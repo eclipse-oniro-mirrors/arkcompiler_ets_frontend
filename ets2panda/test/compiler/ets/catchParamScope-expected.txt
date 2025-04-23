@@ -81,7 +81,7 @@
                           "type": "ETSTypeReferencePart",
                           "name": {
                             "type": "Identifier",
-                            "name": "Object",
+                            "name": "Error",
                             "loc": {
                               "start": {
                                 "line": 16,
@@ -90,7 +90,7 @@
                               },
                               "end": {
                                 "line": 16,
-                                "column": 30,
+                                "column": 29,
                                 "program": "catchParamScope.ets"
                               }
                             }
@@ -103,7 +103,7 @@
                             },
                             "end": {
                               "line": 16,
-                              "column": 30,
+                              "column": 29,
                               "program": "catchParamScope.ets"
                             }
                           }
@@ -116,7 +116,7 @@
                           },
                           "end": {
                             "line": 16,
-                            "column": 30,
+                            "column": 29,
                             "program": "catchParamScope.ets"
                           }
                         }
@@ -129,7 +129,7 @@
                         },
                         "end": {
                           "line": 16,
-                          "column": 30,
+                          "column": 29,
                           "program": "catchParamScope.ets"
                         }
                       }
@@ -142,7 +142,7 @@
                       },
                       "end": {
                         "line": 16,
-                        "column": 30,
+                        "column": 29,
                         "program": "catchParamScope.ets"
                       }
                     }
@@ -153,12 +153,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 33,
+                      "column": 32,
                       "program": "catchParamScope.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 37,
+                      "column": 36,
                       "program": "catchParamScope.ets"
                     }
                   }
@@ -169,7 +169,7 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 38,
+                      "column": 37,
                       "program": "catchParamScope.ets"
                     },
                     "end": {
@@ -456,7 +456,7 @@
                                           "loc": {
                                             "start": {
                                               "line": 22,
-                                              "column": 32,
+                                              "column": 25,
                                               "program": "catchParamScope.ets"
                                             },
                                             "end": {
@@ -469,52 +469,6 @@
                                         "param": {
                                           "type": "Identifier",
                                           "name": "error",
-                                          "typeAnnotation": {
-                                            "type": "ETSTypeReference",
-                                            "part": {
-                                              "type": "ETSTypeReferencePart",
-                                              "name": {
-                                                "type": "Identifier",
-                                                "name": "Error",
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 22,
-                                                    "column": 25,
-                                                    "program": "catchParamScope.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 22,
-                                                    "column": 30,
-                                                    "program": "catchParamScope.ets"
-                                                  }
-                                                }
-                                              },
-                                              "loc": {
-                                                "start": {
-                                                  "line": 22,
-                                                  "column": 25,
-                                                  "program": "catchParamScope.ets"
-                                                },
-                                                "end": {
-                                                  "line": 22,
-                                                  "column": 30,
-                                                  "program": "catchParamScope.ets"
-                                                }
-                                              }
-                                            },
-                                            "loc": {
-                                              "start": {
-                                                "line": 22,
-                                                "column": 25,
-                                                "program": "catchParamScope.ets"
-                                              },
-                                              "end": {
-                                                "line": 22,
-                                                "column": 30,
-                                                "program": "catchParamScope.ets"
-                                              }
-                                            }
-                                          },
                                           "loc": {
                                             "start": {
                                               "line": 22,
@@ -719,4 +673,3 @@
     }
   }
 }
-Warning: The catch statement with type annotation is deprecated, use catch(e). [catchParamScope.ets:22:25]

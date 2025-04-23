@@ -38,10 +38,11 @@ try {
   q += 5;
   throw new TestError();
 }
-catch (e: TestError) {
-}
 catch (e) {
-  arktest.assertTrue(false)
+  if (e instanceof TestError) {
+  } else {
+    arktest.assertTrue(false)
+  }
 }
 
 arktest.assertEQ(q, 8)

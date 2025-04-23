@@ -90,8 +90,12 @@ TEST_F(ASTVerifierTest, TryCatch)
 
             try {
                 throw new NullPointerError();
-            } catch (e: NullPointerError) {
+            } catch (e) {
+             if (e instanceof NullPointerError) {
                 catchCode = 1;
+             } else {
+                throw e;
+             }
             }
         }
     )";

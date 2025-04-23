@@ -33,8 +33,10 @@ function main() {
 
     try{
         c as double;
-    } catch (e: ClassCastError){
-    } catch(other) {
-        arktest.assertEQ(1, 0)
+    } catch (e) {
+        if (e instanceof ClassCastError) {
+        } else {
+            arktest.assertEQ(1, 0)
+        }
     }
 }

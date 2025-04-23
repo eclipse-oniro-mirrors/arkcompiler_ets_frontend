@@ -29,8 +29,10 @@ function main() {
 
     try {
         foo(new A<number>(11) as Object)
-    } catch (error: ClassCastError) {
-        caught_counter++
+    } catch (error) {
+        if (error instanceof ClassCastError) {
+            caught_counter++
+        }
     }
 
     arktest.assertEQ(caught_counter, 1)

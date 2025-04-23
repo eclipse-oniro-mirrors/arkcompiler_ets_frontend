@@ -34,8 +34,10 @@ function foo(a: funcType | null) {
     let test = false;
     try {
         fruit = a!();
-    } catch (e: NullPointerError) {
-        test = true;
+    } catch (e) {
+        if(e instanceof NullPointerError) {
+            test = true;
+        }
     }
 
     arktest.assertEQ(test, true)
