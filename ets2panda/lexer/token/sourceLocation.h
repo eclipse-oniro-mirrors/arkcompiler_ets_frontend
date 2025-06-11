@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_LEXER_TOKEN_SOURCE_LOCATION_H
 #define ES2PANDA_LEXER_TOKEN_SOURCE_LOCATION_H
 
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include <cstddef>
 #include <cstdint>
 #include <limits>

@@ -16,7 +16,7 @@
 #define ES2PANDA_CHECKER_ISOLATED_DECLGEN_CHECKER_H
 
 #include <string>
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "checker/checker.h"
 
 namespace ark::es2panda::declgen {

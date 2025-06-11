@@ -24,7 +24,7 @@
 
 #include "get_class_property_info.h"
 #include "compiler/lowering/util.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 
 namespace ark::es2panda::lsp {
 

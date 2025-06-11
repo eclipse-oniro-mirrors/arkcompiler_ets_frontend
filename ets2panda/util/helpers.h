@@ -17,7 +17,7 @@
 #define ES2PANDA_UTIL_HELPERS_H
 
 #include "varbinder/variableFlags.h"
-#include "mem/pool_manager.h"
+#include "libarkbase/mem/pool_manager.h"
 #include "util/ustring.h"
 #include "util/perfMetrics.h"
 #include "ir/module/importSpecifier.h"

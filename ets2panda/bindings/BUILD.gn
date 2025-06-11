@@ -45,7 +45,7 @@ shared_library("ts_bindings") {
     "$ark_root/assembler:arkassembler_public_config",
     "../:libes2panda_public_config",
     "../:libes2panda_config",
-    "$ark_root/libpandabase:arkbase_public_config",
+    "$ark_root/libarkbase:arkbase_public_config",
     "$ark_root/libarkfile:arkfile_public_config",
   ]
 
@@ -202,7 +202,7 @@ shared_library("public") {
     "$ark_root/assembler:arkassembler_public_config",
     "../:libes2panda_public_config",
     "../:libes2panda_config",
-    "$ark_root/libpandabase:arkbase_public_config",
+    "$ark_root/libarkbase:arkbase_public_config",
     "$ark_root/libarkfile:arkfile_public_config",
   ]
 

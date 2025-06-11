@@ -20,7 +20,7 @@
 #include "ir/expressions/identifier.h"
 #include "ir/expressions/literals/numberLiteral.h"
 #include "ir/expressions/literals/booleanLiteral.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "varbinder/ETSBinder.h"
 #include "util/diagnosticEngine.h"
 

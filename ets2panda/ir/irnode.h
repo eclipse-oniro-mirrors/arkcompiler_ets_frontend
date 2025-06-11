@@ -22,7 +22,7 @@
 #include "lexer/token/sourceLocation.h"
 #include "util/es2pandaMacros.h"
 #include "util/ustring.h"
-#include "utils/span.h"
+#include "libarkbase/utils/span.h"
 
 #include <cstdint>
 #include <list>

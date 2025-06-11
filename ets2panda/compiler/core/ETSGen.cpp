@@ -40,7 +40,7 @@
 #include "compiler/base/lreference.h"
 #include "compiler/base/catchTable.h"
 #include "compiler/core/dynamicContext.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "util/es2pandaMacros.h"
 #include "varbinder/ETSBinder.h"
 #include "varbinder/variable.h"

@@ -15,7 +15,7 @@
 
 #include "compiler/lowering/ets/exportAnonymousConst.h"
 #include "compiler/lowering/util.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 
 namespace ark::es2panda::compiler {
 

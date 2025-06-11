@@ -17,7 +17,7 @@
 #define ES2PANDA_IR_STATEMENT_BLOCK_STATEMENT_H
 
 #include "ir/statement.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::checker {
 class ETSAnalyzer;

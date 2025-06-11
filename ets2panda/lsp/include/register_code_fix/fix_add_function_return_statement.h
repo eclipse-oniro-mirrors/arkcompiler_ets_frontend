@@ -20,7 +20,7 @@
 #include "../services/text_change/change_tracker.h"
 #include "lsp/include/types.h"
 #include "lsp/include/code_fixes/code_fix_types.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::lsp {
 

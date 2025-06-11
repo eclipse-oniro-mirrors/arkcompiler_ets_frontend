@@ -21,7 +21,7 @@
 #include <cstring>
 #include "util.h"
 #include "public/es2panda_lib.h"
-#include "os/file.h"
+#include "libarkbase/os/file.h"
 
 // NOLINTBEGIN
 

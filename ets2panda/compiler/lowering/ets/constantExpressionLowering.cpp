@@ -24,7 +24,7 @@
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "util/helpers.h"
-#include "libpandabase/utils/small_vector.h"
+#include "libarkbase/utils/small_vector.h"
 
 namespace ark::es2panda::compiler {
 

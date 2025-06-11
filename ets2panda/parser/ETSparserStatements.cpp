@@ -21,7 +21,7 @@
 #include "util/errorRecovery.h"
 #include "util/helpers.h"
 #include "util/importPathManager.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/varbinder.h"
 #include "varbinder/ETSBinder.h"
 #include "lexer/lexer.h"

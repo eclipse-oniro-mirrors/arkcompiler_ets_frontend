@@ -24,7 +24,7 @@
 #include "ir/expressions/identifier.h"
 #include "ir/statements/ifStatement.h"
 #include "ir/ts/tsAsExpression.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "parser/ETSparser.h"
 #include "util.h"
 #include "util/ustring.h"

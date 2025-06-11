@@ -15,7 +15,7 @@
 
 #include "importPathManager.h"
 #include "es2panda.h"
-#include <libpandabase/os/filesystem.h>
+#include <libarkbase/os/filesystem.h>
 #include "util/arktsconfig.h"
 #include "util/diagnostic.h"
 #include "util/diagnosticEngine.h"
@@ -29,7 +29,7 @@
 
 #include "libarkfile/class_data_accessor-inl.h"
 #include "libarkfile/file-inl.h"
-#include "libpandabase/utils/logger.h"
+#include "libarkbase/utils/logger.h"
 #include <algorithm>
 
 #ifdef USE_UNIX_SYSCALL

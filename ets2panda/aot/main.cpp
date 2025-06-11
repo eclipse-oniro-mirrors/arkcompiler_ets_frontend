@@ -16,8 +16,8 @@
 #include "bytecode_optimizer/bytecodeopt_options.h"
 #include "bytecode_optimizer/optimize_bytecode.h"
 #include "compiler/compiler_logger.h"
-#include "mem/arena_allocator.h"
-#include "mem/pool_manager.h"
+#include "libarkbase/mem/arena_allocator.h"
+#include "libarkbase/mem/pool_manager.h"
 #include "es2panda.h"
 #include "util/arktsconfig.h"
 #include "util/diagnosticEngine.h"
@@ -25,7 +25,7 @@
 #include "util/options.h"
 #include "util/plugin.h"
 #include "util/perfMetrics.h"
-#include "libpandabase/os/stacktrace.h"
+#include "libarkbase/os/stacktrace.h"
 #include "generated/diagnostic.h"
 
 #include <iostream>

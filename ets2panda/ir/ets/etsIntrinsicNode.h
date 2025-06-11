@@ -18,7 +18,7 @@
 
 #include "ir/expression.h"
 #include "ir/visitor/AstVisitor.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 

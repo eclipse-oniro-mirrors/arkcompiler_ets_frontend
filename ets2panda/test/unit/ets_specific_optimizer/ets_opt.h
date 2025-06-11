@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,10 +30,10 @@
 #include "compiler/optimizer/ir/inst.h"
 #include "compiler/optimizer/ir/ir_constructor.h"
 #include "compiler/optimizer/optimizations/regalloc/reg_alloc_linear_scan.h"
-#include "libpandabase/utils/logger.h"
-#include "libpandabase/utils/utils.h"
-#include "mem/arena_allocator.h"
-#include "mem/pool_manager.h"
+#include "libarkbase/utils/logger.h"
+#include "libarkbase/utils/utils.h"
+#include "libarkbase/mem/arena_allocator.h"
+#include "libarkbase/mem/pool_manager.h"
 #include "optimizer/ir/inst.h"
 #include "bytecode_optimizer/reg_acc_alloc.h"
 #include "bytecode_optimizer/optimize_bytecode.h"

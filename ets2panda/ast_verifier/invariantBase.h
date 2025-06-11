@@ -18,7 +18,7 @@
 
 #include "generated/options.h"
 #include "ir/astNode.h"
-#include "utils/json_builder.h"
+#include "libarkbase/utils/json_builder.h"
 
 namespace ark::es2panda::compiler::ast_verifier {
 

@@ -72,7 +72,7 @@ static uint32_t TranslateModifierFlags(ir::ModifierFlags modifierFlags)
         if ((modifierFlags & ir::ModifierFlags::PROTECTED) != 0) {
             accessFlags = ACC_PROTECTED;
         }
-        // NOTE: torokg. Add ACC_INTERNAL access flag to libpandabase
+        // NOTE: torokg. Add ACC_INTERNAL access flag to libarkbase
     } else if ((modifierFlags & ir::ModifierFlags::PROTECTED) != 0) {
         accessFlags = ACC_PROTECTED;
     } else {

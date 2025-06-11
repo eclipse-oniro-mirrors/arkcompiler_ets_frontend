@@ -17,8 +17,8 @@
 #include "util/diagnostic.h"
 #include "util/diagnosticEngine.h"
 #include "util/ustring.h"
-#include "os/filesystem.h"
-#include "utils/pandargs.h"
+#include "libarkbase/os/filesystem.h"
+#include "libarkbase/utils/pandargs.h"
 #include "arktsconfig.h"
 #include "generated/diagnostic.h"
 

@@ -20,7 +20,7 @@
 #include "compiler/lowering/util.h"
 #include "inlay_hints.h"
 #include "public/public.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::lsp {
 

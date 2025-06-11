@@ -19,7 +19,7 @@
 #include <functional>
 #include <ostream>
 #include <string>
-#include "macros.h"
+#include "libarkbase/macros.h"
 
 static es2panda_Impl *g_implPtr = nullptr;
 

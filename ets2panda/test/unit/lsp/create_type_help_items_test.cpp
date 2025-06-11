@@ -22,7 +22,7 @@
 #include "ir/astNode.h"
 #include "lsp/include/internal_api.h"
 #include "public/es2panda_lib.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace {
 

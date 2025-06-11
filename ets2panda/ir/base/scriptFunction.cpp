@@ -20,8 +20,8 @@
 #include "compiler/core/pandagen.h"
 #include "ir/astDump.h"
 #include "ir/srcDump.h"
-#include "mem/arena_allocator.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/mem/arena_allocator.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 

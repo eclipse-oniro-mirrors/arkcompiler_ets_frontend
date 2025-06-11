@@ -15,9 +15,9 @@
 
 #include "util/perfMetrics.h"
 
-#include "libpandabase/utils/logger.h"
-#include "libpandabase/utils/type_converter.h"
-#include "libpandabase/mem/mem.h"
+#include "libarkbase/utils/logger.h"
+#include "libarkbase/utils/type_converter.h"
+#include "libarkbase/mem/mem.h"
 #include <chrono>
 #include <mutex>
 #include <forward_list>
