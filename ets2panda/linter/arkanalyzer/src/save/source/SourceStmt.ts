@@ -157,6 +157,7 @@ enum AssignStmtDumpType {
     NORMAL,
     TEMP_REPLACE,
     COMPONENT_CREATE,
+    PARAM_REPLACE,
 }
 
 export class SourceAssignStmt extends SourceStmt {
@@ -176,10 +177,15 @@ export class SourceAssignStmt extends SourceStmt {
         this.leftOp = (this.original as ArkAssignStmt).getLeftOp();
         this.rightOp = (this.original as ArkAssignStmt).getRightOp();
 
+        if (this.rightOp instanceof ArkParameterRef) {
+            this.setText('');
+            this.dumpType = AssignStmtDumpType.PARAM_REPLACE;
+            return;
+        }
+
         if (
             (this.leftOp instanceof Local && this.leftOp.getName() === 'this') ||
             (this.rightOp instanceof Constant && this.rightOp.getValue() === 'undefined') ||
-            this.rightOp instanceof ArkParameterRef ||
             this.rightOp instanceof ClosureFieldRef
         ) {
             this.setText('');
@@ -231,6 +237,10 @@ export class SourceAssignStmt extends SourceStmt {
     }
 
     protected beforeDump(): void {
+        if (this.dumpType === AssignStmtDumpType.PARAM_REPLACE && this.leftOp instanceof Local) {
+            this.context.defineLocal(this.leftOp);
+        }
+
         if (this.dumpType !== AssignStmtDumpType.TEMP_REPLACE) {
             return;
         }

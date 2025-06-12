@@ -90,7 +90,7 @@ import { KeyofTypeExpr, TypeQueryExpr } from '../base/TypeExpr';
 const logger = Logger.getLogger(LOG_MODULE_TYPE.ARKANALYZER, 'ArkValueTransformer');
 
 export class ArkValueTransformer {
-    private conditionalOperatorNo: number = 0;
+    public conditionalOperatorNo: number = 0;
     private tempLocalNo: number = 0;
     private sourceFile: ts.SourceFile;
     private locals: Map<string, Local> = new Map();
