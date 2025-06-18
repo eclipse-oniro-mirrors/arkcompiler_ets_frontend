@@ -1,0 +1,14 @@
+# Deprecated operations on char #27402
+ArrayLiteral.ets
+MaxBoundInt.ets
+StringBase64.ets
+UpdateExpression.ets
+boxingConversions3.ets
+boxingConversions4.ets
+castSequence.ets
+char-type.ets
+explicit_cast_boxed_expressions.ets
+fieldImplicitCasting.ets
+implicit_cast_boxed_expressions.ets
+non-const-capture.ets
+string-builder.ets

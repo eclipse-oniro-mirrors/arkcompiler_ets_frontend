@@ -41,4 +41,6 @@ function main() {
 }
 
 /* @@@ label Error TypeError: Switch case type 'A' is not comparable to discriminant type 'E'  */
+/* @@@ label Error TypeError: Enum switch case must be unqualified name of an enum constant  */
 /* @@@ label1 Error TypeError: Switch case type 'A' is not comparable to discriminant type 'E'  */
+/* @@@ label1 Error TypeError: Enum switch case must be unqualified name of an enum constant  */

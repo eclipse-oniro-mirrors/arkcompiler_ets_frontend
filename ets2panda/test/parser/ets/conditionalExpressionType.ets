@@ -14,7 +14,7 @@
  */
 
 function constantCases(): void{
-    let a : char = 100;
+    let a : char = Int.toChar(100);
     let first = true ? a : 68;
 
     let b : byte = 50;
@@ -23,7 +23,7 @@ function constantCases(): void{
     let c : Short = 721;
     let third = true ? c : 419;
 
-    let d : char = 3;
+    let d : char = Int.toChar(3);
     let fourth = false ? c : 665;
 
     let e : Byte = 88;
@@ -53,7 +53,7 @@ function dominantNumericCases(): void{
     let d : int = 2;
     let e : Short = 2;
     let f : byte = 2;
-    let g : char = 2;
+    let g : char = Int.toChar(2);
 
     let first = false ? a : b;
     let sec = false ? b : c;

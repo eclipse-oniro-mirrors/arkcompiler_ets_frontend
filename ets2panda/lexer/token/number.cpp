@@ -23,44 +23,37 @@ Number::Number(util::StringView str, NumberFlags flags) noexcept : str_(str), fl
 {
     Lexer::ConversionResult res {};
 
-    if (((flags & (NumberFlags::DECIMAL_POINT | NumberFlags::EXPONENT)) == std::underlying_type_t<TokenFlags>(0))) {
-        if (str.Utf8().back() == 'f') {
-            num_ = 0;
-            flags_ |= NumberFlags::ERROR;
-        } else {
-            const int64_t temp = Lexer::StrToNumeric(&std::strtoll, str.Utf8().data(), res, 10);
+    const auto s = str.Utf8();
+    const bool hasFloatSuffix = !s.empty() && s.back() == 'f';
+    const bool hasPointOrExp =
+        (flags & (NumberFlags::DECIMAL_POINT | NumberFlags::EXPONENT)) != std::underlying_type_t<TokenFlags>(0);
 
-            if (res == Lexer::ConversionResult::SUCCESS) {
-                // CC-OFFNXT(huge_depth[C++], C_RULE_ID_FUNCTION_NESTING_LEVEL, G.FUN.01-CPP, G.FUD.05) solid logic
-                if (temp <= std::numeric_limits<int32_t>::max() && temp >= std::numeric_limits<int32_t>::min()) {
-                    num_ = static_cast<int32_t>(temp);
-                } else {
-                    num_ = temp;
-                }
+    if (!hasPointOrExp && !hasFloatSuffix) {
+        const int64_t temp = Lexer::StrToNumeric(&std::strtoll, s.data(), res, 10);
+
+        if (res == Lexer::ConversionResult::SUCCESS) {
+            if (temp <= std::numeric_limits<int32_t>::max() && temp >= std::numeric_limits<int32_t>::min()) {
+                num_ = static_cast<int32_t>(temp);
             } else {
-                flags_ |= NumberFlags::ERROR;
+                num_ = temp;
             }
         }
     } else {
-        const double temp = Lexer::StrToNumeric(&std::strtod, str.Utf8().data(), res);
-        if (res == Lexer::ConversionResult::SUCCESS) {
-            if (str.Utf8().back() != 'f') {
-                num_ = temp;
+        if (hasFloatSuffix) {
+            if (!hasPointOrExp) {
+                flags_ |= NumberFlags::ERROR;
             } else {
-                const float tempFloat = Lexer::StrToNumeric(&std::strtof, str.Utf8().data(), res);
-                // CC-OFFNXT(huge_depth[C++], C_RULE_ID_FUNCTION_NESTING_LEVEL, G.FUN.01-CPP, G.FUD.05) solid logic
-                if (res == Lexer::ConversionResult::SUCCESS) {
-                    num_ = static_cast<float>(tempFloat);
-                } else {
-                    flags_ |= NumberFlags::ERROR;
-                }
+                // NOTE(dkofanov): floats should be parsed via 'strtof', however there are problems with subnormal
+                // values.
+                num_ = Lexer::StrToNumeric<double, float>(&std::strtod, s.data(), res);
             }
         } else {
-            flags_ |= NumberFlags::ERROR;
+            num_ = Lexer::StrToNumeric(&std::strtod, s.data(), res);
         }
     }
-    if (res == Lexer::ConversionResult::OUT_OF_RANGE) {
-        num_ = 0;
+    if (res != Lexer::ConversionResult::SUCCESS) {
+        num_ = std::monostate {};
+        flags_ |= NumberFlags::ERROR;
     }
 }
 }  // namespace ark::es2panda::lexer

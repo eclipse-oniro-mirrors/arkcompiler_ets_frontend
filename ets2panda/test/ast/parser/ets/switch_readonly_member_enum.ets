@@ -39,3 +39,7 @@ function main() {
         default: break;
     }
 }
+
+
+/* @@@ label Error TypeError: Enum switch case must be unqualified name of an enum constant  */
+/* @@@ label1 Error TypeError: Enum switch case must be unqualified name of an enum constant  */

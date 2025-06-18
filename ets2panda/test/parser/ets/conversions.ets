@@ -14,8 +14,8 @@
  */
 
 function main(): int {
-    let s: byte = 0 as byte
-    let d: char = s
+    let s: byte = new Byte(0)
+    let d: char = s.toChar()
     if (d != c'\u0000') {
         return 1;
     }

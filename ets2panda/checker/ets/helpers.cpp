@@ -406,12 +406,14 @@ Type *ETSChecker::GetUnaryOperatorPromotedType(Type *type, const bool doPromotio
     auto globalTypesHolder = GetGlobalTypesHolder();
 
     if (doPromotion) {
+        // NOTE(dkofanov): Deprecated operations on 'char' #28006
         if (type == globalTypesHolder->GlobalByteBuiltinType() || type == globalTypesHolder->GlobalShortBuiltinType() ||
             type == globalTypesHolder->GlobalCharBuiltinType() ||
             type == globalTypesHolder->GlobalIntegerBuiltinType()) {
             return GlobalIntBuiltinType();
         }
 
+        // NOTE(dkofanov): Deprecated operations on 'char' #28006
         if (type->IsIntType() || type->IsByteType() || type->IsShortType() || type->IsCharType()) {
             return GlobalIntBuiltinType();
         }

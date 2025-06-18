@@ -515,6 +515,26 @@ bool ValidateRestParameter(ETSChecker *checker, Signature *signature, const Aren
              (flags & TypeRelationFlag::IGNORE_REST_PARAM) != 0);
 }
 
+// NOTE(dkofanov): Mimics type inferrence for integer literals. Also relies on the implicit widening which occurs
+// later in checker and 'CheckCastLiteral' during 'ConstantExpressionLowering'.
+static void InferTypeForNumberLiteral(ETSChecker *checker, ir::NumberLiteral *argumentLiteral, Type *paramType)
+{
+    argumentLiteral->SetTsType(nullptr);
+    argumentLiteral->SetPreferredType(paramType);
+    auto &number = argumentLiteral->AsNumberLiteral()->Number();
+
+    auto *typeRel = checker->Relation();
+    if (typeRel->IsSupertypeOf(checker->GlobalLongBuiltinType(), paramType)) {
+        number.TryNarrowTo<int64_t>();
+    } else if (typeRel->IsSupertypeOf(checker->GlobalIntBuiltinType(), paramType)) {
+        number.TryNarrowTo<int32_t>();
+    } else if (typeRel->IsSupertypeOf(checker->GlobalShortBuiltinType(), paramType)) {
+        number.TryNarrowTo<int16_t>();
+    } else if (typeRel->IsSupertypeOf(checker->GlobalByteBuiltinType(), paramType)) {
+        number.TryNarrowTo<int8_t>();
+    }
+}
+
 // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
 bool ETSChecker::ValidateSignatureRequiredParams(Signature *substitutedSig,
                                                  const ArenaVector<ir::Expression *> &arguments, TypeRelationFlag flags,
@@ -553,8 +573,7 @@ bool ETSChecker::ValidateSignatureRequiredParams(Signature *substitutedSig,
             }
             return false;
         } else if (argument->IsNumberLiteral()) {
-            argument->SetTsType(nullptr);
-            argument->SetPreferredType(paramType);
+            InferTypeForNumberLiteral(this, argument->AsNumberLiteral(), paramType);
         }
 
         if (argTypeInferenceRequired[index]) {

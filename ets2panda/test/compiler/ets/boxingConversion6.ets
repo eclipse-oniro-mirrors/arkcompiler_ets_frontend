@@ -19,4 +19,4 @@ let i: Int = b
 let l: Long = b
 let f: Float = b
 let d: Double = b
-let c: Char = b
+let c: Char = b.toChar()

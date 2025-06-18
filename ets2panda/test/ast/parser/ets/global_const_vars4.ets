@@ -27,4 +27,4 @@ class ABC {
     public main(): void {}
 }
 
-/* @@@ label Error TypeError: Cannot assign to a readonly variable date  */
+/* @@@ label Error TypeError: Cannot assign to a readonly field date  */
