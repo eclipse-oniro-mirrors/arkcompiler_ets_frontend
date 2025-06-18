@@ -20,5 +20,5 @@ class A {
     }
 }
 
-/* @@@ label Error TypeError: Cannot assign to a readonly variable fld  */
+/* @@@ label Error TypeError: Cannot assign to a readonly field fld  */
 /* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned.  */

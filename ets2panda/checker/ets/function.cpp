@@ -467,6 +467,58 @@ static bool HasTransferredTrailingLambda(const ArenaVector<ir::Expression *> &ar
            arguments.back()->AsArrowFunctionExpression()->Function()->IsTrailingLambda();
 }
 
+bool ValidateRestParameter(ETSChecker *checker, Signature *signature, const ArenaVector<ir::Expression *> &arguments,
+                           const lexer::SourcePosition &pos, TypeRelationFlag flags)
+{
+    size_t const argCount = arguments.size();
+    size_t compareCount = argCount;
+    auto const hasRestParameter = signature->HasRestParameter();
+    auto const reportError = (flags & TypeRelationFlag::NO_THROW) == 0;
+    if ((flags & TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA) != 0 && !signature->Params().empty() &&
+        signature->Params().back()->Declaration()->Node()->AsETSParameterExpression()->IsOptional()) {
+        compareCount = compareCount - 1;
+    }
+
+    if (!hasRestParameter && argCount > 0 && arguments[argCount - 1]->IsSpreadElement()) {
+        if (reportError) {
+            checker->LogError(diagnostic::ERROR_ARKTS_SPREAD_ONLY_WITH_REST, {}, pos);
+        }
+        return false;
+    }
+    if (compareCount < signature->MinArgCount() || (argCount > signature->ArgCount() && !hasRestParameter)) {
+        if (reportError) {
+            checker->LogError(diagnostic::PARAM_COUNT_MISMATCH, {signature->MinArgCount(), argCount}, pos);
+        }
+        return false;
+    }
+    if (hasRestParameter &&
+        (((flags & TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA) != 0) || HasTransferredTrailingLambda(arguments))) {
+        return false;
+    }
+    return !(argCount > signature->ArgCount() && hasRestParameter &&
+             (flags & TypeRelationFlag::IGNORE_REST_PARAM) != 0);
+}
+
+// NOTE(dkofanov): Mimics type inferrence for integer literals. Also relies on the implicit widening which occurs
+// later in checker and 'CheckCastLiteral' during 'ConstantExpressionLowering'.
+static void InferTypeForNumberLiteral(ETSChecker *checker, ir::NumberLiteral *argumentLiteral, Type *paramType)
+{
+    argumentLiteral->SetTsType(nullptr);
+    argumentLiteral->SetPreferredType(paramType);
+    auto &number = argumentLiteral->AsNumberLiteral()->Number();
+
+    auto *typeRel = checker->Relation();
+    if (typeRel->IsSupertypeOf(checker->GlobalLongBuiltinType(), paramType)) {
+        number.TryNarrowTo<int64_t>();
+    } else if (typeRel->IsSupertypeOf(checker->GlobalIntBuiltinType(), paramType)) {
+        number.TryNarrowTo<int32_t>();
+    } else if (typeRel->IsSupertypeOf(checker->GlobalShortBuiltinType(), paramType)) {
+        number.TryNarrowTo<int16_t>();
+    } else if (typeRel->IsSupertypeOf(checker->GlobalByteBuiltinType(), paramType)) {
+        number.TryNarrowTo<int8_t>();
+    }
+}
+
 // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
 bool ETSChecker::ValidateSignatureRequiredParams(Signature *substitutedSig,
                                                  const ArenaVector<ir::Expression *> &arguments, TypeRelationFlag flags,
@@ -505,8 +557,7 @@ bool ETSChecker::ValidateSignatureRequiredParams(Signature *substitutedSig,
             }
             return false;
         } else if (argument->IsNumberLiteral()) {
-            argument->SetTsType(nullptr);
-            argument->SetPreferredType(paramType);
+            InferTypeForNumberLiteral(this, argument->AsNumberLiteral(), paramType);
         }
 
         if (argTypeInferenceRequired[index]) {

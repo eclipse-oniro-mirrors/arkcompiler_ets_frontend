@@ -1260,7 +1260,7 @@ function main(): void {
     const k1: long = 2;
     const l1: float = 2.0f;
     const m1: double = 2.0;
-    const n1: byte[] = [h1, Short.toByte(i1), j1, Long.toByte(k1), Float.toByte(l1), Double.toByte(m1)];
+    const n1: byte[] = [h1, Short.toByte(i1), Int.toByte(j1), Long.toByte(k1), Float.toByte(l1), Double.toByte(m1)];
     arktest.assertEQ(n1[0], 2)
     arktest.assertEQ(n1[1], 2)
     arktest.assertEQ(n1[2], 2)

@@ -19,4 +19,5 @@ enum InvalidInitTypeEnum {
   Blue
 }
 
+/* @@? 19:7 Error TypeError: Arithmetic operation causes an overflow.  */
 /* @@? 19:7 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type.  */

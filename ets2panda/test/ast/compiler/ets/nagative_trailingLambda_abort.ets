@@ -30,6 +30,6 @@
 /* @@? 16:2 Error SyntaxError: Unexpected token '22'. */
 /* @@? 16:4 Error SyntaxError: Unexpected token 'Array'. */
 /* @@? 20:74 Error SyntaxError: Expected '}', got 'identification literal'. */
+/* @@? 27:5 Error TypeError: Wrong type of operands for binary expression  */
 /* @@? 27:22 Error SyntaxError: Unexpected token. */
-/* @@? 36:1 Error SyntaxError: Expected '}', got 'end of stream'. */
-
+/* @@? 37:1 Error SyntaxError: Expected '}', got 'end of stream'. */

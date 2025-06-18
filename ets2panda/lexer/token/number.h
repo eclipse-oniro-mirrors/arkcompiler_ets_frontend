@@ -19,6 +19,7 @@
 #include "util/diagnosticEngine.h"
 #include "util/ustring.h"
 #include "util/enumbitops.h"
+#include <type_traits>
 
 namespace ark::es2panda::lexer {
 
@@ -57,57 +58,73 @@ inline constexpr bool dependent_false_v = false;
 
 class Number {
 public:
-    explicit Number() noexcept : num_(static_cast<int32_t>(0)) {};
+    enum class TypeRank {
+        // Keep this order
+        INVALID,
+        INT8,
+        INT16,
+        INT32,
+        INT64,
+        FLOAT,
+        DOUBLE
+    };
+
+    Number() noexcept : num_(std::monostate()), flags_ {NumberFlags::ERROR} {};
     // NOLINTNEXTLINE(bugprone-exception-escape)
-    explicit Number(util::StringView str, NumberFlags flags) noexcept;
-    explicit Number(util::StringView str, double num) noexcept : str_(str), num_(num) {}
-    explicit Number(uint8_t num) noexcept : Number(static_cast<int8_t>(num)) {}
-    explicit Number(int8_t num) noexcept : num_(num) {}
-    explicit Number(uint16_t num) noexcept : Number(static_cast<int16_t>(num)) {}
-    explicit Number(int16_t num) noexcept : num_(num) {}
-    explicit Number(uint32_t num) noexcept : Number(static_cast<int32_t>(num)) {}
-    explicit Number(int32_t num) noexcept : num_(num) {}
-    explicit Number(uint64_t num) noexcept : Number(static_cast<int64_t>(num)) {}
-    explicit Number(int64_t num) noexcept : num_(num) {}
-    explicit Number(float num) noexcept : num_(num) {}
-    explicit Number(double num) noexcept : num_(num) {}
+    Number(util::StringView str, NumberFlags flags) noexcept;
+    Number(util::StringView str, double num) noexcept : str_(str), num_(num) {}
+
+    template <typename T, typename Signed = std::enable_if_t<std::is_signed_v<T>, std::nullptr_t>>
+    explicit Number(T num, [[maybe_unused]] Signed unused = nullptr) noexcept : num_ {num}
+    {
+    }
+    template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>>>
+    explicit Number(T num) noexcept : Number(static_cast<std::make_signed_t<T>>(num))
+    {
+    }
     DEFAULT_COPY_SEMANTIC(Number);
     DEFAULT_MOVE_SEMANTIC(Number);
     ~Number() = default;
 
+    template <typename T>
+    bool Is() const
+    {
+        return std::holds_alternative<T>(num_);
+    }
+
     bool IsByte() const noexcept
     {
-        return std::holds_alternative<int8_t>(num_);
+        return Is<int8_t>();
     }
 
     bool IsShort() const noexcept
     {
-        return std::holds_alternative<int16_t>(num_);
+        return Is<int16_t>();
     }
 
     bool IsInt() const noexcept
     {
-        return std::holds_alternative<int32_t>(num_);
+        return Is<int32_t>();
     }
 
     bool IsLong() const noexcept
     {
-        return std::holds_alternative<int64_t>(num_);
+        return Is<int64_t>();
+    }
+
+    bool IsFloat() const noexcept
+    {
+        return Is<float>();
+    }
+
+    bool IsDouble() const noexcept
+    {
+        return Is<double>();
     }
 
     bool IsInteger() const noexcept
     {
         return IsByte() || IsShort() || IsInt() || IsLong();
-    }
-
-    bool IsFloat() const noexcept
-    {
-        return std::holds_alternative<float>(num_);
-    }
-
-    bool IsDouble() const noexcept
-    {
-        return std::holds_alternative<double>(num_);
     }
 
     bool IsReal() const noexcept
@@ -117,59 +134,108 @@ public:
 
     bool ConversionError() const
     {
-        return (flags_ & NumberFlags::ERROR) != 0;
+        bool error = (flags_ & NumberFlags::ERROR) != 0;
+        ES2PANDA_ASSERT(error == std::holds_alternative<std::monostate>(num_));
+        return error;
+    }
+
+    // NOLINTBEGIN(readability-else-after-return)
+    template <typename T>
+    bool CanGetValue() const
+    {
+        if constexpr (std::is_same_v<T, int64_t>) {
+            return Is<int64_t>() || Is<int32_t>() || Is<int16_t>() || Is<int8_t>();
+        } else if constexpr (std::is_same_v<T, int32_t>) {
+            return Is<int32_t>() || Is<int16_t>() || Is<int8_t>() || CanBeNarrowedTo<int32_t>();
+        } else if constexpr (std::is_same_v<T, int16_t>) {
+            return Is<int16_t>() || Is<int8_t>() || CanBeNarrowedTo<int16_t>();
+        } else if constexpr (std::is_same_v<T, int8_t>) {
+            return Is<int8_t>() || CanBeNarrowedTo<int8_t>();
+        } else if constexpr (std::is_same_v<T, double>) {
+            return true;
+        } else if constexpr (std::is_same_v<T, float>) {
+            return IsInteger() || Is<float>() || CanBeNarrowedTo<float>();
+        } else {
+            static_assert(dependent_false_v<T>, "Invalid value type was requested for Number.");
+            return false;
+        }
+    }
+
+    template <typename T>
+    auto GetValue() const
+    {
+        ES2PANDA_ASSERT(CanGetValue<T>());
+        return std::visit(overloaded {[](auto value) { return static_cast<T>(value); },
+                                      []([[maybe_unused]] std::monostate value) -> T { ES2PANDA_UNREACHABLE(); }},
+                          num_);
+    }
+
+    template <typename TargetType>
+    TargetType GetValueAndCastTo() const
+    {
+        return std::visit(
+            overloaded {[](auto value) { return static_cast<TargetType>(value); },
+                        []([[maybe_unused]] std::monostate value) -> TargetType { ES2PANDA_UNREACHABLE(); }},
+            num_);
     }
 
     int8_t GetByte() const
     {
-        ES2PANDA_ASSERT(IsByte());
-        return std::get<int8_t>(num_);
+        return GetValue<int8_t>();
     }
 
     int16_t GetShort() const
     {
-        return std::visit(overloaded {[](int16_t value) { return value; },
-                                      [](int8_t value) { return static_cast<int16_t>(value); },
-                                      []([[maybe_unused]] auto value) -> int16_t { ES2PANDA_UNREACHABLE(); }},
-                          num_);
+        return GetValue<int16_t>();
     }
 
     int32_t GetInt() const
     {
-        return std::visit(overloaded {[](int32_t value) { return value; },
-                                      [](int16_t value) { return static_cast<int32_t>(value); },
-                                      [](int8_t value) { return static_cast<int32_t>(value); },
-                                      []([[maybe_unused]] auto value) -> int32_t { ES2PANDA_UNREACHABLE(); }},
-                          num_);
+        return GetValue<int32_t>();
     }
 
     int64_t GetLong() const
     {
-        return std::visit(overloaded {[](int64_t value) { return value; },
-                                      [](int32_t value) { return static_cast<int64_t>(value); },
-                                      [](int16_t value) { return static_cast<int64_t>(value); },
-                                      [](int8_t value) { return static_cast<int64_t>(value); },
-                                      []([[maybe_unused]] auto value) -> int64_t { ES2PANDA_UNREACHABLE(); }},
-                          num_);
+        return GetValue<int64_t>();
     }
 
     float GetFloat() const
     {
-        return std::visit(overloaded {[](float value) { return value; },
-                                      [](int64_t value) { return static_cast<float>(value); },
-                                      [](int32_t value) { return static_cast<float>(value); },
-                                      [](int16_t value) { return static_cast<float>(value); },
-                                      [](int8_t value) { return static_cast<float>(value); },
-                                      []([[maybe_unused]] auto value) -> float { ES2PANDA_UNREACHABLE(); }},
-                          num_);
+        return GetValue<float>();
     }
 
     double GetDouble() const
     {
-        return std::visit(overloaded {[]([[maybe_unused]] std::monostate value) -> double { ES2PANDA_UNREACHABLE(); },
-                                      [](double value) { return value; },
-                                      [](auto value) { return static_cast<double>(value); }},
-                          num_);
+        return GetValue<double>();
+    }
+
+    auto GetTypeRank() const
+    {
+        ES2PANDA_ASSERT(num_.index() != 0);
+        return static_cast<TypeRank>(num_.index());
+    }
+
+    template <typename T>
+    static constexpr auto ToTypeRank()
+    {
+        constexpr decltype(num_) V {T {}};
+        return static_cast<TypeRank>(V.index());
+    }
+
+    template <typename T>
+    bool TryNarrowTo()
+    {
+        if (CanGetValue<T>()) {
+            num_ = GetValue<T>();
+            return true;
+        }
+        return false;
+    }
+
+    void NarrowToLowest()
+    {
+        ES2PANDA_ASSERT(IsInteger());
+        TryNarrowTo<int8_t>() || TryNarrowTo<int16_t>() || TryNarrowTo<int32_t>();
     }
 
     const util::StringView &Str() const
@@ -182,19 +248,6 @@ public:
         str_ = str;
     }
 
-    void Negate()
-    {
-        std::visit(overloaded {[]([[maybe_unused]] std::monostate value) { ES2PANDA_UNREACHABLE(); },
-                               [](auto &value) { value = -value; }},
-                   num_);
-        if (std::holds_alternative<int64_t>(num_)) {
-            int64_t num = std::get<int64_t>(num_);
-            if (num == INT32_MIN) {
-                SetValue<int32_t>(num);
-            }
-        }
-    }
-
     bool IsZero() const
     {
         return std::visit(overloaded {[]([[maybe_unused]] std::monostate value) -> bool { ES2PANDA_UNREACHABLE(); },
@@ -202,69 +255,6 @@ public:
                           num_);
     }
 
-    // NOLINTBEGIN(readability-else-after-return)
-    template <typename RT>
-    bool CanGetValue() const noexcept
-    {
-        using T = typename std::remove_cv_t<typename std::remove_reference_t<RT>>;
-
-        if constexpr (std::is_same_v<T, int64_t>) {
-            return IsInteger();
-        } else if constexpr (std::is_same_v<T, int32_t>) {
-            return IsInt() || IsShort() || IsByte();
-        } else if constexpr (std::is_same_v<T, double>) {
-            return true;
-        } else if constexpr (std::is_same_v<T, float>) {
-            return IsInteger() || IsFloat();
-        } else if constexpr (std::is_same_v<T, int16_t>) {
-            return IsShort() || IsByte();
-        } else if constexpr (std::is_same_v<T, int8_t>) {
-            return IsByte();
-        } else {
-            return false;
-        }
-    }
-
-    template <typename RT>
-    auto GetValue() const
-    {
-        using T = typename std::remove_cv_t<typename std::remove_reference_t<RT>>;
-
-        if constexpr (std::is_same_v<T, int64_t>) {
-            return GetLong();
-        } else if constexpr (std::is_same_v<T, int32_t>) {
-            return GetInt();
-        } else if constexpr (std::is_same_v<T, double>) {
-            return GetDouble();
-        } else if constexpr (std::is_same_v<T, float>) {
-            return GetFloat();
-        } else if constexpr (std::is_same_v<T, int16_t>) {
-            return GetShort();
-        } else if constexpr (std::is_same_v<T, int8_t>) {
-            return GetByte();
-        } else {
-            static_assert(dependent_false_v<T>, "Invalid value type was requested for Number.");
-        }
-    }
-
-    template <typename TargetType>
-    TargetType GetValueAndCastTo() const
-    {
-        if (IsByte()) {
-            return static_cast<TargetType>(GetByte());
-        } else if (IsShort()) {
-            return static_cast<TargetType>(GetShort());
-        } else if (IsInt()) {
-            return static_cast<TargetType>(GetInt());
-        } else if (IsLong()) {
-            return static_cast<TargetType>(GetLong());
-        } else if (IsFloat()) {
-            return static_cast<TargetType>(GetFloat());
-        } else if (IsDouble()) {
-            return static_cast<TargetType>(GetDouble());
-        }
-        ES2PANDA_UNREACHABLE();
-    }
     // NOLINTEND(readability-else-after-return)
 
     template <typename RT>
@@ -281,9 +271,46 @@ public:
     }
 
 private:
+    template <typename Dst, typename Src>
+    static bool InRange(Src value)
+    {
+        static_assert(std::is_arithmetic_v<Dst> && std::is_arithmetic_v<Src>);
+        if constexpr (std::is_same_v<Src, float>) {
+            return false;
+        }
+        if constexpr (std::is_same_v<Src, double> && std::is_same_v<Dst, float>) {
+            const auto min = static_cast<Src>(std::numeric_limits<Dst>::lowest());
+            const auto max = static_cast<Src>(std::numeric_limits<Dst>::max());
+            return (min <= value) && (value <= max);
+        }
+        if constexpr (std::is_integral_v<Src> && std::is_integral_v<Dst>) {
+            static_assert(ToTypeRank<Dst>() < ToTypeRank<Src>());
+            static_assert(std::is_signed_v<Dst>);
+            static_assert(std::is_signed_v<Src>);
+            const auto min = static_cast<Src>(std::numeric_limits<Dst>::lowest());
+            const auto max = static_cast<Src>(std::numeric_limits<Dst>::max());
+            return (min <= value) && (value <= max);
+        }
+        return false;
+    }
+
+    template <typename T>
+    bool CanBeNarrowedTo() const
+    {
+        auto canBeNarrowed = [](auto value) {
+            if constexpr (ToTypeRank<decltype(value)>() > ToTypeRank<T>()) {
+                return InRange<T>(value);
+            }
+            return false;
+        };
+        auto unreachable = []([[maybe_unused]] std::monostate value) -> bool { ES2PANDA_UNREACHABLE(); };
+        return std::visit(overloaded {canBeNarrowed, unreachable}, num_);
+    }
+
+private:
     util::StringView str_ {};
     std::variant<std::monostate, int8_t, int16_t, int32_t, int64_t, float, double> num_;
-    NumberFlags flags_ {NumberFlags::NONE};
+    NumberFlags flags_ {};
 };
 }  // namespace ark::es2panda::lexer
 

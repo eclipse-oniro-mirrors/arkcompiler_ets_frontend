@@ -22,8 +22,13 @@ Number::Number(util::StringView str, NumberFlags flags) noexcept : str_(str), fl
 {
     Lexer::ConversionResult res {};
 
-    if ((flags & (NumberFlags::DECIMAL_POINT | NumberFlags::EXPONENT)) == std::underlying_type_t<TokenFlags>(0)) {
-        const int64_t temp = Lexer::StrToNumeric(&std::strtoll, str.Utf8().data(), res, 10);
+    const auto s = str.Utf8();
+    const bool hasFloatSuffix = !s.empty() && s.back() == 'f';
+    const bool hasPointOrExp =
+        (flags & (NumberFlags::DECIMAL_POINT | NumberFlags::EXPONENT)) != std::underlying_type_t<TokenFlags>(0);
+
+    if (!hasPointOrExp && !hasFloatSuffix) {
+        const int64_t temp = Lexer::StrToNumeric(&std::strtoll, s.data(), res, 10);
 
         if (res == Lexer::ConversionResult::SUCCESS) {
             if (temp <= std::numeric_limits<int32_t>::max() && temp >= std::numeric_limits<int32_t>::min()) {
@@ -35,19 +40,21 @@ Number::Number(util::StringView str, NumberFlags flags) noexcept : str_(str), fl
             flags_ |= NumberFlags::ERROR;
         }
     } else {
-        const double temp = Lexer::StrToNumeric(&std::strtod, str.Utf8().data(), res);
-        if (res == Lexer::ConversionResult::SUCCESS) {
-            if (str.Utf8().back() != 'f') {
-                num_ = temp;
+        if (hasFloatSuffix) {
+            if (!hasPointOrExp) {
+                flags_ |= NumberFlags::ERROR;
             } else {
-                num_ = static_cast<float>(temp);
+                // NOTE(dkofanov): floats should be parsed via 'strtof', however there are problems with subnormal
+                // values.
+                num_ = Lexer::StrToNumeric<double, float>(&std::strtod, s.data(), res);
             }
         } else {
-            flags_ |= NumberFlags::ERROR;
+            num_ = Lexer::StrToNumeric(&std::strtod, s.data(), res);
         }
     }
-    if (res == Lexer::ConversionResult::OUT_OF_RANGE) {
-        num_ = 0;
+    if (res != Lexer::ConversionResult::SUCCESS) {
+        num_ = std::monostate {};
+        flags_ |= NumberFlags::ERROR;
     }
 }
 }  // namespace ark::es2panda::lexer

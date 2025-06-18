@@ -22,7 +22,7 @@ function main(): void {
     let fig : Float = 4.0f;
     let grape : Double = 5 as double;
     let honeydewmelon : Double = 5.0 as double;
-    let indian_fig : Char = 65 as char;
+    let indian_fig : Char = Int.toChar(65);
 
 
     let raspberry : Short = (1.0).toShort();

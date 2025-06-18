@@ -285,8 +285,75 @@
                         "type": "BinaryExpression",
                         "operator": "<=",
                         "left": {
-                          "type": "Identifier",
-                          "name": "a",
+                          "type": "CallExpression",
+                          "callee": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "loc": {
+                                "start": {
+                                  "line": 19,
+                                  "column": 28,
+                                  "program": "forUpdateCharType.ets"
+                                },
+                                "end": {
+                                  "line": 19,
+                                  "column": 29,
+                                  "program": "forUpdateCharType.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "compareTo",
+                              "loc": {
+                                "start": {
+                                  "line": 19,
+                                  "column": 30,
+                                  "program": "forUpdateCharType.ets"
+                                },
+                                "end": {
+                                  "line": 19,
+                                  "column": 39,
+                                  "program": "forUpdateCharType.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 19,
+                                "column": 28,
+                                "program": "forUpdateCharType.ets"
+                              },
+                              "end": {
+                                "line": 19,
+                                "column": 39,
+                                "program": "forUpdateCharType.ets"
+                              }
+                            }
+                          },
+                          "arguments": [
+                            {
+                              "type": "CharLiteral",
+                              "value": "d",
+                              "loc": {
+                                "start": {
+                                  "line": 19,
+                                  "column": 40,
+                                  "program": "forUpdateCharType.ets"
+                                },
+                                "end": {
+                                  "line": 19,
+                                  "column": 44,
+                                  "program": "forUpdateCharType.ets"
+                                }
+                              }
+                            }
+                          ],
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 19,
@@ -295,23 +362,23 @@
                             },
                             "end": {
                               "line": 19,
-                              "column": 29,
+                              "column": 45,
                               "program": "forUpdateCharType.ets"
                             }
                           }
                         },
                         "right": {
-                          "type": "CharLiteral",
-                          "value": "d",
+                          "type": "NumberLiteral",
+                          "value": 0,
                           "loc": {
                             "start": {
                               "line": 19,
-                              "column": 33,
+                              "column": 49,
                               "program": "forUpdateCharType.ets"
                             },
                             "end": {
                               "line": 19,
-                              "column": 37,
+                              "column": 50,
                               "program": "forUpdateCharType.ets"
                             }
                           }
@@ -324,27 +391,174 @@
                           },
                           "end": {
                             "line": 19,
-                            "column": 37,
+                            "column": 50,
                             "program": "forUpdateCharType.ets"
                           }
                         }
                       },
                       "update": {
-                        "type": "UpdateExpression",
-                        "operator": "++",
-                        "prefix": false,
-                        "argument": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
                           "type": "Identifier",
                           "name": "a",
                           "loc": {
                             "start": {
                               "line": 19,
-                              "column": 39,
+                              "column": 52,
                               "program": "forUpdateCharType.ets"
                             },
                             "end": {
                               "line": 19,
-                              "column": 40,
+                              "column": 53,
+                              "program": "forUpdateCharType.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "CallExpression",
+                          "callee": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "BinaryExpression",
+                              "operator": "+",
+                              "left": {
+                                "type": "CallExpression",
+                                "callee": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "a",
+                                    "loc": {
+                                      "start": {
+                                        "line": 19,
+                                        "column": 57,
+                                        "program": "forUpdateCharType.ets"
+                                      },
+                                      "end": {
+                                        "line": 19,
+                                        "column": 58,
+                                        "program": "forUpdateCharType.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "toInt",
+                                    "loc": {
+                                      "start": {
+                                        "line": 19,
+                                        "column": 59,
+                                        "program": "forUpdateCharType.ets"
+                                      },
+                                      "end": {
+                                        "line": 19,
+                                        "column": 64,
+                                        "program": "forUpdateCharType.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
+                                  "loc": {
+                                    "start": {
+                                      "line": 19,
+                                      "column": 57,
+                                      "program": "forUpdateCharType.ets"
+                                    },
+                                    "end": {
+                                      "line": 19,
+                                      "column": 64,
+                                      "program": "forUpdateCharType.ets"
+                                    }
+                                  }
+                                },
+                                "arguments": [],
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 19,
+                                    "column": 57,
+                                    "program": "forUpdateCharType.ets"
+                                  },
+                                  "end": {
+                                    "line": 19,
+                                    "column": 66,
+                                    "program": "forUpdateCharType.ets"
+                                  }
+                                }
+                              },
+                              "right": {
+                                "type": "NumberLiteral",
+                                "value": 1,
+                                "loc": {
+                                  "start": {
+                                    "line": 19,
+                                    "column": 69,
+                                    "program": "forUpdateCharType.ets"
+                                  },
+                                  "end": {
+                                    "line": 19,
+                                    "column": 70,
+                                    "program": "forUpdateCharType.ets"
+                                  }
+                                }
+                              },
+                              "loc": {
+                                "start": {
+                                  "line": 19,
+                                  "column": 56,
+                                  "program": "forUpdateCharType.ets"
+                                },
+                                "end": {
+                                  "line": 19,
+                                  "column": 71,
+                                  "program": "forUpdateCharType.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "toChar",
+                              "loc": {
+                                "start": {
+                                  "line": 19,
+                                  "column": 72,
+                                  "program": "forUpdateCharType.ets"
+                                },
+                                "end": {
+                                  "line": 19,
+                                  "column": 78,
+                                  "program": "forUpdateCharType.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 19,
+                                "column": 56,
+                                "program": "forUpdateCharType.ets"
+                              },
+                              "end": {
+                                "line": 19,
+                                "column": 78,
+                                "program": "forUpdateCharType.ets"
+                              }
+                            }
+                          },
+                          "arguments": [],
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 19,
+                              "column": 56,
+                              "program": "forUpdateCharType.ets"
+                            },
+                            "end": {
+                              "line": 19,
+                              "column": 80,
                               "program": "forUpdateCharType.ets"
                             }
                           }
@@ -352,12 +566,12 @@
                         "loc": {
                           "start": {
                             "line": 19,
-                            "column": 39,
+                            "column": 52,
                             "program": "forUpdateCharType.ets"
                           },
                           "end": {
                             "line": 19,
-                            "column": 42,
+                            "column": 80,
                             "program": "forUpdateCharType.ets"
                           }
                         }
@@ -432,7 +646,7 @@
                         "loc": {
                           "start": {
                             "line": 19,
-                            "column": 44,
+                            "column": 82,
                             "program": "forUpdateCharType.ets"
                           },
                           "end": {
