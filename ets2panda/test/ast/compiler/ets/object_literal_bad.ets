@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,9 @@
  * limitations under the License.
  */
 
-class C {
+class A {
+    public age: number = 1
 }
 
-let c: C = /* @@ label */{
-    33: 44,
-};
-
-/* @@@ label Error TypeError: Key in class composite should be identifier only  */
+let a : A = { "age" : 30}
+/* @@? 20:13 Warning Warning: Key in class composite should be identifier, the use of strings as keys will be deprecated soon  */

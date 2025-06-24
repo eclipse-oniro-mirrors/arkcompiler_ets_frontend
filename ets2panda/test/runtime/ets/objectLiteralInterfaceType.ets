@@ -47,7 +47,7 @@ function test(i: I = {f: -1, x: -2, s: "default", iv: {v: -3}},
 function main(): int {
     let i: I = { // variable definition
         f : 1,
-        "x": 2,
+        x: 2,
         s: "s1",
         iv: { v: 3}
     };
