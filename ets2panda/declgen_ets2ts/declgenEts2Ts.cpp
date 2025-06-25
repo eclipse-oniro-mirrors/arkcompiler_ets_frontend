@@ -1676,7 +1676,7 @@ void TSDeclGen::ProcessETSTypeReference(const ir::TypeNode *typeAnnotation, cons
     if (ProcessTypeAnnotationSpecificTypes(checkerType)) {
         return;
     }
-    if (checkerType != nullptr && typeAnnotation->AsETSTypeReference()->Part()->GetIdent()->Name().Is("NullishType")) {
+    if (checkerType != nullptr && typeAnnotation->AsETSTypeReference()->Part()->GetIdent()->Name().Is("Any")) {
         OutDts(typeAnnotation->Parent()->IsTSArrayType() ? "(" : "");
         GenType(checkerType);
         OutDts(typeAnnotation->Parent()->IsTSArrayType() ? ")" : "");

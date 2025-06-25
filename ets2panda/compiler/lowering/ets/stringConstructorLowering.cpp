@@ -63,7 +63,7 @@ ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
         return arg;
     }
 
-    // Case for the constructor: new String(str: NullishType)
+    // Case for the constructor: new String(str: Object)
     if (newClassInstExpr->GetSignature()->InternalName() == Signatures::BUILTIN_STRING_FROM_NULLISH_CTOR) {
         auto *arg = newClassInstExpr->GetArguments()[0];
         auto *argType = arg->TsType();

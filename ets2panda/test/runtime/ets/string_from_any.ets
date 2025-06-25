@@ -14,7 +14,7 @@
  */
 
 function main(): int {
-   let z: NullishType = new Number(1);
+   let z: Any = new Number(1);
    let z1 = undefined;
    let z2 = null;
    let z3: Object = new String("0");

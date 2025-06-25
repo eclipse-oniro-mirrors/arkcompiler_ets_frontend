@@ -369,7 +369,7 @@
                                   "type": "ETSTypeReferencePart",
                                   "name": {
                                     "type": "Identifier",
-                                    "name": "NullishType",
+                                    "name": "Any",
                                     "loc": {
                                       "start": {
                                         "line": 18,
@@ -378,7 +378,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 45,
+                                        "column": 37,
                                         "program": "generic_override_2.ets"
                                       }
                                     }
@@ -391,7 +391,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 45,
+                                      "column": 37,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -404,7 +404,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 45,
+                                    "column": 37,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -417,7 +417,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 45,
+                                  "column": 37,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -430,7 +430,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 45,
+                                "column": 37,
                                 "program": "generic_override_2.ets"
                               }
                             }
@@ -449,12 +449,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 18,
-                                      "column": 50,
+                                      "column": 42,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 51,
+                                      "column": 43,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -462,12 +462,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 18,
-                                    "column": 50,
+                                    "column": 42,
                                     "program": "generic_override_2.ets"
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 51,
+                                    "column": 43,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -475,12 +475,12 @@
                               "loc": {
                                 "start": {
                                   "line": 18,
-                                  "column": 50,
+                                  "column": 42,
                                   "program": "generic_override_2.ets"
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 51,
+                                  "column": 43,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -495,12 +495,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 18,
-                                      "column": 52,
+                                      "column": 44,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 54,
+                                      "column": 46,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -518,12 +518,12 @@
                                           "loc": {
                                             "start": {
                                               "line": 18,
-                                              "column": 55,
+                                              "column": 47,
                                               "program": "generic_override_2.ets"
                                             },
                                             "end": {
                                               "line": 18,
-                                              "column": 56,
+                                              "column": 48,
                                               "program": "generic_override_2.ets"
                                             }
                                           }
@@ -531,12 +531,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 18,
-                                            "column": 55,
+                                            "column": 47,
                                             "program": "generic_override_2.ets"
                                           },
                                           "end": {
                                             "line": 18,
-                                            "column": 56,
+                                            "column": 48,
                                             "program": "generic_override_2.ets"
                                           }
                                         }
@@ -544,12 +544,12 @@
                                       "loc": {
                                         "start": {
                                           "line": 18,
-                                          "column": 55,
+                                          "column": 47,
                                           "program": "generic_override_2.ets"
                                         },
                                         "end": {
                                           "line": 18,
-                                          "column": 56,
+                                          "column": 48,
                                           "program": "generic_override_2.ets"
                                         }
                                       }
@@ -558,12 +558,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 18,
-                                      "column": 54,
+                                      "column": 46,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 57,
+                                      "column": 49,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -571,12 +571,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 18,
-                                    "column": 52,
+                                    "column": 44,
                                     "program": "generic_override_2.ets"
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 57,
+                                    "column": 49,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -584,12 +584,12 @@
                               "loc": {
                                 "start": {
                                   "line": 18,
-                                  "column": 52,
+                                  "column": 44,
                                   "program": "generic_override_2.ets"
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 57,
+                                  "column": 49,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -598,12 +598,12 @@
                           "loc": {
                             "start": {
                               "line": 18,
-                              "column": 50,
+                              "column": 42,
                               "program": "generic_override_2.ets"
                             },
                             "end": {
                               "line": 18,
-                              "column": 57,
+                              "column": 49,
                               "program": "generic_override_2.ets"
                             }
                           }
@@ -616,7 +616,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 57,
+                            "column": 49,
                             "program": "generic_override_2.ets"
                           }
                         }
@@ -629,7 +629,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 57,
+                          "column": 49,
                           "program": "generic_override_2.ets"
                         }
                       }
@@ -642,7 +642,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 57,
+                        "column": 49,
                         "program": "generic_override_2.ets"
                       }
                     }
@@ -658,12 +658,12 @@
                       "loc": {
                         "start": {
                           "line": 18,
-                          "column": 60,
+                          "column": 52,
                           "program": "generic_override_2.ets"
                         },
                         "end": {
                           "line": 18,
-                          "column": 62,
+                          "column": 54,
                           "program": "generic_override_2.ets"
                         }
                       }
@@ -684,12 +684,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 18,
-                                      "column": 63,
+                                      "column": 55,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 64,
+                                      "column": 56,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -697,12 +697,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 18,
-                                    "column": 63,
+                                    "column": 55,
                                     "program": "generic_override_2.ets"
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 64,
+                                    "column": 56,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -710,12 +710,12 @@
                               "loc": {
                                 "start": {
                                   "line": 18,
-                                  "column": 63,
+                                  "column": 55,
                                   "program": "generic_override_2.ets"
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 64,
+                                  "column": 56,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -730,12 +730,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 18,
-                                      "column": 65,
+                                      "column": 57,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 66,
+                                      "column": 58,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -743,12 +743,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 18,
-                                    "column": 65,
+                                    "column": 57,
                                     "program": "generic_override_2.ets"
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 66,
+                                    "column": 58,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -756,12 +756,12 @@
                               "loc": {
                                 "start": {
                                   "line": 18,
-                                  "column": 65,
+                                  "column": 57,
                                   "program": "generic_override_2.ets"
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 66,
+                                  "column": 58,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -770,12 +770,12 @@
                           "loc": {
                             "start": {
                               "line": 18,
-                              "column": 63,
+                              "column": 55,
                               "program": "generic_override_2.ets"
                             },
                             "end": {
                               "line": 18,
-                              "column": 66,
+                              "column": 58,
                               "program": "generic_override_2.ets"
                             }
                           }
@@ -784,12 +784,12 @@
                       "loc": {
                         "start": {
                           "line": 18,
-                          "column": 62,
+                          "column": 54,
                           "program": "generic_override_2.ets"
                         },
                         "end": {
                           "line": 18,
-                          "column": 67,
+                          "column": 59,
                           "program": "generic_override_2.ets"
                         }
                       }
@@ -797,12 +797,12 @@
                     "loc": {
                       "start": {
                         "line": 18,
-                        "column": 60,
+                        "column": 52,
                         "program": "generic_override_2.ets"
                       },
                       "end": {
                         "line": 18,
-                        "column": 67,
+                        "column": 59,
                         "program": "generic_override_2.ets"
                       }
                     }
@@ -810,12 +810,12 @@
                   "loc": {
                     "start": {
                       "line": 18,
-                      "column": 60,
+                      "column": 52,
                       "program": "generic_override_2.ets"
                     },
                     "end": {
                       "line": 18,
-                      "column": 67,
+                      "column": 59,
                       "program": "generic_override_2.ets"
                     }
                   }
@@ -964,7 +964,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 67,
+                                "column": 59,
                                 "program": "generic_override_2.ets"
                               }
                             }
@@ -980,7 +980,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 67,
+                                "column": 59,
                                 "program": "generic_override_2.ets"
                               }
                             }
@@ -993,7 +993,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 67,
+                              "column": 59,
                               "program": "generic_override_2.ets"
                             }
                           }
@@ -1006,7 +1006,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 67,
+                            "column": 59,
                             "program": "generic_override_2.ets"
                           }
                         }
@@ -1019,7 +1019,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 67,
+                          "column": 59,
                           "program": "generic_override_2.ets"
                         }
                       }
@@ -1038,7 +1038,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 67,
+                              "column": 59,
                               "program": "generic_override_2.ets"
                             }
                           }
@@ -1054,7 +1054,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 67,
+                              "column": 59,
                               "program": "generic_override_2.ets"
                             }
                           }
@@ -1073,7 +1073,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 67,
+                            "column": 59,
                             "program": "generic_override_2.ets"
                           }
                         }
@@ -1087,7 +1087,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 67,
+                        "column": 59,
                         "program": "generic_override_2.ets"
                       }
                     }
@@ -1101,7 +1101,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 67,
+                    "column": 59,
                     "program": "generic_override_2.ets"
                   }
                 }
@@ -1114,7 +1114,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 67,
+                  "column": 59,
                   "program": "generic_override_2.ets"
                 }
               }
@@ -1128,7 +1128,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 68,
+                "column": 60,
                 "program": "generic_override_2.ets"
               }
             }
@@ -1783,7 +1783,7 @@
                                   "type": "ETSTypeReferencePart",
                                   "name": {
                                     "type": "Identifier",
-                                    "name": "NullishType",
+                                    "name": "Any",
                                     "loc": {
                                       "start": {
                                         "line": 23,
@@ -1792,7 +1792,7 @@
                                       },
                                       "end": {
                                         "line": 23,
-                                        "column": 45,
+                                        "column": 37,
                                         "program": "generic_override_2.ets"
                                       }
                                     }
@@ -1805,7 +1805,7 @@
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 45,
+                                      "column": 37,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -1818,7 +1818,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 45,
+                                    "column": 37,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -1831,7 +1831,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 45,
+                                  "column": 37,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -1844,7 +1844,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 45,
+                                "column": 37,
                                 "program": "generic_override_2.ets"
                               }
                             }
@@ -1863,12 +1863,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 23,
-                                      "column": 50,
+                                      "column": 42,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 51,
+                                      "column": 43,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -1876,12 +1876,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 23,
-                                    "column": 50,
+                                    "column": 42,
                                     "program": "generic_override_2.ets"
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 51,
+                                    "column": 43,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -1889,12 +1889,12 @@
                               "loc": {
                                 "start": {
                                   "line": 23,
-                                  "column": 50,
+                                  "column": 42,
                                   "program": "generic_override_2.ets"
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 51,
+                                  "column": 43,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -1909,12 +1909,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 23,
-                                      "column": 52,
+                                      "column": 44,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 54,
+                                      "column": 46,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -1932,12 +1932,12 @@
                                           "loc": {
                                             "start": {
                                               "line": 23,
-                                              "column": 55,
+                                              "column": 47,
                                               "program": "generic_override_2.ets"
                                             },
                                             "end": {
                                               "line": 23,
-                                              "column": 56,
+                                              "column": 48,
                                               "program": "generic_override_2.ets"
                                             }
                                           }
@@ -1945,12 +1945,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 23,
-                                            "column": 55,
+                                            "column": 47,
                                             "program": "generic_override_2.ets"
                                           },
                                           "end": {
                                             "line": 23,
-                                            "column": 56,
+                                            "column": 48,
                                             "program": "generic_override_2.ets"
                                           }
                                         }
@@ -1958,12 +1958,12 @@
                                       "loc": {
                                         "start": {
                                           "line": 23,
-                                          "column": 55,
+                                          "column": 47,
                                           "program": "generic_override_2.ets"
                                         },
                                         "end": {
                                           "line": 23,
-                                          "column": 56,
+                                          "column": 48,
                                           "program": "generic_override_2.ets"
                                         }
                                       }
@@ -1972,12 +1972,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 23,
-                                      "column": 54,
+                                      "column": 46,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 57,
+                                      "column": 49,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -1985,12 +1985,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 23,
-                                    "column": 52,
+                                    "column": 44,
                                     "program": "generic_override_2.ets"
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 57,
+                                    "column": 49,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -1998,12 +1998,12 @@
                               "loc": {
                                 "start": {
                                   "line": 23,
-                                  "column": 52,
+                                  "column": 44,
                                   "program": "generic_override_2.ets"
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 57,
+                                  "column": 49,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -2012,12 +2012,12 @@
                           "loc": {
                             "start": {
                               "line": 23,
-                              "column": 50,
+                              "column": 42,
                               "program": "generic_override_2.ets"
                             },
                             "end": {
                               "line": 23,
-                              "column": 57,
+                              "column": 49,
                               "program": "generic_override_2.ets"
                             }
                           }
@@ -2030,7 +2030,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 57,
+                            "column": 49,
                             "program": "generic_override_2.ets"
                           }
                         }
@@ -2043,7 +2043,7 @@
                         },
                         "end": {
                           "line": 23,
-                          "column": 57,
+                          "column": 49,
                           "program": "generic_override_2.ets"
                         }
                       }
@@ -2056,7 +2056,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 57,
+                        "column": 49,
                         "program": "generic_override_2.ets"
                       }
                     }
@@ -2072,12 +2072,12 @@
                       "loc": {
                         "start": {
                           "line": 23,
-                          "column": 60,
+                          "column": 52,
                           "program": "generic_override_2.ets"
                         },
                         "end": {
                           "line": 23,
-                          "column": 62,
+                          "column": 54,
                           "program": "generic_override_2.ets"
                         }
                       }
@@ -2098,12 +2098,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 23,
-                                      "column": 63,
+                                      "column": 55,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 64,
+                                      "column": 56,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -2111,12 +2111,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 23,
-                                    "column": 63,
+                                    "column": 55,
                                     "program": "generic_override_2.ets"
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 64,
+                                    "column": 56,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -2124,12 +2124,12 @@
                               "loc": {
                                 "start": {
                                   "line": 23,
-                                  "column": 63,
+                                  "column": 55,
                                   "program": "generic_override_2.ets"
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 64,
+                                  "column": 56,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -2144,12 +2144,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 23,
-                                      "column": 65,
+                                      "column": 57,
                                       "program": "generic_override_2.ets"
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 66,
+                                      "column": 58,
                                       "program": "generic_override_2.ets"
                                     }
                                   }
@@ -2157,12 +2157,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 23,
-                                    "column": 65,
+                                    "column": 57,
                                     "program": "generic_override_2.ets"
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 66,
+                                    "column": 58,
                                     "program": "generic_override_2.ets"
                                   }
                                 }
@@ -2170,12 +2170,12 @@
                               "loc": {
                                 "start": {
                                   "line": 23,
-                                  "column": 65,
+                                  "column": 57,
                                   "program": "generic_override_2.ets"
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 66,
+                                  "column": 58,
                                   "program": "generic_override_2.ets"
                                 }
                               }
@@ -2184,12 +2184,12 @@
                           "loc": {
                             "start": {
                               "line": 23,
-                              "column": 63,
+                              "column": 55,
                               "program": "generic_override_2.ets"
                             },
                             "end": {
                               "line": 23,
-                              "column": 66,
+                              "column": 58,
                               "program": "generic_override_2.ets"
                             }
                           }
@@ -2198,12 +2198,12 @@
                       "loc": {
                         "start": {
                           "line": 23,
-                          "column": 62,
+                          "column": 54,
                           "program": "generic_override_2.ets"
                         },
                         "end": {
                           "line": 23,
-                          "column": 67,
+                          "column": 59,
                           "program": "generic_override_2.ets"
                         }
                       }
@@ -2211,12 +2211,12 @@
                     "loc": {
                       "start": {
                         "line": 23,
-                        "column": 60,
+                        "column": 52,
                         "program": "generic_override_2.ets"
                       },
                       "end": {
                         "line": 23,
-                        "column": 67,
+                        "column": 59,
                         "program": "generic_override_2.ets"
                       }
                     }
@@ -2224,12 +2224,12 @@
                   "loc": {
                     "start": {
                       "line": 23,
-                      "column": 60,
+                      "column": 52,
                       "program": "generic_override_2.ets"
                     },
                     "end": {
                       "line": 23,
-                      "column": 67,
+                      "column": 59,
                       "program": "generic_override_2.ets"
                     }
                   }
@@ -2569,7 +2569,7 @@
                   "loc": {
                     "start": {
                       "line": 23,
-                      "column": 68,
+                      "column": 60,
                       "program": "generic_override_2.ets"
                     },
                     "end": {
