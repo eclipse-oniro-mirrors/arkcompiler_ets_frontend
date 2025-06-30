@@ -22,7 +22,8 @@
 
 namespace ark::es2panda::ir {
 
-enum class IntrinsicNodeType : uint8_t { NONE = 0, TYPE_REFERENCE = 1 };
+class EtsIntrinsicInfo;
+extern EtsIntrinsicInfo const *GetIntrinsicInfoFor(ETSIntrinsicNode const *node);
 
 class ETSIntrinsicNode : public Expression {
 public:
@@ -32,26 +33,18 @@ public:
     NO_COPY_SEMANTIC(ETSIntrinsicNode);
     NO_MOVE_SEMANTIC(ETSIntrinsicNode);
 
-    explicit ETSIntrinsicNode(ArenaAllocator *const allocator)
-        : Expression(AstNodeType::ETS_INTRINSIC_NODE_TYPE),
-          type_(IntrinsicNodeType::NONE),
-          arguments_(allocator->Adapter())
-    {
-    }
-
     explicit ETSIntrinsicNode(ETSIntrinsicNode const &other, ArenaAllocator *const allocator);
+    explicit ETSIntrinsicNode(util::StringView id, ArenaVector<ir::Expression *> &&arguments);
 
-    explicit ETSIntrinsicNode(IntrinsicNodeType type, ArenaVector<ir::Expression *> &&arguments)
-        : Expression(AstNodeType::ETS_INTRINSIC_NODE_TYPE), type_(type), arguments_(std::move(arguments))
+    util::StringView Id() const;
+    checker::Type *ExpectedTypeAt(checker::ETSChecker *checker, size_t idx) const;
+
+    ArenaVector<ir::Expression *> const &Arguments() const
     {
+        return arguments_;
     }
 
-    IntrinsicNodeType Type() const
-    {
-        return type_;
-    }
-
-    ArenaVector<ir::Expression *> Arguments() const
+    ArenaVector<ir::Expression *> &Arguments()
     {
         return arguments_;
     }
@@ -73,7 +66,9 @@ public:
     [[nodiscard]] ETSIntrinsicNode *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
 private:
-    IntrinsicNodeType type_;
+    friend EtsIntrinsicInfo const *GetIntrinsicInfoFor(ETSIntrinsicNode const *node);
+
+    EtsIntrinsicInfo const *info_;
     ArenaVector<ir::Expression *> arguments_;
 };
 }  // namespace ark::es2panda::ir

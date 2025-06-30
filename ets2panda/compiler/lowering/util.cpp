@@ -165,16 +165,6 @@ static bool IsGeneratedForUtilityType(ir::AstNode const *ast)
     return false;
 }
 
-static bool IsGeneratedDynamicClass(ir::AstNode const *ast)
-{
-    if (ast->IsClassDeclaration()) {
-        auto &name = ast->AsClassDeclaration()->Definition()->Ident()->Name();
-        return name.Is(Signatures::JSNEW_CLASS) || name.Is(Signatures::JSCALL_CLASS);
-    }
-
-    return false;
-}
-
 static void ClearHelper(parser::Program *prog)
 {
     prog->RemoveAstChecked();
@@ -185,7 +175,7 @@ static void ClearHelper(parser::Program *prog)
     stmts.erase(std::remove_if(stmts.begin(), stmts.end(),
         [](ir::AstNode *ast) -> bool {
             return !ast->HasAstNodeFlags(ir::AstNodeFlags::NOCLEANUP) ||
-                IsGeneratedForUtilityType(ast) || IsGeneratedDynamicClass(ast);
+                IsGeneratedForUtilityType(ast);
         }),
         stmts.end());
     // clang-format on

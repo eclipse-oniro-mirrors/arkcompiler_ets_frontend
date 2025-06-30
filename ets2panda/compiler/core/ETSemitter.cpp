@@ -580,13 +580,6 @@ std::vector<pandasm::AnnotationData> ETSEmitter::GenAnnotations(const ir::ClassD
         parent = parent->Parent();
     }
 
-    auto classIdent = classDef->Ident()->Name().Mutf8();
-    bool isConstruct = classIdent == Signatures::JSNEW_CLASS;
-    if (isConstruct || classIdent == Signatures::JSCALL_CLASS) {
-        auto *callNames = Context()->GetChecker()->AsETSChecker()->DynamicCallNames(isConstruct);
-        annotations.push_back(GenAnnotationDynamicCall(*callNames));
-    }
-
     if (std::any_of(classDef->Body().begin(), classDef->Body().end(),
                     [](const ir::AstNode *node) { return node->IsOverloadDeclaration(); })) {
         annotations.push_back(GenAnnotationFunctionOverload(classDef->Body()));
@@ -1154,24 +1147,6 @@ pandasm::AnnotationData ETSEmitter::GenAnnotationAsync(ir::ScriptFunction *scrip
             impl->Function()->Scope()->InternalName().Mutf8())));
     ann.AddElement(std::move(value));
     return ann;
-}
-
-pandasm::AnnotationData ETSEmitter::GenAnnotationDynamicCall(DynamicCallNamesMap &callNames)
-{
-    GenAnnotationRecord(Signatures::ETS_ANNOTATION_DYNAMIC_CALL);
-    pandasm::AnnotationData dynamicCallSig(Signatures::ETS_ANNOTATION_DYNAMIC_CALL);
-    std::vector<pandasm::ScalarValue> allParts {};
-    for (auto &[parts, startIdx] : callNames) {
-        startIdx = allParts.size();
-        for (const auto &str : parts) {
-            allParts.emplace_back(pandasm::ScalarValue::Create<pandasm::Value::Type::STRING>(str.Utf8()));
-        }
-    }
-    pandasm::AnnotationElement value(
-        Signatures::ANNOTATION_KEY_VALUE,
-        std::make_unique<pandasm::ArrayValue>(pandasm::Value::Type::STRING, std::move(allParts)));
-    dynamicCallSig.AddElement(std::move(value));
-    return dynamicCallSig;
 }
 
 void ETSEmitter::GenAnnotationRecord(std::string_view recordNameView, bool isRuntime, bool isType)

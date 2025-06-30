@@ -67,14 +67,10 @@ using ComputedAbstracts =
 using ArrayMap = ArenaUnorderedMap<std::pair<Type *, bool>, ETSArrayType *, PairHash>;
 using ObjectInstantiationMap = ArenaUnorderedMap<ETSObjectType *, ArenaUnorderedMap<util::StringView, ETSObjectType *>>;
 using GlobalArraySignatureMap = ArenaUnorderedMap<const ETSArrayType *, Signature *>;
-using DynamicCallIntrinsicsMap = ArenaUnorderedMap<Language, ArenaUnorderedMap<util::StringView, ir::ScriptFunction *>>;
 using FunctionSignatureMap = ArenaUnorderedMap<ETSFunctionType *, ETSFunctionType *>;
 using FunctionInterfaceMap = ArenaUnorderedMap<ETSFunctionType *, ETSObjectType *>;
-using DynamicClassIntrinsicsMap = ArenaUnorderedMap<Language, ir::ClassDeclaration *>;
-using DynamicLambdaObjectSignatureMap = ArenaUnorderedMap<std::string, Signature *>;
 using FunctionalInterfaceMap = ArenaUnorderedMap<util::StringView, ETSObjectType *>;
 using TypeMapping = ArenaUnorderedMap<Type const *, Type *>;
-using DynamicCallNamesMap = ArenaMap<const ArenaVector<util::StringView>, uint32_t>;
 using ConstraintCheckRecord = std::tuple<const ArenaVector<Type *> *, const Substitution, lexer::SourcePosition>;
 // can't use util::DiagnosticWithParams because std::optional can't contain references
 using MaybeDiagnosticInfo =
@@ -94,15 +90,8 @@ public:
           arrowToFuncInterfaces_(Allocator()->Adapter()),
           globalArraySignatures_(Allocator()->Adapter()),
           unionAssemblerTypes_(Allocator()->Adapter()),
-          dynamicIntrinsics_ {DynamicCallIntrinsicsMap {Allocator()->Adapter()},
-                              DynamicCallIntrinsicsMap {Allocator()->Adapter()}},
-          dynamicClasses_ {DynamicClassIntrinsicsMap(Allocator()->Adapter()),
-                           DynamicClassIntrinsicsMap(Allocator()->Adapter())},
-          dynamicLambdaSignatureCache_(Allocator()->Adapter()),
           functionalInterfaceCache_(Allocator()->Adapter()),
           apparentTypes_(Allocator()->Adapter()),
-          dynamicCallNames_ {
-              {DynamicCallNamesMap(Allocator()->Adapter()), DynamicCallNamesMap(Allocator()->Adapter())}},
           overloadSigContainer_(Allocator()->Adapter()),
           readdedChecker_(Allocator()->Adapter())
     {
@@ -160,8 +149,6 @@ public:
     ETSObjectType *GlobalStringBuilderBuiltinType() const;
     ETSObjectType *GlobalBuiltinPromiseType() const;
     ETSObjectType *GlobalBuiltinFunctionType() const;
-    ETSObjectType *GlobalBuiltinJSRuntimeType() const;
-    ETSObjectType *GlobalBuiltinJSValueType() const;
     ETSObjectType *GlobalBuiltinBoxType(Type *contents);
 
     ETSObjectType *GlobalBuiltinFunctionType(size_t nargs, bool hasRest) const;
@@ -170,13 +157,16 @@ public:
 
     ETSObjectType *GlobalBuiltinTupleType(size_t nargs) const;
 
-    ETSObjectType *GlobalBuiltinDynamicType(Language lang) const;
-
     GlobalArraySignatureMap &GlobalArrayTypes();
     const GlobalArraySignatureMap &GlobalArrayTypes() const;
 
     const ArenaSet<util::StringView> &UnionAssemblerTypes() const;
     ArenaSet<util::StringView> &UnionAssemblerTypes();
+
+    bool IsRelaxedAnyTypeAnnotationAllowed() const
+    {
+        return permitRelaxedAny_;
+    }
 
     Type *GlobalTypeError() const;
     [[nodiscard]] Type *InvalidateType(ir::Typed<ir::AstNode> *node);
@@ -876,16 +866,6 @@ public:
     void ResolveReturnStatement(checker::Type *funcReturnType, checker::Type *argumentType,
                                 ir::ScriptFunction *containingFunc, ir::ReturnStatement *st);
 
-    auto *DynamicCallNames(bool isConstruct)
-    {
-        return &dynamicCallNames_[static_cast<uint32_t>(isConstruct)];
-    }
-
-    const auto *DynamicCallNames(bool isConstruct) const
-    {
-        return &dynamicCallNames_[static_cast<uint32_t>(isConstruct)];
-    }
-
     std::recursive_mutex *Mutex()
     {
         return &mtx_;
@@ -980,19 +960,8 @@ public:
         globalArraySignatures_.clear();
         unionAssemblerTypes_.clear();
         GetCachedComputedAbstracts()->clear();
-        for (auto &dynamicCallIntrinsicsMap : dynamicIntrinsics_) {
-            dynamicCallIntrinsicsMap.clear();
-        }
-
-        for (auto &dynamicClassIntrinsicsMap : dynamicClasses_) {
-            dynamicClassIntrinsicsMap.clear();
-        }
-        dynamicLambdaSignatureCache_.clear();
         functionalInterfaceCache_.clear();
         apparentTypes_.clear();
-        for (auto &dynamicCallNamesMap : dynamicCallNames_) {
-            dynamicCallNamesMap.clear();
-        }
         elementStack_.clear();
         overloadSigContainer_.clear();
     }
@@ -1062,26 +1031,6 @@ private:
         ClassInitializerBuilder const &builder);
     std::pair<ir::ScriptFunction *, ir::Identifier *> CreateScriptFunction(ClassInitializerBuilder const &builder);
 
-    template <typename T>
-    ir::MethodDefinition *CreateDynamicCallIntrinsic(ir::Expression *callee, const ArenaVector<T *> &arguments,
-                                                     Language lang);
-    ir::ClassStaticBlock *CreateDynamicCallClassInitializer(Language lang, bool isConstruct);
-    ir::ClassStaticBlock *CreateDynamicModuleClassInitializer(const std::vector<ir::ETSImportDeclaration *> &imports);
-    ir::MethodDefinition *CreateDynamicModuleClassInitMethod();
-
-    ir::MethodDefinition *CreateLambdaObjectClassInitializer(ETSObjectType *functionalInterface);
-
-    ir::MethodDefinition *CreateLambdaObjectClassInvokeMethod(Signature *invokeSignature,
-                                                              ir::TypeNode *retTypeAnnotation);
-
-    void EmitDynamicModuleClassInitCall();
-    DynamicCallIntrinsicsMap *DynamicCallIntrinsics(bool isConstruct)
-    {
-        return &dynamicIntrinsics_[static_cast<size_t>(isConstruct)];
-    }
-
-    ir::ClassDeclaration *GetDynamicClass(Language lang, bool isConstruct);
-
     using Type2TypeMap = std::unordered_map<varbinder::Variable *, varbinder::Variable *>;
     using TypeSet = std::unordered_set<varbinder::Variable *>;
     bool CheckTypeParameterConstraint(ir::TSTypeParameter *param, Type2TypeMap &extends);
@@ -1141,18 +1090,14 @@ private:
     GlobalArraySignatureMap globalArraySignatures_;
     ArenaSet<util::StringView> unionAssemblerTypes_;
     ComputedAbstracts *cachedComputedAbstracts_ {nullptr};
-    // NOTE(aleksisch): Extract dynamic from checker to separate class
-    std::array<DynamicCallIntrinsicsMap, 2U> dynamicIntrinsics_;
-    std::array<DynamicClassIntrinsicsMap, 2U> dynamicClasses_;
-    DynamicLambdaObjectSignatureMap dynamicLambdaSignatureCache_;
     FunctionalInterfaceMap functionalInterfaceCache_;
     TypeMapping apparentTypes_;
-    std::array<DynamicCallNamesMap, 2U> dynamicCallNames_;
     std::recursive_mutex mtx_;
     evaluate::ScopedDebugInfoPlugin *debugInfoPlugin_ {nullptr};
     std::unordered_set<ir::TSTypeAliasDeclaration *> elementStack_;
     ArenaVector<Signature *> overloadSigContainer_;
     ArenaSet<ETSChecker *> readdedChecker_;
+    bool permitRelaxedAny_ {false};
 };
 
 }  // namespace ark::es2panda::checker

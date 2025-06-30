@@ -84,8 +84,6 @@ public:
     void LoadPropertyByName(const ir::AstNode *node, VReg objReg,
                             checker::ETSChecker::NamedAccessMeta const &fieldMeta);
 
-    void LoadUndefinedDynamic(const ir::AstNode *node, Language lang);
-
     void LoadThis(const ir::AstNode *node);
     [[nodiscard]] VReg GetThisReg() const;
 
@@ -325,7 +323,38 @@ public:
 #endif  // PANDA_WITH_ETS
     }
 
-    void EmitAnyIsInstance(const ir::AstNode *node, VReg objReg)
+    void EmitAnyLdbyname(const ir::AstNode *const node, const VReg objReg, const util::StringView &prop)
+    {
+        Ra().Emit<AnyLdbyname>(node, objReg, prop);
+    }
+
+    void EmitAnyStbyname(const ir::AstNode *const node, const VReg objReg, const util::StringView &prop)
+    {
+        Ra().Emit<AnyStbyname>(node, objReg, prop);
+    }
+
+    void EmitAnyLdbyidx(const ir::AstNode *node, VReg objectReg, VReg propReg)
+    {
+        LoadAccumulator(node, propReg);  // a simplification for the instruction format handling
+        Ra().Emit<AnyLdbyidx>(node, objectReg);
+    }
+
+    void EmitAnyStbyidx(const ir::AstNode *node, VReg objectReg, VReg propReg)
+    {
+        Ra().Emit<AnyStbyidx>(node, objectReg, propReg);
+    }
+
+    void EmitAnyLdbyval(const ir::AstNode *node, VReg objectReg, VReg propReg)
+    {
+        Ra().Emit<AnyLdbyval>(node, objectReg, propReg);
+    }
+
+    void EmitAnyStbyval(const ir::AstNode *node, VReg objectReg, VReg propReg)
+    {
+        Ra().Emit<AnyStbyval>(node, objectReg, propReg);
+    }
+
+    void EmitAnyIsinstance(const ir::AstNode *node, VReg objReg)
     {
         Sa().Emit<AnyIsinstance>(node, objReg);
     }
@@ -433,18 +462,18 @@ public:
         CallDynamicImpl<CallShort, Call, CallRange>(data, param3, signature, arguments);
     }
 
-    void CallAnyNew(const ir::AstNode *const node, const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAnyNew(const ir::AstNode *const node, const Span<ir::Expression const *const> arguments, const VReg athis)
     {
         CallAnyImpl<AnyCallNew0, AnyCallNewShort, AnyCallNewRange>(node, arguments, athis);
     }
 
-    void CallAnyThis(const ir::AstNode *const node, const ir::Identifier *ident,
-                     const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAnyThis(const ir::AstNode *const node, util::StringView prop,
+                     const Span<ir::Expression const *const> arguments, const VReg athis)
     {
-        CallAnyImpl<AnyCallThis0, AnyCallThisShort, AnyCallThisRange>(node, ident, arguments, athis);
+        CallAnyImpl<AnyCallThis0, AnyCallThisShort, AnyCallThisRange>(node, prop, arguments, athis);
     }
 
-    void CallAny(const ir::AstNode *const node, const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAny(const ir::AstNode *const node, const Span<ir::Expression const *const> arguments, const VReg athis)
     {
         CallAnyImpl<AnyCall0, AnyCallShort, AnyCallRange>(node, arguments, athis);
     }
@@ -792,20 +821,19 @@ private:
     ApplyConversionAndStoreAccumulator(arguments[idx], arg##idx, paramType##idx)
 
     template <typename Zero, typename Short, typename Range>
-    void CallAnyImpl(const ir::AstNode *node, const ir::Identifier *ident,
-                     const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAnyImpl(const ir::AstNode *node, util::StringView prop, const Span<ir::Expression const *const> arguments,
+                     const VReg athis)
     {
-        ES2PANDA_ASSERT(ident != nullptr);
         RegScope rs(this);
 
         switch (arguments.size()) {
             case 0U: {
-                Ra().Emit<Zero>(node, ident->Name(), athis);
+                Ra().Emit<Zero>(node, prop, athis);
                 break;
             }
             case 1U: {
                 COMPILE_ANY_ARG(0);
-                Ra().Emit<Short>(node, ident->Name(), athis, arg0);
+                Ra().Emit<Short>(node, prop, athis, arg0);
                 break;
             }
             default: {
@@ -814,13 +842,13 @@ private:
                     COMPILE_ANY_ARG(idx);
                 }
 
-                Rra().Emit<Range>(node, argStart, arguments.size(), ident->Name(), athis, argStart, arguments.size());
+                Rra().Emit<Range>(node, argStart, arguments.size(), prop, athis, argStart, arguments.size());
             }
         }
     }
 
     template <typename Zero, typename Short, typename Range>
-    void CallAnyImpl(const ir::AstNode *node, const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAnyImpl(const ir::AstNode *node, const Span<ir::Expression const *const> arguments, const VReg athis)
     {
         RegScope rs(this);
 

@@ -315,6 +315,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/asyncMethodLowering.cpp
   compiler/lowering/ets/bigintLowering.cpp
   compiler/lowering/ets/recordLowering.cpp
+  compiler/lowering/ets/relaxedAnyLowering.cpp
   compiler/lowering/ets/resizableArrayLowering.cpp
   compiler/lowering/ets/restArgsLowering.cpp
   compiler/lowering/ets/unionLowering.cpp
@@ -446,6 +447,7 @@ set(ES2PANDA_LIB_SRC
   ir/ets/etsClassLiteral.cpp
   ir/ets/etsIntrinsicNode.cpp
   ir/ets/etsFunctionType.cpp
+  ir/ets/etsIntrinsicNode.cpp
   ir/ets/etsKeyofType.cpp
   ir/ets/etsNewArrayInstanceExpression.cpp
   ir/ets/etsNewClassInstanceExpression.cpp

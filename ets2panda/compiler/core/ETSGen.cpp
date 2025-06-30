@@ -514,13 +514,6 @@ void ETSGen::CallRangeFillUndefined(const ir::AstNode *const node, checker::Sign
     Rra().Emit<CallRange>(node, argStart, signature->ArgCount() + 1, signature->InternalName(), argStart);
 }
 
-void ETSGen::LoadUndefinedDynamic(const ir::AstNode *node, Language lang)
-{
-    RegScope rs(this);
-    Ra().Emit<CallShort, 0>(node, Signatures::Dynamic::GetUndefinedBuiltin(lang), dummyReg_, dummyReg_);
-    SetAccumulatorType(Checker()->GlobalBuiltinDynamicType(lang));
-}
-
 void ETSGen::LoadThis(const ir::AstNode *node)
 {
     LoadAccumulator(node, GetThisReg());

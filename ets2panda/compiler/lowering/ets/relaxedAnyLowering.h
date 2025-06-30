@@ -13,15 +13,23 @@
  * limitations under the License.
  */
 
-class C {
-  constructor(x: number, y: string);
-  constructor(s: string);
-  constructor(xs: xny, y?: xny) {}
-}
-let c = new C(10, 'foo');
+#ifndef ES2PANDA_COMPILER_RELAXED_ANY_LOWERING_H
+#define ES2PANDA_COMPILER_RELAXED_ANY_LOWERING_H
 
-/* @@? 17:14 Error TypeError: Only abstract or native methods can't have body.  */
-/* @@? 19:3 Error TypeError: No matching call signature for constructor  */
-/* @@? 19:19 Error TypeError: Cannot find type 'xny'.  */
-/* @@? 19:28 Error TypeError: Cannot find type 'xny'.  */
+#include "compiler/lowering/phase.h"
 
+namespace ark::es2panda::compiler {
+
+class RelaxedAnyLoweringPhase : public PhaseForBodies {
+public:
+    std::string_view Name() const override
+    {
+        return "RelaxedAnyLowering";
+    }
+
+    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+};
+
+}  // namespace ark::es2panda::compiler
+
+#endif  // ES2PANDA_COMPILER_RELAXED_ANY_LOWERING_H

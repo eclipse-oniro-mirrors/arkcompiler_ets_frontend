@@ -587,8 +587,7 @@ void GlobalClassHandler::FormDependentInitTriggers(ArenaVector<ir::Statement *> 
         auto moduleName = NodeAllocator::Alloc<ir::StringLiteral>(allocator_, moduleStr.View());
         params.emplace_back(moduleName);
         // Note (daizihan): #27086, we should not use stringLiteral as argument in ETSIntrinsicNode, should be TypeNode.
-        auto moduleNode = NodeAllocator::Alloc<ir::ETSIntrinsicNode>(allocator_, ir::IntrinsicNodeType::TYPE_REFERENCE,
-                                                                     std::move(params));
+        auto moduleNode = NodeAllocator::Alloc<ir::ETSIntrinsicNode>(allocator_, "typereference", std::move(params));
         auto initIdent =
             NodeAllocator::Alloc<ir::Identifier>(allocator_, compiler::Signatures::CLASS_INITIALIZE_METHOD, allocator_);
         auto *callee = NodeAllocator::Alloc<ir::MemberExpression>(

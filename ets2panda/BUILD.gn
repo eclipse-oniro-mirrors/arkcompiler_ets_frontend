@@ -258,6 +258,7 @@ libes2panda_sources = [
   "compiler/lowering/ets/primitiveConversionPhase.cpp",
   "compiler/lowering/ets/promiseVoid.cpp",
   "compiler/lowering/ets/recordLowering.cpp",
+  "compiler/lowering/ets/relaxedAnyLowering.cpp",
   "compiler/lowering/ets/resizableArrayLowering.cpp",
   "compiler/lowering/ets/restArgsLowering.cpp",
   "compiler/lowering/ets/restTupleLowering.cpp",

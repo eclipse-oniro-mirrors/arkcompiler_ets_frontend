@@ -468,6 +468,11 @@ checker::Type *ETSAnalyzer::Check(ir::ETSClassLiteral *expr) const
     return expr->TsType();
 }
 
+checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::ETSIntrinsicNode *node) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ETSFunctionType *node) const
 {
     if (node->TsType() != nullptr) {
@@ -1478,8 +1483,21 @@ static bool OverloadDeclaration(ir::Expression *expr)
     return false;
 }
 
-checker::Signature *ETSAnalyzer::ResolveSignature(ETSChecker *checker, ir::CallExpression *expr,
-                                                  checker::Type *calleeType) const
+static Signature *CreateRelaxedAnySyntheticCallSignature(ETSChecker *checker)
+{
+    auto *info = checker->CreateSignatureInfo();
+    info->minArgCount = 0;
+
+    auto *paramVar =
+        varbinder::Scope::CreateVar(checker->ProgramAllocator(), "args", varbinder::VariableFlags::NONE, nullptr);
+    paramVar->SetTsType(checker->CreateETSArrayType(checker->GlobalETSRelaxedAnyType()));
+    info->restVar = paramVar;
+    // owner is not set
+
+    return checker->CreateSignature(info, checker->GlobalETSRelaxedAnyType(), ir::ScriptFunctionFlags::NONE, false);
+}
+
+static checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Type *calleeType)
 {
     if (calleeType->IsETSFunctionType() && calleeType->AsETSFunctionType()->HasHelperSignature() &&
         expr->Signature() != nullptr) {
@@ -1498,7 +1516,7 @@ checker::Signature *ETSAnalyzer::ResolveSignature(ETSChecker *checker, ir::CallE
     if (calleeType->IsETSExtensionFuncHelperType()) {
         auto *signature =
             ResolveCallForETSExtensionFuncHelperType(calleeType->AsETSExtensionFuncHelperType(), checker, expr);
-        GetChecker()->AsETSChecker()->UpdateDeclarationFromSignature(expr, signature);
+        checker->AsETSChecker()->UpdateDeclarationFromSignature(expr, signature);
         return signature;
     }
 
@@ -1513,8 +1531,16 @@ checker::Signature *ETSAnalyzer::ResolveSignature(ETSChecker *checker, ir::CallE
         }
         return signature;
     }
+
+    auto noSignatures = ArenaVector<checker::Signature *> {checker->Allocator()->Adapter()};
+    if (calleeType->IsETSRelaxedAnyType()) {
+        noSignatures.push_back(CreateRelaxedAnySyntheticCallSignature(checker));
+    }
+
     auto &signatures = expr->IsETSConstructorCall() ? calleeType->AsETSObjectType()->ConstructSignatures()
-                                                    : calleeType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
+                       : calleeType->IsETSRelaxedAnyType()
+                           ? noSignatures
+                           : calleeType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
 
     return checker->ResolveCallExpressionAndTrailingLambda(signatures, expr, expr->Start());
 }
@@ -1532,16 +1558,14 @@ static ETSObjectType *GetCallExpressionCalleeObject(ETSChecker *checker, ir::Cal
     return checker->Context().ContainingClass();
 }
 
-Type *ETSAnalyzer::GetReturnType(ir::CallExpression *expr, Type *calleeType) const
+static Type *GetReturnType(ETSChecker *checker, ir::CallExpression *expr, Type *calleeType)
 {
-    ETSChecker *checker = GetETSChecker();
-
     if (calleeType->IsTypeError()) {
         return checker->GlobalTypeError();
     }
 
     if (!calleeType->IsETSFunctionType() && !expr->IsETSConstructorCall() &&
-        !calleeType->IsETSExtensionFuncHelperType()) {
+        !calleeType->IsETSExtensionFuncHelperType() && !calleeType->IsETSRelaxedAnyType()) {
         checker->LogError(diagnostic::NO_CALL_SIGNATURE, {calleeType}, expr->Start());
         return checker->GlobalTypeError();
     }
@@ -1618,10 +1642,10 @@ static checker::SavedCheckerContext ReconstructOwnerClassContext(ETSChecker *che
     return SavedCheckerContext(checker, status, owner);
 }
 
-checker::Type *ETSAnalyzer::GetCallExpressionReturnType(ir::CallExpression *expr, checker::Type *calleeType) const
+static checker::Type *GetCallExpressionReturnType(ETSChecker *checker, ir::CallExpression *expr,
+                                                  checker::Type *calleeType)
 {
-    ETSChecker *checker = GetETSChecker();
-    checker::Type *returnType = GetReturnType(expr, calleeType);
+    checker::Type *returnType = GetReturnType(checker, expr, calleeType);
 
     if (returnType->IsTypeError()) {
         return checker->GlobalTypeError();
@@ -1712,13 +1736,12 @@ checker::Type *ETSAnalyzer::Check(ir::CallExpression *expr) const
     checker::TypeStackElement tse(checker, expr, {{diagnostic::CYCLIC_CALLEE, {}}}, expr->Start());
     ERROR_SANITY_CHECK(checker, !tse.HasTypeError(), return expr->SetTsType(checker->GlobalTypeError()));
 
-    checker::Type *const returnType = GetCallExpressionReturnType(expr, calleeType);
+    checker::Type *const returnType = GetCallExpressionReturnType(checker, expr, calleeType);
     expr->SetTsType(returnType);
     if (returnType->IsTypeError()) {
         return returnType;
     }
-
-    if (calleeType->IsETSArrowType()) {
+    if (calleeType->IsETSArrowType() || calleeType->IsETSRelaxedAnyType()) {
         expr->SetUncheckedType(checker->GuaranteedTypeForUncheckedCast(
             checker->GlobalETSAnyType(), checker->MaybeBoxType(expr->Signature()->ReturnType())));
     } else {
@@ -1952,6 +1975,10 @@ checker::Type *ETSAnalyzer::ResolveMemberExpressionByBaseType(ETSChecker *checke
         return checker->InvalidateType(expr);
     }
 
+    if (baseType->IsETSRelaxedAnyType()) {
+        return expr->AdjustType(checker, checker->GlobalETSRelaxedAnyType());
+    }
+
     if (baseType->IsGradualType()) {
         return ResolveMemberExpressionByBaseType(checker, baseType->AsGradualType()->GetBaseType(), expr);
     }
@@ -1985,15 +2012,9 @@ checker::Type *ETSAnalyzer::ResolveMemberExpressionByBaseType(ETSChecker *checke
     // NOTE(mshimenkov): temporary workaround to deliver 'primitives refactoring' patch
     // To be removed after complete refactoring
     if (baseType->IsETSPrimitiveType()) {
-        static std::array<std::string_view, 7U> castMethods {{
-            "toChar",
-            "toByte",
-            "toShort",
-            "toInt",
-            "toLong",
-            "toFloat",
-            "toDouble",
-        }};
+        static std::array<std::string_view, 7U> castMethods {
+            "toChar", "toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble",
+        };
         auto res = std::find(castMethods.begin(), castMethods.end(), expr->Property()->AsIdentifier()->Name().Utf8());
         if (res != castMethods.end()) {
             auto type = checker->MaybeBoxType(baseType);
@@ -3014,25 +3035,6 @@ checker::Type *ETSAnalyzer::Check(ir::StringLiteral *expr) const
         expr->SetTsType(checker->CreateETSStringLiteralType(expr->Str()));
     }
     return expr->TsType();
-}
-
-checker::Type *ETSAnalyzer::Check(ir::ETSIntrinsicNode *node) const
-{
-    ETSChecker *checker = GetETSChecker();
-    for (auto *arg : node->Arguments()) {
-        arg->Check(checker);
-    }
-    // Note (daizihan): #27074, make it more scalable when IntrinsicNodeType is extended.
-    if (node->Type() == ir::IntrinsicNodeType::TYPE_REFERENCE) {
-        auto type = checker->GlobalBuiltinClassType()->Clone(checker);
-        // Since std.core.Class initialize() is instance method, need to remove the variable flag.
-        auto newVar = type->Variable()->AsLocalVariable()->Copy(checker->Allocator(), type->Variable()->Declaration());
-        newVar->RemoveFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE);
-        type->SetVariable(newVar);
-        return node->SetTsType(type);
-    }
-    ES2PANDA_UNREACHABLE();
-    return checker->GlobalTypeError();
 }
 
 checker::Type *ETSAnalyzer::Check(ir::ImportDeclaration *st) const

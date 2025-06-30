@@ -76,6 +76,8 @@ void ETSPartialTypeParameter::IsSubtypeOf(TypeRelation *relation, Type *target)
     relation->Result(false);
     if (target->IsETSPartialTypeParameter()) {
         relation->IsSupertypeOf(target->AsETSPartialTypeParameter()->GetUnderlying(), GetUnderlying());
+    } else if (target->IsETSObjectType() && target->AsETSObjectType()->IsGlobalETSObjectType()) {
+        relation->IsSupertypeOf(target, GetUnderlying());
     }
 }
 

@@ -946,7 +946,7 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
     relation->Result(false);
     auto const checker = relation->GetChecker()->AsETSChecker();
 
-    if (source->HasTypeFlag(TypeFlag::READONLY)) {
+    if (source->HasTypeFlag(TypeFlag::READONLY) && !IsGlobalETSObjectType()) {
         relation->Result(false);
         return;
     }
