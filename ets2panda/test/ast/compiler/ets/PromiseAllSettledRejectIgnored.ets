@@ -55,3 +55,6 @@ Promise.allSettled(thenable).then<void, void>((values: PromiseSettledResult<stri
     console.log('Test failed: ' + e);
 });
 
+
+/* @@? 32:47 Warning Warning: No matching signature found for Promise.then/catch: ((p1: Array<PromiseFulfilledResult<String>|PromiseRejectedResult>) => void) */
+/* @@? 54:10 Warning Warning: No matching signature found for Promise.then/catch: ((p1: Error) => void) */
