@@ -152,12 +152,14 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
     //  or have type parameters that are not modified in the derived class
     ES2PANDA_ASSERT(baseFunction);
     auto const *baseSignature1 = baseFunction->Signature()->Substitute(relation, &substitutions.baseConstraints);
-    if (baseSignature1 == baseFunction->Signature()) {
+    if (baseSignature1 == baseFunction->Signature() &&
+        !baseSignature1->HasSignatureFlag(checker::SignatureFlags::DEFAULT)) {
         return;
     }
 
     auto *baseSignature2 = baseFunction->Signature()->Substitute(relation, &substitutions.derivedSubstitutions);
-    if (baseSignature2 == baseFunction->Signature()) {
+    if (baseSignature2 == baseFunction->Signature() &&
+        !baseSignature2->HasSignatureFlag(checker::SignatureFlags::DEFAULT)) {
         return;
     }
     baseSignature2 = baseSignature2->Substitute(relation, &substitutions.derivedConstraints);
@@ -178,8 +180,8 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
             // This derived overload already handles the base union signature.
             return;
         }
-
-        if (derivedFunction == nullptr && overrides(signature, baseSignature2)) {
+        if ((derivedFunction == nullptr && overrides(signature, baseSignature2)) ||
+            (baseSignature1 == baseSignature2 && baseSignature1->HasSignatureFlag(checker::SignatureFlags::DEFAULT))) {
             //  NOTE: we don't care the possible case of mapping several derived function to the same bridge
             //  signature. Probably sometimes we will process it correctly or issue warning notification here...
             derivedFunction = signature->Function();
@@ -338,6 +340,14 @@ ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefini
         auto const &superClassBody =
             classDefinition->Super()->TsType()->AsETSObjectType()->GetDeclNode()->AsClassDefinition()->Body();
         CreateGenericBridges(classDefinition, substitutions, superClassBody);
+        ArenaVector<checker::ETSObjectType *> interfaces =
+            classDefinition->Super()->TsType()->AsETSObjectType()->Interfaces();
+        if (!interfaces.empty()) {
+            for (checker::ETSObjectType *interface : interfaces) {
+                auto &interfaceBody = interface->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
+                CreateGenericBridges(classDefinition, substitutions, interfaceBody);
+            }
+        }
     }
 
     return classDefinition;
