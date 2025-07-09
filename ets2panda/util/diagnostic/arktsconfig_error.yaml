@@ -67,7 +67,7 @@ arkts_config_error:
 
 - name: NOT_A_DIR
   id: 19
-  message: '{} is not a directory' 
+  message: '{} is not a directory'
 
 - name: NOT_ROOT_DIR
   id: 15
