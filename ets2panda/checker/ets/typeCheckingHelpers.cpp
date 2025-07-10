@@ -14,6 +14,7 @@
  */
 
 #include "checker/checker.h"
+#include "checker/checkerContext.h"
 #include "checker/ets/wideningConverter.h"
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/gradualType.h"
@@ -531,38 +532,36 @@ Type *ETSChecker::CreateSyntheticTypeFromOverload(varbinder::Variable *const var
     return syntheticFunctionType;
 }
 
-void ETSChecker::IterateInVariableContext(varbinder::Variable *const var)
+SavedCheckerContext ETSChecker::CreateSavedCheckerContext(varbinder::Variable *const var)
 {
     // Before computing the given variables type, we have to make a new checker context frame so that the checking is
     // done in the proper context, and have to enter the scope where the given variable is declared, so reference
     // resolution works properly
-    auto *iter = var->Declaration()->Node()->Parent();
-    while (iter != nullptr) {
+    auto constexpr STATUS = CheckerStatus::NO_OPTS;
+    for (auto *iter = var->Declaration()->Node()->Parent(); iter != nullptr; iter = iter->Parent()) {
         if (iter->IsMethodDefinition()) {
             auto *methodDef = iter->AsMethodDefinition();
             ES2PANDA_ASSERT(methodDef->TsType());
             auto *func = methodDef->Function();
             ES2PANDA_ASSERT(func != nullptr);
-            Context().SetContainingSignature(func->Signature());
-        } else if (iter->IsClassDefinition()) {
+            return SavedCheckerContext(this, STATUS, nullptr, func->Signature());
+        }
+        if (iter->IsClassDefinition()) {
             auto *classDef = iter->AsClassDefinition();
             Type *containingClass {};
-
             if (classDef->TsType() == nullptr) {
                 containingClass = BuildBasicClassProperties(classDef)->MaybeBaseTypeOfGradualType();
                 ResolveDeclaredMembersOfObject(containingClass);
             } else {
                 containingClass = classDef->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType();
             }
-
             ES2PANDA_ASSERT(classDef->TsType());
             if (!containingClass->IsTypeError()) {
-                Context().SetContainingClass(containingClass->AsETSObjectType());
+                return SavedCheckerContext(this, STATUS, containingClass->AsETSObjectType());
             }
         }
-
-        iter = iter->Parent();
     }
+    return SavedCheckerContext(this, STATUS);
 }
 
 static Type *GetTypeFromVarLikeVariableDeclaration(ETSChecker *checker, varbinder::Variable *const var)
@@ -651,9 +650,8 @@ Type *ETSChecker::GetTypeOfVariable(varbinder::Variable *const var)
         return var->TsType();
     }
 
-    checker::SavedCheckerContext savedContext(this, CheckerStatus::NO_OPTS);
+    checker::SavedCheckerContext savedContext = CreateSavedCheckerContext(var);
     checker::ScopeContext scopeCtx(this, var->GetScope());
-    IterateInVariableContext(var);
 
     return GetTypeFromVariableDeclaration(var);
 }

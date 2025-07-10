@@ -1048,7 +1048,7 @@ private:
     PropertySearchFlags GetSearchFlags(const ir::MemberExpression *memberExpr, const varbinder::Variable *targetRef);
     PropertySearchFlags GetInitialSearchFlags(const ir::MemberExpression *memberExpr);
     Type *GetTypeOfSetterGetter([[maybe_unused]] varbinder::Variable *var);
-    void IterateInVariableContext([[maybe_unused]] varbinder::Variable *const var);
+    SavedCheckerContext CreateSavedCheckerContext(varbinder::Variable *const var);
     bool CheckInit(ir::Identifier *ident, ir::TypeNode *typeAnnotation, ir::Expression *init,
                    checker::Type *annotationType, varbinder::Variable *const bindingVar);
     void CheckItemCasesConstant(ArenaVector<ir::SwitchCaseStatement *> const &cases);
