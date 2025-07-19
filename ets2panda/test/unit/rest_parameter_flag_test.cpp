@@ -13,15 +13,26 @@
  * limitations under the License.
  */
 
+#include <iomanip>
+#include <ostream>
+
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include "assembler/assembly-program.h"
+#include "assembly-function.h"
 #include "es2panda.h"
-#include "generated/signatures.h"
-#include "libpandabase/mem/mem.h"
-#include "macros.h"
-#include "mem/pool_manager.h"
 #include "test/utils/asm_test.h"
+
+namespace ark::pandasm {
+
+// The value printer for expects.
+std::ostream &operator<<(std::ostream &s, const Function &arg)
+{
+    return s << "Function{" << std::quoted(arg.name) << "}";
+}
+
+}  // namespace ark::pandasm
 
 namespace ark::es2panda::compiler::test {
 
@@ -323,7 +334,9 @@ TEST_F(RestParameterTest, abstract_function_with_rest_parameter_1)
 TEST_F(RestParameterTest, external_function_with_rest_parameter_0)
 {
     SetCurrentProgram("");
-    CheckRestParameterFlag("std.core.LambdaValue.invoke:escompat.Array;std.core.Object;", false);
+    using namespace ::testing;
+    EXPECT_THAT(program_->functionInstanceTable,
+                Contains(Key(Eq("std.core.Object[].<ctor>:std.core.Object[];i32;void;"))));
 }
 
 TEST_F(RestParameterTest, external_function_with_rest_parameter_1)

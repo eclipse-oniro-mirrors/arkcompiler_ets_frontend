@@ -292,6 +292,9 @@ static void GenerateAnonClassTypeFromAbstractClass(public_lib::Context *ctx, ir:
     std::replace(originalName.begin(), originalName.end(), '.', '$');
     auto anonClassName = util::UString(originalName.append(OBJECT_LITERAL_SUFFIX), checker->ProgramAllocator());
     auto *classDecl = checker->BuildClass(anonClassName.View(), classBodyBuilder);
+    if (abstractClassNode->IsDeclare()) {
+        classDecl->Definition()->AddModifier(ir::ModifierFlags::DECLARE);
+    }
     RefineSourceRanges(classDecl);
     auto *classDef = classDecl->Definition();
     if (classDef->TsType()->IsGradualType()) {

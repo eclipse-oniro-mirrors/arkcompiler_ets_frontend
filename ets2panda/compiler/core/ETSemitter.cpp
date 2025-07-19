@@ -15,8 +15,18 @@
 
 #include "ETSemitter.h"
 
+#include <iostream>
+#include <memory>
+#include <ostream>
+#include <set>
+#include <string>
+#include <unordered_set>
+#include <utility>
+
 #include "annotation.h"
+#include "compiler/base/catchTable.h"
 #include "compiler/core/ETSGen.h"
+#include "util/es2pandaMacros.h"
 #include "varbinder/varbinder.h"
 #include "varbinder/ETSBinder.h"
 #include "ir/astNode.h"
@@ -29,7 +39,6 @@
 #include "ir/statements/annotationDeclaration.h"
 #include "ir/ts/tsInterfaceDeclaration.h"
 #include "ir/ts/tsInterfaceBody.h"
-#include "ir/ts/tsTypeParameterDeclaration.h"
 #include "ir/ts/tsTypeParameter.h"
 #include "ir/typeNode.h"
 #include "parser/program/program.h"
@@ -38,16 +47,11 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/type.h"
 #include "checker/types/gradualType.h"
-#include "checker/types/ets/types.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "public/public.h"
 #include "util/nameMangler.h"
 
 #include "assembly-program.h"
-
-namespace {
-uint32_t g_litArrayValueCount = 0;
-}  // namespace
 
 namespace ark::es2panda::compiler {
 
@@ -95,52 +99,110 @@ static uint32_t TranslateModifierFlags(ir::ModifierFlags modifierFlags)
     return accessFlags;
 }
 
-static pandasm::Type PandasmTypeWithRank(checker::Type const *type, uint32_t rank = 0)
+namespace detail {
+
+// #29438
+static const std::set<std::string> AOT_WORKAROUND_BLACKLIST {
+    "std.core.String", "std.core.String[]", "std.core.Object", "std.core.Object[]", "std.core.StringBuilder",
+};
+
+class EmitterDependencies final {
+public:
+    explicit EmitterDependencies() = default;
+    NO_COPY_SEMANTIC(EmitterDependencies);
+    NO_MOVE_SEMANTIC(EmitterDependencies);
+
+    inline const std::string &AddDependence(std::string const &str)
+    {
+        reachable_.insert(str);
+        return str;
+    }
+
+    bool IsNotRequired(std::string const &str, bool isExternal = true)
+    {
+        if (isExternal) {
+            return toEmit_.find(str) == toEmit_.end();
+        }
+        AddDependence(str);
+        return false;
+    }
+
+    void ProcessToEmitExternal()
+    {
+        toEmit_ = reachable_;
+    }
+
+    void ProceedToEmitExternalDelta()
+    {
+        if (reachable_.size() == toEmit_.size()) {
+            toEmit_.clear();
+            return;
+        }
+
+        std::unordered_set<std::string> diff;
+
+        for (auto &e : reachable_) {
+            if (toEmit_.find(e) == toEmit_.end()) {
+                diff.insert(e);
+            }
+        }
+        std::swap(toEmit_, diff);
+    }
+
+private:
+    std::unordered_set<std::string> reachable_ {
+        AOT_WORKAROUND_BLACKLIST.begin(),
+        AOT_WORKAROUND_BLACKLIST.end(),
+    };
+    std::unordered_set<std::string> toEmit_ {};
+};
+
+}  // namespace detail
+
+static pandasm::Type PandasmTypeWithRank(ETSEmitter *emitter, checker::Type const *type)
 {
     if (type->IsGradualType()) {
-        return PandasmTypeWithRank(type->AsGradualType()->GetBaseType());
+        return PandasmTypeWithRank(emitter, type->AsGradualType()->GetBaseType());
     }
     if (type->IsETSTypeParameter()) {
-        return PandasmTypeWithRank(type->AsETSTypeParameter()->GetConstraintType());
+        return PandasmTypeWithRank(emitter, type->AsETSTypeParameter()->GetConstraintType());
     }
     if (type->IsETSNonNullishType()) {
-        return PandasmTypeWithRank(type->AsETSNonNullishType()->GetUnderlying());
+        return PandasmTypeWithRank(emitter, type->AsETSNonNullishType()->GetUnderlying());
     }
     if (type->IsETSPartialTypeParameter()) {
-        return PandasmTypeWithRank(type->AsETSPartialTypeParameter()->GetUnderlying());
+        return PandasmTypeWithRank(emitter, type->AsETSPartialTypeParameter()->GetUnderlying());
     }
 
-    std::stringstream ss;
-    type->ToAssemblerType(ss);
-    return pandasm::Type(ss.str(), rank == 0 ? type->Rank() : rank);
+    auto asmType = type->ToAssemblerType();
+    auto res = pandasm::Type(asmType, type->Rank());
+    if (res.IsObject() && !(res.IsArray() || res.IsUnion())) {
+        emitter->AddDependence(asmType);
+    }
+    return res;
 }
 
-static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc, ETSEmitter *emitter)
+static std::string ToAssemblerSignature(ir::ScriptFunction const *func)
 {
-    auto *funcScope = scriptFunc->Scope();
-    auto *paramScope = funcScope->ParamScope();
+    return func->Scope()->InternalName().Mutf8();
+}
 
-    auto func = pandasm::Function(funcScope->InternalName().Mutf8(), EXTENSION);
-    func.params.reserve(paramScope->Params().size());
-
-    for (const auto *var : paramScope->Params()) {
-        func.params.emplace_back(PandasmTypeWithRank(var->TsType()), EXTENSION);
-        if (scriptFunc->IsExternal() || var->Declaration()->Node() == nullptr ||
-            !var->Declaration()->Node()->IsETSParameterExpression()) {
-            continue;
-        }
-        if (var->Declaration()->Node()->AsETSParameterExpression()->HasAnnotations()) {
-            func.params.back().GetOrCreateMetadata()->SetAnnotations(emitter->GenCustomAnnotations(
-                var->Declaration()->Node()->AsETSParameterExpression()->Annotations(), var->Name().Mutf8()));
-        }
+static std::string ToAssemblerType(ir::AstNode const *node)
+{
+    if (node->IsClassDefinition()) {
+        return node->AsClassDefinition()->InternalName().Mutf8();
     }
-
-    if (scriptFunc->IsConstructor() || scriptFunc->IsStaticBlock()) {
-        func.returnType = pandasm::Type(Signatures::PRIMITIVE_VOID, 0);
-    } else {
-        func.returnType = PandasmTypeWithRank(scriptFunc->Signature()->ReturnType());
+    if (node->IsTSInterfaceDeclaration()) {
+        return node->AsTSInterfaceDeclaration()->InternalName().Mutf8();
     }
+    if (node->IsAnnotationDeclaration()) {
+        return node->AsAnnotationDeclaration()->InternalName().Mutf8();
+    }
+    ES2PANDA_UNREACHABLE();
+}
 
+static uint32_t ComputeAccessFlags(const ir::ScriptFunction *scriptFunc)
+{
     uint32_t accessFlags = 0;
     if (!scriptFunc->IsStaticBlock()) {
         const auto *methodDef = util::Helpers::GetContainingClassMethodDefinition(scriptFunc);
@@ -150,25 +212,80 @@ static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc,
     if (scriptFunc->HasRestParameter()) {
         accessFlags |= ACC_VARARGS;
     }
-    func.metadata->SetAccessFlags(accessFlags);
-    if (!scriptFunc->IsExternal() && scriptFunc->HasAnnotations()) {
-        func.metadata->SetAnnotations(emitter->GenCustomAnnotations(scriptFunc->Annotations(), func.name));
+    if (!scriptFunc->HasBody() && scriptFunc->Signature()->Owner()->HasObjectFlag(checker::ETSObjectFlags::INTERFACE)) {
+        accessFlags |= ACC_ABSTRACT;
     }
+    return accessFlags;
+}
+
+static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc, ETSEmitter *emitter, bool external)
+{
+    auto *paramScope = scriptFunc->Scope()->ParamScope();
+    auto func = pandasm::Function(ToAssemblerSignature(scriptFunc), EXTENSION);
+    func.params.reserve(paramScope->Params().size());
+
+    for (const auto *var : paramScope->Params()) {
+        func.params.emplace_back(PandasmTypeWithRank(emitter, var->TsType()), EXTENSION);
+        if (!external && var->Declaration()->Node() != nullptr &&
+            var->Declaration()->Node()->IsETSParameterExpression() &&
+            var->Declaration()->Node()->AsETSParameterExpression()->HasAnnotations()) {
+            func.params.back().GetOrCreateMetadata()->SetAnnotations(emitter->GenCustomAnnotations(
+                var->Declaration()->Node()->AsETSParameterExpression()->Annotations(), var->Name().Mutf8()));
+        }
+    }
+
+    if (scriptFunc->IsConstructor() || scriptFunc->IsStaticBlock()) {
+        func.returnType = pandasm::Type(Signatures::PRIMITIVE_VOID, 0);
+    } else {
+        func.returnType = PandasmTypeWithRank(emitter, scriptFunc->Signature()->ReturnType());
+    }
+
+    func.metadata->SetAccessFlags(ComputeAccessFlags(scriptFunc));
 
     if (scriptFunc->IsConstructor()) {
         func.metadata->SetAttribute(Signatures::CONSTRUCTOR);
     }
 
+    if (external) {
+        func.metadata->SetAttribute(Signatures::EXTERNAL);
+    } else {
+        if (scriptFunc->HasAnnotations()) {
+            auto annotations = emitter->GenCustomAnnotations(scriptFunc->Annotations(), func.name);
+            func.metadata->SetAnnotations(std::move(annotations));
+        }
+        if (scriptFunc->IsAsyncFunc()) {
+            // callee does not tolerate constness
+            func.metadata->AddAnnotations({
+                emitter->GenAnnotationAsync(const_cast<ir::ScriptFunction *>(scriptFunc)),
+            });
+        }
+    }
     return func;
+}
+
+ETSEmitter::ETSEmitter(const public_lib::Context *context)
+    : Emitter(context), dependencies_(std::make_unique<detail::EmitterDependencies>())
+{
+}
+
+ETSEmitter::~ETSEmitter() {
+    // for PImpl
+};
+
+std::string const &ETSEmitter::AddDependence(std::string const &str)
+{
+    return dependencies_->AddDependence(str);
 }
 
 pandasm::Function *ETSFunctionEmitter::GenFunctionSignature()
 {
     auto *scriptFunc = Cg()->RootNode()->AsScriptFunction();
+    if (scriptFunc->IsExternal() || scriptFunc->Signature()->Owner()->GetDeclNode()->IsDeclare()) {
+        return nullptr;
+    }
     auto *emitter = static_cast<ETSEmitter *>(Cg()->Context()->emitter);
-    auto func = GenScriptFunction(scriptFunc, emitter);
-
-    if (Cg()->RootNode()->AsScriptFunction()->IsExternal()) {
+    auto func = GenScriptFunction(scriptFunc, emitter, false);
+    if (scriptFunc->IsExternal()) {  // why do we emit an external method?
         func.metadata->SetAttribute(Signatures::EXTERNAL);
     }
 
@@ -204,26 +321,15 @@ void ETSFunctionEmitter::GenSourceFileDebugInfo(pandasm::Function *func)
     }
 }
 
-void ETSFunctionEmitter::GenFunctionAnnotations([[maybe_unused]] pandasm::Function *func) {}
-
-static pandasm::Function GenExternalFunction(checker::Signature *signature, bool isCtor)
+void ETSFunctionEmitter::GenFunctionAnnotations([[maybe_unused]] pandasm::Function *func)
 {
-    auto func = pandasm::Function(signature->InternalName().Mutf8(), EXTENSION);
-
-    for (auto param : signature->Params()) {
-        func.params.emplace_back(PandasmTypeWithRank(param->TsType()), EXTENSION);
+    auto emitter = static_cast<const ETSGen *>(Cg())->Emitter();
+    for (const auto *catchBlock : Cg()->CatchList()) {
+        emitter->AddDependence(catchBlock->Exception());
     }
-    func.returnType = PandasmTypeWithRank(signature->ReturnType());
-
-    if (isCtor) {
-        func.metadata->SetAttribute(Signatures::CONSTRUCTOR);
-    }
-    func.metadata->SetAttribute(Signatures::EXTERNAL);
-
-    return func;
 }
 
-void FilterForSimultaneous(varbinder::ETSBinder *varbinder)
+static void FilterForSimultaneous(varbinder::ETSBinder *varbinder)
 {
     ArenaSet<ir::ClassDefinition *> &classDefinitions = varbinder->GetGlobalRecordTable()->ClassDefinitions();
     for (auto it = classDefinitions.begin(); it != classDefinitions.end(); ++it) {
@@ -232,6 +338,7 @@ void FilterForSimultaneous(varbinder::ETSBinder *varbinder)
             break;
         }
     }
+    // obsolete if record itself will not be emitted
     std::vector<std::string_view> filterFunctions = {
         Signatures::UNUSED_ETSGLOBAL_CTOR, Signatures::UNUSED_ETSGLOBAL_INIT, Signatures::UNUSED_ETSGLOBAL_MAIN};
     auto &functions = varbinder->Functions();
@@ -244,23 +351,27 @@ void FilterForSimultaneous(varbinder::ETSBinder *varbinder)
                     functions.end());
 }
 
-void ETSEmitter::GenRecords(varbinder::RecordTable *globalRecordTable)
+void ETSEmitter::GenFunction(ir::ScriptFunction const *scriptFunc, bool external)
 {
-    auto *varbinder = static_cast<varbinder::ETSBinder *>(Context()->parserProgram->VarBinder());
-    auto baseName = varbinder->GetRecordTable()->RecordName().Mutf8();
-    for (auto *annoDecl : globalRecordTable->AnnotationDeclarations()) {
-        std::string newBaseName = util::NameMangler::GetInstance()->CreateMangledNameForAnnotation(
-            baseName, annoDecl->GetBaseName()->Name().Mutf8());
-        GenCustomAnnotationRecord(annoDecl, newBaseName, annoDecl->IsDeclare());
+    if (!external && scriptFunc->Body() != nullptr) {
+        return;  // was already produced by codegen
+    }
+    auto name = ToAssemblerSignature(scriptFunc);
+    if (dependencies_->IsNotRequired(name, external)) {
+        return;
     }
 
-    for (auto *classDecl : globalRecordTable->ClassDefinitions()) {
-        GenClassRecord(classDecl, classDecl->IsDeclare());
+    auto func = GenScriptFunction(scriptFunc, this, external || scriptFunc->IsDeclare());  // #28197
+    if (scriptFunc->Signature()->HasSignatureFlag(checker::SignatureFlags::STATIC) &&
+        Program()->functionStaticTable.find(name) != Program()->functionStaticTable.cend()) {
+        return;
+    }
+    if (!scriptFunc->Signature()->HasSignatureFlag(checker::SignatureFlags::STATIC) &&
+        Program()->functionInstanceTable.find(name) != Program()->functionInstanceTable.cend()) {
+        return;
     }
 
-    for (auto *interfaceDecl : globalRecordTable->InterfaceDeclarations()) {
-        GenInterfaceRecord(interfaceDecl, interfaceDecl->IsDeclare());
-    }
+    Program()->AddToFunctionTable(std::move(func));
 }
 
 void ETSEmitter::GenAnnotation()
@@ -271,95 +382,78 @@ void ETSEmitter::GenAnnotation()
     if (Context()->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
         FilterForSimultaneous(varbinder);
     }
+    ES2PANDA_ASSERT(varbinder->GetRecordTable() == varbinder->GetGlobalRecordTable());
 
-    auto *globalRecordTable = varbinder->GetGlobalRecordTable();
-    GenRecords(globalRecordTable);
+    auto const traverseRecords = [this, varbinder](bool traverseExternals) {
+        EmitRecordTable(varbinder->GetGlobalRecordTable(), false, traverseExternals);
+        auto *saveProgram = varbinder->Program();
+        for (auto [extProg, recordTable] : varbinder->GetExternalRecordTable()) {
+            if (recordTable == varbinder->GetGlobalRecordTable()) {
+                continue;
+            }
+            bool programIsExternal = !(varbinder->IsGenStdLib() || recordTable->Program()->IsGenAbcForExternal());
+            varbinder->SetProgram(extProg);
+            EmitRecordTable(recordTable, programIsExternal, traverseExternals);
+        }
+        varbinder->SetProgram(saveProgram);
+        if (traverseExternals) {
+            const auto *checker = static_cast<checker::ETSChecker *>(Context()->GetChecker());
+            for (auto [arrType, _] : checker->GlobalArrayTypes()) {
+                GenGlobalArrayRecord(arrType);
+            }
+            for (auto unionType : checker->UnionAssemblerTypes()) {
+                GenGlobalUnionRecord(unionType);
+            }
+        }
+    };
 
-    for (auto *signature : globalRecordTable->Signatures()) {
-        auto *scriptFunc = signature->Node()->AsScriptFunction();
-        auto func = GenScriptFunction(scriptFunc, this);
-        if (scriptFunc->IsDeclare()) {
-            func.metadata->SetAttribute(Signatures::EXTERNAL);
-        }
-        if (scriptFunc->IsAsyncFunc()) {
-            std::vector<pandasm::AnnotationData> annotations;
-            annotations.push_back(GenAnnotationAsync(scriptFunc));
-            func.metadata->AddAnnotations(annotations);
-        }
-        Program()->AddToFunctionTable(std::move(func));
+    // compile non-external dependencies
+    traverseRecords(false);
+    dependencies_->ProcessToEmitExternal();
+    // compile external dependencies
+    traverseRecords(true);                        // initial pass, which contributes to the difference
+    dependencies_->ProceedToEmitExternalDelta();  // compute the difference
+    traverseRecords(true);                        // re-run the pass
+    dependencies_.reset();
+}
+
+void ETSEmitter::EmitRecordTable(varbinder::RecordTable *table, bool programIsExternal, bool traverseExternals)
+{
+    // #28197: We should just bailout if programIsExternal is not equal to traverseExternals, but there are
+    // some sources which have declare* entities inside non-declare programs
+    // Also, IsDeclare() for entity implies the program is external!
+    // after it is fixed, the parameter traverseExternals to be removed
+    if (!traverseExternals && programIsExternal) {  // #28197
+        return;
     }
 
-    auto *saveProgram = varbinder->Program();
-    for (auto [extProg, recordTable] : varbinder->GetExternalRecordTable()) {
-        if (recordTable == varbinder->GetRecordTable()) {
+    const auto *varbinder = static_cast<const varbinder::ETSBinder *>(Context()->parserProgram->VarBinder());
+
+    auto baseName = varbinder->GetRecordTable()->RecordName().Mutf8();
+    for (auto *annoDecl : table->AnnotationDeclarations()) {
+        auto external = programIsExternal || annoDecl->IsDeclare();
+        if (external != traverseExternals) {  // #28197
             continue;
         }
-        varbinder->SetProgram(extProg);
-        GenExternalRecord(recordTable, extProg);
-    }
-    varbinder->SetProgram(saveProgram);
-
-    const auto *checker = static_cast<checker::ETSChecker *>(Context()->GetChecker());
-
-    for (auto [arrType, signature] : checker->GlobalArrayTypes()) {
-        GenGlobalArrayRecord(arrType, signature);
-    }
-    for (auto unionType : checker->UnionAssemblerTypes()) {
-        auto unionRecord = pandasm::Record(unionType.Mutf8(), Program()->lang);
-        unionRecord.metadata->SetAttribute(Signatures::EXTERNAL);
-        Program()->recordTable.emplace(unionRecord.name, std::move(unionRecord));
-    }
-}
-
-static bool IsFromSelfHeadFile(const std::string &name, const parser::Program *curProg, const parser::Program *extProg)
-{
-    const auto *curBinder = static_cast<const varbinder::ETSBinder *>(curProg->VarBinder());
-    return extProg->FileName() == curProg->FileName() &&
-           std::any_of(curBinder->Functions().begin(), curBinder->Functions().end(),
-                       [&](auto function) { return function->InternalName().Is(name); });
-}
-
-void ETSEmitter::GenExternalRecord(varbinder::RecordTable *recordTable, const parser::Program *extProg)
-{
-    bool isExternalFromCompile =
-        !recordTable->Program()->VarBinder()->IsGenStdLib() && !recordTable->Program()->IsGenAbcForExternal();
-    const auto *varbinder = static_cast<const varbinder::ETSBinder *>(Context()->parserProgram->VarBinder());
-    auto baseName = varbinder->GetRecordTable()->RecordName().Mutf8();
-    for (auto *annoDecl : recordTable->AnnotationDeclarations()) {
         std::string newBaseName = util::NameMangler::GetInstance()->CreateMangledNameForAnnotation(
             baseName, annoDecl->GetBaseName()->Name().Mutf8());
-        GenCustomAnnotationRecord(annoDecl, newBaseName, isExternalFromCompile || annoDecl->IsDeclare());
+        GenCustomAnnotationRecord(annoDecl, newBaseName, external);
     }
 
-    for (auto *classDecl : recordTable->ClassDefinitions()) {
-        GenClassRecord(classDecl, isExternalFromCompile || classDecl->IsDeclare());
-    }
-
-    for (auto *interfaceDecl : recordTable->InterfaceDeclarations()) {
-        GenInterfaceRecord(interfaceDecl, isExternalFromCompile || interfaceDecl->IsDeclare());
-    }
-
-    for (auto *signature : recordTable->Signatures()) {
-        auto scriptFunc = signature->Node()->AsScriptFunction();
-        auto func = GenScriptFunction(scriptFunc, this);
-
-        if (isExternalFromCompile || scriptFunc->IsDeclare()) {
-            func.metadata->SetAttribute(Signatures::EXTERNAL);
-        }
-
-        if (extProg->IsGenAbcForExternal() && scriptFunc->IsAsyncFunc()) {
-            std::vector<pandasm::AnnotationData> annotations;
-            annotations.push_back(GenAnnotationAsync(scriptFunc));
-            func.metadata->AddAnnotations(annotations);
-        }
-
-        if (func.metadata->IsForeign() && IsFromSelfHeadFile(func.name, Context()->parserProgram, extProg)) {
+    for (auto *classDecl : table->ClassDefinitions()) {
+        auto external = programIsExternal || classDecl->IsDeclare();
+        if (external != traverseExternals) {  // #28197
             continue;
         }
+        GenClassRecord(classDecl, external);
+    }
 
-        if (Program()->functionStaticTable.find(func.name) == Program()->functionStaticTable.cend()) {
-            Program()->AddToFunctionTable(std::move(func));
+    for (auto *interfaceDecl : table->InterfaceDeclarations()) {
+        auto external = programIsExternal || interfaceDecl->IsDeclare();
+        if (external != traverseExternals) {  // #28197
+            continue;
         }
+        GenInterfaceRecord(interfaceDecl, external);
     }
 }
 
@@ -441,36 +535,23 @@ void ETSEmitter::EmitDefaultFieldValue(pandasm::Field &classField, const ir::Exp
     classField.metadata->SetValue(CreateScalarValue(init->AsLiteral(), typeKind));
 }
 
-void ETSEmitter::GenInterfaceMethodDefinition(const ir::MethodDefinition *methodDef, bool external)
+void ETSEmitter::GenClassField(const ir::ClassProperty *prop, pandasm::Record &classRecord, bool external)
 {
-    auto *scriptFunc = methodDef->Function();
-    auto func = GenScriptFunction(scriptFunc, this);
-
-    if (external) {
-        func.metadata->SetAttribute(Signatures::EXTERNAL);
-    }
-
-    if (scriptFunc->Body() != nullptr) {
+    if (dependencies_->IsNotRequired(classRecord.name + '.' + prop->Id()->Name().Mutf8(), external)) {
         return;
     }
 
-    func.metadata->SetAccessFlags(func.metadata->GetAccessFlags() | ACC_ABSTRACT);
-    Program()->AddToFunctionTable(std::move(func));
-}
-
-void ETSEmitter::GenClassField(const ir::ClassProperty *prop, pandasm::Record &classRecord, bool external)
-{
     auto field = pandasm::Field(Program()->lang);
     ES2PANDA_ASSERT(prop->Id() != nullptr);
     field.name = prop->Id()->Name().Mutf8();
-    field.type = PandasmTypeWithRank(prop->TsType());
+    field.type = PandasmTypeWithRank(this, prop->TsType());
     field.metadata->SetAccessFlags(TranslateModifierFlags(prop->Modifiers()));
 
     if (!external && prop->HasAnnotations()) {
         field.metadata->SetAnnotations(GenCustomAnnotations(prop->Annotations(), field.name));
     }
 
-    if (external || prop->IsDeclare()) {
+    if (external || prop->IsDeclare()) {  // #28197
         field.metadata->SetAttribute(Signatures::EXTERNAL);
     } else if (prop->TsType()->IsETSPrimitiveType() || prop->TsType()->IsETSStringType()) {
         EmitDefaultFieldValue(field, prop->Value());
@@ -479,70 +560,99 @@ void ETSEmitter::GenClassField(const ir::ClassProperty *prop, pandasm::Record &c
     classRecord.fieldList.emplace_back(std::move(field));
 }
 
-void ETSEmitter::GenClassInheritedFields(const checker::ETSObjectType *baseType, pandasm::Record &classRecord)
+void ETSEmitter::GenGlobalArrayRecord(const checker::ETSArrayType *arrayType)
 {
-    std::vector<const varbinder::LocalVariable *> foreignProps = baseType->ForeignProperties();
-
-    for (const auto *foreignProp : foreignProps) {
-        auto *declNode = foreignProp->Declaration()->Node();
-        if (!declNode->IsClassProperty()) {
-            continue;
-        }
-
-        GenClassField(declNode->AsClassProperty(), classRecord, true);
+    // escompat.taskpool.ThreadInfo[]. <ctor> : escompat.taskpool.ThreadInfo[]; i32; void;
+    auto name = static_cast<const checker::Type *>(arrayType)->ToAssemblerTypeWithRank();
+    if (dependencies_->IsNotRequired(name)) {
+        return;
     }
+    if (Program()->recordTable.find(name) != Program()->recordTable.end()) {
+        return;
+    }
+
+    auto arrayRecord = pandasm::Record(name, Program()->lang);
+    arrayRecord.metadata->SetAttribute(Signatures::EXTERNAL);
+    Program()->AddToRecordTable(std::move(arrayRecord));
+    Program()->arrayTypes.emplace(PandasmTypeWithRank(this, arrayType));
+
+    std::vector<pandasm::Function::Parameter> params;
+    auto singatureName = name + ".<ctor>:" + name + ";";
+    params.emplace_back(pandasm::Type(name, 0), EXTENSION);
+    for (size_t i = 0; i < arrayType->Rank(); ++i) {
+        singatureName += "i32;";
+        params.emplace_back(pandasm::Type("i32", 0), EXTENSION);
+    }
+    singatureName += "void;";
+
+    auto ctor = pandasm::Function(singatureName, EXTENSION);
+    ctor.params = std::move(params);
+    ctor.returnType = pandasm::Type("void", 0);
+    ctor.metadata->SetAttribute(Signatures::CONSTRUCTOR);
+    ctor.metadata->SetAttribute(Signatures::EXTERNAL);
+    Program()->AddToFunctionTable(std::move(ctor));
 }
 
-void ETSEmitter::GenGlobalArrayRecord(const checker::ETSArrayType *arrayType, checker::Signature *signature)
+void ETSEmitter::GenGlobalUnionRecord(util::StringView assemblerType)
 {
-    std::stringstream ss;
-    arrayType->ToAssemblerTypeWithRank(ss);
+    std::string name = assemblerType.Mutf8();
+    if (dependencies_->IsNotRequired(name)) {
+        return;
+    }
+    if (Program()->recordTable.find(name) != Program()->recordTable.end()) {
+        return;
+    }
+    auto unionRecord = pandasm::Record(name, Program()->lang);
+    unionRecord.metadata->SetAttribute(Signatures::EXTERNAL);
+    Program()->AddToRecordTable(std::move(unionRecord));
+}
 
-    auto arrayRecord = pandasm::Record(ss.str(), Program()->lang);
-
-    auto func = GenExternalFunction(signature, true);
-    func.params.emplace(func.params.begin(), pandasm::Type(ss.str(), 0), EXTENSION);
-
-    Program()->AddToFunctionTable(std::move(func));
-
-    arrayRecord.metadata->SetAttribute(Signatures::EXTERNAL);
-    Program()->recordTable.emplace(arrayRecord.name, std::move(arrayRecord));
-    Program()->arrayTypes.emplace(PandasmTypeWithRank(arrayType));
+void ETSEmitter::GenMethodDefinition(ir::MethodDefinition const *method, bool external)
+{
+    GenFunction(method->Function(), external);
+    for (auto *overload : method->Overloads()) {
+        GenFunction(overload->Function(), external);
+    }
 }
 
 void ETSEmitter::GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceDecl, bool external)
 {
+    if (dependencies_->IsNotRequired(ToAssemblerType(interfaceDecl), external)) {
+        return;
+    }
+    auto interfaceRecord = pandasm::Record(ToAssemblerType(interfaceDecl), Program()->lang);
+
+    interfaceRecord.metadata->SetAccessFlags(ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE);
+    interfaceRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath()};
+
+    for (const auto *prop : interfaceDecl->Body()->Body()) {
+        if (prop->IsMethodDefinition()) {
+            GenMethodDefinition(prop->AsMethodDefinition(), external);
+        }
+    }
+
+    if (external) {
+        interfaceRecord.metadata->SetAttribute(Signatures::EXTERNAL);
+        Program()->AddToRecordTable(std::move(interfaceRecord));
+        return;
+    }
+
+    interfaceRecord.metadata->SetAttributeValue(Signatures::EXTENDS_ATTRIBUTE, Signatures::BUILTIN_OBJECT);
+
     auto *baseType = interfaceDecl->TsType()->IsGradualType()
                          ? interfaceDecl->TsType()->AsGradualType()->GetBaseType()->AsETSObjectType()
                          : interfaceDecl->TsType()->AsETSObjectType();
-    auto interfaceRecord = pandasm::Record(interfaceDecl->InternalName().Mutf8(), Program()->lang);
-
-    uint32_t accessFlags = ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE;
-    if (interfaceDecl->IsStatic()) {
-        accessFlags |= ACC_STATIC;
+    for (auto *it : baseType->Interfaces()) {
+        auto *declNode = it->GetDeclNode();
+        ES2PANDA_ASSERT(declNode->IsTSInterfaceDeclaration());
+        interfaceRecord.metadata->SetAttributeValue(
+            Signatures::IMPLEMENTS_ATTRIBUTE, AddDependence(ToAssemblerType(declNode->AsTSInterfaceDeclaration())));
     }
 
     if (interfaceDecl->HasAnnotations()) {
         interfaceRecord.metadata->SetAnnotations(
             GenCustomAnnotations(interfaceDecl->Annotations(), interfaceRecord.name));
     }
-    interfaceRecord.metadata->SetAccessFlags(accessFlags);
-    interfaceRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath()};
-    interfaceRecord.metadata->SetAttributeValue(Signatures::EXTENDS_ATTRIBUTE, Signatures::BUILTIN_OBJECT);
-
-    GenClassInheritedFields(baseType, interfaceRecord);
-
-    for (const auto *prop : interfaceDecl->Body()->Body()) {
-        if (prop->IsClassProperty()) {
-            GenClassField(prop->AsClassProperty(), interfaceRecord, external);
-        } else if (prop->IsMethodDefinition()) {
-            GenInterfaceMethodDefinition(prop->AsMethodDefinition(), external);
-            for (auto *overload : prop->AsMethodDefinition()->Overloads()) {
-                GenInterfaceMethodDefinition(overload, external);
-            }
-        }
-    }
-
     if (std::any_of(interfaceDecl->Body()->Body().begin(), interfaceDecl->Body()->Body().end(),
                     [](const ir::AstNode *node) { return node->IsOverloadDeclaration(); })) {
         std::vector<pandasm::AnnotationData> annotations {};
@@ -550,20 +660,7 @@ void ETSEmitter::GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceD
         interfaceRecord.metadata->AddAnnotations(annotations);
     }
 
-    if (external) {
-        interfaceRecord.metadata->SetAttribute(Signatures::EXTERNAL);
-        Program()->recordTable.emplace(interfaceRecord.name, std::move(interfaceRecord));
-        return;
-    }
-
-    for (auto *it : baseType->Interfaces()) {
-        auto *declNode = it->GetDeclNode();
-        ES2PANDA_ASSERT(declNode->IsTSInterfaceDeclaration());
-        std::string name = declNode->AsTSInterfaceDeclaration()->InternalName().Mutf8();
-        interfaceRecord.metadata->SetAttributeValue(Signatures::IMPLEMENTS_ATTRIBUTE, name);
-    }
-
-    Program()->recordTable.emplace(interfaceRecord.name, std::move(interfaceRecord));
+    Program()->AddToRecordTable(std::move(interfaceRecord));
 }
 
 std::vector<pandasm::AnnotationData> ETSEmitter::GenAnnotations(const ir::ClassDefinition *classDef)
@@ -615,47 +712,40 @@ static uint32_t GetAccessFlags(const ir::ClassDefinition *classDef)
 
 void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool external)
 {
-    auto classRecord = pandasm::Record(classDef->InternalName().Mutf8(), Program()->lang);
+    if (dependencies_->IsNotRequired(ToAssemblerType(classDef), external)) {
+        return;
+    }
+    auto classRecord = pandasm::Record(ToAssemblerType(classDef), Program()->lang);
     uint32_t accessFlags = GetAccessFlags(classDef);
     classRecord.metadata->SetAccessFlags(accessFlags);
     classRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath()};
-    auto *baseType = classDef->TsType()->IsGradualType()
-                         ? classDef->TsType()->AsGradualType()->GetBaseType()->AsETSObjectType()
-                         : classDef->TsType()->AsETSObjectType();
-    GenClassInheritedFields(baseType, classRecord);
-    for (const auto *prop : classDef->Body()) {
-        if (!prop->IsClassProperty()) {
-            continue;
-        }
 
-        GenClassField(prop->AsClassProperty(), classRecord, external);
+    for (const auto *prop : classDef->Body()) {
+        if (prop->IsClassProperty()) {
+            GenClassField(prop->AsClassProperty(), classRecord, external);
+        } else if (prop->IsMethodDefinition()) {
+            GenMethodDefinition(prop->AsMethodDefinition(), external);
+        }
     }
 
     if (external) {
         classRecord.metadata->SetAttribute(Signatures::EXTERNAL);
-        Program()->recordTable.emplace(classRecord.name, std::move(classRecord));
+        Program()->AddToRecordTable(std::move(classRecord));
         return;
     }
 
+    auto *baseType = classDef->TsType()->IsGradualType()
+                         ? classDef->TsType()->AsGradualType()->GetBaseType()->AsETSObjectType()
+                         : classDef->TsType()->AsETSObjectType();
     if (baseType->SuperType() != nullptr) {
         classRecord.metadata->SetAttributeValue(Signatures::EXTENDS_ATTRIBUTE,
-                                                baseType->SuperType()->AssemblerName().Mutf8());
-    } else {
-        // NOTE: rtakacs. Replace the whole if block (below) with assert when lambda objects have super class.
-        if (baseType->AssemblerName().Mutf8() != Signatures::BUILTIN_OBJECT) {
-            classRecord.metadata->SetAttributeValue(Signatures::EXTENDS_ATTRIBUTE, Signatures::BUILTIN_OBJECT);
-        }
+                                                AddDependence(ToAssemblerType(baseType->SuperType()->GetDeclNode())));
     }
 
     for (auto *it : baseType->Interfaces()) {
-        auto *declNode = it->GetDeclNode();
-        // NOTE: itrubachev. replace it with ES2PANDA_ASSERT(decl_node->IsTSInterfaceDeclaration())
-        // after adding proper creation of lambda object in ETSFunctionType::AssignmentSource
-        if (!declNode->IsTSInterfaceDeclaration()) {
-            continue;
-        }
-        std::string name = declNode->AsTSInterfaceDeclaration()->InternalName().Mutf8();
-        classRecord.metadata->SetAttributeValue(Signatures::IMPLEMENTS_ATTRIBUTE, name);
+        classRecord.metadata->SetAttributeValue(
+            Signatures::IMPLEMENTS_ATTRIBUTE,
+            AddDependence(ToAssemblerType(it->GetDeclNode()->AsTSInterfaceDeclaration())));
     }
 
     if (classDef->HasAnnotations()) {
@@ -668,10 +758,10 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
     }
 
     if (!annotations.empty() && !classDef->IsLazyImportObjectClass()) {
-        classRecord.metadata->AddAnnotations(annotations);
+        classRecord.metadata->AddAnnotations(std::move(annotations));
     }
 
-    Program()->recordTable.emplace(classRecord.name, std::move(classRecord));
+    Program()->AddToRecordTable(std::move(classRecord));
 }
 
 void ETSEmitter::ProcessArrayExpression(
@@ -793,8 +883,9 @@ LiteralArrayVector ETSEmitter::CreateLiteralArray(std::string &baseName, const i
         ProcessArrayElement(elem, literals, baseName, result);
     }
 
+    static uint32_t litArrayValueCount = 0;
     std::string litArrayName =
-        util::NameMangler::GetInstance()->AppendToAnnotationName(baseName, std::to_string(g_litArrayValueCount++));
+        util::NameMangler::GetInstance()->AppendToAnnotationName(baseName, std::to_string(litArrayValueCount++));
     result.emplace_back(litArrayName, literals);
     return result;
 }
@@ -808,19 +899,18 @@ void ETSEmitter::CreateLiteralArrayProp(const ir::ClassProperty *prop, std::stri
         ++rank;
         elemType = checker->GetElementTypeOfArray(elemType);
     }
-    std::stringstream ss;
-    elemType->ToAssemblerType(ss);
-    field.type = pandasm::Type(ss.str(), rank);
+    field.type = pandasm::Type(AddDependence(elemType->ToAssemblerType()), rank);
 
     auto value = prop->Value();
     if (value != nullptr) {
         std::string newBaseName = util::NameMangler::GetInstance()->AppendToAnnotationName(baseName, field.name);
         auto litArray = CreateLiteralArray(newBaseName, value);
-        for (const auto &item : litArray) {
-            Program()->literalarrayTable.emplace(item.first, item.second);
+        auto const metaValue = litArray.back().first;
+
+        for (auto &item : litArray) {
+            Program()->AddToLiteralArrayTable(std::move(item.second), item.first);
         }
-        field.metadata->SetValue(
-            pandasm::ScalarValue::Create<pandasm::Value::Type::LITERALARRAY>(std::string_view {litArray.back().first}));
+        field.metadata->SetValue(pandasm::ScalarValue::Create<pandasm::Value::Type::LITERALARRAY>(metaValue));
     }
 }
 
@@ -831,7 +921,7 @@ void ETSEmitter::GenCustomAnnotationProp(const ir::ClassProperty *prop, std::str
     auto *type = prop->TsType();
     ES2PANDA_ASSERT(prop->Id() != nullptr);
     field.name = prop->Id()->Name().Mutf8();
-    field.type = PandasmTypeWithRank(type);
+    field.type = PandasmTypeWithRank(this, type);
     field.metadata->SetAccessFlags(TranslateModifierFlags(prop->Modifiers()));
 
     if (external) {
@@ -851,10 +941,10 @@ void ETSEmitter::GenCustomAnnotationProp(const ir::ClassProperty *prop, std::str
 void ETSEmitter::GenCustomAnnotationRecord(const ir::AnnotationDeclaration *annoDecl, std::string &baseName,
                                            bool external)
 {
-    auto annoRecord = pandasm::Record(annoDecl->InternalName().Mutf8(), Program()->lang);
-    if (Program()->recordTable.find(annoRecord.name) != Program()->recordTable.end()) {
+    if (dependencies_->IsNotRequired(ToAssemblerType(annoDecl), external)) {
         return;
     }
+    auto annoRecord = pandasm::Record(ToAssemblerType(annoDecl), Program()->lang);
 
     if (external) {
         annoRecord.metadata->SetAttribute(Signatures::EXTERNAL);
@@ -867,7 +957,7 @@ void ETSEmitter::GenCustomAnnotationRecord(const ir::AnnotationDeclaration *anno
         GenCustomAnnotationProp(it->AsClassProperty(), baseName, annoRecord, external);
     }
 
-    Program()->recordTable.emplace(annoRecord.name, std::move(annoRecord));
+    Program()->AddToRecordTable(std::move(annoRecord));
 }
 
 pandasm::AnnotationElement ETSEmitter::ProcessArrayType(const ir::ClassProperty *prop, std::string &baseName,
@@ -877,14 +967,15 @@ pandasm::AnnotationElement ETSEmitter::ProcessArrayType(const ir::ClassProperty 
     auto propName = prop->Id()->Name().Mutf8();
     std::string newBaseName = util::NameMangler::GetInstance()->AppendToAnnotationName(baseName, propName);
     auto litArrays = CreateLiteralArray(newBaseName, init);
+    auto const value = litArrays.back().first;
 
-    for (const auto &item : litArrays) {
-        Program()->literalarrayTable.emplace(item.first, item.second);
+    for (auto &item : litArrays) {
+        Program()->AddToLiteralArrayTable(std::move(item.second), item.first);
     }
 
     return pandasm::AnnotationElement {
-        propName, std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::STRING>(
-                      std::string_view {litArrays.back().first}))};
+        propName,
+        std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::STRING>(value))};
 }
 
 static pandasm::AnnotationElement ProcessETSEnumType(std::string &baseName, const ir::Expression *init,
@@ -927,13 +1018,13 @@ pandasm::AnnotationElement ETSEmitter::GenCustomAnnotationElement(const ir::Clas
 pandasm::AnnotationData ETSEmitter::GenCustomAnnotation(ir::AnnotationUsage *anno, std::string &baseName)
 {
     auto *annoDecl = anno->GetBaseName()->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
-    pandasm::AnnotationData annotation(annoDecl->InternalName().Mutf8());
+    pandasm::AnnotationData annotation(AddDependence(ToAssemblerType(annoDecl)));
     if (annoDecl->IsImportDeclaration()) {
-        auto annoRecord = pandasm::Record(annoDecl->InternalName().Mutf8(), Program()->lang);
+        auto annoRecord = pandasm::Record(ToAssemblerType(annoDecl), Program()->lang);
         annoRecord.metadata->SetAttribute(Signatures::EXTERNAL);
         uint32_t accessFlags = ACC_PUBLIC | ACC_ABSTRACT | ACC_ANNOTATION;
         annoRecord.metadata->SetAccessFlags(accessFlags);
-        Program()->recordTable.emplace(annoRecord.name, std::move(annoRecord));
+        Program()->AddToRecordTable(std::move(annoRecord));
     }
 
     for (auto *prop : anno->Properties()) {
@@ -962,8 +1053,11 @@ pandasm::AnnotationData ETSEmitter::GenAnnotationModule(const ir::ClassDefinitio
     std::vector<pandasm::ScalarValue> exportedClasses {};
 
     for (auto cls : classDef->ExportedClasses()) {
+        if (cls->IsDeclare()) {  // #28197
+            continue;            // AST inconsistency!
+        }
         exportedClasses.emplace_back(pandasm::ScalarValue::Create<pandasm::Value::Type::RECORD>(
-            pandasm::Type::FromName(cls->Definition()->InternalName().Utf8(), true)));
+            pandasm::Type::FromName(AddDependence(ToAssemblerType(cls->Definition())), true)));
     }
 
     GenAnnotationRecord(Signatures::ETS_ANNOTATION_MODULE);
@@ -999,43 +1093,6 @@ pandasm::AnnotationData ETSEmitter::GenAnnotationFunctionOverload(const ArenaVec
         overloadAnno.AddElement(std::move(value));
     }
     return overloadAnno;
-}
-
-pandasm::AnnotationData ETSEmitter::GenAnnotationSignature(const ir::ClassDefinition *classDef)
-{
-    std::vector<pandasm::ScalarValue> parts {};
-    const auto &typeParams = classDef->TypeParams()->Params();
-
-    auto const addStringValue = [&parts](std::string_view str) {
-        parts.emplace_back(pandasm::ScalarValue::Create<pandasm::Value::Type::STRING>(str));
-    };
-
-    if (!typeParams.empty()) {
-        addStringValue(Signatures::GENERIC_BEGIN);
-
-        for (const auto *param : typeParams) {
-            addStringValue(Signatures::MANGLE_BEGIN);
-            std::stringstream ss;
-            param->Constraint()->TsType()->ToAssemblerTypeWithRank(ss);
-            auto asmName = util::StringView(ss.str());
-            addStringValue(checker::ETSObjectType::NameToDescriptor(asmName));
-        }
-        addStringValue(Signatures::GENERIC_END);
-    }
-
-    if (auto super = classDef->TsType()->AsETSObjectType()->SuperType(); super != nullptr) {
-        addStringValue(checker::ETSObjectType::NameToDescriptor(util::StringView(super->AssemblerName().Mutf8())));
-    } else {
-        addStringValue(checker::ETSObjectType::NameToDescriptor(Signatures::BUILTIN_OBJECT));
-    }
-
-    GenAnnotationRecord(Signatures::ETS_ANNOTATION_SIGNATURE);
-    pandasm::AnnotationData signature(Signatures::ETS_ANNOTATION_SIGNATURE);
-    pandasm::AnnotationElement value(
-        Signatures::ANNOTATION_KEY_VALUE,
-        std::make_unique<pandasm::ArrayValue>(pandasm::Value::Type::STRING, std::move(parts)));
-    signature.AddElement(std::move(value));
-    return signature;
 }
 
 pandasm::AnnotationData ETSEmitter::GenAnnotationEnclosingMethod(const ir::MethodDefinition *methodDef)
@@ -1152,8 +1209,8 @@ pandasm::AnnotationData ETSEmitter::GenAnnotationAsync(ir::ScriptFunction *scrip
     pandasm::AnnotationData ann(Signatures::ETS_COROUTINE_ASYNC);
     pandasm::AnnotationElement value(
         Signatures::ANNOTATION_KEY_VALUE,
-        std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::METHOD>(
-            impl->Function()->Scope()->InternalName().Mutf8())));
+        std::make_unique<pandasm::ScalarValue>(
+            pandasm::ScalarValue::Create<pandasm::Value::Type::METHOD>(ToAssemblerSignature(impl->Function()))));
     ann.AddElement(std::move(value));
     return ann;
 }
@@ -1174,7 +1231,7 @@ void ETSEmitter::GenAnnotationRecord(std::string_view recordNameView, bool isRun
         } else if (!isRuntime && isType) {
             record.metadata->SetAttributeValue(Signatures::ANNOTATION_ATTRIBUTE_TYPE, Signatures::TYPE_ANNOTATION);
         }
-        Program()->recordTable.emplace(record.name, std::move(record));
+        Program()->AddToRecordTable(std::move(record));
     }
 }
 }  // namespace ark::es2panda::compiler

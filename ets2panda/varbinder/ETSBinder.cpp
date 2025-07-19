@@ -15,6 +15,7 @@
 
 #include "ETSBinder.h"
 
+#include "es2panda.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
 #include "public/public.h"
 #include "compiler/lowering/util.h"
@@ -1284,6 +1285,11 @@ bool ETSBinder::BuildInternalNameWithCustomRecordTable(ir::ScriptFunction *const
 void ETSBinder::AddCompilableFunction(ir::ScriptFunction *func)
 {
     if (func->IsArrow() || func->IsAsyncFunc()) {
+        return;
+    }
+
+    if (GetContext()->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE &&
+        func->Scope()->Name().Is(compiler::Signatures::ETS_GLOBAL)) {
         return;
     }
 

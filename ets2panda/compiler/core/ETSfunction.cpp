@@ -146,10 +146,15 @@ void ETSFunction::CompileAsConstructor(ETSGen *etsg, const ir::ScriptFunction *s
 
 void ETSFunction::CompileFunction(ETSGen *etsg)
 {
-    if (const auto *decl = etsg->RootNode()->AsScriptFunction(); !decl->IsDeclare() && !decl->IsExternal()) {
-        if (auto *const body = decl->Body(); body != nullptr && body->IsBlockStatement()) {
-            CompileSourceBlock(etsg, body->AsBlockStatement());
-        }
+    const auto *decl = etsg->RootNode()->AsScriptFunction();
+    if (decl->IsDeclare() || decl->IsExternal()) {
+        return;  // such methods should've been filtered in advance
+    }
+    if (decl->Signature()->Owner()->GetDeclNode()->IsDeclare()) {
+        return;  // AST inconsistency!
+    }
+    if (auto *const body = decl->Body(); body != nullptr && body->IsBlockStatement()) {
+        CompileSourceBlock(etsg, body->AsBlockStatement());
     }
 }
 

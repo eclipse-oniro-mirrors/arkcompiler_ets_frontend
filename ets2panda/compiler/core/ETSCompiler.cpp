@@ -63,10 +63,11 @@ void ETSCompiler::Compile(const ir::ClassProperty *st) const
         etsg->ApplyConversion(st->Value(), st->TsType());
     }
 
+    auto fullName = etsg->FormClassOwnPropReference(etsg->ContainingObjectType(), st->Key()->AsIdentifier()->Name());
     if (st->IsStatic()) {
-        etsg->StoreStaticOwnProperty(st, st->TsType(), st->Key()->AsIdentifier()->Name());
+        etsg->StoreStaticProperty(st, st->TsType(), fullName);
     } else {
-        etsg->StoreProperty(st, st->TsType(), etsg->GetThisReg(), st->Key()->AsIdentifier()->Name());
+        etsg->StoreProperty(st, st->TsType(), etsg->GetThisReg(), fullName);
     }
 }
 
@@ -93,7 +94,7 @@ void ETSCompiler::Compile(const ir::ETSClassLiteral *expr) const
         etsg->SetAccumulatorType(literalType);
     }
 
-    etsg->GetType(expr, isPrimitive);
+    etsg->EmitLdaType(expr, etsg->GetAccumulatorType()->AsETSObjectType()->AssemblerName());
     ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
 }
 
@@ -937,7 +938,6 @@ void ETSCompiler::Compile(const ir::MemberExpression *expr) const
     }
 
     auto *const objectType = etsg->Checker()->GetApparentType(expr->Object()->TsType());
-    auto &propName = expr->Property()->AsIdentifier()->Name();
 
     auto ottctx = compiler::TargetTypeContext(etsg, expr->Object()->TsType());
     etsg->CompileAndCheck(expr->Object());
@@ -959,22 +959,7 @@ void ETSCompiler::Compile(const ir::MemberExpression *expr) const
     } else if (objectType->IsETSUnionType()) {
         etsg->LoadPropertyByName(expr, objReg, checker::ETSChecker::FormNamedAccessMetadata(expr->PropVar()));
     } else {
-        auto *id = expr->Property()->AsIdentifier();
-        auto *var = id->Variable();
-        ES2PANDA_ASSERT(var != nullptr && var->Declaration() != nullptr);
-
-        auto *decl = var->Declaration();
-        ES2PANDA_ASSERT(decl->Node() != nullptr);
-
-        auto *declNode = decl->Node();
-        ES2PANDA_ASSERT(declNode->Parent() != nullptr && declNode->Parent()->IsTyped());
-
-        auto *typedOwner = declNode->Parent()->AsTyped();
-        const checker::Type *expectedObjType = typedOwner->TsType();
-        ES2PANDA_ASSERT(expectedObjType != nullptr && expectedObjType->IsETSObjectType());
-
-        const auto fullName = etsg->FormClassPropReference(expectedObjType->AsETSObjectType(), propName);
-        etsg->LoadProperty(expr, variableType, objReg, fullName);
+        etsg->LoadProperty(expr, variableType, objReg, etsg->FormClassPropReference(expr->PropVar()));
     }
     etsg->GuardUncheckedType(expr, expr->UncheckedType(), expr->TsType());
 
@@ -1012,8 +997,7 @@ bool ETSCompiler::HandleStaticProperties(const ir::MemberExpression *expr, ETSGe
             etsg->CallExact(expr, sig->InternalName());
             etsg->SetAccumulatorType(expr->TsType());
         } else {
-            util::StringView const fullName =
-                etsg->FormClassPropReference(expr->Object()->TsType()->AsETSObjectType(), variable->Name());
+            util::StringView const fullName = etsg->FormClassPropReference(variable);
             etsg->LoadStaticProperty(expr, varType, fullName);
             etsg->ApplyConversion(expr, expr->TsType());
         }
@@ -1059,7 +1043,7 @@ void ETSCompiler::Compile(const ir::ObjectExpression *expr) const
 
         value->Compile(etsg);
         etsg->ApplyConversion(value, key->TsType());
-        etsg->StoreProperty(expr, key->TsType(), objReg, pname);
+        etsg->StoreProperty(expr, key->TsType(), objReg, etsg->FormClassPropReference(prop->Variable()));
     }
 
     etsg->LoadAccumulator(expr, objReg);

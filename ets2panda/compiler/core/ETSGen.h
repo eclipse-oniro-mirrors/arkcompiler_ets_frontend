@@ -16,6 +16,12 @@
 #ifndef ES2PANDA_COMPILER_CORE_ETSGEN_H
 #define ES2PANDA_COMPILER_CORE_ETSGEN_H
 
+#include <cstddef>
+#include <string_view>
+#include <tuple>
+#include <type_traits>
+
+#include "compiler/core/ETSemitter.h"
 #include "ir/astNode.h"
 #include "compiler/core/codeGen.h"
 #include "compiler/core/ETSfunction.h"
@@ -23,7 +29,6 @@
 #include "checker/ETSchecker.h"
 #include "ir/expressions/identifier.h"
 #include "util/helpers.h"
-#include <variant>
 
 namespace ark::es2panda::compiler {
 
@@ -36,6 +41,7 @@ public:
     [[nodiscard]] const varbinder::ETSBinder *VarBinder() const noexcept;
     [[nodiscard]] const checker::Type *ReturnType() const noexcept;
     [[nodiscard]] const checker::ETSObjectType *ContainingObjectType() const noexcept;
+    ETSEmitter *Emitter() const;
 
     [[nodiscard]] VReg &Acc() noexcept;
     [[nodiscard]] VReg Acc() const noexcept;
@@ -61,9 +67,9 @@ public:
     void LoadStaticProperty(const ir::AstNode *node, const checker::Type *propType, const util::StringView &fullName);
     void StoreStaticProperty(const ir::AstNode *node, const checker::Type *propType, const util::StringView &fullName);
 
-    void StoreStaticOwnProperty(const ir::AstNode *node, const checker::Type *propType, const util::StringView &name);
-    [[nodiscard]] util::StringView FormClassPropReference(const checker::ETSObjectType *classType,
-                                                          const util::StringView &name);
+    [[nodiscard]] util::StringView FormClassPropReference(varbinder::Variable const *var);
+    [[nodiscard]] util::StringView FormClassOwnPropReference(const checker::ETSObjectType *classType,
+                                                             const util::StringView &name);
 
     void StoreProperty(const ir::AstNode *node, const checker::Type *propType, VReg objReg,
                        const util::StringView &name);
@@ -373,23 +379,23 @@ public:
 
     void CallExact(const ir::AstNode *const node, const util::StringView name)
     {
-        Ra().Emit<CallShort, 0>(node, name, dummyReg_, dummyReg_);
+        Ra().Emit<CallShort, 0>(node, AssemblerSignatureReference(name), dummyReg_, dummyReg_);
     }
 
     void CallExact(const ir::AstNode *const node, const util::StringView name, const VReg arg0)
     {
-        Ra().Emit<CallShort, 1>(node, name, arg0, dummyReg_);
+        Ra().Emit<CallShort, 1>(node, AssemblerSignatureReference(name), arg0, dummyReg_);
     }
 
     void CallExact(const ir::AstNode *const node, const util::StringView name, const VReg arg0, const VReg arg1)
     {
-        Ra().Emit<CallShort>(node, name, arg0, arg1);
+        Ra().Emit<CallShort>(node, AssemblerSignatureReference(name), arg0, arg1);
     }
 
     void CallExact(const ir::AstNode *const node, const util::StringView name, const VReg arg0, const VReg arg1,
                    const VReg arg2)
     {
-        Ra().Emit<Call, 3U>(node, name, arg0, arg1, arg2, dummyReg_);
+        Ra().Emit<Call, 3U>(node, AssemblerSignatureReference(name), arg0, arg1, arg2, dummyReg_);
     }
 
     void CallByName([[maybe_unused]] const ir::AstNode *const node,
@@ -436,12 +442,12 @@ public:
 
     void CallVirtual(const ir::AstNode *const node, const util::StringView name, const VReg athis)
     {
-        Ra().Emit<CallVirtShort, 1>(node, name, athis, dummyReg_);
+        Ra().Emit<CallVirtShort, 1>(node, AssemblerSignatureReference(name), athis, dummyReg_);
     }
 
     void CallVirtual(const ir::AstNode *const node, const util::StringView name, const VReg athis, const VReg arg0)
     {
-        Ra().Emit<CallVirtShort>(node, name, athis, arg0);
+        Ra().Emit<CallVirtShort>(node, AssemblerSignatureReference(name), athis, arg0);
     }
 
     struct CallDynamicData {
@@ -484,20 +490,9 @@ public:
     void CreateBigIntObject(const ir::AstNode *node, VReg arg0,
                             std::string_view signature = Signatures::BUILTIN_BIGINT_CTOR);
 
-    void GetType(const ir::AstNode *node, bool isEtsPrimitive)
-    {
-        if (isEtsPrimitive) {
-            // NOTE: SzD. LoadStaticProperty if ETS stdlib has static TYPE constants otherwise fallback to LdaType
-        } else {
-            ES2PANDA_ASSERT(GetAccumulatorType() != nullptr);
-            auto classRef = GetAccumulatorType()->AsETSObjectType()->AssemblerName();
-            Sa().Emit<LdaType>(node, classRef);
-        }
-    }
-
     void EmitLdaType(const ir::AstNode *node, util::StringView sv)
     {
-        Sa().Emit<LdaType>(node, sv);
+        Sa().Emit<LdaType>(node, AssemblerReference(sv));
     }
 
     ~ETSGen() override = default;
@@ -507,6 +502,12 @@ public:
 private:
     const VReg dummyReg_ = VReg::RegStart();
 
+    util::StringView AssemblerReference(util::StringView ref);
+
+    util::StringView AssemblerSignatureReference(util::StringView ref);
+
+    util::StringView AssemblerReference(checker::Signature const *sig);
+
     void LoadConstantObject(const ir::Expression *node, const checker::Type *type);
     void CreateStringBuilder(const ir::Expression *node);
     void StringBuilderAppend(const ir::AstNode *node, VReg builder);
@@ -514,7 +515,6 @@ private:
     void StringBuilder(const ir::Expression *left, const ir::Expression *right, VReg builder);
     void AppendTemplateString(const ir::TemplateLiteral *node);
     void ConcatTemplateString(const ir::TemplateLiteral *node);
-    util::StringView FormClassPropReference(varbinder::Variable const *var);
     void UnaryMinus(const ir::AstNode *node);
     void UnaryTilde(const ir::AstNode *node);
 
@@ -542,14 +542,14 @@ private:
     void EmitCheckCast(const ir::AstNode *node, util::StringView target)
     {
         if (target != Signatures::BUILTIN_OBJECT) {
-            Sa().Emit<Checkcast>(node, target);
+            Sa().Emit<Checkcast>(node, AssemblerReference(target));
         }
     }
 
     void EmitIsInstance(const ir::AstNode *node, util::StringView target)
     {
         if (target != Signatures::BUILTIN_OBJECT) {
-            Sa().Emit<Isinstance>(node, target);
+            Sa().Emit<Isinstance>(node, AssemblerReference(target));
         } else {
             LoadAccumulatorBoolean(node, true);
         }
@@ -647,7 +647,7 @@ private:
                       const ArenaVector<ir::Expression *> &arguments)
     {
         RegScope rs(this);
-        const auto name = signature->InternalName();
+        const auto name = AssemblerReference(signature);
 
         switch (arguments.size()) {
             case 0U: {
@@ -689,28 +689,29 @@ private:
     {
         ES2PANDA_ASSERT(signature != nullptr);
         RegScope rs(this);
+        auto name = AssemblerReference(signature);
 
         switch (arguments.size()) {
             case 0U: {
-                Ra().Emit<Short, 0U>(node, signature->InternalName(), dummyReg_, dummyReg_);
+                Ra().Emit<Short, 0U>(node, name, dummyReg_, dummyReg_);
                 break;
             }
             case 1U: {
                 COMPILE_ARG(0);
-                Ra().Emit<Short, 1U>(node, signature->InternalName(), arg0, dummyReg_);
+                Ra().Emit<Short, 1U>(node, name, arg0, dummyReg_);
                 break;
             }
             case 2U: {
                 COMPILE_ARG(0);
                 COMPILE_ARG(1);
-                Ra().Emit<Short, 2U>(node, signature->InternalName(), arg0, arg1);
+                Ra().Emit<Short, 2U>(node, name, arg0, arg1);
                 break;
             }
             case 3U: {
                 COMPILE_ARG(0);
                 COMPILE_ARG(1);
                 COMPILE_ARG(2);
-                Ra().Emit<General, 3U>(node, signature->InternalName(), arg0, arg1, arg2, dummyReg_);
+                Ra().Emit<General, 3U>(node, name, arg0, arg1, arg2, dummyReg_);
                 break;
             }
             case 4U: {
@@ -718,7 +719,7 @@ private:
                 COMPILE_ARG(1);
                 COMPILE_ARG(2);
                 COMPILE_ARG(3);
-                Ra().Emit<General, 4U>(node, signature->InternalName(), arg0, arg1, arg2, arg3);
+                Ra().Emit<General, 4U>(node, name, arg0, arg1, arg2, arg3);
                 break;
             }
             default: {
@@ -728,7 +729,7 @@ private:
                     COMPILE_ARG(idx);
                 }
 
-                Rra().Emit<Range>(node, argStart, arguments.size(), signature->InternalName(), argStart);
+                Rra().Emit<Range>(node, argStart, arguments.size(), name, argStart);
                 break;
             }
         }
@@ -751,7 +752,7 @@ private:
                          const ArenaVector<ir::Expression *> &arguments)
     {
         RegScope rs(this);
-        const auto name = signature->InternalName();
+        const auto name = AssemblerReference(signature);
 
         switch (arguments.size()) {
             case 0U: {
@@ -785,7 +786,7 @@ private:
                          const ArenaVector<ir::Expression *> &arguments)
     {
         RegScope rs(this);
-        const auto name = signature->InternalName();
+        const auto name = AssemblerReference(signature);
 
         switch (arguments.size()) {
             case 0U: {

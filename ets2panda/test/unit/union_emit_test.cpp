@@ -13,8 +13,28 @@
  * limitations under the License.
  */
 
+#include <iomanip>
+#include <iterator>
+#include <string>
+
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+#include "assembly-function.h"
+#include "assembly-program.h"
+
+#include "gmock/gmock.h"
 #include "test/utils/asm_test.h"
+
+namespace ark::pandasm {
+
+// The value printer for expects.
+std::ostream &operator<<(std::ostream &s, const Function &arg)
+{
+    return s << std::quoted(arg.name);
+}
+
+}  // namespace ark::pandasm
 
 namespace ark::es2panda::compiler::test {
 
@@ -26,28 +46,20 @@ public:
 
     void CheckFunction(std::string_view funcSig, bool found = true)
     {
+        ASSERT_NE(program_.get(), nullptr);
         pandasm::Function *func = GetFunction(funcSig, program_->functionStaticTable);
         if (found) {
-            ASSERT_TRUE(func != nullptr) << "Function '" << funcSig << "' not found";
+            EXPECT_NE(func, nullptr) << "Function '" << funcSig << "' not found";
         } else {
-            ASSERT_TRUE(func == nullptr) << "Function '" << funcSig << "' found";
-        }
-    }
-
-    void CheckUnionType(std::string_view recordName, bool found = true)
-    {
-        pandasm::Record *rec = GetRecord(recordName, program_);
-        if (found) {
-            ASSERT_TRUE(rec != nullptr) << "Type '" << recordName << "' not found";
-        } else {
-            ASSERT_TRUE(rec == nullptr) << "Type '" << recordName << "' found";
+            EXPECT_EQ(func, nullptr) << "Function '" << funcSig << "' found";
         }
     }
 
     void CheckInsInFunction(std::string_view functionName, std::string_view insString, bool result = true)
     {
+        ASSERT_NE(program_.get(), nullptr);
         pandasm::Function *fn = GetFunction(functionName, program_->functionStaticTable);
-        ASSERT_TRUE(fn != nullptr) << "Function '" << functionName << "' not found";
+        ASSERT_NE(fn, nullptr) << "Function '" << functionName << "' not found";
         bool found = false;
         for (const auto &i : fn->ins) {
             std::string iStr = i.ToString("", true);
@@ -55,8 +67,26 @@ public:
                 found = true;
             }
         }
-        ASSERT_TRUE(found == result) << "Instruction '" << insString << "' in function '" << functionName
-                                     << "' not met expectations";
+        EXPECT_EQ(found, result) << "Instruction '" << insString << "' in function '" << functionName
+                                 << "' not met expectations";
+    }
+
+    template <typename Iterator>
+    void GetAllParameterTypeNames(Iterator result)
+    {
+        ASSERT_NE(program_.get(), nullptr);
+        for (auto const &pair : program_->functionStaticTable) {
+            auto const &params = pair.second.params;
+            std::transform(params.cbegin(), params.cend(), result,
+                           [](auto const &param) { return param.type.GetName(); });
+        }
+    }
+
+    void CheckParameterTypes(const std::set<std::string> &types)
+    {
+        std::set<std::string> paramTypes;
+        GetAllParameterTypeNames(std::inserter(paramTypes, paramTypes.end()));
+        EXPECT_THAT(paramTypes, ::testing::ContainerEq(types));
     }
 
 private:
@@ -77,10 +107,12 @@ TEST_F(UnionAsmTest, union_test)
         function test4(v:B|C|D|int) {}
     )");
 
-    CheckUnionType("{Udummy.A,dummy.B}");
-    CheckUnionType("{Udummy.A,dummy.B,dummy.C[]}");
-    CheckUnionType("{Udummy.A,dummy.B,dummy.C}");
-    CheckUnionType("{Udummy.B,dummy.C,dummy.D,std.core.Int}");
+    CheckParameterTypes({
+        "{Udummy.A,dummy.B}",
+        "{Udummy.A,dummy.B,dummy.C[]}",
+        "{Udummy.A,dummy.B,dummy.C}",
+        "{Udummy.B,dummy.C,dummy.D,std.core.Int}",
+    });
 }
 
 TEST_F(UnionAsmTest, union_test_extends)
@@ -96,9 +128,11 @@ TEST_F(UnionAsmTest, union_test_extends)
         function test4(v:B|C|D|int) {}
     )");
 
-    CheckUnionType("{Udummy.A,dummy.B}");
-    CheckUnionType("{Udummy.A,dummy.B,dummy.C[]}");
-    CheckUnionType("{Udummy.B,std.core.Int}");
+    CheckParameterTypes({
+        "{Udummy.A,dummy.B}",
+        "{Udummy.A,dummy.B,dummy.C[]}",
+        "{Udummy.B,std.core.Int}",
+    });
 }
 
 TEST_F(UnionAsmTest, union_test_2)
@@ -118,12 +152,16 @@ TEST_F(UnionAsmTest, union_test_2)
         function test8(v:A|D|D|D) {}
     )");
 
-    CheckUnionType("{Udummy.A,dummy.B,dummy.C,dummy.D}");
-    CheckUnionType("{Udummy.A,dummy.B,dummy.C}");
-    CheckUnionType("{Udummy.A,dummy.B}");
-    CheckUnionType("{Udummy.A,dummy.D}");
-    CheckUnionType("{Udummy.A,std.core.Double}");
-    CheckUnionType("{Udummy.B,dummy.C}");
+    CheckParameterTypes({
+        "{Udummy.A,dummy.B,dummy.C,dummy.D}",
+        "{Udummy.A,dummy.B,dummy.C}",
+        "{Udummy.A,dummy.B}",
+        "{Udummy.A,dummy.D}",
+        "{Udummy.A,std.core.Double}",
+        "{Udummy.B,dummy.C}",
+        "{Ustd.core.Double,std.core.Int,std.core.Long}",
+        "{Ustd.core.Double,std.core.Long}",
+    });
 }
 
 TEST_F(UnionAsmTest, union_test_arrays)
@@ -145,31 +183,18 @@ TEST_F(UnionAsmTest, union_test_arrays)
         function test1(v:FixedArray<FixedArray<int>|FixedArray<double>>|FixedArray<long>|FixedArray<double>) {}
     )");
 
-    CheckUnionType("{Udummy.A,dummy.B}");
-    CheckUnionType("{Udummy.A,dummy.B}[]");
-    CheckUnionType("{Udummy.A,dummy.D,std.core.Double}");
-    CheckUnionType("{Udummy.A,dummy.D,std.core.Double}[]");
-    CheckUnionType("{Udummy.A,dummy.D,std.core.Int}");
-    CheckUnionType("{Udummy.A,dummy.D,std.core.Int}[]");
-    CheckUnionType("{Udummy.A,dummy.D,std.core.Long}");
-    CheckUnionType("{Udummy.A,dummy.D,std.core.Long}[]");
-    CheckUnionType("{Udummy.A,dummy.D}");
-    CheckUnionType("{Udummy.A,dummy.D}[]");
-    CheckUnionType("{Udummy.B,dummy.C,{Udummy.A,dummy.B}[]}");
-    CheckUnionType("{Udummy.B,dummy.C,{Udummy.A,dummy.D,std.core.Double}[]}");
-    CheckUnionType("{Udummy.B,dummy.C,{Udummy.C,dummy.D}[]}");
-    CheckUnionType("{Udummy.B,dummy.C}");
-    CheckUnionType("{Udummy.B,dummy.C}[]");
-    CheckUnionType("{Udummy.B,dummy.D}");
-    CheckUnionType("{Udummy.B,dummy.D}[]");
-    CheckUnionType("{Udummy.B,{Udummy.A,dummy.D}[],{Udummy.B,dummy.C}[],{Udummy.B,dummy.D}[],{Udummy.C,dummy.D}[]}");
-    CheckUnionType("{Udummy.C,dummy.D}");
-    CheckUnionType("{Udummy.C,dummy.D}[]");
-    CheckUnionType(
-        "{U{Udummy.A,dummy.D,std.core.Double}[],{Udummy.A,dummy.D,std.core.Int}[],{Udummy.A,dummy.D,std.core.Long}[]}");
-    CheckUnionType("{U{Udummy.A,dummy.D}[],{Udummy.B,dummy.C}[],{Udummy.B,dummy.D}[],{Udummy.C,dummy.D}[]}");
-    CheckUnionType("{U{Udummy.A,dummy.D}[],{Udummy.B,dummy.D}[]}");
-    CheckUnionType("{U{Udummy.B,dummy.C}[],{Udummy.C,dummy.D}[]}");
+    CheckParameterTypes({
+        "{Udummy.B,dummy.C,{Udummy.A,dummy.B}[]}",
+        "{Udummy.B,dummy.C,{Udummy.A,dummy.D,std.core.Double}[]}",
+        "{Udummy.B,dummy.C,{Udummy.C,dummy.D}[]}",
+        "{Udummy.B,{Udummy.A,dummy.D}[],{Udummy.B,dummy.C}[],{Udummy.B,dummy.D}[],{Udummy.C,dummy.D}[]}",
+        "{U{Udummy.A,dummy.D,std.core.Double}[],{Udummy.A,dummy.D,std.core.Int}[],{Udummy.A,dummy.D,std.core.Long}[]}",
+        "{U{Udummy.A,dummy.D}[],{Udummy.B,dummy.C}[],{Udummy.B,dummy.D}[],{Udummy.C,dummy.D}[]}",
+        "{U{Udummy.A,dummy.D}[],{Udummy.B,dummy.D}[]}",
+        "{U{Udummy.B,dummy.C}[],{Udummy.C,dummy.D}[]}",
+        "{Uf64[],i64[],{Uf64[],i32[]}[]}",
+        "{Ustd.core.Double,std.core.Long,{Ustd.core.Double,std.core.Int}[]}",
+    });
 }
 
 TEST_F(UnionAsmTest, union_test_null)
@@ -182,7 +207,9 @@ TEST_F(UnionAsmTest, union_test_null)
         function test1(v:D|C|B|null|A) {}
     )");
 
-    CheckUnionType("{Udummy.A,dummy.B,dummy.C,dummy.D,std.core.Null}");
+    CheckParameterTypes({
+        "{Udummy.A,dummy.B,dummy.C,dummy.D,std.core.Null}",
+    });
 }
 
 TEST_F(UnionAsmTest, union_test_undefined)
@@ -197,9 +224,11 @@ TEST_F(UnionAsmTest, union_test_undefined)
         function test3(v:undefined|A|null) {}
     )");
 
-    CheckUnionType("{Udummy.A,dummy.B,dummy.C,dummy.D}");
-    CheckUnionType("{Udummy.A,undefined}", false);
-    CheckUnionType("{Udummy.A,std.core.Null}");
+    CheckParameterTypes({
+        "{Udummy.A,dummy.B,dummy.C,dummy.D}",
+        "dummy.A",
+        "{Udummy.A,std.core.Null}",
+    });
 }
 
 TEST_F(UnionAsmTest, union_test_isinstanceof)

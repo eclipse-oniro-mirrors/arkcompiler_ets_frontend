@@ -65,7 +65,7 @@ public:
     static void DumpAsm(const ark::pandasm::Program *prog);
     static std::string GetPhasesList(ScriptExtension ext);
 
-    ark::pandasm::Program *Emit(public_lib::Context *context);
+    void Emit(public_lib::Context *context);
 
     CompileQueue *Queue()
     {

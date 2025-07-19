@@ -1088,7 +1088,9 @@ ir::MethodDefinition *ETSChecker::CreateNonStaticClassInitializer(varbinder::Cla
 
     VarBinder()->AsETSBinder()->BuildInternalNameWithCustomRecordTable(func, recordTable);
     VarBinder()->AsETSBinder()->BuildFunctionName(func);
-    VarBinder()->Functions().push_back(functionScope);
+    if (!recordTable->IsExternal()) {
+        VarBinder()->Functions().push_back(functionScope);
+    }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *funcExpr = ProgramAllocNode<ir::FunctionExpression>(func);
