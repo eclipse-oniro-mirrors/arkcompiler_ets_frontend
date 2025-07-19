@@ -23,7 +23,7 @@ namespace ark::es2panda::compiler {
 static void GeneratePartialDeclForExported(const public_lib::Context *const ctx, ir::AstNode *const node)
 {
     // NOTE (mmartin): handle interfaces
-    if (node->IsClassDeclaration()) {
+    if (node->IsClassDeclaration() && !node->AsClassDeclaration()->Definition()->IsModule()) {
         ctx->GetChecker()->AsETSChecker()->CreatePartialType(node->AsClassDeclaration()->Definition()->TsType());
     }
     if (node->IsTSInterfaceDeclaration()) {

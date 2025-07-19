@@ -670,7 +670,6 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_LOWERED);
 
     auto *emitter = ctx->emitter;
-    emitter->GenAnnotation();
 
     // Handle context literals.
     uint32_t index = 0;
@@ -685,6 +684,7 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
     ctx->queue->Consume();
     ctx->queue->Wait([emitter](compiler::CompileJob *job) { emitter->AddProgramElement(job->GetProgramElement()); });
     ES2PANDA_ASSERT(ctx->program == nullptr);
+    emitter->GenAnnotation();
     ctx->program = emitter->Finalize(ctx->config->options->IsDumpDebugInfo(), compiler::Signatures::ETS_GLOBAL);
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_ASM_GENERATED : ES2PANDA_STATE_ERROR;
     return ctx;

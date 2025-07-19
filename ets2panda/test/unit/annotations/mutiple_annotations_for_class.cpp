@@ -78,24 +78,23 @@ public:
 
     void CheckLiteralArrayTable(pandasm::Program *program)
     {
-        std::vector<std::pair<std::string, std::vector<AnnotationValueType>>> expectedLiteralArrayTable = {
-            {"ETSGLOBAL%%annotation-Anno2-color-0", std::vector<AnnotationValueType> {COLOR_0, COLOR_1}},
-            {"ETSGLOBAL%%annotation-Anno2-reviewers-1",
-             std::vector<AnnotationValueType> {std::string("Bob"), std::string("Jim"), std::string("Tom")}},
-            {"A%%annotation-Anno2-color-2", std::vector<AnnotationValueType> {COLOR_0, COLOR_1}},
-            {"A%%annotation-Anno2-reviewers-3",
-             std::vector<AnnotationValueType> {std::string("Bob"), std::string("Jim"), std::string("Tom")}},
-            {"A%%annotation-Anno3-reviewersAge-4",
-             std::vector<AnnotationValueType> {REVIEWER_AGE_19, REVIEWER_AGE_20, REVIEWER_AGE_24}},
-            {"A%%annotation-Anno3-testBools-5", std::vector<AnnotationValueType> {true, true, true}},
-            {"A%%annotation-Anno3-mutiArray-6", std::vector<AnnotationValueType> {VALUE_9, VALUE_8, VALUE_7}},
-            {"A%%annotation-Anno3-mutiArray-7", std::vector<AnnotationValueType> {VALUE_6, VALUE_5, VALUE_4}},
-            {"A%%annotation-Anno3-mutiArray-8", std::vector<AnnotationValueType> {VALUE_3, VALUE_2, VALUE_1}},
+        ExpectedLiteralArrayTable const expectedLiteralArrayTable = {
+            {"ETSGLOBAL%%annotation-Anno2-color-0", {COLOR_0, COLOR_1}},
+            {"ETSGLOBAL%%annotation-Anno2-reviewers-1", {"Bob", "Jim", "Tom"}},
+            {"A%%annotation-Anno2-color-2", {COLOR_0, COLOR_1}},
+            {"A%%annotation-Anno2-reviewers-3", {"Bob", "Jim", "Tom"}},
+            {"A%%annotation-Anno3-reviewersAge-4", {REVIEWER_AGE_19, REVIEWER_AGE_20, REVIEWER_AGE_24}},
+            {"A%%annotation-Anno3-testBools-5", {true, true, true}},
+            {"A%%annotation-Anno3-mutiArray-6", {VALUE_9, VALUE_8, VALUE_7}},
+            {"A%%annotation-Anno3-mutiArray-7", {VALUE_6, VALUE_5, VALUE_4}},
+            {"A%%annotation-Anno3-mutiArray-8", {VALUE_3, VALUE_2, VALUE_1}},
             {"A%%annotation-Anno3-mutiArray-9",
-             std::vector<AnnotationValueType> {std::string("A%%annotation-Anno3-mutiArray-6"),
-                                               std::string("A%%annotation-Anno3-mutiArray-7"),
-                                               std::string("A%%annotation-Anno3-mutiArray-8")}}};
-
+             {
+                 "A%%annotation-Anno3-mutiArray-6",
+                 "A%%annotation-Anno3-mutiArray-7",
+                 "A%%annotation-Anno3-mutiArray-8",
+             }},
+        };
         AnnotationEmitTest::CheckLiteralArrayTable(program, expectedLiteralArrayTable);
     }
 

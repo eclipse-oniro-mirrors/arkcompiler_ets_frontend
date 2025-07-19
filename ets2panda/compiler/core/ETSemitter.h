@@ -16,6 +16,12 @@
 #ifndef ES2PANDA_COMPILER_CORE_ETS_EMITTER_H
 #define ES2PANDA_COMPILER_CORE_ETS_EMITTER_H
 
+#include <memory>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
+
 #include "annotation.h"
 #include "assembly-literals.h"
 #include "emitter.h"
@@ -58,11 +64,6 @@ public:
     NO_MOVE_SEMANTIC(ETSFunctionEmitter);
 
 protected:
-    const ETSGen *Etsg() const
-    {
-        return reinterpret_cast<const ETSGen *>(Cg());
-    }
-
     pandasm::Function *GenFunctionSignature() override;
 
     void GenFunctionAnnotations(pandasm::Function *func) override;
@@ -71,23 +72,31 @@ protected:
     void GenSourceFileDebugInfo(pandasm::Function *func) override;
 };
 
+namespace detail {
+class EmitterDependencies;
+}
+
 class ETSEmitter : public Emitter {
 public:
-    explicit ETSEmitter(const public_lib::Context *context) : Emitter(context) {}
-    ~ETSEmitter() override = default;
+    explicit ETSEmitter(const public_lib::Context *context);
+    ~ETSEmitter() override;
     NO_COPY_SEMANTIC(ETSEmitter);
     NO_MOVE_SEMANTIC(ETSEmitter);
 
     void GenAnnotation() override;
+
+    // Handle a broken dependence between annotation handling and shared emitter code
     std::vector<pandasm::AnnotationData> GenCustomAnnotations(
         const ArenaVector<ir::AnnotationUsage *> &annotationUsages, const std::string &baseName);
+    pandasm::AnnotationData GenAnnotationAsync(ir::ScriptFunction *scriptFunc);
+    std::string const &AddDependence(std::string const &str);
 
 private:
     using DynamicCallNamesMap = ArenaMap<const ArenaVector<util::StringView>, uint32_t>;
 
-    void GenRecords(varbinder::RecordTable *globalRecordTable);
-    void GenExternalRecord(varbinder::RecordTable *recordTable, const parser::Program *extProg);
-    void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType, checker::Signature *signature);
+    void EmitRecordTable(varbinder::RecordTable *recordTable, bool externalize, bool isTraverseExternalsPhase);
+    void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType);
+    void GenGlobalUnionRecord(util::StringView assemblerType);
     std::vector<pandasm::AnnotationData> GenAnnotations(const ir::ClassDefinition *classDef);
     void GenClassRecord(const ir::ClassDefinition *classDef, bool external);
     pandasm::AnnotationElement ProcessArrayType(const ir::ClassProperty *prop, std::string &baseName,
@@ -107,20 +116,21 @@ private:
     void EmitDefaultFieldValue(pandasm::Field &classField, const ir::Expression *init);
     void GenClassField(const ir::ClassProperty *prop, pandasm::Record &classRecord, bool external);
 
-    void GenInterfaceMethodDefinition(const ir::MethodDefinition *methodDef, bool external);
+    void GenMethodDefinition(ir::MethodDefinition const *method, bool external);
+    void GenFunction(ir::ScriptFunction const *scriptFunc, bool external);
     void GenClassInheritedFields(const checker::ETSObjectType *baseType, pandasm::Record &classRecord);
-    pandasm::AnnotationData GenAnnotationSignature(const ir::ClassDefinition *classDef);
     pandasm::AnnotationData GenAnnotationModule(const ir::ClassDefinition *classDef);
     pandasm::AnnotationData GenAnnotationFunctionOverload(const ArenaVector<ir::AstNode *> &body);
     pandasm::AnnotationData GenAnnotationEnclosingClass(std::string_view className);
     pandasm::AnnotationData GenAnnotationEnclosingMethod(const ir::MethodDefinition *methodDef);
     pandasm::AnnotationData GenAnnotationFunctionalReference(const ir::ClassDefinition *classDef);
     pandasm::AnnotationData GenAnnotationInnerClass(const ir::ClassDefinition *classDef, const ir::AstNode *parent);
-    pandasm::AnnotationData GenAnnotationAsync(ir::ScriptFunction *scriptFunc);
     pandasm::AnnotationData GenAnnotationDynamicCall(DynamicCallNamesMap &callNames);
     ir::MethodDefinition *FindAsyncImpl(ir::ScriptFunction *asyncFunc);
     void ProcessArrayExpression(std::string &baseName, LiteralArrayVector &result,
                                 std::vector<pandasm::LiteralArray::Literal> &literals, const ir::Expression *elem);
+
+    std::unique_ptr<detail::EmitterDependencies> dependencies_;
 };
 }  // namespace ark::es2panda::compiler
 

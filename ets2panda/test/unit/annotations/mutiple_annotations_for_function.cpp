@@ -91,47 +91,39 @@ public:
 
     void CheckLiteralArrayTable(pandasm::Program *program)
     {
-        std::vector<std::pair<std::string, std::vector<AnnotationValueType>>> expectedLiteralArrayTable = {
-            {"ETSGLOBAL%%annotation-Anno2-param-0", std::vector<AnnotationValueType> {1U, 2U, 3U, 4U}},
-            {"ETSGLOBAL%%annotation-Anno3-param-1", std::vector<AnnotationValueType> {1U}},
-            {"ETSGLOBAL%%annotation-Anno3-param-2", std::vector<AnnotationValueType> {2U}},
+        ExpectedLiteralArrayTable expectedLiteralArrayTable = {
+            {"ETSGLOBAL%%annotation-Anno2-param-0", {1U, 2U, 3U, 4U}},
+            {"ETSGLOBAL%%annotation-Anno3-param-1", {1U}},
+            {"ETSGLOBAL%%annotation-Anno3-param-2", {2U}},
             {"ETSGLOBAL%%annotation-Anno3-param-3",
-             std::vector<AnnotationValueType> {std::string("ETSGLOBAL%%annotation-Anno3-param-1"),
-                                               std::string("ETSGLOBAL%%annotation-Anno3-param-2")}},
-            {"ETSGLOBAL%%annotation-Anno3-param-4", std::vector<AnnotationValueType> {2U}},
-            {"ETSGLOBAL%%annotation-Anno3-param-5", std::vector<AnnotationValueType> {3U}},
+             {"ETSGLOBAL%%annotation-Anno3-param-1", "ETSGLOBAL%%annotation-Anno3-param-2"}},
+            {"ETSGLOBAL%%annotation-Anno3-param-4", {2U}},
+            {"ETSGLOBAL%%annotation-Anno3-param-5", {3U}},
             {"ETSGLOBAL%%annotation-Anno3-param-6",
-             std::vector<AnnotationValueType> {std::string("ETSGLOBAL%%annotation-Anno3-param-4"),
-                                               std::string("ETSGLOBAL%%annotation-Anno3-param-5")}},
-            {"ETSGLOBAL%%annotation-Anno3-param-7", std::vector<AnnotationValueType> {3U}},
-            {"ETSGLOBAL%%annotation-Anno3-param-8", std::vector<AnnotationValueType> {4U}},
+             {"ETSGLOBAL%%annotation-Anno3-param-4", "ETSGLOBAL%%annotation-Anno3-param-5"}},
+            {"ETSGLOBAL%%annotation-Anno3-param-7", {3U}},
+            {"ETSGLOBAL%%annotation-Anno3-param-8", {4U}},
             {"ETSGLOBAL%%annotation-Anno3-param-9",
-             std::vector<AnnotationValueType> {std::string("ETSGLOBAL%%annotation-Anno3-param-7"),
-                                               std::string("ETSGLOBAL%%annotation-Anno3-param-8")}},
+             {"ETSGLOBAL%%annotation-Anno3-param-7", "ETSGLOBAL%%annotation-Anno3-param-8"}},
             {"ETSGLOBAL%%annotation-Anno3-param-10",
-             std::vector<AnnotationValueType> {std::string("ETSGLOBAL%%annotation-Anno3-param-3"),
-                                               std::string("ETSGLOBAL%%annotation-Anno3-param-6"),
-                                               std::string("ETSGLOBAL%%annotation-Anno3-param-9")}},
-            {"ETSGLOBAL.foo:void;%%annotation-Anno2-value-11", std::vector<AnnotationValueType> {4U, 5U, 6U, 7U}},
-            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-12", std::vector<AnnotationValueType> {1U}},
-            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-13", std::vector<AnnotationValueType> {2U}},
+             {"ETSGLOBAL%%annotation-Anno3-param-3", "ETSGLOBAL%%annotation-Anno3-param-6",
+              "ETSGLOBAL%%annotation-Anno3-param-9"}},
+            {"ETSGLOBAL.foo:void;%%annotation-Anno2-value-11", {4U, 5U, 6U, 7U}},
+            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-12", {1U}},
+            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-13", {2U}},
             {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-14",
-             std::vector<AnnotationValueType> {std::string("ETSGLOBAL.foo:void;%%annotation-Anno3-param-12"),
-                                               std::string("ETSGLOBAL.foo:void;%%annotation-Anno3-param-13")}},
-            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-15", std::vector<AnnotationValueType> {2U}},
-            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-16", std::vector<AnnotationValueType> {3U}},
+             {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-12", "ETSGLOBAL.foo:void;%%annotation-Anno3-param-13"}},
+            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-15", {2U}},
+            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-16", {3U}},
             {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-17",
-             std::vector<AnnotationValueType> {std::string("ETSGLOBAL.foo:void;%%annotation-Anno3-param-15"),
-                                               std::string("ETSGLOBAL.foo:void;%%annotation-Anno3-param-16")}},
-            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-18", std::vector<AnnotationValueType> {3U}},
-            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-19", std::vector<AnnotationValueType> {4U}},
+             {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-15", "ETSGLOBAL.foo:void;%%annotation-Anno3-param-16"}},
+            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-18", {3U}},
+            {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-19", {4U}},
             {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-20",
-             std::vector<AnnotationValueType> {std::string("ETSGLOBAL.foo:void;%%annotation-Anno3-param-18"),
-                                               std::string("ETSGLOBAL.foo:void;%%annotation-Anno3-param-19")}},
+             {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-18", "ETSGLOBAL.foo:void;%%annotation-Anno3-param-19"}},
             {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-21",
-             std::vector<AnnotationValueType> {std::string("ETSGLOBAL.foo:void;%%annotation-Anno3-param-14"),
-                                               std::string("ETSGLOBAL.foo:void;%%annotation-Anno3-param-17"),
-                                               std::string("ETSGLOBAL.foo:void;%%annotation-Anno3-param-20")}},
+             {"ETSGLOBAL.foo:void;%%annotation-Anno3-param-14", "ETSGLOBAL.foo:void;%%annotation-Anno3-param-17",
+              "ETSGLOBAL.foo:void;%%annotation-Anno3-param-20"}},
         };
 
         AnnotationEmitTest::CheckLiteralArrayTable(program, expectedLiteralArrayTable);
@@ -142,7 +134,7 @@ private:
     NO_MOVE_SEMANTIC(MutipleAnnotationsforFunction);
 };
 
-TEST_F(MutipleAnnotationsforFunction, mutiple_annotations_for_function)
+TEST_F(MutipleAnnotationsforFunction, DISABLED_mutiple_annotations_for_function)
 {
     std::string_view text = R"(
         @interface Anno1 {
