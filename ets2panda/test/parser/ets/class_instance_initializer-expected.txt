@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "A",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -81,7 +79,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -100,7 +97,6 @@
             "key": {
               "type": "Identifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -152,7 +148,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -171,7 +166,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -197,7 +191,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -243,7 +236,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -339,7 +331,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "b",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 21,
@@ -435,7 +426,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -531,7 +521,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "b",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -648,7 +637,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -674,7 +662,6 @@
                     "id": {
                       "type": "Identifier",
                       "name": "constructor",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 1,
@@ -712,7 +699,6 @@
                               }
                             }
                           },
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 26,
@@ -815,7 +801,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "a",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 28,
@@ -911,7 +896,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "b",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 29,
@@ -1023,7 +1007,6 @@
                   }
                 },
                 "overloads": [],
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 26,
@@ -1042,7 +1025,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -1068,7 +1050,6 @@
                     "id": {
                       "type": "Identifier",
                       "name": "constructor",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 1,
@@ -1098,7 +1079,6 @@
                               "name": {
                                 "type": "Identifier",
                                 "name": "String",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 32,
@@ -1138,7 +1118,6 @@
                               }
                             }
                           },
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 32,
@@ -1194,7 +1173,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "a",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 33,
@@ -1290,7 +1268,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "b",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 34,
@@ -1386,7 +1363,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "a",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 35,
@@ -1482,7 +1458,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "b",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 36,
@@ -1594,7 +1569,6 @@
                   }
                 },
                 "overloads": [],
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 32,
@@ -1609,7 +1583,6 @@
                 }
               }
             ],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -1656,7 +1629,6 @@
         "id": {
           "type": "Identifier",
           "name": "B",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 41,
@@ -1677,7 +1649,6 @@
             "name": {
               "type": "Identifier",
               "name": "A",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 41,
@@ -1724,7 +1695,6 @@
             "key": {
               "type": "Identifier",
               "name": "c",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 42,
@@ -1776,7 +1746,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 42,
@@ -1795,7 +1764,6 @@
             "key": {
               "type": "Identifier",
               "name": "d",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 43,
@@ -1847,7 +1815,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 43,
@@ -1866,7 +1833,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -1892,7 +1858,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -1938,7 +1903,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "c",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 45,
@@ -2034,7 +1998,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "d",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 46,
@@ -2130,7 +2093,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "c",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 47,
@@ -2226,7 +2188,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "d",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 48,
@@ -2343,7 +2304,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -2369,7 +2329,6 @@
                     "id": {
                       "type": "Identifier",
                       "name": "constructor",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 1,
@@ -2407,7 +2366,6 @@
                               }
                             }
                           },
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 51,
@@ -2510,7 +2468,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "c",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 53,
@@ -2606,7 +2563,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "d",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 54,
@@ -2718,7 +2674,6 @@
                   }
                 },
                 "overloads": [],
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 51,
@@ -2737,7 +2692,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -2763,7 +2717,6 @@
                     "id": {
                       "type": "Identifier",
                       "name": "constructor",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 1,
@@ -2793,7 +2746,6 @@
                               "name": {
                                 "type": "Identifier",
                                 "name": "String",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 57,
@@ -2833,7 +2785,6 @@
                               }
                             }
                           },
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 57,
@@ -2953,7 +2904,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "c",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 59,
@@ -3049,7 +2999,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "d",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 60,
@@ -3145,7 +3094,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "c",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 61,
@@ -3241,7 +3189,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "d",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 62,
@@ -3353,7 +3300,6 @@
                   }
                 },
                 "overloads": [],
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 57,
@@ -3368,7 +3314,6 @@
                 }
               }
             ],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 44,
@@ -3415,7 +3360,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -3437,7 +3381,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -3463,7 +3406,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -3524,7 +3466,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,

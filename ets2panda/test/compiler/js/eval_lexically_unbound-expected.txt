@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "Foo",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 17,
@@ -28,7 +27,6 @@
           "key": {
             "type": "Identifier",
             "name": "constructor",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -83,7 +81,6 @@
                         "property": {
                           "type": "PrivateIdentifier",
                           "name": "bar",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -195,7 +192,6 @@
             }
           },
           "overloads": [],
-          "decorators": [],
           "loc": {
             "start": {
               "line": 19,
@@ -215,7 +211,6 @@
             "key": {
               "type": "PrivateIdentifier",
               "name": "bar",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -232,7 +227,6 @@
             "value": {
               "type": "Identifier",
               "name": "undefined",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -252,7 +246,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -300,7 +293,6 @@
         "callee": {
           "type": "Identifier",
           "name": "eval",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 24,

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -91,7 +88,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "Array",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 1,
@@ -115,7 +111,6 @@
                                         "name": {
                                           "type": "Identifier",
                                           "name": "number",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 1,
@@ -195,7 +190,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -310,7 +304,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "x",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -341,7 +334,6 @@
                                     "argument": {
                                       "type": "Identifier",
                                       "name": "y",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 18,
@@ -454,7 +446,6 @@
                                   "name": {
                                     "type": "Identifier",
                                     "name": "Array",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 1,
@@ -478,7 +469,6 @@
                                           "name": {
                                             "type": "Identifier",
                                             "name": "number",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 1,
@@ -571,7 +561,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -588,7 +577,6 @@
                           "init": {
                             "type": "Identifier",
                             "name": "x",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -671,7 +659,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,

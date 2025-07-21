@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -107,7 +104,6 @@
                                   "name": {
                                     "type": "Identifier",
                                     "name": "Exception",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 18,
@@ -210,7 +206,6 @@
                           "param": {
                             "type": "Identifier",
                             "name": "e",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -293,7 +288,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,

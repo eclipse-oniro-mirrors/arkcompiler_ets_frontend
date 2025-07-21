@@ -6,7 +6,6 @@
       "id": {
         "type": "Identifier",
         "name": "Type1",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 17,
@@ -27,7 +26,6 @@
           "name": {
             "type": "Identifier",
             "name": "prop",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -49,7 +47,6 @@
               "typeName": {
                 "type": "Identifier",
                 "name": "T1",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 17,
@@ -140,7 +137,6 @@
             "name": {
               "type": "Identifier",
               "name": "T1",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -214,7 +210,6 @@
       "id": {
         "type": "Identifier",
         "name": "Type2",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 18,
@@ -235,7 +230,6 @@
           "name": {
             "type": "Identifier",
             "name": "prop",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -257,7 +251,6 @@
               "typeName": {
                 "type": "Identifier",
                 "name": "T2",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 18,
@@ -348,7 +341,6 @@
             "name": {
               "type": "Identifier",
               "name": "T2",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -422,7 +414,6 @@
       "id": {
         "type": "Identifier",
         "name": "Type3",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 19,
@@ -443,7 +434,6 @@
           "name": {
             "type": "Identifier",
             "name": "prop",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -465,7 +455,6 @@
               "typeName": {
                 "type": "Identifier",
                 "name": "T3",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 19,
@@ -556,7 +545,6 @@
             "name": {
               "type": "Identifier",
               "name": "T3",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -630,7 +618,6 @@
       "id": {
         "type": "Identifier",
         "name": "Type4",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 20,
@@ -651,7 +638,6 @@
           "name": {
             "type": "Identifier",
             "name": "prop",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -673,7 +659,6 @@
               "typeName": {
                 "type": "Identifier",
                 "name": "T4",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 20,
@@ -762,7 +747,6 @@
             "name": {
               "type": "Identifier",
               "name": "T4",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -836,7 +820,6 @@
       "id": {
         "type": "Identifier",
         "name": "Type5",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 21,
@@ -857,7 +840,6 @@
           "name": {
             "type": "Identifier",
             "name": "prop",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -879,7 +861,6 @@
               "typeName": {
                 "type": "Identifier",
                 "name": "T5",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 21,
@@ -968,7 +949,6 @@
             "name": {
               "type": "Identifier",
               "name": "T5",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 21,
@@ -1042,7 +1022,6 @@
       "id": {
         "type": "Identifier",
         "name": "Type6",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 22,
@@ -1063,7 +1042,6 @@
           "name": {
             "type": "Identifier",
             "name": "prop",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -1085,7 +1063,6 @@
               "typeName": {
                 "type": "Identifier",
                 "name": "T6",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 22,
@@ -1159,7 +1136,6 @@
             "name": {
               "type": "Identifier",
               "name": "T6",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -1233,7 +1209,6 @@
       "id": {
         "type": "Identifier",
         "name": "Type7",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 23,
@@ -1254,7 +1229,6 @@
           "name": {
             "type": "Identifier",
             "name": "prop",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,
@@ -1276,7 +1250,6 @@
               "typeName": {
                 "type": "Identifier",
                 "name": "T7",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 23,
@@ -1350,7 +1323,6 @@
             "name": {
               "type": "Identifier",
               "name": "T7",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,

@@ -8,7 +8,6 @@
         "id": {
           "type": "Identifier",
           "name": "a",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 17,
@@ -60,7 +59,6 @@
           "id": {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -125,7 +123,6 @@
         "id": {
           "type": "Identifier",
           "name": "a",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 19,
@@ -214,3 +211,4 @@
     }
   }
 }
+TypeError: Function implementation is missing or not immediately following the declaration. [test-keyword-declare7.ts:17:18]

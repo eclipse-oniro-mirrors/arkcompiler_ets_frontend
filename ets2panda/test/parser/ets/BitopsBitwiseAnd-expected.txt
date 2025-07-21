@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "BitopsBitwiseAnd",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "n",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -81,7 +79,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -100,7 +97,6 @@
             "key": {
               "type": "Identifier",
               "name": "expected",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -152,7 +148,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -171,7 +166,6 @@
             "key": {
               "type": "Identifier",
               "name": "run",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -197,7 +191,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "run",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -256,7 +249,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 21,
@@ -339,7 +331,6 @@
                                   }
                                 }
                               },
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 22,
@@ -403,7 +394,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 22,
@@ -437,7 +427,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "n",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -486,7 +475,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 22,
@@ -524,7 +512,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "bitwiseAndValue",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 23,
@@ -544,7 +531,6 @@
                                 "left": {
                                   "type": "Identifier",
                                   "name": "bitwiseAndValue",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 23,
@@ -561,7 +547,6 @@
                                 "right": {
                                   "type": "Identifier",
                                   "name": "i",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 23,
@@ -650,7 +635,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "arktest",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 26,
@@ -667,7 +651,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "assertEQ",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 26,
@@ -700,7 +683,6 @@
                           {
                             "type": "Identifier",
                             "name": "bitwiseAndValue",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 26,
@@ -815,7 +797,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -834,7 +815,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -859,7 +839,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -920,7 +899,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -967,7 +945,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -989,7 +966,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 30,
@@ -1015,7 +991,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 30,
@@ -1059,7 +1034,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 31,
@@ -1082,7 +1056,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "BitopsBitwiseAnd",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 31,
@@ -1173,7 +1146,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 32,
@@ -1190,7 +1162,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "run",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 32,
@@ -1288,7 +1259,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 30,

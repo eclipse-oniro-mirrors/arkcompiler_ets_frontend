@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "TestClass",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 22,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "test_member",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,
@@ -66,7 +64,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,
@@ -85,7 +82,6 @@
             "key": {
               "type": "Identifier",
               "name": "test_method",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 25,
@@ -111,7 +107,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "test_method",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 25,
@@ -187,7 +182,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,
@@ -206,7 +200,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -231,7 +224,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -292,7 +284,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -339,7 +330,6 @@
         "id": {
           "type": "Identifier",
           "name": "AliasClass",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 28,
@@ -361,7 +351,6 @@
             "key": {
               "type": "Identifier",
               "name": "alias_class_method",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 29,
@@ -387,7 +376,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "alias_class_method",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 29,
@@ -432,7 +420,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "console",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 30,
@@ -449,7 +436,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "print",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 30,
@@ -564,7 +550,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 29,
@@ -583,7 +568,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 28,
@@ -608,7 +592,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 28,
@@ -669,7 +652,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -715,7 +697,6 @@
       "id": {
         "type": "Identifier",
         "name": "aliased",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 34,
@@ -736,7 +717,6 @@
           "name": {
             "type": "Identifier",
             "name": "AliasClass",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 34,
@@ -795,7 +775,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -817,7 +796,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -843,7 +821,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -904,7 +881,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -923,7 +899,6 @@
             "key": {
               "type": "Identifier",
               "name": "test_func",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -949,7 +924,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "test_func",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -1025,7 +999,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -1044,7 +1017,6 @@
             "key": {
               "type": "Identifier",
               "name": "aliased_func",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -1070,7 +1042,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "aliased_func",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -1146,7 +1117,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -1165,7 +1135,6 @@
             "key": {
               "type": "Identifier",
               "name": "msg",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -1202,7 +1171,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -1221,7 +1189,6 @@
             "key": {
               "type": "Identifier",
               "name": "aliasedMsg",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -1258,7 +1225,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,

@@ -27,10 +27,9 @@ class AnnotationUsage;
 
 class FunctionDeclaration : public AnnotationAllowed<Statement> {
 public:
-    explicit FunctionDeclaration(ArenaAllocator *allocator, ScriptFunction *func,
+    explicit FunctionDeclaration([[maybe_unused]] ArenaAllocator *allocator, ScriptFunction *func,
                                  ArenaVector<AnnotationUsage *> &&annotations, bool isAnonymous = false)
         : AnnotationAllowed<Statement>(AstNodeType::FUNCTION_DECLARATION, std::move(annotations)),
-          decorators_(allocator->Adapter()),
           func_(func),
           isAnonymous_(isAnonymous)
     {
@@ -40,9 +39,9 @@ public:
         }
     }
 
-    explicit FunctionDeclaration(ArenaAllocator *allocator, ScriptFunction *func, bool isAnonymous = false)
+    explicit FunctionDeclaration([[maybe_unused]] ArenaAllocator *allocator, ScriptFunction *func,
+                                 bool isAnonymous = false)
         : AnnotationAllowed<Statement>(AstNodeType::FUNCTION_DECLARATION, allocator),
-          decorators_(allocator->Adapter()),
           func_(func),
           isAnonymous_(isAnonymous)
     {
@@ -52,10 +51,9 @@ public:
         }
     }
 
-    explicit FunctionDeclaration(ArenaAllocator *allocator, ScriptFunction *func, bool isAnonymous,
+    explicit FunctionDeclaration([[maybe_unused]] ArenaAllocator *allocator, ScriptFunction *func, bool isAnonymous,
                                  AstNodeHistory *history)
         : AnnotationAllowed<Statement>(AstNodeType::FUNCTION_DECLARATION, allocator),
-          decorators_(allocator->Adapter()),
           func_(func),
           isAnonymous_(isAnonymous)
     {
@@ -81,17 +79,6 @@ public:
         return GetHistoryNodeAs<FunctionDeclaration>()->func_;
     }
 
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        auto newNode = this->GetOrCreateHistoryNode()->AsFunctionDeclaration();
-        newNode->decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return !inTs;
-    }
-
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
@@ -109,20 +96,10 @@ public:
     FunctionDeclaration *Construct(ArenaAllocator *allocator) override;
     void CopyTo(AstNode *other) const override;
 
-    [[nodiscard]] const ArenaVector<Decorator *> &Decorators() const
-    {
-        return GetHistoryNodeAs<FunctionDeclaration>()->decorators_;
-    };
-
 private:
     friend class SizeOfNodeTest;
     void SetFunction(ScriptFunction *func);
-    void EmplaceDecorators(Decorator *decorators);
-    void ClearDecorators();
-    void SetValueDecorators(Decorator *decorators, size_t index);
-    [[nodiscard]] ArenaVector<Decorator *> &DecoratorsForUpdate();
 
-    ArenaVector<Decorator *> decorators_;
     ScriptFunction *func_;
     bool isAnonymous_;
 };

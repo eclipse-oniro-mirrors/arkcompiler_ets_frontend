@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "foo",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "foo",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -85,7 +82,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "string",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 16,
@@ -125,7 +121,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 16,
@@ -164,7 +159,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "string",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 16,
@@ -204,7 +198,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 1,
@@ -243,7 +236,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "string",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 16,
@@ -283,7 +275,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 1,
@@ -329,7 +320,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "string",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 16,
@@ -369,7 +359,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 16,
@@ -391,7 +380,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "gensym%%_1",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 16,
@@ -437,7 +425,6 @@
                             "consequent": {
                               "type": "Identifier",
                               "name": "gensym%%_1",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 16,
@@ -476,7 +463,6 @@
                                   "name": {
                                     "type": "Identifier",
                                     "name": "string",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 16,
@@ -585,7 +571,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "string",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 16,
@@ -625,7 +610,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 16,
@@ -647,7 +631,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "gensym%%_2",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 16,
@@ -693,7 +676,6 @@
                             "consequent": {
                               "type": "Identifier",
                               "name": "gensym%%_2",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 16,
@@ -732,7 +714,6 @@
                                   "name": {
                                     "type": "Identifier",
                                     "name": "string",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 16,
@@ -851,7 +832,6 @@
                           "left": {
                             "type": "Identifier",
                             "name": "functions",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 16,
@@ -868,7 +848,6 @@
                           "right": {
                             "type": "Identifier",
                             "name": "OptionalParametersAnnotation",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 16,
@@ -927,7 +906,6 @@
                         "key": {
                           "type": "Identifier",
                           "name": "minArgCount",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 16,
@@ -963,7 +941,6 @@
                         "optional": false,
                         "computed": false,
                         "definite": false,
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 16,
@@ -1019,7 +996,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -1038,7 +1014,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -1064,7 +1039,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -1107,7 +1081,6 @@
                         "callee": {
                           "type": "Identifier",
                           "name": "foo",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 21,
@@ -1207,7 +1180,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,

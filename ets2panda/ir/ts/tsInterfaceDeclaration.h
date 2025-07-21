@@ -44,10 +44,9 @@ public:
     };
     // NOLINTEND(cppcoreguidelines-pro-type-member-init)
 
-    explicit TSInterfaceDeclaration(ArenaAllocator *allocator, ArenaVector<TSInterfaceHeritage *> &&extends,
-                                    ConstructorData &&data)
+    explicit TSInterfaceDeclaration([[maybe_unused]] ArenaAllocator *allocator,
+                                    ArenaVector<TSInterfaceHeritage *> &&extends, ConstructorData &&data)
         : AnnotationAllowed<TypedStatement>(AstNodeType::TS_INTERFACE_DECLARATION, allocator),
-          decorators_(allocator->Adapter()),
           id_(data.id),
           typeParams_(data.typeParams),
           body_(data.body),
@@ -62,10 +61,10 @@ public:
         InitHistory();
     }
 
-    explicit TSInterfaceDeclaration(ArenaAllocator *allocator, ArenaVector<TSInterfaceHeritage *> &&extends,
-                                    ConstructorData &&data, AstNodeHistory *history)
+    explicit TSInterfaceDeclaration([[maybe_unused]] ArenaAllocator *allocator,
+                                    ArenaVector<TSInterfaceHeritage *> &&extends, ConstructorData &&data,
+                                    AstNodeHistory *history)
         : AnnotationAllowed<TypedStatement>(AstNodeType::TS_INTERFACE_DECLARATION, allocator),
-          decorators_(allocator->Adapter()),
           id_(data.id),
           typeParams_(data.typeParams),
           body_(data.body),
@@ -160,22 +159,6 @@ public:
         return GetHistoryNodeAs<TSInterfaceDeclaration>()->extends_;
     }
 
-    const ArenaVector<Decorator *> &Decorators() const
-    {
-        return GetHistoryNodeAs<TSInterfaceDeclaration>()->decorators_;
-    }
-
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        auto newNode = reinterpret_cast<TSInterfaceDeclaration *>(this->GetOrCreateHistoryNode());
-        newNode->decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return !inTs;
-    }
-
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
 
     [[nodiscard]] es2panda::Language Language() const noexcept
@@ -216,12 +199,6 @@ public:
     void ClearExtends();
     void SetValueExtends(TSInterfaceHeritage *extends, size_t index);
 
-    void EmplaceDecorators(Decorator *decorators);
-    void ClearDecorators();
-    void SetValueDecorators(Decorator *decorators, size_t index);
-    [[nodiscard]] const ArenaVector<Decorator *> &Decorators();
-    [[nodiscard]] ArenaVector<Decorator *> &DecoratorsForUpdate();
-
 private:
     bool RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const;
     friend class SizeOfNodeTest;
@@ -229,7 +206,6 @@ private:
     void SetTypeParams(TSTypeParameterDeclaration *typeParams);
     void SetBody(TSInterfaceBody *body);
 
-    ArenaVector<Decorator *> decorators_;
     varbinder::LocalScope *scope_ {nullptr};
     Identifier *id_;
     TSTypeParameterDeclaration *typeParams_;

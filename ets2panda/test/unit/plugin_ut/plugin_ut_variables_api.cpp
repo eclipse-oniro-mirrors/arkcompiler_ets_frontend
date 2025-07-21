@@ -68,8 +68,7 @@ static std::string expectResStr(R"(
         "type": "ScriptFunction",
         "id": {
           "type": "Identifier",
-          "name": "main",
-          "decorators": []
+          "name": "main"
         },
         "generator": false,
         "async": false,
@@ -85,8 +84,7 @@ static std::string expectResStr(R"(
                   "type": "VariableDeclarator",
                   "id": {
                     "type": "Identifier",
-                    "name": "newVar",
-                    "decorators": []
+                    "name": "newVar"
                   },
                   "init": {
                     "type": "NumberLiteral",

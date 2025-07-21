@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "Baz",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 17,
@@ -28,7 +27,6 @@
           "key": {
             "type": "Identifier",
             "name": "constructor",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -74,7 +72,6 @@
                     }
                   },
                   "optional": true,
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -107,7 +104,6 @@
                     }
                   },
                   "optional": true,
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -150,7 +146,6 @@
                         "property": {
                           "type": "Identifier",
                           "name": "s",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 21,
@@ -185,7 +180,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "s",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 21,
@@ -279,7 +273,6 @@
                         "property": {
                           "type": "Identifier",
                           "name": "n",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 22,
@@ -314,7 +307,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "n",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 22,
@@ -407,7 +399,6 @@
                         "property": {
                           "type": "Identifier",
                           "name": "f",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 23,
@@ -505,7 +496,6 @@
             }
           },
           "overloads": [],
-          "decorators": [],
           "loc": {
             "start": {
               "line": 20,
@@ -525,7 +515,6 @@
             "key": {
               "type": "Identifier",
               "name": "s",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -560,7 +549,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -579,7 +567,6 @@
             "key": {
               "type": "Identifier",
               "name": "n",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -614,7 +601,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -633,7 +619,6 @@
             "key": {
               "type": "Identifier",
               "name": "f",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 25,
@@ -704,7 +689,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "n",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 26,
@@ -800,7 +784,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,

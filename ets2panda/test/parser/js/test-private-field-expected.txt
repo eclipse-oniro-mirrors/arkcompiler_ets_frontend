@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "A",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -28,7 +27,6 @@
           "key": {
             "type": "Identifier",
             "name": "constructor",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -98,7 +96,6 @@
             }
           },
           "overloads": [],
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -118,7 +115,6 @@
             "key": {
               "type": "PrivateIdentifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -138,7 +134,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -157,7 +152,6 @@
             "key": {
               "type": "PrivateIdentifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -227,7 +221,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -246,7 +239,6 @@
             "key": {
               "type": "PrivateIdentifier",
               "name": "t",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -316,7 +308,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -335,7 +326,6 @@
             "key": {
               "type": "PrivateIdentifier",
               "name": "z",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -405,7 +395,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -424,7 +413,6 @@
             "key": {
               "type": "PrivateIdentifier",
               "name": "z",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 21,
@@ -454,7 +442,6 @@
                   {
                     "type": "Identifier",
                     "name": "t",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 21,
@@ -512,7 +499,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -531,7 +517,6 @@
             "key": {
               "type": "Identifier",
               "name": "u",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -556,7 +541,6 @@
                   "key": {
                     "type": "Identifier",
                     "name": "constructor",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 22,
@@ -626,7 +610,6 @@
                     }
                   },
                   "overloads": [],
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -646,7 +629,6 @@
                     "key": {
                       "type": "Identifier",
                       "name": "e",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 23,
@@ -684,7 +666,6 @@
                                 "left": {
                                   "type": "PrivateIdentifier",
                                   "name": "a",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 1,
@@ -754,7 +735,6 @@
                                         "property": {
                                           "type": "PrivateIdentifier",
                                           "name": "a",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 25,
@@ -849,7 +829,6 @@
                                         "property": {
                                           "type": "PrivateIdentifier",
                                           "name": "t",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 26,
@@ -975,7 +954,6 @@
                       }
                     },
                     "overloads": [],
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 23,
@@ -994,7 +972,6 @@
                     "key": {
                       "type": "PrivateIdentifier",
                       "name": "t",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 29,
@@ -1064,7 +1041,6 @@
                       }
                     },
                     "overloads": [],
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 29,
@@ -1111,7 +1087,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,

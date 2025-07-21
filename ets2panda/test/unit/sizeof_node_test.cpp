@@ -145,8 +145,7 @@ size_t SizeOfNodeTest::SizeOf<ClassDeclaration>()
 
     // clang-format off
     return SizeOf<Statement>() +
-        sizeof(node->def_) +
-        sizeof(node->decorators_);
+        sizeof(node->def_);
     // clang-format on
 }
 
@@ -177,7 +176,6 @@ size_t SizeOfNodeTest::SizeOf<ClassElement>()
     return SizeOf<TypedStatement>() +
         sizeof(node->key_) +
         sizeof(node->value_) +
-        sizeof(node->decorators_) +
         Align(sizeof(node->isComputed_)) +
         sizeof(node->enumMember_);
     // clang-format on
@@ -285,7 +283,6 @@ size_t SizeOfNodeTest::SizeOf<FunctionDeclaration>()
 
     // clang-format off
     return SizeOf<AnnotationAllowed<Statement>>() +
-        sizeof(node->decorators_) +
         sizeof(node->func_) +
         Align(sizeof(node->isAnonymous_));
     // clang-format on
@@ -299,7 +296,6 @@ size_t SizeOfNodeTest::SizeOf<TSEnumDeclaration>()
     // clang-format off
     return SizeOf<TypedStatement>() +
         sizeof(node->scope_) +
-        sizeof(node->decorators_) +
         sizeof(node->key_) +
         sizeof(node->members_) +
         sizeof(node->internalName_) +
@@ -327,7 +323,6 @@ size_t SizeOfNodeTest::SizeOf<TSInterfaceDeclaration>()
 
     // clang-format off
     return SizeOf<AnnotationAllowed<TypedStatement>>() +
-        sizeof(node->decorators_) +
         sizeof(node->scope_) +
         sizeof(node->id_) +
         sizeof(node->typeParams_) +
@@ -365,7 +360,6 @@ size_t SizeOfNodeTest::SizeOf<TSTypeAliasDeclaration>()
 
     // clang-format off
     return SizeOf<AnnotatedStatement>() +
-        sizeof(node->decorators_) +
         sizeof(node->annotations_) +
         sizeof(node->id_) +
         sizeof(node->typeParams_) +
@@ -402,7 +396,6 @@ size_t SizeOfNodeTest::SizeOf<VariableDeclaration>()
     // clang-format off
     return SizeOf<AnnotationAllowed<Statement>>() +
         Align(sizeof(node->kind_) +
-        sizeof(node->decorators_) +
         sizeof(node->declarators_));
     // clang-format on
 }

@@ -31,8 +31,9 @@ public:
     NO_COPY_SEMANTIC(SpreadElement);
     NO_MOVE_SEMANTIC(SpreadElement);
 
-    explicit SpreadElement(AstNodeType const nodeType, ArenaAllocator *const allocator, Expression *const argument)
-        : AnnotatedExpression(nodeType), decorators_(allocator->Adapter()), argument_(argument)
+    explicit SpreadElement(AstNodeType const nodeType, [[maybe_unused]] ArenaAllocator *const allocator,
+                           Expression *const argument)
+        : AnnotatedExpression(nodeType), argument_(argument)
     {
         ES2PANDA_ASSERT(argument_ != nullptr);
     }
@@ -52,21 +53,6 @@ public:
     [[nodiscard]] bool IsOptional() const noexcept
     {
         return optional_;
-    }
-
-    [[nodiscard]] const ArenaVector<Decorator *> &Decorators() const noexcept
-    {
-        return decorators_;
-    }
-
-    void AddDecorators(ArenaVector<Decorator *> &&decorators) override
-    {
-        decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return true;
     }
 
     void SetOptional(bool optional) noexcept
@@ -96,7 +82,6 @@ public:
     }
 
 private:
-    ArenaVector<Decorator *> decorators_;
     Expression *argument_ = nullptr;
     bool optional_ {false};
 };

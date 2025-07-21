@@ -14,7 +14,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -105,7 +104,6 @@
       "id": {
         "type": "Identifier",
         "name": "alma",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 17,
@@ -139,7 +137,6 @@
         "id": {
           "type": "Identifier",
           "name": "A",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 21,
@@ -160,7 +157,6 @@
           "key": {
             "type": "Identifier",
             "name": "constructor",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -230,7 +226,6 @@
             }
           },
           "overloads": [],
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -250,7 +245,6 @@
             "key": {
               "type": "Identifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -290,7 +284,6 @@
                       }
                     }
                   },
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -387,7 +380,6 @@
                       }
                     }
                   },
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -431,7 +423,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,

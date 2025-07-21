@@ -25,7 +25,7 @@
 #include "compiler/core/pandagen.h"
 #include "ir/astDump.h"
 #include "ir/srcDump.h"
-#include "ir/base/decorator.h"
+
 #include "ir/expressions/identifier.h"
 #include "ir/ts/tsInterfaceBody.h"
 #include "ir/ts/tsInterfaceHeritage.h"
@@ -91,48 +91,8 @@ void TSInterfaceDeclaration::SetValueExtends(TSInterfaceHeritage *extends, size_
     return newNode->extends_;
 }
 
-void TSInterfaceDeclaration::EmplaceDecorators(Decorator *decorators)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
-    newNode->decorators_.emplace_back(decorators);
-}
-
-void TSInterfaceDeclaration::ClearDecorators()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
-    newNode->decorators_.clear();
-}
-
-void TSInterfaceDeclaration::SetValueDecorators(Decorator *decorators, size_t index)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
-    auto &arenaVector = newNode->decorators_;
-    ES2PANDA_ASSERT(arenaVector.size() > index);
-    arenaVector[index] = decorators;
-}
-
-[[nodiscard]] const ArenaVector<Decorator *> &TSInterfaceDeclaration::Decorators()
-{
-    auto newNode = this->GetHistoryNodeAs<TSInterfaceDeclaration>();
-    return newNode->decorators_;
-}
-
-[[nodiscard]] ArenaVector<Decorator *> &TSInterfaceDeclaration::DecoratorsForUpdate()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
-    return newNode->decorators_;
-}
-
 void TSInterfaceDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    auto const &decorators = Decorators();
-    for (size_t ix = 0; ix < decorators.size(); ix++) {
-        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
-            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueDecorators(transformedNode->AsDecorator(), ix);
-        }
-    }
-
     TransformAnnotations(cb, transformationName);
 
     auto const id = Id();
@@ -166,10 +126,6 @@ void TSInterfaceDeclaration::TransformChildren(const NodeTransformer &cb, std::s
 
 void TSInterfaceDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
-    }
-
     for (auto *it : Annotations()) {
         cb(it);
     }
@@ -193,7 +149,6 @@ void TSInterfaceDeclaration::Iterate(const NodeTraverser &cb) const
 void TSInterfaceDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", "TSInterfaceDeclaration"},
-                 {"decorators", AstDumper::Optional(Decorators())},
                  {"annotations", AstDumper::Optional(Annotations())},
                  {"body", Body()},
                  {"id", Id()},
@@ -305,7 +260,6 @@ void TSInterfaceDeclaration::CopyTo(AstNode *other) const
 {
     auto otherImpl = other->AsTSInterfaceDeclaration();
 
-    otherImpl->decorators_ = decorators_;
     otherImpl->scope_ = scope_;
     otherImpl->id_ = id_;
     otherImpl->typeParams_ = typeParams_;

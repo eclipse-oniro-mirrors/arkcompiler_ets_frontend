@@ -9,7 +9,6 @@
           "id": {
             "type": "Identifier",
             "name": "var1",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -60,7 +59,6 @@
           "id": {
             "type": "Identifier",
             "name": "var2",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -111,7 +109,6 @@
           "id": {
             "type": "Identifier",
             "name": "var3",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -162,7 +159,6 @@
           "id": {
             "type": "Identifier",
             "name": "var4",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -213,7 +209,6 @@
           "id": {
             "type": "Identifier",
             "name": "var5",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,
@@ -279,7 +274,6 @@
           "id": {
             "type": "Identifier",
             "name": "var6",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 24,
@@ -345,7 +339,6 @@
           "id": {
             "type": "Identifier",
             "name": "var7",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,
@@ -393,7 +386,6 @@
       "id": {
         "type": "Identifier",
         "name": "type1",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 27,
@@ -487,7 +479,6 @@
       "id": {
         "type": "Identifier",
         "name": "type2",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 28,
@@ -583,7 +574,6 @@
         "id": {
           "type": "Identifier",
           "name": "func1",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 30,
@@ -665,7 +655,6 @@
         "id": {
           "type": "Identifier",
           "name": "func2",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 31,
@@ -716,7 +705,6 @@
         "callee": {
           "type": "Identifier",
           "name": "func2",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 32,
@@ -764,7 +752,6 @@
         "id": {
           "type": "Identifier",
           "name": "Class1",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 34,
@@ -785,7 +772,6 @@
           "key": {
             "type": "Identifier",
             "name": "constructor",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 34,
@@ -855,7 +841,6 @@
             }
           },
           "overloads": [],
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -875,7 +860,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 35,
@@ -930,7 +914,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 35,
@@ -949,7 +932,6 @@
             "key": {
               "type": "Identifier",
               "name": "g",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 36,
@@ -1004,7 +986,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 36,
@@ -1042,7 +1023,6 @@
             "optional": false,
             "computed": true,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 37,
@@ -1080,7 +1060,6 @@
             "optional": false,
             "computed": true,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 38,
@@ -1118,7 +1097,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 39,
@@ -1137,7 +1115,6 @@
             "key": {
               "type": "Identifier",
               "name": "j",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 40,
@@ -1157,7 +1134,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 40,
@@ -1176,7 +1152,6 @@
             "key": {
               "type": "Identifier",
               "name": "private",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 41,
@@ -1196,7 +1171,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 41,
@@ -1269,7 +1243,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 42,
@@ -1288,7 +1261,6 @@
             "key": {
               "type": "Identifier",
               "name": "k",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 43,
@@ -1309,7 +1281,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 43,
@@ -1328,7 +1299,6 @@
             "key": {
               "type": "PrivateIdentifier",
               "name": "o",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 44,
@@ -1348,7 +1318,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 44,
@@ -1403,3 +1372,4 @@
     }
   }
 }
+TypeError: Variable var1 implicitly has an any type. [test-keyword-declare.ts:17:5]

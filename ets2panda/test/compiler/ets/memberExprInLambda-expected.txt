@@ -6,7 +6,6 @@
       "id": {
         "type": "Identifier",
         "name": "BenchmarkFunc",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 16,
@@ -70,7 +69,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -92,7 +90,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -118,7 +115,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -179,7 +175,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -198,7 +193,6 @@
             "key": {
               "type": "Identifier",
               "name": "useArrayParamInLambdaFunc",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -224,7 +218,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "useArrayParamInLambdaFunc",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 18,
@@ -275,7 +268,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "Array",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 1,
@@ -299,7 +291,6 @@
                                         "name": {
                                           "type": "Identifier",
                                           "name": "number",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 1,
@@ -379,7 +370,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -517,7 +507,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "BenchmarkFunc",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 20,
@@ -557,7 +546,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -591,7 +579,6 @@
                                         "id": {
                                           "type": "Identifier",
                                           "name": "length",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 21,
@@ -610,7 +597,6 @@
                                           "object": {
                                             "type": "Identifier",
                                             "name": "arr",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 21,
@@ -627,7 +613,6 @@
                                           "property": {
                                             "type": "Identifier",
                                             "name": "length",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 21,
@@ -793,7 +778,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,

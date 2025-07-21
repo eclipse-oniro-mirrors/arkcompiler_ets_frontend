@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -116,7 +113,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -135,7 +131,6 @@
             "key": {
               "type": "Identifier",
               "name": "li",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -172,7 +167,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -191,7 +185,6 @@
             "key": {
               "type": "Identifier",
               "name": "ld",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -228,7 +221,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -247,7 +239,6 @@
             "key": {
               "type": "Identifier",
               "name": "lc",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -284,7 +275,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -303,7 +293,6 @@
             "key": {
               "type": "Identifier",
               "name": "ls",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -340,7 +329,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -359,7 +347,6 @@
             "key": {
               "type": "Identifier",
               "name": "lb",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -396,7 +383,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -415,7 +401,6 @@
             "key": {
               "type": "Identifier",
               "name": "ci",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -452,7 +437,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -471,7 +455,6 @@
             "key": {
               "type": "Identifier",
               "name": "cd",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,
@@ -508,7 +491,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,
@@ -527,7 +509,6 @@
             "key": {
               "type": "Identifier",
               "name": "cc",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 24,
@@ -564,7 +545,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 24,
@@ -583,7 +563,6 @@
             "key": {
               "type": "Identifier",
               "name": "cs",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 25,
@@ -620,7 +599,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,
@@ -639,7 +617,6 @@
             "key": {
               "type": "Identifier",
               "name": "cb",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 26,
@@ -676,7 +653,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 26,

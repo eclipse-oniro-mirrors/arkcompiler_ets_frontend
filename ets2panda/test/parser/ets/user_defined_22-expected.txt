@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "A",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "type",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -72,7 +70,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "number",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -113,7 +110,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -132,7 +128,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -157,7 +152,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -218,7 +212,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -264,7 +257,6 @@
       "id": {
         "type": "Identifier",
         "name": "B",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 19,
@@ -285,7 +277,6 @@
           "name": {
             "type": "Identifier",
             "name": "string",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -344,7 +335,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -366,7 +356,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -392,7 +381,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -453,7 +441,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -472,7 +459,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -495,7 +481,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "A",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -556,7 +541,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -575,7 +559,6 @@
             "key": {
               "type": "Identifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -602,7 +585,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "B",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -643,7 +625,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,

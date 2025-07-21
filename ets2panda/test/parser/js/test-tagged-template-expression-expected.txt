@@ -8,7 +8,6 @@
         "tag": {
           "type": "Identifier",
           "name": "alma",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 17,
@@ -92,7 +91,6 @@
         "tag": {
           "type": "Identifier",
           "name": "fa",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 19,
@@ -116,7 +114,6 @@
               "argument": {
                 "type": "Identifier",
                 "name": "a",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 19,
@@ -230,7 +227,6 @@
         "tag": {
           "type": "Identifier",
           "name": "egy",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 21,
@@ -314,7 +310,6 @@
         "tag": {
           "type": "Identifier",
           "name": "ketto",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 23,
@@ -338,7 +333,6 @@
               "argument": {
                 "type": "Identifier",
                 "name": "a",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 23,
@@ -372,7 +366,6 @@
               "argument": {
                 "type": "Identifier",
                 "name": "b",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 23,
@@ -505,7 +498,6 @@
         "tag": {
           "type": "Identifier",
           "name": "katica",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 25,
@@ -529,7 +521,6 @@
               "argument": {
                 "type": "Identifier",
                 "name": "b",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 25,
@@ -643,7 +634,6 @@
         "tag": {
           "type": "Identifier",
           "name": "harom",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 27,
@@ -667,7 +657,6 @@
               "argument": {
                 "type": "Identifier",
                 "name": "b",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 27,
@@ -781,7 +770,6 @@
         "tag": {
           "type": "Identifier",
           "name": "kiskacsa",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 29,
@@ -867,7 +855,6 @@
           "callee": {
             "type": "Identifier",
             "name": "alma",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 34,
@@ -968,7 +955,6 @@
           "object": {
             "type": "Identifier",
             "name": "alma",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 36,
@@ -1087,7 +1073,6 @@
             "object": {
               "type": "Identifier",
               "name": "fa",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 38,

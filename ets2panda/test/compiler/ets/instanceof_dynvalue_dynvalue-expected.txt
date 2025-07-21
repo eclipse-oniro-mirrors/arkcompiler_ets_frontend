@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "A",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "A",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -74,7 +72,6 @@
           "local": {
             "type": "Identifier",
             "name": "B",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -91,7 +88,6 @@
           "imported": {
             "type": "Identifier",
             "name": "B",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -138,7 +134,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -160,7 +155,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -186,7 +180,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -211,12 +204,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "instanceof_dynvalue_dynvalue.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "instanceof_dynvalue_dynvalue.ets"
                     }
                   }
                 },
@@ -224,12 +217,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "instanceof_dynvalue_dynvalue.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "instanceof_dynvalue_dynvalue.ets"
                   }
                 }
               },
@@ -237,123 +230,16 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "instanceof_dynvalue_dynvalue.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "instanceof_dynvalue_dynvalue.ets"
                 }
               }
             },
             "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "instanceof_dynvalue_dynvalue.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "instanceof_dynvalue_dynvalue.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -372,7 +258,6 @@
             "key": {
               "type": "Identifier",
               "name": "fn",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -398,7 +283,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fn",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -428,7 +312,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "B",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -450,7 +333,7 @@
                             },
                             "end": {
                               "line": 22,
-                              "column": 18,
+                              "column": 17,
                               "program": "instanceof_dynvalue_dynvalue.ets"
                             }
                           }
@@ -463,12 +346,11 @@
                           },
                           "end": {
                             "line": 22,
-                            "column": 18,
+                            "column": 17,
                             "program": "instanceof_dynvalue_dynvalue.ets"
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 22,
@@ -477,7 +359,7 @@
                         },
                         "end": {
                           "line": 22,
-                          "column": 18,
+                          "column": 17,
                           "program": "instanceof_dynvalue_dynvalue.ets"
                         }
                       }
@@ -490,7 +372,7 @@
                       },
                       "end": {
                         "line": 22,
-                        "column": 18,
+                        "column": 17,
                         "program": "instanceof_dynvalue_dynvalue.ets"
                       }
                     }
@@ -522,7 +404,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "o",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 23,
@@ -543,7 +424,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "A",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 23,
@@ -565,7 +445,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 27,
+                                "column": 26,
                                 "program": "instanceof_dynvalue_dynvalue.ets"
                               }
                             }
@@ -578,7 +458,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 27,
+                              "column": 26,
                               "program": "instanceof_dynvalue_dynvalue.ets"
                             }
                           }
@@ -591,7 +471,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 27,
+                            "column": 26,
                             "program": "instanceof_dynvalue_dynvalue.ets"
                           }
                         }
@@ -650,7 +530,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -705,4 +584,6 @@
     }
   }
 }
-TypeError: Right-hand side of instanceof expression must represent a type. [instanceof_dynvalue_dynvalue.ets:23:12]
+TypeError: Cannot find import: dynamic_import_tests [instanceof_dynvalue_dynvalue.ets:20:22]
+TypeError: Cannot find type 'B'. [instanceof_dynvalue_dynvalue.ets:22:16]
+TypeError: Cannot find type 'A'. [instanceof_dynvalue_dynvalue.ets:23:25]

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -106,7 +103,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "Array",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 1,
@@ -178,7 +174,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -277,7 +272,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "goo",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -294,7 +288,6 @@
                           "init": {
                             "type": "Identifier",
                             "name": "foo",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -345,7 +338,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "arktest",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -362,7 +354,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "assertEQ",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -397,7 +388,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "goo",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 19,
@@ -527,7 +517,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,

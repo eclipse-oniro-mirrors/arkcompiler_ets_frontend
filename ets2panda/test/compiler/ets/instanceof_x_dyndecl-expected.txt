@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "AValue",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "AValue",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -107,7 +105,6 @@
           "local": {
             "type": "Identifier",
             "name": "ADeclared",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -124,7 +121,6 @@
           "imported": {
             "type": "Identifier",
             "name": "ADeclared",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -156,7 +152,6 @@
           "local": {
             "type": "Identifier",
             "name": "BDeclared",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -173,7 +168,6 @@
           "imported": {
             "type": "Identifier",
             "name": "BDeclared",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -219,8 +213,158 @@
       "definition": {
         "id": {
           "type": "Identifier",
+          "name": "A",
+          "loc": {
+            "start": {
+              "line": 23,
+              "column": 7,
+              "program": "instanceof_x_dyndecl.ets"
+            },
+            "end": {
+              "line": 23,
+              "column": 8,
+              "program": "instanceof_x_dyndecl.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "constructor",
+              "loc": {
+                "start": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_dyndecl.ets"
+                },
+                "end": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_dyndecl.ets"
+                }
+              }
+            },
+            "kind": "constructor",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "constructor",
+                  "loc": {
+                    "start": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_dyndecl.ets"
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_dyndecl.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_dyndecl.ets"
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_dyndecl.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 23,
+                    "column": 10,
+                    "program": "instanceof_x_dyndecl.ets"
+                  },
+                  "end": {
+                    "line": 23,
+                    "column": 10,
+                    "program": "instanceof_x_dyndecl.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_dyndecl.ets"
+                },
+                "end": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_dyndecl.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 23,
+            "column": 9,
+            "program": "instanceof_x_dyndecl.ets"
+          },
+          "end": {
+            "line": 25,
+            "column": 9,
+            "program": "instanceof_x_dyndecl.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 1,
+          "program": "instanceof_x_dyndecl.ets"
+        },
+        "end": {
+          "line": 25,
+          "column": 9,
+          "program": "instanceof_x_dyndecl.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -242,7 +386,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -268,7 +411,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -293,12 +435,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "instanceof_x_dyndecl.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "instanceof_x_dyndecl.ets"
                     }
                   }
                 },
@@ -306,12 +448,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "instanceof_x_dyndecl.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "instanceof_x_dyndecl.ets"
                   }
                 }
               },
@@ -319,123 +461,16 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "instanceof_x_dyndecl.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "instanceof_x_dyndecl.ets"
                 }
               }
             },
             "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "instanceof_x_dyndecl.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "instanceof_x_dyndecl.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -454,7 +489,6 @@
             "key": {
               "type": "Identifier",
               "name": "fn_object",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 25,
@@ -480,7 +514,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fn_object",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 25,
@@ -510,7 +543,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "Object",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 25,
@@ -532,7 +564,7 @@
                             },
                             "end": {
                               "line": 25,
-                              "column": 30,
+                              "column": 29,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -545,12 +577,11 @@
                           },
                           "end": {
                             "line": 25,
-                            "column": 30,
+                            "column": 29,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 25,
@@ -559,7 +590,7 @@
                         },
                         "end": {
                           "line": 25,
-                          "column": 30,
+                          "column": 29,
                           "program": "instanceof_x_dyndecl.ets"
                         }
                       }
@@ -572,7 +603,7 @@
                       },
                       "end": {
                         "line": 25,
-                        "column": 30,
+                        "column": 29,
                         "program": "instanceof_x_dyndecl.ets"
                       }
                     }
@@ -604,7 +635,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "o",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 26,
@@ -625,7 +655,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "BDeclared",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 26,
@@ -647,7 +676,7 @@
                               },
                               "end": {
                                 "line": 26,
-                                "column": 35,
+                                "column": 34,
                                 "program": "instanceof_x_dyndecl.ets"
                               }
                             }
@@ -660,7 +689,7 @@
                             },
                             "end": {
                               "line": 26,
-                              "column": 35,
+                              "column": 34,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -673,7 +702,7 @@
                           },
                           "end": {
                             "line": 26,
-                            "column": 35,
+                            "column": 34,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
@@ -732,7 +761,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,
@@ -751,7 +779,6 @@
             "key": {
               "type": "Identifier",
               "name": "fn_ets_object",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 29,
@@ -777,7 +804,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fn_ets_object",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 29,
@@ -807,7 +833,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "A",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 29,
@@ -829,7 +854,7 @@
                             },
                             "end": {
                               "line": 29,
-                              "column": 29,
+                              "column": 28,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -842,12 +867,11 @@
                           },
                           "end": {
                             "line": 29,
-                            "column": 29,
+                            "column": 28,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 29,
@@ -856,7 +880,7 @@
                         },
                         "end": {
                           "line": 29,
-                          "column": 29,
+                          "column": 28,
                           "program": "instanceof_x_dyndecl.ets"
                         }
                       }
@@ -869,7 +893,7 @@
                       },
                       "end": {
                         "line": 29,
-                        "column": 29,
+                        "column": 28,
                         "program": "instanceof_x_dyndecl.ets"
                       }
                     }
@@ -901,7 +925,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "o",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 30,
@@ -922,7 +945,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "BDeclared",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 30,
@@ -944,7 +966,7 @@
                               },
                               "end": {
                                 "line": 30,
-                                "column": 35,
+                                "column": 34,
                                 "program": "instanceof_x_dyndecl.ets"
                               }
                             }
@@ -957,7 +979,7 @@
                             },
                             "end": {
                               "line": 30,
-                              "column": 35,
+                              "column": 34,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -970,7 +992,7 @@
                           },
                           "end": {
                             "line": 30,
-                            "column": 35,
+                            "column": 34,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
@@ -1029,7 +1051,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 29,
@@ -1048,7 +1069,6 @@
             "key": {
               "type": "Identifier",
               "name": "fn_jsvalue",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 33,
@@ -1074,7 +1094,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fn_jsvalue",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 33,
@@ -1104,7 +1123,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "JSValue",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 33,
@@ -1126,7 +1144,7 @@
                             },
                             "end": {
                               "line": 33,
-                              "column": 32,
+                              "column": 31,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -1139,12 +1157,11 @@
                           },
                           "end": {
                             "line": 33,
-                            "column": 32,
+                            "column": 31,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 33,
@@ -1153,7 +1170,7 @@
                         },
                         "end": {
                           "line": 33,
-                          "column": 32,
+                          "column": 31,
                           "program": "instanceof_x_dyndecl.ets"
                         }
                       }
@@ -1166,7 +1183,7 @@
                       },
                       "end": {
                         "line": 33,
-                        "column": 32,
+                        "column": 31,
                         "program": "instanceof_x_dyndecl.ets"
                       }
                     }
@@ -1198,7 +1215,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "o",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 34,
@@ -1219,7 +1235,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "BDeclared",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 34,
@@ -1241,7 +1256,7 @@
                               },
                               "end": {
                                 "line": 34,
-                                "column": 35,
+                                "column": 34,
                                 "program": "instanceof_x_dyndecl.ets"
                               }
                             }
@@ -1254,7 +1269,7 @@
                             },
                             "end": {
                               "line": 34,
-                              "column": 35,
+                              "column": 34,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -1267,7 +1282,7 @@
                           },
                           "end": {
                             "line": 34,
-                            "column": 35,
+                            "column": 34,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
@@ -1326,7 +1341,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 33,
@@ -1345,7 +1359,6 @@
             "key": {
               "type": "Identifier",
               "name": "fn_dyn_value",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 37,
@@ -1371,7 +1384,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fn_dyn_value",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 37,
@@ -1401,7 +1413,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "AValue",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 37,
@@ -1423,7 +1434,7 @@
                             },
                             "end": {
                               "line": 37,
-                              "column": 33,
+                              "column": 32,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -1436,12 +1447,11 @@
                           },
                           "end": {
                             "line": 37,
-                            "column": 33,
+                            "column": 32,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 37,
@@ -1450,7 +1460,7 @@
                         },
                         "end": {
                           "line": 37,
-                          "column": 33,
+                          "column": 32,
                           "program": "instanceof_x_dyndecl.ets"
                         }
                       }
@@ -1463,7 +1473,7 @@
                       },
                       "end": {
                         "line": 37,
-                        "column": 33,
+                        "column": 32,
                         "program": "instanceof_x_dyndecl.ets"
                       }
                     }
@@ -1495,7 +1505,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "o",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 38,
@@ -1516,7 +1525,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "BDeclared",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 38,
@@ -1538,7 +1546,7 @@
                               },
                               "end": {
                                 "line": 38,
-                                "column": 35,
+                                "column": 34,
                                 "program": "instanceof_x_dyndecl.ets"
                               }
                             }
@@ -1551,7 +1559,7 @@
                             },
                             "end": {
                               "line": 38,
-                              "column": 35,
+                              "column": 34,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -1564,7 +1572,7 @@
                           },
                           "end": {
                             "line": 38,
-                            "column": 35,
+                            "column": 34,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
@@ -1623,7 +1631,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 37,
@@ -1642,7 +1649,6 @@
             "key": {
               "type": "Identifier",
               "name": "fn_dyn_decl",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 41,
@@ -1668,7 +1674,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fn_dyn_decl",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 41,
@@ -1698,7 +1703,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "ADeclared",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 41,
@@ -1720,7 +1724,7 @@
                             },
                             "end": {
                               "line": 41,
-                              "column": 35,
+                              "column": 34,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -1733,12 +1737,11 @@
                           },
                           "end": {
                             "line": 41,
-                            "column": 35,
+                            "column": 34,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 41,
@@ -1747,7 +1750,7 @@
                         },
                         "end": {
                           "line": 41,
-                          "column": 35,
+                          "column": 34,
                           "program": "instanceof_x_dyndecl.ets"
                         }
                       }
@@ -1760,7 +1763,7 @@
                       },
                       "end": {
                         "line": 41,
-                        "column": 35,
+                        "column": 34,
                         "program": "instanceof_x_dyndecl.ets"
                       }
                     }
@@ -1792,7 +1795,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "o",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 42,
@@ -1813,7 +1815,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "BDeclared",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 42,
@@ -1835,7 +1836,7 @@
                               },
                               "end": {
                                 "line": 42,
-                                "column": 35,
+                                "column": 34,
                                 "program": "instanceof_x_dyndecl.ets"
                               }
                             }
@@ -1848,7 +1849,7 @@
                             },
                             "end": {
                               "line": 42,
-                              "column": 35,
+                              "column": 34,
                               "program": "instanceof_x_dyndecl.ets"
                             }
                           }
@@ -1861,7 +1862,7 @@
                           },
                           "end": {
                             "line": 42,
-                            "column": 35,
+                            "column": 34,
                             "program": "instanceof_x_dyndecl.ets"
                           }
                         }
@@ -1920,7 +1921,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 41,
@@ -1960,859 +1960,6 @@
           "program": "instanceof_x_dyndecl.ets"
         }
       }
-    },
-    {
-      "type": "ClassDeclaration",
-      "definition": {
-        "id": {
-          "type": "Identifier",
-          "name": "A",
-          "decorators": [],
-          "loc": {
-            "start": {
-              "line": 23,
-              "column": 7,
-              "program": "instanceof_x_dyndecl.ets"
-            },
-            "end": {
-              "line": 23,
-              "column": 8,
-              "program": "instanceof_x_dyndecl.ets"
-            }
-          }
-        },
-        "superClass": null,
-        "implements": [],
-        "body": [
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "constructor",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 23,
-                  "column": 10,
-                  "program": "instanceof_x_dyndecl.ets"
-                },
-                "end": {
-                  "line": 23,
-                  "column": 10,
-                  "program": "instanceof_x_dyndecl.ets"
-                }
-              }
-            },
-            "kind": "constructor",
-            "static": false,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "constructor",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 23,
-                      "column": 10,
-                      "program": "instanceof_x_dyndecl.ets"
-                    },
-                    "end": {
-                      "line": 23,
-                      "column": 10,
-                      "program": "instanceof_x_dyndecl.ets"
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 23,
-                      "column": 10,
-                      "program": "instanceof_x_dyndecl.ets"
-                    },
-                    "end": {
-                      "line": 23,
-                      "column": 10,
-                      "program": "instanceof_x_dyndecl.ets"
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 23,
-                    "column": 10,
-                    "program": "instanceof_x_dyndecl.ets"
-                  },
-                  "end": {
-                    "line": 23,
-                    "column": 10,
-                    "program": "instanceof_x_dyndecl.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 23,
-                  "column": 10,
-                  "program": "instanceof_x_dyndecl.ets"
-                },
-                "end": {
-                  "line": 23,
-                  "column": 10,
-                  "program": "instanceof_x_dyndecl.ets"
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              }
-            }
-          }
-        ],
-        "loc": {
-          "start": {
-            "line": 23,
-            "column": 9,
-            "program": "instanceof_x_dyndecl.ets"
-          },
-          "end": {
-            "line": 25,
-            "column": 9,
-            "program": "instanceof_x_dyndecl.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 23,
-          "column": 1,
-          "program": "instanceof_x_dyndecl.ets"
-        },
-        "end": {
-          "line": 25,
-          "column": 9,
-          "program": "instanceof_x_dyndecl.ets"
-        }
-      }
-    },
-    {
-      "type": "ClassDeclaration",
-      "definition": {
-        "id": {
-          "type": "Identifier",
-          "name": "$dynmodule",
-          "decorators": [],
-          "loc": {
-            "start": {
-              "line": 1,
-              "column": 1,
-              "program": null
-            },
-            "end": {
-              "line": 1,
-              "column": 1,
-              "program": null
-            }
-          }
-        },
-        "superClass": null,
-        "implements": [],
-        "body": [
-          {
-            "type": "ClassProperty",
-            "key": {
-              "type": "Identifier",
-              "name": "dynamic_import_tests0",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "accessibility": "public",
-            "static": true,
-            "readonly": true,
-            "declare": false,
-            "optional": false,
-            "computed": false,
-            "typeAnnotation": {
-              "type": "OpaqueType",
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "definite": false,
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              }
-            }
-          },
-          {
-            "type": "ClassProperty",
-            "key": {
-              "type": "Identifier",
-              "name": "dynamic_import_tests_modules_instanceof1",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "accessibility": "public",
-            "static": true,
-            "readonly": true,
-            "declare": false,
-            "optional": false,
-            "computed": false,
-            "typeAnnotation": {
-              "type": "OpaqueType",
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "definite": false,
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              }
-            }
-          },
-          {
-            "type": "ClassStaticBlock",
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "<cctor>",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": true,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "Identifier",
-                            "name": "$dynmodule",
-                            "decorators": [],
-                            "loc": {
-                              "start": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              },
-                              "end": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "Identifier",
-                            "name": "dynamic_import_tests0",
-                            "decorators": [],
-                            "loc": {
-                              "start": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              },
-                              "end": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              }
-                            }
-                          },
-                          "computed": false,
-                          "optional": false,
-                          "loc": {
-                            "start": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            },
-                            "end": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "CallExpression",
-                          "callee": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "JSRuntime",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                },
-                                "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "loadModule",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                },
-                                "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              },
-                              "end": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              }
-                            }
-                          },
-                          "arguments": [
-                            {
-                              "type": "StringLiteral",
-                              "value": "dynamic_import_tests",
-                              "loc": {
-                                "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                },
-                                "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                }
-                              }
-                            }
-                          ],
-                          "optional": false,
-                          "loc": {
-                            "start": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            },
-                            "end": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 1,
-                            "column": 1,
-                            "program": null
-                          },
-                          "end": {
-                            "line": 1,
-                            "column": 1,
-                            "program": null
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
-                        },
-                        "end": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "Identifier",
-                            "name": "$dynmodule",
-                            "decorators": [],
-                            "loc": {
-                              "start": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              },
-                              "end": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "Identifier",
-                            "name": "dynamic_import_tests_modules_instanceof1",
-                            "decorators": [],
-                            "loc": {
-                              "start": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              },
-                              "end": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              }
-                            }
-                          },
-                          "computed": false,
-                          "optional": false,
-                          "loc": {
-                            "start": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            },
-                            "end": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "CallExpression",
-                          "callee": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "JSRuntime",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                },
-                                "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "loadModule",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                },
-                                "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              },
-                              "end": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              }
-                            }
-                          },
-                          "arguments": [
-                            {
-                              "type": "StringLiteral",
-                              "value": "/home/anya/panda_reps/standalone_new/arkcompiler/runtime_core/static_core/tools/es2panda/test/parser/ets/dynamic_import_tests/modules/instanceof.ets",
-                              "loc": {
-                                "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                },
-                                "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                }
-                              }
-                            }
-                          ],
-                          "optional": false,
-                          "loc": {
-                            "start": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            },
-                            "end": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 1,
-                            "column": 1,
-                            "program": null
-                          },
-                          "end": {
-                            "line": 1,
-                            "column": 1,
-                            "program": null
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
-                        },
-                        "end": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "init",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "init",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "returnType": {
-                  "type": "OpaqueType",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              }
-            }
-          }
-        ],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 1,
-            "program": null
-          },
-          "end": {
-            "line": 1,
-            "column": 1,
-            "program": null
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 1,
-          "program": null
-        },
-        "end": {
-          "line": 1,
-          "column": 1,
-          "program": null
-        }
-      }
     }
   ],
   "loc": {
@@ -2828,3 +1975,5 @@
     }
   }
 }
+TypeError: Cannot find import: dynamic_import_tests [instanceof_x_dyndecl.ets:20:24]
+TypeError: Cannot find type 'AValue'. [instanceof_x_dyndecl.ets:37:26]

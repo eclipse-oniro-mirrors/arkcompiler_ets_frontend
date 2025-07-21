@@ -6,7 +6,6 @@
       "discriminant": {
         "type": "Identifier",
         "name": "key",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 17,
@@ -26,7 +25,6 @@
           "test": {
             "type": "Identifier",
             "name": "value",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -124,7 +122,6 @@
       "discriminant": {
         "type": "Identifier",
         "name": "test",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 25,
@@ -157,7 +154,6 @@
       "discriminant": {
         "type": "Identifier",
         "name": "t",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 27,
@@ -208,7 +204,6 @@
       "discriminant": {
         "type": "Identifier",
         "name": "a",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 32,
@@ -228,7 +223,6 @@
           "test": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 35,

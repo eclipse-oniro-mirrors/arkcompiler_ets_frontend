@@ -30,38 +30,6 @@ void ClassElement::SetKey(Expression *key)
     this->GetOrCreateHistoryNodeAs<ClassElement>()->key_ = key;
 }
 
-void ClassElement::EmplaceDecorators(Decorator *decorators)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
-    newNode->decorators_.emplace_back(decorators);
-}
-
-void ClassElement::ClearDecorators()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
-    newNode->decorators_.clear();
-}
-
-void ClassElement::SetValueDecorators(Decorator *decorators, size_t index)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
-    auto &arenaVector = newNode->decorators_;
-    ES2PANDA_ASSERT(arenaVector.size() > index);
-    arenaVector[index] = decorators;
-}
-
-[[nodiscard]] const ArenaVector<Decorator *> &ClassElement::Decorators()
-{
-    auto newNode = this->GetHistoryNodeAs<ClassElement>();
-    return newNode->decorators_;
-}
-
-[[nodiscard]] ArenaVector<Decorator *> &ClassElement::DecoratorsForUpdate()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
-    return newNode->decorators_;
-}
-
 void ClassElement::SetValue(Expression *value) noexcept
 {
     if (Value() == value) {
@@ -102,7 +70,6 @@ void ClassElement::CopyTo(AstNode *other) const
 
     otherImpl->key_ = key_;
     otherImpl->value_ = value_;
-    otherImpl->decorators_ = decorators_;
     otherImpl->isComputed_ = isComputed_;
     otherImpl->enumMember_ = enumMember_;
 

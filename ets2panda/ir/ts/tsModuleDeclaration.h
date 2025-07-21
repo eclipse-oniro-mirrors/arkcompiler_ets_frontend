@@ -31,9 +31,9 @@ public:
     };
     // NOLINTEND(cppcoreguidelines-pro-type-member-init)
 
-    explicit TSModuleDeclaration(ArenaAllocator *allocator, Expression *name, Statement *body, ConstructorFlags &&flags)
+    explicit TSModuleDeclaration([[maybe_unused]] ArenaAllocator *allocator, Expression *name, Statement *body,
+                                 ConstructorFlags &&flags)
         : Statement(AstNodeType::TS_MODULE_DECLARATION),
-          decorators_(allocator->Adapter()),
           name_(name),
           body_(body),
           global_(flags.global),
@@ -82,16 +82,6 @@ public:
         return isExternalAmbient_;
     }
 
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return !inTs;
-    }
-
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
@@ -107,7 +97,6 @@ public:
     }
 
 private:
-    ArenaVector<Decorator *> decorators_;
     varbinder::LocalScope *scope_ {nullptr};
     Expression *name_;
     Statement *body_;

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "MathCordic",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "AG_CONST",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -81,7 +79,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -100,7 +97,6 @@
             "key": {
               "type": "Identifier",
               "name": "TARGET_ANGLE",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -152,7 +148,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -171,7 +166,6 @@
             "key": {
               "type": "Identifier",
               "name": "expected",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -223,7 +217,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -242,7 +235,6 @@
             "key": {
               "type": "Identifier",
               "name": "ANGLES",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -266,7 +258,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -283,7 +274,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -351,7 +341,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -368,7 +357,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -436,7 +424,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -453,7 +440,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -521,7 +507,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -538,7 +523,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -606,7 +590,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -623,7 +606,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -691,7 +673,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -708,7 +689,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -776,7 +756,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -793,7 +772,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -861,7 +839,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -878,7 +855,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -946,7 +922,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -963,7 +938,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -1031,7 +1005,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -1048,7 +1021,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -1116,7 +1088,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -1133,7 +1104,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -1201,7 +1171,6 @@
                     "object": {
                       "type": "Identifier",
                       "name": "MathCordic",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -1218,7 +1187,6 @@
                     "property": {
                       "type": "Identifier",
                       "name": "fnFixed",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -1306,7 +1274,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Array",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -1379,7 +1346,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -1398,7 +1364,6 @@
             "key": {
               "type": "Identifier",
               "name": "fnFixed",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -1424,7 +1389,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fnFixed",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -1462,7 +1426,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 22,
@@ -1516,7 +1479,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "x",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 23,
@@ -1613,7 +1575,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -1632,7 +1593,6 @@
             "key": {
               "type": "Identifier",
               "name": "fnFloat",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 26,
@@ -1658,7 +1618,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fnFloat",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 26,
@@ -1696,7 +1655,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 26,
@@ -1750,7 +1708,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "x",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 27,
@@ -1847,7 +1804,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 26,
@@ -1866,7 +1822,6 @@
             "key": {
               "type": "Identifier",
               "name": "fnDegToRad",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 30,
@@ -1892,7 +1847,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fnDegToRad",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 30,
@@ -1930,7 +1884,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 30,
@@ -2000,7 +1953,6 @@
                         "right": {
                           "type": "Identifier",
                           "name": "x",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 31,
@@ -2081,7 +2033,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 30,
@@ -2100,7 +2051,6 @@
             "key": {
               "type": "Identifier",
               "name": "cordicsincos",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 34,
@@ -2126,7 +2076,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "cordicsincos",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 34,
@@ -2164,7 +2113,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 34,
@@ -2233,7 +2181,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 35,
@@ -2299,7 +2246,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 36,
@@ -2365,7 +2311,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 37,
@@ -2386,7 +2331,6 @@
                               "object": {
                                 "type": "Identifier",
                                 "name": "MathCordic",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 37,
@@ -2403,7 +2347,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "fnFixed",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 37,
@@ -2436,7 +2379,6 @@
                               {
                                 "type": "Identifier",
                                 "name": "target",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 37,
@@ -2516,7 +2458,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 38,
@@ -2597,7 +2538,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 39,
@@ -2648,7 +2588,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "x",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 40,
@@ -2669,7 +2608,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "MathCordic",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 40,
@@ -2686,7 +2624,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "fnFixed",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 40,
@@ -2740,7 +2677,6 @@
                                 "callee": {
                                   "type": "Identifier",
                                   "name": "cos",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 40,
@@ -2848,7 +2784,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "y",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 41,
@@ -2867,7 +2802,6 @@
                           "callee": {
                             "type": "Identifier",
                             "name": "sin",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 41,
@@ -2947,7 +2881,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "step",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 42,
@@ -2996,7 +2929,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "step",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 42,
@@ -3046,7 +2978,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "step",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 42,
@@ -3099,7 +3030,6 @@
                                       }
                                     }
                                   },
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 43,
@@ -3150,7 +3080,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "targetAngle",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 44,
@@ -3167,7 +3096,6 @@
                               "right": {
                                 "type": "Identifier",
                                 "name": "currAngle",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 44,
@@ -3205,7 +3133,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "newX",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 45,
@@ -3225,7 +3152,6 @@
                                       "left": {
                                         "type": "Identifier",
                                         "name": "x",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 45,
@@ -3249,7 +3175,6 @@
                                             "object": {
                                               "type": "Identifier",
                                               "name": "y",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 45,
@@ -3266,7 +3191,6 @@
                                             "property": {
                                               "type": "Identifier",
                                               "name": "toInt",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 45,
@@ -3313,7 +3237,6 @@
                                         "right": {
                                           "type": "Identifier",
                                           "name": "step",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 45,
@@ -3387,7 +3310,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "y",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 46,
@@ -3414,7 +3336,6 @@
                                             "object": {
                                               "type": "Identifier",
                                               "name": "x",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 46,
@@ -3431,7 +3352,6 @@
                                             "property": {
                                               "type": "Identifier",
                                               "name": "toInt",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 46,
@@ -3478,7 +3398,6 @@
                                         "right": {
                                           "type": "Identifier",
                                           "name": "step",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 46,
@@ -3508,7 +3427,6 @@
                                       "right": {
                                         "type": "Identifier",
                                         "name": "y",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 46,
@@ -3569,7 +3487,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "x",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 47,
@@ -3586,7 +3503,6 @@
                                     "right": {
                                       "type": "Identifier",
                                       "name": "newX",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 47,
@@ -3634,7 +3550,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "currAngle",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 48,
@@ -3655,7 +3570,6 @@
                                         "object": {
                                           "type": "Identifier",
                                           "name": "MathCordic",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 48,
@@ -3672,7 +3586,6 @@
                                         "property": {
                                           "type": "Identifier",
                                           "name": "ANGLES",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 48,
@@ -3704,7 +3617,6 @@
                                       "property": {
                                         "type": "Identifier",
                                         "name": "step",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 48,
@@ -3784,7 +3696,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "newX",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 51,
@@ -3804,7 +3715,6 @@
                                       "left": {
                                         "type": "Identifier",
                                         "name": "x",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 51,
@@ -3828,7 +3738,6 @@
                                             "object": {
                                               "type": "Identifier",
                                               "name": "y",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 51,
@@ -3845,7 +3754,6 @@
                                             "property": {
                                               "type": "Identifier",
                                               "name": "toInt",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 51,
@@ -3892,7 +3800,6 @@
                                         "right": {
                                           "type": "Identifier",
                                           "name": "step",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 51,
@@ -3966,7 +3873,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "y",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 52,
@@ -3997,7 +3903,6 @@
                                               "object": {
                                                 "type": "Identifier",
                                                 "name": "x",
-                                                "decorators": [],
                                                 "loc": {
                                                   "start": {
                                                     "line": 52,
@@ -4014,7 +3919,6 @@
                                               "property": {
                                                 "type": "Identifier",
                                                 "name": "toInt",
-                                                "decorators": [],
                                                 "loc": {
                                                   "start": {
                                                     "line": 52,
@@ -4061,7 +3965,6 @@
                                           "right": {
                                             "type": "Identifier",
                                             "name": "step",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 52,
@@ -4104,7 +4007,6 @@
                                       "right": {
                                         "type": "Identifier",
                                         "name": "y",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 52,
@@ -4165,7 +4067,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "x",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 53,
@@ -4182,7 +4083,6 @@
                                     "right": {
                                       "type": "Identifier",
                                       "name": "newX",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 53,
@@ -4230,7 +4130,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "currAngle",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 54,
@@ -4251,7 +4150,6 @@
                                         "object": {
                                           "type": "Identifier",
                                           "name": "MathCordic",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 54,
@@ -4268,7 +4166,6 @@
                                         "property": {
                                           "type": "Identifier",
                                           "name": "ANGLES",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 54,
@@ -4300,7 +4197,6 @@
                                       "property": {
                                         "type": "Identifier",
                                         "name": "step",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 54,
@@ -4421,7 +4317,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "MathCordic",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 57,
@@ -4438,7 +4333,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "fnFloat",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 57,
@@ -4471,7 +4365,6 @@
                             {
                               "type": "Identifier",
                               "name": "x",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 57,
@@ -4507,7 +4400,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "MathCordic",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 57,
@@ -4524,7 +4416,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "fnFloat",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 57,
@@ -4557,7 +4448,6 @@
                             {
                               "type": "Identifier",
                               "name": "y",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 57,
@@ -4653,7 +4543,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 34,
@@ -4672,7 +4561,6 @@
             "key": {
               "type": "Identifier",
               "name": "cordic",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 60,
@@ -4698,7 +4586,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "cordic",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 60,
@@ -4736,7 +4623,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 60,
@@ -4805,7 +4691,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 61,
@@ -4888,7 +4773,6 @@
                                   }
                                 }
                               },
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 62,
@@ -4952,7 +4836,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 62,
@@ -4969,7 +4852,6 @@
                         "right": {
                           "type": "Identifier",
                           "name": "runs",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 62,
@@ -5003,7 +4885,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 62,
@@ -5041,7 +4922,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "total",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 63,
@@ -5062,7 +4942,6 @@
                                   "object": {
                                     "type": "Identifier",
                                     "name": "MathCordic",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 63,
@@ -5079,7 +4958,6 @@
                                   "property": {
                                     "type": "Identifier",
                                     "name": "cordicsincos",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 63,
@@ -5198,7 +5076,6 @@
                       "argument": {
                         "type": "Identifier",
                         "name": "total",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 65,
@@ -5266,7 +5143,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 60,
@@ -5285,7 +5161,6 @@
             "key": {
               "type": "Identifier",
               "name": "n",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 68,
@@ -5321,7 +5196,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 68,
@@ -5340,7 +5214,6 @@
             "key": {
               "type": "Identifier",
               "name": "run",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 70,
@@ -5366,7 +5239,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "run",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 70,
@@ -5427,7 +5299,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "n",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 71,
@@ -5521,7 +5392,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 72,
@@ -5542,7 +5412,6 @@
                               "object": {
                                 "type": "Identifier",
                                 "name": "MathCordic",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 72,
@@ -5559,7 +5428,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "cordic",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 72,
@@ -5609,7 +5477,6 @@
                                 "property": {
                                   "type": "Identifier",
                                   "name": "n",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 72,
@@ -5690,7 +5557,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "arktest",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 74,
@@ -5707,7 +5573,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "assertEQ",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 74,
@@ -5740,7 +5605,6 @@
                           {
                             "type": "Identifier",
                             "name": "total",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 74,
@@ -5855,7 +5719,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 70,
@@ -5874,7 +5737,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -5899,7 +5761,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -5960,7 +5821,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -6007,7 +5867,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -6029,7 +5888,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 78,
@@ -6055,7 +5913,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 78,
@@ -6099,7 +5956,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 79,
@@ -6122,7 +5978,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "MathCordic",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 79,
@@ -6213,7 +6068,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 80,
@@ -6230,7 +6084,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "run",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 80,
@@ -6328,7 +6181,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 78,

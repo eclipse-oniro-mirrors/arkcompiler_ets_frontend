@@ -78,13 +78,6 @@ public:
 
     void SetName(const util::StringView &newName) noexcept;
 
-    void SetValueDecorators(Decorator *source, size_t index);
-
-    [[nodiscard]] const ArenaVector<Decorator *> &Decorators() const noexcept
-    {
-        return GetHistoryNodeAs<Identifier>()->decorators_;
-    }
-
     bool IsErrorPlaceHolder() const noexcept
     {
         return (IdFlags() & IdentifierFlags::ERROR_PLACEHOLDER) != 0;
@@ -188,18 +181,8 @@ public:
         AddIdFlags(IdentifierFlags::ANNOTATIONUSAGE);
     }
 
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        GetOrCreateHistoryNodeAs<Identifier>()->decorators_ = std::move(decorators);
-    }
-
     [[nodiscard]] Identifier *Clone(ArenaAllocator *allocator, AstNode *parent) override;
     [[nodiscard]] Identifier *CloneReference(ArenaAllocator *allocator, AstNode *parent);
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return true;
-    }
 
     [[nodiscard]] ValidationInfo ValidateExpression();
 
@@ -230,7 +213,6 @@ public:
 
         otherImpl->name_ = name_;
         otherImpl->flags_ = flags_;
-        otherImpl->decorators_ = decorators_;
 
         AnnotatedExpression::CopyTo(other);
     };
@@ -263,7 +245,6 @@ private:
 
     util::StringView name_;
     IdentifierFlags flags_ {IdentifierFlags::NONE};
-    ArenaVector<Decorator *> decorators_;
 };
 }  // namespace ark::es2panda::ir
 

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -114,7 +111,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -225,7 +221,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -242,7 +237,6 @@
                           "init": {
                             "type": "Identifier",
                             "name": "s",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -292,7 +286,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "d",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 19,
@@ -469,7 +462,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,

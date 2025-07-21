@@ -8,7 +8,6 @@
         "id": {
           "type": "Identifier",
           "name": "foo",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 17,
@@ -37,7 +36,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -56,7 +54,6 @@
                   "left": {
                     "type": "Identifier",
                     "name": "a",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 17,
@@ -73,7 +70,6 @@
                   "right": {
                     "type": "Identifier",
                     "name": "b",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 17,
@@ -122,7 +118,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -139,7 +134,6 @@
                 "value": {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -175,7 +169,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "d",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -194,7 +187,6 @@
                   "left": {
                     "type": "Identifier",
                     "name": "d",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 17,
@@ -214,7 +206,6 @@
                     "left": {
                       "type": "Identifier",
                       "name": "a",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 17,
@@ -231,7 +222,6 @@
                     "right": {
                       "type": "Identifier",
                       "name": "b",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 17,
@@ -349,7 +339,6 @@
         "id": {
           "type": "Identifier",
           "name": "bar",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 18,
@@ -370,7 +359,6 @@
           {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -387,7 +375,6 @@
           {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -406,7 +393,6 @@
             "left": {
               "type": "Identifier",
               "name": "c",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -499,7 +485,6 @@
         "id": {
           "type": "Identifier",
           "name": "foobar",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 19,
@@ -525,7 +510,6 @@
                 {
                   "type": "Identifier",
                   "name": "a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -588,7 +572,6 @@
               {
                 "type": "Identifier",
                 "name": "b",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 21,
@@ -619,7 +602,6 @@
           {
             "type": "Identifier",
             "name": "c",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -715,7 +697,6 @@
         "id": {
           "type": "Identifier",
           "name": "test1",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 26,
@@ -738,7 +719,6 @@
             "argument": {
               "type": "Identifier",
               "name": "rest",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 26,
@@ -815,7 +795,6 @@
         "id": {
           "type": "Identifier",
           "name": "test2",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 27,
@@ -848,7 +827,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "rest",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 27,
@@ -979,7 +957,6 @@
         "id": {
           "type": "Identifier",
           "name": "test3",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 28,
@@ -1003,7 +980,6 @@
               {
                 "type": "Identifier",
                 "name": "b",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 28,
@@ -1023,7 +999,6 @@
                   {
                     "type": "Identifier",
                     "name": "a",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 28,

@@ -6,7 +6,6 @@
       "id": {
         "type": "Identifier",
         "name": "x",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 16,
@@ -54,7 +53,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,

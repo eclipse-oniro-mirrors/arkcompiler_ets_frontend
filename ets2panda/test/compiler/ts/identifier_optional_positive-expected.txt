@@ -9,7 +9,6 @@
           "id": {
             "type": "Identifier",
             "name": "c",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -51,7 +50,6 @@
                     }
                   },
                   "optional": true,
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -80,12 +77,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "dynamicLambdaJSValueCast.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "dynamicLambdaJSValueCast.ets"
                     }
                   }
                 },
@@ -93,12 +90,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "dynamicLambdaJSValueCast.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "dynamicLambdaJSValueCast.ets"
                   }
                 }
               },
@@ -106,123 +103,16 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "dynamicLambdaJSValueCast.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "dynamicLambdaJSValueCast.ets"
                 }
               }
             },
             "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "dynamicLambdaJSValueCast.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "dynamicLambdaJSValueCast.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -241,7 +131,6 @@
             "key": {
               "type": "Identifier",
               "name": "foo",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -267,7 +156,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "foo",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -318,7 +206,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "JSValue",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 17,
@@ -340,7 +227,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 21,
+                                    "column": 19,
                                     "program": "dynamicLambdaJSValueCast.ets"
                                   }
                                 }
@@ -353,12 +240,11 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 21,
+                                  "column": 19,
                                   "program": "dynamicLambdaJSValueCast.ets"
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -401,7 +287,6 @@
                                         }
                                       }
                                     },
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 17,
@@ -455,7 +340,6 @@
                                       "left": {
                                         "type": "Identifier",
                                         "name": "x",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 17,
@@ -472,7 +356,6 @@
                                       "right": {
                                         "type": "Identifier",
                                         "name": "x",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 17,
@@ -611,7 +494,6 @@
                                         }
                                       }
                                     },
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 18,
@@ -667,7 +549,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -686,7 +567,6 @@
                             "expression": {
                               "type": "Identifier",
                               "name": "f",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 18,
@@ -723,7 +603,6 @@
                                         }
                                       }
                                     },
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 18,
@@ -787,7 +666,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 32,
+                                "column": 51,
                                 "program": "dynamicLambdaJSValueCast.ets"
                               }
                             }
@@ -800,7 +679,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 32,
+                              "column": 51,
                               "program": "dynamicLambdaJSValueCast.ets"
                             }
                           }
@@ -828,7 +707,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "res",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -849,7 +727,6 @@
                               "callee": {
                                 "type": "Identifier",
                                 "name": "f1",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 19,
@@ -918,7 +795,7 @@
                               },
                               "end": {
                                 "line": 19,
-                                "column": 20,
+                                "column": 27,
                                 "program": "dynamicLambdaJSValueCast.ets"
                               }
                             }
@@ -931,7 +808,7 @@
                             },
                             "end": {
                               "line": 19,
-                              "column": 20,
+                              "column": 27,
                               "program": "dynamicLambdaJSValueCast.ets"
                             }
                           }
@@ -946,7 +823,7 @@
                         },
                         "end": {
                           "line": 19,
-                          "column": 20,
+                          "column": 27,
                           "program": "dynamicLambdaJSValueCast.ets"
                         }
                       }
@@ -956,7 +833,6 @@
                       "argument": {
                         "type": "Identifier",
                         "name": "res",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 20,
@@ -1024,7 +900,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -1079,3 +954,5 @@
     }
   }
 }
+TypeError: Type '(x: Int) => Int' cannot be assigned to type 'JSValue' [dynamicLambdaJSValueCast.ets:17:22]
+TypeError: Cannot cast type 'JSValue' to '(x: Int) => Int' [dynamicLambdaJSValueCast.ets:18:31]

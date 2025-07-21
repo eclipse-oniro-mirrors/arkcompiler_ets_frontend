@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -99,7 +96,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "f",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -118,7 +114,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "foo",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 17,
@@ -184,7 +179,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "arktest",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -201,7 +195,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "assertEQ",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -234,7 +227,6 @@
                           {
                             "type": "Identifier",
                             "name": "f",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -333,7 +325,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -352,7 +343,6 @@
             "key": {
               "type": "Identifier",
               "name": "foo",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 21,
@@ -378,7 +368,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "foo",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 21,
@@ -518,7 +507,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,

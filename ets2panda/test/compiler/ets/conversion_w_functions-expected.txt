@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "getI",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "getI",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -93,7 +90,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 16,
@@ -144,7 +140,6 @@
                       "argument": {
                         "type": "Identifier",
                         "name": "i",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 17,
@@ -212,7 +207,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -231,7 +225,6 @@
             "key": {
               "type": "Identifier",
               "name": "getD",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -257,7 +250,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "getD",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -295,7 +287,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -346,7 +337,6 @@
                       "argument": {
                         "type": "Identifier",
                         "name": "d",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 21,
@@ -414,7 +404,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -433,7 +422,6 @@
             "key": {
               "type": "Identifier",
               "name": "apple",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 24,
@@ -459,7 +447,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "apple",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 24,
@@ -484,7 +471,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Byte",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 24,
@@ -538,7 +524,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getI",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 25,
@@ -587,7 +572,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toByte",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 25,
@@ -685,7 +669,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 24,
@@ -704,7 +687,6 @@
             "key": {
               "type": "Identifier",
               "name": "banana",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 28,
@@ -730,7 +712,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "banana",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 28,
@@ -755,7 +736,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Short",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 28,
@@ -809,7 +789,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getI",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 29,
@@ -858,7 +837,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toShort",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 29,
@@ -956,7 +934,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 28,
@@ -975,7 +952,6 @@
             "key": {
               "type": "Identifier",
               "name": "cherry",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 32,
@@ -1001,7 +977,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "cherry",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 32,
@@ -1026,7 +1001,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Int",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 32,
@@ -1080,7 +1054,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getI",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 33,
@@ -1129,7 +1102,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toInt",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 33,
@@ -1227,7 +1199,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 32,
@@ -1246,7 +1217,6 @@
             "key": {
               "type": "Identifier",
               "name": "date",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 36,
@@ -1272,7 +1242,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "date",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 36,
@@ -1297,7 +1266,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Long",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 36,
@@ -1351,7 +1319,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getI",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 37,
@@ -1400,7 +1367,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toLong",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 37,
@@ -1498,7 +1464,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 36,
@@ -1517,7 +1482,6 @@
             "key": {
               "type": "Identifier",
               "name": "elderberry",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 40,
@@ -1543,7 +1507,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "elderberry",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 40,
@@ -1568,7 +1531,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Float",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 40,
@@ -1622,7 +1584,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getI",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 41,
@@ -1671,7 +1632,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toFloat",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 41,
@@ -1769,7 +1729,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 40,
@@ -1788,7 +1747,6 @@
             "key": {
               "type": "Identifier",
               "name": "fig",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 44,
@@ -1814,7 +1772,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fig",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 44,
@@ -1839,7 +1796,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Float",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 44,
@@ -1893,7 +1849,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getD",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 45,
@@ -1942,7 +1897,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toFloat",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 45,
@@ -2040,7 +1994,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 44,
@@ -2059,7 +2012,6 @@
             "key": {
               "type": "Identifier",
               "name": "grape",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 48,
@@ -2085,7 +2037,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "grape",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 48,
@@ -2110,7 +2061,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Double",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 48,
@@ -2164,7 +2114,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getI",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 49,
@@ -2213,7 +2162,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toDouble",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 49,
@@ -2311,7 +2259,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 48,
@@ -2330,7 +2277,6 @@
             "key": {
               "type": "Identifier",
               "name": "honeydewmelon",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 52,
@@ -2356,7 +2302,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "honeydewmelon",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 52,
@@ -2381,7 +2326,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Double",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 52,
@@ -2435,7 +2379,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getD",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 53,
@@ -2484,7 +2427,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toDouble",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 53,
@@ -2582,7 +2524,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 52,
@@ -2601,7 +2542,6 @@
             "key": {
               "type": "Identifier",
               "name": "indian_fig",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 56,
@@ -2627,7 +2567,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "indian_fig",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 56,
@@ -2652,7 +2591,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Char",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 56,
@@ -2706,7 +2644,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getI",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 57,
@@ -2755,7 +2692,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toChar",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 57,
@@ -2853,7 +2789,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 56,
@@ -2872,7 +2807,6 @@
             "key": {
               "type": "Identifier",
               "name": "raspberry",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 60,
@@ -2898,7 +2832,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "raspberry",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 60,
@@ -2923,7 +2856,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Short",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 60,
@@ -2977,7 +2909,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getD",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 61,
@@ -3026,7 +2957,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toShort",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 61,
@@ -3124,7 +3054,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 60,
@@ -3143,7 +3072,6 @@
             "key": {
               "type": "Identifier",
               "name": "strawberry",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 64,
@@ -3169,7 +3097,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "strawberry",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 64,
@@ -3194,7 +3121,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Int",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 64,
@@ -3248,7 +3174,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getD",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 65,
@@ -3297,7 +3222,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toInt",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 65,
@@ -3395,7 +3319,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 64,
@@ -3414,7 +3337,6 @@
             "key": {
               "type": "Identifier",
               "name": "tomato",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 68,
@@ -3440,7 +3362,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "tomato",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 68,
@@ -3465,7 +3386,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Long",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 68,
@@ -3519,7 +3439,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "getD",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 69,
@@ -3568,7 +3487,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "toLong",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 69,
@@ -3666,7 +3584,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 68,
@@ -3685,7 +3602,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 72,
@@ -3711,7 +3627,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 72,
@@ -3787,7 +3702,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 72,

@@ -6,8 +6,7 @@
       "definition": {
         "id": {
           "type": "Identifier",
-          "name": "ETSGLOBAL",
-          "decorators": []
+          "name": "ETSGLOBAL"
         },
         "superClass": null,
         "implements": [],
@@ -16,15 +15,13 @@
             "type": "ClassProperty",
             "key": {
               "type": "Identifier",
-              "name": "a",
-              "decorators": []
+              "name": "a"
             },
             "value": {
               "type": "CallExpression",
               "callee": {
                 "type": "Identifier",
-                "name": "GoodGreeter",
-                "decorators": []
+                "name": "GoodGreeter"
               },
               "arguments": [],
               "optional": false
@@ -35,15 +32,13 @@
             "declare": false,
             "optional": false,
             "computed": false,
-            "definite": false,
-            "decorators": []
+            "definite": false
           },
           {
             "type": "ClassProperty",
             "key": {
               "type": "Identifier",
-              "name": "c",
-              "decorators": []
+              "name": "c"
             },
             "accessibility": "public",
             "static": true,
@@ -57,20 +52,17 @@
                 "type": "ETSTypeReferencePart",
                 "name": {
                   "type": "Identifier",
-                  "name": "GoodGreeter",
-                  "decorators": []
+                  "name": "GoodGreeter"
                 }
               }
             },
-            "definite": false,
-            "decorators": []
+            "definite": false
           },
           {
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "main",
-              "decorators": []
+              "name": "main"
             },
             "kind": "method",
             "accessibility": "public",
@@ -83,8 +75,7 @@
                 "type": "ScriptFunction",
                 "id": {
                   "type": "Identifier",
-                  "name": "main",
-                  "decorators": []
+                  "name": "main"
                 },
                 "generator": false,
                 "async": false,
@@ -103,8 +94,7 @@
                             "name": "m",
                             "typeAnnotation": {
                               "type": "ETSPrimitiveType"
-                            },
-                            "decorators": []
+                            }
                           },
                           "init": {
                             "type": "NumberLiteral",
@@ -124,8 +114,7 @@
                             "name": "n",
                             "typeAnnotation": {
                               "type": "ETSPrimitiveType"
-                            },
-                            "decorators": []
+                            }
                           },
                           "init": {
                             "type": "NumberLiteral",
@@ -145,20 +134,17 @@
                             "name": "f",
                             "typeAnnotation": {
                               "type": "ETSPrimitiveType"
-                            },
-                            "decorators": []
+                            }
                           },
                           "init": {
                             "type": "MemberExpression",
                             "object": {
                               "type": "Identifier",
-                              "name": "c",
-                              "decorators": []
+                              "name": "c"
                             },
                             "property": {
                               "type": "Identifier",
-                              "name": "b",
-                              "decorators": []
+                              "name": "b"
                             },
                             "computed": false,
                             "optional": false
@@ -181,24 +167,20 @@
                                 "type": "ETSTypeReferencePart",
                                 "name": {
                                   "type": "Identifier",
-                                  "name": "string",
-                                  "decorators": []
+                                  "name": "string"
                                 }
                               }
-                            },
-                            "decorators": []
+                            }
                           },
                           "init": {
                             "type": "MemberExpression",
                             "object": {
                               "type": "Identifier",
-                              "name": "c",
-                              "decorators": []
+                              "name": "c"
                             },
                             "property": {
                               "type": "Identifier",
-                              "name": "name",
-                              "decorators": []
+                              "name": "name"
                             },
                             "computed": false,
                             "optional": false
@@ -215,13 +197,11 @@
                           "type": "MemberExpression",
                           "object": {
                             "type": "Identifier",
-                            "name": "console",
-                            "decorators": []
+                            "name": "console"
                           },
                           "property": {
                             "type": "Identifier",
-                            "name": "log",
-                            "decorators": []
+                            "name": "log"
                           },
                           "computed": false,
                           "optional": false
@@ -232,13 +212,11 @@
                             "operator": "+",
                             "left": {
                               "type": "Identifier",
-                              "name": "m",
-                              "decorators": []
+                              "name": "m"
                             },
                             "right": {
                               "type": "Identifier",
-                              "name": "n",
-                              "decorators": []
+                              "name": "n"
                             }
                           }
                         ],
@@ -253,13 +231,11 @@
                           "type": "MemberExpression",
                           "object": {
                             "type": "Identifier",
-                            "name": "console",
-                            "decorators": []
+                            "name": "console"
                           },
                           "property": {
                             "type": "Identifier",
-                            "name": "log",
-                            "decorators": []
+                            "name": "log"
                           },
                           "computed": false,
                           "optional": false
@@ -267,8 +243,7 @@
                         "arguments": [
                           {
                             "type": "Identifier",
-                            "name": "k",
-                            "decorators": []
+                            "name": "k"
                           }
                         ],
                         "optional": false
@@ -278,8 +253,7 @@
                 }
               }
             },
-            "overloads": [],
-            "decorators": []
+            "overloads": []
           }
         ]
       }
@@ -289,8 +263,7 @@
       "definition": {
         "id": {
           "type": "Identifier",
-          "name": "GoodGreeter",
-          "decorators": []
+          "name": "GoodGreeter"
         },
         "superClass": null,
         "implements": [],
@@ -299,8 +272,7 @@
             "type": "ClassProperty",
             "key": {
               "type": "Identifier",
-              "name": "name",
-              "decorators": []
+              "name": "name"
             },
             "accessibility": "public",
             "static": false,
@@ -314,20 +286,17 @@
                 "type": "ETSTypeReferencePart",
                 "name": {
                   "type": "Identifier",
-                  "name": "string",
-                  "decorators": []
+                  "name": "string"
                 }
               }
             },
-            "definite": false,
-            "decorators": []
+            "definite": false
           },
           {
             "type": "ClassProperty",
             "key": {
               "type": "Identifier",
-              "name": "b",
-              "decorators": []
+              "name": "b"
             },
             "accessibility": "public",
             "static": false,
@@ -338,15 +307,13 @@
             "typeAnnotation": {
               "type": "ETSPrimitiveType"
             },
-            "definite": false,
-            "decorators": []
+            "definite": false
           },
           {
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "fooExample",
-              "decorators": []
+              "name": "fooExample"
             },
             "kind": "method",
             "accessibility": "public",
@@ -359,8 +326,7 @@
                 "type": "ScriptFunction",
                 "id": {
                   "type": "Identifier",
-                  "name": "fooExample",
-                  "decorators": []
+                  "name": "fooExample"
                 },
                 "generator": false,
                 "async": false,
@@ -375,15 +341,13 @@
                 }
               }
             },
-            "overloads": [],
-            "decorators": []
+            "overloads": []
           },
           {
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "$_invoke",
-              "decorators": []
+              "name": "$_invoke"
             },
             "kind": "method",
             "accessibility": "public",
@@ -396,8 +360,7 @@
                 "type": "ScriptFunction",
                 "id": {
                   "type": "Identifier",
-                  "name": "$_invoke",
-                  "decorators": []
+                  "name": "$_invoke"
                 },
                 "generator": false,
                 "async": false,
@@ -420,15 +383,13 @@
                 }
               }
             },
-            "overloads": [],
-            "decorators": []
+            "overloads": []
           },
           {
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "constructor",
-              "decorators": []
+              "name": "constructor"
             },
             "kind": "constructor",
             "accessibility": "public",
@@ -441,8 +402,7 @@
                 "type": "ScriptFunction",
                 "id": {
                   "type": "Identifier",
-                  "name": "constructor",
-                  "decorators": []
+                  "name": "constructor"
                 },
                 "generator": false,
                 "async": false,
@@ -463,8 +423,7 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "name": "name",
-                            "decorators": []
+                            "name": "name"
                           },
                           "computed": false,
                           "optional": false
@@ -487,8 +446,7 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "name": "b",
-                            "decorators": []
+                            "name": "b"
                           },
                           "computed": false,
                           "optional": false
@@ -503,8 +461,7 @@
                 }
               }
             },
-            "overloads": [],
-            "decorators": []
+            "overloads": []
           }
         ]
       }
@@ -516,8 +473,7 @@
   "definition": {
     "id": {
       "type": "Identifier",
-      "name": "ETSGLOBAL",
-      "decorators": []
+      "name": "ETSGLOBAL"
     },
     "superClass": null,
     "implements": [],
@@ -526,15 +482,13 @@
         "type": "ClassProperty",
         "key": {
           "type": "Identifier",
-          "name": "a",
-          "decorators": []
+          "name": "a"
         },
         "value": {
           "type": "CallExpression",
           "callee": {
             "type": "Identifier",
-            "name": "GoodGreeter",
-            "decorators": []
+            "name": "GoodGreeter"
           },
           "arguments": [],
           "optional": false
@@ -545,15 +499,13 @@
         "declare": false,
         "optional": false,
         "computed": false,
-        "definite": false,
-        "decorators": []
+        "definite": false
       },
       {
         "type": "ClassProperty",
         "key": {
           "type": "Identifier",
-          "name": "c",
-          "decorators": []
+          "name": "c"
         },
         "accessibility": "public",
         "static": true,
@@ -567,20 +519,17 @@
             "type": "ETSTypeReferencePart",
             "name": {
               "type": "Identifier",
-              "name": "GoodGreeter",
-              "decorators": []
+              "name": "GoodGreeter"
             }
           }
         },
-        "definite": false,
-        "decorators": []
+        "definite": false
       },
       {
         "type": "MethodDefinition",
         "key": {
           "type": "Identifier",
-          "name": "main",
-          "decorators": []
+          "name": "main"
         },
         "kind": "method",
         "accessibility": "public",
@@ -593,8 +542,7 @@
             "type": "ScriptFunction",
             "id": {
               "type": "Identifier",
-              "name": "main",
-              "decorators": []
+              "name": "main"
             },
             "generator": false,
             "async": false,
@@ -613,8 +561,7 @@
                         "name": "m",
                         "typeAnnotation": {
                           "type": "ETSPrimitiveType"
-                        },
-                        "decorators": []
+                        }
                       },
                       "init": {
                         "type": "NumberLiteral",
@@ -634,8 +581,7 @@
                         "name": "n",
                         "typeAnnotation": {
                           "type": "ETSPrimitiveType"
-                        },
-                        "decorators": []
+                        }
                       },
                       "init": {
                         "type": "NumberLiteral",
@@ -655,20 +601,17 @@
                         "name": "f",
                         "typeAnnotation": {
                           "type": "ETSPrimitiveType"
-                        },
-                        "decorators": []
+                        }
                       },
                       "init": {
                         "type": "MemberExpression",
                         "object": {
                           "type": "Identifier",
-                          "name": "c",
-                          "decorators": []
+                          "name": "c"
                         },
                         "property": {
                           "type": "Identifier",
-                          "name": "b",
-                          "decorators": []
+                          "name": "b"
                         },
                         "computed": false,
                         "optional": false
@@ -691,24 +634,20 @@
                             "type": "ETSTypeReferencePart",
                             "name": {
                               "type": "Identifier",
-                              "name": "string",
-                              "decorators": []
+                              "name": "string"
                             }
                           }
-                        },
-                        "decorators": []
+                        }
                       },
                       "init": {
                         "type": "MemberExpression",
                         "object": {
                           "type": "Identifier",
-                          "name": "c",
-                          "decorators": []
+                          "name": "c"
                         },
                         "property": {
                           "type": "Identifier",
-                          "name": "name",
-                          "decorators": []
+                          "name": "name"
                         },
                         "computed": false,
                         "optional": false
@@ -725,13 +664,11 @@
                       "type": "MemberExpression",
                       "object": {
                         "type": "Identifier",
-                        "name": "console",
-                        "decorators": []
+                        "name": "console"
                       },
                       "property": {
                         "type": "Identifier",
-                        "name": "log",
-                        "decorators": []
+                        "name": "log"
                       },
                       "computed": false,
                       "optional": false
@@ -742,13 +679,11 @@
                         "operator": "+",
                         "left": {
                           "type": "Identifier",
-                          "name": "m",
-                          "decorators": []
+                          "name": "m"
                         },
                         "right": {
                           "type": "Identifier",
-                          "name": "n",
-                          "decorators": []
+                          "name": "n"
                         }
                       }
                     ],
@@ -763,13 +698,11 @@
                       "type": "MemberExpression",
                       "object": {
                         "type": "Identifier",
-                        "name": "console",
-                        "decorators": []
+                        "name": "console"
                       },
                       "property": {
                         "type": "Identifier",
-                        "name": "log",
-                        "decorators": []
+                        "name": "log"
                       },
                       "computed": false,
                       "optional": false
@@ -777,8 +710,7 @@
                     "arguments": [
                       {
                         "type": "Identifier",
-                        "name": "k",
-                        "decorators": []
+                        "name": "k"
                       }
                     ],
                     "optional": false
@@ -788,8 +720,7 @@
             }
           }
         },
-        "overloads": [],
-        "decorators": []
+        "overloads": []
       }
     ]
   }
@@ -799,8 +730,7 @@
   "definition": {
     "id": {
       "type": "Identifier",
-      "name": "GoodGreeter",
-      "decorators": []
+      "name": "GoodGreeter"
     },
     "superClass": null,
     "implements": [],
@@ -809,8 +739,7 @@
         "type": "ClassProperty",
         "key": {
           "type": "Identifier",
-          "name": "name",
-          "decorators": []
+          "name": "name"
         },
         "accessibility": "public",
         "static": false,
@@ -824,20 +753,17 @@
             "type": "ETSTypeReferencePart",
             "name": {
               "type": "Identifier",
-              "name": "string",
-              "decorators": []
+              "name": "string"
             }
           }
         },
-        "definite": false,
-        "decorators": []
+        "definite": false
       },
       {
         "type": "ClassProperty",
         "key": {
           "type": "Identifier",
-          "name": "b",
-          "decorators": []
+          "name": "b"
         },
         "accessibility": "public",
         "static": false,
@@ -848,15 +774,13 @@
         "typeAnnotation": {
           "type": "ETSPrimitiveType"
         },
-        "definite": false,
-        "decorators": []
+        "definite": false
       },
       {
         "type": "MethodDefinition",
         "key": {
           "type": "Identifier",
-          "name": "fooExample",
-          "decorators": []
+          "name": "fooExample"
         },
         "kind": "method",
         "accessibility": "public",
@@ -869,8 +793,7 @@
             "type": "ScriptFunction",
             "id": {
               "type": "Identifier",
-              "name": "fooExample",
-              "decorators": []
+              "name": "fooExample"
             },
             "generator": false,
             "async": false,
@@ -885,15 +808,13 @@
             }
           }
         },
-        "overloads": [],
-        "decorators": []
+        "overloads": []
       },
       {
         "type": "MethodDefinition",
         "key": {
           "type": "Identifier",
-          "name": "$_invoke",
-          "decorators": []
+          "name": "$_invoke"
         },
         "kind": "method",
         "accessibility": "public",
@@ -906,8 +827,7 @@
             "type": "ScriptFunction",
             "id": {
               "type": "Identifier",
-              "name": "$_invoke",
-              "decorators": []
+              "name": "$_invoke"
             },
             "generator": false,
             "async": false,
@@ -930,15 +850,13 @@
             }
           }
         },
-        "overloads": [],
-        "decorators": []
+        "overloads": []
       },
       {
         "type": "MethodDefinition",
         "key": {
           "type": "Identifier",
-          "name": "constructor",
-          "decorators": []
+          "name": "constructor"
         },
         "kind": "constructor",
         "accessibility": "public",
@@ -951,8 +869,7 @@
             "type": "ScriptFunction",
             "id": {
               "type": "Identifier",
-              "name": "constructor",
-              "decorators": []
+              "name": "constructor"
             },
             "generator": false,
             "async": false,
@@ -973,8 +890,7 @@
                       },
                       "property": {
                         "type": "Identifier",
-                        "name": "name",
-                        "decorators": []
+                        "name": "name"
                       },
                       "computed": false,
                       "optional": false
@@ -997,8 +913,7 @@
                       },
                       "property": {
                         "type": "Identifier",
-                        "name": "b",
-                        "decorators": []
+                        "name": "b"
                       },
                       "computed": false,
                       "optional": false
@@ -1013,8 +928,7 @@
             }
           }
         },
-        "overloads": [],
-        "decorators": []
+        "overloads": []
       }
     ]
   }

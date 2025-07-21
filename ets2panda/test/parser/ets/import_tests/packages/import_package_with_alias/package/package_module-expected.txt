@@ -6,7 +6,6 @@
       "name": {
         "type": "Identifier",
         "name": "goo",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 17,
@@ -39,7 +38,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -61,7 +59,6 @@
             "key": {
               "type": "Identifier",
               "name": "foo",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -98,7 +95,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -117,7 +113,6 @@
             "key": {
               "type": "Identifier",
               "name": "baz",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -143,7 +138,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "baz",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -251,7 +245,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,

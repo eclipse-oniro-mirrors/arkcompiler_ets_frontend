@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "AccessNSieve",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "n1",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -81,7 +79,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -100,7 +97,6 @@
             "key": {
               "type": "Identifier",
               "name": "n2",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -152,7 +148,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -171,7 +166,6 @@
             "key": {
               "type": "Identifier",
               "name": "expected",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -223,7 +217,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -242,7 +235,6 @@
             "key": {
               "type": "Identifier",
               "name": "isPrime",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -285,7 +277,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Array",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -358,7 +349,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -377,7 +367,6 @@
             "key": {
               "type": "Identifier",
               "name": "setup",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -403,7 +392,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "setup",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -449,7 +437,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "AccessNSieve",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -466,7 +453,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "isPrime",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -608,7 +594,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -627,7 +612,6 @@
             "key": {
               "type": "Identifier",
               "name": "nsieve",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 26,
@@ -653,7 +637,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "nsieve",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 26,
@@ -691,7 +674,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 26,
@@ -760,7 +742,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 27,
@@ -843,7 +824,6 @@
                                   }
                                 }
                               },
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 29,
@@ -907,7 +887,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 29,
@@ -924,7 +903,6 @@
                         "right": {
                           "type": "Identifier",
                           "name": "m",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 29,
@@ -958,7 +936,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 29,
@@ -1000,7 +977,6 @@
                                   "object": {
                                     "type": "Identifier",
                                     "name": "AccessNSieve",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 30,
@@ -1017,7 +993,6 @@
                                   "property": {
                                     "type": "Identifier",
                                     "name": "isPrime",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 30,
@@ -1049,7 +1024,6 @@
                                 "property": {
                                   "type": "Identifier",
                                   "name": "i",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 30,
@@ -1172,7 +1146,6 @@
                                   }
                                 }
                               },
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 33,
@@ -1236,7 +1209,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 33,
@@ -1253,7 +1225,6 @@
                         "right": {
                           "type": "Identifier",
                           "name": "m",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 33,
@@ -1287,7 +1258,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 33,
@@ -1326,7 +1296,6 @@
                                 "object": {
                                   "type": "Identifier",
                                   "name": "AccessNSieve",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 34,
@@ -1343,7 +1312,6 @@
                                 "property": {
                                   "type": "Identifier",
                                   "name": "isPrime",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 34,
@@ -1375,7 +1343,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "i",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 34,
@@ -1432,7 +1399,6 @@
                                               }
                                             }
                                           },
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 35,
@@ -1452,7 +1418,6 @@
                                           "left": {
                                             "type": "Identifier",
                                             "name": "i",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 35,
@@ -1469,7 +1434,6 @@
                                           "right": {
                                             "type": "Identifier",
                                             "name": "i",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 35,
@@ -1530,7 +1494,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "k",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 35,
@@ -1547,7 +1510,6 @@
                                     "right": {
                                       "type": "Identifier",
                                       "name": "m",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 35,
@@ -1580,7 +1542,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "k",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 35,
@@ -1597,7 +1558,6 @@
                                     "right": {
                                       "type": "Identifier",
                                       "name": "i",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 35,
@@ -1639,7 +1599,6 @@
                                               "object": {
                                                 "type": "Identifier",
                                                 "name": "AccessNSieve",
-                                                "decorators": [],
                                                 "loc": {
                                                   "start": {
                                                     "line": 36,
@@ -1656,7 +1615,6 @@
                                               "property": {
                                                 "type": "Identifier",
                                                 "name": "isPrime",
-                                                "decorators": [],
                                                 "loc": {
                                                   "start": {
                                                     "line": 36,
@@ -1688,7 +1646,6 @@
                                             "property": {
                                               "type": "Identifier",
                                               "name": "k",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 36,
@@ -1795,7 +1752,6 @@
                                     "argument": {
                                       "type": "Identifier",
                                       "name": "count",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 38,
@@ -1895,7 +1851,6 @@
                       "argument": {
                         "type": "Identifier",
                         "name": "count",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 41,
@@ -1963,7 +1918,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 26,
@@ -1982,7 +1936,6 @@
             "key": {
               "type": "Identifier",
               "name": "sieve",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 44,
@@ -2008,7 +1961,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "sieve",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 44,
@@ -2067,7 +2019,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 45,
@@ -2150,7 +2101,6 @@
                                   }
                                 }
                               },
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 46,
@@ -2214,7 +2164,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 46,
@@ -2264,7 +2213,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 46,
@@ -2317,7 +2265,6 @@
                                       }
                                     }
                                   },
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 47,
@@ -2356,7 +2303,6 @@
                                     "right": {
                                       "type": "Identifier",
                                       "name": "i",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 47,
@@ -2448,7 +2394,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "sum",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 48,
@@ -2469,7 +2414,6 @@
                                   "object": {
                                     "type": "Identifier",
                                     "name": "AccessNSieve",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 48,
@@ -2486,7 +2430,6 @@
                                   "property": {
                                     "type": "Identifier",
                                     "name": "nsieve",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 48,
@@ -2519,7 +2462,6 @@
                                   {
                                     "type": "Identifier",
                                     "name": "m",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 48,
@@ -2606,7 +2548,6 @@
                       "argument": {
                         "type": "Identifier",
                         "name": "sum",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 50,
@@ -2674,7 +2615,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 44,
@@ -2693,7 +2633,6 @@
             "key": {
               "type": "Identifier",
               "name": "run",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 53,
@@ -2719,7 +2658,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "run",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 53,
@@ -2778,7 +2716,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 54,
@@ -2799,7 +2736,6 @@
                               "object": {
                                 "type": "Identifier",
                                 "name": "AccessNSieve",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 54,
@@ -2816,7 +2752,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "sieve",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 54,
@@ -2897,7 +2832,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "arktest",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 55,
@@ -2914,7 +2848,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "assertEQ",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 55,
@@ -2947,7 +2880,6 @@
                           {
                             "type": "Identifier",
                             "name": "ret",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 55,
@@ -3062,7 +2994,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 53,
@@ -3081,7 +3012,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -3106,7 +3036,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -3167,7 +3096,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -3214,7 +3142,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -3236,7 +3163,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 59,
@@ -3262,7 +3188,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 59,
@@ -3306,7 +3231,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 60,
@@ -3329,7 +3253,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "AccessNSieve",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 60,
@@ -3420,7 +3343,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 61,
@@ -3437,7 +3359,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "setup",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 61,
@@ -3503,7 +3424,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 62,
@@ -3520,7 +3440,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "run",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 62,
@@ -3618,7 +3537,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 59,

@@ -15,7 +15,6 @@
             {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -38,7 +37,6 @@
                 "argument": {
                   "type": "Identifier",
                   "name": "a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -132,7 +130,6 @@
             {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -150,7 +147,6 @@
           "body": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -210,7 +206,6 @@
         "callee": {
           "type": "Identifier",
           "name": "async",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 19,
@@ -237,7 +232,6 @@
                 {
                   "type": "Identifier",
                   "name": "b",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -255,7 +249,6 @@
               "body": {
                 "type": "Identifier",
                 "name": "b",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 19,
@@ -330,7 +323,6 @@
         "callee": {
           "type": "Identifier",
           "name": "async",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 20,
@@ -348,7 +340,6 @@
           {
             "type": "Identifier",
             "name": "async",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,

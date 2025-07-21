@@ -79,10 +79,6 @@ void MethodDefinition::ResolveReferences(const NodeTraverser &cb) const
     for (auto *it : VectorIterationGuard(Overloads())) {
         cb(it);
     }
-
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
-    }
 }
 
 void MethodDefinition::Iterate(const NodeTraverser &cb) const
@@ -96,10 +92,6 @@ void MethodDefinition::Iterate(const NodeTraverser &cb) const
         if (it->Parent() == this) {
             cb(it);
         }
-    }
-
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
     }
 }
 
@@ -122,14 +114,6 @@ void MethodDefinition::TransformChildren(const NodeTransformer &cb, std::string_
         if (auto *transformedNode = cb(overloads[ix]); overloads[ix] != transformedNode) {
             overloads[ix]->SetTransformedNode(transformationName, transformedNode);
             SetValueOverloads(transformedNode->AsMethodDefinition(), ix);
-        }
-    }
-
-    auto const &decorators = Decorators();
-    for (size_t ix = 0; ix < decorators.size(); ix++) {
-        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
-            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueDecorators(transformedNode->AsDecorator(), ix);
         }
     }
 }
@@ -180,8 +164,7 @@ void MethodDefinition::Dump(ir::AstDumper *dumper) const
                  {"optional", IsOptionalDeclaration()},
                  {"computed", IsComputed()},
                  {"value", Value()},
-                 {"overloads", Overloads()},
-                 {"decorators", Decorators()}});
+                 {"overloads", Overloads()}});
 }
 
 void MethodDefinition::DumpModifierPrefix(ir::SrcDumper *dumper) const
@@ -397,10 +380,6 @@ MethodDefinition *MethodDefinition::Clone(ArenaAllocator *const allocator, AstNo
 
     key->SetParent(clone);
     value->SetParent(clone);
-
-    for (auto *const decorator : Decorators()) {
-        clone->AddDecorator(decorator->Clone(allocator, clone));
-    }
 
     clone->SetBaseOverloadMethod(BaseOverloadMethod());
 

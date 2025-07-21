@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "A",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
               "name": {
                 "type": "Identifier",
                 "name": "T",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 16,
@@ -78,7 +76,6 @@
             "key": {
               "type": "Identifier",
               "name": "x",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -105,7 +102,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Array",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -129,7 +125,6 @@
                         "name": {
                           "type": "Identifier",
                           "name": "T",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 1,
@@ -210,7 +205,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -229,7 +223,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -255,7 +248,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -285,7 +277,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "Array",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 1,
@@ -309,7 +300,6 @@
                                   "name": {
                                     "type": "Identifier",
                                     "name": "T",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 1,
@@ -389,7 +379,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 18,
@@ -445,7 +434,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "x",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -477,7 +465,6 @@
                         "right": {
                           "type": "Identifier",
                           "name": "x",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 19,
@@ -558,7 +545,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -605,7 +591,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -627,7 +612,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,
@@ -653,7 +637,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 23,
@@ -692,7 +675,6 @@
                                     "name": {
                                       "type": "Identifier",
                                       "name": "number",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 24,
@@ -739,7 +721,6 @@
                                     "name": {
                                       "type": "Identifier",
                                       "name": "number",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 24,
@@ -793,7 +774,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -902,7 +882,6 @@
                                     "name": {
                                       "type": "Identifier",
                                       "name": "number",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 25,
@@ -949,7 +928,6 @@
                                     "name": {
                                       "type": "Identifier",
                                       "name": "number",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 25,
@@ -1003,7 +981,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 25,
@@ -1102,7 +1079,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 26,
@@ -1125,7 +1101,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "A",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 26,
@@ -1152,7 +1127,6 @@
                                             "name": {
                                               "type": "Identifier",
                                               "name": "number",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 26,
@@ -1199,7 +1173,6 @@
                                             "name": {
                                               "type": "Identifier",
                                               "name": "number",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 26,
@@ -1300,7 +1273,6 @@
                                   {
                                     "type": "Identifier",
                                     "name": "alma",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 26,
@@ -1317,7 +1289,6 @@
                                   {
                                     "type": "Identifier",
                                     "name": "korte",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 26,
@@ -1428,7 +1399,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,

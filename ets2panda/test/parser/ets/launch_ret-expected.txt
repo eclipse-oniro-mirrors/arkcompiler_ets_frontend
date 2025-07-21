@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "launch",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "launch",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -107,7 +105,6 @@
           "local": {
             "type": "Identifier",
             "name": "Job",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -124,7 +121,6 @@
           "imported": {
             "type": "Identifier",
             "name": "Job",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -171,7 +167,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -193,7 +188,6 @@
             "key": {
               "type": "Identifier",
               "name": "fooInt",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -219,7 +213,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fooInt",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -327,7 +320,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -346,7 +338,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,
@@ -372,7 +363,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 23,
@@ -423,7 +413,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "Job",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 24,
@@ -495,7 +484,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -514,7 +502,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "launch",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 24,
@@ -532,7 +519,6 @@
                               {
                                 "type": "Identifier",
                                 "name": "fooInt",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 24,
@@ -693,7 +679,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,

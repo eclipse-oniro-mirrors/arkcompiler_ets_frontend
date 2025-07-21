@@ -22,9 +22,7 @@
 namespace ark::es2panda::ir {
 void ETSStructDeclaration::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", "ETSStructDeclaration"},
-                 {"definition", Definition()},
-                 {"decorators", AstDumper::Optional(Decorators())}});
+    dumper->Add({{"type", "ETSStructDeclaration"}, {"definition", Definition()}});
 }
 
 void ETSStructDeclaration::Dump(ir::SrcDumper *dumper) const

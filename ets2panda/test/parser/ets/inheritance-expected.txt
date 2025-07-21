@@ -22,7 +22,6 @@
       "id": {
         "type": "Identifier",
         "name": "interface_a",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 16,
@@ -71,7 +70,6 @@
       "id": {
         "type": "Identifier",
         "name": "interface_b",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 19,
@@ -105,7 +103,6 @@
         "id": {
           "type": "Identifier",
           "name": "base_class",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 22,
@@ -127,7 +124,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -152,7 +148,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -213,7 +208,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -260,7 +254,6 @@
         "id": {
           "type": "Identifier",
           "name": "public_class",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 25,
@@ -281,7 +274,6 @@
             "name": {
               "type": "Identifier",
               "name": "base_class",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 25,
@@ -331,7 +323,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "interface_a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 25,
@@ -393,7 +384,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "interface_b",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 25,
@@ -453,7 +443,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 25,
@@ -478,7 +467,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 25,
@@ -539,7 +527,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -586,7 +573,6 @@
         "id": {
           "type": "Identifier",
           "name": "final_class",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 28,
@@ -607,7 +593,6 @@
             "name": {
               "type": "Identifier",
               "name": "base_class",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 28,
@@ -654,7 +639,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 28,
@@ -679,7 +663,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 28,
@@ -740,7 +723,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -787,7 +769,6 @@
         "id": {
           "type": "Identifier",
           "name": "abstract_class",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 31,
@@ -808,7 +789,6 @@
             "name": {
               "type": "Identifier",
               "name": "base_class",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 31,
@@ -858,7 +838,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "interface_b",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 31,
@@ -918,7 +897,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 31,
@@ -943,7 +921,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 31,
@@ -1004,7 +981,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -1051,7 +1027,6 @@
         "id": {
           "type": "Identifier",
           "name": "inheritance",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 34,
@@ -1072,7 +1047,6 @@
             "name": {
               "type": "Identifier",
               "name": "base_class",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 34,
@@ -1119,7 +1093,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 34,
@@ -1144,7 +1117,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 34,
@@ -1205,7 +1177,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -1252,7 +1223,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -1274,7 +1244,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -1300,7 +1269,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -1361,7 +1329,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,

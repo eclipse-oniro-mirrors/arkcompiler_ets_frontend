@@ -6,7 +6,6 @@
       "id": {
         "type": "Identifier",
         "name": "x",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 16,
@@ -54,7 +53,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -76,7 +74,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -102,7 +99,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -163,7 +159,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -182,7 +177,6 @@
             "key": {
               "type": "Identifier",
               "name": "x",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -219,7 +213,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,

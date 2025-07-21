@@ -22,7 +22,6 @@
       "id": {
         "type": "Identifier",
         "name": "boolean",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 17,

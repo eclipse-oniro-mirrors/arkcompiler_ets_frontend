@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "bar",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -72,7 +71,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -94,7 +92,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -120,7 +117,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -149,7 +145,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -168,7 +163,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "bar",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -185,7 +179,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "foo",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -250,7 +243,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "b",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 21,
@@ -271,7 +263,6 @@
                               "object": {
                                 "type": "Identifier",
                                 "name": "bar",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 21,
@@ -288,7 +279,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "baz",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 21,
@@ -401,7 +391,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,

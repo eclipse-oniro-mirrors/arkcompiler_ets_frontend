@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "Point",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "x",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -56,7 +54,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "number",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -97,7 +94,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -116,7 +112,6 @@
             "key": {
               "type": "Identifier",
               "name": "y",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -143,7 +138,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "number",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 18,
@@ -184,7 +178,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -203,7 +196,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -228,7 +220,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -289,7 +280,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -336,7 +326,6 @@
         "id": {
           "type": "Identifier",
           "name": "ListTest",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 21,
@@ -358,7 +347,6 @@
               "name": {
                 "type": "Identifier",
                 "name": "T",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 21,
@@ -407,7 +395,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -433,7 +420,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -479,7 +465,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "num",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -575,7 +560,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "data",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 25,
@@ -616,7 +600,6 @@
                                   "name": {
                                     "type": "Identifier",
                                     "name": "T",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 25,
@@ -705,7 +688,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "num",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 25,
@@ -814,7 +796,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -833,7 +814,6 @@
             "key": {
               "type": "Identifier",
               "name": "data",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 27,
@@ -860,7 +840,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Array",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -887,7 +866,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "T",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 1,
@@ -997,7 +975,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 27,
@@ -1016,7 +993,6 @@
             "key": {
               "type": "Identifier",
               "name": "num",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 28,
@@ -1052,7 +1028,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 28,
@@ -1099,7 +1074,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -1121,7 +1095,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 31,
@@ -1147,7 +1120,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 31,
@@ -1191,7 +1163,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "s",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 32,
@@ -1214,7 +1185,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "string",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 32,
@@ -1319,7 +1289,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "n",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 33,
@@ -1342,7 +1311,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "number",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 33,
@@ -1447,7 +1415,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "i",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 34,
@@ -1470,7 +1437,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "Int",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 34,
@@ -1575,7 +1541,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "x",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 35,
@@ -1598,7 +1563,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "Point",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 35,
@@ -1703,7 +1667,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "y",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 36,
@@ -1726,7 +1689,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "ListTest",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 36,
@@ -1750,7 +1712,6 @@
                                         "name": {
                                           "type": "Identifier",
                                           "name": "Point",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 36,
@@ -1928,7 +1889,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 31,

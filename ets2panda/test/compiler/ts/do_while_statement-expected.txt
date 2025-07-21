@@ -9,7 +9,6 @@
           "id": {
             "type": "Identifier",
             "name": "s",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -78,7 +77,6 @@
           "argument": {
             "type": "Identifier",
             "name": "s",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -124,7 +122,6 @@
         "left": {
           "type": "Identifier",
           "name": "s",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 20,

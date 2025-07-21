@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "A",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 17,
@@ -28,7 +27,6 @@
           "key": {
             "type": "Identifier",
             "name": "constructor",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -98,7 +96,6 @@
             }
           },
           "overloads": [],
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -118,7 +115,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -154,11 +150,10 @@
             "optional": false,
             "computed": false,
             "typeAnnotation": {
-              "type": "NamedType",
-              "name": {
+              "type": "TSTypeReference",
+              "typeName": {
                 "type": "Identifier",
                 "name": "i32",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 18,
@@ -172,7 +167,6 @@
                   }
                 }
               },
-              "isNullable": false,
               "loc": {
                 "start": {
                   "line": 18,
@@ -187,7 +181,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,

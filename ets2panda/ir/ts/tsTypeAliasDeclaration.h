@@ -30,10 +30,9 @@ class TSTypeParameterDeclaration;
 
 class TSTypeAliasDeclaration : public AnnotatedStatement {
 public:
-    explicit TSTypeAliasDeclaration(ArenaAllocator *allocator, Identifier *id, TSTypeParameterDeclaration *typeParams,
-                                    TypeNode *typeAnnotation)
+    explicit TSTypeAliasDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *id,
+                                    TSTypeParameterDeclaration *typeParams, TypeNode *typeAnnotation)
         : AnnotatedStatement(AstNodeType::TS_TYPE_ALIAS_DECLARATION, typeAnnotation),
-          decorators_(allocator->Adapter()),
           annotations_(allocator->Adapter()),
           id_(id),
           typeParams_(typeParams),
@@ -42,9 +41,8 @@ public:
         InitHistory();
     }
 
-    explicit TSTypeAliasDeclaration(ArenaAllocator *allocator, Identifier *id)
+    explicit TSTypeAliasDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *id)
         : AnnotatedStatement(AstNodeType::TS_TYPE_ALIAS_DECLARATION),
-          decorators_(allocator->Adapter()),
           annotations_(allocator->Adapter()),
           id_(id),
           typeParams_(nullptr),
@@ -68,23 +66,7 @@ public:
         return GetHistoryNodeAs<TSTypeAliasDeclaration>()->typeParams_;
     }
 
-    const ArenaVector<Decorator *> &Decorators() const
-    {
-        return GetHistoryNodeAs<TSTypeAliasDeclaration>()->decorators_;
-    }
-
     void SetTypeParameters(ir::TSTypeParameterDeclaration *typeParams);
-
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        auto newNode = reinterpret_cast<TSTypeAliasDeclaration *>(this->GetOrCreateHistoryNode());
-        newNode->decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return !inTs;
-    }
 
     void SetTypeParameterTypes(ArenaVector<checker::Type *> &&typeParamTypes)
     {
@@ -144,17 +126,12 @@ public:
     void SetValueTypeParamterTypes(checker::Type *typeParamTypes, size_t index);
     [[nodiscard]] ArenaVector<checker::Type *> &TypeParamterTypesForUpdate();
 
-    void EmplaceDecorators(Decorator *decorators);
-    void ClearDecorators();
-    void SetValueDecorators(Decorator *decorators, size_t index);
-    [[nodiscard]] ArenaVector<Decorator *> &DecoratorsForUpdate();
-
 private:
     bool RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const;
     friend class SizeOfNodeTest;
 
     void SetId(Identifier *id);
-    ArenaVector<Decorator *> decorators_;
+
     ArenaVector<AnnotationUsage *> annotations_;
     Identifier *id_;
     TSTypeParameterDeclaration *typeParams_;

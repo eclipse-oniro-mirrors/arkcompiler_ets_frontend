@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -124,7 +121,6 @@
                                     "name": {
                                       "type": "Identifier",
                                       "name": "Object",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 17,
@@ -178,7 +174,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -229,7 +224,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "mix",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 18,
@@ -293,7 +287,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "mix",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 19,
@@ -357,7 +350,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "mix",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -380,7 +372,6 @@
                               "name": {
                                 "type": "Identifier",
                                 "name": "Object",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -501,7 +492,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,

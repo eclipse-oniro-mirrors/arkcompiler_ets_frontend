@@ -287,10 +287,6 @@ void ETSBinder::BuildETSTypeReference(ir::ETSTypeReference *typeRef)
 
 void ETSBinder::BuildObjectExpression(ir::ObjectExpression *obj)
 {
-    for (auto *it : obj->Decorators()) {
-        ResolveReference(it);
-    }
-
     // NOTE: when we try to resolve references for Object Expression
     // we visit properties, example:
     // class C { x : boolean }

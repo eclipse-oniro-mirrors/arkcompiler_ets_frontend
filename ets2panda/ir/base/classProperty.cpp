@@ -59,14 +59,6 @@ void ClassProperty::TransformChildren(const NodeTransformer &cb, std::string_vie
         }
     }
 
-    auto const &decorators = Decorators();
-    for (size_t ix = 0; ix < decorators.size(); ix++) {
-        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
-            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueDecorators(transformedNode->AsDecorator(), ix);
-        }
-    }
-
     auto const &annotations = Annotations();
     for (size_t ix = 0; ix < annotations.size(); ix++) {
         if (auto *transformedNode = cb(annotations[ix]); annotations[ix] != transformedNode) {
@@ -90,10 +82,6 @@ void ClassProperty::Iterate(const NodeTraverser &cb) const
         cb(TypeAnnotation());
     }
 
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
-    }
-
     for (auto *it : Annotations()) {
         cb(it);
     }
@@ -112,7 +100,6 @@ void ClassProperty::Dump(ir::AstDumper *dumper) const
                  {"computed", IsComputed()},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"definite", IsDefinite()},
-                 {"decorators", Decorators()},
                  {"annotations", AstDumper::Optional(Annotations())}});
 }
 
@@ -311,10 +298,6 @@ ClassProperty *ClassProperty::Clone(ArenaAllocator *const allocator, AstNode *co
     if (typeAnnotation != nullptr) {
         typeAnnotation->SetTsType(typeAnnotation->TsType());
         typeAnnotation->SetParent(clone);
-    }
-
-    for (auto *const decorator : Decorators()) {
-        clone->AddDecorator(decorator->Clone(allocator, clone));
     }
 
     if (!Annotations().empty()) {

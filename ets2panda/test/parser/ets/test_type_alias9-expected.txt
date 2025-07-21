@@ -6,7 +6,6 @@
       "id": {
         "type": "Identifier",
         "name": "x",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 16,
@@ -53,7 +52,6 @@
       "id": {
         "type": "Identifier",
         "name": "Matrix",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 17,
@@ -74,7 +72,6 @@
           "name": {
             "type": "Identifier",
             "name": "Array",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -98,7 +95,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "Array",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 1,
@@ -229,7 +225,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -251,7 +246,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -277,7 +271,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -338,7 +331,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -357,7 +349,6 @@
             "key": {
               "type": "Identifier",
               "name": "num",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -384,7 +375,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "x",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -425,7 +415,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -444,7 +433,6 @@
             "key": {
               "type": "Identifier",
               "name": "m",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -471,7 +459,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Matrix",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -512,7 +499,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,

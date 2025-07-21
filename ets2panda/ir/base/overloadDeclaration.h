@@ -50,7 +50,8 @@ public:
     NO_COPY_SEMANTIC(OverloadDeclaration);
     NO_MOVE_SEMANTIC(OverloadDeclaration);
 
-    explicit OverloadDeclaration(Expression *const key, ModifierFlags const modifiers, ArenaAllocator *const allocator)
+    explicit OverloadDeclaration(Expression *const key, ModifierFlags const modifiers,
+                                 [[maybe_unused]] ArenaAllocator *const allocator)
         : ClassElement(AstNodeType::OVERLOAD_DECLARATION, key, nullptr, modifiers, allocator, false),
           overloadedList_(allocator->Adapter()),
           overloadFlags_(OverloadDeclFlags::NONE)

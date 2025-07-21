@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "bar",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "bar",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -89,7 +87,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -111,7 +108,6 @@
             "key": {
               "type": "Identifier",
               "name": "bar",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -137,7 +133,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "bar",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 18,
@@ -175,7 +170,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 18,
@@ -226,7 +220,6 @@
                       "argument": {
                         "type": "Identifier",
                         "name": "p",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 19,
@@ -294,7 +287,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -313,7 +305,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -339,7 +330,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -383,7 +373,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -402,7 +391,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "bar",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 23,
@@ -482,7 +470,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -501,7 +488,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "bar",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 24,
@@ -616,7 +602,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,

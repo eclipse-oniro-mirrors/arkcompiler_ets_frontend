@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "Enum",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 20,
@@ -28,7 +27,6 @@
             "name": {
               "type": "Identifier",
               "name": "BaseEnum",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -52,7 +50,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "String",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -139,7 +136,6 @@
             "key": {
               "type": "Identifier",
               "name": "#ordinal",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -175,7 +171,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -194,7 +189,6 @@
             "key": {
               "type": "Identifier",
               "name": "<cctor>",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -220,7 +214,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "<cctor>",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -281,7 +274,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -300,7 +292,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -326,7 +317,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -364,7 +354,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -403,7 +392,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "String",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -443,7 +431,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -497,7 +484,6 @@
                           {
                             "type": "Identifier",
                             "name": "value",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -564,7 +550,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "#ordinal",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -596,7 +581,6 @@
                         "right": {
                           "type": "Identifier",
                           "name": "ordinal",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -677,7 +661,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -696,7 +679,6 @@
             "key": {
               "type": "Identifier",
               "name": "e1",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -719,7 +701,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "Enum",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -819,7 +800,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Enum",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -860,7 +840,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -879,7 +858,6 @@
             "key": {
               "type": "Identifier",
               "name": "e2",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -902,7 +880,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "Enum",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1002,7 +979,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Enum",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -1043,7 +1019,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -1062,7 +1037,6 @@
             "key": {
               "type": "Identifier",
               "name": "e3",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -1085,7 +1059,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "Enum",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1185,7 +1158,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Enum",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -1226,7 +1198,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -1245,7 +1216,6 @@
             "key": {
               "type": "Identifier",
               "name": "#NamesArray",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -1339,7 +1309,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "String",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1394,7 +1363,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -1413,7 +1381,6 @@
             "key": {
               "type": "Identifier",
               "name": "#StringValuesArray",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -1507,7 +1474,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "String",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1562,7 +1528,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -1581,7 +1546,6 @@
             "key": {
               "type": "Identifier",
               "name": "#ItemsArray",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -1603,7 +1567,6 @@
                   "object": {
                     "type": "Identifier",
                     "name": "Enum",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1620,7 +1583,6 @@
                   "property": {
                     "type": "Identifier",
                     "name": "e1",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1654,7 +1616,6 @@
                   "object": {
                     "type": "Identifier",
                     "name": "Enum",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1671,7 +1632,6 @@
                   "property": {
                     "type": "Identifier",
                     "name": "e2",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1705,7 +1665,6 @@
                   "object": {
                     "type": "Identifier",
                     "name": "Enum",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1722,7 +1681,6 @@
                   "property": {
                     "type": "Identifier",
                     "name": "e3",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1780,7 +1738,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "Enum",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -1835,7 +1792,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -1854,7 +1810,6 @@
             "key": {
               "type": "Identifier",
               "name": "getName",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -1880,7 +1835,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "getName",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -1905,7 +1859,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "String",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -1957,7 +1910,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "Enum",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -1974,7 +1926,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "#NamesArray",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -2023,7 +1974,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "#ordinal",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -2121,7 +2071,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -2140,7 +2089,6 @@
             "key": {
               "type": "Identifier",
               "name": "getValueOf",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -2166,7 +2114,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "getValueOf",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -2196,7 +2143,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "String",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -2236,7 +2182,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -2271,7 +2216,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Enum",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -2324,7 +2268,6 @@
                             "id": {
                               "type": "Identifier",
                               "name": "i",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -2388,7 +2331,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -2409,7 +2351,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "Enum",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -2426,7 +2367,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "#NamesArray",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -2458,7 +2398,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "length",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -2507,7 +2446,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -2542,7 +2480,6 @@
                           "left": {
                             "type": "Identifier",
                             "name": "name",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -2563,7 +2500,6 @@
                               "object": {
                                 "type": "Identifier",
                                 "name": "Enum",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -2580,7 +2516,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "#NamesArray",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -2612,7 +2547,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "i",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -2663,7 +2597,6 @@
                               "object": {
                                 "type": "Identifier",
                                 "name": "Enum",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -2680,7 +2613,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "#ItemsArray",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -2712,7 +2644,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "i",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -2792,7 +2723,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "Error",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -2855,7 +2785,6 @@
                             "right": {
                               "type": "Identifier",
                               "name": "name",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -2950,7 +2879,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -2969,7 +2897,6 @@
             "key": {
               "type": "Identifier",
               "name": "fromValue",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -2995,7 +2922,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fromValue",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -3025,7 +2951,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "String",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -3065,7 +2990,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -3100,7 +3024,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Enum",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -3153,7 +3076,6 @@
                             "id": {
                               "type": "Identifier",
                               "name": "i",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -3217,7 +3139,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -3238,7 +3159,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "Enum",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -3255,7 +3175,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "#StringValuesArray",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -3287,7 +3206,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "length",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -3336,7 +3254,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "i",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -3371,7 +3288,6 @@
                           "left": {
                             "type": "Identifier",
                             "name": "value",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -3392,7 +3308,6 @@
                               "object": {
                                 "type": "Identifier",
                                 "name": "Enum",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -3409,7 +3324,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "#StringValuesArray",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -3441,7 +3355,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "i",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -3492,7 +3405,6 @@
                               "object": {
                                 "type": "Identifier",
                                 "name": "Enum",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -3509,7 +3421,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "#ItemsArray",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -3541,7 +3452,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "i",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -3621,7 +3531,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "Error",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -3684,7 +3593,6 @@
                             "right": {
                               "type": "Identifier",
                               "name": "value",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -3779,7 +3687,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -3798,7 +3705,6 @@
             "key": {
               "type": "Identifier",
               "name": "valueOf",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -3824,7 +3730,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "valueOf",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -3849,7 +3754,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "String",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -3901,7 +3805,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "Enum",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -3918,7 +3821,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "#StringValuesArray",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -3967,7 +3869,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "#ordinal",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -4065,7 +3966,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -4084,7 +3984,6 @@
             "key": {
               "type": "Identifier",
               "name": "toString",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -4110,7 +4009,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "toString",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -4135,7 +4033,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "String",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -4187,7 +4084,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "Enum",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -4204,7 +4100,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "#StringValuesArray",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -4253,7 +4148,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "#ordinal",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -4351,7 +4245,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -4370,7 +4263,6 @@
             "key": {
               "type": "Identifier",
               "name": "values",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -4396,7 +4288,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "values",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -4423,7 +4314,6 @@
                       "name": {
                         "type": "Identifier",
                         "name": "Enum",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 20,
@@ -4487,7 +4377,6 @@
                         "object": {
                           "type": "Identifier",
                           "name": "Enum",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -4504,7 +4393,6 @@
                         "property": {
                           "type": "Identifier",
                           "name": "#ItemsArray",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -4587,7 +4475,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -4606,7 +4493,6 @@
             "key": {
               "type": "Identifier",
               "name": "getOrdinal",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -4632,7 +4518,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "getOrdinal",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -4690,7 +4575,6 @@
                         "property": {
                           "type": "Identifier",
                           "name": "#ordinal",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -4773,7 +4657,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -4792,7 +4675,6 @@
             "key": {
               "type": "Identifier",
               "name": "$_get",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -4818,7 +4700,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "$_get",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -4848,7 +4729,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "Enum",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -4888,7 +4768,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -4923,7 +4802,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "String",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -4975,7 +4853,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "e",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -4992,7 +4869,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "getName",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -5090,7 +4966,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -5137,7 +5012,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -5159,7 +5033,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -5185,7 +5058,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -5214,7 +5086,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "v",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -5233,7 +5104,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "Enum",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 23,
@@ -5250,7 +5120,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "e3",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 23,
@@ -5312,7 +5181,6 @@
                       "discriminant": {
                         "type": "Identifier",
                         "name": "v",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 24,
@@ -5334,7 +5202,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "Enum",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 25,
@@ -5351,7 +5218,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "e2",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 25,
@@ -5390,7 +5256,6 @@
                                   "object": {
                                     "type": "Identifier",
                                     "name": "arktest",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 25,
@@ -5407,7 +5272,6 @@
                                   "property": {
                                     "type": "Identifier",
                                     "name": "assertTrue",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 25,
@@ -5518,7 +5382,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "Enum",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 26,
@@ -5535,7 +5398,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "e1",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 26,
@@ -5574,7 +5436,6 @@
                                   "object": {
                                     "type": "Identifier",
                                     "name": "arktest",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 26,
@@ -5591,7 +5452,6 @@
                                   "property": {
                                     "type": "Identifier",
                                     "name": "assertTrue",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 26,
@@ -5702,7 +5562,6 @@
                             "object": {
                               "type": "Identifier",
                               "name": "Enum",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 27,
@@ -5719,7 +5578,6 @@
                             "property": {
                               "type": "Identifier",
                               "name": "e3",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 27,
@@ -5834,7 +5692,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,

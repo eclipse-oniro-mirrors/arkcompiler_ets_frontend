@@ -38,10 +38,9 @@ public:
     };
     // NOLINTEND(cppcoreguidelines-pro-type-member-init)
 
-    explicit TSEnumDeclaration(ArenaAllocator *allocator, Identifier *key, ArenaVector<AstNode *> &&members,
-                               ConstructorFlags &&flags, Language lang)
+    explicit TSEnumDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *key,
+                               ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, Language lang)
         : TypedStatement(AstNodeType::TS_ENUM_DECLARATION),
-          decorators_(allocator->Adapter()),
           key_(key),
           typeNode_(nullptr),
           members_(std::move(members)),
@@ -57,10 +56,10 @@ public:
     }
 
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
-    explicit TSEnumDeclaration(ArenaAllocator *allocator, Identifier *key, ArenaVector<AstNode *> &&members,
-                               ConstructorFlags &&flags, ir::TypeNode *typeNode, Language lang)
+    explicit TSEnumDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *key,
+                               ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, ir::TypeNode *typeNode,
+                               Language lang)
         : TypedStatement(AstNodeType::TS_ENUM_DECLARATION),
-          decorators_(allocator->Adapter()),
           key_(key),
           typeNode_(typeNode),
           members_(std::move(members)),
@@ -77,10 +76,10 @@ public:
     }
 
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
-    explicit TSEnumDeclaration(ArenaAllocator *allocator, Identifier *key, ArenaVector<AstNode *> &&members,
-                               ConstructorFlags &&flags, Language lang, AstNodeHistory *history)
+    explicit TSEnumDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *key,
+                               ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, Language lang,
+                               AstNodeHistory *history)
         : TypedStatement(AstNodeType::TS_ENUM_DECLARATION),
-          decorators_(allocator->Adapter()),
           key_(key),
           typeNode_(nullptr),
           members_(std::move(members)),
@@ -160,22 +159,6 @@ public:
         return GetHistoryNodeAs<TSEnumDeclaration>()->isConst_;
     }
 
-    const ArenaVector<Decorator *> &Decorators() const
-    {
-        return GetHistoryNodeAs<TSEnumDeclaration>()->decorators_;
-    }
-
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        auto newNode = GetOrCreateHistoryNodeAs<TSEnumDeclaration>();
-        newNode->decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return !inTs;
-    }
-
     [[nodiscard]] es2panda::Language Language() const noexcept
     {
         return GetHistoryNodeAs<TSEnumDeclaration>()->lang_;
@@ -199,12 +182,6 @@ public:
 
     TSEnumDeclaration *Construct(ArenaAllocator *allocator) override;
     void CopyTo(AstNode *other) const override;
-
-    void EmplaceDecorators(Decorator *source);
-    void ClearDecorators();
-    void SetValueDecorators(Decorator *source, size_t index);
-    [[nodiscard]] ArenaVector<Decorator *> &DecoratorsForUpdate();
-
     void EmplaceMembers(AstNode *source);
     void ClearMembers();
     void SetValueMembers(AstNode *source, size_t index);
@@ -216,7 +193,6 @@ private:
     void SetKey(Identifier *key);
 
     varbinder::LocalScope *scope_ {nullptr};
-    ArenaVector<ir::Decorator *> decorators_;
     Identifier *key_;
     ir::TypeNode *typeNode_;
     ArenaVector<AstNode *> members_;

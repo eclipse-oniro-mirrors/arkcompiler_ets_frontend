@@ -9,7 +9,6 @@
           "id": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -34,7 +33,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -51,7 +49,6 @@
                 "value": {
                   "type": "Identifier",
                   "name": "a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -82,7 +79,7 @@
               {
                 "type": "Property",
                 "method": false,
-                "shorthand": true,
+                "shorthand": false,
                 "computed": false,
                 "key": {
                   "type": "StringLiteral",
@@ -138,7 +135,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -155,7 +151,6 @@
                 "value": {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -191,7 +186,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "d",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -208,7 +202,6 @@
                 "value": {
                   "type": "Identifier",
                   "name": "d",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -292,3 +285,4 @@
     }
   }
 }
+TypeError: Block-scoped variable 'a' used before its declaration [test_object_literal.ts:17:5]

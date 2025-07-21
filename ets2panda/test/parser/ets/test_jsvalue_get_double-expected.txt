@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -80,12 +77,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "test_jsvalue_get_double.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "test_jsvalue_get_double.ets"
                     }
                   }
                 },
@@ -93,12 +90,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "test_jsvalue_get_double.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "test_jsvalue_get_double.ets"
                   }
                 }
               },
@@ -106,189 +103,16 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "test_jsvalue_get_double.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "test_jsvalue_get_double.ets"
                 }
               }
             },
             "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "test_jsvalue_get_double.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "test_jsvalue_get_double.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "num_v",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 17,
-                              "column": 5,
-                              "program": "test_jsvalue_get_double.ets"
-                            },
-                            "end": {
-                              "line": 17,
-                              "column": 10,
-                              "program": "test_jsvalue_get_double.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "Identifier",
-                          "name": "v",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 17,
-                              "column": 21,
-                              "program": "test_jsvalue_get_double.ets"
-                            },
-                            "end": {
-                              "line": 17,
-                              "column": 22,
-                              "program": "test_jsvalue_get_double.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 17,
-                            "column": 5,
-                            "program": "test_jsvalue_get_double.ets"
-                          },
-                          "end": {
-                            "line": 17,
-                            "column": 22,
-                            "program": "test_jsvalue_get_double.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 17,
-                          "column": 5,
-                          "program": "test_jsvalue_get_double.ets"
-                        },
-                        "end": {
-                          "line": 17,
-                          "column": 22,
-                          "program": "test_jsvalue_get_double.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -307,7 +131,6 @@
             "key": {
               "type": "Identifier",
               "name": "v",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -334,7 +157,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "JSValue",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -356,7 +178,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 16,
+                    "column": 15,
                     "program": "test_jsvalue_get_double.ets"
                   }
                 }
@@ -369,13 +191,12 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 16,
+                  "column": 15,
                   "program": "test_jsvalue_get_double.ets"
                 }
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -394,7 +215,6 @@
             "key": {
               "type": "Identifier",
               "name": "num_v",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -430,7 +250,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -439,7 +258,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 22,
+                "column": 21,
                 "program": "test_jsvalue_get_double.ets"
               }
             }
@@ -485,4 +304,4 @@
     }
   }
 }
-TypeError: Variable 'v' is used before being assigned. [test_jsvalue_get_double.ets:17:21]
+TypeError: Type 'JSValue' cannot be assigned to type 'Double' [test_jsvalue_get_double.ets:17:21]

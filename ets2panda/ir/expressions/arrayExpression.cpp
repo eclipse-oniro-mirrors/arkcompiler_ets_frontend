@@ -27,9 +27,7 @@
 namespace ark::es2panda::ir {
 ArrayExpression::ArrayExpression([[maybe_unused]] Tag const tag, ArrayExpression const &other,
                                  ArenaAllocator *const allocator)
-    : AnnotatedExpression(static_cast<AnnotatedExpression const &>(other), allocator),
-      decorators_(allocator->Adapter()),
-      elements_(allocator->Adapter())
+    : AnnotatedExpression(static_cast<AnnotatedExpression const &>(other), allocator), elements_(allocator->Adapter())
 {
     SetPreferredType(other.PreferredType());
     isDeclaration_ = other.isDeclaration_;
@@ -38,10 +36,6 @@ ArrayExpression::ArrayExpression([[maybe_unused]] Tag const tag, ArrayExpression
 
     for (auto *element : other.elements_) {
         elements_.emplace_back(element->Clone(allocator, this)->AsExpression());
-    }
-
-    for (auto *decorator : other.decorators_) {
-        decorators_.emplace_back(decorator->Clone(allocator, this));
     }
 }
 
@@ -159,13 +153,6 @@ ValidationInfo ArrayExpression::ValidateExpression()
 
 void ArrayExpression::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
-        }
-    }
-
     for (auto *&it : VectorIterationGuard(elements_)) {
         if (auto *transformedNode = cb(it); it != transformedNode) {
             it->SetTransformedNode(transformationName, transformedNode);
@@ -183,10 +170,6 @@ void ArrayExpression::TransformChildren(const NodeTransformer &cb, std::string_v
 
 void ArrayExpression::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(decorators_)) {
-        cb(it);
-    }
-
     for (auto *it : VectorIterationGuard(elements_)) {
         cb(it);
     }
@@ -199,7 +182,6 @@ void ArrayExpression::Iterate(const NodeTraverser &cb) const
 void ArrayExpression::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", type_ == AstNodeType::ARRAY_EXPRESSION ? "ArrayExpression" : "ArrayPattern"},
-                 {"decorators", AstDumper::Optional(decorators_)},
                  {"elements", elements_},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"optional", AstDumper::Optional(optional_)}});

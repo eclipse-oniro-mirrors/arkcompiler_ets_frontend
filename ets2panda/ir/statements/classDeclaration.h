@@ -21,14 +21,14 @@
 namespace ark::es2panda::ir {
 class ClassDeclaration : public Statement {
 public:
-    explicit ClassDeclaration(ClassDefinition *def, ArenaAllocator *allocator)
-        : Statement(AstNodeType::CLASS_DECLARATION), def_(def), decorators_(allocator->Adapter())
+    explicit ClassDeclaration(ClassDefinition *def, [[maybe_unused]] ArenaAllocator *allocator)
+        : Statement(AstNodeType::CLASS_DECLARATION), def_(def)
     {
         InitHistory();
     }
 
-    explicit ClassDeclaration(ClassDefinition *def, ArenaAllocator *allocator, AstNodeHistory *history)
-        : Statement(AstNodeType::CLASS_DECLARATION), def_(def), decorators_(allocator->Adapter())
+    explicit ClassDeclaration(ClassDefinition *def, [[maybe_unused]] ArenaAllocator *allocator, AstNodeHistory *history)
+        : Statement(AstNodeType::CLASS_DECLARATION), def_(def)
     {
         if (history != nullptr) {
             history_ = history;
@@ -47,22 +47,6 @@ public:
         return GetHistoryNodeAs<ClassDeclaration>()->def_;
     }
 
-    const ArenaVector<Decorator *> &Decorators() const
-    {
-        return GetHistoryNodeAs<ClassDeclaration>()->decorators_;
-    }
-
-    void AddDecorators(ArenaVector<Decorator *> &&decorators) override
-    {
-        auto newNode = GetOrCreateHistoryNodeAs<ClassDeclaration>();
-        newNode->decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return true;
-    }
-
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
@@ -78,17 +62,12 @@ public:
         v->Accept(this);
     }
 
-    void EmplaceDecorators(Decorator *decorators);
-    void ClearDecorators();
-    void SetValueDecorators(Decorator *decorators, size_t index);
-    const ArenaVector<Decorator *> &Decorators();
-    ArenaVector<Decorator *> &DecoratorsForUpdate();
-
     void SetDefinition(ClassDefinition *def);
 
 protected:
-    explicit ClassDeclaration(AstNodeType type, ClassDefinition *const def, ArenaAllocator *const allocator)
-        : Statement(type), def_(def), decorators_(allocator->Adapter())
+    explicit ClassDeclaration(AstNodeType type, ClassDefinition *const def,
+                              [[maybe_unused]] ArenaAllocator *const allocator)
+        : Statement(type), def_(def)
     {
         InitHistory();
     }
@@ -100,7 +79,6 @@ protected:
 private:
     friend class SizeOfNodeTest;
     ClassDefinition *def_;
-    ArenaVector<Decorator *> decorators_;
 };
 }  // namespace ark::es2panda::ir
 

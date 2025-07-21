@@ -1641,12 +1641,9 @@ ir::AnnotatedExpression *ETSParser::GetAnnotatedExpressionFromParam()
         case lexer::TokenType::LITERAL_IDENT: {
             parameter = AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator());
             ES2PANDA_ASSERT(parameter != nullptr);
-            if (parameter->AsIdentifier()->Decorators().empty()) {
-                parameter->SetRange(Lexer()->GetToken().Loc());
-            } else {
-                parameter->SetRange(
-                    {parameter->AsIdentifier()->Decorators().front()->Start(), Lexer()->GetToken().End()});
-            }
+
+            parameter->SetRange(Lexer()->GetToken().Loc());
+
             break;
         }
 

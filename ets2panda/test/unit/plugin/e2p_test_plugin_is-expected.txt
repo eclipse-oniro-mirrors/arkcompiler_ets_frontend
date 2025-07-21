@@ -5,15 +5,13 @@ After parse:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "GoodGreeter",
-  "decorators": []
+  "name": "GoodGreeter"
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "name",
-  "decorators": []
+  "name": "name"
 }
 ---
 Found Expression:
@@ -23,8 +21,7 @@ Found Expression:
     "type": "ETSTypeReferencePart",
     "name": {
       "type": "Identifier",
-      "name": "string",
-      "decorators": []
+      "name": "string"
     }
   }
 }
@@ -34,23 +31,20 @@ Found Expression:
   "type": "ETSTypeReferencePart",
   "name": {
     "type": "Identifier",
-    "name": "string",
-    "decorators": []
+    "name": "string"
   }
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "string",
-  "decorators": []
+  "name": "string"
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "b",
-  "decorators": []
+  "name": "b"
 }
 ---
 Found Expression:
@@ -61,8 +55,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "fooExample",
-  "decorators": []
+  "name": "fooExample"
 }
 ---
 Found Expression:
@@ -72,8 +65,7 @@ Found Expression:
     "type": "ScriptFunction",
     "id": {
       "type": "Identifier",
-      "name": "fooExample",
-      "decorators": []
+      "name": "fooExample"
     },
     "generator": false,
     "async": false,
@@ -92,8 +84,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "fooExample",
-  "decorators": []
+  "name": "fooExample"
 }
 ---
 Found Expression:
@@ -104,8 +95,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "$_invoke",
-  "decorators": []
+  "name": "$_invoke"
 }
 ---
 Found Expression:
@@ -115,8 +105,7 @@ Found Expression:
     "type": "ScriptFunction",
     "id": {
       "type": "Identifier",
-      "name": "$_invoke",
-      "decorators": []
+      "name": "$_invoke"
     },
     "generator": false,
     "async": false,
@@ -143,8 +132,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "$_invoke",
-  "decorators": []
+  "name": "$_invoke"
 }
 ---
 Found Expression:
@@ -161,8 +149,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "constructor",
-  "decorators": []
+  "name": "constructor"
 }
 ---
 Found Expression:
@@ -172,8 +159,7 @@ Found Expression:
     "type": "ScriptFunction",
     "id": {
       "type": "Identifier",
-      "name": "constructor",
-      "decorators": []
+      "name": "constructor"
     },
     "generator": false,
     "async": false,
@@ -194,8 +180,7 @@ Found Expression:
               },
               "property": {
                 "type": "Identifier",
-                "name": "name",
-                "decorators": []
+                "name": "name"
               },
               "computed": false,
               "optional": false
@@ -218,8 +203,7 @@ Found Expression:
               },
               "property": {
                 "type": "Identifier",
-                "name": "b",
-                "decorators": []
+                "name": "b"
               },
               "computed": false,
               "optional": false
@@ -238,8 +222,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "constructor",
-  "decorators": []
+  "name": "constructor"
 }
 ---
 Found Expression:
@@ -253,8 +236,7 @@ Found Expression:
     },
     "property": {
       "type": "Identifier",
-      "name": "name",
-      "decorators": []
+      "name": "name"
     },
     "computed": false,
     "optional": false
@@ -273,8 +255,7 @@ Found Expression:
   },
   "property": {
     "type": "Identifier",
-    "name": "name",
-    "decorators": []
+    "name": "name"
   },
   "computed": false,
   "optional": false
@@ -288,8 +269,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "name",
-  "decorators": []
+  "name": "name"
 }
 ---
 Found Expression:
@@ -309,8 +289,7 @@ Found Expression:
     },
     "property": {
       "type": "Identifier",
-      "name": "b",
-      "decorators": []
+      "name": "b"
     },
     "computed": false,
     "optional": false
@@ -329,8 +308,7 @@ Found Expression:
   },
   "property": {
     "type": "Identifier",
-    "name": "b",
-    "decorators": []
+    "name": "b"
   },
   "computed": false,
   "optional": false
@@ -344,8 +322,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "b",
-  "decorators": []
+  "name": "b"
 }
 ---
 Found Expression:
@@ -357,8 +334,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "a",
-  "decorators": []
+  "name": "a"
 }
 ---
 Found Expression:
@@ -366,8 +342,7 @@ Found Expression:
   "type": "CallExpression",
   "callee": {
     "type": "Identifier",
-    "name": "GoodGreeter",
-    "decorators": []
+    "name": "GoodGreeter"
   },
   "arguments": [],
   "optional": false
@@ -376,8 +351,7 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "GoodGreeter",
-  "decorators": []
+  "name": "GoodGreeter"
 }
 ---
 Found Expression:
@@ -390,12 +364,10 @@ Found Expression:
       "type": "ETSTypeReferencePart",
       "name": {
         "type": "Identifier",
-        "name": "GoodGreeter",
-        "decorators": []
+        "name": "GoodGreeter"
       }
     }
-  },
-  "decorators": []
+  }
 }
 ---
 Found Expression:
@@ -405,8 +377,7 @@ Found Expression:
     "type": "ETSTypeReferencePart",
     "name": {
       "type": "Identifier",
-      "name": "GoodGreeter",
-      "decorators": []
+      "name": "GoodGreeter"
     }
   }
 }
@@ -416,16 +387,14 @@ Found Expression:
   "type": "ETSTypeReferencePart",
   "name": {
     "type": "Identifier",
-    "name": "GoodGreeter",
-    "decorators": []
+    "name": "GoodGreeter"
   }
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "GoodGreeter",
-  "decorators": []
+  "name": "GoodGreeter"
 }
 ---
 Found Expression:
@@ -437,8 +406,7 @@ Found Expression:
       "type": "ETSTypeReferencePart",
       "name": {
         "type": "Identifier",
-        "name": "GoodGreeter",
-        "decorators": []
+        "name": "GoodGreeter"
       }
     }
   },
@@ -452,8 +420,7 @@ Found Expression:
     "type": "ETSTypeReferencePart",
     "name": {
       "type": "Identifier",
-      "name": "GoodGreeter",
-      "decorators": []
+      "name": "GoodGreeter"
     }
   }
 }
@@ -463,23 +430,20 @@ Found Expression:
   "type": "ETSTypeReferencePart",
   "name": {
     "type": "Identifier",
-    "name": "GoodGreeter",
-    "decorators": []
+    "name": "GoodGreeter"
   }
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "GoodGreeter",
-  "decorators": []
+  "name": "GoodGreeter"
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "main",
-  "decorators": []
+  "name": "main"
 }
 ---
 Found Expression:
@@ -488,8 +452,7 @@ Found Expression:
   "name": "m",
   "typeAnnotation": {
     "type": "ETSPrimitiveType"
-  },
-  "decorators": []
+  }
 }
 ---
 Found Expression:
@@ -509,8 +472,7 @@ Found Expression:
   "name": "n",
   "typeAnnotation": {
     "type": "ETSPrimitiveType"
-  },
-  "decorators": []
+  }
 }
 ---
 Found Expression:
@@ -530,8 +492,7 @@ Found Expression:
   "name": "f",
   "typeAnnotation": {
     "type": "ETSPrimitiveType"
-  },
-  "decorators": []
+  }
 }
 ---
 Found Expression:
@@ -544,13 +505,11 @@ Found Expression:
   "type": "MemberExpression",
   "object": {
     "type": "Identifier",
-    "name": "c",
-    "decorators": []
+    "name": "c"
   },
   "property": {
     "type": "Identifier",
-    "name": "b",
-    "decorators": []
+    "name": "b"
   },
   "computed": false,
   "optional": false
@@ -559,15 +518,13 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "c",
-  "decorators": []
+  "name": "c"
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "b",
-  "decorators": []
+  "name": "b"
 }
 ---
 Found Expression:
@@ -580,12 +537,10 @@ Found Expression:
       "type": "ETSTypeReferencePart",
       "name": {
         "type": "Identifier",
-        "name": "string",
-        "decorators": []
+        "name": "string"
       }
     }
-  },
-  "decorators": []
+  }
 }
 ---
 Found Expression:
@@ -595,8 +550,7 @@ Found Expression:
     "type": "ETSTypeReferencePart",
     "name": {
       "type": "Identifier",
-      "name": "string",
-      "decorators": []
+      "name": "string"
     }
   }
 }
@@ -606,16 +560,14 @@ Found Expression:
   "type": "ETSTypeReferencePart",
   "name": {
     "type": "Identifier",
-    "name": "string",
-    "decorators": []
+    "name": "string"
   }
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "string",
-  "decorators": []
+  "name": "string"
 }
 ---
 Found Expression:
@@ -623,13 +575,11 @@ Found Expression:
   "type": "MemberExpression",
   "object": {
     "type": "Identifier",
-    "name": "c",
-    "decorators": []
+    "name": "c"
   },
   "property": {
     "type": "Identifier",
-    "name": "name",
-    "decorators": []
+    "name": "name"
   },
   "computed": false,
   "optional": false
@@ -638,15 +588,13 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "c",
-  "decorators": []
+  "name": "c"
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "name",
-  "decorators": []
+  "name": "name"
 }
 ---
 Found Expression:
@@ -656,13 +604,11 @@ Found Expression:
     "type": "MemberExpression",
     "object": {
       "type": "Identifier",
-      "name": "console",
-      "decorators": []
+      "name": "console"
     },
     "property": {
       "type": "Identifier",
-      "name": "log",
-      "decorators": []
+      "name": "log"
     },
     "computed": false,
     "optional": false
@@ -673,13 +619,11 @@ Found Expression:
       "operator": "+",
       "left": {
         "type": "Identifier",
-        "name": "m",
-        "decorators": []
+        "name": "m"
       },
       "right": {
         "type": "Identifier",
-        "name": "n",
-        "decorators": []
+        "name": "n"
       }
     }
   ],
@@ -691,13 +635,11 @@ Found Expression:
   "type": "MemberExpression",
   "object": {
     "type": "Identifier",
-    "name": "console",
-    "decorators": []
+    "name": "console"
   },
   "property": {
     "type": "Identifier",
-    "name": "log",
-    "decorators": []
+    "name": "log"
   },
   "computed": false,
   "optional": false
@@ -706,15 +648,13 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "console",
-  "decorators": []
+  "name": "console"
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "log",
-  "decorators": []
+  "name": "log"
 }
 ---
 Found Expression:
@@ -723,28 +663,24 @@ Found Expression:
   "operator": "+",
   "left": {
     "type": "Identifier",
-    "name": "m",
-    "decorators": []
+    "name": "m"
   },
   "right": {
     "type": "Identifier",
-    "name": "n",
-    "decorators": []
+    "name": "n"
   }
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "m",
-  "decorators": []
+  "name": "m"
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "n",
-  "decorators": []
+  "name": "n"
 }
 ---
 Found Expression:
@@ -754,13 +690,11 @@ Found Expression:
     "type": "MemberExpression",
     "object": {
       "type": "Identifier",
-      "name": "console",
-      "decorators": []
+      "name": "console"
     },
     "property": {
       "type": "Identifier",
-      "name": "log",
-      "decorators": []
+      "name": "log"
     },
     "computed": false,
     "optional": false
@@ -768,8 +702,7 @@ Found Expression:
   "arguments": [
     {
       "type": "Identifier",
-      "name": "k",
-      "decorators": []
+      "name": "k"
     }
   ],
   "optional": false
@@ -780,13 +713,11 @@ Found Expression:
   "type": "MemberExpression",
   "object": {
     "type": "Identifier",
-    "name": "console",
-    "decorators": []
+    "name": "console"
   },
   "property": {
     "type": "Identifier",
-    "name": "log",
-    "decorators": []
+    "name": "log"
   },
   "computed": false,
   "optional": false
@@ -795,22 +726,19 @@ Found Expression:
 Found Expression:
 {
   "type": "Identifier",
-  "name": "console",
-  "decorators": []
+  "name": "console"
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "log",
-  "decorators": []
+  "name": "log"
 }
 ---
 Found Expression:
 {
   "type": "Identifier",
-  "name": "k",
-  "decorators": []
+  "name": "k"
 }
 ---
 After check:

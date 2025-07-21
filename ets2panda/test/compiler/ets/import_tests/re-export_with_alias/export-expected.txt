@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "TestClass",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 22,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "test_method",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "test_method",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 23,
@@ -100,7 +97,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "console",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -117,7 +113,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "print",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -232,7 +227,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,
@@ -251,7 +245,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -276,7 +269,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -337,7 +329,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -384,7 +375,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -406,7 +396,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -432,7 +421,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -493,7 +481,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -512,7 +499,6 @@
             "key": {
               "type": "Identifier",
               "name": "test_var",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -539,7 +525,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "String",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -580,7 +565,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -599,7 +583,6 @@
             "key": {
               "type": "Identifier",
               "name": "test_func",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -625,7 +608,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "test_func",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 18,
@@ -733,7 +715,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,

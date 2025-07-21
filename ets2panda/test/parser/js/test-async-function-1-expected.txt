@@ -9,7 +9,6 @@
           "id": {
             "type": "Identifier",
             "name": "async",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -30,7 +29,6 @@
               "id": {
                 "type": "Identifier",
                 "name": "async",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 17,
