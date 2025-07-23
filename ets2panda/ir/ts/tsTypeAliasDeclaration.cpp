@@ -40,13 +40,7 @@ void TSTypeAliasDeclaration::SetId(Identifier *id)
 
 void TSTypeAliasDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    auto const &annotations = Annotations();
-    for (size_t ix = 0; ix < annotations.size(); ix++) {
-        if (auto *transformedNode = cb(annotations[ix]); annotations[ix] != transformedNode) {
-            annotations[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueAnnotations(transformedNode->AsAnnotationUsage(), ix);
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 
     auto const id = Id();
     if (auto *transformedNode = cb(id); id != transformedNode) {
@@ -72,9 +66,7 @@ void TSTypeAliasDeclaration::TransformChildren(const NodeTransformer &cb, std::s
 
 void TSTypeAliasDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : Annotations()) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 
     auto const id = GetHistoryNode()->AsTSTypeAliasDeclaration()->id_;
     cb(id);
@@ -123,9 +115,7 @@ void TSTypeAliasDeclaration::Dump(ir::SrcDumper *dumper) const
     if (RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     if (id_->Parent()->IsExported()) {
         dumper->Add("export ");
     }
@@ -176,7 +166,6 @@ void TSTypeAliasDeclaration::CopyTo(AstNode *other) const
 {
     auto *otherImpl = other->AsTSTypeAliasDeclaration();
 
-    otherImpl->annotations_ = annotations_;
     otherImpl->id_ = id_;
     otherImpl->typeParams_ = typeParams_;
     otherImpl->typeParamTypes_ = typeParamTypes_;
@@ -209,31 +198,4 @@ void TSTypeAliasDeclaration::SetValueTypeParamterTypes(checker::Type *typeParamT
     auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
     return newNode->typeParamTypes_;
 }
-
-void TSTypeAliasDeclaration::EmplaceAnnotations(AnnotationUsage *annotations)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
-    newNode->annotations_.emplace_back(annotations);
-}
-
-void TSTypeAliasDeclaration::ClearAnnotations()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
-    newNode->annotations_.clear();
-}
-
-void TSTypeAliasDeclaration::SetValueAnnotations(AnnotationUsage *annotations, size_t index)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
-    auto &arenaVector = newNode->annotations_;
-    ES2PANDA_ASSERT(arenaVector.size() > index);
-    arenaVector[index] = annotations;
-}
-
-[[nodiscard]] ArenaVector<AnnotationUsage *> &TSTypeAliasDeclaration::AnnotationsForUpdate()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
-    return newNode->annotations_;
-}
-
 }  // namespace ark::es2panda::ir

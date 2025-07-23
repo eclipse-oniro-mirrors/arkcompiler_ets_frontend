@@ -95,20 +95,17 @@ void AnnotationDeclaration::Iterate(const NodeTraverser &cb) const
         cb(it);
     }
 
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void AnnotationDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"Expr", Expr()}, {"properties", Properties()}, {"annotations", AstDumper::Optional(Annotations())}});
 }
+
 void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
 {  // re-understand
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     ES2PANDA_ASSERT(Expr() != nullptr);
     dumper->Add("@interface ");
     Expr()->Dump(dumper);

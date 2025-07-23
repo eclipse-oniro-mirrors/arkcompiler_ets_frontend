@@ -59,9 +59,8 @@ void NamedType::Iterate(const NodeTraverser &cb) const
     if (next_ != nullptr) {
         cb(next_);
     }
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+
+    IterateAnnotations(cb);
 }
 
 void NamedType::Dump(AstDumper *dumper) const
@@ -76,9 +75,7 @@ void NamedType::Dump(AstDumper *dumper) const
 
 void NamedType::Dump(SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("NamedType");
 }
 

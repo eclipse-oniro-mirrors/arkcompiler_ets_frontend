@@ -36,9 +36,7 @@ void TSTypeQuery::TransformChildren(const NodeTransformer &cb, std::string_view 
 void TSTypeQuery::Iterate(const NodeTraverser &cb) const
 {
     cb(exprName_);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSTypeQuery::Dump(ir::AstDumper *dumper) const
@@ -49,9 +47,7 @@ void TSTypeQuery::Dump(ir::AstDumper *dumper) const
 
 void TSTypeQuery::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSTypeQuery");
 }
 

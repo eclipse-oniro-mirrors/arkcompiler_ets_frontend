@@ -126,9 +126,7 @@ void TSInterfaceDeclaration::TransformChildren(const NodeTransformer &cb, std::s
 
 void TSInterfaceDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : Annotations()) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 
     auto const id = GetHistoryNode()->AsTSInterfaceDeclaration()->id_;
     cb(id);
@@ -184,9 +182,7 @@ void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->AddNode(name, this);
         return;
     }
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     if (id_->Parent()->IsExported()) {
         dumper->Add("export ");
     } else if (id_->Parent()->IsDefaultExported()) {

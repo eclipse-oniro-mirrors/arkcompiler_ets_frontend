@@ -32,9 +32,7 @@ void TSConstructorType::TransformChildren(const NodeTransformer &cb, std::string
 void TSConstructorType::Iterate(const NodeTraverser &cb) const
 {
     signature_.Iterate(cb);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSConstructorType::Dump(ir::AstDumper *dumper) const
@@ -49,9 +47,7 @@ void TSConstructorType::Dump(ir::AstDumper *dumper) const
 
 void TSConstructorType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSConstructorType");
 }
 

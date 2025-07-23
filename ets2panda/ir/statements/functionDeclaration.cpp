@@ -42,9 +42,7 @@ void FunctionDeclaration::TransformChildren(const NodeTransformer &cb, std::stri
 
 void FunctionDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 
     auto func = GetHistoryNode()->AsFunctionDeclaration()->func_;
     cb(func);
@@ -59,9 +57,7 @@ void FunctionDeclaration::Dump(ir::AstDumper *dumper) const
 
 void FunctionDeclaration::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     auto func = Function();
     if (func->IsNative()) {
         dumper->Add("native ");

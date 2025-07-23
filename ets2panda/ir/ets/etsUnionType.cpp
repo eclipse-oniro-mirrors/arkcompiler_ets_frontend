@@ -37,9 +37,7 @@ void ETSUnionType::Iterate(const NodeTraverser &cb) const
         cb(it);
     }
 
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSUnionType::Dump(ir::AstDumper *dumper) const
@@ -49,10 +47,8 @@ void ETSUnionType::Dump(ir::AstDumper *dumper) const
 
 void ETSUnionType::Dump(ir::SrcDumper *dumper) const
 {
+    DumpAnnotations(dumper);
     dumper->Add("(");
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
     for (auto type : Types()) {
         type->Dump(dumper);
         if (type != Types().back()) {
@@ -93,7 +89,7 @@ checker::Type *ETSUnionType::GetType(checker::ETSChecker *checker)
     if (TsType() != nullptr) {
         return TsType();
     }
-    checker->CheckAnnotations(Annotations());
+    checker->CheckAnnotations(this);
 
     ArenaVector<checker::Type *> types(checker->Allocator()->Adapter());
 
@@ -123,13 +119,8 @@ ETSUnionType *ETSUnionType::Clone(ArenaAllocator *const allocator, AstNode *cons
     if (parent != nullptr) {
         clone->SetParent(parent);
     }
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            ES2PANDA_ASSERT(annotationUsage->Clone(allocator, clone));
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
     clone->SetRange(Range());
     for (auto *it : clone->Types()) {

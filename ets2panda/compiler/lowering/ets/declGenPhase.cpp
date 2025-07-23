@@ -60,7 +60,7 @@ void DeclGenPhase::CreateModuleDeclarationAnnotation(parser::Program *program)
     annotationUsage->AddModifier(flags);
     annotationUsage->SetParent(program->GlobalClass());
 
-    program->GlobalClass()->AddAnnotations(annotationUsage);
+    program->GlobalClass()->EmplaceAnnotation(annotationUsage);
     Recheck(phaseManager_, checker_->VarBinder()->AsETSBinder(), checker_, annotationUsage);
 }
 

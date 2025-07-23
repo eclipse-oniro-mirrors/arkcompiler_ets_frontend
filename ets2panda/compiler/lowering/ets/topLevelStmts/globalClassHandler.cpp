@@ -173,13 +173,11 @@ ir::ClassDeclaration *GlobalClassHandler::CreateTransformedClass(ir::ETSModule *
     classDecl->SetRange(ns->Range());
     classDecl->AddModifier(ns->Modifiers());
     classDef->SetNamespaceTransformed();
-    ArenaVector<ir::AnnotationUsage *> annotations {allocator_->Adapter()};
-    for (auto *anno : ns->Annotations()) {
-        auto clone = anno->Clone(allocator_, classDef);
-        annotations.push_back(clone);
+
+    if (ns->HasAnnotations()) {
+        classDef->SetAnnotations(ns->Annotations());
     }
 
-    classDef->SetAnnotations(std::move(annotations));
     classDecl->SetRange(ns->Range());
     return classDecl;
 }
@@ -239,10 +237,10 @@ void GlobalClassHandler::MergeNamespace(ArenaVector<ir::ETSModule *> &namespaces
             if (res->second->Modifiers() != ns->Modifiers()) {
                 parser->LogError(diagnostic::NAMESPACE_MERGE_ERROR, {ns->Ident()->Name().Mutf8()}, ns->Start());
             }
-            if (!res->second->Annotations().empty() && !ns->Annotations().empty()) {
+            if (res->second->HasAnnotations() && ns->HasAnnotations()) {
                 parser->LogError(diagnostic::NAMESPACE_ANNOTATION_CONFLICT, {ns->Ident()->Name().Mutf8()}, ns->Start());
-            } else if (!ns->Annotations().empty()) {
-                ES2PANDA_ASSERT(res->second->Annotations().empty());
+            } else if (ns->HasAnnotations()) {
+                ES2PANDA_ASSERT(!res->second->HasAnnotations());
                 res->second->SetAnnotations(std::move(ns->AnnotationsForUpdate()));
             }
             res->second->AddStatements(ns->Statements());

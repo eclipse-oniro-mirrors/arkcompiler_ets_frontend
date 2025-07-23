@@ -200,9 +200,7 @@ void ETSParameterExpression::Iterate(const NodeTraverser &cb) const
         cb(initializer);
     }
 
-    for (auto *it : Annotations()) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSParameterExpression::Dump(ir::AstDumper *const dumper) const
@@ -221,9 +219,7 @@ void ETSParameterExpression::Dump(ir::AstDumper *const dumper) const
 
 void ETSParameterExpression::Dump(ir::SrcDumper *const dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
 
     if (IsRestParameter()) {
         Spread()->Dump(dumper);
@@ -302,14 +298,8 @@ ETSParameterExpression *ETSParameterExpression::Clone(ArenaAllocator *const allo
 
     clone->SetRequiredParams(GetRequiredParams());
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            auto *const annotationClone = annotationUsage->Clone(allocator, nullptr);
-            ES2PANDA_ASSERT(annotationClone != nullptr);
-            annotationUsages.push_back(annotationClone->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

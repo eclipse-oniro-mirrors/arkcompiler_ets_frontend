@@ -47,9 +47,8 @@ void TSMappedType::Iterate(const NodeTraverser &cb) const
     if (typeAnnotation_ != nullptr) {
         cb(typeAnnotation_);
     }
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+
+    IterateAnnotations(cb);
 }
 
 void TSMappedType::Dump(ir::AstDumper *dumper) const
@@ -68,9 +67,7 @@ void TSMappedType::Dump(ir::AstDumper *dumper) const
 
 void TSMappedType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSMappedType");
 }
 
@@ -120,12 +117,8 @@ TSMappedType *TSMappedType::Clone(ArenaAllocator *allocator, AstNode *parent)
     clone->SetRange(Range());
 
     // Clone annotations if any
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

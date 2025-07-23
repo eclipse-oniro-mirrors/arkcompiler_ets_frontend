@@ -36,9 +36,7 @@ void TSInferType::TransformChildren(const NodeTransformer &cb, std::string_view 
 void TSInferType::Iterate(const NodeTraverser &cb) const
 {
     cb(typeParam_);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSInferType::Dump(ir::AstDumper *dumper) const
@@ -49,9 +47,7 @@ void TSInferType::Dump(ir::AstDumper *dumper) const
 
 void TSInferType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSInferType");
 }
 

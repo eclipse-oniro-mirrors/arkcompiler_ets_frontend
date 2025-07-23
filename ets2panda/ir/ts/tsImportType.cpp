@@ -59,9 +59,8 @@ void TSImportType::Iterate(const NodeTraverser &cb) const
     if (qualifier_ != nullptr) {
         cb(qualifier_);
     }
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+
+    IterateAnnotations(cb);
 }
 
 void TSImportType::Dump(ir::AstDumper *dumper) const
@@ -76,9 +75,7 @@ void TSImportType::Dump(ir::AstDumper *dumper) const
 
 void TSImportType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSImportType");
 }
 

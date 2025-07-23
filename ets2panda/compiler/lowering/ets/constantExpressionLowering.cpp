@@ -1166,13 +1166,12 @@ static varbinder::Variable *ResolveIdentifier(const ir::Identifier *ident)
         return ident->Variable();
     }
 
-    varbinder::ResolveBindingOptions option =
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    static constexpr varbinder::ResolveBindingOptions const option =
         varbinder::ResolveBindingOptions::ALL_DECLARATION | varbinder::ResolveBindingOptions::ALL_VARIABLES;
 
     varbinder::Scope *scope = NearestScope(ident);
-    ES2PANDA_ASSERT(scope != nullptr);
-    auto *resolved = scope->Find(ident->Name(), option).variable;
-    return resolved;
+    return scope != nullptr ? scope->Find(ident->Name(), option).variable : nullptr;
 }
 
 static varbinder::Variable *ResolveMemberExpressionProperty(ir::MemberExpression *me)

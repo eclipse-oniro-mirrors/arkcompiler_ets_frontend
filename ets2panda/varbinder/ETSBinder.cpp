@@ -40,8 +40,10 @@ void ETSBinder::IdentifierAnalysis()
 void ETSBinder::LookupTypeArgumentReferences(ir::ETSTypeReference *typeRef)
 {
     auto *iter = typeRef->Part();
-    for (auto *anno : typeRef->Annotations()) {
-        ResolveReference(anno);
+    if (typeRef->HasAnnotations()) {
+        for (auto *anno : typeRef->Annotations()) {
+            ResolveReference(anno);
+        }
     }
 
     while (iter != nullptr) {
@@ -334,8 +336,10 @@ void ETSBinder::ResolveInterfaceDeclaration(ir::TSInterfaceDeclaration *decl)
         ResolveReference(extend);
     }
 
-    for (auto *anno : decl->Annotations()) {
-        ResolveReference(anno);
+    if (decl->HasAnnotations()) {
+        for (auto *anno : decl->Annotations()) {
+            ResolveReference(anno);
+        }
     }
 
     auto scopeCtx = LexicalScope<ClassScope>::Enter(this, decl->Scope()->AsClassScope());
@@ -402,8 +406,10 @@ void ETSBinder::BuildAnnotationDeclaration(ir::AnnotationDeclaration *annoDecl)
     for (auto *property : annoDecl->Properties()) {
         ResolveReference(property);
     }
-    for (auto *anno : annoDecl->Annotations()) {
-        ResolveReference(anno);
+    if (annoDecl->HasAnnotations()) {
+        for (auto *anno : annoDecl->Annotations()) {
+            ResolveReference(anno);
+        }
     }
 }
 
@@ -426,8 +432,10 @@ void ETSBinder::ResolveMethodDefinition(ir::MethodDefinition *methodDef)
 
     auto *func = methodDef->Function();
     ES2PANDA_ASSERT(func != nullptr);
-    for (auto *anno : func->Annotations()) {
-        ResolveReference(anno);
+    if (func->HasAnnotations()) {
+        for (auto *anno : func->Annotations()) {
+            ResolveReference(anno);
+        }
     }
     if (methodDef->IsStatic() || func->IsStaticBlock()) {
         return;
@@ -495,8 +503,11 @@ void ETSBinder::BuildClassDefinitionImpl(ir::ClassDefinition *classDef)
     for (auto *impl : classDef->Implements()) {
         ResolveReference(impl);
     }
-    for (auto *anno : classDef->Annotations()) {
-        ResolveReference(anno);
+
+    if (classDef->HasAnnotations()) {
+        for (auto *anno : classDef->Annotations()) {
+            ResolveReference(anno);
+        }
     }
 
     for (auto *stmt : classDef->Body()) {

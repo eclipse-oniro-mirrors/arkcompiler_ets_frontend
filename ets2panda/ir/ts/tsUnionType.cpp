@@ -39,9 +39,8 @@ void TSUnionType::Iterate(const NodeTraverser &cb) const
     for (auto *it : VectorIterationGuard(types_)) {
         cb(it);
     }
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+
+    IterateAnnotations(cb);
 }
 
 void TSUnionType::Dump(ir::AstDumper *dumper) const
@@ -51,9 +50,7 @@ void TSUnionType::Dump(ir::AstDumper *dumper) const
 
 void TSUnionType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSUnionType");
 }
 
@@ -119,12 +116,8 @@ TSUnionType *TSUnionType::Clone(ArenaAllocator *allocator, AstNode *parent)
     clone->SetRange(Range());
 
     // Clone annotations if any
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

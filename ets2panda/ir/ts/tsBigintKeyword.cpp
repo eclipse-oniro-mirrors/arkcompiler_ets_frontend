@@ -29,11 +29,9 @@ void TSBigintKeyword::TransformChildren([[maybe_unused]] const NodeTransformer &
     TransformAnnotations(cb, transformationName);
 }
 
-void TSBigintKeyword::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void TSBigintKeyword::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSBigintKeyword::Dump(ir::AstDumper *dumper) const
@@ -43,9 +41,7 @@ void TSBigintKeyword::Dump(ir::AstDumper *dumper) const
 
 void TSBigintKeyword::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSBigintKeyword");
 }
 

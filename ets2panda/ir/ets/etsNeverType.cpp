@@ -26,9 +26,7 @@ void ETSNeverType::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
 
 void ETSNeverType::Iterate([[maybe_unused]] const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSNeverType::Dump(ir::AstDumper *dumper) const
@@ -38,9 +36,7 @@ void ETSNeverType::Dump(ir::AstDumper *dumper) const
 
 void ETSNeverType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("never");
 }
 
@@ -74,14 +70,8 @@ ETSNeverType *ETSNeverType::Clone(ArenaAllocator *allocator, AstNode *parent)
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            auto *const annotationClone = annotationUsage->Clone(allocator, nullptr);
-            ES2PANDA_ASSERT(annotationClone != nullptr);
-            annotationUsages.push_back(annotationClone->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     clone->SetRange(Range());

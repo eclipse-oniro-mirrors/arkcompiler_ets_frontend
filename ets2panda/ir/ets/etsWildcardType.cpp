@@ -54,9 +54,7 @@ void ETSWildcardType::Dump(ir::AstDumper *dumper) const
 
 void ETSWildcardType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("ETSWildcardType");
 }
 

@@ -34,9 +34,7 @@ void TSArrayType::TransformChildren(const NodeTransformer &cb, std::string_view 
 void TSArrayType::Iterate(const NodeTraverser &cb) const
 {
     cb(elementType_);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSArrayType::Dump(ir::AstDumper *dumper) const
@@ -46,9 +44,7 @@ void TSArrayType::Dump(ir::AstDumper *dumper) const
 
 void TSArrayType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     ES2PANDA_ASSERT(elementType_);
     if (elementType_->IsETSUnionType()) {
         dumper->Add("(");
@@ -113,15 +109,8 @@ TSArrayType *TSArrayType::Clone(ArenaAllocator *const allocator, AstNode *const 
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        AnnotationUsage *clonedAnnotationUsage;
-        for (auto *annotationUsage : Annotations()) {
-            clonedAnnotationUsage = annotationUsage->Clone(allocator, clone);
-            ES2PANDA_ASSERT(clonedAnnotationUsage != nullptr);
-            annotationUsages.push_back(clonedAnnotationUsage->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     clone->SetRange(range_.GetRange());

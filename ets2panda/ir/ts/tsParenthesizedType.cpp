@@ -35,9 +35,7 @@ void TSParenthesizedType::TransformChildren(const NodeTransformer &cb, std::stri
 void TSParenthesizedType::Iterate(const NodeTraverser &cb) const
 {
     cb(type_);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSParenthesizedType::Dump(ir::AstDumper *dumper) const
@@ -49,9 +47,7 @@ void TSParenthesizedType::Dump(ir::AstDumper *dumper) const
 
 void TSParenthesizedType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSParenthesizedType");
 }
 
