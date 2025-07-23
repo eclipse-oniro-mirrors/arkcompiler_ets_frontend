@@ -396,11 +396,10 @@ keywords:
     keyword_like: [ets, ts]
     flags: [definable_type_name, predefined_type]
 
-  # issue 25066
-  # - name: 'Number'
-  #   token: KEYW_BUILTIN_NUMBER
-  #   keyword_like: [ets]
-  #   flags:  [predefined_type]
+  - name: 'Number'
+    token: KEYW_BUILTIN_NUMBER
+    keyword_like: [ets]
+    flags:  [predefined_type]
 
   - name: 'object'
     token: KEYW_OBJECT
