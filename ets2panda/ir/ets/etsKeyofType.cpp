@@ -38,9 +38,7 @@ void ETSKeyofType::Dump(ir::AstDumper *dumper) const
 
 void ETSKeyofType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("keyof ");
     type_->Dump(dumper);
 }

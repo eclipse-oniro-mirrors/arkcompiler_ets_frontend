@@ -934,9 +934,9 @@ ir::ClassDefinition *ETSParser::ParseClassDefinition(ir::ClassDefinitionModifier
         std::tie(ctor, properties, bodyRange) = ParseClassBody(modifiers, flags);
     }
 
-    auto *classDefinition =
-        AllocNode<ir::ClassDefinition>(identNode, typeParamDecl, superTypeParams, std::move(implements), ctor,
-                                       superClass, std::move(properties), modifiers, flags, GetContext().GetLanguage());
+    auto *classDefinition = AllocNode<ir::ClassDefinition>(
+        Allocator(), identNode, typeParamDecl, superTypeParams, std::move(implements), ctor, superClass,
+        std::move(properties), modifiers, flags, GetContext().GetLanguage());
     ES2PANDA_ASSERT(classDefinition != nullptr);
 
     classDefinition->SetRange(bodyRange);

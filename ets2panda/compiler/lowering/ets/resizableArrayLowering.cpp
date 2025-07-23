@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-#include <sstream>
-
 #include "resizableArrayLowering.h"
 #include "compiler/lowering/util.h"
 
@@ -31,7 +29,9 @@ static ir::AstNode *ConvertToResizableArrayType(ir::TSArrayType *node, public_li
     auto *parser = ctx->parser->AsETSParser();
     ir::TypeNode *typeAnnotation = parser->CreateFormattedTypeAnnotation(typeAnnotationSrc.str());
     ES2PANDA_ASSERT(typeAnnotation != nullptr);
-    typeAnnotation->SetAnnotations(node->Annotations());
+    if (node->HasAnnotations()) {
+        typeAnnotation->SetAnnotations(node->Annotations());
+    }
     typeAnnotation->SetParent(node->Parent());
     typeAnnotation->SetRange(node->Range());
     RefineSourceRanges(node);

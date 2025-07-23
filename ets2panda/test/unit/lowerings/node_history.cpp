@@ -296,7 +296,6 @@ ir::ClassDefinition *NewClassDefinition(ArenaAllocator *allocator)
         ->AsClassDefinition();
 }
 
-/// NOTE(mivanov): To be enabled after #24153/#24424 implemented
 TEST_F(NodeHistoryTest, UpdateField)
 {
     ASSERT_EQ(PhaseManager()->CurrentPhaseId(), PARSER_PHASE_ID);
@@ -341,8 +340,7 @@ TEST_F(NodeHistoryTest, UpdateField)
     ASSERT_FALSE(definition->IsFinal());
 }
 
-/// NOTE(mivanov): To be enabled after #24153/#24424 implemented
-TEST_F(NodeHistoryTest, DISABLED_UpdateChild)
+TEST_F(NodeHistoryTest, UpdateChild)
 {
     ASSERT_EQ(PhaseManager()->CurrentPhaseId(), PARSER_PHASE_ID);
 

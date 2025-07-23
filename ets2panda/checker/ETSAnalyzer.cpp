@@ -121,7 +121,7 @@ checker::Type *ETSAnalyzer::Check(ir::ClassProperty *st) const
 
     ES2PANDA_ASSERT(st->Id()->Variable() != nullptr);
 
-    checker->CheckAnnotations(st->Annotations());
+    checker->CheckAnnotations(st);
     if (st->TypeAnnotation() != nullptr) {
         st->TypeAnnotation()->Check(checker);
     }
@@ -230,7 +230,7 @@ checker::Type *ETSAnalyzer::Check(ir::MethodDefinition *node) const
         return node->TsType();
     };
 
-    checker->CheckAnnotations(scriptFunc->Annotations());
+    checker->CheckAnnotations(scriptFunc);
     checker->CheckFunctionSignatureAnnotations(scriptFunc->Params(), scriptFunc->TypeParams(),
                                                scriptFunc->ReturnTypeAnnotation());
 
@@ -473,7 +473,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSFunctionType *node) const
         return node->TsType();
     }
     ETSChecker *checker = GetETSChecker();
-    checker->CheckAnnotations(node->Annotations());
+    checker->CheckAnnotations(node);
     checker->CheckFunctionSignatureAnnotations(node->Params(), node->TypeParams(), node->ReturnType());
 
     auto *signatureInfo = checker->ComposeSignatureInfo(node->TypeParams(), node->Params());
@@ -708,7 +708,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSStructDeclaration *node) const
 checker::Type *ETSAnalyzer::Check(ir::ETSTypeReference *node) const
 {
     ETSChecker *checker = GetETSChecker();
-    checker->CheckAnnotations(node->Annotations());
+    checker->CheckAnnotations(node);
     return node->GetType(checker);
 }
 
@@ -730,14 +730,14 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNonNullishTypeNode *node) const
 checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::ETSNullType *node) const
 {
     ETSChecker *checker = GetETSChecker();
-    checker->CheckAnnotations(node->Annotations());
+    checker->CheckAnnotations(node);
     return node->SetTsType(checker->GlobalETSNullType());
 }
 
 checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::ETSUndefinedType *node) const
 {
     ETSChecker *checker = GetETSChecker();
-    checker->CheckAnnotations(node->Annotations());
+    checker->CheckAnnotations(node);
     return node->SetTsType(checker->GlobalETSUndefinedType());
 }
 
@@ -750,7 +750,7 @@ checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::ETSNeverType *node) const
 checker::Type *ETSAnalyzer::Check(ir::ETSStringLiteralType *node) const
 {
     ETSChecker *checker = GetETSChecker();
-    checker->CheckAnnotations(node->Annotations());
+    checker->CheckAnnotations(node);
     return node->GetType(checker);
 }
 
@@ -1044,7 +1044,7 @@ void TryInferPreferredType(ir::ArrowFunctionExpression *expr, checker::Type *pre
 checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
 {
     ETSChecker *checker = GetETSChecker();
-    checker->CheckAnnotations(expr->Annotations());
+    checker->CheckAnnotations(expr);
     if (expr->TsType() != nullptr) {
         return expr->TsType();
     }
@@ -3160,9 +3160,11 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationDeclaration *st) const
     ETSChecker *checker = GetETSChecker();
     st->Expr()->Check(checker);
 
-    for (auto *anno : st->Annotations()) {
-        checker->CheckStandardAnnotation(anno);
-        anno->Check(checker);
+    if (st->HasAnnotations()) {
+        for (auto *anno : st->Annotations()) {
+            checker->CheckStandardAnnotation(anno);
+            anno->Check(checker);
+        }
     }
 
     ScopeContext scopeCtx(checker, st->Scope());
@@ -3763,7 +3765,7 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclaration *st) const
 {
     ETSChecker *checker = GetETSChecker();
 
-    checker->CheckAnnotations(st->Annotations());
+    checker->CheckAnnotations(st);
 
     for (auto *it : st->Declarators()) {
         it->Check(checker);
@@ -3801,7 +3803,7 @@ checker::Type *ETSAnalyzer::Check(ir::WhileStatement *st) const
 checker::Type *ETSAnalyzer::Check(ir::TSArrayType *node) const
 {
     ETSChecker *checker = GetETSChecker();
-    checker->CheckAnnotations(node->Annotations());
+    checker->CheckAnnotations(node);
     node->elementType_->Check(checker);
     node->SetTsType(node->GetType(checker));
 
@@ -3818,7 +3820,7 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
         return expr->TsType();
     }
 
-    checker->CheckAnnotations(expr->TypeAnnotation()->Annotations());
+    checker->CheckAnnotations(expr->TypeAnnotation());
     auto *const targetType = expr->TypeAnnotation()->AsTypeNode()->GetType(checker);
     FORWARD_TYPE_ERROR(checker, targetType, expr);
 
@@ -4029,7 +4031,7 @@ checker::Type *ETSAnalyzer::Check(ir::TSTypeAliasDeclaration *st) const
     ETSChecker *checker = GetETSChecker();
     auto checkerContext = SavedCheckerContext(checker, CheckerStatus::NO_OPTS, checker->Context().ContainingClass());
 
-    checker->CheckAnnotations(st->Annotations());
+    checker->CheckAnnotations(st);
 
     if (st->TypeParams() == nullptr) {
         const checker::SavedTypeRelationFlagsContext savedFlagsCtx(

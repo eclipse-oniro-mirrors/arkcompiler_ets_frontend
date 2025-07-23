@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -79,9 +79,9 @@ public:
 
     ClassDefinition *Build()
     {
-        auto node = AllocNode(ident_, typeParams_, superTypeParams_, std::move(implements_), ctor_, superClass_,
-                              std::move(body_), ir::ClassDefinitionModifiers::CLASS_DECL, ir::ModifierFlags::NONE,
-                              Language(Language::Id::ETS));
+        auto node = AllocNode(Allocator(), ident_, typeParams_, superTypeParams_, std::move(implements_), ctor_,
+                              superClass_, std::move(body_), ir::ClassDefinitionModifiers::CLASS_DECL,
+                              ir::ModifierFlags::NONE, Language(Language::Id::ETS));
         return node;
     }
 

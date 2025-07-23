@@ -27,11 +27,9 @@ void TSThisType::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
     TransformAnnotations(cb, transformationName);
 }
 
-void TSThisType::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void TSThisType::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSThisType::Dump(ir::AstDumper *dumper) const
@@ -85,14 +83,8 @@ TSThisType *TSThisType::Clone(ArenaAllocator *const allocator, AstNode *const pa
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            auto *clonedAnnotationUsage = annotationUsage->Clone(allocator, clone);
-            ES2PANDA_ASSERT(clonedAnnotationUsage != nullptr);
-            annotationUsages.push_back(clonedAnnotationUsage->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     clone->SetRange(Range());

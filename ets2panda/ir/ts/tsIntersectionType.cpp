@@ -40,9 +40,8 @@ void TSIntersectionType::Iterate(const NodeTraverser &cb) const
     for (auto *it : VectorIterationGuard(types_)) {
         cb(it);
     }
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+
+    IterateAnnotations(cb);
 }
 
 void TSIntersectionType::Dump(ir::AstDumper *dumper) const
@@ -53,9 +52,7 @@ void TSIntersectionType::Dump(ir::AstDumper *dumper) const
 
 void TSIntersectionType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSIntersectionType");
 }
 

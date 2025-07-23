@@ -28,11 +28,9 @@ void TSVoidKeyword::TransformChildren([[maybe_unused]] const NodeTransformer &cb
     TransformAnnotations(cb, transformationName);
 }
 
-void TSVoidKeyword::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void TSVoidKeyword::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSVoidKeyword::Dump(ir::AstDumper *dumper) const
@@ -42,9 +40,7 @@ void TSVoidKeyword::Dump(ir::AstDumper *dumper) const
 
 void TSVoidKeyword::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSVoidKeyword");
 }
 
@@ -84,12 +80,8 @@ TSVoidKeyword *TSVoidKeyword::Clone(ArenaAllocator *allocator, AstNode *parent)
     clone->SetRange(Range());
 
     // Clone annotations if any
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

@@ -210,7 +210,7 @@ static void AnnotateGeneratedAnonClass(checker::ETSChecker *checker, ir::ClassDe
     annoUsage->AddModifier(ir::ModifierFlags::ANNOTATION_USAGE);
     annoUsage->SetParent(classDef);
     annoId->SetParent(annoUsage);
-    classDef->AddAnnotations(annoUsage);
+    classDef->EmplaceAnnotation(annoUsage);
     RefineSourceRanges(annoUsage);
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, annoUsage);
 }

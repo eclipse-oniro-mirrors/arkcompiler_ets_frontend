@@ -38,9 +38,7 @@ void ETSTuple::Iterate(const NodeTraverser &cb) const
         cb(it);
     }
 
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSTuple::Dump(ir::AstDumper *const dumper) const
@@ -52,9 +50,7 @@ void ETSTuple::Dump(ir::AstDumper *const dumper) const
 
 void ETSTuple::Dump(ir::SrcDumper *const dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("[");
     for (const auto *const typeAnnot : typeAnnotationList_) {
         typeAnnot->Dump(dumper);
@@ -101,7 +97,7 @@ checker::Type *ETSTuple::GetType(checker::ETSChecker *const checker)
     if (TsType() != nullptr) {
         return TsType();
     }
-    checker->CheckAnnotations(Annotations());
+    checker->CheckAnnotations(this);
 
     // NOTE (smartin): Remove, when TupleN is handled in codegen
     constexpr uint8_t MAX_TUPLE_ARITY = 16;
@@ -153,15 +149,10 @@ ETSTuple *ETSTuple::Clone(ArenaAllocator *const allocator, AstNode *const parent
         typeList.push_back(t);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            auto *const annotationClone = annotationUsage->Clone(allocator, nullptr);
-            ES2PANDA_ASSERT(annotationClone != nullptr);
-            annotationUsages.push_back(annotationClone->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
+
     clone->SetTypeAnnotationsList(std::move(typeList));
 
     clone->SetRange(Range());

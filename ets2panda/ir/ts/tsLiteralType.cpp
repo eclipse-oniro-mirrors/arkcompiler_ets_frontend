@@ -35,9 +35,7 @@ void TSLiteralType::TransformChildren(const NodeTransformer &cb, std::string_vie
 void TSLiteralType::Iterate(const NodeTraverser &cb) const
 {
     cb(literal_);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSLiteralType::Dump(ir::AstDumper *dumper) const
@@ -48,9 +46,7 @@ void TSLiteralType::Dump(ir::AstDumper *dumper) const
 
 void TSLiteralType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSLiteralType");
 }
 
@@ -106,12 +102,8 @@ TSLiteralType *TSLiteralType::Clone(ArenaAllocator *allocator, AstNode *parent)
     clone->SetRange(Range());
 
     // Clone annotations if any
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

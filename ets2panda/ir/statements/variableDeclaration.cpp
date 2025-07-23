@@ -57,13 +57,7 @@ void VariableDeclaration::SetValueDeclarators(VariableDeclarator *source, size_t
 
 void VariableDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    auto const &annotations = Annotations();
-    for (size_t index = 0; index < annotations.size(); ++index) {
-        if (auto *transformedNode = cb(annotations[index]); annotations[index] != transformedNode) {
-            annotations[index]->SetTransformedNode(transformationName, transformedNode);
-            SetValueAnnotations(transformedNode->AsAnnotationUsage(), index);
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 
     auto const &declarators = Declarators();
     for (size_t index = 0; index < declarators.size(); ++index) {
@@ -76,9 +70,7 @@ void VariableDeclaration::TransformChildren(const NodeTransformer &cb, std::stri
 
 void VariableDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 
     for (auto *it : VectorIterationGuard(Declarators())) {
         cb(it);
@@ -116,9 +108,7 @@ void VariableDeclaration::Dump(ir::AstDumper *dumper) const
 
 void VariableDeclaration::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
 
     if (IsDeclare()) {
         dumper->Add("declare ");
@@ -193,6 +183,12 @@ VariableDeclaration *VariableDeclaration::Clone(ArenaAllocator *const allocator,
     if (parent != nullptr) {
         clone->SetParent(parent);
     }
+
+    // Clone annotations if any
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
+    }
+
     clone->SetRange(Range());
     return clone;
 }

@@ -16,6 +16,7 @@
 #ifndef CONVERTORS_NAPI_H_
 #define CONVERTORS_NAPI_H_
 
+#include <array>
 #include <unordered_map>
 #include <vector>
 #include <string>

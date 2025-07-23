@@ -42,9 +42,7 @@ void ETSTypeReference::Iterate(const NodeTraverser &cb) const
 {
     auto const part = GetHistoryNodeAs<ETSTypeReference>()->part_;
     cb(part);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 ir::Identifier *ETSTypeReference::BaseName() const
@@ -99,9 +97,7 @@ void ETSTypeReference::Dump(ir::AstDumper *dumper) const
 
 void ETSTypeReference::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     ES2PANDA_ASSERT(Part() != nullptr);
     Part()->Dump(dumper);
 }
@@ -158,14 +154,8 @@ ETSTypeReference *ETSTypeReference::Clone(ArenaAllocator *const allocator, AstNo
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            auto *annotationClone = annotationUsage->Clone(allocator, nullptr);
-            ES2PANDA_ASSERT(annotationClone != nullptr);
-            annotationUsages.push_back(annotationClone->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

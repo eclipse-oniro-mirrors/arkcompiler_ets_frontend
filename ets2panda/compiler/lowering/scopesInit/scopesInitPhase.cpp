@@ -14,8 +14,9 @@
  */
 
 #include "scopesInitPhase.h"
-#include "util/diagnosticEngine.h"
+#include "compiler/lowering/scopesInit/savedBindingsCtx.h"
 #include "compiler/lowering/util.h"
+#include "varbinder/tsBinding.h"
 
 namespace ark::es2panda::compiler {
 
@@ -128,7 +129,7 @@ void ScopesInitPhase::HandleFunction(ir::ScriptFunction *function)
     BindScopeNode(functionScope, function);
     funcParamScope->BindNode(function);
 
-    CallNode(function->Annotations());
+    CallNodeAnnotations(function);
 }
 
 void ScopesInitPhase::HandleBlockStmt(ir::BlockStatement *block, varbinder::Scope *scope)
@@ -420,7 +421,7 @@ void ScopesInitPhase::IterateNoTParams(ir::ClassDefinition *classDef)
 {
     CallNode(classDef->Super());
     CallNode(classDef->SuperTypeParams());
-    CallNode(classDef->Annotations());
+    CallNodeAnnotations(classDef);
     CallNode(classDef->Implements());
     CallNode(classDef->Ctor());
 
@@ -1264,7 +1265,7 @@ void InitScopesPhaseETS::VisitTSInterfaceDeclaration(ir::TSInterfaceDeclaration 
         CallNode(interfaceDecl->Extends());
         auto localScope = LexicalScopeCreateOrEnter<varbinder::ClassScope>(VarBinder(), interfaceDecl);
         CallNode(interfaceDecl->Body());
-        CallNode(interfaceDecl->Annotations());
+        CallNodeAnnotations(interfaceDecl);
         BindScopeNode(localScope.GetScope(), interfaceDecl);
     }
     auto name = FormInterfaceOrEnumDeclarationIdBinding(interfaceDecl->Id());
@@ -1501,7 +1502,7 @@ void InitScopesPhaseETS::ParseGlobalClass(ir::ClassDefinition *global)
         }
         CallNode(decl);
     }
-    CallNode(global->Annotations());
+    CallNodeAnnotations(global);
     FilterOverloads(global->BodyForUpdate());
 }
 

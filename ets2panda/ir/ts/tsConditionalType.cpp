@@ -53,9 +53,7 @@ void TSConditionalType::Iterate(const NodeTraverser &cb) const
     cb(extendsType_);
     cb(trueType_);
     cb(falseType_);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSConditionalType::Dump(ir::AstDumper *dumper) const
@@ -70,9 +68,7 @@ void TSConditionalType::Dump(ir::AstDumper *dumper) const
 
 void TSConditionalType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSConditionalType");
 }
 

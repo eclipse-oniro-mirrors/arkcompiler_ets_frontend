@@ -984,9 +984,9 @@ ir::ClassDefinition *TypedParser::ParseClassDefinition(ir::ClassDefinitionModifi
         flags |= ir::ModifierFlags::DECLARE;
     }
 
-    auto *classDefinition =
-        AllocNode<ir::ClassDefinition>(identNode, typeParamDecl, superTypeParams, std::move(implements), ctor,
-                                       superClass, std::move(properties), modifiers, flags, GetContext().GetLanguage());
+    auto *classDefinition = AllocNode<ir::ClassDefinition>(
+        Allocator(), identNode, typeParamDecl, superTypeParams, std::move(implements), ctor, superClass,
+        std::move(properties), modifiers, flags, GetContext().GetLanguage());
     ES2PANDA_ASSERT(classDefinition != nullptr);
     classDefinition->SetInternalName(privateBinding.View());
 
