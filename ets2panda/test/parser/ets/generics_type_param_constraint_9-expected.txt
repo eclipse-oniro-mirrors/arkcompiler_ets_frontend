@@ -278,7 +278,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 36,
+                        "column": 35,
                         "program": "generics_type_param_constraint_9.ets"
                       }
                     }
@@ -291,7 +291,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 36,
+                      "column": 35,
                       "program": "generics_type_param_constraint_9.ets"
                     }
                   }
@@ -318,7 +318,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 38,
+                "column": 36,
                 "program": "generics_type_param_constraint_9.ets"
               }
             }
@@ -331,7 +331,7 @@
             },
             "end": {
               "line": 18,
-              "column": 38,
+              "column": 36,
               "program": "generics_type_param_constraint_9.ets"
             }
           }
@@ -565,7 +565,7 @@
                             },
                             "end": {
                               "line": 19,
-                              "column": 27,
+                              "column": 25,
                               "program": "generics_type_param_constraint_9.ets"
                             }
                           }
@@ -578,7 +578,7 @@
                           },
                           "end": {
                             "line": 19,
-                            "column": 27,
+                            "column": 25,
                             "program": "generics_type_param_constraint_9.ets"
                           }
                         }
@@ -921,7 +921,7 @@
                                           },
                                           "end": {
                                             "line": 21,
-                                            "column": 22,
+                                            "column": 21,
                                             "program": "generics_type_param_constraint_9.ets"
                                           }
                                         }
@@ -934,7 +934,7 @@
                                         },
                                         "end": {
                                           "line": 21,
-                                          "column": 22,
+                                          "column": 21,
                                           "program": "generics_type_param_constraint_9.ets"
                                         }
                                       }
@@ -960,8 +960,8 @@
                                     "program": "generics_type_param_constraint_9.ets"
                                   },
                                   "end": {
-                                    "line": 22,
-                                    "column": 2,
+                                    "line": 21,
+                                    "column": 22,
                                     "program": "generics_type_param_constraint_9.ets"
                                   }
                                 }
@@ -973,8 +973,8 @@
                                   "program": "generics_type_param_constraint_9.ets"
                                 },
                                 "end": {
-                                  "line": 22,
-                                  "column": 2,
+                                  "line": 21,
+                                  "column": 22,
                                   "program": "generics_type_param_constraint_9.ets"
                                 }
                               }

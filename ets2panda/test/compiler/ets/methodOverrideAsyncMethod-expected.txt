@@ -198,7 +198,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 57,
+                        "column": 55,
                         "program": "methodOverrideAsyncMethod.ets"
                       }
                     }
@@ -211,7 +211,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 57,
+                      "column": 55,
                       "program": "methodOverrideAsyncMethod.ets"
                     }
                   }
@@ -734,7 +734,7 @@
                       },
                       "end": {
                         "line": 25,
-                        "column": 63,
+                        "column": 61,
                         "program": "methodOverrideAsyncMethod.ets"
                       }
                     }
@@ -747,7 +747,7 @@
                     },
                     "end": {
                       "line": 25,
-                      "column": 63,
+                      "column": 61,
                       "program": "methodOverrideAsyncMethod.ets"
                     }
                   }
@@ -1086,7 +1086,7 @@
             "loc": {
               "start": {
                 "line": 25,
-                "column": 3,
+                "column": 9,
                 "program": "methodOverrideAsyncMethod.ets"
               },
               "end": {

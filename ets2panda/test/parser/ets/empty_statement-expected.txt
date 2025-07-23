@@ -595,7 +595,7 @@
             "loc": {
               "start": {
                 "line": 18,
-                "column": 5,
+                "column": 13,
                 "program": "empty_statement.ets"
               },
               "end": {
@@ -716,7 +716,7 @@
             "loc": {
               "start": {
                 "line": 29,
-                "column": 5,
+                "column": 13,
                 "program": "empty_statement.ets"
               },
               "end": {

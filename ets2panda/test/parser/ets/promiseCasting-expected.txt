@@ -576,7 +576,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 27,
+                        "column": 25,
                         "program": "promiseCasting.ets"
                       }
                     }
@@ -589,7 +589,7 @@
                     },
                     "end": {
                       "line": 23,
-                      "column": 27,
+                      "column": 25,
                       "program": "promiseCasting.ets"
                     }
                   }
@@ -2789,7 +2789,7 @@
                                   },
                                   "end": {
                                     "line": 42,
-                                    "column": 35,
+                                    "column": 34,
                                     "program": "promiseCasting.ets"
                                   }
                                 }
@@ -2802,7 +2802,7 @@
                                 },
                                 "end": {
                                   "line": 42,
-                                  "column": 35,
+                                  "column": 34,
                                   "program": "promiseCasting.ets"
                                 }
                               }
@@ -3162,7 +3162,7 @@
                                           },
                                           "end": {
                                             "line": 44,
-                                            "column": 27,
+                                            "column": 26,
                                             "program": "promiseCasting.ets"
                                           }
                                         }
@@ -3175,7 +3175,7 @@
                                         },
                                         "end": {
                                           "line": 44,
-                                          "column": 27,
+                                          "column": 26,
                                           "program": "promiseCasting.ets"
                                         }
                                       }
@@ -3260,7 +3260,7 @@
                                             },
                                             "end": {
                                               "line": 44,
-                                              "column": 43,
+                                              "column": 42,
                                               "program": "promiseCasting.ets"
                                             }
                                           }
@@ -3273,7 +3273,7 @@
                                           },
                                           "end": {
                                             "line": 44,
-                                            "column": 43,
+                                            "column": 42,
                                             "program": "promiseCasting.ets"
                                           }
                                         }
@@ -3286,7 +3286,7 @@
                                         },
                                         "end": {
                                           "line": 44,
-                                          "column": 43,
+                                          "column": 42,
                                           "program": "promiseCasting.ets"
                                         }
                                       }
@@ -3725,7 +3725,7 @@
                                                     },
                                                     "end": {
                                                       "line": 49,
-                                                      "column": 34,
+                                                      "column": 33,
                                                       "program": "promiseCasting.ets"
                                                     }
                                                   }
@@ -3738,7 +3738,7 @@
                                                   },
                                                   "end": {
                                                     "line": 49,
-                                                    "column": 34,
+                                                    "column": 33,
                                                     "program": "promiseCasting.ets"
                                                   }
                                                 }
@@ -3765,7 +3765,7 @@
                                             },
                                             "end": {
                                               "line": 49,
-                                              "column": 35,
+                                              "column": 34,
                                               "program": "promiseCasting.ets"
                                             }
                                           }
@@ -3778,7 +3778,7 @@
                                           },
                                           "end": {
                                             "line": 49,
-                                            "column": 35,
+                                            "column": 34,
                                             "program": "promiseCasting.ets"
                                           }
                                         }

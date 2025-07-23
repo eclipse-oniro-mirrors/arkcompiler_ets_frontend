@@ -148,6 +148,10 @@
     * @param2 preStr { p }
     */
 /**
+this is jsdoc of tool
+*/
+Empty Jsdoc
+/**
     * ==== ambient indexer jsdoc ====
     * @param1 {} behindStr
     * @param2 preStr { p }
@@ -241,4 +245,12 @@
  * ==== import specifier jsdoc ====
  * @param1 {} behindStr
  * @param2 preStr { p }
+*/
+/**
+ * ==== function overload declaration jsdoc ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+this is jsdoc of struct
 */

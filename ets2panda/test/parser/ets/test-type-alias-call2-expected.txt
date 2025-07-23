@@ -159,8 +159,8 @@
               "program": "test-type-alias-call2.ets"
             },
             "end": {
-              "line": 18,
-              "column": 5,
+              "line": 17,
+              "column": 20,
               "program": "test-type-alias-call2.ets"
             }
           }
@@ -172,8 +172,8 @@
             "program": "test-type-alias-call2.ets"
           },
           "end": {
-            "line": 18,
-            "column": 5,
+            "line": 17,
+            "column": 20,
             "program": "test-type-alias-call2.ets"
           }
         }
@@ -238,8 +238,8 @@
               "program": "test-type-alias-call2.ets"
             },
             "end": {
-              "line": 19,
-              "column": 6,
+              "line": 18,
+              "column": 23,
               "program": "test-type-alias-call2.ets"
             }
           }
@@ -251,8 +251,8 @@
             "program": "test-type-alias-call2.ets"
           },
           "end": {
-            "line": 19,
-            "column": 6,
+            "line": 18,
+            "column": 23,
             "program": "test-type-alias-call2.ets"
           }
         }
@@ -478,7 +478,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 32,
+                    "column": 30,
                     "program": "test-type-alias-call2.ets"
                   }
                 }
@@ -491,7 +491,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 32,
+                  "column": 30,
                   "program": "test-type-alias-call2.ets"
                 }
               }
@@ -706,7 +706,7 @@
             "loc": {
               "start": {
                 "line": 21,
-                "column": 5,
+                "column": 12,
                 "program": "test-type-alias-call2.ets"
               },
               "end": {

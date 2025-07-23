@@ -162,10 +162,10 @@ TEST_F(LSPInlayHintsTests, VisitFunctionLikeForParameterTypeTest)
     const std::string voidString = "void";
     const std::string numberString = "number";
     const std::string stdString = "string";
-    const size_t index1 = 32;
-    const size_t index2 = 43;
-    const size_t index3 = 127;
-    const size_t index4 = 140;
+    const size_t index1 = 31;
+    const size_t index2 = 42;
+    const size_t index3 = 126;
+    const size_t index4 = 139;
     const size_t i0 = 0;
     const size_t i1 = 1;
     const size_t i2 = 2;

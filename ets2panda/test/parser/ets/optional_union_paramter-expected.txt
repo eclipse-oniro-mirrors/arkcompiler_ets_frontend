@@ -110,7 +110,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 38,
+                                  "column": 36,
                                   "program": "optional_union_paramter.ets"
                                 }
                               }
@@ -123,7 +123,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 38,
+                                "column": 36,
                                 "program": "optional_union_paramter.ets"
                               }
                             }
@@ -157,7 +157,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 43,
+                                  "column": 42,
                                   "program": "optional_union_paramter.ets"
                                 }
                               }
@@ -170,7 +170,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 43,
+                                "column": 42,
                                 "program": "optional_union_paramter.ets"
                               }
                             }
@@ -184,7 +184,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 43,
+                            "column": 42,
                             "program": "optional_union_paramter.ets"
                           }
                         }
@@ -198,7 +198,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 43,
+                          "column": 42,
                           "program": "optional_union_paramter.ets"
                         }
                       }
@@ -211,7 +211,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 43,
+                        "column": 42,
                         "program": "optional_union_paramter.ets"
                       }
                     }
@@ -250,7 +250,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 59,
+                              "column": 58,
                               "program": "optional_union_paramter.ets"
                             }
                           }
@@ -263,7 +263,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 59,
+                            "column": 58,
                             "program": "optional_union_paramter.ets"
                           }
                         }
@@ -277,7 +277,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 59,
+                          "column": 58,
                           "program": "optional_union_paramter.ets"
                         }
                       }
@@ -290,7 +290,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 59,
+                        "column": 58,
                         "program": "optional_union_paramter.ets"
                       }
                     }
@@ -655,7 +655,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 12,
                 "program": "optional_union_paramter.ets"
               },
               "end": {

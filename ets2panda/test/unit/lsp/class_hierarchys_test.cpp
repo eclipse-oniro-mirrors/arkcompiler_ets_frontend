@@ -166,8 +166,8 @@ TEST_F(LspClassHierarchiesTests, GetClassHierarchiesImpl_002)
 
 TEST_F(LspClassHierarchiesTests, GetClassHierarchiesImpl_003)
 {
-    constexpr size_t expectedInfoCount = 12;
-    constexpr size_t tokenOffset = 100;
+    constexpr size_t expectedInfoCount = 7;
+    constexpr size_t tokenOffset = 101;  // Note: here will get interface decl: `Iaaa`
 
     std::vector<std::string> fileNames = {"GetClassHierarchiesImpl_003_file1.ets"};
 

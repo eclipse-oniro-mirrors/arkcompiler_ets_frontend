@@ -119,7 +119,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 19,
                 "program": "method_modifier_check_14.ets"
               },
               "end": {

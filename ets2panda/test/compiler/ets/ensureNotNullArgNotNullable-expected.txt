@@ -52,7 +52,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 17,
+                  "column": 16,
                   "program": "ensureNotNullArgNotNullable.ets"
                 }
               }
@@ -65,7 +65,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 17,
+                "column": 16,
                 "program": "ensureNotNullArgNotNullable.ets"
               }
             }
@@ -218,7 +218,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 22,
+                              "column": 21,
                               "program": "ensureNotNullArgNotNullable.ets"
                             }
                           }
@@ -231,7 +231,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 22,
+                            "column": 21,
                             "program": "ensureNotNullArgNotNullable.ets"
                           }
                         }
@@ -245,7 +245,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 22,
+                          "column": 21,
                           "program": "ensureNotNullArgNotNullable.ets"
                         }
                       }
@@ -258,7 +258,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 22,
+                        "column": 21,
                         "program": "ensureNotNullArgNotNullable.ets"
                       }
                     }

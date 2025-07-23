@@ -112,7 +112,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 38,
+                            "column": 36,
                             "program": "generics_type_param_constraint_2.ets"
                           }
                         }
@@ -125,7 +125,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 38,
+                          "column": 36,
                           "program": "generics_type_param_constraint_2.ets"
                         }
                       }
@@ -204,8 +204,8 @@
           "program": "generics_type_param_constraint_2.ets"
         },
         "end": {
-          "line": 18,
-          "column": 1,
+          "line": 17,
+          "column": 41,
           "program": "generics_type_param_constraint_2.ets"
         }
       }

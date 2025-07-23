@@ -58,20 +58,18 @@ ir::Statement *ETSParser::ParseNamespace(ir::ModifierFlags flags)
     if ((GetContext().Status() & ParserStatus::IN_NAMESPACE) == 0) {
         LogError(diagnostic::NAMESPACE_ONLY_TOP_OR_IN_NAMESPACE);
     }
-    auto start = Lexer()->GetToken().Start();
     ir::ETSModule *ns = ParseNamespaceImp(flags);
     ES2PANDA_ASSERT(ns != nullptr);
-    ns->SetRange({start, Lexer()->GetToken().Start()});
     return ns;
 }
 
 ir::ETSModule *ETSParser::ParseNamespaceImp(ir::ModifierFlags flags)
 {
+    auto nsStart = Lexer()->GetToken().Start();
     Lexer()->NextToken();
     auto *result =
         AllocNode<ir::ETSModule>(Allocator(), ArenaVector<ir::Statement *>(Allocator()->Adapter()), ExpectIdentifier(),
                                  ir::ModuleFlag::NAMESPACE, GetContext().GetLanguage(), globalProgram_);
-    ES2PANDA_ASSERT(result != nullptr);
     ir::ETSModule *parent = result;
     ir::ETSModule *child = nullptr;
     while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD) {
@@ -80,7 +78,6 @@ ir::ETSModule *ETSParser::ParseNamespaceImp(ir::ModifierFlags flags)
         child = AllocNode<ir::ETSModule>(Allocator(), ArenaVector<ir::Statement *>(Allocator()->Adapter()),
                                          ExpectIdentifier(), ir::ModuleFlag::NAMESPACE, GetContext().GetLanguage(),
                                          globalProgram_);
-        ES2PANDA_ASSERT(child != nullptr);
         child->SetParent(parent);
         child->SetRange({start, Lexer()->GetToken().Start()});
         child->AddModifier(ir::ModifierFlags::EXPORT);
@@ -104,6 +101,7 @@ ir::ETSModule *ETSParser::ParseNamespaceImp(ir::ModifierFlags flags)
         auto st = ParseTopLevelStatement();
         statements.emplace_back(st);
     }
+    auto nsEnd = Lexer()->GetToken().End();
     Lexer()->NextToken();
     if (child != nullptr) {
         child->SetNamespaceChainLastNode();
@@ -113,6 +111,7 @@ ir::ETSModule *ETSParser::ParseNamespaceImp(ir::ModifierFlags flags)
         result->SetStatements(std::move(statements));
     }
     result->AddModifier(flags);
+    result->SetRange({nsStart, nsEnd});
     return result;
 }
 

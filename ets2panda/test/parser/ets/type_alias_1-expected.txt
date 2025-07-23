@@ -358,8 +358,8 @@
                     "program": "type_alias_1.ets"
                   },
                   "end": {
-                    "line": 19,
-                    "column": 1,
+                    "line": 18,
+                    "column": 19,
                     "program": "type_alias_1.ets"
                   }
                 }
@@ -371,8 +371,8 @@
                   "program": "type_alias_1.ets"
                 },
                 "end": {
-                  "line": 19,
-                  "column": 1,
+                  "line": 18,
+                  "column": 19,
                   "program": "type_alias_1.ets"
                 }
               }

@@ -168,7 +168,7 @@
             "loc": {
               "start": {
                 "line": 21,
-                "column": 4,
+                "column": 12,
                 "program": "func-ref-private.ets"
               },
               "end": {

@@ -15,8 +15,8 @@
 
 class A {
     native final foo() : void;
-    static final foo2() : void {};
+    static final /* @@ label */foo2() : void {};
 }
 
-/* @@? 18:5 Error TypeError: Invalid method modifier(s): a final method can't have abstract or static modifier.  */
-/* @@? 18:5 Error TypeError: Invalid method modifier(s): a static method can't have abstract, final or override modifier.  */
+/* @@@ label Error TypeError: Invalid method modifier(s): a final method can't have abstract or static modifier.  */
+/* @@@ label Error TypeError: Invalid method modifier(s): a static method can't have abstract, final or override modifier.  */

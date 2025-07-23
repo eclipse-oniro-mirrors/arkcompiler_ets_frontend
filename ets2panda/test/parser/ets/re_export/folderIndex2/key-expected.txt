@@ -94,7 +94,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 18,
+                    "column": 16,
                     "program": "key.ets"
                   }
                 }
@@ -107,7 +107,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 18,
+                  "column": 16,
                   "program": "key.ets"
                 }
               }
@@ -352,7 +352,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 18,
+                    "column": 16,
                     "program": "key.ets"
                   }
                 }
@@ -365,7 +365,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 18,
+                  "column": 16,
                   "program": "key.ets"
                 }
               }

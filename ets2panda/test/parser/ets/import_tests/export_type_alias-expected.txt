@@ -251,7 +251,7 @@
             },
             "end": {
               "line": 19,
-              "column": 36,
+              "column": 35,
               "program": "export_type_alias.ets"
             }
           }
@@ -264,7 +264,7 @@
           },
           "end": {
             "line": 19,
-            "column": 36,
+            "column": 35,
             "program": "export_type_alias.ets"
           }
         }

@@ -229,7 +229,7 @@
                     },
                     "end": {
                       "line": 19,
-                      "column": 22,
+                      "column": 21,
                       "program": "lowering-interaction.ets"
                     }
                   }
@@ -242,7 +242,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 22,
+                    "column": 21,
                     "program": "lowering-interaction.ets"
                   }
                 }
@@ -296,7 +296,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 15,
+                    "column": 13,
                     "program": "lowering-interaction.ets"
                   }
                 }
@@ -309,7 +309,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 15,
+                  "column": 13,
                   "program": "lowering-interaction.ets"
                 }
               }
@@ -1132,7 +1132,7 @@
                       },
                       "end": {
                         "line": 31,
-                        "column": 15,
+                        "column": 13,
                         "program": "lowering-interaction.ets"
                       }
                     }
@@ -1145,7 +1145,7 @@
                     },
                     "end": {
                       "line": 31,
-                      "column": 15,
+                      "column": 13,
                       "program": "lowering-interaction.ets"
                     }
                   }

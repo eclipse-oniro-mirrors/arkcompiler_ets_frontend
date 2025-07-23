@@ -85,21 +85,21 @@ interface I1 {
 /* @@? 18:30 Error TypeError: Native, Abstract and Declare methods cannot have body. */
 /* @@? 19:21 Error TypeError: Static property 'f' must be accessed through it's class 'A' */
 /* @@? 22:12 Error SyntaxError: Access modifier must precede field and method modifiers. */
-/* @@? 22:20 Error TypeError: Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier. */
+/* @@? 22:36 Error TypeError: Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier. */
 /* @@? 22:46 Error TypeError: Native, Abstract and Declare methods cannot have body. */
 /* @@? 26:18 Error SyntaxError: Native method cannot be async. */
-/* @@? 27:5 Error TypeError: Non abstract class has abstract method. */
 /* @@? 27:20 Error SyntaxError: Abstract method cannot be async. */
+/* @@? 27:20 Error TypeError: Non abstract class has abstract method. */
 /* @@? 35:5 Error SyntaxError: Only one static block is allowed in one namespace or class. */
 /* @@? 38:10 Error SyntaxError: Duplicated modifier is not allowed. */
-/* @@? 41:5 Error SyntaxError: The special predefined method '$_get' should have exactly one required parameter. */
-/* @@? 41:5 Error SyntaxError: The special predefined method '$_get' cannot be asynchronous. */
+/* @@? 41:11 Error SyntaxError: The special predefined method '$_get' should have exactly one required parameter. */
+/* @@? 41:11 Error SyntaxError: The special predefined method '$_get' cannot be asynchronous. */
 /* @@? 41:16 Error TypeError: Return type of async function must be 'Promise'. */
-/* @@? 45:5 Error SyntaxError: The special predefined method '$_set' should have exactly two required parameter. */
-/* @@? 45:5 Error SyntaxError: The special predefined method '$_set' cannot be asynchronous. */
+/* @@? 45:11 Error SyntaxError: The special predefined method '$_set' should have exactly two required parameter. */
+/* @@? 45:11 Error SyntaxError: The special predefined method '$_set' cannot be asynchronous. */
 /* @@? 45:16 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 47:5 Error SyntaxError: The special predefined method '$_iterator' cannot be asynchronous. */
-/* @@? 47:5 Error SyntaxError: The special predefined method '$_iterator' should not have parameters. */
+/* @@? 47:11 Error SyntaxError: The special predefined method '$_iterator' cannot be asynchronous. */
+/* @@? 47:11 Error SyntaxError: The special predefined method '$_iterator' should not have parameters. */
 /* @@? 47:21 Error TypeError: The return type of '$_iterator' must be a type that implements Iterator interface. */
 /* @@? 47:21 Error TypeError: Return type of async function must be 'Promise'. */
 /* @@? 54:21 Error TypeError: Initializers are not allowed in ambient contexts: x */

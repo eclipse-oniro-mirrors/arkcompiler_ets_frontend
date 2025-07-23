@@ -81,7 +81,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 19,
+                        "column": 18,
                         "program": "requiredType_11.ets"
                       }
                     }
@@ -94,7 +94,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 19,
+                      "column": 18,
                       "program": "requiredType_11.ets"
                     }
                   }
@@ -425,7 +425,7 @@
                           },
                           "end": {
                             "line": 21,
-                            "column": 21,
+                            "column": 20,
                             "program": "requiredType_11.ets"
                           }
                         }
@@ -438,7 +438,7 @@
                         },
                         "end": {
                           "line": 21,
-                          "column": 21,
+                          "column": 20,
                           "program": "requiredType_11.ets"
                         }
                       }
@@ -465,7 +465,7 @@
                   },
                   "end": {
                     "line": 21,
-                    "column": 22,
+                    "column": 21,
                     "program": "requiredType_11.ets"
                   }
                 }
@@ -478,7 +478,7 @@
                 },
                 "end": {
                   "line": 21,
-                  "column": 22,
+                  "column": 21,
                   "program": "requiredType_11.ets"
                 }
               }
@@ -493,7 +493,7 @@
               },
               "end": {
                 "line": 21,
-                "column": 22,
+                "column": 21,
                 "program": "requiredType_11.ets"
               }
             }
@@ -829,7 +829,7 @@
                                                           },
                                                           "end": {
                                                             "line": 25,
-                                                            "column": 40,
+                                                            "column": 37,
                                                             "program": "requiredType_11.ets"
                                                           }
                                                         }
@@ -842,7 +842,7 @@
                                                         },
                                                         "end": {
                                                           "line": 25,
-                                                          "column": 40,
+                                                          "column": 37,
                                                           "program": "requiredType_11.ets"
                                                         }
                                                       }
@@ -949,7 +949,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 42,
+                                    "column": 40,
                                     "program": "requiredType_11.ets"
                                   }
                                 }
@@ -962,7 +962,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 42,
+                                  "column": 40,
                                   "program": "requiredType_11.ets"
                                 }
                               }

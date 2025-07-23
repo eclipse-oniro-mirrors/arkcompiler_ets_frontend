@@ -49,7 +49,7 @@
             },
             "end": {
               "line": 15,
-              "column": 20,
+              "column": 19,
               "program": "generic_typealias_7_neg.ets"
             }
           }
@@ -62,7 +62,7 @@
           },
           "end": {
             "line": 15,
-            "column": 20,
+            "column": 19,
             "program": "generic_typealias_7_neg.ets"
           }
         }
@@ -288,7 +288,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 25,
+                                    "column": 23,
                                     "program": "generic_typealias_7_neg.ets"
                                   }
                                 }
@@ -301,7 +301,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 25,
+                                  "column": 23,
                                   "program": "generic_typealias_7_neg.ets"
                                 }
                               }

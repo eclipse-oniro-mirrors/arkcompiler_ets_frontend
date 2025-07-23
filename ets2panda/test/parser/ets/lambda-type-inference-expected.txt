@@ -682,7 +682,7 @@
                                     },
                                     "end": {
                                       "line": 24,
-                                      "column": 61,
+                                      "column": 60,
                                       "program": "lambda-type-inference.ets"
                                     }
                                   }
@@ -695,7 +695,7 @@
                                   },
                                   "end": {
                                     "line": 24,
-                                    "column": 61,
+                                    "column": 60,
                                     "program": "lambda-type-inference.ets"
                                   }
                                 }
@@ -709,7 +709,7 @@
                                 },
                                 "end": {
                                   "line": 24,
-                                  "column": 61,
+                                  "column": 60,
                                   "program": "lambda-type-inference.ets"
                                 }
                               }
@@ -722,7 +722,7 @@
                               },
                               "end": {
                                 "line": 24,
-                                "column": 61,
+                                "column": 60,
                                 "program": "lambda-type-inference.ets"
                               }
                             }
@@ -1563,7 +1563,7 @@
                                                   },
                                                   "end": {
                                                     "line": 37,
-                                                    "column": 28,
+                                                    "column": 27,
                                                     "program": "lambda-type-inference.ets"
                                                   }
                                                 }
@@ -1576,7 +1576,7 @@
                                                 },
                                                 "end": {
                                                   "line": 37,
-                                                  "column": 28,
+                                                  "column": 27,
                                                   "program": "lambda-type-inference.ets"
                                                 }
                                               }
@@ -1845,7 +1845,7 @@
                                                   },
                                                   "end": {
                                                     "line": 40,
-                                                    "column": 28,
+                                                    "column": 27,
                                                     "program": "lambda-type-inference.ets"
                                                   }
                                                 }
@@ -1858,7 +1858,7 @@
                                                 },
                                                 "end": {
                                                   "line": 40,
-                                                  "column": 28,
+                                                  "column": 27,
                                                   "program": "lambda-type-inference.ets"
                                                 }
                                               }
@@ -2166,7 +2166,7 @@
                                           },
                                           "end": {
                                             "line": 43,
-                                            "column": 46,
+                                            "column": 45,
                                             "program": "lambda-type-inference.ets"
                                           }
                                         }
@@ -2179,7 +2179,7 @@
                                         },
                                         "end": {
                                           "line": 43,
-                                          "column": 46,
+                                          "column": 45,
                                           "program": "lambda-type-inference.ets"
                                         }
                                       }
@@ -2193,7 +2193,7 @@
                                       },
                                       "end": {
                                         "line": 43,
-                                        "column": 46,
+                                        "column": 45,
                                         "program": "lambda-type-inference.ets"
                                       }
                                     }
@@ -2206,7 +2206,7 @@
                                     },
                                     "end": {
                                       "line": 43,
-                                      "column": 46,
+                                      "column": 45,
                                       "program": "lambda-type-inference.ets"
                                     }
                                   }

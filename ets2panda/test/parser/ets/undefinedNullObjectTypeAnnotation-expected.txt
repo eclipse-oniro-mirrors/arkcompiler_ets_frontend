@@ -146,7 +146,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 41,
+                                        "column": 40,
                                         "program": "undefinedNullObjectTypeAnnotation.ets"
                                       }
                                     }
@@ -159,7 +159,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 41,
+                                      "column": 40,
                                       "program": "undefinedNullObjectTypeAnnotation.ets"
                                     }
                                   }
@@ -173,7 +173,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 41,
+                                  "column": 40,
                                   "program": "undefinedNullObjectTypeAnnotation.ets"
                                 }
                               }
@@ -402,7 +402,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 22,
+                                  "column": 21,
                                   "program": "undefinedNullObjectTypeAnnotation.ets"
                                 }
                               }
@@ -415,7 +415,7 @@
                               },
                               "end": {
                                 "line": 20,
-                                "column": 22,
+                                "column": 21,
                                 "program": "undefinedNullObjectTypeAnnotation.ets"
                               }
                             }

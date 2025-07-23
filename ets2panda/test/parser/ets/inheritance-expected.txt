@@ -44,8 +44,8 @@
           "program": "inheritance.ets"
         },
         "end": {
-          "line": 19,
-          "column": 10,
+          "line": 17,
+          "column": 2,
           "program": "inheritance.ets"
         }
       }
@@ -93,8 +93,8 @@
           "program": "inheritance.ets"
         },
         "end": {
-          "line": 22,
-          "column": 6,
+          "line": 20,
+          "column": 2,
           "program": "inheritance.ets"
         }
       }
@@ -303,7 +303,7 @@
               },
               "end": {
                 "line": 25,
-                "column": 49,
+                "column": 38,
                 "program": "inheritance.ets"
               }
             }
@@ -316,7 +316,7 @@
             },
             "end": {
               "line": 25,
-              "column": 49,
+              "column": 38,
               "program": "inheritance.ets"
             }
           }
@@ -353,7 +353,7 @@
                   },
                   "end": {
                     "line": 25,
-                    "column": 62,
+                    "column": 61,
                     "program": "inheritance.ets"
                   }
                 }
@@ -366,7 +366,7 @@
                 },
                 "end": {
                   "line": 25,
-                  "column": 62,
+                  "column": 61,
                   "program": "inheritance.ets"
                 }
               }
@@ -415,7 +415,7 @@
                   },
                   "end": {
                     "line": 25,
-                    "column": 77,
+                    "column": 74,
                     "program": "inheritance.ets"
                   }
                 }
@@ -428,7 +428,7 @@
                 },
                 "end": {
                   "line": 25,
-                  "column": 77,
+                  "column": 74,
                   "program": "inheritance.ets"
                 }
               }
@@ -629,7 +629,7 @@
               },
               "end": {
                 "line": 28,
-                "column": 40,
+                "column": 37,
                 "program": "inheritance.ets"
               }
             }
@@ -642,7 +642,7 @@
             },
             "end": {
               "line": 28,
-              "column": 40,
+              "column": 37,
               "program": "inheritance.ets"
             }
           }
@@ -830,7 +830,7 @@
               },
               "end": {
                 "line": 31,
-                "column": 60,
+                "column": 49,
                 "program": "inheritance.ets"
               }
             }
@@ -843,7 +843,7 @@
             },
             "end": {
               "line": 31,
-              "column": 60,
+              "column": 49,
               "program": "inheritance.ets"
             }
           }
@@ -880,7 +880,7 @@
                   },
                   "end": {
                     "line": 31,
-                    "column": 75,
+                    "column": 72,
                     "program": "inheritance.ets"
                   }
                 }
@@ -893,7 +893,7 @@
                 },
                 "end": {
                   "line": 31,
-                  "column": 75,
+                  "column": 72,
                   "program": "inheritance.ets"
                 }
               }
@@ -1094,7 +1094,7 @@
               },
               "end": {
                 "line": 34,
-                "column": 47,
+                "column": 44,
                 "program": "inheritance.ets"
               }
             }
@@ -1107,7 +1107,7 @@
             },
             "end": {
               "line": 34,
-              "column": 47,
+              "column": 44,
               "program": "inheritance.ets"
             }
           }

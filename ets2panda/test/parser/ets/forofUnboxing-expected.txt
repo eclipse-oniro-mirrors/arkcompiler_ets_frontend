@@ -324,7 +324,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 33,
+                                        "column": 32,
                                         "program": "forofUnboxing.ets"
                                       }
                                     }
@@ -337,7 +337,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 33,
+                                      "column": 32,
                                       "program": "forofUnboxing.ets"
                                     }
                                   }
@@ -434,7 +434,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 55,
+                                        "column": 54,
                                         "program": "forofUnboxing.ets"
                                       }
                                     }
@@ -447,7 +447,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 55,
+                                      "column": 54,
                                       "program": "forofUnboxing.ets"
                                     }
                                   }
@@ -544,7 +544,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 77,
+                                        "column": 76,
                                         "program": "forofUnboxing.ets"
                                       }
                                     }
@@ -557,7 +557,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 77,
+                                      "column": 76,
                                       "program": "forofUnboxing.ets"
                                     }
                                   }

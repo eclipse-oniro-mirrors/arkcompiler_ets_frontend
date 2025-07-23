@@ -218,7 +218,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 42,
+                    "column": 40,
                     "program": "import_interface_test.ets"
                   }
                 }
@@ -231,7 +231,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 42,
+                  "column": 40,
                   "program": "import_interface_test.ets"
                 }
               }
@@ -664,7 +664,7 @@
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 34,
+                                    "column": 33,
                                     "program": "import_interface_test.ets"
                                   }
                                 }
@@ -677,7 +677,7 @@
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 34,
+                                  "column": 33,
                                   "program": "import_interface_test.ets"
                                 }
                               }
@@ -777,7 +777,7 @@
                                   },
                                   "end": {
                                     "line": 27,
-                                    "column": 35,
+                                    "column": 34,
                                     "program": "import_interface_test.ets"
                                   }
                                 }
@@ -790,7 +790,7 @@
                                 },
                                 "end": {
                                   "line": 27,
-                                  "column": 35,
+                                  "column": 34,
                                   "program": "import_interface_test.ets"
                                 }
                               }

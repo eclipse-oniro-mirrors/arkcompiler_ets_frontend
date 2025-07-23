@@ -213,7 +213,7 @@
                             },
                             "end": {
                               "line": 16,
-                              "column": 35,
+                              "column": 34,
                               "program": "native_toplevel.ets"
                             }
                           }
@@ -226,7 +226,7 @@
                           },
                           "end": {
                             "line": 16,
-                            "column": 35,
+                            "column": 34,
                             "program": "native_toplevel.ets"
                           }
                         }
@@ -240,7 +240,7 @@
                         },
                         "end": {
                           "line": 16,
-                          "column": 35,
+                          "column": 34,
                           "program": "native_toplevel.ets"
                         }
                       }
@@ -253,7 +253,7 @@
                       },
                       "end": {
                         "line": 16,
-                        "column": 35,
+                        "column": 34,
                         "program": "native_toplevel.ets"
                       }
                     }
@@ -288,7 +288,7 @@
                       },
                       "end": {
                         "line": 16,
-                        "column": 44,
+                        "column": 43,
                         "program": "native_toplevel.ets"
                       }
                     }
@@ -301,7 +301,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 44,
+                      "column": 43,
                       "program": "native_toplevel.ets"
                     }
                   }

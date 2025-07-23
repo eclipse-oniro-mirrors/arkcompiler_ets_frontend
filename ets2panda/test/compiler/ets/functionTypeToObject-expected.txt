@@ -711,7 +711,7 @@
                                   },
                                   "end": {
                                     "line": 22,
-                                    "column": 20,
+                                    "column": 18,
                                     "program": "functionTypeToObject.ets"
                                   }
                                 }
@@ -724,7 +724,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 20,
+                                  "column": 18,
                                   "program": "functionTypeToObject.ets"
                                 }
                               }

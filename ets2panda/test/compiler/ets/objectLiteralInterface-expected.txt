@@ -44,8 +44,8 @@
           "program": "objectLiteralInterface.ets"
         },
         "end": {
-          "line": 18,
-          "column": 4,
+          "line": 16,
+          "column": 15,
           "program": "objectLiteralInterface.ets"
         }
       }
@@ -233,7 +233,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 11,
+                    "column": 9,
                     "program": "objectLiteralInterface.ets"
                   }
                 }
@@ -246,7 +246,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 11,
+                  "column": 9,
                   "program": "objectLiteralInterface.ets"
                 }
               }

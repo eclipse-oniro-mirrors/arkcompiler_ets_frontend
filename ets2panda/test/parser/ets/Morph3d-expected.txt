@@ -951,7 +951,7 @@
             "loc": {
               "start": {
                 "line": 24,
-                "column": 3,
+                "column": 10,
                 "program": "Morph3d.ets"
               },
               "end": {
@@ -2302,7 +2302,7 @@
             "loc": {
               "start": {
                 "line": 32,
-                "column": 3,
+                "column": 11,
                 "program": "Morph3d.ets"
               },
               "end": {
@@ -3623,7 +3623,7 @@
             "loc": {
               "start": {
                 "line": 43,
-                "column": 3,
+                "column": 10,
                 "program": "Morph3d.ets"
               },
               "end": {
@@ -3908,7 +3908,7 @@
                                   },
                                   "end": {
                                     "line": 61,
-                                    "column": 23,
+                                    "column": 22,
                                     "program": "Morph3d.ets"
                                   }
                                 }
@@ -3921,7 +3921,7 @@
                                 },
                                 "end": {
                                   "line": 61,
-                                  "column": 23,
+                                  "column": 22,
                                   "program": "Morph3d.ets"
                                 }
                               }

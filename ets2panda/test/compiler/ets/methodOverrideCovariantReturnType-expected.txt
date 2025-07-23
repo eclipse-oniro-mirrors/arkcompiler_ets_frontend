@@ -102,7 +102,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 23,
+                        "column": 22,
                         "program": "methodOverrideCovariantReturnType.ets"
                       }
                     }
@@ -115,7 +115,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 23,
+                      "column": 22,
                       "program": "methodOverrideCovariantReturnType.ets"
                     }
                   }
@@ -151,7 +151,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 14,
                 "program": "methodOverrideCovariantReturnType.ets"
               },
               "end": {
@@ -442,8 +442,8 @@
           "program": "methodOverrideCovariantReturnType.ets"
         },
         "end": {
-          "line": 24,
-          "column": 6,
+          "line": 22,
+          "column": 2,
           "program": "methodOverrideCovariantReturnType.ets"
         }
       }
@@ -497,7 +497,7 @@
               },
               "end": {
                 "line": 24,
-                "column": 29,
+                "column": 18,
                 "program": "methodOverrideCovariantReturnType.ets"
               }
             }
@@ -510,7 +510,7 @@
             },
             "end": {
               "line": 24,
-              "column": 29,
+              "column": 18,
               "program": "methodOverrideCovariantReturnType.ets"
             }
           }
@@ -547,7 +547,7 @@
                   },
                   "end": {
                     "line": 24,
-                    "column": 32,
+                    "column": 31,
                     "program": "methodOverrideCovariantReturnType.ets"
                   }
                 }
@@ -560,7 +560,7 @@
                 },
                 "end": {
                   "line": 24,
-                  "column": 32,
+                  "column": 31,
                   "program": "methodOverrideCovariantReturnType.ets"
                 }
               }
@@ -658,7 +658,7 @@
                       },
                       "end": {
                         "line": 25,
-                        "column": 24,
+                        "column": 22,
                         "program": "methodOverrideCovariantReturnType.ets"
                       }
                     }
@@ -671,7 +671,7 @@
                     },
                     "end": {
                       "line": 25,
-                      "column": 24,
+                      "column": 22,
                       "program": "methodOverrideCovariantReturnType.ets"
                     }
                   }
@@ -754,7 +754,7 @@
             "loc": {
               "start": {
                 "line": 25,
-                "column": 5,
+                "column": 14,
                 "program": "methodOverrideCovariantReturnType.ets"
               },
               "end": {
@@ -892,7 +892,7 @@
             "loc": {
               "start": {
                 "line": 28,
-                "column": 5,
+                "column": 14,
                 "program": "methodOverrideCovariantReturnType.ets"
               },
               "end": {
@@ -1238,7 +1238,7 @@
               },
               "end": {
                 "line": 37,
-                "column": 20,
+                "column": 18,
                 "program": "methodOverrideCovariantReturnType.ets"
               }
             }
@@ -1251,7 +1251,7 @@
             },
             "end": {
               "line": 37,
-              "column": 20,
+              "column": 18,
               "program": "methodOverrideCovariantReturnType.ets"
             }
           }
@@ -1336,7 +1336,7 @@
                       },
                       "end": {
                         "line": 38,
-                        "column": 24,
+                        "column": 22,
                         "program": "methodOverrideCovariantReturnType.ets"
                       }
                     }
@@ -1349,7 +1349,7 @@
                     },
                     "end": {
                       "line": 38,
-                      "column": 24,
+                      "column": 22,
                       "program": "methodOverrideCovariantReturnType.ets"
                     }
                   }
@@ -1394,7 +1394,7 @@
                                   },
                                   "end": {
                                     "line": 39,
-                                    "column": 24,
+                                    "column": 22,
                                     "program": "methodOverrideCovariantReturnType.ets"
                                   }
                                 }
@@ -1407,7 +1407,7 @@
                                 },
                                 "end": {
                                   "line": 39,
-                                  "column": 24,
+                                  "column": 22,
                                   "program": "methodOverrideCovariantReturnType.ets"
                                 }
                               }
@@ -1457,7 +1457,7 @@
                                   },
                                   "end": {
                                     "line": 39,
-                                    "column": 31,
+                                    "column": 30,
                                     "program": "methodOverrideCovariantReturnType.ets"
                                   }
                                 }
@@ -1470,7 +1470,7 @@
                                 },
                                 "end": {
                                   "line": 39,
-                                  "column": 31,
+                                  "column": 30,
                                   "program": "methodOverrideCovariantReturnType.ets"
                                 }
                               }
@@ -1716,7 +1716,7 @@
                           },
                           "end": {
                             "line": 42,
-                            "column": 21,
+                            "column": 19,
                             "program": "methodOverrideCovariantReturnType.ets"
                           }
                         }
@@ -1729,7 +1729,7 @@
                         },
                         "end": {
                           "line": 42,
-                          "column": 21,
+                          "column": 19,
                           "program": "methodOverrideCovariantReturnType.ets"
                         }
                       }
@@ -1774,7 +1774,7 @@
                                       },
                                       "end": {
                                         "line": 43,
-                                        "column": 24,
+                                        "column": 22,
                                         "program": "methodOverrideCovariantReturnType.ets"
                                       }
                                     }
@@ -1787,7 +1787,7 @@
                                     },
                                     "end": {
                                       "line": 43,
-                                      "column": 24,
+                                      "column": 22,
                                       "program": "methodOverrideCovariantReturnType.ets"
                                     }
                                   }
@@ -1837,7 +1837,7 @@
                                       },
                                       "end": {
                                         "line": 43,
-                                        "column": 31,
+                                        "column": 30,
                                         "program": "methodOverrideCovariantReturnType.ets"
                                       }
                                     }
@@ -1850,7 +1850,7 @@
                                     },
                                     "end": {
                                       "line": 43,
-                                      "column": 31,
+                                      "column": 30,
                                       "program": "methodOverrideCovariantReturnType.ets"
                                     }
                                   }
@@ -1989,7 +1989,7 @@
             "loc": {
               "start": {
                 "line": 38,
-                "column": 5,
+                "column": 14,
                 "program": "methodOverrideCovariantReturnType.ets"
               },
               "end": {

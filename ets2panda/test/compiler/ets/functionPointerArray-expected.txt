@@ -291,7 +291,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 35,
+                              "column": 34,
                               "program": "functionPointerArray.ets"
                             }
                           }
@@ -304,7 +304,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 35,
+                            "column": 34,
                             "program": "functionPointerArray.ets"
                           }
                         }
@@ -318,7 +318,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 35,
+                          "column": 34,
                           "program": "functionPointerArray.ets"
                         }
                       }
@@ -331,7 +331,7 @@
                       },
                       "end": {
                         "line": 20,
-                        "column": 35,
+                        "column": 34,
                         "program": "functionPointerArray.ets"
                       }
                     }
@@ -854,7 +854,7 @@
                                   },
                                   "end": {
                                     "line": 27,
-                                    "column": 21,
+                                    "column": 19,
                                     "program": "functionPointerArray.ets"
                                   }
                                 }
@@ -867,7 +867,7 @@
                                 },
                                 "end": {
                                   "line": 27,
-                                  "column": 21,
+                                  "column": 19,
                                   "program": "functionPointerArray.ets"
                                 }
                               }

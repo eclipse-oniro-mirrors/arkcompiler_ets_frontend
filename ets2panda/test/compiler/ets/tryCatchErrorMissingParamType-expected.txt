@@ -129,7 +129,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 25,
+                                      "column": 24,
                                       "program": "tryCatchErrorMissingParamType.ets"
                                     }
                                   }
@@ -142,7 +142,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 25,
+                                    "column": 24,
                                     "program": "tryCatchErrorMissingParamType.ets"
                                   }
                                 }

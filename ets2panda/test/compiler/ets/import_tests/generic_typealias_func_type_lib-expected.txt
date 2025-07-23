@@ -57,7 +57,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 38,
+                      "column": 37,
                       "program": "generic_typealias_func_type_lib.ets"
                     }
                   }
@@ -70,7 +70,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 38,
+                    "column": 37,
                     "program": "generic_typealias_func_type_lib.ets"
                   }
                 }
@@ -84,7 +84,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 38,
+                  "column": 37,
                   "program": "generic_typealias_func_type_lib.ets"
                 }
               }
@@ -97,7 +97,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 38,
+                "column": 37,
                 "program": "generic_typealias_func_type_lib.ets"
               }
             }
@@ -131,8 +131,8 @@
                 "program": "generic_typealias_func_type_lib.ets"
               },
               "end": {
-                "line": 18,
-                "column": 7,
+                "line": 16,
+                "column": 43,
                 "program": "generic_typealias_func_type_lib.ets"
               }
             }
@@ -144,8 +144,8 @@
               "program": "generic_typealias_func_type_lib.ets"
             },
             "end": {
-              "line": 18,
-              "column": 7,
+              "line": 16,
+              "column": 43,
               "program": "generic_typealias_func_type_lib.ets"
             }
           }
@@ -157,8 +157,8 @@
             "program": "generic_typealias_func_type_lib.ets"
           },
           "end": {
-            "line": 18,
-            "column": 7,
+            "line": 16,
+            "column": 43,
             "program": "generic_typealias_func_type_lib.ets"
           }
         }
@@ -493,7 +493,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 42,
+                                      "column": 41,
                                       "program": "generic_typealias_func_type_lib.ets"
                                     }
                                   }
@@ -506,7 +506,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 42,
+                                    "column": 41,
                                     "program": "generic_typealias_func_type_lib.ets"
                                   }
                                 }
@@ -540,7 +540,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 45,
+                                      "column": 44,
                                       "program": "generic_typealias_func_type_lib.ets"
                                     }
                                   }
@@ -553,7 +553,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 45,
+                                    "column": 44,
                                     "program": "generic_typealias_func_type_lib.ets"
                                   }
                                 }
@@ -580,7 +580,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 46,
+                              "column": 45,
                               "program": "generic_typealias_func_type_lib.ets"
                             }
                           }
@@ -593,7 +593,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 46,
+                            "column": 45,
                             "program": "generic_typealias_func_type_lib.ets"
                           }
                         }
@@ -607,7 +607,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 46,
+                          "column": 45,
                           "program": "generic_typealias_func_type_lib.ets"
                         }
                       }
@@ -620,7 +620,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 46,
+                        "column": 45,
                         "program": "generic_typealias_func_type_lib.ets"
                       }
                     }
@@ -655,7 +655,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 51,
+                        "column": 49,
                         "program": "generic_typealias_func_type_lib.ets"
                       }
                     }
@@ -668,7 +668,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 51,
+                      "column": 49,
                       "program": "generic_typealias_func_type_lib.ets"
                     }
                   }

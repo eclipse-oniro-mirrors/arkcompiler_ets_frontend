@@ -363,7 +363,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 21,
+                        "column": 19,
                         "program": "returnNullableFromFunction.ets"
                       }
                     }
@@ -376,7 +376,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 21,
+                      "column": 19,
                       "program": "returnNullableFromFunction.ets"
                     }
                   }
@@ -424,7 +424,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 17,
+                                        "column": 15,
                                         "program": "returnNullableFromFunction.ets"
                                       }
                                     }
@@ -437,7 +437,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 17,
+                                      "column": 15,
                                       "program": "returnNullableFromFunction.ets"
                                     }
                                   }
@@ -516,7 +516,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 31,
+                                    "column": 30,
                                     "program": "returnNullableFromFunction.ets"
                                   }
                                 }
@@ -529,7 +529,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 31,
+                                  "column": 30,
                                   "program": "returnNullableFromFunction.ets"
                                 }
                               }

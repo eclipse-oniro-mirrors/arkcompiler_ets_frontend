@@ -444,7 +444,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 19,
+                                    "column": 18,
                                     "program": "class_def_varargs_2.ets"
                                   }
                                 }
@@ -457,7 +457,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 19,
+                                  "column": 18,
                                   "program": "class_def_varargs_2.ets"
                                 }
                               }
@@ -557,7 +557,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 15,
+                                  "column": 14,
                                   "program": "class_def_varargs_2.ets"
                                 }
                               }
@@ -570,7 +570,7 @@
                               },
                               "end": {
                                 "line": 22,
-                                "column": 15,
+                                "column": 14,
                                 "program": "class_def_varargs_2.ets"
                               }
                             }

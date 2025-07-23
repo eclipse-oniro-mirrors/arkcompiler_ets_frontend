@@ -205,7 +205,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 20,
+                "column": 18,
                 "program": "function_subtyping_1.ets"
               }
             }
@@ -218,7 +218,7 @@
             },
             "end": {
               "line": 17,
-              "column": 20,
+              "column": 18,
               "program": "function_subtyping_1.ets"
             }
           }
@@ -492,7 +492,7 @@
                                           },
                                           "end": {
                                             "line": 20,
-                                            "column": 18,
+                                            "column": 17,
                                             "program": "function_subtyping_1.ets"
                                           }
                                         }
@@ -505,7 +505,7 @@
                                         },
                                         "end": {
                                           "line": 20,
-                                          "column": 18,
+                                          "column": 17,
                                           "program": "function_subtyping_1.ets"
                                         }
                                       }
@@ -519,7 +519,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 18,
+                                        "column": 17,
                                         "program": "function_subtyping_1.ets"
                                       }
                                     }
@@ -532,7 +532,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 18,
+                                      "column": 17,
                                       "program": "function_subtyping_1.ets"
                                     }
                                   }
@@ -567,7 +567,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 25,
+                                      "column": 23,
                                       "program": "function_subtyping_1.ets"
                                     }
                                   }
@@ -580,7 +580,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 25,
+                                    "column": 23,
                                     "program": "function_subtyping_1.ets"
                                   }
                                 }
@@ -593,7 +593,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 25,
+                                  "column": 23,
                                   "program": "function_subtyping_1.ets"
                                 }
                               }
@@ -655,7 +655,7 @@
                                           },
                                           "end": {
                                             "line": 20,
-                                            "column": 32,
+                                            "column": 31,
                                             "program": "function_subtyping_1.ets"
                                           }
                                         }
@@ -668,7 +668,7 @@
                                         },
                                         "end": {
                                           "line": 20,
-                                          "column": 32,
+                                          "column": 31,
                                           "program": "function_subtyping_1.ets"
                                         }
                                       }
@@ -682,7 +682,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 32,
+                                        "column": 31,
                                         "program": "function_subtyping_1.ets"
                                       }
                                     }
@@ -695,7 +695,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 32,
+                                      "column": 31,
                                       "program": "function_subtyping_1.ets"
                                     }
                                   }
@@ -730,7 +730,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 38,
+                                      "column": 35,
                                       "program": "function_subtyping_1.ets"
                                     }
                                   }
@@ -743,7 +743,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 38,
+                                    "column": 35,
                                     "program": "function_subtyping_1.ets"
                                   }
                                 }
@@ -784,7 +784,7 @@
                                             },
                                             "end": {
                                               "line": 20,
-                                              "column": 54,
+                                              "column": 53,
                                               "program": "function_subtyping_1.ets"
                                             }
                                           }
@@ -797,7 +797,7 @@
                                           },
                                           "end": {
                                             "line": 20,
-                                            "column": 54,
+                                            "column": 53,
                                             "program": "function_subtyping_1.ets"
                                           }
                                         }

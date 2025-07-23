@@ -136,7 +136,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 44,
+                    "column": 42,
                     "program": "selective_import_with_alias_2.ets"
                   }
                 }
@@ -149,7 +149,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 44,
+                  "column": 42,
                   "program": "selective_import_with_alias_2.ets"
                 }
               }

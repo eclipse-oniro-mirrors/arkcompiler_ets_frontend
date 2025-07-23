@@ -81,7 +81,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 20,
+                        "column": 19,
                         "program": "optional_field_class.ets"
                       }
                     }
@@ -94,7 +94,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 20,
+                      "column": 19,
                       "program": "optional_field_class.ets"
                     }
                   }
@@ -109,7 +109,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 20,
+                      "column": 19,
                       "program": "optional_field_class.ets"
                     }
                   }
@@ -123,7 +123,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 20,
+                  "column": 19,
                   "program": "optional_field_class.ets"
                 }
               }
@@ -138,7 +138,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 20,
+                "column": 19,
                 "program": "optional_field_class.ets"
               }
             }
@@ -200,7 +200,7 @@
                       },
                       "end": {
                         "line": 19,
-                        "column": 28,
+                        "column": 27,
                         "program": "optional_field_class.ets"
                       }
                     }
@@ -213,7 +213,7 @@
                     },
                     "end": {
                       "line": 19,
-                      "column": 28,
+                      "column": 27,
                       "program": "optional_field_class.ets"
                     }
                   }
@@ -228,7 +228,7 @@
                     },
                     "end": {
                       "line": 19,
-                      "column": 28,
+                      "column": 27,
                       "program": "optional_field_class.ets"
                     }
                   }
@@ -242,7 +242,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 28,
+                  "column": 27,
                   "program": "optional_field_class.ets"
                 }
               }
@@ -257,7 +257,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 28,
+                "column": 27,
                 "program": "optional_field_class.ets"
               }
             }

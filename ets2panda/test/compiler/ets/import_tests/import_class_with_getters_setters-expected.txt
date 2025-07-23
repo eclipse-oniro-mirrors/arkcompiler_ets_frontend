@@ -275,7 +275,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 25,
+                                    "column": 24,
                                     "program": "import_class_with_getters_setters.ets"
                                   }
                                 }
@@ -288,7 +288,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 25,
+                                  "column": 24,
                                   "program": "import_class_with_getters_setters.ets"
                                 }
                               }
@@ -372,7 +372,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 21,
+                                    "column": 19,
                                     "program": "import_class_with_getters_setters.ets"
                                   }
                                 }
@@ -385,7 +385,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 21,
+                                  "column": 19,
                                   "program": "import_class_with_getters_setters.ets"
                                 }
                               }
@@ -435,7 +435,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 36,
+                                    "column": 35,
                                     "program": "import_class_with_getters_setters.ets"
                                   }
                                 }
@@ -448,7 +448,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 36,
+                                  "column": 35,
                                   "program": "import_class_with_getters_setters.ets"
                                 }
                               }

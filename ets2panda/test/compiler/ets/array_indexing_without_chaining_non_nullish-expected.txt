@@ -490,7 +490,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 20,
+                    "column": 18,
                     "program": "array_indexing_without_chaining_non_nullish.ets"
                   }
                 }
@@ -503,7 +503,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 20,
+                  "column": 18,
                   "program": "array_indexing_without_chaining_non_nullish.ets"
                 }
               }

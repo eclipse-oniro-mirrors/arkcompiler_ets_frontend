@@ -12509,7 +12509,7 @@
                   },
                   "end": {
                     "line": 32,
-                    "column": 21,
+                    "column": 19,
                     "program": "enum_export.ets"
                   }
                 }
@@ -12522,7 +12522,7 @@
                 },
                 "end": {
                   "line": 32,
-                  "column": 21,
+                  "column": 19,
                   "program": "enum_export.ets"
                 }
               }

@@ -212,7 +212,7 @@
                                     },
                                     "end": {
                                       "line": 16,
-                                      "column": 38,
+                                      "column": 37,
                                       "program": "FunctionalTypeAsTypeArgument.ets"
                                     }
                                   }
@@ -225,7 +225,7 @@
                                   },
                                   "end": {
                                     "line": 16,
-                                    "column": 38,
+                                    "column": 37,
                                     "program": "FunctionalTypeAsTypeArgument.ets"
                                   }
                                 }
@@ -239,7 +239,7 @@
                                 },
                                 "end": {
                                   "line": 16,
-                                  "column": 38,
+                                  "column": 37,
                                   "program": "FunctionalTypeAsTypeArgument.ets"
                                 }
                               }
@@ -252,7 +252,7 @@
                               },
                               "end": {
                                 "line": 16,
-                                "column": 38,
+                                "column": 37,
                                 "program": "FunctionalTypeAsTypeArgument.ets"
                               }
                             }
@@ -308,7 +308,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 48,
+                      "column": 47,
                       "program": "FunctionalTypeAsTypeArgument.ets"
                     }
                   }
@@ -321,7 +321,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 48,
+                    "column": 47,
                     "program": "FunctionalTypeAsTypeArgument.ets"
                   }
                 }

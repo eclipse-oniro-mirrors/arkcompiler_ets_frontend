@@ -72,7 +72,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 26,
+                      "column": 25,
                       "program": "generics_instantiation_1.ets"
                     }
                   }
@@ -85,7 +85,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 26,
+                    "column": 25,
                     "program": "generics_instantiation_1.ets"
                   }
                 }
@@ -174,7 +174,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 19,
+                    "column": 18,
                     "program": "generics_instantiation_1.ets"
                   }
                 }
@@ -187,7 +187,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 19,
+                  "column": 18,
                   "program": "generics_instantiation_1.ets"
                 }
               }
@@ -202,7 +202,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 19,
+                "column": 18,
                 "program": "generics_instantiation_1.ets"
               }
             }
@@ -290,7 +290,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 23,
+                              "column": 22,
                               "program": "generics_instantiation_1.ets"
                             }
                           }
@@ -303,7 +303,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 23,
+                            "column": 22,
                             "program": "generics_instantiation_1.ets"
                           }
                         }
@@ -317,7 +317,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 23,
+                          "column": 22,
                           "program": "generics_instantiation_1.ets"
                         }
                       }
@@ -330,7 +330,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 23,
+                        "column": 22,
                         "program": "generics_instantiation_1.ets"
                       }
                     }
@@ -569,7 +569,7 @@
                       },
                       "end": {
                         "line": 21,
-                        "column": 21,
+                        "column": 19,
                         "program": "generics_instantiation_1.ets"
                       }
                     }
@@ -582,7 +582,7 @@
                     },
                     "end": {
                       "line": 21,
-                      "column": 21,
+                      "column": 19,
                       "program": "generics_instantiation_1.ets"
                     }
                   }
@@ -699,7 +699,7 @@
             "loc": {
               "start": {
                 "line": 21,
-                "column": 5,
+                "column": 12,
                 "program": "generics_instantiation_1.ets"
               },
               "end": {
@@ -842,7 +842,7 @@
                             },
                             "end": {
                               "line": 27,
-                              "column": 30,
+                              "column": 29,
                               "program": "generics_instantiation_1.ets"
                             }
                           }
@@ -855,7 +855,7 @@
                           },
                           "end": {
                             "line": 27,
-                            "column": 30,
+                            "column": 29,
                             "program": "generics_instantiation_1.ets"
                           }
                         }
@@ -869,7 +869,7 @@
                         },
                         "end": {
                           "line": 27,
-                          "column": 30,
+                          "column": 29,
                           "program": "generics_instantiation_1.ets"
                         }
                       }
@@ -882,7 +882,7 @@
                       },
                       "end": {
                         "line": 27,
-                        "column": 30,
+                        "column": 29,
                         "program": "generics_instantiation_1.ets"
                       }
                     }
@@ -967,7 +967,7 @@
                                           },
                                           "end": {
                                             "line": 28,
-                                            "column": 32,
+                                            "column": 31,
                                             "program": "generics_instantiation_1.ets"
                                           }
                                         }
@@ -980,7 +980,7 @@
                                         },
                                         "end": {
                                           "line": 28,
-                                          "column": 32,
+                                          "column": 31,
                                           "program": "generics_instantiation_1.ets"
                                         }
                                       }
@@ -1007,7 +1007,7 @@
                                   },
                                   "end": {
                                     "line": 28,
-                                    "column": 34,
+                                    "column": 32,
                                     "program": "generics_instantiation_1.ets"
                                   }
                                 }
@@ -1020,7 +1020,7 @@
                                 },
                                 "end": {
                                   "line": 28,
-                                  "column": 34,
+                                  "column": 32,
                                   "program": "generics_instantiation_1.ets"
                                 }
                               }
@@ -1160,7 +1160,7 @@
                                           },
                                           "end": {
                                             "line": 28,
-                                            "column": 57,
+                                            "column": 56,
                                             "program": "generics_instantiation_1.ets"
                                           }
                                         }
@@ -1173,7 +1173,7 @@
                                         },
                                         "end": {
                                           "line": 28,
-                                          "column": 57,
+                                          "column": 56,
                                           "program": "generics_instantiation_1.ets"
                                         }
                                       }
@@ -1200,7 +1200,7 @@
                                   },
                                   "end": {
                                     "line": 28,
-                                    "column": 58,
+                                    "column": 57,
                                     "program": "generics_instantiation_1.ets"
                                   }
                                 }
@@ -1213,7 +1213,7 @@
                                 },
                                 "end": {
                                   "line": 28,
-                                  "column": 58,
+                                  "column": 57,
                                   "program": "generics_instantiation_1.ets"
                                 }
                               }
@@ -1226,7 +1226,7 @@
                               },
                               "end": {
                                 "line": 28,
-                                "column": 58,
+                                "column": 57,
                                 "program": "generics_instantiation_1.ets"
                               }
                             }
@@ -1239,7 +1239,7 @@
                             },
                             "end": {
                               "line": 28,
-                              "column": 58,
+                              "column": 57,
                               "program": "generics_instantiation_1.ets"
                             }
                           }
@@ -1304,7 +1304,7 @@
             "loc": {
               "start": {
                 "line": 27,
-                "column": 5,
+                "column": 12,
                 "program": "generics_instantiation_1.ets"
               },
               "end": {
@@ -1442,7 +1442,7 @@
                                           },
                                           "end": {
                                             "line": 31,
-                                            "column": 27,
+                                            "column": 26,
                                             "program": "generics_instantiation_1.ets"
                                           }
                                         }
@@ -1455,7 +1455,7 @@
                                         },
                                         "end": {
                                           "line": 31,
-                                          "column": 27,
+                                          "column": 26,
                                           "program": "generics_instantiation_1.ets"
                                         }
                                       }
@@ -1482,7 +1482,7 @@
                                   },
                                   "end": {
                                     "line": 31,
-                                    "column": 29,
+                                    "column": 27,
                                     "program": "generics_instantiation_1.ets"
                                   }
                                 }
@@ -1495,7 +1495,7 @@
                                 },
                                 "end": {
                                   "line": 31,
-                                  "column": 29,
+                                  "column": 27,
                                   "program": "generics_instantiation_1.ets"
                                 }
                               }
@@ -1635,7 +1635,7 @@
                                           },
                                           "end": {
                                             "line": 31,
-                                            "column": 52,
+                                            "column": 51,
                                             "program": "generics_instantiation_1.ets"
                                           }
                                         }
@@ -1648,7 +1648,7 @@
                                         },
                                         "end": {
                                           "line": 31,
-                                          "column": 52,
+                                          "column": 51,
                                           "program": "generics_instantiation_1.ets"
                                         }
                                       }
@@ -1675,7 +1675,7 @@
                                   },
                                   "end": {
                                     "line": 31,
-                                    "column": 53,
+                                    "column": 52,
                                     "program": "generics_instantiation_1.ets"
                                   }
                                 }
@@ -1688,7 +1688,7 @@
                                 },
                                 "end": {
                                   "line": 31,
-                                  "column": 53,
+                                  "column": 52,
                                   "program": "generics_instantiation_1.ets"
                                 }
                               }
@@ -1701,7 +1701,7 @@
                               },
                               "end": {
                                 "line": 31,
-                                "column": 53,
+                                "column": 52,
                                 "program": "generics_instantiation_1.ets"
                               }
                             }
@@ -1714,7 +1714,7 @@
                             },
                             "end": {
                               "line": 31,
-                              "column": 53,
+                              "column": 52,
                               "program": "generics_instantiation_1.ets"
                             }
                           }
@@ -1911,7 +1911,7 @@
             "loc": {
               "start": {
                 "line": 30,
-                "column": 5,
+                "column": 13,
                 "program": "generics_instantiation_1.ets"
               },
               "end": {
@@ -1999,7 +1999,7 @@
                       },
                       "end": {
                         "line": 35,
-                        "column": 28,
+                        "column": 26,
                         "program": "generics_instantiation_1.ets"
                       }
                     }
@@ -2012,7 +2012,7 @@
                     },
                     "end": {
                       "line": 35,
-                      "column": 28,
+                      "column": 26,
                       "program": "generics_instantiation_1.ets"
                     }
                   }
@@ -2053,7 +2053,7 @@
                               },
                               "end": {
                                 "line": 35,
-                                "column": 47,
+                                "column": 46,
                                 "program": "generics_instantiation_1.ets"
                               }
                             }
@@ -2066,7 +2066,7 @@
                             },
                             "end": {
                               "line": 35,
-                              "column": 47,
+                              "column": 46,
                               "program": "generics_instantiation_1.ets"
                             }
                           }
@@ -2143,7 +2143,7 @@
             "loc": {
               "start": {
                 "line": 35,
-                "column": 5,
+                "column": 13,
                 "program": "generics_instantiation_1.ets"
               },
               "end": {

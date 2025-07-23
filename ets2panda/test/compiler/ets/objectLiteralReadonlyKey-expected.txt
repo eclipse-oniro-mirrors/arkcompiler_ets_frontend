@@ -394,7 +394,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 11,
+                    "column": 9,
                     "program": "objectLiteralReadonlyKey.ets"
                   }
                 }
@@ -407,7 +407,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 11,
+                  "column": 9,
                   "program": "objectLiteralReadonlyKey.ets"
                 }
               }

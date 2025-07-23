@@ -1617,7 +1617,7 @@
             "loc": {
               "start": {
                 "line": 22,
-                "column": 5,
+                "column": 12,
                 "program": "MathCordic.ets"
               },
               "end": {
@@ -1851,7 +1851,7 @@
             "loc": {
               "start": {
                 "line": 26,
-                "column": 5,
+                "column": 12,
                 "program": "MathCordic.ets"
               },
               "end": {
@@ -2085,7 +2085,7 @@
             "loc": {
               "start": {
                 "line": 30,
-                "column": 5,
+                "column": 12,
                 "program": "MathCordic.ets"
               },
               "end": {
@@ -4657,7 +4657,7 @@
             "loc": {
               "start": {
                 "line": 34,
-                "column": 5,
+                "column": 12,
                 "program": "MathCordic.ets"
               },
               "end": {
@@ -5270,7 +5270,7 @@
             "loc": {
               "start": {
                 "line": 60,
-                "column": 5,
+                "column": 12,
                 "program": "MathCordic.ets"
               },
               "end": {
@@ -5859,7 +5859,7 @@
             "loc": {
               "start": {
                 "line": 70,
-                "column": 5,
+                "column": 13,
                 "program": "MathCordic.ets"
               },
               "end": {
@@ -6144,7 +6144,7 @@
                                   },
                                   "end": {
                                     "line": 79,
-                                    "column": 26,
+                                    "column": 25,
                                     "program": "MathCordic.ets"
                                   }
                                 }
@@ -6157,7 +6157,7 @@
                                 },
                                 "end": {
                                   "line": 79,
-                                  "column": 26,
+                                  "column": 25,
                                   "program": "MathCordic.ets"
                                 }
                               }

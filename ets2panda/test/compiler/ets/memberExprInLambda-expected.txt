@@ -539,7 +539,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 40,
+                                    "column": 38,
                                     "program": "memberExprInLambda.ets"
                                   }
                                 }
@@ -552,7 +552,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 40,
+                                  "column": 38,
                                   "program": "memberExprInLambda.ets"
                                 }
                               }

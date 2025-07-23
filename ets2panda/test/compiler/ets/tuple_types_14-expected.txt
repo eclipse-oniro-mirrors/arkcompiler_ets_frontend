@@ -127,7 +127,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 13,
+                    "column": 12,
                     "program": "tuple_types_14.ets"
                   }
                 }
@@ -140,7 +140,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 13,
+                  "column": 12,
                   "program": "tuple_types_14.ets"
                 }
               }
@@ -155,7 +155,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 13,
+                "column": 12,
                 "program": "tuple_types_14.ets"
               }
             }
@@ -243,7 +243,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 15,
+                              "column": 14,
                               "program": "tuple_types_14.ets"
                             }
                           }
@@ -256,7 +256,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 15,
+                            "column": 14,
                             "program": "tuple_types_14.ets"
                           }
                         }
@@ -270,7 +270,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 15,
+                          "column": 14,
                           "program": "tuple_types_14.ets"
                         }
                       }
@@ -283,7 +283,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 15,
+                        "column": 14,
                         "program": "tuple_types_14.ets"
                       }
                     }
@@ -439,7 +439,7 @@
                       },
                       "end": {
                         "line": 19,
-                        "column": 15,
+                        "column": 13,
                         "program": "tuple_types_14.ets"
                       }
                     }
@@ -452,7 +452,7 @@
                     },
                     "end": {
                       "line": 19,
-                      "column": 15,
+                      "column": 13,
                       "program": "tuple_types_14.ets"
                     }
                   }
@@ -880,7 +880,7 @@
                                               },
                                               "end": {
                                                 "line": 25,
-                                                "column": 32,
+                                                "column": 31,
                                                 "program": "tuple_types_14.ets"
                                               }
                                             }
@@ -893,7 +893,7 @@
                                             },
                                             "end": {
                                               "line": 25,
-                                              "column": 32,
+                                              "column": 31,
                                               "program": "tuple_types_14.ets"
                                             }
                                           }
@@ -934,7 +934,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 35,
+                                    "column": 33,
                                     "program": "tuple_types_14.ets"
                                   }
                                 }
@@ -947,7 +947,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 35,
+                                  "column": 33,
                                   "program": "tuple_types_14.ets"
                                 }
                               }
@@ -1039,7 +1039,7 @@
                                               },
                                               "end": {
                                                 "line": 25,
-                                                "column": 55,
+                                                "column": 54,
                                                 "program": "tuple_types_14.ets"
                                               }
                                             }
@@ -1052,7 +1052,7 @@
                                             },
                                             "end": {
                                               "line": 25,
-                                              "column": 55,
+                                              "column": 54,
                                               "program": "tuple_types_14.ets"
                                             }
                                           }
@@ -1093,7 +1093,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 57,
+                                    "column": 56,
                                     "program": "tuple_types_14.ets"
                                   }
                                 }
@@ -1106,7 +1106,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 57,
+                                  "column": 56,
                                   "program": "tuple_types_14.ets"
                                 }
                               }
@@ -1339,7 +1339,7 @@
                                       },
                                       "end": {
                                         "line": 27,
-                                        "column": 27,
+                                        "column": 26,
                                         "program": "tuple_types_14.ets"
                                       }
                                     }
@@ -1352,7 +1352,7 @@
                                     },
                                     "end": {
                                       "line": 27,
-                                      "column": 27,
+                                      "column": 26,
                                       "program": "tuple_types_14.ets"
                                     }
                                   }
@@ -1642,7 +1642,7 @@
                                               },
                                               "end": {
                                                 "line": 30,
-                                                "column": 34,
+                                                "column": 33,
                                                 "program": "tuple_types_14.ets"
                                               }
                                             }
@@ -1655,7 +1655,7 @@
                                             },
                                             "end": {
                                               "line": 30,
-                                              "column": 34,
+                                              "column": 33,
                                               "program": "tuple_types_14.ets"
                                             }
                                           }
@@ -1696,7 +1696,7 @@
                                   },
                                   "end": {
                                     "line": 30,
-                                    "column": 37,
+                                    "column": 35,
                                     "program": "tuple_types_14.ets"
                                   }
                                 }
@@ -1709,7 +1709,7 @@
                                 },
                                 "end": {
                                   "line": 30,
-                                  "column": 37,
+                                  "column": 35,
                                   "program": "tuple_types_14.ets"
                                 }
                               }
@@ -1801,7 +1801,7 @@
                                               },
                                               "end": {
                                                 "line": 30,
-                                                "column": 57,
+                                                "column": 56,
                                                 "program": "tuple_types_14.ets"
                                               }
                                             }
@@ -1814,7 +1814,7 @@
                                             },
                                             "end": {
                                               "line": 30,
-                                              "column": 57,
+                                              "column": 56,
                                               "program": "tuple_types_14.ets"
                                             }
                                           }
@@ -1855,7 +1855,7 @@
                                   },
                                   "end": {
                                     "line": 30,
-                                    "column": 59,
+                                    "column": 58,
                                     "program": "tuple_types_14.ets"
                                   }
                                 }
@@ -1868,7 +1868,7 @@
                                 },
                                 "end": {
                                   "line": 30,
-                                  "column": 59,
+                                  "column": 58,
                                   "program": "tuple_types_14.ets"
                                 }
                               }

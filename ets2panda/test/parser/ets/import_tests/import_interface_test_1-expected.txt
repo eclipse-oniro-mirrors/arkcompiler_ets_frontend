@@ -150,8 +150,8 @@
           "program": "import_interface_test_1.ets"
         },
         "end": {
-          "line": 19,
-          "column": 1,
+          "line": 18,
+          "column": 2,
           "program": "import_interface_test_1.ets"
         }
       }

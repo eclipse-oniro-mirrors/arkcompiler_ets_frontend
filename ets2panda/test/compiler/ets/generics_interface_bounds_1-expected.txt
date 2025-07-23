@@ -89,7 +89,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 15,
+                              "column": 14,
                               "program": "generics_interface_bounds_1.ets"
                             }
                           }
@@ -102,7 +102,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 15,
+                            "column": 14,
                             "program": "generics_interface_bounds_1.ets"
                           }
                         }
@@ -116,7 +116,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 15,
+                          "column": 14,
                           "program": "generics_interface_bounds_1.ets"
                         }
                       }
@@ -129,7 +129,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 15,
+                        "column": 14,
                         "program": "generics_interface_bounds_1.ets"
                       }
                     }
@@ -279,8 +279,8 @@
           "program": "generics_interface_bounds_1.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "generics_interface_bounds_1.ets"
         }
       }
@@ -380,7 +380,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 29,
+                              "column": 27,
                               "program": "generics_interface_bounds_1.ets"
                             }
                           }
@@ -393,7 +393,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 29,
+                            "column": 27,
                             "program": "generics_interface_bounds_1.ets"
                           }
                         }
@@ -522,7 +522,7 @@
                   },
                   "end": {
                     "line": 21,
-                    "column": 23,
+                    "column": 22,
                     "program": "generics_interface_bounds_1.ets"
                   }
                 }
@@ -535,7 +535,7 @@
                 },
                 "end": {
                   "line": 21,
-                  "column": 23,
+                  "column": 22,
                   "program": "generics_interface_bounds_1.ets"
                 }
               }
@@ -550,7 +550,7 @@
               },
               "end": {
                 "line": 21,
-                "column": 23,
+                "column": 22,
                 "program": "generics_interface_bounds_1.ets"
               }
             }
@@ -638,7 +638,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 27,
+                              "column": 26,
                               "program": "generics_interface_bounds_1.ets"
                             }
                           }
@@ -651,7 +651,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 27,
+                            "column": 26,
                             "program": "generics_interface_bounds_1.ets"
                           }
                         }
@@ -665,7 +665,7 @@
                         },
                         "end": {
                           "line": 23,
-                          "column": 27,
+                          "column": 26,
                           "program": "generics_interface_bounds_1.ets"
                         }
                       }
@@ -678,7 +678,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 27,
+                        "column": 26,
                         "program": "generics_interface_bounds_1.ets"
                       }
                     }
@@ -943,7 +943,7 @@
                                   },
                                   "end": {
                                     "line": 28,
-                                    "column": 24,
+                                    "column": 22,
                                     "program": "generics_interface_bounds_1.ets"
                                   }
                                 }
@@ -956,7 +956,7 @@
                                 },
                                 "end": {
                                   "line": 28,
-                                  "column": 24,
+                                  "column": 22,
                                   "program": "generics_interface_bounds_1.ets"
                                 }
                               }

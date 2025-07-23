@@ -33,10 +33,10 @@ namespace NS1{
   }
 }
 
-assertEQ(NS1.data, 2);
-assertEQ(NS1.a.data, "hello initializer block!");
-assertEQ(NS1.b, "hi initializer block");
-assertEQ(NS1.c, "immediate Initializer First! initializer Block Second!");
+arktest.assertEQ(NS1.data, 2);
+arktest.assertEQ(NS1.a.data, "hello initializer block!");
+arktest.assertEQ(NS1.b, "hi initializer block");
+arktest.assertEQ(NS1.c, "immediate Initializer First! initializer Block Second!");
 
 namespace NS2{
   export function foo():number {return 1}
@@ -57,7 +57,7 @@ namespace NS2{
   }
 }
 
-assertEQ(NS2.b, 1);
-assertEQ(NS2.a.data, "hello initializer block!");
-assertEQ(NS2.NS3.bb, 2);
-assertEQ(NS2.NS3.aa.data, "hello sub initializer block!");
+arktest.assertEQ(NS2.b, 1);
+arktest.assertEQ(NS2.a.data, "hello initializer block!");
+arktest.assertEQ(NS2.NS3.bb, 2);
+arktest.assertEQ(NS2.NS3.aa.data, "hello sub initializer block!");

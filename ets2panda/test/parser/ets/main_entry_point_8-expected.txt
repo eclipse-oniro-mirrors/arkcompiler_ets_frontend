@@ -49,7 +49,7 @@
             },
             "end": {
               "line": 16,
-              "column": 19,
+              "column": 18,
               "program": "main_entry_point_8.ets"
             }
           }
@@ -62,7 +62,7 @@
           },
           "end": {
             "line": 16,
-            "column": 19,
+            "column": 18,
             "program": "main_entry_point_8.ets"
           }
         }
@@ -210,7 +210,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 34,
+                                      "column": 33,
                                       "program": "main_entry_point_8.ets"
                                     }
                                   }
@@ -223,7 +223,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 34,
+                                    "column": 33,
                                     "program": "main_entry_point_8.ets"
                                   }
                                 }
@@ -250,7 +250,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 35,
+                              "column": 34,
                               "program": "main_entry_point_8.ets"
                             }
                           }
@@ -263,7 +263,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 35,
+                            "column": 34,
                             "program": "main_entry_point_8.ets"
                           }
                         }
@@ -277,7 +277,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 35,
+                          "column": 34,
                           "program": "main_entry_point_8.ets"
                         }
                       }
@@ -290,7 +290,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 35,
+                        "column": 34,
                         "program": "main_entry_point_8.ets"
                       }
                     }

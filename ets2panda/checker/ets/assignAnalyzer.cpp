@@ -1454,11 +1454,15 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
         }
 
         if (declNode->Parent() != classDef_) {
-            // property of an other class
+            // property of another class
             return;
         }
 
         if (node->IsDefinite()) {
+            return;
+        }
+
+        if (declNode->AsClassProperty()->IsImmediateInit()) {
             return;
         }
     }

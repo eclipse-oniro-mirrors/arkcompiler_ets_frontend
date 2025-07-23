@@ -135,7 +135,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 18,
                 "program": "access_modifier_2.ets"
               },
               "end": {

@@ -819,7 +819,7 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 3,
+                "column": 10,
                 "program": "BitopsBitwiseAnd.ets"
               },
               "end": {
@@ -1104,7 +1104,7 @@
                                   },
                                   "end": {
                                     "line": 31,
-                                    "column": 32,
+                                    "column": 31,
                                     "program": "BitopsBitwiseAnd.ets"
                                   }
                                 }
@@ -1117,7 +1117,7 @@
                                 },
                                 "end": {
                                   "line": 31,
-                                  "column": 32,
+                                  "column": 31,
                                   "program": "BitopsBitwiseAnd.ets"
                                 }
                               }

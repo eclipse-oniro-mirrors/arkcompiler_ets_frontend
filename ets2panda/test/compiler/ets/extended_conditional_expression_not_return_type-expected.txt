@@ -213,7 +213,7 @@
                             },
                             "end": {
                               "line": 16,
-                              "column": 22,
+                              "column": 21,
                               "program": "extended_conditional_expression_not_return_type.ets"
                             }
                           }
@@ -226,7 +226,7 @@
                           },
                           "end": {
                             "line": 16,
-                            "column": 22,
+                            "column": 21,
                             "program": "extended_conditional_expression_not_return_type.ets"
                           }
                         }
@@ -240,7 +240,7 @@
                         },
                         "end": {
                           "line": 16,
-                          "column": 22,
+                          "column": 21,
                           "program": "extended_conditional_expression_not_return_type.ets"
                         }
                       }
@@ -253,7 +253,7 @@
                       },
                       "end": {
                         "line": 16,
-                        "column": 22,
+                        "column": 21,
                         "program": "extended_conditional_expression_not_return_type.ets"
                       }
                     }

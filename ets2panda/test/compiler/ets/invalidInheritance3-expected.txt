@@ -534,7 +534,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 20,
+                "column": 18,
                 "program": "invalidInheritance3.ets"
               }
             }
@@ -547,7 +547,7 @@
             },
             "end": {
               "line": 20,
-              "column": 20,
+              "column": 18,
               "program": "invalidInheritance3.ets"
             }
           }

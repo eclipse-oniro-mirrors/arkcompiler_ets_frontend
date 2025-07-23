@@ -136,7 +136,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 48,
+                    "column": 46,
                     "program": "import_interface_test_2.ets"
                   }
                 }
@@ -149,7 +149,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 48,
+                  "column": 46,
                   "program": "import_interface_test_2.ets"
                 }
               }

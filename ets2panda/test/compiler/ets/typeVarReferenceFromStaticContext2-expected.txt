@@ -175,7 +175,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 32,
+                                "column": 31,
                                 "program": "typeVarReferenceFromStaticContext2.ets"
                               }
                             }
@@ -188,7 +188,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 32,
+                              "column": 31,
                               "program": "typeVarReferenceFromStaticContext2.ets"
                             }
                           }
@@ -215,7 +215,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 34,
+                        "column": 32,
                         "program": "typeVarReferenceFromStaticContext2.ets"
                       }
                     }
@@ -228,7 +228,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 34,
+                      "column": 32,
                       "program": "typeVarReferenceFromStaticContext2.ets"
                     }
                   }
@@ -342,7 +342,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 26,
+                                        "column": 25,
                                         "program": "typeVarReferenceFromStaticContext2.ets"
                                       }
                                     }
@@ -355,7 +355,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 26,
+                                      "column": 25,
                                       "program": "typeVarReferenceFromStaticContext2.ets"
                                     }
                                   }
@@ -382,7 +382,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 27,
+                                "column": 26,
                                 "program": "typeVarReferenceFromStaticContext2.ets"
                               }
                             }
@@ -395,7 +395,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 27,
+                              "column": 26,
                               "program": "typeVarReferenceFromStaticContext2.ets"
                             }
                           }
@@ -472,7 +472,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 12,
                 "program": "typeVarReferenceFromStaticContext2.ets"
               },
               "end": {

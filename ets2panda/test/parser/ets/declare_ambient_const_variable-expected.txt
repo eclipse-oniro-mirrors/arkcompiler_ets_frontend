@@ -78,7 +78,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 26,
+                    "column": 25,
                     "program": "declare_ambient_const_variable.ets"
                   }
                 }
@@ -91,7 +91,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 26,
+                  "column": 25,
                   "program": "declare_ambient_const_variable.ets"
                 }
               }

@@ -184,7 +184,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 16,
+                    "column": 14,
                     "program": "string.ets"
                   }
                 }
@@ -197,7 +197,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 16,
+                  "column": 14,
                   "program": "string.ets"
                 }
               }
@@ -271,7 +271,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 16,
+                    "column": 14,
                     "program": "string.ets"
                   }
                 }
@@ -284,7 +284,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 16,
+                  "column": 14,
                   "program": "string.ets"
                 }
               }

@@ -128,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 21,
+                                    "column": 19,
                                     "program": "switch.ets"
                                   }
                                 }
@@ -141,7 +141,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 21,
+                                  "column": 19,
                                   "program": "switch.ets"
                                 }
                               }
@@ -241,7 +241,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 21,
+                                    "column": 20,
                                     "program": "switch.ets"
                                   }
                                 }
@@ -254,7 +254,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 21,
+                                  "column": 20,
                                   "program": "switch.ets"
                                 }
                               }

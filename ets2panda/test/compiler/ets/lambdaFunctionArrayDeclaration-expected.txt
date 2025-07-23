@@ -334,7 +334,7 @@
                                               },
                                               "end": {
                                                 "line": 17,
-                                                "column": 48,
+                                                "column": 47,
                                                 "program": "lambdaFunctionArrayDeclaration.ets"
                                               }
                                             }
@@ -347,7 +347,7 @@
                                             },
                                             "end": {
                                               "line": 17,
-                                              "column": 48,
+                                              "column": 47,
                                               "program": "lambdaFunctionArrayDeclaration.ets"
                                             }
                                           }
@@ -361,7 +361,7 @@
                                           },
                                           "end": {
                                             "line": 17,
-                                            "column": 48,
+                                            "column": 47,
                                             "program": "lambdaFunctionArrayDeclaration.ets"
                                           }
                                         }
@@ -374,7 +374,7 @@
                                         },
                                         "end": {
                                           "line": 17,
-                                          "column": 48,
+                                          "column": 47,
                                           "program": "lambdaFunctionArrayDeclaration.ets"
                                         }
                                       }

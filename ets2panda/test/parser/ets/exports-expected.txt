@@ -44,8 +44,8 @@
           "program": "exports.ets"
         },
         "end": {
-          "line": 22,
-          "column": 7,
+          "line": 21,
+          "column": 22,
           "program": "exports.ets"
         }
       }

@@ -152,7 +152,7 @@
             "loc": {
               "start": {
                 "line": 18,
-                "column": 3,
+                "column": 10,
                 "program": "function_implicit_return_type5.ets"
               },
               "end": {

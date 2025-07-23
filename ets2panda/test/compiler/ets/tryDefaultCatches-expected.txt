@@ -129,7 +129,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 32,
+                                      "column": 31,
                                       "program": "tryDefaultCatches.ets"
                                     }
                                   }
@@ -142,7 +142,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 32,
+                                    "column": 31,
                                     "program": "tryDefaultCatches.ets"
                                   }
                                 }
@@ -239,7 +239,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 25,
+                                    "column": 24,
                                     "program": "tryDefaultCatches.ets"
                                   }
                                 }
@@ -252,7 +252,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 25,
+                                  "column": 24,
                                   "program": "tryDefaultCatches.ets"
                                 }
                               }

@@ -144,7 +144,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 29,
+                                    "column": 28,
                                     "program": "external_cyclic_constructor_check.ets"
                                   }
                                 }
@@ -157,7 +157,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 29,
+                                  "column": 28,
                                   "program": "external_cyclic_constructor_check.ets"
                                 }
                               }

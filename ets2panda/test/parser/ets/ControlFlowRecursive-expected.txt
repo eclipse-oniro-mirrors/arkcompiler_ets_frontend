@@ -1089,7 +1089,7 @@
             "loc": {
               "start": {
                 "line": 21,
-                "column": 3,
+                "column": 18,
                 "program": "ControlFlowRecursive.ets"
               },
               "end": {
@@ -1639,7 +1639,7 @@
             "loc": {
               "start": {
                 "line": 31,
-                "column": 3,
+                "column": 18,
                 "program": "ControlFlowRecursive.ets"
               },
               "end": {
@@ -2558,7 +2558,7 @@
             "loc": {
               "start": {
                 "line": 38,
-                "column": 3,
+                "column": 18,
                 "program": "ControlFlowRecursive.ets"
               },
               "end": {
@@ -3734,7 +3734,7 @@
             "loc": {
               "start": {
                 "line": 45,
-                "column": 3,
+                "column": 17,
                 "program": "ControlFlowRecursive.ets"
               },
               "end": {

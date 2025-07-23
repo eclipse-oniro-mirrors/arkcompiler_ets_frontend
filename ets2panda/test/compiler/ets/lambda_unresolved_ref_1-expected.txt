@@ -577,7 +577,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 12,
                 "program": "lambda_unresolved_ref_1.ets"
               },
               "end": {

@@ -256,7 +256,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 18,
+                    "column": 16,
                     "program": "const.ets"
                   }
                 }
@@ -269,7 +269,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 18,
+                  "column": 16,
                   "program": "const.ets"
                 }
               }

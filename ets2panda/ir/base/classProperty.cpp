@@ -341,7 +341,7 @@ void ClassProperty::CopyTo(AstNode *other) const
 
     otherImpl->typeAnnotation_ = typeAnnotation_;
     otherImpl->isDefault_ = isDefault_;
-    otherImpl->needInitInStaticBlock_ = needInitInStaticBlock_;
+    otherImpl->initMode_ = initMode_;
 
     AnnotationAllowed<ClassElement>::CopyTo(other);
 }

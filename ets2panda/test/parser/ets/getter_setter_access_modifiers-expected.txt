@@ -803,7 +803,7 @@
               },
               "end": {
                 "line": 26,
-                "column": 41,
+                "column": 39,
                 "program": "getter_setter_access_modifiers.ets"
               }
             }
@@ -816,7 +816,7 @@
             },
             "end": {
               "line": 26,
-              "column": 41,
+              "column": 39,
               "program": "getter_setter_access_modifiers.ets"
             }
           }

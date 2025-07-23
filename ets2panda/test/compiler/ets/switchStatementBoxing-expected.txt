@@ -128,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 21,
+                                    "column": 19,
                                     "program": "switchStatementBoxing.ets"
                                   }
                                 }
@@ -141,7 +141,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 21,
+                                  "column": 19,
                                   "program": "switchStatementBoxing.ets"
                                 }
                               }

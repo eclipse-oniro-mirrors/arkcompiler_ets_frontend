@@ -4268,7 +4268,7 @@
             "loc": {
               "start": {
                 "line": 22,
-                "column": 3,
+                "column": 18,
                 "program": "MathPartialSums.ets"
               },
               "end": {
@@ -5215,7 +5215,7 @@
             "loc": {
               "start": {
                 "line": 72,
-                "column": 3,
+                "column": 17,
                 "program": "MathPartialSums.ets"
               },
               "end": {

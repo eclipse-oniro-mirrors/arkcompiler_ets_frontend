@@ -238,8 +238,8 @@
                         "program": "export_class_with_getters_setters.ets"
                       },
                       "end": {
-                        "line": 20,
-                        "column": 2,
+                        "line": 19,
+                        "column": 18,
                         "program": "export_class_with_getters_setters.ets"
                       }
                     }
@@ -251,8 +251,8 @@
                       "program": "export_class_with_getters_setters.ets"
                     },
                     "end": {
-                      "line": 20,
-                      "column": 2,
+                      "line": 19,
+                      "column": 18,
                       "program": "export_class_with_getters_setters.ets"
                     }
                   }
@@ -264,8 +264,8 @@
                     "program": "export_class_with_getters_setters.ets"
                   },
                   "end": {
-                    "line": 20,
-                    "column": 2,
+                    "line": 19,
+                    "column": 18,
                     "program": "export_class_with_getters_setters.ets"
                   }
                 }
@@ -277,8 +277,8 @@
                   "program": "export_class_with_getters_setters.ets"
                 },
                 "end": {
-                  "line": 20,
-                  "column": 2,
+                  "line": 19,
+                  "column": 18,
                   "program": "export_class_with_getters_setters.ets"
                 }
               }
@@ -366,8 +366,8 @@
                                   "program": "export_class_with_getters_setters.ets"
                                 },
                                 "end": {
-                                  "line": 20,
-                                  "column": 2,
+                                  "line": 19,
+                                  "column": 18,
                                   "program": "export_class_with_getters_setters.ets"
                                 }
                               }
@@ -379,8 +379,8 @@
                                 "program": "export_class_with_getters_setters.ets"
                               },
                               "end": {
-                                "line": 20,
-                                "column": 2,
+                                "line": 19,
+                                "column": 18,
                                 "program": "export_class_with_getters_setters.ets"
                               }
                             }
@@ -420,8 +420,8 @@
                         "program": "export_class_with_getters_setters.ets"
                       },
                       "end": {
-                        "line": 20,
-                        "column": 2,
+                        "line": 19,
+                        "column": 18,
                         "program": "export_class_with_getters_setters.ets"
                       }
                     }
@@ -433,8 +433,8 @@
                       "program": "export_class_with_getters_setters.ets"
                     },
                     "end": {
-                      "line": 20,
-                      "column": 2,
+                      "line": 19,
+                      "column": 18,
                       "program": "export_class_with_getters_setters.ets"
                     }
                   }
@@ -448,8 +448,8 @@
                     "program": "export_class_with_getters_setters.ets"
                   },
                   "end": {
-                    "line": 20,
-                    "column": 2,
+                    "line": 19,
+                    "column": 18,
                     "program": "export_class_with_getters_setters.ets"
                   }
                 }
@@ -463,8 +463,8 @@
                 "program": "export_class_with_getters_setters.ets"
               },
               "end": {
-                "line": 20,
-                "column": 2,
+                "line": 19,
+                "column": 18,
                 "program": "export_class_with_getters_setters.ets"
               }
             }
@@ -508,8 +508,8 @@
           "program": "export_class_with_getters_setters.ets"
         },
         "end": {
-          "line": 22,
-          "column": 7,
+          "line": 20,
+          "column": 2,
           "program": "export_class_with_getters_setters.ets"
         }
       }
@@ -567,7 +567,7 @@
                   },
                   "end": {
                     "line": 22,
-                    "column": 49,
+                    "column": 47,
                     "program": "export_class_with_getters_setters.ets"
                   }
                 }
@@ -580,7 +580,7 @@
                 },
                 "end": {
                   "line": 22,
-                  "column": 49,
+                  "column": 47,
                   "program": "export_class_with_getters_setters.ets"
                 }
               }
@@ -650,7 +650,7 @@
                     },
                     "end": {
                       "line": 23,
-                      "column": 35,
+                      "column": 34,
                       "program": "export_class_with_getters_setters.ets"
                     }
                   }
@@ -663,7 +663,7 @@
                   },
                   "end": {
                     "line": 23,
-                    "column": 35,
+                    "column": 34,
                     "program": "export_class_with_getters_setters.ets"
                   }
                 }
@@ -717,7 +717,7 @@
                   },
                   "end": {
                     "line": 23,
-                    "column": 20,
+                    "column": 18,
                     "program": "export_class_with_getters_setters.ets"
                   }
                 }
@@ -730,7 +730,7 @@
                 },
                 "end": {
                   "line": 23,
-                  "column": 20,
+                  "column": 18,
                   "program": "export_class_with_getters_setters.ets"
                 }
               }

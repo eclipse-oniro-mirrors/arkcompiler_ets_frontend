@@ -240,7 +240,7 @@
                       },
                       "end": {
                         "line": 16,
-                        "column": 50,
+                        "column": 49,
                         "program": "async_func_return_type.ets"
                       }
                     }
@@ -253,7 +253,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 50,
+                      "column": 49,
                       "program": "async_func_return_type.ets"
                     }
                   }
@@ -409,7 +409,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 37,
+                        "column": 35,
                         "program": "async_func_return_type.ets"
                       }
                     }
@@ -422,7 +422,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 37,
+                      "column": 35,
                       "program": "async_func_return_type.ets"
                     }
                   }
@@ -674,7 +674,7 @@
                       },
                       "end": {
                         "line": 22,
-                        "column": 53,
+                        "column": 51,
                         "program": "async_func_return_type.ets"
                       }
                     }
@@ -687,7 +687,7 @@
                     },
                     "end": {
                       "line": 22,
-                      "column": 53,
+                      "column": 51,
                       "program": "async_func_return_type.ets"
                     }
                   }

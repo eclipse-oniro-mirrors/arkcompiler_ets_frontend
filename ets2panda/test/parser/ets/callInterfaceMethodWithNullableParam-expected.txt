@@ -89,7 +89,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 15,
+                              "column": 14,
                               "program": "callInterfaceMethodWithNullableParam.ets"
                             }
                           }
@@ -102,7 +102,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 15,
+                            "column": 14,
                             "program": "callInterfaceMethodWithNullableParam.ets"
                           }
                         }
@@ -116,7 +116,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 15,
+                          "column": 14,
                           "program": "callInterfaceMethodWithNullableParam.ets"
                         }
                       }
@@ -129,7 +129,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 15,
+                        "column": 14,
                         "program": "callInterfaceMethodWithNullableParam.ets"
                       }
                     }
@@ -230,8 +230,8 @@
           "program": "callInterfaceMethodWithNullableParam.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "callInterfaceMethodWithNullableParam.ets"
         }
       }
@@ -289,7 +289,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 23,
+                    "column": 21,
                     "program": "callInterfaceMethodWithNullableParam.ets"
                   }
                 }
@@ -302,7 +302,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 23,
+                  "column": 21,
                   "program": "callInterfaceMethodWithNullableParam.ets"
                 }
               }
@@ -405,7 +405,7 @@
                             },
                             "end": {
                               "line": 21,
-                              "column": 15,
+                              "column": 14,
                               "program": "callInterfaceMethodWithNullableParam.ets"
                             }
                           }
@@ -418,7 +418,7 @@
                           },
                           "end": {
                             "line": 21,
-                            "column": 15,
+                            "column": 14,
                             "program": "callInterfaceMethodWithNullableParam.ets"
                           }
                         }
@@ -432,7 +432,7 @@
                         },
                         "end": {
                           "line": 21,
-                          "column": 15,
+                          "column": 14,
                           "program": "callInterfaceMethodWithNullableParam.ets"
                         }
                       }
@@ -445,7 +445,7 @@
                       },
                       "end": {
                         "line": 21,
-                        "column": 15,
+                        "column": 14,
                         "program": "callInterfaceMethodWithNullableParam.ets"
                       }
                     }
@@ -785,7 +785,7 @@
                                       },
                                       "end": {
                                         "line": 25,
-                                        "column": 17,
+                                        "column": 15,
                                         "program": "callInterfaceMethodWithNullableParam.ets"
                                       }
                                     }
@@ -798,7 +798,7 @@
                                     },
                                     "end": {
                                       "line": 25,
-                                      "column": 17,
+                                      "column": 15,
                                       "program": "callInterfaceMethodWithNullableParam.ets"
                                     }
                                   }
@@ -877,7 +877,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 31,
+                                    "column": 30,
                                     "program": "callInterfaceMethodWithNullableParam.ets"
                                   }
                                 }
@@ -890,7 +890,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 31,
+                                  "column": 30,
                                   "program": "callInterfaceMethodWithNullableParam.ets"
                                 }
                               }
@@ -974,7 +974,7 @@
                                   },
                                   "end": {
                                     "line": 27,
-                                    "column": 11,
+                                    "column": 10,
                                     "program": "callInterfaceMethodWithNullableParam.ets"
                                   }
                                 }
@@ -987,7 +987,7 @@
                                 },
                                 "end": {
                                   "line": 27,
-                                  "column": 11,
+                                  "column": 10,
                                   "program": "callInterfaceMethodWithNullableParam.ets"
                                 }
                               }

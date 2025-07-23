@@ -327,8 +327,8 @@
           "program": "returnTypeGenericArray.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "returnTypeGenericArray.ets"
         }
       }
@@ -459,7 +459,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 33,
+                            "column": 32,
                             "program": "returnTypeGenericArray.ets"
                           }
                         }
@@ -472,7 +472,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 33,
+                          "column": 32,
                           "program": "returnTypeGenericArray.ets"
                         }
                       }
@@ -499,7 +499,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 35,
+                    "column": 33,
                     "program": "returnTypeGenericArray.ets"
                   }
                 }
@@ -512,7 +512,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 35,
+                  "column": 33,
                   "program": "returnTypeGenericArray.ets"
                 }
               }
@@ -763,7 +763,7 @@
                                   },
                                   "end": {
                                     "line": 22,
-                                    "column": 24,
+                                    "column": 22,
                                     "program": "returnTypeGenericArray.ets"
                                   }
                                 }
@@ -776,7 +776,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 24,
+                                  "column": 22,
                                   "program": "returnTypeGenericArray.ets"
                                 }
                               }
@@ -897,7 +897,7 @@
             "loc": {
               "start": {
                 "line": 21,
-                "column": 5,
+                "column": 14,
                 "program": "returnTypeGenericArray.ets"
               },
               "end": {

@@ -14,7 +14,7 @@
  */
 
 abstract class A {
-    /* @@ label */native abstract foo() : void;
+    native abstract /* @@ label */foo() : void;
 }
 
 /* @@@ label Error TypeError: Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier.  */

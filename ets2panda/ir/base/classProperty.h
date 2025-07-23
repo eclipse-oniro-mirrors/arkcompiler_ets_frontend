@@ -25,6 +25,16 @@ class ETSAnalyzer;
 }  // namespace ark::es2panda::checker
 
 namespace ark::es2panda::ir {
+enum class InitMode : uint8_t { NONE = 0U, IMMEDIATE_INIT = 1U << 0U, NEED_INIT_IN_STATIC_BLOCK = 1U << 1U };
+}  // namespace ark::es2panda::ir
+
+namespace enumbitops {
+template <>
+struct IsAllowedType<ark::es2panda::ir::InitMode> : std::true_type {
+};
+}  // namespace enumbitops
+
+namespace ark::es2panda::ir {
 class Expression;
 class TypeNode;
 
@@ -81,12 +91,22 @@ public:
 
     [[nodiscard]] bool NeedInitInStaticBlock() const
     {
-        return needInitInStaticBlock_;
+        return (initMode_ & InitMode::NEED_INIT_IN_STATIC_BLOCK) != 0;
     }
 
-    void SetInitInStaticBlock(bool needInitInStaticBlock)
+    void SetNeedInitInStaticBlock()
     {
-        needInitInStaticBlock_ = needInitInStaticBlock;
+        initMode_ |= InitMode::NEED_INIT_IN_STATIC_BLOCK;
+    }
+
+    [[nodiscard]] bool IsImmediateInit() const
+    {
+        return (initMode_ & InitMode::IMMEDIATE_INIT) != 0;
+    }
+
+    void SetIsImmediateInit()
+    {
+        initMode_ |= InitMode::IMMEDIATE_INIT;
     }
 
 protected:
@@ -103,7 +123,7 @@ private:
     friend class SizeOfNodeTest;
     TypeNode *typeAnnotation_;
     bool isDefault_ = false;
-    bool needInitInStaticBlock_ = false;
+    InitMode initMode_ = InitMode::NONE;
 };
 }  // namespace ark::es2panda::ir
 

@@ -120,7 +120,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 12,
                 "program": "launch_with_call_expression.ets"
               },
               "end": {

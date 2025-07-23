@@ -157,7 +157,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 14,
+                              "column": 13,
                               "program": "type_variance1.ets"
                             }
                           }
@@ -170,7 +170,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 14,
+                            "column": 13,
                             "program": "type_variance1.ets"
                           }
                         }
@@ -184,7 +184,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 14,
+                          "column": 13,
                           "program": "type_variance1.ets"
                         }
                       }
@@ -197,7 +197,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 14,
+                        "column": 13,
                         "program": "type_variance1.ets"
                       }
                     }
@@ -495,7 +495,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 17,
+                              "column": 16,
                               "program": "type_variance1.ets"
                             }
                           }
@@ -508,7 +508,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 17,
+                            "column": 16,
                             "program": "type_variance1.ets"
                           }
                         }
@@ -522,7 +522,7 @@
                         },
                         "end": {
                           "line": 23,
-                          "column": 17,
+                          "column": 16,
                           "program": "type_variance1.ets"
                         }
                       }
@@ -535,7 +535,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 17,
+                        "column": 16,
                         "program": "type_variance1.ets"
                       }
                     }
@@ -675,7 +675,7 @@
                       },
                       "end": {
                         "line": 24,
-                        "column": 18,
+                        "column": 17,
                         "program": "type_variance1.ets"
                       }
                     }
@@ -688,7 +688,7 @@
                     },
                     "end": {
                       "line": 24,
-                      "column": 18,
+                      "column": 17,
                       "program": "type_variance1.ets"
                     }
                   }
@@ -701,7 +701,7 @@
                   },
                   "end": {
                     "line": 24,
-                    "column": 18,
+                    "column": 17,
                     "program": "type_variance1.ets"
                   }
                 }
@@ -714,7 +714,7 @@
                 },
                 "end": {
                   "line": 24,
-                  "column": 18,
+                  "column": 17,
                   "program": "type_variance1.ets"
                 }
               }
@@ -856,8 +856,8 @@
           "program": "type_variance1.ets"
         },
         "end": {
-          "line": 27,
-          "column": 6,
+          "line": 25,
+          "column": 2,
           "program": "type_variance1.ets"
         }
       }
@@ -1094,7 +1094,7 @@
                           },
                           "end": {
                             "line": 29,
-                            "column": 60,
+                            "column": 59,
                             "program": "type_variance1.ets"
                           }
                         }
@@ -1107,7 +1107,7 @@
                         },
                         "end": {
                           "line": 29,
-                          "column": 60,
+                          "column": 59,
                           "program": "type_variance1.ets"
                         }
                       }
@@ -1141,7 +1141,7 @@
                           },
                           "end": {
                             "line": 29,
-                            "column": 63,
+                            "column": 62,
                             "program": "type_variance1.ets"
                           }
                         }
@@ -1154,7 +1154,7 @@
                         },
                         "end": {
                           "line": 29,
-                          "column": 63,
+                          "column": 62,
                           "program": "type_variance1.ets"
                         }
                       }
@@ -1181,7 +1181,7 @@
                   },
                   "end": {
                     "line": 29,
-                    "column": 65,
+                    "column": 63,
                     "program": "type_variance1.ets"
                   }
                 }
@@ -1194,7 +1194,7 @@
                 },
                 "end": {
                   "line": 29,
-                  "column": 65,
+                  "column": 63,
                   "program": "type_variance1.ets"
                 }
               }
@@ -1297,7 +1297,7 @@
                             },
                             "end": {
                               "line": 30,
-                              "column": 23,
+                              "column": 22,
                               "program": "type_variance1.ets"
                             }
                           }
@@ -1310,7 +1310,7 @@
                           },
                           "end": {
                             "line": 30,
-                            "column": 23,
+                            "column": 22,
                             "program": "type_variance1.ets"
                           }
                         }
@@ -1324,7 +1324,7 @@
                         },
                         "end": {
                           "line": 30,
-                          "column": 23,
+                          "column": 22,
                           "program": "type_variance1.ets"
                         }
                       }
@@ -1337,7 +1337,7 @@
                       },
                       "end": {
                         "line": 30,
-                        "column": 23,
+                        "column": 22,
                         "program": "type_variance1.ets"
                       }
                     }
@@ -1405,7 +1405,7 @@
             "loc": {
               "start": {
                 "line": 30,
-                "column": 5,
+                "column": 14,
                 "program": "type_variance1.ets"
               },
               "end": {
@@ -1493,7 +1493,7 @@
                       },
                       "end": {
                         "line": 31,
-                        "column": 24,
+                        "column": 22,
                         "program": "type_variance1.ets"
                       }
                     }
@@ -1506,7 +1506,7 @@
                     },
                     "end": {
                       "line": 31,
-                      "column": 24,
+                      "column": 22,
                       "program": "type_variance1.ets"
                     }
                   }
@@ -1547,7 +1547,7 @@
                               },
                               "end": {
                                 "line": 32,
-                                "column": 22,
+                                "column": 21,
                                 "program": "type_variance1.ets"
                               }
                             }
@@ -1560,7 +1560,7 @@
                             },
                             "end": {
                               "line": 32,
-                              "column": 22,
+                              "column": 21,
                               "program": "type_variance1.ets"
                             }
                           }
@@ -1637,7 +1637,7 @@
             "loc": {
               "start": {
                 "line": 31,
-                "column": 5,
+                "column": 14,
                 "program": "type_variance1.ets"
               },
               "end": {
@@ -2290,7 +2290,7 @@
                     },
                     "end": {
                       "line": 20,
-                      "column": 47,
+                      "column": 46,
                       "program": "type_variance1.ets"
                     }
                   }
@@ -2303,7 +2303,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 47,
+                    "column": 46,
                     "program": "type_variance1.ets"
                   }
                 }
@@ -2485,7 +2485,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 30,
+                    "column": 28,
                     "program": "type_variance1.ets"
                   }
                 }
@@ -2498,7 +2498,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 30,
+                  "column": 28,
                   "program": "type_variance1.ets"
                 }
               }
@@ -2646,7 +2646,7 @@
                                           },
                                           "end": {
                                             "line": 39,
-                                            "column": 24,
+                                            "column": 23,
                                             "program": "type_variance1.ets"
                                           }
                                         }
@@ -2659,7 +2659,7 @@
                                         },
                                         "end": {
                                           "line": 39,
-                                          "column": 24,
+                                          "column": 23,
                                           "program": "type_variance1.ets"
                                         }
                                       }
@@ -2686,7 +2686,7 @@
                                   },
                                   "end": {
                                     "line": 39,
-                                    "column": 26,
+                                    "column": 24,
                                     "program": "type_variance1.ets"
                                   }
                                 }
@@ -2699,7 +2699,7 @@
                                 },
                                 "end": {
                                   "line": 39,
-                                  "column": 26,
+                                  "column": 24,
                                   "program": "type_variance1.ets"
                                 }
                               }
@@ -2773,7 +2773,7 @@
                                           },
                                           "end": {
                                             "line": 39,
-                                            "column": 41,
+                                            "column": 40,
                                             "program": "type_variance1.ets"
                                           }
                                         }
@@ -2786,7 +2786,7 @@
                                         },
                                         "end": {
                                           "line": 39,
-                                          "column": 41,
+                                          "column": 40,
                                           "program": "type_variance1.ets"
                                         }
                                       }
@@ -2813,7 +2813,7 @@
                                   },
                                   "end": {
                                     "line": 39,
-                                    "column": 42,
+                                    "column": 41,
                                     "program": "type_variance1.ets"
                                   }
                                 }
@@ -2826,7 +2826,7 @@
                                 },
                                 "end": {
                                   "line": 39,
-                                  "column": 42,
+                                  "column": 41,
                                   "program": "type_variance1.ets"
                                 }
                               }
@@ -3038,7 +3038,7 @@
                                   },
                                   "end": {
                                     "line": 40,
-                                    "column": 29,
+                                    "column": 27,
                                     "program": "type_variance1.ets"
                                   }
                                 }
@@ -3051,7 +3051,7 @@
                                 },
                                 "end": {
                                   "line": 40,
-                                  "column": 29,
+                                  "column": 27,
                                   "program": "type_variance1.ets"
                                 }
                               }
@@ -3229,7 +3229,7 @@
                                   },
                                   "end": {
                                     "line": 40,
-                                    "column": 47,
+                                    "column": 46,
                                     "program": "type_variance1.ets"
                                   }
                                 }
@@ -3242,7 +3242,7 @@
                                 },
                                 "end": {
                                   "line": 40,
-                                  "column": 47,
+                                  "column": 46,
                                   "program": "type_variance1.ets"
                                 }
                               }

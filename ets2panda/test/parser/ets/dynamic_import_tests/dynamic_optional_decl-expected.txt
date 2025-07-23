@@ -377,7 +377,7 @@
                                     },
                                     "end": {
                                       "line": 21,
-                                      "column": 24,
+                                      "column": 23,
                                       "program": "dynamic_optional_decl.ets"
                                     }
                                   }
@@ -390,7 +390,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 24,
+                                    "column": 23,
                                     "program": "dynamic_optional_decl.ets"
                                   }
                                 }
@@ -474,7 +474,7 @@
                                       },
                                       "end": {
                                         "line": 21,
-                                        "column": 42,
+                                        "column": 41,
                                         "program": "dynamic_optional_decl.ets"
                                       }
                                     }
@@ -487,7 +487,7 @@
                                     },
                                     "end": {
                                       "line": 21,
-                                      "column": 42,
+                                      "column": 41,
                                       "program": "dynamic_optional_decl.ets"
                                     }
                                   }
@@ -599,7 +599,7 @@
                                   },
                                   "end": {
                                     "line": 22,
-                                    "column": 12,
+                                    "column": 11,
                                     "program": "dynamic_optional_decl.ets"
                                   }
                                 }
@@ -612,7 +612,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 12,
+                                  "column": 11,
                                   "program": "dynamic_optional_decl.ets"
                                 }
                               }
@@ -761,7 +761,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 12,
+                                    "column": 11,
                                     "program": "dynamic_optional_decl.ets"
                                   }
                                 }
@@ -774,7 +774,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 12,
+                                  "column": 11,
                                   "program": "dynamic_optional_decl.ets"
                                 }
                               }

@@ -150,8 +150,8 @@
           "program": "override2.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "override2.ets"
         }
       }
@@ -322,7 +322,7 @@
             "loc": {
               "start": {
                 "line": 21,
-                "column": 3,
+                "column": 10,
                 "program": "override2.ets"
               },
               "end": {
@@ -513,7 +513,7 @@
               },
               "end": {
                 "line": 24,
-                "column": 38,
+                "column": 27,
                 "program": "override2.ets"
               }
             }
@@ -526,7 +526,7 @@
             },
             "end": {
               "line": 24,
-              "column": 38,
+              "column": 27,
               "program": "override2.ets"
             }
           }
@@ -563,7 +563,7 @@
                   },
                   "end": {
                     "line": 24,
-                    "column": 42,
+                    "column": 40,
                     "program": "override2.ets"
                   }
                 }
@@ -576,7 +576,7 @@
                 },
                 "end": {
                   "line": 24,
-                  "column": 42,
+                  "column": 40,
                   "program": "override2.ets"
                 }
               }
