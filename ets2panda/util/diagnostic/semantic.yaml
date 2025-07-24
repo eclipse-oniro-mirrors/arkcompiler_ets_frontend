@@ -475,6 +475,10 @@ semantic:
   id: 343
   message: "Indexed signatures are not allowed. Use arrays instead!"
 
+- name: ERROR_ARKTS_SPREAD_ONLY_WITH_REST
+  id: 44192
+  message: "The function or method being called needs a rest parameter to accept arguments passed via the spread operator."
+
 - name: EXCEPTION_REDECLARATION
   id: 13
   message: "Redeclaration of exception type"

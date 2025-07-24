@@ -42,9 +42,8 @@ class A {
 /* @@? 24:34 Error SyntaxError: Unexpected token '='. */
 /* @@? 24:36 Error SyntaxError: Unexpected token '{'. */
 /* @@? 24:38 Error TypeError: Unresolved reference caches */
-/* @@? 25:21 Error TypeError: Expected 0 arguments, got 1. */
+/* @@? 25:21 Error TypeError: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
 /* @@? 25:21 Error TypeError: No matching construct signature for class_cyclic_constructor.A(...tuple) */
-/* @@? 25:27 Error TypeError: Spread argument cannot be passed for ordinary parameter. */
 /* @@? 25:30 Error TypeError: Unresolved reference tuple */
 /* @@? 26:31 Error TypeError: Property 'bar' does not exist on type 'A' */
 /* @@? 27:5 Error SyntaxError: Unexpected token ')'. */

@@ -738,23 +738,10 @@ Signature *ETSChecker::ValidateSignature(
     size_t const argCount = arguments.size();
     auto const hasRestParameter = signature->RestVar() != nullptr;
     auto const reportError = (flags & TypeRelationFlag::NO_THROW) == 0;
-    size_t compareCount = argCount;
-    if ((flags & TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA) != 0 && !signature->Params().empty() &&
-        signature->Params().back()->Declaration()->Node()->AsETSParameterExpression()->IsOptional()) {
-        compareCount = compareCount - 1;
-    }
 
-    if (compareCount < signature->MinArgCount() || (argCount > signature->ArgCount() && !hasRestParameter)) {
-        if (reportError) {
-            LogError(diagnostic::PARAM_COUNT_MISMATCH, {signature->MinArgCount(), argCount}, pos);
-        }
+    if (!ValidateRestParameter(this, signature, arguments, pos, flags)) {
         return nullptr;
     }
-
-    if (argCount > signature->ArgCount() && hasRestParameter && (flags & TypeRelationFlag::IGNORE_REST_PARAM) != 0) {
-        return nullptr;
-    }
-
     auto count = std::min(signature->ArgCount(), argCount);
     // Check all required formal parameter(s) first
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
