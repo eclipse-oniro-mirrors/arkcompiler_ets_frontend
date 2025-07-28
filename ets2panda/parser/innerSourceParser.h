@@ -42,7 +42,7 @@ private:
     ETSParser *parser_;
     lexer::Lexer *savedLexer_;
     util::StringView savedSourceCode_ {};
-    util::StringView savedSourceFile_ {};
+    util::Path savedSourceFile_ {};
     util::StringView savedSourceFilePath_ {};
     util::StringView savedRelativeFilePath_ {};
 };

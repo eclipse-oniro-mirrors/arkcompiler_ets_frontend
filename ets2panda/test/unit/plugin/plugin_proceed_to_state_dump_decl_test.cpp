@@ -34,7 +34,7 @@ class A {
 }
 )";
 
-static std::string expected = R"(public prop: ((done: () => void) => void)|((done: () => void) => Promise<void>);
+static std::string expected = R"(public prop: ((p1: () => void) => void)|((p1: () => void) => Promise<void>);
 )";
 
 static es2panda_AstNode *prop = nullptr;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,4 +16,4 @@
 
 var a: (a: number, b?: number) => number;
 var /* @@ label */a: (a: number, b: number) => number;
-/* @@@ label Error TypeError: Subsequent variable declaration must have the same type. Variable 'a' must be of type '(a: number, b?: number) => number', but here has type '(a: number, b: number) => number'.  */
+/* @@@ label Error TypeError: Subsequent variable declaration must have the same type. Variable 'a' must be of type '(p1: number, p2?: number) => number', but here has type '(p1: number, p2: number) => number'.  */

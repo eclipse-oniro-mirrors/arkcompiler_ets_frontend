@@ -19,6 +19,6 @@ let fob:(...args:FixedArray<number>)=>number = (...args:FixedArray<number>) =>{}
 
 let foc:(c:string, ...args:FixedArray<number>)=>string = (c:number, ...args:FixedArray<string>):string=>{}
 
-/* @@? 16:56 Error TypeError: Type '(c: Double, ...args: FixedArray<Double>) => void' cannot be assigned to type '(c: String, ...args: FixedArray<Double>) => void' */
-/* @@? 18:48 Error TypeError: Type '(...args: FixedArray<Double>) => void' cannot be assigned to type '(...args: FixedArray<Double>) => Double' */
-/* @@? 20:58 Error TypeError: Type '(c: Double, ...args: FixedArray<String>) => String' cannot be assigned to type '(c: String, ...args: FixedArray<Double>) => String' */
+/* @@? 16:56 Error TypeError: Type '(p1: Double, ...p2: FixedArray<Double>) => void' cannot be assigned to type '(p1: String, ...p2: FixedArray<Double>) => void' */
+/* @@? 18:48 Error TypeError: Type '(...p1: FixedArray<Double>) => void' cannot be assigned to type '(...p1: FixedArray<Double>) => Double' */
+/* @@? 20:58 Error TypeError: Type '(p1: Double, ...p2: FixedArray<String>) => String' cannot be assigned to type '(p1: String, ...p2: FixedArray<Double>) => String' */

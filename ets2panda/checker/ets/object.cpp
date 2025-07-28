@@ -287,7 +287,7 @@ void ETSChecker::GetInterfacesOfInterface(ETSObjectType *type)
     type->AddObjectFlag(ETSObjectFlags::RESOLVED_INTERFACES);
 }
 
-ArenaVector<ETSObjectType *> ETSChecker::GetInterfaces(ETSObjectType *type)
+ArenaVector<ETSObjectType *> const &ETSChecker::GetInterfaces(ETSObjectType *type)
 {
     ES2PANDA_ASSERT(type->GetDeclNode()->IsClassDefinition() || type->GetDeclNode()->IsTSInterfaceDeclaration());
 
@@ -2478,6 +2478,20 @@ void ETSChecker::WarnForEndlessLoopInGetterSetter(const ir::MemberExpression *co
     }
 }
 
+[[maybe_unused]] static std::unordered_set<util::StringView> CollectInstancePropsTransitive(ETSObjectType *classType)
+{
+    std::unordered_set<util::StringView> transitivePropNames;
+    for (auto const t : classType->TransitiveSupertypes()) {
+        for (auto const p : t->InstanceMethods()) {
+            transitivePropNames.insert(p.first);
+        }
+        for (auto const p : t->InstanceFields()) {
+            transitivePropNames.insert(p.first);
+        }
+    }
+    return transitivePropNames;
+}
+
 void ETSChecker::CheckValidInheritance(ETSObjectType *classType, ir::ClassDefinition *classDef)
 {
     if (classType->SuperType() == nullptr) {
@@ -2485,6 +2499,8 @@ void ETSChecker::CheckValidInheritance(ETSObjectType *classType, ir::ClassDefini
     }
 
     const auto &allProps = classType->GetAllProperties();
+    auto const interfaceList = GetInterfaces(classType);
+    auto const instancePropNamesTransitive = CollectInstancePropsTransitive(classType);
 
     for (auto *it : allProps) {
         auto *node = it->Declaration()->Node();
@@ -2492,21 +2508,26 @@ void ETSChecker::CheckValidInheritance(ETSObjectType *classType, ir::ClassDefini
             node->AsClassProperty()->TsType()->IsTypeError()) {
             continue;
         }
+        if (instancePropNamesTransitive.find(it->Name()) == instancePropNamesTransitive.end()) {
+            continue;
+        }
 
-        const auto searchFlag = PropertySearchFlags::SEARCH_ALL | PropertySearchFlags::SEARCH_IN_BASE |
-                                PropertySearchFlags::SEARCH_IN_INTERFACES |
-                                PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION;
-        auto *foundInSuper = classType->SuperType()->GetProperty(it->Name(), searchFlag);
+        const auto searchFlagsSuper = PropertySearchFlags::SEARCH_INSTANCE | PropertySearchFlags::SEARCH_IN_BASE |
+                                      PropertySearchFlags::SEARCH_IN_INTERFACES |
+                                      PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION;
+        auto *foundInSuper = classType->SuperType()->GetProperty(it->Name(), searchFlagsSuper);
 
         ETSObjectType *interfaceFound = nullptr;
         if (foundInSuper != nullptr) {
             CheckProperties(classType, classDef, it, foundInSuper, interfaceFound);
         }
 
-        auto interfaceList = GetInterfaces(classType);
         varbinder::LocalVariable *foundInInterface = nullptr;
         for (auto *interface : interfaceList) {
-            auto *propertyFound = interface->GetProperty(it->Name(), searchFlag);
+            const auto searchFlagsInterfaces = PropertySearchFlags::SEARCH_INSTANCE_METHOD |
+                                               PropertySearchFlags::SEARCH_IN_INTERFACES |
+                                               PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION;
+            auto *propertyFound = interface->GetProperty(it->Name(), searchFlagsInterfaces);
             if (propertyFound == nullptr) {
                 continue;
             }
@@ -2820,7 +2841,8 @@ void ETSChecker::CheckInvokeMethodsLegitimacy(ETSObjectType *const classType)
     }
 
     auto searchFlag = PropertySearchFlags::SEARCH_IN_INTERFACES | PropertySearchFlags::SEARCH_IN_BASE |
-                      PropertySearchFlags::SEARCH_STATIC_METHOD;
+                      PropertySearchFlags::SEARCH_STATIC_METHOD |
+                      PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION;
 
     auto *const invokeMethod = classType->GetProperty(compiler::Signatures::STATIC_INVOKE_METHOD, searchFlag);
     if (invokeMethod == nullptr) {

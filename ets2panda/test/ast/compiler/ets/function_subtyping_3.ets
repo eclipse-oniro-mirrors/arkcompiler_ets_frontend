@@ -19,4 +19,4 @@ class B extends A {}
 function main(): void {
     let x: (p: A) => A = /* @@ label */(p: B): B => { return new B() }
 }
-/* @@@ label Error TypeError: Type '(p: B) => B' cannot be assigned to type '(p: A) => A'  */
+/* @@@ label Error TypeError: Type '(p1: B) => B' cannot be assigned to type '(p1: A) => A'  */

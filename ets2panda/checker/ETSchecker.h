@@ -66,6 +66,7 @@ using ComputedAbstracts =
     ArenaUnorderedMap<ETSObjectType *, std::pair<ArenaVector<ETSFunctionType *>, ArenaUnorderedSet<ETSObjectType *>>>;
 using ArrayMap = ArenaUnorderedMap<std::pair<Type *, bool>, ETSArrayType *, PairHash>;
 using ObjectInstantiationMap = ArenaUnorderedMap<ETSObjectType *, ArenaUnorderedMap<util::StringView, ETSObjectType *>>;
+using FunctionTypeInstantiationMap = std::unordered_map<std::string, ETSFunctionType *>;
 using GlobalArraySignatureMap = ArenaUnorderedMap<const ETSArrayType *, Signature *>;
 using FunctionSignatureMap = ArenaUnorderedMap<ETSFunctionType *, ETSFunctionType *>;
 using FunctionInterfaceMap = ArenaUnorderedMap<ETSFunctionType *, ETSObjectType *>;
@@ -203,7 +204,7 @@ public:
     ETSObjectType *BuildAnonymousClassProperties(ir::ClassDefinition *classDef, ETSObjectType *superType);
     Type *BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *interfaceDecl);
     ETSObjectType *GetSuperType(ETSObjectType *type);
-    ArenaVector<ETSObjectType *> GetInterfaces(ETSObjectType *type);
+    ArenaVector<ETSObjectType *> const &GetInterfaces(ETSObjectType *type);
     void GetInterfacesOfClass(ETSObjectType *type);
     void GetInterfacesOfInterface(ETSObjectType *type);
     void ValidateImplementedInterface(ETSObjectType *type, Type *interface, std::unordered_set<Type *> *extendsSet,
@@ -1090,6 +1091,7 @@ private:
     ArrayMap arrayTypes_;
     std::vector<ConstraintCheckRecord> pendingConstraintCheckRecords_ {};
     ObjectInstantiationMap objectInstantiationMap_;
+    FunctionTypeInstantiationMap functionTypeInstantiationMap_;  // not an arena container
     FunctionSignatureMap invokeToArrowSignatures_;
     FunctionInterfaceMap arrowToFuncInterfaces_;
     size_t constraintCheckScopesCount_ {0};

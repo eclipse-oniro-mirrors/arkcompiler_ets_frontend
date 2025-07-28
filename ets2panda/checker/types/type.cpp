@@ -22,8 +22,6 @@
 
 namespace ark::es2panda::checker {
 
-std::mutex Type::idLock_ {};
-
 bool Type::IsETSResizableArrayType() const
 {
     return IsETSObjectType() && AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_ARRAY);

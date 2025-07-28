@@ -153,9 +153,12 @@ void Signature::ToString(std::stringstream &ss, const varbinder::Variable *varia
     }
 
     ss << "(";
+    size_t pidx = 1;
 
     for (auto it = signatureInfo_->params.begin(); it != signatureInfo_->params.end(); it++) {
-        ss << (!(*it)->Name().StartsWith(compiler::GENSYM_CORE) ? (*it)->Name().Utf8() : compiler::DUMMY_ID);
+        ss << (!this->HasFunction()
+                   ? "p" + std::to_string(pidx++)
+                   : (!(*it)->Name().StartsWith(compiler::GENSYM_CORE) ? (*it)->Name().Utf8() : compiler::DUMMY_ID));
 
         if ((*it)->HasFlag(varbinder::VariableFlags::OPTIONAL)) {
             ss << "?";
@@ -176,7 +179,8 @@ void Signature::ToString(std::stringstream &ss, const varbinder::Variable *varia
         }
 
         ss << "...";
-        ss << (!signatureInfo_->restVar->Name().StartsWith(compiler::GENSYM_CORE)
+        ss << (!this->HasFunction() ? "p" + std::to_string(pidx++)
+               : !signatureInfo_->restVar->Name().StartsWith(compiler::GENSYM_CORE)
                    ? signatureInfo_->restVar->Name().Utf8()
                    : compiler::DUMMY_ID);
         ss << ": ";

@@ -19,4 +19,4 @@ function foo(): void {
     }
 }
 
-/* @@@ label Error TypeError: Type '(b: Int) => void' cannot be assigned to type '(b: String) => void'  */
+/* @@@ label Error TypeError: Type '(p1: Int) => void' cannot be assigned to type '(p1: String) => void'  */
