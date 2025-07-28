@@ -51,17 +51,15 @@ class Type {
 public:
     explicit Type(TypeFlag flag) : typeFlags_(flag)
     {
-        std::lock_guard<std::mutex> lock(idLock_);
-        static uint32_t typeId = 0;
-        ES2PANDA_ASSERT(typeId < std::numeric_limits<uint32_t>::max());
+        static std::atomic<uint32_t> typeId = 0;
         id_ = ++typeId;
+        ES2PANDA_ASSERT(id_ != std::numeric_limits<uint32_t>::max());
     }
 
     NO_COPY_SEMANTIC(Type);
     NO_MOVE_SEMANTIC(Type);
 
     virtual ~Type() = default;
-    static std::mutex idLock_;
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define TYPE_IS_CHECKS(typeFlag, typeName)                                                  \

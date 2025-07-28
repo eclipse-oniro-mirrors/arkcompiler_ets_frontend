@@ -226,6 +226,14 @@ public:
         packageStartPosition_ = start;
     }
 
+    void SetSource(const util::StringView &sourceCode, const util::Path &sourceFilePath,
+                   const util::StringView &sourceFileFolder)
+    {
+        sourceCode_ = sourceCode;
+        sourceFile_ = sourceFilePath;
+        sourceFileFolder_ = sourceFileFolder;
+    }
+
     void SetSource(const util::StringView &sourceCode, const util::StringView &sourceFilePath,
                    const util::StringView &sourceFileFolder)
     {

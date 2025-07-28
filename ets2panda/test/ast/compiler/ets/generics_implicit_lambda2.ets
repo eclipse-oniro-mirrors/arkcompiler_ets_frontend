@@ -19,4 +19,4 @@ function main() {
     foo(/* @@ label */(a: int, b: String, c: String): String => { return "XXX" });
 }
 
-/* @@@ label Error TypeError: Type '(a: Int, b: String, c: String) => String' is not compatible with type '(a: Int, b: String, c: Int) => String' at index 1  */
+/* @@@ label Error TypeError: Type '(p1: Int, p2: String, p3: String) => String' is not compatible with type '(p1: Int, p2: String, p3: Int) => String' at index 1  */

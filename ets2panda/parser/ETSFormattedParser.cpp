@@ -15,6 +15,7 @@
 
 #include "ETSparser.h"
 
+#include "lexer/ETSLexer.h"
 #include "lexer/lexer.h"
 #include "ir/typeNode.h"
 #include "ir/expressions/identifier.h"
@@ -283,9 +284,8 @@ ArenaVector<ir::Expression *> &ETSParser::ParseExpressionsArrayFormatPlaceholder
 
 ir::Statement *ETSParser::CreateStatement(std::string_view const sourceCode)
 {
-    util::UString source {sourceCode, Allocator()};
     auto const isp = InnerSourceParser(this);
-    auto const lexer = InitLexer({GetContext().FormattingFileName(), source.View().Utf8()});
+    auto const lexer = InitFormattedLexer(GetContext().FormattingFileName(), sourceCode);
 
     lexer::SourcePosition const startLoc = lexer->GetToken().Start();
     lexer->NextToken();
@@ -334,9 +334,8 @@ ir::Statement *ETSParser::CreateFormattedStatement(std::string_view const source
 
 ir::TypeNode *ETSParser::CreateFormattedTypeAnnotation(std::string_view const sourceCode)
 {
-    util::UString source {sourceCode, Allocator()};
     auto const isp = InnerSourceParser(this);
-    auto const lexer = InitLexer({GetContext().FormattingFileName(), source.View().Utf8()});
+    auto const lexer = InitFormattedLexer(GetContext().FormattingFileName(), sourceCode);
     lexer->NextToken();
     TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::NO_OPTS;
     return ParseTypeAnnotation(&options);
@@ -353,9 +352,8 @@ ir::TypeNode *ETSParser::CreateFormattedTypeAnnotation(std::string_view const so
 
 ArenaVector<ir::Statement *> ETSParser::CreateStatements(std::string_view const sourceCode)
 {
-    util::UString source {sourceCode, Allocator()};
     auto const isp = InnerSourceParser(this);
-    auto const lexer = InitLexer({GetContext().FormattingFileName(), source.View().Utf8()});
+    auto const lexer = InitFormattedLexer(GetContext().FormattingFileName(), sourceCode);
 
     lexer->NextToken();
     return ParseStatementList(StatementParsingFlags::STMT_GLOBAL_LEXICAL);
@@ -423,9 +421,8 @@ ir::AstNode *ETSParser::CreateFormattedClassElement(std::string_view sourceCode,
 ir::AstNode *ETSParser::CreateClassElement(std::string_view sourceCode, const ArenaVector<ir::AstNode *> &properties,
                                            ir::ClassDefinitionModifiers modifiers)
 {
-    util::UString source {sourceCode, Allocator()};
     auto const isp = InnerSourceParser(this);
-    auto const lexer = InitLexer({GetContext().FormattingFileName(), source.View().Utf8()});
+    auto const lexer = InitFormattedLexer(GetContext().FormattingFileName(), sourceCode);
 
     auto savedCtx = SavedStatusContext<ParserStatus::IN_CLASS_BODY>(&GetContext());
     SavedClassPrivateContext classContext(this);
@@ -447,9 +444,8 @@ ir::Statement *ETSParser::CreateFormattedClassDeclaration(std::string_view sourc
 
 ir::Statement *ETSParser::CreateClassDeclaration(std::string_view sourceCode, bool allowStatic)
 {
-    util::UString source {sourceCode, Allocator()};
     auto const isp = InnerSourceParser(this);
-    auto const lexer = InitLexer({GetContext().FormattingFileName(), source.View().Utf8()});
+    auto const lexer = InitFormattedLexer(GetContext().FormattingFileName(), sourceCode);
 
     auto savedCtx = SavedStatusContext<ParserStatus::IN_CLASS_BODY>(&GetContext());
 
@@ -490,9 +486,8 @@ ir::Statement *ETSParser::CreateClassDeclaration(std::string_view sourceCode, bo
 ir::MethodDefinition *ETSParser::CreateConstructorDefinition(ir::ModifierFlags modifiers,
                                                              std::string_view const sourceCode)
 {
-    util::UString source {sourceCode, Allocator()};
     auto const isp = InnerSourceParser(this);
-    auto const lexer = InitLexer({GetContext().FormattingFileName(), source.View().Utf8()});
+    auto const lexer = InitFormattedLexer(GetContext().FormattingFileName(), sourceCode);
 
     auto const startLoc = Lexer()->GetToken().Start();
     Lexer()->NextToken();
@@ -523,9 +518,8 @@ ir::MethodDefinition *ETSParser::CreateConstructorDefinition(ir::ModifierFlags m
 
 ir::Expression *ETSParser::CreateExpression(std::string_view const sourceCode, ExpressionParseFlags const flags)
 {
-    util::UString source {sourceCode, Allocator()};
     auto const isp = InnerSourceParser(this);
-    auto const lexer = InitLexer({GetContext().FormattingFileName(), source.View().Utf8()});
+    auto const lexer = InitFormattedLexer(GetContext().FormattingFileName(), sourceCode);
 
     lexer->NextToken();
 
@@ -550,11 +544,21 @@ ir::Expression *ETSParser::CreateFormattedExpression(std::string_view const sour
     return returnExpression;
 }
 
-ir::Statement *ETSParser::CreateTopLevelStatement(std::string_view const sourceCode)
+[[nodiscard]] std::unique_ptr<lexer::Lexer> ETSParser::InitFormattedLexer(
+    // CC-OFFNXT(G.FMT.06-CPP) project code style
+    [[maybe_unused]] std::string_view formattedName, std::string_view sourceCode)
 {
     util::UString source {sourceCode, Allocator()};
+    GetProgram()->SetSource(source.View().Utf8(), util::Path(), "");
+    auto lexer = std::make_unique<lexer::ETSLexer>(&GetContext(), DiagnosticEngine());
+    SetLexer(lexer.get());
+    return lexer;
+}
+
+ir::Statement *ETSParser::CreateTopLevelStatement(std::string_view const sourceCode)
+{
     auto const isp = InnerSourceParser(this);
-    auto const lexer = InitLexer({GetContext().FormattingFileName(), source.View().Utf8()});
+    auto const lexer = InitFormattedLexer(GetContext().FormattingFileName(), sourceCode);
 
     lexer->NextToken();
 
@@ -572,9 +576,8 @@ ir::Statement *ETSParser::CreateFormattedTopLevelStatement(std::string_view cons
 
 ir::TypeNode *ETSParser::CreateTypeAnnotation(TypeAnnotationParsingOptions *options, std::string_view const sourceCode)
 {
-    util::UString source {sourceCode, Allocator()};
     auto const isp = InnerSourceParser(this);
-    auto const lexer = InitLexer({GetContext().FormattingFileName(), source.View().Utf8()});
+    auto const lexer = InitFormattedLexer(GetContext().FormattingFileName(), sourceCode);
 
     lexer->NextToken();
     return ParseTypeAnnotation(options);

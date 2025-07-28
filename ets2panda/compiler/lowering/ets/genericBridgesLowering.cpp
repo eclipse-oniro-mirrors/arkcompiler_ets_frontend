@@ -405,9 +405,28 @@ GenericBridgesPhase::Substitutions GenericBridgesPhase::GetSubstitutions(
     return substitutions;
 }
 
-void GenericBridgesPhase::ProcessInterfaces(ir::ClassDefinition *const classDefinition,
-                                            ArenaVector<checker::ETSObjectType *> const &interfaces) const
+static std::unordered_set<checker::ETSObjectType *> CollectInterfacesTransitive(checker::ETSObjectType *type)
 {
+    std::unordered_set<checker::ETSObjectType *> collected;
+
+    auto traverse = [&collected](auto &&self, checker::ETSObjectType *t) {
+        if (t->TypeArguments().empty() || !collected.insert(t).second) {
+            return;
+        }
+        for (auto itf : t->Interfaces()) {
+            self(self, itf);
+        }
+    };
+    for (auto itf : type->Interfaces()) {
+        traverse(traverse, itf);
+    }
+    return collected;
+}
+
+void GenericBridgesPhase::ProcessInterfaces(ir::ClassDefinition *const classDefinition) const
+{
+    auto interfaces = CollectInterfacesTransitive(classDefinition->TsType()->AsETSObjectType());
+
     for (auto const *interfaceType : interfaces) {
         auto const &typeParameters = interfaceType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
         if (!typeParameters.empty()) {
@@ -418,15 +437,13 @@ void GenericBridgesPhase::ProcessInterfaces(ir::ClassDefinition *const classDefi
                 CreateGenericBridges(classDefinition, substitutions, interfaceBody);
             }
         }
-
-        ProcessInterfaces(classDefinition, interfaceType->Interfaces());
     }
 }
 
 ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefinition *const classDefinition) const
 {
     //  Check class interfaces.
-    ProcessInterfaces(classDefinition, classDefinition->TsType()->AsETSObjectType()->Interfaces());
+    ProcessInterfaces(classDefinition);
 
     //  Check if the base class is a generic class.
     if (classDefinition->Super() == nullptr || classDefinition->Super()->TsType() == nullptr ||

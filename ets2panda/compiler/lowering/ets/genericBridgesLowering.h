@@ -38,8 +38,7 @@ private:
 
     ir::ClassDefinition *ProcessClassDefinition(ir::ClassDefinition *classDefinition) const;
 
-    void ProcessInterfaces(ir::ClassDefinition *classDefinition,
-                           ArenaVector<checker::ETSObjectType *> const &interfaces) const;
+    void ProcessInterfaces(ir::ClassDefinition *classDefinition) const;
 
     Substitutions GetSubstitutions(checker::ETSObjectType const *const objectType,
                                    ArenaVector<checker::Type *> const &typeParameters) const;

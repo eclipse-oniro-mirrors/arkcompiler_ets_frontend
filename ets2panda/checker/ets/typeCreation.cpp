@@ -178,9 +178,65 @@ ETSTypeAliasType *ETSChecker::CreateETSTypeAliasType(util::StringView name, cons
     return ProgramAllocator()->New<ETSTypeAliasType>(this, name, declNode, isRecursive);
 }
 
+// the "inference" routine of the generic type inference _mutates_ arrow function signature
+// even in the case when the arrow signature is computed from the arrow function expression
+// Conservatively disable the type caching in that case
+static bool WorkaroundForSignatureMutationsInTypeInference(Signature *signature)
+{
+    if (!signature->HasFunction()) {
+        return false;
+    }
+    auto ast = signature->Function();
+    if (!(ast->Parent()->IsArrowFunctionExpression() && ast->Parent()->Parent()->IsCallExpression())) {
+        return false;
+    }
+
+    auto callee = ast->Parent()->Parent()->AsCallExpression()->Callee()->TsType();
+    if (callee == nullptr || !callee->IsETSMethodType()) {
+        return false;
+    }
+    for (auto sig : callee->AsETSFunctionType()->CallSignatures()) {
+        if (!sig->TypeParams().empty()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 ETSFunctionType *ETSChecker::CreateETSArrowType(Signature *signature)
 {
-    return ProgramAllocator()->New<ETSFunctionType>(this, signature);
+    bool noCaching = false;
+    auto const typeRef = [&noCaching](Type *t) {
+        noCaching |= t->IsTypeError();  // "inference" has not succeeded yet
+        return t;
+    };
+    noCaching |= WorkaroundForSignatureMutationsInTypeInference(signature);
+
+    std::stringstream ss;
+    ss << "/" << helpers::ToUnderlying(signature->Flags());
+    ss << "/";
+    for (auto p : signature->GetSignatureInfo()->typeParams) {
+        ss << ":" << p;
+    }
+    ss << "/" << signature->GetSignatureInfo()->minArgCount;
+    ss << "/r" << typeRef(signature->ReturnType());
+    ss << "/";
+    for (auto p : signature->GetSignatureInfo()->params) {
+        ss << ":" << typeRef(p->TsType());
+    }
+    auto restVar = signature->GetSignatureInfo()->restVar;
+    if (restVar != nullptr) {
+        ss << "/" << typeRef(restVar->TsType());
+    }
+    auto hash = ss.str();
+
+    auto &cache = functionTypeInstantiationMap_;
+    if (auto it = cache.find(hash); !noCaching && it != cache.end()) {
+        return it->second;
+    }
+    auto type = ProgramAllocator()->New<ETSFunctionType>(this, signature);
+    cache.insert({hash, type});
+    return type;
 }
 
 ETSFunctionType *ETSChecker::CreateETSMethodType(util::StringView name, ArenaVector<Signature *> &&signatures)

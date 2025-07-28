@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,4 +19,4 @@ function foo({ x: { asd }, y: { t = 6, r = "foo" } = { t: "foo" } }) {
 }
 
 /* @@ label */foo + 5;
-/* @@@ label Error TypeError: operator + cannot be applied to types ({ x: { asd }, y: { t, r } }: { x?: { asd: any; }; y?: { t: string; }; }) => void and number  */
+/* @@@ label Error TypeError: operator + cannot be applied to types (p1: { x?: { asd: any; }; y?: { t: string; }; }) => void and number  */

@@ -19,4 +19,4 @@ let x: (i: int, a: A) => number;
 x = (i: int, t: /* @@ label */this): number => { return 2.0; };
 
 /* @@@ label Error SyntaxError: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions.  */
-/* @@? 19:5 Error TypeError: Type '(i: int, t: ETSGLOBAL) => double' cannot be assigned to type '(p1: Int, p2: A) => Double' */
+/* @@? 19:5 Error TypeError: Type '(p1: int, p2: ETSGLOBAL) => double' cannot be assigned to type '(p1: Int, p2: A) => Double' */

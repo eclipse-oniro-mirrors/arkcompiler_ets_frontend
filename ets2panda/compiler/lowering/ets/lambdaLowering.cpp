@@ -1492,8 +1492,11 @@ static ir::AstNode *InsertInvokeCall(public_lib::Context *ctx, ir::CallExpressio
     util::StringView invokeMethodName =
         util::UString {checker->FunctionalInterfaceInvokeName(arity, hasRestParam), allocator}.View();
 
-    auto *prop = ifaceType->GetProperty(invokeMethodName, checker::PropertySearchFlags::SEARCH_INSTANCE_METHOD |
-                                                              checker::PropertySearchFlags::SEARCH_IN_INTERFACES);
+    auto *prop =
+        ifaceType->GetProperty(invokeMethodName, checker::PropertySearchFlags::SEARCH_INSTANCE_METHOD |
+                                                     checker::PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION |
+                                                     checker::PropertySearchFlags::SEARCH_IN_BASE |
+                                                     checker::PropertySearchFlags::SEARCH_IN_INTERFACES);
     ES2PANDA_ASSERT(prop != nullptr);
     auto *invoke0Id = allocator->New<ir::Identifier>(invokeMethodName, allocator);
     ES2PANDA_ASSERT(invoke0Id != nullptr);
@@ -1592,12 +1595,7 @@ static ir::AstNode *BuildLambdaClassWhenNeeded(public_lib::Context *ctx, ir::Ast
             mexpr->TsType()->IsETSFunctionType() && mexpr->Object()->TsType()->IsETSObjectType() &&
             mexpr->PropVar() != nullptr && !mexpr->PropVar()->HasFlag(varbinder::VariableFlags::DYNAMIC)) {
             ES2PANDA_ASSERT(mexpr->Property()->IsIdentifier());
-            auto *var = mexpr->Object()->TsType()->AsETSObjectType()->GetProperty(
-                mexpr->Property()->AsIdentifier()->Name(),
-                checker::PropertySearchFlags::SEARCH_INSTANCE_METHOD |
-                    checker::PropertySearchFlags::SEARCH_STATIC_METHOD | checker::PropertySearchFlags::SEARCH_IN_BASE |
-                    checker::PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION);
-            if (IsValidFunctionDeclVar(var) && !IsInCalleePosition(mexpr) && !IsOverloadedName(mexpr)) {
+            if (IsValidFunctionDeclVar(mexpr->PropVar()) && !IsInCalleePosition(mexpr) && !IsOverloadedName(mexpr)) {
                 return ConvertFunctionReference(ctx, mexpr);
             }
         }
