@@ -20,7 +20,7 @@ type Loop<T, U extends Loop<T, U>> = {
 /* @@? 16:24 Error TypeError: Circular type alias reference */
 /* @@? 16:38 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 17:6 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 17:10 Error SyntaxError: Field type annotation expected. */
+/* @@? 17:8 Error SyntaxError: Unexpected token 'in'. */
 /* @@? 17:16 Error SyntaxError: Field type annotation expected. */
 /* @@? 17:18 Error SyntaxError: Unexpected token ']'. */
 /* @@? 17:18 Error SyntaxError: Field type annotation expected. */

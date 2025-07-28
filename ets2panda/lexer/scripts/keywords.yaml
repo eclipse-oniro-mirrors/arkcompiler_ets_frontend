@@ -297,8 +297,7 @@ keywords:
 
   - name: 'in'
     token: KEYW_IN
-    keyword: [as, js, ts]
-    keyword_like: [ets]
+    keyword: [as, js, ets, ts]
     flags: [binary]
 
   - name: 'infer'

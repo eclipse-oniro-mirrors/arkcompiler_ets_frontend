@@ -1284,6 +1284,10 @@ syntax:
   message: "Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal
     types, not annotations."
 
+- name: UNSUPPORTED_IN_OPERATOR_TYPE
+  id: 58212
+  message: "The in operator is not supported in binary expression."
+
 - name: UNTERMINATED_MULTI_LINE_COMMENT
   id: 245
   message: "Unterminated multi-line comment."

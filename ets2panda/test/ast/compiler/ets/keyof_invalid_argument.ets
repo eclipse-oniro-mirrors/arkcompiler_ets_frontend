@@ -30,7 +30,7 @@ type NestedKey<T, K extends keyof T> = T[K] extends object ? keyof T[K] : never;
 /* @@? 18:33 Error TypeError: The super type of 'ObservableImpl' class is not extensible. */
 /* @@? 20:24 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 20:27 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 20:31 Error SyntaxError: Field type annotation expected. */
+/* @@? 20:29 Error SyntaxError: Unexpected token 'in'. */
 /* @@? 20:41 Error SyntaxError: Unexpected token '&'. */
 /* @@? 20:41 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 20:41 Error SyntaxError: Parameter declaration should have an explicit type annotation. */

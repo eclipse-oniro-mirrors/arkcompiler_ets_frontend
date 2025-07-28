@@ -173,6 +173,10 @@ protected:
     virtual void ParseTrailingBlock([[maybe_unused]] ir::CallExpression *callExpr) {}
     ir::Expression *CreateBinaryAssignmentExpression(ir::Expression *assignmentExpression,
                                                      ir::Expression *lhsExpression, lexer::TokenType tokenType);
+    virtual bool IsInOperatorTypeSupported() const
+    {
+        return true;
+    }
 
     // StatementParser.Cpp
 

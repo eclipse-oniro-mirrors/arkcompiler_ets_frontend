@@ -34,5 +34,4 @@ for (i in 50) {
 /* @@? 20:21 Error TypeError: Unresolved reference a */
 /* @@? 20:22 Error SyntaxError: Unexpected token ')'. */
 /* @@? 20:24 Error SyntaxError: Unexpected token '{'. */
-/* @@? 25:11 Error TypeError: Object type doesn't have proper iterator method. */
-/* @@? 25:11 Error TypeError: 'For-of' statement source expression is not of iterable type. */
+/* @@? 25:8 Error SyntaxError: 'for ... in' loop is not supported, please use regular 'for' or 'for ... of ...' loop to iterate through arrays and iterable objects. */

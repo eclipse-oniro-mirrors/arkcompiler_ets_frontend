@@ -15,7 +15,7 @@
 
 class C{
     out: number = 0;
-    in: number = 0;
+    input: number = 0;
     data: number = 0;
 }
 
@@ -23,7 +23,7 @@ function process1(con: (this:C)=>void){
     let c = new C();
     c.con();
     arktest.assertEQ(c.out, 1);
-    arktest.assertEQ(c.in, 2);
+    arktest.assertEQ(c.input, 2);
     arktest.assertEQ(c.data, 3);
 }
 
@@ -31,7 +31,7 @@ function process2(con: (this:C)=>void){
     let c = new C();
     c.con();
     arktest.assertEQ(c.out, 1);
-    arktest.assertEQ(c.in, 2);
+    arktest.assertEQ(c.input, 2);
     arktest.assertEQ(c.data, 3);
 }
 
@@ -41,14 +41,14 @@ function main(){
     // passed lambda as parameter.
     process1((this:C):void => {
         this.out = field_out;
-        this.in = field_in;
+        this.input = field_in;
         this.data = 3;
     })
 
     // passed lambda as trailing lambda.
     process2() {
         this.out = field_out;
-        this.in = field_in;
+        this.input = field_in;
         this.data = 3;
     }
 }
