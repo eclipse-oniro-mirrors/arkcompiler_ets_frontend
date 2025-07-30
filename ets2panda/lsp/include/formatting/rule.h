@@ -18,15 +18,13 @@
 
 #include <functional>
 #include <vector>
-#include "generated/tokenType.h"
-#include "lexer/lexer.h"
 #include "formatting_context.h"
 
 namespace ark::es2panda::lsp {
 
 using ContextPredicate = std::function<bool(FormattingContext *)>;
 
-enum class RuleAction : uint16_t {
+enum class RuleAction : uint32_t {
     NONE = 0U,
     STOP_PROCESSING_SPACE_ACTIONS = 1U << 0U,
     STOP_PROCESSING_TOKEN_ACTIONS = 1U << 1U,
@@ -34,8 +32,33 @@ enum class RuleAction : uint16_t {
     INSERT_NEWLINE = 1U << 3U,
     DELETE_SPACE = 1U << 4U,
     DELETE_TOKEN = 1U << 5U,
-    INSERT_TRAILING_SEMICOLON = 1U << 6U
+    INSERT_TRAILING_SEMICOLON = 1U << 6U,
+
+    STOP_ACTION = STOP_PROCESSING_SPACE_ACTIONS | STOP_PROCESSING_TOKEN_ACTIONS,
+    MODIFY_SPACE_ACTION = INSERT_SPACE | INSERT_NEWLINE | DELETE_SPACE,
+    MODIFY_TOKEN_ACTION = DELETE_TOKEN | INSERT_TRAILING_SEMICOLON
 };
+
+inline RuleAction operator&(RuleAction lhs, RuleAction rhs)
+{
+    return static_cast<RuleAction>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
+}
+
+inline RuleAction operator|(RuleAction lhs, RuleAction rhs)
+{
+    return static_cast<RuleAction>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+}
+
+inline RuleAction &operator|=(RuleAction &lhs, RuleAction rhs)
+{
+    lhs = lhs | rhs;
+    return lhs;
+}
+
+inline RuleAction operator~(RuleAction rhs)
+{
+    return static_cast<RuleAction>(~static_cast<uint32_t>(rhs));
+}
 
 enum class RuleFlags { NONE, CAN_DELETE_NEWLINES };
 
@@ -46,12 +69,12 @@ public:
     {
     }
 
-    std::vector<ContextPredicate> &GetContext()
+    const std::vector<ContextPredicate> &GetContext() const
     {
         return context_;
     }
 
-    RuleAction GetRuleAction()
+    RuleAction GetRuleAction() const
     {
         return action_;
     }
@@ -77,6 +100,11 @@ public:
     std::vector<lexer::TokenType> &GetTokens()
     {
         return tokens_;
+    }
+
+    void SetSpecific(bool isSpecific)
+    {
+        isSpecific_ = isSpecific;
     }
 
     bool GetIsSpecifier()
