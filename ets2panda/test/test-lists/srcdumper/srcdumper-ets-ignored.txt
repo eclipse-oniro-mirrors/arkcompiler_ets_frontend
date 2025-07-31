@@ -30,6 +30,7 @@ runtime/ets/generics_1.ets
 runtime/ets/labeledStatement.ets
 runtime/ets/namespace_tests/namespace_import_type_test/namespace_export.ets
 runtime/ets/newArrayCreationUnionType.ets
+parser/ets/dynamic_import_tests/modules/module.ets
 
 
 # FailKind.ES2PANDA_FAIL
