@@ -547,6 +547,9 @@ void ETSChecker::CheckDynamicInheritanceAndImplement(ETSObjectType *const interf
         }
         return false;
     };
+    if (isFromDynamicDecl(interfaceOrClassType)) {
+        return;
+    }
     for (ETSObjectType *interType : interfaceOrClassType->Interfaces()) {
         if (isFromDynamicDecl(interType)) {
             LogError(diagnostic::INTERFACE_OR_CLASS_CANNOT_IMPL_OR_EXTEND_DYNAMIC,
@@ -1908,6 +1911,9 @@ void ETSChecker::CheckCyclicConstructorCall(Signature *signature)
 
 ETSObjectType *ETSChecker::CheckExceptionOrErrorType(checker::Type *type, const lexer::SourcePosition pos)
 {
+    if (type->IsGradualType()) {
+        return CheckExceptionOrErrorType(type->AsGradualType()->GetBaseType(), pos);
+    }
     ES2PANDA_ASSERT(type != nullptr);
     if (!type->IsETSObjectType() || (!Relation()->IsAssignableTo(type, GlobalBuiltinExceptionType()) &&
                                      !Relation()->IsAssignableTo(type, GlobalBuiltinErrorType()))) {

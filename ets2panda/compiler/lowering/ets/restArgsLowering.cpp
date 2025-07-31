@@ -86,7 +86,8 @@ static ir::BlockExpression *ConvertSpreadToBlockExpression(public_lib::Context *
 static bool ShouldProcessRestParameters(checker::Signature *signature, const ArenaVector<ir::Expression *> &arguments)
 {
     return signature != nullptr && signature->HasRestParameter() && !signature->RestVar()->TsType()->IsETSArrayType() &&
-           arguments.size() >= signature->Params().size() && !signature->RestVar()->TsType()->IsETSTupleType();
+           arguments.size() >= signature->Params().size() && !signature->RestVar()->TsType()->IsETSTupleType() &&
+           !signature->Function()->IsDynamic();
 }
 
 static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVector<ir::Expression *> &arguments,

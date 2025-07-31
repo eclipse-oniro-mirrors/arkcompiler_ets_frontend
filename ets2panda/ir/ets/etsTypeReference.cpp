@@ -71,6 +71,15 @@ ir::Identifier *ETSTypeReference::BaseName() const
         while (iter->Left()->IsTSQualifiedName()) {
             iter = iter->Left()->AsTSQualifiedName();
         }
+        if (iter->Left()->IsMemberExpression()) {
+            ES2PANDA_ASSERT(iter->Left()->AsMemberExpression()->ObjType()->HasObjectFlag(
+                checker::ETSObjectFlags::LAZY_IMPORT_OBJECT));
+            ir::MemberExpression *memberExprIter = iter->Left()->AsMemberExpression();
+            while (memberExprIter->Property()->IsMemberExpression()) {
+                memberExprIter = memberExprIter->Property()->AsMemberExpression();
+            }
+            return memberExprIter->Property()->AsIdentifier();
+        }
         return iter->Left()->AsIdentifier();
     }
 
