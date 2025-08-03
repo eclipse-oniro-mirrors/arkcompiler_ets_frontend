@@ -50,10 +50,10 @@ struct PkgInfo {
 struct CompileContextInfo {
     std::vector<std::string> compileEntries;
     std::set<std::string> externalPkgNames;
-    std::map<std::string, PkgInfo> pkgContextInfo;
+    std::unordered_map<std::string, PkgInfo> pkgContextInfo;
     // The key of updateVersionInfo is the package name for an abc file, and the value contains the name of its
     // dependent pacakge and corresponding package version which need to update version.
-    std::unordered_map<std::string, std::map<std::string, PkgInfo>> updateVersionInfo;
+    std::unordered_map<std::string, std::unordered_map<std::string, PkgInfo>> updateVersionInfo;
     /**
      * When there is an abc file as input and needModifyRecord is true, it is necessary to modify the recordName
      * in abc2program and modify the ohmurl for dynamic and static imports.
@@ -61,6 +61,13 @@ struct CompileContextInfo {
     bool needModifyRecord {false};
     std::string bundleName {};
     std::unordered_map<std::string, std::vector<std::string>> replaceRecords {};
+};
+
+struct CompileOhmurlVersionConfig {
+    std::string packageName {};
+    std::string originVersion {};
+    std::string targetVersion {};
+    std::unordered_map<std::string, PkgInfo> updateVersionInfo {};
 };
 }  // namespace panda::es2panda
 

@@ -1265,6 +1265,9 @@ class FilesInfoRunner(Runner):
 
 class FilesInfoTest(Test):
     LONG_PATH_MARKER = "long_path_filesinfo"
+    SOURCE_LANG = "sourceLang"
+    ABC_VERSION_ADJUST = "abc_version_adjust"
+    REPLACE_RECORDS = "replace_records"
 
     def __init__(self, projects_path, project, filesinfo_path, flags):
         Test.__init__(self, "", flags)
@@ -1277,8 +1280,10 @@ class FilesInfoTest(Test):
         self.symbol_table_file = os.path.join(self.output_path, 'base.map')
         self.output_abc_name = path.join(self.output_path, self.project + ".abc")
         self.output_abc_name_of_input_abc = path.join(self.output_path, self.project + "_input.abc")
+        self.output_abc_name_of_adjust_version_abc = path.join(self.output_path, self.project + "_adjust_version.abc")
         self.is_long_path_case = self.LONG_PATH_MARKER in self.path
         self.compile_context_info_path = path.join(self.path, "compileContextInfo.json")
+        self.compile_ohmurl_version_config = path.join(self.projects_path, "compileOhmurlVersionConfig.json")
 
         if not path.exists(self.output_path):
             os.makedirs(self.output_path)
@@ -1295,28 +1300,48 @@ class FilesInfoTest(Test):
         if self.project == "mod": # clear after all tests
             self.remove_output()
 
-    def gen_es2abc_cmd(self, runner, input_file, output_file):
-        es2abc_cmd = runner.cmd_prefix + [runner.es2panda]
-        es2abc_cmd.extend(self.flags)
-        es2abc_cmd.extend(['%s%s' % ("--output=", output_file)])
+    def build_es2abc_cmd(self, runner, input_file, output_file, *,
+                     enable_input=False,
+                     dump_asm=False,
+                     compile_info=None):
+        es2abc_cmd = runner.cmd_prefix + [runner.es2panda] + self.flags
+        es2abc_cmd.append(f"--output={output_file}")
+
+        # Add options based on parameters
+        if enable_input:
+            es2abc_cmd.append("--enable-abc-input")
+        if dump_asm:
+            es2abc_cmd.append("--dump-assembly")
+        if compile_info:
+            es2abc_cmd.append(f"--ohmurl-version-config={compile_info}")
+
+        # Add special parameters based on path conditions
+        if self.SOURCE_LANG in self.projects_path:
+            if self.project == "base":
+                es2abc_cmd.extend(["--dump-symbol-table", self.symbol_table_file])
+            else:
+                es2abc_cmd.extend(["--input-symbol-table", self.symbol_table_file])
+        elif self.ABC_VERSION_ADJUST in self.projects_path and not dump_asm:
+            es2abc_cmd.extend(['--dump-assembly'])
+            es2abc_cmd.extend(['--target-api-version=20'])
+            es2abc_cmd.extend(['--enable-annotations'])
+        elif self.REPLACE_RECORDS in self.projects_path:
+            if path.exists(self.compile_context_info_path):
+                es2abc_cmd.extend(["--compile-context-info", self.compile_context_info_path, "--enable-abc-input"])
+        
         es2abc_cmd.append(input_file)
-        if path.exists(self.compile_context_info_path):
-            es2abc_cmd.extend(["--compile-context-info", self.compile_context_info_path, "--enable-abc-input"])
-            return es2abc_cmd
-        if ("base" == self.project):
-            es2abc_cmd.extend(['--dump-symbol-table', self.symbol_table_file])
-        elif ("original" == self.project):
-            return es2abc_cmd
-        else:
-            es2abc_cmd.extend(['--input-symbol-table', self.symbol_table_file])
         return es2abc_cmd
 
+    def gen_es2abc_cmd(self, runner, input_file, output_file):
+        return self.build_es2abc_cmd(runner, input_file, output_file)
+
     def gen_es2abc_cmd_input_abc(self, runner, input_file, output_file):
-        es2abc_cmd = runner.cmd_prefix + [runner.es2panda]
-        es2abc_cmd.extend(self.flags)
-        es2abc_cmd.extend(['%s%s' % ("--output=", output_file), "--enable-abc-input"])
-        es2abc_cmd.append(input_file)
-        return es2abc_cmd
+        return self.build_es2abc_cmd(runner, input_file, output_file, enable_input=True)
+
+    def gen_es2abc_with_adjust_version(self, runner, input_file, output_file, compile_ohmurl_version_config):
+        return self.build_es2abc_cmd(runner, input_file, output_file,
+                                    enable_input=True, dump_asm=True,
+                                    compile_info=compile_ohmurl_version_config)
 
     def get_long_path_filesinfo_path(self):
         long_dir = "a" * 4096
@@ -1355,16 +1380,36 @@ class FilesInfoTest(Test):
         # Input abc and verify it when it is base.
         if self.project == "base":
             self.input_abc(runner)
+        if self.ABC_VERSION_ADJUST in self.projects_path:
+            self.adjust_abc_version(runner)
         return self
 
     def input_abc(self, runner):
         es2abc_cmd = self.gen_es2abc_cmd_input_abc(runner, self.output_abc_name, self.output_abc_name_of_input_abc)
-        process = run_subprocess_with_beta3(self, es2abc_cmd)
-        out, err = process.communicate()
         pa_expected_path = "".join([self.path, "input_base-expected.pa.txt"])
+        self.run_cmd_and_validate(es2abc_cmd, pa_expected_path, use_beta3_wrapper=True)
+
+    def adjust_abc_version(self, runner):
+        es2abc_cmd = self.gen_es2abc_with_adjust_version(
+            runner,
+            self.output_abc_name,
+            self.output_abc_name_of_adjust_version_abc,
+            self.compile_ohmurl_version_config
+        )
+        pa_expected_path = "".join([self.path, "_adjust_version-expected.pa.txt"])
+        self.run_cmd_and_validate(es2abc_cmd, pa_expected_path, use_beta3_wrapper=False)
+
+    def run_cmd_and_validate(self, cmd, expected_path, use_beta3_wrapper=False):
+        if use_beta3_wrapper:
+            process = run_subprocess_with_beta3(self, cmd)
+        else:
+            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        out, err = process.communicate()
         self.output = out.decode("utf-8", errors="ignore") + err.decode("utf-8", errors="ignore")
+
         try:
-            with open(pa_expected_path, 'r') as fp:
+            with open(expected_path, 'r') as fp:
                 expected = fp.read()
             self.passed = expected == self.output and process.returncode in [0, 1]
         except Exception:
@@ -1372,7 +1417,6 @@ class FilesInfoTest(Test):
         if not self.passed:
             self.error = err.decode("utf-8", errors="ignore")
             return self
-
 
     def run(self, runner):
         self.gen_files_info()
@@ -3074,6 +3118,8 @@ def add_directory_for_compiler(runners, args):
                                                 ["--module", "--merge-abc"]))
     filesinfo_compiler_infos.append(CompilerTestInfo("compiler/filesInfoTest/replace_records", "ts",
                                                 ["--module", "--merge-abc", "--dump-assembly"]))
+    filesinfo_compiler_infos.append(CompilerTestInfo("compiler/filesInfoTest/abc_version_adjust", "txt",
+                                                ["--module", "--merge-abc"]))
 
     for info in filesinfo_compiler_infos:
         filesinfo_runner.add_directory(info.directory, info.extension, info.flags)

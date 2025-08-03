@@ -117,6 +117,8 @@ struct CompilerOptions {
     bool requireGlobalOptimization {false};
     std::string compileContextInfoPath {};
     CompileContextInfo compileContextInfo {};
+    std::string compileOhmurlVersionConfigPath {};
+    CompileOhmurlVersionConfig compileOhmurlVersionConfig {};
     bool dumpDepsInfo {false};
     bool updatePkgVersionForAbcInput {false};
     bool removeRedundantFile {false};

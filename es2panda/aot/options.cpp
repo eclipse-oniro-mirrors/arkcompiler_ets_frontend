@@ -234,14 +234,14 @@ bool Options::ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson)
 {
     if (compileContextInfoJson.contains("updateVersionInfo") &&
         compileContextInfoJson["updateVersionInfo"].is_object()) {
-        std::unordered_map<std::string, std::map<std::string, PkgInfo>> updateVersionInfo {};
+        std::unordered_map<std::string, std::unordered_map<std::string, PkgInfo>> updateVersionInfo {};
         for (const auto& [abcName, versionInfo] : compileContextInfoJson["updateVersionInfo"].items()) {
             if (!versionInfo.is_object()) {
                 std::cerr << "The input file '" << compilerOptions_.compileContextInfoPath <<
                              "' updateVersionInfo format is incorrect." << std::endl;
                 return false;
             }
-            std::map<std::string, PkgInfo> pkgContextMap {};
+            std::unordered_map<std::string, PkgInfo> pkgContextMap {};
             for (const auto& [pkgName, version] : versionInfo.items()) {
                 PkgInfo pkgInfo;
                 pkgInfo.version = version;
@@ -253,7 +253,7 @@ bool Options::ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson)
         compilerOptions_.compileContextInfo.updateVersionInfo = updateVersionInfo;
     } else if (compileContextInfoJson.contains("pkgContextInfo") &&
                compileContextInfoJson["pkgContextInfo"].is_object()) {
-        std::map<std::string, PkgInfo> pkgContextMap {};
+        std::unordered_map<std::string, PkgInfo> pkgContextMap {};
         for (const auto& [pkgName, pkgContextInfo] : compileContextInfoJson["pkgContextInfo"].items()) {
             PkgInfo pkgInfo;
             if (pkgContextInfo.contains("version") && pkgContextInfo["version"].is_string()) {
@@ -319,6 +319,71 @@ bool Options::ParseReplaceRecords(nlohmann::json &compileContextInfoJson)
             return false;
         }
     }
+    return true;
+}
+
+bool Options::ReadFileToJsonString(const std::string &path, std::string &outJsonStr)
+{
+    std::stringstream ss;
+    if (!util::Helpers::ReadFileToBuffer(path, ss)) {
+        std::cerr << "[ERROR] Failed to read file: " << path << std::endl;
+        return false;
+    }
+
+    outJsonStr = ss.str();
+    if (outJsonStr.empty() || !nlohmann::json::accept(outJsonStr)) {
+        std::cerr << "[ERROR] The input file '" << path << "' is not a valid JSON" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool Options::ParseCompileOhmurlVersionConfig(const std::string compileOhmurlVersionConfigPath)
+{
+    std::stringstream ss;
+    std::string buffer;
+    if (!ReadFileToJsonString(compileOhmurlVersionConfigPath, buffer)) {
+        return false;
+    }
+    // Parser compile context info base on the input json file.
+    nlohmann::json compileContextInfoJson = nlohmann::json::parse(buffer);
+    if (!compileContextInfoJson.contains("packageName") ||
+        !compileContextInfoJson["packageName"].is_string()) {
+        std::cerr << "[ERROR] Missing or invalid field: 'packageName'." << std::endl;
+        return false;
+    }
+    compilerOptions_.compileOhmurlVersionConfig.packageName = compileContextInfoJson["packageName"];
+    if (!compileContextInfoJson.contains("originVersion") ||
+        !compileContextInfoJson["originVersion"].is_string()) {
+        std::cerr << "[ERROR] Missing or invalid field: 'originVersion'." << std::endl;
+        return false;
+    }
+    compilerOptions_.compileOhmurlVersionConfig.originVersion = compileContextInfoJson["originVersion"];
+    if (!compileContextInfoJson.contains("targetVersion") ||
+        !compileContextInfoJson["targetVersion"].is_string()) {
+        std::cerr << "[ERROR] Missing or invalid field: 'targetVersion'." << std::endl;
+        return false;
+    }
+    compilerOptions_.compileOhmurlVersionConfig.targetVersion = compileContextInfoJson["targetVersion"];
+    if (!compileContextInfoJson.contains("updateVersionInfo") ||
+        !compileContextInfoJson["updateVersionInfo"].is_object()) {
+        std::cerr << "[ERROR] Missing or invalid field: 'updateVersionInfo'." << std::endl;
+        return false;
+    }
+
+    std::unordered_map<std::string, PkgInfo> pkgContextMap {};
+    for (const auto& [pkgName, version] : compileContextInfoJson["updateVersionInfo"].items()) {
+        if (!version.is_string()) {
+            std::cerr << "[ERROR] Invalid version value for package '" << pkgName << "'." << std::endl;
+            return false;
+        }
+        PkgInfo pkgInfo;
+        pkgInfo.version = version;
+        pkgInfo.packageName = pkgName;
+        pkgContextMap[pkgName] = pkgInfo;
+    }
+    compilerOptions_.compileOhmurlVersionConfig.updateVersionInfo = pkgContextMap;
     return true;
 }
 
@@ -496,6 +561,14 @@ bool Options::Parse(int argc, const char **argv)
     // compile entries and pkg context info
     panda::PandArg<std::string> compileContextInfoPath("compile-context-info", "", "The path to compile context"\
         "info file");
+    panda::PandArg<std::string> compileOhmurlVersionConfigPath("ohmurl-version-config", "",
+        "The path to a JSON file describing rules for adjusting OHMURL version information. "
+        "This is an [Experimental Feature]. The JSON file must contain the following fields: \n"
+        "  packageName (string) – the HAR package name to be modified; \n"
+        "  originVersion (string) – the original version; \n"
+        "  targetVersion (string) – the new version; \n"
+        "  updateVersionInfo (object) – a mapping of package names to their updated versions."
+    );
     panda::PandArg<bool> opDumpDepsInfo("dump-deps-info", false, "Dump all dependency files and records "\
         "including source files and bytecode files");
     panda::PandArg<bool> opRemoveRedundantFile("remove-redundant-file", false, "Remove redundant info"\
@@ -576,6 +649,7 @@ bool Options::Parse(int argc, const char **argv)
     argparser_->Add(&enableAnnotations);
 
     argparser_->Add(&compileContextInfoPath);
+    argparser_->Add(&compileOhmurlVersionConfigPath);
     argparser_->Add(&opDumpDepsInfo);
     argparser_->Add(&opRemoveRedundantFile);
     argparser_->Add(&opDumpString);
@@ -780,6 +854,11 @@ bool Options::Parse(int argc, const char **argv)
     compilerOptions_.mergeAbc = opMergeAbc.GetValue();
     compilerOptions_.compileContextInfoPath = compileContextInfoPath.GetValue();
     if (!compileContextInfoPath.GetValue().empty() && !ParseCompileContextInfo(compileContextInfoPath.GetValue())) {
+        return false;
+    }
+    compilerOptions_.compileOhmurlVersionConfigPath = compileOhmurlVersionConfigPath.GetValue();
+    if (!compileOhmurlVersionConfigPath.GetValue().empty() &&
+        !ParseCompileOhmurlVersionConfig(compileOhmurlVersionConfigPath.GetValue())) {
         return false;
     }
     compilerOptions_.dumpDepsInfo = opDumpDepsInfo.GetValue();

@@ -63,7 +63,7 @@ std::string GetRecordNameFromNormalizedOhmurl(const std::string &ohmurl);
 std::string GetPkgNameFromNormalizedOhmurl(const std::string &ohmurl);
 std::string GetPkgNameFromNormalizedImport(const std::string &normalizedImport);
 std::string UpdatePackageVersionIfNeeded(const std::string &ohmurl,
-                                         const std::map<std::string, PkgInfo> &pkgContextInfo);
+                                         const std::unordered_map<std::string, PkgInfo> &pkgContextInfo);
 std::string UpdatePackageNameIfNeeded(const std::string &ohmurl, const std::string &modifiedPkgName);
 std::string UpdateBundleNameIfNeeded(std::string &ohmurl, const std::string &bundleName,
                                      const std::set<std::string> &externalPkgNames);
