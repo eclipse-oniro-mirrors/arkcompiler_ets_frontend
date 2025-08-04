@@ -60,9 +60,9 @@ public:
 
     es2panda_SuggestionInfo *CreateSuggestionInfo(es2panda_Context *context, const es2panda_DiagnosticKind *kind,
                                                   const char **args, size_t argc, const char *substitutionCode,
-                                                  es2panda_SourceRange *range)
+                                                  const char *title, es2panda_SourceRange *range)
     {
-        return impl_->CreateSuggestionInfo(context, kind, args, argc, substitutionCode, range);
+        return impl_->CreateSuggestionInfo(context, kind, args, argc, substitutionCode, title, range);
     }
 
     es2panda_DiagnosticInfo *CreateDiagnosticInfo(es2panda_Context *context, const es2panda_DiagnosticKind *kind,
