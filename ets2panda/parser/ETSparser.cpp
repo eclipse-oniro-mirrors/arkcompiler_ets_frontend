@@ -2024,13 +2024,18 @@ bool ETSParser::ParsePotentialGenericFunctionCall(ir::Expression *primaryExpr, i
         return true;
     }
 
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SEMI_COLON) {
+        Lexer()->NextToken();
+        return true;
+    }
+
+    if (Lexer()->GetToken().Type() == lexer::TokenType::EOS || Lexer()->GetToken().NewLine()) {
+        return true;
+    }
+
     // unexpected_token_49,ets, 50, 51
     if (!Lexer()->GetToken().NewLine() && Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
         LogExpectedToken(lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS);
-    }
-
-    if (Lexer()->GetToken().NewLine()) {
-        return true;
     }
 
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {

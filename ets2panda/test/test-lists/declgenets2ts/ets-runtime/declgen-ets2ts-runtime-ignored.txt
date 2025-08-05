@@ -29,3 +29,4 @@ fuzz/too_many_async.ets
 typeAlias_2.ets
 Multiline_string.ets
 Multiline_string_escape_char.ets
+run_ok_without_semicolon.ets
