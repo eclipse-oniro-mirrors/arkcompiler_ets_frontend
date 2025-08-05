@@ -34,18 +34,18 @@ TEST_F(LspGetDefinitionFromNodeTest, GetDefinitionFromNode1)
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     Initializer initializer = Initializer();
-    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-
-    auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-    auto ast = ctx->parserProgram->Ast();
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_PARSED);
     LSPAPI const *lspApi = GetImpl();
     const std::string nodeName = "Foo";
-    auto res = lspApi->getDefinitionDataFromNode(reinterpret_cast<es2panda_AstNode *>(ast), nodeName);
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::CLASS_PROPERTY});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(context, nodeInfoPtrs);
     initializer.DestroyContext(context);
-    std::string expectedFileName = filePaths[0];
-    size_t const expectedStart = 6;
+    size_t const expectedStart = 16;
     size_t const expectedLength = 3;
-    ASSERT_EQ(res.fileName, expectedFileName);
     ASSERT_EQ(res.start, expectedStart);
     ASSERT_EQ(res.length, expectedLength);
 }

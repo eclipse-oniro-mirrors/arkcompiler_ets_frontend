@@ -78,6 +78,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/isolated_declaration.cpp",
     "src/line_column_offset.cpp",
     "src/navigate_to.cpp",
+    "src/node_matchers.cpp",
     "src/organize_imports.cpp",
     "src/quick_info.cpp",
     "src/refactor_provider.cpp",

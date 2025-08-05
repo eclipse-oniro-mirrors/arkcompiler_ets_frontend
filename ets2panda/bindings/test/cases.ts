@@ -62,7 +62,123 @@ export const basicCases: TestCases = {
           name: 'Foo'
         }
       ] as NodeInfo[]
-    ]
+    ],
+    '14': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition21.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.CLASS_DEFINITION,
+          name: 'Foo'
+        },
+        {
+          kind: AstNodeType.METHOD_DEFINITION,
+          name: 'bar'
+        }
+      ] as NodeInfo[]
+    ],
+    '15': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition22.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.CLASS_DEFINITION,
+          name: 'Foo'
+        },
+        {
+          kind: AstNodeType.CLASS_PROPERTY,
+          name: 'staticProperty'
+        }
+      ] as NodeInfo[]
+    ],
+    '16': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition23.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.MEMBER_EXPRESSION,
+          name: 'bar'
+        }
+      ] as NodeInfo[]
+    ],
+    '17': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition24.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.EXPORT_SPECIFIER,
+          name: 'PI'
+        }
+      ] as NodeInfo[]
+    ],
+    '18': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition25.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.TS_INTERFACE_DECLARATION,
+          name: 'User'
+        }
+      ] as NodeInfo[]
+    ],
+    '19': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition26.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.TS_TYPE_ALIAS_DECLARATION,
+          name: 'ID'
+        }
+      ] as NodeInfo[]
+    ],
+    '20': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition27.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.TS_ENUM_DECLARATION,
+          name: 'Color'
+        }
+      ] as NodeInfo[]
+    ],
+    '21': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition28.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.TS_ENUM_MEMBER,
+          name: 'Green'
+        }
+      ] as NodeInfo[]
+    ],
+    '22': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition30.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.TS_CLASS_IMPLEMENTS,
+          name: 'Printable'
+        }
+      ] as NodeInfo[]
+    ],
   },
   getSemanticDiagnostics: {
     expectedFilePath: resolveTestPath('test/expected/getSemanticDiagnostics.json'),

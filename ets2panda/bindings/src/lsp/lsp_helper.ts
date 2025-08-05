@@ -289,24 +289,18 @@ export class Lsp {
 
   private getDefinitionAtPositionByNodeInfos(declFilePath: String, nodeInfos: NodeInfo[]): LspDefinitionData {
     let ptr: KPointer;
+    let nodeInfoPtrs: KPointer[] = [];
     const sourceFilePath = this.declFileMap[declFilePath.valueOf()];
     const [cfg, ctx] = this.createContext(sourceFilePath, false);
-    let astNode = global.es2panda._getProgramAst(ctx);
-    let currentNodeName: string = '';
     try {
       nodeInfos.forEach((nodeInfo) => {
-        currentNodeName = nodeInfo.name;
-        if (nodeInfo.kind === AstNodeType.CLASS_DEFINITION) {
-          astNode = global.es2panda._getClassDefinition(astNode, currentNodeName);
-        } else if (nodeInfo.kind === AstNodeType.IDENTIFIER) {
-          astNode = global.es2panda._getIdentifier(astNode, currentNodeName);
-        }
+        nodeInfoPtrs.push(global.es2panda._CreateNodeInfoPtr(nodeInfo.name, nodeInfo.kind));
       });
+      ptr = global.es2panda._getDefinitionDataFromNode(ctx, passPointerArray(nodeInfoPtrs), nodeInfoPtrs.length);
     } finally {
-      ptr = global.es2panda._getDefinitionDataFromNode(astNode, currentNodeName);
       this.destroyContext(cfg, ctx);
     }
-    return new LspDefinitionData(ptr);
+    return new LspDefinitionData(ptr, sourceFilePath);
   }
 
   private getMergedCompileFiles(filename: String): string[] {

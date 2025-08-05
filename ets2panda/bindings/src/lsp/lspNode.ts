@@ -175,9 +175,9 @@ export class LspDiagsNode extends LspNode {
 }
 
 export class LspDefinitionData extends LspNode {
-  constructor(peer: KNativePointer) {
+  constructor(peer: KNativePointer, filePath?: string) {
     super(peer);
-    this.fileName = unpackString(global.es2panda._GetFileNameFromDef(peer));
+    this.fileName = filePath ? filePath : unpackString(global.es2panda._GetFileNameFromDef(peer));
     this.start = global.es2panda._GetStartFromDef(peer);
     this.length = global.es2panda._getLengthFromDef(peer);
   }
