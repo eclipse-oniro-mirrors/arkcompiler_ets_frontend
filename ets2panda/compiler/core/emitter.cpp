@@ -225,13 +225,15 @@ void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, pandasm::Ins *p
 
 void FunctionEmitter::GenFunctionInstructions(pandasm::Function *func)
 {
-    func->ins.reserve(cg_->Insns().size());
+    const size_t insCount = cg_->Insns().size();
+
+    func->ins.resize(insCount);
 
     uint32_t totalRegs = cg_->TotalRegsNum();
+    size_t index = 0;
 
     for (const auto *ins : cg_->Insns()) {
-        auto &pandaIns = func->ins.emplace_back();
-
+        auto &pandaIns = func->ins[index++];
         ins->Transform(&pandaIns, programElement_, totalRegs);
         GenInstructionDebugInfo(ins, &pandaIns);
     }
@@ -344,11 +346,20 @@ void FunctionEmitter::GenScopeVariableInfo(pandasm::Function *func, const varbin
 {
     const auto &instructions = cg_->Insns();
     auto lastIter = instructions.end();
-    auto iter = std::find(instructions.begin(), lastIter, scope->ScopeStart());
+
+    uint32_t count = 0;
+    auto iter = instructions.begin();
+
+    for (; iter != lastIter; ++iter, ++count) {
+        if (*iter == scope->ScopeStart()) {
+            break;
+        }
+    }
+
     if (iter == lastIter || *iter == scope->ScopeEnd()) {
         return;
     }
-    uint32_t count = iter - instructions.begin();
+
     uint32_t start = count;
 
     auto checkNodeIsValid = [](const ir::AstNode *node) { return node != nullptr && node != FIRST_NODE_OF_FUNCTION; };

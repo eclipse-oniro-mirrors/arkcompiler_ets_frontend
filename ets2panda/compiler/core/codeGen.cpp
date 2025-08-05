@@ -52,12 +52,12 @@ const ir::AstNode *CodeGen::RootNode() const noexcept
     return rootNode_;
 }
 
-ArenaVector<IRNode *> &CodeGen::Insns() noexcept
+ArenaList<IRNode *> &CodeGen::Insns() noexcept
 {
     return insns_;
 }
 
-const ArenaVector<IRNode *> &CodeGen::Insns() const noexcept
+const ArenaList<IRNode *> &CodeGen::Insns() const noexcept
 {
     return insns_;
 }
