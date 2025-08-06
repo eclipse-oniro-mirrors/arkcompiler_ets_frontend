@@ -2310,7 +2310,7 @@ ir::OverloadDeclaration *ETSParser::ParseOverloadDeclaration(ir::ModifierFlags m
                                                            modifiers, Allocator());
     overloadDef->AddOverloadDeclFlag(ir::OverloadDeclFlags::FUNCTION);
 
-    auto startLoc = Lexer()->GetToken().Start();
+    auto startLoc = overloadName->Start();
     if (!Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_LEFT_BRACE)) {
         LogExpectedToken(lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
     }
