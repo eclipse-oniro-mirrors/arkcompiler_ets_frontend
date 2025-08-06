@@ -17,8 +17,10 @@
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
 #include "ir/expressions/arrayExpression.h"
-
+#include "ir/expressions/literals/undefinedLiteral.h"
 #include <checker/ETSchecker.h>
+#include <cstddef>
+#include <iterator>
 #include <sstream>
 
 namespace ark::es2panda::compiler {
@@ -83,11 +85,69 @@ static ir::BlockExpression *ConvertSpreadToBlockExpression(public_lib::Context *
     return blockExpression;
 }
 
+bool ShouldSkipParamCheck(checker::Signature *signature, const ArenaVector<ir::Expression *> &args)
+{
+    if (signature == nullptr) {
+        return false;
+    }
+
+    if (signature->Params().empty()) {
+        return false;
+    }
+
+    const auto &params = signature->Params();
+
+    if (params.empty()) {
+        return false;
+    }
+
+    if (!signature->HasRestParameter()) {
+        return false;
+    }
+
+    auto *restVar = signature->RestVar();
+    if (restVar == nullptr) {
+        return false;
+    }
+
+    size_t nMandatory = 0;
+    size_t nOptional = 0;
+
+    for (auto *param : params) {
+        if (param == nullptr) {
+            return false;
+        }
+
+        auto *decl = param->Declaration();
+        if (decl == nullptr) {
+            return false;
+        }
+
+        auto *node = decl->Node();
+        if (node == nullptr || !node->IsETSParameterExpression()) {
+            return false;
+        }
+
+        auto *etsParam = node->AsETSParameterExpression();
+        if (etsParam == nullptr) {
+            return false;
+        }
+
+        if (etsParam->IsOptional()) {
+            ++nOptional;
+        } else {
+            ++nMandatory;
+        }
+    }
+
+    return args.size() < (nOptional + nMandatory) && nOptional > 0;
+}
+
 static bool ShouldProcessRestParameters(checker::Signature *signature, const ArenaVector<ir::Expression *> &arguments)
 {
     return signature != nullptr && signature->HasRestParameter() && !signature->RestVar()->TsType()->IsETSArrayType() &&
-           arguments.size() >= signature->Params().size() && !signature->RestVar()->TsType()->IsETSTupleType() &&
-           !signature->Function()->IsDynamic();
+           (arguments.size() >= signature->Params().size() || ShouldSkipParamCheck(signature, arguments)) &&
+           !signature->RestVar()->TsType()->IsETSTupleType() && !signature->Function()->IsDynamic();
 }
 
 static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVector<ir::Expression *> &arguments,
@@ -98,7 +158,8 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVe
     auto *checker = context->GetChecker()->AsETSChecker();
 
     // Handle single spread element case
-    const size_t extraArgs = arguments.size() - signature->Params().size();
+    const int diffArgs = arguments.size() - signature->Params().size();
+    const size_t extraArgs = diffArgs < 0 ? 0 : diffArgs;
     if (extraArgs == 1 && arguments.back()->IsSpreadElement()) {
         return ConvertSpreadToBlockExpression(context, arguments.back()->AsSpreadElement());
     }
@@ -137,15 +198,29 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVe
 
 static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, ir::CallExpression *originalCall,
                                                  checker::Signature *signature, ir::Expression *restArgsArray)
+
 {
     auto *allocator = context->allocator;
     auto *varbinder = context->GetChecker()->VarBinder()->AsETSBinder();
     ArenaVector<ir::Expression *> newArgs(allocator->Adapter());
 
-    for (size_t i = 0; i < signature->Params().size(); ++i) {
-        newArgs.push_back(originalCall->Arguments()[i]);
+    if (!originalCall->Arguments().empty()) {
+        for (size_t i = 0; i < signature->Params().size() && i < originalCall->Arguments().size(); ++i) {
+            newArgs.push_back(originalCall->Arguments()[i]);
+        }
     }
-
+    if (ShouldSkipParamCheck(signature, originalCall->Arguments())) {
+        auto *checker = context->GetChecker()->AsETSChecker();
+        auto *undefinedExpr = checker->AllocNode<ir::UndefinedLiteral>();
+        size_t nMissing = signature->Params().size() - originalCall->Arguments().size();
+        auto it = signature->Params().begin();
+        std::advance(it, originalCall->Arguments().size());
+        for (size_t i = 0; i < nMissing; ++i) {
+            undefinedExpr->SetTsType((*it)->TsType());
+            newArgs.push_back(undefinedExpr);
+            ++it;
+        }
+    }
     newArgs.push_back(restArgsArray);
 
     auto *newCall = util::NodeAllocator::ForceSetParent<ir::CallExpression>(allocator, originalCall->Callee(),
