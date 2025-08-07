@@ -13,13 +13,21 @@
               "newText": ""
             }
           ]
-        },
+       }
+     ],
+     "description": "Remove the duplicate 'Entry' annotation",
+     "fixName": "Fix",
+     "fixId_": "UI_PLUGIN_SUGGEST",
+     "fixAllDescription_": "Fix All Description"
+   },
+   {
+     "changes": [
         {
           "fileName": "getCodeFixesAtPosition1.ets",
           "textChanges": []
         }
       ],
-      "description": "Fix Description",
+      "description": "Remove the duplicate 'Entry' annotation",
       "fixName": "Fix",
       "fixId_": "UI_PLUGIN_SUGGEST",
       "fixAllDescription_": "Fix All Description"
