@@ -17,11 +17,9 @@
 
 #include <gtest/gtest.h>
 
-#include "ir/astNode.h"
 #include "lsp/include/register_code_fix/ui_plugin_suggest.h"
 #include "lsp/include/internal_api.h"
 #include "public/es2panda_lib.h"
-#include "public/public.h"
 
 namespace {
 
@@ -44,8 +42,6 @@ void AssertDiagnosticContainsCodeAndMessage(const DiagnosticReferences &suggest,
 
 TEST_F(LspUISuggestionTests, UIPluginsErrorTest1)
 {
-    using ark::es2panda::ir::AstNode;
-    using ark::es2panda::public_lib::Context;
     Initializer initializer = Initializer();
     std::vector<std::string> files = {"ui_error1.ets"};
     std::vector<std::string> texts = {R"delimiter(function main() {})delimiter"};
@@ -80,7 +76,7 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest1)
     auto suggest = lspApi->getSyntacticDiagnostics(ctx);
     AssertDiagnosticContainsCodeAndMessage(suggest, code, dmessage2);
     auto result = ark::es2panda::lsp::UIPluginSuggest::GetUIPluginCodeFixes(ctx, offset, false);
-    ASSERT_EQ(result.at(0).textChanges.at(0).newText, substitutionCode);
+    ASSERT_EQ(result.at(0).changes.at(0).textChanges.at(0).newText, substitutionCode);
     std::vector<int> codes;
     codes.emplace_back(code);
     CodeFixOptions emptyOptions;
@@ -93,8 +89,6 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest1)
 
 TEST_F(LspUISuggestionTests, UIPluginsErrorTest2)
 {
-    using ark::es2panda::ir::AstNode;
-    using ark::es2panda::public_lib::Context;
     Initializer initializer = Initializer();
     std::vector<std::string> files = {"ui_error2.ets"};
     std::vector<std::string> texts = {R"delimiter(function main() {})delimiter"};
@@ -128,12 +122,9 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest2)
 
 TEST_F(LspUISuggestionTests, UIPluginsErrorTest3)
 {
-    using ark::es2panda::ir::AstNode;
-    using ark::es2panda::public_lib::Context;
     Initializer initializer = Initializer();
-    std::vector<std::string> files = {"ui_error3.ets"};
-    std::vector<std::string> texts = {R"delimiter(function main() {})delimiter"};
-    auto ctx = initializer.CreateContext(CreateTempFile(files, texts)[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto ctx =
+        initializer.CreateContext("ui_error3.ets", ES2PANDA_STATE_CHECKED, R"delimiter(function main() {})delimiter");
     LSPAPI const *lspApi = GetImpl();
     const char *dmessage1 = "origin a";
     const char *substitutionCode = "replace b";
@@ -185,8 +176,6 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest3)
 
 TEST_F(LspUISuggestionTests, UIPluginsErrorTest4)
 {
-    using ark::es2panda::ir::AstNode;
-    using ark::es2panda::public_lib::Context;
     Initializer initializer = Initializer();
     std::vector<std::string> files = {"ui_error1.ets"};
     std::vector<std::string> texts = {R"delimiter(function main() { return 1 })delimiter"};
@@ -225,7 +214,7 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest4)
     auto suggest = lspApi->getSyntacticDiagnostics(ctx);
     AssertDiagnosticContainsCodeAndMessage(suggest, code, dmessage2);
     auto result = ark::es2panda::lsp::UIPluginSuggest::GetUIPluginCodeFixes(ctx, offset, false);
-    ASSERT_EQ(result.at(0).textChanges.at(0).newText, substitutionCode);
+    ASSERT_EQ(result.at(0).changes.at(0).textChanges.at(0).newText, substitutionCode);
     std::vector<int> codes;
     codes.emplace_back(code);
     CodeFixOptions emptyOptions;

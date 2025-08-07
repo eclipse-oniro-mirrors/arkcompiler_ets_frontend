@@ -28,7 +28,7 @@ class UIPluginSuggest : public CodeFixRegistration {
 public:
     UIPluginSuggest();
 
-    static std::vector<FileTextChanges> GetUIPluginCodeFixes(es2panda_Context *context, size_t pos, bool isAll);
+    static std::vector<CodeFixAction> GetUIPluginCodeFixes(es2panda_Context *context, size_t pos, bool isAll);
 
     std::vector<CodeFixAction> GetCodeActions(const CodeFixContext &context) override;
 
