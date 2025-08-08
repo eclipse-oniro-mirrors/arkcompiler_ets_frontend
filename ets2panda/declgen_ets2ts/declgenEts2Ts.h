@@ -51,11 +51,10 @@ public:
           program_(program),
           diagnosticEngine_(checker->DiagnosticEngine()),
           allocator_(SpaceType::SPACE_TYPE_COMPILER, nullptr, true),
-          indirectDependencyObjects_(allocator_.Adapter()),
+          dependencySet_(allocator_.Adapter()),
           importSet_(allocator_.Adapter()),
           exportSet_(allocator_.Adapter()),
           glueCodeImportSet_(allocator_.Adapter()),
-          typeAliasMap_(allocator_.Adapter()),
           paramDefaultMap_(allocator_.Adapter())
     {
     }
@@ -109,7 +108,7 @@ private:
 
     void GenType(const checker::Type *checkerType);
     void GenFunctionType(const checker::ETSFunctionType *functionType, const ir::MethodDefinition *methodDef = nullptr);
-    void SplitUnionTypes(std::string &unionTypeString);
+    void AddUnionTypeImports(std::string &unionTypeString);
     void ProcessFunctionReturnType(const checker::Signature *sig);
     bool ProcessTSQualifiedName(const ir::ETSTypeReference *typeReference);
     void ProcessETSTypeReferenceType(const ir::ETSTypeReference *typeReference,
@@ -125,6 +124,7 @@ private:
     void GenObjectType(const checker::ETSObjectType *objectType);
     void GenUnionType(const checker::ETSUnionType *unionType);
     void GenTupleType(const checker::ETSTupleType *tupleType);
+    void GenArrayType(const checker::Type *elementType);
 
     template <class UnionType>
     std::vector<UnionType *> FilterUnionTypes(const ArenaVector<UnionType *> &originTypes);
@@ -185,7 +185,7 @@ private:
     void GenExport(const ir::Identifier *symbol);
     void GenExport(const ir::Identifier *symbol, const std::string &alias);
     void GenDefaultExport(const ir::Identifier *symbol);
-    bool ShouldEmitDeclarationSymbol(const ir::Identifier *symbol);
+    bool ShouldEmitDeclaration(const ir::AstNode *decl);
 
     template <class T, class CB>
     void GenSeparated(const T &container, const CB &cb, const char *separator = ", ", bool isReExport = false,
@@ -215,20 +215,24 @@ private:
     void CollectGlueCodeImportSet();
     void CollectDefaultImport(const ir::AstNode *specifier);
     void CollectNamedImports(const ArenaVector<ir::AstNode *> &specifiers);
-    void CollectIndirectExportDependencies();
-    void ProcessTypeAliasDependencies(const ir::TSTypeAliasDeclaration *typeAliasDecl);
-    void ProcessTypeAnnotationDependencies(const ir::TypeNode *typeAnnotation);
-    void ProcessClassDependencies(const ir::ClassDeclaration *classDecl);
-    void ProcessClassPropDependencies(const ir::ClassDefinition *classDef);
-    void ProcessClassMethodDependencies(const ir::MethodDefinition *methodDef);
-    void ProcessInterfaceDependencies(const ir::TSInterfaceDeclaration *interfaceDecl);
-    void ProcessInterfacePropDependencies(const ir::TSInterfaceDeclaration *interfaceDecl);
-    void ProcessInterfaceMethodDependencies(const ir::MethodDefinition *methodDef);
-    void ProcessETSTypeReferenceDependencies(const ir::ETSTypeReference *typeReference);
-    void AddSuperType(const ir::Expression *super);
-    void AddSuperType(const checker::Type *tsType);
-    void ProcessInterfacesDependencies(const ArenaVector<checker::ETSObjectType *> &interfaces);
-    void AddObjectDependencies(const util::StringView &typeName, const std::string &alias = "");
+
+    void CollectDependencies();
+    void CollectDependencies(const ir::AstNode *node);
+    void CollectTypeAliasDependencies(const ir::TSTypeAliasDeclaration *typeAliasDecl);
+    void CollectTypeAnnotationDependencies(const ir::TypeNode *typeAnnotation);
+    void CollectClassDependencies(const ir::ClassDeclaration *classDecl);
+    void CollectClassDependencies(const ir::ClassDefinition *classDef);
+    void CollectClassPropDependencies(const ir::ClassDefinition *classDef);
+    void CollectClassMethodDependencies(const ir::MethodDefinition *methodDef);
+    void CollectInterfaceDependencies(const ir::TSInterfaceDeclaration *interfaceDecl);
+    void CollectInterfacePropDependencies(const ir::TSInterfaceDeclaration *interfaceDecl);
+    void CollectInterfaceMethodDependencies(const ir::MethodDefinition *methodDef);
+    void CollectETSTypeReferenceDependencies(const ir::ETSTypeReference *typeReference);
+    void CollectInterfacesDependencies(const ArenaVector<checker::ETSObjectType *> &interfaces);
+
+    /* TSTypeAliasDeclaration does not offer transitive information, so we collect all their parents as dependencies. */
+    void CollectTypeAliasAsDependencies(const ir::AstNode *node);
+
     void GenDeclarations();
     void CloseClassBlock(const bool isDts);
 
@@ -253,6 +257,18 @@ private:
                                  std::unordered_set<std::string> &processedMethods);
     void ProcessMethodsFromInterfaces(std::unordered_set<std::string> &processedMethods,
                                       const ArenaVector<checker::ETSObjectType *> &interfaces);
+
+    void AddImport(const std::string &qualifiedName);
+    bool IsImport(const ir::AstNode *specifier);
+    bool IsImport(const ir::Identifier *identifier);
+    bool IsImport(const std::string &name);
+
+    void AddDependency(const ir::AstNode *astNode);
+    void AddDependency(const checker::Type *tsType);
+    void AddDependency(const std::string &assemblerName);
+    bool IsDependency(const ir::AstNode *decl);
+    bool IsDependency(const checker::Type *tsType);
+    bool IsDependency(const std::string &assemblerName);
 
     void OutDts() {}
 
@@ -290,11 +306,9 @@ private:
     void ResetClassNode()
     {
         classNode_.isStruct = false;
-        classNode_.isIndirect = false;
     }
 
     struct GenState {
-        const ir::Expression *super {nullptr};
         bool inInterface {false};
         bool inGlobalClass {false};
         bool inClass {false};
@@ -311,7 +325,6 @@ private:
 
     struct ClassNode {
         bool hasNestedClass {false};
-        bool isIndirect {false};
         bool isStruct {false};
         size_t indentLevel {1};
     } classNode_ {};
@@ -337,13 +350,12 @@ private:
     const ark::es2panda::parser::Program *program_ {};
     util::DiagnosticEngine &diagnosticEngine_;
     ArenaAllocator allocator_;
-    ArenaSet<std::string> indirectDependencyObjects_;
+    ArenaSet<std::string> dependencySet_;
     ArenaSet<std::string> importSet_;
     ArenaSet<std::string> exportSet_;
     ArenaSet<std::string> glueCodeImportSet_;
     DeclgenOptions declgenOptions_ {};
     std::string globalDesc_;
-    ArenaMap<std::string, std::string> typeAliasMap_;
     ArenaMap<util::StringView, util::StringView> paramDefaultMap_;
 };
 }  // namespace ark::es2panda::declgen_ets2ts
