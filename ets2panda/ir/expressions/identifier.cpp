@@ -101,20 +101,6 @@ void Identifier::Iterate(const NodeTraverser &cb) const
     }
 }
 
-ValidationInfo Identifier::ValidateExpression()
-{
-    if ((IdFlags() & IdentifierFlags::OPTIONAL) != 0U) {
-        return {"Unexpected token '?'.", Start()};
-    }
-
-    if (TypeAnnotation() != nullptr) {
-        return {"Unexpected token.", TypeAnnotation()->Start()};
-    }
-
-    ValidationInfo info;
-    return info;
-}
-
 void Identifier::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", IsPrivateIdent() ? "PrivateIdentifier" : "Identifier"},

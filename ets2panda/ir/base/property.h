@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,6 +77,11 @@ public:
         return kind_;
     }
 
+    void SetKind(PropertyKind kind) noexcept
+    {
+        kind_ = kind;
+    }
+
     [[nodiscard]] bool IsMethod() const noexcept
     {
         return isMethod_;
@@ -105,7 +110,6 @@ public:
     [[nodiscard]] Property *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
     bool ConvertibleToPatternProperty();
-    ValidationInfo ValidateExpression();
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;

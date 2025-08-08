@@ -101,56 +101,6 @@ bool ArrayExpression::ConvertibleToArrayPattern()
     return convResult;
 }
 
-ValidationInfo ArrayExpression::ValidateExpression()
-{
-    if (optional_) {
-        return {"Unexpected token '?'.", Start()};
-    }
-
-    if (TypeAnnotation() != nullptr) {
-        return {"Unexpected token.", TypeAnnotation()->Start()};
-    }
-
-    ValidationInfo info;
-
-    for (auto *it : elements_) {
-        switch (it->Type()) {
-            case AstNodeType::OBJECT_EXPRESSION: {
-                info = it->AsObjectExpression()->ValidateExpression();
-                break;
-            }
-            case AstNodeType::ARRAY_EXPRESSION: {
-                info = it->AsArrayExpression()->ValidateExpression();
-                break;
-            }
-            case AstNodeType::ASSIGNMENT_EXPRESSION: {
-                auto *assignmentExpr = it->AsAssignmentExpression();
-
-                if (assignmentExpr->Left()->IsArrayExpression()) {
-                    info = assignmentExpr->Left()->AsArrayExpression()->ValidateExpression();
-                } else if (assignmentExpr->Left()->IsObjectExpression()) {
-                    info = assignmentExpr->Left()->AsObjectExpression()->ValidateExpression();
-                }
-
-                break;
-            }
-            case AstNodeType::SPREAD_ELEMENT: {
-                info = it->AsSpreadElement()->ValidateExpression();
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-
-        if (info.Fail()) {
-            break;
-        }
-    }
-
-    return info;
-}
-
 void ArrayExpression::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
     for (auto *&it : VectorIterationGuard(elements_)) {

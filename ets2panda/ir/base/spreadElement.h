@@ -62,7 +62,6 @@ public:
 
     [[nodiscard]] SpreadElement *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
-    ValidationInfo ValidateExpression();
     [[nodiscard]] bool ConvertibleToRest(bool isDeclaration, bool allowPattern = true);
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;

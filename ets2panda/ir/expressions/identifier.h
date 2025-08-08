@@ -184,8 +184,6 @@ public:
     [[nodiscard]] Identifier *Clone(ArenaAllocator *allocator, AstNode *parent) override;
     [[nodiscard]] Identifier *CloneReference(ArenaAllocator *allocator, AstNode *parent);
 
-    [[nodiscard]] ValidationInfo ValidateExpression();
-
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
@@ -217,12 +215,12 @@ public:
         AnnotatedExpression::CopyTo(other);
     };
 
-private:
     IdentifierFlags IdFlags() const
     {
         return GetHistoryNodeAs<Identifier>()->flags_;
     }
 
+private:
     void AddIdFlags(IdentifierFlags const flags) noexcept
     {
         if (!All(IdFlags(), flags)) {

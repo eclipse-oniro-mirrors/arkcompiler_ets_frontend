@@ -83,39 +83,6 @@ bool Property::ConvertibleToPatternProperty()
     return true;
 }
 
-ValidationInfo Property::ValidateExpression()
-{
-    ValidationInfo info;
-
-    if (!IsComputed() && !IsMethod() && !IsAccessor() && !IsShorthand()) {
-        bool currentIsProto = false;
-
-        if (key_->IsIdentifier()) {
-            currentIsProto = key_->AsIdentifier()->Name().Is("__proto__");
-        } else if (key_->IsStringLiteral()) {
-            currentIsProto = key_->AsStringLiteral()->Str().Is("__proto__");
-        }
-
-        if (currentIsProto) {
-            kind_ = PropertyKind::PROTO;
-        }
-    }
-
-    if (value_ != nullptr) {
-        if (value_->IsAssignmentPattern()) {
-            return {"Invalid shorthand property initializer.", value_->Start()};
-        }
-
-        if (value_->IsObjectExpression()) {
-            info = value_->AsObjectExpression()->ValidateExpression();
-        } else if (value_->IsArrayExpression()) {
-            info = value_->AsArrayExpression()->ValidateExpression();
-        }
-    }
-
-    return info;
-}
-
 void Property::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
     if (auto *transformedNode = cb(key_); key_ != transformedNode) {
