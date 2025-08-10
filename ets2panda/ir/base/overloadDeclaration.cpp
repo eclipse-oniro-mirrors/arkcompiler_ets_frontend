@@ -55,7 +55,7 @@ void OverloadDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", "OverloadDeclaration"},
                  {"key", key_},
-                 {"optional", AstDumper::Optional(AstDumper::ModifierToString(flags_))},
+                 {"optional", AstDumper::Optional(AstDumper::ModifierToString(Modifiers()))},
                  {"static", IsStatic()},
                  {"overloadedList", overloadedList_}});
 }

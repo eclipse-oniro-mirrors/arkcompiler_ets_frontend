@@ -31,7 +31,7 @@ Identifier::Identifier([[maybe_unused]] Tag const tag, Identifier const &other, 
 
 Identifier::Identifier(ArenaAllocator *const allocator) : Identifier(ERROR_LITERAL, allocator)
 {
-    flags_ |= IdentifierFlags::ERROR_PLACEHOLDER;
+    AddIdFlags(IdentifierFlags::ERROR_PLACEHOLDER);
     InitHistory();
 }
 
@@ -39,7 +39,7 @@ Identifier::Identifier(util::StringView const name, [[maybe_unused]] ArenaAlloca
     : AnnotatedExpression(AstNodeType::IDENTIFIER), name_(name)
 {
     if (name == ERROR_LITERAL) {
-        flags_ |= IdentifierFlags::ERROR_PLACEHOLDER;
+        AddIdFlags(IdentifierFlags::ERROR_PLACEHOLDER);
     }
     InitHistory();
 }
@@ -49,7 +49,7 @@ Identifier::Identifier(util::StringView const name, TypeNode *const typeAnnotati
     : AnnotatedExpression(AstNodeType::IDENTIFIER, typeAnnotation), name_(name)
 {
     if (name == ERROR_LITERAL) {
-        flags_ |= IdentifierFlags::ERROR_PLACEHOLDER;
+        AddIdFlags(IdentifierFlags::ERROR_PLACEHOLDER);
     }
     InitHistory();
 }

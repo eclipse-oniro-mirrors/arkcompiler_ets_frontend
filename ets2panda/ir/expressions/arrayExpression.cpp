@@ -131,7 +131,7 @@ void ArrayExpression::Iterate(const NodeTraverser &cb) const
 
 void ArrayExpression::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", type_ == AstNodeType::ARRAY_EXPRESSION ? "ArrayExpression" : "ArrayPattern"},
+    dumper->Add({{"type", Type() == AstNodeType::ARRAY_EXPRESSION ? "ArrayExpression" : "ArrayPattern"},
                  {"elements", elements_},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"optional", AstDumper::Optional(optional_)}});

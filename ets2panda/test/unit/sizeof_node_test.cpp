@@ -65,9 +65,13 @@ size_t SizeOfNodeTest::SizeOf<AstNode>()
     return Align(SIZE_OF_VTABLE +
         sizeof(node->parent_) +
         sizeof(node->range_) +
+#ifndef NDEBUG
         sizeof(node->type_) +
         sizeof(node->flags_) +
         sizeof(node->astNodeFlags_) +
+#else
+        sizeof(node->bitFields_) +
+#endif
         sizeof(node->history_) +
         sizeof(node->variable_) +
         sizeof(node->originalNode_));

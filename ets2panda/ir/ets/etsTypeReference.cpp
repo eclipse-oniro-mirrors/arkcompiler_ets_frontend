@@ -157,7 +157,7 @@ ETSTypeReference *ETSTypeReference::Clone(ArenaAllocator *const allocator, AstNo
         partClone->SetParent(clone);
     }
 
-    clone->flags_ = Modifiers();
+    clone->AddModifier(Modifiers());
 
     if (parent != nullptr) {
         clone->SetParent(parent);

@@ -103,7 +103,7 @@ void AssignmentExpression::Iterate(const NodeTraverser &cb) const
 
 void AssignmentExpression::Dump(ir::AstDumper *dumper) const
 {
-    if (type_ == AstNodeType::ASSIGNMENT_EXPRESSION) {
+    if (Type() == AstNodeType::ASSIGNMENT_EXPRESSION) {
         dumper->Add({{"type", "AssignmentExpression"}, {"operator", operator_}, {"left", left_}, {"right", right_}});
     } else {
         dumper->Add({{"type", "AssignmentPattern"}, {"left", left_}, {"right", right_}});
