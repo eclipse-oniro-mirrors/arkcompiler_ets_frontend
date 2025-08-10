@@ -15,5 +15,20 @@
  
 enum Fraction: int { 
     A = 1,
-    B = 1
+    B = 2
+}
+
+enum Fraction2: double { 
+    A = 1.2,
+    B = 3.1
+}
+
+enum Fraction4: byte { 
+    A = 0x01,
+    B = 0x01
+}
+
+enum Fraction5: short { 
+    A = 1,
+    B = 2
 }

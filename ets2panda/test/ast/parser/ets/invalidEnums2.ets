@@ -13,12 +13,25 @@
  * limitations under the License.
  */
 
-enum Status {
-  Pending,
-  InProgress,
-  Complete
+enum EBadInitValueD: double {
+    Member1 = 1.0,
+    Member2,
 }
 
-type StatusType = Status;
+enum EBadInitValueF: float {
+    Member1 = 1.0f,
+    Member2,
+}
 
-let current: StatusType = Status.InProgress;
+enum Ebyte: byte  {
+    Str1 = 1,
+    Str2
+}
+
+enum Eshort: short  {
+    Str1 = 1,
+    Str2
+}
+
+/* @@? 18:12 Error Syntax error ESY0276: All items of non-Integer enumeration should be explicitly initialized. */
+/* @@? 23:12 Error Syntax error ESY0276: All items of non-Integer enumeration should be explicitly initialized. */

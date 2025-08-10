@@ -74,10 +74,15 @@ static bool IsValidEnumCasting(checker::Type *type, EnumCastType castType)
         case EnumCastType::CAST_TO_STRING: {
             return type->IsETSStringEnumType();
         }
-        case EnumCastType::CAST_TO_INT: {
-            return type->IsETSIntEnumType();
+        case EnumCastType::CAST_TO_INT:
+        case EnumCastType::CAST_TO_LONG:
+        case EnumCastType::CAST_TO_DOUBLE:
+        case EnumCastType::CAST_TO_FLOAT:
+        case EnumCastType::CAST_TO_BYTE:
+        case EnumCastType::CAST_TO_SHORT: {
+            return type->IsETSNumericEnumType();
         }
-        case EnumCastType::CAST_TO_INT_ENUM:
+        case EnumCastType::CAST_TO_NUMERIC_ENUM:
         case EnumCastType::CAST_TO_STRING_ENUM: {
             return true;
         }
@@ -99,13 +104,8 @@ static EnumCastType NeedHandleEnumCasting(ir::TSAsExpression *node)
     } else if (type->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC) || type->IsBuiltinNumeric()) {
         castType = EnumCastType::CAST_TO_INT;
     } else if (type->IsETSEnumType()) {
-        if (type->IsETSIntEnumType()) {
-            castType = EnumCastType::CAST_TO_INT_ENUM;
-        } else if (type->IsETSDoubleEnumType()) {
-            castType = EnumCastType::CAST_TO_DOUBLE_ENUM;
-        } else if (type->IsETSStringEnumType()) {
-            castType = EnumCastType::CAST_TO_STRING_ENUM;
-        }
+        castType =
+            type->IsETSNumericEnumType() ? EnumCastType::CAST_TO_NUMERIC_ENUM : EnumCastType::CAST_TO_STRING_ENUM;
     } else {
         return castType;
     }
@@ -256,7 +256,7 @@ void EnumPostCheckLoweringPhase::CreateStatementForUnionConstituentType(EnumCast
             break;
         }
         case EnumCastType::CAST_TO_INT: {
-            if (type->IsETSIntEnumType()) {
+            if (type->IsETSNumericEnumType()) {
                 auto callExpr = CallInstanceEnumMethod(context_, checker::ETSEnumType::VALUE_OF_METHOD_NAME,
                                                        ident->Clone(context_->Allocator(), nullptr)->AsExpression());
                 callExpr->SetRange(tsAsExpr->Expr()->Range());
@@ -264,24 +264,10 @@ void EnumPostCheckLoweringPhase::CreateStatementForUnionConstituentType(EnumCast
             }
             break;
         }
-        case EnumCastType::CAST_TO_INT_ENUM: {
+        case EnumCastType::CAST_TO_NUMERIC_ENUM: {
             // int and Boxed Int can be casted to int enum
             if (type->IsIntType() || (type->IsETSObjectType() &&
                                       type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_INT))) {
-                auto name = TypeAnnotationToString(tsAsExpr->TypeAnnotation()->AsETSTypeReference(), context_);
-                auto callExpr =
-                    GenerateFromValueCall(ident->Clone(context_->Allocator(), nullptr)->AsExpression(), name);
-                callExpr->SetRange(tsAsExpr->Expr()->Range());
-                createInstanceOfStatement(callExpr);
-            }
-            break;
-        }
-        case EnumCastType::CAST_TO_DOUBLE_ENUM: {
-            // int and Boxed Int can be casted to int enum
-            if (type->IsDoubleType() ||
-                (type->IsETSObjectType() &&
-                 type->AsETSObjectType()->HasObjectFlag(
-                     checker::ETSObjectFlags::BUILTIN_DOUBLE))) {  // CC-OFFNXT(G.FMT.06-CPP) project code style
                 auto name = TypeAnnotationToString(tsAsExpr->TypeAnnotation()->AsETSTypeReference(), context_);
                 auto callExpr =
                     GenerateFromValueCall(ident->Clone(context_->Allocator(), nullptr)->AsExpression(), name);
@@ -371,7 +357,9 @@ ir::AstNode *EnumPostCheckLoweringPhase::GenerateValueOfCall(ir::AstNode *const 
     if (node->AsExpression()->TsType()->IsTypeError()) {
         return node;
     }
-    if (node->AsExpression()->TsType()->AsETSEnumType()->NodeIsEnumLiteral(node->AsExpression())) {
+    auto *enumNode = node->AsExpression()->TsType()->AsETSEnumType();
+
+    if (enumNode->NodeIsEnumLiteral(node->AsExpression()) && enumNode->EnumAnnotedType() == nullptr) {
         return InlineValueOf(node->AsMemberExpression(), context_->Allocator());
     }
     auto *callExpr = CreateCallInstanceEnumExpression(context_, node, checker::ETSEnumType::VALUE_OF_METHOD_NAME);
@@ -421,8 +409,7 @@ static void RecheckNode(ir::AstNode *node, checker::ETSChecker *checker)
     node->Check(checker);
 
     if (node->IsExpression() && node->AsExpression()->TsType() != nullptr &&
-        !(node->AsExpression()->TsType()->IsETSIntEnumType() ||
-          node->AsExpression()->TsType()->IsETSDoubleEnumType())) {
+        !node->AsExpression()->TsType()->IsETSNumericEnumType()) {
         node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
     }
 }

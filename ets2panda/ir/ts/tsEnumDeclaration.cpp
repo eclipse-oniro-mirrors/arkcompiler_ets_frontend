@@ -116,6 +116,10 @@ void TSEnumDeclaration::Dump(ir::SrcDumper *dumper) const
     }
     dumper->Add("enum ");
     Key()->Dump(dumper);
+    if (typeAnnotation_ != nullptr) {
+        dumper->Add(": ");
+        dumper->Add(typeAnnotation_->DumpEtsSrc());
+    }
     dumper->Add(" {");
     auto const members = Members();
     if (!members.empty()) {

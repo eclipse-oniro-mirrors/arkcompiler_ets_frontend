@@ -539,7 +539,7 @@ void SetTsTypeForUnaryExpression(ETSChecker *checker, ir::UnaryExpression *expr,
                 break;
             }
             auto exprType = expr->SetTsType(checker->SelectGlobalIntegerTypeForNumeric(operandType));
-            if (!expr->Argument()->TsType()->IsETSIntEnumType()) {
+            if (!expr->Argument()->TsType()->IsETSNumericEnumType()) {
                 expr->Argument()->SetTsType(exprType);
             }
             break;

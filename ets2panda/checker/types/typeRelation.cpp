@@ -254,12 +254,8 @@ bool TypeRelation::IsLegalBoxedPrimitiveConversion(Type *target, Type *source)
     Type *targetUnboxedType = checker->MaybeUnboxType(target);
     Type *sourceUnboxedType = checker->MaybeUnboxType(source);
 
-    if (source->IsETSIntEnumType()) {
+    if (source->IsETSNumericEnumType()) {
         targetUnboxedType = checker->GlobalIntType();
-    }
-
-    if (source->IsETSDoubleEnumType()) {
-        targetUnboxedType = checker->GlobalDoubleType();
     }
 
     if (targetUnboxedType == nullptr || sourceUnboxedType == nullptr) {

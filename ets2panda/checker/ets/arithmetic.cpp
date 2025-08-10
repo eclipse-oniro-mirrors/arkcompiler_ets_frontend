@@ -159,7 +159,7 @@ static Type *TryConvertToPrimitiveType(ETSChecker *checker, Type *type)
         return nullptr;
     }
 
-    if (type->IsETSIntEnumType()) {
+    if (type->IsETSNumericEnumType()) {
         // Pull out the type argument to BaseEnum
         if (type->AsETSObjectType()->SuperType() != nullptr &&
             !type->AsETSObjectType()->SuperType()->TypeArguments().empty()) {
@@ -167,10 +167,6 @@ static Type *TryConvertToPrimitiveType(ETSChecker *checker, Type *type)
             return checker->MaybeUnboxInRelation(baseEnumArg);
         }
         return checker->GlobalIntType();
-    }
-
-    if (type->IsETSDoubleEnumType()) {
-        return checker->GlobalDoubleType();
     }
 
     if (type->IsETSStringEnumType()) {
@@ -319,22 +315,22 @@ static bool TypeIsAppropriateForArithmetic(const checker::Type *type, ETSChecker
             checker->Relation()->IsSupertypeOf(checker->GetGlobalTypesHolder()->GlobalNumericBuiltinType(), type));
 }
 
-static checker::Type *CheckBinaryOperatorForIntEnums(ETSChecker *checker, checker::Type *const leftType,
-                                                     checker::Type *const rightType)
+static checker::Type *CheckBinaryOperatorForNumericEnums(ETSChecker *checker, checker::Type *const leftType,
+                                                         checker::Type *const rightType)
 {
     if (!leftType->IsETSEnumType() && !rightType->IsETSEnumType()) {
         return nullptr;
     }
     if (TypeIsAppropriateForArithmetic(leftType, checker) && TypeIsAppropriateForArithmetic(rightType, checker)) {
         Type *leftNumeric;
-        if (leftType->IsETSIntEnumType()) {
+        if (leftType->IsETSNumericEnumType()) {
             leftNumeric = checker->MaybeBoxInRelation(TryConvertToPrimitiveType(checker, leftType));
         } else {
             leftNumeric = leftType;
         }
 
         Type *rightNumeric;
-        if (rightType->IsETSIntEnumType()) {
+        if (rightType->IsETSNumericEnumType()) {
             rightNumeric = checker->MaybeBoxInRelation(TryConvertToPrimitiveType(checker, rightType));
         } else {
             rightNumeric = rightType;
@@ -364,7 +360,7 @@ checker::Type *ETSChecker::CheckBinaryOperatorMulDivMod(
     }
 
     if (promotedType == nullptr || !CheckIfNumeric(leftType) || !CheckIfNumeric(rightType)) {
-        auto type = CheckBinaryOperatorForIntEnums(this, leftType, rightType);
+        auto type = CheckBinaryOperatorForNumericEnums(this, leftType, rightType);
         if (type != nullptr) {
             return type;
         }
@@ -375,15 +371,28 @@ checker::Type *ETSChecker::CheckBinaryOperatorMulDivMod(
     return promotedType;
 }
 
-checker::Type *ETSChecker::CheckBinaryBitwiseOperatorForIntEnums(const checker::Type *const leftType,
-                                                                 const checker::Type *const rightType)
+checker::Type *ETSChecker::CheckBinaryBitwiseOperatorForNumericEnums(checker::Type *const leftType,
+                                                                     checker::Type *const rightType)
 {
     if (!leftType->IsETSEnumType() && !rightType->IsETSEnumType()) {
         return nullptr;
     }
+
+    auto checkForEnumType = [=](auto type, bool hasLong) -> bool {
+        ETSObjectFlags floatingPointType = hasLong ? ETSObjectFlags::BUILTIN_DOUBLE : ETSObjectFlags::BUILTIN_FLOAT;
+        ETSObjectFlags integralType = hasLong ? ETSObjectFlags::BUILTIN_LONG : ETSObjectFlags::BUILTIN_INT;
+        return (type->AsETSNumericEnumType()->CheckBuiltInType(this, floatingPointType) ||
+                type->AsETSNumericEnumType()->CheckBuiltInType(this, integralType));
+    };
+
     if (TypeIsAppropriateForArithmetic(leftType, this) && TypeIsAppropriateForArithmetic(rightType, this)) {
-        if (leftType->IsETSIntEnumType() && rightType->IsETSIntEnumType()) {
-            return GlobalIntBuiltinType();
+        if (leftType->IsETSNumericEnumType() && rightType->IsETSNumericEnumType()) {
+            if (checkForEnumType(leftType, false) || checkForEnumType(rightType, false)) {
+                return GlobalIntBuiltinType();
+            }
+            if (checkForEnumType(leftType, true) || checkForEnumType(rightType, true)) {
+                return GlobalLongBuiltinType();
+            }
         }
         if (leftType->IsFloatType() || rightType->IsFloatType()) {
             return GlobalIntBuiltinType();
@@ -402,7 +411,7 @@ checker::Type *ETSChecker::CheckBinaryBitwiseOperatorForIntEnums(const checker::
 static checker::Type *CheckBinaryOperatorPlusForEnums(ETSChecker *checker, checker::Type *const leftType,
                                                       checker::Type *const rightType)
 {
-    if (auto numericType = CheckBinaryOperatorForIntEnums(checker, leftType, rightType); numericType != nullptr) {
+    if (auto numericType = CheckBinaryOperatorForNumericEnums(checker, leftType, rightType); numericType != nullptr) {
         return numericType;
     }
     if ((leftType->IsETSStringEnumType() && (rightType->IsETSStringType() || rightType->IsETSStringEnumType())) ||
@@ -498,7 +507,7 @@ checker::Type *ETSChecker::CheckBinaryOperatorShift(
     auto promotedRightType = GetUnaryOperatorPromotedType(rightType, !isEqualOp);
     if (promotedLeftType == nullptr || promotedRightType == nullptr || !CheckIfNumeric(promotedLeftType) ||
         !CheckIfNumeric(promotedRightType)) {
-        auto type = CheckBinaryBitwiseOperatorForIntEnums(leftType, rightType);
+        auto type = CheckBinaryBitwiseOperatorForNumericEnums(leftType, rightType);
         if (type != nullptr) {
             return type;
         }
@@ -547,7 +556,7 @@ checker::Type *ETSChecker::CheckBinaryOperatorBitwise(
 
     auto const promotedType = BinaryGetPromotedType(this, leftType, rightType, !isEqualOp);
     if (promotedType == nullptr || !CheckIfNumeric(rightType) || !CheckIfNumeric(leftType)) {
-        auto type = CheckBinaryBitwiseOperatorForIntEnums(leftType, rightType);
+        auto type = CheckBinaryBitwiseOperatorForNumericEnums(leftType, rightType);
         if (type != nullptr) {
             return type;
         }
@@ -769,8 +778,8 @@ static bool NonNumericTypesAreAppropriateForComparison(ETSChecker *checker, Type
         (leftType->IsETSStringType() && rightType->IsETSStringEnumType())) {
         return true;
     }
-    if ((leftType->IsETSPrimitiveType() && rightType->IsETSIntEnumType()) ||
-        (leftType->IsETSIntEnumType() && rightType->IsETSPrimitiveType())) {
+    if ((leftType->IsETSPrimitiveType() && rightType->IsETSNumericEnumType()) ||
+        (leftType->IsETSNumericEnumType() && rightType->IsETSPrimitiveType())) {
         return true;
     }
     return false;
@@ -1110,13 +1119,13 @@ static void TryAddValueOfFlagToStringEnumOperand(ir::Expression *op, const ir::E
     }
 }
 
-static void TryAddValueOfFlagToIntEnumOperand(ir::Expression *op, const ir::Expression *otherOp)
+static void TryAddValueOfFlagToNumericEnumOperand(ir::Expression *op, const ir::Expression *otherOp)
 {
     auto type = op->TsType();
     auto otherType = otherOp->TsType();
-    if (type->IsETSIntEnumType() &&
+    if (type->IsETSNumericEnumType() &&
         ((otherType->IsETSObjectType() && otherType->AsETSObjectType()->IsBoxedPrimitive()) ||
-         otherType->IsETSIntEnumType())) {
+         otherType->IsETSNumericEnumType())) {
         op->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
     }
 }
@@ -1156,8 +1165,8 @@ static void CheckEnumInOperatorContext(ir::Expression *expression, lexer::TokenT
         case lexer::TokenType::PUNCTUATOR_BITWISE_XOR:
         case lexer::TokenType::PUNCTUATOR_LOGICAL_AND:
         case lexer::TokenType::PUNCTUATOR_LOGICAL_OR: {
-            TryAddValueOfFlagToIntEnumOperand(left, right);
-            TryAddValueOfFlagToIntEnumOperand(right, left);
+            TryAddValueOfFlagToNumericEnumOperand(left, right);
+            TryAddValueOfFlagToNumericEnumOperand(right, left);
             break;
         }
         default:

@@ -442,7 +442,7 @@ bool ETSChecker::IsClassStaticMethod(checker::ETSObjectType *objType, checker::S
 [[nodiscard]] TypeFlag ETSChecker::TypeKind(const Type *const type) noexcept
 {
     // These types were not present in the ETS_TYPE list. Some of them are omitted intentionally, other are just bugs
-    static constexpr auto TO_CLEAR = TypeFlag::CONSTANT | TypeFlag::GENERIC | TypeFlag::ETS_INT_ENUM |
+    static constexpr auto TO_CLEAR = TypeFlag::CONSTANT | TypeFlag::GENERIC | TypeFlag::ETS_NUMERIC_ENUM |
                                      TypeFlag::ETS_STRING_ENUM | TypeFlag::READONLY | TypeFlag::BIGINT_LITERAL |
                                      TypeFlag::ETS_TYPE_ALIAS | TypeFlag::TYPE_ERROR;
 

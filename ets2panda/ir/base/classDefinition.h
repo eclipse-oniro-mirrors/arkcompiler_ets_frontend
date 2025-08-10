@@ -56,12 +56,11 @@ enum class ClassDefinitionModifiers : uint32_t {
     CLASSDEFINITION_CHECKED = 1U << 12U,
     NAMESPACE_TRANSFORMED = 1U << 13U,
     STRING_ENUM_TRANSFORMED = 1U << 14U,
-    INT_ENUM_TRANSFORMED = 1U << 15U,
+    NUMERIC_ENUM_TRANSFORMED = 1U << 15U,
     FROM_STRUCT = 1U << 16U,
     FUNCTIONAL_REFERENCE = 1U << 17U,
     LAZY_IMPORT_OBJECT_CLASS = 1U << 18U,
     INIT_IN_CCTOR = 1U << 19U,
-    DOUBLE_ENUM_TRANSFORMED = 1U << 20U,
     DECLARATION_ID_REQUIRED = DECLARATION | ID_REQUIRED,
     ETS_MODULE = NAMESPACE_TRANSFORMED | GLOBAL
 };
@@ -253,14 +252,9 @@ public:
         return (Modifiers() & ClassDefinitionModifiers::ANONYMOUS) != 0;
     }
 
-    [[nodiscard]] bool IsIntEnumTransformed() const noexcept
+    [[nodiscard]] bool IsNumericEnumTransformed() const noexcept
     {
-        return (Modifiers() & ClassDefinitionModifiers::INT_ENUM_TRANSFORMED) != 0;
-    }
-
-    [[nodiscard]] bool IsDoubleEnumTransformed() const noexcept
-    {
-        return (Modifiers() & ClassDefinitionModifiers::DOUBLE_ENUM_TRANSFORMED) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::NUMERIC_ENUM_TRANSFORMED) != 0;
     }
 
     [[nodiscard]] bool IsStringEnumTransformed() const noexcept
@@ -270,7 +264,7 @@ public:
 
     [[nodiscard]] bool IsEnumTransformed() const noexcept
     {
-        return IsIntEnumTransformed() || IsStringEnumTransformed() || IsDoubleEnumTransformed();
+        return IsNumericEnumTransformed() || IsStringEnumTransformed();
     }
 
     [[nodiscard]] bool IsNamespaceTransformed() const noexcept

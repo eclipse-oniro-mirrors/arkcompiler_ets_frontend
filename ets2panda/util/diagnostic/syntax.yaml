@@ -225,9 +225,9 @@ syntax:
   id: 36
   message: "Invalid enum initialization value"
 
-- name: ENUM_STRING_TYPE_ALL_ITEMS_INIT
+- name: ENUM_NON_INT_TYPE_ALL_ITEMS_INIT
   id: 276
-  message: "All items of string-type enumeration should be explicitly initialized."
+  message: "All items of non-Integer enumeration should be explicitly initialized."
 
 - name: ERROR_ARKTS_NO_AMBIENT_DECLS
   id: 308
@@ -1293,8 +1293,7 @@ syntax:
 
 - name: UNSUPPORTED_ENUM_TYPE
   id: 327
-  message: "Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal
-    types, not annotations."
+  message: "Unsupported enum type annotation. Supported enum types are: integral types, floating point types and string."
 
 - name: UNSUPPORTED_IN_OPERATOR_TYPE
   id: 58212
@@ -1335,6 +1334,10 @@ syntax:
 - name: WITH_DEPRECATED
   id: 161
   message: "'With' is deprecated and not supported any more."
+
+- name: WRONG_ENUM_TYPE
+  id: 56791
+  message: "Member type {} cannot be assigned to enum type {}."
 
 - name: WRONG_LEFT_OF_INSTANCEOF
   id: 310

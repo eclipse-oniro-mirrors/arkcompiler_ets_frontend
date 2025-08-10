@@ -315,7 +315,7 @@ size_t SizeOfNodeTest::SizeOf<TSEnumDeclaration>()
         sizeof(node->members_) +
         sizeof(node->internalName_) +
         sizeof(node->boxedClass_) +
-        sizeof(node->typeNode_) +
+        sizeof(node->typeAnnotation_) +
         Align(sizeof(node->isConst_));
     // clang-format on
 }

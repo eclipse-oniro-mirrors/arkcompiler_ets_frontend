@@ -409,23 +409,33 @@ ETSObjectType *ETSChecker::CreateETSObjectType(
     auto const relation = caches.has_value() ? caches->second : Relation();
 
     auto const [name, internalName] = GetObjectTypeDeclNames(declNode);
-
     if (declNode->IsClassDefinition() && (declNode->AsClassDefinition()->IsEnumTransformed())) {
-        if (declNode->AsClassDefinition()->IsIntEnumTransformed()) {
-            return allocator->New<ETSIntEnumType>(allocator, name, internalName, declNode, relation);
+        ETSEnumType *enumObject = nullptr;
+        if (declNode->AsClassDefinition()->IsNumericEnumTransformed()) {
+            enumObject = allocator->New<ETSNumericEnumType>(ProgramAllocator(), name, internalName, declNode, relation);
+        } else {
+            ES2PANDA_ASSERT(declNode->AsClassDefinition()->IsStringEnumTransformed());
+            enumObject = allocator->New<ETSStringEnumType>(ProgramAllocator(), name, internalName, declNode, relation);
         }
-        if (declNode->AsClassDefinition()->IsDoubleEnumTransformed()) {
-            return ProgramAllocator()->New<ETSDoubleEnumType>(ProgramAllocator(), name, internalName, declNode,
-                                                              Relation());
+
+        ir::TSEnumDeclaration *originalDecl = declNode->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
+        if (originalDecl->TypeAnnotation() != nullptr) {
+            enumObject->SetEnumType(originalDecl->TypeAnnotation(), this);
         }
-        ES2PANDA_ASSERT(declNode->AsClassDefinition()->IsStringEnumTransformed());
-        return allocator->New<ETSStringEnumType>(allocator, name, internalName, declNode, relation);
+        return enumObject;
     }
 
+    ETSObjectType *objectType = nullptr;
     if (internalName == compiler::Signatures::BUILTIN_ARRAY) {
-        return allocator->New<ETSResizableArrayType>(allocator, name, std::make_tuple(declNode, flags, relation));
+        objectType =
+            allocator->New<ETSResizableArrayType>(ProgramAllocator(), name, std::make_tuple(declNode, flags, relation));
+        return objectType;
     }
-    return allocator->New<ETSObjectType>(allocator, name, internalName, std::make_tuple(declNode, flags, relation));
+
+    objectType = allocator->New<ETSObjectType>(ProgramAllocator(), name, internalName,
+                                               std::make_tuple(declNode, flags, relation));
+
+    return objectType;
 }
 
 std::tuple<util::StringView, SignatureInfo *> ETSChecker::CreateBuiltinArraySignatureInfo(const ETSArrayType *arrayType,

@@ -70,7 +70,7 @@ enum class TypeFlag : uint64_t {
     WILDCARD = 1ULL << 42ULL,                 // new A<?>()
     ETS_TYPE_PARAMETER = 1ULL << 43ULL,       // ETS type parameter
     GENERIC = 1ULL << 45ULL,                  // ETS Generic
-    ETS_INT_ENUM = 1ULL << 46ULL,             // ETS Enum
+    ETS_NUMERIC_ENUM = 1ULL << 46ULL,         // ETS Enum
     ETS_STRING_ENUM = 1ULL << 47ULL,          // ETS string-type Enumeration
     ETS_RETURN_TYPE_UTILITY = 1ULL << 48ULL,  // ETS ReturnType<T> utility type
     GETTER = 1ULL << 49ULL,                   // ETS Getter
@@ -93,9 +93,9 @@ enum class TypeFlag : uint64_t {
     ETS_FLOATING_POINT = FLOAT | DOUBLE,
     ETS_NUMERIC = ETS_INTEGRAL_NUMERIC | ETS_FLOATING_POINT,
     ETS_INTEGRAL = ETS_INTEGRAL_NUMERIC | CHAR,
-    ETS_ENUM = ETS_INT_ENUM | ETS_STRING_ENUM,
+    ETS_ENUM = ETS_NUMERIC_ENUM | ETS_STRING_ENUM,
     ETS_ARRAY_INDEX = BYTE | SHORT | INT,
-    ETS_CONVERTIBLE_TO_NUMERIC = ETS_NUMERIC | CHAR | ETS_INT_ENUM,  // NOTE char should be removed
+    ETS_CONVERTIBLE_TO_NUMERIC = ETS_NUMERIC | CHAR | ETS_NUMERIC_ENUM,  // NOTE char should be removed
     ETS_ARRAY_OR_OBJECT = ETS_ARRAY | ETS_OBJECT,
     ANY_OR_UNKNOWN = ANY | UNKNOWN,
     ANY_OR_VOID = ANY | VOID,

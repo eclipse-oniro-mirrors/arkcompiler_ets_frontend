@@ -66,7 +66,7 @@
     _(TypeFlag::ETS_READONLY, ETSReadonlyType)                         \
     _(TypeFlag::ETS_AWAITED, ETSAwaitedType)                           \
     _(TypeFlag::ETS_RETURN_TYPE_UTILITY, ETSReturnTypeUtilityType)     \
-    _(TypeFlag::ETS_INT_ENUM, ETSIntEnumType)                          \
+    _(TypeFlag::ETS_NUMERIC_ENUM, ETSNumericEnumType)                  \
     _(TypeFlag::ETS_STRING_ENUM, ETSStringEnumType)                    \
     _(TypeFlag::ETS_ENUM, ETSEnumType)                                 \
     _(TypeFlag::ETS_EXTENSION_FUNC_HELPER, ETSExtensionFuncHelperType) \
