@@ -72,7 +72,8 @@ set(ES2PANDA_LSP_SRC
   ./src/get_name_or_dotted_name_span.cpp
 )
 
-panda_add_library(${LSP_LIB} SHARED ${ES2PANDA_LSP_SRC})
+panda_frontend_add_library(${LSP_LIB} SHARED ${ES2PANDA_LSP_SRC})
+add_dependencies(frontend_bins ${LSP_LIB})
 
 panda_target_include_directories(${LSP_LIB}
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -81,7 +82,7 @@ panda_target_include_directories(${LSP_LIB}
 )
 
 panda_target_compile_options(${LSP_LIB}
-  PRIVATE -fexceptions -Werror=shadow
+  PRIVATE -fexceptions -Werror=shadow -Wno-return-type-c-linkage
 )
 
 panda_target_link_libraries(${LSP_LIB}

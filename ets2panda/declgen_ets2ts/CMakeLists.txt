@@ -21,7 +21,7 @@ set(DECLGEN_ETS2TS_INCLUDE_DIRS
     ${CMAKE_CURRENT_BINARY_DIR}/..
 )
 
-panda_add_executable(declgen_ets2ts ${DECLGEN_ETS2TS_SRC})
+panda_frontend_add_executable(declgen_ets2ts ${DECLGEN_ETS2TS_SRC})
 panda_target_link_libraries(declgen_ets2ts es2panda-public es2panda-lib arkassembler arkbytecodeopt)
 panda_target_include_directories(declgen_ets2ts PRIVATE ${DECLGEN_ETS2TS_INCLUDE_DIRS})
 panda_target_compile_options(declgen_ets2ts PRIVATE -fexceptions)
