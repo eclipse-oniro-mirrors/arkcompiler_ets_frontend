@@ -35,15 +35,14 @@ import {
     LogDataFactory,
     Logger
 } from '../logger';
-import { ErrorCode } from '../error_code';
+import { ErrorCode } from '../util/error';
 import {
     BuildConfig,
     BUILD_MODE,
     AliasConfig
 } from '../types';
-import { initKoalaModules } from './init_koala_modules';
 
-export function processBuildConfig(projectConfig: BuildConfig): BuildConfig {
+export function initBuildConfig(projectConfig: BuildConfig): BuildConfig {
     let buildConfig: BuildConfig = {
         ...projectConfig,
         isBuildConfigModified: false
@@ -58,7 +57,6 @@ export function processBuildConfig(projectConfig: BuildConfig): BuildConfig {
     checkCacheProjectConfig(buildConfig);
     initPlatformSpecificConfig(buildConfig);
     initBuildEnv(buildConfig);
-    initKoalaModules(buildConfig);
     PluginDriver.getInstance().initPlugins(buildConfig);
     initAliasConfig(buildConfig);
     initInteropSDKInfo(buildConfig);
@@ -119,7 +117,7 @@ function initPlatformSpecificConfig(buildConfig: BuildConfig): void {
 
     if (!buildConfig.frameworkMode && !buildConfig.enableDeclgenEts2Ts && !fs.existsSync(buildConfig.dependencyAnalyzerPath as string)) {
         const logData: LogData = LogDataFactory.newInstance(
-            ErrorCode.BUILDSYSTEM_Dependency_Analyzer_NOT_FOUND_FAIL,
+            ErrorCode.BUILDSYSTEM_DEPENDENCY_ANALYZER_NOT_FOUND_FAIL,
             'Dependency_analyzer not found in path.',
             '',
             buildConfig.dependencyAnalyzerPath as string

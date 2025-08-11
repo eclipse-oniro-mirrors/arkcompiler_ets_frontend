@@ -13,51 +13,22 @@
  * limitations under the License.
  */
 
-import { Logger, LogDataFactory, LogData } from '../../../src/logger';
-import { SubsystemCode, ErrorCode } from '../../../src/error_code';
-import { BuildConfig, BUILD_TYPE, BUILD_MODE } from '../../../src/types';
-
-function createMockBuildConfig(): BuildConfig {
-    return {
-        getHvigorConsoleLogger: jest.fn(() => ({
-            printInfo: jest.fn(),
-            printWarn: jest.fn(),
-            printDebug: jest.fn(),
-            printError: jest.fn(),
-            printErrorAndExit: jest.fn(),
-        })),
-        packageName: 'mockpkg',
-        moduleType: 'shared',
-        moduleRootPath: '/mock/module',
-        sourceRoots: [],
-        byteCodeHar: false,
-        plugins: {},
-        compileFiles: [],
-        dependentModuleList: [],
-        buildType: BUILD_TYPE.BUILD,
-        buildMode: BUILD_MODE.DEBUG,
-        hasMainModule: true,
-        arkts: {} as any,
-        arktsGlobal: {} as any,
-        declgenV1OutPath: undefined,
-        declgenV2OutPath: undefined,
-        declgenBridgeCodePath: undefined,
-        buildSdkPath: '',
-        loaderOutPath: '',
-        cachePath: '',
-        externalApiPaths: [],
-        enableDeclgenEts2Ts: false,
-        //`as unknown` to satisfy TypeScript type checking
-    } as unknown as BuildConfig;
-}
+import {
+    ILogger,
+    Logger,
+    LogDataFactory,
+    LogData,
+    SubsystemCode,
+    getConsoleLogger
+} from '../../../src/logger';
+import { ErrorCode } from '../../../src/util/error';
+import { getMockLoggerGetter } from '../mock/data'
 
 // This test suite is for the Logger class, which handles logging for different subsystems in the build system.
 describe('test Logger class', () => {
-    let logger: Logger;
 
     beforeEach(() => {
-        Logger.destroyInstance();
-        logger = Logger.getInstance(createMockBuildConfig());
+        Logger.getInstance(getMockLoggerGetter());
     });
 
     afterEach(() => {
@@ -67,21 +38,24 @@ describe('test Logger class', () => {
 
     test('singleton', () => {
         Logger.destroyInstance();
-        expect(() => Logger.getInstance()).toThrow('projectConfig is required for the first instantiation.');
-        const logger1 = Logger.getInstance(createMockBuildConfig());
+        expect(() => Logger.getInstance()).toThrow('loggerGetter is required for the first instantiation.');
+        const logger1 = Logger.getInstance(getMockLoggerGetter());
         const logger2 = Logger.getInstance();
         expect(logger1).toBe(logger2);
-        const logger3 = Logger.getInstance(createMockBuildConfig());
+        const logger3 = Logger.getInstance(getMockLoggerGetter());
         Logger.destroyInstance();
-        const logger4 = Logger.getInstance(createMockBuildConfig());
+        const logger4 = Logger.getInstance(getMockLoggerGetter());
         expect(logger3).not.toBe(logger4);
     });
 
+    test('consoleLogger', () => {
+        getConsoleLogger('TEST')
+    });
+
     test('printInfo', () => {
-        const spy = jest.fn();
-        (logger as any).loggerMap[SubsystemCode.BUILDSYSTEM].printInfo = spy;
-        (logger as any).loggerMap[SubsystemCode.BUILDSYSTEM].printWarn = spy;
-        (logger as any).loggerMap[SubsystemCode.BUILDSYSTEM].printDebug = spy;
+        const spy: jest.Mock = jest.fn();
+        Logger.destroyInstance();
+        const logger = Logger.getInstance(getMockLoggerGetter(spy));
         logger.printInfo('info');
         logger.printWarn('warn');
         logger.printDebug('debug');
@@ -91,21 +65,25 @@ describe('test Logger class', () => {
     });
 
     test('printError && printErrorAndExit', () => {
-        const spy = jest.fn();
-        // insert persudo code '001' && '002' into the map, for testing.
-        (logger as any).loggerMap['001'] = { printError: spy };
-        (logger as any).loggerMap['002'] = { printErrorAndExit: spy };
+        const spy: jest.Mock = jest.fn();
+        const logger: Logger = Logger.getInstance();
+
+        (logger as any).loggerMap['001' as SubsystemCode] = getMockLoggerGetter(spy)('001' as SubsystemCode);
+        (logger as any).loggerMap['002' as SubsystemCode] = getMockLoggerGetter(spy)('002' as SubsystemCode);
+
         let logData = LogDataFactory.newInstance('00100001' as ErrorCode, 'desc');
         logger.printError(logData);
-        expect((logger as any).hasErrorOccurred).toBe(true);
+        expect(logger.hasErrors()).toBe(true);
         expect(spy).toHaveBeenCalledWith(logData);
+
         logData = LogDataFactory.newInstance('00200001' as ErrorCode, 'desc');
         logger.printErrorAndExit(logData);
-        expect((logger as any).hasErrorOccurred).toBe(true);
+        expect(logger.hasErrors()).toBe(true);
         expect(spy).toHaveBeenCalledWith(logData);
     });
 
     test('hasErrors && resetErrorFlag', () => {
+        const logger = Logger.getInstance()
         expect(logger.hasErrors()).toBe(false);
         (logger as any).hasErrorOccurred = true;
         expect(logger.hasErrors()).toBe(true);
@@ -114,37 +92,31 @@ describe('test Logger class', () => {
     });
 
     test('ValidErrorCode', () => {
-        expect((logger as any).isValidErrorCode('12345678')).toBe(true);
-        expect((logger as any).isValidErrorCode('1234567')).toBe(false);
-        expect((logger as any).isValidErrorCode('abcdefgh')).toBe(false);
-        expect(() => (logger as any).getLoggerFromSubsystemCode('INVALID')).toThrow('Invalid subsystemCode.');
+        const logger = Logger.getInstance()
+        expect((logger as any).isValidErrorCode('12345678' as ErrorCode)).toBe(true);
+        expect((logger as any).isValidErrorCode('1234567' as ErrorCode)).toBe(false);
+        expect((logger as any).isValidErrorCode('abcdefgh' as ErrorCode)).toBe(false);
     });
 
     test('getLoggerFromSubsystemCode', () => {
-        const fakeLogger = {
-            printInfo: jest.fn(), printWarn: jest.fn(),
-            printDebug: jest.fn(), printError: jest.fn(), printErrorAndExit: jest.fn()
-        };
-        (logger as any).loggerMap['FKLGR'] = fakeLogger;
-        expect((logger as any).getLoggerFromSubsystemCode('FKLGR')).toBe(fakeLogger);
+        const logger = Logger.getInstance();
+        expect(() => { (logger as any).getLoggerFromSubsystemCode('INVALID' as SubsystemCode) }).toThrow('Invalid subsystemCode.');
+        const fakeLogger: ILogger = getMockLoggerGetter()('FKLGR' as SubsystemCode);
+        (logger as any).loggerMap['FKLGR' as SubsystemCode] = fakeLogger;
+        expect((logger as any).getLoggerFromSubsystemCode('FKLGR' as SubsystemCode)).toBe(fakeLogger);
     });
 
     test('getLoggerFromErrorCode', () => {
-        expect(() => (logger as any).getLoggerFromErrorCode('badcode')).toThrow('Invalid errorCode.');
-        const fakeLogger = {
-            printInfo: jest.fn(),
-            printWarn: jest.fn(),
-            printDebug: jest.fn(),
-            printError: jest.fn(),
-            printErrorAndExit: jest.fn(),
-        };
-        (logger as any).loggerMap['001'] = fakeLogger;
-        expect((logger as any).getLoggerFromErrorCode('00100001')).toBe(fakeLogger);
+        const logger = Logger.getInstance();
+        expect(() => (logger as any).getLoggerFromErrorCode('badcode' as ErrorCode)).toThrow('Invalid errorCode.');
+        const fakeLogger: ILogger = (getMockLoggerGetter())('001' as SubsystemCode);
+        (logger as any).loggerMap['001' as SubsystemCode] = fakeLogger;
+        expect((logger as any).getLoggerFromErrorCode('00100001' as ErrorCode)).toBe(fakeLogger);
     });
 });
 
 // This test suite is for the LogDataFactory and LogData classes, which are used to create log data instances.
-describe('test LogDataFactory && LogData', () => {
+describe('test LogDataFactory and LogData', () => {
     test('LogDataFactory.newInstance creates LogData', () => {
         let logData = LogDataFactory.newInstance(
             '00100001' as ErrorCode, 'desc', 'cause', 'pos', ['sol1', 'sol2'], { foo: 'bar' });
@@ -162,10 +134,37 @@ describe('test LogDataFactory && LogData', () => {
         expect(str).toContain('> sol1');
         expect(str).toContain('More Info:');
         expect(str).toContain('FOO: bar');
-        logData = LogDataFactory.newInstance('00100001' as ErrorCode, 'desc', '', '', [''], undefined);
+        logData = LogDataFactory.newInstance('00100001' as ErrorCode, 'desc');
         str = logData.toString();
         expect(str).toContain('ERROR Code: 00100001 desc');
         expect(str).not.toContain('Error Message:');
         expect(str).not.toContain('More Info:');
+    });
+});
+
+describe('test console logger', () => {
+    test('print', () => {
+        const logger = getConsoleLogger('test');
+        const spy = jest.fn()
+        global.console.info = spy
+        global.console.debug = spy
+        global.console.warn = spy
+        global.console.error = spy
+        global.process.exit = jest.fn() as any
+
+        logger.printInfo('info')
+        logger.printDebug('debug')
+        logger.printWarn('warn')
+        const errorData: LogData = LogDataFactory.newInstance('00100001' as ErrorCode, 'desc');
+        const errorDataStr: string = errorData.toString();
+
+        logger.printError(errorData)
+        logger.printErrorAndExit(errorData)
+
+        expect(spy).toHaveBeenCalledWith('info');
+        expect(spy).toHaveBeenCalledWith('warn');
+        expect(spy).toHaveBeenCalledWith('debug');
+        expect(spy).toHaveBeenNthCalledWith(4, errorDataStr);
+        expect(spy).toHaveBeenNthCalledWith(5, errorDataStr);
     });
 });

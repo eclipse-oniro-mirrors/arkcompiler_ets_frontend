@@ -23,5 +23,5 @@
     "declgenDtsOutPath": "./dist/cache/demo_mix_hap/decl",
     "declgenTsOutPath": "./dist/cache/demo_mix_hap/ts",
 
-    "dependentModuleList": []
+    "dependencyModuleList": []
 }

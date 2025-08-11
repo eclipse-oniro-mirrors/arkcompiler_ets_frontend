@@ -49,9 +49,6 @@ export interface BuildBaseConfig {
     buildMode: BUILD_MODE;
     es2pandaMode: ES2PANDA_MODE;
     hasMainModule: boolean;
-    arkts: ArkTS;
-    arktsGlobal: ArkTSGlobal;
-    maxWorkers?: number;
     isBuildConfigModified?: boolean;
     recordType?: RECORD_TYPE;
 }
@@ -91,6 +88,7 @@ export interface ArkTS {
     destroyConfig: Function;
     Es2pandaContextState: typeof Es2pandaContextState;
     MemInitialize: Function;
+    MemFinalize: Function;
     CreateGlobalContext: Function;
     AstNode: AstNode;
     ETSImportDeclaration: ETSImportDeclaration;
@@ -127,6 +125,7 @@ export interface ModuleConfig {
     moduleRootPath: string;
     sourceRoots: string[];
     byteCodeHar: boolean;
+    entryFile: string;
 }
 
 export interface PathConfig {
@@ -180,7 +179,7 @@ export interface LoggerConfig {
     getHvigorConsoleLogger?: Function;
 }
 
-export interface DependentModuleConfig {
+export interface DependencyModuleConfig {
     packageName: string;
     moduleName: string;
     moduleType: string;
@@ -194,25 +193,25 @@ export interface DependentModuleConfig {
     declgenV1OutPath?: string;
     declgenV2OutPath?: string;
     declgenBridgeCodePath?: string;
-    byteCodeHar: boolean;
+    byteCodeHar?: boolean;
 }
 
 export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfig, ModuleConfig, PathConfig, FrameworkConfig {
     plugins: PluginsConfig;
     paths: PathsConfig; // paths config passed from template to generate arktsconfig.json "paths" configs.
     compileFiles: string[];
-    entryFiles?: string[];
-    dependentModuleList: DependentModuleConfig[];
+    dependencyModuleList: DependencyModuleConfig[];
     aliasConfig: Record<string, Record<string, AliasConfig>>;
+    // NOTE: left to be backward compatible with old version of build config
+    // TO BE REMOVED!!
+    dependentModuleList: DependencyModuleConfig[];
 }
 // ProjectConfig ends
 
 export interface CompileFileInfo {
-    filePath: string;
-    dependentFiles: string[];
-    abcFilePath: string;
+    inputFilePath: string;
+    outputFilePath: string;
     arktsConfigFile: string;
-    packageName: string;
 };
 
 export interface ModuleInfo {
@@ -223,22 +222,18 @@ export interface ModuleInfo {
     sourceRoots: string[];
     entryFile: string;
     arktsConfigFile: string;
-    compileFileInfos: CompileFileInfo[];
-    declgenV1OutPath: string | undefined;
-    declgenV2OutPath: string | undefined;
-    declgenBridgeCodePath: string | undefined;
-    dependencies?: string[];
-    staticDepModuleInfos: Map<string, ModuleInfo>;
-    dynamicDepModuleInfos: Map<string, ModuleInfo>;
+    declgenV1OutPath?: string;
+    declgenV2OutPath?: string;
+    declgenBridgeCodePath?: string;
+    dependencies: string[];
+    staticDependencyModules: Map<string, ModuleInfo>;
+    dynamicDependencyModules: Map<string, ModuleInfo>;
     language?: string;
     declFilesPath?: string;
     abcPath?: string;
     frameworkMode?: boolean;
     useEmptyPackage?: boolean;
-    byteCodeHar: boolean;
-    //for topological order merging
-    dependenciesSet: Set<string>;
-    dependentSet: Set<string>;
+    byteCodeHar?: boolean;
 }
 
 export type SetupClusterOptions = {
@@ -246,23 +241,6 @@ export type SetupClusterOptions = {
     execPath?: string;
     execArgs?: string[];
 };
-
-export interface DependencyFileConfig {
-    dependants: {
-        [filePath: string]: string[];
-    };
-    dependencies: {
-        [filePath: string]: string[];
-    }
-}
-
-export interface JobInfo {
-    id: string;
-    isCompileAbc: boolean;
-    compileFileInfo: CompileFileInfo;
-    buildConfig: Object;
-    globalContextPtr?: KPointer;
-}
 
 export type KPointer = number | bigint;
 
@@ -305,10 +283,10 @@ export enum Es2pandaImportFlags {
 }
 
 export enum ES2PANDA_MODE {
-    RUN_PARALLEL = 0,
-    RUN_CONCURRENT = 1,
-    RUN = 2,
-    RUN_WITH_MUTIL = 3
+    RUN_PARALLEL = "parallel",
+    RUN_CONCURRENT = "concurrent",
+    RUN_SIMULTANEOUS = "simultaneous",
+    RUN = "sequential"
 };
 
 export interface DynamicFileContext {
@@ -339,8 +317,22 @@ export interface ArkTSConfigObject {
     }
 };
 
-export interface CompilePayload {
-    fileInfo: CompileFileInfo;
+export interface CompileTask {
+    job: CompileJobInfo;
+}
+
+export interface ProcessCompileTask extends CompileTask {
     buildConfig: BuildConfig;
-    moduleInfos: [string, ModuleInfo][];
+}
+
+export interface JobInfo {
+    id: string;
+    isAbcJob: boolean;
+    fileList: string[];
+    jobDependencies: string[];
+    jobDependants: string[];
+}
+
+export interface CompileJobInfo extends JobInfo {
+    compileFileInfo: CompileFileInfo
 }

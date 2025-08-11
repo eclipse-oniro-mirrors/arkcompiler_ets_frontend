@@ -14,7 +14,6 @@
  */
 
 import { parentPort, workerData } from 'worker_threads';
-import { JobInfo } from '../types';
 import * as path from 'path';
 import {
     changeFileExtension,
@@ -22,65 +21,64 @@ import {
 } from '../util/utils';
 import {
     DECL_ETS_SUFFIX,
-    KOALA_WRAPPER_PATH_FROM_SDK
 } from '../pre_define';
 import { PluginDriver, PluginHook } from '../plugins/plugins_driver';
 import {
     BuildConfig,
     BUILD_MODE,
-    OHOS_MODULE_TYPE
+    OHOS_MODULE_TYPE,
+    KPointer,
+    CompileJobInfo
 } from '../types';
 import {
     LogData,
     LogDataFactory,
-    Logger
+    Logger,
 } from '../logger';
-import { ErrorCode } from '../error_code';
+import { ErrorCode } from '../util/error';
 import { KitImportTransformer } from '../plugins/KitImportTransformer';
 import { initKoalaModules } from '../init/init_koala_modules';
 
 const { workerId } = workerData;
 
-function compileAbc(jobInfo: JobInfo): void {
-    let config = jobInfo.buildConfig as BuildConfig;
-    Logger.getInstance(config);
-    PluginDriver.getInstance().initPlugins(config);
-    let { arkts, arktsGlobal } = initKoalaModules(config)
-    const isDebug = config.buildMode === BUILD_MODE.DEBUG;
+function compileAbc(jobInfo: CompileJobInfo, globalContextPtr: KPointer, buildConfig: BuildConfig): void {
+    PluginDriver.getInstance().initPlugins(buildConfig);
+    let { arkts, arktsGlobal } = initKoalaModules(buildConfig)
+    const isDebug = buildConfig.buildMode === BUILD_MODE.DEBUG;
 
     let errorStatus = false;
     try {
         let fileInfo = jobInfo.compileFileInfo;
-        ensurePathExists(fileInfo.abcFilePath);
+        ensurePathExists(fileInfo.inputFilePath);
 
         const ets2pandaCmd = [
             '_', '--extension', 'ets',
             '--arktsconfig', fileInfo.arktsConfigFile,
-            '--output', fileInfo.abcFilePath,
+            '--output', fileInfo.inputFilePath,
         ];
 
         if (isDebug) {
             ets2pandaCmd.push('--debug-info');
             ets2pandaCmd.push('--opt-level=0');
         }
-        ets2pandaCmd.push(fileInfo.filePath);
+        ets2pandaCmd.push(fileInfo.inputFilePath);
 
         let arkConfig = arkts.Config.create(ets2pandaCmd).peer;
         arktsGlobal.config = arkConfig;
 
-        let context = arkts.Context.createCacheContextFromFile(arkConfig, fileInfo.filePath, jobInfo.globalContextPtr, false).peer;
+        let context = arkts.Context.createCacheContextFromFile(arkConfig, fileInfo.inputFilePath, globalContextPtr, false).peer;
 
         PluginDriver.getInstance().getPluginContext().setContextPtr(context);
 
         arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, context);
-        if (config.aliasConfig && Object.keys(config.aliasConfig).length > 0) {
+        if (buildConfig.aliasConfig && Object.keys(buildConfig.aliasConfig).length > 0) {
             // if aliasConfig is set, transform aliasName@kit.xxx to default@ohos.xxx through the plugin
             let ast = arkts.EtsScript.fromContext();
             let transformAst = new KitImportTransformer(
                 arkts,
                 arktsGlobal.compilerContext.program,
-                config.buildSdkPath,
-                config.aliasConfig
+                buildConfig.buildSdkPath,
+                buildConfig.aliasConfig
             ).transform(ast);
             PluginDriver.getInstance().getPluginContext().setArkTSAst(transformAst);
         }
@@ -88,10 +86,10 @@ function compileAbc(jobInfo: JobInfo): void {
 
         arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, context);
 
-        if (config.hasMainModule && (config.byteCodeHar || config.moduleType === OHOS_MODULE_TYPE.SHARED)) {
-            let filePathFromModuleRoot: string = path.relative(config.moduleRootPath, fileInfo.filePath);
+        {
+            let filePathFromModuleRoot: string = path.relative(buildConfig.moduleRootPath, fileInfo.inputFilePath);
             let declEtsOutputPath: string = changeFileExtension(
-                path.join(config.declgenV2OutPath as string, filePathFromModuleRoot),
+                path.join(buildConfig.declgenV2OutPath as string, filePathFromModuleRoot),
                 DECL_ETS_SUFFIX
             );
             ensurePathExists(declEtsOutputPath);
@@ -123,12 +121,10 @@ function compileAbc(jobInfo: JobInfo): void {
     }
 }
 
-function compileExternalProgram(jobInfo: JobInfo): void {
-    let config = jobInfo.buildConfig as BuildConfig;
-    Logger.getInstance(config);
-    PluginDriver.getInstance().initPlugins(config);
-    let { arkts, arktsGlobal } = initKoalaModules(config)
-    const isDebug = config.buildMode === BUILD_MODE.DEBUG;
+function compileDeclaration(jobInfo: CompileJobInfo, globalContextPtr: KPointer, buildConfig: BuildConfig): void {
+    PluginDriver.getInstance().initPlugins(buildConfig);
+    let { arkts, arktsGlobal } = initKoalaModules(buildConfig)
+    const isDebug = buildConfig.buildMode === BUILD_MODE.DEBUG;
 
     let errorStatus = false;
     try {
@@ -139,12 +135,12 @@ function compileExternalProgram(jobInfo: JobInfo): void {
             ets2pandaCmd.push('--debug-info');
             ets2pandaCmd.push('--opt-level=0');
         }
-        ets2pandaCmd.push(fileInfo.filePath);
+        ets2pandaCmd.push(fileInfo.inputFilePath);
 
         let arkConfig = arkts.Config.create(ets2pandaCmd).peer;
         arktsGlobal.config = arkConfig;
 
-        let context = arkts.Context.createCacheContextFromFile(arkConfig, fileInfo.filePath, jobInfo.globalContextPtr, true).peer;
+        let context = arkts.Context.createCacheContextFromFile(arkConfig, fileInfo.inputFilePath, globalContextPtr, true).peer;
 
         PluginDriver.getInstance().getPluginContext().setContextPtr(context);
 
@@ -177,14 +173,14 @@ function compileExternalProgram(jobInfo: JobInfo): void {
     }
 }
 
-parentPort?.on('message', (msg) => {
+parentPort!.on('message', (msg: any) => {
     if (msg.type === 'ASSIGN_TASK') {
-        const job = msg.jobInfo;
+        const { job, globalContextPtr, buildConfig } = msg.data;
 
         if (job.isCompileAbc) {
-            compileAbc(job);
+            compileAbc(job, globalContextPtr, buildConfig);
         } else {
-            compileExternalProgram(job);
+            compileDeclaration(job, globalContextPtr, buildConfig);
         }
 
         parentPort?.postMessage({

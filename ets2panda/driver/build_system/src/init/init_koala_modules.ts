@@ -31,11 +31,6 @@ export function initKoalaModules(buildConfig: BuildConfig) {
         koalaModule.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
     }
 
-    Object.assign(buildConfig, {
-        arkts: koalaModule.arkts,
-        arktsGlobal: koalaModule.arktsGlobal,
-    });
-
     return koalaModule;
 }
 

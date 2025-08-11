@@ -26,15 +26,16 @@ import {
     sdkConfigPrefix
 } from '../pre_define';
 import {
-    Logger,
-    LogData,
     LogDataFactory
 } from '../logger';
-import { ErrorCode } from '../error_code';
+import { ErrorCode, DriverError } from '../util/error';
 import {
     ModuleInfo,
     OHOS_MODULE_TYPE,
-    BuildConfig
+    BuildConfig,
+    DependencyModuleConfig,
+    CompileJobInfo,
+    CompileFileInfo
 } from '../types';
 
 const WINDOWS: string = 'Windows_NT';
@@ -67,8 +68,12 @@ export function changeDeclgenFileExtension(file: string, targetExt: string): str
 }
 
 export function ensurePathExists(filePath: string): void {
+    const dirPath: string = path.dirname(filePath);
+    ensureDirExists(dirPath);
+}
+
+export function ensureDirExists(dirPath: string): void {
     try {
-        const dirPath: string = path.dirname(filePath);
         if (!fs.existsSync(dirPath)) {
             fs.mkdirSync(dirPath, { recursive: true });
         }
@@ -77,11 +82,6 @@ export function ensurePathExists(filePath: string): void {
             console.error(`Error: ${error.message}`);
         }
     }
-}
-
-export function getFileHash(filePath: string): string {
-    const content = fs.readFileSync(filePath, 'utf8');
-    return crypto.createHash('sha256').update(content).digest('hex');
 }
 
 export function toUnixPath(path: string): string {
@@ -101,18 +101,20 @@ export function readFirstLineSync(filePath: string): string | null {
     return firstLine;
 }
 
-export function safeRealpath(path: string, logger: Logger): string {
+export function safeRealpath(path: string): string {
     try {
         return fs.realpathSync(path);
     } catch (error) {
-        const msg = error instanceof Error ? error.message : String(error);
-        const logData: LogData = LogDataFactory.newInstance(
-            ErrorCode.BUILDSYSTEM_PATH_RESOLVE_FAIL,
-            `Error resolving path "${path}".`,
-            msg
-        );
-        logger.printError(logData);
-        throw logData;
+        if (error instanceof Error) {
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_PATH_RESOLVE_FAIL,
+                    `Error resolving path "${path}".`,
+                    error.message
+                )
+            );
+        }
+        throw error
     }
 }
 
@@ -150,8 +152,8 @@ export function getOhmurlByApi(api: string): string {
 }
 
 export function isSubPathOf(targetPath: string, parentDir: string): boolean {
-    const resolvedParent = toUnixPath(path.resolve(parentDir));
-    const resolvedTarget = toUnixPath(path.resolve(targetPath));
+    const resolvedParent: string = path.posix.resolve(parentDir);
+    const resolvedTarget: string = path.posix.resolve(targetPath);
     return resolvedTarget === resolvedParent || resolvedTarget.startsWith(resolvedParent + '/');
 }
 
@@ -195,10 +197,7 @@ export function createFileIfNotExists(filePath: string, content: string): boolea
             return false;
         }
 
-        const dir = path.dirname(normalizedPath);
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
+        ensurePathExists(filePath);
 
         fs.writeFileSync(normalizedPath, content, { encoding: 'utf-8' });
         return true;
@@ -208,7 +207,7 @@ export function createFileIfNotExists(filePath: string, content: string): boolea
 }
 
 export function isMixCompileProject(buildConfig: BuildConfig): boolean {
-    for (const moduleInfo of buildConfig.dependentModuleList) {
+    for (const moduleInfo of buildConfig.dependencyModuleList) {
         if (
             moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1 ||
             moduleInfo.language === LANGUAGE_VERSION.ARKTS_HYBRID
@@ -219,21 +218,46 @@ export function isMixCompileProject(buildConfig: BuildConfig): boolean {
     return false;
 }
 
-export function createTaskId(): string {
-    const timestamp = Date.now().toString(36);
-    const randomPart = Math.random().toString(36).slice(2, 6);
-    return `task-${timestamp}-${randomPart}`;
+export function checkDependencyModuleInfoCorrectness(module: DependencyModuleConfig): boolean {
+    return (module.packageName && module.modulePath && module.sourceRoots && module.entryFile) != "";
 }
 
-export function serializeWithIgnore(obj: any, ignoreKeys: string[] = []): any {
-    const jsonStr = JSON.stringify(obj, (key, value) => {
-        if (typeof value === 'bigint') {
-            return undefined;
-        }
-        if (ignoreKeys.includes(key)) {
-            return undefined;
-        }
-        return value;
-    });
-    return JSON.parse(jsonStr);
+export function computeHash(str: string): string {
+    const hash = crypto.createHash('sha256');
+    return hash.update(str).digest('hex');
 }
+
+export function getFileHash(filePath: string): string {
+    return computeHash(fs.readFileSync(filePath, 'utf8'));
+}
+
+export function formEts2pandaCmd(jobInfo: CompileJobInfo, isDebug: boolean, simultaneous: boolean = false): string[] {
+    let { inputFilePath, outputFilePath, arktsConfigFile }: CompileFileInfo = jobInfo.compileFileInfo;
+
+    const ets2pandaCmd: string[] = [
+        '_',
+        '--extension',
+        'ets',
+        '--arktsconfig',
+        arktsConfigFile
+    ]
+
+    if (simultaneous) {
+        ets2pandaCmd.push('--simultaneous')
+    }
+
+    if (jobInfo.isAbcJob) {
+        ets2pandaCmd.push('--output')
+        ets2pandaCmd.push(outputFilePath)
+    }
+
+    if (isDebug) {
+        ets2pandaCmd.push('--debug-info');
+        ets2pandaCmd.push('--opt-level=0');
+    }
+
+    ets2pandaCmd.push(inputFilePath)
+    return ets2pandaCmd
+}
+
+

@@ -15,19 +15,13 @@
 
 import { CompileFileInfo, ModuleInfo } from '../types';
 import { BuildConfig } from '../types';
-import {
-    Logger,
-    LogData,
-    LogDataFactory
-} from '../logger';
-import { ErrorCode } from '../error_code';
+import { Logger, getConsoleLogger } from '../logger';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
     changeDeclgenFileExtension,
     changeFileExtension,
     createFileIfNotExists,
-    serializeWithIgnore,
     ensurePathExists
 } from '../util/utils';
 import {
@@ -43,6 +37,7 @@ import { initKoalaModules } from '../init/init_koala_modules';
 process.on('message', async (message: {
     id: string;
     payload: {
+        packageName: string,
         fileInfo: CompileFileInfo;
         buildConfig: BuildConfig;
         moduleInfos: Array<[string, ModuleInfo]>;
@@ -53,20 +48,19 @@ process.on('message', async (message: {
     }
 
     const { id, payload } = message;
-    const { fileInfo, buildConfig, moduleInfos } = payload;
+    const { packageName, fileInfo, buildConfig, moduleInfos } = payload;
     const moduleInfosMap = new Map<string, ModuleInfo>(moduleInfos);
-    const logger = Logger.getInstance(buildConfig);
+    const logger = Logger.getInstance(getConsoleLogger);
     const pluginDriver = PluginDriver.getInstance();
     pluginDriver.initPlugins(buildConfig);
 
     let { arkts, arktsGlobal } = initKoalaModules(buildConfig)
-    let errorStatus = false;
-    let continueOnError = buildConfig.continueOnError ?? true;
-    try {
-        const source = fs.readFileSync(fileInfo.filePath, 'utf8');
-        const moduleInfo = moduleInfosMap.get(fileInfo.packageName)!;
 
-        let filePathFromModuleRoot = path.relative(moduleInfo.moduleRootPath, fileInfo.filePath);
+    try {
+        const source = fs.readFileSync(fileInfo.inputFilePath, 'utf8');
+        const moduleInfo = moduleInfosMap.get(packageName)!;
+
+        let filePathFromModuleRoot = path.relative(moduleInfo.moduleRootPath, fileInfo.inputFilePath);
         let declEtsOutputPath = path.join(moduleInfo.declgenV1OutPath!, moduleInfo.packageName, filePathFromModuleRoot);
         declEtsOutputPath = changeDeclgenFileExtension(declEtsOutputPath, DECL_ETS_SUFFIX);
 
@@ -85,14 +79,14 @@ process.on('message', async (message: {
         );
         createFileIfNotExists(staticRecordPath, STATIC_RECORD_FILE_CONTENT);
 
-        arktsGlobal.filePath = fileInfo.filePath;
+        arktsGlobal.filePath = fileInfo.inputFilePath;
         arktsGlobal.config = arkts.Config.create([
             '_',
             '--extension',
             'ets',
             '--arktsconfig',
             fileInfo.arktsConfigFile,
-            fileInfo.filePath
+            fileInfo.inputFilePath
         ]).peer;
 
         arktsGlobal.compilerContext = arkts.Context.createFromStringWithHistory(source);
@@ -119,27 +113,19 @@ process.on('message', async (message: {
             genDeclAnnotations
         );
 
-        logger.printInfo(`[declgen] ${fileInfo.filePath} processed successfully`);
+        logger.printInfo(`[declgen] ${fileInfo.inputFilePath} processed successfully`);
 
-        process.send({ id, success: true, shouldKill: false });
+        process.send({ id, success: true });
     } catch (err) {
-        errorStatus = true;
         if (err instanceof Error) {
-            const logData: LogData = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_DECLGEN_FAIL,
-                'Declgen generates declaration files failed.',
-                err.message,
-                fileInfo.filePath
-            );
             process.send({
                 id,
                 success: false,
-                shouldKill: !continueOnError,
-                error: serializeWithIgnore(logData)
+                error: `Generate declaration files failed.\n${err?.message || err}`
             });
         }
     } finally {
-        if (!errorStatus && arktsGlobal?.compilerContext?.peer) {
+        if (arktsGlobal?.compilerContext?.peer) {
             arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
         }
         if (arktsGlobal?.config) {

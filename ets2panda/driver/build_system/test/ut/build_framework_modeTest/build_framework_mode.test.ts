@@ -43,7 +43,7 @@ describe('test build_framework_mode.ts file api', () => {
         moduleRootPath: '/test/path',
         buildMode: BUILD_MODE.DEBUG,
         plugins: {} as PluginsConfig,
-        dependentModuleList: [],
+        dependencyModuleList: [],
         hasMainModule: false,
         byteCodeHar: false,
         arkts: {} as any,

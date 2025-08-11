@@ -13,33 +13,40 @@
  * limitations under the License.
  */
 
-import { BuildConfig } from './types';
-import {
-    ErrorCode,
-    SubsystemCode
-} from './error_code';
+import { ErrorCode } from './util/error'
+
+export enum SubsystemCode {
+    BUILDSYSTEM = '114',
+    ES2PANDA = '115',
+}
+
+export interface ILogger {
+    printInfo(message: string): void;
+    printWarn(message: string): void;
+    printDebug(message: string): void;
+    printError(error: LogData): void;
+    printErrorAndExit(error: LogData): void;
+}
+
+export type LoggerGetter = (code: SubsystemCode) => ILogger;
 
 export class Logger {
-    private static instance: Logger | undefined;
+    private static instance?: Logger;
     private loggerMap: { [key in SubsystemCode]?: ILogger };
     private hasErrorOccurred: boolean = false;
 
-    private constructor(projectConfig: BuildConfig) {
-        if (typeof projectConfig.getHvigorConsoleLogger !== 'function') {
-            projectConfig.getHvigorConsoleLogger = getConsoleLogger;
-        }
-        let getHvigorConsoleLogger = projectConfig.getHvigorConsoleLogger as Function;
+    private constructor(loggerGetter: LoggerGetter) {
         this.loggerMap = {};
-        this.loggerMap[SubsystemCode.BUILDSYSTEM] = getHvigorConsoleLogger(SubsystemCode.BUILDSYSTEM);
-        this.loggerMap[SubsystemCode.ES2PANDA] = getHvigorConsoleLogger(SubsystemCode.ES2PANDA);
+        this.loggerMap[SubsystemCode.BUILDSYSTEM] = loggerGetter(SubsystemCode.BUILDSYSTEM);
+        this.loggerMap[SubsystemCode.ES2PANDA] = loggerGetter(SubsystemCode.ES2PANDA);
     }
 
-    public static getInstance(projectConfig?: BuildConfig): Logger {
+    public static getInstance(loggerGetter?: LoggerGetter): Logger {
         if (!Logger.instance) {
-            if (!projectConfig) {
-                throw new Error('projectConfig is required for the first instantiation.');
+            if (!loggerGetter) {
+                throw new Error('loggerGetter is required for the first instantiation.');
             }
-            Logger.instance = new Logger(projectConfig);
+            Logger.instance = new Logger(loggerGetter);
         }
         return Logger.instance;
     }
@@ -75,11 +82,11 @@ export class Logger {
         logger.printErrorAndExit(error);
     }
 
-    private isValidErrorCode(errorCode: ErrorCode): boolean {
+    protected isValidErrorCode(errorCode: ErrorCode): boolean {
         return /^\d{8}$/.test(errorCode);
     }
 
-    private getLoggerFromErrorCode(errorCode: ErrorCode): ILogger {
+    protected getLoggerFromErrorCode(errorCode: ErrorCode): ILogger {
         if (!this.isValidErrorCode(errorCode)) {
             throw new Error('Invalid errorCode.');
         }
@@ -88,7 +95,7 @@ export class Logger {
         return logger;
     }
 
-    private getLoggerFromSubsystemCode(subsystemCode: SubsystemCode): ILogger {
+    protected getLoggerFromSubsystemCode(subsystemCode: SubsystemCode): ILogger {
         if (!this.loggerMap[subsystemCode]) {
             throw new Error('Invalid subsystemCode.');
         }
@@ -104,16 +111,7 @@ export class Logger {
     }
 }
 
-interface ILogger {
-    printInfo(message: string): void;
-    printWarn(message: string): void;
-    printDebug(message: string): void;
-    printError(error: LogData): void;
-    printErrorAndExit(error: LogData): void;
-}
-
 export class LogDataFactory {
-
     static newInstance(
         code: ErrorCode,
         description: string,
@@ -128,7 +126,6 @@ export class LogDataFactory {
 }
 
 export class LogData {
-
     code: ErrorCode;
     description: string;
     cause: string;
@@ -139,8 +136,8 @@ export class LogData {
     constructor(
         code: ErrorCode,
         description: string,
-        cause: string = '',
-        position: string = '',
+        cause: string,
+        position: string,
         solutions: string[],
         moreInfo?: Object
     ) {
@@ -149,18 +146,16 @@ export class LogData {
         this.cause = cause;
         this.position = position;
         this.solutions = solutions;
-        if (moreInfo) {
-            this.moreInfo = moreInfo;
-        }
+        this.moreInfo = moreInfo;
     }
 
     toString(): string {
         let errorString = `ERROR Code: ${this.code} ${this.description}\n`;
 
         if (this.cause || this.position) {
-            errorString += `Error Message: ${this.cause}`;
+            errorString += `Error Message: ${this.cause}\n`;
             if (this.position) {
-                errorString += ` ${this.position}`;
+                errorString += `Position: ${this.position}\n`;
             }
             errorString += '\n\n';
         }
@@ -186,19 +181,19 @@ class ConsoleLogger {
     private constructor() { }
 
     public printInfo(message: string): void {
-        console.info(message);
+        console.info("[INFO]", message);
     }
 
     public printWarn(message: string): void {
-        console.warn(message);
+        console.warn("[WARN]", message);
     }
 
     public printDebug(message: string): void {
-        console.debug(message);
+        console.debug("[DEBUG]", message);
     }
 
     public printError(error: LogData): void {
-        console.error(error.toString());
+        console.error("[ERROR]", error.toString());
     }
 
     public printErrorAndExit(error: LogData): void {
@@ -214,6 +209,6 @@ class ConsoleLogger {
     }
 }
 
-function getConsoleLogger(subsystemCode: string): ConsoleLogger {
+export function getConsoleLogger(subsystemCode: string): ConsoleLogger {
     return ConsoleLogger.createLogger(subsystemCode);
 }

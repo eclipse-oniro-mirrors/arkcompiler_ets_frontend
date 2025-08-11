@@ -69,7 +69,7 @@ function getConfigAndPaths(testScriptName: string) {
 function getExpectedOutputs(config: any, cachePath: string) {
   const allModules = [
     { packageName: config.packageName, modulePath: config.moduleRootPath },
-    ...(config.dependentModuleList || []).map((m: any) => ({
+    ...(config.dependencyModuleList || []).map((m: any) => ({
       packageName: m.packageName,
       modulePath: m.modulePath
     }))
