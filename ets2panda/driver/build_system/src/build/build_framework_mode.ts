@@ -14,37 +14,34 @@
  */
 
 import { BaseMode } from './base_mode';
-import { BuildConfig, CompileFileInfo, ModuleInfo } from '../types';
-import { LogData, LogDataFactory } from '../logger';
+import { BuildConfig, ModuleInfo } from '../types';
+import {  LogDataFactory } from '../logger';
 import { changeFileExtension } from '../util/utils';
 import { ABC_SUFFIX } from '../pre_define';
 import path from 'path';
-import { ErrorCode } from '../error_code';
+import { ErrorCode, DriverError } from '../util/error';
 
 export class BuildFrameworkMode extends BaseMode {
-    frameworkMode: boolean;
-    useEmptyPackage: boolean;
 
     constructor(buildConfig: BuildConfig) {
         super(buildConfig);
         this.mergedAbcFile = buildConfig.loaderOutPath as string;
-        this.frameworkMode = buildConfig.frameworkMode ?? false;
-        this.useEmptyPackage = buildConfig.useEmptyPackage ?? false;
     }
 
-    public async run(): Promise<void> {
-        super.run();
+    public async runSimultaneous(): Promise<void> {
+        await super.runSimultaneous();
     }
 
-    protected generateModuleInfos(): void {
+    // NOTE: never called
+    protected parseBuildConfig(): void {
         this.collectModuleInfos();
         this.generateArkTSConfigForModules();
-        this.collectCompileFiles();
+        this.processEntryFiles();
     }
 
-    protected collectCompileFiles(): void {
+    protected processEntryFiles(): void {
         this.entryFiles.forEach((file: string) => {
-            for (const [packageName, moduleInfo] of this.moduleInfos) {
+            for (const [_, moduleInfo] of this.moduleInfos) {
                 if (!file.startsWith(moduleInfo.moduleRootPath)) {
                     continue;
                 }
@@ -52,27 +49,21 @@ export class BuildFrameworkMode extends BaseMode {
                 let filePathInCache: string = path.join(this.cacheDir, moduleInfo.packageName, filePathFromModuleRoot);
                 let abcFilePath: string = path.resolve(changeFileExtension(filePathInCache, ABC_SUFFIX));
                 this.abcFiles.add(abcFilePath);
-                let fileInfo: CompileFileInfo = {
-                    filePath: file,
-                    dependentFiles: [],
-                    abcFilePath: abcFilePath,
-                    arktsConfigFile: moduleInfo.arktsConfigFile,
-                    packageName: moduleInfo.packageName
-                };
-                moduleInfo.compileFileInfos.push(fileInfo);
-                this.compileFiles.set(file, fileInfo);
+                this.fileToModule.set(file, moduleInfo);
                 return;
             }
-            const logData: LogData = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_FILE_NOT_BELONG_TO_ANY_MODULE_FAIL,
-                'File does not belong to any module in moduleInfos.',
-                '',
-                file
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_FILE_NOT_BELONG_TO_ANY_MODULE_FAIL,
+                    'File does not belong to any module in moduleInfos.',
+                    '',
+                    file
+                )
             );
-            this.logger.printError(logData);
         });
     }
 
+    // NOTE: never called
     protected getMainModuleInfo(): ModuleInfo {
         let moduleInfo = super.getMainModuleInfo();
         moduleInfo.frameworkMode = this.frameworkMode;

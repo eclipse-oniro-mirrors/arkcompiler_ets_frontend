@@ -45,7 +45,7 @@ const mockConfig: BuildConfig = {
     buildSdkPath: "./sdk",
     externalApiPaths: [],
 
-    dependentModuleList: [
+    dependencyModuleList: [
     ]
 } as any;
 

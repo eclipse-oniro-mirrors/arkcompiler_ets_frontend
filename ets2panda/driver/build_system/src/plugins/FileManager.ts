@@ -14,7 +14,7 @@
  */
 
 import * as path from 'path';
-import { BuildConfig, DependentModuleConfig } from '../types';
+import { BuildConfig, DependencyModuleConfig } from '../types';
 import {
     toUnixPath,
     readFirstLineSync
@@ -23,7 +23,7 @@ import { ETS_1_1, ETS_1_1_INTEROP, LANGUAGE_VERSION } from '../pre_define';
 
 export class FileManager {
     private static instance: FileManager | undefined = undefined;
-    static arkTSModuleMap: Map<string, DependentModuleConfig> = new Map();
+    static arkTSModuleMap: Map<string, DependencyModuleConfig> = new Map();
     static staticApiPath: Set<string> = new Set();
     static dynamicApiPath: Set<string> = new Set();
     static buildConfig: BuildConfig;
@@ -31,7 +31,7 @@ export class FileManager {
     static init(buildConfig: BuildConfig): void {
         if (FileManager.instance === undefined) {
             FileManager.instance = new FileManager();
-            FileManager.initLanguageVersionFromDependentModuleMap(buildConfig.dependentModuleList);
+            FileManager.initLanguageVersionFromDependencyModuleMap(buildConfig.dependencyModuleList);
             FileManager.initSDK(new Set(buildConfig.externalApiPaths), buildConfig.buildSdkPath);
             FileManager.buildConfig = buildConfig;
         }
@@ -61,12 +61,12 @@ export class FileManager {
         FileManager.dynamicApiPath.add(toUnixPath(path.resolve(etsPath, ETS_1_1_INTEROP)));
     }
 
-    private static initLanguageVersionFromDependentModuleMap(
-        dependentModuleList: DependentModuleConfig[]
+    private static initLanguageVersionFromDependencyModuleMap(
+        dependencyModuleList: DependencyModuleConfig[]
     ): void {
-        const convertedMap = new Map<string, DependentModuleConfig>();
-        dependentModuleList.forEach(module => {
-            const convertedModule: DependentModuleConfig = {
+        const convertedMap = new Map<string, DependencyModuleConfig>();
+        dependencyModuleList.forEach(module => {
+            const convertedModule: DependencyModuleConfig = {
                 ...module,
                 modulePath: toUnixPath(module.modulePath),
                 declgenV1OutPath: module.declgenV1OutPath ? toUnixPath(module.declgenV1OutPath) : undefined,
@@ -95,7 +95,7 @@ export class FileManager {
                 return LANGUAGE_VERSION.ARKTS_1_1;
             }
         }
-        if (FileManager.buildConfig.compileFiles?.includes(filePath)) {
+        if (FileManager.buildConfig.compileFiles.includes(filePath)) {
             return LANGUAGE_VERSION.ARKTS_1_2;
         }
         for (const [pkgName, moduleInfo] of FileManager.arkTSModuleMap) {

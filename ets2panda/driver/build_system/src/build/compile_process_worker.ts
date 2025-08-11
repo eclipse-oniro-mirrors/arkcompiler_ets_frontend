@@ -13,64 +13,47 @@
  * limitations under the License.
  */
 
-import { CompileFileInfo, ModuleInfo } from '../types';
 import * as fs from 'fs';
 import * as path from 'path';
 
 import {
     changeFileExtension,
     ensurePathExists,
-    serializeWithIgnore
+    formEts2pandaCmd
 } from '../util/utils';
 import {
     DECL_ETS_SUFFIX,
-    KOALA_WRAPPER_PATH_FROM_SDK
 } from '../pre_define';
 import { PluginDriver, PluginHook } from '../plugins/plugins_driver';
 import {
     BuildConfig,
+    CompileJobInfo,
     BUILD_MODE,
     OHOS_MODULE_TYPE
 } from '../types';
 import { initKoalaModules } from '../init/init_koala_modules';
-import { LogData, LogDataFactory, Logger } from '../logger';
-import { ErrorCode } from '../error_code';
+import { LogDataFactory, Logger, getConsoleLogger } from '../logger';
+import { ErrorCode, DriverError } from '../util/error';
 import { KitImportTransformer } from '../plugins/KitImportTransformer'
 
-process.on('message', async (message: {
-    id: number;
-    fileInfo: CompileFileInfo;
+process.on('message', (message: {
+    job: CompileJobInfo;
     buildConfig: BuildConfig;
 }) => {
-    const id = message.id;
-    //@ts-ignore
-    const { fileInfo, buildConfig } = message.payload;
+    const { job, buildConfig } = message;
 
-    Logger.getInstance(buildConfig);
+    Logger.getInstance(getConsoleLogger);
     PluginDriver.getInstance().initPlugins(buildConfig);
     let { arkts, arktsGlobal } = initKoalaModules(buildConfig)
-    let errorStatus = false;
+
+    const isDebug = buildConfig.buildMode === BUILD_MODE.DEBUG;
+    const ets2pandaCmd: string[] = formEts2pandaCmd(job, isDebug)
+
+    const inputFile = job.compileFileInfo.inputFilePath
+    const source = fs.readFileSync(inputFile).toString();
 
     try {
-        Logger.getInstance(buildConfig);
-        PluginDriver.getInstance().initPlugins(buildConfig);
-        const isDebug = buildConfig.buildMode === BUILD_MODE.DEBUG;
-
-        ensurePathExists(fileInfo.abcFilePath);
-        const source = fs.readFileSync(fileInfo.filePath).toString();
-
-        let ets2pandaCmd = [
-            '_', '--extension', 'ets',
-            '--arktsconfig', fileInfo.arktsConfigFile,
-            '--output', fileInfo.abcFilePath
-        ];
-        if (isDebug) {
-            ets2pandaCmd.push('--debug-info');
-            ets2pandaCmd.push('--opt-level=0');
-        }
-        ets2pandaCmd.push(fileInfo.filePath);
-
-        arktsGlobal.filePath = fileInfo.filePath;
+        arktsGlobal.filePath = inputFile;
         arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
         arktsGlobal.compilerContext = arkts.Context.createFromString(source);
 
@@ -91,8 +74,8 @@ process.on('message', async (message: {
         PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
 
         arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
-        if (buildConfig.hasMainModule && (buildConfig.byteCodeHar || buildConfig.moduleType === OHOS_MODULE_TYPE.SHARED)) {
-            const filePathFromModuleRoot = path.relative(buildConfig.moduleRootPath, fileInfo.filePath);
+        {
+            const filePathFromModuleRoot = path.relative(buildConfig.moduleRootPath, inputFile);
             const declEtsOutputPath = changeFileExtension(
                 path.join(buildConfig.declgenV2OutPath!, filePathFromModuleRoot),
                 DECL_ETS_SUFFIX
@@ -104,31 +87,20 @@ process.on('message', async (message: {
 
         arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
 
-        if (process.send) {
-            process.send({ id, success: true, shouldKill: false });
-        }
+        process.send!(job);
     } catch (error) {
-        errorStatus = true;
         if (error instanceof Error) {
-            const logData: LogData = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-                'Compile abc files failed.',
-                error.message,
-                fileInfo.filePath
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
+                    'Compile abc files failed.',
+                    error.message,
+                    inputFile
+                )
             );
-            if (process.send) {
-                process.send({
-                    id,
-                    success: false,
-                    shouldKill: true,
-                    error: serializeWithIgnore(logData)
-                });
-            }
         }
     } finally {
-        if (!errorStatus) {
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
-        }
+        arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
         PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
         arkts.destroyConfig(arktsGlobal.config);
     }

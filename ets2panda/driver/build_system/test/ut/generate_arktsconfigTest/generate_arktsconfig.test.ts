@@ -60,7 +60,7 @@ const mockConfig: BuildConfig = {
     declgenV2OutPath: "./dist/declgen/v2",
     buildSdkPath: "./sdk",
     externalApiPaths: [],
-    dependentModuleList: [
+    dependencyModuleList: [
     ]
 } as any;
 

@@ -13,4 +13,6 @@
  * limitations under the License.
  */
 
+// import {strA} from 'harA'
+
 export let strB = "hello world from harB!";

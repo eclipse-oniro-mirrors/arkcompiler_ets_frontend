@@ -17,48 +17,47 @@ import fs from 'fs';
 import path from 'path';
 
 import { BaseMode } from '../../../src/build/base_mode';
-import { BuildConfig, BUILD_TYPE, BUILD_MODE, OHOS_MODULE_TYPE, ModuleInfo, ES2PANDA_MODE, DeclFileInfo, CompileFileInfo } from '../../../src/types';
-import { BuildMode } from '../../../src/build/build_mode';
 import {
-    ErrorCode,
-} from '../../../src/error_code';
-import { Module } from 'module';
+    BuildConfig,
+    BUILD_TYPE,
+    BUILD_MODE,
+    OHOS_MODULE_TYPE,
+    ModuleInfo,
+    JobInfo
+} from '../../../src/types';
+import {
+    DependencyFileMap
+} from '../../../src/dependency_analyzer'
+import { BuildMode } from '../../../src/build/build_mode';
+import { ErrorCode } from '../../../src/util/error';
+import { Logger } from '../../../src/logger'
+import * as mock from '../mock/data'
+import { LANGUAGE_VERSION } from '../../../src/pre_define'
 
-interface Job {
-    id: string;
-    type?: string;
-    dependencies: string[];
-    dependants: string[];
-    fileList?: string[];
-    isDeclFile?: boolean;
-    isAbcJob?: boolean;
-    isInCycle?: boolean;
-    result?: any;
+interface LogDataFactory {
+    newInstance: jest.Mock;
 }
 
-interface WorkerInfo {
-    worker: ThreadWorker;
-    isIdle: boolean;
+function getMockMainModuleInfo(): ModuleInfo {
+    return {
+        isMainModule: true,
+        packageName: "test",
+        moduleRootPath: "/test/path",
+        moduleType: OHOS_MODULE_TYPE.HAR,
+        sourceRoots: ["./"],
+        entryFile: "index.ets",
+
+        arktsConfigFile: "/dist/cache/test/arktsconfig.json",
+        dependencies: [],
+        staticDependencyModules: new Map(),
+        dynamicDependencyModules: new Map(),
+        language: LANGUAGE_VERSION.ARKTS_1_2,
+    }
 }
 
 interface ThreadWorker {
     postMessage: (message: any) => void;
 }
-
-interface Queues {
-    externalProgramQueue: Job[];
-    abcQueue: Job[];
-}
-
-interface DependencyFileConfig {
-    dependencies: Record<string, string[]>;
-    dependants: Record<string, string[]>;
-}
-
-jest.mock('os', () => ({
-    ...jest.requireActual('os'),
-    type: jest.fn().mockReturnValue('Darwin')
-}));
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -72,6 +71,14 @@ beforeAll(() => {
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
     }
+
+    Logger.getInstance(mock.getMockLoggerGetter())
+
+    const PluginDriver = require('../../../src/plugins/plugins_driver').PluginDriver;
+    PluginDriver.getInstance = jest.fn().mockReturnValue({
+        runPluginHook: jest.fn()
+    });
+
 });
 
 // Test the functions of the base_mode.ts file.
@@ -84,20 +91,8 @@ describe('test base_mode.ts file api', () => {
         test_collectDependentCompileFiles002();
     });
 
-    test('test shouldSkipFile', () => {
-        test_shouldSkipFile();
-    });
-
-    test('test collectCompileFiles when test declaration files skip branch', () => {
-        test_collectCompileFiles_decl_ets_skip();
-    });
-
-    test('test collectCompileFiles when test bytecode HAR branch', () => {
-        test_collectCompileFiles_bytecode_har();
-    });
-
-    test('test collectCompileFiles when test file not in module path branch', () => {
-        test_collectCompileFiles_file_not_in_module();
+    test('test processEntryFiles when test file not in module path branch', () => {
+        test_processEntryFiles_file_not_in_module();
     });
 
     test('test createExternalProgramJob method branches', () => {
@@ -108,24 +103,8 @@ describe('test base_mode.ts file api', () => {
         test_findStronglyConnectedComponents_branches();
     });
 
-    test('test assignTaskToIdleWorker abcQueue branch without job', () => {
-        test_assignTaskToIdleWorker_abcQueue_no_job();
-    });
-
-    test('test assignTaskToIdleWorker with empty queues', () => {
-        test_assignTaskToIdleWorker_empty_queues();
-    });
-
-    test('test generateDeclaration method', () => {
-        return test_generateDeclaration();
-    });
-
     test('test run method', () => {
         test_runMethod();
-    });
-
-    test('test declgen method', () => {
-        test_declgen_method();
     });
 
     test('test getDependentModules with missing module', () => {
@@ -134,18 +113,6 @@ describe('test base_mode.ts file api', () => {
 
     test('test collectDependencyModules language branches', () => {
         test_collectDependencyModules_language_branches();
-    });
-
-    test('test runConcurrent method', () => {
-        test_runConcurrent();
-    });
-
-    test('test processAfterCompile method', () => {
-        test_processAfterCompile();
-    });
-
-    test('test checkAllTasksDone method', () => {
-        test_checkAllTasksDone();
     });
 
     test('test initCompileQueues method', () => {
@@ -158,10 +125,6 @@ describe('test base_mode.ts file api', () => {
 
     test('test dealWithDependants method', () => {
         test_dealWithDependants();
-    });
-
-    test('test collectCompileJobs method', () => {
-        test_collectCompileJobs();
     });
 
     test('test getJobDependants method', () => {
@@ -200,142 +163,189 @@ describe('test base_mode.ts file api', () => {
         test_collectCompileFiles_enableDeclgenEts2Ts_false();
     });
 
-    test('test collectAbcFileFromByteCodeHar_missing_abc_path', () => {
-        test_collectAbcFileFromByteCodeHar_missing_abc_path();
-    });
-
     test('test collectDependentCompileFiles isFileChanged branch', () => {
         test_collectDependentCompileFiles_isFileChanged_branch();
     });
 
-  test('collectCompileJobs should skip entry files not in compileFiles', () => {
-    test_collectCompileJobs_should_skip_entry_files_not_in_compileFiles();
-  });
-  test('needsBackup should backUp when declgenFile modified', () => {
-    test_needsBackup_declgenfile_should_backUp_when_dclgenFile_modified();
-  });
+    test('collectCompileJobs should skip entry files not in compileFiles', () => {
+        test_collectCompileJobs_should_skip_entry_files_not_in_compileFiles();
+    });
+
+    test('needsBackup should backUp when declgenFile modified', () => {
+        test_needsBackup_declgenfile_should_backUp_when_dclgenFile_modified();
+    });
+
+    function test_needsBackup_declgenfile_should_backUp_when_dclgenFile_modified() {
+        const fs = require('fs');
+        jest.spyOn(fs, 'existsSync').mockImplementation(function (path) {
+            return path === '/test/path/file1.d.ts' || path === '/test/path/file1.ts';
+        });
+        jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
+            if (path === '/test/path/file1.d.ts') {
+                return { mtimeMs: 456 }
+            } else {
+                return { mtimeMs: 789 }
+            }
+        });
+
+        const mockConfig = {
+            packageName: 'test',
+            moduleRootPath: '/test/path',
+            sourceRoots: ['./'],
+            loaderOutPath: './dist',
+            cachePath: './dist/cache',
+            dependentModuleList: [],
+            buildMode: BUILD_MODE.DEBUG,
+        };
+        const fileInfo = {
+            filePath: '/test/path/file1.ets',
+            dependentFiles: [],
+            abcFilePath: '/test/path/file1.abc',
+            arktsConfigFile: '/test/path/arktsconfig.json',
+            packageName: 'test',
+        };
+        const declFileInfo: DeclFileInfo = {
+            delFilePath: '/test/path/declgen/file1.d.ts',
+            declLastModified: 123,
+            glueCodeFilePath: '/test/path/declgen/file1.ts',
+            glueCodeLastModified: 123,
+            sourceFilePath: '/test/path/file1.ets',
+        };
+
+        class TestBaseMode extends BaseMode {
+            public run(): Promise<void> {
+                return Promise.resolve();
+            }
+        }
+        const baseMode = new TestBaseMode(mockConfig as any);
+
+        jest.spyOn(baseMode as any, 'getOutputFilePaths').mockImplementation(() => ({
+            declEtsOutputPath: '/test/path/file1.d.ts',
+            glueCodeOutputPath: '/test/path/file1.ts',
+        }));
+        let { needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo);
+
+        expect(fs.existsSync).toHaveBeenCalledTimes(3);
+        expect(fs.statSync).toHaveBeenCalledTimes(0);
+        expect(needsDeclBackup).toBe(false);
+        expect(needsGlueCodeBackup).toBe(false);
+
+        baseMode.declFileMap.set(fileInfo.filePath, declFileInfo);
+
+        ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+        expect(fs.existsSync).toHaveBeenCalledTimes(5);
+        expect(fs.statSync).toHaveBeenCalledTimes(2);
+        expect(needsDeclBackup).toBe(true);
+        expect(needsGlueCodeBackup).toBe(true);
+
+        jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
+            if (path === '/test/path/file1.d.ts') {
+                return { mtimeMs: 123 }
+            } else {
+                return { mtimeMs: 789 }
+            }
+        });
+
+        ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+        expect(fs.existsSync).toHaveBeenCalledTimes(7);
+        expect(fs.statSync).toHaveBeenCalledTimes(4);
+        expect(needsDeclBackup).toBe(false);
+        expect(needsGlueCodeBackup).toBe(true);
+
+        jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
+            if (path === '/test/path/file1.d.ts') {
+                return { mtimeMs: 456 }
+            } else {
+                return { mtimeMs: 123 }
+            }
+        });
+
+        ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+        expect(fs.existsSync).toHaveBeenCalledTimes(9);
+        expect(fs.statSync).toHaveBeenCalledTimes(6);
+        expect(needsDeclBackup).toBe(true);
+        expect(needsGlueCodeBackup).toBe(false);
+
+        jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
+            if (path === '/test/path/file1.d.ts') {
+                return { mtimeMs: 123 }
+            } else {
+                return { mtimeMs: 123 }
+            }
+        });
+
+        ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+        expect(fs.existsSync).toHaveBeenCalledTimes(11);
+        expect(fs.statSync).toHaveBeenCalledTimes(8);
+        expect(needsDeclBackup).toBe(false);
+        expect(needsGlueCodeBackup).toBe(false);
+
+        baseMode.declFileMap.clear();
+
+        ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+        expect(fs.existsSync).toHaveBeenCalledTimes(11);
+        expect(fs.statSync).toHaveBeenCalledTimes(8);
+        expect(needsDeclBackup).toBe(false);
+        expect(needsGlueCodeBackup).toBe(false);
+    }
+
+
+    // NOTE: to be defined later
+    // test('test checkAllTasksDone method', () => {
+    //     test_checkAllTasksDone();
+    // });
+    //
+    // test('test assignTaskToIdleWorker abcQueue branch without job', () => {
+    //     test_assignTaskToIdleWorker_abcQueue_no_job();
+    // });
+    //
+    // test('test assignTaskToIdleWorker with empty queues', () => {
+    //     test_assignTaskToIdleWorker_empty_queues();
+    // });
+    //
+    // test('test generateDeclaration method', () => {
+    //     return test_generateDeclaration();
+    // });
+    //
+    // test('test shouldSkipFile', () => {
+    //     test_shouldSkipFile();
+    // });
+    //
+    // test('test collectCompileFiles when test declaration files skip branch', () => {
+    //     test_processEntryFiles_decl_ets_skip();
+    // });
+    //
+    // test('test collectCompileFiles when test bytecode HAR branch', () => {
+    //     test_collectCompileFiles_bytecode_har();
+    // });
+    //
+    // test('test declgen method', () => {
+    //     test_declgen_method();
+    // });
+    //
+    // test('test runConcurrent method', () => {
+    //     test_runConcurrent();
+    // });
+    //
+    // test('test processAfterCompile method', () => {
+    //     test_processAfterCompile();
+    // });
+    //
+    // test('test collectAbcFileFromByteCodeHar_missing_abc_path', () => {
+    //     test_collectAbcFileFromByteCodeHar_missing_abc_path();
+    // });
+    //
+    // NOTE: to be moved to Dependency Analyzer ut
+    // test('test collectCompileJobs method', () => {
+    //     test_collectCompileJobs();
+    // });
 
 });
-
-function test_needsBackup_declgenfile_should_backUp_when_dclgenFile_modified() {
-  const fs = require('fs');
-  jest.spyOn(fs, 'existsSync').mockImplementation(function (path) {
-    return path === '/test/path/file1.d.ts' || path === '/test/path/file1.ts';
-  });
-  jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
-    if (path === '/test/path/file1.d.ts') {
-      return { mtimeMs: 456 }
-    } else {
-      return { mtimeMs: 789 }
-    }
-  });
-
-  const mockConfig = {
-    packageName: 'test',
-    moduleRootPath: '/test/path',
-    sourceRoots: ['./'],
-    loaderOutPath: './dist',
-    cachePath: './dist/cache',
-    dependentModuleList: [],
-    buildMode: BUILD_MODE.DEBUG,
-  };
-  const fileInfo = {
-    filePath: '/test/path/file1.ets',
-    dependentFiles: [],
-    abcFilePath: '/test/path/file1.abc',
-    arktsConfigFile: '/test/path/arktsconfig.json',
-    packageName: 'test',
-  };
-  const declFileInfo: DeclFileInfo = {
-    delFilePath: '/test/path/declgen/file1.d.ts',
-    declLastModified: 123,
-    glueCodeFilePath: '/test/path/declgen/file1.ts',
-    glueCodeLastModified: 123,
-    sourceFilePath: '/test/path/file1.ets',
-  };
-
-  class TestBaseMode extends BaseMode {
-    public run(): Promise<void> {
-      return Promise.resolve();
-    }
-  }
-  const baseMode = new TestBaseMode(mockConfig as any);
-
-  jest.spyOn(baseMode as any, 'getOutputFilePaths').mockImplementation(() => ({
-    declEtsOutputPath: '/test/path/file1.d.ts',
-    glueCodeOutputPath: '/test/path/file1.ts',
-  }));
-  let { needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo);
-
-  expect(fs.existsSync).toHaveBeenCalledTimes(3);
-  expect(fs.statSync).toHaveBeenCalledTimes(0);
-  expect(needsDeclBackup).toBe(false);
-  expect(needsGlueCodeBackup).toBe(false);
-
-  baseMode.declFileMap.set(fileInfo.filePath, declFileInfo);
-
-  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
-
-  expect(fs.existsSync).toHaveBeenCalledTimes(5);
-  expect(fs.statSync).toHaveBeenCalledTimes(2);
-  expect(needsDeclBackup).toBe(true);
-  expect(needsGlueCodeBackup).toBe(true);
-
-  jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
-    if (path === '/test/path/file1.d.ts') {
-      return { mtimeMs: 123 }
-    } else {
-      return { mtimeMs: 789 }
-    }
-  });
-
-  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
-
-  expect(fs.existsSync).toHaveBeenCalledTimes(7);
-  expect(fs.statSync).toHaveBeenCalledTimes(4);
-  expect(needsDeclBackup).toBe(false);
-  expect(needsGlueCodeBackup).toBe(true);
-
-  jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
-    if (path === '/test/path/file1.d.ts') {
-      return { mtimeMs: 456 }
-    } else {
-      return { mtimeMs: 123 }
-    }
-  });
-
-  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
-
-  expect(fs.existsSync).toHaveBeenCalledTimes(9);
-  expect(fs.statSync).toHaveBeenCalledTimes(6);
-  expect(needsDeclBackup).toBe(true);
-  expect(needsGlueCodeBackup).toBe(false);
-
-  jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
-    if (path === '/test/path/file1.d.ts') {
-      return { mtimeMs: 123 }
-    } else {
-      return { mtimeMs: 123 }
-    }
-  });
-
-  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
-
-  expect(fs.existsSync).toHaveBeenCalledTimes(11);
-  expect(fs.statSync).toHaveBeenCalledTimes(8);
-  expect(needsDeclBackup).toBe(false);
-  expect(needsGlueCodeBackup).toBe(false);
-
-  baseMode.declFileMap.clear();
-
-  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
-
-  expect(fs.existsSync).toHaveBeenCalledTimes(11);
-  expect(fs.statSync).toHaveBeenCalledTimes(8);
-  expect(needsDeclBackup).toBe(false);
-  expect(needsGlueCodeBackup).toBe(false);
-}
-
 
 function test_collectCompileJobs_should_skip_entry_files_not_in_compileFiles() {
     const mockConfig = {
@@ -423,7 +433,7 @@ function test_collectDependentCompileFiles_isFileChanged_branch() {
         sourceRoots: ["./"],
         loaderOutPath: "./dist",
         cachePath: "./dist/cache",
-        dependentModuleList: [],
+        dependencyModuleList: []
     };
 
     class TestBaseMode extends BaseMode {
@@ -498,6 +508,8 @@ function test_collectDependentCompileFiles_isFileChanged_branch() {
     jest.restoreAllMocks();
 }
 
+// NOTE: to be defined later
+/*
 function test_collectAbcFileFromByteCodeHar_missing_abc_path() {
     const mockLogger = {
         printInfo: jest.fn(),
@@ -524,7 +536,7 @@ function test_collectAbcFileFromByteCodeHar_missing_abc_path() {
         sourceRoots: ["./"],
         loaderOutPath: "./dist",
         cachePath: "./dist/cache",
-        dependentModuleList: [],
+        dependencyModuleList: []
     };
 
     class TestBaseMode extends BaseMode {
@@ -576,6 +588,7 @@ function test_collectAbcFileFromByteCodeHar_missing_abc_path() {
     delete (global as any).LogDataFactory;
     delete (global as any).ErrorCode;
 }
+*/
 
 function test_collectCompileFiles_enableDeclgenEts2Ts_false() {
     const mockLogger = {
@@ -592,7 +605,7 @@ function test_collectCompileFiles_enableDeclgenEts2Ts_false() {
         loaderOutPath: "./dist",
         cachePath: "./dist/cache",
         enableDeclgenEts2Ts: false,
-        dependentModuleList: [],
+        dependencyModuleList: []
     };
 
     class TestBaseMode extends BaseMode {
@@ -601,7 +614,7 @@ function test_collectCompileFiles_enableDeclgenEts2Ts_false() {
         }
 
         public testCollectCompileFiles(): void {
-            this.collectCompileFiles();
+            super.processEntryFiles();
         }
     }
 
@@ -611,11 +624,10 @@ function test_collectCompileFiles_enableDeclgenEts2Ts_false() {
 
     const baseMode = new TestBaseMode(mockConfig as any);
 
-    (baseMode as any).entryFiles = new Set(['/test/path/file1.ets']);
-    (baseMode as any).moduleInfos = new Map();
-    (baseMode as any).abcFiles = new Set();
-    (baseMode as any).hashCache = {};
-    (baseMode as any).compileFiles = new Map();
+    baseMode.entryFiles = new Set(['/test/path/file1.ets']);
+    baseMode.moduleInfos = new Map();
+    baseMode.abcFiles = new Set();
+    baseMode.filesHashCache = {};
 
     baseMode.testCollectCompileFiles();
 }
@@ -625,53 +637,37 @@ class TestBaseModeMock extends BaseMode {
         return Promise.resolve();
     }
     public getMainModuleInfo(): ModuleInfo {
-        const path = require('path');
         const ARKTSCONFIG_JSON_FILE = 'arktsconfig.json';
         return {
             isMainModule: true,
-            packageName: this.packageName,
-            moduleRootPath: this.moduleRootPath,
-            sourceRoots: this.sourceRoots,
-            arktsConfigFile: path.resolve(this.cacheDir, this.packageName, ARKTSCONFIG_JSON_FILE),
-            compileFileInfos: [],
-            dynamicDepModuleInfos: new Map(),
-            staticDepModuleInfos: new Map(),
-            dependenciesSet: new Set(),
-            dependentSet: new Set(),
+            packageName: "entry",
+            moduleRootPath: "./",
             moduleType: OHOS_MODULE_TYPE.HAR,
+            sourceRoots: ["./"],
             entryFile: "index.ets",
-            byteCodeHar: false,
+            arktsConfigFile: path.resolve(this.cacheDir, "entry", ARKTSCONFIG_JSON_FILE),
             declgenV1OutPath: path.resolve(this.cacheDir, "declgen"),
             declgenV2OutPath: path.resolve(this.cacheDir, "declgen/v2"),
-            declgenBridgeCodePath: path.resolve(this.cacheDir, "bridge")
+            declgenBridgeCodePath: path.resolve(this.cacheDir, "bridge"),
+            dependencies: [],
+            dynamicDependencyModules: new Map(),
+            staticDependencyModules: new Map(),
+            byteCodeHar: false,
         };
     }
     public testCollectModuleInfos(): void {
-        return (this as any).collectModuleInfos();
+        return this.collectModuleInfos();
     }
 }
 
-function test_collectModuleInfos1(mockLogger: any, LogDataFactory: any) {
-    const mockConfig = {
-        buildMode: BUILD_MODE.DEBUG,
-        compileFiles: ["test.ets"],
-        packageName: "",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        hasMainModule: true,
-        dependentModuleList: [],
-    };
-    const baseMode = new TestBaseModeMock(mockConfig as any);
-    (baseMode as any).logger = mockLogger;
-    (baseMode as any).cacheDir = "./dist/cache";
+function test_collectModuleInfos1(LogDataFactory: LogDataFactory) {
+    const mockConfig = mock.getMockedBuildConfig()
+    const baseMode = new TestBaseModeMock(mockConfig);
     baseMode.testCollectModuleInfos();
     LogDataFactory.newInstance.mockClear();
-    mockLogger.printError.mockClear();
 }
 
-function test_collectModuleInfos2(mockLogger: any, LogDataFactory: any) {
+function test_collectModuleInfos2(LogDataFactory: LogDataFactory) {
     const mockConfig = {
         buildMode: BUILD_MODE.DEBUG,
         compileFiles: ["test.ets"],
@@ -681,7 +677,7 @@ function test_collectModuleInfos2(mockLogger: any, LogDataFactory: any) {
         loaderOutPath: "./dist",
         cachePath: "./dist/cache",
         hasMainModule: true,
-        dependentModuleList: [
+        dependencyModuleList: [
             {
                 packageName: "dep1",
                 sourceRoots: ["./"],
@@ -691,16 +687,11 @@ function test_collectModuleInfos2(mockLogger: any, LogDataFactory: any) {
     };
 
     const baseMode = new TestBaseModeMock(mockConfig as any);
-    (baseMode as any).logger = mockLogger;
-    (baseMode as any).cacheDir = "./dist/cache";
-
     baseMode.testCollectModuleInfos();
     LogDataFactory.newInstance.mockClear();
-    mockLogger.printError.mockClear();
-
 }
 
-function test_collectModuleInfos3(mockLogger: any, LogDataFactory: any) {
+function test_collectModuleInfos3(LogDataFactory: LogDataFactory) {
     const mockConfig = {
         buildMode: BUILD_MODE.DEBUG,
         compileFiles: ["test.ets"],
@@ -710,7 +701,7 @@ function test_collectModuleInfos3(mockLogger: any, LogDataFactory: any) {
         loaderOutPath: "./dist",
         cachePath: "./dist/cache",
         hasMainModule: true,
-        dependentModuleList: [
+        dependencyModuleList: [
             {
                 packageName: "dep2",
                 modulePath: "/test/dep2",
@@ -720,15 +711,12 @@ function test_collectModuleInfos3(mockLogger: any, LogDataFactory: any) {
     };
 
     const baseMode = new TestBaseModeMock(mockConfig as any);
-    (baseMode as any).logger = mockLogger;
-    (baseMode as any).cacheDir = "./dist/cache";
 
     baseMode.testCollectModuleInfos();
     LogDataFactory.newInstance.mockClear();
-    mockLogger.printError.mockClear();
 }
 
-function test_collectModuleInfos4(mockLogger: any, LogDataFactory: any) {
+function test_collectModuleInfos4(LogDataFactory: LogDataFactory) {
     const mockConfig = {
         buildMode: BUILD_MODE.DEBUG,
         compileFiles: ["test.ets"],
@@ -738,7 +726,7 @@ function test_collectModuleInfos4(mockLogger: any, LogDataFactory: any) {
         loaderOutPath: "./dist",
         cachePath: "./dist/cache",
         hasMainModule: true,
-        dependentModuleList: [
+        dependencyModuleList: [
             {
                 packageName: "dep3",
                 modulePath: "/test/dep3",
@@ -748,73 +736,54 @@ function test_collectModuleInfos4(mockLogger: any, LogDataFactory: any) {
     };
 
     const baseMode = new TestBaseModeMock(mockConfig as any);
-    (baseMode as any).logger = mockLogger;
-    (baseMode as any).cacheDir = "./dist/cache";
     baseMode.testCollectModuleInfos();
     LogDataFactory.newInstance.mockClear();
-    mockLogger.printError.mockClear();
 }
 
 function test_collectModuleInfos001() {
-    const mockLogger = { printError: jest.fn(), printInfo: jest.fn() };
     const LogDataFactory = { newInstance: jest.fn().mockReturnValue({ code: "123", message: "Test error" }) };
-    const ErrorCode = {
-        BUILDSYSTEM_MODULE_INFO_NOT_CORRECT_FAIL: '11410003',
-        BUILDSYSTEM_DEPENDENT_MODULE_INFO_NOT_CORRECT_FAIL: '11410004'
-    };
-    const path = require('path');
-    const ARKTSCONFIG_JSON_FILE = 'arktsconfig.json';
-    (global as any).LogDataFactory = LogDataFactory;
-    (global as any).ErrorCode = ErrorCode;
 
-    test_collectModuleInfos1(mockLogger as any, LogDataFactory as any);
-    test_collectModuleInfos2(mockLogger as any, LogDataFactory as any);
-    test_collectModuleInfos3(mockLogger as any, LogDataFactory as any);
-    test_collectModuleInfos4(mockLogger as any, LogDataFactory as any);
+    test_collectModuleInfos1(LogDataFactory);
+    test_collectModuleInfos2(LogDataFactory);
+    test_collectModuleInfos3(LogDataFactory);
+    test_collectModuleInfos4(LogDataFactory);
 
-    delete (global as any).LogDataFactory;
-    delete (global as any).ErrorCode;
 }
 
-function test_updateDependantJobs1(baseMode: any) {
+function test_updateDependantJobs1(baseMode: TestBuildMode) {
     const jobId = "job1";
     const processingJobs = new Set<string>([jobId, "job2"]);
-    const jobs: Record<string, Job> = {
+    const jobs: Record<string, JobInfo> = {
         "job1": {
             id: "job1",
-            dependencies: [],
-            dependants: ["job2", "job3"],
+            jobDependencies: [],
+            jobDependants: ["job2", "job3"],
             fileList: ["/test/file1.ets"],
             isAbcJob: true
         },
         "job2": {
             id: "job2",
-            dependencies: ["job1", "job4"],
-            dependants: [],
+            jobDependencies: ["job1", "job4"],
+            jobDependants: [],
             fileList: ["/test/file2.ets"],
             isAbcJob: true
         },
         "job3": {
             id: "job3",
-            dependencies: ["job1"],
-            dependants: [],
+            jobDependencies: ["job1"],
+            jobDependants: [],
             fileList: ["/test/file3.ets"],
             isAbcJob: true
         }
     };
 
-    const queues: Queues = {
-        externalProgramQueue: [],
-        abcQueue: []
-    };
-
-    baseMode.testUpdateDependantJobs(jobId, processingJobs, jobs, queues);
+    baseMode.testUpdateDependantJobs(jobId, processingJobs, jobs);
 
     expect(processingJobs.has(jobId)).toBe(false);
-    expect(jobs["job2"].dependencies).not.toContain("job1");
-    expect(jobs["job2"].dependencies).toContain("job4");
-    expect(jobs["job3"].dependencies.length).toBe(0);
-    expect((baseMode as any).addJobToQueues).toHaveBeenCalledWith(jobs["job3"], queues);
+    expect(jobs["job2"].jobDependencies).not.toContain("job1");
+    expect(jobs["job2"].jobDependencies).toContain("job4");
+    expect(jobs["job3"].jobDependencies.length).toBe(0);
+    expect(baseMode.addJobToQueues).toHaveBeenCalledWith(jobs["job3"]);
 }
 
 function test_updateDependantJobs2(global: any, baseMode: any) {
@@ -823,32 +792,27 @@ function test_updateDependantJobs2(global: any, baseMode: any) {
 
     const jobId = "job5";
     const processingJobs = new Set<string>([jobId]);
-    const jobs: Record<string, Job> = {
+    const jobs: Record<string, JobInfo> = {
         "job5": {
             id: "job5",
-            dependencies: [],
-            dependants: ["job6", "nonExistingJob"],
+            jobDependencies: [],
+            jobDependants: ["job6", "nonExistingJob"],
             fileList: ["/test/file5.ets"],
             isAbcJob: true
         },
         "job6": {
             id: "job6",
-            dependencies: ["job5"],
-            dependants: [],
+            jobDependencies: ["job5"],
+            jobDependants: [],
             fileList: ["/test/file6.ets"],
             isAbcJob: true
         }
     };
 
-    const queues: Queues = {
-        externalProgramQueue: [],
-        abcQueue: []
-    };
-
-    baseMode.testUpdateDependantJobs(jobId, processingJobs, jobs, queues);
+    baseMode.testUpdateDependantJobs(jobId, processingJobs, jobs);
 
     expect(processingJobs.has(jobId)).toBe(false);
-    expect((baseMode as any).addJobToQueues).toHaveBeenCalledWith(jobs["job6"], queues);
+    expect((baseMode as any).addJobToQueues).toHaveBeenCalledWith(jobs["job6"]);
 }
 
 function test_updateDependantJobs3(global: any, baseMode: any) {
@@ -857,31 +821,26 @@ function test_updateDependantJobs3(global: any, baseMode: any) {
 
     const jobId = "job7";
     const processingJobs = new Set<string>([jobId]);
-    const jobs: Record<string, Job> = {
+    const jobs: Record<string, JobInfo> = {
         "job7": {
             id: "job7",
-            dependencies: [],
-            dependants: ["job8"],
+            jobDependencies: [],
+            jobDependants: ["job8"],
             fileList: ["/test/file7.ets"],
             isAbcJob: true
         },
         "job8": {
             id: "job8",
-            dependencies: ["job9"],
-            dependants: [],
+            jobDependencies: ["job9"],
+            jobDependants: [],
             fileList: ["/test/file8.ets"],
             isAbcJob: true
         }
     };
 
-    const queues: Queues = {
-        externalProgramQueue: [],
-        abcQueue: []
-    };
+    baseMode.testUpdateDependantJobs(jobId, processingJobs, jobs);
 
-    baseMode.testUpdateDependantJobs(jobId, processingJobs, jobs, queues);
-
-    expect(jobs["job8"].dependencies).toEqual(["job9"]);
+    expect(jobs["job8"].jobDependencies).toEqual(["job9"]);
     expect((baseMode as any).addJobToQueues).not.toHaveBeenCalled();
 }
 
@@ -895,15 +854,15 @@ function test_updateDependantJobs() {
         dependentModuleList: [],
         buildMode: BUILD_MODE.DEBUG
     };
-    (global as any).finishedJob = [];
+    global.finishedJob = [];
     class TestBuildMode extends BuildMode {
-        public testUpdateDependantJobs(jobId: string, processingJobs: Set<string>, jobs: Record<string, Job>, queues: Queues): void {
-            return (this as any).updateDependantJobs(jobId, processingJobs, jobs, queues);
+        public testUpdateDependantJobs(jobId: string, processingJobs: Set<string>, jobs: Record<string, JobInfo>): void {
+            return this.updateDependantJobs(jobId, processingJobs, jobs);
         }
     }
     const baseMode = new TestBuildMode(mockConfig as any);
     (baseMode as any).addJobToQueues = jest.fn();
-    test_updateDependantJobs1(baseMode as any);
+    test_updateDependantJobs1(baseMode);
     test_updateDependantJobs2(global as any, baseMode as any);
     test_updateDependantJobs3(global as any, baseMode as any);
 
@@ -1241,16 +1200,10 @@ function test_getJobDependants() {
     }
 }
 
+// NOTE: move to Dependency Analyzer ut
+/*
 function test_collectCompileJobs() {
-    const mockConfig = {
-        packageName: "test",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        dependentModuleList: [],
-        buildMode: BUILD_MODE.DEBUG
-    };
+    const mockConfig = getMockConfig()
 
     class TestBuildMode extends BuildMode {
         public testCollectCompileJobs(jobs: Record<string, Job>): void {
@@ -1259,7 +1212,7 @@ function test_collectCompileJobs() {
 
         constructor(buildConfig: any) {
             super(buildConfig);
-            (this as any).dependencyFileMap = {
+            this.dependencyFileMap = {
                 dependencies: {
                     '/test/path/file1.ets': ['/test/path/file2.ets'],
                     '/test/path/file3.ets': ['/test/path/file4.ets'],
@@ -1271,27 +1224,27 @@ function test_collectCompileJobs() {
                 }
             };
 
-            (this as any).entryFiles = new Set(['/test/path/file1.ets']);
-            (this as any).compileFiles = new Map([
+            this.entryFiles = new Set(['/test/path/file1.ets']);
+            this.compileFiles = new Map([
                 ['/test/path/file1.ets', { filePath: '/test/path/file1.ets' }]
             ]);
 
-            (this as any).moduleInfos = new Map();
-            (this as any).moduleInfos.set("test", {
+            this.moduleInfos = new Map();
+            this.moduleInfos.set("test", {
                 packageName: "test",
                 moduleRootPath: "/test/path",
                 arktsConfigFile: "/test/path/config.json"
-            });
+            };
 
-            (this as any).allFiles = new Map();
+            this.allFiles = new Map();
 
-            (this as any).getJobDependencies = jest.fn().mockImplementation(() => new Set(['dep1', 'dep2']));
-            (this as any).getJobDependants = jest.fn().mockImplementation(() => new Set(['dep3', 'dep4']));
-            (this as any).getAbcJobId = jest.fn().mockImplementation((file) => '1' + file);
-            (this as any).getExternalProgramJobId = jest.fn().mockImplementation((file) => '0' + file);
-            (this as any).createExternalProgramJob = jest.fn();
-            (this as any).dealWithDependants = jest.fn();
-            (this as any).findStronglyConnectedComponents = jest.fn().mockImplementation(() => {
+            this.getJobDependencies = jest.fn().mockImplementation(() => new Set(['dep1', 'dep2']));
+            this.getJobDependants = jest.fn().mockImplementation(() => new Set(['dep3', 'dep4']));
+            this.getAbcJobId = jest.fn().mockImplementation((file) => '1' + file);
+            this.getExternalProgramJobId = jest.fn().mockImplementation((file) => '0' + file);
+            this.createExternalProgramJob = jest.fn();
+            this.dealWithDependants = jest.fn();
+            this.findStronglyConnectedComponents = jest.fn().mockImplementation(() => {
                 const cycleGroups = new Map();
                 const cycle1 = new Set(['/test/path/cycle1.ets', '/test/path/cycle2.ets']);
                 cycleGroups.set('cycle-group-1', cycle1);
@@ -1300,7 +1253,7 @@ function test_collectCompileJobs() {
         }
     }
 
-    const baseMode = new TestBuildMode(mockConfig as any);
+    const baseMode = new TestBuildMode(mockConfig);
 
     (baseMode as any).dependencyFileMap.dependants['/test/path/file6.ets'] = ['/test/path/file7.ets'];
 
@@ -1342,6 +1295,7 @@ function test_collectCompileJobs() {
 
     jest.restoreAllMocks();
 }
+*/
 
 function test_dealWithDependants() {
     const mockConfig = {
@@ -1354,7 +1308,7 @@ function test_dealWithDependants() {
         buildMode: BUILD_MODE.DEBUG
     };
     class TestBuildMode extends BuildMode {
-        public testDealWithDependants(cycleFiles: Map<string, string[]>, key: string, jobs: Record<string, Job>, dependants: Set<string>): void {
+        public testDealWithDependants(cycleFiles: Map<string, string[]>, key: string, jobs: Record<string, JobInfo>, dependants: Set<string>): void {
             return (this as any).dealWithDependants(cycleFiles, key, jobs, dependants);
         }
     }
@@ -1362,44 +1316,44 @@ function test_dealWithDependants() {
     {
         const cycleFiles = new Map<string, string[]>();
         cycleFiles.set('file1.ets', ['cycle-1', 'cycle-2']);
-        const jobs: Record<string, Job> = {
+        const jobs: Record<string, JobInfo> = {
             'cycle-1': {
                 id: 'cycle-1',
                 fileList: ['file1.ets'],
-                dependencies: [],
-                dependants: ['dep1', 'dep2'],
+                jobDependencies: [],
+                jobDependants: ['dep1', 'dep2'],
                 isAbcJob: false
             },
             'cycle-2': {
                 id: 'cycle-2',
                 fileList: ['file1.ets', 'file2.ets'],
-                dependencies: [],
-                dependants: ['dep3'],
+                jobDependencies: [],
+                jobDependants: ['dep3'],
                 isAbcJob: false
             }
         };
         const dependants = new Set<string>(['dep4', 'dep5', 'cycle-1']);
         baseMode.testDealWithDependants(cycleFiles, 'file1.ets', jobs, dependants);
-        expect(jobs['cycle-1'].dependants).toEqual(expect.arrayContaining(['dep1', 'dep2', 'dep4', 'dep5']));
-        expect(jobs['cycle-1'].dependants).not.toContain('cycle-1');
-        expect(jobs['cycle-2'].dependants).toEqual(expect.arrayContaining(['dep3', 'dep4', 'dep5']));
-        expect(jobs['cycle-2'].dependants).not.toContain('cycle-1');
+        expect(jobs['cycle-1'].jobDependants).toEqual(expect.arrayContaining(['dep1', 'dep2', 'dep4', 'dep5']));
+        expect(jobs['cycle-1'].jobDependants).not.toContain('cycle-1');
+        expect(jobs['cycle-2'].jobDependants).toEqual(expect.arrayContaining(['dep3', 'dep4', 'dep5']));
+        expect(jobs['cycle-2'].jobDependants).not.toContain('cycle-1');
     }
     {
         const cycleFiles = new Map<string, string[]>();
-        const jobs: Record<string, Job> = {
+        const jobs: Record<string, JobInfo> = {
             '0file2.ets': {
                 id: '0file2.ets',
                 fileList: ['file2.ets'],
-                dependencies: [],
-                dependants: ['dep1', 'dep2'],
+                jobDependencies: [],
+                jobDependants: ['dep1', 'dep2'],
                 isAbcJob: false
             }
         };
         const dependants = new Set<string>(['dep3', 'dep4', '0file2.ets']);
         baseMode.testDealWithDependants(cycleFiles, 'file2.ets', jobs, dependants);
-        expect(jobs['0file2.ets'].dependants).toEqual(expect.arrayContaining(['dep1', 'dep2', 'dep3', 'dep4']));
-        expect(jobs['0file2.ets'].dependants).not.toContain('0file2.ets');
+        expect(jobs['0file2.ets'].jobDependants).toEqual(expect.arrayContaining(['dep1', 'dep2', 'dep3', 'dep4']));
+        expect(jobs['0file2.ets'].jobDependants).not.toContain('0file2.ets');
     }
 }
 
@@ -1415,74 +1369,54 @@ function test_addJobToQueues() {
     };
 
     class TestBuildMode extends BuildMode {
-        public testAddJobToQueues(job: Job, queues: Queues): void {
-            return (this as any).addJobToQueues(job, queues);
+        public testAddJobToQueues(job: JobInfo): void {
+            return this.consumeJob(job);
         }
     }
 
     const baseMode = new TestBuildMode(mockConfig as any);
 
-    const job1: Job = {
+    const job1: JobInfo = {
         id: 'job1',
         fileList: ['/test/path/file1.ets'],
-        dependencies: [],
-        dependants: [],
-        isDeclFile: true,
+        jobDependencies: [],
+        jobDependants: [],
         isAbcJob: false
     };
-    const queues1: Queues = {
-        externalProgramQueue: [],
-        abcQueue: []
-    };
-    baseMode.testAddJobToQueues(job1, queues1);
+    baseMode.testAddJobToQueues(job1);
     expect(queues1.externalProgramQueue.length).toBe(1);
     expect(queues1.externalProgramQueue[0].id).toBe('job1');
     expect(queues1.abcQueue.length).toBe(0);
 
-    const job2: Job = {
+    const job2: JobInfo = {
         id: 'job2',
         fileList: ['/test/path/file2.ets'],
-        dependencies: [],
-        dependants: [],
-        isDeclFile: false,
+        jobDependencies: [],
+        jobDependants: [],
         isAbcJob: true
     };
-    const queues2: Queues = {
-        externalProgramQueue: [],
-        abcQueue: []
-    };
-    baseMode.testAddJobToQueues(job2, queues2);
+    baseMode.testAddJobToQueues(job2);
     expect(queues2.externalProgramQueue.length).toBe(0);
     expect(queues2.abcQueue.length).toBe(1);
     expect(queues2.abcQueue[0].id).toBe('job2');
 
-    const job3: Job = {
+    const job3: JobInfo = {
         id: 'job3',
         fileList: ['/test/path/file3.ets'],
-        dependencies: [],
-        dependants: [],
-        isDeclFile: true,
+        jobDependencies: [],
+        jobDependants: [],
         isAbcJob: false
-    };
-    const queues3: Queues = {
-        externalProgramQueue: [job3],
-        abcQueue: []
     };
     baseMode.testAddJobToQueues(job3, queues3);
     expect(queues3.externalProgramQueue.length).toBe(1);
     expect(queues3.abcQueue.length).toBe(0);
 
-    const job4: Job = {
+    const job4: JobInfo = {
         id: 'job4',
         fileList: ['/test/path/file4.ets'],
-        dependencies: [],
-        dependants: [],
-        isDeclFile: false,
+        jobDependencies: [],
+        jobDependants: [],
         isAbcJob: true
-    };
-    const queues4: Queues = {
-        externalProgramQueue: [],
-        abcQueue: [job4]
     };
     baseMode.testAddJobToQueues(job4, queues4);
     expect(queues4.externalProgramQueue.length).toBe(0);
@@ -1490,53 +1424,41 @@ function test_addJobToQueues() {
 }
 
 function test_initCompileQueues() {
-    const mockConfig = {
-        packageName: "test",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        dependentModuleList: [],
-        buildMode: BUILD_MODE.DEBUG
-    };
-
+    const mockConfig = mock.getMockedBuildConfig()
     class TestBuildMode extends BuildMode {
-        public testInitCompileQueues(jobs: Record<string, Job>, queues: Queues): void {
+        public testInitCompileQueues(jobs: Record<string, JobInfo>, queues: Queues): void {
             return (this as any).initCompileQueues(jobs, queues);
         }
 
         constructor(buildConfig: any) {
             super(buildConfig);
-            (this as any).collectCompileJobs = jest.fn().mockImplementation((jobs: Record<string, Job>) => {
+            this.collectCompileJobs = jest.fn().mockImplementation((jobs: Record<string, JobInfo>) => {
                 jobs['job1'] = {
                     id: 'job1',
-                    dependencies: [],
-                    dependants: ['job3'],
+                    jobDependencies: [],
+                    jobDependants: ['job3'],
                     fileList: ['/test/path/file1.ets'],
                     isAbcJob: true,
-                    isDeclFile: false
                 };
 
                 jobs['job2'] = {
                     id: 'job2',
-                    dependencies: [],
-                    dependants: [],
+                    jobDependencies: [],
+                    jobDependants: [],
                     fileList: ['/test/path/file2.ets'],
                     isAbcJob: false,
-                    isDeclFile: true
                 };
 
                 jobs['job3'] = {
                     id: 'job3',
-                    dependencies: ['job1'],
-                    dependants: [],
+                    jobDependencies: ['job1'],
+                    jobDependants: [],
                     fileList: ['/test/path/file3.ets'],
                     isAbcJob: true,
-                    isDeclFile: false
                 };
             });
 
-            (this as any).addJobToQueues = jest.fn().mockImplementation((job: Job, queues: Queues) => {
+            (this as any).addJobToQueues = jest.fn().mockImplementation((job: JobInfo, queues: Queues) => {
                 if (job.isAbcJob) {
                     queues.abcQueue.push(job);
                 } else {
@@ -1548,14 +1470,9 @@ function test_initCompileQueues() {
 
     const baseMode = new TestBuildMode(mockConfig as any);
 
-    const jobs: Record<string, Job> = {};
-    const queues: Queues = {
-        externalProgramQueue: [],
-        abcQueue: []
-    };
-
-    const collectCompileJobsSpy = jest.spyOn(baseMode as any, 'collectCompileJobs');
-    const addJobToQueuesSpy = jest.spyOn(baseMode as any, 'addJobToQueues');
+    const jobs: Record<string, JobInfo> = {};
+    const collectCompileJobsSpy = jest.spyOn(baseMode, 'collectCompileJobs');
+    const addJobToQueuesSpy = jest.spyOn(baseMode, 'addJobToQueues');
 
     baseMode.testInitCompileQueues(jobs, queues);
 
@@ -1568,11 +1485,14 @@ function test_initCompileQueues() {
     expect(queues.externalProgramQueue.length).toBe(1);
     expect(queues.externalProgramQueue[0].id).toBe('job2');
 
-    expect(queues.abcQueue.find(job => job.id === 'job3')).toBeUndefined();
+    expect(queues.abcQueue.find((job: JobInfo) => job.id === 'job3')).toBeUndefined();
 
     jest.restoreAllMocks();
 }
 
+
+// NOTE: To be defined later
+/*
 function test_checkAllTasksDone() {
     const mockConfig = {
         packageName: "test",
@@ -1719,9 +1639,9 @@ function test_runConcurrent() {
         jest.restoreAllMocks();
     });
 }
+*/
 
 function test_collectDependencyModules_language_branches() {
-    const { LANGUAGE_VERSION } = require('../../../src/pre_define');
     class TestBaseMode extends BaseMode {
         public run(): Promise<void> { return Promise.resolve(); }
         public testCollectDependencyModules(
@@ -1791,7 +1711,7 @@ function test_getDependentModules_missing_module() {
     const ErrorCode = {
         BUILDSYSTEM_DEPENDENT_MODULE_INFO_NOT_FOUND: 'BUILDSYSTEM_DEPENDENT_MODULE_INFO_NOT_FOUND'
     };
-    jest.mock('../../../src/error_code', () => ({
+    jest.mock('../../../src/util/error', () => ({
         ErrorCode
     }));
     const mockConfig = {
@@ -1830,6 +1750,8 @@ function test_getDependentModules_missing_module() {
     );
 }
 
+// NOTE: to be defined later
+/*
 function test_declgen_method() {
     jest.resetAllMocks();
     jest.restoreAllMocks();
@@ -1853,11 +1775,7 @@ function test_declgen_method() {
         },
         arktsGlobal: { es2panda: { _DestroyContext: jest.fn() } }
     };
-    const Logger = require('../../../src/logger').Logger;
     const PluginDriver = require('../../../src/plugins/plugins_driver').PluginDriver;
-    const utils = require('../../../src/util/utils');
-    const path = require('path');
-    Logger.getInstance = jest.fn().mockReturnValue({ printInfo: jest.fn(), printError: jest.fn() });
     PluginDriver.getInstance = jest.fn().mockReturnValue({
         getPluginContext: jest.fn().mockReturnValue({ setArkTSProgram: jest.fn(), setArkTSAst: jest.fn() }),
         runPluginHook: jest.fn()
@@ -1887,7 +1805,10 @@ function test_declgen_method() {
     expect(mockConfig.arkts.generateTsDeclarationsFromContext).toHaveBeenCalled();
     jest.restoreAllMocks();
 }
+*/
 
+// NOTE: to be defined later
+/*
 function test_generateDeclaration() {
     const mockConfig: BuildConfig = {
         buildMode: BUILD_MODE.DEBUG,
@@ -1898,7 +1819,7 @@ function test_generateDeclaration() {
         loaderOutPath: "./dist",
         cachePath: "./dist/cache",
         plugins: {},
-        dependentModuleList: [],
+        dependencyModuleList: [],
         buildType: BUILD_TYPE.BUILD,
         hasMainModule: false,
         moduleType: OHOS_MODULE_TYPE.HAR,
@@ -1941,22 +1862,35 @@ function test_generateDeclaration() {
         declgenSpy.mockRestore();
     });
 }
+*/
 
-function test_runMethod() {
-    const mockConfig: BuildConfig = {
-        buildMode: BUILD_MODE.DEBUG,
-        compileFiles: ["/test/path/file1.ets", "/test/path/file2.ets"],
-        packageName: "test",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        plugins: {},
-        dependentModuleList: [],
-        buildType: BUILD_TYPE.BUILD,
-        hasMainModule: false,
+async function test_runMethod() {
+    const mockConfig: BuildConfig = mock.getMockedBuildConfig()
+    mockConfig.compileFiles.push("/test/dependency/path/index.ets")
+    mockConfig.declgenV1OutPath = "./dist/declgen"
+    mockConfig.declgenV2OutPath = "./dist/declgen/v2"
+    mockConfig.dependencyModuleList.push({
+        packageName: "testDependency",
+        moduleName: "testDependency",
         moduleType: OHOS_MODULE_TYPE.HAR,
-        byteCodeHar: false,
+        modulePath: "/test/dependency/path",
+        sourceRoots: ["./"],
+        entryFile: "index.ets",
+        language: "1.2"
+    })
+
+    class TestBuildMode extends BuildMode {
+        public run(): Promise<void> {
+            return super.run();
+        }
+
+        public collectModuleInfos() {
+            super.collectModuleInfos()
+        }
+    }
+
+    const testBuildMode = new TestBuildMode(mockConfig);
+    testBuildMode.koalaModule = {
         arkts: {
             compiler: '/path/to/compiler',
             args: [],
@@ -1964,75 +1898,447 @@ function test_runMethod() {
         } as any,
         arktsGlobal: {
             config: {}
-        } as any,
+        } as any
+    } as any
+
+    const mainModuleInfo: ModuleInfo = getMockMainModuleInfo()
+
+    const dependencyModuleInfo: ModuleInfo = {
+        isMainModule: false,
+        packageName: "dependency",
+        moduleRootPath: "/test/dependency/path",
+        moduleType: OHOS_MODULE_TYPE.HAR,
+        sourceRoots: ["./"],
+        entryFile: "index.ets",
+
+        arktsConfigFile: "/dist/cache/test/dependency/arktsconfig.json",
+        dependencies: [],
+        staticDependencyModules: new Map(),
+        dynamicDependencyModules: new Map(),
+        language: LANGUAGE_VERSION.ARKTS_1_1,
+    }
+    mainModuleInfo.dependencies.push("dependency")
+    mainModuleInfo.staticDependencyModules.set("dependency", dependencyModuleInfo)
+
+
+    const generateModuleInfosSpy = jest.spyOn(testBuildMode, 'collectModuleInfos')
+        .mockImplementation(() => {
+            testBuildMode.fileToModule = new Map([
+                ['/test/path/file1.ets', mainModuleInfo],
+                ['/test/path/file2.ets', dependencyModuleInfo]
+            ]);
+            return;
+        });
+
+    return testBuildMode.run().then(() => {
+        expect(generateModuleInfosSpy).toHaveBeenCalledTimes(1);
+        generateModuleInfosSpy.mockRestore();
+    });
+}
+
+
+function test_findStronglyConnectedComponents_branches() {
+    const mockConfig: BuildConfig = mock.getMockedBuildConfig()
+
+    class TestBaseMode extends BaseMode {
+        public run(): Promise<void> { return Promise.resolve(); }
+        public testFindStronglyConnectedComponents(fileMap: DependencyFileMap): Map<string, Set<string>> {
+            return (this as any).findStronglyConnectedComponents(fileMap);
+        }
+        protected createHash(input: string): string { return 'cycle-group-' + input.length; }
+    }
+
+    const baseMode = new TestBaseMode(mockConfig as any);
+    const graph1 = {
+        dependencies: { 'A': ['B', 'C'], 'B': ['C'], 'C': ['A'] },
+        dependants: { 'A': ['C'], 'B': ['A'], 'C': ['A', 'B'] }
+    };
+    const result1 = baseMode.testFindStronglyConnectedComponents(graph1);
+    expect(result1.size).toBe(1);
+    expect(Array.from(result1.values())[0].size).toBe(3);
+    const graph2 = {
+        dependencies: { 'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': ['E'], 'E': ['B'] },
+        dependants: { 'A': [], 'B': ['A', 'E'], 'C': ['A'], 'D': ['B', 'C'], 'E': ['D'] }
+    };
+    const result2 = baseMode.testFindStronglyConnectedComponents(graph2);
+    expect(result2.size).toBe(1);
+    expect(Array.from(result2.values())[0].size).toBe(3);
+    const graph3 = {
+        dependencies: { 'A': ['B'], 'B': ['C'], 'C': ['D'], 'D': [], 'E': ['F'], 'F': ['E'] },
+        dependants: { 'A': [], 'B': ['A'], 'C': ['B'], 'D': ['C'], 'E': ['F'], 'F': ['E'] }
+    };
+    const result3 = baseMode.testFindStronglyConnectedComponents(graph3);
+    expect(result3.size).toBe(1);
+    expect(Array.from(result3.values())[0].size).toBe(2);
+    const graph4 = {
+        dependencies: { 'A': ['B'], 'B': ['C'], 'C': ['D'], 'D': [] },
+        dependants: { 'A': [], 'B': ['A'], 'C': ['B'], 'D': ['C'] }
+    };
+    const result4 = baseMode.testFindStronglyConnectedComponents(graph4);
+    expect(result4.size).toBe(0);
+}
+
+function test_createExternalProgramJob_branches() {
+    const mockConfig: BuildConfig = mock.getMockedBuildConfig()
+
+    class TestBaseMode extends BaseMode {
+        public run(): Promise<void> {
+            return Promise.resolve();
+        }
+
+        public testCreateExternalProgramJob(id: string, fileList: string[],
+            jobs: Record<string, JobInfo>, dependencies: Set<string>, isInCycle?: boolean): void {
+            return (this as any).createExternalProgramJob(id, fileList, jobs, dependencies, isInCycle);
+        }
+    }
+
+    const baseMode = new TestBaseMode(mockConfig);
+
+    {
+        const id = "external-program:test/file.ets";
+        const fileList = ["test/file.ets"];
+        const jobs: Record<string, JobInfo> = {};
+        const dependencies = new Set<string>([id, "external-program:other.ets"]);
+        const isInCycle = false;
+
+        baseMode.testCreateExternalProgramJob(id, fileList, jobs, dependencies, isInCycle);
+
+        expect(dependencies.has(id)).toBe(false);
+        expect(dependencies.size).toBe(1);
+
+        expect(jobs[id]).toBeDefined();
+        expect(jobs[id].id).toBe(id);
+        expect(jobs[id].fileList).toEqual(fileList);
+        expect(jobs[id].jobDependencies).toEqual(["external-program:other.ets"]);
+        expect(jobs[id].jobDependants).toEqual([]);
+    }
+
+    {
+        const id = "external-program:test/file2.ets";
+        const fileList = ["test/file2.ets", "test/file2b.ets"];
+        const jobs: Record<string, JobInfo> = {
+            [id]: {
+                id,
+                fileList: ["test/file2.ets"],
+                isAbcJob: false,
+                jobDependencies: ["external-program:dep1.ets"],
+                jobDependants: ["external-program:dep3.ets"]
+            }
+        };
+
+        const dependencies = new Set<string>(["external-program:dep2.ets"]);
+        const isInCycle = true;
+
+        baseMode.testCreateExternalProgramJob(id, fileList, jobs, dependencies, isInCycle);
+
+        expect(jobs[id]).toBeDefined();
+        expect(jobs[id].id).toBe(id);
+        expect(jobs[id].fileList).toEqual(["test/file2.ets"]);
+        expect(jobs[id].jobDependencies).toContain("external-program:dep1.ets");
+        expect(jobs[id].jobDependencies).toContain("external-program:dep2.ets");
+        expect(jobs[id].jobDependencies.length).toBe(2);
+        expect(jobs[id].jobDependants).toEqual(["external-program:dep3.ets"]);
+    }
+}
+
+// NOTE: to be defined later
+/*
+function test_collectCompileFiles_bytecode_har() {
+    const mockLogger = {
+        printInfo: jest.fn(),
+        printError: jest.fn()
+    };
+
+    const mockConfig: BuildConfig = getMockConfig()
+
+    class TestBaseMode extends BaseMode {
+        public run(): Promise<void> {
+            return Promise.resolve();
+        }
+
+        public testProcessEntryFiles(): void {
+            super.processEntryFiles();
+        }
+
+        // NOTE: to be defined later
+        // public testCollectAbcFileFromByteCodeHar(): void {
+        //     this.collectAbcFileFromByteCodeHar();
+        // }
+    }
+
+    const Logger = require('../../../src/logger').Logger;
+    Logger.instance = null;
+    Logger.getInstance = jest.fn().mockReturnValue(mockLogger);
+    const baseMode = new TestBaseMode(mockConfig);
+
+
+    baseMode.moduleInfos = new Map();
+    baseMode.moduleInfos.set("test", {
+        packageName: "test",
+        moduleType: "har",
+        byteCodeHar: true,
+        moduleRootPath: "/test/path",
+        sourceRoots: ["./"],
+        arktsConfigFile: "./dist/cache/test/config.json",
+        compileFileInfos: []
+    });
+
+    global.getFileHash = jest.fn().mockReturnValue("hash123");
+
+    jest.spyOn(baseMode, 'testCollectAbcFileFromByteCodeHar').mockImplementation(() => { });
+
+    baseMode.testCollectCompileFiles();
+}
+*/
+
+function test_processEntryFiles_file_not_in_module() {
+    const mockConfig: BuildConfig = mock.getMockedBuildConfig()
+
+    class TestBaseMode extends BaseMode {
+        public run(): Promise<void> {
+            return Promise.resolve();
+        }
+
+        public testProcessEntryFiles(): void {
+            super.processEntryFiles();
+        }
+    }
+
+    const baseMode = new TestBaseMode(mockConfig);
+
+    baseMode.entryFiles = new Set([
+        '/other/path/test.ets'
+    ]);
+
+    baseMode.moduleInfos = new Map();
+    baseMode.moduleInfos.set("test", getMockMainModuleInfo())
+
+    baseMode.testProcessEntryFiles();
+
+    expect(Logger.getInstance().printError).toHaveBeenCalledWith(
+        expect.objectContaining({
+            code: ErrorCode.BUILDSYSTEM_FILE_NOT_BELONG_TO_ANY_MODULE_FAIL,
+            description: 'File does not belong to any module in moduleInfos.'
+        })
+    );
+
+    expect(baseMode.fileToModule.size).toBe(0);
+}
+
+// NOTE: to be defined later
+/*
+function test_processEntryFiles_decl_ets_skip() {
+    const mockConfig: BuildConfig = getMockConfig()
+
+    class TestBaseMode extends BaseMode {
+        public run(): Promise<void> {
+            return Promise.resolve();
+        }
+
+        public testProcessEntryFiles(): void {
+            this.processEntryFiles();
+        }
+    }
+
+    const baseMode = new TestBaseMode(mockConfig);
+
+    baseMode.cacheDir = "./dist/cache";
+    baseMode.abcFiles = new Set();
+    baseMode.filesHashCache = {};
+
+    baseMode.entryFiles = new Set([
+        'index.ets',
+        '/test/ut/mock/web.d.ets'
+    ]);
+
+    baseMode.moduleInfos = new Map();
+    baseMode.moduleInfos.set("test", {
+        packageName: "test",
+        moduleRootPath: "/test/path",
+        sourceRoots: ["./"],
+        arktsConfigFile: "./dist/cache/test/config.json",
+        compileFileInfos: []
+    });
+
+    global.getFileHash = jest.fn().mockReturnValue("hash123");
+
+    baseMode.testProcessEntryFiles();
+}
+*/
+
+function test_collectModuleInfos() {
+    const mockConfig: BuildConfig = {
+        buildMode: BUILD_MODE.DEBUG,
+        compileFiles: ["test.ets"],
+        packageName: "test",
+        moduleRootPath: "/test/path",
+        sourceRoots: ["./"],
+        loaderOutPath: "./dist",
+        cachePath: "./dist/cache",
+        plugins: {},
+        buildType: BUILD_TYPE.BUILD,
+        hasMainModule: true,
+        moduleType: OHOS_MODULE_TYPE.HAR,
+        arkts: {} as any,
+        arktsGlobal: {} as any,
+        enableDeclgenEts2Ts: false,
+        byteCodeHar: false,
         declgenV1OutPath: "./dist/declgen",
         declgenV2OutPath: "./dist/declgen/v2",
         buildSdkPath: "./sdk",
         externalApiPaths: [],
-        enableDeclgenEts2Ts: false,
-        es2pandaMode: ES2PANDA_MODE.RUN
-    } as any;
 
+        dependencyModuleList: [
+            {
+                "packageName": "harA",
+                "moduleName": "harA",
+                "moduleType": "har",
+                "modulePath": "test/ut/mock/demo_1.2_dep_hsp1.2/harA",
+                "sourceRoots": ["./"],
+                "entryFile": "index.ets",
+                "language": "11.2",
+                "dependencies": ["hspA"],
+                "byteCodeHar": false
+            },
+            {
+                "packageName": "hspA",
+                "moduleName": "hspA",
+                "moduleType": "shared",
+                "modulePath": "hspA",
+                "sourceRoots": ["./"],
+                "entryFile": "index.ets",
+                "language": "11.2",
+                "byteCodeHar": false
+            }
+        ]
+    } as any;
     const Logger = require('../../../src/logger').Logger;
     Logger.instance = null;
-    Logger.getInstance = jest.fn().mockReturnValue({
-        printInfo: jest.fn(),
+    Logger.getInstance(mockConfig);
+    let baseModule: BuildMode = new BuildMode(mockConfig);
+    (baseModule as any).collectModuleInfos();
+
+    expect(Logger.getInstance().printError).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+            code: ErrorCode.BUILDSYSTEM_MODULE_INFO_NOT_CORRECT_FAIL,
+            description: 'Main module info from hvigor is not correct.'
+        })
+    );
+}
+
+function test_collectDependentCompileFiles002() {
+    const mockLogger = {
         printError: jest.fn(),
-        hasErrors: jest.fn().mockReturnValue(false),
-        printErrorAndExit: jest.fn()
-    });
-
-    const PluginDriver = require('../../../src/plugins/plugins_driver').PluginDriver;
-    PluginDriver.getInstance = jest.fn().mockReturnValue({
-        runPluginHook: jest.fn()
-    });
-
-    class TestBuildMode extends BuildMode {
-        public compile(fileInfo: any): void {
-            super.compile(fileInfo);
-        }
-
-        protected executeCommand(command: string, args: string[], options?: any): Promise<any> {
-            return Promise.resolve({ stdout: "mock stdout", stderr: "" });
-        }
-
-        protected getCompileCommand(fileInfo: any): { command: string, args: string[] } {
-            return {
-                command: 'node',
-                args: ['/path/to/compiler', fileInfo.filePath]
-            };
-        }
-    }
-
-    const baseMode = new TestBuildMode(mockConfig);
-
-    const mockFileInfo1 = {
-        filePath: '/test/path/file1.ets',
-        abcFilePath: '/test/path/file1.abc',
-        packageName: 'test',
-        arktsConfigFile: '/test/path/arktsconfig.json',
-        dependentFiles: []
-    };
-    const mockFileInfo2 = {
-        filePath: '/test/path/file2.ets',
-        abcFilePath: '/test/path/file2.abc',
-        packageName: 'test',
-        arktsConfigFile: '/test/path/arktsconfig.json',
-        dependentFiles: []
+        printInfo: jest.fn(),
+        hasErrors: jest.fn().mockReturnValue(false)
     };
 
-    const generateModuleInfosSpy = jest.spyOn(baseMode as any, 'generateModuleInfos')
-        .mockImplementation(() => {
-            (baseMode as any).compileFiles = new Map([
-                ['/test/path/file1.ets', mockFileInfo1],
-                ['/test/path/file2.ets', mockFileInfo2]
-            ]);
-        });
+    const moduleRootPath = "test/ut/mock/";
+    const testFile = `${moduleRootPath}a.ets`;
 
-    return baseMode.run().then(() => {
-        expect(generateModuleInfosSpy).toHaveBeenCalledTimes(1);
-        generateModuleInfosSpy.mockRestore();
+    const mockConfig: BuildConfig = {
+        compileFiles: [testFile],
+        packageName: "entry",
+        moduleType: OHOS_MODULE_TYPE.HAR,
+        buildType: BUILD_TYPE.BUILD,
+        buildMode: BUILD_MODE.DEBUG,
+        moduleRootPath: moduleRootPath,
+        sourceRoots: ["./"],
+        loaderOutPath: "test/ut/mock/dist",
+        cachePath: "test/ut/mock/dist/cache",
+        dependencyModuleList: [],
+        plugins: {},
+        hasMainModule: false,
+        arkts: {} as any,
+        arktsGlobal: {} as any,
+        enableDeclgenEts2Ts: false,
+        byteCodeHar: false,
+        declgenV1OutPath: "./dist/declgen",
+        declgenV2OutPath: "./dist/declgen/v2",
+        buildSdkPath: "./sdk",
+        externalApiPaths: []
+    } as any;
+
+    const BuildMode = require('../../../src/build/build_mode').BuildMode;
+    const Logger = require('../../../src/logger').Logger;
+    Logger.instance = null;
+    Logger.getInstance(mockConfig);
+    let baseModule = new BuildMode(mockConfig);
+
+    (baseModule as any).logger = mockLogger;
+    (baseModule as any).moduleInfos = new Map();
+    (baseModule as any).moduleInfos.set("entry", {
+        packageName: "entry",
+        moduleRootPath: moduleRootPath,
+        sourceRoots: ["./"],
+        compileFileInfos: []
     });
+
+    (baseModule as any).entryFiles = new Set([testFile]);
+    (baseModule as any).dependencyFileMap = {
+        dependants: {
+            [testFile]: ["dependency1.ets", "dependency2.ets"]
+        }
+    };
+    (baseModule as any).cacheDir = "test/ut/mock/dist/cache";
+    (baseModule as any).hashCache = {};
+    (baseModule as any).abcFiles = new Set();
+    (baseModule as any).compileFiles = new Map();
+
+    (baseModule as any).isBuildConfigModified = true;
+
+    (baseModule as any).isFileChanged = jest.fn().mockReturnValue(false);
+
+    (baseModule as any).collectDependentCompileFiles();
+
+    expect(mockLogger.printError).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+            code: ErrorCode.BUILDSYSTEM_FILE_NOT_BELONG_TO_ANY_MODULE_FAIL,
+            message: 'File does not belong to any module in moduleInfos.'
+        })
+    );
+
+    expect((baseModule as any).abcFiles.size).toBe(1);
+    const compileFilesArray = Array.from((baseModule as any).compileFiles.keys());
+    expect(compileFilesArray.length).toBe(1);
+    expect(compileFilesArray[0]).toBe(testFile);
+}
+
+// NOTE: to be defined later
+/*
+function test_shouldSkipFile() {
+    const mockConfig: BuildConfig = getMockBuildConfig()
+    let baseModule: BuildMode = new BuildMode(mockConfig);
+    baseModule.filesHashCache = {
+        "/test/path/file.ets": "hash123"
+    };
+
+    const file = "/test/path/file.ets";
+    const moduleInfo: ModuleInfo = {
+        isMainModule: false,
+        packageName: "test",
+        moduleRootPath: "/test/path",
+        sourceRoots: ["./"],
+        arktsConfigFile: "/cache/test/arktsconfig.json",
+        declgenV1OutPath: "/dist/declgen",
+        declgenBridgeCodePath: "/dist/bridge",
+        dynamicDependencyModules: new Map(),
+        staticDependencyModules: new Map(),
+        dependencies: [],
+        moduleType: OHOS_MODULE_TYPE.HAR,
+        entryFile: "index.ets",
+        declgenV2OutPath: "/dist/declgen/v2",
+        byteCodeHar: false
+    };
+    const filePathFromModuleRoot = "file.ets";
+    const abcFilePath = "/cache/test/file.abc";
+
+    baseModule.enableDeclgenEts2Ts = true;
+    let result3 = baseModule.shouldSkipFile(file, moduleInfo, filePathFromModuleRoot, abcFilePath);
+    baseModule.enableDeclgenEts2Ts = false;
+    let result4 = baseModule.shouldSkipFile(file, moduleInfo, filePathFromModuleRoot, abcFilePath);
+    expect(result3).toBe(false);
+    expect(result4).toBe(false);
 }
 
 function test_assignTaskToIdleWorker_empty_queues() {
@@ -2220,534 +2526,4 @@ function test_assignTaskToIdleWorker_abcQueue_no_job() {
         jest.restoreAllMocks();
     }
 }
-
-function test_findStronglyConnectedComponents_branches() {
-    const mockConfig = {
-        packageName: "test",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        buildMode: "Debug",
-        dependentModuleList: [],
-    };
-
-    class TestBaseMode extends BaseMode {
-        public run(): Promise<void> { return Promise.resolve(); }
-        public testFindStronglyConnectedComponents(graph: DependencyFileConfig): Map<string, Set<string>> {
-            return (this as any).findStronglyConnectedComponents(graph);
-        }
-        protected createHash(input: string): string { return 'cycle-group-' + input.length; }
-    }
-
-    const Logger = require('../../../src/logger').Logger;
-    Logger.instance = null;
-    Logger.getInstance = jest.fn().mockReturnValue({ printInfo: jest.fn(), printError: jest.fn() });
-    const baseMode = new TestBaseMode(mockConfig as any);
-    const graph1 = {
-        dependencies: { 'A': ['B', 'C'], 'B': ['C'], 'C': ['A'] },
-        dependants: { 'A': ['C'], 'B': ['A'], 'C': ['A', 'B'] }
-    };
-    const result1 = baseMode.testFindStronglyConnectedComponents(graph1);
-    expect(result1.size).toBe(1);
-    expect(Array.from(result1.values())[0].size).toBe(3);
-    const graph2 = {
-        dependencies: { 'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': ['E'], 'E': ['B'] },
-        dependants: { 'A': [], 'B': ['A', 'E'], 'C': ['A'], 'D': ['B', 'C'], 'E': ['D'] }
-    };
-    const result2 = baseMode.testFindStronglyConnectedComponents(graph2);
-    expect(result2.size).toBe(1);
-    expect(Array.from(result2.values())[0].size).toBe(3);
-    const graph3 = {
-        dependencies: { 'A': ['B'], 'B': ['C'], 'C': ['D'], 'D': [], 'E': ['F'], 'F': ['E'] },
-        dependants: { 'A': [], 'B': ['A'], 'C': ['B'], 'D': ['C'], 'E': ['F'], 'F': ['E'] }
-    };
-    const result3 = baseMode.testFindStronglyConnectedComponents(graph3);
-    expect(result3.size).toBe(1);
-    expect(Array.from(result3.values())[0].size).toBe(2);
-    const graph4 = {
-        dependencies: { 'A': ['B'], 'B': ['C'], 'C': ['D'], 'D': [] },
-        dependants: { 'A': [], 'B': ['A'], 'C': ['B'], 'D': ['C'] }
-    };
-    const result4 = baseMode.testFindStronglyConnectedComponents(graph4);
-    expect(result4.size).toBe(0);
-}
-
-function test_createExternalProgramJob_branches() {
-    const mockConfig = {
-        packageName: "test",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        buildMode: "Debug",
-        moduleType: "har",
-        dependentModuleList: [],
-    };
-
-    class TestBaseMode extends BaseMode {
-        public run(): Promise<void> {
-            return Promise.resolve();
-        }
-
-        public testCreateExternalProgramJob(id: string, fileList: string[],
-            jobs: Record<string, Job>, dependencies: Set<string>, isInCycle?: boolean): void {
-            return (this as any).createExternalProgramJob(id, fileList, jobs, dependencies, isInCycle);
-        }
-    }
-
-    const Logger = require('../../../src/logger').Logger;
-    Logger.instance = null;
-    Logger.getInstance = jest.fn().mockReturnValue({
-        printInfo: jest.fn(),
-        printError: jest.fn()
-    });
-
-    const baseMode = new TestBaseMode(mockConfig as any);
-
-    {
-        const id = "external-program:test/file.ets";
-        const fileList = ["test/file.ets"];
-        const jobs: Record<string, Job> = {};
-        const dependencies = new Set<string>([id, "external-program:other.ets"]);
-        const isInCycle = false;
-
-        baseMode.testCreateExternalProgramJob(id, fileList, jobs, dependencies, isInCycle);
-
-        expect(dependencies.has(id)).toBe(false);
-        expect(dependencies.size).toBe(1);
-
-        expect(jobs[id]).toBeDefined();
-        expect(jobs[id].id).toBe(id);
-        expect(jobs[id].fileList).toEqual(fileList);
-        expect(jobs[id].isDeclFile).toBe(true);
-        expect(jobs[id].isInCycle).toBe(false);
-        expect(jobs[id].dependencies).toEqual(["external-program:other.ets"]);
-        expect(jobs[id].dependants).toEqual([]);
-    }
-
-    {
-        const id = "external-program:test/file2.ets";
-        const fileList = ["test/file2.ets", "test/file2b.ets"];
-        const jobs: Record<string, Job> = {
-            [id]: {
-                id,
-                fileList: ["test/file2.ets"],
-                isDeclFile: false,
-                isInCycle: false,
-                isAbcJob: false,
-                dependencies: ["external-program:dep1.ets"],
-                dependants: ["external-program:dep3.ets"]
-            }
-        };
-
-        const dependencies = new Set<string>(["external-program:dep2.ets"]);
-        const isInCycle = true;
-
-        baseMode.testCreateExternalProgramJob(id, fileList, jobs, dependencies, isInCycle);
-
-        expect(jobs[id]).toBeDefined();
-        expect(jobs[id].id).toBe(id);
-        expect(jobs[id].fileList).toEqual(["test/file2.ets"]);
-        expect(jobs[id].isDeclFile).toBe(false);
-        expect(jobs[id].isInCycle).toBe(false);
-        expect(jobs[id].dependencies).toContain("external-program:dep1.ets");
-        expect(jobs[id].dependencies).toContain("external-program:dep2.ets");
-        expect(jobs[id].dependencies.length).toBe(2);
-        expect(jobs[id].dependants).toEqual(["external-program:dep3.ets"]);
-    }
-}
-
-function test_collectCompileFiles_bytecode_har() {
-    const mockLogger = {
-        printInfo: jest.fn(),
-        printError: jest.fn()
-    };
-
-    const mockConfig = {
-        packageName: "test",
-        moduleType: "har",
-        buildMode: BUILD_MODE.DEBUG,
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        enableDeclgenEts2Ts: true,
-        dependentModuleList: [],
-    };
-
-    class TestBaseMode extends BaseMode {
-        public run(): Promise<void> {
-            return Promise.resolve();
-        }
-
-        public testCollectCompileFiles(): void {
-            this.collectCompileFiles();
-        }
-
-        public testCollectAbcFileFromByteCodeHar(): void {
-            this.collectAbcFileFromByteCodeHar();
-        }
-    }
-
-    const Logger = require('../../../src/logger').Logger;
-    Logger.instance = null;
-    Logger.getInstance = jest.fn().mockReturnValue(mockLogger);
-    const baseMode = new TestBaseMode(mockConfig as any);
-
-    (baseMode as any).cacheDir = "./dist/cache";
-    (baseMode as any).abcFiles = new Set();
-    (baseMode as any).hashCache = {};
-    (baseMode as any).compileFiles = new Map();
-
-    (baseMode as any).entryFiles = new Set([
-        './test/ut/mock/a.ets',
-    ]);
-
-    (baseMode as any).moduleInfos = new Map();
-    (baseMode as any).moduleInfos.set("test", {
-        packageName: "test",
-        moduleType: "har",
-        byteCodeHar: true,
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        arktsConfigFile: "./dist/cache/test/config.json",
-        compileFileInfos: []
-    });
-
-    (global as any).getFileHash = jest.fn().mockReturnValue("hash123");
-    const utils = require('../../../src/util/utils');
-
-    jest.spyOn(baseMode, 'testCollectAbcFileFromByteCodeHar').mockImplementation(() => { });
-
-    baseMode.testCollectCompileFiles();
-}
-
-function test_collectCompileFiles_file_not_in_module() {
-    const mockLogger = {
-        printInfo: jest.fn(),
-        printError: jest.fn()
-    };
-
-    const mockConfig = {
-        packageName: "test",
-        moduleType: "har",
-        buildMode: BUILD_MODE.DEBUG,
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        enableDeclgenEts2Ts: true,
-        dependentModuleList: [],
-    };
-
-    class TestBaseMode extends BaseMode {
-        public run(): Promise<void> {
-            return Promise.resolve();
-        }
-
-        public testCollectCompileFiles(): void {
-            this.collectCompileFiles();
-        }
-    }
-
-    const Logger = require('../../../src/logger').Logger;
-    Logger.instance = null;
-    Logger.getInstance = jest.fn().mockReturnValue(mockLogger);
-    const baseMode = new TestBaseMode(mockConfig as any);
-
-    (baseMode as any).cacheDir = "./dist/cache";
-    (baseMode as any).abcFiles = new Set();
-    (baseMode as any).hashCache = {};
-    (baseMode as any).compileFiles = new Map();
-
-    (baseMode as any).entryFiles = new Set([
-        '/other/path/test.ets'
-    ]);
-
-    (baseMode as any).moduleInfos = new Map();
-    (baseMode as any).moduleInfos.set("test", {
-        packageName: "test",
-        moduleType: "har",
-        byteCodeHar: false,
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        arktsConfigFile: "./dist/cache/test/config.json",
-        compileFileInfos: []
-    });
-
-    baseMode.testCollectCompileFiles();
-
-    expect(mockLogger.printError).toHaveBeenCalledWith(
-        expect.objectContaining({
-            code: ErrorCode.BUILDSYSTEM_FILE_NOT_BELONG_TO_ANY_MODULE_FAIL,
-            description: 'File does not belong to any module in moduleInfos.'
-        })
-    );
-
-    expect((baseMode as any).compileFiles.size).toBe(0);
-}
-
-function test_collectCompileFiles_decl_ets_skip() {
-    const mockLogger = {
-        printInfo: jest.fn(),
-        printError: jest.fn()
-    };
-
-    const mockConfig = {
-        packageName: "test",
-        moduleType: "har",
-        buildMode: BUILD_MODE.DEBUG,
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        enableDeclgenEts2Ts: true,
-        dependentModuleList: [],
-    };
-
-    class TestBaseMode extends BaseMode {
-        public run(): Promise<void> {
-            return Promise.resolve();
-        }
-
-        public testCollectCompileFiles(): void {
-            this.collectCompileFiles();
-        }
-    }
-
-    const Logger = require('../../../src/logger').Logger;
-    Logger.instance = null;
-    Logger.getInstance = jest.fn().mockReturnValue(mockLogger);
-    const baseMode = new TestBaseMode(mockConfig as any);
-
-    (baseMode as any).cacheDir = "./dist/cache";
-    (baseMode as any).abcFiles = new Set();
-    (baseMode as any).hashCache = {};
-    (baseMode as any).compileFiles = new Map();
-
-    (baseMode as any).entryFiles = new Set([
-        'index.ets',
-        '/test/ut/mock/web.d.ets'
-    ]);
-
-    (baseMode as any).moduleInfos = new Map();
-    (baseMode as any).moduleInfos.set("test", {
-        packageName: "test",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        arktsConfigFile: "./dist/cache/test/config.json",
-        compileFileInfos: []
-    });
-
-    (global as any).getFileHash = jest.fn().mockReturnValue("hash123");
-    const utils = require('../../../src/util/utils');
-
-    baseMode.testCollectCompileFiles();
-}
-
-function test_collectModuleInfos() {
-    const mockLogger = {
-        printError: jest.fn(),
-        printInfo: jest.fn()
-    };
-    const mockConfig: BuildConfig = {
-        buildMode: BUILD_MODE.DEBUG,
-        compileFiles: ["test.ets"],
-        packageName: "test",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        plugins: {},
-        buildType: BUILD_TYPE.BUILD,
-        hasMainModule: true,
-        moduleType: OHOS_MODULE_TYPE.HAR,
-        arkts: {} as any,
-        arktsGlobal: {} as any,
-        enableDeclgenEts2Ts: false,
-        byteCodeHar: false,
-        declgenV1OutPath: "./dist/declgen",
-        declgenV2OutPath: "./dist/declgen/v2",
-        buildSdkPath: "./sdk",
-        externalApiPaths: [],
-
-        dependentModuleList: [
-            {
-                "packageName": "harA",
-                "moduleName": "harA",
-                "moduleType": "har",
-                "modulePath": "test/ut/mock/demo_1.2_dep_hsp1.2/harA",
-                "sourceRoots": ["./"],
-                "entryFile": "index.ets",
-                "language": "11.2",
-                "dependencies": ["hspA"],
-                "byteCodeHar": false
-            },
-            {
-                "packageName": "hspA",
-                "moduleName": "hspA",
-                "moduleType": "shared",
-                "modulePath": "hspA",
-                "sourceRoots": ["./"],
-                "entryFile": "index.ets",
-                "language": "11.2",
-                "byteCodeHar": false
-            }
-        ]
-    } as any;
-    const Logger = require('../../../src/logger').Logger;
-    Logger.instance = null;
-    Logger.getInstance(mockConfig);
-    let baseModule: BuildMode = new BuildMode(mockConfig);
-    (baseModule as any).collectModuleInfos();
-
-    expect(mockLogger.printError).not.toHaveBeenCalledWith(
-        expect.objectContaining({
-            code: ErrorCode.BUILDSYSTEM_MODULE_INFO_NOT_CORRECT_FAIL,
-            description: 'Main module info from hvigor is not correct.'
-        })
-    );
-}
-
-function test_collectDependentCompileFiles002() {
-    const mockLogger = {
-        printError: jest.fn(),
-        printInfo: jest.fn(),
-        hasErrors: jest.fn().mockReturnValue(false)
-    };
-
-    const moduleRootPath = "test/ut/mock/";
-    const testFile = `${moduleRootPath}a.ets`;
-
-    const mockConfig: BuildConfig = {
-        compileFiles: [testFile],
-        packageName: "entry",
-        moduleType: OHOS_MODULE_TYPE.HAR,
-        buildType: BUILD_TYPE.BUILD,
-        buildMode: BUILD_MODE.DEBUG,
-        moduleRootPath: moduleRootPath,
-        sourceRoots: ["./"],
-        loaderOutPath: "test/ut/mock/dist",
-        cachePath: "test/ut/mock/dist/cache",
-        dependentModuleList: [],
-        plugins: {},
-        hasMainModule: false,
-        arkts: {} as any,
-        arktsGlobal: {} as any,
-        enableDeclgenEts2Ts: false,
-        byteCodeHar: false,
-        declgenV1OutPath: "./dist/declgen",
-        declgenV2OutPath: "./dist/declgen/v2",
-        buildSdkPath: "./sdk",
-        externalApiPaths: []
-    } as any;
-
-    const BuildMode = require('../../../src/build/build_mode').BuildMode;
-    const Logger = require('../../../src/logger').Logger;
-    Logger.instance = null;
-    Logger.getInstance(mockConfig);
-    let baseModule = new BuildMode(mockConfig);
-
-    (baseModule as any).logger = mockLogger;
-    (baseModule as any).moduleInfos = new Map();
-    (baseModule as any).moduleInfos.set("entry", {
-        packageName: "entry",
-        moduleRootPath: moduleRootPath,
-        sourceRoots: ["./"],
-        compileFileInfos: []
-    });
-
-    (baseModule as any).entryFiles = new Set([testFile]);
-    (baseModule as any).dependencyFileMap = {
-        dependants: {
-            [testFile]: ["dependency1.ets", "dependency2.ets"]
-        }
-    };
-    (baseModule as any).cacheDir = "test/ut/mock/dist/cache";
-    (baseModule as any).hashCache = {};
-    (baseModule as any).abcFiles = new Set();
-    (baseModule as any).compileFiles = new Map();
-
-    (baseModule as any).isBuildConfigModified = true;
-
-    (baseModule as any).isFileChanged = jest.fn().mockReturnValue(false);
-
-    (baseModule as any).collectDependentCompileFiles();
-
-    expect(mockLogger.printError).not.toHaveBeenCalledWith(
-        expect.objectContaining({
-            code: ErrorCode.BUILDSYSTEM_FILE_NOT_BELONG_TO_ANY_MODULE_FAIL,
-            message: 'File does not belong to any module in moduleInfos.'
-        })
-    );
-
-    expect((baseModule as any).abcFiles.size).toBe(1);
-    const compileFilesArray = Array.from((baseModule as any).compileFiles.keys());
-    expect(compileFilesArray.length).toBe(1);
-    expect(compileFilesArray[0]).toBe(testFile);
-}
-
-function test_shouldSkipFile() {
-    const mockLogger = { printError: jest.fn() };
-    const mockConfig: BuildConfig = {
-        buildMode: BUILD_MODE.DEBUG,
-        compileFiles: ["test.ets"],
-        packageName: "test",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        loaderOutPath: "./dist",
-        cachePath: "./dist/cache",
-        plugins: {},
-        dependentModuleList: [],
-        buildType: BUILD_TYPE.BUILD,
-        hasMainModule: false,
-        moduleType: OHOS_MODULE_TYPE.HAR,
-        byteCodeHar: false,
-        arkts: {} as any,
-        arktsGlobal: {} as any,
-        declgenV1OutPath: "./dist/declgen",
-        declgenV2OutPath: "./dist/declgen/v2",
-        buildSdkPath: "./sdk",
-        externalApiPaths: [],
-        enableDeclgenEts2Ts: false
-    } as any;
-    const Logger = require('../../../src/logger').Logger;
-    Logger.instance = null;
-    Logger.getInstance(mockConfig);
-    let baseModule: BaseMode = new BuildMode(mockConfig);
-    (baseModule as any).logger = mockLogger;
-    (baseModule as any).hashCache = {
-        "/test/path/file.ets": "hash123"
-    };
-
-    const file = "/test/path/file.ets";
-    const moduleInfo: ModuleInfo = {
-        isMainModule: false,
-        packageName: "test",
-        moduleRootPath: "/test/path",
-        sourceRoots: ["./"],
-        arktsConfigFile: "/cache/test/arktsconfig.json",
-        compileFileInfos: [],
-        declgenV1OutPath: "/dist/declgen",
-        declgenBridgeCodePath: "/dist/bridge",
-        dynamicDepModuleInfos: new Map(),
-        staticDepModuleInfos: new Map(),
-        dependenciesSet: new Set(),
-        dependentSet: new Set(),
-        moduleType: OHOS_MODULE_TYPE.HAR,
-        entryFile: "index.ets",
-        declgenV2OutPath: "/dist/declgen/v2",
-        byteCodeHar: false
-    };
-    const filePathFromModuleRoot = "file.ets";
-    const abcFilePath = "/cache/test/file.abc";
-
-    (baseModule as any).enableDeclgenEts2Ts = true;
-    let result3 = (baseModule as any).shouldSkipFile(file, moduleInfo, filePathFromModuleRoot, abcFilePath);
-    (baseModule as any).enableDeclgenEts2Ts = false;
-    let result4 = (baseModule as any).shouldSkipFile(file, moduleInfo, filePathFromModuleRoot, abcFilePath);
-    expect(result3).toBe(false);
-    expect(result4).toBe(false);
-}
-
+*/

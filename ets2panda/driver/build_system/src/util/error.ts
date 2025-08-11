@@ -13,10 +13,9 @@
  * limitations under the License.
  */
 
-export enum SubsystemCode {
-    BUILDSYSTEM = '114',
-    ES2PANDA = '115',
-}
+import {
+    LogData
+} from '../logger'
 
 export enum ErrorCode {
     BUILDSYSTEM_COMPILE_ABC_FAIL = '11410001',
@@ -33,8 +32,8 @@ export enum ErrorCode {
     BUILDSYSTEM_PLUGIN_CONTEXT_RESET_PROJECT_CONFIG = '11410012',
     BUILDSYSTEM_DECLGEN_FAIL = '11410013',
     BUILDSYSTEM_LOAD_HASH_CACHE_FAIL = '11410014',
-    BUILDSYSTEM_Dependency_Analyze_FAIL = '11410015',
-    BUILDSYSTEM_Dependency_Analyzer_NOT_FOUND_FAIL = '11410016',
+    BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL = '11410015',
+    BUILDSYSTEM_DEPENDENCY_ANALYZER_NOT_FOUND_FAIL = '11410016',
     BUILDSYSTEM_ABC_FILE_MISSING_IN_BCHAR = '11410017',
     BUILDSYSTEM_HANDLE_ENTRY_FILE = '11410018',
     BUILDSYSTEM_PATH_RESOLVE_FAIL = '11410019',
@@ -46,4 +45,18 @@ export enum ErrorCode {
     BUILDSYSTEM_ENTRY_FILE_NOT_EXIST = "11410025",
     BUILDSYSTEM_COMPILE_FAILED_IN_WORKER = "11410026",
     BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER = '11410027',
+    BUILDSYSTEM_DYNAMIC_MODULE_DECL_FILE_NOT_FOUND = '11410028',
+}
+
+export class DriverError extends Error {
+    logData: LogData
+
+    constructor(logData: LogData) {
+        super()
+        this.logData = logData
+    }
+
+    toString() {
+        return this.logData.toString()
+    }
 }

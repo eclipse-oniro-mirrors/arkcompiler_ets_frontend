@@ -7,16 +7,16 @@
     "buildType": "build",
     "buildMode": "Debug",
     "moduleRootPath": "${absolute_path_to_build_system}/test/demo_mix_hap/entry/",
-    "sourceRoots": [
-        "./"
-    ],
+    "sourceRoots": ["./"],
+    "es2pandaMode": "sequential",
+
     "loaderOutPath": "./dist/cache/demo_mix_hap",
     "cachePath": "./dist/cache/demo_mix_hap",
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
     "enableDeclgenEts2Ts": false,
     "declgenDtsOutPath": "./dist/cache/demo_mix_hap/decl",
     "declgenTsOutPath": "./dist/cache/demo_mix_hap/ts",
-    "dependentModuleList": [
+    "dependencyModuleList": [
         {
             "packageName": "entry",
             "moduleName": "entry",

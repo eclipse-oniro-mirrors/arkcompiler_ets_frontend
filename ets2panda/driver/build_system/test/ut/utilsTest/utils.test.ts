@@ -18,7 +18,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
     ErrorCode,
-} from '../../../src/error_code';
+} from '../../../src/util/error';
 import {
     isWindows, isLinux, isMac,
     changeFileExtension, changeDeclgenFileExtension,

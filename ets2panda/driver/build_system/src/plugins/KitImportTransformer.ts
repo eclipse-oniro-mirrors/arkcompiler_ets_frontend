@@ -21,7 +21,7 @@ import {
     Logger,
     LogDataFactory
 } from '../logger';
-import { ErrorCode } from '../error_code';
+import { ErrorCode } from '../util/error';
 import {
     DYNAMIC_PREFIX,
     KIT_CONFIGS_PATH_FROM_SDK,

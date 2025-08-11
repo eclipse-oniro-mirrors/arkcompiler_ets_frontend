@@ -17,4 +17,4 @@ import {UIAbility} from '@ohos.app.ability.UIAbility'
 import {Lang} from '@arkts.lang'
 import {Hilog} from '@ohos.hilog'
 
-export {UIAbility, Lang}
+export {UIAbility, Lang, Hilog}

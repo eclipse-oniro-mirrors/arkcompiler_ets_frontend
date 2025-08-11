@@ -16,7 +16,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { safeRealpath } from '../../src/util/utils';
-import { ErrorCode } from '../../src/error_code';
+import { ErrorCode } from '../../src/util/error';
 import { Logger } from '../../src/logger';
 
 describe('safeRealpath', () => {
@@ -68,5 +68,21 @@ describe('safeRealpath', () => {
             expect(e.code).toBe(ErrorCode.BUILDSYSTEM_PATH_RESOLVE_FAIL);
         }
     });
+
+  test('throws error for non-existent path', () => {
+    try {
+      safeRealpath(nonExistent, mockLogger);
+    } catch (e: any) {
+      expect(e.code).toBe(ErrorCode.BUILDSYSTEM_PATH_RESOLVE_FAIL);
+    }
+  });
+
+  test('throws error for empty path string', () => {
+    try {
+      safeRealpath('', mockLogger);
+    } catch (e: any) {
+      expect(e.code).toBe(ErrorCode.BUILDSYSTEM_PATH_RESOLVE_FAIL);
+    }
+  });
 
 });

@@ -14,11 +14,12 @@
  */
 
 export const ARKTSCONFIG_JSON_FILE: string = 'arktsconfig.json';
-export const MERGED_INTERMEDIATE_FILE: string = 'modules_intermediate.abc';
+export const MERGED_CYCLE_FILE: string = 'cycle.abc';
 export const MERGED_ABC_FILE: string = 'modules_static.abc';
 export const LINKER_INPUT_FILE: string = 'fileInfo.txt';
-export const DEPENDENCY_INPUT_FILE: string = 'dependencyFileInfo.txt';
-export const DEPENDENCY_JSON_FILE: string = 'dependency.json';
+export const DEP_ANALYZER_INPUT_FILE: string = 'dependencyFileInfo.txt';
+export const DEP_ANALYZER_OUTPUT_FILE: string = 'dependency.json';
+export const DEP_ANALYZER_DIR: string = 'dep_analyzer';
 export const PROJECT_BUILD_CONFIG_FILE: string = 'projectionConfig.json';
 export const STATIC_RECORD_FILE: string = 'static.Record.d.ts';
 
@@ -39,7 +40,7 @@ export const PANDA_SDK_PATH_FROM_SDK: string = './build-tools/ets2panda';
 export const SYSTEM_SDK_PATH_FROM_SDK: string = './';
 export const KIT_CONFIGS_PATH_FROM_SDK: string = '../dynamic/build-tools/ets-loader/kit_configs';
 
-export const DEFAULT_WOKER_NUMS: number = 6;
+export const DEFAULT_WORKER_NUMS: number = 6;
 
 export const ETS_1_1 = 'dynamic';
 export const ETS_1_1_INTEROP = 'dynamic-interop';

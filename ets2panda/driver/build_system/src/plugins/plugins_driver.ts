@@ -19,7 +19,7 @@ import {
     LogDataFactory
 } from '../logger';
 import { BuildConfig } from '../types';
-import { ErrorCode } from '../error_code';
+import { ErrorCode, DriverError } from '../util/error';
 import { FileManager } from './FileManager';
 import path from 'path'
 import { MEMO_PLUGIN_PATH_FROM_SDK, UI_PLUGIN_PATH_FROM_SDK } from '../pre_define';
@@ -173,7 +173,9 @@ export class PluginDriver {
 
         this.initKoalaPlugins(projectConfig)
 
-        const pluginResults: RawPlugins[] = Object.entries(projectConfig.plugins).map(([key, value]) => {
+        const pluginResults: RawPlugins[] = []
+
+        Object.entries(projectConfig.plugins).forEach(([key, value]) => {
             try {
                 let pluginObject = require(value as string);
                 let initFunction = Object.values(pluginObject)[0] as PluginInitFunction;
@@ -182,21 +184,20 @@ export class PluginDriver {
                 }
                 this.logger.printInfo(`Loaded plugin: ', ${key}, ${pluginObject}`);
 
-                return {
+                pluginResults.push({
                     name: key,
                     init: initFunction
-                };
+                })
             } catch (error) {
-                const logData: LogData = LogDataFactory.newInstance(
-                    ErrorCode.BUILDSYSTEM_LOAD_PLUGIN_FAIL,
-                    'Failed to load plugin.',
-                    error as string
-                );
-                this.logger.printError(logData);
-                return {
-                    name: key,
-                    init: undefined
-                };
+                if (error instanceof Error) {
+                    throw new DriverError(
+                        LogDataFactory.newInstance(
+                            ErrorCode.BUILDSYSTEM_LOAD_PLUGIN_FAIL,
+                            'Failed to load plugin.',
+                            error.message
+                        )
+                    )
+                }
             }
         });
 
