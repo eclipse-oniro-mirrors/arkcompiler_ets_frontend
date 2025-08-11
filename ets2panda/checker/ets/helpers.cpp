@@ -766,6 +766,22 @@ static bool SetPreferredTypeForExpression(ETSChecker *checker, ir::Identifier *i
     if (init->IsNumberLiteral() && annotationType != nullptr) {
         init->SetPreferredType(annotationType);
     }
+    if (init->IsBinaryExpression() && annotationType != nullptr) {
+        auto *binExpr = init->AsBinaryExpression();
+        if (binExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_NULLISH_COALESCING &&
+            !binExpr->Right()->IsLiteral()) {
+            binExpr->Right()->SetPreferredType(annotationType);
+        }
+    }
+    if (init->IsConditionalExpression() && annotationType != nullptr) {
+        auto *conditionalExpr = init->AsConditionalExpression();
+        if (!conditionalExpr->Consequent()->IsLiteral()) {
+            conditionalExpr->Consequent()->SetPreferredType(annotationType);
+        }
+        if (!conditionalExpr->Alternate()->IsLiteral()) {
+            conditionalExpr->Alternate()->SetPreferredType(annotationType);
+        }
+    }
 
     if (typeAnnotation != nullptr && init->IsArrowFunctionExpression()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
