@@ -31,7 +31,6 @@ config("ark_config") {
     "//arkcompiler/ets_frontend/*",
   ]
 
-  include_dirs = [ "$ark_root" ]
   defines = [ "PANDA_TARGET_MOBILE_WITH_MANAGED_LIBS=1" ]
 
   if (is_linux) {
