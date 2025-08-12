@@ -558,6 +558,10 @@ semantic:
   id: 320
   message: "Interface '{}' incorrectly extends interface '{}'"
 
+- name: IFACE_INVALID_OVERRIDE
+  id: 79074
+  message: "Property '{}' must be optional in '{}', which is originally declared in '{}'."
+
 - name: IFACE_MULTIPLE_EXTENSION
   id: 315
   message: "Interface '{}' cannot simultaneously extend types '{}' and '{}'."

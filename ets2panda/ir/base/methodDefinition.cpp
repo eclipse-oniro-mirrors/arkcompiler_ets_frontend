@@ -235,7 +235,8 @@ static void DumpAccessorPrefix(const ir::MethodDefinition *m, ir::SrcDumper *dum
     if (dumper->IsDeclgen() && parent->IsTSInterfaceBody()) {
         if (m->Value() != nullptr && m->Value()->IsFunctionExpression() &&
             m->Value()->AsFunctionExpression()->Function() != nullptr &&
-            m->Value()->AsFunctionExpression()->Function()->HasBody()) {
+            m->Value()->AsFunctionExpression()->Function()->HasBody() && !m->IsGetter() && !m->IsSetter()) {
+            // Setter and Getter don't have 'default' modifier according to the language spec.
             dumper->Add("default ");
         }
     }

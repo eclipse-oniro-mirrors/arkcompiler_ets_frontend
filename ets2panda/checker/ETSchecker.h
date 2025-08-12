@@ -224,6 +224,7 @@ public:
     void ValidateAbstractMethodsToBeImplemented(ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
                                                 ETSObjectType *classType,
                                                 const std::vector<Signature *> &implementedSignatures);
+    void ValidateOptionalPropOverriding(const std::vector<ETSFunctionType *> &optionalProps, ETSObjectType *classType);
     void ApplyModifiersAndRemoveImplementedAbstracts(ArenaVector<ETSFunctionType *>::iterator &it,
                                                      ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
                                                      ETSObjectType *classType, bool &functionOverridden,
@@ -238,13 +239,17 @@ public:
     void MaybeReportErrorsForOverridingValidation(ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
                                                   ETSObjectType *classType, const lexer::SourcePosition &pos,
                                                   bool reportError);
+    void AddAccessorFlagsForOptionalPropInterface(ETSObjectType *classType, ETSObjectType *interfaceType,
+                                                  ir::MethodDefinition *ifaceMethod);
     void ValidateOverriding(ETSObjectType *classType, const lexer::SourcePosition &pos);
     void CheckInterfaceFunctions(ETSObjectType *classType);
     void CollectImplementedMethodsFromInterfaces(ETSObjectType *classType,
                                                  std::vector<Signature *> *implementedSignatures,
+                                                 std::vector<ETSFunctionType *> *optionalProps,
                                                  const ArenaVector<ETSFunctionType *> &abstractsToBeImplemented);
     void AddImplementedSignature(std::vector<Signature *> *implementedSignatures, varbinder::LocalVariable *function,
                                  ETSFunctionType *it);
+    void AddOptionalProps(std::vector<ETSFunctionType *> *optionalPropSignatures, varbinder::LocalVariable *function);
     void CheckInnerClassMembers(const ETSObjectType *classType);
     void CheckLocalClass(ir::ClassDefinition *classDef, CheckerStatus &checkerStatus);
     void CheckClassDefinition(ir::ClassDefinition *classDef);

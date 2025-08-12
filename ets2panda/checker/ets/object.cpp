@@ -17,6 +17,7 @@
 #include "checker/ETSchecker.h"
 #include "checker/checkerContext.h"
 #include "checker/ets/typeRelationContext.h"
+#include "checker/types/ets/etsFunctionType.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
@@ -994,7 +995,7 @@ static void CallRedeclarationCheckForCorrectSignature(ir::MethodDefinition *meth
 {
     ir::ScriptFunction *func = method->Function();
     ES2PANDA_ASSERT(func != nullptr);
-    if (!func->IsAbstract()) {
+    if (!func->IsAbstract() && !func->IsSetter() && !func->IsGetter()) {
         auto *sigFunc = funcType->FindSignature(func);
         checker->CheckFunctionRedeclarationInInterface(classType, similarSignatures, sigFunc);
     }
@@ -1014,6 +1015,7 @@ void ETSChecker::CheckInterfaceFunctions(ETSObjectType *classType)
             }
 
             ir::MethodDefinition *node = prop->Declaration()->Node()->AsMethodDefinition();
+            AddAccessorFlagsForOptionalPropInterface(classType, interface, node);
             if (prop->TsType()->IsTypeError()) {
                 continue;
             }
@@ -1029,6 +1031,7 @@ void ETSChecker::CheckInterfaceFunctions(ETSObjectType *classType)
 /// Traverse the interface inheritance tree and collects implemented methods
 void ETSChecker::CollectImplementedMethodsFromInterfaces(ETSObjectType *classType,
                                                          std::vector<Signature *> *implementedSignatures,
+                                                         std::vector<ETSFunctionType *> *optionalProps,
                                                          const ArenaVector<ETSFunctionType *> &abstractsToBeImplemented)
 {
     std::vector<ETSObjectType *> collectedInterfaces;
@@ -1040,11 +1043,12 @@ void ETSChecker::CollectImplementedMethodsFromInterfaces(ETSObjectType *classTyp
     size_t index = 0;
 
     while (index < collectedInterfaces.size()) {
-        for (auto &it : abstractsToBeImplemented) {
-            for (const auto &prop : collectedInterfaces[index]->Methods()) {
-                GetTypeOfVariable(prop);
+        for (const auto &prop : collectedInterfaces[index]->Methods()) {
+            GetTypeOfVariable(prop);
+            for (auto &it : abstractsToBeImplemented) {
                 AddImplementedSignature(implementedSignatures, prop, it);
             }
+            AddOptionalProps(optionalProps, prop);
         }
 
         for (auto &currentInterfaceChild : collectedInterfaces[index]->Interfaces()) {
@@ -1167,6 +1171,52 @@ void ETSChecker::ApplyModifiersAndRemoveImplementedAbstracts(ArenaVector<ETSFunc
     }
 }
 
+static bool IsPropertyOptional(ir::ClassProperty *prop)
+{
+    if (prop->IsOptionalDeclaration()) {
+        return true;
+    }
+
+    // Check if property type includes undefined (indicating optional)
+    auto typeAnno = prop->TypeAnnotation();
+    if (typeAnno == nullptr || !typeAnno->IsETSUnionType()) {
+        return false;
+    }
+
+    auto unionTypeAnno = typeAnno->AsETSUnionType();
+    for (auto *typeNode : unionTypeAnno->Types()) {
+        if (typeNode->IsETSUndefinedType()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void ETSChecker::ValidateOptionalPropOverriding(const std::vector<ETSFunctionType *> &optionalProps,
+                                                ETSObjectType *classType)
+{
+    if (optionalProps.empty()) {
+        return;
+    }
+
+    for (auto *prop : optionalProps) {
+        for (auto *field : classType->Fields()) {
+            auto classProp = field->Declaration()->Node()->AsClassProperty();
+            if (classProp->IsStatic()) {
+                continue;
+            }
+
+            if (field->Name() == prop->Name() && !IsPropertyOptional(classProp)) {
+                LogError(diagnostic::IFACE_INVALID_OVERRIDE,
+                         {field->Name(), classType->Name(),
+                          util::Helpers::GetContainingObjectName(prop->Variable()->Declaration()->Node())},
+                         field->Declaration()->Node()->Start());
+                return;
+            }
+        }
+    }
+}
+
 void ETSChecker::ValidateAbstractMethodsToBeImplemented(ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
                                                         ETSObjectType *classType,
                                                         const std::vector<Signature *> &implementedSignatures)
@@ -1230,6 +1280,28 @@ void ETSChecker::MaybeReportErrorsForOverridingValidation(ArenaVector<ETSFunctio
     }
 }
 
+void ETSChecker::AddAccessorFlagsForOptionalPropInterface(ETSObjectType *classType, ETSObjectType *interfaceType,
+                                                          ir::MethodDefinition *ifaceMethod)
+{
+    // Since optional properties in interface have default implementation,
+    // Getter/Setter flags need manually add to class field to ensure correct overriding.
+    if (ifaceMethod->IsAbstract() || ifaceMethod->Function()->Body() == nullptr || classType == interfaceType) {
+        return;
+    }
+
+    for (auto *field : classType->Fields()) {
+        if (field->Declaration()->Node()->AsClassProperty()->IsStatic()) {
+            continue;
+        }
+
+        if (field->Name() == ifaceMethod->Id()->Name()) {
+            auto flags = ifaceMethod->IsGetter() ? ir::ModifierFlags::GETTER : ir::ModifierFlags::SETTER;
+            field->Declaration()->Node()->AddModifier(flags);
+            break;
+        }
+    }
+}
+
 void ETSChecker::ValidateOverriding(ETSObjectType *classType, const lexer::SourcePosition &pos)
 {
     if (GetCachedComputedAbstracts()->find(classType) != GetCachedComputedAbstracts()->end()) {
@@ -1247,9 +1319,11 @@ void ETSChecker::ValidateOverriding(ETSObjectType *classType, const lexer::Sourc
 
     auto &abstractsToBeImplemented = GetAbstractsForClass(classType);
     std::vector<Signature *> implementedSignatures;
-
+    // Collect optional properties in interface to ensure correct overriding.
+    std::vector<ETSFunctionType *> optionalProps;
     // Since interfaces can define function bodies we have to collect the implemented ones first
-    CollectImplementedMethodsFromInterfaces(classType, &implementedSignatures, abstractsToBeImplemented);
+    CollectImplementedMethodsFromInterfaces(classType, &implementedSignatures, &optionalProps,
+                                            abstractsToBeImplemented);
     CheckInterfaceFunctions(classType);
 
     auto *superIter = classType;
@@ -1263,7 +1337,27 @@ void ETSChecker::ValidateOverriding(ETSObjectType *classType, const lexer::Sourc
         superIter = superIter->SuperType();
     } while (superIter != nullptr);
     ValidateAbstractMethodsToBeImplemented(abstractsToBeImplemented, classType, implementedSignatures);
+    ValidateOptionalPropOverriding(optionalProps, classType);
     MaybeReportErrorsForOverridingValidation(abstractsToBeImplemented, classType, pos, throwError);
+}
+
+void ETSChecker::AddOptionalProps(std::vector<ETSFunctionType *> *optionalProps, varbinder::LocalVariable *function)
+{
+    if (!function->TsType()->IsETSFunctionType()) {
+        return;
+    }
+    auto functionType = function->TsType()->AsETSFunctionType();
+    for (auto signature : functionType->CallSignatures()) {
+        if (signature->Function()->IsAbstract() || signature->Function()->IsStatic()) {
+            continue;
+        }
+
+        // If getter or setter has implementation in interface, it must be transformed from optional properties.
+        if (signature->Function()->IsGetter() || signature->Function()->IsSetter()) {
+            optionalProps->emplace_back(functionType);
+            break;
+        }
+    }
 }
 
 void ETSChecker::AddImplementedSignature(std::vector<Signature *> *implementedSignatures,

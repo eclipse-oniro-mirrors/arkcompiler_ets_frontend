@@ -19,6 +19,7 @@
 #include "checker/ETSchecker.h"
 
 #include "parser/program/program.h"
+#include "util/ustring.h"
 #include "varbinder/privateBinding.h"
 #include "varbinder/ETSBinder.h"
 #include "lexer/token/letters.h"
@@ -236,6 +237,24 @@ const checker::ETSObjectType *Helpers::GetContainingObjectType(const ir::AstNode
             return ret != nullptr ? ret->AsETSObjectType() : nullptr;
         }
 
+        iter = iter->Parent();
+    }
+
+    return nullptr;
+}
+
+const util::StringView Helpers::GetContainingObjectName(const ir::AstNode *node)
+{
+    const auto *iter = node;
+
+    while (iter != nullptr) {
+        if (iter->IsClassDefinition()) {
+            return iter->AsClassDefinition()->Ident()->Name();
+        }
+
+        if (iter->IsTSInterfaceDeclaration()) {
+            return iter->AsTSInterfaceDeclaration()->Id()->Name();
+        }
         iter = iter->Parent();
     }
 
