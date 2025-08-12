@@ -135,6 +135,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 22,
+            "column": 59,
+            "endLine": 22,
+            "endColumn": 70,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"wrapBuilder\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
             "line": 23,
             "column": 24,
             "endLine": 23,
@@ -142,6 +152,16 @@
             "problem": "UIInterfaceImport",
             "suggest": "",
             "rule": "The ArkUI interface \"WrappedBuilder\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 59,
+            "endLine": 23,
+            "endColumn": 70,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"wrapBuilder\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         },
         {

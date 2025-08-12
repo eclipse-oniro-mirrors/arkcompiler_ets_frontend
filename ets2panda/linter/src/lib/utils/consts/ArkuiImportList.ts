@@ -1596,6 +1596,7 @@ export const arkuiImportList: Set<string> = new Set([
   'WithThemeOptions',
   'WordBreak',
   'WorkStateStyle',
+  'wrapBuilder',
   'WrappedBuilder',
   'XComponent',
   'XComponentAttribute',
