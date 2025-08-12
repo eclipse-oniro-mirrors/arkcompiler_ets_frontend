@@ -117,6 +117,12 @@ def _check_regression(
 
     if success:
         print(f"\n✅ {metric_name} regression check for {perf_name} finished!")
+        msg = (
+            f"[UPDATE REQUIRED] Perf statistics for {perf_name}: {metric_name} exceeded lower threshold.\n"
+            f"\tLimit: {regression:.1%}, Actual: +{((new_sum / base_sum) - 1) * 100:.2f}%\n"
+            f"\tBase: {format_func(base_sum)}, New: {format_func(new_sum)}\n"
+        )
+        _print_and_log("Info", msg, log_dir)
 
 
 def compare_perf_files(
