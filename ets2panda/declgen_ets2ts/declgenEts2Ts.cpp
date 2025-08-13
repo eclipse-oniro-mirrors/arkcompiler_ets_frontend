@@ -383,7 +383,8 @@ void TSDeclGen::GenDeclarations()
         const auto jsdoc = compiler::JsdocStringFromDeclaration(globalStatement);
         if (jsdoc.Utf8().find(NON_INTEROP_FLAG) != std::string_view::npos) {
             continue;
-        } else if (globalStatement->IsClassDeclaration()) {
+        }
+        if (globalStatement->IsClassDeclaration()) {
             GenClassDeclaration(globalStatement->AsClassDeclaration());
         } else if (globalStatement->IsTSInterfaceDeclaration()) {
             GenInterfaceDeclaration(globalStatement->AsTSInterfaceDeclaration());
@@ -2126,7 +2127,8 @@ void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
         const auto jsdoc = compiler::JsdocStringFromDeclaration(prop);
         if (jsdoc.Utf8().find(NON_INTEROP_FLAG) != std::string_view::npos) {
             continue;
-        } else if (classDef->IsEnumTransformed()) {
+        }
+        if (classDef->IsEnumTransformed()) {
             if (prop->IsClassProperty()) {
                 state_.inEnum = true;
                 GenPropDeclaration(prop->AsClassProperty());
@@ -2279,7 +2281,7 @@ void TSDeclGen::GenMethodDeclaration(const ir::MethodDefinition *methodDef)
     }
     const auto methodIdent = GetKeyIdent(methodDef->Key());
     auto methodName = methodIdent->Name().Mutf8();
-    if (methodName.compare("$_iterator") == 0) {
+    if (methodName == "$_iterator") {
         methodName = "[Symbol.iterator]";
     }
     if (GenMethodDeclarationPrefix(methodDef, methodIdent, methodName)) {
