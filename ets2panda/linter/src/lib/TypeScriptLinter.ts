@@ -1828,61 +1828,48 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2) {
       return;
     }
+
+    // Safeguard: only process the outermost property access, not nested chains
+    if (ts.isPropertyAccessExpression(propertyAccessNode.parent)) {
+      return;
+    }
+
     const baseExprType = this.tsTypeChecker.getTypeAtLocation(propertyAccessNode.expression);
     const baseExprSym = baseExprType.aliasSymbol || baseExprType.getSymbol();
     const symbolName = baseExprSym ? baseExprSym.name : this.tsTypeChecker.typeToString(baseExprType);
+
     if (!baseExprType.isUnion() || COMMON_UNION_MEMBER_ACCESS_WHITELIST.has(symbolName)) {
       return;
     }
-    const allType = baseExprType.types;
-    const commonPropertyType = allType.filter((type) => {
-      return this.tsUtils.findProperty(type, propertyAccessNode.name.getText()) !== undefined;
+
+    const allTypes = baseExprType.types;
+    const propName = propertyAccessNode.name.getText();
+
+    // Only keep union members that have the property
+    const typesWithProp = allTypes.filter((type) => {
+      return this.tsUtils.findProperty(type, propName) !== undefined;
     });
-    const typeMap = new Map();
-    if (commonPropertyType.length === allType.length) {
-      allType.forEach((type) => {
-        this.handleTypeMember(type, propertyAccessNode.name.getText(), typeMap);
-      });
-      if (typeMap.size > 1) {
-        this.incrementCounters(propertyAccessNode, FaultID.AvoidUnionTypes);
+
+    if (typesWithProp.length !== allTypes.length) {
+      // Not all members have this property, nothing to check
+      return;
+    }
+
+    // Extract the type of the property for each member
+    const propTypes: string[] = [];
+    for (const t of typesWithProp) {
+      const propSym = this.tsUtils.findProperty(t, propName);
+      if (propSym) {
+        const propType = this.tsTypeChecker.getTypeOfSymbolAtLocation(propSym, propertyAccessNode);
+        propTypes.push(this.tsTypeChecker.typeToString(propType));
       }
     }
-  }
 
-  private handleTypeMember(
-    type: ts.Type,
-    memberName: string,
-    typeMap: Map<string | ts.Type | undefined, string>
-  ): void {
-    const propertySymbol = this.tsUtils.findProperty(type, memberName);
-    if (!propertySymbol?.declarations) {
-      return;
+    // If there's more than one distinct property type signature, flag it
+    const distinctPropTypes = new Set(propTypes);
+    if (distinctPropTypes.size > 1) {
+      this.incrementCounters(propertyAccessNode, FaultID.AvoidUnionTypes);
     }
-    const propertyType = this.tsTypeChecker.getTypeOfSymbolAtLocation(propertySymbol, propertySymbol.declarations[0]);
-    const symbol = propertySymbol.valueDeclaration;
-    if (!symbol) {
-      return;
-    }
-    if (ts.isMethodDeclaration(symbol)) {
-      const returnType = this.getMethodReturnType(propertySymbol);
-      typeMap.set(returnType, memberName);
-    } else {
-      typeMap.set(propertyType, memberName);
-    }
-  }
-
-  private getMethodReturnType(symbol: ts.Symbol): string | undefined {
-    const declaration = symbol.valueDeclaration ?? (symbol.declarations?.[0] as ts.Node | undefined);
-    if (!declaration) {
-      return undefined;
-    }
-    const methodType = this.tsTypeChecker.getTypeOfSymbolAtLocation(symbol, declaration);
-    const signatures = methodType.getCallSignatures();
-    if (signatures.length === 0) {
-      return 'void';
-    }
-    const returnType = signatures[0].getReturnType();
-    return this.tsTypeChecker.typeToString(returnType);
   }
 
   private handleLiteralAsPropertyName(node: ts.PropertyDeclaration | ts.PropertySignature): void {

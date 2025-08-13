@@ -45,3 +45,9 @@ class E {
 }
 let ab: D|E = new D();
 ab.tt();
+
+declare interface TextPickerResult {
+  value: string | string[];
+}
+const result: TextPickerResult = { value: 'a' };
+result.value.toString() // no error - ok
