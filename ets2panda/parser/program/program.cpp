@@ -181,6 +181,11 @@ void Program::SetASTChecked()
     programFlags_ |= ProgramFlags::AST_CHECKED;
 }
 
+void Program::RemoveAstChecked()
+{
+    programFlags_ &= ~ProgramFlags::AST_CHECKED;
+}
+
 bool Program::IsASTChecked()
 {
     return ((programFlags_ & ProgramFlags::AST_CHECKED) != 0U) ||

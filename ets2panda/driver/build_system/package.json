@@ -52,7 +52,9 @@
     "build_system_Utest": "jest --testMatch='**/test/ut/**/*.test.ts' --testPathIgnorePatterns='test/e2e/'",
     "build_system_Etest": "TEST=demo_entry1.2_hsp1.1:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'",
     "IncrementCompileTest1": "npm run build && node ./dist/entry.js test/e2e/IncrementDemo/build_config.json && sed -i 's/hello world from harA!/hello world from harA! (modified)/' \"$(pwd)/test/e2e/IncrementDemo/harB/index.ets\" && TEST=IncrementDemo:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'",
-    "IncrementCompileTest2": "npm run build && node ./dist/entry.js test/e2e/IncrementDemo/build_config.json && sed -i 's/console.log(strA)/console.log(strA + \"modified\")/' \"$(pwd)/test/e2e/IncrementDemo/entry/index.ets\" && TEST=IncrementDemo:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'"
+    "IncrementCompileTest2": "npm run build && node ./dist/entry.js test/e2e/IncrementDemo/build_config.json && sed -i 's/console.log(strA)/console.log(strA + \"modified\")/' \"$(pwd)/test/e2e/IncrementDemo/entry/index.ets\" && TEST=IncrementDemo:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'",
+
+    "simultaneous_compiling:namespace_import": "npm run build && node ./dist/entry.js test/simultaneous_compiling/namespace_import/build_config.json"
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
