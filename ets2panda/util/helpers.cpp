@@ -165,7 +165,15 @@ util::StringView Helpers::ToStringView(ArenaAllocator *allocator, int32_t number
     return str.View();
 }
 
-bool Helpers::EndsWith(const std::string &str, const std::string &suffix)
+bool Helpers::StartsWith(const std::string_view str, const std::string_view prefix)
+{
+    if (str.length() < prefix.length()) {
+        return false;
+    }
+    return str.compare(0, prefix.size(), prefix) == 0;
+}
+
+bool Helpers::EndsWith(const std::string_view str, const std::string_view suffix)
 {
     if (str.length() < suffix.length()) {
         return false;

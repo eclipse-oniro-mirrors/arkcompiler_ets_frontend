@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "rootDir": "${ES2PANDA_PATH}${DELIM}test${DELIM}unit${DELIM}plugin",
+        "cacheDir": "${ES2PANDA_PATH}${DELIM}test${DELIM}unit${DELIM}plugin${DELIM}cache",
+        "paths": {
+            "std": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}std"],
+            "escompat": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}escompat"]
+        }
+    }
+}

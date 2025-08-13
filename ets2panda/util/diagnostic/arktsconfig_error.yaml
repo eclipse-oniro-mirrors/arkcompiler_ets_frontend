@@ -65,6 +65,10 @@ arkts_config_error:
   id: 4
   message: Invalid value for '{}' with key '{}'
 
+- name: NOT_A_DIR
+  id: 19
+  message: '{} is not a directory' 
+
 - name: NOT_ROOT_DIR
   id: 15
   message: '{} is not root directory for {}'

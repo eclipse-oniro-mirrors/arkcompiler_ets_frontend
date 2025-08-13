@@ -18,7 +18,7 @@ include(${PANDA_ROOT}/cmake/toolchain/coverage/unit_tests_lcov.cmake)
 add_custom_target(es2panda_coverage DEPENDS etsstdlib es2panda verifier ark)
 
 if (NOT DEFINED ES2PANDA_PATH)
-    set(ES2PANDA_PATH ${PANDA_ROOT}/tools/es2panda)
+    file(REAL_PATH ${PANDA_ROOT}/tools/es2panda ES2PANDA_PATH)
 endif()
 
 add_custom_command(TARGET es2panda_coverage POST_BUILD

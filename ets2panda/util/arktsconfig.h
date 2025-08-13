@@ -155,6 +155,10 @@ public:
     {
         return outDir_;
     }
+    const std::string &CacheDir() const
+    {
+        return cacheDir_;
+    }
     const std::vector<std::string> &Files() const
     {
         return files_;
@@ -208,6 +212,7 @@ private:
     static constexpr const char *OUT_DIR = "outDir";
     static constexpr const char *ROOT_DIR = "rootDir";
     static constexpr const char *DEPENDENCIES = "dependencies";  // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
+    static constexpr const char *CACHE_DIR = "cacheDir";         // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
 
     void Inherit(const ArkTsConfig &base);
     bool ParseDependency(size_t keyIdx, const std::unique_ptr<ark::JsonObject> *dependencies,
@@ -221,6 +226,7 @@ private:
     bool useUrl_ = false;
     std::string outDir_ {};
     std::string rootDir_ {};
+    std::string cacheDir_ {};
     PathsMap paths_ {};
     std::map<std::string, ExternalModuleData, CompareByLength> dependencies_ {};
     std::vector<std::string> files_ {};

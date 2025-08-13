@@ -29,6 +29,9 @@ set(COMMON_SOURCE_FILES
     "util.cpp"
 )
 
+set(ETS_CONFIG_WITH_CACHE ${CMAKE_CURRENT_BINARY_DIR}/arktsconfig.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/arktsconfig.in.json ${ETS_CONFIG_WITH_CACHE})
+
 set(PLUGIN_TESTS
     #"test_name test_sts_file how_to_test_mode plugin_file_extension(c|cpp) how_to_compile_mode"
     "e2p_test_plugin_dump_json compile.ets ${RUNTIME_MODE} c ${LIBRARY_PLUGIN}"
@@ -60,6 +63,7 @@ set(PLUGIN_TESTS
     # "plugin_proceed_to_state_run_verifier compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_ast_node_check compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_resolve_path compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_resolve_path_cache compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN} ${ETS_CONFIG_WITH_CACHE}"
     "plugin_proceed_to_state_arktsconfig compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_find_method_decl compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_find_method_decl_by_name import.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
@@ -156,11 +160,18 @@ foreach(TEST_DATA IN ITEMS ${PLUGIN_TESTS})
     list(GET TEST_DATA_ELEM 1 TEST_STS_FILE)
     list(GET TEST_DATA_ELEM 2 TEST_MODE)
     list(GET TEST_DATA_ELEM 4 PLUGIN_MODE)
+    # if provided, use custom arktsconfig
+    list(LENGTH TEST_DATA_ELEM list_length)
+    if (list_length EQUAL 6)
+        list(GET TEST_DATA_ELEM 5 ARKTSCONFIG)
+    else()
+        set(ARKTSCONFIG ${CMAKE_BINARY_DIR}/bin/arktsconfig.json)
+    endif()
     if(${PLUGIN_MODE} STREQUAL ${LIBRARY_PLUGIN})
         add_custom_target(es2panda-plugin-test-compile-${TEST_NAME}
             COMMAND ${CMAKE_COMMAND} -E env
                 LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX} $<TARGET_FILE:es2panda>
-                --plugins=${TEST_NAME} --extension=ets --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.abc"
+                --plugins=${TEST_NAME} --arktsconfig=${ARKTSCONFIG} --extension=ets --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.abc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_STS_FILE}" > "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.out"
         )
     endif()
@@ -169,7 +180,7 @@ foreach(TEST_DATA IN ITEMS ${PLUGIN_TESTS})
             COMMAND ${CMAKE_COMMAND} -E env
                 LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
                 ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} $<TARGET_FILE:es2panda>
-                --extension=ets --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.abc"
+                --extension=ets --arktsconfig=${ARKTSCONFIG} --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.abc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_STS_FILE}" > "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.out" 2>&1
         )
     endif()
@@ -205,18 +216,25 @@ foreach(TEST_DATA IN ITEMS ${PLUGIN_TESTS})
     list(GET TEST_DATA_ELEM 1 TEST_STS_FILE)
     list(GET TEST_DATA_ELEM 2 TEST_MODE)
     list(GET TEST_DATA_ELEM 4 PLUGIN_MODE)
+    # if provided, use custom arktsconfig
+    list(LENGTH TEST_DATA_ELEM list_length)
+    if (list_length EQUAL 6)
+        list(GET TEST_DATA_ELEM 5 ARKTSCONFIG)
+    else()
+        set(ARKTSCONFIG ${CMAKE_BINARY_DIR}/bin/arktsconfig.json)
+    endif()
     if(${TEST_MODE} STREQUAL ${EXPECTED_MODE})
         if(${PLUGIN_MODE} STREQUAL ${LIBRARY_PLUGIN})
             add_custom_target(update-es2panda-plugin-test-expected-${TEST_NAME}
                 COMMAND ${CMAKE_COMMAND} -E env
                     LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX} $<TARGET_FILE:es2panda>
-                    --plugins=${TEST_NAME} --extension=ets --ets-unnamed "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_STS_FILE}" >
+                    --plugins=${TEST_NAME} --extension=ets --arktsconfig=${ARKTSCONFIG} --ets-unnamed "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_STS_FILE}" >
                     "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}-expected.txt")
         else()
             add_custom_target(update-es2panda-plugin-test-expected-${TEST_NAME}
                 COMMAND ${CMAKE_COMMAND} -E env
                     LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
-                    ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} $<TARGET_FILE:es2panda>
+                    ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} $<TARGET_FILE:es2panda> --arktsconfig=${ARKTSCONFIG}
                     "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_STS_FILE}" >
                     "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}-expected.txt")
         endif()
