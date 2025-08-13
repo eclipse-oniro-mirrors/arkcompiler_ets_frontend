@@ -186,7 +186,8 @@ static void HandleNativeAndAsyncMethods(ETSChecker *checker, ir::MethodDefinitio
     ES2PANDA_ASSERT(scriptFunc != nullptr);
 
     if (util::Helpers::IsAsyncMethod(node)) {
-        if (scriptFunc->ReturnTypeAnnotation() != nullptr && scriptFunc->Signature() != nullptr) {
+        if (scriptFunc->ReturnTypeAnnotation() != nullptr && !scriptFunc->ReturnTypeAnnotation()->IsOpaqueTypeNode() &&
+            scriptFunc->Signature() != nullptr) {
             auto *asyncFuncReturnType = scriptFunc->Signature()->ReturnType();
 
             if (!asyncFuncReturnType->IsETSObjectType() ||
@@ -1097,19 +1098,23 @@ checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
 
     checker->Context().SetContainingSignature(signature);
     expr->Function()->Body()->Check(checker);
+    if (expr->Function()->ReturnTypeAnnotation() == nullptr) {
+        if (expr->Function()->IsAsyncFunc()) {
+            auto *retType = signature->ReturnType();
+            if (!retType->IsETSObjectType() ||
+                retType->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType()) {
+                auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(signature->ReturnType());
+                ES2PANDA_ASSERT(returnType != nullptr);
+                expr->Function()->Signature()->SetReturnType(returnType->PromiseType());
+                for (auto &returnStatement : expr->Function()->ReturnStatements()) {
+                    returnStatement->SetReturnType(checker, returnType);
+                }
+            }
+        }
+    }
 
     auto *funcType = checker->CreateETSArrowType(signature);
     checker->Context().SetContainingSignature(nullptr);
-
-    if (expr->Function()->IsAsyncFunc()) {
-        auto *retType = signature->ReturnType();
-        if (!retType->IsETSObjectType() ||
-            retType->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType()) {
-            checker->LogError(diagnostic::ASYNC_DOESNT_PROMISE, {}, expr->Function()->Start());
-            expr->SetTsType(checker->GlobalTypeError());
-            return expr->TsType();
-        }
-    }
     expr->SetTsType(funcType);
     return expr->TsType();
 }
