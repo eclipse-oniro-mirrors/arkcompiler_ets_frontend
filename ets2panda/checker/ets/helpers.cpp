@@ -1806,8 +1806,13 @@ void ETSChecker::SetPropertiesForModuleObject(checker::ETSObjectType *moduleObjT
         if (!VarBinder()->AsETSBinder()->GetGlobalRecordTable()->IsExternal()) {
             RemoveStatus(CheckerStatus::IN_EXTERNAL);
         }
+        auto savedProgram = Program();
+        VarBinder()->AsETSBinder()->SetProgram(program);
+        VarBinder()->AsETSBinder()->ResetTopScope(program->GlobalScope());
         program->SetASTChecked();
         program->Ast()->Check(this);
+        VarBinder()->AsETSBinder()->SetProgram(savedProgram);
+        VarBinder()->AsETSBinder()->ResetTopScope(savedProgram->GlobalScope());
     }
 
     BindingsModuleObjectAddProperty<checker::PropertyType::STATIC_FIELD>(
