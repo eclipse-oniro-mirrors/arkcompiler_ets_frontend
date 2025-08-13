@@ -21,7 +21,7 @@
             "endColumn": 12,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"push\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         }
     ]

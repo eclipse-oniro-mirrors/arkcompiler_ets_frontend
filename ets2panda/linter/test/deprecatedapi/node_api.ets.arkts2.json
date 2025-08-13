@@ -13,7 +13,7 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-     "result": [
+    "result": [
         {
             "line": 21,
             "column": 33,
@@ -21,7 +21,7 @@
             "endColumn": 37,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"NODE\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -64,5 +64,5 @@
             "rule": "The ArkUI interface \"XComponent\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         }
-     ]
+    ]
 }

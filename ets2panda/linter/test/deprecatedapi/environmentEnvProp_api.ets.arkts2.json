@@ -21,7 +21,7 @@
             "endColumn": 20,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"EnvProp\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -31,7 +31,7 @@
             "endColumn": 43,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"Keys\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -41,7 +41,7 @@
             "endColumn": 21,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"EnvProps\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         }
     ]

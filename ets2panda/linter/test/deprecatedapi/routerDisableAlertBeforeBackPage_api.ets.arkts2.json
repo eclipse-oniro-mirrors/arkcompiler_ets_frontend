@@ -21,7 +21,7 @@
             "endColumn": 38,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"disableAlertBeforeBackPage\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -31,7 +31,7 @@
             "endColumn": 14,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"success\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -41,7 +41,7 @@
             "endColumn": 15,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"complete\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -51,7 +51,7 @@
             "endColumn": 19,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"replace\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -61,7 +61,7 @@
             "endColumn": 10,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"uri\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -71,7 +71,7 @@
             "endColumn": 13,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"params\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -81,7 +81,7 @@
             "endColumn": 17,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"clear\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {

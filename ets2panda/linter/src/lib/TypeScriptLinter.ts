@@ -11135,6 +11135,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       errorMsg = `The "${name}" in SDK is no longer supported.(sdk-method-not-supported)`;
     } else if (faultID === FaultID.SdkCommonApiBehaviorChange) {
       errorMsg = `The "${name}" in SDK has been changed.(sdk-method-changed)`;
+    } else if (faultID === FaultID.NoDeprecatedApi) {
+      errorMsg = `The ArkUI interface "${name}" is deprecated (arkui-deprecated-interface)`;
     }
     return errorMsg;
   }
@@ -14131,7 +14133,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         name,
         faultID,
         isSdkCommon || apiType === BUILTIN_TYPE ? undefined : autofix,
-        isSdkCommon ? TypeScriptLinter.getErrorMsgForSdkCommonApi(name.text, faultID) : undefined
+        isSdkCommon || apiType === undefined ?
+          TypeScriptLinter.getErrorMsgForSdkCommonApi(name.text, faultID) :
+          undefined
       );
     }
   }
@@ -14222,7 +14226,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
           }
         }
         if (paramMatch) {
-          this.incrementCounters(expression, FaultID.NoDeprecatedApi);
+          this.incrementCounters(
+            expression,
+            FaultID.NoDeprecatedApi,
+            undefined,
+            TypeScriptLinter.getErrorMsgForSdkCommonApi(expression.getText(), FaultID.NoDeprecatedApi)
+          );
           return;
         }
       }
@@ -14487,7 +14496,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         errorNode,
         faultID,
         isSdkCommon || apiType === BUILTIN_TYPE ? undefined : autofix,
-        isSdkCommon ? TypeScriptLinter.getErrorMsgForSdkCommonApi(apiName, faultID) : undefined
+        isSdkCommon || apiType === undefined ? TypeScriptLinter.getErrorMsgForSdkCommonApi(apiName, faultID) : undefined
       );
     }
   }
