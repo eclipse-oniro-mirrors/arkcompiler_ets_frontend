@@ -20,13 +20,13 @@ jest.mock('path');
 jest.mock('../../../src/util/utils', () => ({
     // simplified functions for testing
     changeFileExtension: jest.fn((file: string, targetExt: string, originExt = '') => {
-        const currentExt = originExt.length === 0 ? file.substring(file.lastIndexOf('.')) 
-                                                  : originExt;
+        const currentExt = originExt.length === 0 ? file.substring(file.lastIndexOf('.'))
+            : originExt;
         const fileWithoutExt = file.substring(0, file.lastIndexOf(currentExt));
         return fileWithoutExt + targetExt;
     }),
     changeDeclgenFileExtension: jest.fn((file: string, targetExt: string) => {
-        const DECL_ETS_SUFFIX = '.d.ets'; 
+        const DECL_ETS_SUFFIX = '.d.ets';
         if (file.endsWith(DECL_ETS_SUFFIX)) {
             return file.replace(DECL_ETS_SUFFIX, targetExt);
         }
@@ -55,8 +55,11 @@ jest.mock('../../../src/logger', () => {
     } as any;
     return {
         Logger: mLogger,
-        LogDataFactory: { newInstance: jest.fn(() => ({
-            code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {} })) }
+        LogDataFactory: {
+            newInstance: jest.fn(() => ({
+                code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {}
+            }))
+        }
     };
 });
 jest.mock('../../../src/pre_define', () => ({
@@ -67,23 +70,23 @@ jest.mock('../../../src/pre_define', () => ({
 
 jest.mock('../../../src/init/init_koala_modules', () => ({
     initKoalaModules: jest.fn((buildConfig) => {
-    const fakeKoala = {
-      arkts: fakeArkts,
-      arktsGlobal: fakeArktsGlobal
-    };
-    fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
-    
-    buildConfig.arkts = fakeKoala.arkts;
-    buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
-    return fakeKoala;
-  })
+        const fakeKoala = {
+            arkts: fakeArkts,
+            arktsGlobal: fakeArktsGlobal
+        };
+        fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+
+        buildConfig.arkts = fakeKoala.arkts;
+        buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
+        return fakeKoala;
+    })
 }));
 
 const fakeArkts = {
     Config: { create: jest.fn(() => ({ peer: 'peer' })) },
-    Context: { 
+    Context: {
         createFromString: jest.fn(() => ({ program: {}, peer: 'peer' })),
-        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' })) 
+        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' }))
     },
     proceedToState: jest.fn(),
     Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2 },
@@ -124,14 +127,14 @@ afterEach(() => {
 
 // Test the functions of the declgen_worker.ts file
 describe('declgen_worker', () => {
-    const compileFileInfo ={
+    const compileFileInfo = {
         filePath: '/src/foo.ets',
         dependentFiles: [],
         abcFilePath: 'foo.abc',
         arktsConfigFile: '/src/arktsconfig.json',
         packageName: 'pkg',
     };
-    
+
     const buildConfig = {
         hasMainModule: true,
         byteCodeHar: true,
@@ -164,7 +167,7 @@ describe('declgen_worker', () => {
         dependenciesSet: new Set(),
         dependentSet: new Set(),
     };
-    
+
     const moduleInfos = [['pkg', moduleInfo]];
 
     test('generate declaration && glue files && exit', () => {
@@ -189,10 +192,11 @@ describe('declgen_worker', () => {
         expect(fakeArktsGlobal.es2panda._DestroyContext).toHaveBeenCalled();
         expect(process.send).toHaveBeenCalledWith({
             id: 'processId1',
-            success: true
+            success: true,
+            shouldKill: false
         });
     });
-    
+
     test('destroy context && config', () => {
         require('fs').readFileSync.mockReturnValue('source code');
         require('../../../src/build/declgen_worker');
@@ -206,5 +210,5 @@ describe('declgen_worker', () => {
         expect(fakeArkts.destroyConfig).toHaveBeenCalled();
         expect(fakeArktsGlobal.es2panda._DestroyContext).toHaveBeenCalled();
     });
-    
+
 });

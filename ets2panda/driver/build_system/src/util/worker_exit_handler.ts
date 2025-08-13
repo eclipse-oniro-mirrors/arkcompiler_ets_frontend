@@ -22,6 +22,7 @@ import { Task, WorkerInfo } from "./TaskManager";
 export function handleCompileWorkerExit(
   workerInfo: WorkerInfo,
   code: number | null,
+  signal: NodeJS.Signals | null,
   runningTasks: Map<string, Task<CompilePayload>>
 ): void {
   if (!code || code === 0) {
@@ -51,3 +52,28 @@ export function handleCompileWorkerExit(
   Logger.getInstance().printErrorAndExit(logData);
 }
 
+export function handleDeclgenWorkerExit(
+  workerInfo: WorkerInfo,
+  code: number | null,
+  signal: NodeJS.Signals | null,
+  runningTasks: Map<string, Task<CompilePayload>>
+): void {
+
+  if (code && code !== 0) {
+    let logExitCodeData: LogData = LogDataFactory.newInstance(
+      ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
+      `Declgen crashed (exit code ${code})`,
+      "This error is likely caused internally from compiler.",
+    );
+    Logger.getInstance().printError(logExitCodeData);
+    return;
+  }
+  if (signal && signal !== "SIGTERM") {
+    let logSignalData: LogData = LogDataFactory.newInstance(
+      ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
+      `Declgen crashed (exit signal ${signal})`,
+      "This error is likely caused internally from compiler.",
+    );
+    Logger.getInstance().printError(logSignalData);
+  }
+}

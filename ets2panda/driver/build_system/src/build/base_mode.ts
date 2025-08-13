@@ -83,7 +83,10 @@ import {
   RECORDE_RUN_NODE
 } from '../utils/record_time_mem';
 import { TaskManager } from '../util/TaskManager';
-import { handleCompileWorkerExit } from '../util/worker_exit_handler';
+import {
+  handleCompileWorkerExit,
+  handleDeclgenWorkerExit
+} from '../util/worker_exit_handler';
 import { initKoalaModules } from '../init/init_koala_modules';
 
 export abstract class BaseMode {
@@ -1020,7 +1023,7 @@ export abstract class BaseMode {
 
     const taskManager = new TaskManager<CompilePayload>(
       path.resolve(__dirname, 'declgen_worker.js'),
-      handleCompileWorkerExit
+      handleDeclgenWorkerExit
     );
 
     try {
@@ -1034,7 +1037,7 @@ export abstract class BaseMode {
         })
       );
 
-      await Promise.all(taskPromises);
+      await Promise.allSettled(taskPromises);
 
       this.logger.printInfo('All declaration generation tasks complete.');
     } catch (error) {

@@ -172,6 +172,7 @@ export interface DeclgenConfig {
   declgenV2OutPath?: string;
   declgenBridgeCodePath?: string;
   skipDeclCheck?: boolean;
+  continueOnError?: boolean;
 }
 
 export interface LoggerConfig {
