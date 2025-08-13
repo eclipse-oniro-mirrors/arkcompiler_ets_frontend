@@ -178,10 +178,6 @@ semantic:
   id: 209
   message: "Cannot assign to this property because it is readonly."
 
-- name: ASYNC_DOESNT_PROMISE
-  id: 23
-  message: "Return type of async lambda must be 'Promise'"
-
 - name: ASYNC_FUNCTION_RETURN_TYPE
   id: 1
   message: "Return type of async function must be 'Promise'."
@@ -1464,6 +1460,7 @@ graveyard:
 - 15
 - 16
 - 22
+- 23
 - 29
 - 30
 - 35
