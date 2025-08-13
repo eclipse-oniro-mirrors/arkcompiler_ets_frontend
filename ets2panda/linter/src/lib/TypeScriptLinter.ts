@@ -9590,11 +9590,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private isTargetStorageType(storage: ts.Identifier, targetTypes: string[]): boolean {
     const decl = this.tsUtils.getDeclarationNode(storage);
-    if (!decl) {
-      if (targetTypes.includes(storage.getText())) {
-        return true;
-      }
-      return false;
+    if (!decl || decl.getSourceFile() !== storage.getSourceFile()) {
+      return targetTypes.includes(storage.getText());
     }
 
     if (!ts.isVariableDeclaration(decl)) {
