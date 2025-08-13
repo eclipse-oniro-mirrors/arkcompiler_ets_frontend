@@ -975,6 +975,75 @@ static Type *GetAppropriatePreferredType(Type *originalType, std::function<bool(
     return preferredType;
 }
 
+static inline checker::Type *CheckElemUnder(checker::ETSChecker *checker, ir::Expression *node,
+                                            checker::Type *preferElem)
+{
+    auto *oldPref = node->PreferredType();
+    node->SetPreferredType(preferElem);
+    checker::Type *t = node->Check(checker);
+    node->SetPreferredType(oldPref);
+    return t;
+}
+
+static Type *SelectArrayPreferredTypeForLiteral(ETSChecker *checker, ir::ArrayExpression *arrayLiteral,
+                                                Type *contextualType)
+{
+    ES2PANDA_ASSERT(checker != nullptr);
+    ES2PANDA_ASSERT(arrayLiteral != nullptr);
+    ES2PANDA_ASSERT(contextualType != nullptr && contextualType->IsETSUnionType());
+
+    auto &alts = contextualType->AsETSUnionType()->ConstituentTypes();
+
+    for (auto *el : arrayLiteral->Elements()) {
+        ES2PANDA_ASSERT(el != nullptr);
+        if (el->IsSpreadElement() || el->IsBrokenExpression()) {
+            return nullptr;
+        }
+    }
+
+    Type *selected = nullptr;
+    Type *selectedElem = nullptr;
+
+    for (Type *candidate : alts) {
+        if (!candidate->IsETSArrayType() && !candidate->IsETSResizableArrayType()) {
+            continue;
+        }
+
+        Type *candElem = checker->GetElementTypeOfArray(candidate);
+        ES2PANDA_ASSERT(candElem != nullptr);
+
+        bool ok = true;
+        for (auto *el : arrayLiteral->Elements()) {
+            Type *elTy = CheckElemUnder(checker, el, candElem);
+            if (elTy == nullptr || !checker->Relation()->IsAssignableTo(elTy, candElem)) {
+                ok = false;
+                break;
+            }
+        }
+        if (!ok) {
+            continue;
+        }
+
+        if (selected == nullptr) {
+            selected = candidate;
+            selectedElem = candElem;
+            continue;
+        }
+
+        auto *relation = checker->Relation();
+        const bool candMoreSpecific = relation->IsSupertypeOf(selectedElem, candElem);
+        const bool selMoreSpecific = relation->IsSupertypeOf(candElem, selectedElem);
+        if (candMoreSpecific && !selMoreSpecific) {
+            selected = candidate;
+            selectedElem = candElem;
+        } else if (!candMoreSpecific && !selMoreSpecific && !relation->IsIdenticalTo(selected, candidate)) {
+            return nullptr;
+        }
+    }
+
+    return selected;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -983,6 +1052,13 @@ checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
     }
 
     auto *preferredType = GetAppropriatePreferredType(expr->PreferredType(), &Type::IsAnyETSArrayOrTupleType);
+
+    if (expr->PreferredType() != nullptr && expr->PreferredType()->IsETSUnionType()) {
+        if (auto *picked = SelectArrayPreferredTypeForLiteral(checker, expr, expr->PreferredType())) {
+            preferredType = picked;
+            expr->SetPreferredType(preferredType);
+        }
+    }
 
     if (preferredType != nullptr && preferredType->IsETSReadonlyArrayType()) {
         const auto elementType = preferredType->AsETSObjectType()->TypeArguments().front();
