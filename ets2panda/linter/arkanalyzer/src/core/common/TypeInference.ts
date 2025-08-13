@@ -208,6 +208,13 @@ export class TypeInference {
             }
         }
         signatures.forEach(s => this.inferSignatureReturnType(s, arkMethod));
+        if (arkMethod.isGetter()) {
+            // should also update the corresponding field type with the getter method return type
+            const field = arkMethod.getGeneratedFieldOfGetter();
+            if (field) {
+                field.getSignature().setType(arkMethod.getReturnType());
+            }
+        }
     }
 
     private static resolveStmt(stmt: Stmt, arkMethod: ArkMethod): void {

@@ -269,6 +269,7 @@ function buildScene(fileList: string[], checkEntry: CheckEntry): boolean {
         checkEntry.scene.buildSceneFromFiles(sceneConfig);
         logger.info('Build scene completed.');
         checkEntry.scene.inferTypes();
+        checkEntry.scene.inferTypes();
         logger.info('Infer types completed.');
     } catch (error) {
         logger.error('Build scene or infer types error: ', error);

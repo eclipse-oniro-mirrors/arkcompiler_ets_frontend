@@ -33,7 +33,7 @@ import { ArkClass, ClassCategory } from './ArkClass';
 import { MethodSignature, MethodSubSignature } from './ArkSignature';
 import { BodyBuilder } from './builder/BodyBuilder';
 import { ArkExport, ExportType } from './ArkExport';
-import { ANONYMOUS_METHOD_PREFIX, DEFAULT_ARK_METHOD_NAME, LEXICAL_ENV_NAME_PREFIX } from '../common/Const';
+import { ANONYMOUS_METHOD_PREFIX, DEFAULT_ARK_METHOD_NAME, GETTER_METHOD_PREFIX, LEXICAL_ENV_NAME_PREFIX, SETTER_METHOD_PREFIX } from '../common/Const';
 import { getColNo, getLineNo, LineCol, setCol, setLine } from '../base/Position';
 import { ArkBaseModel, ModifierType } from './ArkBaseModel';
 import { ArkError, ArkErrorCode } from '../common/ArkError';
@@ -44,6 +44,7 @@ import { ArkFile, Language } from './ArkFile';
 import { CONSTRUCTOR_NAME } from '../common/TSConst';
 import { MethodParameter } from './builder/ArkMethodBuilder';
 import { TypeInference } from '../common/TypeInference';
+import { ArkField } from './ArkField';
 
 export const arkMethodNodeKind = [
     'MethodDeclaration',
@@ -573,6 +574,22 @@ export class ArkMethod extends ArkBaseModel implements ArkExport {
 
     public isGenerated(): boolean {
         return this.isGeneratedFlag;
+    }
+
+    public isGetter(): boolean {
+        return this.getName().startsWith(GETTER_METHOD_PREFIX);
+    }
+
+    public getGeneratedFieldOfGetter(): ArkField | null {
+        if (!this.isGetter()) {
+            return null;
+        }
+        const fieldName = this.getName().slice(4);
+        return this.getDeclaringArkClass().getFieldWithName(fieldName);
+    }
+
+    public isSetter(): boolean {
+        return this.getName().startsWith(SETTER_METHOD_PREFIX);
     }
 
     public setIsGeneratedFlag(isGeneratedFlag: boolean): void {
