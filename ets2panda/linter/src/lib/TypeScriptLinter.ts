@@ -6270,6 +6270,66 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         this.checkAssignmentMatching(tsArg, tsParamType, tsArg);
       }
     }
+    this.checkOnClickCallback(tsCallOrNewExpr);
+  }
+
+private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpression): void {
+    if (!tsCallOrNewExpr.arguments || tsCallOrNewExpr.arguments.length === 0 && this.options.arkts2) {
+      return;
+    }
+
+    const isOnClick =
+      ts.isPropertyAccessExpression(tsCallOrNewExpr.expression) && tsCallOrNewExpr.expression.name.text === 'onClick';
+    if (!isOnClick) {
+      return;
+    }
+
+    const objType = this.tsTypeChecker.getTypeAtLocation(tsCallOrNewExpr.expression.expression);
+    const declNode = TsUtils.getDeclaration(objType.getSymbol());
+    if (declNode) {
+      const fileName = declNode.getSourceFile().fileName;
+      if (!fileName.includes('@ohos/')) {
+        return;
+      }
+    }
+
+    const callback = tsCallOrNewExpr.arguments[0];
+    if (!ts.isArrowFunction(callback)) {
+      return;
+    }
+
+    this.checkAsyncOrPromiseFunction(callback);
+  }
+
+  private checkAsyncOrPromiseFunction(callback: ts.ArrowFunction): void {
+    const returnsPromise = this.checkReturnsPromise(callback);
+    const isAsync = callback.modifiers?.some((m) => { 
+      return m.kind === ts.SyntaxKind.AsyncKeyword; 
+    });
+
+    if (isAsync || returnsPromise) {
+      const startPos = callback.modifiers?.[0]?.getStart() ?? callback.getStart();
+      const endPos = callback.body.getEnd();
+
+      const errorNode = {
+        getStart: () => { return startPos; },
+        getEnd: () => { return endPos; },
+        getSourceFile: () => { return callback.getSourceFile(); }
+      } as ts.Node;
+
+      this.incrementCounters(errorNode, FaultID.IncompationbleFunctionType);
+    }
+  }
+
+  private checkReturnsPromise(callback: ts.ArrowFunction): boolean {
+    const callbackType = this.tsTypeChecker.getTypeAtLocation(callback);
+    const signatures = this.tsTypeChecker.getSignaturesOfType(callbackType, ts.SignatureKind.Call);
+    if (signatures.length === 0) {
+      return false;
+    }
+
+    const returnType = this.tsTypeChecker.getReturnTypeOfSignature(signatures[0]);
+    return !!returnType.getProperty('then');
   }
 
   private static readonly LimitedApis = new Map<string, { arr: Array<string> | null; fault: FaultID }>([
