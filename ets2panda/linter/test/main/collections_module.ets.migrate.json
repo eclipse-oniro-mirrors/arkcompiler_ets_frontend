@@ -15,23 +15,43 @@
     ],
     "result": [
         {
-            "line": 32,
-            "column": 7,
-            "endLine": 32,
-            "endColumn": 19,
-            "problem": "VariableMissingInitializer",
+            "line": 26,
+            "column": 43,
+            "endLine": 26,
+            "endColumn": 48,
+            "problem": "BuiltinNewCtor",
             "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
-            "line": 36,
-            "column": 7,
-            "endLine": 36,
-            "endColumn": 19,
-            "problem": "VariableMissingInitializer",
+            "line": 28,
+            "column": 28,
+            "endLine": 28,
+            "endColumn": 33,
+            "problem": "BuiltinNewCtor",
             "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 28,
+            "endLine": 30,
+            "endColumn": 33,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 43,
+            "endLine": 34,
+            "endColumn": 48,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {

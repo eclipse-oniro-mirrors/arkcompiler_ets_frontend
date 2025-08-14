@@ -115,16 +115,6 @@
             "severity": "ERROR"
         },
         {
-          "line": 34,
-          "column": 7,
-          "endLine": 34,
-          "endColumn": 14,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
-        },
-        {
             "line": 34,
             "column": 16,
             "endLine": 34,
@@ -153,16 +143,6 @@
             "suggest": "",
             "rule": "Worker are not supported(arkts-no-need-stdlib-worker)",
             "severity": "ERROR"
-        },
-        {
-          "line": 38,
-          "column": 7,
-          "endLine": 38,
-          "endColumn": 14,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
         }
     ]
 }

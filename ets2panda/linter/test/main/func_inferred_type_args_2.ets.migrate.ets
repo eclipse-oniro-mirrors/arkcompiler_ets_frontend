@@ -129,3 +129,19 @@ let subWeakSet = new SubWeakSet();
 class C {}
 class D<T> {}
 let a: D<[C]> = new D<[C]>();
+
+function fun(a?:Map<string,string>){
+  let c:Map<string,string>|undefined
+  if(a === undefined){
+    a = new Map<string, string>()
+  }
+  if(a){
+    a = new Map<string, string>()
+  }
+  if(c){
+    c = new Map<string, string>()
+  }
+  if(c === undefined){
+    c = new Map<string, string>()
+  }
+}

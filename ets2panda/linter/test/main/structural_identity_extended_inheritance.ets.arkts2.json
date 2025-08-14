@@ -15,6 +15,16 @@
     ],
     "result": [
         {
+            "line": 49,
+            "column": 15,
+            "endLine": 49,
+            "endColumn": 20,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 56,
             "column": 1,
             "endLine": 56,
@@ -23,26 +33,6 @@
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
             "severity": "ERROR"
-        },
-        {
-          "line": 58,
-          "column": 5,
-          "endLine": 58,
-          "endColumn": 16,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
-        },
-        {
-          "line": 60,
-          "column": 5,
-          "endLine": 60,
-          "endColumn": 16,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
         },
         {
             "line": 73,

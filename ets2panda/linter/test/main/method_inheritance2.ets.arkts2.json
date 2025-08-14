@@ -1,4 +1,18 @@
 {
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
     "result": [
         {
             "line": 46,
@@ -238,6 +252,26 @@
             "problem": "MethodInheritRule",
             "suggest": "",
             "rule": "Overridden method parameters and return types must respect type inheritance principles (arkts-method-inherit-rule)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 255,
+            "column": 9,
+            "endLine": 255,
+            "endColumn": 12,
+            "problem": "InvalidAbstractOverrideReturnType",
+            "suggest": "",
+            "rule": "In 1.1, the default type obtained for the abstract method without the annotation type is any. In 1.2, the default type for the abstract method without the annotation type is void. (arkts-distinct-abstract-method-default-return-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 258,
+            "column": 3,
+            "endLine": 258,
+            "endColumn": 7,
+            "problem": "InvalidAbstractOverrideReturnType",
+            "suggest": "",
+            "rule": "In 1.1, the default type obtained for the abstract method without the annotation type is any. In 1.2, the default type for the abstract method without the annotation type is void. (arkts-distinct-abstract-method-default-return-type)",
             "severity": "ERROR"
         },
         {

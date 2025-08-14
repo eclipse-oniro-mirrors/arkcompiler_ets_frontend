@@ -42,7 +42,8 @@ import {
   PROVIDE_ALLOW_OVERRIDE_PROPERTY_NAME,
   NEW_PROP_DECORATOR_SUFFIX,
   VIRTUAL_SCROLL_IDENTIFIER,
-  DISABLE_VIRTUAL_SCROLL_IDENTIFIER
+  DISABLE_VIRTUAL_SCROLL_IDENTIFIER,
+  USE_STATIC_STATEMENT
 } from '../utils/consts/ArkuiConstants';
 import { ES_VALUE } from '../utils/consts/ESObject';
 import type { IncrementDecrementNodeInfo } from '../utils/consts/InteropAPI';
@@ -3693,7 +3694,7 @@ export class Autofixer {
   fixInterfaceImport(
     interfacesNeedToImport: Set<string>,
     interfacesAlreadyImported: Set<string>,
-    sourceFile: ts.SourceFile
+    file: ts.SourceFile
   ): Autofix[] {
     const importSpecifiers: ts.ImportSpecifier[] = [];
     interfacesNeedToImport.forEach((interfaceName) => {
@@ -3710,25 +3711,33 @@ export class Autofixer {
       undefined
     );
 
-    const leadingComments = ts.getLeadingCommentRanges(sourceFile.getFullText(), 0);
+    const leadingComments = ts.getLeadingCommentRanges(file.getFullText(), 0);
     let annotationEndLine = 0;
     let annotationEndPos = 0;
     if (leadingComments && leadingComments.length > 0) {
       annotationEndPos = leadingComments[leadingComments.length - 1].end;
-      annotationEndLine = sourceFile.getLineAndCharacterOfPosition(annotationEndPos).line;
+      annotationEndLine = file.getLineAndCharacterOfPosition(annotationEndPos).line;
     }
+
+    const stmt = file?.statements[0];
+    const isUseStaticAtStart = stmt ? Autofixer.checkUseStaticAtStart(stmt) : false;
+    annotationEndLine = isUseStaticAtStart ? file.getLineAndCharacterOfPosition(stmt.end).line : annotationEndLine;
+    annotationEndPos = isUseStaticAtStart ? stmt.end : annotationEndPos;
 
     let text = Autofixer.formatImportStatement(
-      this.printer.printNode(ts.EmitHint.Unspecified, importDeclaration, sourceFile)
+      this.printer.printNode(ts.EmitHint.Unspecified, importDeclaration, file)
     );
     if (annotationEndPos !== 0) {
-      text = this.getNewLine() + this.getNewLine() + text;
+      text = this.getNewLine() + (isUseStaticAtStart ? '' : this.getNewLine()) + text;
     }
 
-    const codeStartLine = sourceFile.getLineAndCharacterOfPosition(sourceFile.getStart()).line;
+    const codeStartLine = isUseStaticAtStart ?
+      annotationEndLine + 1 :
+      file.getLineAndCharacterOfPosition(file.getStart()).line;                                      
     for (let i = 2; i > codeStartLine - annotationEndLine; i--) {
       text = text + this.getNewLine();
     }
+
     return [{ start: annotationEndPos, end: annotationEndPos, replacementText: text }];
   }
 
@@ -3748,6 +3757,10 @@ export class Autofixer {
       }
       return `{${importList}}`;
     });
+  }
+
+  private static checkUseStaticAtStart(stmt: ts.Statement): boolean {
+    return stmt.getText().trim().replace(/^'|'$/g, '').endsWith(USE_STATIC_STATEMENT);
   }
 
   fixStylesDecoratorGlobal(
@@ -4739,7 +4752,7 @@ export class Autofixer {
       return undefined;
     }
 
-    const typeArgs = Autofixer.getTypeArgumentsFromType(contextualType);
+    const typeArgs = this.getTypeArgumentsFromType(contextualType);
     if (typeArgs.length === 0) {
       return undefined;
     }
@@ -5044,8 +5057,8 @@ export class Autofixer {
     return [{ start: identifier.getEnd(), end: identifier.getEnd(), replacementText: typeArgsText }];
   }
 
-  static getTypeArgumentsFromType(type: ts.Type): ts.Type[] {
-    const typeReference = type as ts.TypeReference;
+  private getTypeArgumentsFromType(type: ts.Type): ts.Type[] {
+    const typeReference = this.utils.getNonNullableType(type) as ts.TypeReference;
     if (typeReference.typeArguments) {
       return [...typeReference.typeArguments];
     }

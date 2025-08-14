@@ -135,6 +135,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 33,
+            "column": 19,
+            "endLine": 33,
+            "endColumn": 23,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
             "line": 35,
             "column": 15,
             "endLine": 35,
@@ -306,6 +316,16 @@
         },
         {
             "line": 56,
+            "column": 18,
+            "endLine": 56,
+            "endColumn": 22,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
             "column": 43,
             "endLine": 56,
             "endColumn": 47,
@@ -422,6 +442,16 @@
             "problem": "SdkCommonApiDeprecated",
             "suggest": "",
             "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 20,
+            "endLine": 74,
+            "endColumn": 24,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
             "severity": "ERROR"
         },
         {

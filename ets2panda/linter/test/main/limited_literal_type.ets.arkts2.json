@@ -45,26 +45,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 5,
-            "endLine": 19,
-            "endColumn": 6,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 5,
-            "endLine": 22,
-            "endColumn": 6,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-            "severity": "ERROR"
-        },
-        {
             "line": 30,
             "column": 7,
             "endLine": 30,
@@ -72,26 +52,6 @@
             "problem": "LimitedLiteralType",
             "suggest": "",
             "rule": "Literal types are restricted(arkts-limited-literal-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 35,
-            "column": 5,
-            "endLine": 35,
-            "endColumn": 6,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 36,
-            "column": 5,
-            "endLine": 36,
-            "endColumn": 12,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
             "severity": "ERROR"
         },
         {
@@ -122,16 +82,6 @@
             "problem": "LimitedLiteralType",
             "suggest": "",
             "rule": "Literal types are restricted(arkts-limited-literal-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 44,
-            "column": 5,
-            "endLine": 44,
-            "endColumn": 8,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
             "severity": "ERROR"
         },
         {

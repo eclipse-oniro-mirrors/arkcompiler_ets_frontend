@@ -675,16 +675,6 @@
             "severity": "ERROR"
         },
         {
-          "line": 507,
-          "column": 5,
-          "endLine": 507,
-          "endColumn": 7,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
-        },
-        {
             "line": 511,
             "column": 1,
             "endLine": 511,
@@ -1072,6 +1062,16 @@
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 622,
+            "column": 45,
+            "endLine": 622,
+            "endColumn": 49,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
             "severity": "ERROR"
         },
         {

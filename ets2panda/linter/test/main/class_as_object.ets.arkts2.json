@@ -215,16 +215,6 @@
             "severity": "ERROR"
         },
         {
-          "line": 98,
-          "column": 5,
-          "endLine": 98,
-          "endColumn": 6,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
-        },
-        {
             "line": 98,
             "column": 8,
             "endLine": 98,
@@ -675,6 +665,76 @@
             "severity": "ERROR"
         },
         {
+            "line": 171,
+            "column": 7,
+            "endLine": 171,
+            "endColumn": 14,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 171,
+            "column": 17,
+            "endLine": 171,
+            "endColumn": 31,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 172,
+            "column": 15,
+            "endLine": 172,
+            "endColumn": 20,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 174,
+            "column": 14,
+            "endLine": 174,
+            "endColumn": 21,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 175,
+            "column": 14,
+            "endLine": 175,
+            "endColumn": 18,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 176,
+            "column": 13,
+            "endLine": 176,
+            "endColumn": 18,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 179,
+            "column": 13,
+            "endLine": 179,
+            "endColumn": 19,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 180,
             "column": 7,
             "endLine": 180,
@@ -685,6 +745,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 180,
+            "column": 13,
+            "endLine": 180,
+            "endColumn": 19,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
             "line": 183,
             "column": 15,
             "endLine": 183,
@@ -692,6 +762,16 @@
             "problem": "RegularExpressionLiteral",
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 184,
+            "column": 13,
+            "endLine": 184,
+            "endColumn": 19,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -715,6 +795,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 192,
+            "column": 15,
+            "endLine": 192,
+            "endColumn": 21,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 193,
             "column": 9,
             "endLine": 193,
@@ -732,6 +822,16 @@
             "problem": "ClassAsObjectError",
             "suggest": "",
             "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 202,
+            "column": 30,
+            "endLine": 202,
+            "endColumn": 36,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         }
     ]

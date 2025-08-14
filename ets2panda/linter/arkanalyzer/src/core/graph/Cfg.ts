@@ -121,6 +121,18 @@ export class Cfg {
         }
     }
 
+    public setBlocks(blocks: Set<BasicBlock>, resetStmtToBlock: boolean = true): void {
+        this.blocks = blocks;
+        if (resetStmtToBlock) {
+            this.stmtToBlock.clear();
+            for (const block of this.blocks) {
+                for (const stmt of block.getStmts()) {
+                    this.stmtToBlock.set(stmt, block);
+                }
+            }
+        }
+    }
+
     public getBlocks(): Set<BasicBlock> {
         return this.blocks;
     }

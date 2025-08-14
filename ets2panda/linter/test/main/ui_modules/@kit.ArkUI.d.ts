@@ -14,4 +14,5 @@
  */
 
 import { BuilderNode } from './@ohos.arkui.node';
-export { BuilderNode };
+import { PersistenceV2 } from './@ohos.arkui.StateManagement';
+export { BuilderNode, PersistenceV2 };

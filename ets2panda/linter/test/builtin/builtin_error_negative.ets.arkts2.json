@@ -1,0 +1,238 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 16,
+            "column": 5,
+            "endLine": 16,
+            "endColumn": 9,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 17,
+            "column": 5,
+            "endLine": 17,
+            "endColumn": 9,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 5,
+            "endLine": 18,
+            "endColumn": 35,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 24,
+            "endLine": 18,
+            "endColumn": 28,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 29,
+            "endLine": 18,
+            "endColumn": 35,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 48,
+            "endLine": 22,
+            "endColumn": 53,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 14,
+            "endLine": 24,
+            "endColumn": 17,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 16,
+            "endLine": 26,
+            "endColumn": 21,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 7,
+            "endLine": 29,
+            "endColumn": 11,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 13,
+            "endLine": 30,
+            "endColumn": 17,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 18,
+            "endLine": 30,
+            "endColumn": 24,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 13,
+            "endLine": 31,
+            "endColumn": 17,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 7,
+            "endLine": 33,
+            "endColumn": 11,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 8,
+            "endLine": 34,
+            "endColumn": 17,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 39,
+            "endLine": 34,
+            "endColumn": 49,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 13,
+            "endLine": 37,
+            "endColumn": 17,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 18,
+            "endLine": 37,
+            "endColumn": 24,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 40,
+            "endLine": 43,
+            "endColumn": 45,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 12,
+            "endLine": 48,
+            "endColumn": 17,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 37,
+            "endLine": 49,
+            "endColumn": 42,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 13,
+            "endLine": 51,
+            "endColumn": 17,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 18,
+            "endLine": 51,
+            "endColumn": 24,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        }
+    ]
+}

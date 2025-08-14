@@ -25,6 +25,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 46,
+            "column": 16,
+            "endLine": 46,
+            "endColumn": 22,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 47,
             "column": 13,
             "endLine": 47,
@@ -35,6 +45,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 47,
+            "column": 17,
+            "endLine": 47,
+            "endColumn": 24,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 48,
             "column": 12,
             "endLine": 48,
@@ -42,6 +62,36 @@
             "problem": "CreatingPrimitiveTypes",
             "suggest": "",
             "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 16,
+            "endLine": 48,
+            "endColumn": 22,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 16,
+            "endLine": 49,
+            "endColumn": 22,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 86,
+            "column": 16,
+            "endLine": 86,
+            "endColumn": 23,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         }
     ]

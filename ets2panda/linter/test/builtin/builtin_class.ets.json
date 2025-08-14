@@ -1,0 +1,68 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 70,
+            "column": 3,
+            "endLine": 70,
+            "endColumn": 23,
+            "problem": "ComputedPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 4,
+            "endLine": 70,
+            "endColumn": 22,
+            "problem": "SymbolType",
+            "suggest": "",
+            "rule": "\"Symbol()\" API is not supported (arkts-no-symbol)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 3,
+            "endLine": 99,
+            "endColumn": 23,
+            "problem": "ComputedPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 4,
+            "endLine": 99,
+            "endColumn": 22,
+            "problem": "SymbolType",
+            "suggest": "",
+            "rule": "\"Symbol()\" API is not supported (arkts-no-symbol)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 3,
+            "endLine": 70,
+            "endColumn": 23,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property '[Symbol.toStringTag]' in type 'MyFinalizationRegistry2<T>' is not assignable to the same property in base type 'FinalizationRegistry<T>'.\n  Type '\"FinalizationRegistry\" | undefined' is not assignable to type '\"FinalizationRegistry\"'.\n    Type 'undefined' is not assignable to type '\"FinalizationRegistry\"'.",
+            "rule": "Property '[Symbol.toStringTag]' in type 'MyFinalizationRegistry2<T>' is not assignable to the same property in base type 'FinalizationRegistry<T>'.\n  Type '\"FinalizationRegistry\" | undefined' is not assignable to type '\"FinalizationRegistry\"'.\n    Type 'undefined' is not assignable to type '\"FinalizationRegistry\"'.",
+            "severity": "ERROR"
+        }
+    ]
+}

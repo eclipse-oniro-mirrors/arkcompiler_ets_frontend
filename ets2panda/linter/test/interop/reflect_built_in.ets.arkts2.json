@@ -45,6 +45,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 20,
+            "column": 10,
+            "endLine": 20,
+            "endColumn": 17,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 24,
             "column": 5,
             "endLine": 24,
@@ -52,6 +62,16 @@
             "problem": "InteropCallReflect",
             "suggest": "",
             "rule": "Reflect API usage is not allowed in interop calls when an \"Object\" parameter receives a class instance (arkts-interop-d2s-static-reflect-on-dynamic-instance)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 20,
+            "endLine": 24,
+            "endColumn": 23,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
             "severity": "ERROR"
         },
         {
@@ -135,6 +155,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 38,
+            "column": 13,
+            "endLine": 38,
+            "endColumn": 20,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 41,
             "column": 1,
             "endLine": 41,
@@ -172,6 +202,16 @@
             "problem": "InteropCallReflect",
             "suggest": "",
             "rule": "Reflect API usage is not allowed in interop calls when an \"Object\" parameter receives a class instance (arkts-interop-d2s-static-reflect-on-dynamic-instance)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 9,
+            "endLine": 44,
+            "endColumn": 16,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
             "severity": "ERROR"
         },
         {
@@ -215,6 +255,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 49,
+            "column": 9,
+            "endLine": 49,
+            "endColumn": 16,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 51,
             "column": 1,
             "endLine": 51,
@@ -255,6 +305,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 54,
+            "column": 9,
+            "endLine": 54,
+            "endColumn": 16,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 56,
             "column": 1,
             "endLine": 56,
@@ -292,6 +352,16 @@
             "problem": "InteropCallReflect",
             "suggest": "",
             "rule": "Reflect API usage is not allowed in interop calls when an \"Object\" parameter receives a class instance (arkts-interop-d2s-static-reflect-on-dynamic-instance)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 9,
+            "endLine": 59,
+            "endColumn": 16,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
             "severity": "ERROR"
         }
     ]

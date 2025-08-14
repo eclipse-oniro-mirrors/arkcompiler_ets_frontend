@@ -386,6 +386,16 @@
         },
         {
             "line": 169,
+            "column": 28,
+            "endLine": 169,
+            "endColumn": 33,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 169,
             "column": 24,
             "endLine": 169,
             "endColumn": 43,
@@ -393,6 +403,16 @@
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
             "severity": "ERROR"
+        },
+        {
+            "line": 169,
+            "column": 24,
+            "endLine": 169,
+            "endColumn": 43,
+            "problem": "UninitializedArrayElements",
+            "suggest": "",
+            "rule": "Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)",
+            "severity": "WARNING"
         },
         {
             "line": 185,
@@ -435,6 +455,36 @@
             "severity": "ERROR"
         },
         {
+            "line": 219,
+            "column": 16,
+            "endLine": 219,
+            "endColumn": 21,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 220,
+            "column": 16,
+            "endLine": 220,
+            "endColumn": 21,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 220,
+            "column": 12,
+            "endLine": 220,
+            "endColumn": 33,
+            "problem": "UninitializedArrayElements",
+            "suggest": "",
+            "rule": "Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)",
+            "severity": "WARNING"
+        },
+        {
             "line": 227,
             "column": 1,
             "endLine": 227,
@@ -466,6 +516,16 @@
         },
         {
             "line": 254,
+            "column": 28,
+            "endLine": 254,
+            "endColumn": 33,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 254,
             "column": 24,
             "endLine": 254,
             "endColumn": 43,
@@ -473,6 +533,16 @@
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
             "severity": "ERROR"
+        },
+        {
+            "line": 254,
+            "column": 24,
+            "endLine": 254,
+            "endColumn": 43,
+            "problem": "UninitializedArrayElements",
+            "suggest": "",
+            "rule": "Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)",
+            "severity": "WARNING"
         },
         {
             "line": 266,
@@ -486,6 +556,16 @@
         },
         {
             "line": 270,
+            "column": 28,
+            "endLine": 270,
+            "endColumn": 33,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 270,
             "column": 24,
             "endLine": 270,
             "endColumn": 42,
@@ -493,6 +573,16 @@
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
             "severity": "ERROR"
+        },
+        {
+            "line": 270,
+            "column": 24,
+            "endLine": 270,
+            "endColumn": 42,
+            "problem": "UninitializedArrayElements",
+            "suggest": "",
+            "rule": "Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)",
+            "severity": "WARNING"
         },
         {
             "line": 276,
@@ -535,6 +625,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 299,
+            "column": 44,
+            "endLine": 299,
+            "endColumn": 49,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 301,
             "column": 23,
             "endLine": 301,
@@ -542,6 +642,16 @@
             "problem": "RuntimeArrayCheck",
             "suggest": "",
             "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 313,
+            "column": 36,
+            "endLine": 313,
+            "endColumn": 41,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {

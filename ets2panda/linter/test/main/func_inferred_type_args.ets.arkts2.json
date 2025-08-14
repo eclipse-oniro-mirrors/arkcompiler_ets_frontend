@@ -75,16 +75,6 @@
             "severity": "ERROR"
         },
         {
-          "line": 56,
-          "column": 5,
-          "endLine": 56,
-          "endColumn": 6,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
-        },
-        {
             "line": 56,
             "column": 8,
             "endLine": 56,
@@ -225,16 +215,6 @@
             "severity": "ERROR"
         },
         {
-          "line": 72,
-          "column": 7,
-          "endLine": 72,
-          "endColumn": 8,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
-        },
-        {
             "line": 72,
             "column": 10,
             "endLine": 72,
@@ -265,6 +245,56 @@
             "severity": "ERROR"
         },
         {
+            "line": 81,
+            "column": 3,
+            "endLine": 81,
+            "endColumn": 10,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 82,
+            "column": 3,
+            "endLine": 82,
+            "endColumn": 10,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 83,
+            "column": 3,
+            "endLine": 83,
+            "endColumn": 10,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 84,
+            "column": 3,
+            "endLine": 84,
+            "endColumn": 10,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 87,
+            "column": 1,
+            "endLine": 87,
+            "endColumn": 8,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 89,
             "column": 5,
             "endLine": 89,
@@ -272,6 +302,16 @@
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 16,
+            "endLine": 89,
+            "endColumn": 21,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -372,6 +412,16 @@
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 93,
+            "column": 20,
+            "endLine": 93,
+            "endColumn": 27,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {

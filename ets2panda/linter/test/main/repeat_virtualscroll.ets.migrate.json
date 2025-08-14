@@ -13,5 +13,46 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": []
+    "result": [
+        {
+            "line": 48,
+            "column": 62,
+            "endLine": 48,
+            "endColumn": 71,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 62,
+            "endLine": 48,
+            "endColumn": 71,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 62,
+            "endLine": 58,
+            "endColumn": 71,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 62,
+            "endLine": 58,
+            "endColumn": 71,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        }
+    ]
 }

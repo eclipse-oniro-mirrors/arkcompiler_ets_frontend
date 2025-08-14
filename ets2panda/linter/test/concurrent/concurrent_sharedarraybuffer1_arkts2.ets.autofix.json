@@ -13,36 +13,5 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": [
-        {
-            "line": 20,
-            "column": 5,
-            "endLine": 20,
-            "endColumn": 7,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
-            "column": 7,
-            "endLine": 24,
-            "endColumn": 9,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 7,
-            "endLine": 28,
-            "endColumn": 9,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-            "severity": "ERROR"
-        }
-    ]
+    "result": []
 }

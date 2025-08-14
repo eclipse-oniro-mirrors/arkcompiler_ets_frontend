@@ -235,6 +235,26 @@
             "severity": "ERROR"
         },
         {
+            "line": 102,
+            "column": 27,
+            "endLine": 102,
+            "endColumn": 36,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 102,
+            "column": 27,
+            "endLine": 102,
+            "endColumn": 36,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 103,
             "column": 16,
             "endLine": 103,
@@ -395,6 +415,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 126,
+            "column": 33,
+            "endLine": 126,
+            "endColumn": 40,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 127,
             "column": 1,
             "endLine": 127,
@@ -406,12 +436,32 @@
         },
         {
             "line": 128,
+            "column": 12,
+            "endLine": 128,
+            "endColumn": 16,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 128,
             "column": 1,
             "endLine": 128,
             "endColumn": 16,
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 129,
+            "column": 12,
+            "endLine": 129,
+            "endColumn": 19,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
             "severity": "ERROR"
         },
         {

@@ -15,6 +15,86 @@
     ],
     "result": [
         {
+            "line": 27,
+            "column": 31,
+            "endLine": 27,
+            "endColumn": 40,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 31,
+            "endLine": 27,
+            "endColumn": 40,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 23,
+            "endLine": 29,
+            "endColumn": 32,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 23,
+            "endLine": 29,
+            "endColumn": 32,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 23,
+            "endLine": 31,
+            "endColumn": 32,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 23,
+            "endLine": 31,
+            "endColumn": 32,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 31,
+            "endLine": 33,
+            "endColumn": 40,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 31,
+            "endLine": 33,
+            "endColumn": 40,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 35,
             "column": 22,
             "endLine": 35,

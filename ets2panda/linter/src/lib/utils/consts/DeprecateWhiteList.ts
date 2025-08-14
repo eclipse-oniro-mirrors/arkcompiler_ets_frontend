@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+export const DEPRECATE_TYPE = 'DeprecatedApi';
 export enum DeprecateProblem {
   NoDeprecatedApi = 'NoDeprecatedApi'
 }
