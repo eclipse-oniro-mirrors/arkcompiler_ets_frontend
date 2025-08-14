@@ -13,13 +13,12 @@
  * limitations under the License.
  */
 
-#include <map>
-#include <set>
 #include <algorithm>
 #include <sstream>
 
+#include "compiler/lowering/util.h"
+#include "internal_api.h"
 #include "public/public.h"
-#include "lsp/include/api.h"
 #include "lsp/include/organize_imports.h"
 
 namespace ark::es2panda::lsp {
@@ -30,11 +29,7 @@ bool IsImportUsed(es2panda_Context *ctx, const ImportSpecifier &spec)
     auto *ast = context->parserProgram->Ast();
     bool found = false;
 
-    ast->FindChild([&](ir::AstNode *node) {
-        if (node->IsETSImportDeclaration() || node->IsImportSpecifier()) {
-            return false;
-        }
-
+    auto checkFunction = [&ctx, &spec, &found](ir::AstNode *node) {
         if (spec.type == ImportType::NAMESPACE) {
             if (node->IsTSQualifiedName()) {
                 auto *qname = node->AsTSQualifiedName();
@@ -56,16 +51,29 @@ bool IsImportUsed(es2panda_Context *ctx, const ImportSpecifier &spec)
             return false;
         }
 
-        auto *parent = node->Parent();
-        bool isProperty =
-            parent != nullptr && parent->IsMemberExpression() && (parent->AsMemberExpression()->Property() == node);
-        bool isImportSpecifier = parent != nullptr && parent->IsImportSpecifier();
-        if (!isProperty && !isImportSpecifier) {
+        auto touchingToken = GetTouchingToken(ctx, spec.start, false);
+        if (touchingToken == nullptr || !touchingToken->IsIdentifier()) {
+            return false;
+        }
+        auto decl = compiler::DeclarationFromIdentifier(node->AsIdentifier());
+        auto specDecl = compiler::DeclarationFromIdentifier(touchingToken->AsIdentifier());
+        if (decl == nullptr || specDecl == nullptr) {
+            return false;
+        }
+        if (decl == specDecl) {
             found = true;
             return true;
         }
+
         return false;
-    });
+    };
+
+    for (auto &statement : ast->Statements()) {
+        if (statement == nullptr || statement->IsETSImportDeclaration() || statement->IsETSReExportDeclaration()) {
+            continue;
+        }
+        statement->FindChild(checkFunction);
+    }
 
     return found;
 }
@@ -82,8 +90,13 @@ void ProcessImportSpecifier(ir::AstNode *spec, bool isTypeOnly, ImportInfo &info
         auto *importSpec = spec->AsImportSpecifier();
         local = importSpec->Local();
         auto *imported = importSpec->Imported();
+        bool isDefault = false;
+        auto decl = compiler::DeclarationFromIdentifier(imported);
+        if (decl != nullptr) {
+            isDefault = decl->IsDefaultExported();
+        }
         specInfo.importedName = imported != nullptr ? std::string(imported->Name()) : std::string(local->Name());
-        specInfo.type = isTypeOnly ? ImportType::TYPE_ONLY : ImportType::NORMAL;
+        specInfo.type = isTypeOnly ? ImportType::TYPE_ONLY : isDefault ? ImportType::DEFAULT : ImportType::NORMAL;
     } else if (spec->IsImportDefaultSpecifier()) {
         auto *defaultSpec = spec->AsImportDefaultSpecifier();
         local = defaultSpec->Local();
@@ -125,9 +138,15 @@ void CollectImports(es2panda_Context *context, std::vector<ImportInfo> &imports)
               [](ir::AstNode *a, ir::AstNode *b) { return a->Start().index < b->Start().index; });
 
     for (auto *importNode : importsNode) {
-        auto *importDecl = importNode->AsETSImportDeclaration();
-        if (importDecl == nullptr || importDecl->Source() == nullptr) {
+        if (importNode == nullptr || !importNode->IsETSImportDeclaration()) {
             continue;
+        }
+        auto *importDecl = importNode->AsETSImportDeclaration();
+        if (importDecl->Source() == nullptr) {
+            continue;
+        }
+        if (importDecl->Start().index == importDecl->End().index) {
+            continue;  // Skip empty import declarations
         }
 
         auto *declInfo = static_cast<ir::ImportDeclaration *>(importNode);
@@ -166,42 +185,85 @@ void RemoveUnusedImports(std::vector<ImportInfo> &imports, es2panda_Context *ctx
     }
 }
 
+std::tuple<bool, size_t> HasDefaultSpecifier(const std::vector<ImportSpecifier> &namedImports)
+{
+    auto it = std::find_if(namedImports.begin(), namedImports.end(),
+                           [](const ImportSpecifier &spec) { return spec.type == ImportType::DEFAULT; });
+    return std::make_tuple(it != namedImports.end(),
+                           it != namedImports.end() ? std::distance(namedImports.begin(), it) : -1);
+}
+
+void ExtractDefaultImport(const ImportInfo &imp, std::ostringstream &osst, const std::string &prefix,
+                          const std::tuple<bool, size_t> &hasDefault)
+{
+    auto [_, defaultIndex] = hasDefault;
+    osst << prefix;
+    osst << imp.namedImports[defaultIndex].localName;
+    if (imp.namedImports.size() > 1) {
+        osst << ", { ";
+    }
+    for (size_t i = 0; i < imp.namedImports.size(); ++i) {
+        if (i != defaultIndex) {
+            const auto &spec = imp.namedImports[i];
+            if (spec.importedName != spec.localName) {
+                osst << spec.importedName << " as " << spec.localName;
+            } else {
+                osst << spec.localName;
+            }
+            if (i + 1 == defaultIndex && defaultIndex == imp.namedImports.size() - 1) {
+                continue;  // Skip if the default import is the last one
+            }
+            if (i + 1 < imp.namedImports.size()) {
+                osst << ", ";
+            }
+        }
+    }
+    if (imp.namedImports.size() > 1) {
+        osst << " }";
+    }
+    osst << " from \'" << imp.moduleName << "\';\n";
+}
+
+void GenerateImportBlock(const ImportInfo &imp, std::ostringstream &osst, const std::string &prefix)
+{
+    osst << prefix;
+    size_t index = 0;
+    for (auto &namedImport : imp.namedImports) {
+        const auto &spec = namedImport;
+        if (spec.importedName != spec.localName) {
+            osst << spec.importedName << " as " << spec.localName;
+        } else {
+            osst << spec.localName;
+        }
+        if (index + 1 < imp.namedImports.size()) {
+            osst << ", ";
+        }
+        index++;
+    }
+    osst << " } from \'" << imp.moduleName << "\';\n";
+}
+
 std::vector<TextChange> GenerateTextChanges(const std::vector<ImportInfo> &imports)
 {
     if (imports.empty()) {
         return {};
     }
 
-    size_t start = imports.front().startIndex;
-    size_t end = imports.back().endIndex;
     std::ostringstream oss;
-
-    auto generateImportBlock = [](const ImportInfo &imp, std::ostringstream &osst, const std::string &prefix) {
-        osst << prefix;
-        size_t index = 0;
-        for (auto &namedImport : imp.namedImports) {
-            const auto &spec = namedImport;
-            if (spec.importedName != spec.localName) {
-                osst << spec.importedName << " as " << spec.localName;
-            } else {
-                osst << spec.localName;
-            }
-            if (index + 1 < imp.namedImports.size()) {
-                osst << ", ";
-            }
-            index++;
-        }
-        osst << " } from \'" << imp.moduleName << "\';\n";
-    };
 
     for (const auto &imp : imports) {
         if (imp.namedImports.empty()) {
             continue;
         }
 
+        auto hasDefault = HasDefaultSpecifier(imp.namedImports);
+        if (std::get<0>(hasDefault) && imp.namedImports.size() > 1) {
+            ExtractDefaultImport(imp, oss, "import ", hasDefault);
+            continue;
+        }
         switch (imp.namedImports[0].type) {
             case ImportType::NORMAL:
-                generateImportBlock(imp, oss, "import { ");
+                GenerateImportBlock(imp, oss, "import { ");
                 break;
             case ImportType::DEFAULT:
                 oss << "import " << imp.namedImports[0].localName << " from \'" << imp.moduleName << "\';\n";
@@ -210,12 +272,18 @@ std::vector<TextChange> GenerateTextChanges(const std::vector<ImportInfo> &impor
                 oss << "import * as " << imp.namedImports[0].localName << " from \'" << imp.moduleName << "\';\n";
                 break;
             case ImportType::TYPE_ONLY:
-                generateImportBlock(imp, oss, "import type { ");
+                GenerateImportBlock(imp, oss, "import type { ");
                 break;
         }
     }
 
-    return {TextChange(TextSpan(start, end - start), oss.str())};
+    std::string result = oss.str();
+    if (!result.empty() && result.back() == '\n') {
+        result.pop_back();  // Remove trailing newline to avoid adding newlines repeatedly.
+    }
+
+    return {
+        TextChange(TextSpan(imports.front().startIndex, imports.back().endIndex - imports.front().startIndex), result)};
 }
 
 std::vector<FileTextChanges> OrganizeImports::Organize(es2panda_Context *context, const std::string &fileName)

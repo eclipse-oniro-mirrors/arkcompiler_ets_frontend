@@ -1,0 +1,50 @@
+{
+  "1": {
+    "fileTextChanges": [
+      {
+        "fileName": "getOrganizeImports1.ets",
+        "textChanges": [
+          {
+            "span": {
+              "start": 608,
+              "length": 306
+            },
+            "newText": "import { Entry, Component } from '@ohos.arkui.component';\nimport { State } from '@ohos.arkui.stateManagement';\nimport { B, C } from './getOrganizeImports2';"
+          }
+        ]
+      }
+    ]
+  },
+  "2": {
+    "fileTextChanges": [
+      {
+        "fileName": "ExtractDefaultImport1_import.ets",
+        "textChanges": [
+          {
+            "span": {
+              "start": 608,
+              "length": 56
+            },
+            "newText": "import Foo, { one } from './ExtractDefaultImport1_export';"
+          }
+        ]
+      }
+    ]
+  },
+  "3": {
+    "fileTextChanges": [
+      {
+        "fileName": "ExtractDefaultImport2_import.ets",
+        "textChanges": [
+          {
+            "span": {
+              "start": 608,
+              "length": 51
+            },
+            "newText": "import Foo from './ExtractDefaultImport2_export';"
+          }
+        ]
+      }
+    ]
+  }
+}
