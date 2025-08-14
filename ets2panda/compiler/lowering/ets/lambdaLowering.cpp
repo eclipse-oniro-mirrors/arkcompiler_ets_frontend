@@ -16,6 +16,7 @@
 #include "lambdaLowering.h"
 #include <sstream>
 
+#include "checker/types/ets/etsTupleType.h"
 #include "checker/ets/typeRelationContext.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
@@ -707,10 +708,7 @@ static void CreateInvokeMethodRestParameter(public_lib::Context *ctx, LambdaClas
     lciInfo->restParameterIdentifier = restIdent->Name();
     auto *spread = allocator->New<ir::SpreadElement>(ir::AstNodeType::REST_ELEMENT, allocator, restIdent);
     ES2PANDA_ASSERT(spread != nullptr);
-    auto *restVar = lciInfo->lambdaSignature->RestVar();
-    auto *arr = (restVar != nullptr && restVar->TsType()->IsETSTupleType())
-                    ? restVar->TsType()
-                    : checker->CreateETSArrayType(checker->GlobalETSAnyType());
+    auto *arr = checker->CreateETSArrayType(checker->GlobalETSAnyType());
 
     auto *typeAnnotation = allocator->New<ir::OpaqueTypeNode>(arr, allocator);
 
@@ -730,9 +728,28 @@ static ir::Expression *SetRestIdentOfCallArguments(public_lib::Context *ctx, Lam
     auto *allocator = ctx->allocator;
 
     auto restType = lciInfo->lambdaSignature->RestVar()->TsType();
-    auto *restIdent = allocator->New<ir::Identifier>(
-        restType->IsETSTupleType() ? lciInfo->restParameterIdentifier : lciInfo->restArgumentIdentifier, allocator);
-    if (restType->IsETSArrayType() || restType->IsETSTupleType()) {
+    if (restType->IsETSTupleType()) {
+        ArenaVector<ir::Expression *> tupleElements(allocator->Adapter());
+        for (std::uint16_t i = 0; i < restType->AsETSTupleType()->GetTupleSize(); ++i) {
+            auto ident = allocator->New<ir::Identifier>(lciInfo->restParameterIdentifier, allocator);
+            auto number = allocator->New<ir::NumberLiteral>(lexer::Number(i));
+            auto indexed = util::NodeAllocator::ForceSetParent<ir::MemberExpression>(
+                allocator, ident, number, ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
+
+            auto typeNode =
+                allocator->New<ir::OpaqueTypeNode>(restType->AsETSTupleType()->GetTupleTypesList()[i], allocator);
+            auto cast = util::NodeAllocator::ForceSetParent<ir::TSAsExpression>(allocator, indexed, typeNode, false);
+            tupleElements.push_back(cast);
+        }
+        auto arrayExpr =
+            util::NodeAllocator::ForceSetParent<ir::ArrayExpression>(allocator, std::move(tupleElements), allocator);
+        auto *spread = util::NodeAllocator::ForceSetParent<ir::SpreadElement>(
+            allocator, ir::AstNodeType::SPREAD_ELEMENT, allocator, arrayExpr);
+        return spread;
+    }
+    auto *restIdent =
+        util::NodeAllocator::ForceSetParent<ir::Identifier>(allocator, lciInfo->restArgumentIdentifier, allocator);
+    if (restType->IsETSArrayType()) {
         auto *spread = allocator->New<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, allocator, restIdent);
         restIdent->SetParent(spread);
         return spread;
@@ -1176,14 +1193,6 @@ static ir::ClassDeclaration *CreateLambdaClass(public_lib::Context *ctx, checker
         lciInfo.arity = signature->ArgCount();
         CreateLambdaClassInvokeN(ctx, info, &lciInfo);
     }
-
-    if (signature->HasRestParameter() && signature->RestVar()->TsType()->IsETSTupleType()) {
-        auto invokeMethodName =
-            util::UString {checker->FunctionalInterfaceInvokeName(lciInfo.arity + 1, signature->HasRestParameter()),
-                           ctx->allocator}
-                .View();
-        CreateLambdaClassInvokeMethod(ctx, info, &lciInfo, invokeMethodName, true);
-    }
     CreateLambdaClassInvokeMethod(ctx, info, &lciInfo, compiler::Signatures::LAMBDA_OBJECT_INVOKE, false);
 
     InitScopesPhaseETS::RunExternalNode(classDeclaration, varBinder);
@@ -1463,6 +1472,54 @@ static bool IsTypeErrorCall(ir::CallExpression const *node)
     return callee->TsType()->IsTypeError();
 }
 
+static ir::AstNode *TransformTupleSpread(public_lib::Context *ctx, ir::CallExpression *call)
+{
+    auto *allocator = ctx->allocator;
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    ArenaVector<ir::Expression *> newArgs(allocator->Adapter());
+    bool modified = false;
+
+    for (auto *arg : call->Arguments()) {
+        if (!arg->IsSpreadElement() || !arg->TsType()->IsETSTupleType()) {
+            newArgs.push_back(arg);
+            continue;
+        }
+        modified = true;
+
+        std::stringstream ss;
+        auto *genSymIdent = Gensym(allocator);
+        ss << "let @@I1: @@T2 = @@E3;";
+        ss << "@@E4 as FixedArray<Any>";
+
+        ArenaVector<ir::Expression *> tupleElements(allocator->Adapter());
+        for (std::size_t idx = 0U; idx < arg->TsType()->AsETSTupleType()->GetTupleSize(); ++idx) {
+            auto *ident = genSymIdent->Clone(allocator, nullptr);
+            auto *number = allocator->New<ir::NumberLiteral>(lexer::Number(idx));
+            auto *indexed = util::NodeAllocator::ForceSetParent<ir::MemberExpression>(
+                allocator, ident, number, ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
+            tupleElements.push_back(indexed);
+        }
+        auto arrayExpr =
+            util::NodeAllocator::ForceSetParent<ir::ArrayExpression>(allocator, std::move(tupleElements), allocator);
+
+        auto typeNode = util::NodeAllocator::ForceSetParent<ir::OpaqueTypeNode>(allocator, arg->TsType(), allocator);
+
+        auto *blockExpression = ctx->parser->AsETSParser()->CreateFormattedExpression(
+            ss.str(), genSymIdent, typeNode, arg->AsSpreadElement()->Argument()->Clone(allocator, nullptr), arrayExpr);
+
+        auto *spreadElement = util::NodeAllocator::ForceSetParent<ir::SpreadElement>(
+            allocator, ir::AstNodeType::SPREAD_ELEMENT, allocator, blockExpression);
+        newArgs.push_back(spreadElement);
+        spreadElement->SetParent(call);
+
+        CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, spreadElement);
+    }
+    if (modified) {
+        call->Arguments() = std::move(newArgs);
+    }
+    return call;
+}
+
 // CC-OFFNXT(G.FUN.01, huge_method, huge_method[C++]) solid logic
 static ir::AstNode *InsertInvokeCall(public_lib::Context *ctx, ir::CallExpression *call)
 {
@@ -1518,7 +1575,7 @@ static ir::AstNode *InsertInvokeCall(public_lib::Context *ctx, ir::CallExpressio
         CheckLoweredNode(varBinder, checker, arg);
     }
 
-    return call;
+    return TransformTupleSpread(ctx, call);
 }
 
 static bool IsRedirectingConstructorCall(ir::CallExpression *expr)
