@@ -3733,7 +3733,7 @@ export class Autofixer {
 
     const codeStartLine = isUseStaticAtStart ?
       annotationEndLine + 1 :
-      file.getLineAndCharacterOfPosition(file.getStart()).line;                                      
+      file.getLineAndCharacterOfPosition(file.getStart()).line;
     for (let i = 2; i > codeStartLine - annotationEndLine; i--) {
       text = text + this.getNewLine();
     }
@@ -3760,7 +3760,9 @@ export class Autofixer {
   }
 
   private static checkUseStaticAtStart(stmt: ts.Statement): boolean {
-    return stmt.getText().trim().replace(/^'|'$/g, '').endsWith(USE_STATIC_STATEMENT);
+    return stmt.getText().trim().
+      replace(/^'|'$/g, '').
+      endsWith(USE_STATIC_STATEMENT);
   }
 
   fixStylesDecoratorGlobal(

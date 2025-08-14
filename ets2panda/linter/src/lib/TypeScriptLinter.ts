@@ -221,7 +221,7 @@ import { ERROR_TASKPOOL_PROP_LIST } from './utils/consts/ErrorProp';
 import { COMMON_UNION_MEMBER_ACCESS_WHITELIST } from './utils/consts/ArktsWhiteApiPaths';
 import type { BaseClassConstructorInfo, ConstructorParameter, ExtendedIdentifierInfo } from './utils/consts/Types';
 import { ExtendedIdentifierType } from './utils/consts/Types';
-import { STRING_ERROR_LITERAL } from './utils/consts/Literals';
+import { COMPONENT_DECORATOR, SELECT_IDENTIFIER, SELECT_OPTIONS, STRING_ERROR_LITERAL } from './utils/consts/Literals';
 import { ES_OBJECT } from './utils/consts/ESObject';
 import { cookBookMsg } from './CookBookMsg';
 
@@ -5570,102 +5570,64 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleNoDeprecatedApi(callExpr);
     this.handleFunctionReturnThisCall(callExpr);
     this.handlePromiseTupleGeneric(callExpr);
-    this.checkArgumentTypeOfCallExpr(callExpr, callSignature);
+    this.isSelectOfArkUI(callExpr, callSignature);
     this.handleTupleGeneric(callExpr);
   }
 
-  private checkArgumentTypeOfCallExpr(callExpr: ts.CallExpression, signature: ts.Signature | undefined): void {
+  private isSelectOfArkUI(callExpr: ts.CallExpression, signature: ts.Signature | undefined): void {
     if (!this.options.arkts2) {
       return;
     }
-    if (!signature) {
+
+    if (callExpr.expression.getText() !== SELECT_IDENTIFIER) {
+      return;
+    }
+
+    /*
+     * for some reason UI component methods signatures cannot be accessed through here,
+     * there should be no signature declaration of this callExpression,
+     * if there is signature declaration we will assume this is not an ArkUI component
+     */
+    if (signature?.getDeclaration()) {
+      return;
+    }
+
+    const insideArkUi = this.isInComponentBlock(callExpr.getSourceFile());
+    if (!insideArkUi) {
       return;
     }
 
     const args = callExpr.arguments;
-    if (args.length === 0) {
+    if (args.length !== 1) {
       return;
     }
 
-    for (const [idx, arg] of args.entries()) {
-      this.isArgumentAndParameterMatch(signature, arg, idx);
-    }
-  }
-
-  private isArgumentAndParameterMatch(signature: ts.Signature, arg: ts.Expression, idx: number): void {
-    if (!ts.isPropertyAccessExpression(arg)) {
-      return;
-    }
-
-    let rootObject = arg.expression;
-
-    while (ts.isPropertyAccessExpression(rootObject)) {
-      rootObject = rootObject.expression;
-    }
-
-    if (rootObject.kind !== ts.SyntaxKind.ThisKeyword) {
-      return;
-    }
-
-    const param = signature.parameters.at(idx);
-    if (!param) {
-      return;
-    }
-    const paramDecl = param.getDeclarations();
-    if (!paramDecl || paramDecl.length === 0) {
-      return;
-    }
-
-    const paramFirstDecl = paramDecl[0];
-    if (!ts.isParameter(paramFirstDecl)) {
-      return;
-    }
-
-    const paramTypeNode = paramFirstDecl.type;
+    const arg = args[0];
     const argumentType = this.tsTypeChecker.getTypeAtLocation(arg);
-    if (!paramTypeNode) {
-      return;
-    }
-
-    if (!paramTypeNode) {
-      return;
-    }
-
     const argumentTypeString = this.tsTypeChecker.typeToString(argumentType);
-    if (ts.isUnionTypeNode(paramTypeNode)) {
-      this.checkUnionTypesMatching(arg, paramTypeNode, argumentTypeString);
-    } else {
-      this.checkSingleTypeMatching(paramTypeNode, arg, argumentTypeString);
-    }
-  }
 
-  private checkSingleTypeMatching(paramTypeNode: ts.TypeNode, arg: ts.Node, argumentTypeString: string): void {
-    const paramType = this.tsTypeChecker.getTypeFromTypeNode(paramTypeNode);
-    const paramTypeString = this.tsTypeChecker.typeToString(paramType);
-    if (TsUtils.isIgnoredTypeForParameterType(paramTypeString, paramType)) {
+    if (SELECT_OPTIONS.includes(argumentTypeString)) {
       return;
     }
 
-    if (argumentTypeString !== paramTypeString) {
-      this.incrementCounters(arg, FaultID.StructuralIdentity);
-    }
+    this.incrementCounters(arg, FaultID.StructuralIdentity);
   }
 
-  private checkUnionTypesMatching(arg: ts.Node, paramTypeNode: ts.UnionTypeNode, argumentTypeString: string): void {
-    let notMatching = true;
-    for (const type of paramTypeNode.types) {
-      const paramType = this.tsTypeChecker.getTypeFromTypeNode(type);
-      const paramTypeString = this.tsTypeChecker.typeToString(paramType);
-      notMatching = !TsUtils.isIgnoredTypeForParameterType(paramTypeString, paramType);
-
-      if (argumentTypeString === paramTypeString) {
-        notMatching = false;
+  private isInComponentBlock(sourceFile: ts.SourceFile): boolean {
+    void this;
+    let isInside = false;
+    for (const statement of sourceFile.statements) {
+      statement.forEachChild((node) => {
+        if (node.getText() === COMPONENT_DECORATOR) {
+          isInside = true;
+        }
+      });
+      if (isInside) {
+        break;
       }
     }
 
-    if (notMatching) {
-      this.incrementCounters(arg, FaultID.StructuralIdentity);
-    }
+    return isInside;
   }
 
   private handleTupleGeneric(callExpr: ts.CallExpression): void {
