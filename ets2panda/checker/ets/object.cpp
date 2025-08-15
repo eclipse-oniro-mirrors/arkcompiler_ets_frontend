@@ -1729,6 +1729,7 @@ std::optional<std::size_t> ETSChecker::GetTupleElementAccessValue(const ir::Expr
     }
 
     // Below code should be unreachable after removing primitives
+    // #29100: constantExpressionLowering may fail in some cases, and result in the `type` to be ETSObject.
     auto type = expr->TsType();
 
     ES2PANDA_ASSERT(type->HasTypeFlag(TypeFlag::CONSTANT | TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC));
@@ -1751,7 +1752,7 @@ std::optional<std::size_t> ETSChecker::GetTupleElementAccessValue(const ir::Expr
             return std::nullopt;
         }
         default: {
-            ES2PANDA_UNREACHABLE();
+            return std::nullopt;
         }
     }
 }
