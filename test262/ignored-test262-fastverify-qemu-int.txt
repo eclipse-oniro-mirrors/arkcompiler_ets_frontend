@@ -171,3 +171,6 @@ test262/data/test_es2021/built-ins/Array/prototype/reduce/call-with-boolean.js
 
 #27389
 test262/data/test_es2021/built-ins/GeneratorPrototype/return/try-catch-following-catch.js
+
+#27689
+test262/data/test_es2021/language/function-code/10.4.3-1-102-s.js
