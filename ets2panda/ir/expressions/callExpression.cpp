@@ -20,6 +20,16 @@
 #include "compiler/core/pandagen.h"
 
 namespace ark::es2panda::ir {
+void CallExpression::SetArguments(ArenaVector<Expression *> &&argumentsList)
+{
+    auto &arguments = this->Arguments();
+    arguments = std::move(argumentsList);
+
+    for (auto *argument : arguments) {
+        argument->SetParent(this);
+    }
+}
+
 void CallExpression::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
     if (auto *transformedNode = cb(callee_); callee_ != transformedNode) {
