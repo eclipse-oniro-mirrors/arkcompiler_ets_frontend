@@ -56,7 +56,7 @@ npm run mixed_hap:gen_abc  # build demo_mix_hap
 npm run demo_hap:gen_abc   # build demo_hap
 ```
 
-### step5
+### step 5
 Run tests (using Jest)
 Jest is almost ready to use out of the box.
 The test file path has been configured through jest.config.js.
@@ -79,3 +79,31 @@ To open the switch, change recordType to ON_TYPE.
 this.recordType = recordType ?? RECORD_TYPE.ON_TYPE
 ```
 And the report, named bs_record_perf.csv, is located in the project root directory.
+
+## How to use build system without plugins
+
+Target:
+```
+  ninja ts_bindings ark_link dependency_analyzer
+```
+
+Build tsbindings:
+
+```
+  cd ets2panda/bindings
+  npm i
+  npm run run
+```
+
+Build build system source code
+
+```
+cd ets2panda/driver/build_system
+npm install
+npm run build
+```
+
+### Usage
+```sh
+$(which node) ets2panda/driver/build_system/dist/entry.js [build config json file]
+```

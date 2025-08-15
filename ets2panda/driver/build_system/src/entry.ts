@@ -44,7 +44,6 @@ export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGet
     logger.printDebug(`Project config: ${JSON.stringify(projectConfig, null, 1)}`)
 
     let buildConfig: BuildConfig = initBuildConfig(projectConfig);
-    logger.printDebug(`Resulting buildConfig: ${JSON.stringify(buildConfig, null, 1)}`)
 
     try {
         if (projectConfig.frameworkMode === true) {

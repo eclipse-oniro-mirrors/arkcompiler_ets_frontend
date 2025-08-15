@@ -18,6 +18,7 @@ import * as fs from 'fs';
 import { initKoalaModules } from '../init/init_koala_modules';
 import {
     BuildConfig,
+    PluginsConfig,
     CompileJobInfo,
     FileInfo,
     DeclgenV1JobInfo,
@@ -58,6 +59,7 @@ import {
 export class Ets2panda {
     private static instance?: Ets2panda;
     private readonly logger: Logger = Logger.getInstance();
+    private readonly plugins: PluginsConfig;
     private readonly buildSdkPath: string;
     private readonly aliasConfig: Record<string, Record<string, AliasConfig>>;
     private readonly cacheDir: string;
@@ -70,6 +72,7 @@ export class Ets2panda {
 
     private constructor(buildConfig: BuildConfig) {
         this.koalaModule = initKoalaModules(buildConfig);
+        this.plugins = buildConfig.plugins;
         this.buildSdkPath = buildConfig.buildSdkPath;
         this.aliasConfig = buildConfig.aliasConfig;
         this.cacheDir = buildConfig.cachePath;
@@ -103,6 +106,9 @@ export class Ets2panda {
     }
 
     private transformImportStatementsWithAliasConfig() {
+        if (this.plugins === undefined) {
+            return;
+        }
         const { arkts, arktsGlobal } = this.koalaModule;
         let ast = arkts.EtsScript.fromContext();
         if (this.aliasConfig && Object.keys(this.aliasConfig).length > 0) {

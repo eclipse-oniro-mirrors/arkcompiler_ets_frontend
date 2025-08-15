@@ -41,22 +41,39 @@ static es2panda_Impl const *g_impl = nullptr;
 #define LIB_SUFFIX ".so"
 #endif
 
-const char *g_libES2PandaPublic = LIB_PREFIX "es2panda_public" LIB_SUFFIX;
+constexpr const char *G_LIB_ES2_PANDA_PUBLIC_OHOS = LIB_PREFIX "es2panda_public" LIB_SUFFIX;
+constexpr const char *G_LIB_ES2_PANDA_PUBLIC = LIB_PREFIX "es2panda-public" LIB_SUFFIX;
 
 void *FindLibrary()
 {
-    std::string libraryName;
+    std::string basePath;
     char *envValue = getenv("PANDA_SDK_PATH");
     if (envValue) {
-        libraryName = string(envValue) + ("/" PLUGIN_DIR "/lib/") + g_libES2PandaPublic;
+        basePath = std::string(envValue) + "/" + PLUGIN_DIR + "/lib/";
     } else {
-        if (g_pandaLibPath.empty()) {
-            libraryName = g_libES2PandaPublic;
+        char *envBuildPath = getenv("BUILD_DIR");
+        if (!g_pandaLibPath.empty()) {
+            basePath = g_pandaLibPath + "/";
+        } else if (envBuildPath) {
+            basePath = std::string(envBuildPath) + "/lib/";
         } else {
-            libraryName = g_pandaLibPath + "/" + g_libES2PandaPublic;
+            basePath = "";
         }
     }
-    return LoadLibrary(libraryName);
+
+    std::string libraryName = basePath + G_LIB_ES2_PANDA_PUBLIC_OHOS;
+    void *library = LoadLibrary(libraryName);
+    if (library != nullptr) {
+        return library;
+    }
+
+    std::string altLibraryName = basePath + G_LIB_ES2_PANDA_PUBLIC;
+    library = LoadLibrary(altLibraryName);
+    if (library != nullptr) {
+        return library;
+    }
+
+    return nullptr;
 }
 
 const es2panda_Impl *GetPublicImpl()
@@ -66,7 +83,7 @@ const es2panda_Impl *GetPublicImpl()
     }
     auto library = FindLibrary();
     if (library == nullptr) {
-        std::cout << "Cannot find " << g_libES2PandaPublic << endl;
+        std::cout << "Cannot find " << G_LIB_ES2_PANDA_PUBLIC << endl;
     }
     auto symbol = FindSymbol(library, "es2panda_GetImpl");
     if (symbol == nullptr) {
@@ -81,11 +98,7 @@ std::string GetString(KStringPtr ptr)
     return ptr.Data();
 }
 
-char *GetStringCopy(KStringPtr &ptr)
-{
-    return strdup(ptr.CStr());
-}
-
+// NOLINTBEGIN
 inline KUInt UnpackUInt(const KByte *bytes)
 {
     const KUInt oneByte = 8U;
@@ -95,6 +108,7 @@ inline KUInt UnpackUInt(const KByte *bytes)
             (static_cast<KUInt>(bytes[twoByte / oneByte]) << twoByte) |
             (static_cast<KUInt>(bytes[threeByte / oneByte]) << threeByte));
 }
+// NOLINTEND
 
 inline std::string_view GetStringView(KStringPtr &ptr)
 {
@@ -135,12 +149,11 @@ KNativePointer impl_DestroyContext(KNativePointer contextPtr)
 }
 TS_INTEROP_1(DestroyContext, KNativePointer, KNativePointer)
 
-void impl_MemInitialize(KStringPtr &pandaLibPath)
+void impl_MemInitialize()
 {
-    g_pandaLibPath = GetStringView(pandaLibPath);
     GetPublicImpl()->MemInitialize();
 }
-TS_INTEROP_V1(MemInitialize, KStringPtr)
+TS_INTEROP_V0(MemInitialize)
 
 void impl_MemFinalize()
 {

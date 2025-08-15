@@ -20,7 +20,9 @@ export class BuildFrameworkMode extends BaseMode {
 
     constructor(buildConfig: BuildConfig) {
         super(buildConfig);
-        this.mergedAbcFile = buildConfig.loaderOutPath as string;
+        if (buildConfig.loaderOutPath !== "") {
+            this.mergedAbcFile = buildConfig.loaderOutPath as string;
+        }
     }
 
     public async runSimultaneous(): Promise<void> {
