@@ -211,7 +211,7 @@ bool NodeHasTokens(const ir::AstNode *node)
     return node->Start().index != node->End().index;
 }
 
-ir::AstNode *FindRightmostChildNodeWithTokens(const ArenaVector<ir::AstNode *> &nodes, int exclusiveStartPosition)
+ir::AstNode *FindRightmostChildNodeWithTokens(const std::vector<ir::AstNode *> &nodes, int exclusiveStartPosition)
 {
     for (int i = exclusiveStartPosition - 1; i >= 0; --i) {
         if (NodeHasTokens(nodes[i])) {
@@ -221,9 +221,9 @@ ir::AstNode *FindRightmostChildNodeWithTokens(const ArenaVector<ir::AstNode *> &
     return nullptr;
 }
 
-ArenaVector<ir::AstNode *> GetChildren(const ir::AstNode *node, ArenaAllocator *allocator)
+std::vector<ir::AstNode *> GetChildren(const ir::AstNode *node, [[maybe_unused]] ArenaAllocator *allocator)
 {
-    ArenaVector<ir::AstNode *> children(allocator->Adapter());
+    std::vector<ir::AstNode *> children {};
     if (node->Type() == ir::AstNodeType::ETS_MODULE) {
         // ETS_MODULE is the root node, need to get the definition of global class
         auto globalClass =
@@ -250,7 +250,7 @@ ir::AstNode *FindRightmostToken(const ir::AstNode *node, ArenaAllocator *allocat
     return FindRightmostToken(candidate, allocator);
 }
 
-ir::AstNode *FindNodeBeforePosition(const ArenaVector<ir::AstNode *> &children, size_t pos)
+ir::AstNode *FindNodeBeforePosition(const std::vector<ir::AstNode *> &children, size_t pos)
 {
     if (children.empty()) {
         return nullptr;
@@ -338,7 +338,7 @@ std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position)
     return node != nullptr ? ReplaceQuotation(program->SourceCode().Substr(node->Start().index, position)) : "";
 }
 
-ir::AstNode *FindLeftToken(const size_t pos, const ArenaVector<ir::AstNode *> &nodes)
+ir::AstNode *FindLeftToken(const size_t pos, const std::vector<ir::AstNode *> &nodes)
 {
     int left = 0;
     int right = nodes.size() - 1;
@@ -355,7 +355,7 @@ ir::AstNode *FindLeftToken(const size_t pos, const ArenaVector<ir::AstNode *> &n
     return result;
 }
 
-ir::AstNode *FindRightToken(const size_t pos, const ArenaVector<ir::AstNode *> &nodes)
+ir::AstNode *FindRightToken(const size_t pos, const std::vector<ir::AstNode *> &nodes)
 {
     int left = 0;
     int right = nodes.size() - 1;

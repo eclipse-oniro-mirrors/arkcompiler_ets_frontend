@@ -68,8 +68,7 @@ public:
     [[nodiscard]] bool IsETSParser() const noexcept override;
 
     [[nodiscard]] bool IsValidIdentifierName(const lexer::Token &token) const noexcept override;
-
-    void AddDirectImportsToDirectExternalSources(const ArenaVector<util::StringView> &directImportsFromMainSource,
+    void AddDirectImportsToDirectExternalSources(const std::vector<util::StringView> &directImportsFromMainSource,
                                                  parser::Program *newProg) const;
     bool CheckDupAndReplace(Program *&oldProg, Program *newProg) const;
     ArenaVector<ir::ETSImportDeclaration *> ParseDefaultSources(std::string_view srcFile, std::string_view importSrc);
@@ -98,6 +97,7 @@ public:
     ir::Expression *CreateFormattedExpression(std::string_view sourceCode, std::vector<ir::AstNode *> &insertingNodes);
 
     ir::Expression *CreateFormattedExpression(std::string_view const sourceCode, ArenaVector<ir::Expression *> &args);
+    ir::Expression *CreateFormattedExpression(std::string_view const sourceCode, std::vector<ir::Expression *> &args);
     ir::Statement *CreateFormattedStatement(std::string_view sourceCode, std::vector<ir::AstNode *> &insertingNodes);
     ArenaVector<ir::Statement *> CreateStatements(std::string_view sourceCode);
     ArenaVector<ir::Statement *> CreateFormattedStatements(std::string_view sourceCode,
@@ -195,7 +195,7 @@ private:
     void ParseUserSources(std::vector<std::string> userParths);
     ArenaVector<ir::Statement *> ParseTopLevelDeclaration();
     void ParseParseListElement(const util::ImportPathManager::ParseInfo &parseListElem, std::string_view extSrc,
-                               const ArenaVector<util::StringView> &directImportsFromMainSource,
+                               const std::vector<util::StringView> &directImportsFromMainSource,
                                std::vector<Program *> *programs);
     bool IsDefaultImport();
     void ParseNamedSpecifiesDefaultImport(ArenaVector<ir::ImportDefaultSpecifier *> *resultDefault,
@@ -214,7 +214,7 @@ private:
 
     std::optional<std::string_view> GetDeclarationSource(std::string &&fileToParse) const;
     std::vector<Program *> SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,
-                                              ArenaVector<util::StringView> &directImportsFromMainSource);
+                                              std::vector<util::StringView> &directImportsFromMainSource);
     parser::Program *ParseSource(const SourceFile &sourceFile);
     ir::ETSModule *ParseETSGlobalScript(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> &statements);
     void ParseFileHeaderFlag(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> *statements);

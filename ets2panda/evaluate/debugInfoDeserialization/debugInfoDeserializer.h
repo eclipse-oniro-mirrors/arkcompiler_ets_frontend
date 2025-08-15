@@ -83,7 +83,7 @@ private:
      * @returns declaration name of the first already created class in chain,
      * empty string if algorithm has reached BUILTIN_OBJECT.
      */
-    util::StringView CollectChainInfo(ArenaVector<ChainEntryInfo> &chainEntryList, util::StringView abcSuperName,
+    util::StringView CollectChainInfo(std::vector<ChainEntryInfo> &chainEntryList, util::StringView abcSuperName,
                                       FileDebugInfo *debugInfo);
 
     varbinder::Variable *CreateLocalVarDecl(ir::Identifier *ident, RegisterNumber regNumber,

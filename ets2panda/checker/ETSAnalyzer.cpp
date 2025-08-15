@@ -766,7 +766,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSKeyofType *node) const
 // compile methods for EXPRESSIONS in alphabetical order
 
 static void AddSpreadElementTypes(ETSChecker *checker, ir::SpreadElement *const element,
-                                  ArenaVector<std::pair<Type *, ir::Expression *>> &elementTypes)
+                                  std::vector<std::pair<Type *, ir::Expression *>> &elementTypes)
 {
     Type *const spreadType = element->Check(checker);
 
@@ -800,9 +800,9 @@ static bool ValidArrayExprSizeForTupleSize(ETSChecker *checker, Type *possibleTu
                                                  possibleTupleType->AsETSTupleType());
 }
 
-static ArenaVector<std::pair<Type *, ir::Expression *>> GetElementTypes(ETSChecker *checker, ir::ArrayExpression *expr)
+static std::vector<std::pair<Type *, ir::Expression *>> GetElementTypes(ETSChecker *checker, ir::ArrayExpression *expr)
 {
-    ArenaVector<std::pair<Type *, ir::Expression *>> elementTypes(checker->ProgramAllocator()->Adapter());
+    std::vector<std::pair<Type *, ir::Expression *>> elementTypes {};
 
     auto *const exprPreferredType = expr->PreferredType();
     auto *const exprTupleType = exprPreferredType->IsETSTupleType() ? exprPreferredType->AsETSTupleType() : nullptr;
@@ -844,7 +844,7 @@ static Type *GetArrayElementType(ETSChecker *checker, Type *preferredType)
 }
 
 static bool CheckElement(ETSChecker *checker, Type *const preferredType,
-                         ArenaVector<std::pair<Type *, ir::Expression *>> arrayExprElementTypes, std::size_t idx)
+                         std::vector<std::pair<Type *, ir::Expression *>> arrayExprElementTypes, std::size_t idx)
 {
     auto [elementType, currentElement] = arrayExprElementTypes[idx];
 
@@ -931,7 +931,7 @@ static Type *InferPreferredTypeFromElements(ETSChecker *checker, ir::ArrayExpres
 
 static bool CheckArrayExpressionElements(ETSChecker *checker, ir::ArrayExpression *arrayExpr)
 {
-    const ArenaVector<std::pair<Type *, ir::Expression *>> arrayExprElementTypes = GetElementTypes(checker, arrayExpr);
+    const std::vector<std::pair<Type *, ir::Expression *>> arrayExprElementTypes = GetElementTypes(checker, arrayExpr);
 
     bool allElementsAssignable = !std::any_of(arrayExprElementTypes.begin(), arrayExprElementTypes.end(),
                                               [](auto &pair) { return pair.first->IsTypeError(); });

@@ -133,7 +133,7 @@ static void ProcessTypeParameterProperties(checker::ETSTypeParameter *oldTypePar
 // NOTE (smartin): The two methods 'CreateNewTypeParamVectors' and 'SetConstraintTypeAndDefaultTypeForTypeParams'
 // contain very similar logic that can be found in 'CloneTypeParamsForClass'. Merge these later if possible
 static void FillNewTypeParamVectors(ThreadSafeArenaAllocator *allocator,
-                                    ArenaVector<checker::ETSTypeParameter *> &newTypeParams,
+                                    std::vector<checker::ETSTypeParameter *> &newTypeParams,
                                     ArenaVector<ir::TSTypeParameter *> &newTypeParamNodes,
                                     const checker::Signature *const lambdaSig,
                                     checker::Substitution *const substitution)
@@ -161,7 +161,7 @@ static void FillNewTypeParamVectors(ThreadSafeArenaAllocator *allocator,
 }
 
 static void SetConstraintTypeAndDefaultTypeForTypeParams(public_lib::Context *ctx,
-                                                         const ArenaVector<checker::ETSTypeParameter *> &newTypeParams,
+                                                         const std::vector<checker::ETSTypeParameter *> &newTypeParams,
                                                          const ArenaVector<ir::TSTypeParameter *> &newTypeParamNodes,
                                                          const checker::Signature *const lambdaSig,
                                                          const checker::Substitution *const substitution)
@@ -199,7 +199,7 @@ static ir::TSTypeParameterDeclaration *CloneTypeParamsForSignature(public_lib::C
     }
 
     auto *allocator = ctx->allocator;
-    auto newTypeParams = ArenaVector<checker::ETSTypeParameter *>(allocator->Adapter());
+    auto newTypeParams = std::vector<checker::ETSTypeParameter *> {};
     auto newTypeParamNodes = ArenaVector<ir::TSTypeParameter *>(allocator->Adapter());
 
     FillNewTypeParamVectors(allocator, newTypeParams, newTypeParamNodes, lambdaSig, lciInfo->substitution);
@@ -223,7 +223,7 @@ static std::pair<ir::TSTypeParameterDeclaration *, checker::Substitution> CloneT
     auto *allocator = ctx->allocator;
 
     auto *newScope = allocator->New<varbinder::LocalScope>(allocator, enclosingScope);
-    auto newTypeParams = ArenaVector<checker::ETSTypeParameter *>(allocator->Adapter());
+    auto newTypeParams = std::vector<checker::ETSTypeParameter *> {};
     auto newTypeParamNodes = ArenaVector<ir::TSTypeParameter *>(allocator->Adapter());
     auto substitution = checker::Substitution {};
 
@@ -1093,7 +1093,7 @@ static void CorrectTheTrueThisForExtensionLambda(public_lib::Context *ctx, ir::C
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *classScope = lambdaClass->Definition()->Scope();
-    ArenaVector<varbinder::Variable *> invokeFuncsOfLambda(ctx->Allocator()->Adapter());
+    std::vector<varbinder::Variable *> invokeFuncsOfLambda {};
     auto invokeName = checker->FunctionalInterfaceInvokeName(arity, hasRestParam);
     invokeFuncsOfLambda.emplace_back(
         classScope->FindLocal(compiler::Signatures::LAMBDA_OBJECT_INVOKE, varbinder::ResolveBindingOptions::METHODS));
