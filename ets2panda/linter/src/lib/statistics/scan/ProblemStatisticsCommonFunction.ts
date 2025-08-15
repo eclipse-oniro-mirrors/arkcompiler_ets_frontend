@@ -27,6 +27,7 @@ import type { RuleDetailedErrorInfo } from './RuleDetailedErrorInfo';
 import type { StatisticsReportInPutInfo } from './StatisticsReportInPutInfo';
 import type { TimeRecorder } from './TimeRecorder';
 import { WorkLoadInfo } from './WorkLoadInfo';
+import { getwholeRules } from '../../utils/functions/ConfiguredRulesProcess';
 
 export function getProblemStatisticsInfo(
   problemNumbers: ProblemNumbersInfo,
@@ -85,14 +86,18 @@ export function accumulateRuleNumbers(
   ruleToNumbersMap: Map<string, number>,
   ruleToAutoFixedNumbersMap: Map<string, number>
 ): void {
+  const regex = /.*\(([^)]+)\)[^(]*$/;
   problems.forEach((problem) => {
     if (problem.rule !== undefined) {
-      if (problem.autofix) {
-        const currentNumber = ruleToAutoFixedNumbersMap.get(problem.rule) || 0;
-        ruleToAutoFixedNumbersMap.set(problem.rule, currentNumber + 1);
+      const match = problem.rule.match(regex);
+      if (match?.[1]?.trim()) {
+        if (problem.autofix) {
+          const currentNumber = ruleToAutoFixedNumbersMap.get(match[1]) || 0;
+          ruleToAutoFixedNumbersMap.set(match[1], currentNumber + 1);
+        }
+        const currentNumber = ruleToNumbersMap.get(match[1]) || 0;
+        ruleToNumbersMap.set(match[1], currentNumber + 1);
       }
-      const currentNumber = ruleToNumbersMap.get(problem.rule) || 0;
-      ruleToNumbersMap.set(problem.rule, currentNumber + 1);
     }
   });
 }
@@ -148,7 +153,7 @@ export async function generateScanProbelemStatisticsReport(
   workLoadInfo.calculateFixRate(problemNumbers);
   const statisticsReportData = getProblemStatisticsInfo(
     problemNumbers,
-    statisticsReportInPutInfo.ruleToNumbersMap,
+    getProcessedRuleToNumbersMap(statisticsReportInPutInfo.ruleToNumbersMap, statisticsReportInPutInfo.wholeRules),
     statisticsReportInPutInfo.ruleToAutoFixedNumbersMap,
     statisticsReportInPutInfo.timeRecorder,
     workLoadInfo
@@ -158,6 +163,22 @@ export async function generateScanProbelemStatisticsReport(
     statisticsReportData,
     statisticsReportInPutInfo.cmdOptions.outputFilePath
   );
+}
+
+function getProcessedRuleToNumbersMap(ruleToNumbersMap: Map<string, number>, wholeLinterRules: string[]) : Map<string, number> {
+  const processedRuleToNumbersMap: Map<string, number> = new Map();
+  const homecheckRuleToNumbersMap: Map<string, number> = ruleToNumbersMap;
+  wholeLinterRules.forEach((ruleName) => {
+    const ruleNumber = ruleToNumbersMap.get(ruleName) || 0;
+    homecheckRuleToNumbersMap.delete(ruleName);
+    processedRuleToNumbersMap.set(ruleName, ruleNumber);
+  });
+  
+  homecheckRuleToNumbersMap.forEach((number, ruleName) => {
+    processedRuleToNumbersMap.set(ruleName, number);
+  })
+
+  return processedRuleToNumbersMap;
 }
 
 export function generateMigrationStatisicsReport(
@@ -192,7 +213,7 @@ export function generateMigrationStatisicsReport(
 
   const statisticsReportData = getProblemStatisticsInfo(
     problemNumbers,
-    ruleToNumbersMap,
+    getProcessedRuleToNumbersMap(ruleToNumbersMap, getwholeRules()),
     ruleToAutoFixedNumbersMap,
     timeRecorder
   );

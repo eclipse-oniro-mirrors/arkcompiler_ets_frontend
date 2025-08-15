@@ -14,6 +14,8 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import type { OptionValues } from 'commander';
+import { Logger } from '../../../lib/Logger';
 
 export function getConfiguredRuleTags(
   arkTSRulesMap: Map<number, string>,
@@ -48,6 +50,34 @@ export function getRulesFromConfig(configRulePath: string): Map<string, string[]
   }
 }
 
+export function getConfigureRulePath(options: OptionValues): string {
+  if (!options.ruleConfig) {
+    return getDefaultConfigurePath();
+  }
+  const stats = fs.statSync(path.normalize(options.ruleConfig));
+  if (!stats.isFile()) {
+    Logger.error(`The file at ${options.ruleConfigPath} path does not exist!
+          And will use the default configure rule`);
+    return getDefaultConfigurePath();
+  }
+  return options.ruleConfig;
+}
+
+export function getDefaultConfigurePath(): string {
+  const defaultConfigPath = path.join(process.cwd(), 'rule-config.json');
+  try {
+    fs.accessSync(defaultConfigPath, fs.constants.F_OK);
+  } catch (error: any) {
+    if (error.code === 'ENOENT') {
+      Logger.error(
+        'The default rule configuration file does not exist, please add the file named rule-config.json in the migration-helper folder!'
+      );
+      process.exit(1);
+    }
+  }
+  return defaultConfigPath;
+}
+
 function convertToStringArrayMap(inputMap: Map<string, any>): Map<string, string[]> {
   const resultMap: Map<string, string[]> = new Map();
   for (const [key, value] of inputMap) {
@@ -65,4 +95,10 @@ function isStringArray(value: any): value is string[] {
       return typeof item === 'string';
     })
   );
+}
+
+export function getwholeRules() : string[] {
+  const configureRulePath = getDefaultConfigurePath();
+  const configuredRulesMap = getRulesFromConfig(configureRulePath);
+  return Array.from(configuredRulesMap.values()).flat();
 }
