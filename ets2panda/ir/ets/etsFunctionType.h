@@ -75,6 +75,8 @@ public:
         return GetHistoryNodeAs<ETSFunctionType>()->signature_.Params();
     }
 
+    void SetParams(ArenaVector<Expression *> &&paramsList);
+
     const TypeNode *ReturnType() const
     {
         return GetHistoryNodeAs<ETSFunctionType>()->signature_.ReturnType();

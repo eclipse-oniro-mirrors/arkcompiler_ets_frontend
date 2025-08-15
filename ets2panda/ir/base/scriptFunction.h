@@ -370,6 +370,7 @@ public:
     void SetValueReturnStatements(ReturnStatement *returnStatements, size_t index);
 
     void EmplaceParams(Expression *params);
+    void SetParams(ArenaVector<Expression *> &&paramsList);
     void ClearParams();
     void SetValueParams(Expression *params, size_t index);
     ArenaVector<Expression *> &ParamsForUpdate();
