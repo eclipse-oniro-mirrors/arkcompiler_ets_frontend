@@ -516,6 +516,9 @@ std::tuple<varbinder::Decl *, varbinder::Variable *> ScopesInitPhase::AddOrGetVa
         case ir::VariableDeclaratorFlag::LET:
             return VarBinder()->NewVarDecl<varbinder::LetDecl>(id->Start(), name);
         case ir::VariableDeclaratorFlag::VAR:
+            if (VarBinder()->IsETSBinder()) {
+                return VarBinder()->NewVarDecl<varbinder::LetDecl>(id->Start(), name);
+            }
             return VarBinder()->NewVarDecl<varbinder::VarDecl>(id->Start(), name);
         case ir::VariableDeclaratorFlag::CONST:
             return VarBinder()->NewVarDecl<varbinder::ConstDecl>(id->Start(), name);
