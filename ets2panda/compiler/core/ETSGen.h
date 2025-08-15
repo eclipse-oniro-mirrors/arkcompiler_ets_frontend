@@ -360,9 +360,9 @@ public:
         Ra().Emit<AnyStbyval>(node, objectReg, propReg);
     }
 
-    void EmitAnyIsinstance(const ir::AstNode *node, VReg objReg)
+    void EmitAnyIsinstance(const ir::AstNode *node, VReg typeReg)
     {
-        Sa().Emit<AnyIsinstance>(node, objReg);
+        Sa().Emit<AnyIsinstance>(node, typeReg);
     }
 
     void CallExact(const ir::AstNode *node, checker::Signature *signature,

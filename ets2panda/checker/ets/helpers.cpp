@@ -18,7 +18,6 @@
 #include "checker/ETSchecker.h"
 
 #include "checker/types/globalTypesHolder.h"
-#include "checker/types/gradualType.h"
 #include "checker/checkerContext.h"
 #include "checker/ETSAnalyzerHelpers.h"
 #include "checker/types/ets/etsEnumType.h"
@@ -1720,7 +1719,7 @@ Type *ETSChecker::HandleTypeAlias(ir::Expression *const name, const ir::TSTypePa
 
     for (std::size_t idx = 0U; idx < typeAliasNode->TypeParams()->Params().size(); ++idx) {
         auto *typeAliasTypeName = typeAliasNode->TypeParams()->Params().at(idx)->Name();
-        auto *typeAliasType = typeAliasTypeName->Variable()->TsType()->MaybeBaseTypeOfGradualType();
+        auto *typeAliasType = typeAliasTypeName->Variable()->TsType();
         if (typeAliasType->IsETSTypeParameter()) {
             ir::TypeNode *typeNode = ResolveTypeNodeForTypeArg(typeAliasNode, typeParams, idx);
             auto paramType = typeNode->GetType(this);
@@ -1793,10 +1792,7 @@ static void BuildExportedFunctionSignature(ETSChecker *checker, varbinder::Varia
         checker->BuildBasicClassProperties(classDef);
     }
 
-    auto containingClass = classDef->TsType()->IsGradualType()
-                               ? classDef->TsType()->AsGradualType()->GetBaseType()->AsETSObjectType()
-                               : classDef->TsType()->AsETSObjectType();
-    SavedCheckerContext scc(checker, checker->Context().Status(), containingClass);
+    SavedCheckerContext scc(checker, checker->Context().Status(), classDef->TsType()->AsETSObjectType());
     auto funcType = checker->BuildMethodSignature(method);
     funcType->SetVariable(var);
     var->SetTsType(funcType);
@@ -2859,7 +2855,7 @@ void ETSChecker::GenerateGetterSetterBody(ArenaVector<ir::Statement *> &stmts, A
     memberExpression->SetPropVar(field->Key()->Variable()->AsLocalVariable());
     memberExpression->SetRange(classDef->Range());
     if (memberExpression->ObjType() == nullptr && classDef->TsType() != nullptr) {
-        memberExpression->SetObjectType(classDef->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType());
+        memberExpression->SetObjectType(classDef->TsType()->AsETSObjectType());
     }
 
     if (!isSetter) {
@@ -3328,7 +3324,7 @@ void ETSChecker::CheckTypeParameterVariance(ir::ClassDefinition *classDef)
         return;
     }
 
-    Context().SetContainingClass(classDef->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType());
+    Context().SetContainingClass(classDef->TsType()->AsETSObjectType());
     auto checkVariance = [this](VarianceFlag varianceFlag, ir::Expression *expression, Type *type) {
         Relation()->Result(RelationResult::TRUE);
         Relation()->SetNode(expression);

@@ -482,43 +482,11 @@ static void CastTupleElementFromClassMemberType(checker::ETSChecker *checker,
                                                   tupleElementAccessor->Start(), checker::TypeRelationFlag::NO_THROW});
 }
 
-checker::Type *MemberExpression::HandleComputedInGradualType(checker::ETSChecker *checker, checker::Type *baseType)
-{
-    property_->Check(checker);
-    if (baseType->IsETSObjectType()) {
-        util::StringView searchName;
-        if (property_->IsLiteral()) {
-            searchName = util::StringView {property_->AsLiteral()->ToString()};
-        }
-        auto found = baseType->AsETSObjectType()->GetProperty(searchName, checker::PropertySearchFlags::SEARCH_ALL);
-        if (found == nullptr) {
-            // Try to find indexer method
-            checker::Type *indexType = CheckIndexAccessMethod(checker);
-            if (indexType != nullptr) {
-                return indexType;
-            }
-            checker->LogError(diagnostic::PROPERTY_NONEXISTENT, {searchName, baseType->AsETSObjectType()->Name()},
-                              property_->Start());
-            return nullptr;
-        }
-        return found->TsType();
-    }
-    ES2PANDA_UNREACHABLE();
-    return nullptr;
-}
-
 checker::Type *MemberExpression::CheckComputed(checker::ETSChecker *checker, checker::Type *baseType)
 {
     if (baseType->IsETSRelaxedAnyType()) {
         Property()->Check(checker);
         return checker->GlobalETSRelaxedAnyType();
-    }
-
-    if (baseType->IsETSObjectType() && baseType->AsETSObjectType()->GetDeclNode() != nullptr &&
-        baseType->AsETSObjectType()->GetDeclNode()->AsTyped()->TsType() != nullptr &&
-        baseType->AsETSObjectType()->GetDeclNode()->AsTyped()->TsType()->IsGradualType()) {
-        SetObjectType(baseType->AsETSObjectType());
-        return HandleComputedInGradualType(checker, baseType);
     }
 
     if (baseType->IsETSArrayType()) {

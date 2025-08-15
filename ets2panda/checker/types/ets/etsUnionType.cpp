@@ -416,7 +416,7 @@ bool ETSUnionType::ExtractType(checker::ETSChecker *checker, checker::Type *sour
     bool rc = false;
     auto it = unionTypes.cbegin();
     while (it != unionTypes.cend()) {
-        auto *constituentType = (*it)->MaybeBaseTypeOfGradualType();
+        auto *constituentType = (*it);
         //  Because 'instanceof' expression does not check for type parameters, then for generic types we should
         //  consider that expressions like 'SomeType<U...>' and 'SomeType<T...>' are identical for smart casting.
         //  We also have to pass through all the union to process cases like 'C<T>|A|B|C<U>|undefined`

@@ -201,7 +201,6 @@ public:
     void CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &properties);
     Type *BuildBasicClassProperties(ir::ClassDefinition *classDef);
     ETSObjectType *BuildAnonymousClassProperties(ir::ClassDefinition *classDef, ETSObjectType *superType);
-    Type *MaybeGradualType(ir::AstNode *node, ETSObjectType *type);
     Type *BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *interfaceDecl);
     ETSObjectType *GetSuperType(ETSObjectType *type);
     ArenaVector<ETSObjectType *> GetInterfaces(ETSObjectType *type);
@@ -317,7 +316,6 @@ public:
     ETSResizableArrayType *CreateETSMultiDimResizableArrayType(Type *element, size_t dimSize);
     ETSResizableArrayType *CreateETSResizableArrayType(Type *element);
     ETSArrayType *CreateETSArrayType(Type *elementType, bool isCachePolluting = false);
-    Type *CreateGradualType(Type *baseType, Language lang = Language(Language::Id::JS));
     Type *CreateETSUnionType(Span<Type *const> constituentTypes);
     template <size_t N>
     Type *CreateETSUnionType(Type *const (&arr)[N])  // NOLINT(modernize-avoid-c-arrays)
@@ -340,7 +338,11 @@ public:
                                                                  ETSFunctionType *extensionFunctionType);
     void AddThisReturnTypeFlagForInterfaceInvoke(ETSObjectType *interface);
     ETSTypeParameter *CreateTypeParameter();
-    ETSObjectType *CreateETSObjectType(ir::AstNode *declNode, ETSObjectFlags flags);
+
+    ETSObjectType *CreateETSObjectType(
+        ir::AstNode *declNode, ETSObjectFlags flags,
+        /* this parameter maintanis the behavior of the broken ast-cache logic, avoid it whenever possible */
+        std::optional<std::pair<ThreadSafeArenaAllocator *, TypeRelation *>> caches = std::nullopt);
     ETSObjectType *CreateETSObjectTypeOrBuiltin(ir::AstNode *declNode, ETSObjectFlags flags);
     std::tuple<util::StringView, SignatureInfo *> CreateBuiltinArraySignatureInfo(const ETSArrayType *arrayType,
                                                                                   size_t dim);

@@ -187,11 +187,4 @@ bool CallExpression::IsExtensionAccessorCall()
     return (Signature() != nullptr) && (Signature()->Function()->IsExtensionAccessor());
 }
 
-bool CallExpression::IsDynamicCall() const noexcept
-{
-    return Callee()->IsMemberExpression() && Callee()->AsMemberExpression()->PropVar() != nullptr &&
-           (Callee()->AsMemberExpression()->Object()->TsType()->IsETSAnyType() ||
-            Callee()->AsMemberExpression()->Object()->TsType()->IsGradualType());
-}
-
 }  // namespace ark::es2panda::ir

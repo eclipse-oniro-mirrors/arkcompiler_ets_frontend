@@ -495,17 +495,6 @@ static void CompileLogical(compiler::ETSGen *etsg, const ir::BinaryExpression *e
     etsg->SetAccumulatorType(expr->TsType());
 }
 
-static void CompileAnyInstanceOf(compiler::ETSGen *etsg, const VReg lhs, const ir::Expression *expr)
-{
-    RegScope rs(etsg);
-    VReg objReg = etsg->AllocReg();
-    expr->Compile(etsg);
-    etsg->StoreAccumulator(expr, objReg);
-    etsg->LoadAccumulator(expr, lhs);
-    etsg->EmitAnyIsinstance(expr, objReg);
-    etsg->SetAccumulatorType(etsg->Checker()->GlobalETSBooleanType());
-}
-
 static void CompileInstanceof(compiler::ETSGen *etsg, const ir::BinaryExpression *expr)
 {
     ES2PANDA_ASSERT(expr->OperatorType() == lexer::TokenType::KEYW_INSTANCEOF);
@@ -516,12 +505,7 @@ static void CompileInstanceof(compiler::ETSGen *etsg, const ir::BinaryExpression
     expr->Left()->Compile(etsg);
     etsg->ApplyConversionAndStoreAccumulator(expr->Left(), lhs, expr->OperationType());
 
-    auto target = expr->Right()->TsType();
-    if (target->IsETSAnyType() && target->AsETSAnyType()->IsRelaxed()) {
-        CompileAnyInstanceOf(etsg, lhs, expr->Right());
-    } else {
-        etsg->IsInstance(expr, lhs, target);
-    }
+    etsg->IsInstance(expr, lhs, expr->Right()->TsType());
     ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
 }
 
@@ -697,29 +681,6 @@ bool IsCastCall(checker::Signature *signature)
             (signature->Params().size() == 1) && signature->Params()[0]->TsType()->IsETSPrimitiveType());
 }
 
-void ETSCompiler::CompileAny(const ir::CallExpression *expr, const ir::Expression *callee,
-                             compiler::VReg &calleeReg) const
-{
-    ETSGen *etsg = GetETSGen();
-    auto memberExpr = callee->AsMemberExpression();
-    memberExpr->Object()->Compile(etsg);
-    compiler::VReg objReg = etsg->AllocReg();
-    etsg->StoreAccumulator(expr, objReg);
-    auto ttctx = compiler::TargetTypeContext(etsg, expr->TsType());
-    if (expr->Signature()->Function() != nullptr && expr->Signature()->Function()->IsStatic()) {
-        auto name = expr->Signature()->Function()->IsDefaultExported() ? compiler::Signatures::DEFAULT
-                                                                       : memberExpr->Property()->AsIdentifier()->Name();
-        etsg->LoadPropertyByNameAny(memberExpr, objReg, name);
-        etsg->StoreAccumulator(expr, calleeReg);
-        etsg->CallAny(callee->AsMemberExpression()->Object(), Span<ir::Expression const *const>(expr->Arguments()),
-                      calleeReg);
-    } else {
-        etsg->CallAnyThis(expr, memberExpr->Property()->AsIdentifier()->Name(),
-                          Span<ir::Expression const *const>(expr->Arguments()), objReg);
-    }
-    etsg->EmitAnyCheckCast(expr, expr->TsType());
-}
-
 void ETSCompiler::EmitCall(const ir::CallExpression *expr, compiler::VReg &calleeReg,
                            checker::Signature *signature) const
 {
@@ -774,9 +735,7 @@ void ETSCompiler::Compile(const ir::CallExpression *expr) const
 
     ConvertRestArguments(const_cast<checker::ETSChecker *>(etsg->Checker()->AsETSChecker()), expr, signature);
 
-    if (expr->IsDynamicCall()) {
-        CompileAny(expr, callee, calleeReg);
-    } else if (callee->IsIdentifier()) {
+    if (callee->IsIdentifier()) {
         if (!isStatic) {
             etsg->LoadThis(expr);
             etsg->StoreAccumulator(expr, calleeReg);
@@ -850,17 +809,6 @@ void ETSCompiler::Compile(const ir::Identifier *expr) const
     etsg->SetAccumulatorType(smartType);
 }
 
-static void LoadETSAnyTypeFromMemberExpr(compiler::ETSGen *etsg, const ir::MemberExpression *expr,
-                                         compiler::VReg objReg)
-{
-    if (expr->Property()->TsType()->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC)) {
-        etsg->LoadByIndexAny(expr, objReg);
-    } else {
-        etsg->LoadByValueAny(expr, objReg);
-    }
-    etsg->EmitAnyCheckCast(expr, expr->TsType());
-}
-
 bool ETSCompiler::CompileComputed(compiler::ETSGen *etsg, const ir::MemberExpression *expr)
 {
     if (!expr->IsComputed()) {
@@ -886,8 +834,6 @@ bool ETSCompiler::CompileComputed(compiler::ETSGen *etsg, const ir::MemberExpres
         auto indexValue = *expr->GetTupleIndexValue();
         auto *tupleElementType = objectType->AsETSTupleType()->GetTypeAtIndex(indexValue);
         etsg->LoadTupleElement(expr, objReg, tupleElementType, indexValue);
-    } else if (objectType->IsETSAnyType()) {
-        LoadETSAnyTypeFromMemberExpr(etsg, expr, objReg);
     } else {
         ES2PANDA_ASSERT(objectType->IsETSArrayType());
         etsg->LoadArrayElement(expr, objReg);
@@ -900,28 +846,6 @@ bool ETSCompiler::CompileComputed(compiler::ETSGen *etsg, const ir::MemberExpres
     return true;
 }
 
-bool ETSCompiler::CompileAny(compiler::ETSGen *etsg, const ir::MemberExpression *expr) const
-{
-    if (!etsg->Checker()->GetApparentType(expr->Object()->TsType())->IsETSAnyType()) {
-        return false;
-    }
-    auto ottctx = compiler::TargetTypeContext(etsg, expr->Object()->TsType());
-    etsg->CompileAndCheck(expr->Object());
-
-    compiler::VReg objReg = etsg->AllocReg();
-    etsg->StoreAccumulator(expr, objReg);
-
-    auto ttctx = compiler::TargetTypeContext(etsg, expr->TsType());
-    if (expr->Property()->Variable()->Declaration() != nullptr &&
-        expr->Property()->Variable()->Declaration()->Node()->IsDefaultExported()) {
-        etsg->LoadPropertyByNameAny(expr, objReg, compiler::Signatures::DEFAULT);
-    } else {
-        etsg->LoadPropertyByNameAny(expr, objReg, expr->Property()->AsIdentifier()->Name());
-    }
-    etsg->EmitAnyCheckCast(expr, expr->TsType());
-    return true;
-}
-
 void ETSCompiler::Compile(const ir::MemberExpression *expr) const
 {
     ETSGen *etsg = GetETSGen();
@@ -929,10 +853,6 @@ void ETSCompiler::Compile(const ir::MemberExpression *expr) const
     compiler::RegScope rs(etsg);
 
     if (CompileComputed(etsg, expr)) {
-        return;
-    }
-
-    if (CompileAny(etsg, expr)) {
         return;
     }
 
@@ -1656,7 +1576,8 @@ void ETSCompiler::CompileCast(const ir::TSAsExpression *expr, checker::Type cons
         case checker::TypeFlag::ETS_UNION:
         case checker::TypeFlag::ETS_ANY:
         case checker::TypeFlag::ETS_NULL:
-        case checker::TypeFlag::ETS_UNDEFINED: {
+        case checker::TypeFlag::ETS_UNDEFINED:
+        case checker::TypeFlag::ETS_VOID: {
             etsg->CastToReftype(expr, targetType, expr->isUncheckedCast_);
             break;
         }
@@ -1734,17 +1655,9 @@ void ETSCompiler::Compile(const ir::TSNonNullExpression *expr) const
 
 void ETSCompiler::Compile([[maybe_unused]] const ir::TSTypeAliasDeclaration *st) const {}
 
-void ETSCompiler::Compile(const ir::TSQualifiedName *expr) const
+void ETSCompiler::Compile([[maybe_unused]] const ir::TSQualifiedName *expr) const
 {
-    ES2PANDA_ASSERT(expr->Left()->IsMemberExpression());
-
-    ETSGen *etsg = GetETSGen();
-    expr->Left()->Compile(etsg);
-
-    compiler::VReg objReg = etsg->AllocReg();
-    etsg->StoreAccumulator(expr->Left(), objReg);
-    etsg->LoadPropertyByNameAny(expr->Left(), objReg, expr->Right()->AsIdentifier()->Name());
-    etsg->EmitAnyCheckCast(expr, expr->Right()->AsIdentifier()->Variable()->TsType());
+    ES2PANDA_UNREACHABLE();
 }
 
 }  // namespace ark::es2panda::compiler

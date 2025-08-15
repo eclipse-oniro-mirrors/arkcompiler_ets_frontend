@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-ets2panda_add_gtest(any_ins_test
-    CPP_SOURCES any_ins_test.cpp
-)
+# 29387
+# ets2panda_add_gtest(any_ins_test
+#     CPP_SOURCES any_ins_test.cpp
+# )

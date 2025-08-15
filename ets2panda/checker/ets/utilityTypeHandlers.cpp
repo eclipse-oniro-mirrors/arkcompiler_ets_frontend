@@ -26,8 +26,6 @@
 #include "compiler/lowering/util.h"
 #include "util/nameMangler.h"
 
-#include <checker/types/gradualType.h>
-
 namespace ark::es2panda::checker {
 
 std::optional<ir::TypeNode *> ETSChecker::GetUtilityTypeTypeParamNode(
@@ -40,11 +38,10 @@ std::optional<ir::TypeNode *> ETSChecker::GetUtilityTypeTypeParamNode(
     return typeParams->Params().front();
 }
 
-static bool ValidBaseTypeOfRequiredAndPartial(Type *baseType)
+static bool ValidBaseTypeOfRequiredAndPartial(Type *type)
 {
-    Type *type = baseType->MaybeBaseTypeOfGradualType();
-    return type->IsETSObjectType() && (type->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::INTERFACE) ||
-                                       type->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::CLASS));
+    return type->IsETSObjectType() &&
+           type->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::INTERFACE | ETSObjectFlags::CLASS);
 }
 
 Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstantiation *const typeParams,
@@ -229,11 +226,6 @@ Type *ETSChecker::CreatePartialType(Type *const typeToBePartial)
     ES2PANDA_ASSERT(typeToBePartial->IsETSReferenceType());
     if (typeToBePartial->IsTypeError() || typeToBePartial->IsETSNeverType() || typeToBePartial->IsETSAnyType()) {
         return typeToBePartial;
-    }
-
-    if (typeToBePartial->IsGradualType()) {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        return CreatePartialType(typeToBePartial->AsGradualType()->GetBaseType());
     }
 
     if (typeToBePartial->IsETSTypeParameter()) {
@@ -1113,10 +1105,6 @@ Type *ETSChecker::GetReadonlyType(Type *type)
         return *found;
     }
 
-    if (type->IsGradualType()) {
-        return GetReadonlyType(type->AsGradualType()->GetBaseType());
-    }
-
     NamedTypeStackElement ntse(this, type);
     ES2PANDA_ASSERT(type != nullptr);
     if (type->IsETSArrayType()) {
@@ -1205,7 +1193,7 @@ Type *ETSChecker::HandleRequiredType(Type *typeToBeRequired)
 
     typeToBeRequired = typeToBeRequired->Clone(this);
 
-    MakePropertiesNonNullish(typeToBeRequired->MaybeBaseTypeOfGradualType()->AsETSObjectType());
+    MakePropertiesNonNullish(typeToBeRequired->AsETSObjectType());
 
     return typeToBeRequired;
 }

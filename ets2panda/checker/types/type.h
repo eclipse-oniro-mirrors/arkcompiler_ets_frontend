@@ -33,7 +33,6 @@ class ETSAsyncFuncReturnType;
 class ETSChecker;
 class ETSTypeParameter;
 class ETSEnumType;
-class GradualType;
 
 // CC-OFFNXT(G.PRE.02) name part
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
@@ -180,8 +179,6 @@ public:
     {
         return IsETSArrayType() || IsETSResizableArrayType() || IsETSReadonlyArrayType() || IsETSTupleType();
     }
-
-    Type *MaybeBaseTypeOfGradualType();
 
     TypeFlag TypeFlags() const
     {

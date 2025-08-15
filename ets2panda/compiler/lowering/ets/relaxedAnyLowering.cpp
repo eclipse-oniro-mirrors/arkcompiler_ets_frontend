@@ -29,12 +29,30 @@ static bool IsLoweringCandidate(checker::ETSChecker *checker, checker::Type *typ
     if (type->IsETSMethodType() || type->IsETSExtensionFuncHelperType()) {
         return false;  // synthetic types don't represent values
     }
-    if (type->IsGradualType()) {
-        return false;  // should be removed after Gradual type refactoring
+    if (type->IsETSObjectType() && type->AsETSObjectType()->IsGradual()) {
+        return true;  // enum-BaseEnum case
     }
 
     return type->IsETSAnyType() ||
            !checker->Relation()->IsSupertypeOf(checker->GlobalETSUnionUndefinedNullObject(), type);
+}
+
+static ir::Expression *InsertTypeGuard(public_lib::Context *ctx, checker::Type *type, ir::Expression *expr)
+{
+    auto checker = ctx->GetChecker()->AsETSChecker();
+    auto allocator = ctx->Allocator();
+
+    if (type == nullptr || type->IsTypeError()) {  // #29049: type errors should not appear here
+        return expr;
+    }
+    if (type->IsETSMethodType()) {  // bug, should not be the case of gradual types
+        type = type->AsETSFunctionType()->MethodToArrow(checker);
+    }
+    if (checker->Relation()->IsIdenticalTo(type, checker->GlobalETSAnyType())) {
+        return expr;
+    }
+    return util::NodeAllocator::ForceSetParent<ir::TSAsExpression>(
+        allocator, expr, allocator->New<ir::OpaqueTypeNode>(type, allocator), false);
 }
 
 static ir::Expression *CreateIntrin(public_lib::Context *ctx, std::string_view id, checker::Type *type,
@@ -42,12 +60,9 @@ static ir::Expression *CreateIntrin(public_lib::Context *ctx, std::string_view i
 {
     auto checker = ctx->GetChecker()->AsETSChecker();
     auto allocator = ctx->Allocator();
-    ir::Expression *result = util::NodeAllocator::ForceSetParent<ir::ETSIntrinsicNode>(allocator, id, std::move(args));
-    if (type != nullptr && !type->IsTypeError() &&  // #29049: type errors should not appear here
-        !checker->Relation()->IsIdenticalTo(type, checker->GlobalETSAnyType())) {
-        result = util::NodeAllocator::ForceSetParent<ir::TSAsExpression>(
-            allocator, result, allocator->New<ir::OpaqueTypeNode>(type, allocator), false);
-    }
+    auto result = InsertTypeGuard(
+        ctx, type, util::NodeAllocator::ForceSetParent<ir::ETSIntrinsicNode>(allocator, id, std::move(args)));
+
     result->Check(checker);
     return result;
 }
@@ -100,24 +115,81 @@ static ir::AstNode *TransformCallExpression(public_lib::Context *ctx, ir::CallEx
     auto checker = ctx->GetChecker()->AsETSChecker();
 
     auto const callee = node->Callee();
-    if (!IsLoweringCandidate(checker, callee->TsType())) {
-        return node;
-    }
-
-    auto args = ArenaVector<ir::Expression *>({}, ctx->Allocator()->Adapter());
-    args.reserve(node->Arguments().size() + 2U);
-
     if (callee->IsMemberExpression()) {
+        if (!IsLoweringCandidate(checker, callee->AsMemberExpression()->Object()->TsType())) {
+            return node;
+        }
         auto prop = callee->AsMemberExpression()->Property();
         prop = callee->AsMemberExpression()->IsComputed() ? prop : IdentifierToLiteral(ctx, prop->AsIdentifier());
+
+        auto args = ArenaVector<ir::Expression *>({}, ctx->Allocator()->Adapter());
+        args.reserve(node->Arguments().size() + 2U);
         args.insert(args.end(), {callee->AsMemberExpression()->Object(), prop});
         args.insert(args.end(), node->Arguments().begin(), node->Arguments().end());
         return CreateIntrin(ctx, "anycallthis", node->TsType(), std::move(args));
     }
 
+    if (!IsLoweringCandidate(checker, callee->TsType())) {
+        return node;
+    }
+
+    auto args = ArenaVector<ir::Expression *>({}, ctx->Allocator()->Adapter());
+    args.reserve(node->Arguments().size() + 1U);
     args.insert(args.begin(), callee);
     args.insert(args.end(), node->Arguments().begin(), node->Arguments().end());
     return CreateIntrin(ctx, "anycall", node->TsType(), std::move(args));
+}
+
+static ir::Expression *TransformTypeExpressionPattern(public_lib::Context *ctx, ir::Expression *expr)
+{
+    ir::Expression *typeref = expr->IsETSTypeReference() ? expr->AsETSTypeReference()->Part()->Name() : expr;
+
+    std::vector<ir::Identifier *> names;
+    while (typeref->IsTSQualifiedName()) {
+        names.push_back(typeref->AsTSQualifiedName()->Right());
+        typeref = typeref->AsTSQualifiedName()->Left();
+    }
+    names.push_back(typeref->AsMemberExpression()->Property()->AsIdentifier());
+
+    ir::Expression *val = typeref->AsMemberExpression()->Object();
+    for (auto it = names.rbegin(); it != names.rend(); ++it) {
+        val = CreateIntrin(ctx, "anyldbyname", nullptr, val, IdentifierToLiteral(ctx, *it));
+    }
+    return val;
+}
+
+static bool IsTypeExpressionType(checker::Type *type)
+{
+    return type->IsETSObjectType();
+}
+
+static ir::AstNode *TransformNewExpression(public_lib::Context *ctx, ir::ETSNewClassInstanceExpression *node)
+{
+    auto checker = ctx->GetChecker()->AsETSChecker();
+
+    auto const typeNode = node->GetTypeRef();
+    if (!IsLoweringCandidate(checker, typeNode->TsType()) || !IsTypeExpressionType(typeNode->TsType())) {
+        return node;
+    }
+
+    auto args = ArenaVector<ir::Expression *>({}, ctx->Allocator()->Adapter());
+    args.reserve(node->GetArguments().size() + 2U);
+
+    args.insert(args.begin(), TransformTypeExpressionPattern(ctx, typeNode));
+    args.insert(args.end(), node->GetArguments().begin(), node->GetArguments().end());
+    return CreateIntrin(ctx, "anycallnew", node->TsType(), std::move(args));
+}
+
+static ir::AstNode *TransformInstanceofExpression(public_lib::Context *ctx, ir::BinaryExpression *node)
+{
+    ES2PANDA_ASSERT(node->OperatorType() == lexer::TokenType::KEYW_INSTANCEOF);
+    auto checker = ctx->GetChecker()->AsETSChecker();
+
+    auto const typeNode = node->Right();
+    if (!IsLoweringCandidate(checker, typeNode->TsType()) || !IsTypeExpressionType(typeNode->TsType())) {
+        return node;
+    }
+    return CreateIntrin(ctx, "anyisinstance", nullptr, node->Left(), TransformTypeExpressionPattern(ctx, typeNode));
 }
 
 static ir::AstNode *LowerOperationIfNeeded(public_lib::Context *ctx, ir::AstNode *node)
@@ -129,6 +201,12 @@ static ir::AstNode *LowerOperationIfNeeded(public_lib::Context *ctx, ir::AstNode
         return res;
     };
 
+    if (node->IsETSNewClassInstanceExpression()) {
+        return setParent(TransformNewExpression(ctx, node->AsETSNewClassInstanceExpression()));
+    }
+    if (node->IsBinaryExpression() && node->AsBinaryExpression()->OperatorType() == lexer::TokenType::KEYW_INSTANCEOF) {
+        return setParent(TransformInstanceofExpression(ctx, node->AsBinaryExpression()));
+    }
     if (node->IsCallExpression()) {
         return setParent(TransformCallExpression(ctx, node->AsCallExpression()));
     }

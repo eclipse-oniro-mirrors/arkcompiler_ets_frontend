@@ -117,7 +117,7 @@ Signature *Signature::Copy(ArenaAllocator *allocator, TypeRelation *relation, Gl
     SignatureInfo *copiedInfo = allocator->New<SignatureInfo>(signatureInfo_, allocator);
     ES2PANDA_ASSERT(copiedInfo != nullptr);
     for (size_t idx = 0U; idx < signatureInfo_->params.size(); ++idx) {
-        auto *const paramType = signatureInfo_->params[idx]->TsType()->MaybeBaseTypeOfGradualType();
+        auto *const paramType = signatureInfo_->params[idx]->TsType();
         if (paramType->HasTypeFlag(TypeFlag::GENERIC) && paramType->IsETSObjectType()) {
             copiedInfo->params[idx]->SetTsType(paramType->Instantiate(allocator, relation, globalTypes));
             auto originalTypeArgs = paramType->AsETSObjectType()->GetOriginalBaseType()->TypeArguments();

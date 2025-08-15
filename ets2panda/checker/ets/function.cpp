@@ -27,7 +27,6 @@
 #include "checker/types/ets/etsAwaitedType.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
-#include "checker/types/gradualType.h"
 #include "checker/types/typeError.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "ir/base/catchClause.h"
@@ -85,8 +84,8 @@ bool ETSChecker::IsCompatibleTypeArgument(ETSTypeParameter *typeParam, Type *typ
 bool ETSChecker::EnhanceSubstitutionForReadonly(const ArenaVector<Type *> &typeParams, ETSReadonlyType *paramType,
                                                 Type *argumentType, Substitution *substitution)
 {
-    return EnhanceSubstitutionForType(typeParams, paramType->GetUnderlying()->MaybeBaseTypeOfGradualType(),
-                                      GetReadonlyType(argumentType), substitution);
+    return EnhanceSubstitutionForType(typeParams, paramType->GetUnderlying(), GetReadonlyType(argumentType),
+                                      substitution);
 }
 
 /* A very rough and imprecise partial type inference */
@@ -117,10 +116,6 @@ bool ETSChecker::EnhanceSubstitutionForType(const ArenaVector<Type *> &typeParam
     if (paramType->IsETSPartialTypeParameter()) {
         return EnhanceSubstitutionForPartialTypeParam(typeParams, paramType->AsETSPartialTypeParameter(), argumentType,
                                                       substitution);
-    }
-    if (paramType->IsGradualType()) {
-        return EnhanceSubstitutionForType(typeParams, paramType->AsGradualType()->GetBaseType(), argumentType,
-                                          substitution);
     }
     if (paramType->IsETSUnionType()) {
         return EnhanceSubstitutionForUnion(typeParams, paramType->AsETSUnionType(), argumentType, substitution);
@@ -159,8 +154,7 @@ bool ETSChecker::EnhanceSubstitutionForUnion(const ArenaVector<Type *> &typePara
     if (!argumentType->IsETSUnionType()) {
         bool foundValid = false;
         for (Type *ctype : paramUn->ConstituentTypes()) {
-            foundValid |=
-                ValidateTypeSubstitution(typeParams, ctype->MaybeBaseTypeOfGradualType(), argumentType, substitution);
+            foundValid |= ValidateTypeSubstitution(typeParams, ctype, argumentType, substitution);
         }
         return foundValid;
     }
@@ -580,8 +574,7 @@ bool ETSChecker::ValidateSignatureRequiredParams(Signature *substitutedSig,
         auto &argument = arguments[index];
 
         // #22952: infer optional parameter heuristics
-        auto const paramType =
-            GetNonNullishType(substitutedSig->Params()[index]->TsType())->MaybeBaseTypeOfGradualType();
+        auto const paramType = GetNonNullishType(substitutedSig->Params()[index]->TsType());
         if (argument->IsObjectExpression()) {
             ES2PANDA_ASSERT(paramType != nullptr);
             if (!paramType->IsETSObjectType()) {
@@ -1103,9 +1096,8 @@ Signature *ETSChecker::FindMostSpecificSignature(const ArenaVector<Signature *> 
 
 static Type *GetParameterTypeOrRestAtIdx(checker::ETSChecker *checker, Signature *sig, const size_t idx)
 {
-    return idx < sig->ArgCount()
-               ? sig->Params().at(idx)->TsType()->MaybeBaseTypeOfGradualType()
-               : checker->GetElementTypeOfArray(sig->RestVar()->TsType())->MaybeBaseTypeOfGradualType();
+    return idx < sig->ArgCount() ? sig->Params().at(idx)->TsType()
+                                 : checker->GetElementTypeOfArray(sig->RestVar()->TsType());
 }
 
 static void InitMostSpecificType(TypeRelation *relation, const ArenaVector<Signature *> &signatures,
@@ -1260,7 +1252,7 @@ void ETSChecker::CollectSuitableSignaturesForTypeInference(
     }
 
     for (auto *sig : signatures) {
-        auto paramType = sig->Params().at(paramIdx)->TsType()->MaybeBaseTypeOfGradualType();
+        auto paramType = sig->Params().at(paramIdx)->TsType();
         if (paramIdx >= sig->Params().size() || !paramType->IsETSObjectType() ||
             !paramType->AsETSObjectType()->IsGlobalETSObjectType()) {
             bestSignaturesForParameter.insert({paramIdx, sig});

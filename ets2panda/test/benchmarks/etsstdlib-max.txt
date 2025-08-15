@@ -9,7 +9,6 @@
 :@phases/ConstantExpressionLowering             :  time=363.29ms      mem=0.28MB      
 :@phases/LambdaObjectConversion                 :  time=328.18ms      mem=22.00MB     
 :@phases/TopLevelStatements                     :  time=277.34ms      mem=83.00MB     
-:@phases/GradualTypeNarrowing                   :  time=198.37ms      mem=19.00MB     
 :@phases/ResolveIdentifiers                     :  time=123.95ms      mem=5.13MB      
 :@phases/OpAssignmentLowering                   :  time=116.33ms      mem=18.00MB     
 :@phases/InterfaceObjectLiteralLowering         :  time=76.22ms       mem=7.00MB      

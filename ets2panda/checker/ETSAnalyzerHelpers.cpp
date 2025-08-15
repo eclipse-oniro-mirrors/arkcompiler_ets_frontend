@@ -315,7 +315,7 @@ void CheckIteratorMethodReturnType(ETSChecker *checker, ir::ScriptFunction *scri
                                    const lexer::SourcePosition &position,
                                    [[maybe_unused]] const std::string &methodName)
 {
-    const auto *returnType = scriptFunc->Signature()->ReturnType()->MaybeBaseTypeOfGradualType();
+    const auto *returnType = scriptFunc->Signature()->ReturnType();
 
     if (returnType->IsETSTypeParameter()) {
         returnType = checker->GetApparentType(returnType->AsETSTypeParameter()->GetConstraintType());

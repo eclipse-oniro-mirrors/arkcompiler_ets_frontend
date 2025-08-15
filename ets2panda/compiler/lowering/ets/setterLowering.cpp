@@ -53,7 +53,7 @@ static bool IsSetterCallOrSetExpression(const ir::Expression *const expr)
     // set expressions, but not get expressions
     const auto isSetExpression = [](const ir::MemberExpression *const possibleSetExpr) {
         return possibleSetExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS &&
-               possibleSetExpr->ObjType() != nullptr && !possibleSetExpr->Object()->TsType()->IsGradualType();
+               possibleSetExpr->ObjType() != nullptr;
     };
 
     return isSetExpression(memberExpr);
