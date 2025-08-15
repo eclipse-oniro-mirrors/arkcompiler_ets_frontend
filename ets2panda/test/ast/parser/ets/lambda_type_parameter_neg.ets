@@ -16,6 +16,7 @@
 let a = <Int,() => Int>(reader);
 
 /* @@? 16:14 Error SyntaxError: Identifier expected, got '('. */
+/* @@? 16:15 Error SyntaxError: Unexpected token, expected '>'. */
 /* @@? 16:15 Error SyntaxError: Variable must be initialized or it's type must be declared. */
 /* @@? 16:15 Error SyntaxError: Unexpected token ')'. */
 /* @@? 16:17 Error SyntaxError: Unexpected token '=>'. */
