@@ -1122,6 +1122,10 @@ void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, ArenaVe
     auto superClassType = classType->SuperType();
     while (!functionOverridden && superClassType != nullptr) {
         for (auto *field : superClassType->Fields()) {
+            if (field->Declaration()->Node()->AsClassProperty()->IsStatic()) {
+                continue;
+            }
+
             if (field->Name() == (*it)->Name()) {
                 auto *newProp = field->Declaration()
                                     ->Node()
