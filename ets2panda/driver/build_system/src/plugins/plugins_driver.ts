@@ -18,7 +18,7 @@ import {
     LogData,
     LogDataFactory
 } from '../logger';
-import { BuildConfig } from '../types';
+import { BuildConfig, KPointer } from '../types';
 import { ErrorCode, DriverError } from '../util/error';
 import { FileManager } from './FileManager';
 import { initKoalaPlugins } from '../init/init_koala_modules';
@@ -72,7 +72,7 @@ class PluginContext {
     private program: object | undefined;
     private projectConfig: object | undefined;
     private fileManager: FileManager | undefined;
-    private contextPtr: number | undefined;
+    private contextPtr: KPointer | undefined;
 
     constructor() {
         this.ast = undefined;
@@ -117,11 +117,11 @@ class PluginContext {
         return this.fileManager;
     }
 
-    public setContextPtr(ptr: number): void {
+    public setContextPtr(ptr: KPointer): void {
         this.contextPtr = ptr;
     }
 
-    public getContextPtr(): number | undefined {
+    public getContextPtr(): KPointer | undefined {
         return this.contextPtr;
     }
 }
@@ -130,7 +130,7 @@ export class PluginDriver {
     private static instance: PluginDriver | undefined;
     private sortedPlugins: Map<PluginHook, PluginExecutor[] | undefined>;
     private allPlugins: Map<string, Plugins>;
-    private context: PluginContext;
+    private context: PluginContext | undefined;
     private logger: Logger = Logger.getInstance();
 
     constructor() {
@@ -148,6 +148,10 @@ export class PluginDriver {
 
     public static destroyInstance(): void {
         PluginDriver.instance = undefined;
+    }
+
+    public setPluginContext(ctxPeer: KPointer): void {
+        this.context!.setContextPtr(ctxPeer)
     }
 
     public initPlugins(projectConfig: BuildConfig): void {
@@ -191,8 +195,10 @@ export class PluginDriver {
             }
         });
 
-        this.context.setProjectConfig(projectConfig);
-        this.context.setFileManager(projectConfig);
+        if (this.context !== undefined) {
+            this.context.setProjectConfig(projectConfig);
+            this.context.setFileManager(projectConfig);
+        }
     }
 
     private getPlugins(hook: PluginHook): PluginExecutor[] | undefined {
@@ -246,11 +252,14 @@ export class PluginDriver {
         }
         plugins.forEach((executor: PluginExecutor) => {
             this.logger.printInfo(`[Plugin Driver] executing plugin: ${executor.name}`);
-            return (executor.handler as Function).apply(this.context);
+            return (executor.handler as Function).apply(this.getPluginContext());
         });
     }
 
     public getPluginContext(): PluginContext {
+        if (this.context == undefined) {
+            throw new Error("Plugin context not initialized, pls call setPluginContext before")
+        }
         return this.context;
     }
 }

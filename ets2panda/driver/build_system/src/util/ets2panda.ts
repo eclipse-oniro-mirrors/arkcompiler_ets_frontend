@@ -19,6 +19,7 @@ import * as fs from 'fs';
 import { initKoalaModules } from '../init/init_koala_modules';
 import {
     BuildConfig,
+    PluginsConfig,
     CompileJobInfo,
     FileInfo,
     DeclgenV1JobInfo,
@@ -36,7 +37,7 @@ import {
     createFileIfNotExists,
     ensurePathExists,
     formEts2pandaCmd,
-} from '../util/utils';
+} from './utils';
 import {
     DECL_ETS_SUFFIX,
     DECL_TS_SUFFIX,
@@ -75,6 +76,7 @@ function formEvent(event: Ets2pandaEvent): string {
 export class Ets2panda {
     private static instance?: Ets2panda;
     private readonly logger: Logger = Logger.getInstance();
+    private readonly plugins: PluginsConfig;
     private readonly buildSdkPath: string;
     private readonly aliasConfig: Record<string, Record<string, AliasConfig>>;
     private readonly cacheDir: string;
@@ -88,6 +90,7 @@ export class Ets2panda {
 
     private constructor(buildConfig: BuildConfig) {
         this.koalaModule = initKoalaModules(buildConfig);
+        this.plugins = buildConfig.plugins;
         this.buildSdkPath = buildConfig.buildSdkPath;
         this.aliasConfig = buildConfig.aliasConfig;
         this.cacheDir = buildConfig.cachePath;
@@ -127,6 +130,9 @@ export class Ets2panda {
     }
 
     private transformImportStatementsWithAliasConfig() {
+        if (this.plugins === undefined) {
+            return;
+        }
         const { arkts, arktsGlobal } = this.koalaModule;
         let ast = arkts.EtsScript.fromContext();
         if (this.aliasConfig && Object.keys(this.aliasConfig).length > 0) {
@@ -363,7 +369,7 @@ export class Ets2panda {
         const source = fs.readFileSync(inputFilePath, 'utf8');
         const filePathFromModuleRoot: string = path.relative(jobInfo.fileInfo.moduleRoot, inputFilePath);
         const declEtsOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(jobInfo.declgenConfig.otuput, jobInfo.fileInfo.moduleName, filePathFromModuleRoot),
+            path.resolve(jobInfo.declgenConfig.output, jobInfo.fileInfo.moduleName, filePathFromModuleRoot),
             DECL_ETS_SUFFIX
         );
         const etsOutputPath: string = changeDeclgenFileExtension(
@@ -373,7 +379,7 @@ export class Ets2panda {
         ensurePathExists(declEtsOutputPath);
         ensurePathExists(etsOutputPath);
         const staticRecordPath = path.join(
-            jobInfo.declgenConfig.otuput,
+            jobInfo.declgenConfig.output,
             STATIC_RECORD_FILE
         )
         const declEtsOutputDir = path.dirname(declEtsOutputPath);

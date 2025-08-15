@@ -72,6 +72,8 @@ set(BINDINGS_NAPI_SRC
   ./src/common-interop.cpp
   ./src/convertors-napi.cpp
   ./src/lsp.cpp
+  ./src/common.cpp
+  ./src/bridges.cpp
 )
 
 # PUBLIC arkbase es2panda-lib es2panda-public
@@ -117,3 +119,12 @@ panda_target_compile_options(${NAPI_BINDINGS_LIB}
 panda_add_sanitizers(TARGET ${NAPI_BINDINGS_LIB} 
   SANITIZERS ${PANDA_SANITIZERS_LIST}
 )
+
+get_target_property(is_imported ${NAPI_BINDINGS_LIB} IMPORTED)
+if(NOT is_imported)
+  set(DESTINATION_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../${NAPI_BINDINGS_LIB}.node)
+
+  add_custom_command(TARGET ${NAPI_BINDINGS_LIB} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${NAPI_BINDINGS_LIB}> ${DESTINATION_PATH}
+  )
+endif()

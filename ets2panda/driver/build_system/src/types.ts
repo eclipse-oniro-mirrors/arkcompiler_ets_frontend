@@ -87,7 +87,7 @@ export interface ArkTS {
         fromContext: Function;
     };
     proceedToState: Function;
-    generateTsDeclarationsFromContext: Function;
+    GenerateTsDeclarationsFromContext: Function;
     generateStaticDeclarationsFromContext: Function;
     destroyConfig: Function;
     Es2pandaContextState: typeof Es2pandaContextState;
@@ -240,7 +240,7 @@ export type SetupClusterOptions = {
     execArgs?: string[];
 };
 
-export type KPointer = number | bigint;
+export type KPointer = Uint8Array | number | bigint;
 
 export interface AliasConfig {
     originalAPIName: string;
@@ -347,7 +347,7 @@ export interface ProcessCompileTask extends CompileJobInfo {
 }
 
 export interface DeclgenV1JobConfig {
-    otuput: string;
+    output: string;
     bridgeCode: string;
 }
 
