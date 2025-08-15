@@ -24,5 +24,5 @@ function main()
 
 /* @@? 17:14 Error SyntaxError: Interface member initialization is prohibited. */
 /* @@? 17:16 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:16 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:16 Error SyntaxError: Identifier expected, got 'number literal'. */
 /* @@? 17:17 Error SyntaxError: Identifier expected. */

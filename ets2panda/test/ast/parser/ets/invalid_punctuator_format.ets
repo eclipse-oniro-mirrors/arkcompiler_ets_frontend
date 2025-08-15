@@ -20,8 +20,8 @@ J* @@?
 /* @@? 17:2 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 17:4 Error SyntaxError: Unexpected token '@@'. */
 /* @@? 17:4 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:4 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:4 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 17:6 Error SyntaxError: Identifier expected. */
 /* @@? 17:6 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:6 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:6 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 18:1 Error SyntaxError: Identifier expected. */

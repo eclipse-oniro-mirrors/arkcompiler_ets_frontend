@@ -18,5 +18,5 @@
   }
 /* @@? 17:7 Error TypeError: Native and Declare methods should have explicit return type. */
 /* @@? 17:21 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:21 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:21 Error SyntaxError: Identifier expected, got 'string'. */
 /* @@? 18:3 Error SyntaxError: Identifier expected. */

@@ -24,8 +24,8 @@ declare interface A {
 /* @@? 17:20 Error SyntaxError: Invalid Type. */
 /* @@? 17:20 Error SyntaxError: Return type of index signature from exported class or interface need to be identifier. */
 /* @@? 17:20 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:20 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:20 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 17:21 Error SyntaxError: Identifier expected. */
 /* @@? 17:21 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:21 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:21 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 18:1 Error SyntaxError: Invalid Type. */

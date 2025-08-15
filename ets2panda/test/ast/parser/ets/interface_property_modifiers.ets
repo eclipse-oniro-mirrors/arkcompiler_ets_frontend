@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,20 @@
  * limitations under the License.
  */
 
-interface Test {
-    proc()  // passes
-    proc()()  // throws SyntaxError
+interface I {
+    f: number;
+    readonly f_ro: number;
+
+    // invalid interface property modifiers
+    private f_priv: number;
+    protected f_prot: number;
+    public f_pub: number;
+    static f_stat: number;
+    default f_def: number;
 }
 
-/* @@? 18:5 Error TypeError: Function proc is already declared. */
-/* @@? 18:11 Error SyntaxError: Unexpected token '('. */
-/* @@? 18:11 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:11 Error SyntaxError: Identifier expected, got 'end of stream'. */
-/* @@? 18:12 Error SyntaxError: Identifier expected. */
-/* @@? 18:12 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:12 Error SyntaxError: Identifier expected, got 'end of stream'. */
-/* @@? 19:1 Error SyntaxError: Identifier expected. */
+/* @@? 21:5 Error SyntaxError: Identifier expected, got 'private'. */
+/* @@? 22:5 Error SyntaxError: Identifier expected, got 'protected'. */
+/* @@? 23:5 Error SyntaxError: Identifier expected, got 'public'. */
+/* @@? 24:5 Error SyntaxError: Identifier expected, got 'static'. */
+/* @@? 25:5 Error SyntaxError: Identifier expected, got 'default'. */

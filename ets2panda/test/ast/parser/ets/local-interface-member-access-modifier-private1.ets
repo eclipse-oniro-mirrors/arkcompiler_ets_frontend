@@ -23,3 +23,4 @@ function foo()
 
 /* @@@ label1 Error SyntaxError: Illegal start of INTERFACE expression. */
 /* @@@ label2 Error SyntaxError: Local class or interface declaration members can not have access modifies. */
+/* @@@ label2 Error SyntaxError: Identifier expected, got 'private'. */

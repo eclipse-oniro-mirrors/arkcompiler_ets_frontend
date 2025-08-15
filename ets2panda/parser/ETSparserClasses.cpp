@@ -960,19 +960,22 @@ ir::ModifierFlags ETSParser::ParseInterfaceMethodModifiers()
             LogError(diagnostic::LOCAL_CLASS_ACCESS_MOD, {}, Lexer()->GetToken().Start());
         }
     }
+
+    // NOTE(pantos): The 'private' modifier is only allowed for default methods, it is checked later for properties
     const auto keywordType = Lexer()->GetToken().KeywordType();
     const bool isPrivate = (keywordType == lexer::TokenType::KEYW_PRIVATE);
     const bool isDefaultInAmbient = (keywordType == lexer::TokenType::KEYW_DEFAULT) && InAmbientContext();
     if (!isPrivate) {
         if (!isDefaultInAmbient) {
-            LogError(diagnostic::UNEXPECTED_TOKEN_PRIVATE_ID);
+            LogError(diagnostic::IDENTIFIER_EXPECTED_HERE, {TokenToString(keywordType)}, Lexer()->GetToken().Start());
         }
         if (keywordType == lexer::TokenType::KEYW_NEW) {
             LogError(diagnostic::ERROR_ARKTS_NO_INTERFACE_CONSTRUCTOR_SIGNATURES);
         }
     }
     Lexer()->NextToken();
-    return isDefaultInAmbient ? ir::ModifierFlags::DEFAULT : ir::ModifierFlags::PRIVATE;
+    return isDefaultInAmbient ? ir::ModifierFlags::DEFAULT
+                              : (isPrivate ? ir::ModifierFlags::PRIVATE : ir::ModifierFlags::PUBLIC);
 }
 
 ir::TypeNode *ETSParser::ParseInterfaceTypeAnnotation(ir::Identifier *name)
@@ -1253,6 +1256,7 @@ ir::AstNode *ETSParser::ParseTypeLiteralOrInterfaceMember()
         return ParseInterfaceGetterSetterMethod(ir::ModifierFlags::PUBLIC);
     }
 
+    auto modLoc = Lexer()->GetToken().Start();
     ir::ModifierFlags modifiers = ParseInterfaceMethodModifiers();
     char32_t nextCp = Lexer()->Lookahead();
     auto startLoc = Lexer()->GetToken().Start();
@@ -1284,6 +1288,9 @@ ir::AstNode *ETSParser::ParseTypeLiteralOrInterfaceMember()
 
     auto *field = ParseInterfaceField();
     if (field != nullptr) {
+        if ((modifiers & ir::ModifierFlags::PRIVATE) != 0) {
+            LogError(diagnostic::IDENTIFIER_EXPECTED_HERE, {"private"}, modLoc);
+        }
         field->SetStart(startLoc);
         if (isReadonly) {
             field->AddModifier(ir::ModifierFlags::READONLY);

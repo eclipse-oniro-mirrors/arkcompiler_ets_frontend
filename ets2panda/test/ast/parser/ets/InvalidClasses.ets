@@ -118,12 +118,11 @@ interface I1 {
 /* @@? 65:5 Error SyntaxError: Illegal start of INTERFACE expression. */
 /* @@? 66:9 Error SyntaxError: Local class or interface declaration members can not have access modifies. */
 /* @@? 66:18 Error SyntaxError: Private interface methods must have body. */
-/* @@? 67:9 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 67:16 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 67:9 Error SyntaxError: Identifier expected, got 'static'. */
 /* @@? 67:16 Error SyntaxError: Unexpected token, expected ','. */
+/* @@? 67:16 Error SyntaxError: Identifier expected, got 'static'. */
 /* @@? 67:16 Error SyntaxError: Identifier expected. */
-/* @@? 67:24 Error SyntaxError: Private interface methods must have body. */
-/* @@? 72:5 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 72:5 Error SyntaxError: Identifier expected, got 'class'. */
 /* @@? 72:13 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 72:14 Error SyntaxError: Invalid Type. */
 /* @@? 74:5 Error SyntaxError: Extension Getter can only have 1 parameter. */

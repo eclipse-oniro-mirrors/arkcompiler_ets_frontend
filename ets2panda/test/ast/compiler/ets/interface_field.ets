@@ -29,13 +29,13 @@ interface Todo {
 /* @@? 18:22 Error SyntaxError: Label must be followed by a loop statement. */
 /* @@? 18:22 Error TypeError: Type name 'string' used in the wrong context */
 /* @@? 21:14 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 21:14 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 21:14 Error SyntaxError: Identifier expected, got 'identification literal'. */
 /* @@? 21:25 Error TypeError: Cannot find type 'todo'. */
 /* @@? 21:29 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 21:29 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 21:29 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 21:34 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 21:36 Error TypeError: Cannot find type 'fieldToUpdate'. */
-/* @@? 21:49 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 21:49 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 21:49 Error SyntaxError: Unexpected token, expected ','. */
 /* @@? 21:64 Error SyntaxError: Unexpected token, expected '('. */
 /* @@? 21:66 Error SyntaxError: Unexpected token, expected ',' or ')'. */

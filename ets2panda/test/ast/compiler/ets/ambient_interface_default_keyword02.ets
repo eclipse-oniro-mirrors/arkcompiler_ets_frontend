@@ -27,6 +27,5 @@ interface YYY {
 
 /* @@? 17:36 Error TypeError: Native, Abstract and Declare methods cannot have body. */
 /* @@? 20:26 Error TypeError: Native, Abstract and Declare methods cannot have body. */
-/* @@? 24:7 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 24:18 Error SyntaxError: Private interface methods must have body. */
-/* @@? 25:7 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 24:7 Error SyntaxError: Identifier expected, got 'default'. */
+/* @@? 25:7 Error SyntaxError: Identifier expected, got 'default'. */

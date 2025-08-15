@@ -21,5 +21,5 @@ declare namespace MySpace{
 
 /* @@? 18:15 Error SyntaxError: Interface member initialization is prohibited. */
 /* @@? 18:17 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:17 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 18:17 Error SyntaxError: Identifier expected, got 'number literal'. */
 /* @@? 19:5 Error SyntaxError: Identifier expected. */

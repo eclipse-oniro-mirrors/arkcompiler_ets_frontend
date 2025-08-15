@@ -1235,10 +1235,6 @@ syntax:
   id: 231
   message: "Unexpected token '{}', expected 'case' or 'default'."
 
-- name: UNEXPECTED_TOKEN_PRIVATE_ID
-  id: 124
-  message: "Unexpected token, expected 'private' or identifier."
-
 - name: UNEXPECTED_TOKEN_STRING_LITERAL
   id: 151
   message: "Unexpected token, expected string literal."
@@ -1317,6 +1313,7 @@ graveyard:
 - 109
 - 110
 - 123
+- 124
 - 139
 - 142
 - 152

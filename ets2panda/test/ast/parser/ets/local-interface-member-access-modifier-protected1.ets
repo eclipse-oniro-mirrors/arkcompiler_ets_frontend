@@ -22,4 +22,4 @@ function foo()
 }
 
 /* @@@ label1 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@@ label2 Error SyntaxError: Unexpected token, expected 'private' or identifier.  */
+/* @@@ label2 Error SyntaxError: Identifier expected, got 'protected'. */

@@ -20,5 +20,5 @@ interface /* @@ label1 */double {
 /* @@@ label1 Error SyntaxError: double is a predefined type, cannot be used as an identifier */
 /* @@@ label2 Error SyntaxError: Interface member initialization is prohibited. */
 /* @@@ label3 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:51 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@@ label3 Error SyntaxError: Identifier expected, got 'string literal'. */
 /* @@@ label4 Error SyntaxError: Identifier expected. */

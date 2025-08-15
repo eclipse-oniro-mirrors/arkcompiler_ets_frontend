@@ -19,8 +19,8 @@ interface Test {
 
 /* @@? 17:25 Error SyntaxError: Unexpected token '('. */
 /* @@? 17:25 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:25 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:25 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 17:26 Error SyntaxError: Identifier expected. */
 /* @@? 17:26 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:26 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:26 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 18:1 Error SyntaxError: Identifier expected. */

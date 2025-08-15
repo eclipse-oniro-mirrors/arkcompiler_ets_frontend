@@ -19,5 +19,4 @@ interface I {
 
 /* @@? 17:13 Error SyntaxError: Identifier expected. */
 /* @@? 17:13 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:13 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 17:23 Error SyntaxError: Private interface methods must have body. */
+/* @@? 17:13 Error SyntaxError: Identifier expected, got 'static'. */

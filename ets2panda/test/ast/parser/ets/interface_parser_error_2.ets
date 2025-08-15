@@ -17,8 +17,8 @@ interface I {
     : boolean
 }
 
-/* @@? 17:5 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:5 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 17:7 Error SyntaxError: Identifier expected. */
 /* @@? 17:7 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:7 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:7 Error SyntaxError: Identifier expected, got 'boolean'. */
 /* @@? 18:1 Error SyntaxError: Identifier expected. */

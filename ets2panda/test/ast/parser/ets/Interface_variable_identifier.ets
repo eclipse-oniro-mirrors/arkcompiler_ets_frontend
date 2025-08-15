@@ -21,4 +21,4 @@ interface A{
 /* @@? 18:11 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 18:12 Error SyntaxError: Invalid Type. */
 /* @@? 18:12 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:12 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 18:12 Error SyntaxError: Identifier expected, got 'end of stream'. */
