@@ -224,6 +224,7 @@ import { ExtendedIdentifierType } from './utils/consts/Types';
 import { COMPONENT_DECORATOR, SELECT_IDENTIFIER, SELECT_OPTIONS, STRING_ERROR_LITERAL } from './utils/consts/Literals';
 import { ES_OBJECT } from './utils/consts/ESObject';
 import { cookBookMsg } from './CookBookMsg';
+import { getCommonApiInfoMap } from './utils/functions/CommonApiInfo';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
   supportedStdCallApiChecker: SupportedStdCallApiChecker;
@@ -3993,6 +3994,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const classDecl = node.parent;
     if (!ts.isClassDeclaration(classDecl)) {
+      this.handleMethodInheritForCommonApi(node);
       return;
     }
     const isStatic =
@@ -4010,6 +4012,16 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.checkMethodType(allBaseTypes, methodName, node, isStatic);
     }
     this.checkIncompatibleFunctionTypes(node);
+  }
+
+  private handleMethodInheritForCommonApi(node: ts.MethodDeclaration): void {
+    const commonApiInfos = getCommonApiInfoMap();
+    commonApiInfos?.forEach((apiNode) => {
+      if (node.name.getText() === apiNode.name.getText()) {
+        this.checkMethodParameters(node, apiNode);
+        this.checkMethodReturnType(node, apiNode);
+      }
+    });
   }
 
   private checkMethodType(
