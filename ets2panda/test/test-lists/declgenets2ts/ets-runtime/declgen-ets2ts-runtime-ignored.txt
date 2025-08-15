@@ -35,14 +35,12 @@ top_level_03.ets
 multisource_inheritance.ets
 as_string.ets
 function_type_with_receiver/extensionFunctionType_return_this.ets
-<<<<<<< HEAD
 forOfCustomIterator3.ets
 too_many_async.ets
-=======
 defaultExportObjectLiteral_exp.ets
 forOfCustomIterator3.ets
 fuzz/too_many_async.ets
 typeAlias_2.ets
 Multiline_string.ets
 Multiline_string_escape_char.ets
->>>>>>> origin/OpenHarmony_feature_Release_20250728
+async_lambda_return_type_test.ets
