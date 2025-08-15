@@ -12295,7 +12295,16 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     staticProps: Map<string, ts.Type>,
     instanceProps: Map<string, ts.Type>
   ): void {
-    forEachNodeInSubtree(body, (node) => {
+    const stopCondition = (node: ts.Node): boolean => {
+      return (
+        ts.isFunctionDeclaration(node) ||
+        ts.isFunctionExpression(node) ||
+        ts.isMethodDeclaration(node) ||
+        ts.isAccessor(node) ||
+        ts.isArrowFunction(node)
+      );
+    };
+    const callback = (node: ts.Node): void => {
       if (!ts.isReturnStatement(node) || !node.expression) {
         return;
       }
@@ -12303,7 +12312,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         if (ts.isPropertyAccessExpression(expr)) {
           return expr;
         }
-
         if (ts.isCallExpression(expr) && ts.isPropertyAccessExpression(expr.expression)) {
           return expr.expression;
         }
@@ -12327,7 +12335,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (isInstancePropertyAccess(node.expression)) {
         this.checkPropertyAccess(node, node.expression as ts.PropertyAccessExpression, instanceProps, methodReturnType);
       }
-    });
+    };
+    forEachNodeInSubtree(body, callback, stopCondition);
   }
 
   private checkPropertyAccess(
