@@ -285,8 +285,11 @@ static AstNodePtr TransformIdentifier(ir::Identifier *ident, public_lib::Context
     }
 
     const auto parent = ident->Parent();
+    auto isTransformedNode =
+        (parent->IsMemberExpression() && parent->AsMemberExpression()->ObjType() != nullptr &&
+         parent->AsMemberExpression()->ObjType()->HasObjectFlag(checker::ETSObjectFlags::LAZY_IMPORT_OBJECT));
     if (parent->IsImportSpecifier() || parent->IsImportNamespaceSpecifier() || parent->IsScriptFunction() ||
-        parent->IsMethodDefinition()) {
+        parent->IsMethodDefinition() || isTransformedNode) {
         return ident;
     }
 
