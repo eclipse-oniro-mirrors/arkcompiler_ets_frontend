@@ -957,7 +957,7 @@ void ETSChecker::GetInterfacesOfClass(ETSObjectType *type, ArenaVector<ETSObject
 void ETSChecker::CheckIfOverrideIsValidInInterface(ETSObjectType *classType, Signature *sig, Signature *sigFunc)
 {
     bool throwError = false;
-    if (AreOverrideCompatible(sig, sigFunc) && sigFunc->Function()->IsStatic() == sig->Function()->IsStatic()) {
+    if (AreOverrideCompatible(sigFunc, sig) && sigFunc->Function()->IsStatic() == sig->Function()->IsStatic()) {
         SavedTypeRelationFlagsContext const savedFlags(Relation(), Relation()->GetTypeRelationFlags() |
                                                                        TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
         if (CheckIfInterfaceCanBeFoundOnDifferentPaths(classType, sigFunc->Owner(), this) &&
