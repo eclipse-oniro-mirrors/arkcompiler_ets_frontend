@@ -25,16 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 22,
-            "column": 5,
-            "endLine": 22,
-            "endColumn": 7,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-            "severity": "ERROR"
-        },
-        {
             "line": 23,
             "column": 1,
             "endLine": 23,
@@ -62,6 +52,16 @@
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 35,
+            "endLine": 32,
+            "endColumn": 40,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -336,12 +336,32 @@
         },
         {
             "line": 149,
+            "column": 40,
+            "endLine": 149,
+            "endColumn": 45,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 149,
             "column": 36,
             "endLine": 149,
             "endColumn": 47,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 150,
+            "column": 21,
+            "endLine": 150,
+            "endColumn": 26,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -353,6 +373,16 @@
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
             "severity": "ERROR"
+        },
+        {
+            "line": 150,
+            "column": 17,
+            "endLine": 150,
+            "endColumn": 29,
+            "problem": "UninitializedArrayElements",
+            "suggest": "",
+            "rule": "Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)",
+            "severity": "WARNING"
         },
         {
             "line": 151,
@@ -372,6 +402,16 @@
             "problem": "LimitedStdLibApi",
             "suggest": "",
             "rule": "Usage of standard library is restricted (arkts-limited-stdlib)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 155,
+            "column": 17,
+            "endLine": 155,
+            "endColumn": 22,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {

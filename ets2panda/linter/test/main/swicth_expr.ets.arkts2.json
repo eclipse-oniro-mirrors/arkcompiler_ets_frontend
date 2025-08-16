@@ -93,6 +93,16 @@
             "suggest": "",
             "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
             "severity": "ERROR"
+        },
+        {
+            "line": 215,
+            "column": 17,
+            "endLine": 215,
+            "endColumn": 23,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
         }
     ]
 }

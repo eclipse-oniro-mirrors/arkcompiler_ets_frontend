@@ -90,7 +90,7 @@ cookBookTag[59] = '"delete" operator is not supported (arkts-no-delete)';
 cookBookTag[60] = '"typeof" operator is allowed only in expression contexts (arkts-no-type-query)';
 cookBookTag[61] =
   'The bitwise inversion gives different result for "Infinity" (arkts-distinct-infinity-bitwise-inversion)';
-cookBookTag[62] = '';
+cookBookTag[62] = 'Index of tuple must be non-negative integer (arkts-limited-tuple-index-type)';
 cookBookTag[63] = '';
 cookBookTag[64] = '';
 cookBookTag[65] = '"instanceof" operator is partially supported (arkts-instanceof-ref-types)';
@@ -240,6 +240,8 @@ cookBookTag[185] = 'syntax for import type is disabled (arkts-import-types)';
 cookBookTag[186] = '"new" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)';
 cookBookTag[187] =
   'function "Math.pow()" behavior for ArkTS differs from Typescript version (arkts-math-pow-standard-diff)';
+cookBookTag[188] =
+  'In 1.1, the default type obtained for the abstract method without the annotation type is any. In 1.2, the default type for the abstract method without the annotation type is void. (arkts-distinct-abstract-method-default-return-type)';
 cookBookTag[189] = 'Numeric semantics is different for integer values (arkts-numeric-semantic)';
 cookBookTag[190] = 'Stricter assignments into variables of function type (arkts-incompatible-function-types)';
 cookBookTag[191] = 'ASON is not supported. (arkts-no-need-stdlib-ason)';
@@ -298,8 +300,6 @@ cookBookTag[268] = 'Direct usage of interop JS objects is not supported (arkts-i
 cookBookTag[269] =
   'Direct usage of interop JS functions is not supported (arkts-interop-js2s-js-expand-static-instance)';
 cookBookTag[270] = 'ArkTS1.2 cannot catch a non Error instance thrown from JS code (arkts-interop-js2s-js-exception)';
-cookBookTag[271] =
-  'After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)';
 cookBookTag[272] =
   'This API of process is obsolete in ArkTS 1.1. It\'s no longer supported in ArkTS 1.2 (arkts-concurrent-deprecated-apis)';
 cookBookTag[273] =
@@ -415,10 +415,23 @@ cookBookTag[381] =
   'The code block passed to stateStyles needs to be an arrow function (arkui-statestyles-block-need-arrow-func)';
 cookBookTag[382] =
   'Promise<void>constructor only supports using resolve (undefined) (arkts-promise-with-void-type-need-undefined-as-resolve-arg)';
+cookBookTag[391] =
+  'The class of the second parameter passed to the "persistProp" method must be a primitive type or Date type, or implement the "toJson" and "fromJson" methods (arkui-persistent-prop-serialization)';
+cookBookTag[392] =
+  'The class of the "defaultValue" parameter in the literal passed to the "persistProps" method must be a primitive type or Date type, or implement the "toJson" and "fromJson" methods (arkui-persistent-props-serialization)';
+cookBookTag[393] =
+  'When calling the "globalConnect" and "connect" methods, the parameter list of the methods needs to include "toJson" and "fromJson" (arkui-persistencev2-connect-serialization)';
 cookBookTag[399] = 'ArkUI deprecated api check (arkui-no-deprecated-api)';
 cookBookTag[400] = 'ArkUI sdk common deprecated api check (arkui-sdk-common-deprecated-api)';
 cookBookTag[401] = 'ArkUI sdk common whitelist api check (arkui-sdk-common-whitelist-api)';
 cookBookTag[402] = 'ArkUI sdk common behavior change api check (arkui-sdk-common-behaviorchange-api)';
+cookBookTag[403] = 'API is not support initial ctor signature (arkts-builtin-new-cotr)';
+cookBookTag[404] =
+  'Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)';
+cookBookTag[405] = 'API is not support use class in this API (arkts-builtin-final-class)';
+cookBookTag[406] = 'Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)';
+cookBookTag[407] = 'API has been disabled (arkts-builtin-disable-api)';
+cookBookTag[408] = 'The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)';
 
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';

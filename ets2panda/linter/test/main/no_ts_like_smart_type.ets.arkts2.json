@@ -115,6 +115,36 @@
             "severity": "ERROR"
         },
         {
+            "line": 93,
+            "column": 66,
+            "endLine": 93,
+            "endColumn": 75,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 93,
+            "column": 66,
+            "endLine": 93,
+            "endColumn": 75,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 54,
+            "endLine": 101,
+            "endColumn": 58,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
             "line": 105,
             "column": 8,
             "endLine": 105,
@@ -122,6 +152,16 @@
             "problem": "NoTsLikeSmartType",
             "suggest": "",
             "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 109,
+            "column": 50,
+            "endLine": 109,
+            "endColumn": 54,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
             "severity": "ERROR"
         },
         {

@@ -229,16 +229,6 @@
         },
         {
             "line": 32,
-            "column": 7,
-            "endLine": 32,
-            "endColumn": 19,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 32,
             "column": 21,
             "endLine": 32,
             "endColumn": 43,
@@ -298,16 +288,6 @@
             ],
             "suggest": "",
             "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 36,
-            "column": 7,
-            "endLine": 36,
-            "endColumn": 19,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
             "severity": "ERROR"
         },
         {

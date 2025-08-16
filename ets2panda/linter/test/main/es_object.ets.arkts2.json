@@ -35,26 +35,6 @@
             "severity": "ERROR"
         },
         {
-          "line": 20,
-          "column": 5,
-          "endLine": 20,
-          "endColumn": 7,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
-        },
-        {
-          "line": 21,
-          "column": 5,
-          "endLine": 21,
-          "endColumn": 7,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
-        },
-        {
             "line": 21,
             "column": 9,
             "endLine": 21,
@@ -63,16 +43,6 @@
             "suggest": "",
             "rule": "Usage of 'ESValue' type is restricted (arkts-limited-esobj)",
             "severity": "ERROR"
-        },
-        {
-          "line": 22,
-          "column": 5,
-          "endLine": 22,
-          "endColumn": 7,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
         },
         {
             "line": 22,
@@ -783,16 +753,6 @@
             "suggest": "",
             "rule": "Usage of 'ESValue' type is restricted (arkts-limited-esobj)",
             "severity": "ERROR"
-        },
-        {
-          "line": 148,
-          "column": 5,
-          "endLine": 148,
-          "endColumn": 6,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
         },
         {
             "line": 149,

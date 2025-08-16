@@ -96,6 +96,16 @@
         },
         {
             "line": 57,
+            "column": 18,
+            "endLine": 57,
+            "endColumn": 23,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
             "column": 14,
             "endLine": 57,
             "endColumn": 27,
@@ -103,6 +113,16 @@
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
             "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 14,
+            "endLine": 57,
+            "endColumn": 27,
+            "problem": "UninitializedArrayElements",
+            "suggest": "",
+            "rule": "Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)",
+            "severity": "WARNING"
         },
         {
             "line": 70,
@@ -325,6 +345,36 @@
             "severity": "ERROR"
         },
         {
+            "line": 108,
+            "column": 17,
+            "endLine": 108,
+            "endColumn": 40,
+            "problem": "BuiltinIteratorResultValue",
+            "suggest": "",
+            "rule": "The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 112,
+            "column": 15,
+            "endLine": 112,
+            "endColumn": 38,
+            "problem": "BuiltinIteratorResultValue",
+            "suggest": "",
+            "rule": "The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 115,
+            "column": 15,
+            "endLine": 115,
+            "endColumn": 20,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 117,
             "column": 20,
             "endLine": 117,
@@ -355,6 +405,26 @@
             "severity": "ERROR"
         },
         {
+            "line": 118,
+            "column": 15,
+            "endLine": 118,
+            "endColumn": 36,
+            "problem": "BuiltinIteratorResultValue",
+            "suggest": "",
+            "rule": "The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 121,
+            "column": 13,
+            "endLine": 121,
+            "endColumn": 34,
+            "problem": "BuiltinIteratorResultValue",
+            "suggest": "",
+            "rule": "The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)",
+            "severity": "ERROR"
+        },
+        {
             "line": 139,
             "column": 12,
             "endLine": 139,
@@ -362,6 +432,26 @@
             "problem": "CreatingPrimitiveTypes",
             "suggest": "",
             "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 139,
+            "column": 16,
+            "endLine": 139,
+            "endColumn": 22,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 150,
+            "column": 23,
+            "endLine": 150,
+            "endColumn": 29,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
             "severity": "ERROR"
         },
         {

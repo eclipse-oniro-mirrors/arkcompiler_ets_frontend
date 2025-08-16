@@ -266,6 +266,16 @@
         },
         {
             "line": 47,
+            "column": 16,
+            "endLine": 47,
+            "endColumn": 22,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
             "column": 23,
             "endLine": 47,
             "endColumn": 25,
@@ -282,6 +292,16 @@
             "problem": "CreatingPrimitiveTypes",
             "suggest": "",
             "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 17,
+            "endLine": 48,
+            "endColumn": 24,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -306,12 +326,32 @@
         },
         {
             "line": 49,
+            "column": 16,
+            "endLine": 49,
+            "endColumn": 22,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
             "column": 23,
             "endLine": 49,
             "endColumn": 25,
             "problem": "NosparseArray",
             "suggest": "",
             "rule": "Sparse array is not supported in ArkTS1.2 (arkts-no-sparse-array)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 16,
+            "endLine": 50,
+            "endColumn": 22,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -352,6 +392,16 @@
             "problem": "NosparseArray",
             "suggest": "",
             "rule": "Sparse array is not supported in ArkTS1.2 (arkts-no-sparse-array)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 16,
+            "endLine": 57,
+            "endColumn": 23,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {

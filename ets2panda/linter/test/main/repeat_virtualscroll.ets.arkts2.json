@@ -15,6 +15,26 @@
     ],
     "result": [
         {
+            "line": 36,
+            "column": 62,
+            "endLine": 36,
+            "endColumn": 71,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 62,
+            "endLine": 36,
+            "endColumn": 71,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 40,
             "column": 9,
             "endLine": 40,
@@ -22,6 +42,26 @@
             "problem": "RepeatDisableVirtualScroll",
             "suggest": "",
             "rule": "\"Repeat\" natively supports virtual scrolling capability in ArkTS1.2, so the default virtual scrolling should be disabled (arkui-repeat-disable-default-virtualscroll)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 62,
+            "endLine": 46,
+            "endColumn": 71,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 62,
+            "endLine": 46,
+            "endColumn": 71,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
             "severity": "ERROR"
         },
         {

@@ -56,6 +56,16 @@
         },
         {
             "line": 25,
+            "column": 35,
+            "endLine": 25,
+            "endColumn": 41,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
             "column": 25,
             "endLine": 25,
             "endColumn": 34,
@@ -82,6 +92,16 @@
             "problem": "ArgumentsObject",
             "suggest": "",
             "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 51,
+            "endLine": 31,
+            "endColumn": 57,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
             "severity": "ERROR"
         },
         {
@@ -222,6 +242,16 @@
             "problem": "ArgumentsObject",
             "suggest": "",
             "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 19,
+            "endLine": 57,
+            "endColumn": 25,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
             "severity": "ERROR"
         },
         {

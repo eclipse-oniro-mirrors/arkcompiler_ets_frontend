@@ -25,16 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
-            "column": 5,
-            "endLine": 57,
-            "endColumn": 6,
-            "problem": "VariableMissingInitializer",
-            "suggest": "",
-            "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-            "severity": "ERROR"
-        },
-        {
             "line": 92,
             "column": 19,
             "endLine": 92,
@@ -142,6 +132,26 @@
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 206,
+            "column": 33,
+            "endLine": 206,
+            "endColumn": 37,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 207,
+            "column": 33,
+            "endLine": 207,
+            "endColumn": 37,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
             "severity": "ERROR"
         },
         {

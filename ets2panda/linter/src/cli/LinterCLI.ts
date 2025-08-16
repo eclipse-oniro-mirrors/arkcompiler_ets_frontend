@@ -128,6 +128,12 @@ async function executeHomeCheckTask(scanTaskRelatedInfo: ScanTaskRelatedInfo): P
   migrationTool = null;
   scanTaskRelatedInfo.homeCheckResult = transferIssues2ProblemInfo(result);
   for (const [filePath, problems] of scanTaskRelatedInfo.homeCheckResult) {
+    if (
+      !scanTaskRelatedInfo.cmdOptions.scanWholeProjectInHomecheck &&
+      !scanTaskRelatedInfo.cmdOptions.inputFiles.includes(filePath)
+    ) {
+      continue;
+    }
     if (!scanTaskRelatedInfo.mergedProblems.has(filePath)) {
       scanTaskRelatedInfo.mergedProblems.set(filePath, []);
     }

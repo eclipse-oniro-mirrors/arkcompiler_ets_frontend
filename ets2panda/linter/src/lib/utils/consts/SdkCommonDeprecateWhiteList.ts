@@ -15,6 +15,7 @@
 
 import { FaultID } from '../../Problems';
 
+export const SDK_COMMON_TYPE = 'SdkCommonApi';
 export const SdkCommonApiProblemInfos = new Map<string, number>([
   ['WhiteList', FaultID.SdkCommonApiWhiteList],
   ['BehaviorChange', FaultID.SdkCommonApiBehaviorChange],

@@ -485,6 +485,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 91,
+            "column": 15,
+            "endLine": 91,
+            "endColumn": 37,
+            "problem": "BuiltinIteratorResultValue",
+            "suggest": "",
+            "rule": "The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)",
+            "severity": "ERROR"
+        },
+        {
             "line": 94,
             "column": 8,
             "endLine": 94,
@@ -915,16 +925,6 @@
             "severity": "ERROR"
         },
         {
-          "line": 177,
-          "column": 5,
-          "endLine": 177,
-          "endColumn": 10,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
-        },
-        {
             "line": 177,
             "column": 12,
             "endLine": 177,
@@ -933,16 +933,6 @@
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
-        },
-        {
-          "line": 180,
-          "column": 5,
-          "endLine": 180,
-          "endColumn": 10,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
         },
         {
             "line": 182,
@@ -983,16 +973,6 @@
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
-        },
-        {
-          "line": 208,
-          "column": 5,
-          "endLine": 208,
-          "endColumn": 7,
-          "problem": "VariableMissingInitializer",
-          "suggest": "",
-          "rule": "After a variable is declared, a value must be assigned before using it (arkts-var-assignment-before-use)",
-          "severity": "ERROR"
         },
         {
             "line": 209,

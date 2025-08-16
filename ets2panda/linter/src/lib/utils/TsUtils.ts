@@ -48,6 +48,7 @@ import { ETS_MODULE, PATH_SEPARATOR, VALID_OHM_COMPONENTS_MODULE_PATH } from './
 import { EXTNAME_ETS, EXTNAME_JS, EXTNAME_D_ETS } from './consts/ExtensionName';
 import { CONCAT_ARRAY, STRING_ERROR_LITERAL } from './consts/Literals';
 import { INT_MIN, INT_MAX } from './consts/NumericalConstants';
+import { IGNORE_TYPE_LIST } from './consts/TypesToBeIgnored';
 
 export const PROMISE_METHODS = new Set(['all', 'race', 'any', 'resolve', 'allSettled']);
 export const PROMISE_METHODS_WITH_NO_TUPLE_SUPPORT = new Set(['all', 'race', 'any', 'allSettled']);
@@ -3916,5 +3917,17 @@ export class TsUtils {
     }
 
     return (typeArguments[0].flags & ts.TypeFlags.Number) !== 0;
+  }
+
+  static isIgnoredTypeForParameterType(typeString: string, type: ts.Type): boolean {
+    if (TsUtils.isAnyType(type)) {
+      return true;
+    }
+
+    return (
+      IGNORE_TYPE_LIST.findIndex((ignored_type) => {
+        return typeString.includes(ignored_type);
+      }) !== -1
+    );
   }
 }

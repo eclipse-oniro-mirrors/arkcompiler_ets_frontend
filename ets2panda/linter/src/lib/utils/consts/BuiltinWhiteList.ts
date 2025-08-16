@@ -13,12 +13,19 @@
  * limitations under the License.
  */
 
+import { FaultID } from '../../Problems';
+
 export enum BuiltinProblem {
   LimitedThisArg = 'ThisArg',
   SymbolIterator = 'SymbolIterator',
   BuiltinNoCtorFunc = 'BuiltinNoCtorFunc',
   BuiltinNoPropertyDescriptor = 'NoPropertyDescriptor',
-  MissingAttributes = 'MissingAttributes'
+  MissingAttributes = 'MissingAttributes',
+  BuiltinNewCtor = 'BuiltinNewCtor',
+  BuiltinFinalClass = 'BuiltinFinalClass',
+  BuiltinNarrowTypes = 'BuiltinNarrowTypes',
+  BuiltinDisableApi = 'BuiltinDisableApi',
+  BuiltinIteratorResultValue = 'BuiltinIteratorResultValue'
 }
 
 export const SYMBOL_ITERATOR: string = 'Symbol.iterator';
@@ -51,3 +58,25 @@ export const BUILTIN_CONSTRUCTORS = ['Boolean', 'Number', 'Object', 'String'];
 export const COLLECTION_TYPES = new Set(['Map', 'Set', 'WeakMap', 'WeakSet']);
 
 export const COLLECTION_METHODS = new Set(['add', 'delete', 'get', 'has', 'set']);
+
+export const BUILTIN_TYPE = 'BuiltinApi';
+export const BuiltinProblemInfos = new Map<string, number>([
+  [BuiltinProblem.BuiltinNoCtorFunc, FaultID.BuiltinNoCtorFunc],
+  [BuiltinProblem.BuiltinNoPropertyDescriptor, FaultID.NoPropertyDescriptor],
+  [BuiltinProblem.BuiltinNarrowTypes, FaultID.BuiltinNarrowTypes],
+  [BuiltinProblem.BuiltinDisableApi, FaultID.BuiltinDisableApi],
+  [BuiltinProblem.BuiltinIteratorResultValue, FaultID.BuiltinIteratorResultValue]
+]);
+export const BUILTIN_CONSTRUCTOR_API_NAME: string = 'builtin_constructor';
+export const BUILTIN_CONSTRUCTOR_API_TYPE = ['CallSignature'];
+export const BUILTIN_CALLSIGNATURE_NEWCTOR = [
+  'AggregateError',
+  'Array',
+  'Boolean',
+  'Date',
+  'Error',
+  'Number',
+  'String',
+  'WeakMap',
+  'Object'
+];

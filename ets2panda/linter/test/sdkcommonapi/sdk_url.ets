@@ -30,7 +30,7 @@ paramsObject2.delete('fod');//error
 
 let searchParamsObject1 = new url.URLSearchParams("keyName1=valueName1&keyName2=valueName2");//error
 let iter: Iterable<Object[]> = searchParamsObject1.entries();//error
-let pairs = Array.from(iter);
+let pairs = Array.from(iter); //BuiltinAll
 for (let pair of pairs) { // Show keyName/valueName pairs
   console.log(pair[0]+ ', '+ pair[1]);
 }
@@ -53,7 +53,7 @@ let paramsObject4 = new url.URLSearchParams(urlObject2.search.slice(1));//error*
 paramsObject4.has('bard') === true;//error
 
 let searchParamsObject2 = new url.URLSearchParams("key1=value1&key2=value2"); //error
-let keys = Array.from(searchParamsObject2.keys());//error
+let keys = Array.from(searchParamsObject2.keys());//error+BuiltinAll
 for (let key of keys) {
   console.log(key);
 }
@@ -71,7 +71,7 @@ params.append('fod', '3');//error
 console.log(params.toString()); //error
 
 let searchParams = new url.URLSearchParams("key1=value1&key2=value2");//error
-let values = Array.from(searchParams.values());//error
+let values = Array.from(searchParams.values());//error+BuiltinAll
 for (let value of values) { console.log(value); }
 
 //sum:40

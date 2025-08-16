@@ -1,0 +1,668 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 16,
+            "column": 26,
+            "endLine": 16,
+            "endColumn": 35,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 16,
+            "column": 7,
+            "endLine": 16,
+            "endColumn": 17,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 16,
+            "column": 47,
+            "endLine": 16,
+            "endColumn": 56,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 17,
+            "column": 31,
+            "endLine": 17,
+            "endColumn": 40,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 25,
+            "endLine": 19,
+            "endColumn": 31,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 7,
+            "endLine": 19,
+            "endColumn": 16,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 43,
+            "endLine": 19,
+            "endColumn": 49,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 4,
+            "endLine": 23,
+            "endColumn": 19,
+            "problem": "BuiltinSymbolIterator",
+            "suggest": "",
+            "rule": "Using \"Symbol.iterator\" is not allowed in this API (arkts-builtin-symbol-iterator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 27,
+            "endLine": 28,
+            "endColumn": 35,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 7,
+            "endLine": 28,
+            "endColumn": 18,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 48,
+            "endLine": 28,
+            "endColumn": 56,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 31,
+            "endLine": 29,
+            "endColumn": 39,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 29,
+            "endLine": 31,
+            "endColumn": 39,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 7,
+            "endLine": 31,
+            "endColumn": 20,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 51,
+            "endLine": 31,
+            "endColumn": 61,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 10,
+            "endLine": 32,
+            "endColumn": 80,
+            "problem": "MethodInheritRule",
+            "suggest": "",
+            "rule": "Overridden method parameters and return types must respect type inheritance principles (arkts-method-inherit-rule)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 82,
+            "endLine": 32,
+            "endColumn": 98,
+            "problem": "MethodInheritRule",
+            "suggest": "",
+            "rule": "Overridden method parameters and return types must respect type inheritance principles (arkts-method-inherit-rule)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 33,
+            "endLine": 36,
+            "endColumn": 43,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 29,
+            "endLine": 39,
+            "endColumn": 39,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 7,
+            "endLine": 40,
+            "endColumn": 20,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 32,
+            "endLine": 40,
+            "endColumn": 42,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 33,
+            "endLine": 41,
+            "endColumn": 43,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 32,
+            "endLine": 43,
+            "endColumn": 45,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 7,
+            "endLine": 43,
+            "endColumn": 23,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 57,
+            "endLine": 43,
+            "endColumn": 70,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 37,
+            "endLine": 44,
+            "endColumn": 50,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 7,
+            "endLine": 46,
+            "endColumn": 20,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 11,
+            "endLine": 47,
+            "endColumn": 25,
+            "problem": "BuiltinIteratorResultValue",
+            "suggest": "",
+            "rule": "The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 14,
+            "endLine": 48,
+            "endColumn": 18,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 26,
+            "endLine": 48,
+            "endColumn": 31,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 46,
+            "endLine": 48,
+            "endColumn": 50,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 4,
+            "endLine": 51,
+            "endColumn": 19,
+            "problem": "BuiltinSymbolIterator",
+            "suggest": "",
+            "rule": "Using \"Symbol.iterator\" is not allowed in this API (arkts-builtin-symbol-iterator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 29,
+            "endLine": 56,
+            "endColumn": 41,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 7,
+            "endLine": 56,
+            "endColumn": 20,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 53,
+            "endLine": 56,
+            "endColumn": 65,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 66,
+            "endLine": 56,
+            "endColumn": 78,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 35,
+            "endLine": 57,
+            "endColumn": 47,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 35,
+            "endLine": 58,
+            "endColumn": 47,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 43,
+            "endLine": 60,
+            "endColumn": 50,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 7,
+            "endLine": 60,
+            "endColumn": 13,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 67,
+            "endLine": 60,
+            "endColumn": 74,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 81,
+            "endLine": 60,
+            "endColumn": 88,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
+            "column": 51,
+            "endLine": 61,
+            "endColumn": 58,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 44,
+            "endLine": 62,
+            "endColumn": 51,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 48,
+            "endLine": 63,
+            "endColumn": 55,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 24,
+            "endLine": 65,
+            "endColumn": 31,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 7,
+            "endLine": 65,
+            "endColumn": 15,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 43,
+            "endLine": 65,
+            "endColumn": 50,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 51,
+            "endLine": 65,
+            "endColumn": 57,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 66,
+            "column": 30,
+            "endLine": 66,
+            "endColumn": 37,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 29,
+            "endLine": 67,
+            "endColumn": 35,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 42,
+            "endLine": 68,
+            "endColumn": 62,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 45,
+            "endLine": 69,
+            "endColumn": 65,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 3,
+            "endLine": 70,
+            "endColumn": 23,
+            "problem": "ComputedPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 11,
+            "endLine": 70,
+            "endColumn": 22,
+            "problem": "SymbolType",
+            "suggest": "",
+            "rule": "\"Symbol()\" API is not supported (arkts-no-symbol)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 46,
+            "endLine": 74,
+            "endColumn": 66,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 75,
+            "column": 29,
+            "endLine": 75,
+            "endColumn": 36,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 81,
+            "column": 32,
+            "endLine": 81,
+            "endColumn": 39,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 83,
+            "column": 5,
+            "endLine": 83,
+            "endColumn": 79,
+            "problem": "MethodInheritRule",
+            "suggest": "",
+            "rule": "Overridden method parameters and return types must respect type inheritance principles (arkts-method-inherit-rule)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 84,
+            "column": 5,
+            "endLine": 84,
+            "endColumn": 79,
+            "problem": "MethodInheritRule",
+            "suggest": "",
+            "rule": "Overridden method parameters and return types must respect type inheritance principles (arkts-method-inherit-rule)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 90,
+            "column": 5,
+            "endLine": 90,
+            "endColumn": 77,
+            "problem": "MethodInheritRule",
+            "suggest": "",
+            "rule": "Overridden method parameters and return types must respect type inheritance principles (arkts-method-inherit-rule)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 3,
+            "endLine": 99,
+            "endColumn": 23,
+            "problem": "ComputedPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 11,
+            "endLine": 99,
+            "endColumn": 22,
+            "problem": "SymbolType",
+            "suggest": "",
+            "rule": "\"Symbol()\" API is not supported (arkts-no-symbol)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 102,
+            "column": 33,
+            "endLine": 102,
+            "endColumn": 40,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 3,
+            "endLine": 70,
+            "endColumn": 23,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property '[Symbol.toStringTag]' in type 'MyFinalizationRegistry2<T>' is not assignable to the same property in base type 'FinalizationRegistry<T>'.\n  Type '\"FinalizationRegistry\" | undefined' is not assignable to type '\"FinalizationRegistry\"'.\n    Type 'undefined' is not assignable to type '\"FinalizationRegistry\"'.",
+            "rule": "Property '[Symbol.toStringTag]' in type 'MyFinalizationRegistry2<T>' is not assignable to the same property in base type 'FinalizationRegistry<T>'.\n  Type '\"FinalizationRegistry\" | undefined' is not assignable to type '\"FinalizationRegistry\"'.\n    Type 'undefined' is not assignable to type '\"FinalizationRegistry\"'.",
+            "severity": "ERROR"
+        }
+    ]
+}

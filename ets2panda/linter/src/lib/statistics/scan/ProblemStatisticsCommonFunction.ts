@@ -144,13 +144,14 @@ export async function generateScanProbelemStatisticsReport(
     needToManualFixproblemNumbers: statisticsReportInPutInfo.totalProblemNumbers - canBeAutoFixedproblemNumbers
   };
   const projectFolderList = statisticsReportInPutInfo.cmdOptions.linterOptions.projectFolderList!;
-  const WorkLoadInfo = await getWorkLoadInfo(projectFolderList);
+  const workLoadInfo = await getWorkLoadInfo(projectFolderList);
+  workLoadInfo.calculateFixRate(problemNumbers);
   const statisticsReportData = getProblemStatisticsInfo(
     problemNumbers,
     statisticsReportInPutInfo.ruleToNumbersMap,
     statisticsReportInPutInfo.ruleToAutoFixedNumbersMap,
     statisticsReportInPutInfo.timeRecorder,
-    WorkLoadInfo
+    workLoadInfo
   );
   await generateReportFile(
     statisticsReportInPutInfo.statisticsReportName,

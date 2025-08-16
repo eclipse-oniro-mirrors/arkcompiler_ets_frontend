@@ -14,7 +14,6 @@
     "arkts-no-function-return-this",
     "arkts-limited-stdlib",
     "arkts-no-class-add-super-prop-with-readonly",
-    "arkts-var-assignment-before-use",
     "arkts-concurrent-deprecated-apis",
     "arkts-no-classes-as-obj",
     "arkts-obj-literal-props",
@@ -23,6 +22,7 @@
     "arkts-optional-methods",
     "arkts-use-long-for-large-numeric-literal",
     "arkts-numeric-semantic",
+    "arkts-limited-tuple-index-type",
     "arkts-incompatible-function-types",
     "arkts-limited-void-type",
     "arkts-distinct-infinity-bitwise-inversion",
@@ -34,7 +34,6 @@
     "arkts-no-debugger",
     "arkts-no-arguments-obj",
     "arkts-no-tagged-templates",
-    "arkts-array-index-expr-type",
     "arkts-switch-expr",
     "arkts-case-expr",
     "arkts-array-index-negative",
@@ -61,6 +60,7 @@
     "arkts-limited-stdlib-no-setTransferList",
     "arkts-builtin-object-getOwnPropertyNames",
     "arkts-no-class-omit-interface-optional-prop",
+    "arkts-distinct-abstract-method-default-return-type",
     "arkts-class-no-signature-distinct-with-object-public-api",
     "arkts-no-sparse-array",
     "arkts-no-enum-prop-as-type",
@@ -142,13 +142,22 @@
     "arkui-buildernode-no-nestingbuildersupported",
     "arkui-sdk-common-deprecated-api",
     "arkui-sdk-common-whitelist-api",
-    "arkui-sdk-common-behaviorchange-api"
+    "arkui-sdk-common-behaviorchange-api",
+    "arkui-persistent-prop-serialization",
+    "arkui-persistent-props-serialization",
+    "arkui-persistencev2-connect-serialization"
   ],
   "builtin": [
     "arkts-builtin-thisArgs",
     "arkts-builtin-symbol-iterator",
     "arkts-builtin-no-property-descriptor",
-    "arkts-builtin-cotr"
+    "arkts-builtin-cotr",
+    "arkts-builtin-new-cotr",
+    "arkts-builtin-uninitialized-element",
+    "arkts-builtin-final-class",
+    "arkts-builtin-narrow-types",
+    "arkts-builtin-disable-api",
+    "arkts-builtin-iterator-result-value"
   ],
   "OHMURL": [
     "arkts-require-fullpath-name"

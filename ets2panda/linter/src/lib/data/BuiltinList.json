@@ -4,13 +4,13 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 107,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinNarrowTypes",
         "api_name": "PropertyKey",
         "api_type": "TypeAliasDeclaration",
         "api_func_args": [],
         "parent_api": [],
         "code_kind": 268,
-        "api_property_type": "string | number | symbol"
+        "method_return_type": "string | number | symbol"
       },
       "import_path": [],
       "is_global": true
@@ -148,7 +148,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 133,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "valueOf",
         "api_type": "MethodSignature",
         "api_optional": false,
@@ -189,8 +189,8 @@
     {
       "file_path": "lib.es5.d.ts",
       "api_info": {
-        "line": 156,
-        "problem": "BuiltinAll",
+        "line": 157,
+        "problem": "BuiltinDisableApi",
         "api_type": "CallSignature",
         "parent_api": [
           {
@@ -206,8 +206,8 @@
     {
       "file_path": "lib.es5.d.ts",
       "api_info": {
-        "line": 157,
-        "problem": "BuiltinAll",
+        "line": 576,
+        "problem": "BuiltinNewCtor",
         "api_type": "CallSignature",
         "parent_api": [
           {
@@ -224,7 +224,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 392,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "length",
         "api_type": "PropertySignature",
         "api_optional": false,
@@ -244,7 +244,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 393,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "callee",
         "api_type": "PropertySignature",
         "api_optional": false,
@@ -280,8 +280,42 @@
     {
       "file_path": "lib.es5.d.ts",
       "api_info": {
+        "line": 522,
+        "problem": "BuiltinNewCtor",
+        "api_type": "CallSignature",
+        "parent_api": [
+          {
+            "api_name": "StringConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 179
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
         "line": 539,
         "problem": "BuiltinNoCtorFunc",
+        "api_type": "CallSignature",
+        "parent_api": [
+          {
+            "api_name": "BooleanConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 179
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 539,
+        "problem": "BuiltinNewCtor",
         "api_type": "CallSignature",
         "parent_api": [
           {
@@ -314,8 +348,25 @@
     {
       "file_path": "lib.es5.d.ts",
       "api_info": {
+        "line": 576,
+        "problem": "BuiltinNewCtor",
+        "api_type": "CallSignature",
+        "parent_api": [
+          {
+            "api_name": "NumberConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 179
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
         "line": 608,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "raw",
         "api_type": "PropertySignature",
         "api_optional": false,
@@ -336,6 +387,23 @@
       "api_info": {
         "line": 916,
         "problem": "BuiltinNoCtorFunc",
+        "api_type": "CallSignature",
+        "parent_api": [
+          {
+            "api_name": "DateConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 179
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 916,
+        "problem": "BuiltinNewCtor",
         "api_type": "CallSignature",
         "parent_api": [
           {
@@ -387,6 +455,23 @@
       "api_info": {
         "line": 1060,
         "problem": "BuiltinNoCtorFunc",
+        "api_type": "CallSignature",
+        "parent_api": [
+          {
+            "api_name": "ErrorConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 179
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 1060,
+        "problem": "BuiltinNewCtor",
         "api_type": "CallSignature",
         "parent_api": [
           {
@@ -539,7 +624,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 1188,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinNarrowTypes",
         "api_name": "concat",
         "api_type": "MethodSignature",
         "api_optional": false,
@@ -825,7 +910,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 1334,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinNarrowTypes",
         "api_name": "concat",
         "api_type": "MethodSignature",
         "api_optional": false,
@@ -1073,6 +1158,23 @@
     {
       "file_path": "lib.es5.d.ts",
       "api_info": {
+        "line": 1490,
+        "problem": "BuiltinNewCtor",
+        "api_type": "CallSignature",
+        "parent_api": [
+          {
+            "api_name": "ArrayConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 179
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
         "line": 1498,
         "problem": "NoPropertyDescriptor",
         "api_name": "enumerable",
@@ -1194,7 +1296,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 1506,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "ClassDecorator",
         "api_type": "TypeAliasDeclaration",
         "api_func_args": [
@@ -1215,7 +1317,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 1507,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "PropertyDecorator",
         "api_type": "TypeAliasDeclaration",
         "api_func_args": [
@@ -1241,7 +1343,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 1508,
-        "problem": "NoPropertyDescriptor",
+        "problem": "BuiltinDisableApi",
         "api_name": "MethodDecorator",
         "api_type": "TypeAliasDeclaration",
         "api_func_args": [
@@ -1272,7 +1374,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 1509,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "ParameterDecorator",
         "api_type": "TypeAliasDeclaration",
         "api_func_args": [
@@ -1303,7 +1405,7 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 1681,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "ArrayBuffer",
         "api_type": "PropertySignature",
         "api_optional": false,
@@ -3505,7 +3607,7 @@
       "file_path": "lib.es2015.iterable.d.ts",
       "api_info": {
         "line": 46,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "return",
         "api_type": "MethodSignature",
         "api_optional": true,
@@ -3533,7 +3635,7 @@
       "file_path": "lib.es2015.iterable.d.ts",
       "api_info": {
         "line": 47,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinDisableApi",
         "api_name": "throw",
         "api_type": "MethodSignature",
         "api_optional": true,
@@ -5763,6 +5865,23 @@
       "is_global": true
     },
     {
+      "file_path": "lib.es2021.promise.d.ts",
+      "api_info": {
+        "line": 1,
+        "problem": "BuiltinNewCtor",
+        "api_type": "CallSignature",
+        "parent_api": [
+          {
+            "api_name": "AggregateErrorConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 179
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
       "file_path": "lib.es2015.core.d.ts",
       "api_info": {
         "line": 43,
@@ -5792,6 +5911,1524 @@
         ],
         "method_return_type": "number",
         "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2021.promise.d.ts",
+      "api_info": {
+        "line": 110,
+        "problem": "NoPropertyDescriptor",
+        "api_name": "errors",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "AggregateError",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 170,
+        "api_property_type": "any[]"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2019.array.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinDisableApi",
+        "api_name": "flat",
+        "api_type": "MethodSignature",
+        "api_func_args": [
+          {
+            "name": "this",
+            "type": "A",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "depth",
+            "type": "D",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Array",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "FlatArray<A, D>[]",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "day",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "dayPeriod",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "era",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "hour",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "literal",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "minute",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "month",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "second",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "timeZoneName",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "weekday",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "year",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DateTimeFormatPartTypesRegistry",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "any",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2020.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "prototype",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "DisplayNames",
+            "api_type": "VariableDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "DisplayNames",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2021.intl.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "prototype",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ListFormat",
+            "api_type": "VariableDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "ListFormat",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 114,
+        "problem": "BuiltinDisableApi",
+        "api_name": "prototype",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "NumberFormat",
+            "api_type": "VariableDeclaration"
+          },
+          {
+            "api_name": "Intl",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "NumberFormat",
+        "code_kind": 170
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2019.array.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinDisableApi",
+        "api_name": "flat",
+        "api_type": "MethodSignature",
+        "api_func_args": [
+          {
+            "name": "this",
+            "type": "A",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "depth",
+            "type": "D",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ReadonlyArray",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "FlatArray<A, D>[]",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2019.array.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinDisableApi",
+        "api_name": "flatMap",
+        "api_type": "MethodSignature",
+        "api_func_args": [
+          {
+            "name": "callback",
+            "type": "(this: This, value: T, index: number, array: T[]) => U | ReadonlyArray<U>",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "This",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ReadonlyArray",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "U[]",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2018.regexp.d.ts",
+      "api_info": {
+        "line": 110,
+        "problem": "BuiltinDisableApi",
+        "api_name": "groups",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "RegExpExecArray",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 170,
+        "api_property_type": "{[key: string]: string}"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2018.regexp.d.ts",
+      "api_info": {
+        "line": 110,
+        "problem": "BuiltinDisableApi",
+        "api_name": "groups",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "RegExpMatchArray",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 170,
+        "api_property_type": "{[key: string]: string}"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2019.array.d.ts",
+      "api_info": {
+        "line": 110,
+        "problem": "BuiltinDisableApi",
+        "api_name": "FlatArray",
+        "api_type": "TypeAliasDeclaration",
+        "api_optional": true,
+        "parent_api": [],
+        "code_kind": 170,
+        "method_return_type": "{\"done\": Arr, \"recur\": Arr extends ReadonlyArray<infer InnerArr> ? FlatArray<InnerArr, [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20][Depth]> : Arr}[Depth extends -1 ? \"done\" : \"recur\"]"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.core.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "isFinite",
+        "api_type": "MethodSignature",
+        "api_func_args": [
+          {
+            "name": "number",
+            "type": "unknown",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "NumberConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.core.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "isInteger",
+        "api_type": "MethodSignature",
+        "api_func_args": [
+          {
+            "name": "number",
+            "type": "unknown",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "NumberConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.core.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "isNaN",
+        "api_type": "MethodSignature",
+        "api_func_args": [
+          {
+            "name": "number",
+            "type": "unknown",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "NumberConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.core.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "isSafeInteger",
+        "api_type": "MethodSignature",
+        "api_func_args": [
+          {
+            "name": "number",
+            "type": "unknown",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "NumberConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.reflect.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinAll",
+        "api_name": "get",
+        "api_type": "MethodDeclaration",
+        "api_func_args": [
+          {
+            "name": "target",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "propertyKey",
+            "type": "P",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "receiver",
+            "type": "unknown",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Reflect",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "P extends keyof T ? T[P] : any",
+        "code_kind": 174
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.reflect.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "has",
+        "api_type": "MethodDeclaration",
+        "api_func_args": [
+          {
+            "name": "target",
+            "type": "object",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "propertyKey",
+            "type": "PropertyKey",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Reflect",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.reflect.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "ownKeys",
+        "api_type": "MethodDeclaration",
+        "api_func_args": [
+          {
+            "name": "target",
+            "type": "object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Reflect",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "(string | symbol)[]",
+        "code_kind": 174
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.reflect.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinAll",
+        "api_name": "set",
+        "api_type": "MethodDeclaration",
+        "api_func_args": [
+          {
+            "name": "target",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "propertyKey",
+            "type": "P",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "value",
+            "type": "P extends keyof T ? T[P] : any",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "receiver",
+            "type": "any",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Reflect",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.core.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinDisableApi",
+        "api_name": "raw",
+        "api_type": "MethodSignature",
+        "api_func_args": [
+          {
+            "name": "template",
+            "type": "{ raw: readonly string[] | ArrayLike<string>}",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "substitutions",
+            "type": "any[]",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "StringConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.iterable.d.ts",
+      "api_info": {
+        "line": 1,
+        "problem": "BuiltinDisableApi",
+        "api_name": "from",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "iterable",
+            "type": "Iterable<T> | ArrayLike<T>",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ArrayConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "T[]",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 1,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "isArray",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "arg",
+            "type": "any",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ArrayConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "arg is any[]",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.iterable.d.ts",
+      "api_info": {
+        "line": 1506,
+        "problem": "BuiltinIteratorResultValue",
+        "api_name": "IteratorResult",
+        "api_type": "TypeAliasDeclaration",
+        "api_func_args": [],
+        "parent_api": [],
+        "method_return_type": "IteratorYieldResult<T> | IteratorReturnResult<TReturn>",
+        "code_kind": 268
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.iterable.d.ts",
+      "api_info": {
+        "line": 1681,
+        "problem": "BuiltinDisableApi",
+        "api_name": "done",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "IteratorReturnResult",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 170,
+        "api_property_type": "true"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.iterable.d.ts",
+      "api_info": {
+        "line": 1681,
+        "problem": "BuiltinDisableApi",
+        "api_name": "value",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "IteratorReturnResult",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 170,
+        "api_property_type": "TReturn"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.iterable.d.ts",
+      "api_info": {
+        "line": 1681,
+        "problem": "BuiltinDisableApi",
+        "api_name": "done",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "IteratorYieldResult",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 170,
+        "api_property_type": "false"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.iterable.d.ts",
+      "api_info": {
+        "line": 1681,
+        "problem": "BuiltinDisableApi",
+        "api_name": "value",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "IteratorYieldResult",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 170,
+        "api_property_type": "TYield"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 1244,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "isView",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "arg",
+            "type": "any",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ArrayBufferConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "arg is ArrayBufferView",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 1244,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "toJSON",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "key",
+            "type": "any",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Date",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2022.error.d.ts",
+      "api_info": {
+        "line": 110,
+        "problem": "NoPropertyDescriptor",
+        "api_name": "cause",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "ErrorOptions",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 170,
+        "api_property_type": "unknown"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2022.error.d.ts",
+      "api_info": {
+        "line": 110,
+        "problem": "NoPropertyDescriptor",
+        "api_name": "cause",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "Error",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 170,
+        "api_property_type": "unknown"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 1139,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "stringify",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "any",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "replacer",
+            "type": "(this: any, key: string, value: any) => any",
+            "is_optional": true,
+            "has_default": false
+          },
+          {
+            "name": "space",
+            "type": "string | number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "JSON",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 1139,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "stringify",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "any",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "replacer",
+            "type": "(number | string)[] | null",
+            "is_optional": true,
+            "has_default": false
+          },
+          {
+            "name": "space",
+            "type": "string | number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "JSON",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.object.d.ts",
+      "api_info": {
+        "line": 1139,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "entries",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "o",
+            "type": "{}",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ObjectConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "[string, any][]",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2017.object.d.ts",
+      "api_info": {
+        "line": 1139,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "values",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "o",
+            "type": "{}",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ObjectConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "any[]",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2019.object.d.ts",
+      "api_info": {
+        "line": 1139,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "fromEntries",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "entries",
+            "type": "Iterable<readonly [PropertyKey, T]>",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ObjectConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "{ [k: string]: T }",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 1139,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "replace",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "searchValue",
+            "type": "string | RegExp",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "replacer",
+            "type": "(substring: string, ...args: any[]) => string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "String",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2021.string.d.ts",
+      "api_info": {
+        "line": 1139,
+        "problem": "BuiltinNarrowTypes",
+        "api_name": "replaceAll",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "searchValue",
+            "type": "string | RegExp",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "replacer",
+            "type": "(substring: string, ...args: any[]) => string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "String",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.collection.d.ts",
+      "api_info": {
+        "line": 522,
+        "problem": "BuiltinNoCtorFunc",
+        "api_type": "CallSignature",
+        "parent_api": [
+          {
+            "api_name": "WeakMapConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 179
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.collection.d.ts",
+      "api_info": {
+        "line": 522,
+        "problem": "BuiltinNewCtor",
+        "api_type": "CallSignature",
+        "parent_api": [
+          {
+            "api_name": "WeakMapConstructor",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "code_kind": 179
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2020.bigint.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "BigInt",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "BigIntConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "DataView",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "DataViewConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "Int8Array",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "Int8ArrayConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "Int16Array",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "Int16ArrayConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "Int32Array",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "Int32ArrayConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2020.bigint.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "BigInt64Array",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "BigInt64ArrayConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "Float32Array",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "Float32ArrayConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "Float64Array",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "Float64ArrayConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "Boolean",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "BooleanConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "String",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "StringConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.collection.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "WeakMap",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "WeakMapConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2015.collection.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "WeakSet",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "WeakSetConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es2021.weakref.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "FinalizationRegistry",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "FinalizationRegistryConstructor"
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 126,
+        "problem": "BuiltinFinalClass",
+        "api_name": "Promise",
+        "api_type": "VariableDeclaration",
+        "api_optional": false,
+        "parent_api": [],
+        "code_kind": 260,
+        "api_property_type": "PromiseConstructor"
       },
       "import_path": [],
       "is_global": true
