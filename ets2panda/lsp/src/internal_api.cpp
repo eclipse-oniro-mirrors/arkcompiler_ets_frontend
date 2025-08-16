@@ -721,6 +721,7 @@ HighlightSpanKind GetHightlightSpanKind(ir::AstNode *identifierDeclaration, ir::
 DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto ast = ctx->parserProgram->Ast();
     std::string fileName(ctx->sourceFile->filePath);
     auto touchingToken = GetTouchingToken(context, position, false);

@@ -120,7 +120,8 @@ export const basicCases: TestCases = {
     '5': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights5.ets'), 619],
     '6': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights6.ets'), 657],
     '7': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights7.ets'), 733],
-    '8': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights8.ets'), 677]
+    '8': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights8.ets'), 677],
+    '9': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights9.ets'), 620]
   },
   getCompletionAtPosition: {
     expectedFilePath: resolveTestPath('test/expected/getCompletionAtPosition.json'),
