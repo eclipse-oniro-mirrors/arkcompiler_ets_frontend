@@ -21,7 +21,7 @@
             "endColumn": 27,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"Sticky\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -31,7 +31,7 @@
             "endColumn": 31,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"EditMode\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
