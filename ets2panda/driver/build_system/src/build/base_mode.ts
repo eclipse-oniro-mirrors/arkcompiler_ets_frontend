@@ -81,6 +81,8 @@ import {
 import { SetupClusterOptions } from '../types';
 import { KitImportTransformer } from '../plugins/KitImportTransformer';
 
+import { initKoalaModules } from '../init/init_koala_modules';
+
 export abstract class BaseMode {
   public buildConfig: BuildConfig;
   public entryFiles: Set<string>;
@@ -262,8 +264,7 @@ export abstract class BaseMode {
     ets2pandaCmd.push(fileInfo.filePath);
     this.logger.printInfo('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
-    const arktsGlobal = this.buildConfig.arktsGlobal;
-    const arkts = this.buildConfig.arkts;
+    let { arkts, arktsGlobal } = initKoalaModules(this.buildConfig)
     let errorStatus = false;
     try {
       arktsGlobal.filePath = fileInfo.filePath;
@@ -357,8 +358,7 @@ export abstract class BaseMode {
     ets2pandaCmd.push(this.buildConfig.compileFiles[0]);
     this.logger.printInfo('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
-    let arktsGlobal = this.buildConfig.arktsGlobal;
-    let arkts = this.buildConfig.arkts;
+    let { arkts, arktsGlobal } = initKoalaModules(this.buildConfig);
     let errorStatus = false;
     try {
       arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;

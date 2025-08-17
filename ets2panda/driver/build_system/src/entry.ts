@@ -23,6 +23,7 @@ import { ArkTSConfigGenerator } from './build/generate_arktsconfig';
 import { PluginDriver } from './plugins/plugins_driver';
 import { BuildConfig, BUILD_TYPE } from './types';
 import { BuildFrameworkMode } from './build/build_framework_mode';
+import { cleanKoalaModule } from './init/init_koala_modules';
 
 export async function build(projectConfig: BuildConfig): Promise<void> {
   let logger: Logger = Logger.getInstance(projectConfig);
@@ -51,6 +52,7 @@ function clean(): void {
   Logger.destroyInstance();
   ArkTSConfigGenerator.destroyInstance();
   PluginDriver.destroyInstance();
+  cleanKoalaModule();
 }
 
 function main(): void {
