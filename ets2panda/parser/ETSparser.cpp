@@ -1764,6 +1764,7 @@ ir::Expression *ETSParser::ParseFunctionParameter()
         case lexer::TokenType::KEYW_PROTECTED:
             LogError(diagnostic::FIELD_IN_PARAM);
             Lexer()->NextToken();
+            [[fallthrough]];
         default:
             break;
     }
