@@ -232,3 +232,21 @@ export class N extends T {
         return this._t // legal
     }
 }
+
+type AsyncCB<T> = () => T | Promise<T>;
+
+class AsyncLock {
+    lockAsync<T>(callback: AsyncCB<T>): Promise<T> {
+    }
+}
+
+export class AB {
+    private count_: number = 0
+    public lock_: AsyncLock = new AsyncLock();
+
+    public async getCount(): Promise<number> {
+        return this.lock_.lockAsync(() => {
+            return this.count_; //legal
+        })
+    }
+} 
