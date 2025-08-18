@@ -292,10 +292,17 @@ ir::ClassDeclaration *EnumLoweringPhase::CreateClass(ir::TSEnumDeclaration *cons
 {
     auto *ident = Allocator()->New<ir::Identifier>(enumDecl->Key()->Name(), Allocator());
     ident->SetRange(enumDecl->Key()->Range());
-    auto enumFlag = enumType == EnumType::INT || enumType == EnumType::LONG
-                        ? ir::ClassDefinitionModifiers::INT_ENUM_TRANSFORMED
-                        : ir::ClassDefinitionModifiers::STRING_ENUM_TRANSFORMED;
-    auto baseClassDefinitionFlag = ir::ClassDefinitionModifiers::CLASS_DECL | enumFlag;
+
+    auto baseClassDefinitionFlag = ir::ClassDefinitionModifiers::CLASS_DECL;
+    if (enumType == EnumType::INT || enumType == EnumType::LONG) {
+        baseClassDefinitionFlag |= ir::ClassDefinitionModifiers::INT_ENUM_TRANSFORMED;
+    } else if (enumType == EnumType::DOUBLE) {
+        baseClassDefinitionFlag |= ir::ClassDefinitionModifiers::DOUBLE_ENUM_TRANSFORMED;
+    } else if (enumType == EnumType::STRING) {
+        baseClassDefinitionFlag |= ir::ClassDefinitionModifiers::STRING_ENUM_TRANSFORMED;
+    } else if (enumType == EnumType::NOT_SPECIFIED) {
+        ES2PANDA_UNREACHABLE();
+    }
 
     auto typeParamsVector = ArenaVector<ir::TypeNode *>(Allocator()->Adapter());
     typeParamsVector.push_back(CreateType(context_, enumType));

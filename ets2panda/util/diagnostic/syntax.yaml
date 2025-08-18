@@ -235,8 +235,8 @@ syntax:
 
 - name: ERROR_ARKTS_NO_FOR_IN_LOOP
   id: 6987
-  message: "'for ... in' loop is not supported, please use regular 'for' or 'for ... of ...' loop to iterate through arrays\
-    \ and iterable objects."
+  message: "'for ... in' loop is not supported, please use regular 'for' or 'for ... of ...' loop to iterate through arrays
+    and iterable objects."
 
 - name: ERROR_ARKTS_NO_IMPORT_ASSERTIONS
   id: 313
@@ -253,8 +253,8 @@ syntax:
 
 - name: ERROR_ARKTS_NO_IS_OPERATOR
   id: 169587
-  message: "'is' operator is not supported. Use 'instanceof' instead to check whether a variable is instance of a given type\
-    \ and use 'as' operator to cast to the appropriate type!"
+  message: "'is' operator is not supported. Use 'instanceof' instead to check whether a variable is instance of a given type
+    and use 'as' operator to cast to the appropriate type!"
 
 - name: ERROR_ARKTS_NO_OBJ_LITERAL_TO_DECL_TYPE
   id: 177354
@@ -274,8 +274,8 @@ syntax:
 
 - name: ERROR_ARKTS_NO_SIDE_EFFECT_IMPORT
   id: 73297
-  message: "Importing for side-effect only is prohibited! Please provide objects to be imported explicitly or use * to import\
-    \ all objects declared in the module!"
+  message: "Importing for side-effect only is prohibited! Please provide objects to be imported explicitly or use * to import
+    all objects declared in the module!"
 
 - name: ERROR_ARKTS_NO_UMD
   id: 114179
@@ -485,8 +485,8 @@ syntax:
 
 - name: IMPORT_TOP_LEVEL
   id: 226
-  message: "Import declarations can only be used on the top level and before any other declaration, top level statement or\
-    \ directive."
+  message: "Import declarations can only be used on the top level and before any other declaration, top level statement or
+    directive."
 
 - name: IMPROPER_NESTING_CLASS
   id: 233
@@ -522,8 +522,8 @@ syntax:
 
 - name: INIT_MODULE_DECLARATION_POSITION
   id: 322
-  message: "initModule() must only be called immediately after the import statement, and before any other declarations or\
-    \ statements."
+  message: "initModule() must only be called immediately after the import statement, and before any other declarations or
+    statements."
 
 - name: INSERT_NODE_ABSENT
   id: 10
@@ -607,8 +607,8 @@ syntax:
 
 - name: INVALID_DECORATOR_CONSTRUCTOR
   id: 201
-  message: "The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and\
-    \ 'native' modifiers."
+  message: "The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and
+    'native' modifiers."
 
 - name: INVALID_DESTRUCTURING_TARGET
   id: 49
@@ -776,8 +776,8 @@ syntax:
 
 - name: LITERAL_VALUE_IDENT
   id: 315
-  message: "Number, string or computed value property name '{}' is not allowed, use classes to access data by property names\
-    \ that are identifiers"
+  message: "Number, string or computed value property name '{}' is not allowed, use classes to access data by property names
+    that are identifiers"
 
 - name: LOCAL_CLASS_ACCESS_MOD
   id: 30
@@ -1262,8 +1262,8 @@ syntax:
 
 - name: UNSUPPORTED_ENUM_TYPE
   id: 327
-  message: "Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal\
-    \ types, not annotations."
+  message: "Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal
+    types, not annotations."
 
 - name: UNTERMINATED_MULTI_LINE_COMMENT
   id: 245

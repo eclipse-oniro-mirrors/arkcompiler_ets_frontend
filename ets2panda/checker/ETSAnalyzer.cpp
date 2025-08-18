@@ -2771,6 +2771,9 @@ static checker::Type *GetTypeOfStringType(checker::Type *argType, ETSChecker *ch
     if (argType->IsETSStringEnumType()) {
         return checker->CreateETSStringLiteralType("string");
     }
+    if (argType->IsETSDoubleEnumType()) {
+        return checker->CreateETSStringLiteralType("double");
+    }
     return checker->GlobalBuiltinETSStringType();
 }
 

@@ -895,6 +895,10 @@ static pandasm::AnnotationElement ProcessETSEnumType(std::string &baseName, cons
         auto enumValue = static_cast<uint32_t>(initValue->AsNumberLiteral()->Number().GetInt());
         auto intEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::I32>(enumValue);
         return pandasm::AnnotationElement {baseName, std::make_unique<pandasm::ScalarValue>(intEnumValue)};
+    } else if (type->IsETSDoubleEnumType()) {
+        auto enumValue = initValue->AsNumberLiteral()->Number().GetDouble();
+        auto doubleEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::F64>(enumValue);
+        return pandasm::AnnotationElement {baseName, std::make_unique<pandasm::ScalarValue>(doubleEnumValue)};
     }
     ES2PANDA_ASSERT(type->IsETSStringEnumType());
     auto enumValue = initValue->AsStringLiteral()->Str().Mutf8();

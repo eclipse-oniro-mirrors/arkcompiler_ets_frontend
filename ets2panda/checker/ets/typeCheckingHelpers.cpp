@@ -412,6 +412,11 @@ bool Type::IsETSPrimitiveOrEnumType() const
     return IsETSPrimitiveType() || IsETSEnumType();
 }
 
+bool Type::IsETSDoubleEnumType() const
+{
+    return IsETSObjectType() && AsETSObjectType()->HasObjectFlag(ETSObjectFlags::DOUBLE_ENUM_OBJECT);
+}
+
 bool Type::IsETSReferenceType() const
 {
     // Do not modify

@@ -99,7 +99,13 @@ static EnumCastType NeedHandleEnumCasting(ir::TSAsExpression *node)
     } else if (type->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC) || type->IsBuiltinNumeric()) {
         castType = EnumCastType::CAST_TO_INT;
     } else if (type->IsETSEnumType()) {
-        castType = type->IsETSIntEnumType() ? EnumCastType::CAST_TO_INT_ENUM : EnumCastType::CAST_TO_STRING_ENUM;
+        if (type->IsETSIntEnumType()) {
+            castType = EnumCastType::CAST_TO_INT_ENUM;
+        } else if (type->IsETSDoubleEnumType()) {
+            castType = EnumCastType::CAST_TO_DOUBLE_ENUM;
+        } else if (type->IsETSStringEnumType()) {
+            castType = EnumCastType::CAST_TO_STRING_ENUM;
+        }
     } else {
         return castType;
     }
@@ -270,6 +276,20 @@ void EnumPostCheckLoweringPhase::CreateStatementForUnionConstituentType(EnumCast
             }
             break;
         }
+        case EnumCastType::CAST_TO_DOUBLE_ENUM: {
+            // int and Boxed Int can be casted to int enum
+            if (type->IsDoubleType() ||
+                (type->IsETSObjectType() &&
+                 type->AsETSObjectType()->HasObjectFlag(
+                     checker::ETSObjectFlags::BUILTIN_DOUBLE))) {  // CC-OFFNXT(G.FMT.06-CPP) project code style
+                auto name = TypeAnnotationToString(tsAsExpr->TypeAnnotation()->AsETSTypeReference(), context_);
+                auto callExpr =
+                    GenerateFromValueCall(ident->Clone(context_->Allocator(), nullptr)->AsExpression(), name);
+                callExpr->SetRange(tsAsExpr->Expr()->Range());
+                createInstanceOfStatement(callExpr);
+            }
+            break;
+        }
         case EnumCastType::CAST_TO_STRING_ENUM: {
             if (type->IsETSStringType()) {
                 auto name = TypeAnnotationToString(tsAsExpr->TypeAnnotation()->AsETSTypeReference(), context_);
@@ -401,7 +421,8 @@ static void RecheckNode(ir::AstNode *node, checker::ETSChecker *checker)
     node->Check(checker);
 
     if (node->IsExpression() && node->AsExpression()->TsType() != nullptr &&
-        !node->AsExpression()->TsType()->IsETSIntEnumType()) {
+        !(node->AsExpression()->TsType()->IsETSIntEnumType() ||
+          node->AsExpression()->TsType()->IsETSDoubleEnumType())) {
         node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
     }
 }
