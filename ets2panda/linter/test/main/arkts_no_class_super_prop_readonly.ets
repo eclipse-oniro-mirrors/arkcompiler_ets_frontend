@@ -81,3 +81,19 @@ class B2 extends B1 {
 class B3 extends B2 {
     readonly data: number= 2; // legal
 }
+
+interface NonReadonly {
+    v: number
+}
+
+class B4 extends NonReadonly {
+    readonly v: number = 0; // error
+}
+
+interface Readonly {
+    readonly v: number;
+}
+
+class B5 extends Readonly {
+    readonly v: number = 0; // legal
+}

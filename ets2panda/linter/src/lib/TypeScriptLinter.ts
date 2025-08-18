@@ -1914,6 +1914,81 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handlePropertyDeclarationForProp(node);
     this.handleSdkGlobalApi(node);
     this.handleObjectLiteralAssignmentToClass(node);
+    this.checkPropertyDeclarationReadonlyUsage(node);
+  }
+
+  private checkPropertyDeclarationReadonlyUsage(propDecl: ts.PropertyDeclaration): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+
+    const { parent, name } = propDecl;
+
+    if (!ts.isClassDeclaration(parent)) {
+      return;
+    }
+
+    if (!parent.heritageClauses) {
+      return;
+    }
+
+    const extendedIdent = parent.heritageClauses.at(0);
+
+    if (!TsUtils.hasModifier(propDecl.modifiers, ts.SyntaxKind.ReadonlyKeyword)) {
+      return;
+    }
+
+    const extendedProp = this.getExtendedProperty(name, extendedIdent);
+    if (!extendedProp) {
+      return;
+    }
+
+    if (TsUtils.hasModifier(extendedProp.modifiers, ts.SyntaxKind.ReadonlyKeyword)) {
+      return;
+    }
+
+    this.incrementCounters(propDecl, FaultID.NoClassSuperPropReadonly);
+  }
+
+  private getExtendedProperty(
+    propertyName: ts.PropertyName,
+    extended: ts.HeritageClause | undefined
+  ): ts.PropertySignature | undefined {
+    if (!extended) {
+      return undefined;
+    }
+
+    const extendedType = extended.types.at(0);
+    if (!extendedType) {
+      return undefined;
+    }
+
+    const extendedIdent = extendedType.expression;
+    if (!ts.isIdentifier(extendedIdent)) {
+      return undefined;
+    }
+
+    const extendedDeclaration = this.tsUtils.getDeclarationNode(extendedIdent);
+    if (!extendedDeclaration) {
+      return undefined;
+    }
+
+    if (!ts.isInterfaceDeclaration(extendedDeclaration)) {
+      return undefined;
+    }
+
+    for (const member of extendedDeclaration.members) {
+      if (!ts.isPropertySignature(member)) {
+        continue;
+      }
+      if (member.name.getText() !== propertyName.getText()) {
+        continue;
+      }
+
+      return member;
+    }
+
+    return undefined;
   }
 
   private handleSendableClassProperty(node: ts.PropertyDeclaration): void {
@@ -6247,7 +6322,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.checkOnClickCallback(tsCallOrNewExpr);
   }
 
-private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpression): void {
+  private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpression): void {
     if (!tsCallOrNewExpr.arguments || tsCallOrNewExpr.arguments.length === 0 && this.options.arkts2) {
       return;
     }
@@ -6277,8 +6352,8 @@ private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpressi
 
   private checkAsyncOrPromiseFunction(callback: ts.ArrowFunction): void {
     const returnsPromise = this.checkReturnsPromise(callback);
-    const isAsync = callback.modifiers?.some((m) => { 
-      return m.kind === ts.SyntaxKind.AsyncKeyword; 
+    const isAsync = callback.modifiers?.some((m) => {
+      return m.kind === ts.SyntaxKind.AsyncKeyword;
     });
 
     if (isAsync || returnsPromise) {
@@ -6286,9 +6361,15 @@ private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpressi
       const endPos = callback.body.getEnd();
 
       const errorNode = {
-        getStart: () => { return startPos; },
-        getEnd: () => { return endPos; },
-        getSourceFile: () => { return callback.getSourceFile(); }
+        getStart: () => {
+          return startPos;
+        },
+        getEnd: () => {
+          return endPos;
+        },
+        getSourceFile: () => {
+          return callback.getSourceFile();
+        }
       } as ts.Node;
 
       this.incrementCounters(errorNode, FaultID.IncompationbleFunctionType);
