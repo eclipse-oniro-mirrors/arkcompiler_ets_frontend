@@ -1,0 +1,25 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/simultaneous_compiling/namespace_import/entry/a.ets",
+        "${absolute_path_to_build_system}/test/simultaneous_compiling/namespace_import/entry/b.ets",
+        "${absolute_path_to_build_system}/test/simultaneous_compiling/namespace_import/entry/c.ets"
+    ],
+    "packageName": "entry",
+    "moduleType": "shared",
+    "buildType": "build",
+    "buildMode": "Debug",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/simultaneous_compiling/namespace_import/entry/",
+    "sourceRoots": [
+        "./",
+        "src/main1/ets"
+    ],
+    "loaderOutPath": "./dist",
+    "cachePath": "./dist/cache",
+    "enableDeclgenEts2Ts": false,
+    "declgenV1OutPath": "./dist/declgen/decl_ets",
+    "declgenV2OutPath": "./dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "dependentModuleList": [],
+    "hasMainModule": true
+}

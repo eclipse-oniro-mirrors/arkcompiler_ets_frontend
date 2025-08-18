@@ -283,6 +283,7 @@ public:
     void SetFlag(ProgramFlags flag);
     bool GetFlag(ProgramFlags flag) const;
     void SetASTChecked();
+    void RemoveAstChecked();
     bool IsASTChecked();
 
     void MarkASTAsLowered()
