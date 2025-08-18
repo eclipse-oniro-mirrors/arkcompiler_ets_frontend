@@ -45,9 +45,6 @@ protobuf_snapshot_generator_sources = [
 
 config("panda_assembly_proto_public_config") {
   include_dirs = [
-    "$ark_root/assembler",
-    "$ark_root/libpandabase",
-    "$ark_root/libpandabase/mem",
     "$ark_root",
     "src",
     "$proto_out_dir",
@@ -168,6 +165,7 @@ ohos_source_set("assembly_proto_static") {
   deps = [ ":arkcompiler_generate_proto" ]
 
   external_deps = []
+  include_dirs = []
   if (!is_arkui_x) {
     external_deps += [
       "protobuf:protobuf_lite_static",
@@ -196,6 +194,12 @@ ohos_source_set("assembly_proto_static") {
     if (enable_hilog) {
       external_deps += [ "hilog:libhilog" ]
     }
+  } else {
+    include_dirs += [
+      "$ark_root/assembler",
+      "$ark_root/libpandabase",
+      "$ark_root/libpandabase/mem",
+    ]
   }
 
   if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
@@ -248,6 +252,11 @@ ohos_executable("merge_abc") {
       "$ark_root/assembler:arkassembler_public_config",
       "$ark_root/libpandafile:arkfile_public_config",
       "$ark_root/libpandabase:arkbase_public_config",
+    ]
+    include_dirs += [
+      "$ark_root/assembler",
+      "$ark_root/libpandabase",
+      "$ark_root/libpandabase/mem",
     ]
   } else {
     configs = [ "//arkcompiler/ets_frontend:ark_config" ]
