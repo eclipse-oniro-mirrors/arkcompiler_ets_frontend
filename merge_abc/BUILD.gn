@@ -184,16 +184,15 @@ ohos_source_set("assembly_proto_static") {
       "$ark_third_party_root/protobuf:protobuf_static",
     ]
   }
-
+  if (enable_hilog) {
+    external_deps += [ "hilog:libhilog" ]
+  }
   if (!ark_standalone_build && !is_arkui_x) {
     external_deps += [
       "runtime_core:arkassembler_public_headers",
       "runtime_core:arkbase_public_headers",
       "runtime_core:arkfile_public_headers",
     ]
-    if (enable_hilog) {
-      external_deps += [ "hilog:libhilog" ]
-    }
   } else {
     include_dirs += [
       "$ark_root/assembler",
