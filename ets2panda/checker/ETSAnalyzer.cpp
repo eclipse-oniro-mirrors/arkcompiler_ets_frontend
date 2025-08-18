@@ -3806,6 +3806,26 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
         return expr->SetTsType(checker->TypeError(expr, diagnostic::NULLISH_CAST_TO_NONNULLISH, expr->Start()));
     }
 
+    if (expr->Expr()->IsLiteral() && sourceType->IsBuiltinNumeric() && targetType->IsETSTypeParameter()) {
+        checker->LogError(diagnostic::INVALID_CAST, {sourceType->ToString(), targetType->ToString()},
+                          expr->Expr()->Start());
+        return checker->InvalidateType(expr);
+    }
+
+    if (expr->Expr()->IsLiteral() && sourceType->IsBuiltinNumeric() && targetType->IsETSUnionType()) {
+        bool allAreTypeParams = true;
+        for (auto *sub : targetType->AsETSUnionType()->ConstituentTypes()) {
+            if (!sub->IsETSTypeParameter()) {
+                allAreTypeParams = false;
+            }
+        }
+        if (allAreTypeParams) {
+            checker->LogError(diagnostic::INVALID_CAST, {sourceType->ToString(), targetType->ToString()},
+                              expr->Expr()->Start());
+            return checker->InvalidateType(expr);
+        }
+    }
+
     const checker::CastingContext ctx(
         checker->Relation(),
         sourceType->IsBuiltinNumeric() && targetType->IsBuiltinNumeric() ? diagnostic::IMPROPER_NUMERIC_CAST
