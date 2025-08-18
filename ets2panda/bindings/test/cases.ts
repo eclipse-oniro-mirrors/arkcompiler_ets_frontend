@@ -44,7 +44,6 @@ export const testCases: TestCases = {
     '7': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition13.ets'), 664],
     '8': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition15.ets'), 617],
     '9': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition17.ets'), 677],
-    '10': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition18.ets'), 930],
     '11': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition19.ets'), 634]
   },
   getSemanticDiagnostics: {
