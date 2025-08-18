@@ -104,6 +104,12 @@ export const basicCases: TestCases = {
     expectedFilePath: resolveTestPath('test/expected/getSuggestionDiagnostics.json'),
     '1': [resolveTestPath('test/testcases/getSuggestionDiagnostics/getSuggestionDiagnostics1.ets')]
   },
+  getOrganizeImports: {
+    expectedFilePath: resolveTestPath('test/expected/getOrganizeImports.json'),
+    '1': [resolveTestPath('test/testcases/getOrganizeImports/getOrganizeImports1.ets')],
+    '2': [resolveTestPath('test/testcases/getOrganizeImports/ExtractDefaultImport1_import.ets')],
+    '3': [resolveTestPath('test/testcases/getOrganizeImports/ExtractDefaultImport2_import.ets')]
+  },
   getQuickInfoAtPosition: {
     expectedFilePath: resolveTestPath('test/expected/getQuickInfoAtPosition.json'),
     '1': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition1.ets'), 626],
