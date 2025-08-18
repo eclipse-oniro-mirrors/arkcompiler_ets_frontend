@@ -78,9 +78,8 @@ void AppendStatementToProgram(es2panda_Context *context, es2panda_AstNode *progr
     auto *statements = impl->BlockStatementStatements(context, program, &sizeOfStatements);
     auto **newStatements =
         static_cast<es2panda_AstNode **>(impl->AllocMemory(context, sizeOfStatements + 1, sizeof(es2panda_AstNode *)));
-    for (size_t i = 0; i < sizeOfStatements; i++) {
-        newStatements[i] = statements[i];
-    }
+    std::copy_n(statements, sizeOfStatements, newStatements);
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     newStatements[sizeOfStatements] = newStatement;
     impl->BlockStatementSetStatements(context, program, newStatements, sizeOfStatements + 1);
     impl->AstNodeSetParent(context, newStatement, program);
@@ -93,9 +92,9 @@ void PrependStatementToProgram(es2panda_Context *context, es2panda_AstNode *prog
     auto *statements = impl->BlockStatementStatements(context, program, &sizeOfStatements);
     auto **newStatements =
         static_cast<es2panda_AstNode **>(impl->AllocMemory(context, sizeOfStatements + 1, sizeof(es2panda_AstNode *)));
-    for (size_t i = 0; i < sizeOfStatements; i++) {
-        newStatements[i + 1] = statements[i];
-    }
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    std::copy_n(statements, sizeOfStatements, &newStatements[1]);
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     newStatements[0] = newStatement;
     impl->BlockStatementSetStatements(context, program, newStatements, sizeOfStatements + 1);
     impl->AstNodeSetParent(context, newStatement, program);
@@ -155,12 +154,15 @@ int RunAllStagesWithTestFunction(ProccedToStatePluginTestData &data)
     }
     *data.impl = GetImpl();
     std::cout << "LOAD SUCCESS" << std::endl;
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     const char **args = const_cast<const char **>(&(data.argv[1]));
     auto config = g_implPtr->CreateConfig(data.argc - 1, args);
     es2panda_Context *context = nullptr;
     if (data.fromSource) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         context = g_implPtr->CreateContextFromString(config, data.source.data(), data.argv[data.argc - 1]);
     } else {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         context = g_implPtr->CreateContextFromFile(config, data.argv[data.argc - 1]);
     }
     if (context == nullptr) {
