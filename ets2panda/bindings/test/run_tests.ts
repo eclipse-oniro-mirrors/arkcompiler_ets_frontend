@@ -38,16 +38,7 @@ interface ComparisonOutcome {
 
 let updateMode = false;
 
-function checkEnvironment(testDir: string): void {
-  const testCasesFilePath = path.join(testDir, 'testcases', 'cases.json');
-  if (!fs.existsSync(testCasesFilePath)) {
-    console.error(`Test cases file not found: ${testCasesFilePath}`);
-    process.exit(1);
-  }
-}
-
 function getModules(projectRoot: string): ModuleDescriptor[] {
-  const testCases = JSON.parse(fs.readFileSync(path.join(projectRoot, 'cases.json'), 'utf-8')) as TestCases;
   return Object.keys(testCases).map((name) => {
     const modulePath = path.join(projectRoot, name);
     return {
@@ -310,7 +301,6 @@ function compareResults(testName: string, index: string, actual: unknown, expect
 
 function runTests(testDir: string, lsp: Lsp) {
   console.log('Running tests...');
-  const testCases = JSON.parse(fs.readFileSync(path.join(testDir, 'testcases', 'cases.json'), 'utf-8')) as TestCases;
   if (!testCases) {
     console.error('Failed to load test cases');
     return;
@@ -374,7 +364,6 @@ if (require.main === module) {
     updateMode = true;
   }
   const testDir = path.resolve(process.argv[2]);
-  checkEnvironment(testDir);
   const buildSdkPath = path.join(testDir, 'ets', 'ets1.2');
   const projectRoot = path.join(testDir, 'testcases');
   const modules = getModules(projectRoot);
