@@ -486,11 +486,11 @@ ohos_static_library("es2panda_lib") {
     "-Wno-c++20-designator",
     "-Wno-implicit-fallthrough",
   ]
+  if (enable_hilog) {
+    external_deps += [ "hilog:libhilog" ]
+  }
   if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
     external_deps += [ "runtime_core:libarkassembler_static" ]
-    if (enable_hilog) {
-      external_deps += [ "hilog:libhilog" ]
-    }
     cflags += [ "-I" + rebase_path(
                     "$root_build_dir/gen/arkcompiler/runtime_core/compiler/generated") ]
   }
@@ -542,16 +542,15 @@ ohos_executable("es2panda") {
       "runtime_core:arkfile_public_headers",
     ]
   }
-
+  if (enable_hilog) {
+    external_deps += [ "hilog:libhilog" ]
+  }
   if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
     external_deps += [
       "abseil-cpp:absl_base_static",
       "icu:shared_icuuc",
       "runtime_core:libarkassembler_static",
     ]
-    if (enable_hilog) {
-      external_deps += [ "hilog:libhilog" ]
-    }
     cflags = [
       "-Wno-constant-conversion",
       "-I" + rebase_path(
