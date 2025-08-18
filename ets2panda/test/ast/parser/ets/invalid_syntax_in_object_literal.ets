@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-class A {
-    bit1: int =< 2
+let a2: A2 = {
+    value: {
+        'bbb': 222 / <s
+    }
 }
 
-/* @@? 17:18 Error SyntaxError: Number, string or computed value property name '2' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 17:18 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 17:18 Error SyntaxError: Unexpected token '2'. */
-/* @@? 18:1 Error SyntaxError: Unexpected token, expected '>'. */
+/* @@? 16:9 Error TypeError: Cannot find type 'A2'. */
+/* @@? 19:5 Error SyntaxError: Unexpected token, expected '>'. */
