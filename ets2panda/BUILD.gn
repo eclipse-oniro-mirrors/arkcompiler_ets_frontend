@@ -1232,7 +1232,14 @@ ohos_shared_library("libes2panda_public") {
 if (!(defined(ark_static_standalone_build) && ark_static_standalone_build)) {
   ohos_shared_headers("libes2panda_public_headers") {
     include_dirs = [ "$ark_es2panda_root/public" ]
-    deps = [ ":libes2panda_public_frontend_static" ]
+    deps = [
+      ":gen_${LIB_NAME}_decl_inc",
+      ":gen_${LIB_NAME}_enums_inc",
+      ":gen_${LIB_NAME}_idl",
+      ":gen_${LIB_NAME}_impl_inc",
+      ":gen_${LIB_NAME}_include_inc",
+      ":gen_${LIB_NAME}_list_inc"
+    ]
     part_name = "ets_frontend"
     subsystem_name = "arkcompiler"
   }
