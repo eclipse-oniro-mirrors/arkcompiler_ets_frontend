@@ -21,12 +21,31 @@
 
 namespace ark::es2panda::lsp {
 const int G_UI_PLUGIN_SUGGEST_CODE = 4000;  // change this to the error code you want to handle
+constexpr const char *G_UI_PLUGIN_SUGGEST_ID = "UIPluginSuggest";
+std::vector<FileTextChanges> fixAll;
 
 UIPluginSuggest::UIPluginSuggest()
 {
-    const char *uiPluginSuggestId = "UIPluginSuggest";
     SetErrorCodes({G_UI_PLUGIN_SUGGEST_CODE});
-    SetFixIds({uiPluginSuggestId});
+    SetFixIds({G_UI_PLUGIN_SUGGEST_ID});
+}
+
+CodeFixAction CreateCodeFixAction(const ark::es2panda::util::Diagnostic *diag, std::vector<FileTextChanges> &changes)
+{
+    CodeFixAction codeAction;
+    codeAction.fixName = "Fix";
+    codeAction.description =
+        diag->HasSuggestions() && !diag->Suggestion().empty()
+            ? !diag->Suggestion().at(0)->Title().empty() ? diag->Suggestion().at(0)->Title() : "Fix Description"
+            : "Fix Description";
+    codeAction.changes = std::move(changes);
+    codeAction.fixId = "UI_PLUGIN_SUGGEST";
+    codeAction.fixAllDescription = "Fix All Description";
+    InstallPackageAction codeActionCommand;
+    codeActionCommand.file = diag->File();
+    codeActionCommand.packageName = "";
+    codeAction.commands.push_back(codeActionCommand);
+    return codeAction;
 }
 
 std::vector<TextChange> GetTextChangesFromSuggestions(const ark::es2panda::util::Diagnostic *diag, size_t pos,
@@ -58,62 +77,52 @@ std::vector<TextChange> GetTextChangesFromSuggestions(const ark::es2panda::util:
     return textChanges;
 }
 
-std::vector<FileTextChanges> GetUIPluginCodeFixesByDiagType(es2panda_Context *context, size_t pos,
-                                                            util::DiagnosticType type, bool isAll)
+std::vector<FileTextChanges> GetUIPluginCodeFixesByDiagType(es2panda_Context *context, size_t pos, bool isAll,
+                                                            std::vector<CodeFixAction> &actions,
+                                                            util::DiagnosticType type)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto filename = ctx->sourceFileName;
-    std::vector<FileTextChanges> res;
     const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(type);
-    auto diagnosticStorage = reinterpret_cast<const ark::es2panda::util::DiagnosticStorage *>(&diagnostics);
-    // NOLINTNEXTLINE(modernize-loop-convert,-warnings-as-errors)
-    for (size_t i = 0; i < diagnosticStorage->size(); ++i) {
-        auto diag = reinterpret_cast<const ark::es2panda::util::Diagnostic *>(&(*(*diagnosticStorage)[i]));
+    std::vector<FileTextChanges> changes;
+    for (const auto &diagnostic : diagnostics) {
+        std::vector<FileTextChanges> fileChanges;
+        auto diag = reinterpret_cast<const ark::es2panda::util::Diagnostic *>(&(*diagnostic));
         auto textChanges = GetTextChangesFromSuggestions(diag, pos, isAll, context);
-        FileTextChanges fileTextChanges(filename, textChanges);
-        res.emplace_back(fileTextChanges);
+        FileTextChanges fileTextChanges(ctx->sourceFileName, textChanges);
+        fileChanges.emplace_back(fileTextChanges);
+        changes.emplace_back(fileTextChanges);
+        actions.push_back(CreateCodeFixAction(diag, fileChanges));
     }
-    return res;
+    return changes;
 }
 
-std::vector<FileTextChanges> UIPluginSuggest::GetUIPluginCodeFixes(es2panda_Context *context, size_t pos, bool isAll)
+std::vector<CodeFixAction> UIPluginSuggest::GetUIPluginCodeFixes(es2panda_Context *context, size_t pos, bool isAll)
 {
-    if (context == nullptr) {
-        return {};
+    std::vector<util::DiagnosticType> types = {util::DiagnosticType::PLUGIN_ERROR,
+                                               util::DiagnosticType::PLUGIN_WARNING};
+    std::vector<FileTextChanges> changes;
+    std::vector<CodeFixAction> returnedActions;
+    for (const auto &type : types) {
+        auto typeChanges = GetUIPluginCodeFixesByDiagType(context, pos, isAll, returnedActions, type);
+        changes.insert(changes.end(), typeChanges.begin(), typeChanges.end());
     }
-    std::vector<FileTextChanges> res;
-    auto errorFixes = GetUIPluginCodeFixesByDiagType(context, pos, util::DiagnosticType::PLUGIN_ERROR, isAll);
-    res.insert(res.end(), errorFixes.begin(), errorFixes.end());
-    auto warningFixes = GetUIPluginCodeFixesByDiagType(context, pos, util::DiagnosticType::PLUGIN_WARNING, isAll);
-    res.insert(res.end(), warningFixes.begin(), warningFixes.end());
-    return res;
+    fixAll = changes;
+    return returnedActions;
 }
 
 std::vector<CodeFixAction> UIPluginSuggest::GetCodeActions(const CodeFixContext &context)
 {
-    std::vector<CodeFixAction> returnedActions;
-    auto changes = GetUIPluginCodeFixes(context.context, context.span.start, false);
-    if (!changes.empty()) {
-        CodeFixAction codeAction;
-        codeAction.fixName = "Fix";
-        codeAction.description = "Fix Description";
-        codeAction.changes = changes;
-        codeAction.fixId = "UI_PLUGIN_SUGGEST";
-        codeAction.fixAllDescription = "Fix All Description";
-        InstallPackageAction codeActionCommand;
-        codeActionCommand.file = reinterpret_cast<public_lib::Context *>(context.context)->sourceFileName;
-        codeActionCommand.packageName = "";
-        codeAction.commands.push_back(codeActionCommand);
-        returnedActions.push_back(codeAction);
-    }
+    auto returnedActions = GetUIPluginCodeFixes(context.context, context.span.start, false);
     return returnedActions;
 }
 
 CombinedCodeActions UIPluginSuggest::GetAllCodeActions(const CodeFixAllContext &codeFixAll)
 {
     CombinedCodeActions combinedCodeActions;
-    auto changes = GetUIPluginCodeFixes(codeFixAll.context, 0, true);
-    combinedCodeActions.changes = changes;
+    if (fixAll.empty()) {
+        GetUIPluginCodeFixes(codeFixAll.context, 0, true);
+    }
+    combinedCodeActions.changes = fixAll;
     InstallPackageAction codeActionCommand;
     codeActionCommand.file = reinterpret_cast<public_lib::Context *>(codeFixAll.context)->sourceFileName;
     codeActionCommand.packageName = "";
@@ -122,5 +131,5 @@ CombinedCodeActions UIPluginSuggest::GetAllCodeActions(const CodeFixAllContext &
     return combinedCodeActions;
 }
 // NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
-AutoCodeFixRegister<UIPluginSuggest> g_uiPluginSuggest("UIPluginSuggest");
+AutoCodeFixRegister<UIPluginSuggest> g_uiPluginSuggest(G_UI_PLUGIN_SUGGEST_ID);
 }  // namespace ark::es2panda::lsp
