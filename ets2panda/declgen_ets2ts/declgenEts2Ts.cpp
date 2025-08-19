@@ -67,8 +67,6 @@ bool TSDeclGen::GenGlobalDescriptor()
         checker::ETSObjectType::NameToDescriptor(program_->GlobalClass()->TsType()->AsETSObjectType()->AssemblerName());
     OutTs("let ETSGLOBAL = (globalThis as any).Panda.getClass('", globalDesc_, "');");
     OutEndlTs();
-    OutTs("ETSGLOBAL.", compiler::Signatures::INIT_METHOD, "();");
-    OutEndlTs();
     OutTs("export {};");
     OutEndlTs();
     return true;
