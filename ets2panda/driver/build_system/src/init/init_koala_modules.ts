@@ -22,20 +22,27 @@ import path from "path"
 let koalaModule: any;
 
 export function initKoalaModules(buildConfig: BuildConfig) {
-  if (koalaModule) return koalaModule
-  
-  const koalaWrapperPath = process.env.KOALA_WRAPPER_PATH ?? path.resolve(buildConfig.buildSdkPath, KOALA_WRAPPER_PATH_FROM_SDK);
-  koalaModule = require(koalaWrapperPath);
-  koalaModule.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
-  buildConfig.arkts = koalaModule.arkts;
-  buildConfig.arktsGlobal = koalaModule.arktsGlobal;
-  return koalaModule
+  if (!koalaModule) {
+    const koalaWrapperPath =
+      process.env.KOALA_WRAPPER_PATH ??
+      path.resolve(buildConfig.buildSdkPath, KOALA_WRAPPER_PATH_FROM_SDK);
+
+    koalaModule = require(koalaWrapperPath);
+    koalaModule.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+  }
+
+  Object.assign(buildConfig, {
+    arkts: koalaModule.arkts,
+    arktsGlobal: koalaModule.arktsGlobal,
+  });
+
+  return koalaModule;
 }
 
-export function initKoalaPlugins(projectConfig: BuildConfig): void {
 
-    const uiPluginPath = path.resolve(projectConfig.buildSdkPath, UI_PLUGIN_PATH_FROM_SDK);
-    const memoPluginPath = path.resolve(projectConfig.buildSdkPath, MEMO_PLUGIN_PATH_FROM_SDK);
+export function initKoalaPlugins(projectConfig: BuildConfig): void {
+  const uiPluginPath = path.resolve(projectConfig.buildSdkPath, UI_PLUGIN_PATH_FROM_SDK);
+  const memoPluginPath = path.resolve(projectConfig.buildSdkPath, MEMO_PLUGIN_PATH_FROM_SDK);
 
     // TODO: need change in hvigor
     if (process.env.USE_KOALA_UI_PLUGIN) {
@@ -45,4 +52,13 @@ export function initKoalaPlugins(projectConfig: BuildConfig): void {
     if (process.env.USE_KOALA_MEMO_PLUGIN) {
       projectConfig.plugins['ArkUI-Memo'] = memoPluginPath
     }
+}
+
+export function cleanKoalaModule() {
+  koalaModule = null;
+}
+
+// for ut
+export function getKoalaModule() {
+  return koalaModule;
 }
