@@ -146,6 +146,7 @@ typedef struct es2panda_SuggestionInfo {
     const char **args;
     size_t argc;
     const char *substitutionCode;
+    const char *title;
     es2panda_SourceRange *range;
 } es2panda_SuggestionInfo;
 
@@ -243,7 +244,7 @@ struct CAPI_EXPORT es2panda_Impl {
                                                      const char **args, size_t argc, es2panda_SourcePosition *position);
     es2panda_SuggestionInfo *(*CreateSuggestionInfo)(es2panda_Context *context, const es2panda_DiagnosticKind *kind,
                                                      const char **args, size_t argc, const char *substitutionCode,
-                                                     es2panda_SourceRange *range);
+                                                     const char *title, es2panda_SourceRange *range);
     void (*LogDiagnosticWithSuggestion)(es2panda_Context *context, const es2panda_DiagnosticInfo *diagnosticInfo,
                                         const es2panda_SuggestionInfo *suggestionInfo);
     void (*LogDiagnostic)(es2panda_Context *context, const es2panda_DiagnosticKind *kind, const char **args,

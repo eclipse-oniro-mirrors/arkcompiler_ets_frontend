@@ -926,7 +926,7 @@ extern "C" es2panda_DiagnosticInfo *CreateDiagnosticInfo(es2panda_Context *conte
 
 extern "C" es2panda_SuggestionInfo *CreateSuggestionInfo(es2panda_Context *context, const es2panda_DiagnosticKind *kind,
                                                          const char **args, size_t argc, const char *substitutionCode,
-                                                         es2panda_SourceRange *range)
+                                                         const char *title, es2panda_SourceRange *range)
 {
     auto *allocator = reinterpret_cast<Context *>(context)->allocator;
     auto suggestionInfo = allocator->New<es2panda_SuggestionInfo>();
@@ -934,6 +934,7 @@ extern "C" es2panda_SuggestionInfo *CreateSuggestionInfo(es2panda_Context *conte
     suggestionInfo->args = args;
     suggestionInfo->argc = argc;
     suggestionInfo->substitutionCode = substitutionCode;
+    suggestionInfo->title = title;
     suggestionInfo->range = range;
     return suggestionInfo;
 }
@@ -957,8 +958,8 @@ extern "C" void LogDiagnosticWithSuggestion(es2panda_Context *context, const es2
 
     auto E2pRange = reinterpret_cast<lexer::SourceRange *>(suggestionInfo->range);
     auto posE2p = reinterpret_cast<lexer::SourcePosition *>(diagnosticInfo->pos);
-    auto suggestion = ctx->diagnosticEngine->CreateSuggestion(suggestionkind, suggestionParams,
-                                                              suggestionInfo->substitutionCode, E2pRange);
+    auto suggestion = ctx->diagnosticEngine->CreateSuggestion(
+        suggestionkind, suggestionParams, suggestionInfo->substitutionCode, suggestionInfo->title, E2pRange);
     ctx->diagnosticEngine->LogDiagnostic(*diagnostickind, diagnosticParams, *posE2p, suggestion);
 }
 

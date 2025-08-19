@@ -227,8 +227,12 @@ ThrowableDiagnostic::ThrowableDiagnostic(const DiagnosticType type, const diagno
 }
 
 Suggestion::Suggestion(const diagnostic::DiagnosticKind *kind, std::vector<std::string> &params,
-                       const char *substitutionCode, const lexer::SourceRange *range)
-    : kind_(kind), substitutionCode_(substitutionCode), message_(Format(kind->Message(), params)), range_(range)
+                       const char *substitutionCode, const char *title, const lexer::SourceRange *range)
+    : kind_(kind),
+      substitutionCode_(substitutionCode),
+      title_(title),
+      message_(Format(kind->Message(), params)),
+      range_(range)
 {
 }
 

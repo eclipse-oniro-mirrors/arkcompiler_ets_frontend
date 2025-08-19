@@ -180,7 +180,7 @@ private:
 class Suggestion : public DiagnosticBase {
 public:
     explicit Suggestion(const diagnostic::DiagnosticKind *kind, std::vector<std::string> &params,
-                        const char *substitutionCode, const lexer::SourceRange *range);
+                        const char *substitutionCode, const char *title, const lexer::SourceRange *range);
 
     const lexer::SourceRange *SourceRange() const
     {
@@ -190,6 +190,11 @@ public:
     std::string SubstitutionCode() const
     {
         return substitutionCode_;
+    }
+
+    std::string Title() const
+    {
+        return title_;
     }
 
     std::string Message() const override
@@ -204,6 +209,7 @@ public:
 private:
     const diagnostic::DiagnosticKind *kind_;
     const std::string substitutionCode_;
+    const std::string title_;
     const std::string message_;
     const lexer::SourceRange *range_;
 };
