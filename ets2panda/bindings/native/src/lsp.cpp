@@ -1888,6 +1888,12 @@ KNativePointer impl_getNameByNodeInfo(KNativePointer nodeInfo)
 }
 TS_INTEROP_1(getNameByNodeInfo, KNativePointer, KNativePointer)
 
+KNativePointer impl_CreateNodeInfoPtr(KStringPtr &nodeName, KInt nodeKind)
+{
+    return new NodeInfo(nodeName.Data(), ark::es2panda::ir::AstNodeType(nodeKind));
+}
+TS_INTEROP_2(CreateNodeInfoPtr, KNativePointer, KStringPtr, KInt)
+
 KNativePointer impl_getKindByNodeInfo(KNativePointer nodeInfo)
 {
     auto *info = reinterpret_cast<NodeInfo *>(nodeInfo);
@@ -1895,13 +1901,22 @@ KNativePointer impl_getKindByNodeInfo(KNativePointer nodeInfo)
 }
 TS_INTEROP_1(getKindByNodeInfo, KNativePointer, KNativePointer)
 
-KNativePointer impl_getDefinitionDataFromNode(KNativePointer astNodePtr, KStringPtr &nodeNamePtr)
+KNativePointer impl_getDefinitionDataFromNode(KNativePointer context, KStringArray pointerArrayPtr, KInt arraySize)
 {
-    auto ast = reinterpret_cast<es2panda_AstNode *>(astNodePtr);
+    auto pointerArray = ParsePointerArray(arraySize, pointerArrayPtr);
+    auto nodeInfos = std::vector<NodeInfo *> {};
+    nodeInfos.reserve(arraySize);
+    for (std::size_t i = 0; i < static_cast<std::size_t>(arraySize); ++i) {
+        auto contextPtr = reinterpret_cast<NodeInfo *>(pointerArray[i]);
+        if (contextPtr != nullptr) {
+            nodeInfos.push_back(contextPtr);
+        }
+    }
+    auto ctx = reinterpret_cast<es2panda_Context *>(context);
     LSPAPI const *impl = GetImpl();
-    return new DefinitionInfo(impl->getDefinitionDataFromNode(ast, nodeNamePtr.Data()));
+    return new DefinitionInfo(impl->getDefinitionDataFromNode(ctx, nodeInfos));
 }
-TS_INTEROP_2(getDefinitionDataFromNode, KNativePointer, KNativePointer, KStringPtr)
+TS_INTEROP_3(getDefinitionDataFromNode, KNativePointer, KNativePointer, KStringArray, KInt)
 
 KInt impl_getSourceLocationLine(KNativePointer locationPtr)
 {

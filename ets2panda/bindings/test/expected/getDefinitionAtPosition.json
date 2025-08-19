@@ -63,5 +63,50 @@
     "fileName": "getDefinitionAtPosition20.ets",
     "start": 625,
     "length": 3
+  },
+  "14": {
+    "fileName": "getDefinitionAtPosition21.ets",
+    "start": 636,
+    "length": 3
+  },
+  "15": {
+    "fileName": "getDefinitionAtPosition22.ets",
+    "start": 643,
+    "length": 14
+  },
+  "16": {
+    "fileName": "getDefinitionAtPosition23.ets",
+    "start": 672,
+    "length": 3
+  },
+  "17": {
+    "fileName": "getDefinitionAtPosition24.ets",
+    "start": 629,
+    "length": 2
+  },
+  "18": {
+    "fileName": "getDefinitionAtPosition25.ets",
+    "start": 630,
+    "length": 4
+  },
+  "19": {
+    "fileName": "getDefinitionAtPosition26.ets",
+    "start": 625,
+    "length": 2
+  },
+  "20": {
+    "fileName": "getDefinitionAtPosition27.ets",
+    "start": 625,
+    "length": 5
+  },
+  "21": {
+    "fileName": "getDefinitionAtPosition28.ets",
+    "start": 642,
+    "length": 5
+  },
+  "22": {
+    "fileName": "getDefinitionAtPosition30.ets",
+    "start": 714,
+    "length": 9
   }
 }

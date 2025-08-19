@@ -1026,6 +1026,10 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _CreateNodeInfoPtr(nodeName: String, nodeKind: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
   _getProgramAst(context: KPtr): KPtr {
     throw new Error('Not implemented');
   }
@@ -1034,7 +1038,7 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _getDefinitionDataFromNode(astNode: KPtr, nodeName: String): KPtr {
+  _getDefinitionDataFromNode(context: KPtr, nodeInfoPtrs: Uint8Array, arraySize: KInt): KPtr {
     throw new Error('Not implemented');
   }
 

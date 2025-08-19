@@ -42,6 +42,7 @@
 #include "completions_details.h"
 #include "get_name_or_dotted_name_span.h"
 #include "get_signature.h"
+#include "node_matchers.h"
 
 using ark::es2panda::lsp::details::GetCompletionEntryDetailsImpl;
 
@@ -525,31 +526,44 @@ es2panda_AstNode *GetIdentifier(es2panda_AstNode *astNode, const std::string &no
     return GetIdentifierImpl(astNode, nodeName);
 }
 
-DefinitionInfo GetDefinitionDataFromNode(es2panda_AstNode *astNode, const std::string &nodeName)
+DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::vector<NodeInfo *> nodeInfos)
 {
-    DefinitionInfo result;
-    if (astNode == nullptr) {
+    DefinitionInfo result {"", 0, 0};
+    if (context == nullptr || nodeInfos.empty()) {
         return result;
     }
-    auto node = reinterpret_cast<ir::AstNode *>(astNode);
-    auto targetNode = node->IsIdentifier() ? node : node->FindChild([&nodeName](ir::AstNode *childNode) {
-        return childNode->IsIdentifier() && std::string(childNode->AsIdentifier()->Name()) == nodeName;
-    });
-    std::string filePath;
-    while (node != nullptr) {
-        if (node->Range().start.Program() != nullptr) {
-            filePath = std::string(node->Range().start.Program()->SourceFile().GetAbsolutePath().Utf8());
-            break;
-        }
-        if (node->IsETSModule()) {
-            filePath = std::string(node->AsETSModule()->Program()->SourceFilePath());
-            break;
-        }
-        node = node->Parent();
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto rootNode = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    if (rootNode == nullptr) {
+        return result;
     }
-    if (targetNode != nullptr) {
-        result = {filePath, targetNode->Start().index, targetNode->End().index - targetNode->Start().index};
+
+    ir::AstNode *lastFoundNode = nullptr;
+    NodeInfo *lastNodeInfo = nullptr;
+    for (auto info : nodeInfos) {
+        auto foundNode = rootNode->FindChild([info](ir::AstNode *childNode) -> bool {
+            auto it = nodeMatchers.find(info->kind);
+            if (it != nodeMatchers.end()) {
+                return it->second(childNode, info);
+            }
+            return false;
+        });
+        if (foundNode == nullptr) {
+            return {"", 0, 0};
+        }
+        lastFoundNode = foundNode;
+        lastNodeInfo = info;
     }
+
+    if (lastFoundNode != nullptr && lastNodeInfo != nullptr) {
+        ir::AstNode *identifierNode = ExtractIdentifierFromNode(lastFoundNode, lastNodeInfo);
+        if (identifierNode != nullptr) {
+            result = {"", identifierNode->Start().index, identifierNode->End().index - identifierNode->Start().index};
+        } else {
+            result = {"", lastFoundNode->Start().index, lastFoundNode->End().index - lastFoundNode->Start().index};
+        }
+    }
+
     return result;
 }
 

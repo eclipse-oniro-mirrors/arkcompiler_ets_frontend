@@ -135,6 +135,7 @@ set(ES2PANDA_LSP_SRC
   ./src/get_signature.cpp
   ./src/get_name_or_dotted_name_span.cpp
   ./src/get_node.cpp
+  ./src/node_matchers.cpp
 )
 
 panda_frontend_add_library(${LSP_LIB} SHARED ${ES2PANDA_LSP_SRC})
