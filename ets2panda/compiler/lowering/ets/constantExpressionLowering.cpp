@@ -106,7 +106,7 @@ static bool IsMultiplicativeExpression(const ir::BinaryExpression *expr)
 {
     auto opType = expr->OperatorType();
     return opType == lexer::TokenType::PUNCTUATOR_MULTIPLY || opType == lexer::TokenType::PUNCTUATOR_DIVIDE ||
-           opType == lexer::TokenType::PUNCTUATOR_MOD;
+           opType == lexer::TokenType::PUNCTUATOR_MOD || opType == lexer::TokenType::PUNCTUATOR_EXPONENTIATION;
 }
 
 static bool IsRelationalExpression(const ir::BinaryExpression *expr)
@@ -412,6 +412,14 @@ private:
             }
             case lexer::TokenType::PUNCTUATOR_MOD: {
                 PerformArithmetic<std::modulus<>>(expr, leftNum, rightNum, &resNum);
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_EXPONENTIATION: {
+                if (leftNum < 0 && !std::is_integral_v<TargetType>) {
+                    LogError(diagnostic::EXPONENTIATION_BASE_LESS_ZERO, {}, expr->Start());
+                    resNum = std::numeric_limits<TargetType>::quiet_NaN();
+                }
+                resNum = std::pow(leftNum, rightNum);
                 break;
             }
             default:

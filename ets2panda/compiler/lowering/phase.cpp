@@ -23,6 +23,7 @@
 #include "compiler/lowering/ets/ambientLowering.h"
 #include "compiler/lowering/ets/arrayLiteralLowering.h"
 #include "compiler/lowering/ets/bigintLowering.h"
+#include "compiler/lowering/ets/binaryExpressionLowering.h"
 #include "compiler/lowering/ets/boxingForLocals.h"
 #include "compiler/lowering/ets/capturedVariables.h"
 #include "compiler/lowering/ets/constantExpressionLowering.h"
@@ -141,6 +142,7 @@ std::vector<Phase *> GetETSPhaseList()
         new ArrayLiteralLowering,
         new BigIntLowering,
         new OpAssignmentLowering,
+        new BinaryExpressionLowering, // should be after BigIntLowering and OpAssignmentLowering
         new SetterLowering,  // must be put before ObjectIndexLowering
         new LateInitializationConvert,
         new ExtensionAccessorPhase,

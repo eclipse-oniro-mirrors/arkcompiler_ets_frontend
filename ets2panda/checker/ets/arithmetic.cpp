@@ -939,6 +939,8 @@ std::map<lexer::TokenType, CheckBinaryFunction> &GetCheckMap()
         {lexer::TokenType::PUNCTUATOR_DIVIDE_EQUAL, &ETSChecker::CheckBinaryOperatorMulDivMod},
         {lexer::TokenType::PUNCTUATOR_MOD, &ETSChecker::CheckBinaryOperatorMulDivMod},
         {lexer::TokenType::PUNCTUATOR_MOD_EQUAL, &ETSChecker::CheckBinaryOperatorMulDivMod},
+        {lexer::TokenType::PUNCTUATOR_EXPONENTIATION, &ETSChecker::CheckBinaryOperatorMulDivMod},
+        {lexer::TokenType::PUNCTUATOR_EXPONENTIATION_EQUAL, &ETSChecker::CheckBinaryOperatorMulDivMod},
 
         {lexer::TokenType::PUNCTUATOR_MINUS, &ETSChecker::CheckBinaryOperatorPlus},
         {lexer::TokenType::PUNCTUATOR_MINUS_EQUAL, &ETSChecker::CheckBinaryOperatorPlus},

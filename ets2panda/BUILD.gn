@@ -32,7 +32,7 @@ config("libes2panda_public_config") {
     "$ark_es2panda_root",
   ]
   if (ark_standalone_build || ark_static_standalone_build) {
-    include_dirs += [ 
+    include_dirs += [
       "$target_gen_dir/generated",
       "//third_party/icu/icu4c/source/common",
       "//third_party/icu/icu4c/source/i18n",
@@ -116,6 +116,7 @@ libes2panda_sources = [
   "checker/types/ets/etsAnyType.cpp",
   "checker/types/ets/etsArrayType.cpp",
   "checker/types/ets/etsAsyncFuncReturnType.cpp",
+  "checker/types/ets/etsAwaitedType.cpp",
   "checker/types/ets/etsBigIntType.cpp",
   "checker/types/ets/etsBooleanType.cpp",
   "checker/types/ets/etsEnumType.cpp",
@@ -127,7 +128,6 @@ libes2panda_sources = [
   "checker/types/ets/etsObjectType.cpp",
   "checker/types/ets/etsPartialTypeParameter.cpp",
   "checker/types/ets/etsReadonlyType.cpp",
-  "checker/types/ets/etsAwaitedType.cpp",
   "checker/types/ets/etsResizableArrayType.cpp",
   "checker/types/ets/etsStringType.cpp",
   "checker/types/ets/etsTupleType.cpp",
@@ -222,6 +222,7 @@ libes2panda_sources = [
   "compiler/lowering/ets/arrayLiteralLowering.cpp",
   "compiler/lowering/ets/asyncMethodLowering.cpp",
   "compiler/lowering/ets/bigintLowering.cpp",
+  "compiler/lowering/ets/binaryExpressionLowering.cpp",
   "compiler/lowering/ets/boxingForLocals.cpp",
   "compiler/lowering/ets/capturedVariables.cpp",
   "compiler/lowering/ets/cfgBuilderPhase.cpp",
@@ -1299,8 +1300,8 @@ ohos_source_set("libes2panda_public_frontend_static") {
       "$ark_root/assembler:libarktsassembler",
       "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package",
       "$ark_root/compiler:libarktscompiler",
-      "$ark_root/libpandabase:libarktsbase",
       "$ark_root/libarkfile:libarktsfile",
+      "$ark_root/libpandabase:libarktsbase",
     ]
   } else {
     external_deps += [
