@@ -22,7 +22,7 @@ import type { CommandLineOptions } from '../lib/CommandLineOptions';
 import { cookBookTag } from '../lib/CookBookMsg';
 import { Logger } from '../lib/Logger';
 import { ARKTS_IGNORE_DIRS_OH_MODULES } from '../lib/utils/consts/ArktsIgnorePaths';
-import { getConfiguredRuleTags, getRulesFromConfig } from '../lib/utils/functions/ConfiguredRulesProcess';
+import { getConfiguredRuleTags, getConfigureRulePath, getRulesFromConfig } from '../lib/utils/functions/ConfiguredRulesProcess';
 import { extractRuleTags } from '../lib/utils/functions/CookBookUtils';
 import { logTscDiagnostic } from '../lib/utils/functions/LogTscDiagnostic';
 
@@ -210,34 +210,6 @@ function processRuleConfig(commandLineOptions: CommandLineOptions, options: Opti
   const configuredRulesMap = getRulesFromConfig(configureRulePath);
   const arkTSRulesMap = extractRuleTags(cookBookTag);
   commandLineOptions.linterOptions.ruleConfigTags = getConfiguredRuleTags(arkTSRulesMap, configuredRulesMap);
-}
-
-function getConfigureRulePath(options: OptionValues): string {
-  if (!options.ruleConfig) {
-    return getDefaultConfigurePath();
-  }
-  const stats = fs.statSync(path.normalize(options.ruleConfig));
-  if (!stats.isFile()) {
-    Logger.error(`The file at ${options.ruleConfigPath} path does not exist!
-          And will use the default configure rule`);
-    return getDefaultConfigurePath();
-  }
-  return options.ruleConfig;
-}
-
-function getDefaultConfigurePath(): string {
-  const defaultConfigPath = path.join(process.cwd(), 'rule-config.json');
-  try {
-    fs.accessSync(defaultConfigPath, fs.constants.F_OK);
-  } catch (error: any) {
-    if (error.code === 'ENOENT') {
-      Logger.error(
-        'The default rule configuration file does not exist, please add the file named rule-config.json in the migration-helper folder!'
-      );
-      process.exit(1);
-    }
-  }
-  return defaultConfigPath;
 }
 
 function processAutofixRuleConfig(commandLineOptions: CommandLineOptions, options: OptionValues): void {

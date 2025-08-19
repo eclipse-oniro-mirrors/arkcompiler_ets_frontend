@@ -20,6 +20,7 @@ export class StatisticsReportInPutInfo {
   totalProblemNumbers: number = 0;
   arkOnePointOneProblemNumbers: number = 0;
   ruleToNumbersMap: Map<string, number> = {} as Map<string, number>;
+  wholeRules: string[] = [] as string[];
   ruleToAutoFixedNumbersMap: Map<string, number> = {} as Map<string, number>;
   cmdOptions: CommandLineOptions = {} as CommandLineOptions;
   timeRecorder: TimeRecorder = {} as TimeRecorder;
