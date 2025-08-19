@@ -98,6 +98,8 @@ public:
         return arguments_;
     }
 
+    void SetArguments(ArenaVector<Expression *> &&argumentsList);
+
     [[nodiscard]] bool HasTrailingComma() const noexcept
     {
         return trailingComma_;

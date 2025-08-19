@@ -117,6 +117,7 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_function_dump compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "pugin_proceed_to_state_annotationUsage_source_range_access compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_optional_language compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_setters_for_param_rewrite compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
 )
 
 set(RUNTIME_ARGUMENTS

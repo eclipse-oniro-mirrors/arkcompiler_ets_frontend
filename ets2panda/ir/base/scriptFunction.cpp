@@ -51,6 +51,16 @@ void ScriptFunction::EmplaceParams(Expression *params)
     newNode->irSignature_.Params().emplace_back(params);
 }
 
+void ScriptFunction::SetParams(ArenaVector<Expression *> &&paramsList)
+{
+    auto &params = this->GetOrCreateHistoryNodeAs<ScriptFunction>()->irSignature_.Params();
+    params = std::move(paramsList);
+
+    for (auto *param : params) {
+        param->SetParent(this);
+    }
+}
+
 void ScriptFunction::ClearParams()
 {
     auto newNode = this->GetOrCreateHistoryNodeAs<ScriptFunction>();
