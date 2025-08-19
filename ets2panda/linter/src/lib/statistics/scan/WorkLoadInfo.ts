@@ -54,7 +54,7 @@ export class WorkLoadInfo {
       (problemCount * AVERAGE_LINE_FOR_REPAIRE_RULE_COEFFICIENT * TEST_DEBUG_WORKLOAD_COEFFICIENT +
         this.totalNapiCodeLines * NPAI_REPAIRE_WORKLOADA_COEFFICIEN) /
       totalLines;
-      
+
     this.manualFixRate = `${(ratio * 100).toFixed(2)}%`;
   }
 }

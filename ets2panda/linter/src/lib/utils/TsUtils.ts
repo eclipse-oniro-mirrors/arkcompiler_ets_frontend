@@ -47,7 +47,7 @@ import { STRINGLITERAL_NUMBER, STRINGLITERAL_NUMBER_ARRAY } from './consts/Strin
 import { ETS_MODULE, PATH_SEPARATOR, VALID_OHM_COMPONENTS_MODULE_PATH } from './consts/OhmUrl';
 import { EXTNAME_ETS, EXTNAME_JS, EXTNAME_D_ETS } from './consts/ExtensionName';
 import { CONCAT_ARRAY, STRING_ERROR_LITERAL } from './consts/Literals';
-import { INT_MIN, INT_MAX } from './consts/NumericalConstants';
+import { INT_MIN, INT_MAX, LARGE_NUMBER_MIN, LARGE_NUMBER_MAX } from './consts/NumericalConstants';
 import { IGNORE_TYPE_LIST } from './consts/TypesToBeIgnored';
 
 export const PROMISE_METHODS = new Set(['all', 'race', 'any', 'resolve', 'allSettled']);
@@ -481,14 +481,24 @@ export class TsUtils {
   }
 
   static isNullableUnionType(type: ts.Type): boolean {
-    if (type.isUnion()) {
-      for (const t of type.types) {
-        if (!!(t.flags & ts.TypeFlags.Undefined) || !!(t.flags & ts.TypeFlags.Null)) {
-          return true;
-        }
+    if (!type.isUnion()) {
+      return false;
+    }
+
+    for (const t of type.types) {
+      if (TsUtils.isNullishType(t)) {
+        return true;
       }
     }
+
     return false;
+  }
+
+  /**
+   * Returns true if the given type is `null` or `undefined`.
+   */
+  static isNullishType(t: ts.Type): boolean {
+    return !!(t.flags & ts.TypeFlags.Undefined) || !!(t.flags & ts.TypeFlags.Null);
   }
 
   static isMethodAssignment(tsSymbol: ts.Symbol | undefined): boolean {
@@ -1699,6 +1709,13 @@ export class TsUtils {
     const value = isPrefix ? Number(raw) * -1 : Number(raw);
 
     return value < INT_MIN || value > INT_MAX;
+  }
+
+  static isLargeNumericLiteral(node: ts.NumericLiteral, isPrefix: boolean): boolean {
+    const raw = node.getText();
+    const value = isPrefix ? Number(raw) * -1 : Number(raw);
+
+    return value < LARGE_NUMBER_MIN || value > LARGE_NUMBER_MAX;
   }
 
   isStdErrorType(type: ts.Type): boolean {

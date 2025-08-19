@@ -1,0 +1,108 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 16,
+            "column": 11,
+            "endLine": 16,
+            "endColumn": 12,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 3,
+            "endLine": 19,
+            "endColumn": 4,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 5,
+            "endLine": 25,
+            "endColumn": 21,
+            "problem": "DestructuringDeclaration",
+            "suggest": "",
+            "rule": "Destructuring variable declarations are not supported (arkts-no-destruct-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 5,
+            "endLine": 26,
+            "endColumn": 19,
+            "problem": "DestructuringDeclaration",
+            "suggest": "",
+            "rule": "Destructuring variable declarations are not supported (arkts-no-destruct-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 5,
+            "endLine": 27,
+            "endColumn": 23,
+            "problem": "DestructuringDeclaration",
+            "suggest": "",
+            "rule": "Destructuring variable declarations are not supported (arkts-no-destruct-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 2,
+            "endLine": 31,
+            "endColumn": 18,
+            "problem": "DestructuringAssignment",
+            "suggest": "",
+            "rule": "Destructuring assignment is not supported (arkts-no-destruct-assignment)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 2,
+            "endLine": 32,
+            "endColumn": 16,
+            "problem": "DestructuringAssignment",
+            "suggest": "",
+            "rule": "Destructuring assignment is not supported (arkts-no-destruct-assignment)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 4,
+            "endLine": 32,
+            "endColumn": 5,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 2,
+            "endLine": 33,
+            "endColumn": 20,
+            "problem": "DestructuringAssignment",
+            "suggest": "",
+            "rule": "Destructuring assignment is not supported (arkts-no-destruct-assignment)",
+            "severity": "ERROR"
+        }
+    ]
+}

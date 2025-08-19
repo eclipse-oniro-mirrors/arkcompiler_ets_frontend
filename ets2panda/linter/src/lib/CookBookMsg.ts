@@ -384,6 +384,8 @@ cookBookTag[351] =
   'The taskpool setTransferList interface is deleted from ArkTS1.2 (arkts-limited-stdlib-no-setTransferList)';
 cookBookTag[352] =
   '1.2 Void cannot be combined. OnDestroy/onDisconnect (The return type of the method is now void | Promise) needs to be split into two interfaces. (sdk-ability-asynchronous-lifecycle)';
+cookBookTag[353] =
+  'Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)';
 cookBookTag[355] = 'Usage of standard library is restricted(arkts-limited-stdlib-no-sendable-decorator)';
 cookBookTag[356] = 'Usage of standard library is restricted(arkts-limited-stdlib-no-concurrent-decorator)';
 cookBookTag[357] = 'Worker are not supported(arkts-no-need-stdlib-worker)';
@@ -432,6 +434,8 @@ cookBookTag[405] = 'API is not support use class in this API (arkts-builtin-fina
 cookBookTag[406] = 'Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)';
 cookBookTag[407] = 'API has been disabled (arkts-builtin-disable-api)';
 cookBookTag[408] = 'The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)';
+cookBookTag[409] = 'No optional tuple type (arkts-no-optional-tuple-type)';
+cookBookTag[410] = 'Numeric literal exceeds allowed range (arkts-no-large-numeric-literal)';
 
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';

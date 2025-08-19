@@ -1,0 +1,138 @@
+{
+  "copyright": [
+    "Copyright (c) 2025 Huawei Device Co., Ltd.",
+    "Licensed under the Apache License, Version 2.0 (the 'License');",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an 'AS IS' BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+  "result": [
+    {
+      "line": 53,
+      "column": 18,
+      "endLine": 53,
+      "endColumn": 21,
+      "problem": "AnyType",
+      "suggest": "",
+      "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 53,
+      "column": 36,
+      "endLine": 53,
+      "endColumn": 37,
+      "problem": "ObjectLiteralNoContextType",
+      "suggest": "",
+      "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 78,
+      "column": 22,
+      "endLine": 78,
+      "endColumn": 34,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 81,
+      "column": 22,
+      "endLine": 81,
+      "endColumn": 34,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 84,
+      "column": 22,
+      "endLine": 84,
+      "endColumn": 34,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 87,
+      "column": 34,
+      "endLine": 87,
+      "endColumn": 46,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 93,
+      "column": 10,
+      "endLine": 93,
+      "endColumn": 22,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 98,
+      "column": 10,
+      "endLine": 98,
+      "endColumn": 22,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 107,
+      "column": 6,
+      "endLine": 107,
+      "endColumn": 19,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 113,
+      "column": 6,
+      "endLine": 113,
+      "endColumn": 19,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 119,
+      "column": 6,
+      "endLine": 119,
+      "endColumn": 18,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 123,
+      "column": 6,
+      "endLine": 123,
+      "endColumn": 19,
+      "problem": "ObjectLiteralUnionNeedsCast",
+      "suggest": "",
+      "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+      "severity": "ERROR"
+    }
+  ]
+}

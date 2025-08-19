@@ -135,3 +135,69 @@ class E {
     return a;
   }
 }
+
+import { Entry, Text, Column, Component, Button, ClickEvent ,Image ,ShadowOptions} from '@ohos.arkui.component'
+import { State } from '@ohos.arkui.stateManagement'
+import hilog from '@ohos.hilog'
+import util from '@ohos.util';
+
+@Entry
+@Component
+struct MyStateSample {
+  @State stateVar: string = 'state var';
+  message: string = 'var';
+
+  changeValue() {
+    this.getUIContext();
+    this.stateVar += '~'
+  }
+
+  build() {
+    Column(undefined) {
+      Text('Hello World').fontSize(20)
+      Button(this.message).backgroundColor('#FFFF00FF')
+        .onClick(async (e: ClickEvent) => {
+          let lock: AsyncLock = AsyncLock.request("lock_1");
+          hilog.info(0x0000, 'testTag', 'On Click');
+          let a = this.getUIContext();
+          this.changeValue();
+
+        })
+      Text(this.stateVar).fontSize(20)
+        .onClick((e: ClickEvent) => {
+          this.message += "~"
+        } as (event: ClickEvent) => void)
+      Child({ stateVar: this.stateVar })
+    }
+  }
+}
+
+interface CustomClickable {
+  onClick(handler: (event: ClickEvent) => void): this;
+}
+
+function onClick(handler: (event: ClickEvent) => void): this {
+  return this.onClick((e: ClickEvent) => {
+    console.log('Before custom onClick');
+    handler(e);
+    console.log('After custom onClick');
+  });
+}
+
+// 将扩展方法附加到Button组件
+Button.extend({ onClick });
+
+@Entry
+@Component
+struct MyComponent {
+  @State message: string = 'Click me';
+
+  build() {
+    Column() {
+      Button(this.message)
+        .onClick((e: ClickEvent) => {
+          this.message = 'Custom onClick worked!';
+        })
+    }
+  }
+}

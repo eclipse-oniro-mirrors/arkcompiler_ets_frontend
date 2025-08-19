@@ -62,6 +62,7 @@
     "arkts-no-class-omit-interface-optional-prop",
     "arkts-distinct-abstract-method-default-return-type",
     "arkts-class-no-signature-distinct-with-object-public-api",
+    "arkts-union-assignment-with-obj-literal-ambiguity",
     "arkts-no-sparse-array",
     "arkts-no-enum-prop-as-type",
     "arkts-no-ts-like-smart-type",
@@ -72,11 +73,13 @@
     "arkts-numeric-bigint-compare",
     "arkts-only-support-decimal-bigint-literal",
     "arkts-unsupport-operator",
-	"arkts-no-duplicate-function-name",
+    "arkts-no-duplicate-function-name",
     "arkts-require-func-arg-type",
-	"arkts-subclass-must-call-super-constructor-with-args",
+    "arkts-subclass-must-call-super-constructor-with-args",
     "arkts-no-esobject-support",
-    "arkts-not-support-tuple-generic-validation"
+    "arkts-not-support-tuple-generic-validation",
+    "arkts-no-optional-tuple-type",
+    "arkts-no-large-numeric-literal"
   ],
   "interop": [
     "arkts-interop-js2s-inherit-js-class",

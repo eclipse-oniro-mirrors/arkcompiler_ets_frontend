@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2023-2025 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -15,23 +15,13 @@
     ],
     "result": [
         {
-            "line": 55,
-            "column": 27,
-            "endLine": 55,
-            "endColumn": 30,
-            "problem": "AnyType",
+            "line": 62,
+            "column": 18,
+            "endLine": 62,
+            "endColumn": 19,
+            "problem": "ObjectLiteralNoContextType",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 63,
-            "column": 39,
-            "endLine": 63,
-            "endColumn": 42,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
             "severity": "ERROR"
         }
     ]
