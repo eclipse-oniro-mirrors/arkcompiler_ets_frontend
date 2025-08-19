@@ -436,7 +436,7 @@ cookBookTag[407] = 'API has been disabled (arkts-builtin-disable-api)';
 cookBookTag[408] = 'The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)';
 cookBookTag[409] = 'No optional tuple type (arkts-no-optional-tuple-type)';
 cookBookTag[410] = 'Numeric literal exceeds allowed range (arkts-no-large-numeric-literal)';
-
+cookBookTag[411] = '"instanceof" operator can\'t be applied to function (arkts-no-instanceof-func)';
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';
 }

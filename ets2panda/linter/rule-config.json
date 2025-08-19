@@ -79,7 +79,8 @@
     "arkts-no-esobject-support",
     "arkts-not-support-tuple-generic-validation",
     "arkts-no-optional-tuple-type",
-    "arkts-no-large-numeric-literal"
+    "arkts-no-large-numeric-literal",
+    "arkts-no-instanceof-func"
   ],
   "interop": [
     "arkts-interop-js2s-inherit-js-class",

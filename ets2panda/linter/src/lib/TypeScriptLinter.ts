@@ -215,7 +215,7 @@ import {
   ABILITY_LIFECYCLE_SDK
 } from './utils/consts/AsyncLifecycleSDK';
 import { ERROR_PROP_LIST } from './utils/consts/ErrorProp';
-import { D_ETS, D_TS } from './utils/consts/TsSuffix';
+import { ETS, D_ETS, D_TS } from './utils/consts/TsSuffix';
 import { arkTsBuiltInTypeName } from './utils/consts/ArkuiImportList';
 import { ERROR_TASKPOOL_PROP_LIST } from './utils/consts/ErrorProp';
 import { COMMON_UNION_MEMBER_ACCESS_WHITELIST } from './utils/consts/ArktsWhiteApiPaths';
@@ -2457,6 +2457,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       case ts.SyntaxKind.InstanceOfKeyword:
         this.processBinaryInstanceOf(node, tsLhsExpr, leftOperandType);
         this.handleInstanceOfExpression(tsBinaryExpr);
+        this.handleInstanceOfFunction(tsBinaryExpr);
         break;
       case ts.SyntaxKind.InKeyword:
         this.incrementCounters(tsBinaryExpr.operatorToken, FaultID.InOperator);
@@ -6247,7 +6248,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.checkOnClickCallback(tsCallOrNewExpr);
   }
 
-private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpression): void {
+  private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpression): void {
     if (!tsCallOrNewExpr.arguments || tsCallOrNewExpr.arguments.length === 0 && this.options.arkts2) {
       return;
     }
@@ -6277,8 +6278,8 @@ private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpressi
 
   private checkAsyncOrPromiseFunction(callback: ts.ArrowFunction): void {
     const returnsPromise = this.checkReturnsPromise(callback);
-    const isAsync = callback.modifiers?.some((m) => { 
-      return m.kind === ts.SyntaxKind.AsyncKeyword; 
+    const isAsync = callback.modifiers?.some((m) => {
+      return m.kind === ts.SyntaxKind.AsyncKeyword;
     });
 
     if (isAsync || returnsPromise) {
@@ -6286,9 +6287,15 @@ private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpressi
       const endPos = callback.body.getEnd();
 
       const errorNode = {
-        getStart: () => { return startPos; },
-        getEnd: () => { return endPos; },
-        getSourceFile: () => { return callback.getSourceFile(); }
+        getStart: () => {
+          return startPos;
+        },
+        getEnd: () => {
+          return endPos;
+        },
+        getSourceFile: () => {
+          return callback.getSourceFile();
+        }
       } as ts.Node;
 
       this.incrementCounters(errorNode, FaultID.IncompationbleFunctionType);
@@ -11407,6 +11414,50 @@ private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpressi
 
     const autofix = this.autofixer?.fixInteropJsInstanceOfExpression(node);
     this.incrementCounters(node, FaultID.InteropJsInstanceof, autofix);
+  }
+
+  handleInstanceOfFunction(node: ts.BinaryExpression): void {
+    const right = node.right;
+    let symbol = this.tsUtils.trueSymbolAtLocation(right);
+    if (!symbol) {
+      return;
+    }
+
+    const visitedSymbols = new Set<ts.Symbol>();
+    if (this.checkSymbolDeclarationsForInstanceOfFunction(symbol, visitedSymbols)) {
+      this.incrementCounters(right, FaultID.InstanceOfFunction);
+    }
+  }
+
+  private checkSymbolDeclarationsForInstanceOfFunction(symbol: ts.Symbol, visited: Set<ts.Symbol>): boolean {
+    if (visited.has(symbol)) {
+      return false;
+    }
+    visited.add(symbol);
+    const declarations = symbol.getDeclarations() || [];
+    for (const decl of declarations) {
+      const sourceFile = decl.getSourceFile();
+      if (!sourceFile?.fileName) {
+        continue;
+      }
+
+      if (!sourceFile.fileName.endsWith(ETS)) {
+        continue;
+      }
+
+      if (ts.isFunctionDeclaration(decl)) {
+        return true;
+      }
+
+      if (ts.isVariableDeclaration(decl) && decl.initializer) {
+        const initSymbol = this.tsUtils.trueSymbolAtLocation(decl.initializer);
+        if (!!initSymbol && this.checkSymbolDeclarationsForInstanceOfFunction(initSymbol, visited)) {
+          return true;
+        }
+        continue;
+      }
+    }
+    return false;
   }
 
   private checkAutoIncrementDecrement(unaryExpr: ts.PostfixUnaryExpression | ts.PrefixUnaryExpression): void {
