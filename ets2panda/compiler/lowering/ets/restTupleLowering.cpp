@@ -267,13 +267,9 @@ ir::ScriptFunction *CreateNewScriptFunction(public_lib::Context *ctx, ir::Script
     ES2PANDA_ASSERT(newScriptFunc != nullptr);
     newScriptFunc->AddModifier(scriptFunc->AsScriptFunction()->Modifiers());
 
-    ArenaVector<ir::AnnotationUsage *> annotationUsages {allocator->Adapter()};
-    for (auto *annotationUsage : scriptFunc->Annotations()) {
-        auto *newAnnotationUsage = annotationUsage->Clone(allocator, newScriptFunc);
-        ES2PANDA_ASSERT(newAnnotationUsage != nullptr);
-        annotationUsages.push_back(newAnnotationUsage->AsAnnotationUsage());
+    if (scriptFunc->HasAnnotations()) {
+        newScriptFunc->SetAnnotations(scriptFunc->Annotations());
     }
-    newScriptFunc->SetAnnotations(std::move(annotationUsages));
 
     ir::Identifier *newScriptFuncId = scriptFunc->Id()->Clone(allocator, newScriptFunc);
     newScriptFunc->SetIdent(newScriptFuncId);

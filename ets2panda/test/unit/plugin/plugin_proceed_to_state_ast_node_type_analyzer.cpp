@@ -109,27 +109,10 @@ static void ProcessTSInterface(es2panda_Context *context, es2panda_AstNode *node
     }
 }
 
-static void ProcessNewExpression(es2panda_Context *context, es2panda_AstNode *node)
+static void ProcessNewExpression([[maybe_unused]] es2panda_Context *context, [[maybe_unused]] es2panda_AstNode *node)
 {
     counter.newExpressionCount++;
-    auto *typeRef = node ? impl->ETSTypeReferencePartName(context, node) : nullptr;
-    if (!typeRef) {
-        return;
-    }
-
-    auto *part = impl->ETSTypeReferencePart(context, typeRef);
-    if (!part) {
-        return;
-    }
-
-    auto *typeName = impl->ETSTypeReferencePartName(context, part);
-    if (typeName && impl->IsIdentifier(typeName)) {
-        const char *className = impl->IdentifierName(context, typeName);
-        if (className) {
-            // Print newExpression
-            std::cout << "Detected newExpression: new " << className << "()" << std::endl;
-        }
-    }
+    std::cout << "Detected newExpression" << std::endl;
 }
 
 static void ProcessFunctionExpression(es2panda_Context *context, es2panda_AstNode *node)

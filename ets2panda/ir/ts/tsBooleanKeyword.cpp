@@ -28,11 +28,9 @@ void TSBooleanKeyword::TransformChildren([[maybe_unused]] const NodeTransformer 
     TransformAnnotations(cb, transformationName);
 }
 
-void TSBooleanKeyword::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void TSBooleanKeyword::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSBooleanKeyword::Dump(ir::AstDumper *dumper) const
@@ -42,9 +40,7 @@ void TSBooleanKeyword::Dump(ir::AstDumper *dumper) const
 
 void TSBooleanKeyword::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSBooleanKeyword");
 }
 
@@ -84,12 +80,8 @@ TSBooleanKeyword *TSBooleanKeyword::Clone(ArenaAllocator *allocator, AstNode *pa
     clone->SetRange(Range());
 
     // Clone annotations if any
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

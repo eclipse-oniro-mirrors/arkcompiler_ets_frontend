@@ -325,12 +325,15 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
     }
 
     auto value = Value();
-    for (auto *anno : value->AsFunctionExpression()->Function()->Annotations()) {
-        // NOTE(zhelyapov): workaround, see #26031
-        if (anno->GetBaseName()->Name() != compiler::Signatures::DEFAULT_ANNO_FOR_FUNC) {
-            anno->Dump(dumper);
+    if (value->AsFunctionExpression()->Function()->HasAnnotations()) {
+        for (auto *anno : value->AsFunctionExpression()->Function()->Annotations()) {
+            // NOTE(zhelyapov): workaround, see #26031
+            if (anno->GetBaseName()->Name() != compiler::Signatures::DEFAULT_ANNO_FOR_FUNC) {
+                anno->Dump(dumper);
+            }
         }
     }
+
     DumpPrefix(dumper);
 
     if (IsConstructor() &&

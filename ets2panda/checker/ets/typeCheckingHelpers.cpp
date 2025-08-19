@@ -1047,22 +1047,22 @@ void ETSChecker::CheckFunctionSignatureAnnotations(const ArenaVector<ir::Express
 {
     for (auto *param : params) {
         if (param->IsETSParameterExpression()) {
-            CheckAnnotations(param->AsETSParameterExpression()->Annotations());
+            CheckAnnotations(param->AsETSParameterExpression());
             if (param->AsETSParameterExpression()->TypeAnnotation() != nullptr) {
-                CheckAnnotations(param->AsETSParameterExpression()->TypeAnnotation()->Annotations());
+                CheckAnnotations(param->AsETSParameterExpression()->TypeAnnotation());
             }
         }
     }
 
     if (typeParams != nullptr) {
         for (auto *typeParam : typeParams->Params()) {
-            CheckAnnotations(typeParam->Annotations());
+            CheckAnnotations(typeParam);
         }
     }
 
     if (returnTypeAnnotation != nullptr) {
         ValidateThisUsage(returnTypeAnnotation);
-        CheckAnnotations(returnTypeAnnotation->Annotations());
+        CheckAnnotations(returnTypeAnnotation);
     }
 }
 
@@ -1118,9 +1118,8 @@ void ETSChecker::ValidateThisUsage(const ir::TypeNode *returnTypeAnnotation)
 
 void ETSChecker::CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotations)
 {
-    if (annotations.empty()) {
-        return;
-    }
+    ES2PANDA_ASSERT(!annotations.empty());
+
     std::unordered_set<util::StringView> seenAnnotations;
     for (const auto &anno : annotations) {
         anno->Check(this);

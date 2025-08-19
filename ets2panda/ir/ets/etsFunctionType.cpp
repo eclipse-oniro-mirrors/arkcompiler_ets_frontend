@@ -30,9 +30,7 @@ void ETSFunctionType::TransformChildren(const NodeTransformer &cb, std::string_v
 void ETSFunctionType::Iterate(const NodeTraverser &cb) const
 {
     GetHistoryNodeAs<ETSFunctionType>()->signature_.Iterate(cb);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSFunctionType::Dump(ir::AstDumper *dumper) const
@@ -46,9 +44,7 @@ void ETSFunctionType::Dump(ir::AstDumper *dumper) const
 
 void ETSFunctionType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("((");
     for (auto *param : Params()) {
         param->Dump(dumper);
@@ -132,13 +128,8 @@ ETSFunctionType *ETSFunctionType::Clone(ArenaAllocator *const allocator, AstNode
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            ES2PANDA_ASSERT(annotationUsage->Clone(allocator, clone));
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     // If the scope is set to empty, it will result in the inability to retrieve the scope after clone,

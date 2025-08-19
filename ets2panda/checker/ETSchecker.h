@@ -640,7 +640,15 @@ public:
     bool CheckAndLogInvalidThisUsage(const ir::TypeNode *type, const diagnostic::DiagnosticKind &diagnostic);
     bool IsFixedArray(ir::ETSTypeReferencePart *part);
     void ValidateThisUsage(const ir::TypeNode *returnTypeAnnotation);
-    void CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotations);
+
+    template <typename T>
+    void CheckAnnotations(ir::AnnotationAllowed<T> *node)
+    {
+        if (node->HasAnnotations()) {
+            CheckAnnotations(node->Annotations());
+        }
+    }
+
     void CheckAmbientAnnotation(ir::AnnotationDeclaration *annoImpl, ir::AnnotationDeclaration *annoDecl);
     bool CheckAmbientAnnotationFieldInitializerValue(ir::Expression *init, ir::Expression *expected);
     bool CheckAmbientAnnotationFieldInitializer(ir::Expression *init, ir::Expression *expected);
@@ -1045,6 +1053,8 @@ private:
                    checker::Type *annotationType, varbinder::Variable *const bindingVar);
     void CheckItemCasesConstant(ArenaVector<ir::SwitchCaseStatement *> const &cases);
     void CheckItemCasesDuplicate(ArenaVector<ir::SwitchCaseStatement *> const &cases);
+
+    void CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotations);
 
     template <typename EnumType>
     EnumType *CreateEnumTypeFromEnumDeclaration(ir::TSEnumDeclaration const *const enumDecl);

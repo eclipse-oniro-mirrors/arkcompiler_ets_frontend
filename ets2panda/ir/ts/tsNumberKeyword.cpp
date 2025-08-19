@@ -28,11 +28,9 @@ void TSNumberKeyword::TransformChildren([[maybe_unused]] const NodeTransformer &
     TransformAnnotations(cb, transformationName);
 }
 
-void TSNumberKeyword::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void TSNumberKeyword::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSNumberKeyword::Dump(ir::AstDumper *dumper) const
@@ -42,9 +40,7 @@ void TSNumberKeyword::Dump(ir::AstDumper *dumper) const
 
 void TSNumberKeyword::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSNumberKeyword");
 }
 
@@ -84,12 +80,8 @@ TSNumberKeyword *TSNumberKeyword::Clone(ArenaAllocator *allocator, AstNode *pare
     clone->SetRange(Range());
 
     // Clone annotations if any
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

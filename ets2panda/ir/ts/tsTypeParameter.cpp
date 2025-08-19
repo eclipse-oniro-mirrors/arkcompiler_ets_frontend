@@ -65,13 +65,7 @@ void TSTypeParameter::TransformChildren(const NodeTransformer &cb, std::string_v
         }
     }
 
-    auto const annotations = Annotations();
-    for (size_t ix = 0; ix < annotations.size(); ix++) {
-        if (auto *transformedNode = cb(annotations[ix]); annotations[ix] != transformedNode) {
-            annotations[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueAnnotations(transformedNode->AsAnnotationUsage(), ix);
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSTypeParameter::Iterate(const NodeTraverser &cb) const
@@ -88,9 +82,8 @@ void TSTypeParameter::Iterate(const NodeTraverser &cb) const
     if (defaultType != nullptr) {
         cb(defaultType);
     }
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+
+    IterateAnnotations(cb);
 }
 
 void TSTypeParameter::Dump(ir::AstDumper *dumper) const
@@ -106,9 +99,7 @@ void TSTypeParameter::Dump(ir::AstDumper *dumper) const
 
 void TSTypeParameter::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     if (IsIn()) {
         dumper->Add("in ");
     }

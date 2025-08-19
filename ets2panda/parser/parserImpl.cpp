@@ -797,8 +797,8 @@ ir::ClassDefinition *ParserImpl::ParseClassDefinition(ir::ClassDefinitionModifie
 
     ArenaVector<ir::TSClassImplements *> implements(Allocator()->Adapter());
     auto *classDefinition =
-        AllocNode<ir::ClassDefinition>(identNode, nullptr, superTypeParams, std::move(implements), ctor, superClass,
-                                       std::move(properties), modifiers, flags, GetContext().GetLanguage());
+        AllocNode<ir::ClassDefinition>(Allocator(), identNode, nullptr, superTypeParams, std::move(implements), ctor,
+                                       superClass, std::move(properties), modifiers, flags, GetContext().GetLanguage());
     ES2PANDA_ASSERT(classDefinition != nullptr);
     classDefinition->SetInternalName(privateBinding.View());
 

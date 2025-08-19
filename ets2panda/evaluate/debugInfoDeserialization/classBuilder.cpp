@@ -52,8 +52,8 @@ ir::ClassDeclaration *ClassBuilder::Build(parser::Program *program) &&
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *classDef = checker_->AllocNode<ir::ClassDefinition>(
-        classId, nullptr, nullptr, ArenaVector<ir::TSClassImplements *>(allocator->Adapter()), nullptr, superClass_,
-        ArenaVector<ir::AstNode *>(allocator->Adapter()), classModifiers_, modifierFlags_,
+        allocator, classId, nullptr, nullptr, ArenaVector<ir::TSClassImplements *>(allocator->Adapter()), nullptr,
+        superClass_, ArenaVector<ir::AstNode *>(allocator->Adapter()), classModifiers_, modifierFlags_,
         ToLanguage(program->Extension()));
 
     // Set parents for all class'es fields and methods.

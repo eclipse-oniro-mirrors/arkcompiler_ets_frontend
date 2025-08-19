@@ -18,16 +18,10 @@
 
 #include "compiler/lowering/phase.h"
 #include "util/helpers.h"
-#include "parser/parserFlags.h"
-#include "varbinder/tsBinding.h"
 #include "varbinder/ETSBinder.h"
-#include "compiler/lowering/scopesInit/savedBindingsCtx.h"
 #include "checker/checker.h"
 #include "ir/visitor/IterateAstVisitor.h"
-#include "ir/expressions/literals/undefinedLiteral.h"
 #include "ir/expressions/blockExpression.h"
-#include "ir/ets/etsUnionType.h"
-#include "ir/ets/etsTuple.h"
 
 namespace ark::es2panda::compiler {
 
@@ -79,6 +73,14 @@ protected:
     {
         for (auto *node : nodes) {
             CallNode(node);
+        }
+    }
+
+    template <typename T>
+    void CallNodeAnnotations(const ir::AnnotationAllowed<T> *node)
+    {
+        if (node->HasAnnotations()) {
+            CallNode(node->Annotations());
         }
     }
 

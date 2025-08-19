@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 - 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -78,7 +78,9 @@ void GlobalDeclTransformer::VisitFunctionDeclaration(ir::FunctionDeclaration *fu
         funcDecl->Function()->Modifiers(), allocator_, false);
     ES2PANDA_ASSERT(method != nullptr && method->Function() != nullptr);
     method->SetRange(funcDecl->Range());
-    method->Function()->SetAnnotations(funcDecl->Annotations());
+    if (funcDecl->HasAnnotations()) {
+        method->Function()->SetAnnotations(funcDecl->Annotations());
+    }
 
     if (funcDecl->Function()->HasExportAlias()) {
         method->AddAstNodeFlags(ir::AstNodeFlags::HAS_EXPORT_ALIAS);
@@ -105,15 +107,8 @@ void GlobalDeclTransformer::VisitVariableDeclaration(ir::VariableDeclaration *va
         }
         field->SetRange(declarator->Range());
 
-        if (!varDecl->Annotations().empty()) {
-            ArenaVector<ir::AnnotationUsage *> propAnnotations(allocator_->Adapter());
-            for (auto *annotationUsage : varDecl->Annotations()) {
-                ES2PANDA_ASSERT(annotationUsage != nullptr);
-                auto annotationUsageClone = annotationUsage->Clone(allocator_, field);
-                ES2PANDA_ASSERT(annotationUsageClone != nullptr);
-                propAnnotations.push_back(annotationUsageClone->AsAnnotationUsage());
-            }
-            field->SetAnnotations(std::move(propAnnotations));
+        if (varDecl->HasAnnotations()) {
+            field->SetAnnotations(varDecl->Annotations());
         }
 
         if (varDecl->HasExportAlias() || declarator->HasExportAlias()) {

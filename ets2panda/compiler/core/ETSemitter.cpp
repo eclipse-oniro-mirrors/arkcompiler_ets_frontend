@@ -129,8 +129,10 @@ static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc,
             !var->Declaration()->Node()->IsETSParameterExpression()) {
             continue;
         }
-        func.params.back().GetOrCreateMetadata()->SetAnnotations(emitter->GenCustomAnnotations(
-            var->Declaration()->Node()->AsETSParameterExpression()->Annotations(), var->Name().Mutf8()));
+        if (var->Declaration()->Node()->AsETSParameterExpression()->HasAnnotations()) {
+            func.params.back().GetOrCreateMetadata()->SetAnnotations(emitter->GenCustomAnnotations(
+                var->Declaration()->Node()->AsETSParameterExpression()->Annotations(), var->Name().Mutf8()));
+        }
     }
 
     if (scriptFunc->IsConstructor() || scriptFunc->IsStaticBlock()) {
@@ -149,7 +151,7 @@ static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc,
         accessFlags |= ACC_VARARGS;
     }
     func.metadata->SetAccessFlags(accessFlags);
-    if (!scriptFunc->IsExternal()) {
+    if (!scriptFunc->IsExternal() && scriptFunc->HasAnnotations()) {
         func.metadata->SetAnnotations(emitter->GenCustomAnnotations(scriptFunc->Annotations(), func.name));
     }
 
@@ -455,7 +457,7 @@ void ETSEmitter::GenClassField(const ir::ClassProperty *prop, pandasm::Record &c
     field.type = PandasmTypeWithRank(prop->TsType());
     field.metadata->SetAccessFlags(TranslateModifierFlags(prop->Modifiers()));
 
-    if (!external) {
+    if (!external && prop->HasAnnotations()) {
         field.metadata->SetAnnotations(GenCustomAnnotations(prop->Annotations(), field.name));
     }
 
@@ -511,7 +513,10 @@ void ETSEmitter::GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceD
         accessFlags |= ACC_STATIC;
     }
 
-    interfaceRecord.metadata->SetAnnotations(GenCustomAnnotations(interfaceDecl->Annotations(), interfaceRecord.name));
+    if (interfaceDecl->HasAnnotations()) {
+        interfaceRecord.metadata->SetAnnotations(
+            GenCustomAnnotations(interfaceDecl->Annotations(), interfaceRecord.name));
+    }
     interfaceRecord.metadata->SetAccessFlags(accessFlags);
     interfaceRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath()};
     interfaceRecord.metadata->SetAttributeValue(Signatures::EXTENDS_ATTRIBUTE, Signatures::BUILTIN_OBJECT);
@@ -651,7 +656,9 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
         classRecord.metadata->SetAttributeValue(Signatures::IMPLEMENTS_ATTRIBUTE, name);
     }
 
-    classRecord.metadata->SetAnnotations(GenCustomAnnotations(classDef->Annotations(), classRecord.name));
+    if (classDef->HasAnnotations()) {
+        classRecord.metadata->SetAnnotations(GenCustomAnnotations(classDef->Annotations(), classRecord.name));
+    }
 
     std::vector<pandasm::AnnotationData> annotations = GenAnnotations(classDef);
     if (classDef->IsNamespaceTransformed() || classDef->IsGlobalInitialized()) {

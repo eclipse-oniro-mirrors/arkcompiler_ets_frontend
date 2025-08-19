@@ -1097,9 +1097,9 @@ std::string TSDeclGen::RemoveModuleExtensionName(const std::string &filepath)
 }
 
 template <class T>
-void TSDeclGen::GenAnnotations(const T *node)
+void TSDeclGen::GenAnnotations(const ir::AnnotationAllowed<T> *node)
 {
-    if (node == nullptr) {
+    if (node == nullptr || !node->HasAnnotations()) {
         return;
     }
     GenSeparated(
@@ -2318,9 +2318,7 @@ bool TSDeclGen::GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef
             return true;
         }
         auto methDefFunc = methodDef->Function();
-        if (methDefFunc != nullptr && !methDefFunc->Annotations().empty()) {
-            GenAnnotations(methDefFunc);
-        }
+        GenAnnotations(methDefFunc);
         ProcessIndent();
         GenModifier(methodDef);
     }
@@ -2450,9 +2448,7 @@ void TSDeclGen::ProcessClassPropDeclaration(const ir::ClassProperty *classProp)
             GenPropAccessor(classProp, "set ");
         }
     } else {
-        if (!classProp->Annotations().empty()) {
-            GenAnnotations(classProp);
-        }
+        GenAnnotations(classProp);
         ProcessIndent();
         if (!classNode_.isStruct) {
             GenModifier(classProp, true);
@@ -2475,9 +2471,7 @@ void TSDeclGen::GenPropAccessor(const ir::ClassProperty *classProp, const std::s
     if (accessorKind != "set " && accessorKind != "get ") {
         return;
     }
-    if (!classProp->Annotations().empty()) {
-        GenAnnotations(classProp);
-    }
+    GenAnnotations(classProp);
     ProcessIndent();
     GenModifier(classProp);
 

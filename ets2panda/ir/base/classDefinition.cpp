@@ -274,9 +274,7 @@ void ClassDefinition::Iterate(const NodeTraverser &cb) const
         cb(implement);
     }
 
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 
     auto const ctor = GetHistoryNodeAs<ClassDefinition>()->ctor_;
     if (ctor != nullptr) {
@@ -418,9 +416,7 @@ void ClassDefinition::Dump(ir::SrcDumper *dumper) const
         return;
     }
 
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
 
     DumpPrefix(dumper);
     ident_->Dump(dumper);

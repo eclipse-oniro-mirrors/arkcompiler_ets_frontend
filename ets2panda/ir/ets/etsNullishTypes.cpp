@@ -24,11 +24,9 @@ void ETSUndefinedType::TransformChildren([[maybe_unused]] const NodeTransformer 
     TransformAnnotations(cb, transformationName);
 }
 
-void ETSUndefinedType::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void ETSUndefinedType::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSUndefinedType::Dump(ir::AstDumper *dumper) const
@@ -38,9 +36,7 @@ void ETSUndefinedType::Dump(ir::AstDumper *dumper) const
 
 void ETSUndefinedType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("undefined");
 }
 
@@ -74,13 +70,8 @@ ETSUndefinedType *ETSUndefinedType::Clone(ArenaAllocator *allocator, AstNode *pa
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            ES2PANDA_ASSERT(annotationUsage->Clone(allocator, clone));
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;
@@ -92,11 +83,9 @@ void ETSNullType::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
     TransformAnnotations(cb, transformationName);
 }
 
-void ETSNullType::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void ETSNullType::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSNullType::Dump(ir::AstDumper *dumper) const
@@ -106,9 +95,7 @@ void ETSNullType::Dump(ir::AstDumper *dumper) const
 
 void ETSNullType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("null");
 }
 
@@ -140,12 +127,8 @@ ETSNullType *ETSNullType::Clone(ArenaAllocator *allocator, AstNode *parent)
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

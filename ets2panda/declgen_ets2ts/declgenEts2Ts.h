@@ -178,7 +178,7 @@ private:
     void GenModifier(const T *node, bool isProp = false);
 
     template <class T>
-    void GenAnnotations(const T *node);
+    void GenAnnotations(const ir::AnnotationAllowed<T> *node);
     void GenAnnotationProperties(const ir::AnnotationUsage *anno);
     void GenAnnotationPropertyValue(ir::Expression *value);
 

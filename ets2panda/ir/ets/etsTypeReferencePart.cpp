@@ -254,7 +254,7 @@ checker::Type *ETSTypeReferencePart::GetType(checker::ETSChecker *checker)
 {
     if (TypeParams() != nullptr) {
         for (auto *param : TypeParams()->Params()) {
-            checker->CheckAnnotations(param->Annotations());
+            checker->CheckAnnotations(param);
             if (param->IsETSTypeReference() && param->AsETSTypeReference()->Part()->Name()->IsTSQualifiedName()) {
                 param->Check(checker);
             }

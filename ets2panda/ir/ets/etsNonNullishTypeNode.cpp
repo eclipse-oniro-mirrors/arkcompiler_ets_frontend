@@ -38,9 +38,7 @@ void ETSNonNullishTypeNode::Dump(ir::AstDumper *dumper) const
 
 void ETSNonNullishTypeNode::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("NonNullable<");
     typeNode_->Dump(dumper);
     dumper->Add(">");

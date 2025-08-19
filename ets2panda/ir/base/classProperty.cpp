@@ -59,13 +59,7 @@ void ClassProperty::TransformChildren(const NodeTransformer &cb, std::string_vie
         }
     }
 
-    auto const &annotations = Annotations();
-    for (size_t ix = 0; ix < annotations.size(); ix++) {
-        if (auto *transformedNode = cb(annotations[ix]); annotations[ix] != transformedNode) {
-            annotations[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueAnnotations(transformedNode->AsAnnotationUsage(), ix);
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void ClassProperty::Iterate(const NodeTraverser &cb) const
@@ -82,9 +76,7 @@ void ClassProperty::Iterate(const NodeTraverser &cb) const
         cb(TypeAnnotation());
     }
 
-    for (auto *it : Annotations()) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ClassProperty::Dump(ir::AstDumper *dumper) const
@@ -165,9 +157,7 @@ bool ClassProperty::DumpNamespaceForDeclGen(ir::SrcDumper *dumper) const
 
 void ClassProperty::DumpPrefix(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     if (DumpNamespaceForDeclGen(dumper)) {
         return;
     }
@@ -300,12 +290,8 @@ ClassProperty *ClassProperty::Clone(ArenaAllocator *const allocator, AstNode *co
         typeAnnotation->SetParent(clone);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     clone->SetRange(Range());

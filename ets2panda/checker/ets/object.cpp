@@ -1412,20 +1412,20 @@ void ETSChecker::CheckClassElement(ir::ClassDefinition *classDef)
 
 void ETSChecker::CheckClassAnnotations(ir::ClassDefinition *classDef)
 {
-    CheckAnnotations(classDef->Annotations());
+    CheckAnnotations(classDef);
     if (classDef->TypeParams() != nullptr) {
         for (auto *param : classDef->TypeParams()->Params()) {
-            CheckAnnotations(param->Annotations());
+            CheckAnnotations(param);
         }
     }
 }
 
 void ETSChecker::CheckInterfaceAnnotations(ir::TSInterfaceDeclaration *interfaceDecl)
 {
-    CheckAnnotations(interfaceDecl->Annotations());
+    CheckAnnotations(interfaceDecl);
     if (interfaceDecl->TypeParams() != nullptr) {
         for (auto *param : interfaceDecl->TypeParams()->Params()) {
-            CheckAnnotations(param->Annotations());
+            CheckAnnotations(param);
         }
     }
 }

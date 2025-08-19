@@ -47,9 +47,8 @@ void TSTypePredicate::Iterate(const NodeTraverser &cb) const
     if (typeAnnotation_ != nullptr) {
         cb(typeAnnotation_);
     }
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+
+    IterateAnnotations(cb);
 }
 
 void TSTypePredicate::Dump(ir::AstDumper *dumper) const
@@ -62,9 +61,7 @@ void TSTypePredicate::Dump(ir::AstDumper *dumper) const
 }
 void TSTypePredicate::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSTypePredicate");
 }
 
