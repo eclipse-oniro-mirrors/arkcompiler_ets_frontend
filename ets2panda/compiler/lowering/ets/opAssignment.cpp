@@ -193,6 +193,15 @@ static std::string GetCastString(checker::ETSChecker *checker, ir::Expression *e
     return " as @@T" + std::to_string(vec.size());
 }
 
+static std::string GetCastString(ir::Expression *expr)
+{
+    auto type = expr->TsType();
+    if (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) {
+        return ".to" + type->ToString() + "()";
+    }
+    return "";
+}
+
 static ir::Expression *GenerateLoweredResultForLoweredAssignment(const lexer::TokenType opEqual,
                                                                  ir::MemberExpression *expr,
                                                                  checker::ETSChecker *const checker,
@@ -372,7 +381,8 @@ static ir::Expression *ConstructUpdateResult(public_lib::Context *ctx, ir::Updat
     if (upd->IsPrefix()) {
         argInfo.newAssignmentStatements += "const @@I7 = (" + GenFormatForExpression(argument, 8U, 9U) +
                                            (argument->IsTSNonNullExpression() ? "!" : "") + opSign + " 1" + suffix +
-                                           ").to" + argument->TsType()->ToString() + "();";
+                                           ")" + GetCastString(argument) + ";\n";
+
         argInfo.newAssignmentStatements += GenFormatForExpression(argument, 10U, 11U) + " = @@I12; @@I13";
         return parser->CreateFormattedExpression(
             argInfo.newAssignmentStatements, argInfo.id1, argInfo.object, argInfo.objType, argInfo.id2,
@@ -382,10 +392,11 @@ static ir::Expression *ConstructUpdateResult(public_lib::Context *ctx, ir::Updat
     }
 
     // upd is postfix
-    argInfo.newAssignmentStatements +=
-        "const @@I7 = " + GenFormatForExpression(argument, 8, 9) + (argument->IsTSNonNullExpression() ? "!" : "") +
-        ".to" + argument->TsType()->ToString() + "();" + GenFormatForExpression(argument, 10U, 11U) + " = (@@I12 " +
-        opSign + " 1" + suffix + ").to" + argument->TsType()->ToString() + "(); @@I13;";
+    argInfo.newAssignmentStatements += "const @@I7 = " + GenFormatForExpression(argument, 8, 9) +
+                                       (argument->IsTSNonNullExpression() ? "!" : "") + GetCastString(argument) + ";" +
+                                       GenFormatForExpression(argument, 10U, 11U) + " = (@@I12 " + opSign + " 1" +
+                                       suffix + ")" + GetCastString(argument) + "; @@I13\n;";
+
     return parser->CreateFormattedExpression(
         argInfo.newAssignmentStatements, argInfo.id1, argInfo.object, argInfo.objType, argInfo.id2, argInfo.property,
         argInfo.propType, argInfo.id3, GetClone(allocator, argInfo.id1), GetClone(allocator, argInfo.id2),
