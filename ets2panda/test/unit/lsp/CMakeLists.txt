@@ -248,6 +248,18 @@ ets2panda_add_gtest(lsp_api_test_formatting CPP_SOURCES
     formatting_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_formatting_1 CPP_SOURCES
+    formatting_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_formatting_2 CPP_SOURCES
+    formatting_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_rulesmap CPP_SOURCES
+    rules_map_cache_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_todo_comments CPP_SOURCES
     todo_comments_test.cpp
 )
