@@ -246,6 +246,7 @@ export enum FaultID {
   SetCloneListDeprecated,
   SetTransferListDeprecated,
   SdkAbilityAsynchronousLifecycle,
+  ObjectLiteralUnionNeedsCast,
   LimitedStdLibNoSendableDecorator,
   LimitedStdLibNoDoncurrentDecorator,
   NoNeedStdlibWorker,
@@ -294,6 +295,8 @@ export enum FaultID {
   BuiltinNarrowTypes,
   BuiltinDisableApi,
   BuiltinIteratorResultValue,
+  OptionalTupleType,
+  LargeNumericLiteral,
   // this should always be last enum
   LAST_ID
 }

@@ -13,7 +13,7 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-     "result": [
+    "result": [
         {
             "line": 17,
             "column": 1,
@@ -31,7 +31,7 @@
             "endColumn": 22,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"PanelType\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -41,7 +41,7 @@
             "endColumn": 30,
             "problem": "NoDeprecatedApi",
             "suggest": "",
-            "rule": "ArkUI deprecated api check (arkui-no-deprecated-api)",
+            "rule": "The ArkUI interface \"Minibar\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -94,5 +94,5 @@
             "rule": "The ArkUI interface \"Panel\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         }
-     ]
+    ]
 }

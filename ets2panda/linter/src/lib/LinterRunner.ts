@@ -54,6 +54,7 @@ import { mergeArrayMaps } from './utils/functions/MergeArrayMaps';
 import { clearPathHelperCache, pathContainsDirectory } from './utils/functions/PathHelper';
 import { processSyncErr } from './utils/functions/ProcessWrite';
 import type { LinterInputInfo } from './LinterInputInfo';
+import { collectCommonApiInfo } from './utils/functions/CommonApiInfo';
 
 function prepareInputFilesList(cmdOptions: CommandLineOptions): string[] {
   let inputFiles = cmdOptions.inputFiles.map((x) => {
@@ -120,6 +121,7 @@ function lintImpl(config: LinterConfig, migrationInfo?: MigrationInfo): LintRunR
     if (srcFile) {
       srcFiles.push(srcFile);
     }
+    collectCommonApiInfo(tsProgram);
   }
 
   const tscStrictDiagnostics = getTscDiagnostics(tscCompiledProgram, srcFiles);

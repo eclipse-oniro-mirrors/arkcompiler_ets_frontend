@@ -15,8 +15,9 @@
 
 import { Sdk } from 'arkanalyzer/lib/Config';
 import fs from 'fs';
-import { AnyType, ArkMethod, EnumValueType, MethodSignature, UnionType, Value } from 'arkanalyzer';
+import { AnyType, ArkField, ArkFile, ArkMethod, ClassSignature, EnumValueType, Local, MethodSignature, UnionType, Value } from 'arkanalyzer';
 import { Utils } from './Utils';
+import { AbstractFieldRef, ArkNamespace, NamespaceSignature } from 'arkanalyzer/lib';
 
 export class SdkUtils {
     static OhosSdkName = 'ohosSdk';
@@ -57,6 +58,11 @@ export class SdkUtils {
         return projectName === this.OhosSdkName || projectName === this.HmsSdkName;
     }
 
+    static isFieldFromSdk(fieldRef: AbstractFieldRef): boolean {
+        const projectName = fieldRef.getFieldSignature().getDeclaringSignature().getDeclaringFileSignature().getProjectName();
+        return projectName === this.OhosSdkName || projectName === this.HmsSdkName;
+    }
+
     static getSdkMatchedSignature(ets1SDK: ArkMethod, args: Value[]): MethodSignature | null {
         const declareSigs = ets1SDK.getDeclareSignatures();
         if (declareSigs === null) {
@@ -93,5 +99,37 @@ export class SdkUtils {
             }
         }
         return ets1SigMatched;
+    }
+
+    static getSdkField(etsFile: ArkFile, fieldRef: AbstractFieldRef): ArkField | Local | null {
+        const declaringSig = fieldRef.getFieldSignature().getDeclaringSignature();
+        if (declaringSig instanceof ClassSignature) {
+            const declaringNS = declaringSig.getDeclaringNamespaceSignature();
+            if (!declaringNS) {
+                return etsFile?.getClassWithName(declaringSig.getClassName())?.getFieldWithName(fieldRef.getFieldName()) ?? null;
+            }
+            const namespace = this.getSdkNamespace(etsFile, declaringNS);
+            if (!namespace) {
+                return null;
+            }
+            return namespace.getClassWithName(declaringSig.getClassName())?.getFieldWithName(fieldRef.getFieldName()) ?? null;
+        }
+        const namespace = this.getSdkNamespace(etsFile, declaringSig);
+        if (!namespace) {
+            return null;
+        }
+        return namespace.getDefaultClass().getDefaultArkMethod()?.getBody()?.getLocals().get(fieldRef.getFieldName()) ?? null;
+    }
+
+    static getSdkNamespace(etsFile: ArkFile, namespaceSig: NamespaceSignature): ArkNamespace | null {
+        const declaringNsSig = namespaceSig.getDeclaringNamespaceSignature();
+        if (!declaringNsSig) {
+            return etsFile.getNamespace(namespaceSig);
+        }
+        const declaringNS = this.getSdkNamespace(etsFile, declaringNsSig);
+        if (!declaringNS) {
+            return null;
+        }
+        return declaringNS.getNamespace(namespaceSig);
     }
 }

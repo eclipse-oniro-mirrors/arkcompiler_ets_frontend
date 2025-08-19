@@ -35,6 +35,10 @@ export function readDeclareFiles(SdkPath: string): string[] {
     return [];
   }
   const declarationsFileNames: string[] = [];
+  const commonPath = path.resolve(SdkPath, './component/common.d.ts');
+  if (fs.existsSync(commonPath)) {
+    declarationsFileNames.push(path.resolve(SdkPath, './component/common.d.ts'));
+  }
   const declarationsPath = path.resolve(SdkPath, './build-tools/ets-loader/declarations');
   if (!fs.existsSync(declarationsPath)) {
     throw new Error('get wrong sdkDefaultApiPath, declarationsPath not found');

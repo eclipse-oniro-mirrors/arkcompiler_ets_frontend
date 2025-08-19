@@ -133,6 +133,10 @@ export class Cfg {
         }
     }
 
+    /**
+     * Get all basic blocks with topological order.
+     * @returns The set of all basic blocks.
+     */
     public getBlocks(): Set<BasicBlock> {
         return this.blocks;
     }

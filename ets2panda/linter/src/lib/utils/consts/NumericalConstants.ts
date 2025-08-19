@@ -15,3 +15,7 @@
 
 export const INT_MIN = -2147483648;
 export const INT_MAX = 2147483647;
+
+// Large number literal constants (2^63 - 1 to -2^63)
+export const LARGE_NUMBER_MAX = Number('9223372036854775807');
+export const LARGE_NUMBER_MIN = Number('-9223372036854775808');

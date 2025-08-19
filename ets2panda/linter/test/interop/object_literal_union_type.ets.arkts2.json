@@ -16,12 +16,32 @@
     "result": [
         {
             "line": 20,
+            "column": 17,
+            "endLine": 20,
+            "endColumn": 31,
+            "problem": "ObjectLiteralUnionNeedsCast",
+            "suggest": "",
+            "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
             "column": 5,
             "endLine": 20,
             "endColumn": 31,
             "problem": "InteropObjectLiteralAmbiguity",
             "suggest": "",
             "rule": "Object literal not compatible with target union type. (arkts-interop-d2s-object-literal-no-ambiguity)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 17,
+            "endLine": 22,
+            "endColumn": 31,
+            "problem": "ObjectLiteralUnionNeedsCast",
+            "suggest": "",
+            "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
             "severity": "ERROR"
         },
         {
@@ -36,12 +56,32 @@
         },
         {
             "line": 24,
+            "column": 22,
+            "endLine": 24,
+            "endColumn": 37,
+            "problem": "ObjectLiteralUnionNeedsCast",
+            "suggest": "",
+            "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
             "column": 5,
             "endLine": 24,
             "endColumn": 37,
             "problem": "InteropObjectLiteralAmbiguity",
             "suggest": "",
             "rule": "Object literal not compatible with target union type. (arkts-interop-d2s-object-literal-no-ambiguity)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 17,
+            "endLine": 26,
+            "endColumn": 34,
+            "problem": "ObjectLiteralUnionNeedsCast",
+            "suggest": "",
+            "rule": "Object literal used with a union type. The intended union member (e.g. { … } as A) must be explicitly asserted (arkts-union-assignment-with-obj-literal-ambiguity)",
             "severity": "ERROR"
         },
         {

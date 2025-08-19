@@ -140,6 +140,8 @@ export class NumericSemanticCheck implements BaseChecker {
     private visited: Set<ArkMethod> = new Set();
     private callDepth = 0;
     private classFieldRes: Map<ArkField, IssueInfo> = new Map<ArkField, IssueInfo>();
+    private issuesMap: Map<string, IssueReport> = new Map<string, IssueReport>();
+    private sourceFiles: Map<FileSignature, ts.SourceFile> = new Map<FileSignature, ts.SourceFile>();
 
     public registerMatchers(): MatcherCallback[] {
         const matchBuildCb: MatcherCallback = {
@@ -169,6 +171,8 @@ export class NumericSemanticCheck implements BaseChecker {
             if (arkFile.getLanguage() !== Language.ARKTS1_2) {
                 continue;
             }
+            // 用于记录与issue相关的文件的tsc信息，避免每次新增issue时重复创建，提升性能。每次遍历新文件时清空map，节省内存。
+            this.sourceFiles = new Map<FileSignature, ts.SourceFile>();
             const defaultMethod = arkFile.getDefaultClass().getDefaultArkMethod();
             if (defaultMethod) {
                 this.dvfgBuilder.buildForSingleMethod(defaultMethod);
@@ -182,14 +186,16 @@ export class NumericSemanticCheck implements BaseChecker {
                 }
             }
         }
+
+        this.issues = Array.from(this.issuesMap.values());
     };
 
     public processClass(arkClass: ArkClass): void {
-        if (arkClass.getCategory() === ClassCategory.ENUM) {
+        if (arkClass.getCategory() === ClassCategory.ENUM || arkClass.getCategory() === ClassCategory.TYPE_LITERAL) {
             // Enum类型的class不需要处理，仅有statint函数，一定不涉及SDK调用，整型字面量不能进行浮点字面量的修改，也不涉及类型注解修改
+            // TYPE_LITERAL类型的class不需要处理，仅作为type使用，该class内无方法，仅有field的定义，且field无初始化语句，仅设定类型
             return;
         }
-        // TODO: type literal类型的class需要处理吗
         this.classFieldRes = new Map<ArkField, IssueInfo>();
         // 查找全部method，包含constructor、%instInit，%statInit等
         for (let mtd of arkClass.getMethods(true)) {
@@ -203,16 +209,18 @@ export class NumericSemanticCheck implements BaseChecker {
         for (const stmt of stmts) {
             try {
                 this.checkSdkArgsInStmt(stmt);
+                this.checkSdkReturnValueInStmt(stmt);
+                this.checkSdkFieldValueInStmt(stmt);
             } catch (e) {
                 logger.error(`Error checking sdk called in stmt: ${stmt.toString()}, method: ${target.getSignature().toString()}, error: ${e}`);
             }
         }
 
-        // 场景2：需要检查整型字面量出现的stmt，该stmt为sink点。场景2在场景1之后执行，优先让SDK调用来决定变量的类型为int、long、number，剩余的场景2处理，避免issue之间的冲突
+        // 场景2：需要检查整型字面量或除法出现的stmt，该stmt为sink点。场景2在场景1之后执行，优先让SDK调用来决定变量的类型为int、long、number，剩余的场景2处理，避免issue之间的冲突
         if (target.isGenerated()) {
             // statInit、instInit等方法不进行检查，不主动对类属性的类型进行检查，因为类属性的使用范围很广，很难找全，仅对涉及的1/2这种进行告警，自动修复为1.0/2.0
             try {
-                this.checkFieldInitializerWithDivision(target);
+                this.checkFieldInitializerWithIntLiteral(target);
             } catch (e) {
                 logger.error(`Error checking init method with numeric literal, method: ${target.getSignature().toString()}, error: ${e}`);
             }
@@ -239,18 +247,18 @@ export class NumericSemanticCheck implements BaseChecker {
     }
 
     private checkSdkArgsInStmt(stmt: Stmt): void {
-        // res用于存放检查过程中所有找到的Local变量，记录这些变量是否均仅当做int使用，若是则可以设置成int类型，跨函数场景下可能包含其他method中的Local变量
-        const res = new Map<Local, IssueInfo>();
-        this.callDepth = 0;
         const intArgs = this.getSDKIntLongArgs(stmt);
         if (intArgs === null || intArgs.size === 0) {
             return;
         }
 
+        // res用于存放检查过程中所有找到的Local变量，记录这些变量是否均仅当做int使用，若是则可以设置成int类型，跨函数场景下可能包含其他method中的Local变量
+        const res = new Map<Local, IssueInfo>();
+        this.callDepth = 0;
         for (const [arg, category] of intArgs) {
             const issueReason = this.checkValueOnlyUsedAsIntLong(stmt, arg, res, category);
             if (issueReason !== IssueReason.OnlyUsedAsIntLong) {
-                this.addIssueReport(RuleCategory.SDKIntType, category, issueReason, true, stmt, arg);
+                this.addIssueReportForSDKArg(RuleCategory.SDKIntType, category, issueReason, true, stmt, arg);
             }
         }
         res.forEach((issueInfo, local) => {
@@ -259,19 +267,130 @@ export class NumericSemanticCheck implements BaseChecker {
             }
             const declaringStmt = local.getDeclaringStmt();
             if (declaringStmt !== null && issueInfo.issueReason === IssueReason.OnlyUsedAsIntLong) {
-                this.addIssueReport(RuleCategory.SDKIntType, issueInfo.numberCategory, issueInfo.issueReason, true, declaringStmt, local, undefined, stmt);
+                this.addIssueReportForSDKArg(
+                    RuleCategory.SDKIntType,
+                    issueInfo.numberCategory,
+                    issueInfo.issueReason,
+                    true,
+                    declaringStmt,
+                    local,
+                    undefined,
+                    stmt
+                );
             }
         });
         this.classFieldRes.forEach((fieldInfo, field) => {
             if (fieldInfo.issueReason === IssueReason.OnlyUsedAsIntLong || fieldInfo.issueReason === IssueReason.UsedWithOtherType) {
                 // 如果能明确判断出field是int或非int，则添加类型注解int或number，其他找不全的场景不变
-                this.addIssueReport(RuleCategory.NumericLiteral, fieldInfo.numberCategory, fieldInfo.issueReason, true, undefined, undefined, field);
+                this.addIssueReportForSDKArg(RuleCategory.SDKIntType, fieldInfo.numberCategory, fieldInfo.issueReason, true, undefined, undefined, field, stmt);
             }
         });
     }
 
-    private checkFieldInitializerWithDivision(method: ArkMethod): void {
-        // 仅对类属性的初始化语句进行检查，判断其中是否有涉及整型字面量参与的除法运算
+    private checkSdkReturnValueInStmt(stmt: Stmt): void {
+        if (!(stmt instanceof ArkAssignStmt)) {
+            return;
+        }
+        const rightOp = stmt.getRightOp();
+        if (!(rightOp instanceof AbstractInvokeExpr)) {
+            return;
+        }
+        const numberCategory = this.checkSDKReturnType(rightOp);
+        if (!numberCategory) {
+            return;
+        }
+
+        const res = new Map<Local, IssueInfo>();
+        this.callDepth = 0;
+        const leftOp = stmt.getLeftOp();
+        this.checkValueOnlyUsedAsIntLong(stmt, leftOp, res, numberCategory);
+        res.forEach((issueInfo, local) => {
+            if (this.shouldIgnoreLocal(local)) {
+                return;
+            }
+            const declaringStmt = local.getDeclaringStmt();
+            if (declaringStmt !== null) {
+                this.addIssueReportForSDKReturnOrField(
+                    RuleCategory.SDKIntType,
+                    issueInfo.numberCategory,
+                    issueInfo.issueReason,
+                    declaringStmt,
+                    local,
+                    undefined,
+                    stmt
+                );
+            }
+        });
+        this.classFieldRes.forEach((fieldInfo, field) => {
+            if (fieldInfo.issueReason === IssueReason.OnlyUsedAsIntLong || fieldInfo.issueReason === IssueReason.UsedWithOtherType) {
+                // 如果能明确判断出field是int或非int，则添加类型注解int或number，其他找不全的场景不变
+                this.addIssueReportForSDKReturnOrField(
+                    RuleCategory.SDKIntType,
+                    fieldInfo.numberCategory,
+                    fieldInfo.issueReason,
+                    undefined,
+                    undefined,
+                    field,
+                    stmt
+                );
+            }
+        });
+    }
+
+    private checkSdkFieldValueInStmt(stmt: Stmt): void {
+        if (!(stmt instanceof ArkAssignStmt)) {
+            return;
+        }
+        const rightOp = stmt.getRightOp();
+        if (!(rightOp instanceof AbstractFieldRef)) {
+            return;
+        }
+        const numberCategory = this.checkSDKFieldType(rightOp);
+        if (!numberCategory) {
+            return;
+        }
+        const res = new Map<Local, IssueInfo>();
+        this.callDepth = 0;
+        const leftOp = stmt.getLeftOp();
+        if (!Utils.isNearlyNumberType(leftOp.getType())) {
+            return;
+        }
+        this.checkValueOnlyUsedAsIntLong(stmt, leftOp, res, numberCategory);
+        res.forEach((issueInfo, local) => {
+            if (this.shouldIgnoreLocal(local)) {
+                return;
+            }
+            const declaringStmt = local.getDeclaringStmt();
+            if (declaringStmt !== null) {
+                this.addIssueReportForSDKReturnOrField(
+                    RuleCategory.SDKIntType,
+                    issueInfo.numberCategory,
+                    issueInfo.issueReason,
+                    declaringStmt,
+                    local,
+                    undefined,
+                    stmt
+                );
+            }
+        });
+        this.classFieldRes.forEach((fieldInfo, field) => {
+            if (fieldInfo.issueReason === IssueReason.OnlyUsedAsIntLong || fieldInfo.issueReason === IssueReason.UsedWithOtherType) {
+                // 如果能明确判断出field是int或非int，则添加类型注解int或number，其他找不全的场景不变
+                this.addIssueReportForSDKReturnOrField(
+                    RuleCategory.SDKIntType,
+                    fieldInfo.numberCategory,
+                    fieldInfo.issueReason,
+                    undefined,
+                    undefined,
+                    field,
+                    stmt
+                );
+            }
+        });
+    }
+
+    private checkFieldInitializerWithIntLiteral(method: ArkMethod): void {
+        // 仅对类属性的初始化语句进行检查，判断其中是否有涉及整型字面量的赋值或涉及除法运算
         if (method.getName() !== STATIC_INIT_METHOD_NAME && method.getName() !== INSTANCE_INIT_METHOD_NAME) {
             return;
         }
@@ -288,16 +407,73 @@ export class NumericSemanticCheck implements BaseChecker {
                 continue;
             }
             const rightOp = stmt.getRightOp();
-            if (rightOp instanceof Local && !rightOp.getName().startsWith(TEMP_LOCAL_PREFIX)) {
-                // 类属性的初始化语句使用Local赋值，且Local非临时变量，则一定不涉及除法运算，无需继续本轮检查
-                continue;
+            if (rightOp instanceof Local && rightOp.getName().startsWith(TEMP_LOCAL_PREFIX)) {
+                // 类属性的初始化语句使用Local赋值，且Local为临时变量，则可能涉及除法运算
+                // 整型字面量参与除法运算的告警和自动修复信息在检查过程中就已生成，无需在此处额外生成
+                this.checkValueOnlyUsedAsIntLong(stmt, rightOp, new Map<Local, IssueInfo>(), NumberCategory.int);
+                this.checkFieldRef(
+                    leftOp,
+                    stmt.getCfg().getDeclaringMethod().getDeclaringArkClass().getSignature(),
+                    NumberCategory.int,
+                    new Map<Local, IssueInfo>()
+                );
             }
-            // 整型字面量参与除法运算的告警和自动修复信息在检查过程中就已生成，无需在此处额外生成
-            this.checkValueOnlyUsedAsIntLong(stmt, stmt.getRightOp(), new Map<Local, IssueInfo>(), NumberCategory.int);
+            if (rightOp instanceof NumberConstant && !this.isNumberConstantActuallyFloat(rightOp)) {
+                this.checkFieldRef(
+                    leftOp,
+                    stmt.getCfg().getDeclaringMethod().getDeclaringArkClass().getSignature(),
+                    NumberCategory.int,
+                    new Map<Local, IssueInfo>()
+                );
+            }
         }
+        this.classFieldRes.forEach((fieldInfo, field) => {
+            this.addIssueReport(RuleCategory.NumericLiteral, fieldInfo.numberCategory, fieldInfo.issueReason, true, undefined, undefined, field);
+        });
     }
 
     private checkStmtContainsNumericLiteral(stmt: Stmt): void {
+        const res = new Map<Local, IssueInfo>();
+        this.callDepth = 0;
+
+        // 场景1：先判断是否涉及除法运算
+        if (stmt instanceof ArkAssignStmt) {
+            const leftOp = stmt.getLeftOp();
+            const rightOp = stmt.getRightOp();
+            if (leftOp instanceof Local && rightOp instanceof ArkNormalBinopExpr && rightOp.getOperator() === NormalBinaryOperator.Division) {
+                if (this.isLocalAssigned2Array(leftOp)) {
+                    // local为临时变量，用于给数组元素赋值的场景，不在本规则的实现范围内，归另一处的规则开发实现
+                    return;
+                }
+                if (!Utils.isNearlyNumberType(leftOp.getType())) {
+                    // 对左值进行检查决定是否对其添加类型注解int或number，如果不是number相关类型则无需继续进行检查
+                    return;
+                }
+                this.checkValueOnlyUsedAsIntLong(stmt, stmt.getLeftOp(), res, NumberCategory.number);
+                // 因为如果let a10 = a1/2; a10 = a2/3;第1句能判断a10为number，则不会继续后面的检查，所以需要额外对除法表达式的op1和op2进行number类型注解的补充
+                this.isAbstractExprOnlyUsedAsIntLong(stmt, rightOp, res, NumberCategory.number);
+                res.forEach((issueInfo, local) => {
+                    if (this.shouldIgnoreLocal(local)) {
+                        return;
+                    }
+                    const declaringStmt = local.getDeclaringStmt();
+                    if (declaringStmt === null) {
+                        return;
+                    }
+                    // 无论local的判定结果是什么，均需要进行自动修复类型注解为int或者number
+                    this.addIssueReport(RuleCategory.NumericLiteral, issueInfo.numberCategory, issueInfo.issueReason, true, declaringStmt, local);
+                });
+                this.classFieldRes.forEach((fieldInfo, field) => {
+                    if (fieldInfo.issueReason === IssueReason.OnlyUsedAsIntLong || fieldInfo.issueReason === IssueReason.UsedWithOtherType) {
+                        // 如果能明确判断出field是int或非int，则添加类型注解int或number，其他找不全的场景不变
+                        this.addIssueReport(RuleCategory.NumericLiteral, fieldInfo.numberCategory, fieldInfo.issueReason, true, undefined, undefined, field);
+                    }
+                });
+                return;
+            }
+        }
+
+        // 场景2：非除法运算场景，处理其余涉及整型字面量的场景
         if (!this.isStmtContainsIntLiteral(stmt)) {
             return;
         }
@@ -334,9 +510,7 @@ export class NumericSemanticCheck implements BaseChecker {
             return;
         }
 
-        const res = new Map<Local, IssueInfo>();
-        this.callDepth = 0;
-        if (rightOp instanceof NumberConstant && !this.isNumberConstantWithDecimalPoint(rightOp)) {
+        if (rightOp instanceof NumberConstant && !this.isNumberConstantActuallyFloat(rightOp)) {
             // 整型字面量直接赋值给左值，判断左值在生命周期内是否仅作为int使用，并且判断左值是否继续赋值给其他变量，其他变量是否也可以定义为int
             this.checkAllLocalsAroundLocal(stmt, leftOp, res, NumberCategory.int);
         } else if (rightOp instanceof AbstractExpr) {
@@ -358,7 +532,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 return;
             }
             // 无论local的判定结果是什么，均需要进行自动修复类型注解为int或者number
-            this.addIssueReport(RuleCategory.NumericLiteral, issueInfo.numberCategory, issueInfo.issueReason, true, declaringStmt, local, undefined);
+            this.addIssueReport(RuleCategory.NumericLiteral, issueInfo.numberCategory, issueInfo.issueReason, true, declaringStmt, local);
         });
         this.classFieldRes.forEach((fieldInfo, field) => {
             if (fieldInfo.issueReason === IssueReason.OnlyUsedAsIntLong || fieldInfo.issueReason === IssueReason.UsedWithOtherType) {
@@ -511,13 +685,40 @@ export class NumericSemanticCheck implements BaseChecker {
         if (declaringStmt instanceof ArkAssignStmt && declaringStmt.getRightOp() instanceof ClosureFieldRef) {
             return true;
         }
+
+        // 对于for (const i of arr)这样的写法，不能为i添加类型注解
+        if (declaringStmt instanceof ArkAssignStmt) {
+            const rightOp = declaringStmt.getRightOp();
+            if (!(rightOp instanceof ArkCastExpr)) {
+                return false;
+            }
+            const castOp = rightOp.getOp();
+            if (!(castOp instanceof Local)) {
+                return false;
+            }
+            const castOpDeclaring = castOp.getDeclaringStmt();
+            if (!(castOpDeclaring instanceof ArkAssignStmt)) {
+                return false;
+            }
+            const castOpRight = castOpDeclaring.getRightOp();
+            if (!(castOpRight instanceof ArkInstanceFieldRef)) {
+                return false;
+            }
+            const fieldSig = castOpRight.getFieldSignature();
+            if (fieldSig.getFieldName() === 'value') {
+                const declaringSig = fieldSig.getDeclaringSignature();
+                if (declaringSig instanceof ClassSignature && declaringSig.getClassName() === 'IteratorYieldResult') {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
     private isStmtContainsIntLiteral(stmt: Stmt): boolean {
         const uses = stmt.getUses();
         for (const use of uses) {
-            if (use instanceof NumberConstant && !this.isNumberConstantWithDecimalPoint(use)) {
+            if (use instanceof NumberConstant && !this.isNumberConstantActuallyFloat(use)) {
                 return true;
             }
         }
@@ -638,7 +839,7 @@ export class NumericSemanticCheck implements BaseChecker {
         const args = invokeExpr.getArgs();
 
         // 根据找到的对应arkts1.1中的SDK接口匹配到对应在arkts1.2中的SDK接口
-        const ets2SdkSignature = this.getEts2SdkSignatureWithEts1Method(callMethod, args);
+        const ets2SdkSignature = this.getEts2SdkSignatureWithEts1Method(callMethod, args, true);
         if (ets2SdkSignature === null) {
             return null;
         }
@@ -658,6 +859,82 @@ export class NumericSemanticCheck implements BaseChecker {
             return null;
         }
         return res;
+    }
+
+    private checkSDKReturnType(invokeExpr: AbstractInvokeExpr): NumberCategory | null {
+        const callMethod = this.scene.getMethod(invokeExpr.getMethodSignature());
+        if (callMethod === null || !SdkUtils.isMethodFromSdk(callMethod)) {
+            return null;
+        }
+        const args = invokeExpr.getArgs();
+
+        // 根据找到的对应arkts1.1中的SDK接口匹配到对应在arkts1.2中的SDK接口
+        const ets2SdkSignature = this.getEts2SdkSignatureWithEts1Method(callMethod, args, false);
+        if (ets2SdkSignature === null) {
+            return null;
+        }
+        const returnType = ets2SdkSignature.getType();
+        if (this.isLongType(returnType)) {
+            return NumberCategory.long;
+        }
+        if (this.isIntType(returnType)) {
+            return NumberCategory.int;
+        }
+        return null;
+    }
+
+    private checkSDKFieldType(fieldRef: AbstractFieldRef): NumberCategory | null {
+        if (!SdkUtils.isFieldFromSdk(fieldRef) || !Utils.isNearlyNumberType(fieldRef.getType())) {
+            return null;
+        }
+        const ets1SdkFileSig = fieldRef.getFieldSignature().getDeclaringSignature().getDeclaringFileSignature();
+        const ets2SdkFileSig = new FileSignature(ets1SdkFileSig.getProjectName(), ets1SdkFileSig.getFileName().replace('.d.ts', '.d.ets'));
+        const ets2SdkFileSigBak = new FileSignature(ets1SdkFileSig.getProjectName(), ets1SdkFileSig.getFileName());
+        const ets2SdkFile = this.ets2SdkScene?.getFile(ets2SdkFileSig) ?? this.ets2SdkScene?.getFile(ets2SdkFileSigBak);
+        if (!ets2SdkFile) {
+            return null;
+        }
+        let ets2Field = SdkUtils.getSdkField(ets2SdkFile, fieldRef);
+        if (!ets2Field) {
+            return null;
+        }
+        if (this.isIntType(ets2Field.getType())) {
+            return NumberCategory.int;
+        }
+        if (this.isLongType(ets2Field.getType())) {
+            return NumberCategory.long;
+        }
+        return null;
+    }
+
+    private matchEts1NumberEts2IntLongReturnSig(ets2Sigs: MethodSignature[], ets1Sig: MethodSignature): MethodSignature | null {
+        const ets1Params = ets1Sig.getMethodSubSignature().getParameters();
+        for (const ets2Sig of ets2Sigs) {
+            let allParamMatched = true;
+            const ets2Params = ets2Sig.getMethodSubSignature().getParameters();
+            if (ets2Params.length !== ets1Params.length) {
+                continue;
+            }
+            for (let i = 0; i < ets1Params.length; i++) {
+                const ets2ParamType = ets2Params[i].getType();
+                const ets1ParamType = ets1Params[i].getType();
+                if (
+                    ets2ParamType === ets1ParamType ||
+                    (ets1ParamType instanceof NumberType && (this.isIntType(ets2ParamType) || this.isLongType(ets2ParamType)))
+                ) {
+                    continue;
+                }
+                allParamMatched = false;
+                break;
+            }
+            if (allParamMatched) {
+                const returnType = ets2Sig.getType();
+                if (this.isLongType(returnType) || this.isIntType(returnType)) {
+                    return ets2Sig;
+                }
+            }
+        }
+        return null;
     }
 
     private matchEts1NumberEts2IntLongMethodSig(ets2Sigs: MethodSignature[], ets1Sig: MethodSignature): MethodSignature | null {
@@ -697,7 +974,8 @@ export class NumericSemanticCheck implements BaseChecker {
         return intSDKMatched;
     }
 
-    private getEts2SdkSignatureWithEts1Method(ets1SDK: ArkMethod, args: Value[], exactMatch: boolean = true): MethodSignature | null {
+    // checkArg = true is for checking SDK arg with int or long; otherwise is for checking SDK return with int or long
+    private getEts2SdkSignatureWithEts1Method(ets1SDK: ArkMethod, args: Value[], checkArg: boolean, exactMatch: boolean = true): MethodSignature | null {
         const ets2Sdks = this.ets2Sdks;
         if (ets2Sdks === undefined || ets2Sdks.length === 0) {
             return null;
@@ -726,7 +1004,10 @@ export class NumericSemanticCheck implements BaseChecker {
         if (!exactMatch && declareSigs.length === 1) {
             return declareSigs[0];
         }
-        return this.matchEts1NumberEts2IntLongMethodSig(declareSigs, ets1SigMatched);
+        if (checkArg) {
+            return this.matchEts1NumberEts2IntLongMethodSig(declareSigs, ets1SigMatched);
+        }
+        return this.matchEts1NumberEts2IntLongReturnSig(declareSigs, ets1SigMatched);
     }
 
     private getEts2SdkWithEts1SdkInfo(ets2File: ArkFile, ets1SDK: ArkMethod): ArkMethod | null {
@@ -804,7 +1085,7 @@ export class NumericSemanticCheck implements BaseChecker {
             return IssueReason.RelatedWithNonETS2;
         }
         if (value instanceof NumberConstant) {
-            if (this.isNumberConstantWithDecimalPoint(value)) {
+            if (this.isNumberConstantActuallyFloat(value)) {
                 return IssueReason.UsedWithOtherType;
             }
             return IssueReason.OnlyUsedAsIntLong;
@@ -830,8 +1111,18 @@ export class NumericSemanticCheck implements BaseChecker {
         return IssueReason.Other;
     }
 
-    private isNumberConstantWithDecimalPoint(constant: NumberConstant): boolean {
-        return constant.getValue().includes('.');
+    private isNumberConstantActuallyFloat(constant: NumberConstant): boolean {
+        const valueStr = constant.getValue();
+        if (valueStr.includes('.') && !valueStr.includes('e')) {
+            // 数字字面量非科学计数的写法，并且有小数点，则一定是浮点数，1.0也认为是float
+            return true;
+        }
+        const num = Number(constant.getValue());
+        if (isNaN(num)) {
+            // 超大数字字面量转换后是NaN，按照number处理
+            return true;
+        }
+        return !Number.isInteger(num);
     }
 
     // 判断number constant是否为1.0、2.0这种可以转成1、2的整型形式
@@ -899,16 +1190,20 @@ export class NumericSemanticCheck implements BaseChecker {
         }
 
         if (stmt.getCfg().getDeclaringMethod().getLanguage() !== Language.ARKTS1_2) {
-            hasChecked.set(local, { issueReason: IssueReason.RelatedWithNonETS2, numberCategory: numberCategory });
+            hasChecked.set(local, { issueReason: IssueReason.RelatedWithNonETS2, numberCategory: NumberCategory.number });
             return IssueReason.RelatedWithNonETS2;
         }
 
         // 先将value加入map中，默认设置成false，避免后续递归查找阶段出现死循环，最后再根据查找结果绝对是否重新设置成true
-        hasChecked.set(local, { issueReason: IssueReason.Other, numberCategory: numberCategory });
+        hasChecked.set(local, { issueReason: IssueReason.Other, numberCategory: NumberCategory.number });
 
         const resWithLocalType = this.checkResWithLocalType(local, stmt);
         if (resWithLocalType) {
-            hasChecked.set(local, { issueReason: resWithLocalType, numberCategory: numberCategory });
+            if (resWithLocalType === IssueReason.OnlyUsedAsIntLong) {
+                hasChecked.set(local, { issueReason: resWithLocalType, numberCategory: numberCategory });
+            } else {
+                hasChecked.set(local, { issueReason: resWithLocalType, numberCategory: NumberCategory.number });
+            }
             return resWithLocalType;
         }
 
@@ -931,7 +1226,7 @@ export class NumericSemanticCheck implements BaseChecker {
             if (declaringStmt === null) {
                 // local变量未找到定义语句，直接返回false，因为就算是能确认local仅当做int使用，也找不到定义语句去修改类型注解为int，所以后续检查都没有意义
                 logger.error(`Missing declaring stmt, local: ${local.getName()}`);
-                hasChecked.set(local, { issueReason: IssueReason.CannotFindAll, numberCategory: numberCategory });
+                hasChecked.set(local, { issueReason: IssueReason.CannotFindAll, numberCategory: NumberCategory.number });
                 return IssueReason.CannotFindAll;
             }
             hasChecked.delete(local);
@@ -981,13 +1276,17 @@ export class NumericSemanticCheck implements BaseChecker {
     private checkRelatedStmtForLocal(stmt: Stmt, local: Local, hasChecked: Map<Local, IssueInfo>, numberCategory: NumberCategory): IssueInfo {
         if (stmt instanceof ArkAssignStmt && stmt.getLeftOp() === local) {
             const issueReason = this.checkValueOnlyUsedAsIntLong(stmt, stmt.getRightOp(), hasChecked, numberCategory);
-            return { issueReason, numberCategory };
+            if (issueReason === IssueReason.OnlyUsedAsIntLong) {
+                return { issueReason, numberCategory };
+            } else {
+                return { issueReason, numberCategory: NumberCategory.number };
+            }
         }
         // 当前检查的local位于赋值语句的右边，若参与除法运算则看做double类型使用，若作为SDK入参依据SDK定义，其余运算、赋值等处理不会影响其自身从int -> number，所以不处理
         if (stmt instanceof ArkAssignStmt && stmt.getLeftOp() !== local) {
             const rightOp = stmt.getRightOp();
             if (rightOp instanceof ArkNormalBinopExpr && rightOp.getOperator() === NormalBinaryOperator.Division) {
-                return { issueReason: IssueReason.UsedWithOtherType, numberCategory };
+                return { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number };
             }
             if (rightOp instanceof AbstractInvokeExpr) {
                 const res = this.checkLocalUsedAsSDKArg(rightOp, local, hasChecked);
@@ -1011,7 +1310,7 @@ export class NumericSemanticCheck implements BaseChecker {
             return { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory };
         }
         logger.error(`Need to check new type of stmt: ${stmt.toString()}, method: ${stmt.getCfg().getDeclaringMethod().getSignature().toString()}`);
-        return { issueReason: IssueReason.Other, numberCategory };
+        return { issueReason: IssueReason.Other, numberCategory: NumberCategory.number };
     }
 
     // 判断local是否是SDK invoke expr的入参，且其类型是int或long，否则返回null
@@ -1153,11 +1452,15 @@ export class NumericSemanticCheck implements BaseChecker {
             if (expr.getOperator() === NormalBinaryOperator.Division) {
                 const op1 = expr.getOp1();
                 const op2 = expr.getOp2();
-                if (op1 instanceof NumberConstant && !this.isNumberConstantWithDecimalPoint(op1)) {
+                if (op1 instanceof NumberConstant && !this.isNumberConstantActuallyFloat(op1)) {
                     this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op1);
+                } else if (op1 instanceof Local) {
+                    hasChecked.set(op1, { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number });
                 }
-                if (op2 instanceof NumberConstant && !this.isNumberConstantWithDecimalPoint(op2)) {
+                if (op2 instanceof NumberConstant && !this.isNumberConstantActuallyFloat(op2)) {
                     this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op2);
+                } else if (op2 instanceof Local) {
+                    hasChecked.set(op2, { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number });
                 }
                 return IssueReason.UsedWithOtherType;
             }
@@ -1186,7 +1489,7 @@ export class NumericSemanticCheck implements BaseChecker {
             if (SdkUtils.isMethodFromSdk(method)) {
                 const ets2SDKSig = this.getEts2SdkSignatureWithEts1Method(method, expr.getArgs(), false);
                 if (ets2SDKSig === null) {
-                    return IssueReason.RelatedWithNonETS2;
+                    return IssueReason.UsedWithOtherType;
                 }
                 if (this.isIntType(ets2SDKSig.getType()) || this.isLongType(ets2SDKSig.getType())) {
                     return IssueReason.OnlyUsedAsIntLong;
@@ -1259,19 +1562,22 @@ export class NumericSemanticCheck implements BaseChecker {
         return IssueReason.Other;
     }
 
-    private checkFieldRef(ref: AbstractRef, currentClassSig: ClassSignature, numberCategory: NumberCategory, hasChecked: Map<Local, IssueInfo>): IssueReason {
-        const refType = ref.getType();
-        if (!(ref instanceof AbstractFieldRef)) {
-            if (!Utils.isNearlyNumberType(refType)) {
-                if (refType instanceof UnknownType) {
-                    return IssueReason.CannotFindAll;
-                }
-                return IssueReason.UsedWithOtherType;
+    private checkFieldRef(
+        fieldRef: AbstractFieldRef,
+        currentClassSig: ClassSignature,
+        numberCategory: NumberCategory,
+        hasChecked: Map<Local, IssueInfo>
+    ): IssueReason {
+        if (SdkUtils.isFieldFromSdk(fieldRef)) {
+            const ets2FieldType = this.checkSDKFieldType(fieldRef);
+            if (ets2FieldType && (ets2FieldType === NumberCategory.int || ets2FieldType === NumberCategory.long)) {
+                return IssueReason.OnlyUsedAsIntLong;
             }
-            // 此处若想充分解析，需要在整个项目中找到该field的所有使用到的地方，效率很低，且很容易找漏，当前不做检查，直接返回false
-            return IssueReason.CannotFindAll;
+            return IssueReason.UsedWithOtherType;
         }
-        const fieldBase = ref.getFieldSignature().getDeclaringSignature();
+
+        const refType = fieldRef.getType();
+        const fieldBase = fieldRef.getFieldSignature().getDeclaringSignature();
         if (fieldBase instanceof NamespaceSignature) {
             return IssueReason.CannotFindAll;
         }
@@ -1282,7 +1588,6 @@ export class NumericSemanticCheck implements BaseChecker {
         if (baseClass.getLanguage() !== Language.ARKTS1_2) {
             return IssueReason.RelatedWithNonETS2;
         }
-        // TODO: typeliteral是什么类型？
         if (
             baseClass.getCategory() === ClassCategory.ENUM ||
             baseClass.getCategory() === ClassCategory.OBJECT ||
@@ -1295,7 +1600,7 @@ export class NumericSemanticCheck implements BaseChecker {
         if (baseClass.getSignature().toString() !== currentClassSig.toString()) {
             return IssueReason.CannotFindAll;
         }
-        const field = baseClass.getField(ref.getFieldSignature());
+        const field = baseClass.getField(fieldRef.getFieldSignature());
         if (field === null) {
             return IssueReason.CannotFindAll;
         }
@@ -1306,29 +1611,44 @@ export class NumericSemanticCheck implements BaseChecker {
         if (!Utils.isNearlyNumberType(refType)) {
             if (refType instanceof UnknownType) {
                 const res = IssueReason.CannotFindAll;
-                this.classFieldRes.set(field, { issueReason: res, numberCategory: numberCategory });
+                this.classFieldRes.set(field, { issueReason: res, numberCategory: NumberCategory.number });
                 return res;
             }
             const res = IssueReason.UsedWithOtherType;
-            this.classFieldRes.set(field, { issueReason: res, numberCategory: numberCategory });
-            return res;
-        }
-        if (field.containsModifier(ModifierType.READONLY)) {
-            // 先写入默认值，避免后续查找时出现死循环，得到结果后再进行替换
-            this.classFieldRes.set(field, { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory: numberCategory });
-            const res = this.checkReadonlyFieldInitializer(field, baseClass, numberCategory, hasChecked);
-            this.classFieldRes.set(field, { issueReason: res, numberCategory: numberCategory });
+            this.classFieldRes.set(field, { issueReason: res, numberCategory: NumberCategory.number });
             return res;
         }
         if (field.containsModifier(ModifierType.PRIVATE)) {
+            // 如果属性有setter方法，则无法找全其赋值的地方，无法判断是否为int，保守方式判定为number
+            // 如果属性有getter方法，则无法找全其使用的地方，如果有用作除法运算，则应该是number，保守方式判定为number
+            if (this.fieldWithSetter(field, baseClass) || this.fieldWithGetter(field, baseClass)) {
+                const res = IssueReason.CannotFindAll;
+                this.classFieldRes.set(field, { issueReason: res, numberCategory: NumberCategory.number });
+                return res;
+            }
+            if (field.containsModifier(ModifierType.READONLY)) {
+                // 先写入默认值，避免后续查找时出现死循环，得到结果后再进行替换
+                this.classFieldRes.set(field, { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory: numberCategory });
+                const res = this.checkReadonlyFieldInitializer(field, baseClass, numberCategory, hasChecked);
+                if (res === IssueReason.OnlyUsedAsIntLong) {
+                    this.classFieldRes.set(field, { issueReason: res, numberCategory: numberCategory });
+                } else {
+                    this.classFieldRes.set(field, { issueReason: res, numberCategory: NumberCategory.number });
+                }
+                return res;
+            }
             this.classFieldRes.set(field, { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory: numberCategory });
             const res = this.checkPrivateField(field, baseClass, numberCategory, hasChecked);
-            this.classFieldRes.set(field, { issueReason: res, numberCategory: numberCategory });
+            if (res === IssueReason.OnlyUsedAsIntLong) {
+                this.classFieldRes.set(field, { issueReason: res, numberCategory: numberCategory });
+            } else {
+                this.classFieldRes.set(field, { issueReason: res, numberCategory: NumberCategory.number });
+            }
             return res;
         }
         // 此处若想充分解析，需要在整个项目中找到该field的所有使用到的地方，效率很低，且很容易找漏，当前不做检查，直接返回false
         const res = IssueReason.CannotFindAll;
-        this.classFieldRes.set(field, { issueReason: res, numberCategory: numberCategory });
+        this.classFieldRes.set(field, { issueReason: res, numberCategory: NumberCategory.number });
         return res;
     }
 
@@ -1380,9 +1700,6 @@ export class NumericSemanticCheck implements BaseChecker {
     }
 
     private checkPrivateField(field: ArkField, baseClass: ArkClass, numberCategory: NumberCategory, hasChecked: Map<Local, IssueInfo>): IssueReason {
-        if (this.fieldWithSetter(field, baseClass)) {
-            return IssueReason.CannotFindAll;
-        }
         const methods = baseClass.getMethods(true);
         for (const method of methods) {
             if (method.getName().startsWith('Set-') || method.getName().startsWith('Get-')) {
@@ -1467,6 +1784,39 @@ export class NumericSemanticCheck implements BaseChecker {
                 }
                 if (field.getName() === leftOp.getFieldName()) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private fieldWithGetter(field: ArkField, baseClass: ArkClass): boolean {
+        const methods = baseClass.getMethods();
+        for (const method of methods) {
+            if (!method.getName().startsWith('Get-')) {
+                continue;
+            }
+            const stmts = method.getCfg()?.getStmts();
+            if (stmts === undefined) {
+                continue;
+            }
+            for (const stmt of stmts) {
+                if (!(stmt instanceof ArkReturnStmt)) {
+                    continue;
+                }
+                const op = stmt.getOp();
+                if (op instanceof Local) {
+                    const opDeclaringStmt = op.getDeclaringStmt();
+                    if (!(opDeclaringStmt instanceof ArkAssignStmt)) {
+                        continue;
+                    }
+                    const rightOp = opDeclaringStmt.getRightOp();
+                    if (!(rightOp instanceof ArkInstanceFieldRef)) {
+                        continue;
+                    }
+                    if (field.getName() === rightOp.getFieldName()) {
+                        return true;
+                    }
                 }
             }
         }
@@ -1622,30 +1972,22 @@ export class NumericSemanticCheck implements BaseChecker {
     }
 
     private getFieldIssueFromIssueList(field: ArkField): IssueReport | null {
+        const filePath = field.getDeclaringArkClass().getDeclaringArkFile().getFilePath();
         const position: WarnInfo = {
             line: field.getOriginPosition().getLineNo(),
             startCol: field.getOriginPosition().getColNo(),
             endCol: field.getOriginPosition().getColNo(),
             filePath: field.getDeclaringArkClass().getDeclaringArkFile().getFilePath(),
         };
-        const fixKeyPrefix = position.line + '%' + position.startCol + '%' + position.endCol + '%';
-        for (const issue of this.issues) {
-            if (issue.defect.fixKey.startsWith(fixKeyPrefix)) {
-                return issue;
-            }
-        }
-        return null;
+        const mapKey = `${filePath}%${position.line}%${position.startCol}%${position.endCol}%${this.rule.ruleId}`;
+        return this.issuesMap.get(mapKey) ?? null;
     }
 
     private getLocalIssueFromIssueList(local: Local, stmt: Stmt): IssueReport | null {
+        const filePath = stmt.getCfg().getDeclaringMethod().getDeclaringArkFile().getFilePath();
         const position = getLineAndColumn(stmt, local, true);
-        const fixKeyPrefix = position.line + '%' + position.startCol + '%' + position.endCol + '%';
-        for (const issue of this.issues) {
-            if (issue.defect.fixKey.startsWith(fixKeyPrefix)) {
-                return issue;
-            }
-        }
-        return null;
+        const mapKey = `${filePath}%${position.line}%${position.startCol}%${position.endCol}%${this.rule.ruleId}`;
+        return this.issuesMap.get(mapKey) ?? null;
     }
 
     private getWarnInfo(field?: ArkField, issueStmt?: Stmt, value?: Value): WarnInfo | null {
@@ -1706,24 +2048,7 @@ export class NumericSemanticCheck implements BaseChecker {
         return null;
     }
 
-    private getDesc(
-        ruleCategory: RuleCategory,
-        reason: IssueReason,
-        numberCategory: NumberCategory,
-        couldAutofix: boolean,
-        issueStmt?: Stmt,
-        usedStmt?: Stmt
-    ): string | null {
-        if (ruleCategory === RuleCategory.SDKIntType) {
-            if (reason === IssueReason.OnlyUsedAsIntLong) {
-                if (usedStmt) {
-                    return `It has relationship with the arg of SDK API in ${this.getUsedStmtDesc(usedStmt, issueStmt)} and only used as ${numberCategory}, should be defined as ${numberCategory} (${ruleCategory})`;
-                }
-                logger.error('Missing used stmt when getting issue description');
-                return null;
-            }
-            return `The arg of SDK API should be ${numberCategory} here (${ruleCategory})`;
-        }
+    private getDesc(ruleCategory: RuleCategory, reason: IssueReason, couldAutofix: boolean): string | null {
         if (ruleCategory === RuleCategory.NumericLiteral) {
             if (reason === IssueReason.OnlyUsedAsIntLong) {
                 return `It is used as ${NumberCategory.int} (${ruleCategory})`;
@@ -1746,24 +2071,7 @@ export class NumericSemanticCheck implements BaseChecker {
         return null;
     }
 
-    private addIssueReport(
-        ruleCategory: RuleCategory,
-        numberCategory: NumberCategory,
-        reason: IssueReason,
-        couldAutofix: boolean,
-        issueStmt?: Stmt,
-        value?: Value,
-        field?: ArkField,
-        usedStmt?: Stmt
-    ): void {
-        const severity = this.rule.alert ?? this.metaData.severity;
-        let warnInfo = this.getWarnInfo(field, issueStmt, value);
-        let problem = this.getProblem(ruleCategory, reason);
-        let desc = this.getDesc(ruleCategory, reason, numberCategory, couldAutofix, issueStmt, usedStmt);
-        if (!warnInfo || !problem || !desc) {
-            return;
-        }
-
+    private shouldSkipDuplicatedIssue(numberCategory: NumberCategory, field?: ArkField, value?: Value, issueStmt?: Stmt): boolean {
         // 添加新的issue之前需要检查一下已有issue，避免重复issue，或2个issue之间冲突，一个issue要改为int，一个issue要改为long
         let currentIssue: IssueReport | null = null;
         let issueCategory: NumberCategory | null = null;
@@ -1782,23 +2090,60 @@ export class NumericSemanticCheck implements BaseChecker {
         }
         if (currentIssue && issueCategory) {
             const issueReason = this.getIssueReasonFromDefectInfo(currentIssue.defect);
-            if (issueReason !== null) {
-                if (issueReason === IssueReason.OnlyUsedAsIntLong) {
-                    if (issueCategory !== NumberCategory.long && numberCategory === NumberCategory.long) {
-                        // 删除掉之前的修复为int的，用本次即将add的新的issue替代
-                        const index = this.issues.indexOf(currentIssue);
-                        if (index > -1) {
-                            this.issues.splice(index, 1);
-                        }
-                    } else {
-                        // 已有的issue已经足够进行自动修复处理，无需重复添加
-                        return;
-                    }
-                } else {
-                    // 已有的issue对非int进行修改，无需重复添加
-                    return;
-                }
+            if (issueReason === null) {
+                return false;
             }
+            if (issueReason !== IssueReason.OnlyUsedAsIntLong) {
+                return true;
+            }
+            if (issueCategory !== NumberCategory.long && numberCategory === NumberCategory.long) {
+                // 删除掉之前的修复为int的，用本次即将add的新的issue替代
+                this.issuesMap.delete(this.getIssuesMapKey(currentIssue.defect.mergeKey));
+                return false;
+            } else {
+                // 已有的issue已经足够进行自动修复处理，无需重复添加
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private getIssuesMapKey(mergeKey: string): string {
+        const lastIndex = mergeKey.lastIndexOf('%');
+        return mergeKey.substring(0, lastIndex);
+    }
+
+    private addIssueReportForSDKArg(
+        ruleCategory: RuleCategory,
+        numberCategory: NumberCategory,
+        reason: IssueReason,
+        couldAutofix: boolean,
+        issueStmt?: Stmt,
+        value?: Value,
+        field?: ArkField,
+        usedStmt?: Stmt
+    ): void {
+        const severity = this.rule.alert ?? this.metaData.severity;
+        let warnInfo = this.getWarnInfo(field, issueStmt, value);
+        let problem = this.getProblem(ruleCategory, reason);
+        if (!warnInfo || !problem) {
+            return;
+        }
+        let desc: string;
+        if (reason === IssueReason.OnlyUsedAsIntLong) {
+            if (usedStmt) {
+                desc = `It has relationship with the arg of SDK API in ${this.getUsedStmtDesc(usedStmt, issueStmt)} and only used as ${numberCategory}, should be defined as ${numberCategory} (${ruleCategory})`;
+            } else {
+                logger.error('Missing used stmt when getting issue description');
+                return;
+            }
+        } else {
+            desc = `The arg of SDK API should be ${numberCategory} here (${ruleCategory})`;
+        }
+
+        const shouldSkip = this.shouldSkipDuplicatedIssue(numberCategory, field, value, issueStmt);
+        if (shouldSkip) {
+            return;
         }
 
         let defects = new Defects(
@@ -1817,17 +2162,115 @@ export class NumericSemanticCheck implements BaseChecker {
         );
 
         if (!couldAutofix) {
-            this.issues.push(new IssueReport(defects, undefined));
+            this.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, undefined));
             return;
         }
-        if (ruleCategory === RuleCategory.SDKIntType) {
-            const autofix = this.generateSDKRuleFix(warnInfo, reason, numberCategory, issueStmt, value, field);
-            if (autofix === null) {
-                // 此规则必须修复，若autofix为null，则表示无需修复，不添加issue
-                return;
+        const autofix = this.generateSDKArgRuleFix(warnInfo, reason, numberCategory, issueStmt, value, field);
+        if (autofix === null) {
+            // 此规则必须修复，若autofix为null，则表示无需修复，不添加issue
+            return;
+        } else {
+            this.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, autofix));
+        }
+        return;
+    }
+
+    private addIssueReportForSDKReturnOrField(
+        ruleCategory: RuleCategory,
+        numberCategory: NumberCategory,
+        reason: IssueReason,
+        issueStmt?: Stmt,
+        value?: Value,
+        field?: ArkField,
+        usedStmt?: Stmt
+    ): void {
+        const severity = this.rule.alert ?? this.metaData.severity;
+        let warnInfo = this.getWarnInfo(field, issueStmt, value);
+        let problem = this.getProblem(ruleCategory, reason);
+        if (!warnInfo || !problem) {
+            return;
+        }
+        const shouldSkip = this.shouldSkipDuplicatedIssue(numberCategory, field, value, issueStmt);
+        if (shouldSkip) {
+            return;
+        }
+
+        let desc: string;
+        if (reason === IssueReason.OnlyUsedAsIntLong) {
+            if (usedStmt) {
+                desc = `It has relationship with the SDK API in ${this.getUsedStmtDesc(usedStmt, issueStmt)} and only used as ${numberCategory}, should be defined as ${numberCategory} (${ruleCategory})`;
             } else {
-                this.issues.push(new IssueReport(defects, autofix));
+                logger.error('Missing used stmt when getting issue description');
+                return;
             }
+        } else {
+            desc = `It is used as number (${ruleCategory})`;
+        }
+
+        let defects = new Defects(
+            warnInfo.line,
+            warnInfo.startCol,
+            warnInfo.endCol,
+            problem,
+            desc,
+            severity,
+            this.rule.ruleId,
+            warnInfo.filePath,
+            this.metaData.ruleDocPath,
+            true,
+            false,
+            true
+        );
+
+        const autofix = this.generateSDKReturnOrFieldRuleFix(warnInfo, numberCategory, issueStmt, field);
+        if (autofix === null) {
+            // 此规则必须修复，若autofix为null，则表示无需修复，不添加issue
+            return;
+        } else {
+            this.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, autofix));
+        }
+        return;
+    }
+
+    private addIssueReport(
+        ruleCategory: RuleCategory,
+        numberCategory: NumberCategory,
+        reason: IssueReason,
+        couldAutofix: boolean,
+        issueStmt?: Stmt,
+        value?: Value,
+        field?: ArkField
+    ): void {
+        const severity = this.rule.alert ?? this.metaData.severity;
+        let warnInfo = this.getWarnInfo(field, issueStmt, value);
+        let problem = this.getProblem(ruleCategory, reason);
+        let desc = this.getDesc(ruleCategory, reason, couldAutofix);
+        if (!warnInfo || !problem || !desc) {
+            return;
+        }
+
+        const shouldSkip = this.shouldSkipDuplicatedIssue(numberCategory, field, value, issueStmt);
+        if (shouldSkip) {
+            return;
+        }
+
+        let defects = new Defects(
+            warnInfo.line,
+            warnInfo.startCol,
+            warnInfo.endCol,
+            problem,
+            desc,
+            severity,
+            this.rule.ruleId,
+            warnInfo.filePath,
+            this.metaData.ruleDocPath,
+            true,
+            false,
+            couldAutofix
+        );
+
+        if (!couldAutofix) {
+            this.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, undefined));
             return;
         }
         if (ruleCategory === RuleCategory.NumericLiteral) {
@@ -1836,7 +2279,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 // 此规则必须修复，若autofix为null，则表示无需修复，不添加issue
                 return;
             }
-            this.issues.push(new IssueReport(defects, autofix));
+            this.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, autofix));
             return;
         }
         if (ruleCategory === RuleCategory.ArrayIndex) {
@@ -1844,9 +2287,9 @@ export class NumericSemanticCheck implements BaseChecker {
                 const autofix = this.generateIntConstantIndexRuleFix(warnInfo, issueStmt, value);
                 if (autofix === null) {
                     defects.fixable = false;
-                    this.issues.push(new IssueReport(defects, undefined));
+                    this.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, undefined));
                 } else {
-                    this.issues.push(new IssueReport(defects, autofix));
+                    this.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, autofix));
                 }
             } else {
                 const autofix = this.generateNumericLiteralRuleFix(warnInfo, reason, issueStmt, value, field);
@@ -1854,7 +2297,7 @@ export class NumericSemanticCheck implements BaseChecker {
                     // 此规则必须修复，若autofix为null，则表示无需修复，不添加issue
                     return;
                 }
-                this.issues.push(new IssueReport(defects, autofix));
+                this.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, autofix));
             }
             return;
         }
@@ -1880,7 +2323,12 @@ export class NumericSemanticCheck implements BaseChecker {
             logger.error('Missing both issue stmt and field when generating auto fix info.');
             return null;
         }
-        return AstTreeUtils.getASTNode(arkFile.getName(), arkFile.getCode());
+        let sourceFile = this.sourceFiles.get(arkFile.getFileSignature());
+        if (!sourceFile) {
+            sourceFile = AstTreeUtils.getASTNode(arkFile.getName(), arkFile.getCode());
+            this.sourceFiles.set(arkFile.getFileSignature(), sourceFile);
+        }
+        return sourceFile;
     }
 
     private generateRuleFixForLocalDefine(sourceFile: ts.SourceFile, warnInfo: WarnInfo, numberCategory: NumberCategory): RuleFix | null {
@@ -1994,7 +2442,7 @@ export class NumericSemanticCheck implements BaseChecker {
         return null;
     }
 
-    private generateSDKRuleFix(
+    private generateSDKArgRuleFix(
         warnInfo: WarnInfo,
         issueReason: IssueReason,
         numberCategory: NumberCategory,
@@ -2076,6 +2524,17 @@ export class NumericSemanticCheck implements BaseChecker {
         }
     }
 
+    private generateSDKReturnOrFieldRuleFix(warnInfo: WarnInfo, numberCategory: NumberCategory, issueStmt?: Stmt, field?: ArkField): RuleFix | null {
+        const sourceFile = this.getSourceFile(field, issueStmt);
+        if (!sourceFile) {
+            return null;
+        }
+        if (field) {
+            return this.generateRuleFixForFieldDefine(sourceFile, warnInfo, numberCategory);
+        }
+        return this.generateRuleFixForLocalDefine(sourceFile, warnInfo, numberCategory);
+    }
+
     private generateIntConstantIndexRuleFix(warnInfo: WarnInfo, issueStmt: Stmt, constant: NumberConstant): RuleFix | null {
         if (!this.isFloatActuallyInt(constant)) {
             return null;
@@ -2120,7 +2579,7 @@ export class NumericSemanticCheck implements BaseChecker {
 
         if (value instanceof NumberConstant) {
             // 对整型字面量进行自动修复，转成浮点字面量，例如1->1.0
-            if (this.isNumberConstantWithDecimalPoint(value)) {
+            if (this.isNumberConstantActuallyFloat(value)) {
                 // 无需修复
                 return null;
             }
