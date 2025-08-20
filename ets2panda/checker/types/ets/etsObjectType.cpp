@@ -21,6 +21,7 @@
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "checker/types/ets/etsEnumType.h"
 #include "compiler/lowering/phase.h"
+#include "util/nameMangler.h"
 #include "ir/statements/annotationDeclaration.h"
 
 namespace ark::es2panda::checker {
@@ -580,7 +581,7 @@ void ETSObjectType::ToString(std::stringstream &ss, bool precise) const
 {
     if (IsPartial()) {
         ss << "Partial" << compiler::Signatures::GENERIC_BEGIN;
-        baseType_->ToString(ss, precise);
+        ss << util::NameMangler::GetInstance()->GetOriginalClassNameFromPartial(name_.Mutf8());
         ss << compiler::Signatures::GENERIC_END;
         return;
     }
@@ -1446,7 +1447,7 @@ void ETSObjectType::CheckAndInstantiateProperties() const
         return;
     }
 
-    TypeStackElement tse {checker, this, {{diagnostic::CYCLIC_INHERITANCE, {this->Name()}}}, declNode->Start()};
+    TypeStackElement tse {checker, this, {{diagnostic::CIRCULAR_DEPENDENCY, {this->Name()}}}, declNode->Start()};
     if (tse.HasTypeError()) {
         return;
     }

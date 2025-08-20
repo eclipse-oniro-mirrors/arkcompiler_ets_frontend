@@ -48,6 +48,8 @@ public:
     std::string CreateMangledNameForAnnotation(const std::string &baseName, const std::string &annotationName);
     std::string AppendToAnnotationName(const std::string &annotationName, const std::string &secondPart);
 
+    std::string GetOriginalClassNameFromPartial(const std::string &partialName);
+
 private:
     NameMangler() = default;
 };

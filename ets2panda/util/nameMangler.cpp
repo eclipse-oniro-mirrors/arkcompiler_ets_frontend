@@ -98,4 +98,25 @@ std::string NameMangler::AppendToAnnotationName(const std::string &annotationNam
 
     return annotationName + "-" + secondPart;
 }
+
+std::string NameMangler::GetOriginalClassNameFromPartial(const std::string &partialName)
+{
+    const std::string partialSuffix = "$partial";
+
+    if (partialName.length() <= partialSuffix.length()) {
+        return "";
+    }
+
+    size_t suffixPos = partialName.rfind(partialSuffix);
+    if (suffixPos == std::string::npos) {
+        return "";
+    }
+
+    // Check if the suffix is at the end of the string
+    if (suffixPos + partialSuffix.length() != partialName.length()) {
+        return "";
+    }
+
+    return partialName.substr(0, suffixPos);
+}
 }  // namespace ark::es2panda::util
