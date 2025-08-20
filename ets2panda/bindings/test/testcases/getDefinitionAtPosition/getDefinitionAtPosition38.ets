@@ -15,6 +15,16 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
+export class Parent {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+export class Child extends Parent {
+  age: number;
+  constructor(name: string, age: number) {
+    super(name);
+    this.age = age;
+  }
 }

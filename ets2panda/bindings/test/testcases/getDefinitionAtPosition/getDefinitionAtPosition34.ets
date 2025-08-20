@@ -15,6 +15,20 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
+export class Base {
+    prop1: number = 1;
 }
+
+export class Derived extends Base {
+    prop2: string = "test";
+}
+
+export class StaticClass {
+    static staticMethod() {}
+}
+
+export class PrivateClass {
+    private privProp: boolean = true;
+}
+
+export class EmptyClass {}

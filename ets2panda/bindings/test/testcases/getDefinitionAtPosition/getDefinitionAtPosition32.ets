@@ -15,6 +15,32 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
+@interface Validate {
+
 }
+
+@interface Log {
+  level: string;
+}
+
+@interface Component1 {
+    name: string;
+    version: number;
+}
+
+@interface Deprecated {
+
+}
+
+@Component1({name: 'Service', version: 1})
+export class Service {
+    @Validate
+    @Log({level: 'info'})
+    doSomething() {
+    }
+    
+    @Deprecated
+    oldMethod() {
+    }
+}
+

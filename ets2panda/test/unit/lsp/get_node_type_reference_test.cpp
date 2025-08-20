@@ -24,14 +24,28 @@
 namespace {
 using ark::es2panda::lsp::Initializer;
 
-class LspGetNodeExportTests : public LSPAPITests {
+class LspGetNodeTypeReferenceTests : public LSPAPITests {
 protected:
     static void SetUpTestSuite()
     {
         initializer_ = new Initializer();
         sourceCode_ = R"(
-export { PI } from "std/math";
-export { E as CircleE } from "std/math";
+class Person {
+    name: string;
+    age: number;
+
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+}
+let user: Person = new Person("Alice", 30);
+class Person1 {
+    name = "Jonn"
+}
+function printPerson(p: Person1): void {
+}
+type UserList = Array<Person>;
 )";
         GenerateContexts(*initializer_);
     }
@@ -45,7 +59,8 @@ export { E as CircleE } from "std/math";
     }
     static void GenerateContexts(Initializer &initializer)
     {
-        contexts_ = initializer.CreateContext("GetNodeExportTest.ts", ES2PANDA_STATE_PARSED, sourceCode_.c_str());
+        contexts_ =
+            initializer.CreateContext("GetNodeTypeReferenceTest.ets", ES2PANDA_STATE_PARSED, sourceCode_.c_str());
     }
     // NOLINTBEGIN(fuchsia-statically-constructed-objects, cert-err58-cpp)
     static inline es2panda_Context *contexts_ = nullptr;
@@ -54,12 +69,12 @@ export { E as CircleE } from "std/math";
     // NOLINTEND(fuchsia-statically-constructed-objects, cert-err58-cpp)
 };
 
-TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationTest)
+TEST_F(LspGetNodeTypeReferenceTests, GetTypeReferenceTest1)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "PI";
+    const std::string moduleName = "Person";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::EXPORT_SPECIFIER});
+    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::ETS_TYPE_REFERENCE});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
@@ -68,12 +83,12 @@ TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationTest)
     ASSERT_NE(extractedText.find(moduleName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationAsNameTest1)
+TEST_F(LspGetNodeTypeReferenceTests, GetTypeReferenceTest2)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "CircleE";
+    const std::string moduleName = "Person1";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::EXPORT_SPECIFIER});
+    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::ETS_TYPE_REFERENCE});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
@@ -82,40 +97,12 @@ TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationAsNameTest1)
     ASSERT_NE(extractedText.find(moduleName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest2)
+TEST_F(LspGetNodeTypeReferenceTests, GetTypeReferenceTest3)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "PI";
+    const std::string moduleName = "Array";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
-    std::vector<NodeInfo *> nodeInfoPtrs;
-    nodeInfoPtrs.push_back(&nodeInfos[0]);
-
-    auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
-    std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
-}
-
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest3)
-{
-    LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "E";
-    std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
-    std::vector<NodeInfo *> nodeInfoPtrs;
-    nodeInfoPtrs.push_back(&nodeInfos[0]);
-
-    auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
-    std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
-}
-
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest4)
-{
-    LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "CircleE";
-    std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::ETS_TYPE_REFERENCE});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 

@@ -15,4 +15,4 @@
 
 'use static';
 
-export { PI } from "index.ets";
+export { PI } from "./index.ets";

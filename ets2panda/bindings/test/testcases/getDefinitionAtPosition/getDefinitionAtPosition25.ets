@@ -15,6 +15,6 @@
 
 'use static';
 
-interface User {
+export interface User {
   bar(): void;
 }

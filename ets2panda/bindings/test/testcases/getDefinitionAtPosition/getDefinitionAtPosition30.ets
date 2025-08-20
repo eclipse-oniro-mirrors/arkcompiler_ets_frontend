@@ -15,12 +15,12 @@
 
 'use static';
 
-interface Printable {
+export interface Printable {
     print(): void;
     getTitle(): string;
 }
 
-class Document implements Printable {
+export class Document implements Printable {
     constructor() {}
 
     print(): void {

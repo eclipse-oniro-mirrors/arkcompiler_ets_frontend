@@ -179,6 +179,210 @@ export const basicCases: TestCases = {
         }
       ] as NodeInfo[]
     ],
+    '23': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition31.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.VARIABLE_DECLARATION,
+          name: 'a'
+        }
+      ] as NodeInfo[]
+    ],
+    '24': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition31.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.VARIABLE_DECLARATOR,
+          name: 'b'
+        }
+      ] as NodeInfo[]
+    ],
+    '25': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition32.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.ANNOTATION_DECLARATION,
+          name: 'Validate'
+        }
+      ] as NodeInfo[]
+    ],
+    '26': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition32.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.ANNOTATION_USAGE,
+          name: 'Log'
+        }
+      ] as NodeInfo[]
+    ],
+    '27': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition33.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.AWAIT_EXPRESSION,
+          name: 'p'
+        }
+      ] as NodeInfo[]
+    ],
+    '28': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition34.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.CLASS_DECLARATION,
+          name: 'Derived'
+        }
+      ] as NodeInfo[]
+    ],
+    '29': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition35.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.IMPORT_SPECIFIER,
+          name: 'State'
+        }
+      ] as NodeInfo[]
+    ],
+    '30': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition35.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.IMPORT_DEFAULT_SPECIFIER,
+          name: 'hilog'
+        }
+      ] as NodeInfo[]
+    ],
+    '31': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition35.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.IMPORT_NAMESPACE_SPECIFIER,
+          name: 'All'
+        }
+      ] as NodeInfo[]
+    ],
+    '32': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition36.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.PROPERTY,
+          name: 'prop'
+        }
+      ] as NodeInfo[]
+    ],
+    '33': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition37.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.CALL_EXPRESSION,
+          name: 'a'
+        }
+      ] as NodeInfo[]
+    ],
+    '34': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition38.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.SUPER_EXPRESSION,
+          name: 'super'
+        }
+      ] as NodeInfo[]
+    ],
+    '35': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition39.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.REEXPORT_STATEMENT,
+          name: 'PI'
+        }
+      ] as NodeInfo[]
+    ],
+    '36': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition40.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.SCRIPT_FUNCTION,
+          name: 'test'
+        }
+      ] as NodeInfo[]
+    ],
+    '37': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition41.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.ETS_TYPE_REFERENCE,
+          name: 'Person'
+        },
+        {
+          kind: AstNodeType.ETS_TYPE_REFERENCE,
+          name: 'Person1'
+        },
+        {
+          kind: AstNodeType.ETS_TYPE_REFERENCE,
+          name: 'Array'
+        }
+      ] as NodeInfo[]
+    ],
+    '38': [
+      resolveTestPath(
+        'test/testcases/.idea/.deveco/getDefinitionAtPosition/declgen/static/getDefinitionAtPosition42.d.ets'
+      ),
+      0,
+      [
+        {
+          kind: AstNodeType.SPREAD_ELEMENT,
+          name: 'numbers'
+        },
+        {
+          kind: AstNodeType.SPREAD_ELEMENT,
+          name: 'args'
+        }
+      ] as NodeInfo[]
+    ]
   },
   getSemanticDiagnostics: {
     expectedFilePath: resolveTestPath('test/expected/getSemanticDiagnostics.json'),

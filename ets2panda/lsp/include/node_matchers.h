@@ -37,10 +37,38 @@ bool MatchTSTypeAliasDeclaration(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchExportSpecifier(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchMemberExpression(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchTSClassImplements(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchEtsStringLiteralType(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchEtsTypeReference(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchEtsKeyofType(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchEtsNewClassInstanceExpression(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchEtsStructDeclaration(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchSpreadElement(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchCallExpression(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchTsTypeReference(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchScriptFunction(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchVariableDeclarator(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchVariableDeclaration(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchClassDeclaration(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchAnnotationDeclaration(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchAnnotationUsage(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchAwaitExpression(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchBigIntLiteral(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchImportSpecifier(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchImportDefaultSpecifier(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchImportNamespaceSpecifier(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchTSTypeParameter(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchSwitchStatement(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchEtsParameterExpression(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchTsNonNullExpression(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchFunctionDeclaration(ir::AstNode *childNode, const NodeInfo *info);
 
 ir::AstNode *ExtractExportSpecifierIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractTSClassImplementsIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractIdentifierFromNode(ir::AstNode *node, const NodeInfo *info);
+ir::AstNode *ExtractETSStringLiteralTypeIdentifier(ir::AstNode *node, const NodeInfo *info);
+ir::AstNode *ExtractETSKeyofTypeIdentifier(ir::AstNode *node, const NodeInfo *info);
+ir::AstNode *ExtractCallExpressionIdentifier(ir::AstNode *node, const NodeInfo *info);
+
 const std::unordered_map<ir::AstNodeType, NodeExtractor> &GetNodeExtractors();
 const std::unordered_map<ir::AstNodeType, NodeMatcher> &GetNodeMatchers();
 }  // namespace ark::es2panda::lsp

@@ -15,6 +15,7 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
+export function a() {
+    return 'hello';
 }
+a();

@@ -15,6 +15,19 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
+export class Person {
+    name: string;
+    age: number;
+
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
 }
+let user: Person = new Person("Alice", 30);
+export class Person1 {
+    name = "Jonn"
+}
+export function printPerson(p: Person1): void {
+}
+export type UserList = Array<Person>;

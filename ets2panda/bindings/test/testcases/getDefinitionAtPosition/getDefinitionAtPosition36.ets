@@ -15,6 +15,6 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
-}
+const obj = {
+    prop: 'value'
+};

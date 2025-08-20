@@ -15,6 +15,8 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
-}
+import { State} from '@ohos.arkui.stateManagement';
+
+import hilog from '@ohos.hilog';
+
+import * as All from './getDefinitionAtPosition8';

@@ -27,7 +27,7 @@ function compileExternalProgram(jobInfo: JobInfo): void {
   let ets2pandaCmd = ['-', '--extension', 'ets', '--arktsconfig', jobInfo.arktsConfigFile];
   let lspDriverHelper = new LspDriverHelper();
   let config = lspDriverHelper.createCfg(ets2pandaCmd, jobInfo.filePath);
-  if (!fs.existsSync(jobInfo.filePath)) {
+  if (!fs.existsSync(jobInfo.filePath) || fs.statSync(jobInfo.filePath).isDirectory()) {
     return;
   }
   const source = fs.readFileSync(jobInfo.filePath, 'utf8').replace(/\r\n/g, '\n');
