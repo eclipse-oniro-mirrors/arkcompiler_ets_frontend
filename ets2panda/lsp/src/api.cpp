@@ -526,7 +526,7 @@ es2panda_AstNode *GetIdentifier(es2panda_AstNode *astNode, const std::string &no
     return GetIdentifierImpl(astNode, nodeName);
 }
 
-DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::vector<NodeInfo *> nodeInfos)
+DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::vector<NodeInfo *> &nodeInfos)
 {
     DefinitionInfo result {"", 0, 0};
     if (context == nullptr || nodeInfos.empty()) {
@@ -542,6 +542,7 @@ DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::v
     NodeInfo *lastNodeInfo = nullptr;
     for (auto info : nodeInfos) {
         auto foundNode = rootNode->FindChild([info](ir::AstNode *childNode) -> bool {
+            const auto &nodeMatchers = GetNodeMatchers();
             auto it = nodeMatchers.find(info->kind);
             if (it != nodeMatchers.end()) {
                 return it->second(childNode, info);

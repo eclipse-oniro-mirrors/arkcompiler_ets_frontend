@@ -133,12 +133,12 @@ ir::AstNode *ExtractTSClassImplementsIdentifier(ir::AstNode *node, const NodeInf
     }
 
     auto expr = node->AsTSClassImplements()->Expr();
-    if (!expr || !expr->IsETSTypeReference()) {
+    if ((expr == nullptr) || !expr->IsETSTypeReference()) {
         return node;
     }
 
     auto part = expr->AsETSTypeReference()->Part();
-    if (!part || !part->GetIdent()) {
+    if ((part == nullptr) || (part->GetIdent() == nullptr)) {
         return node;
     }
 
@@ -149,53 +149,61 @@ ir::AstNode *ExtractTSClassImplementsIdentifier(ir::AstNode *node, const NodeInf
     return node;
 }
 
-const std::unordered_map<ir::AstNodeType, NodeExtractor> nodeExtractors = {
-    {ir::AstNodeType::CLASS_DEFINITION,
-     [](ir::AstNode *node, const NodeInfo *) {
-         return node->IsClassDefinition() ? node->AsClassDefinition()->Ident() : node;
-     }},
-    {ir::AstNodeType::IDENTIFIER,
-     [](ir::AstNode *node, const NodeInfo *) { return node->IsIdentifier() ? node->AsIdentifier() : node; }},
-    {ir::AstNodeType::CLASS_PROPERTY,
-     [](ir::AstNode *node, const NodeInfo *) {
-         return node->IsClassProperty() ? node->AsClassProperty()->Id() : node;
-     }},
-    {ir::AstNodeType::PROPERTY,
-     [](ir::AstNode *node, const NodeInfo *) {
-         return node->IsProperty() ? node->AsProperty()->Key()->AsIdentifier() : node;
-     }},
-    {ir::AstNodeType::METHOD_DEFINITION,
-     [](ir::AstNode *node, const NodeInfo *) {
-         return node->IsMethodDefinition() ? node->AsMethodDefinition()->Function()->Id() : node;
-     }},
-    {ir::AstNodeType::TS_ENUM_DECLARATION,
-     [](ir::AstNode *node, const NodeInfo *) {
-         return node->IsTSEnumDeclaration() ? node->AsTSEnumDeclaration()->Key() : node;
-     }},
-    {ir::AstNodeType::TS_ENUM_MEMBER,
-     [](ir::AstNode *node, const NodeInfo *) { return node->IsTSEnumMember() ? node->AsTSEnumMember()->Key() : node; }},
-    {ir::AstNodeType::TS_INTERFACE_DECLARATION,
-     [](ir::AstNode *node, const NodeInfo *) {
-         return node->IsTSInterfaceDeclaration() ? node->AsTSInterfaceDeclaration()->Id() : node;
-     }},
-    {ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION,
-     [](ir::AstNode *node, const NodeInfo *) {
-         return node->IsTSTypeAliasDeclaration() ? node->AsTSTypeAliasDeclaration()->Id() : node;
-     }},
-    {ir::AstNodeType::EXPORT_SPECIFIER,
-     [](ir::AstNode *node, const NodeInfo *info) { return ExtractExportSpecifierIdentifier(node, info); }},
-    {ir::AstNodeType::MEMBER_EXPRESSION,
-     [](ir::AstNode *node, const NodeInfo *) {
-         return node->IsMemberExpression() ? node->AsMemberExpression()->Property()->AsIdentifier() : node;
-     }},
-    {ir::AstNodeType::TS_CLASS_IMPLEMENTS,
-     [](ir::AstNode *node, const NodeInfo *info) { return ExtractTSClassImplementsIdentifier(node, info); }}};
+const std::unordered_map<ir::AstNodeType, NodeExtractor> &GetNodeExtractors()
+{
+    static const std::unordered_map<ir::AstNodeType, NodeExtractor> NODE_EXTRACTORS = {
+        {ir::AstNodeType::CLASS_DEFINITION,
+         [](ir::AstNode *node, const NodeInfo *) {
+             return node->IsClassDefinition() ? node->AsClassDefinition()->Ident() : node;
+         }},
+        {ir::AstNodeType::IDENTIFIER,
+         [](ir::AstNode *node, const NodeInfo *) { return node->IsIdentifier() ? node->AsIdentifier() : node; }},
+        {ir::AstNodeType::CLASS_PROPERTY,
+         [](ir::AstNode *node, const NodeInfo *) {
+             return node->IsClassProperty() ? node->AsClassProperty()->Id() : node;
+         }},
+        {ir::AstNodeType::PROPERTY,
+         [](ir::AstNode *node, const NodeInfo *) {
+             return node->IsProperty() ? node->AsProperty()->Key()->AsIdentifier() : node;
+         }},
+        {ir::AstNodeType::METHOD_DEFINITION,
+         [](ir::AstNode *node, const NodeInfo *) {
+             return node->IsMethodDefinition() ? node->AsMethodDefinition()->Function()->Id() : node;
+         }},
+        {ir::AstNodeType::TS_ENUM_DECLARATION,
+         [](ir::AstNode *node, const NodeInfo *) {
+             return node->IsTSEnumDeclaration() ? node->AsTSEnumDeclaration()->Key() : node;
+         }},
+        {ir::AstNodeType::TS_ENUM_MEMBER,
+         [](ir::AstNode *node, const NodeInfo *) {
+             return node->IsTSEnumMember() ? node->AsTSEnumMember()->Key() : node;
+         }},
+        {ir::AstNodeType::TS_INTERFACE_DECLARATION,
+         [](ir::AstNode *node, const NodeInfo *) {
+             return node->IsTSInterfaceDeclaration() ? node->AsTSInterfaceDeclaration()->Id() : node;
+         }},
+        {ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION,
+         [](ir::AstNode *node, const NodeInfo *) {
+             return node->IsTSTypeAliasDeclaration() ? node->AsTSTypeAliasDeclaration()->Id() : node;
+         }},
+        {ir::AstNodeType::EXPORT_SPECIFIER,
+         [](ir::AstNode *node, const NodeInfo *info) { return ExtractExportSpecifierIdentifier(node, info); }},
+        {ir::AstNodeType::MEMBER_EXPRESSION,
+         [](ir::AstNode *node, const NodeInfo *) {
+             return node->IsMemberExpression() ? node->AsMemberExpression()->Property()->AsIdentifier() : node;
+         }},
+        {ir::AstNodeType::TS_CLASS_IMPLEMENTS,
+         [](ir::AstNode *node, const NodeInfo *info) { return ExtractTSClassImplementsIdentifier(node, info); }}};
+    return NODE_EXTRACTORS;
+}
 
 ir::AstNode *ExtractIdentifierFromNode(ir::AstNode *node, const NodeInfo *info)
 {
-    if (!node)
+    if (node == nullptr) {
         return node;
+    }
 
+    const auto &nodeExtractors = GetNodeExtractors();
     auto it = nodeExtractors.find(info->kind);
     if (it != nodeExtractors.end()) {
         return it->second(node, info);
@@ -203,17 +211,21 @@ ir::AstNode *ExtractIdentifierFromNode(ir::AstNode *node, const NodeInfo *info)
     return node;
 }
 
-const std::unordered_map<ir::AstNodeType, NodeMatcher> nodeMatchers = {
-    {ir::AstNodeType::CLASS_DEFINITION, MatchClassDefinition},
-    {ir::AstNodeType::IDENTIFIER, MatchIdentifier},
-    {ir::AstNodeType::CLASS_PROPERTY, MatchClassProperty},
-    {ir::AstNodeType::PROPERTY, MatchProperty},
-    {ir::AstNodeType::METHOD_DEFINITION, MatchMethodDefinition},
-    {ir::AstNodeType::TS_ENUM_DECLARATION, MatchTSEnumDeclaration},
-    {ir::AstNodeType::TS_ENUM_MEMBER, MatchTSEnumMember},
-    {ir::AstNodeType::TS_INTERFACE_DECLARATION, MatchTSInterfaceDeclaration},
-    {ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION, MatchTSTypeAliasDeclaration},
-    {ir::AstNodeType::EXPORT_SPECIFIER, MatchExportSpecifier},
-    {ir::AstNodeType::MEMBER_EXPRESSION, MatchMemberExpression},
-    {ir::AstNodeType::TS_CLASS_IMPLEMENTS, MatchTSClassImplements}};
+const std::unordered_map<ir::AstNodeType, NodeMatcher> &GetNodeMatchers()
+{
+    static const std::unordered_map<ir::AstNodeType, NodeMatcher> NODE_MATCHERS = {
+        {ir::AstNodeType::CLASS_DEFINITION, MatchClassDefinition},
+        {ir::AstNodeType::IDENTIFIER, MatchIdentifier},
+        {ir::AstNodeType::CLASS_PROPERTY, MatchClassProperty},
+        {ir::AstNodeType::PROPERTY, MatchProperty},
+        {ir::AstNodeType::METHOD_DEFINITION, MatchMethodDefinition},
+        {ir::AstNodeType::TS_ENUM_DECLARATION, MatchTSEnumDeclaration},
+        {ir::AstNodeType::TS_ENUM_MEMBER, MatchTSEnumMember},
+        {ir::AstNodeType::TS_INTERFACE_DECLARATION, MatchTSInterfaceDeclaration},
+        {ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION, MatchTSTypeAliasDeclaration},
+        {ir::AstNodeType::EXPORT_SPECIFIER, MatchExportSpecifier},
+        {ir::AstNodeType::MEMBER_EXPRESSION, MatchMemberExpression},
+        {ir::AstNodeType::TS_CLASS_IMPLEMENTS, MatchTSClassImplements}};
+    return NODE_MATCHERS;
+}
 }  // namespace ark::es2panda::lsp

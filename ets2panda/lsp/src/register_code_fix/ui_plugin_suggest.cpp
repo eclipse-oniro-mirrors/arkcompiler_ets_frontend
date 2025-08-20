@@ -22,7 +22,12 @@
 namespace ark::es2panda::lsp {
 const int G_UI_PLUGIN_SUGGEST_CODE = 4000;  // change this to the error code you want to handle
 constexpr const char *G_UI_PLUGIN_SUGGEST_ID = "UIPluginSuggest";
-std::vector<FileTextChanges> fixAll;
+
+static std::vector<FileTextChanges> &GetFixAll()
+{
+    static std::vector<FileTextChanges> fixAll;
+    return fixAll;
+}
 
 UIPluginSuggest::UIPluginSuggest()
 {
@@ -106,6 +111,8 @@ std::vector<CodeFixAction> UIPluginSuggest::GetUIPluginCodeFixes(es2panda_Contex
         auto typeChanges = GetUIPluginCodeFixesByDiagType(context, pos, isAll, returnedActions, type);
         changes.insert(changes.end(), typeChanges.begin(), typeChanges.end());
     }
+
+    auto &fixAll = GetFixAll();
     fixAll = changes;
     return returnedActions;
 }
@@ -119,6 +126,7 @@ std::vector<CodeFixAction> UIPluginSuggest::GetCodeActions(const CodeFixContext 
 CombinedCodeActions UIPluginSuggest::GetAllCodeActions(const CodeFixAllContext &codeFixAll)
 {
     CombinedCodeActions combinedCodeActions;
+    auto &fixAll = GetFixAll();
     if (fixAll.empty()) {
         GetUIPluginCodeFixes(codeFixAll.context, 0, true);
     }

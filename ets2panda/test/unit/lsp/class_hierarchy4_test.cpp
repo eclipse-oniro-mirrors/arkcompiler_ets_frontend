@@ -28,51 +28,38 @@ namespace {
 
 class LspClassHierarchyTests : public LSPAPITests {};
 
-TEST_F(LspClassHierarchyTests, GetTypeHierarchiesImpl_001)
+TEST_F(LspClassHierarchyTests, GetTypeHierarchiesImpl_004)
 {
-    std::vector<std::string> fileNames = {"aa1.ets", "bb1.ets", "cc1.ets", "ii1.ets", "mm1.ets", "nn1.ets", "pp1.ets"};
+    std::vector<std::string> fileNames = {"aa4.ets", "bb4.ets", "cc4.ets", "dd4.ets"};
     std::vector<std::string> fileContents = {
         R"(
         export class AAA {}
         )",
         R"(
-        import { AAA } from "./aa1"
+        import { AAA } from "./aa4"
         export class BBB extends AAA {}
     )",
-        R"(import { BBB } from "./bb1"
-        import { NNN } from "./nn1"
-        import { PPP } from "./pp1"
-        class CCC extends BBB implements NNN, PPP {}
+        R"(import { AAA } from "./aa4"
+        class CCC extends AAA {}
     )",
-        R"(export interface III {}
-    )",
-        R"(
-        export interface MMM {}
-    )",
-        R"(import { III } from "./ii1"
-        import { MMM } from "./mm1"
-        export interface NNN extends III, MMM {}
-        export interface NNN2 extends III {}
-        export interface NNN3 extends NNN2 {}
-        export interface NNN4 extends NNN2 {}
-    )",
-        R"(export interface PPP {}
+        R"(import { BBB } from "./bb4"
+        class DDD extends BBB {}
     )"};
     auto filePaths = CreateTempFile(fileNames, fileContents);
     ASSERT_TRUE(filePaths.size() == fileContents.size());
     ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
-    const int position = 120;
-    const int fileIndex = 2;
+    const int position = 26;
+    const int fileIndex = 0;
     auto context = initializer.CreateContext(filePaths[fileIndex].c_str(), ES2PANDA_STATE_CHECKED);
-    auto node = ark::es2panda::lsp::GetTouchingToken(context, position, false);
+    auto node = ark::es2panda::lsp::GetTargetDeclarationNodeByPosition(context, position);
     auto tokenId = ark::es2panda::lsp::GetOwnerId(node);
     auto tokenName = ark::es2panda::lsp::GetIdentifierName(node);
-    auto res = ark::es2panda::lsp::GetTypeHierarchiesImpl(context, position);
+    const int fileIndex5 = 1;
+    auto context5 = initializer.CreateContext(filePaths[fileIndex5].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = ark::es2panda::lsp::GetTypeHierarchiesImpl(context5, position, node);
     initializer.DestroyContext(context);
-    const size_t parentNum1 = 3;
-    const size_t parentNum2 = 1;
-    ASSERT_EQ(res.superHierarchies.subOrSuper.size(), parentNum1);
-    ASSERT_EQ(res.superHierarchies.subOrSuper[0].subOrSuper.size(), parentNum2);
+    const size_t childNum1 = 1;
+    ASSERT_EQ(res.subHierarchies.subOrSuper.size(), childNum1);
 }
 
 }  // namespace
