@@ -11225,7 +11225,7 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "name": "assertTrue",
+                            "name": "assertLT",
                             "loc": {
                               "start": {
                                 "line": 115,
@@ -11234,7 +11234,7 @@
                               },
                               "end": {
                                 "line": 115,
-                                "column": 27,
+                                "column": 25,
                                 "program": "generic_arrayaslist.ets"
                               }
                             }
@@ -11249,7 +11249,7 @@
                             },
                             "end": {
                               "line": 115,
-                              "column": 27,
+                              "column": 25,
                               "program": "generic_arrayaslist.ets"
                             }
                           }
@@ -11261,12 +11261,12 @@
                             "loc": {
                               "start": {
                                 "line": 115,
-                                "column": 28,
+                                "column": 26,
                                 "program": "generic_arrayaslist.ets"
                               },
                               "end": {
                                 "line": 115,
-                                "column": 29,
+                                "column": 27,
                                 "program": "generic_arrayaslist.ets"
                               }
                             }
@@ -11278,12 +11278,12 @@
                               "loc": {
                                 "start": {
                                   "line": 115,
-                                  "column": 31,
+                                  "column": 29,
                                   "program": "generic_arrayaslist.ets"
                                 },
                                 "end": {
                                   "line": 115,
-                                  "column": 35,
+                                  "column": 33,
                                   "program": "generic_arrayaslist.ets"
                                 }
                               }
@@ -11294,12 +11294,12 @@
                               "loc": {
                                 "start": {
                                   "line": 115,
-                                  "column": 36,
+                                  "column": 34,
                                   "program": "generic_arrayaslist.ets"
                                 },
                                 "end": {
                                   "line": 115,
-                                  "column": 43,
+                                  "column": 41,
                                   "program": "generic_arrayaslist.ets"
                                 }
                               }
@@ -11309,12 +11309,12 @@
                             "loc": {
                               "start": {
                                 "line": 115,
-                                "column": 31,
+                                "column": 29,
                                 "program": "generic_arrayaslist.ets"
                               },
                               "end": {
                                 "line": 115,
-                                "column": 43,
+                                "column": 41,
                                 "program": "generic_arrayaslist.ets"
                               }
                             }
@@ -11325,12 +11325,12 @@
                             "loc": {
                               "start": {
                                 "line": 115,
-                                "column": 45,
+                                "column": 43,
                                 "program": "generic_arrayaslist.ets"
                               },
                               "end": {
                                 "line": 115,
-                                "column": 81,
+                                "column": 79,
                                 "program": "generic_arrayaslist.ets"
                               }
                             }
@@ -11345,7 +11345,7 @@
                           },
                           "end": {
                             "line": 115,
-                            "column": 82,
+                            "column": 80,
                             "program": "generic_arrayaslist.ets"
                           }
                         }
@@ -11358,7 +11358,7 @@
                         },
                         "end": {
                           "line": 115,
-                          "column": 83,
+                          "column": 81,
                           "program": "generic_arrayaslist.ets"
                         }
                       }
@@ -16163,11 +16163,11 @@
                                   "type": "ETSTypeReferencePart",
                                   "name": {
                                     "type": "Identifier",
-                                    "name": "NoDataException",
+                                    "name": "NoDataError",
                                     "loc": {
                                       "start": {
                                         "line": 165,
-                                        "column": 19,
+                                        "column": 23,
                                         "program": "generic_arrayaslist.ets"
                                       },
                                       "end": {
@@ -16180,7 +16180,7 @@
                                   "loc": {
                                     "start": {
                                       "line": 165,
-                                      "column": 19,
+                                      "column": 23,
                                       "program": "generic_arrayaslist.ets"
                                     },
                                     "end": {
@@ -16193,7 +16193,7 @@
                                 "loc": {
                                   "start": {
                                     "line": 165,
-                                    "column": 19,
+                                    "column": 23,
                                     "program": "generic_arrayaslist.ets"
                                   },
                                   "end": {
@@ -16207,7 +16207,7 @@
                               "loc": {
                                 "start": {
                                   "line": 165,
-                                  "column": 15,
+                                  "column": 19,
                                   "program": "generic_arrayaslist.ets"
                                 },
                                 "end": {
@@ -16220,7 +16220,7 @@
                             "loc": {
                               "start": {
                                 "line": 165,
-                                "column": 9,
+                                "column": 13,
                                 "program": "generic_arrayaslist.ets"
                               },
                               "end": {
@@ -24777,5 +24777,3 @@
     }
   }
 }
-TypeError: Expected 1 arguments, got 3. [generic_arrayaslist.ets:115:9]
-TypeError: No matching call signature for assertTrue(Int, Int, "No data to popBack in ArrayAsList!") [generic_arrayaslist.ets:115:9]
