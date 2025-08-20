@@ -241,7 +241,7 @@ ir::ArrowFunctionExpression *TypedParser::ParseGenericArrowFunction()
     ES2PANDA_ASSERT(Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LESS_THAN);
     lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
 
-    auto typeParamDeclOptions = TypeAnnotationParsingOptions::NO_OPTS;
+    auto typeParamDeclOptions = TypeAnnotationParsingOptions::REPORT_ERROR;
     ir::TSTypeParameterDeclaration *typeParamDecl = ParseTypeParameterDeclaration(&typeParamDeclOptions);
 
     if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
