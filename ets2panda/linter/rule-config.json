@@ -122,7 +122,7 @@
     "arkui-data-observation",
     "arkui-modular-interface",
     "arkui-entry-annotation-parameters",
-    "arkui-no-makeobserved-function",
+    "arkui-makeobserved-cannot-observe-custom-class",
     "arkui-provide-annotation-parameters",
     "arkui-custom-layout-need-add-decorator",
     "arkui-no-prop-decorator",

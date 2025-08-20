@@ -288,7 +288,8 @@ cookBookTag[259] = 'The ArkUI interface should be imported before it is used (ar
 cookBookTag[260] = 'The "@Entry" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)';
 cookBookTag[261] =
   'The UIAbility of 1.2 needs to be listened by the new StaticAbilityLifecycleCallback. The original AbilityLifecycleCallback can only listen to the UIAbility of 1.1 (sdk-ability-lifecycle-monitor)';
-cookBookTag[262] = 'The makeObserved function is not supported (arkui-no-makeobserved-function)';
+cookBookTag[262] =
+  'The "makeObserved" function cannot observe custom class (arkui-makeobserved-cannot-observe-custom-class)';
 cookBookTag[263] =
   'The "@Provide" annotation does not support dynamic parameters (arkui-provide-annotation-parameters)';
 cookBookTag[264] =

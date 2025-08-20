@@ -19,9 +19,9 @@
             "column": 26,
             "endLine": 28,
             "endColumn": 44,
-            "problem": "MakeObservedIsNotSupported",
+            "problem": "MakeObservedCannotObserveCustomClass",
             "suggest": "",
-            "rule": "The makeObserved function is not supported (arkui-no-makeobserved-function)",
+            "rule": "The \"makeObserved\" function cannot observe custom class (arkui-makeobserved-cannot-observe-custom-class)",
             "severity": "ERROR"
         },
         {
@@ -29,9 +29,9 @@
             "column": 24,
             "endLine": 38,
             "endColumn": 42,
-            "problem": "MakeObservedIsNotSupported",
+            "problem": "MakeObservedCannotObserveCustomClass",
             "suggest": "",
-            "rule": "The makeObserved function is not supported (arkui-no-makeobserved-function)",
+            "rule": "The \"makeObserved\" function cannot observe custom class (arkui-makeobserved-cannot-observe-custom-class)",
             "severity": "ERROR"
         },
         {

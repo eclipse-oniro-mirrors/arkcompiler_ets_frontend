@@ -11814,7 +11814,32 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    this.incrementCounters(node, FaultID.MakeObservedIsNotSupported);
+    const callExpr = node.parent;
+    if (!callExpr || !ts.isCallExpression(callExpr)) {
+      return;
+    }
+
+    const arg = callExpr.arguments?.[0];
+    if (!arg) {
+      return;
+    }
+
+    if (!this.isCustomClass(arg)) {
+      return;
+    }
+
+    this.incrementCounters(node, FaultID.MakeObservedCannotObserveCustomClass);
+  }
+
+  private isCustomClass(node: ts.Node): boolean {
+    const type = this.tsTypeChecker.getTypeAtLocation(node);
+    const typeSymbol = type.getSymbol();
+    if (!typeSymbol) {
+      return false;
+    }
+
+    const decl = TsUtils.getDeclaration(typeSymbol);
+    return decl !== undefined && decl.getSourceFile() === node.getSourceFile() && ts.isClassDeclaration(decl);
   }
 
   private handlePropertyDeclarationForProp(node: ts.PropertyDeclaration): void {
