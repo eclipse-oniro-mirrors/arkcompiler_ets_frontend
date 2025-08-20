@@ -30,7 +30,8 @@
         },
         "build": {
             "sub_component": [
-                "//arkcompiler/ets_frontend:ets_frontend_build"
+                "//arkcompiler/ets_frontend:ets_frontend_build",
+                "//arkcompiler/ets_frontend/ets2panda:libes2panda_public(//build/toolchain/linux:clang_x64)"
             ],
             "inner_kits": [
                 {
@@ -44,6 +45,12 @@
                 },
                 {
                     "name": "//arkcompiler/ets_frontend/ets2panda:libes2panda_public"
+                },
+                {
+                    "name": "//arkcompiler/ets_frontend/ets2panda:libes2panda_public_headers"
+                },
+                {
+                    "name": "//arkcompiler/ets_frontend/arkguard:build_arkguard_etc"
                 }
             ],
             "test": [

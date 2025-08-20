@@ -32,7 +32,7 @@ config("libes2panda_public_config") {
     "$ark_es2panda_root",
   ]
   if (ark_standalone_build || ark_static_standalone_build) {
-    include_dirs += [ 
+    include_dirs += [
       "$target_gen_dir/generated",
       "//third_party/icu/icu4c/source/common",
       "//third_party/icu/icu4c/source/i18n",
@@ -116,6 +116,7 @@ libes2panda_sources = [
   "checker/types/ets/etsAnyType.cpp",
   "checker/types/ets/etsArrayType.cpp",
   "checker/types/ets/etsAsyncFuncReturnType.cpp",
+  "checker/types/ets/etsAwaitedType.cpp",
   "checker/types/ets/etsBigIntType.cpp",
   "checker/types/ets/etsBooleanType.cpp",
   "checker/types/ets/etsEnumType.cpp",
@@ -127,7 +128,6 @@ libes2panda_sources = [
   "checker/types/ets/etsObjectType.cpp",
   "checker/types/ets/etsPartialTypeParameter.cpp",
   "checker/types/ets/etsReadonlyType.cpp",
-  "checker/types/ets/etsAwaitedType.cpp",
   "checker/types/ets/etsResizableArrayType.cpp",
   "checker/types/ets/etsStringType.cpp",
   "checker/types/ets/etsTupleType.cpp",
@@ -1266,6 +1266,22 @@ ohos_shared_library("libes2panda_public") {
   subsystem_name = "arkcompiler"
 }
 
+if (!(defined(ark_static_standalone_build) && ark_static_standalone_build)) {
+  ohos_shared_headers("libes2panda_public_headers") {
+    include_dirs = [ "$ark_es2panda_root/public" ]
+    deps = [
+      ":gen_${LIB_NAME}_decl_inc",
+      ":gen_${LIB_NAME}_enums_inc",
+      ":gen_${LIB_NAME}_idl",
+      ":gen_${LIB_NAME}_impl_inc",
+      ":gen_${LIB_NAME}_include_inc",
+      ":gen_${LIB_NAME}_list_inc",
+    ]
+    part_name = "ets_frontend"
+    subsystem_name = "arkcompiler"
+  }
+}
+
 action("generate_ets2panda_info") {
   script = "$ark_root/gn/build/es2panda_info.sh"
   outputs = [ "$target_gen_dir/generated/es2panda_build_info.h" ]
@@ -1299,8 +1315,8 @@ ohos_source_set("libes2panda_public_frontend_static") {
       "$ark_root/assembler:libarktsassembler",
       "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package",
       "$ark_root/compiler:libarktscompiler",
-      "$ark_root/libpandabase:libarktsbase",
       "$ark_root/libarkfile:libarktsfile",
+      "$ark_root/libpandabase:libarktsbase",
     ]
   } else {
     external_deps += [
