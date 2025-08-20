@@ -21,31 +21,25 @@
 
 namespace ark::es2panda::parser {
 static constexpr std::string_view JSDOC_END = "*/";
-static constexpr std::string_view JSDOC_START = "/**";
-static constexpr std::string_view LICENSES_START = "/*";
 static constexpr std::string_view EMPTY_JSDOC = "Empty Jsdoc";
-static constexpr std::string_view EMPTY_LICENSE = "Empty License";
 
 static constexpr size_t START_POS = 0;
 static constexpr size_t COLLECT_CURRENT_POS = 1;
 
 // NOLINTBEGIN(modernize-avoid-c-arrays)
-static constexpr std::string_view POTENTIAL_PREFIX[] = {"@",      "get",      "set",      "let",     "const",
-                                                        "async",  "readonly", "abstract", "native",  "static",
-                                                        "public", "private",  "declare",  "default", "export"};
+static constexpr std::string_view POTENTIAL_PREFIX[] = {
+    "@",        "get",    "set",    "let",    "const",   "overload", "async",   "readonly",
+    "abstract", "native", "static", "public", "private", "declare",  "default", "export"};
 // NOLINTEND(modernize-avoid-c-arrays)
 
 // Note: Potential annotation allowed node need to collect jsdoc.
 // NOLINTBEGIN(fuchsia-statically-constructed-objects, cert-err58-cpp)
-static const std::unordered_set<ir::AstNodeType> ANNOTATION_ALLOWED_NODE = {ir::AstNodeType::METHOD_DEFINITION,
-                                                                            ir::AstNodeType::CLASS_DECLARATION,
-                                                                            ir::AstNodeType::FUNCTION_DECLARATION,
-                                                                            ir::AstNodeType::TS_INTERFACE_DECLARATION,
-                                                                            ir::AstNodeType::CLASS_PROPERTY,
-                                                                            ir::AstNodeType::VARIABLE_DECLARATION,
-                                                                            ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION,
-                                                                            ir::AstNodeType::ARROW_FUNCTION_EXPRESSION,
-                                                                            ir::AstNodeType::ANNOTATION_DECLARATION};
+static const std::unordered_set<ir::AstNodeType> ANNOTATION_ALLOWED_NODE = {
+    ir::AstNodeType::METHOD_DEFINITION,         ir::AstNodeType::CLASS_DECLARATION,
+    ir::AstNodeType::STRUCT_DECLARATION,        ir::AstNodeType::FUNCTION_DECLARATION,
+    ir::AstNodeType::TS_INTERFACE_DECLARATION,  ir::AstNodeType::CLASS_PROPERTY,
+    ir::AstNodeType::VARIABLE_DECLARATION,      ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION,
+    ir::AstNodeType::ARROW_FUNCTION_EXPRESSION, ir::AstNodeType::ANNOTATION_DECLARATION};
 // NOLINTEND(fuchsia-statically-constructed-objects, cert-err58-cpp)
 
 static const ArenaVector<ir::AnnotationUsage *> &GetAstAnnotationUsage(const ir::AstNode *node)
@@ -74,6 +68,8 @@ static const ArenaVector<ir::AnnotationUsage *> &GetAstAnnotationUsage(const ir:
             return node->AsArrowFunctionExpression()->Annotations();
         case ir::AstNodeType::ANNOTATION_DECLARATION:
             return node->AsAnnotationDeclaration()->Annotations();
+        case ir::AstNodeType::STRUCT_DECLARATION:
+            return node->AsETSStructDeclaration()->Definition()->Annotations();
         default:
             ES2PANDA_UNREACHABLE();
     }
@@ -122,6 +118,10 @@ bool JsdocHelper::BackWardUntilJsdocStart()
             }
             case lexer::LEX_CHAR_ASTERISK: {
                 Backward(1);
+                if (PeekBackWard() == lexer::LEX_CHAR_SLASH) {
+                    // Note: found `/*` here, it is only the common start of comments, not jsdoc.
+                    return false;
+                }
                 if (PeekBackWard() != lexer::LEX_CHAR_ASTERISK) {
                     continue;
                 }
@@ -167,22 +167,11 @@ util::StringView JsdocHelper::GetJsdocBackward()
     return SourceView(backwardPos, jsdocEndPos);
 }
 
+// Note: Return first matched string that starts with `/*` or `/**` and ends with `*/`
 util::StringView JsdocHelper::GetLicenseStringFromStart()
 {
-    size_t startPos = START_POS;
-    auto sv = SourceView(startPos, sourceCode_.Length());
-    static constexpr std::string_view MANDATORY_PREFIX = "\'use static\'\n";
-    static constexpr std::string_view MANDATORY_PREFIX_DOUBLE_QUOTE = "\"use static\"\n";
-    if (sv.StartsWith(MANDATORY_PREFIX) || sv.StartsWith(MANDATORY_PREFIX_DOUBLE_QUOTE)) {
-        startPos += MANDATORY_PREFIX.length();
-        sv = SourceView(startPos, sourceCode_.Length());
-    }
-
-    if (!sv.StartsWith(LICENSES_START) && !sv.StartsWith(JSDOC_START)) {
-        return EMPTY_LICENSE;
-    }
-    Forward(LICENSES_START.length());
-
+    Iterator().Reset(START_POS);
+    auto licenseStart = START_POS;
     do {
         const char32_t cp = Iterator().Peek();
         switch (cp) {
@@ -195,7 +184,14 @@ util::StringView JsdocHelper::GetLicenseStringFromStart()
                     Forward(1);
                     break;
                 }
-                [[fallthrough]];
+                continue;
+            }
+            case lexer::LEX_CHAR_SLASH: {
+                Forward(1);
+                if (Iterator().Peek() == lexer::LEX_CHAR_ASTERISK) {
+                    licenseStart = Iterator().Index() - 1;
+                }
+                continue;
             }
             default: {
                 Iterator().SkipCp();
@@ -205,6 +201,6 @@ util::StringView JsdocHelper::GetLicenseStringFromStart()
         break;
     } while (true);
 
-    return SourceView(startPos, Iterator().Index());
+    return SourceView(licenseStart, Iterator().Index());
 }
 }  // namespace ark::es2panda::parser

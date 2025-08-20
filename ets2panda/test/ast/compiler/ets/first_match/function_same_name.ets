@@ -16,12 +16,12 @@
 namespace NS{
     export function foo(a:number){}
     export function foo2(a:string){}
-    export overload foo{foo2}
+    export overload /* @@ label */foo{foo2}
 }
 
 function foo(a:number){}
 function foo2(a:string){}
-overload foo{foo2}
+overload /* @@ label2 */foo{foo2}
 
-/* @@? 19:24 Error TypeError: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
-/* @@? 24:13 Error TypeError: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
+/* @@@ label Error TypeError: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
+/* @@@ label2 Error TypeError: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */

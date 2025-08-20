@@ -45,7 +45,8 @@ static std::map<std::string, es2panda_AstNode *> methodMap = {
     {"interfaceFoo1", nullptr},  {"interfaceFoo2", nullptr},  {"interfaceFoo3", nullptr},  {"interfaceFoo4", nullptr},
     {"classFoo1", nullptr},      {"classFoo2", nullptr},      {"classFoo3", nullptr},      {"interfaceProp1", nullptr},
     {"interfaceProp2", nullptr}, {"interfaceProp3", nullptr}, {"interfaceProp4", nullptr}, {"jsDocFunc", nullptr},
-    {"intefaceGet", nullptr},    {"intefaceSet", nullptr},    {"testGet", nullptr},        {"testSet", nullptr}};
+    {"intefaceGet", nullptr},    {"intefaceSet", nullptr},    {"testGet", nullptr},        {"testSet", nullptr},
+    {"tool", nullptr},           {"tool2", nullptr}};
 
 // Note: the variableDecl witll be transferred to property of ETSGLOBAL after lowerings.
 static std::map<std::string, es2panda_AstNode *> propertyMap = {
@@ -63,6 +64,8 @@ static es2panda_AstNode *exportNamedDecl = nullptr;
 static es2panda_AstNode *exportSingleNamedDecl = nullptr;
 static es2panda_AstNode *reExportedDecl = nullptr;
 static es2panda_AstNode *importDecl = nullptr;
+static es2panda_AstNode *overloadDecl = nullptr;
+static es2panda_AstNode *structDecl = nullptr;
 
 static std::string g_source = R"('use static'
 /*
@@ -402,7 +405,49 @@ export { PI, E } from "std/math"
  * @param2 preStr { p }
 */
 export jsdocVal2
+
+/**
+ * ==== function overload declaration jsdoc ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+overload zoo {
+  jsDocFunc
+}
+
+/**
+this is jsdoc of tool
+*/
+export function tool() {}
+
+/*
+this isn't jsdoc of tool2
+*/
+export function tool2() {}
+
+/**
+this is jsdoc of struct
+*/
+@myAnnoWithAnno
+export default struct myStruct {}
+
 )";
+
+static void FindStructDecl(es2panda_AstNode *ast, void *context)
+{
+    [[maybe_unused]] auto ctx = reinterpret_cast<es2panda_Context *>(context);
+    if (impl->IsETSStructDeclaration(ast)) {
+        structDecl = ast;
+    }
+}
+
+static void FindOverloadDecl(es2panda_AstNode *ast, void *context)
+{
+    [[maybe_unused]] auto ctx = reinterpret_cast<es2panda_Context *>(context);
+    if (impl->IsOverloadDeclaration(ast)) {
+        overloadDecl = ast;
+    }
+}
 
 static void FindImportExportSpecifier(es2panda_AstNode *ast, void *context)
 {
@@ -580,11 +625,13 @@ static void FindTargetAstAfterChecker(es2panda_Context *context, es2panda_AstNod
     impl->AstNodeForEach(ast, FindAnnotationDecl, context);
     impl->AstNodeForEach(ast, FindETSParamDecl, context);
     impl->AstNodeForEach(indexerClass, FindIndexerTransferredGetterSetter, context);
+    impl->AstNodeForEach(ast, FindOverloadDecl, context);
 }
 
 static void FindTargetAstAfterParser(es2panda_Context *context, es2panda_AstNode *ast)
 {
     impl->AstNodeForEach(ast, FindImportExportSpecifier, context);
+    impl->AstNodeForEach(ast, FindStructDecl, context);
 }
 
 static void TestJSDoc(es2panda_Context *context, es2panda_AstNode *entryAst)
@@ -625,6 +672,8 @@ static void TestJSDoc(es2panda_Context *context, es2panda_AstNode *entryAst)
     std::cout << impl->JsdocStringFromDeclaration(context, reExportedDecl) << std::endl;
     std::cout << impl->JsdocStringFromDeclaration(context, exportSingleNamedDecl) << std::endl;
     std::cout << impl->JsdocStringFromDeclaration(context, importDecl) << std::endl;
+    std::cout << impl->JsdocStringFromDeclaration(context, overloadDecl) << std::endl;
+    std::cout << impl->JsdocStringFromDeclaration(context, structDecl) << std::endl;
 }
 
 int main(int argc, char **argv)
