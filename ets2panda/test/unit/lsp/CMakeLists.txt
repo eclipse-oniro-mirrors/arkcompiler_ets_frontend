@@ -11,6 +11,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# NOTE(@srokashevich, #29196): enable with asan after fix
+if (PANDA_ENABLE_ADDRESS_SANITIZER)
+    return()
+endif()
+
 ets2panda_add_gtest(lsp_get_definition_at_position_test CPP_SOURCES
     get_definition_at_position_test.cpp
 )
