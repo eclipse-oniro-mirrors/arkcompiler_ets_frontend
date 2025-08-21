@@ -3620,6 +3620,10 @@ export class TsUtils {
     return !!originalIdentifier && this.isImportedFromJS(originalIdentifier);
   }
 
+  static isClassOrInterfaceDeclaration(d: ts.Declaration): d is ts.ClassDeclaration | ts.InterfaceDeclaration {
+    return ts.isClassDeclaration(d) || ts.isInterfaceDeclaration(d);
+  }
+
   /**
    * Extracts the Identifier from the given node. returns undefined if no Identifier is found.
    *

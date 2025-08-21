@@ -15,6 +15,16 @@
     ],
     "result": [
         {
+            "line": 35,
+            "column": 3,
+            "endLine": 35,
+            "endColumn": 13,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
             "line": 36,
             "column": 3,
             "endLine": 36,

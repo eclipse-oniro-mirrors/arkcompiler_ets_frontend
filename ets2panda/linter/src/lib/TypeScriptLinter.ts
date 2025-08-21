@@ -10846,59 +10846,166 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   /**
    * Checks that each field in a subclass matches the type of the same-named field
-   * in its base class. If the subclass field's type is not assignable to the
-   * base class field type, emit a diagnostic.
+   * in its base class or implemented interfaces.
    */
   private handleFieldTypesMatchingBetweenDerivedAndBaseClass(node: ts.HeritageClause): void {
-    // Only process "extends" clauses
-    if (node.token !== ts.SyntaxKind.ExtendsKeyword) {
+    if (node.token !== ts.SyntaxKind.ExtendsKeyword && node.token !== ts.SyntaxKind.ImplementsKeyword) {
       return;
     }
+
     const derivedClass = node.parent;
     if (!ts.isClassDeclaration(derivedClass)) {
       return;
     }
 
-    // Locate the base class declaration
-    const baseExpr = node.types[0]?.expression;
-    if (!ts.isIdentifier(baseExpr)) {
-      return;
-    }
-    const baseSym = this.tsUtils.trueSymbolAtLocation(baseExpr);
-    const baseClassDecl = baseSym?.declarations?.find(ts.isClassDeclaration);
-    if (!baseClassDecl) {
-      return;
-    }
-
-    // Compare each property in the derived class against the base class
     for (const member of derivedClass.members) {
       if (!ts.isPropertyDeclaration(member) || !ts.isIdentifier(member.name) || !member.type) {
         continue;
       }
       const propName = member.name.text;
-      // Find the first declaration of this property in the base-class chain
-      const baseProp = this.findPropertyDeclarationInBaseChain(baseClassDecl, propName);
-      if (!baseProp) {
-        continue;
-      }
 
-      // Get the types
-      const derivedType = this.tsTypeChecker.getTypeAtLocation(member.type);
-      const baseType = this.tsTypeChecker.getTypeAtLocation(baseProp.type!);
-
-      // If the derived type is not assignable to the base type, report
-      if (!this.isFieldTypeMatchingBetweenDerivedAndBaseClass(derivedType, baseType)) {
+      // Delegate heritage comparison logic
+      if (this.hasFieldTypeMismatchWithBases(node, propName, member)) {
         this.incrementCounters(member.name, FaultID.FieldTypeMismatch);
       }
     }
   }
 
   /**
+   * Checks the given derived property against all base classes/interfaces
+   * in the heritage clause. Returns true if a mismatch is found.
+   */
+  private hasFieldTypeMismatchWithBases(
+    node: ts.HeritageClause,
+    propName: string,
+    member: ts.PropertyDeclaration
+  ): boolean {
+    for (const hType of node.types) {
+      const baseExpr = hType?.expression;
+      if (!ts.isIdentifier(baseExpr)) {
+        continue;
+      }
+
+      const baseSym = this.tsUtils.trueSymbolAtLocation(baseExpr);
+      const baseDecl = baseSym?.declarations?.find(TsUtils.isClassOrInterfaceDeclaration);
+      if (!baseDecl) {
+        continue;
+      }
+
+      const baseProp = this.findPropertyDeclarationInBaseChain(baseDecl, propName);
+      if (!baseProp?.type) {
+        continue;
+      }
+
+      const derivedType = this.tsTypeChecker.getTypeAtLocation(member.type!);
+      const baseType = this.tsTypeChecker.getTypeAtLocation(baseProp.type);
+
+      if (!this.isFieldTypeMatchingBetweenDerivedAndBase(derivedType, baseType)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Searches the base chain (classes or interfaces) to find the first declaration
+   * of the given property (with a type annotation). Avoids cycles.
+   */
+  private findPropertyDeclarationInBaseChain(
+    decl: ts.ClassDeclaration | ts.InterfaceDeclaration,
+    propName: string,
+    visited: Set<ts.Node> = new Set()
+  ): ts.PropertyDeclaration | ts.PropertySignature | undefined {
+    if (visited.has(decl)) {
+      return undefined;
+    }
+    visited.add(decl);
+
+    if (ts.isClassDeclaration(decl)) {
+      return this.findPropertyInClassChain(decl, propName, visited);
+    }
+
+    // Interface path
+    return this.findPropertyInInterfaceChain(decl, propName, visited);
+  }
+
+  /** Look for a property in a class declaration or its base classes */
+  private findPropertyInClassChain(
+    decl: ts.ClassDeclaration,
+    propName: string,
+    visited: Set<ts.Node>
+  ): ts.PropertyDeclaration | ts.PropertySignature | undefined {
+    // Check current class members
+    const member = decl.members.find((m): m is ts.PropertyDeclaration => {
+      return ts.isPropertyDeclaration(m) && ts.isIdentifier(m.name) && m.name.text === propName && !!m.type;
+    });
+    if (member) {
+      return member;
+    }
+
+    // Otherwise, follow the extends clause (single inheritance)
+    const ext = decl.heritageClauses?.find((c) => {
+      return c.token === ts.SyntaxKind.ExtendsKeyword;
+    });
+    if (!ext || ext.types.length === 0) {
+      return undefined;
+    }
+
+    const expr = ext.types[0].expression;
+    if (!ts.isIdentifier(expr)) {
+      return undefined;
+    }
+
+    const sym = this.tsUtils.trueSymbolAtLocation(expr);
+    const nextDecl = sym?.declarations?.find(ts.isClassDeclaration);
+    return nextDecl ? this.findPropertyInClassChain(nextDecl, propName, visited) : undefined;
+  }
+
+  /** Look for a property in an interface declaration or its extended interfaces */
+  private findPropertyInInterfaceChain(
+    decl: ts.InterfaceDeclaration,
+    propName: string,
+    visited: Set<ts.Node>
+  ): ts.PropertySignature | ts.PropertyDeclaration | undefined {
+    // Check current interface members
+    const member = decl.members.find((m): m is ts.PropertySignature => {
+      return ts.isPropertySignature(m) && ts.isIdentifier(m.name) && m.name.text === propName && !!m.type;
+    });
+    if (member) {
+      return member;
+    }
+
+    // Otherwise, follow extended interfaces
+    const ext = decl.heritageClauses?.find((c) => {
+      return c.token === ts.SyntaxKind.ExtendsKeyword;
+    });
+    if (!ext) {
+      return undefined;
+    }
+
+    for (const t of ext.types) {
+      const expr = t.expression;
+      if (!ts.isIdentifier(expr)) {
+        continue;
+      }
+      const sym = this.tsUtils.trueSymbolAtLocation(expr);
+      const nextDecl = sym?.declarations?.find(ts.isInterfaceDeclaration);
+      if (nextDecl) {
+        const found = this.findPropertyInInterfaceChain(nextDecl, propName, visited);
+        if (found) {
+          return found;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  /**
    * Returns true if the union type members of subclass field's type
-   * exactly match those of the base class field's type (order-insensitive).
+   * exactly match those of the base field's type (order-insensitive).
    * So `number|string` ↔ `string|number` passes, but `number` ↔ `number|string` fails.
    */
-  private isFieldTypeMatchingBetweenDerivedAndBaseClass(derivedType: ts.Type, baseType: ts.Type): boolean {
+  private isFieldTypeMatchingBetweenDerivedAndBase(derivedType: ts.Type, baseType: ts.Type): boolean {
     // Split union type strings into trimmed member names
     const derivedNames = this.tsTypeChecker.
       typeToString(derivedType).
@@ -10925,43 +11032,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         return derivedNames.includes(name);
       })
     );
-  }
-
-  /**
-   * Recursively searches base classes to find a property declaration
-   * with the given name and a type annotation.
-   */
-  private findPropertyDeclarationInBaseChain(
-    classDecl: ts.ClassDeclaration,
-    propName: string
-  ): ts.PropertyDeclaration | undefined {
-    let current: ts.ClassDeclaration | undefined = classDecl;
-    while (current) {
-      // Look for the property in this class
-      const member = current.members.find((m) => {
-        return ts.isPropertyDeclaration(m) && ts.isIdentifier(m.name) && m.name.text === propName && !!m.type;
-      }) as ts.PropertyDeclaration | undefined;
-      if (member) {
-        return member;
-      }
-
-      // Move to the next base class if it exists
-      const extendsClause = current.heritageClauses?.find((c) => {
-        return c.token === ts.SyntaxKind.ExtendsKeyword;
-      });
-      if (!extendsClause) {
-        break;
-      }
-      const baseExpr = extendsClause.types[0]?.expression;
-      if (!ts.isIdentifier(baseExpr)) {
-        break;
-      }
-
-      const sym = this.tsUtils.trueSymbolAtLocation(baseExpr);
-      const decl = sym?.declarations?.find(ts.isClassDeclaration);
-      current = decl;
-    }
-    return undefined;
   }
 
   /**
