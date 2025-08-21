@@ -14,9 +14,9 @@
  */
 
 
-import { KOALA_WRAPPER_PATH_FROM_SDK, MEMO_PLUGIN_PATH_FROM_SDK, UI_PLUGIN_PATH_FROM_SDK } from "../pre_define";
-import { BuildConfig } from "../types";
-import path from "path"
+import { KOALA_WRAPPER_PATH_FROM_SDK, MEMO_PLUGIN_PATH_FROM_SDK, UI_PLUGIN_PATH_FROM_SDK } from '../pre_define';
+import { BuildConfig } from '../types';
+import path from 'path'
 
 
 let koalaModule: any;
@@ -46,7 +46,7 @@ export function initKoalaPlugins(projectConfig: BuildConfig): void {
 
     // TODO: need change in hvigor
     if (process.env.USE_KOALA_UI_PLUGIN) {
-      projectConfig.plugins['ArkUI'] = uiPluginPath
+      projectConfig.plugins.ArkUI = uiPluginPath
     }
 
     if (process.env.USE_KOALA_MEMO_PLUGIN) {
@@ -54,7 +54,7 @@ export function initKoalaPlugins(projectConfig: BuildConfig): void {
     }
 }
 
-export function cleanKoalaModule() {
+export function cleanKoalaModule(): void {
   koalaModule = null;
 }
 

@@ -187,7 +187,7 @@ export abstract class BaseMode {
       const declEtsOutputDir = path.dirname(declEtsOutputPath);
       const staticRecordRelativePath = changeFileExtension(
         path.relative(declEtsOutputDir, staticRecordPath).replace(/\\/g, '\/'),
-        "",
+        '',
         DECL_TS_SUFFIX
       );
       createFileIfNotExists(staticRecordPath, STATIC_RECORD_FILE_CONTENT);

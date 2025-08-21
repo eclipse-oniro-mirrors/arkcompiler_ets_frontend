@@ -158,7 +158,7 @@ export class PluginDriver {
 
     // TODO: need change in hvigor
     if (process.env.USE_KOALA_UI_PLUGIN) {
-      projectConfig.plugins['ArkUI'] = uiPluginPath
+      projectConfig.plugins.ArkUI = uiPluginPath
     }
 
     if (process.env.USE_KOALA_MEMO_PLUGIN) {
