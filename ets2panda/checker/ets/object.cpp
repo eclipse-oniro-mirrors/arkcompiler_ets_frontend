@@ -2351,12 +2351,28 @@ void ETSChecker::CheckAnnotationReference(const ir::MemberExpression *memberExpr
     }
 }
 
+std::vector<ResolveResult *> ETSChecker::HandlePropertyResolution(varbinder::LocalVariable *const prop,
+                                                                  ir::MemberExpression *const memberExpr,
+                                                                  varbinder::Variable *const globalFunctionVar,
+                                                                  PropertySearchFlags searchFlag)
+{
+    std::vector<ResolveResult *> resolveRes {};
+
+    if (prop != nullptr && IsVariableGetterSetter(prop) &&
+        ((searchFlag & PropertySearchFlags::IS_GETTER) != 0 || (searchFlag & PropertySearchFlags::IS_SETTER) != 0)) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        return ValidateAccessor(memberExpr, prop, globalFunctionVar, searchFlag);
+    }
+    if (prop != nullptr) {
+        resolveRes.emplace_back(ProgramAllocator()->New<ResolveResult>(prop, ResolvedKind::PROPERTY));
+    }
+    return resolveRes;
+}
+
 // NOLINTNEXTLINE(readability-function-size)
 std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::MemberExpression *const memberExpr,
                                                                 const ETSObjectType *const target)
 {
-    std::vector<ResolveResult *> resolveRes {};
-
     if (target->GetDeclNode() != nullptr && target->GetDeclNode()->IsClassDefinition() &&
         !target->GetDeclNode()->AsClassDefinition()->IsClassDefinitionChecked()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
@@ -2376,10 +2392,9 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
     if (targetRef != nullptr && targetRef->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE)) {
         // Note: extension function only for instance.
         ValidateResolvedProperty(&prop, target, memberExpr->Property()->AsIdentifier(), searchFlag);
-        if (prop != nullptr) {
-            resolveRes.emplace_back(ProgramAllocator()->New<ResolveResult>(prop, ResolvedKind::PROPERTY));
-        }
-        return resolveRes;
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        return HandlePropertyResolution(prop, const_cast<ir::MemberExpression *>(memberExpr), globalFunctionVar,
+                                        searchFlag);
     }
 
     if (HasStatus(CheckerStatus::IN_GETTER)) {
@@ -2393,6 +2408,7 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
         return ValidateAccessor(const_cast<ir::MemberExpression *>(memberExpr), prop, globalFunctionVar, searchFlag);
     }
 
+    std::vector<ResolveResult *> resolveRes {};
     if (globalFunctionVar != nullptr) {
         ResolvedKind resolvedKind = DecideResolvedKind(globalFunctionVar->TsType());
         if (IsExtensionAccessorCallUse(this, memberExpr, resolvedKind)) {
