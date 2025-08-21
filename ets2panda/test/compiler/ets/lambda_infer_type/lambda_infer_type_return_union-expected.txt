@@ -150,7 +150,7 @@
                                                     },
                                                     "end": {
                                                       "line": 18,
-                                                      "column": 20,
+                                                      "column": 18,
                                                       "program": "lambda_infer_type_return_union.ets"
                                                     }
                                                   }
@@ -163,7 +163,7 @@
                                                   },
                                                   "end": {
                                                     "line": 18,
-                                                    "column": 20,
+                                                    "column": 18,
                                                     "program": "lambda_infer_type_return_union.ets"
                                                   }
                                                 }
@@ -197,7 +197,7 @@
                                                     },
                                                     "end": {
                                                       "line": 18,
-                                                      "column": 29,
+                                                      "column": 27,
                                                       "program": "lambda_infer_type_return_union.ets"
                                                     }
                                                   }
@@ -210,7 +210,7 @@
                                                   },
                                                   "end": {
                                                     "line": 18,
-                                                    "column": 29,
+                                                    "column": 27,
                                                     "program": "lambda_infer_type_return_union.ets"
                                                   }
                                                 }
@@ -224,7 +224,7 @@
                                               },
                                               "end": {
                                                 "line": 18,
-                                                "column": 29,
+                                                "column": 27,
                                                 "program": "lambda_infer_type_return_union.ets"
                                               }
                                             }
@@ -430,7 +430,7 @@
                                         },
                                         "end": {
                                           "line": 21,
-                                          "column": 29,
+                                          "column": 27,
                                           "program": "lambda_infer_type_return_union.ets"
                                         }
                                       }
@@ -443,7 +443,7 @@
                                       },
                                       "end": {
                                         "line": 21,
-                                        "column": 29,
+                                        "column": 27,
                                         "program": "lambda_infer_type_return_union.ets"
                                       }
                                     }
@@ -477,7 +477,7 @@
                                         },
                                         "end": {
                                           "line": 21,
-                                          "column": 38,
+                                          "column": 36,
                                           "program": "lambda_infer_type_return_union.ets"
                                         }
                                       }
@@ -490,7 +490,7 @@
                                       },
                                       "end": {
                                         "line": 21,
-                                        "column": 38,
+                                        "column": 36,
                                         "program": "lambda_infer_type_return_union.ets"
                                       }
                                     }
@@ -504,7 +504,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 38,
+                                    "column": 36,
                                     "program": "lambda_infer_type_return_union.ets"
                                   }
                                 }
@@ -517,7 +517,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 38,
+                                  "column": 36,
                                   "program": "lambda_infer_type_return_union.ets"
                                 }
                               }

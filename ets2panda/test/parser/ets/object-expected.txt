@@ -184,7 +184,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 15,
+                    "column": 14,
                     "program": "object.ets"
                   }
                 }
@@ -197,7 +197,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 15,
+                  "column": 14,
                   "program": "object.ets"
                 }
               }

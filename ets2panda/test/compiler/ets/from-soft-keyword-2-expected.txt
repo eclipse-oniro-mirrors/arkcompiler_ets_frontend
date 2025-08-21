@@ -263,8 +263,8 @@
           "program": "from-soft-keyword-2.ets"
         },
         "end": {
-          "line": 22,
-          "column": 9,
+          "line": 20,
+          "column": 2,
           "program": "from-soft-keyword-2.ets"
         }
       }

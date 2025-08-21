@@ -96,7 +96,7 @@
                             },
                             "end": {
                               "line": 16,
-                              "column": 36,
+                              "column": 35,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -109,7 +109,7 @@
                           },
                           "end": {
                             "line": 16,
-                            "column": 36,
+                            "column": 35,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -136,7 +136,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 37,
+                      "column": 36,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -149,7 +149,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 37,
+                    "column": 36,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -294,7 +294,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 19,
+                            "column": 18,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -307,7 +307,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 19,
+                          "column": 18,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -341,7 +341,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 22,
+                            "column": 21,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -354,7 +354,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 22,
+                          "column": 21,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -381,7 +381,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 23,
+                    "column": 22,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -394,7 +394,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 23,
+                  "column": 22,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -409,7 +409,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 23,
+                "column": 22,
                 "program": "generics_class_recursive_type_1.ets"
               }
             }
@@ -468,7 +468,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 12,
+                    "column": 11,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -481,7 +481,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 12,
+                  "column": 11,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -496,7 +496,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 12,
+                "column": 11,
                 "program": "generics_class_recursive_type_1.ets"
               }
             }
@@ -555,7 +555,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 14,
+                    "column": 13,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -568,7 +568,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 14,
+                  "column": 13,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -583,7 +583,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 14,
+                "column": 13,
                 "program": "generics_class_recursive_type_1.ets"
               }
             }
@@ -721,7 +721,7 @@
                           },
                           "end": {
                             "line": 21,
-                            "column": 20,
+                            "column": 19,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -734,7 +734,7 @@
                         },
                         "end": {
                           "line": 21,
-                          "column": 20,
+                          "column": 19,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -768,7 +768,7 @@
                           },
                           "end": {
                             "line": 21,
-                            "column": 23,
+                            "column": 22,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -781,7 +781,7 @@
                         },
                         "end": {
                           "line": 21,
-                          "column": 23,
+                          "column": 22,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -808,7 +808,7 @@
                   },
                   "end": {
                     "line": 21,
-                    "column": 24,
+                    "column": 23,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -821,7 +821,7 @@
                 },
                 "end": {
                   "line": 21,
-                  "column": 24,
+                  "column": 23,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -836,7 +836,7 @@
               },
               "end": {
                 "line": 21,
-                "column": 24,
+                "column": 23,
                 "program": "generics_class_recursive_type_1.ets"
               }
             }
@@ -948,7 +948,7 @@
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 23,
+                                      "column": 22,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -961,7 +961,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 23,
+                                    "column": 22,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -995,7 +995,7 @@
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 26,
+                                      "column": 25,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -1008,7 +1008,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 26,
+                                    "column": 25,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -1035,7 +1035,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 27,
+                              "column": 26,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -1048,7 +1048,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 27,
+                            "column": 26,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -1062,7 +1062,7 @@
                         },
                         "end": {
                           "line": 23,
-                          "column": 27,
+                          "column": 26,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -1075,7 +1075,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 27,
+                        "column": 26,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -1114,7 +1114,7 @@
                             },
                             "end": {
                               "line": 24,
-                              "column": 16,
+                              "column": 15,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -1127,7 +1127,7 @@
                           },
                           "end": {
                             "line": 24,
-                            "column": 16,
+                            "column": 15,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -1141,7 +1141,7 @@
                         },
                         "end": {
                           "line": 24,
-                          "column": 16,
+                          "column": 15,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -1154,7 +1154,7 @@
                       },
                       "end": {
                         "line": 24,
-                        "column": 16,
+                        "column": 15,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -1193,7 +1193,7 @@
                             },
                             "end": {
                               "line": 25,
-                              "column": 18,
+                              "column": 17,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -1206,7 +1206,7 @@
                           },
                           "end": {
                             "line": 25,
-                            "column": 18,
+                            "column": 17,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -1220,7 +1220,7 @@
                         },
                         "end": {
                           "line": 25,
-                          "column": 18,
+                          "column": 17,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -1233,7 +1233,7 @@
                       },
                       "end": {
                         "line": 25,
-                        "column": 18,
+                        "column": 17,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -1343,7 +1343,7 @@
                                     },
                                     "end": {
                                       "line": 27,
-                                      "column": 24,
+                                      "column": 23,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -1356,7 +1356,7 @@
                                   },
                                   "end": {
                                     "line": 27,
-                                    "column": 24,
+                                    "column": 23,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -1390,7 +1390,7 @@
                                     },
                                     "end": {
                                       "line": 27,
-                                      "column": 27,
+                                      "column": 26,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -1403,7 +1403,7 @@
                                   },
                                   "end": {
                                     "line": 27,
-                                    "column": 27,
+                                    "column": 26,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -1429,8 +1429,8 @@
                               "program": "generics_class_recursive_type_1.ets"
                             },
                             "end": {
-                              "line": 28,
-                              "column": 10,
+                              "line": 27,
+                              "column": 27,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -1442,8 +1442,8 @@
                             "program": "generics_class_recursive_type_1.ets"
                           },
                           "end": {
-                            "line": 28,
-                            "column": 10,
+                            "line": 27,
+                            "column": 27,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -1456,8 +1456,8 @@
                           "program": "generics_class_recursive_type_1.ets"
                         },
                         "end": {
-                          "line": 28,
-                          "column": 10,
+                          "line": 27,
+                          "column": 27,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -1469,8 +1469,8 @@
                         "program": "generics_class_recursive_type_1.ets"
                       },
                       "end": {
-                        "line": 28,
-                        "column": 10,
+                        "line": 27,
+                        "column": 27,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -2134,7 +2134,7 @@
                             },
                             "end": {
                               "line": 39,
-                              "column": 20,
+                              "column": 19,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -2147,7 +2147,7 @@
                           },
                           "end": {
                             "line": 39,
-                            "column": 20,
+                            "column": 19,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -2161,7 +2161,7 @@
                         },
                         "end": {
                           "line": 39,
-                          "column": 20,
+                          "column": 19,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -2174,7 +2174,7 @@
                       },
                       "end": {
                         "line": 39,
-                        "column": 20,
+                        "column": 19,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -2314,7 +2314,7 @@
                       },
                       "end": {
                         "line": 40,
-                        "column": 19,
+                        "column": 18,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -2327,7 +2327,7 @@
                     },
                     "end": {
                       "line": 40,
-                      "column": 19,
+                      "column": 18,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -2340,7 +2340,7 @@
                   },
                   "end": {
                     "line": 40,
-                    "column": 19,
+                    "column": 18,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -2353,7 +2353,7 @@
                 },
                 "end": {
                   "line": 40,
-                  "column": 19,
+                  "column": 18,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -2456,7 +2456,7 @@
                             },
                             "end": {
                               "line": 41,
-                              "column": 19,
+                              "column": 18,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -2469,7 +2469,7 @@
                           },
                           "end": {
                             "line": 41,
-                            "column": 19,
+                            "column": 18,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -2483,7 +2483,7 @@
                         },
                         "end": {
                           "line": 41,
-                          "column": 19,
+                          "column": 18,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -2496,7 +2496,7 @@
                       },
                       "end": {
                         "line": 41,
-                        "column": 19,
+                        "column": 18,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -2636,7 +2636,7 @@
                       },
                       "end": {
                         "line": 42,
-                        "column": 18,
+                        "column": 17,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -2649,7 +2649,7 @@
                     },
                     "end": {
                       "line": 42,
-                      "column": 18,
+                      "column": 17,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -2662,7 +2662,7 @@
                   },
                   "end": {
                     "line": 42,
-                    "column": 18,
+                    "column": 17,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -2675,7 +2675,7 @@
                 },
                 "end": {
                   "line": 42,
-                  "column": 18,
+                  "column": 17,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -2926,7 +2926,7 @@
                       },
                       "end": {
                         "line": 44,
-                        "column": 23,
+                        "column": 22,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -2939,7 +2939,7 @@
                     },
                     "end": {
                       "line": 44,
-                      "column": 23,
+                      "column": 22,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -2952,7 +2952,7 @@
                   },
                   "end": {
                     "line": 44,
-                    "column": 23,
+                    "column": 22,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -2965,7 +2965,7 @@
                 },
                 "end": {
                   "line": 44,
-                  "column": 23,
+                  "column": 22,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -3068,7 +3068,7 @@
                             },
                             "end": {
                               "line": 45,
-                              "column": 14,
+                              "column": 13,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -3081,7 +3081,7 @@
                           },
                           "end": {
                             "line": 45,
-                            "column": 14,
+                            "column": 13,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -3095,7 +3095,7 @@
                         },
                         "end": {
                           "line": 45,
-                          "column": 14,
+                          "column": 13,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -3108,7 +3108,7 @@
                       },
                       "end": {
                         "line": 45,
-                        "column": 14,
+                        "column": 13,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -3261,7 +3261,7 @@
                                     },
                                     "end": {
                                       "line": 46,
-                                      "column": 23,
+                                      "column": 22,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -3274,7 +3274,7 @@
                                   },
                                   "end": {
                                     "line": 46,
-                                    "column": 23,
+                                    "column": 22,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -3288,7 +3288,7 @@
                                 },
                                 "end": {
                                   "line": 46,
-                                  "column": 23,
+                                  "column": 22,
                                   "program": "generics_class_recursive_type_1.ets"
                                 }
                               }
@@ -3301,7 +3301,7 @@
                               },
                               "end": {
                                 "line": 46,
-                                "column": 23,
+                                "column": 22,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -3336,7 +3336,7 @@
                               },
                               "end": {
                                 "line": 46,
-                                "column": 29,
+                                "column": 28,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -3349,7 +3349,7 @@
                             },
                             "end": {
                               "line": 46,
-                              "column": 29,
+                              "column": 28,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -3362,7 +3362,7 @@
                           },
                           "end": {
                             "line": 46,
-                            "column": 29,
+                            "column": 28,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -3376,7 +3376,7 @@
                         },
                         "end": {
                           "line": 46,
-                          "column": 29,
+                          "column": 28,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -3389,7 +3389,7 @@
                       },
                       "end": {
                         "line": 46,
-                        "column": 29,
+                        "column": 28,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -3448,7 +3448,7 @@
                               },
                               "end": {
                                 "line": 46,
-                                "column": 39,
+                                "column": 38,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -3461,7 +3461,7 @@
                             },
                             "end": {
                               "line": 46,
-                              "column": 39,
+                              "column": 38,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -3488,7 +3488,7 @@
                       },
                       "end": {
                         "line": 46,
-                        "column": 40,
+                        "column": 39,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -3501,7 +3501,7 @@
                     },
                     "end": {
                       "line": 46,
-                      "column": 40,
+                      "column": 39,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -3514,7 +3514,7 @@
                   },
                   "end": {
                     "line": 46,
-                    "column": 40,
+                    "column": 39,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -3527,7 +3527,7 @@
                 },
                 "end": {
                   "line": 46,
-                  "column": 40,
+                  "column": 39,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -3638,7 +3638,7 @@
                                     },
                                     "end": {
                                       "line": 47,
-                                      "column": 43,
+                                      "column": 42,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -3651,7 +3651,7 @@
                                   },
                                   "end": {
                                     "line": 47,
-                                    "column": 43,
+                                    "column": 42,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -3665,7 +3665,7 @@
                                 },
                                 "end": {
                                   "line": 47,
-                                  "column": 43,
+                                  "column": 42,
                                   "program": "generics_class_recursive_type_1.ets"
                                 }
                               }
@@ -3678,7 +3678,7 @@
                               },
                               "end": {
                                 "line": 47,
-                                "column": 43,
+                                "column": 42,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -3713,7 +3713,7 @@
                               },
                               "end": {
                                 "line": 47,
-                                "column": 49,
+                                "column": 48,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -3726,7 +3726,7 @@
                             },
                             "end": {
                               "line": 47,
-                              "column": 49,
+                              "column": 48,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -3739,7 +3739,7 @@
                           },
                           "end": {
                             "line": 47,
-                            "column": 49,
+                            "column": 48,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -3753,7 +3753,7 @@
                         },
                         "end": {
                           "line": 47,
-                          "column": 49,
+                          "column": 48,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -3766,7 +3766,7 @@
                       },
                       "end": {
                         "line": 47,
-                        "column": 49,
+                        "column": 48,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -3801,7 +3801,7 @@
                       },
                       "end": {
                         "line": 47,
-                        "column": 54,
+                        "column": 53,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -3814,7 +3814,7 @@
                     },
                     "end": {
                       "line": 47,
-                      "column": 54,
+                      "column": 53,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -3926,7 +3926,7 @@
                                     },
                                     "end": {
                                       "line": 47,
-                                      "column": 32,
+                                      "column": 30,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -3939,7 +3939,7 @@
                                   },
                                   "end": {
                                     "line": 47,
-                                    "column": 32,
+                                    "column": 30,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -4019,7 +4019,7 @@
                   },
                   "end": {
                     "line": 47,
-                    "column": 54,
+                    "column": 53,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -4032,7 +4032,7 @@
                 },
                 "end": {
                   "line": 47,
-                  "column": 54,
+                  "column": 53,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -4143,7 +4143,7 @@
                                     },
                                     "end": {
                                       "line": 48,
-                                      "column": 27,
+                                      "column": 26,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -4156,7 +4156,7 @@
                                   },
                                   "end": {
                                     "line": 48,
-                                    "column": 27,
+                                    "column": 26,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -4170,7 +4170,7 @@
                                 },
                                 "end": {
                                   "line": 48,
-                                  "column": 27,
+                                  "column": 26,
                                   "program": "generics_class_recursive_type_1.ets"
                                 }
                               }
@@ -4183,7 +4183,7 @@
                               },
                               "end": {
                                 "line": 48,
-                                "column": 27,
+                                "column": 26,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -4222,7 +4222,7 @@
                                     },
                                     "end": {
                                       "line": 48,
-                                      "column": 35,
+                                      "column": 34,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -4235,7 +4235,7 @@
                                   },
                                   "end": {
                                     "line": 48,
-                                    "column": 35,
+                                    "column": 34,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -4249,7 +4249,7 @@
                                 },
                                 "end": {
                                   "line": 48,
-                                  "column": 35,
+                                  "column": 34,
                                   "program": "generics_class_recursive_type_1.ets"
                                 }
                               }
@@ -4262,7 +4262,7 @@
                               },
                               "end": {
                                 "line": 48,
-                                "column": 35,
+                                "column": 34,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -4297,7 +4297,7 @@
                               },
                               "end": {
                                 "line": 48,
-                                "column": 41,
+                                "column": 40,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -4310,7 +4310,7 @@
                             },
                             "end": {
                               "line": 48,
-                              "column": 41,
+                              "column": 40,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -4323,7 +4323,7 @@
                           },
                           "end": {
                             "line": 48,
-                            "column": 41,
+                            "column": 40,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -4337,7 +4337,7 @@
                         },
                         "end": {
                           "line": 48,
-                          "column": 41,
+                          "column": 40,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -4350,7 +4350,7 @@
                       },
                       "end": {
                         "line": 48,
-                        "column": 41,
+                        "column": 40,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -4385,7 +4385,7 @@
                       },
                       "end": {
                         "line": 48,
-                        "column": 45,
+                        "column": 44,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -4398,7 +4398,7 @@
                     },
                     "end": {
                       "line": 48,
-                      "column": 45,
+                      "column": 44,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -4411,7 +4411,7 @@
                   },
                   "end": {
                     "line": 48,
-                    "column": 45,
+                    "column": 44,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -4424,7 +4424,7 @@
                 },
                 "end": {
                   "line": 48,
-                  "column": 45,
+                  "column": 44,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -4535,7 +4535,7 @@
                                     },
                                     "end": {
                                       "line": 49,
-                                      "column": 34,
+                                      "column": 33,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -4548,7 +4548,7 @@
                                   },
                                   "end": {
                                     "line": 49,
-                                    "column": 34,
+                                    "column": 33,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -4562,7 +4562,7 @@
                                 },
                                 "end": {
                                   "line": 49,
-                                  "column": 34,
+                                  "column": 33,
                                   "program": "generics_class_recursive_type_1.ets"
                                 }
                               }
@@ -4575,7 +4575,7 @@
                               },
                               "end": {
                                 "line": 49,
-                                "column": 34,
+                                "column": 33,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -4614,7 +4614,7 @@
                                     },
                                     "end": {
                                       "line": 49,
-                                      "column": 42,
+                                      "column": 41,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -4627,7 +4627,7 @@
                                   },
                                   "end": {
                                     "line": 49,
-                                    "column": 42,
+                                    "column": 41,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -4641,7 +4641,7 @@
                                 },
                                 "end": {
                                   "line": 49,
-                                  "column": 42,
+                                  "column": 41,
                                   "program": "generics_class_recursive_type_1.ets"
                                 }
                               }
@@ -4654,7 +4654,7 @@
                               },
                               "end": {
                                 "line": 49,
-                                "column": 42,
+                                "column": 41,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -4689,7 +4689,7 @@
                               },
                               "end": {
                                 "line": 49,
-                                "column": 47,
+                                "column": 46,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -4702,7 +4702,7 @@
                             },
                             "end": {
                               "line": 49,
-                              "column": 47,
+                              "column": 46,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -4715,7 +4715,7 @@
                           },
                           "end": {
                             "line": 49,
-                            "column": 47,
+                            "column": 46,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -4729,7 +4729,7 @@
                         },
                         "end": {
                           "line": 49,
-                          "column": 47,
+                          "column": 46,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -4742,7 +4742,7 @@
                       },
                       "end": {
                         "line": 49,
-                        "column": 47,
+                        "column": 46,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -4781,7 +4781,7 @@
                             },
                             "end": {
                               "line": 49,
-                              "column": 59,
+                              "column": 58,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -4794,7 +4794,7 @@
                           },
                           "end": {
                             "line": 49,
-                            "column": 59,
+                            "column": 58,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -4808,7 +4808,7 @@
                         },
                         "end": {
                           "line": 49,
-                          "column": 59,
+                          "column": 58,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -4821,7 +4821,7 @@
                       },
                       "end": {
                         "line": 49,
-                        "column": 59,
+                        "column": 58,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -4856,7 +4856,7 @@
                       },
                       "end": {
                         "line": 49,
-                        "column": 63,
+                        "column": 62,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -4869,7 +4869,7 @@
                     },
                     "end": {
                       "line": 49,
-                      "column": 63,
+                      "column": 62,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -4931,7 +4931,7 @@
                   },
                   "end": {
                     "line": 49,
-                    "column": 63,
+                    "column": 62,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -4944,7 +4944,7 @@
                 },
                 "end": {
                   "line": 49,
-                  "column": 63,
+                  "column": 62,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -5055,7 +5055,7 @@
                                     },
                                     "end": {
                                       "line": 50,
-                                      "column": 30,
+                                      "column": 29,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -5068,7 +5068,7 @@
                                   },
                                   "end": {
                                     "line": 50,
-                                    "column": 30,
+                                    "column": 29,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -5082,7 +5082,7 @@
                                 },
                                 "end": {
                                   "line": 50,
-                                  "column": 30,
+                                  "column": 29,
                                   "program": "generics_class_recursive_type_1.ets"
                                 }
                               }
@@ -5095,7 +5095,7 @@
                               },
                               "end": {
                                 "line": 50,
-                                "column": 30,
+                                "column": 29,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -5210,7 +5210,7 @@
                               },
                               "end": {
                                 "line": 50,
-                                "column": 51,
+                                "column": 50,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -5223,7 +5223,7 @@
                             },
                             "end": {
                               "line": 50,
-                              "column": 51,
+                              "column": 50,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -5250,7 +5250,7 @@
                       },
                       "end": {
                         "line": 50,
-                        "column": 52,
+                        "column": 51,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -5263,7 +5263,7 @@
                     },
                     "end": {
                       "line": 50,
-                      "column": 52,
+                      "column": 51,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -5276,7 +5276,7 @@
                   },
                   "end": {
                     "line": 50,
-                    "column": 52,
+                    "column": 51,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -5289,7 +5289,7 @@
                 },
                 "end": {
                   "line": 50,
-                  "column": 52,
+                  "column": 51,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -5400,7 +5400,7 @@
                                     },
                                     "end": {
                                       "line": 51,
-                                      "column": 30,
+                                      "column": 29,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -5413,7 +5413,7 @@
                                   },
                                   "end": {
                                     "line": 51,
-                                    "column": 30,
+                                    "column": 29,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -5427,7 +5427,7 @@
                                 },
                                 "end": {
                                   "line": 51,
-                                  "column": 30,
+                                  "column": 29,
                                   "program": "generics_class_recursive_type_1.ets"
                                 }
                               }
@@ -5440,7 +5440,7 @@
                               },
                               "end": {
                                 "line": 51,
-                                "column": 30,
+                                "column": 29,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -5479,7 +5479,7 @@
                                     },
                                     "end": {
                                       "line": 51,
-                                      "column": 38,
+                                      "column": 37,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -5492,7 +5492,7 @@
                                   },
                                   "end": {
                                     "line": 51,
-                                    "column": 38,
+                                    "column": 37,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -5506,7 +5506,7 @@
                                 },
                                 "end": {
                                   "line": 51,
-                                  "column": 38,
+                                  "column": 37,
                                   "program": "generics_class_recursive_type_1.ets"
                                 }
                               }
@@ -5519,7 +5519,7 @@
                               },
                               "end": {
                                 "line": 51,
-                                "column": 38,
+                                "column": 37,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -5634,7 +5634,7 @@
                               },
                               "end": {
                                 "line": 51,
-                                "column": 59,
+                                "column": 58,
                                 "program": "generics_class_recursive_type_1.ets"
                               }
                             }
@@ -5647,7 +5647,7 @@
                             },
                             "end": {
                               "line": 51,
-                              "column": 59,
+                              "column": 58,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -5674,7 +5674,7 @@
                       },
                       "end": {
                         "line": 51,
-                        "column": 60,
+                        "column": 59,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -5687,7 +5687,7 @@
                     },
                     "end": {
                       "line": 51,
-                      "column": 60,
+                      "column": 59,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -5700,7 +5700,7 @@
                   },
                   "end": {
                     "line": 51,
-                    "column": 60,
+                    "column": 59,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -5713,7 +5713,7 @@
                 },
                 "end": {
                   "line": 51,
-                  "column": 60,
+                  "column": 59,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -5821,8 +5821,8 @@
           "program": "generics_class_recursive_type_1.ets"
         },
         "end": {
-          "line": 54,
-          "column": 6,
+          "line": 52,
+          "column": 2,
           "program": "generics_class_recursive_type_1.ets"
         }
       }
@@ -5977,7 +5977,7 @@
                           },
                           "end": {
                             "line": 55,
-                            "column": 12,
+                            "column": 11,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -5990,7 +5990,7 @@
                         },
                         "end": {
                           "line": 55,
-                          "column": 12,
+                          "column": 11,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -6017,7 +6017,7 @@
                   },
                   "end": {
                     "line": 55,
-                    "column": 13,
+                    "column": 12,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -6030,7 +6030,7 @@
                 },
                 "end": {
                   "line": 55,
-                  "column": 13,
+                  "column": 12,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -6045,7 +6045,7 @@
               },
               "end": {
                 "line": 55,
-                "column": 13,
+                "column": 12,
                 "program": "generics_class_recursive_type_1.ets"
               }
             }
@@ -6157,7 +6157,7 @@
                                     },
                                     "end": {
                                       "line": 56,
-                                      "column": 24,
+                                      "column": 23,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -6170,7 +6170,7 @@
                                   },
                                   "end": {
                                     "line": 56,
-                                    "column": 24,
+                                    "column": 23,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -6197,7 +6197,7 @@
                             },
                             "end": {
                               "line": 56,
-                              "column": 25,
+                              "column": 24,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -6210,7 +6210,7 @@
                           },
                           "end": {
                             "line": 56,
-                            "column": 25,
+                            "column": 24,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -6224,7 +6224,7 @@
                         },
                         "end": {
                           "line": 56,
-                          "column": 25,
+                          "column": 24,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -6237,7 +6237,7 @@
                       },
                       "end": {
                         "line": 56,
-                        "column": 25,
+                        "column": 24,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -6520,7 +6520,7 @@
                             },
                             "end": {
                               "line": 61,
-                              "column": 32,
+                              "column": 31,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -6533,7 +6533,7 @@
                           },
                           "end": {
                             "line": 61,
-                            "column": 32,
+                            "column": 31,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -6560,7 +6560,7 @@
                     },
                     "end": {
                       "line": 61,
-                      "column": 33,
+                      "column": 32,
                       "program": "generics_class_recursive_type_1.ets"
                     }
                   }
@@ -6573,7 +6573,7 @@
                   },
                   "end": {
                     "line": 61,
-                    "column": 33,
+                    "column": 32,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -6718,7 +6718,7 @@
                           },
                           "end": {
                             "line": 62,
-                            "column": 16,
+                            "column": 15,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -6731,7 +6731,7 @@
                         },
                         "end": {
                           "line": 62,
-                          "column": 16,
+                          "column": 15,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -6765,7 +6765,7 @@
                           },
                           "end": {
                             "line": 62,
-                            "column": 19,
+                            "column": 18,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -6778,7 +6778,7 @@
                         },
                         "end": {
                           "line": 62,
-                          "column": 19,
+                          "column": 18,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -6805,7 +6805,7 @@
                   },
                   "end": {
                     "line": 62,
-                    "column": 20,
+                    "column": 19,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -6818,7 +6818,7 @@
                 },
                 "end": {
                   "line": 62,
-                  "column": 20,
+                  "column": 19,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -6833,7 +6833,7 @@
               },
               "end": {
                 "line": 62,
-                "column": 20,
+                "column": 19,
                 "program": "generics_class_recursive_type_1.ets"
               }
             }
@@ -6916,7 +6916,7 @@
                           },
                           "end": {
                             "line": 63,
-                            "column": 16,
+                            "column": 15,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -6929,7 +6929,7 @@
                         },
                         "end": {
                           "line": 63,
-                          "column": 16,
+                          "column": 15,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -6963,7 +6963,7 @@
                           },
                           "end": {
                             "line": 63,
-                            "column": 19,
+                            "column": 18,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -6976,7 +6976,7 @@
                         },
                         "end": {
                           "line": 63,
-                          "column": 19,
+                          "column": 18,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -7003,7 +7003,7 @@
                   },
                   "end": {
                     "line": 63,
-                    "column": 20,
+                    "column": 19,
                     "program": "generics_class_recursive_type_1.ets"
                   }
                 }
@@ -7016,7 +7016,7 @@
                 },
                 "end": {
                   "line": 63,
-                  "column": 20,
+                  "column": 19,
                   "program": "generics_class_recursive_type_1.ets"
                 }
               }
@@ -7031,7 +7031,7 @@
               },
               "end": {
                 "line": 63,
-                "column": 20,
+                "column": 19,
                 "program": "generics_class_recursive_type_1.ets"
               }
             }
@@ -7143,7 +7143,7 @@
                                     },
                                     "end": {
                                       "line": 65,
-                                      "column": 20,
+                                      "column": 19,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -7156,7 +7156,7 @@
                                   },
                                   "end": {
                                     "line": 65,
-                                    "column": 20,
+                                    "column": 19,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -7190,7 +7190,7 @@
                                     },
                                     "end": {
                                       "line": 65,
-                                      "column": 23,
+                                      "column": 22,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -7203,7 +7203,7 @@
                                   },
                                   "end": {
                                     "line": 65,
-                                    "column": 23,
+                                    "column": 22,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -7230,7 +7230,7 @@
                             },
                             "end": {
                               "line": 65,
-                              "column": 24,
+                              "column": 23,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -7243,7 +7243,7 @@
                           },
                           "end": {
                             "line": 65,
-                            "column": 24,
+                            "column": 23,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -7257,7 +7257,7 @@
                         },
                         "end": {
                           "line": 65,
-                          "column": 24,
+                          "column": 23,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -7270,7 +7270,7 @@
                       },
                       "end": {
                         "line": 65,
-                        "column": 24,
+                        "column": 23,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }
@@ -7333,7 +7333,7 @@
                                     },
                                     "end": {
                                       "line": 66,
-                                      "column": 20,
+                                      "column": 19,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -7346,7 +7346,7 @@
                                   },
                                   "end": {
                                     "line": 66,
-                                    "column": 20,
+                                    "column": 19,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -7380,7 +7380,7 @@
                                     },
                                     "end": {
                                       "line": 66,
-                                      "column": 23,
+                                      "column": 22,
                                       "program": "generics_class_recursive_type_1.ets"
                                     }
                                   }
@@ -7393,7 +7393,7 @@
                                   },
                                   "end": {
                                     "line": 66,
-                                    "column": 23,
+                                    "column": 22,
                                     "program": "generics_class_recursive_type_1.ets"
                                   }
                                 }
@@ -7419,8 +7419,8 @@
                               "program": "generics_class_recursive_type_1.ets"
                             },
                             "end": {
-                              "line": 67,
-                              "column": 10,
+                              "line": 66,
+                              "column": 23,
                               "program": "generics_class_recursive_type_1.ets"
                             }
                           }
@@ -7432,8 +7432,8 @@
                             "program": "generics_class_recursive_type_1.ets"
                           },
                           "end": {
-                            "line": 67,
-                            "column": 10,
+                            "line": 66,
+                            "column": 23,
                             "program": "generics_class_recursive_type_1.ets"
                           }
                         }
@@ -7446,8 +7446,8 @@
                           "program": "generics_class_recursive_type_1.ets"
                         },
                         "end": {
-                          "line": 67,
-                          "column": 10,
+                          "line": 66,
+                          "column": 23,
                           "program": "generics_class_recursive_type_1.ets"
                         }
                       }
@@ -7459,8 +7459,8 @@
                         "program": "generics_class_recursive_type_1.ets"
                       },
                       "end": {
-                        "line": 67,
-                        "column": 10,
+                        "line": 66,
+                        "column": 23,
                         "program": "generics_class_recursive_type_1.ets"
                       }
                     }

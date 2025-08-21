@@ -52,7 +52,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 34,
+                  "column": 33,
                   "program": "nullableTuple.ets"
                 }
               }
@@ -65,7 +65,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 34,
+                "column": 33,
                 "program": "nullableTuple.ets"
               }
             }
@@ -99,7 +99,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 42,
+                  "column": 41,
                   "program": "nullableTuple.ets"
                 }
               }
@@ -112,7 +112,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 42,
+                "column": 41,
                 "program": "nullableTuple.ets"
               }
             }
@@ -195,7 +195,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 38,
+                  "column": 37,
                   "program": "nullableTuple.ets"
                 }
               }
@@ -208,7 +208,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 38,
+                "column": 37,
                 "program": "nullableTuple.ets"
               }
             }
@@ -382,7 +382,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 30,
+                                    "column": 28,
                                     "program": "nullableTuple.ets"
                                   }
                                 }
@@ -395,7 +395,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 30,
+                                  "column": 28,
                                   "program": "nullableTuple.ets"
                                 }
                               }
@@ -528,7 +528,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 24,
+                                    "column": 22,
                                     "program": "nullableTuple.ets"
                                   }
                                 }
@@ -541,7 +541,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 24,
+                                  "column": 22,
                                   "program": "nullableTuple.ets"
                                 }
                               }

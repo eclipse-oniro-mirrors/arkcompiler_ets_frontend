@@ -78,7 +78,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 17,
+                    "column": 15,
                     "program": "cast_const_union.ets"
                   }
                 }
@@ -91,7 +91,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 17,
+                  "column": 15,
                   "program": "cast_const_union.ets"
                 }
               }
@@ -203,7 +203,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 22,
+                                        "column": 20,
                                         "program": "cast_const_union.ets"
                                       }
                                     }
@@ -216,7 +216,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 22,
+                                      "column": 20,
                                       "program": "cast_const_union.ets"
                                     }
                                   }
@@ -250,7 +250,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 31,
+                                        "column": 29,
                                         "program": "cast_const_union.ets"
                                       }
                                     }
@@ -263,7 +263,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 31,
+                                      "column": 29,
                                       "program": "cast_const_union.ets"
                                     }
                                   }
@@ -297,7 +297,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 40,
+                                        "column": 38,
                                         "program": "cast_const_union.ets"
                                       }
                                     }
@@ -310,7 +310,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 40,
+                                      "column": 38,
                                       "program": "cast_const_union.ets"
                                     }
                                   }
@@ -324,7 +324,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 40,
+                                  "column": 38,
                                   "program": "cast_const_union.ets"
                                 }
                               }
@@ -492,7 +492,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 34,
+                                    "column": 33,
                                     "program": "cast_const_union.ets"
                                   }
                                 }
@@ -505,7 +505,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 34,
+                                  "column": 33,
                                   "program": "cast_const_union.ets"
                                 }
                               }
@@ -518,7 +518,7 @@
                               },
                               "end": {
                                 "line": 20,
-                                "column": 34,
+                                "column": 33,
                                 "program": "cast_const_union.ets"
                               }
                             }

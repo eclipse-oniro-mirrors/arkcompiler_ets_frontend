@@ -128,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 25,
+                                    "column": 23,
                                     "program": "this_cmp_object.ets"
                                   }
                                 }
@@ -141,7 +141,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 25,
+                                  "column": 23,
                                   "program": "this_cmp_object.ets"
                                 }
                               }
@@ -375,7 +375,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 3,
+                "column": 10,
                 "program": "this_cmp_object.ets"
               },
               "end": {

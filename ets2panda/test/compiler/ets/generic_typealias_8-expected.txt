@@ -49,7 +49,7 @@
             },
             "end": {
               "line": 15,
-              "column": 20,
+              "column": 19,
               "program": "generic_typealias_8.ets"
             }
           }
@@ -62,7 +62,7 @@
           },
           "end": {
             "line": 15,
-            "column": 20,
+            "column": 19,
             "program": "generic_typealias_8.ets"
           }
         }
@@ -438,7 +438,7 @@
                                               },
                                               "end": {
                                                 "line": 19,
-                                                "column": 24,
+                                                "column": 22,
                                                 "program": "generic_typealias_8.ets"
                                               }
                                             }
@@ -451,7 +451,7 @@
                                             },
                                             "end": {
                                               "line": 19,
-                                              "column": 24,
+                                              "column": 22,
                                               "program": "generic_typealias_8.ets"
                                             }
                                           }
@@ -485,7 +485,7 @@
                                               },
                                               "end": {
                                                 "line": 19,
-                                                "column": 27,
+                                                "column": 26,
                                                 "program": "generic_typealias_8.ets"
                                               }
                                             }
@@ -498,7 +498,7 @@
                                             },
                                             "end": {
                                               "line": 19,
-                                              "column": 27,
+                                              "column": 26,
                                               "program": "generic_typealias_8.ets"
                                             }
                                           }
@@ -512,7 +512,7 @@
                                         },
                                         "end": {
                                           "line": 19,
-                                          "column": 27,
+                                          "column": 26,
                                           "program": "generic_typealias_8.ets"
                                         }
                                       }
@@ -539,7 +539,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 29,
+                                    "column": 27,
                                     "program": "generic_typealias_8.ets"
                                   }
                                 }
@@ -552,7 +552,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 29,
+                                  "column": 27,
                                   "program": "generic_typealias_8.ets"
                                 }
                               }
@@ -602,7 +602,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 36,
+                                    "column": 35,
                                     "program": "generic_typealias_8.ets"
                                   }
                                 }
@@ -615,7 +615,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 36,
+                                  "column": 35,
                                   "program": "generic_typealias_8.ets"
                                 }
                               }

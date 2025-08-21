@@ -878,7 +878,7 @@
             "loc": {
               "start": {
                 "line": 29,
-                "column": 3,
+                "column": 22,
                 "program": "internalProtectedParsing.ets"
               },
               "end": {
@@ -1042,7 +1042,7 @@
                                   },
                                   "end": {
                                     "line": 33,
-                                    "column": 21,
+                                    "column": 19,
                                     "program": "internalProtectedParsing.ets"
                                   }
                                 }
@@ -1055,7 +1055,7 @@
                                 },
                                 "end": {
                                   "line": 33,
-                                  "column": 21,
+                                  "column": 19,
                                   "program": "internalProtectedParsing.ets"
                                 }
                               }
@@ -1105,7 +1105,7 @@
                                   },
                                   "end": {
                                     "line": 33,
-                                    "column": 28,
+                                    "column": 27,
                                     "program": "internalProtectedParsing.ets"
                                   }
                                 }
@@ -1118,7 +1118,7 @@
                                 },
                                 "end": {
                                   "line": 33,
-                                  "column": 28,
+                                  "column": 27,
                                   "program": "internalProtectedParsing.ets"
                                 }
                               }

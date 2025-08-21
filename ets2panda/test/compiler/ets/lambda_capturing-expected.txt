@@ -367,7 +367,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 40,
+                        "column": 38,
                         "program": "lambda_capturing.ets"
                       }
                     }
@@ -380,7 +380,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 40,
+                      "column": 38,
                       "program": "lambda_capturing.ets"
                     }
                   }

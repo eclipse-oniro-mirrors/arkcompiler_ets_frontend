@@ -353,7 +353,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 28,
+                                  "column": 27,
                                   "program": "class_instance_creation.ets"
                                 }
                               }
@@ -366,7 +366,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 28,
+                                "column": 27,
                                 "program": "class_instance_creation.ets"
                               }
                             }
@@ -380,7 +380,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 28,
+                              "column": 27,
                               "program": "class_instance_creation.ets"
                             }
                           }
@@ -393,7 +393,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 28,
+                            "column": 27,
                             "program": "class_instance_creation.ets"
                           }
                         }
@@ -568,7 +568,7 @@
                     },
                     "end": {
                       "line": 26,
-                      "column": 74,
+                      "column": 73,
                       "program": "class_instance_creation.ets"
                     }
                   }
@@ -581,7 +581,7 @@
                   },
                   "end": {
                     "line": 26,
-                    "column": 74,
+                    "column": 73,
                     "program": "class_instance_creation.ets"
                   }
                 }
@@ -635,7 +635,7 @@
                   },
                   "end": {
                     "line": 26,
-                    "column": 45,
+                    "column": 43,
                     "program": "class_instance_creation.ets"
                   }
                 }
@@ -648,7 +648,7 @@
                 },
                 "end": {
                   "line": 26,
-                  "column": 45,
+                  "column": 43,
                   "program": "class_instance_creation.ets"
                 }
               }
@@ -718,7 +718,7 @@
                     },
                     "end": {
                       "line": 27,
-                      "column": 74,
+                      "column": 73,
                       "program": "class_instance_creation.ets"
                     }
                   }
@@ -731,7 +731,7 @@
                   },
                   "end": {
                     "line": 27,
-                    "column": 74,
+                    "column": 73,
                     "program": "class_instance_creation.ets"
                   }
                 }
@@ -802,7 +802,7 @@
                   },
                   "end": {
                     "line": 27,
-                    "column": 45,
+                    "column": 43,
                     "program": "class_instance_creation.ets"
                   }
                 }
@@ -815,7 +815,7 @@
                 },
                 "end": {
                   "line": 27,
-                  "column": 45,
+                  "column": 43,
                   "program": "class_instance_creation.ets"
                 }
               }
@@ -885,7 +885,7 @@
                     },
                     "end": {
                       "line": 28,
-                      "column": 74,
+                      "column": 73,
                       "program": "class_instance_creation.ets"
                     }
                   }
@@ -898,7 +898,7 @@
                   },
                   "end": {
                     "line": 28,
-                    "column": 74,
+                    "column": 73,
                     "program": "class_instance_creation.ets"
                   }
                 }
@@ -985,7 +985,7 @@
                   },
                   "end": {
                     "line": 28,
-                    "column": 45,
+                    "column": 43,
                     "program": "class_instance_creation.ets"
                   }
                 }
@@ -998,7 +998,7 @@
                 },
                 "end": {
                   "line": 28,
-                  "column": 45,
+                  "column": 43,
                   "program": "class_instance_creation.ets"
                 }
               }

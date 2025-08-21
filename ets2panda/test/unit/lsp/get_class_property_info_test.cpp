@@ -558,7 +558,7 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod3)
 }
 
 std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult4 = {
-    {"pop", 107, 119, "classField", {"public"}}};
+    {"pop", 107, 117, "classField", {"public"}}};
 
 TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod4)
 {
@@ -595,7 +595,7 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod4)
 }
 
 std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult5 = {
-    {"jkk", 64, 76, "classField", {"public"}}};
+    {"jkk", 64, 75, "classField", {"public"}}};
 
 TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod5)
 {
@@ -632,7 +632,7 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod5)
 }
 
 std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult6 = {
-    {"jkk", 195, 207, "classField", {"public"}}, {"wwa", 210, 222, "classField", {"public"}}};
+    {"jkk", 195, 206, "classField", {"public"}}, {"wwa", 210, 221, "classField", {"public"}}};
 
 TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod6)
 {
@@ -669,7 +669,7 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod6)
 }
 
 std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult7 = {
-    {"test", 14, 27, "classField", {"public"}}};
+    {"test", 14, 26, "classField", {"public"}}};
 
 TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod7)
 {
@@ -780,7 +780,7 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod9)
 }
 
 std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult10 = {
-    {"a", 17, 34, "classField", {"public"}}};
+    {"a", 17, 33, "classField", {"public"}}};
 
 TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod10)
 {
@@ -817,7 +817,7 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod10)
 }
 
 std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult11 = {
-    {"a", 32, 49, "classField", {"public"}}};
+    {"a", 32, 48, "classField", {"public"}}};
 
 TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod11)
 {
@@ -893,7 +893,7 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod12)
 }
 
 std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult13 = {
-    {"aa", 216, 227, "classField", {"public"}}};
+    {"aa", 216, 226, "classField", {"public"}}};
 
 TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod13)
 {
@@ -930,7 +930,7 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod13)
 }
 
 std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult14 = {
-    {"subscriber", 144, 210, "classField", {"public"}}, {"subscribeInfo", 221, 254, "classField", {"public"}}};
+    {"subscriber", 144, 210, "classField", {"public"}}, {"subscribeInfo", 221, 253, "classField", {"public"}}};
 
 TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod14)
 {

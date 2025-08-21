@@ -293,7 +293,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 13,
+                                    "column": 12,
                                     "program": "import_diff_paths.ets"
                                   }
                                 }
@@ -306,7 +306,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 13,
+                                  "column": 12,
                                   "program": "import_diff_paths.ets"
                                 }
                               }

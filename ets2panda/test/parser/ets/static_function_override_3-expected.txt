@@ -135,7 +135,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 12,
                 "program": "static_function_override_3.ets"
               },
               "end": {
@@ -326,7 +326,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 30,
+                "column": 28,
                 "program": "static_function_override_3.ets"
               }
             }
@@ -339,7 +339,7 @@
             },
             "end": {
               "line": 20,
-              "column": 30,
+              "column": 28,
               "program": "static_function_override_3.ets"
             }
           }

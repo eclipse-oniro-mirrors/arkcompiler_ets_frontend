@@ -563,6 +563,11 @@ ir::ScriptFunction *ETSParser::ParseFunction(ParserStatus newStatus)
         LogError(diagnostic::ASYNC_IN_AMBIENT_CONTEXT);
     }
 
+    if (isDeclare && signature.ReturnType() != nullptr) {
+        // Note: if the return type annotation is null, the error handler will set later.
+        endLoc = signature.ReturnType()->Range().end;
+    }
+
     // clang-format off
     ir::ModifierFlags mFlags = isDeclare ? ir::ModifierFlags::DECLARE : ir::ModifierFlags::NONE;
     ir::ScriptFunctionFlags funcFlags =
@@ -690,10 +695,10 @@ ir::AstNode *ETSParser::ParseInnerRest(const ArenaVector<ir::AstNode *> &propert
         return ParseClassGetterSetterMethod(properties, modifiers, memberModifiers, isDefault);
     }
 
-    auto parseClassMethod = [&memberModifiers, &startLoc, isDefault, this](ir::Identifier *methodName) {
+    auto parseClassMethod = [&memberModifiers, isDefault, this](ir::Identifier *methodName) {
         auto *classMethod = ParseClassMethodDefinition(methodName, memberModifiers, isDefault);
         ES2PANDA_ASSERT(classMethod != nullptr);
-        classMethod->SetStart(startLoc);
+        classMethod->SetStart(methodName->Start());
         return classMethod;
     };
 
@@ -1046,7 +1051,8 @@ ir::TypeNode *ETSParser::ParseTypeReference(TypeAnnotationParsingOptions *option
 
         typeRefPart = AllocNode<ir::ETSTypeReferencePart>(typeName, typeParams, typeRefPart, Allocator());
         ES2PANDA_ASSERT(typeRefPart != nullptr);
-        typeRefPart->SetRange({partPos, Lexer()->GetToken().End()});
+        auto endPos = typeParams == nullptr ? typeName->End() : typeParams->End();
+        typeRefPart->SetRange({partPos, endPos});
 
         if (!Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_PERIOD)) {
             break;
@@ -1060,7 +1066,7 @@ ir::TypeNode *ETSParser::ParseTypeReference(TypeAnnotationParsingOptions *option
 
     auto *typeReference = AllocNode<ir::ETSTypeReference>(typeRefPart, Allocator());
     ES2PANDA_ASSERT(typeReference != nullptr);
-    typeReference->SetRange({startPos, Lexer()->GetToken().End()});
+    typeReference->SetRange({startPos, typeRefPart->End()});
     return typeReference;
 }
 
@@ -2297,7 +2303,7 @@ ir::OverloadDeclaration *ETSParser::ParseOverloadDeclaration(ir::ModifierFlags m
                                                            modifiers, Allocator());
     overloadDef->AddOverloadDeclFlag(ir::OverloadDeclFlags::FUNCTION);
 
-    auto startLoc = Lexer()->GetToken().Start();
+    auto startLoc = overloadName->Start();
     if (!Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_LEFT_BRACE)) {
         LogExpectedToken(lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
     }

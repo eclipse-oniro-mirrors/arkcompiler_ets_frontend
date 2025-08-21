@@ -27,6 +27,6 @@ function main(): void {
 }
 
 
-/* @@? 20:5 Error TypeError: Function foo with this assembly signature already declared. */
+/* @@? 20:13 Error TypeError: Function foo with this assembly signature already declared. */
 /* @@? 26:5 Error TypeError: Signature foo(a: Double|undefined): Int is not visible here. */
 /* @@? 26:5 Error TypeError: No matching call signature for foo(Double) */

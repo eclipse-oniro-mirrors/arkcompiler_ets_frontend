@@ -167,7 +167,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 3,
+                "column": 10,
                 "program": "override16.ets"
               },
               "end": {
@@ -358,7 +358,7 @@
               },
               "end": {
                 "line": 22,
-                "column": 20,
+                "column": 18,
                 "program": "override16.ets"
               }
             }
@@ -371,7 +371,7 @@
             },
             "end": {
               "line": 22,
-              "column": 20,
+              "column": 18,
               "program": "override16.ets"
             }
           }

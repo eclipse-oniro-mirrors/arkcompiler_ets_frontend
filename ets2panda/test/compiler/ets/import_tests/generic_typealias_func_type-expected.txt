@@ -223,7 +223,7 @@
                                           },
                                           "end": {
                                             "line": 19,
-                                            "column": 21,
+                                            "column": 20,
                                             "program": "generic_typealias_func_type.ets"
                                           }
                                         }
@@ -236,7 +236,7 @@
                                         },
                                         "end": {
                                           "line": 19,
-                                          "column": 21,
+                                          "column": 20,
                                           "program": "generic_typealias_func_type.ets"
                                         }
                                       }
@@ -250,7 +250,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 21,
+                                        "column": 20,
                                         "program": "generic_typealias_func_type.ets"
                                       }
                                     }
@@ -263,7 +263,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 21,
+                                      "column": 20,
                                       "program": "generic_typealias_func_type.ets"
                                     }
                                   }
@@ -305,7 +305,7 @@
                                             },
                                             "end": {
                                               "line": 19,
-                                              "column": 33,
+                                              "column": 32,
                                               "program": "generic_typealias_func_type.ets"
                                             }
                                           }
@@ -318,7 +318,7 @@
                                           },
                                           "end": {
                                             "line": 19,
-                                            "column": 33,
+                                            "column": 32,
                                             "program": "generic_typealias_func_type.ets"
                                           }
                                         }

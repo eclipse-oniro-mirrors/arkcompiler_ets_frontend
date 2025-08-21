@@ -135,7 +135,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 13,
                 "program": "multipleMethodOverride.ets"
               },
               "end": {
@@ -326,7 +326,7 @@
               },
               "end": {
                 "line": 22,
-                "column": 19,
+                "column": 18,
                 "program": "multipleMethodOverride.ets"
               }
             }
@@ -339,7 +339,7 @@
             },
             "end": {
               "line": 22,
-              "column": 19,
+              "column": 18,
               "program": "multipleMethodOverride.ets"
             }
           }
@@ -457,7 +457,7 @@
             "loc": {
               "start": {
                 "line": 23,
-                "column": 5,
+                "column": 21,
                 "program": "multipleMethodOverride.ets"
               },
               "end": {
@@ -648,7 +648,7 @@
               },
               "end": {
                 "line": 29,
-                "column": 19,
+                "column": 18,
                 "program": "multipleMethodOverride.ets"
               }
             }
@@ -661,7 +661,7 @@
             },
             "end": {
               "line": 29,
-              "column": 19,
+              "column": 18,
               "program": "multipleMethodOverride.ets"
             }
           }
@@ -849,7 +849,7 @@
               },
               "end": {
                 "line": 33,
-                "column": 20,
+                "column": 18,
                 "program": "multipleMethodOverride.ets"
               }
             }
@@ -862,7 +862,7 @@
             },
             "end": {
               "line": 33,
-              "column": 20,
+              "column": 18,
               "program": "multipleMethodOverride.ets"
             }
           }
@@ -980,7 +980,7 @@
             "loc": {
               "start": {
                 "line": 34,
-                "column": 5,
+                "column": 21,
                 "program": "multipleMethodOverride.ets"
               },
               "end": {

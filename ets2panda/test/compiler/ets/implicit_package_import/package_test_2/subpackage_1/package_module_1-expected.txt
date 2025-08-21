@@ -530,7 +530,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 20,
+                                    "column": 18,
                                     "program": "package_module_1.ets"
                                   }
                                 }
@@ -543,7 +543,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 20,
+                                  "column": 18,
                                   "program": "package_module_1.ets"
                                 }
                               }
@@ -661,7 +661,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 20,
+                                    "column": 18,
                                     "program": "package_module_1.ets"
                                   }
                                 }
@@ -674,7 +674,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 20,
+                                  "column": 18,
                                   "program": "package_module_1.ets"
                                 }
                               }

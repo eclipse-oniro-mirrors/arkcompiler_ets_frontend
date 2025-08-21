@@ -102,7 +102,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 34,
+                        "column": 32,
                         "program": "generic_deadlock.ets"
                       }
                     }
@@ -115,7 +115,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 34,
+                      "column": 32,
                       "program": "generic_deadlock.ets"
                     }
                   }
@@ -261,7 +261,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 26,
+                                    "column": 25,
                                     "program": "generic_deadlock.ets"
                                   }
                                 }
@@ -274,7 +274,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 26,
+                                  "column": 25,
                                   "program": "generic_deadlock.ets"
                                 }
                               }
@@ -364,7 +364,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 19,
                 "program": "generic_deadlock.ets"
               },
               "end": {
@@ -452,7 +452,7 @@
                       },
                       "end": {
                         "line": 20,
-                        "column": 34,
+                        "column": 32,
                         "program": "generic_deadlock.ets"
                       }
                     }
@@ -465,7 +465,7 @@
                     },
                     "end": {
                       "line": 20,
-                      "column": 34,
+                      "column": 32,
                       "program": "generic_deadlock.ets"
                     }
                   }
@@ -611,7 +611,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 26,
+                                    "column": 25,
                                     "program": "generic_deadlock.ets"
                                   }
                                 }
@@ -624,7 +624,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 26,
+                                  "column": 25,
                                   "program": "generic_deadlock.ets"
                                 }
                               }
@@ -714,7 +714,7 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 5,
+                "column": 19,
                 "program": "generic_deadlock.ets"
               },
               "end": {
@@ -1035,7 +1035,7 @@
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 17,
+                                    "column": 16,
                                     "program": "generic_deadlock.ets"
                                   }
                                 }
@@ -1048,7 +1048,7 @@
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 17,
+                                  "column": 16,
                                   "program": "generic_deadlock.ets"
                                 }
                               }

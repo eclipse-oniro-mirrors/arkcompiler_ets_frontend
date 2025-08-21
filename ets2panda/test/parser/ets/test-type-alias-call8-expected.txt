@@ -291,7 +291,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 32,
+                    "column": 30,
                     "program": "test-type-alias-call8.ets"
                   }
                 }
@@ -304,7 +304,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 32,
+                  "column": 30,
                   "program": "test-type-alias-call8.ets"
                 }
               }
@@ -519,7 +519,7 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 5,
+                "column": 12,
                 "program": "test-type-alias-call8.ets"
               },
               "end": {

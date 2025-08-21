@@ -239,7 +239,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 15,
+                    "column": 13,
                     "program": "boxingConversion9.ets"
                   }
                 }
@@ -252,7 +252,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 15,
+                  "column": 13,
                   "program": "boxingConversion9.ets"
                 }
               }
@@ -326,7 +326,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 16,
+                    "column": 14,
                     "program": "boxingConversion9.ets"
                   }
                 }
@@ -339,7 +339,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 16,
+                  "column": 14,
                   "program": "boxingConversion9.ets"
                 }
               }

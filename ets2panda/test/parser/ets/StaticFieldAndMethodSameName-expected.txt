@@ -94,7 +94,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 15,
+                    "column": 13,
                     "program": "StaticFieldAndMethodSameName.ets"
                   }
                 }
@@ -107,7 +107,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 15,
+                  "column": 13,
                   "program": "StaticFieldAndMethodSameName.ets"
                 }
               }
@@ -238,7 +238,7 @@
             "loc": {
               "start": {
                 "line": 18,
-                "column": 2,
+                "column": 9,
                 "program": "StaticFieldAndMethodSameName.ets"
               },
               "end": {
@@ -588,7 +588,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 11,
+                                  "column": 10,
                                   "program": "StaticFieldAndMethodSameName.ets"
                                 }
                               }
@@ -601,7 +601,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 11,
+                                "column": 10,
                                 "program": "StaticFieldAndMethodSameName.ets"
                               }
                             }

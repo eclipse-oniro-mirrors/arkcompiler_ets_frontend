@@ -203,7 +203,7 @@ size_t SizeOfNodeTest::SizeOf<ClassProperty>()
     return SizeOf<AnnotationAllowed<ClassElement>>() +
         sizeof(node->typeAnnotation_) +
         Align(sizeof(node->isDefault_) +
-            sizeof(node->needInitInStaticBlock_));
+            sizeof(node->initMode_));
     // clang-format on
 }
 

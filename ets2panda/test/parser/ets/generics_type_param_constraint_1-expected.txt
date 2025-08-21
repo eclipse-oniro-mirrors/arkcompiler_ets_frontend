@@ -96,7 +96,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 34,
+                              "column": 32,
                               "program": "generics_type_param_constraint_1.ets"
                             }
                           }
@@ -109,7 +109,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 34,
+                            "column": 32,
                             "program": "generics_type_param_constraint_1.ets"
                           }
                         }

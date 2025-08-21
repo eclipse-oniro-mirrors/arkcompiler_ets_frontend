@@ -234,7 +234,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 23,
+                    "column": 21,
                     "program": "import_type.ets"
                   }
                 }
@@ -247,7 +247,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 23,
+                  "column": 21,
                   "program": "import_type.ets"
                 }
               }
@@ -578,7 +578,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 15,
+                      "column": 14,
                       "program": "import_type.ets"
                     }
                   }
@@ -591,7 +591,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 15,
+                    "column": 14,
                     "program": "import_type.ets"
                   }
                 }
@@ -681,7 +681,7 @@
                     },
                     "end": {
                       "line": 20,
-                      "column": 15,
+                      "column": 14,
                       "program": "import_type.ets"
                     }
                   }
@@ -694,7 +694,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 15,
+                    "column": 14,
                     "program": "import_type.ets"
                   }
                 }
@@ -784,7 +784,7 @@
                     },
                     "end": {
                       "line": 21,
-                      "column": 15,
+                      "column": 14,
                       "program": "import_type.ets"
                     }
                   }
@@ -797,7 +797,7 @@
                   },
                   "end": {
                     "line": 21,
-                    "column": 15,
+                    "column": 14,
                     "program": "import_type.ets"
                   }
                 }

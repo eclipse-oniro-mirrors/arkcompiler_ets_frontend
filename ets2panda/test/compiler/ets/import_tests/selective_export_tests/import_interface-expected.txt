@@ -185,7 +185,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 43,
+                    "column": 41,
                     "program": "import_interface.ets"
                   }
                 }
@@ -198,7 +198,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 43,
+                  "column": 41,
                   "program": "import_interface.ets"
                 }
               }
@@ -403,7 +403,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 47,
+                    "column": 45,
                     "program": "import_interface.ets"
                   }
                 }
@@ -416,7 +416,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 47,
+                  "column": 45,
                   "program": "import_interface.ets"
                 }
               }

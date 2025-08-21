@@ -164,7 +164,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 17,
+                                      "column": 16,
                                       "program": "lambdaAsFunctionParam.ets"
                                     }
                                   }
@@ -177,7 +177,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 17,
+                                    "column": 16,
                                     "program": "lambdaAsFunctionParam.ets"
                                   }
                                 }
@@ -191,7 +191,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 17,
+                                  "column": 16,
                                   "program": "lambdaAsFunctionParam.ets"
                                 }
                               }
@@ -204,7 +204,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 17,
+                                "column": 16,
                                 "program": "lambdaAsFunctionParam.ets"
                               }
                             }
@@ -243,7 +243,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 23,
+                                      "column": 22,
                                       "program": "lambdaAsFunctionParam.ets"
                                     }
                                   }
@@ -256,7 +256,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 23,
+                                    "column": 22,
                                     "program": "lambdaAsFunctionParam.ets"
                                   }
                                 }
@@ -270,7 +270,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 23,
+                                  "column": 22,
                                   "program": "lambdaAsFunctionParam.ets"
                                 }
                               }
@@ -283,7 +283,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 23,
+                                "column": 22,
                                 "program": "lambdaAsFunctionParam.ets"
                               }
                             }
@@ -318,7 +318,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 34,
+                                "column": 33,
                                 "program": "lambdaAsFunctionParam.ets"
                               }
                             }
@@ -331,7 +331,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 34,
+                              "column": 33,
                               "program": "lambdaAsFunctionParam.ets"
                             }
                           }
@@ -344,7 +344,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 34,
+                            "column": 33,
                             "program": "lambdaAsFunctionParam.ets"
                           }
                         }
@@ -358,7 +358,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 34,
+                          "column": 33,
                           "program": "lambdaAsFunctionParam.ets"
                         }
                       }
@@ -371,7 +371,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 34,
+                        "column": 33,
                         "program": "lambdaAsFunctionParam.ets"
                       }
                     }
@@ -931,7 +931,7 @@
                                           },
                                           "end": {
                                             "line": 23,
-                                            "column": 26,
+                                            "column": 25,
                                             "program": "lambdaAsFunctionParam.ets"
                                           }
                                         }
@@ -944,7 +944,7 @@
                                         },
                                         "end": {
                                           "line": 23,
-                                          "column": 26,
+                                          "column": 25,
                                           "program": "lambdaAsFunctionParam.ets"
                                         }
                                       }
@@ -971,7 +971,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 27,
+                                    "column": 26,
                                     "program": "lambdaAsFunctionParam.ets"
                                   }
                                 }
@@ -984,7 +984,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 27,
+                                  "column": 26,
                                   "program": "lambdaAsFunctionParam.ets"
                                 }
                               }
@@ -1130,7 +1130,7 @@
                                           },
                                           "end": {
                                             "line": 24,
-                                            "column": 20,
+                                            "column": 19,
                                             "program": "lambdaAsFunctionParam.ets"
                                           }
                                         }
@@ -1143,7 +1143,7 @@
                                         },
                                         "end": {
                                           "line": 24,
-                                          "column": 20,
+                                          "column": 19,
                                           "program": "lambdaAsFunctionParam.ets"
                                         }
                                       }
@@ -1157,7 +1157,7 @@
                                       },
                                       "end": {
                                         "line": 24,
-                                        "column": 20,
+                                        "column": 19,
                                         "program": "lambdaAsFunctionParam.ets"
                                       }
                                     }
@@ -1170,7 +1170,7 @@
                                     },
                                     "end": {
                                       "line": 24,
-                                      "column": 20,
+                                      "column": 19,
                                       "program": "lambdaAsFunctionParam.ets"
                                     }
                                   }
@@ -1209,7 +1209,7 @@
                                           },
                                           "end": {
                                             "line": 24,
-                                            "column": 31,
+                                            "column": 30,
                                             "program": "lambdaAsFunctionParam.ets"
                                           }
                                         }
@@ -1222,7 +1222,7 @@
                                         },
                                         "end": {
                                           "line": 24,
-                                          "column": 31,
+                                          "column": 30,
                                           "program": "lambdaAsFunctionParam.ets"
                                         }
                                       }
@@ -1236,7 +1236,7 @@
                                       },
                                       "end": {
                                         "line": 24,
-                                        "column": 31,
+                                        "column": 30,
                                         "program": "lambdaAsFunctionParam.ets"
                                       }
                                     }
@@ -1249,7 +1249,7 @@
                                     },
                                     "end": {
                                       "line": 24,
-                                      "column": 31,
+                                      "column": 30,
                                       "program": "lambdaAsFunctionParam.ets"
                                     }
                                   }
@@ -1284,7 +1284,7 @@
                                     },
                                     "end": {
                                       "line": 24,
-                                      "column": 42,
+                                      "column": 39,
                                       "program": "lambdaAsFunctionParam.ets"
                                     }
                                   }
@@ -1297,7 +1297,7 @@
                                   },
                                   "end": {
                                     "line": 24,
-                                    "column": 42,
+                                    "column": 39,
                                     "program": "lambdaAsFunctionParam.ets"
                                   }
                                 }

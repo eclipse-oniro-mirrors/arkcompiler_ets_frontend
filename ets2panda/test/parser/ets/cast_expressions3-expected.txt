@@ -199,8 +199,8 @@
           "program": "cast_expressions3.ets"
         },
         "end": {
-          "line": 18,
-          "column": 6,
+          "line": 17,
+          "column": 15,
           "program": "cast_expressions3.ets"
         }
       }
@@ -254,7 +254,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 29,
+                "column": 18,
                 "program": "cast_expressions3.ets"
               }
             }
@@ -267,7 +267,7 @@
             },
             "end": {
               "line": 18,
-              "column": 29,
+              "column": 18,
               "program": "cast_expressions3.ets"
             }
           }
@@ -304,7 +304,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 33,
+                    "column": 31,
                     "program": "cast_expressions3.ets"
                   }
                 }
@@ -317,7 +317,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 33,
+                  "column": 31,
                   "program": "cast_expressions3.ets"
                 }
               }
@@ -518,7 +518,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 20,
+                "column": 18,
                 "program": "cast_expressions3.ets"
               }
             }
@@ -531,7 +531,7 @@
             },
             "end": {
               "line": 19,
-              "column": 20,
+              "column": 18,
               "program": "cast_expressions3.ets"
             }
           }
@@ -919,7 +919,7 @@
                                   },
                                   "end": {
                                     "line": 22,
-                                    "column": 18,
+                                    "column": 17,
                                     "program": "cast_expressions3.ets"
                                   }
                                 }
@@ -932,7 +932,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 18,
+                                  "column": 17,
                                   "program": "cast_expressions3.ets"
                                 }
                               }
@@ -1049,7 +1049,7 @@
                                   },
                                   "end": {
                                     "line": 24,
-                                    "column": 21,
+                                    "column": 20,
                                     "program": "cast_expressions3.ets"
                                   }
                                 }
@@ -1062,7 +1062,7 @@
                                 },
                                 "end": {
                                   "line": 24,
-                                  "column": 21,
+                                  "column": 20,
                                   "program": "cast_expressions3.ets"
                                 }
                               }
@@ -1075,7 +1075,7 @@
                               },
                               "end": {
                                 "line": 24,
-                                "column": 21,
+                                "column": 20,
                                 "program": "cast_expressions3.ets"
                               }
                             }
@@ -1088,7 +1088,7 @@
                             },
                             "end": {
                               "line": 24,
-                              "column": 21,
+                              "column": 20,
                               "program": "cast_expressions3.ets"
                             }
                           }
@@ -1178,7 +1178,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 21,
+                                    "column": 20,
                                     "program": "cast_expressions3.ets"
                                   }
                                 }
@@ -1191,7 +1191,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 21,
+                                  "column": 20,
                                   "program": "cast_expressions3.ets"
                                 }
                               }
@@ -1204,7 +1204,7 @@
                               },
                               "end": {
                                 "line": 25,
-                                "column": 21,
+                                "column": 20,
                                 "program": "cast_expressions3.ets"
                               }
                             }
@@ -1217,7 +1217,7 @@
                             },
                             "end": {
                               "line": 25,
-                              "column": 21,
+                              "column": 20,
                               "program": "cast_expressions3.ets"
                             }
                           }
@@ -1307,7 +1307,7 @@
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 21,
+                                    "column": 20,
                                     "program": "cast_expressions3.ets"
                                   }
                                 }
@@ -1320,7 +1320,7 @@
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 21,
+                                  "column": 20,
                                   "program": "cast_expressions3.ets"
                                 }
                               }
@@ -1333,7 +1333,7 @@
                               },
                               "end": {
                                 "line": 26,
-                                "column": 21,
+                                "column": 20,
                                 "program": "cast_expressions3.ets"
                               }
                             }
@@ -1346,7 +1346,7 @@
                             },
                             "end": {
                               "line": 26,
-                              "column": 21,
+                              "column": 20,
                               "program": "cast_expressions3.ets"
                             }
                           }
@@ -1436,7 +1436,7 @@
                                   },
                                   "end": {
                                     "line": 27,
-                                    "column": 21,
+                                    "column": 20,
                                     "program": "cast_expressions3.ets"
                                   }
                                 }
@@ -1449,7 +1449,7 @@
                                 },
                                 "end": {
                                   "line": 27,
-                                  "column": 21,
+                                  "column": 20,
                                   "program": "cast_expressions3.ets"
                                 }
                               }
@@ -1462,7 +1462,7 @@
                               },
                               "end": {
                                 "line": 27,
-                                "column": 21,
+                                "column": 20,
                                 "program": "cast_expressions3.ets"
                               }
                             }
@@ -1475,7 +1475,7 @@
                             },
                             "end": {
                               "line": 27,
-                              "column": 21,
+                              "column": 20,
                               "program": "cast_expressions3.ets"
                             }
                           }
@@ -1565,7 +1565,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 22,
+                                    "column": 21,
                                     "program": "cast_expressions3.ets"
                                   }
                                 }
@@ -1578,7 +1578,7 @@
                                 },
                                 "end": {
                                   "line": 29,
-                                  "column": 22,
+                                  "column": 21,
                                   "program": "cast_expressions3.ets"
                                 }
                               }
@@ -1591,7 +1591,7 @@
                               },
                               "end": {
                                 "line": 29,
-                                "column": 22,
+                                "column": 21,
                                 "program": "cast_expressions3.ets"
                               }
                             }
@@ -1604,7 +1604,7 @@
                             },
                             "end": {
                               "line": 29,
-                              "column": 22,
+                              "column": 21,
                               "program": "cast_expressions3.ets"
                             }
                           }
@@ -1694,7 +1694,7 @@
                                   },
                                   "end": {
                                     "line": 30,
-                                    "column": 22,
+                                    "column": 21,
                                     "program": "cast_expressions3.ets"
                                   }
                                 }
@@ -1707,7 +1707,7 @@
                                 },
                                 "end": {
                                   "line": 30,
-                                  "column": 22,
+                                  "column": 21,
                                   "program": "cast_expressions3.ets"
                                 }
                               }
@@ -1720,7 +1720,7 @@
                               },
                               "end": {
                                 "line": 30,
-                                "column": 22,
+                                "column": 21,
                                 "program": "cast_expressions3.ets"
                               }
                             }
@@ -1733,7 +1733,7 @@
                             },
                             "end": {
                               "line": 30,
-                              "column": 22,
+                              "column": 21,
                               "program": "cast_expressions3.ets"
                             }
                           }
@@ -1823,7 +1823,7 @@
                                   },
                                   "end": {
                                     "line": 31,
-                                    "column": 22,
+                                    "column": 21,
                                     "program": "cast_expressions3.ets"
                                   }
                                 }
@@ -1836,7 +1836,7 @@
                                 },
                                 "end": {
                                   "line": 31,
-                                  "column": 22,
+                                  "column": 21,
                                   "program": "cast_expressions3.ets"
                                 }
                               }
@@ -1849,7 +1849,7 @@
                               },
                               "end": {
                                 "line": 31,
-                                "column": 22,
+                                "column": 21,
                                 "program": "cast_expressions3.ets"
                               }
                             }
@@ -1862,7 +1862,7 @@
                             },
                             "end": {
                               "line": 31,
-                              "column": 22,
+                              "column": 21,
                               "program": "cast_expressions3.ets"
                             }
                           }

@@ -213,7 +213,7 @@
                             },
                             "end": {
                               "line": 16,
-                              "column": 22,
+                              "column": 21,
                               "program": "instanceof.ets"
                             }
                           }
@@ -226,7 +226,7 @@
                           },
                           "end": {
                             "line": 16,
-                            "column": 22,
+                            "column": 21,
                             "program": "instanceof.ets"
                           }
                         }
@@ -240,7 +240,7 @@
                         },
                         "end": {
                           "line": 16,
-                          "column": 22,
+                          "column": 21,
                           "program": "instanceof.ets"
                         }
                       }
@@ -253,7 +253,7 @@
                       },
                       "end": {
                         "line": 16,
-                        "column": 22,
+                        "column": 21,
                         "program": "instanceof.ets"
                       }
                     }
@@ -328,7 +328,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 27,
+                                "column": 26,
                                 "program": "instanceof.ets"
                               }
                             }
@@ -341,7 +341,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 27,
+                              "column": 26,
                               "program": "instanceof.ets"
                             }
                           }
@@ -354,7 +354,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 27,
+                            "column": 26,
                             "program": "instanceof.ets"
                           }
                         }

@@ -674,7 +674,7 @@
               },
               "end": {
                 "line": 29,
-                "column": 42,
+                "column": 39,
                 "program": "constructor_test.ets"
               }
             }
@@ -687,7 +687,7 @@
             },
             "end": {
               "line": 29,
-              "column": 42,
+              "column": 39,
               "program": "constructor_test.ets"
             }
           }

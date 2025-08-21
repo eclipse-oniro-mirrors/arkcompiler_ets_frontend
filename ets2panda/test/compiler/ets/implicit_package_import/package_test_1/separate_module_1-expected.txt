@@ -184,7 +184,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 32,
+                    "column": 30,
                     "program": "separate_module_1.ets"
                   }
                 }
@@ -197,7 +197,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 32,
+                  "column": 30,
                   "program": "separate_module_1.ets"
                 }
               }

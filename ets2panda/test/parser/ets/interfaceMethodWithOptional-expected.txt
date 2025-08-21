@@ -89,7 +89,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 18,
+                              "column": 17,
                               "program": "interfaceMethodWithOptional.ets"
                             }
                           }
@@ -102,7 +102,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 18,
+                            "column": 17,
                             "program": "interfaceMethodWithOptional.ets"
                           }
                         }
@@ -116,7 +116,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 18,
+                          "column": 17,
                           "program": "interfaceMethodWithOptional.ets"
                         }
                       }
@@ -129,7 +129,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 18,
+                        "column": 17,
                         "program": "interfaceMethodWithOptional.ets"
                       }
                     }
@@ -383,8 +383,8 @@
           "program": "interfaceMethodWithOptional.ets"
         },
         "end": {
-          "line": 19,
-          "column": 1,
+          "line": 18,
+          "column": 2,
           "program": "interfaceMethodWithOptional.ets"
         }
       }

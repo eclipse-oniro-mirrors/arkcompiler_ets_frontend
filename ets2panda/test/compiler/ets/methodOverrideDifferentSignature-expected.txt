@@ -150,8 +150,8 @@
           "program": "methodOverrideDifferentSignature.ets"
         },
         "end": {
-          "line": 20,
-          "column": 9,
+          "line": 18,
+          "column": 2,
           "program": "methodOverrideDifferentSignature.ets"
         }
       }
@@ -209,7 +209,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 32,
+                    "column": 30,
                     "program": "methodOverrideDifferentSignature.ets"
                   }
                 }
@@ -222,7 +222,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 32,
+                  "column": 30,
                   "program": "methodOverrideDifferentSignature.ets"
                 }
               }
@@ -353,7 +353,7 @@
             "loc": {
               "start": {
                 "line": 21,
-                "column": 5,
+                "column": 14,
                 "program": "methodOverrideDifferentSignature.ets"
               },
               "end": {
@@ -597,7 +597,7 @@
                 "loc": {
                   "start": {
                     "line": 25,
-                    "column": 5,
+                    "column": 14,
                     "program": "methodOverrideDifferentSignature.ets"
                   },
                   "end": {
@@ -781,7 +781,7 @@
             "loc": {
               "start": {
                 "line": 24,
-                "column": 5,
+                "column": 14,
                 "program": "methodOverrideDifferentSignature.ets"
               },
               "end": {
@@ -972,7 +972,7 @@
               },
               "end": {
                 "line": 31,
-                "column": 20,
+                "column": 18,
                 "program": "methodOverrideDifferentSignature.ets"
               }
             }
@@ -985,7 +985,7 @@
             },
             "end": {
               "line": 31,
-              "column": 20,
+              "column": 18,
               "program": "methodOverrideDifferentSignature.ets"
             }
           }
@@ -1258,7 +1258,7 @@
                 "loc": {
                   "start": {
                     "line": 35,
-                    "column": 5,
+                    "column": 14,
                     "program": "methodOverrideDifferentSignature.ets"
                   },
                   "end": {
@@ -1273,7 +1273,7 @@
             "loc": {
               "start": {
                 "line": 32,
-                "column": 5,
+                "column": 14,
                 "program": "methodOverrideDifferentSignature.ets"
               },
               "end": {

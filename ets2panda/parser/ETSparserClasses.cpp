@@ -882,7 +882,7 @@ ir::Statement *ETSParser::ParseInterfaceDeclaration(bool isStatic)
     auto *declNode = ParseInterfaceBody(id, isStatic);
     ES2PANDA_ASSERT(declNode != nullptr);
 
-    declNode->SetRange({interfaceStart, Lexer()->GetToken().End()});
+    declNode->SetRange({interfaceStart, declNode->Body()->Range().end});
     return declNode;
 }
 
@@ -1083,7 +1083,7 @@ ir::AstNode *ETSParser::ParseInterfaceField()
     if (optionalField) {
         field->AddModifier(ir::ModifierFlags::OPTIONAL);
     }
-    field->SetEnd(Lexer()->GetToken().End());
+    field->SetEnd(typeAnnotation->End());
 
     return field;
 }

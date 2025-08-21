@@ -143,7 +143,7 @@
                                             },
                                             "end": {
                                               "line": 18,
-                                              "column": 29,
+                                              "column": 28,
                                               "program": "lambda_infer_type_arrow_expression.ets"
                                             }
                                           }
@@ -156,7 +156,7 @@
                                           },
                                           "end": {
                                             "line": 18,
-                                            "column": 29,
+                                            "column": 28,
                                             "program": "lambda_infer_type_arrow_expression.ets"
                                           }
                                         }
@@ -296,7 +296,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 33,
+                                      "column": 31,
                                       "program": "lambda_infer_type_arrow_expression.ets"
                                     }
                                   }
@@ -309,7 +309,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 33,
+                                    "column": 31,
                                     "program": "lambda_infer_type_arrow_expression.ets"
                                   }
                                 }
@@ -322,7 +322,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 33,
+                                  "column": 31,
                                   "program": "lambda_infer_type_arrow_expression.ets"
                                 }
                               }

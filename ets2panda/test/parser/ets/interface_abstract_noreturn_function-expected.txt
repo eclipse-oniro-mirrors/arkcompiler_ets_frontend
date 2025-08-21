@@ -135,8 +135,8 @@
           "program": "interface_abstract_noreturn_function.ets"
         },
         "end": {
-          "line": 19,
-          "column": 1,
+          "line": 18,
+          "column": 2,
           "program": "interface_abstract_noreturn_function.ets"
         }
       }

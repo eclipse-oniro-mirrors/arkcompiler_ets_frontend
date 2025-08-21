@@ -81,7 +81,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 27,
+                        "column": 25,
                         "program": "AccessBinaryTrees.ets"
                       }
                     }
@@ -94,7 +94,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 27,
+                      "column": 25,
                       "program": "AccessBinaryTrees.ets"
                     }
                   }
@@ -200,7 +200,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 28,
+                        "column": 26,
                         "program": "AccessBinaryTrees.ets"
                       }
                     }
@@ -213,7 +213,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 28,
+                      "column": 26,
                       "program": "AccessBinaryTrees.ets"
                     }
                   }
@@ -403,7 +403,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 31,
+                                  "column": 29,
                                   "program": "AccessBinaryTrees.ets"
                                 }
                               }
@@ -416,7 +416,7 @@
                               },
                               "end": {
                                 "line": 21,
-                                "column": 31,
+                                "column": 29,
                                 "program": "AccessBinaryTrees.ets"
                               }
                             }
@@ -514,7 +514,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 55,
+                                  "column": 53,
                                   "program": "AccessBinaryTrees.ets"
                                 }
                               }
@@ -527,7 +527,7 @@
                               },
                               "end": {
                                 "line": 21,
-                                "column": 55,
+                                "column": 53,
                                 "program": "AccessBinaryTrees.ets"
                               }
                             }
@@ -1583,7 +1583,7 @@
             "loc": {
               "start": {
                 "line": 27,
-                "column": 3,
+                "column": 10,
                 "program": "AccessBinaryTrees.ets"
               },
               "end": {
@@ -1984,7 +1984,7 @@
                       },
                       "end": {
                         "line": 40,
-                        "column": 57,
+                        "column": 55,
                         "program": "AccessBinaryTrees.ets"
                       }
                     }
@@ -1997,7 +1997,7 @@
                     },
                     "end": {
                       "line": 40,
-                      "column": 57,
+                      "column": 55,
                       "program": "AccessBinaryTrees.ets"
                     }
                   }
@@ -2092,7 +2092,7 @@
                                     },
                                     "end": {
                                       "line": 42,
-                                      "column": 26,
+                                      "column": 25,
                                       "program": "AccessBinaryTrees.ets"
                                     }
                                   }
@@ -2105,7 +2105,7 @@
                                   },
                                   "end": {
                                     "line": 42,
-                                    "column": 26,
+                                    "column": 25,
                                     "program": "AccessBinaryTrees.ets"
                                   }
                                 }
@@ -2582,7 +2582,7 @@
                               },
                               "end": {
                                 "line": 48,
-                                "column": 24,
+                                "column": 23,
                                 "program": "AccessBinaryTrees.ets"
                               }
                             }
@@ -2595,7 +2595,7 @@
                             },
                             "end": {
                               "line": 48,
-                              "column": 24,
+                              "column": 23,
                               "program": "AccessBinaryTrees.ets"
                             }
                           }
@@ -2722,7 +2722,7 @@
             "loc": {
               "start": {
                 "line": 40,
-                "column": 3,
+                "column": 10,
                 "program": "AccessBinaryTrees.ets"
               },
               "end": {
@@ -5161,7 +5161,7 @@
             "loc": {
               "start": {
                 "line": 51,
-                "column": 3,
+                "column": 10,
                 "program": "AccessBinaryTrees.ets"
               },
               "end": {
@@ -5446,7 +5446,7 @@
                                   },
                                   "end": {
                                     "line": 80,
-                                    "column": 33,
+                                    "column": 32,
                                     "program": "AccessBinaryTrees.ets"
                                   }
                                 }
@@ -5459,7 +5459,7 @@
                                 },
                                 "end": {
                                   "line": 80,
-                                  "column": 33,
+                                  "column": 32,
                                   "program": "AccessBinaryTrees.ets"
                                 }
                               }

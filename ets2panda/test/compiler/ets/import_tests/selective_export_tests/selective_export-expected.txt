@@ -758,7 +758,7 @@
             },
             "end": {
               "line": 34,
-              "column": 27,
+              "column": 26,
               "program": "selective_export.ets"
             }
           }
@@ -771,7 +771,7 @@
           },
           "end": {
             "line": 34,
-            "column": 27,
+            "column": 26,
             "program": "selective_export.ets"
           }
         }

@@ -301,7 +301,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 19,
+                                    "column": 17,
                                     "program": "extdef.ets"
                                   }
                                 }
@@ -314,7 +314,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 19,
+                                  "column": 17,
                                   "program": "extdef.ets"
                                 }
                               }
@@ -364,7 +364,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 29,
+                                    "column": 28,
                                     "program": "extdef.ets"
                                   }
                                 }
@@ -377,7 +377,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 29,
+                                  "column": 28,
                                   "program": "extdef.ets"
                                 }
                               }

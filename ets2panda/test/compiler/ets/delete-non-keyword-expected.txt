@@ -202,7 +202,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 12,
                 "program": "delete-non-keyword.ets"
               },
               "end": {

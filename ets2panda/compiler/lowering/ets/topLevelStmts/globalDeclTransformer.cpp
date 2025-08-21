@@ -94,13 +94,15 @@ void GlobalDeclTransformer::VisitVariableDeclaration(ir::VariableDeclaration *va
         auto typeAnn = id->TypeAnnotation();
         id->SetTsTypeAnnotation(nullptr);
         auto modifiers = varDecl->Modifiers() | declarator->Modifiers();
-        bool needInitializeInStaticBlock = (declarator->Init() == nullptr) &&
-                                           (modifiers & ir::ModifierFlags::CONST) != 0 &&
-                                           currentModule_->AsETSModule()->Program()->IsPackage();
         auto *field = util::NodeAllocator::ForceSetParent<ir::ClassProperty>(
             allocator_, id->Clone(allocator_, nullptr), declarator->Init(), typeAnn, modifiers, allocator_, false);
         ES2PANDA_ASSERT(field != nullptr);
-        field->SetInitInStaticBlock(needInitializeInStaticBlock);
+        if (declarator->Init() != nullptr) {
+            field->SetIsImmediateInit();
+        } else if ((modifiers & ir::ModifierFlags::CONST) != 0 &&
+                   currentModule_->AsETSModule()->Program()->IsPackage()) {
+            field->SetNeedInitInStaticBlock();
+        }
         field->SetRange(declarator->Range());
 
         if (!varDecl->Annotations().empty()) {

@@ -488,7 +488,7 @@
                                   },
                                   "end": {
                                     "line": 32,
-                                    "column": 21,
+                                    "column": 19,
                                     "program": "switchStatementCorrectConversion.ets"
                                   }
                                 }
@@ -501,7 +501,7 @@
                                 },
                                 "end": {
                                   "line": 32,
-                                  "column": 21,
+                                  "column": 19,
                                   "program": "switchStatementCorrectConversion.ets"
                                 }
                               }

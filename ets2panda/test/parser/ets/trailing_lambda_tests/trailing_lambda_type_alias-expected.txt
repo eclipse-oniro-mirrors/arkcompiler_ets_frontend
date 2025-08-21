@@ -170,7 +170,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 23,
+                              "column": 22,
                               "program": "trailing_lambda_type_alias.ets"
                             }
                           }
@@ -183,7 +183,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 23,
+                            "column": 22,
                             "program": "trailing_lambda_type_alias.ets"
                           }
                         }
@@ -197,7 +197,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 23,
+                          "column": 22,
                           "program": "trailing_lambda_type_alias.ets"
                         }
                       }
@@ -210,7 +210,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 23,
+                        "column": 22,
                         "program": "trailing_lambda_type_alias.ets"
                       }
                     }

@@ -751,7 +751,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 16,
+                                    "column": 14,
                                     "program": "ambient_indexer_1.ets"
                                   }
                                 }
@@ -764,7 +764,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 16,
+                                  "column": 14,
                                   "program": "ambient_indexer_1.ets"
                                 }
                               }
@@ -814,7 +814,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 23,
+                                    "column": 22,
                                     "program": "ambient_indexer_1.ets"
                                   }
                                 }
@@ -827,7 +827,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 23,
+                                  "column": 22,
                                   "program": "ambient_indexer_1.ets"
                                 }
                               }

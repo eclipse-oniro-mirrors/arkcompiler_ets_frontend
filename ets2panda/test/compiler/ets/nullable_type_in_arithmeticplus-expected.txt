@@ -116,7 +116,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 16,
+                                        "column": 15,
                                         "program": "nullable_type_in_arithmeticplus.ets"
                                       }
                                     }
@@ -129,7 +129,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 16,
+                                      "column": 15,
                                       "program": "nullable_type_in_arithmeticplus.ets"
                                     }
                                   }
@@ -261,7 +261,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 19,
+                                        "column": 18,
                                         "program": "nullable_type_in_arithmeticplus.ets"
                                       }
                                     }
@@ -274,7 +274,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 19,
+                                      "column": 18,
                                       "program": "nullable_type_in_arithmeticplus.ets"
                                     }
                                   }

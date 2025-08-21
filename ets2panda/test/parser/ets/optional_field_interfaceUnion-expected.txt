@@ -90,7 +90,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 21,
+                                "column": 19,
                                 "program": "optional_field_interfaceUnion.ets"
                               }
                             }
@@ -103,7 +103,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 21,
+                              "column": 19,
                               "program": "optional_field_interfaceUnion.ets"
                             }
                           }
@@ -137,7 +137,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 30,
+                                "column": 28,
                                 "program": "optional_field_interfaceUnion.ets"
                               }
                             }
@@ -150,7 +150,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 30,
+                              "column": 28,
                               "program": "optional_field_interfaceUnion.ets"
                             }
                           }
@@ -184,7 +184,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 38,
+                                "column": 37,
                                 "program": "optional_field_interfaceUnion.ets"
                               }
                             }
@@ -197,7 +197,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 38,
+                              "column": 37,
                               "program": "optional_field_interfaceUnion.ets"
                             }
                           }
@@ -211,7 +211,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 38,
+                          "column": 37,
                           "program": "optional_field_interfaceUnion.ets"
                         }
                       }
@@ -253,7 +253,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 38,
+                    "column": 37,
                     "program": "optional_field_interfaceUnion.ets"
                   }
                 }
@@ -266,7 +266,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 38,
+                  "column": 37,
                   "program": "optional_field_interfaceUnion.ets"
                 }
               }
@@ -361,7 +361,7 @@
                                         },
                                         "end": {
                                           "line": 18,
-                                          "column": 21,
+                                          "column": 19,
                                           "program": "optional_field_interfaceUnion.ets"
                                         }
                                       }
@@ -374,7 +374,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 21,
+                                        "column": 19,
                                         "program": "optional_field_interfaceUnion.ets"
                                       }
                                     }
@@ -408,7 +408,7 @@
                                         },
                                         "end": {
                                           "line": 18,
-                                          "column": 30,
+                                          "column": 28,
                                           "program": "optional_field_interfaceUnion.ets"
                                         }
                                       }
@@ -421,7 +421,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 30,
+                                        "column": 28,
                                         "program": "optional_field_interfaceUnion.ets"
                                       }
                                     }
@@ -455,7 +455,7 @@
                                         },
                                         "end": {
                                           "line": 18,
-                                          "column": 38,
+                                          "column": 37,
                                           "program": "optional_field_interfaceUnion.ets"
                                         }
                                       }
@@ -468,7 +468,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 38,
+                                        "column": 37,
                                         "program": "optional_field_interfaceUnion.ets"
                                       }
                                     }
@@ -482,7 +482,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 38,
+                                    "column": 37,
                                     "program": "optional_field_interfaceUnion.ets"
                                   }
                                 }
@@ -552,7 +552,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 38,
+                        "column": 37,
                         "program": "optional_field_interfaceUnion.ets"
                       }
                     }
@@ -565,7 +565,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 38,
+                      "column": 37,
                       "program": "optional_field_interfaceUnion.ets"
                     }
                   }
@@ -580,7 +580,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 38,
+                    "column": 37,
                     "program": "optional_field_interfaceUnion.ets"
                   }
                 }
@@ -595,7 +595,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 38,
+                "column": 37,
                 "program": "optional_field_interfaceUnion.ets"
               }
             }
@@ -639,8 +639,8 @@
           "program": "optional_field_interfaceUnion.ets"
         },
         "end": {
-          "line": 21,
-          "column": 6,
+          "line": 19,
+          "column": 2,
           "program": "optional_field_interfaceUnion.ets"
         }
       }
@@ -697,8 +697,8 @@
                     "program": "optional_field_interfaceUnion.ets"
                   },
                   "end": {
-                    "line": 22,
-                    "column": 2,
+                    "line": 21,
+                    "column": 21,
                     "program": "optional_field_interfaceUnion.ets"
                   }
                 }
@@ -710,8 +710,8 @@
                   "program": "optional_field_interfaceUnion.ets"
                 },
                 "end": {
-                  "line": 22,
-                  "column": 2,
+                  "line": 21,
+                  "column": 21,
                   "program": "optional_field_interfaceUnion.ets"
                 }
               }
@@ -788,7 +788,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 22,
+                        "column": 20,
                         "program": "optional_field_interfaceUnion.ets"
                       }
                     }
@@ -801,7 +801,7 @@
                     },
                     "end": {
                       "line": 23,
-                      "column": 22,
+                      "column": 20,
                       "program": "optional_field_interfaceUnion.ets"
                     }
                   }
@@ -835,7 +835,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 30,
+                        "column": 29,
                         "program": "optional_field_interfaceUnion.ets"
                       }
                     }
@@ -848,7 +848,7 @@
                     },
                     "end": {
                       "line": 23,
-                      "column": 30,
+                      "column": 29,
                       "program": "optional_field_interfaceUnion.ets"
                     }
                   }
@@ -863,7 +863,7 @@
                     },
                     "end": {
                       "line": 23,
-                      "column": 30,
+                      "column": 29,
                       "program": "optional_field_interfaceUnion.ets"
                     }
                   }
@@ -877,7 +877,7 @@
                 },
                 "end": {
                   "line": 23,
-                  "column": 30,
+                  "column": 29,
                   "program": "optional_field_interfaceUnion.ets"
                 }
               }
@@ -892,7 +892,7 @@
               },
               "end": {
                 "line": 23,
-                "column": 30,
+                "column": 29,
                 "program": "optional_field_interfaceUnion.ets"
               }
             }
@@ -978,7 +978,7 @@
                           },
                           "end": {
                             "line": 25,
-                            "column": 26,
+                            "column": 24,
                             "program": "optional_field_interfaceUnion.ets"
                           }
                         }
@@ -991,7 +991,7 @@
                         },
                         "end": {
                           "line": 25,
-                          "column": 26,
+                          "column": 24,
                           "program": "optional_field_interfaceUnion.ets"
                         }
                       }
@@ -1025,7 +1025,7 @@
                           },
                           "end": {
                             "line": 25,
-                            "column": 35,
+                            "column": 33,
                             "program": "optional_field_interfaceUnion.ets"
                           }
                         }
@@ -1038,7 +1038,7 @@
                         },
                         "end": {
                           "line": 25,
-                          "column": 35,
+                          "column": 33,
                           "program": "optional_field_interfaceUnion.ets"
                         }
                       }
@@ -1266,7 +1266,7 @@
                                     },
                                     "end": {
                                       "line": 29,
-                                      "column": 26,
+                                      "column": 24,
                                       "program": "optional_field_interfaceUnion.ets"
                                     }
                                   }
@@ -1279,7 +1279,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 26,
+                                    "column": 24,
                                     "program": "optional_field_interfaceUnion.ets"
                                   }
                                 }
@@ -1313,7 +1313,7 @@
                                     },
                                     "end": {
                                       "line": 29,
-                                      "column": 35,
+                                      "column": 33,
                                       "program": "optional_field_interfaceUnion.ets"
                                     }
                                   }
@@ -1326,7 +1326,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 35,
+                                    "column": 33,
                                     "program": "optional_field_interfaceUnion.ets"
                                   }
                                 }

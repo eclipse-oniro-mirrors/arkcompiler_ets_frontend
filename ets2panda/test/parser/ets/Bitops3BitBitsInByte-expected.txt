@@ -945,7 +945,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 3,
+                "column": 18,
                 "program": "Bitops3BitBitsInByte.ets"
               },
               "end": {
@@ -2086,7 +2086,7 @@
             "loc": {
               "start": {
                 "line": 30,
-                "column": 3,
+                "column": 10,
                 "program": "Bitops3BitBitsInByte.ets"
               },
               "end": {
@@ -2371,7 +2371,7 @@
                                   },
                                   "end": {
                                     "line": 42,
-                                    "column": 36,
+                                    "column": 35,
                                     "program": "Bitops3BitBitsInByte.ets"
                                   }
                                 }
@@ -2384,7 +2384,7 @@
                                 },
                                 "end": {
                                   "line": 42,
-                                  "column": 36,
+                                  "column": 35,
                                   "program": "Bitops3BitBitsInByte.ets"
                                 }
                               }

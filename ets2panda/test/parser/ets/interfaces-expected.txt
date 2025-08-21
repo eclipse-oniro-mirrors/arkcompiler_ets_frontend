@@ -78,7 +78,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 12,
+                    "column": 11,
                     "program": "interfaces.ets"
                   }
                 }
@@ -91,7 +91,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 12,
+                  "column": 11,
                   "program": "interfaces.ets"
                 }
               }
@@ -202,7 +202,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 12,
+                        "column": 11,
                         "program": "interfaces.ets"
                       }
                     }
@@ -215,7 +215,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 12,
+                      "column": 11,
                       "program": "interfaces.ets"
                     }
                   }
@@ -230,7 +230,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 12,
+                    "column": 11,
                     "program": "interfaces.ets"
                   }
                 }
@@ -245,7 +245,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 12,
+                "column": 11,
                 "program": "interfaces.ets"
               }
             }
@@ -322,7 +322,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 12,
+                    "column": 11,
                     "program": "interfaces.ets"
                   }
                 }
@@ -335,7 +335,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 12,
+                  "column": 11,
                   "program": "interfaces.ets"
                 }
               }
@@ -446,7 +446,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 12,
+                        "column": 11,
                         "program": "interfaces.ets"
                       }
                     }
@@ -459,7 +459,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 12,
+                      "column": 11,
                       "program": "interfaces.ets"
                     }
                   }
@@ -474,7 +474,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 12,
+                    "column": 11,
                     "program": "interfaces.ets"
                   }
                 }
@@ -489,7 +489,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 12,
+                "column": 11,
                 "program": "interfaces.ets"
               }
             }
@@ -533,8 +533,8 @@
           "program": "interfaces.ets"
         },
         "end": {
-          "line": 21,
-          "column": 10,
+          "line": 19,
+          "column": 2,
           "program": "interfaces.ets"
         }
       }
@@ -1030,8 +1030,8 @@
           "program": "interfaces.ets"
         },
         "end": {
-          "line": 27,
-          "column": 10,
+          "line": 25,
+          "column": 2,
           "program": "interfaces.ets"
         }
       }
@@ -1103,7 +1103,7 @@
                 },
                 "end": {
                   "line": 27,
-                  "column": 24,
+                  "column": 23,
                   "program": "interfaces.ets"
                 }
               }
@@ -1116,7 +1116,7 @@
               },
               "end": {
                 "line": 27,
-                "column": 24,
+                "column": 23,
                 "program": "interfaces.ets"
               }
             }
@@ -1129,7 +1129,7 @@
             },
             "end": {
               "line": 27,
-              "column": 24,
+              "column": 23,
               "program": "interfaces.ets"
             }
           }
@@ -1165,7 +1165,7 @@
                 },
                 "end": {
                   "line": 27,
-                  "column": 29,
+                  "column": 27,
                   "program": "interfaces.ets"
                 }
               }
@@ -1178,7 +1178,7 @@
               },
               "end": {
                 "line": 27,
-                "column": 29,
+                "column": 27,
                 "program": "interfaces.ets"
               }
             }
@@ -1191,7 +1191,7 @@
             },
             "end": {
               "line": 27,
-              "column": 29,
+              "column": 27,
               "program": "interfaces.ets"
             }
           }
@@ -1204,8 +1204,8 @@
           "program": "interfaces.ets"
         },
         "end": {
-          "line": 31,
-          "column": 1,
+          "line": 28,
+          "column": 2,
           "program": "interfaces.ets"
         }
       }

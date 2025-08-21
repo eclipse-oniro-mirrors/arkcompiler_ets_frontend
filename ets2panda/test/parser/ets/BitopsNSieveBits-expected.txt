@@ -1801,7 +1801,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 3,
+                "column": 10,
                 "program": "BitopsNSieveBits.ets"
               },
               "end": {
@@ -2522,7 +2522,7 @@
             "loc": {
               "start": {
                 "line": 35,
-                "column": 3,
+                "column": 18,
                 "program": "BitopsNSieveBits.ets"
               },
               "end": {
@@ -3697,7 +3697,7 @@
             "loc": {
               "start": {
                 "line": 46,
-                "column": 3,
+                "column": 10,
                 "program": "BitopsNSieveBits.ets"
               },
               "end": {
@@ -3982,7 +3982,7 @@
                                   },
                                   "end": {
                                     "line": 58,
-                                    "column": 32,
+                                    "column": 31,
                                     "program": "BitopsNSieveBits.ets"
                                   }
                                 }
@@ -3995,7 +3995,7 @@
                                 },
                                 "end": {
                                   "line": 58,
-                                  "column": 32,
+                                  "column": 31,
                                   "program": "BitopsNSieveBits.ets"
                                 }
                               }

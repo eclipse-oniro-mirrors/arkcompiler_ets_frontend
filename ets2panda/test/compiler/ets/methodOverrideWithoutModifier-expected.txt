@@ -135,7 +135,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 12,
                 "program": "methodOverrideWithoutModifier.ets"
               },
               "end": {
@@ -326,7 +326,7 @@
               },
               "end": {
                 "line": 22,
-                "column": 20,
+                "column": 18,
                 "program": "methodOverrideWithoutModifier.ets"
               }
             }
@@ -339,7 +339,7 @@
             },
             "end": {
               "line": 22,
-              "column": 20,
+              "column": 18,
               "program": "methodOverrideWithoutModifier.ets"
             }
           }
@@ -457,7 +457,7 @@
             "loc": {
               "start": {
                 "line": 23,
-                "column": 5,
+                "column": 12,
                 "program": "methodOverrideWithoutModifier.ets"
               },
               "end": {

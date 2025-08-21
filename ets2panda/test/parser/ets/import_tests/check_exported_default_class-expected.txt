@@ -178,7 +178,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 39,
+                                    "column": 37,
                                     "program": "check_exported_default_class.ets"
                                   }
                                 }
@@ -191,7 +191,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 39,
+                                  "column": 37,
                                   "program": "check_exported_default_class.ets"
                                 }
                               }
@@ -241,7 +241,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 63,
+                                    "column": 62,
                                     "program": "check_exported_default_class.ets"
                                   }
                                 }
@@ -254,7 +254,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 63,
+                                  "column": 62,
                                   "program": "check_exported_default_class.ets"
                                 }
                               }

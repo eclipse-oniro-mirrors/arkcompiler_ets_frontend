@@ -160,7 +160,7 @@
             },
             "end": {
               "line": 17,
-              "column": 23,
+              "column": 22,
               "program": "lambda-type-inference-alias.ets"
             }
           }
@@ -173,7 +173,7 @@
           },
           "end": {
             "line": 17,
-            "column": 23,
+            "column": 22,
             "program": "lambda-type-inference-alias.ets"
           }
         }
@@ -297,7 +297,7 @@
                             },
                             "end": {
                               "line": 19,
-                              "column": 32,
+                              "column": 31,
                               "program": "lambda-type-inference-alias.ets"
                             }
                           }
@@ -310,7 +310,7 @@
                           },
                           "end": {
                             "line": 19,
-                            "column": 32,
+                            "column": 31,
                             "program": "lambda-type-inference-alias.ets"
                           }
                         }
@@ -324,7 +324,7 @@
                         },
                         "end": {
                           "line": 19,
-                          "column": 32,
+                          "column": 31,
                           "program": "lambda-type-inference-alias.ets"
                         }
                       }
@@ -337,7 +337,7 @@
                       },
                       "end": {
                         "line": 19,
-                        "column": 32,
+                        "column": 31,
                         "program": "lambda-type-inference-alias.ets"
                       }
                     }

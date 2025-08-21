@@ -523,7 +523,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 32,
+                                    "column": 30,
                                     "program": "import_aliased_re-export.ets"
                                   }
                                 }
@@ -536,7 +536,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 32,
+                                  "column": 30,
                                   "program": "import_aliased_re-export.ets"
                                 }
                               }
@@ -586,7 +586,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 50,
+                                    "column": 49,
                                     "program": "import_aliased_re-export.ets"
                                   }
                                 }
@@ -599,7 +599,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 50,
+                                  "column": 49,
                                   "program": "import_aliased_re-export.ets"
                                 }
                               }

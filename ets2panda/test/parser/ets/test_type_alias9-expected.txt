@@ -406,7 +406,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 13,
+                    "column": 11,
                     "program": "test_type_alias9.ets"
                   }
                 }
@@ -419,7 +419,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 13,
+                  "column": 11,
                   "program": "test_type_alias9.ets"
                 }
               }
@@ -493,7 +493,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 16,
+                    "column": 14,
                     "program": "test_type_alias9.ets"
                   }
                 }
@@ -506,7 +506,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 16,
+                  "column": 14,
                   "program": "test_type_alias9.ets"
                 }
               }

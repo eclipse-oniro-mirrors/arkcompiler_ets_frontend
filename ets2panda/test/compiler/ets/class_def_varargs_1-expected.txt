@@ -567,7 +567,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 40,
+                                "column": 39,
                                 "program": "class_def_varargs_1.ets"
                               }
                             }
@@ -580,7 +580,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 40,
+                              "column": 39,
                               "program": "class_def_varargs_1.ets"
                             }
                           }
@@ -607,7 +607,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 42,
+                        "column": 40,
                         "program": "class_def_varargs_1.ets"
                       }
                     }
@@ -620,7 +620,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 42,
+                      "column": 40,
                       "program": "class_def_varargs_1.ets"
                     }
                   }
@@ -754,7 +754,7 @@
                                           },
                                           "end": {
                                             "line": 19,
-                                            "column": 29,
+                                            "column": 28,
                                             "program": "class_def_varargs_1.ets"
                                           }
                                         }
@@ -767,7 +767,7 @@
                                         },
                                         "end": {
                                           "line": 19,
-                                          "column": 29,
+                                          "column": 28,
                                           "program": "class_def_varargs_1.ets"
                                         }
                                       }
@@ -794,7 +794,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 30,
+                                    "column": 29,
                                     "program": "class_def_varargs_1.ets"
                                   }
                                 }
@@ -807,7 +807,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 30,
+                                  "column": 29,
                                   "program": "class_def_varargs_1.ets"
                                 }
                               }
@@ -931,7 +931,7 @@
             "loc": {
               "start": {
                 "line": 18,
-                "column": 5,
+                "column": 12,
                 "program": "class_def_varargs_1.ets"
               },
               "end": {

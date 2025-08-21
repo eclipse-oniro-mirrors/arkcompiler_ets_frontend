@@ -283,7 +283,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 20,
+                                    "column": 19,
                                     "program": "assignNullableToNonNullable.ets"
                                   }
                                 }
@@ -296,7 +296,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 20,
+                                  "column": 19,
                                   "program": "assignNullableToNonNullable.ets"
                                 }
                               }
@@ -384,7 +384,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 17,
+                                        "column": 15,
                                         "program": "assignNullableToNonNullable.ets"
                                       }
                                     }
@@ -397,7 +397,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 17,
+                                      "column": 15,
                                       "program": "assignNullableToNonNullable.ets"
                                     }
                                   }
@@ -476,7 +476,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 31,
+                                    "column": 30,
                                     "program": "assignNullableToNonNullable.ets"
                                   }
                                 }
@@ -489,7 +489,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 31,
+                                  "column": 30,
                                   "program": "assignNullableToNonNullable.ets"
                                 }
                               }

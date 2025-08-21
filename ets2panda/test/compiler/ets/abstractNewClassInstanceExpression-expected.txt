@@ -119,7 +119,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 14,
                 "program": "abstractNewClassInstanceExpression.ets"
               },
               "end": {
@@ -489,7 +489,7 @@
                     },
                     "end": {
                       "line": 26,
-                      "column": 20,
+                      "column": 19,
                       "program": "abstractNewClassInstanceExpression.ets"
                     }
                   }
@@ -502,7 +502,7 @@
                   },
                   "end": {
                     "line": 26,
-                    "column": 20,
+                    "column": 19,
                     "program": "abstractNewClassInstanceExpression.ets"
                   }
                 }
@@ -556,7 +556,7 @@
                   },
                   "end": {
                     "line": 26,
-                    "column": 13,
+                    "column": 11,
                     "program": "abstractNewClassInstanceExpression.ets"
                   }
                 }
@@ -569,7 +569,7 @@
                 },
                 "end": {
                   "line": 26,
-                  "column": 13,
+                  "column": 11,
                   "program": "abstractNewClassInstanceExpression.ets"
                 }
               }
@@ -700,7 +700,7 @@
             "loc": {
               "start": {
                 "line": 27,
-                "column": 9,
+                "column": 18,
                 "program": "abstractNewClassInstanceExpression.ets"
               },
               "end": {

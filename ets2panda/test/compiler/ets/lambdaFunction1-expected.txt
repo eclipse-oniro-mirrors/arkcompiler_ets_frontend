@@ -1518,7 +1518,7 @@
                                   },
                                   "end": {
                                     "line": 40,
-                                    "column": 19,
+                                    "column": 18,
                                     "program": "lambdaFunction1.ets"
                                   }
                                 }
@@ -1531,7 +1531,7 @@
                                 },
                                 "end": {
                                   "line": 40,
-                                  "column": 19,
+                                  "column": 18,
                                   "program": "lambdaFunction1.ets"
                                 }
                               }

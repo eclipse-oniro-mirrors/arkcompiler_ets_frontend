@@ -1,0 +1,498 @@
+{
+  "type": "Program",
+  "statements": [
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
+          "name": "ETSGLOBAL",
+          "decorators": [],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 1,
+              "program": "class_interface_enum_only_top_level_4.ets"
+            },
+            "end": {
+              "line": 1,
+              "column": 1,
+              "program": "class_interface_enum_only_top_level_4.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "_$init$_",
+              "decorators": [],
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 1,
+                  "program": null
+                },
+                "end": {
+                  "line": 1,
+                  "column": 1,
+                  "program": null
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": true,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "_$init$_",
+                  "decorators": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": "class_interface_enum_only_top_level_4.ets"
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": "class_interface_enum_only_top_level_4.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 1,
+                    "program": "class_interface_enum_only_top_level_4.ets"
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1,
+                    "program": "class_interface_enum_only_top_level_4.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 1,
+                  "program": "class_interface_enum_only_top_level_4.ets"
+                },
+                "end": {
+                  "line": 1,
+                  "column": 1,
+                  "program": "class_interface_enum_only_top_level_4.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "decorators": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": "class_interface_enum_only_top_level_4.ets"
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": "class_interface_enum_only_top_level_4.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "main",
+              "decorators": [],
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 10,
+                  "program": "class_interface_enum_only_top_level_4.ets"
+                },
+                "end": {
+                  "line": 16,
+                  "column": 14,
+                  "program": "class_interface_enum_only_top_level_4.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": true,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "main",
+                  "decorators": [],
+                  "loc": {
+                    "start": {
+                      "line": 16,
+                      "column": 10,
+                      "program": "class_interface_enum_only_top_level_4.ets"
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 14,
+                      "program": "class_interface_enum_only_top_level_4.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSPrimitiveType",
+                  "loc": {
+                    "start": {
+                      "line": 16,
+                      "column": 19,
+                      "program": "class_interface_enum_only_top_level_4.ets"
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23,
+                      "program": "class_interface_enum_only_top_level_4.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "TSInterfaceDeclaration",
+                      "body": {
+                        "type": "TSInterfaceBody",
+                        "body": [
+                          {
+                            "type": "MethodDefinition",
+                            "key": {
+                              "type": "Identifier",
+                              "name": "foo",
+                              "decorators": [],
+                              "loc": {
+                                "start": {
+                                  "line": 19,
+                                  "column": 5,
+                                  "program": "class_interface_enum_only_top_level_4.ets"
+                                },
+                                "end": {
+                                  "line": 19,
+                                  "column": 8,
+                                  "program": "class_interface_enum_only_top_level_4.ets"
+                                }
+                              }
+                            },
+                            "kind": "method",
+                            "accessibility": "public",
+                            "static": false,
+                            "optional": false,
+                            "computed": false,
+                            "value": {
+                              "type": "FunctionExpression",
+                              "function": {
+                                "type": "ScriptFunction",
+                                "id": {
+                                  "type": "Identifier",
+                                  "name": "foo",
+                                  "decorators": [],
+                                  "loc": {
+                                    "start": {
+                                      "line": 19,
+                                      "column": 5,
+                                      "program": "class_interface_enum_only_top_level_4.ets"
+                                    },
+                                    "end": {
+                                      "line": 19,
+                                      "column": 8,
+                                      "program": "class_interface_enum_only_top_level_4.ets"
+                                    }
+                                  }
+                                },
+                                "generator": false,
+                                "async": false,
+                                "expression": false,
+                                "params": [
+                                  {
+                                    "type": "ETSParameterExpression",
+                                    "name": {
+                                      "type": "Identifier",
+                                      "name": "a",
+                                      "typeAnnotation": {
+                                        "type": "ETSPrimitiveType",
+                                        "loc": {
+                                          "start": {
+                                            "line": 19,
+                                            "column": 12,
+                                            "program": "class_interface_enum_only_top_level_4.ets"
+                                          },
+                                          "end": {
+                                            "line": 19,
+                                            "column": 15,
+                                            "program": "class_interface_enum_only_top_level_4.ets"
+                                          }
+                                        }
+                                      },
+                                      "decorators": [],
+                                      "loc": {
+                                        "start": {
+                                          "line": 19,
+                                          "column": 9,
+                                          "program": "class_interface_enum_only_top_level_4.ets"
+                                        },
+                                        "end": {
+                                          "line": 19,
+                                          "column": 15,
+                                          "program": "class_interface_enum_only_top_level_4.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 19,
+                                        "column": 9,
+                                        "program": "class_interface_enum_only_top_level_4.ets"
+                                      },
+                                      "end": {
+                                        "line": 19,
+                                        "column": 15,
+                                        "program": "class_interface_enum_only_top_level_4.ets"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "returnType": {
+                                  "type": "ETSPrimitiveType",
+                                  "loc": {
+                                    "start": {
+                                      "line": 19,
+                                      "column": 18,
+                                      "program": "class_interface_enum_only_top_level_4.ets"
+                                    },
+                                    "end": {
+                                      "line": 19,
+                                      "column": 21,
+                                      "program": "class_interface_enum_only_top_level_4.ets"
+                                    }
+                                  }
+                                },
+                                "loc": {
+                                  "start": {
+                                    "line": 19,
+                                    "column": 5,
+                                    "program": "class_interface_enum_only_top_level_4.ets"
+                                  },
+                                  "end": {
+                                    "line": 19,
+                                    "column": 21,
+                                    "program": "class_interface_enum_only_top_level_4.ets"
+                                  }
+                                }
+                              },
+                              "loc": {
+                                "start": {
+                                  "line": 19,
+                                  "column": 5,
+                                  "program": "class_interface_enum_only_top_level_4.ets"
+                                },
+                                "end": {
+                                  "line": 19,
+                                  "column": 21,
+                                  "program": "class_interface_enum_only_top_level_4.ets"
+                                }
+                              }
+                            },
+                            "overloads": [],
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 19,
+                                "column": 5,
+                                "program": "class_interface_enum_only_top_level_4.ets"
+                              },
+                              "end": {
+                                "line": 19,
+                                "column": 22,
+                                "program": "class_interface_enum_only_top_level_4.ets"
+                              }
+                            }
+                          }
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 18,
+                            "column": 15,
+                            "program": "class_interface_enum_only_top_level_4.ets"
+                          },
+                          "end": {
+                            "line": 20,
+                            "column": 4,
+                            "program": "class_interface_enum_only_top_level_4.ets"
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "Identifier",
+                        "name": "C",
+                        "decorators": [],
+                        "loc": {
+                          "start": {
+                            "line": 18,
+                            "column": 13,
+                            "program": "class_interface_enum_only_top_level_4.ets"
+                          },
+                          "end": {
+                            "line": 18,
+                            "column": 14,
+                            "program": "class_interface_enum_only_top_level_4.ets"
+                          }
+                        }
+                      },
+                      "extends": [],
+                      "loc": {
+                        "start": {
+                          "line": 18,
+                          "column": 3,
+                          "program": "class_interface_enum_only_top_level_4.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 4,
+                          "program": "class_interface_enum_only_top_level_4.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 17,
+                      "column": 1,
+                      "program": "class_interface_enum_only_top_level_4.ets"
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 2,
+                      "program": "class_interface_enum_only_top_level_4.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 16,
+                    "column": 10,
+                    "program": "class_interface_enum_only_top_level_4.ets"
+                  },
+                  "end": {
+                    "line": 21,
+                    "column": 2,
+                    "program": "class_interface_enum_only_top_level_4.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 10,
+                  "program": "class_interface_enum_only_top_level_4.ets"
+                },
+                "end": {
+                  "line": 21,
+                  "column": 2,
+                  "program": "class_interface_enum_only_top_level_4.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "decorators": [],
+            "loc": {
+              "start": {
+                "line": 16,
+                "column": 1,
+                "program": "class_interface_enum_only_top_level_4.ets"
+              },
+              "end": {
+                "line": 21,
+                "column": 2,
+                "program": "class_interface_enum_only_top_level_4.ets"
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 1,
+            "program": "class_interface_enum_only_top_level_4.ets"
+          },
+          "end": {
+            "line": 1,
+            "column": 1,
+            "program": "class_interface_enum_only_top_level_4.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 1,
+          "program": "class_interface_enum_only_top_level_4.ets"
+        },
+        "end": {
+          "line": 1,
+          "column": 1,
+          "program": "class_interface_enum_only_top_level_4.ets"
+        }
+      }
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 1,
+      "program": "class_interface_enum_only_top_level_4.ets"
+    },
+    "end": {
+      "line": 22,
+      "column": 1,
+      "program": "class_interface_enum_only_top_level_4.ets"
+    }
+  }
+}

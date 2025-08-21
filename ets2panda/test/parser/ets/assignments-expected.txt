@@ -1751,7 +1751,7 @@
             "loc": {
               "start": {
                 "line": 19,
-                "column": 5,
+                "column": 13,
                 "program": "assignments.ets"
               },
               "end": {

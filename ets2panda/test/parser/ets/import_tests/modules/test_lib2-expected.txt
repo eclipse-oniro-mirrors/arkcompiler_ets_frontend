@@ -295,7 +295,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 24,
+                              "column": 23,
                               "program": "test_lib2.ets"
                             }
                           }
@@ -308,7 +308,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 24,
+                            "column": 23,
                             "program": "test_lib2.ets"
                           }
                         }
@@ -322,7 +322,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 24,
+                          "column": 23,
                           "program": "test_lib2.ets"
                         }
                       }
@@ -335,7 +335,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 24,
+                        "column": 23,
                         "program": "test_lib2.ets"
                       }
                     }

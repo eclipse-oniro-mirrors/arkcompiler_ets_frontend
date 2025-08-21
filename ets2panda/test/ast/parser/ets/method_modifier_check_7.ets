@@ -14,7 +14,7 @@
  */
 
 class A {
-    /* @@ label */static override foo(): void {}
+    static override /* @@ label */foo(): void {}
 }
 
 /* @@@ label Error TypeError: Invalid method modifier(s): a static method can't have abstract, final or override modifier.  */

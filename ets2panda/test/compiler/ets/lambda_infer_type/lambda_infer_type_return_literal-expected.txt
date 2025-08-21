@@ -249,7 +249,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 31,
+                                      "column": 29,
                                       "program": "lambda_infer_type_return_literal.ets"
                                     }
                                   }
@@ -262,7 +262,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 31,
+                                    "column": 29,
                                     "program": "lambda_infer_type_return_literal.ets"
                                   }
                                 }
@@ -275,7 +275,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 31,
+                                  "column": 29,
                                   "program": "lambda_infer_type_return_literal.ets"
                                 }
                               }

@@ -159,8 +159,8 @@
               "program": "test-type-alias-call5.ets"
             },
             "end": {
-              "line": 18,
-              "column": 5,
+              "line": 17,
+              "column": 20,
               "program": "test-type-alias-call5.ets"
             }
           }
@@ -172,8 +172,8 @@
             "program": "test-type-alias-call5.ets"
           },
           "end": {
-            "line": 18,
-            "column": 5,
+            "line": 17,
+            "column": 20,
             "program": "test-type-alias-call5.ets"
           }
         }
@@ -242,7 +242,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 24,
+                  "column": 22,
                   "program": "test-type-alias-call5.ets"
                 }
               }
@@ -255,7 +255,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 24,
+                "column": 22,
                 "program": "test-type-alias-call5.ets"
               }
             }
@@ -289,7 +289,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 32,
+                  "column": 31,
                   "program": "test-type-alias-call5.ets"
                 }
               }
@@ -302,7 +302,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 32,
+                "column": 31,
                 "program": "test-type-alias-call5.ets"
               }
             }
@@ -316,7 +316,7 @@
           },
           "end": {
             "line": 18,
-            "column": 32,
+            "column": 31,
             "program": "test-type-alias-call5.ets"
           }
         }
@@ -542,7 +542,7 @@
                   },
                   "end": {
                     "line": 21,
-                    "column": 32,
+                    "column": 30,
                     "program": "test-type-alias-call5.ets"
                   }
                 }
@@ -555,7 +555,7 @@
                 },
                 "end": {
                   "line": 21,
-                  "column": 32,
+                  "column": 30,
                   "program": "test-type-alias-call5.ets"
                 }
               }
@@ -770,7 +770,7 @@
             "loc": {
               "start": {
                 "line": 22,
-                "column": 5,
+                "column": 12,
                 "program": "test-type-alias-call5.ets"
               },
               "end": {

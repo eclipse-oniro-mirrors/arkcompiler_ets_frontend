@@ -128,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 26,
+                                    "column": 24,
                                     "program": "forUpdateCharType.ets"
                                   }
                                 }
@@ -141,7 +141,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 26,
+                                  "column": 24,
                                   "program": "forUpdateCharType.ets"
                                 }
                               }

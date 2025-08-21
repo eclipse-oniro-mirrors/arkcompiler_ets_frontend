@@ -254,7 +254,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 20,
+                "column": 18,
                 "program": "constructor_super_call1.ets"
               }
             }
@@ -267,7 +267,7 @@
             },
             "end": {
               "line": 20,
-              "column": 20,
+              "column": 18,
               "program": "constructor_super_call1.ets"
             }
           }

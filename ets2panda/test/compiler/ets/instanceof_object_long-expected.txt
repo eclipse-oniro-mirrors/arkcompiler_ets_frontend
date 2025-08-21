@@ -213,7 +213,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 23,
+                              "column": 22,
                               "program": "instanceof_object_long.ets"
                             }
                           }
@@ -226,7 +226,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 23,
+                            "column": 22,
                             "program": "instanceof_object_long.ets"
                           }
                         }
@@ -240,7 +240,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 23,
+                          "column": 22,
                           "program": "instanceof_object_long.ets"
                         }
                       }
@@ -253,7 +253,7 @@
                       },
                       "end": {
                         "line": 20,
-                        "column": 23,
+                        "column": 22,
                         "program": "instanceof_object_long.ets"
                       }
                     }

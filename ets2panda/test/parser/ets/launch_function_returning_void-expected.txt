@@ -415,7 +415,7 @@
                                   },
                                   "end": {
                                     "line": 22,
-                                    "column": 23,
+                                    "column": 21,
                                     "program": "launch_function_returning_void.ets"
                                   }
                                 }
@@ -428,7 +428,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 23,
+                                  "column": 21,
                                   "program": "launch_function_returning_void.ets"
                                 }
                               }

@@ -205,7 +205,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 20,
+                "column": 18,
                 "program": "lambda_cast_infer_type_narrowing.ets"
               }
             }
@@ -218,7 +218,7 @@
             },
             "end": {
               "line": 20,
-              "column": 20,
+              "column": 18,
               "program": "lambda_cast_infer_type_narrowing.ets"
             }
           }
@@ -344,7 +344,7 @@
                                             },
                                             "end": {
                                               "line": 22,
-                                              "column": 24,
+                                              "column": 23,
                                               "program": "lambda_cast_infer_type_narrowing.ets"
                                             }
                                           }
@@ -357,7 +357,7 @@
                                           },
                                           "end": {
                                             "line": 22,
-                                            "column": 24,
+                                            "column": 23,
                                             "program": "lambda_cast_infer_type_narrowing.ets"
                                           }
                                         }
@@ -371,7 +371,7 @@
                                         },
                                         "end": {
                                           "line": 22,
-                                          "column": 24,
+                                          "column": 23,
                                           "program": "lambda_cast_infer_type_narrowing.ets"
                                         }
                                       }
@@ -384,7 +384,7 @@
                                       },
                                       "end": {
                                         "line": 22,
-                                        "column": 24,
+                                        "column": 23,
                                         "program": "lambda_cast_infer_type_narrowing.ets"
                                       }
                                     }
@@ -426,7 +426,7 @@
                                               },
                                               "end": {
                                                 "line": 22,
-                                                "column": 43,
+                                                "column": 42,
                                                 "program": "lambda_cast_infer_type_narrowing.ets"
                                               }
                                             }
@@ -439,7 +439,7 @@
                                             },
                                             "end": {
                                               "line": 22,
-                                              "column": 43,
+                                              "column": 42,
                                               "program": "lambda_cast_infer_type_narrowing.ets"
                                             }
                                           }
@@ -548,7 +548,7 @@
                                           },
                                           "end": {
                                             "line": 22,
-                                            "column": 57,
+                                            "column": 56,
                                             "program": "lambda_cast_infer_type_narrowing.ets"
                                           }
                                         }
@@ -561,7 +561,7 @@
                                         },
                                         "end": {
                                           "line": 22,
-                                          "column": 57,
+                                          "column": 56,
                                           "program": "lambda_cast_infer_type_narrowing.ets"
                                         }
                                       }
@@ -575,7 +575,7 @@
                                       },
                                       "end": {
                                         "line": 22,
-                                        "column": 57,
+                                        "column": 56,
                                         "program": "lambda_cast_infer_type_narrowing.ets"
                                       }
                                     }
@@ -588,7 +588,7 @@
                                     },
                                     "end": {
                                       "line": 22,
-                                      "column": 57,
+                                      "column": 56,
                                       "program": "lambda_cast_infer_type_narrowing.ets"
                                     }
                                   }
@@ -622,8 +622,8 @@
                                       "program": "lambda_cast_infer_type_narrowing.ets"
                                     },
                                     "end": {
-                                      "line": 23,
-                                      "column": 12,
+                                      "line": 22,
+                                      "column": 62,
                                       "program": "lambda_cast_infer_type_narrowing.ets"
                                     }
                                   }
@@ -635,8 +635,8 @@
                                     "program": "lambda_cast_infer_type_narrowing.ets"
                                   },
                                   "end": {
-                                    "line": 23,
-                                    "column": 12,
+                                    "line": 22,
+                                    "column": 62,
                                     "program": "lambda_cast_infer_type_narrowing.ets"
                                   }
                                 }
@@ -648,8 +648,8 @@
                                   "program": "lambda_cast_infer_type_narrowing.ets"
                                 },
                                 "end": {
-                                  "line": 23,
-                                  "column": 12,
+                                  "line": 22,
+                                  "column": 62,
                                   "program": "lambda_cast_infer_type_narrowing.ets"
                                 }
                               }
@@ -661,8 +661,8 @@
                                 "program": "lambda_cast_infer_type_narrowing.ets"
                               },
                               "end": {
-                                "line": 23,
-                                "column": 12,
+                                "line": 22,
+                                "column": 62,
                                 "program": "lambda_cast_infer_type_narrowing.ets"
                               }
                             }
@@ -674,8 +674,8 @@
                               "program": "lambda_cast_infer_type_narrowing.ets"
                             },
                             "end": {
-                              "line": 23,
-                              "column": 12,
+                              "line": 22,
+                              "column": 62,
                               "program": "lambda_cast_infer_type_narrowing.ets"
                             }
                           }
@@ -689,8 +689,8 @@
                           "program": "lambda_cast_infer_type_narrowing.ets"
                         },
                         "end": {
-                          "line": 23,
-                          "column": 12,
+                          "line": 22,
+                          "column": 62,
                           "program": "lambda_cast_infer_type_narrowing.ets"
                         }
                       }
@@ -740,7 +740,7 @@
                                           },
                                           "end": {
                                             "line": 23,
-                                            "column": 31,
+                                            "column": 30,
                                             "program": "lambda_cast_infer_type_narrowing.ets"
                                           }
                                         }
@@ -753,7 +753,7 @@
                                         },
                                         "end": {
                                           "line": 23,
-                                          "column": 31,
+                                          "column": 30,
                                           "program": "lambda_cast_infer_type_narrowing.ets"
                                         }
                                       }
@@ -767,7 +767,7 @@
                                       },
                                       "end": {
                                         "line": 23,
-                                        "column": 31,
+                                        "column": 30,
                                         "program": "lambda_cast_infer_type_narrowing.ets"
                                       }
                                     }
@@ -780,7 +780,7 @@
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 31,
+                                      "column": 30,
                                       "program": "lambda_cast_infer_type_narrowing.ets"
                                     }
                                   }
@@ -815,7 +815,7 @@
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 38,
+                                      "column": 36,
                                       "program": "lambda_cast_infer_type_narrowing.ets"
                                     }
                                   }
@@ -828,7 +828,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 38,
+                                    "column": 36,
                                     "program": "lambda_cast_infer_type_narrowing.ets"
                                   }
                                 }
@@ -841,7 +841,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 38,
+                                  "column": 36,
                                   "program": "lambda_cast_infer_type_narrowing.ets"
                                 }
                               }

@@ -128,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 20,
+                                    "column": 18,
                                     "program": "new_object_3.ets"
                                   }
                                 }
@@ -141,7 +141,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 20,
+                                  "column": 18,
                                   "program": "new_object_3.ets"
                                 }
                               }
@@ -191,7 +191,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 33,
+                                    "column": 32,
                                     "program": "new_object_3.ets"
                                   }
                                 }
@@ -204,7 +204,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 33,
+                                  "column": 32,
                                   "program": "new_object_3.ets"
                                 }
                               }

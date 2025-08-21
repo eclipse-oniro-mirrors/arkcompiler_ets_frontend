@@ -338,7 +338,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 50,
+                                    "column": 48,
                                     "program": "async_with_lambda.ets"
                                   }
                                 }
@@ -351,7 +351,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 50,
+                                  "column": 48,
                                   "program": "async_with_lambda.ets"
                                 }
                               }
@@ -407,7 +407,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 58,
+                        "column": 56,
                         "program": "async_with_lambda.ets"
                       }
                     }
@@ -420,7 +420,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 58,
+                      "column": 56,
                       "program": "async_with_lambda.ets"
                     }
                   }
@@ -871,7 +871,7 @@
                                                 },
                                                 "end": {
                                                   "line": 26,
-                                                  "column": 45,
+                                                  "column": 43,
                                                   "program": "async_with_lambda.ets"
                                                 }
                                               }
@@ -884,7 +884,7 @@
                                               },
                                               "end": {
                                                 "line": 26,
-                                                "column": 45,
+                                                "column": 43,
                                                 "program": "async_with_lambda.ets"
                                               }
                                             }
@@ -940,7 +940,7 @@
                                     },
                                     "end": {
                                       "line": 26,
-                                      "column": 53,
+                                      "column": 51,
                                       "program": "async_with_lambda.ets"
                                     }
                                   }
@@ -953,7 +953,7 @@
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 53,
+                                    "column": 51,
                                     "program": "async_with_lambda.ets"
                                   }
                                 }
@@ -966,7 +966,7 @@
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 53,
+                                  "column": 51,
                                   "program": "async_with_lambda.ets"
                                 }
                               }
@@ -1050,7 +1050,7 @@
                                                 },
                                                 "end": {
                                                   "line": 26,
-                                                  "column": 80,
+                                                  "column": 78,
                                                   "program": "async_with_lambda.ets"
                                                 }
                                               }
@@ -1063,7 +1063,7 @@
                                               },
                                               "end": {
                                                 "line": 26,
-                                                "column": 80,
+                                                "column": 78,
                                                 "program": "async_with_lambda.ets"
                                               }
                                             }
@@ -1119,7 +1119,7 @@
                                     },
                                     "end": {
                                       "line": 26,
-                                      "column": 89,
+                                      "column": 86,
                                       "program": "async_with_lambda.ets"
                                     }
                                   }
@@ -1132,7 +1132,7 @@
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 89,
+                                    "column": 86,
                                     "program": "async_with_lambda.ets"
                                   }
                                 }
@@ -1465,7 +1465,7 @@
                                             },
                                             "end": {
                                               "line": 33,
-                                              "column": 43,
+                                              "column": 42,
                                               "program": "async_with_lambda.ets"
                                             }
                                           }
@@ -1478,7 +1478,7 @@
                                           },
                                           "end": {
                                             "line": 33,
-                                            "column": 43,
+                                            "column": 42,
                                             "program": "async_with_lambda.ets"
                                           }
                                         }
@@ -1505,7 +1505,7 @@
                                     },
                                     "end": {
                                       "line": 33,
-                                      "column": 45,
+                                      "column": 43,
                                       "program": "async_with_lambda.ets"
                                     }
                                   }
@@ -1518,7 +1518,7 @@
                                   },
                                   "end": {
                                     "line": 33,
-                                    "column": 45,
+                                    "column": 43,
                                     "program": "async_with_lambda.ets"
                                   }
                                 }
@@ -1531,7 +1531,7 @@
                                 },
                                 "end": {
                                   "line": 33,
-                                  "column": 45,
+                                  "column": 43,
                                   "program": "async_with_lambda.ets"
                                 }
                               }
@@ -1612,7 +1612,7 @@
                                             },
                                             "end": {
                                               "line": 33,
-                                              "column": 71,
+                                              "column": 70,
                                               "program": "async_with_lambda.ets"
                                             }
                                           }
@@ -1625,7 +1625,7 @@
                                           },
                                           "end": {
                                             "line": 33,
-                                            "column": 71,
+                                            "column": 70,
                                             "program": "async_with_lambda.ets"
                                           }
                                         }
@@ -1652,7 +1652,7 @@
                                     },
                                     "end": {
                                       "line": 33,
-                                      "column": 74,
+                                      "column": 71,
                                       "program": "async_with_lambda.ets"
                                     }
                                   }
@@ -1665,7 +1665,7 @@
                                   },
                                   "end": {
                                     "line": 33,
-                                    "column": 74,
+                                    "column": 71,
                                     "program": "async_with_lambda.ets"
                                   }
                                 }
@@ -1730,7 +1730,7 @@
                                                     },
                                                     "end": {
                                                       "line": 34,
-                                                      "column": 35,
+                                                      "column": 34,
                                                       "program": "async_with_lambda.ets"
                                                     }
                                                   }
@@ -1743,7 +1743,7 @@
                                                   },
                                                   "end": {
                                                     "line": 34,
-                                                    "column": 35,
+                                                    "column": 34,
                                                     "program": "async_with_lambda.ets"
                                                   }
                                                 }
@@ -1770,7 +1770,7 @@
                                             },
                                             "end": {
                                               "line": 34,
-                                              "column": 36,
+                                              "column": 35,
                                               "program": "async_with_lambda.ets"
                                             }
                                           }
@@ -1783,7 +1783,7 @@
                                           },
                                           "end": {
                                             "line": 34,
-                                            "column": 36,
+                                            "column": 35,
                                             "program": "async_with_lambda.ets"
                                           }
                                         }
@@ -1840,7 +1840,7 @@
                                                                 },
                                                                 "end": {
                                                                   "line": 34,
-                                                                  "column": 61,
+                                                                  "column": 60,
                                                                   "program": "async_with_lambda.ets"
                                                                 }
                                                               }
@@ -1853,7 +1853,7 @@
                                                               },
                                                               "end": {
                                                                 "line": 34,
-                                                                "column": 61,
+                                                                "column": 60,
                                                                 "program": "async_with_lambda.ets"
                                                               }
                                                             }
@@ -1867,7 +1867,7 @@
                                                             },
                                                             "end": {
                                                               "line": 34,
-                                                              "column": 61,
+                                                              "column": 60,
                                                               "program": "async_with_lambda.ets"
                                                             }
                                                           }
@@ -1880,7 +1880,7 @@
                                                           },
                                                           "end": {
                                                             "line": 34,
-                                                            "column": 61,
+                                                            "column": 60,
                                                             "program": "async_with_lambda.ets"
                                                           }
                                                         }
@@ -2013,7 +2013,7 @@
                                                               },
                                                               "end": {
                                                                 "line": 35,
-                                                                "column": 32,
+                                                                "column": 31,
                                                                 "program": "async_with_lambda.ets"
                                                               }
                                                             }
@@ -2026,7 +2026,7 @@
                                                             },
                                                             "end": {
                                                               "line": 35,
-                                                              "column": 32,
+                                                              "column": 31,
                                                               "program": "async_with_lambda.ets"
                                                             }
                                                           }

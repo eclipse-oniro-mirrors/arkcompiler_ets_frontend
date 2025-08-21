@@ -239,7 +239,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 13,
+                    "column": 11,
                     "program": "boxingConversion7.ets"
                   }
                 }
@@ -252,7 +252,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 13,
+                  "column": 11,
                   "program": "boxingConversion7.ets"
                 }
               }
@@ -326,7 +326,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 14,
+                    "column": 12,
                     "program": "boxingConversion7.ets"
                   }
                 }
@@ -339,7 +339,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 14,
+                  "column": 12,
                   "program": "boxingConversion7.ets"
                 }
               }
@@ -413,7 +413,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 15,
+                    "column": 13,
                     "program": "boxingConversion7.ets"
                   }
                 }
@@ -426,7 +426,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 15,
+                  "column": 13,
                   "program": "boxingConversion7.ets"
                 }
               }
@@ -500,7 +500,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 16,
+                    "column": 14,
                     "program": "boxingConversion7.ets"
                   }
                 }
@@ -513,7 +513,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 16,
+                  "column": 14,
                   "program": "boxingConversion7.ets"
                 }
               }

@@ -273,7 +273,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 22,
+                                        "column": 21,
                                         "program": "tupleIndexWithNumbers.ets"
                                       }
                                     }
@@ -286,7 +286,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 22,
+                                      "column": 21,
                                       "program": "tupleIndexWithNumbers.ets"
                                     }
                                   }
@@ -320,7 +320,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 30,
+                                        "column": 29,
                                         "program": "tupleIndexWithNumbers.ets"
                                       }
                                     }
@@ -333,7 +333,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 30,
+                                      "column": 29,
                                       "program": "tupleIndexWithNumbers.ets"
                                     }
                                   }

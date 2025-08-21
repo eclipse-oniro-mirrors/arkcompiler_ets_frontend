@@ -78,7 +78,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 32,
+                    "column": 31,
                     "program": "global_const_vars3.ets"
                   }
                 }
@@ -91,7 +91,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 32,
+                  "column": 31,
                   "program": "global_const_vars3.ets"
                 }
               }
@@ -106,7 +106,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 32,
+                "column": 31,
                 "program": "global_const_vars3.ets"
               }
             }
@@ -248,7 +248,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 30,
+                                  "column": 29,
                                   "program": "global_const_vars3.ets"
                                 }
                               }
@@ -261,7 +261,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 30,
+                                "column": 29,
                                 "program": "global_const_vars3.ets"
                               }
                             }
@@ -472,7 +472,7 @@
             "loc": {
               "start": {
                 "line": 26,
-                "column": 5,
+                "column": 12,
                 "program": "global_const_vars3.ets"
               },
               "end": {
@@ -759,7 +759,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 28,
+                      "column": 27,
                       "program": "global_const_vars3.ets"
                     }
                   }
@@ -772,7 +772,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 28,
+                    "column": 27,
                     "program": "global_const_vars3.ets"
                   }
                 }
@@ -826,7 +826,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 18,
+                    "column": 16,
                     "program": "global_const_vars3.ets"
                   }
                 }
@@ -839,7 +839,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 18,
+                  "column": 16,
                   "program": "global_const_vars3.ets"
                 }
               }

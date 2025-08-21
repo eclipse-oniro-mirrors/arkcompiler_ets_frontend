@@ -177,7 +177,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 40,
+                                    "column": 38,
                                     "program": "async_overload.ets"
                                   }
                                 }
@@ -190,7 +190,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 40,
+                                  "column": 38,
                                   "program": "async_overload.ets"
                                 }
                               }
@@ -246,7 +246,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 48,
+                        "column": 46,
                         "program": "async_overload.ets"
                       }
                     }
@@ -259,7 +259,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 48,
+                      "column": 46,
                       "program": "async_overload.ets"
                     }
                   }
@@ -425,7 +425,7 @@
                                     },
                                     "end": {
                                       "line": 21,
-                                      "column": 26,
+                                      "column": 24,
                                       "program": "async_overload.ets"
                                     }
                                   }
@@ -438,7 +438,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 26,
+                                    "column": 24,
                                     "program": "async_overload.ets"
                                   }
                                 }
@@ -603,7 +603,7 @@
                                       },
                                       "end": {
                                         "line": 21,
-                                        "column": 58,
+                                        "column": 56,
                                         "program": "async_overload.ets"
                                       }
                                     }
@@ -616,7 +616,7 @@
                                     },
                                     "end": {
                                       "line": 21,
-                                      "column": 58,
+                                      "column": 56,
                                       "program": "async_overload.ets"
                                     }
                                   }
@@ -672,7 +672,7 @@
                           },
                           "end": {
                             "line": 21,
-                            "column": 66,
+                            "column": 64,
                             "program": "async_overload.ets"
                           }
                         }
@@ -685,7 +685,7 @@
                         },
                         "end": {
                           "line": 21,
-                          "column": 66,
+                          "column": 64,
                           "program": "async_overload.ets"
                         }
                       }
@@ -737,7 +737,7 @@
                 "loc": {
                   "start": {
                     "line": 21,
-                    "column": 5,
+                    "column": 11,
                     "program": "async_overload.ets"
                   },
                   "end": {
@@ -752,7 +752,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 11,
                 "program": "async_overload.ets"
               },
               "end": {
@@ -1070,7 +1070,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 45,
+                                    "column": 43,
                                     "program": "async_overload.ets"
                                   }
                                 }
@@ -1083,7 +1083,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 45,
+                                  "column": 43,
                                   "program": "async_overload.ets"
                                 }
                               }
@@ -1139,7 +1139,7 @@
                       },
                       "end": {
                         "line": 25,
-                        "column": 53,
+                        "column": 51,
                         "program": "async_overload.ets"
                       }
                     }
@@ -1152,7 +1152,7 @@
                     },
                     "end": {
                       "line": 25,
-                      "column": 53,
+                      "column": 51,
                       "program": "async_overload.ets"
                     }
                   }
@@ -1318,7 +1318,7 @@
                                     },
                                     "end": {
                                       "line": 29,
-                                      "column": 31,
+                                      "column": 29,
                                       "program": "async_overload.ets"
                                     }
                                   }
@@ -1331,7 +1331,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 31,
+                                    "column": 29,
                                     "program": "async_overload.ets"
                                   }
                                 }
@@ -1496,7 +1496,7 @@
                                       },
                                       "end": {
                                         "line": 29,
-                                        "column": 63,
+                                        "column": 61,
                                         "program": "async_overload.ets"
                                       }
                                     }
@@ -1509,7 +1509,7 @@
                                     },
                                     "end": {
                                       "line": 29,
-                                      "column": 63,
+                                      "column": 61,
                                       "program": "async_overload.ets"
                                     }
                                   }
@@ -1565,7 +1565,7 @@
                           },
                           "end": {
                             "line": 29,
-                            "column": 70,
+                            "column": 69,
                             "program": "async_overload.ets"
                           }
                         }
@@ -1578,7 +1578,7 @@
                         },
                         "end": {
                           "line": 29,
-                          "column": 70,
+                          "column": 69,
                           "program": "async_overload.ets"
                         }
                       }
@@ -1955,7 +1955,7 @@
                                   },
                                   "end": {
                                     "line": 36,
-                                    "column": 23,
+                                    "column": 22,
                                     "program": "async_overload.ets"
                                   }
                                 }
@@ -1968,7 +1968,7 @@
                                 },
                                 "end": {
                                   "line": 36,
-                                  "column": 23,
+                                  "column": 22,
                                   "program": "async_overload.ets"
                                 }
                               }

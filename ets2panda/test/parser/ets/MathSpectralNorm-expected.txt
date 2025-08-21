@@ -523,7 +523,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 3,
+                "column": 18,
                 "program": "MathSpectralNorm.ets"
               },
               "end": {
@@ -1728,7 +1728,7 @@
             "loc": {
               "start": {
                 "line": 21,
-                "column": 3,
+                "column": 18,
                 "program": "MathSpectralNorm.ets"
               },
               "end": {
@@ -2933,7 +2933,7 @@
             "loc": {
               "start": {
                 "line": 31,
-                "column": 3,
+                "column": 18,
                 "program": "MathSpectralNorm.ets"
               },
               "end": {
@@ -3625,7 +3625,7 @@
             "loc": {
               "start": {
                 "line": 41,
-                "column": 3,
+                "column": 18,
                 "program": "MathSpectralNorm.ets"
               },
               "end": {
@@ -6010,7 +6010,7 @@
             "loc": {
               "start": {
                 "line": 46,
-                "column": 3,
+                "column": 18,
                 "program": "MathSpectralNorm.ets"
               },
               "end": {
@@ -6970,7 +6970,7 @@
             "loc": {
               "start": {
                 "line": 80,
-                "column": 3,
+                "column": 10,
                 "program": "MathSpectralNorm.ets"
               },
               "end": {
@@ -7255,7 +7255,7 @@
                                   },
                                   "end": {
                                     "line": 92,
-                                    "column": 32,
+                                    "column": 31,
                                     "program": "MathSpectralNorm.ets"
                                   }
                                 }
@@ -7268,7 +7268,7 @@
                                 },
                                 "end": {
                                   "line": 92,
-                                  "column": 32,
+                                  "column": 31,
                                   "program": "MathSpectralNorm.ets"
                                 }
                               }

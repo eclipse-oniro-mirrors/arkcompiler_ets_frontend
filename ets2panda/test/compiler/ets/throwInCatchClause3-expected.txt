@@ -240,7 +240,7 @@
                                           },
                                           "end": {
                                             "line": 19,
-                                            "column": 33,
+                                            "column": 32,
                                             "program": "throwInCatchClause3.ets"
                                           }
                                         }
@@ -253,7 +253,7 @@
                                         },
                                         "end": {
                                           "line": 19,
-                                          "column": 33,
+                                          "column": 32,
                                           "program": "throwInCatchClause3.ets"
                                         }
                                       }
@@ -355,7 +355,7 @@
                                               },
                                               "end": {
                                                 "line": 21,
-                                                "column": 34,
+                                                "column": 33,
                                                 "program": "throwInCatchClause3.ets"
                                               }
                                             }
@@ -368,7 +368,7 @@
                                             },
                                             "end": {
                                               "line": 21,
-                                              "column": 34,
+                                              "column": 33,
                                               "program": "throwInCatchClause3.ets"
                                             }
                                           }
@@ -381,7 +381,7 @@
                                           },
                                           "end": {
                                             "line": 21,
-                                            "column": 34,
+                                            "column": 33,
                                             "program": "throwInCatchClause3.ets"
                                           }
                                         }

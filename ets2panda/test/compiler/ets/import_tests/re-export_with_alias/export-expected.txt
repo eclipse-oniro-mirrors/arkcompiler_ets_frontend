@@ -561,7 +561,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 30,
+                    "column": 28,
                     "program": "export.ets"
                   }
                 }
@@ -574,7 +574,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 30,
+                  "column": 28,
                   "program": "export.ets"
                 }
               }

@@ -300,7 +300,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 20,
+                                    "column": 19,
                                     "program": "new_expressions.ets"
                                   }
                                 }
@@ -313,7 +313,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 20,
+                                  "column": 19,
                                   "program": "new_expressions.ets"
                                 }
                               }

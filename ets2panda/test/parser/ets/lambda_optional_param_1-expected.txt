@@ -89,7 +89,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 21,
+                              "column": 20,
                               "program": "lambda_optional_param_1.ets"
                             }
                           }
@@ -102,7 +102,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 21,
+                            "column": 20,
                             "program": "lambda_optional_param_1.ets"
                           }
                         }
@@ -116,7 +116,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 21,
+                          "column": 20,
                           "program": "lambda_optional_param_1.ets"
                         }
                       }
@@ -129,7 +129,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 21,
+                        "column": 20,
                         "program": "lambda_optional_param_1.ets"
                       }
                     }
@@ -176,7 +176,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 42,
+                                      "column": 41,
                                       "program": "lambda_optional_param_1.ets"
                                     }
                                   }
@@ -189,7 +189,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 42,
+                                    "column": 41,
                                     "program": "lambda_optional_param_1.ets"
                                   }
                                 }
@@ -203,7 +203,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 42,
+                                  "column": 41,
                                   "program": "lambda_optional_param_1.ets"
                                 }
                               }
@@ -216,7 +216,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 42,
+                                "column": 41,
                                 "program": "lambda_optional_param_1.ets"
                               }
                             }
@@ -251,7 +251,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 51,
+                                "column": 50,
                                 "program": "lambda_optional_param_1.ets"
                               }
                             }
@@ -264,7 +264,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 51,
+                              "column": 50,
                               "program": "lambda_optional_param_1.ets"
                             }
                           }
@@ -277,7 +277,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 51,
+                            "column": 50,
                             "program": "lambda_optional_param_1.ets"
                           }
                         }
@@ -291,7 +291,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 51,
+                          "column": 50,
                           "program": "lambda_optional_param_1.ets"
                         }
                       }
@@ -304,7 +304,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 51,
+                        "column": 50,
                         "program": "lambda_optional_param_1.ets"
                       }
                     }

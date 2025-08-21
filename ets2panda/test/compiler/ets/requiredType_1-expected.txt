@@ -97,7 +97,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 17,
+                        "column": 16,
                         "program": "requiredType_1.ets"
                       }
                     }
@@ -110,7 +110,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 17,
+                      "column": 16,
                       "program": "requiredType_1.ets"
                     }
                   }
@@ -442,7 +442,7 @@
                                           },
                                           "end": {
                                             "line": 21,
-                                            "column": 27,
+                                            "column": 26,
                                             "program": "requiredType_1.ets"
                                           }
                                         }
@@ -455,7 +455,7 @@
                                         },
                                         "end": {
                                           "line": 21,
-                                          "column": 27,
+                                          "column": 26,
                                           "program": "requiredType_1.ets"
                                         }
                                       }
@@ -482,7 +482,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 29,
+                                    "column": 27,
                                     "program": "requiredType_1.ets"
                                   }
                                 }
@@ -495,7 +495,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 29,
+                                  "column": 27,
                                   "program": "requiredType_1.ets"
                                 }
                               }
@@ -648,7 +648,7 @@
                                   },
                                   "end": {
                                     "line": 22,
-                                    "column": 24,
+                                    "column": 22,
                                     "program": "requiredType_1.ets"
                                   }
                                 }
@@ -661,7 +661,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 24,
+                                  "column": 22,
                                   "program": "requiredType_1.ets"
                                 }
                               }

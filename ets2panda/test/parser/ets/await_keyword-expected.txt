@@ -235,7 +235,7 @@
                                   },
                                   "end": {
                                     "line": 16,
-                                    "column": 44,
+                                    "column": 42,
                                     "program": "await_keyword.ets"
                                   }
                                 }
@@ -248,7 +248,7 @@
                                 },
                                 "end": {
                                   "line": 16,
-                                  "column": 44,
+                                  "column": 42,
                                   "program": "await_keyword.ets"
                                 }
                               }
@@ -304,7 +304,7 @@
                       },
                       "end": {
                         "line": 16,
-                        "column": 52,
+                        "column": 50,
                         "program": "await_keyword.ets"
                       }
                     }
@@ -317,7 +317,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 52,
+                      "column": 50,
                       "program": "await_keyword.ets"
                     }
                   }
@@ -392,7 +392,7 @@
                                                   },
                                                   "end": {
                                                     "line": 17,
-                                                    "column": 34,
+                                                    "column": 32,
                                                     "program": "await_keyword.ets"
                                                   }
                                                 }
@@ -405,7 +405,7 @@
                                                 },
                                                 "end": {
                                                   "line": 17,
-                                                  "column": 34,
+                                                  "column": 32,
                                                   "program": "await_keyword.ets"
                                                 }
                                               }
@@ -461,7 +461,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 42,
+                                        "column": 40,
                                         "program": "await_keyword.ets"
                                       }
                                     }
@@ -474,7 +474,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 42,
+                                      "column": 40,
                                       "program": "await_keyword.ets"
                                     }
                                   }
@@ -592,7 +592,7 @@
                                                       },
                                                       "end": {
                                                         "line": 17,
-                                                        "column": 70,
+                                                        "column": 68,
                                                         "program": "await_keyword.ets"
                                                       }
                                                     }
@@ -605,7 +605,7 @@
                                                     },
                                                     "end": {
                                                       "line": 17,
-                                                      "column": 70,
+                                                      "column": 68,
                                                       "program": "await_keyword.ets"
                                                     }
                                                   }
@@ -661,7 +661,7 @@
                                           },
                                           "end": {
                                             "line": 17,
-                                            "column": 78,
+                                            "column": 76,
                                             "program": "await_keyword.ets"
                                           }
                                         }
@@ -674,7 +674,7 @@
                                         },
                                         "end": {
                                           "line": 17,
-                                          "column": 78,
+                                          "column": 76,
                                           "program": "await_keyword.ets"
                                         }
                                       }
@@ -865,7 +865,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 22,
+                                        "column": 20,
                                         "program": "await_keyword.ets"
                                       }
                                     }
@@ -878,7 +878,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 22,
+                                      "column": 20,
                                       "program": "await_keyword.ets"
                                     }
                                   }
@@ -1172,7 +1172,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 40,
+                                  "column": 38,
                                   "program": "await_keyword.ets"
                                 }
                               }
@@ -1185,7 +1185,7 @@
                               },
                               "end": {
                                 "line": 22,
-                                "column": 40,
+                                "column": 38,
                                 "program": "await_keyword.ets"
                               }
                             }
@@ -1241,7 +1241,7 @@
                     },
                     "end": {
                       "line": 22,
-                      "column": 48,
+                      "column": 46,
                       "program": "await_keyword.ets"
                     }
                   }
@@ -1254,7 +1254,7 @@
                   },
                   "end": {
                     "line": 22,
-                    "column": 48,
+                    "column": 46,
                     "program": "await_keyword.ets"
                   }
                 }
@@ -1267,7 +1267,7 @@
                 },
                 "end": {
                   "line": 22,
-                  "column": 48,
+                  "column": 46,
                   "program": "await_keyword.ets"
                 }
               }
@@ -1421,7 +1421,7 @@
                                                   },
                                                   "end": {
                                                     "line": 29,
-                                                    "column": 34,
+                                                    "column": 32,
                                                     "program": "await_keyword.ets"
                                                   }
                                                 }
@@ -1434,7 +1434,7 @@
                                                 },
                                                 "end": {
                                                   "line": 29,
-                                                  "column": 34,
+                                                  "column": 32,
                                                   "program": "await_keyword.ets"
                                                 }
                                               }
@@ -1490,7 +1490,7 @@
                                       },
                                       "end": {
                                         "line": 29,
-                                        "column": 42,
+                                        "column": 40,
                                         "program": "await_keyword.ets"
                                       }
                                     }
@@ -1503,7 +1503,7 @@
                                     },
                                     "end": {
                                       "line": 29,
-                                      "column": 42,
+                                      "column": 40,
                                       "program": "await_keyword.ets"
                                     }
                                   }
@@ -1621,7 +1621,7 @@
                                                       },
                                                       "end": {
                                                         "line": 29,
-                                                        "column": 70,
+                                                        "column": 68,
                                                         "program": "await_keyword.ets"
                                                       }
                                                     }
@@ -1634,7 +1634,7 @@
                                                     },
                                                     "end": {
                                                       "line": 29,
-                                                      "column": 70,
+                                                      "column": 68,
                                                       "program": "await_keyword.ets"
                                                     }
                                                   }
@@ -1690,7 +1690,7 @@
                                           },
                                           "end": {
                                             "line": 29,
-                                            "column": 78,
+                                            "column": 76,
                                             "program": "await_keyword.ets"
                                           }
                                         }
@@ -1703,7 +1703,7 @@
                                         },
                                         "end": {
                                           "line": 29,
-                                          "column": 78,
+                                          "column": 76,
                                           "program": "await_keyword.ets"
                                         }
                                       }
@@ -1894,7 +1894,7 @@
                                       },
                                       "end": {
                                         "line": 30,
-                                        "column": 22,
+                                        "column": 20,
                                         "program": "await_keyword.ets"
                                       }
                                     }
@@ -1907,7 +1907,7 @@
                                     },
                                     "end": {
                                       "line": 30,
-                                      "column": 22,
+                                      "column": 20,
                                       "program": "await_keyword.ets"
                                     }
                                   }
@@ -2240,7 +2240,7 @@
                                   },
                                   "end": {
                                     "line": 38,
-                                    "column": 30,
+                                    "column": 28,
                                     "program": "await_keyword.ets"
                                   }
                                 }
@@ -2253,7 +2253,7 @@
                                 },
                                 "end": {
                                   "line": 38,
-                                  "column": 30,
+                                  "column": 28,
                                   "program": "await_keyword.ets"
                                 }
                               }
@@ -2309,7 +2309,7 @@
                       },
                       "end": {
                         "line": 38,
-                        "column": 38,
+                        "column": 36,
                         "program": "await_keyword.ets"
                       }
                     }
@@ -2322,7 +2322,7 @@
                     },
                     "end": {
                       "line": 38,
-                      "column": 38,
+                      "column": 36,
                       "program": "await_keyword.ets"
                     }
                   }
@@ -2428,7 +2428,7 @@
                       },
                       "end": {
                         "line": 39,
-                        "column": 18,
+                        "column": 16,
                         "program": "await_keyword.ets"
                       }
                     }
@@ -2441,7 +2441,7 @@
                     },
                     "end": {
                       "line": 39,
-                      "column": 18,
+                      "column": 16,
                       "program": "await_keyword.ets"
                     }
                   }
