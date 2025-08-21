@@ -20,48 +20,42 @@
 
 namespace ark::es2panda::compiler {
 
+constexpr std::string_view MODULE_DECLARATION_NAME {"ModuleDeclaration"};
+
 bool DeclGenPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
     if (!ctx->config->options->IsEmitDeclaration()) {
         return true;
     }
 
-    checker_ = ctx->GetChecker()->AsETSChecker();
-    phaseManager_ = ctx->phaseManager;
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *phaseManager = ctx->phaseManager;
+    auto *allocator = ctx->Allocator();
 
-    DumpDeclaration(program);
-    CreateModuleDeclarationAnnotation(program);
+    // Arena cause we want declaration be life until codegen happens
+    auto *declaration = allocator->New<ArenaString>(program->Ast()->DumpDecl(), allocator->Adapter());
+    ES2PANDA_ASSERT(declaration != nullptr);
 
-    return true;
-}
-
-void DeclGenPhase::DumpDeclaration(parser::Program *program)
-{
-    declaration_ = program->Ast()->DumpDecl();
-    declaration_.erase(0, declaration_.find_first_not_of('\n'));
-    declaration_.erase(declaration_.find_last_not_of('\n'), declaration_.size() - 1);
-}
-
-void DeclGenPhase::CreateModuleDeclarationAnnotation(parser::Program *program)
-{
-    auto *const annoUsageIdent = checker_->AllocNode<ir::Identifier>(MODULE_DECLARATION_NAME, checker_->Allocator());
+    auto *const annoUsageIdent = checker->AllocNode<ir::Identifier>(MODULE_DECLARATION_NAME, checker->Allocator());
     annoUsageIdent->SetAnnotationUsage();
 
     auto flags = ir::ModifierFlags::ANNOTATION_USAGE;
-    ArenaVector<ir::AstNode *> properties(checker_->Allocator()->Adapter());
+    ArenaVector<ir::AstNode *> properties(checker->Allocator()->Adapter());
     auto *singleParamName =
-        checker_->AllocNode<ir::Identifier>(compiler::Signatures::ANNOTATION_KEY_VALUE, checker_->Allocator());
-    auto *declarationLiteral = checker_->AllocNode<ir::StringLiteral>(declaration_.c_str());
-    auto *declarationProp = checker_->AllocNode<ir::ClassProperty>(singleParamName, declarationLiteral, nullptr, flags,
-                                                                   checker_->Allocator(), false);
+        checker->AllocNode<ir::Identifier>(compiler::Signatures::ANNOTATION_KEY_VALUE, checker->Allocator());
+    auto *declarationLiteral = checker->AllocNode<ir::StringLiteral>(declaration->c_str());
+    auto *declarationProp = checker->AllocNode<ir::ClassProperty>(singleParamName, declarationLiteral, nullptr, flags,
+                                                                  checker->Allocator(), false);
     properties.push_back(declarationProp);
 
-    auto *annotationUsage = checker_->AllocNode<ir::AnnotationUsage>(annoUsageIdent, std::move(properties));
+    auto *annotationUsage = checker->AllocNode<ir::AnnotationUsage>(annoUsageIdent, std::move(properties));
     annotationUsage->AddModifier(flags);
     annotationUsage->SetParent(program->GlobalClass());
 
     program->GlobalClass()->EmplaceAnnotation(annotationUsage);
-    Recheck(phaseManager_, checker_->VarBinder()->AsETSBinder(), checker_, annotationUsage);
+    Recheck(phaseManager, checker->VarBinder()->AsETSBinder(), checker, annotationUsage);
+
+    return true;
 }
 
 }  // namespace ark::es2panda::compiler

@@ -104,9 +104,15 @@ void AnnotationDeclaration::Dump(ir::AstDumper *dumper) const
 }
 
 void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
-{  // re-understand
+{
     DumpAnnotations(dumper);
     ES2PANDA_ASSERT(Expr() != nullptr);
+    if (IsExported()) {
+        dumper->Add("export ");
+    }
+    if (IsDeclare() || dumper->IsDeclgen()) {
+        dumper->Add("declare ");
+    }
     dumper->Add("@interface ");
     Expr()->Dump(dumper);
     dumper->Add(" {");
@@ -117,13 +123,14 @@ void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Endl();
         for (auto elem : properties) {
             elem->Dump(dumper);
-            if (elem == properties.back()) {
-                dumper->DecrIndent();
+            if (elem != properties.back()) {
+                dumper->Endl();
             }
         }
+        dumper->DecrIndent();
+        dumper->Endl();
     }
     dumper->Add("}");
-    dumper->Endl();
 }
 void AnnotationDeclaration::Compile(compiler::PandaGen *pg) const
 {

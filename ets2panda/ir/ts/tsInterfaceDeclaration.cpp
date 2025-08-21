@@ -188,7 +188,9 @@ void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
     } else if (id_->Parent()->IsDefaultExported()) {
         dumper->Add("export default ");
     }
-    if (IsDeclare() || dumper->IsDeclgen()) {
+    if (dumper->IsDeclgen()) {
+        dumper->TryDeclareAmbientContext();
+    } else if (IsDeclare()) {
         dumper->Add("declare ");
     }
     dumper->Add("interface ");

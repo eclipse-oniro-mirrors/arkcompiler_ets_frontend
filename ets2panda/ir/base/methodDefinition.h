@@ -250,7 +250,7 @@ private:
     void DumpModifierPrefix(ir::SrcDumper *dumper) const;
     bool DumpNamespaceForDeclGen(ir::SrcDumper *dumper) const;
     void DumpPrefixForDeclGen(ir::SrcDumper *dumper) const;
-    bool FilterForDeclGen(ir::SrcDumper *dumper) const;
+    bool FilterForDeclGen() const;
 
     friend class SizeOfNodeTest;
     bool isDefault_ = false;
