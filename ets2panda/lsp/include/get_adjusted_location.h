@@ -27,38 +27,18 @@
 namespace ark::es2panda::lsp {
 
 // Main location adjustment functions
-std::optional<ir::AstNode *> GetAdjustedLocation(ir::AstNode *node, bool forRename, ArenaAllocator *allocator);
+std::optional<ir::AstNode *> GetAdjustedLocation(ir::AstNode *node, ArenaAllocator *allocator);
 std::optional<ir::AstNode *> GetAdjustedLocationForClass(ir::AstNode *node, ArenaAllocator *allocator);
 std::optional<ir::AstNode *> GetAdjustedLocationForFunction(ir::AstNode *node, ArenaAllocator *allocator);
-std::optional<ir::AstNode *> GetAdjustedLocationForDeclaration(ir::AstNode *node, bool forRename,
+std::optional<ir::AstNode *> GetAdjustedLocationForDeclaration(ir::AstNode *node,
                                                                const ArenaVector<ir::AstNode *> &children,
                                                                ArenaAllocator *allocator);
-std::optional<ir::AstNode *> GetAdjustedLocationForImportDeclaration(ir::AstNode *node, bool forRename,
+std::optional<ir::AstNode *> GetAdjustedLocationForImportDeclaration(ir::AstNode *node,
                                                                      const ArenaVector<ir::AstNode *> &children);
-std::optional<ir::AstNode *> GetAdjustedLocationForExportDeclaration(ir::AstNode *node, bool forRename,
+std::optional<ir::AstNode *> GetAdjustedLocationForExportDeclaration(ir::AstNode *node,
                                                                      const ArenaVector<ir::AstNode *> &children);
 std::optional<ir::AstNode *> GetAdjustedLocationForHeritageClause(ir::AstNode *node);
 ir::AstNode *GetTouchingPropertyName(es2panda_Context *context, size_t pos);
-// Expression handlers
-std::optional<ir::AstNode *> HandleBasicExpressions(ir::AstNode *node, ir::AstNode *parent,
-                                                    const ArenaVector<ir::AstNode *> &parentChildren);
-std::optional<ir::AstNode *> HandleBinaryExpressions(ir::AstNode *node, ir::AstNode *parent,
-                                                     const ArenaVector<ir::AstNode *> &parentChildren);
-std::optional<ir::AstNode *> HandleForStatements(ir::AstNode *node, ir::AstNode *parent,
-                                                 const ArenaVector<ir::AstNode *> &parentChildren);
-std::optional<ir::AstNode *> HandleNonRenameExpressions(ir::AstNode *node, ir::AstNode *parent,
-                                                        const ArenaVector<ir::AstNode *> &parentChildren,
-                                                        bool forRename);
-
-// Node type handlers
-inline std::optional<ir::AstNode *> HandleTSAsExpression(ir::AstNode *node, ir::AstNode *parent,
-                                                         const ArenaVector<ir::AstNode *> &parentChildren);
-inline std::optional<ir::AstNode *> HandleImportDeclaration(ir::AstNode *node, ir::AstNode *parent,
-                                                            const ArenaVector<ir::AstNode *> &parentChildren,
-                                                            bool forRename);
-inline std::optional<ir::AstNode *> HandleTSImportType(ir::AstNode *node, ir::AstNode *parent,
-                                                       const ArenaVector<ir::AstNode *> &parentChildren, bool forRename,
-                                                       ArenaAllocator *allocator);
 
 // Node finding functions
 ir::AstNode *FindFirstIdentifier(ir::AstNode *node, bool skipModifiers, const ArenaVector<ir::AstNode *> &children);
@@ -74,14 +54,13 @@ ir::AstNode *FindArrayType(ir::AstNode *node, const ArenaVector<ir::AstNode *> &
 bool IsModifier(const ir::AstNode *node);
 bool CanHaveModifiers(const ir::AstNode &node);
 bool IsOuterExpression(const ir::AstNode *node);
-bool IsDeclarationOrModifier(ir::AstNode *node, ir::AstNode *parent, bool forRename);
+bool IsDeclarationOrModifier(ir::AstNode *node, ir::AstNode *parent);
 
-// Node manipulation functions
+// Node manipulation
 ir::AstNode *SkipOuterExpressions(ir::AstNode *node);
 
-// Child node functions
+// Children collection
 ArenaVector<ir::AstNode *> GetChildren(ir::AstNode *node, ArenaAllocator *allocator);
 
 }  // namespace ark::es2panda::lsp
-
 #endif  // ES2PANDA_LSP_GET_ADJUSTED_LOCATION_H

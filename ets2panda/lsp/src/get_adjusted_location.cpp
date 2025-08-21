@@ -13,534 +13,51 @@
  * limitations under the License.
  */
 
-#include "get_adjusted_location.h"
-#include "internal_api.h"
-#include <cassert>
-#include <string>
 #include <vector>
-#include "public/es2panda_lib.h"
-#include "public/public.h"
+#include <cassert>
+#include "internal_api.h"
 #include "ir/astNodeFlags.h"
+#include "public/es2panda_lib.h"
+#include "get_adjusted_location.h"
 #include "utils/arena_containers.h"
-#include "util/options.h"
 
 using ark::es2panda::ir::AstNode;
 using ark::es2panda::ir::AstNodeType;
 using ark::es2panda::ir::ModifierFlags;
 
 namespace ark::es2panda::lsp {
+static inline bool IsOuterExpressionKind(AstNodeType t)
+{
+    return t == AstNodeType::TS_TYPE_ASSERTION || t == AstNodeType::TS_AS_EXPRESSION ||
+           t == AstNodeType::TS_NON_NULL_EXPRESSION;
+}
+
+static inline bool IsMirroredSimpleKind(AstNodeType t)
+{
+    switch (t) {
+        case AstNodeType::NEW_EXPRESSION:
+        case AstNodeType::TS_VOID_KEYWORD:
+        case AstNodeType::TYPEOF_EXPRESSION:
+        case AstNodeType::AWAIT_EXPRESSION:
+        case AstNodeType::YIELD_EXPRESSION:
+            return true;
+        default:
+            return false;
+    }
+}
 
 ArenaVector<AstNode *> GetChildren(AstNode *node, ArenaAllocator *allocator)
 {
     ArenaVector<AstNode *> children(allocator->Adapter());
-
     if (node == nullptr) {
         return children;
     }
-
-    node->IterateRecursively([&children](const AstNode *current) {
-        if (current != nullptr) {
-            children.push_back(const_cast<AstNode *>(current));
+    node->IterateRecursively([&children](const AstNode *cur) {
+        if (cur != nullptr) {
+            children.push_back(const_cast<AstNode *>(cur));
         }
     });
-
     return children;
-}
-
-AstNode *GetTouchingPropertyName(es2panda_Context *context, size_t pos)
-{
-    AstNode *token = GetTouchingToken(context, pos, false);
-    if (token == nullptr) {
-        return nullptr;
-    }
-
-    if (token->IsCallExpression() && token->AsCallExpression()->Callee()->IsIdentifier()) {
-        return token->AsCallExpression()->Callee()->AsIdentifier();
-    }
-
-    if (token->IsProperty() || token->IsIdentifier()) {
-        return token;
-    }
-
-    if (token->IsClassDeclaration() || token->IsFunctionDeclaration() || token->IsTSConstructorType()) {
-        return token;
-    }
-
-    return nullptr;
-}
-
-bool IsDeclarationOrModifier(AstNode *node, AstNode *parent, bool forRename)
-{
-    return (
-        // Modifier check
-        (IsModifier(node) && forRename && CanHaveModifiers(*parent) &&
-         (parent->Modifiers() & node->Modifiers()) != 0U) ||
-        // Class implementation check
-        (node->IsTSClassImplements() && (parent->IsClassDeclaration() || node->IsClassExpression())) ||
-        // Function declaration check
-        (node->IsFunctionDeclaration() && (parent->IsFunctionDeclaration() || node->IsFunctionExpression())) ||
-        // Interface declaration check
-        (node->IsTSInterfaceDeclaration() && parent->IsTSInterfaceDeclaration()) ||
-        // Enum declaration check
-        (node->IsTSEnumDeclaration() && parent->IsTSEnumDeclaration()) ||
-        // Type alias declaration check
-        (node->IsTSTypeAliasDeclaration() && parent->IsTSTypeAliasDeclaration()) ||
-        // Module and import namespace check
-        ((node->IsImportNamespaceSpecifier() || node->IsTSModuleDeclaration()) && parent->IsTSModuleDeclaration()) ||
-        // Import equals declaration check
-        (node->IsTSImportEqualsDeclaration() && parent->IsTSImportEqualsDeclaration()));
-}
-
-std::optional<AstNode *> HandleTSAsExpression(AstNode *node, AstNode *parent,
-                                              const ArenaVector<AstNode *> &parentChildren)
-{
-    if (!node->IsTSAsExpression()) {
-        return std::nullopt;
-    }
-    // Import/Export specifier check
-    if (parent->IsImportSpecifier() || parent->IsExportSpecifier() || parent->IsImportNamespaceSpecifier()) {
-        return std::make_optional(FindFirstIdentifier(parent, false, parentChildren));
-    }
-    // Export all declaration check
-    if (parent->IsExportAllDeclaration()) {
-        if (auto *exportClause = FindNodeOfType(parent, AstNodeType::EXPORT_SPECIFIER, parentChildren)) {
-            if (exportClause->AsExportSpecifier()->Local()->IsIdentifier() &&
-                exportClause->AsExportSpecifier()->Local()->AsIdentifier()->Name() == "*") {
-                return std::make_optional(FindFirstIdentifier(exportClause, false, parentChildren));
-            }
-        }
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> HandleTSImportType(AstNode *node, AstNode *parent,
-                                            const ArenaVector<AstNode *> &parentChildren, bool forRename,
-                                            ArenaAllocator *allocator)
-{
-    if (!node->IsTSImportType()) {
-        return std::nullopt;
-    }
-    if (auto location = GetAdjustedLocationForDeclaration(parent->Parent(), forRename, parentChildren, allocator)) {
-        return location;
-    }
-
-    if (parent->IsExportAllDeclaration()) {
-        if (auto location = GetAdjustedLocationForExportDeclaration(parent, forRename, parentChildren)) {
-            return location;
-        }
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> HandleImportDeclaration(AstNode *node, AstNode *parent,
-                                                 const ArenaVector<AstNode *> &parentChildren, bool forRename)
-{
-    if (!node->IsImportDeclaration() || !parent->IsImportDeclaration()) {
-        return std::nullopt;
-    }
-    return GetAdjustedLocationForImportDeclaration(parent, forRename, parentChildren);
-}
-
-inline std::optional<AstNode *> HandleExportAllDeclaration(AstNode *node, AstNode *parent, bool forRename,
-                                                           const ArenaVector<AstNode *> &parentChildren)
-{
-    if (!node->IsExportAllDeclaration() || !parent->IsExportAllDeclaration()) {
-        return std::nullopt;
-    }
-    return GetAdjustedLocationForExportDeclaration(parent, forRename, parentChildren);
-}
-
-inline std::optional<AstNode *> HandleTSClassImplements(AstNode *node, AstNode *parent)
-{
-    if (!node->IsTSClassImplements() || !parent->IsTSClassImplements()) {
-        return std::nullopt;
-    }
-    return GetAdjustedLocationForHeritageClause(parent);
-}
-
-inline std::optional<AstNode *> HandleTSInferType(AstNode *node, AstNode *parent,
-                                                  const ArenaVector<AstNode *> &parentChildren)
-{
-    if (!node->IsTSInferType() || !parent->IsTSInferType()) {
-        return std::nullopt;
-    }
-    if (auto *typeParam = FindTypeParameter(parent, parentChildren)) {
-        return std::make_optional(FindFirstIdentifier(typeParam, false, parentChildren));
-    }
-    return std::nullopt;
-}
-
-inline std::optional<AstNode *> HandleTSTypeParameterDeclaration(AstNode *parent,
-                                                                 const ArenaVector<AstNode *> &parentChildren)
-{
-    if (!parent->IsTSTypeParameterDeclaration() || !parent->Parent()->IsTSTypeParameterDeclaration()) {
-        return std::nullopt;
-    }
-    return std::make_optional(FindFirstIdentifier(parent, false, parentChildren));
-}
-
-std::optional<AstNode *> HandleTSTypeOperator(AstNode *parent, const ArenaVector<AstNode *> &parentChildren)
-{
-    if (!parent->IsTSTypeOperator()) {
-        return std::nullopt;
-    }
-    if (auto *typeRef = FindTypeReference(parent, parentChildren)) {
-        return std::make_optional(FindFirstIdentifier(typeRef, false, parentChildren));
-    }
-    if (auto *arrayType = FindArrayType(parent, parentChildren)) {
-        if (auto *elementType = FindTypeReference(arrayType, parentChildren)) {
-            return std::make_optional(FindFirstIdentifier(elementType, false, parentChildren));
-        }
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> HandleBasicExpressions(AstNode *node, AstNode *parent,
-                                                const ArenaVector<AstNode *> &parentChildren)
-{
-    if ((node->IsNewExpression() && parent->IsNewExpression()) ||
-        (node->IsTSVoidKeyword() && parent->IsTSVoidKeyword()) ||
-        (node->IsTypeofExpression() && parent->IsTypeofExpression()) ||
-        (node->IsAwaitExpression() && parent->IsAwaitExpression()) ||
-        (node->IsYieldExpression() && parent->IsYieldExpression())) {
-        if (auto *expr = FindFirstExpression(parent, parentChildren)) {
-            return std::make_optional(SkipOuterExpressions(expr));
-        }
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> HandleBinaryExpressions(AstNode *node, AstNode *parent,
-                                                 const ArenaVector<AstNode *> &parentChildren)
-{
-    if (!parent->IsBinaryExpression()) {
-        return std::nullopt;
-    }
-    if (node->IsTSTypeOperator() ||
-        (node->IsForInStatement() && parent->FindChild([node](AstNode *child) { return child == node; }) != nullptr)) {
-        auto *firstExpr = FindFirstExpression(parent, parentChildren);
-        if (auto *rightExpr = FindFirstExpressionAfter(parent, firstExpr, parentChildren)) {
-            return std::make_optional(SkipOuterExpressions(rightExpr));
-        }
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> HandleForStatements(AstNode *node, AstNode *parent,
-                                             const ArenaVector<AstNode *> &parentChildren)
-{
-    if ((node->IsForInStatement() && parent->IsForInStatement()) ||
-        (node->IsForOfStatement() && parent->IsForOfStatement())) {
-        if (auto *expr = FindFirstExpression(parent, parentChildren)) {
-            return std::make_optional(SkipOuterExpressions(expr));
-        }
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> HandleNonRenameExpressions(AstNode *node, AstNode *parent,
-                                                    const ArenaVector<AstNode *> &parentChildren, bool forRename)
-{
-    if (forRename) {
-        return std::nullopt;
-    }
-    // Try each handler in sequence
-    if (auto result = HandleBasicExpressions(node, parent, parentChildren)) {
-        return result;
-    }
-
-    if (auto result = HandleBinaryExpressions(node, parent, parentChildren)) {
-        return result;
-    }
-    // Handle type assertions
-    if (node->IsTSAsExpression() && parent->IsTSAsExpression() && parent->IsTSTypeReference()) {
-        return std::make_optional(FindFirstIdentifier(parent, false, parentChildren));
-    }
-    if (auto result = HandleForStatements(node, parent, parentChildren)) {
-        return result;
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> HandleDefaultExport(AstNode *node, ArenaAllocator *allocator)
-{
-    if ((node->Modifiers() & ModifierFlags::DEFAULT_EXPORT) == 0U) {
-        return std::nullopt;
-    }
-    const std::array<AstNodeType, 21> declarationTypes = {AstNodeType::VARIABLE_DECLARATION,
-                                                          AstNodeType::PROPERTY,
-                                                          AstNodeType::FUNCTION_DECLARATION,
-                                                          AstNodeType::CLASS_DECLARATION,
-                                                          AstNodeType::TS_INTERFACE_DECLARATION,
-                                                          AstNodeType::TS_ENUM_DECLARATION,
-                                                          AstNodeType::TS_TYPE_ALIAS_DECLARATION,
-                                                          AstNodeType::TS_TYPE_PARAMETER_DECLARATION,
-                                                          AstNodeType::TS_MODULE_DECLARATION,
-                                                          AstNodeType::TS_CONSTRUCTOR_TYPE,
-                                                          AstNodeType::TS_TYPE_ASSERTION,
-                                                          AstNodeType::TS_AS_EXPRESSION,
-                                                          AstNodeType::TS_NON_NULL_EXPRESSION,
-                                                          AstNodeType::BINARY_EXPRESSION,
-                                                          AstNodeType::FOR_IN_STATEMENT,
-                                                          AstNodeType::FOR_OF_STATEMENT,
-                                                          AstNodeType::NEW_EXPRESSION,
-                                                          AstNodeType::TS_VOID_KEYWORD,
-                                                          AstNodeType::TYPEOF_EXPRESSION,
-                                                          AstNodeType::AWAIT_EXPRESSION,
-                                                          AstNodeType::YIELD_EXPRESSION};
-
-    auto children = GetChildren(node, allocator);
-    for (const auto type : declarationTypes) {
-        if (auto *declaration = FindNodeOfType(node, type, children)) {
-            return std::make_optional(declaration);
-        }
-    }
-    return std::nullopt;
-}
-
-inline std::optional<AstNode *> HandleVariableDeclaration(AstNode *parent, const ArenaVector<AstNode *> &parentChildren)
-{
-    if (parent->IsVariableDeclaration()) {
-        if (auto *identifier = FindFirstIdentifier(parent, false, parentChildren)) {
-            return std::make_optional(identifier);
-        }
-    }
-    return std::nullopt;
-}
-
-inline std::optional<AstNode *> HandleExternalModuleReference(AstNode *parent,
-                                                              const ArenaVector<AstNode *> &parentChildren)
-{
-    if (parent->IsTSExternalModuleReference()) {
-        if (auto *expr = FindFirstExpression(parent, parentChildren)) {
-            return std::make_optional(expr);
-        }
-    }
-    return std::nullopt;
-}
-
-inline std::optional<AstNode *> HandleModuleSpecifier(AstNode *parent, const ArenaVector<AstNode *> &parentChildren)
-{
-    if ((parent->IsImportDeclaration() || parent->IsExportAllDeclaration())) {
-        if (auto *moduleSpecifier = FindNodeOfType(parent, AstNodeType::STRING_LITERAL, parentChildren)) {
-            return std::make_optional(moduleSpecifier);
-        }
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> HandleExpressionAndTypes(AstNode *node, AstNode *parent,
-                                                  const ArenaVector<AstNode *> &parentChildren, bool forRename,
-                                                  ArenaAllocator *allocator)
-{
-    // Expression handlers
-    if (auto result = HandleTSAsExpression(node, parent, parentChildren)) {
-        return result;
-    }
-    if (auto result = HandleTSImportType(node, parent, parentChildren, forRename, allocator)) {
-        return result;
-    }
-
-    // Type system handlers
-    if (auto result = HandleTSClassImplements(node, parent)) {
-        return result;
-    }
-    if (auto result = HandleTSInferType(node, parent, parentChildren)) {
-        return result;
-    }
-    if (auto result = HandleTSTypeParameterDeclaration(parent, parentChildren)) {
-        return result;
-    }
-    if (auto result = HandleTSTypeOperator(parent, parentChildren)) {
-        return result;
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> HandleModulesAndExports(AstNode *node, AstNode *parent,
-                                                 const ArenaVector<AstNode *> &parentChildren, bool forRename,
-                                                 ArenaAllocator *allocator)
-{
-    // Import/Export handlers
-    if (auto result = HandleImportDeclaration(node, parent, parentChildren, forRename)) {
-        return result;
-    }
-    if (auto result = HandleExportAllDeclaration(node, parent, forRename, parentChildren)) {
-        return result;
-    }
-    if (auto result = HandleExternalModuleReference(parent, parentChildren)) {
-        return result;
-    }
-    if (auto result = HandleModuleSpecifier(parent, parentChildren)) {
-        return result;
-    }
-    if (auto result = HandleDefaultExport(node, allocator)) {
-        return result;
-    }
-
-    return std::nullopt;
-}
-
-std::optional<AstNode *> GetAdjustedLocation(AstNode *node, bool forRename, ArenaAllocator *allocator)
-{
-    if (node == nullptr) {
-        return std::nullopt;
-    }
-    node = GetOriginalNode(node);
-    auto *parent = node->Parent();
-    if (parent == nullptr) {
-        return std::make_optional(node);
-    }
-
-    ArenaVector<AstNode *> parentChildren = GetChildren(parent, allocator);
-
-    // Declaration handlers
-    if (IsDeclarationOrModifier(node, parent, forRename)) {
-        if (auto location = GetAdjustedLocationForDeclaration(parent, forRename, parentChildren, allocator)) {
-            return location;
-        }
-    }
-    // Expression and Type handlers
-    if (auto result = HandleExpressionAndTypes(node, parent, parentChildren, forRename, allocator)) {
-        return result;
-    }
-    // Module and Export handlers
-    if (auto result = HandleModulesAndExports(node, parent, parentChildren, forRename, allocator)) {
-        return result;
-    }
-    // Variable handlers
-    if (auto result = HandleVariableDeclaration(parent, parentChildren)) {
-        return result;
-    }
-    if (auto result = HandleNonRenameExpressions(node, parent, parentChildren, forRename)) {
-        return result;
-    }
-    return std::make_optional(node);
-}
-
-std::optional<AstNode *> GetAdjustedLocationForDeclaration(AstNode *node, bool forRename,
-                                                           const ArenaVector<AstNode *> &children,
-                                                           ArenaAllocator *allocator)
-{
-    if (!forRename) {
-        switch (node->Type()) {
-            case AstNodeType::CLASS_DECLARATION:
-            case AstNodeType::CLASS_EXPRESSION:
-            case AstNodeType::STRUCT_DECLARATION:
-                return GetAdjustedLocationForClass(node, allocator);
-            case AstNodeType::FUNCTION_DECLARATION:
-            case AstNodeType::FUNCTION_EXPRESSION:
-                return GetAdjustedLocationForFunction(node, allocator);
-            case AstNodeType::TS_CONSTRUCTOR_TYPE:
-                return std::make_optional(node);
-            default:
-                break;
-        }
-    }
-    if (node->IsExportNamedDeclaration()) {
-        return std::make_optional(FindFirstIdentifier(node, false, children));
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> GetAdjustedLocationForImportDeclaration(AstNode *node, bool forRename,
-                                                                 const ArenaVector<AstNode *> &children)
-{
-    if (!node->IsImportDeclaration()) {
-        return std::nullopt;
-    }
-    if (forRename) {
-        auto *importNode = node->FindChild(
-            [](AstNode *child) { return child->IsImportSpecifier() || child->IsImportNamespaceSpecifier(); });
-        if (importNode != nullptr) {
-            return std::make_optional(FindFirstIdentifier(importNode, false, children));
-        }
-        return std::nullopt;
-    }
-    auto *importNode = node->FindChild(
-        [](AstNode *child) { return child->IsImportSpecifier() || child->IsImportNamespaceSpecifier(); });
-    if (importNode != nullptr) {
-        if (auto *identifier = FindFirstIdentifier(importNode, false, children)) {
-            return std::make_optional(identifier);
-        }
-        return std::make_optional(importNode);
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> GetAdjustedLocationForExportDeclaration(AstNode *node, bool forRename,
-                                                                 const ArenaVector<AstNode *> &children)
-{
-    if (!node->IsExportAllDeclaration()) {
-        return std::nullopt;
-    }
-    if (forRename) {
-        return std::make_optional(FindFirstIdentifier(node, false, children));
-    }
-    auto *exportSpecifier = FindNodeOfType(node, AstNodeType::EXPORT_SPECIFIER, children);
-    if (exportSpecifier != nullptr) {
-        if (auto *identifier = FindFirstIdentifier(exportSpecifier, false, children)) {
-            return std::make_optional(identifier);
-        }
-        return std::make_optional(exportSpecifier);
-    }
-    if ((node->Modifiers() & ModifierFlags::DEFAULT_EXPORT) != 0U) {
-        const std::array<AstNodeType, 21> declarationTypes = {AstNodeType::VARIABLE_DECLARATION,
-                                                              AstNodeType::PROPERTY,
-                                                              AstNodeType::FUNCTION_DECLARATION,
-                                                              AstNodeType::CLASS_DECLARATION,
-                                                              AstNodeType::TS_INTERFACE_DECLARATION,
-                                                              AstNodeType::TS_ENUM_DECLARATION,
-                                                              AstNodeType::TS_TYPE_ALIAS_DECLARATION,
-                                                              AstNodeType::TS_TYPE_PARAMETER_DECLARATION,
-                                                              AstNodeType::TS_MODULE_DECLARATION,
-                                                              AstNodeType::TS_CONSTRUCTOR_TYPE,
-                                                              AstNodeType::TS_TYPE_ASSERTION,
-                                                              AstNodeType::TS_AS_EXPRESSION,
-                                                              AstNodeType::TS_NON_NULL_EXPRESSION,
-                                                              AstNodeType::BINARY_EXPRESSION,
-                                                              AstNodeType::FOR_IN_STATEMENT,
-                                                              AstNodeType::FOR_OF_STATEMENT,
-                                                              AstNodeType::NEW_EXPRESSION,
-                                                              AstNodeType::TS_VOID_KEYWORD,
-                                                              AstNodeType::TYPEOF_EXPRESSION,
-                                                              AstNodeType::AWAIT_EXPRESSION,
-                                                              AstNodeType::YIELD_EXPRESSION};
-
-        for (const auto type : declarationTypes) {
-            if (auto *declaration = FindNodeOfType(node, type, children)) {
-                return std::make_optional(declaration);
-            }
-        }
-    }
-    return std::nullopt;
-}
-
-std::optional<AstNode *> GetAdjustedLocationForClass(AstNode *node, ArenaAllocator *allocator)
-{
-    if (node == nullptr || (!node->IsClassDeclaration() && !node->IsClassExpression())) {
-        return std::nullopt;
-    }
-    auto children = GetChildren(node, allocator);
-    return std::make_optional(FindFirstIdentifier(node, false, children));
-}
-
-std::optional<AstNode *> GetAdjustedLocationForFunction(AstNode *node, ArenaAllocator *allocator)
-{
-    if (node->IsIdentifier()) {
-        return std::make_optional(node);
-    }
-    if (node->IsFunctionDeclaration()) {
-        auto children = GetChildren(node, allocator);
-        return std::make_optional(FindFirstIdentifier(node, false, children));
-    }
-    if (auto *parent = node->Parent()) {
-        if (parent->IsFunctionDeclaration()) {
-            auto children = GetChildren(parent, allocator);
-            return std::make_optional(FindFirstIdentifier(parent, false, children));
-        }
-    }
-    return std::nullopt;
 }
 
 bool IsModifier(const AstNode *node)
@@ -570,42 +87,6 @@ bool IsModifier(const AstNode *node)
     }
 }
 
-bool IsOuterExpression(const AstNode *node)
-{
-    if (node == nullptr) {
-        return false;
-    }
-    switch (node->Type()) {
-        case AstNodeType::TS_TYPE_ASSERTION:
-        case AstNodeType::TS_AS_EXPRESSION:
-        case AstNodeType::TS_NON_NULL_EXPRESSION:
-            return true;
-        default:
-            return false;
-    }
-}
-
-AstNode *SkipOuterExpressions(AstNode *node)
-{
-    if (node == nullptr) {
-        return node;
-    }
-    if (node->IsExpression() && IsOuterExpression(node)) {
-        return node;
-    }
-    return node;
-}
-
-std::optional<AstNode *> GetAdjustedLocationForHeritageClause(AstNode *node)
-{
-    if (node == nullptr || node->Type() != AstNodeType::TS_INTERFACE_HERITAGE) {
-        return std::nullopt;
-    }
-    auto *expression = node->FindChild(
-        [](AstNode *child) { return child->IsExpression() || child->IsIdentifier() || child->IsTSTypeReference(); });
-    return expression != nullptr ? std::make_optional(expression) : std::nullopt;
-}
-
 bool CanHaveModifiers(const AstNode &node)
 {
     switch (node.Type()) {
@@ -625,105 +106,501 @@ bool CanHaveModifiers(const AstNode &node)
     }
 }
 
-AstNode *FindFirstIdentifier(AstNode *node, bool skipModifiers, const ArenaVector<AstNode *> &children)
+bool IsOuterExpression(const AstNode *node)
 {
+    return (node != nullptr) && IsOuterExpressionKind(node->Type());
+}
+
+AstNode *SkipOuterExpressions(AstNode *node)
+{
+    while (node != nullptr && node->IsExpression() && IsOuterExpressionKind(node->Type())) {
+        AstNode *inner = node->FindChild(
+            [](AstNode *c) { return c->IsExpression() || c->IsIdentifier() || c->IsTSTypeReference(); });
+        if (inner == nullptr) {
+            break;
+        }
+        node = inner;
+    }
+    return node;
+}
+
+AstNode *FindFirstIdentifier(AstNode *node, bool skipModifiers, const ArenaVector<AstNode *> & /*children*/)
+{
+    if (node == nullptr) {
+        return nullptr;
+    }
     if (node->IsIdentifier() && (!skipModifiers || !IsModifier(node))) {
         return node;
     }
-    for (auto *child : children) {
-        if (child->IsIdentifier() && (!skipModifiers || !IsModifier(child))) {
-            return child;
-        }
-    }
-    return nullptr;
+    return node->FindChild([&](AstNode *n) { return n->IsIdentifier() && (!skipModifiers || !IsModifier(n)); });
 }
 
-AstNode *FindFirstExpression(AstNode *node, const ArenaVector<AstNode *> &children)
+AstNode *FindFirstExpression(AstNode *node, const ArenaVector<AstNode *> & /*children*/)
 {
+    if (node == nullptr) {
+        return nullptr;
+    }
     if (node->IsExpression()) {
         return node;
     }
-    for (auto *child : children) {
-        if (child->IsExpression()) {
-            return child;
-        }
-    }
-    return nullptr;
+    return node->FindChild([](AstNode *n) { return n->IsExpression(); });
 }
 
-AstNode *FindFirstExpressionAfter(AstNode *node, AstNode *after, const ArenaVector<AstNode *> &children)
+AstNode *FindFirstExpressionAfter(AstNode *node, AstNode *after, const ArenaVector<AstNode *> & /*children*/)
 {
-    if (node->IsExpression() && node != after) {
-        return node;
+    if (node == nullptr) {
+        return nullptr;
     }
-    bool foundAfter = false;
-    for (auto *child : children) {
-        if (child == after) {
-            foundAfter = true;
-            continue;
+    bool seen = false;
+    AstNode *found = nullptr;
+    node->IterateRecursivelyPreorder([&](AstNode *n) {
+        if (found != nullptr) {
+            return;
         }
-        if (foundAfter && child->IsExpression()) {
-            return child;
+        if (!seen) {
+            if (n == after) {
+                seen = true;
+            }
+            return;
         }
-    }
-    return nullptr;
+        if (n->IsExpression()) {
+            found = n;
+        }
+    });
+    return found;
 }
 
-AstNode *FindNodeOfType(AstNode *node, AstNodeType type, const ArenaVector<AstNode *> &children)
+AstNode *FindNodeOfType(AstNode *node, AstNodeType type, const ArenaVector<AstNode *> & /*children*/)
 {
+    if (node == nullptr) {
+        return nullptr;
+    }
     if (node->Type() == type) {
         return node;
     }
-    for (auto *child : children) {
-        if (child->Type() == type) {
-            return child;
-        }
-    }
-    return nullptr;
+    return node->FindChild([&](AstNode *n) { return n->Type() == type; });
 }
 
-AstNode *FindTypeReference(AstNode *node, const ArenaVector<AstNode *> &children)
+AstNode *FindTypeReference(AstNode *node, const ArenaVector<AstNode *> & /*children*/)
 {
-    if (node != nullptr && node->IsTSTypeReference()) {
+    if (node == nullptr) {
+        return nullptr;
+    }
+    if (node->IsTSTypeReference()) {
         return node;
     }
-    for (auto *child : children) {
-        if (child->IsTSTypeReference()) {
-            return child;
-        }
-    }
-    return nullptr;
+    return node->FindChild([](AstNode *n) { return n->IsTSTypeReference(); });
 }
 
-AstNode *FindTypeParameter(AstNode *node, const ArenaVector<AstNode *> &children)
+AstNode *FindTypeParameter(AstNode *node, const ArenaVector<AstNode *> & /*children*/)
 {
+    if (node == nullptr) {
+        return nullptr;
+    }
     if (node->IsTSTypeParameterDeclaration()) {
         return node;
     }
-
-    for (auto *child : children) {
-        if (child->IsTSTypeParameterDeclaration()) {
-            return child;
-        }
-        if (child->IsIdentifier() && child->AsIdentifier()->Name() == "T") {
-            return child;
-        }
-    }
-
-    return nullptr;
+    return node->FindChild([](AstNode *n) { return n->IsTSTypeParameterDeclaration(); });
 }
 
-AstNode *FindArrayType(AstNode *node, const ArenaVector<AstNode *> &children)
+AstNode *FindArrayType(AstNode *node, const ArenaVector<AstNode *> & /*children*/)
 {
+    if (node == nullptr) {
+        return nullptr;
+    }
     if (node->IsTSArrayType()) {
         return node;
     }
-    for (auto *child : children) {
-        if (child->IsTSArrayType()) {
-            return child;
-        }
+    return node->FindChild([](AstNode *n) { return n->IsTSArrayType(); });
+}
+
+bool IsDeclarationOrModifier(AstNode *node, AstNode *parent)
+{
+    if (node == nullptr || parent == nullptr) {
+        return false;
+    }
+    return (
+        (IsModifier(node) && CanHaveModifiers(*parent) && ((parent->Modifiers() & node->Modifiers()) != 0U)) ||
+        (node->IsTSClassImplements() && (parent->IsClassDeclaration() || parent->IsClassExpression())) ||
+        (node->IsFunctionDeclaration() && (parent->IsFunctionDeclaration() || parent->IsFunctionExpression())) ||
+        (node->IsTSInterfaceDeclaration() && parent->IsTSInterfaceDeclaration()) ||
+        (node->IsTSEnumDeclaration() && parent->IsTSEnumDeclaration()) ||
+        (node->IsTSTypeAliasDeclaration() && parent->IsTSTypeAliasDeclaration()) ||
+        ((node->IsImportNamespaceSpecifier() || node->IsTSModuleDeclaration()) && parent->IsTSModuleDeclaration()) ||
+        (node->IsTSImportEqualsDeclaration() && parent->IsTSImportEqualsDeclaration()));
+}
+
+std::optional<AstNode *> GetAdjustedLocationForClass(AstNode *node, ArenaAllocator *allocator)
+{
+    if (node == nullptr || allocator == nullptr) {
+        return std::nullopt;
+    }
+    if (!node->IsClassDeclaration() && !node->IsClassExpression()) {
+        return std::nullopt;
+    }
+    ArenaVector<AstNode *> dummy(allocator->Adapter());
+    AstNode *id = FindFirstIdentifier(node, false, dummy);
+    if (id != nullptr) {
+        return id;
+    }
+    return std::nullopt;
+}
+
+static AstNode *FunctionDeclSelfOrParent(AstNode *n)
+{
+    if (n == nullptr) {
+        return nullptr;
+    }
+    if (n->IsFunctionDeclaration()) {
+        return n;
+    }
+    AstNode *p = n->Parent();
+    if (p != nullptr && p->IsFunctionDeclaration()) {
+        return p;
     }
     return nullptr;
 }
 
+std::optional<AstNode *> GetAdjustedLocationForFunction(AstNode *node, ArenaAllocator *allocator)
+{
+    if (node == nullptr || allocator == nullptr) {
+        return std::nullopt;
+    }
+
+    if (node->IsIdentifier()) {
+        return node;
+    }
+
+    AstNode *fn = FunctionDeclSelfOrParent(node);
+    if (fn == nullptr) {
+        return std::nullopt;
+    }
+
+    constexpr bool kSkipModifiers = false;
+    ArenaVector<AstNode *> dummy(allocator->Adapter());
+    AstNode *id = FindFirstIdentifier(fn, kSkipModifiers, dummy);
+    return (id != nullptr) ? std::optional<AstNode *> {id} : std::nullopt;
+}
+
+std::optional<AstNode *> GetAdjustedLocationForDeclaration(AstNode *node, const ArenaVector<AstNode *> &children,
+                                                           ArenaAllocator *allocator)
+{
+    switch (node->Type()) {
+        case AstNodeType::CLASS_DECLARATION:
+        case AstNodeType::CLASS_EXPRESSION:
+        case AstNodeType::STRUCT_DECLARATION:
+            return GetAdjustedLocationForClass(node, allocator);
+        case AstNodeType::FUNCTION_DECLARATION:
+        case AstNodeType::FUNCTION_EXPRESSION:
+            return GetAdjustedLocationForFunction(node, allocator);
+        case AstNodeType::TS_CONSTRUCTOR_TYPE:
+            return node;
+        default:
+            break;
+    }
+    if (node->IsExportNamedDeclaration()) {
+        AstNode *id = FindFirstIdentifier(node, false, children);
+        if (id != nullptr) {
+            return id;
+        }
+    }
+    return std::nullopt;
+}
+
+std::optional<AstNode *> GetAdjustedLocationForImportDeclaration(AstNode *node, const ArenaVector<AstNode *> &children)
+{
+    if (!node->IsImportDeclaration()) {
+        return std::nullopt;
+    }
+    AstNode *spec =
+        node->FindChild([](AstNode *c) { return c->IsImportSpecifier() || c->IsImportNamespaceSpecifier(); });
+    if (spec == nullptr) {
+        return std::nullopt;
+    }
+    AstNode *id = FindFirstIdentifier(spec, false, children);
+    if (id != nullptr) {
+        return id;
+    }
+    return std::make_optional(spec);
+}
+
+std::optional<AstNode *> GetAdjustedLocationForExportDeclaration(AstNode *node, const ArenaVector<AstNode *> &children)
+{
+    if (!node->IsExportAllDeclaration()) {
+        return std::nullopt;
+    }
+    AstNode *spec = FindNodeOfType(node, AstNodeType::EXPORT_SPECIFIER, children);
+    if (spec != nullptr) {
+        AstNode *id = FindFirstIdentifier(spec, false, children);
+        if (id != nullptr) {
+            return id;
+        }
+        return spec;
+    }
+    return std::nullopt;
+}
+
+std::optional<AstNode *> GetAdjustedLocationForHeritageClause(AstNode *node)
+{
+    if (node == nullptr || node->Type() != AstNodeType::TS_INTERFACE_HERITAGE) {
+        return std::nullopt;
+    }
+    AstNode *expr =
+        node->FindChild([](AstNode *c) { return c->IsExpression() || c->IsIdentifier() || c->IsTSTypeReference(); });
+    if (expr != nullptr) {
+        return expr;
+    }
+    return std::nullopt;
+}
+
+static std::optional<AstNode *> TryTSAsExpression(AstNode *node, AstNode *parent,
+                                                  const ArenaVector<AstNode *> &parentChildren)
+{
+    if (node == nullptr || parent == nullptr) {
+        return std::nullopt;
+    }
+    if (!node->IsTSAsExpression()) {
+        return std::nullopt;
+    }
+    if (parent->IsImportSpecifier() || parent->IsExportSpecifier() || parent->IsImportNamespaceSpecifier()) {
+        if (AstNode *id = FindFirstIdentifier(parent, false, parentChildren)) {
+            return id;
+        }
+        return std::nullopt;
+    }
+    if (parent->IsExportAllDeclaration()) {
+        if (AstNode *spec = FindNodeOfType(parent, AstNodeType::EXPORT_SPECIFIER, parentChildren)) {
+            if (AstNode *id = FindFirstIdentifier(spec, false, parentChildren)) {
+                return id;
+            }
+        }
+    }
+    return std::nullopt;
+}
+
+static std::optional<AstNode *> TryTSImportType(AstNode *node, AstNode *parent,
+                                                const ArenaVector<AstNode *> &parentChildren, ArenaAllocator *allocator)
+{
+    if (node == nullptr || parent == nullptr) {
+        return std::nullopt;
+    }
+    if (!node->IsTSImportType()) {
+        return std::nullopt;
+    }
+    if (AstNode *pp = parent->Parent()) {
+        if (auto loc = GetAdjustedLocationForDeclaration(pp, parentChildren, allocator)) {
+            return loc;
+        }
+    }
+    if (parent->IsExportAllDeclaration()) {
+        if (auto loc = GetAdjustedLocationForExportDeclaration(parent, parentChildren)) {
+            return loc;
+        }
+    }
+    return std::nullopt;
+}
+
+static std::optional<AstNode *> TryTSHeritageAndInfer(AstNode *node, AstNode *parent,
+                                                      const ArenaVector<AstNode *> &parentChildren)
+{
+    if (node == nullptr || parent == nullptr) {
+        return std::nullopt;
+    }
+    if (node->IsTSClassImplements() && parent->IsTSClassImplements()) {
+        if (auto loc = GetAdjustedLocationForHeritageClause(parent)) {
+            return loc;
+        }
+    }
+    if (node->IsTSInferType() && parent->IsTSInferType()) {
+        if (AstNode *tp = FindTypeParameter(parent, parentChildren)) {
+            if (AstNode *id = FindFirstIdentifier(tp, false, parentChildren)) {
+                return id;
+            }
+        }
+    }
+    if (parent->IsTSTypeParameterDeclaration()) {
+        if (AstNode *id = FindFirstIdentifier(parent, false, parentChildren)) {
+            return id;
+        }
+    }
+    return std::nullopt;
+}
+
+static std::optional<AstNode *> TryTypeOperatorFamily(AstNode *parent, const ArenaVector<AstNode *> &parentChildren)
+{
+    if (parent == nullptr) {
+        return std::nullopt;
+    }
+    if (!parent->IsTSTypeOperator()) {
+        return std::nullopt;
+    }
+    if (AstNode *ref = FindTypeReference(parent, parentChildren)) {
+        if (AstNode *id = FindFirstIdentifier(ref, false, parentChildren)) {
+            return id;
+        }
+    }
+    if (AstNode *arr = FindArrayType(parent, parentChildren)) {
+        if (AstNode *elem = FindTypeReference(arr, parentChildren)) {
+            if (AstNode *id = FindFirstIdentifier(elem, false, parentChildren)) {
+                return id;
+            }
+        }
+    }
+    return std::nullopt;
+}
+
+static std::optional<AstNode *> TryDeclaration(AstNode *node, AstNode *parent,
+                                               const ArenaVector<AstNode *> &parentChildren, ArenaAllocator *allocator)
+{
+    if (!IsDeclarationOrModifier(node, parent)) {
+        return std::nullopt;
+    }
+    return GetAdjustedLocationForDeclaration(parent, parentChildren, allocator);
+}
+
+static std::optional<AstNode *> TryExpressions(AstNode *node, AstNode *parent,
+                                               const ArenaVector<AstNode *> &parentChildren, ArenaAllocator *allocator)
+{
+    if (auto asExpr = TryTSAsExpression(node, parent, parentChildren)) {
+        return asExpr;
+    }
+    if (auto importType = TryTSImportType(node, parent, parentChildren, allocator)) {
+        return importType;
+    }
+    if (auto heritageOrInfer = TryTSHeritageAndInfer(node, parent, parentChildren)) {
+        return heritageOrInfer;
+    }
+    if (auto typeOperator = TryTypeOperatorFamily(parent, parentChildren)) {
+        return typeOperator;
+    }
+    return std::nullopt;
+}
+
+static std::optional<AstNode *> TryImportsAndExports(AstNode *parent, const ArenaVector<AstNode *> &parentChildren)
+{
+    if (auto importDecl = GetAdjustedLocationForImportDeclaration(parent, parentChildren)) {
+        return importDecl;
+    }
+    if (parent->IsExportAllDeclaration()) {
+        if (auto exportDecl = GetAdjustedLocationForExportDeclaration(parent, parentChildren)) {
+            return exportDecl;
+        }
+    }
+    return std::nullopt;
+}
+
+static std::optional<AstNode *> TryModuleOrVariable(AstNode *parent, const ArenaVector<AstNode *> &parentChildren)
+{
+    if (parent->IsTSExternalModuleReference()) {
+        if (AstNode *expr = FindFirstExpression(parent, parentChildren)) {
+            return expr;
+        }
+    }
+    if (parent->IsImportDeclaration() || parent->IsExportAllDeclaration()) {
+        if (AstNode *lit = FindNodeOfType(parent, AstNodeType::STRING_LITERAL, parentChildren)) {
+            return lit;
+        }
+    }
+    if (parent->IsVariableDeclaration()) {
+        if (AstNode *id = FindFirstIdentifier(parent, false, parentChildren)) {
+            return id;
+        }
+    }
+    return std::nullopt;
+}
+
+static std::optional<AstNode *> TryConvenienceExpressions(AstNode *node, AstNode *parent,
+                                                          const ArenaVector<AstNode *> &parentChildren)
+{
+    if (node == nullptr || parent == nullptr) {
+        return std::nullopt;
+    }
+
+    const AstNodeType nt = node->Type();
+    const AstNodeType pt = parent->Type();
+    if (nt == pt && IsMirroredSimpleKind(nt)) {
+        if (AstNode *expr = FindFirstExpression(parent, parentChildren)) {
+            return SkipOuterExpressions(expr);
+        }
+        return std::nullopt;
+    }
+
+    if (parent->IsBinaryExpression() && node->IsTSTypeOperator()) {
+        AstNode *lhs = FindFirstExpression(parent, parentChildren);
+        if (lhs == nullptr) {
+            return std::nullopt;
+        }
+        AstNode *rhs = FindFirstExpressionAfter(parent, lhs, parentChildren);
+        if (rhs == nullptr) {
+            return std::nullopt;
+        }
+        return SkipOuterExpressions(rhs);
+    }
+
+    const bool isForPair = (nt == AstNodeType::FOR_IN_STATEMENT && pt == AstNodeType::FOR_IN_STATEMENT) ||
+                           (nt == AstNodeType::FOR_OF_STATEMENT && pt == AstNodeType::FOR_OF_STATEMENT);
+    if (isForPair) {
+        if (AstNode *expr = FindFirstExpression(parent, parentChildren)) {
+            return SkipOuterExpressions(expr);
+        }
+        return std::nullopt;
+    }
+
+    return std::nullopt;
+}
+
+std::optional<AstNode *> GetAdjustedLocation(AstNode *node, ArenaAllocator *allocator)
+{
+    if (node == nullptr) {
+        return std::nullopt;
+    }
+
+    node = GetOriginalNode(node);
+
+    AstNode *parent = node->Parent();
+    if (parent == nullptr) {
+        return node;
+    }
+
+    ArenaVector<AstNode *> parentChildren = GetChildren(parent, allocator);
+    if (auto r = TryDeclaration(node, parent, parentChildren, allocator)) {
+        return r;
+    }
+    if (auto r = TryExpressions(node, parent, parentChildren, allocator)) {
+        return r;
+    }
+    if (auto r = TryImportsAndExports(parent, parentChildren)) {
+        return r;
+    }
+    if (auto r = TryModuleOrVariable(parent, parentChildren)) {
+        return r;
+    }
+    if (auto r = TryConvenienceExpressions(node, parent, parentChildren)) {
+        return r;
+    }
+
+    return node;
+}
+
+AstNode *GetTouchingPropertyName(es2panda_Context *context, size_t pos)
+{
+    AstNode *token = GetTouchingToken(context, pos, false);
+    if (token == nullptr) {
+        return nullptr;
+    }
+
+    if (token->IsCallExpression() && token->AsCallExpression()->Callee()->IsIdentifier()) {
+        return token->AsCallExpression()->Callee()->AsIdentifier();
+    }
+
+    if (token->IsProperty() || token->IsIdentifier()) {
+        return token;
+    }
+
+    if (token->IsClassDeclaration() || token->IsFunctionDeclaration() || token->IsTSConstructorType()) {
+        return token;
+    }
+
+    return nullptr;
+}
 }  // namespace ark::es2panda::lsp
