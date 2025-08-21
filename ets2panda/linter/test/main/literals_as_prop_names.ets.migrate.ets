@@ -134,7 +134,7 @@ class A{
  public age:number = 1; 
 }
 
-let a:A = { age: 30}  
+let a:A = { "age": 30}  
 
 
 class B {

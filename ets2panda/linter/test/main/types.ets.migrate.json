@@ -275,6 +275,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 71,
+            "column": 3,
+            "endLine": 71,
+            "endColumn": 6,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'Two' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'Two' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
             "line": 114,
             "column": 3,
             "endLine": 114,

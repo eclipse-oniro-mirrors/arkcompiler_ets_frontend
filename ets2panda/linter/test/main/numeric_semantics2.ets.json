@@ -66,6 +66,16 @@
         },
         {
             "line": 37,
+            "column": 18,
+            "endLine": 37,
+            "endColumn": 24,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
             "column": 32,
             "endLine": 37,
             "endColumn": 33,

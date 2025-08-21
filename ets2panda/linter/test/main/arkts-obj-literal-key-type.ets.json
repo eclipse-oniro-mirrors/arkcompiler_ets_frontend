@@ -14,25 +14,55 @@
       "limitations under the License."
     ],
     "result": [
-    {
-      "line": 33,
-      "column": 33,
-      "endLine": 33,
-      "endColumn": 34,
-      "problem": "ObjectLiteralNoContextType",
-      "suggest": "",
-      "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-      "severity": "ERROR"
-    },
-    {
-      "line": 37,
-      "column": 33,
-      "endLine": 37,
-      "endColumn": 34,
-      "problem": "ObjectLiteralNoContextType",
-      "suggest": "",
-      "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-      "severity": "ERROR"
-    }
-  ]
+        {
+            "line": 31,
+            "column": 13,
+            "endLine": 31,
+            "endColumn": 18,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 33,
+            "endLine": 33,
+            "endColumn": 34,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 13,
+            "endLine": 35,
+            "endColumn": 19,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 31,
+            "endLine": 35,
+            "endColumn": 36,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 33,
+            "endLine": 37,
+            "endColumn": 34,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        }
+    ]
 }

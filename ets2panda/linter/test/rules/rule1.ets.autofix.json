@@ -24,7 +24,11 @@
                 {
                     "start": 610,
                     "end": 635,
-                    "replacementText": "let x = { \"name\": 1, 2: 3 }"
+                    "replacementText": "let x = { \"name\": 1, 2: 3 }",
+                    "line": 16,
+                    "column": 1,
+                    "endLine": 16,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -39,6 +43,16 @@
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 16,
+            "column": 10,
+            "endLine": 16,
+            "endColumn": 16,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
             "severity": "ERROR"
         },
         {
@@ -81,12 +95,20 @@
                 {
                     "start": 719,
                     "end": 719,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    name: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    name: number;\n}\n",
+                    "line": 24,
+                    "column": 9,
+                    "endLine": 24,
+                    "endColumn": 10
                 },
                 {
                     "start": 724,
                     "end": 724,
-                    "replacementText": ": GeneratedObjectLiteralInterface_1"
+                    "replacementText": ": GeneratedObjectLiteralInterface_1",
+                    "line": 24,
+                    "column": 9,
+                    "endLine": 24,
+                    "endColumn": 10
                 }
             ],
             "suggest": "",

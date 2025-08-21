@@ -89,9 +89,9 @@
             "column": 18,
             "endLine": 37,
             "endColumn": 24,
-            "problem": "LiteralAsPropertyName",
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -99,9 +99,9 @@
             "column": 32,
             "endLine": 37,
             "endColumn": 33,
-            "problem": "LiteralAsPropertyName",
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -122,16 +122,6 @@
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 42,
-            "column": 30,
-            "endLine": 42,
-            "endColumn": 31,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
             "severity": "ERROR"
         },
         {

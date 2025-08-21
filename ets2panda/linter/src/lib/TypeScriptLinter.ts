@@ -2016,31 +2016,42 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     this.handleQuotedHyphenPropsDeprecated(node);
     this.handleNoDeprecatedApi(node);
-    const propName = node.name;
-    if (!propName || !(ts.isNumericLiteral(propName) || this.options.arkts2 && ts.isStringLiteral(propName))) {
-      return;
-    }
 
-    /*
-     * We can use literals as property names only when creating Record or any interop instances.
-     * We can also initialize with constant string literals.
-     * Assignment with string enum values is handled in handleComputedPropertyName
-     */
-    let isRecordObjectInitializer = false;
-    let isLibraryType = false;
-    let isDynamic = false;
-    const objectLiteralType = this.tsTypeChecker.getContextualType(node.parent);
-    if (objectLiteralType) {
-      isRecordObjectInitializer = this.tsUtils.checkTypeSet(objectLiteralType, this.tsUtils.isStdRecordType);
-      isLibraryType = this.tsUtils.isLibraryType(objectLiteralType);
-    }
-
-    isDynamic = isLibraryType || this.tsUtils.isDynamicLiteralInitializer(node.parent);
-    if (!isRecordObjectInitializer && !isDynamic) {
-      const autofix = this.autofixer?.fixLiteralAsPropertyNamePropertyAssignment(node);
-      this.incrementCounters(node.name, FaultID.LiteralAsPropertyName, autofix);
-    }
+    if (!this.options.arkts2) {
+        this.handleLiteralAsPropertyNameForPropertyAssignment(node);
+      }
   }
+
+  private handleLiteralAsPropertyNameForPropertyAssignment(node: ts.PropertyAssignment): void {
+  const propName = node.name;
+  if (!propName || !(ts.isNumericLiteral(propName) || ts.isStringLiteral(propName))) {
+    return;
+  }
+
+  /*
+   * We can use literals as property names only when creating Record or any interop instances.
+   * We can also initialize with constant string literals.
+   * Assignment with string enum values is handled in handleComputedPropertyName
+   */
+  let isRecordObjectInitializer = false;
+  let isLibraryType = false;
+  let isDynamic = false;
+  const objectLiteralType = this.tsTypeChecker.getContextualType(node.parent);
+
+  if (objectLiteralType) {
+    isRecordObjectInitializer = this.tsUtils.checkTypeSet(objectLiteralType, this.tsUtils.isStdRecordType);
+    isLibraryType = this.tsUtils.isLibraryType(objectLiteralType);
+
+  }
+
+  isDynamic = isLibraryType || this.tsUtils.isDynamicLiteralInitializer(node.parent);
+
+  if (!isRecordObjectInitializer && !isDynamic) {
+    const autofix = this.autofixer?.fixLiteralAsPropertyNamePropertyAssignment(node);
+    this.incrementCounters(node.name, FaultID.LiteralAsPropertyName, autofix);
+  }
+}
+
 
   private static getAllClassesFromSourceFile(sourceFile: ts.SourceFile): ts.ClassDeclaration[] {
     const allClasses: ts.ClassDeclaration[] = [];
@@ -2808,13 +2819,22 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private isObjectLiteralKeyTypeValid(objectLiteral: ts.ObjectLiteralExpression, contextualType: ts.Type): void {
-    if (!this.tsUtils.isStdRecordType(contextualType)) {
+    const decl = contextualType.symbol?.declarations?.[0];
+    if (
+      !this.tsUtils.isStdRecordType(contextualType) &&
+      !(decl && (ts.isClassDeclaration(decl) || ts.isInterfaceDeclaration(decl)))
+    ) {
       return;
     }
     objectLiteral.properties.forEach((prop: ts.ObjectLiteralElementLike): void => {
       if (ts.isPropertyAssignment(prop)) {
-        if (!this.tsUtils.isValidRecordObjectLiteralKey(prop.name)) {
-          this.incrementCounters(prop, FaultID.ObjectLiteralKeyType);
+        const propName = prop.name;
+        const isValid = this.tsUtils.isStdRecordType(contextualType) ?
+          this.tsUtils.isValidRecordObjectLiteralKey(propName) :
+          ts.isIdentifier(propName);
+
+        if (!isValid) {
+          this.incrementCounters(propName, FaultID.ObjectLiteralKeyType);
         }
       }
     });
