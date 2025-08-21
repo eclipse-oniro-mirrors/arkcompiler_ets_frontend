@@ -1,3 +1,4 @@
+#!/bin/bash
 # Copyright (c) 2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,26 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/version.gni")
+set -e
 
-group("bindings_test") {
-  deps = [ ":check_result" ]
-}
-
-action("check_result") {
-  deps = [ ":run_test" ]
-  script = "check_result.sh"
-  args = [ rebase_path("../finished.txt") ]
-  outputs = [ "$target_out_dir/$target_name.timestamp" ]
-}
-
-action("run_test") {
-  script = "run_bindings.sh"
-  args = [
-    rebase_path("./"),
-    rebase_path(
-        "//prebuilts/build-tools/common/nodejs/node-v16.20.2-linux-x64/bin"),
-    rebase_path("//prebuilts/ohos-sdk/linux/${api_version}/ets"),
-  ]
-  outputs = [ "$target_out_dir/$target_name.timestamp" ]
-}
+if [ -f "$1" ]; then
+    echo "test execution successfully"
+else
+    echo "test execution failed"
+    exit 1
+fi

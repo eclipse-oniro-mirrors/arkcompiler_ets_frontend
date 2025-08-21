@@ -481,4 +481,5 @@ if (require.main === module) {
   process.env.PANDA_BIN_PATH = path.join(pathConfig.buildSdkPath, 'build-tools', 'ets2panda', 'bin');
   run(testDir, pathConfig);
   runWithAstCache(testDir, pathConfig).then(() => {});
+  fs.writeFileSync('./finished.txt', 'success', 'utf8');
 }
