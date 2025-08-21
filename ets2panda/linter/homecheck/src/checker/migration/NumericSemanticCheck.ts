@@ -2351,8 +2351,8 @@ export class NumericSemanticCheck implements BaseChecker {
             return null;
         }
 
-        // 场景1：变量或函数入参，无类型注解的场景，直接在localString后面添加': int'
-        if (!restString.trimStart().startsWith(':')) {
+        // 场景1：变量或函数入参，无类型注解的场景，直接在localString后面添加': int'，同时考虑可选参数即'?:'
+        if (!restString.trimStart().startsWith(':') && !restString.trimStart().startsWith('?')) {
             let ruleFix = new RuleFix();
             ruleFix.range = localRange;
             const localString = FixUtils.getSourceWithRange(sourceFile, ruleFix.range);
@@ -2363,8 +2363,8 @@ export class NumericSemanticCheck implements BaseChecker {
             ruleFix.text = `${localString}: ${numberCategory}`;
             return ruleFix;
         }
-        // 场景2：变量或函数入参，有类型注解的场景，需要将类型注解替换成新的类型
-        const match = restString.match(/^(\s*:[^,)=;]+)([\s\S]*)$/);
+        // 场景2：变量或函数入参，有类型注解的场景，需要将类型注解替换成新的类型，同时考虑可选参数即'?:'
+        const match = restString.match(/^(\s*\??\s*:[^=,);]+)([\s\S]*)$/);
         if (match === null || match.length < 3) {
             return null;
         }
