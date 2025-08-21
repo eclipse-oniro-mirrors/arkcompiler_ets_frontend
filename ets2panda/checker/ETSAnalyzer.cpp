@@ -1839,7 +1839,8 @@ static Type *TransformTypeForMethodReference(ETSChecker *checker, ir::Expression
     };
 
     ir::Expression *expr = use;
-    while (expr->Parent()->IsMemberExpression() && expr->Parent()->AsMemberExpression()->Property() == expr) {
+    while (expr->Parent()->IsMemberExpression() && !expr->Parent()->AsMemberExpression()->IsComputed() &&
+           expr->Parent()->AsMemberExpression()->Property() == expr) {
         expr = expr->Parent()->AsMemberExpression();
     }
     if (expr->Parent()->IsCallExpression() && expr->Parent()->AsCallExpression()->Callee() == expr) {
