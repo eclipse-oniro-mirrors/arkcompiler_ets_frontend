@@ -157,16 +157,16 @@ function main(): void {
 /* @@? 53:27 Error TypeError: Type 'null' cannot be assigned to type 'Char' */
 /* @@? 54:26 Error TypeError: Cannot find type 'HashMap'. */
 /* @@? 54:57 Error TypeError: 'For-of' statement source expression is not of iterable type. */
-/* @@? 71:33 Error TypeError: Type 'Double' has no call signatures. */
-/* @@? 72:24 Error TypeError: Type 'Double' has no call signatures. */
-/* @@? 77:33 Error TypeError: Type 'Double' has no call signatures. */
-/* @@? 78:24 Error TypeError: Type 'Double' has no call signatures. */
+/* @@? 71:33 Error TypeError: Type 'Int' has no call signatures. */
+/* @@? 72:24 Error TypeError: Type 'Int' has no call signatures. */
+/* @@? 77:33 Error TypeError: Type 'Int' has no call signatures. */
+/* @@? 78:24 Error TypeError: Type 'Int' has no call signatures. */
 /* @@? 84:41 Error TypeError: Cannot find type 'HashMap'. */
 /* @@? 86:9 Error TypeError: Static property 'makeCumulative' must be accessed through it's class 'StringFasta' */
 /* @@? 94:34 Error TypeError: Static property 'Random' must be accessed through it's class 'StringFasta' */
 /* @@? 95:34 Error TypeError: Cannot find type 'HashMap'. */
 /* @@? 95:65 Error TypeError: 'For-of' statement source expression is not of iterable type. */
-/* @@? 103:20 Error TypeError: Type 'Double' has no call signatures. */
+/* @@? 103:20 Error TypeError: Type 'Int' has no call signatures. */
 /* @@? 112:16 Error TypeError: Static property 'fastaRepeat' must be accessed through it's class 'StringFasta' */
 /* @@? 112:32 Error TypeError: Property 'count' must be accessed through 'this' */
 /* @@? 113:16 Error TypeError: Static property 'fastaRandom' must be accessed through it's class 'StringFasta' */
