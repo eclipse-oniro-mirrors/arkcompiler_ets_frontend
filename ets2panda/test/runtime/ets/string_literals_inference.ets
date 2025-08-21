@@ -22,7 +22,7 @@ function id<T>(v: Object): T {
     return v as T
 }
 
-function getColor(colors: Array<"default"|"invisible"|number>, id: number) {
+function getColor(colors: Array<"default"|"invisible"|number>, id: int) {
     return colors[id]
 }
 
