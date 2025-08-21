@@ -63,6 +63,9 @@ void ImportDeclaration::Dump(ir::AstDumper *dumper) const
 
 void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    if (dumper->IsDeclgen()) {
+        return;
+    }
     dumper->Add("import ");
     auto const &specifiers = Specifiers();
     if (specifiers.size() == 1 &&

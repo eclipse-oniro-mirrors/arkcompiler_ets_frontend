@@ -146,7 +146,6 @@ public:
     static void AddGenExtenralSourceToParseList(public_lib::Context *ctx);
 
 private:
-    void ParseAndSetStdlib();
     NodeFormatType GetFormatPlaceholderType();
     ir::Statement *ParseStatementFormatPlaceholder() override;
     ir::Expression *ParseExpressionFormatPlaceholder();

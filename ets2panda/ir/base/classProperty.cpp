@@ -98,13 +98,6 @@ void ClassProperty::Dump(ir::AstDumper *dumper) const
 void ClassProperty::DumpModifiers(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(key_);
-    if (dumper->IsDeclgen()) {
-        if (key_->Parent()->IsExported()) {
-            dumper->Add("export declare ");
-        } else if (key_->Parent()->IsDefaultExported()) {
-            dumper->Add("export default declare ");
-        }
-    }
 
     if (compiler::HasGlobalClassParent(this)) {
         if (key_->Parent()->IsConst()) {
@@ -215,6 +208,9 @@ bool ClassProperty::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 
 void ClassProperty::Dump(ir::SrcDumper *dumper) const
 {
+    if (dumper->IsDeclgen() && IsInternal()) {
+        return;
+    }
     if (RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
@@ -239,13 +235,14 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
 
     DumpCheckerTypeForDeclGen(dumper);
 
-    if (value_ != nullptr && !dumper->IsDeclgen()) {
-        dumper->Add(" = ");
-        Value()->Dump(dumper);
+    if (value_ != nullptr) {
+        if (!dumper->IsDeclgen() || Parent()->IsAnnotationDeclaration()) {
+            dumper->Add(" = ");
+            Value()->Dump(dumper);
+        }
     }
 
     dumper->Add(";");
-    dumper->Endl();
 }
 
 void ClassProperty::Compile(compiler::PandaGen *pg) const

@@ -4,7 +4,6 @@ SRC DUMP AFTER UPDATE CLASS:
 
 class A {
   public x: int = 10;
-  
   public bar() {}
   
   public constructor() {}

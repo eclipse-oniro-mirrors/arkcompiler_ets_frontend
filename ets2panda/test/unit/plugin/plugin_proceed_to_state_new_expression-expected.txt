@@ -4,14 +4,12 @@ PROGRAM NODE:
 
 class A {
   public name: string = "a";
-  
   public constructor() {}
   
 }
 
 class B {
   public name: string = "b";
-  
   public constructor() {}
   
 }

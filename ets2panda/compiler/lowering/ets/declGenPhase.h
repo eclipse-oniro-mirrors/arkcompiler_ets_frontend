@@ -30,17 +30,7 @@ public:
     }
 
     bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
-
-    static constexpr std::string_view const MODULE_DECLARATION_NAME {"ModuleDeclaration"};
-    static constexpr std::string_view const MODULE_DECLARATION_ANNOTATION {"std.annotations.ModuleDeclaration"};
-
-private:
-    void DumpDeclaration(parser::Program *program);
-    void CreateModuleDeclarationAnnotation(parser::Program *program);
-
-    checker::ETSChecker *checker_ {nullptr};
-    compiler::PhaseManager *phaseManager_ {nullptr};
-    std::string declaration_;
+    static constexpr std::string_view MODULE_DECLARATION_ANNOTATION {"std.annotations.ModuleDeclaration"};
 };
 
 }  // namespace ark::es2panda::compiler

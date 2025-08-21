@@ -200,61 +200,41 @@ void MethodDefinition::DumpModifierPrefix(ir::SrcDumper *dumper) const
     }
 }
 
-bool MethodDefinition::DumpNamespaceForDeclGen(ir::SrcDumper *dumper) const
+static bool IsNamespaceTransformed(const MethodDefinition *method)
 {
-    if (!dumper->IsDeclgen()) {
-        return false;
+    auto *parent = method->Parent();
+    if (parent->IsMethodDefinition()) {
+        // handle overloads
+        parent = parent->Parent();
     }
-
-    if (Parent() == nullptr) {
-        return false;
-    }
-
-    bool isNamespaceTransformed =
-        Parent()->IsClassDefinition() && Parent()->AsClassDefinition()->IsNamespaceTransformed();
-    if (isNamespaceTransformed) {
-        dumper->Add("function ");
+    if (parent->IsClassDefinition() && parent->AsClassDefinition()->IsNamespaceTransformed()) {
         return true;
     }
-
     return false;
-}
-
-void MethodDefinition::DumpPrefixForDeclGen(ir::SrcDumper *dumper) const
-{
-    if (!dumper->IsDeclgen()) {
-        return;
-    }
-
-    if (key_ == nullptr) {
-        return;
-    }
-
-    if (key_->Parent()->IsExported()) {
-        dumper->Add("export declare function ");
-    } else if (key_->Parent()->IsDefaultExported()) {
-        dumper->Add("export default declare function ");
-    }
 }
 
 void MethodDefinition::DumpPrefix(ir::SrcDumper *dumper) const
 {
-    if (DumpNamespaceForDeclGen(dumper)) {
-        return;
-    }
-
-    if (compiler::HasGlobalClassParent(this) && !dumper->IsDeclgen()) {
+    bool global = compiler::HasGlobalClassParent(this);
+    if (global || IsNamespaceTransformed(this)) {
         if (IsExported()) {
             dumper->Add("export ");
+        }
+        if (IsDefaultExported()) {
+            dumper->Add("export default ");
+        }
+        if (dumper->IsDeclgen()) {
+            if (global) {
+                dumper->Add("declare ");
+            } else {
+                dumper->TryDeclareAmbientContext();
+            }
         }
         dumper->Add("function ");
         return;
     }
 
-    DumpPrefixForDeclGen(dumper);
-
-    if (Parent() != nullptr && Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal() &&
-        !compiler::HasGlobalClassParent(this)) {
+    if (Parent() != nullptr && Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal()) {
         if (IsPrivate()) {
             dumper->Add("private ");
         } else if (IsProtected()) {
@@ -268,12 +248,8 @@ void MethodDefinition::DumpPrefix(ir::SrcDumper *dumper) const
     DumpModifierPrefix(dumper);
 }
 
-bool MethodDefinition::FilterForDeclGen(ir::SrcDumper *dumper) const
+bool MethodDefinition::FilterForDeclGen() const
 {
-    if (!dumper->IsDeclgen()) {
-        return false;
-    }
-
     if (key_ == nullptr) {
         return false;
     }
@@ -301,7 +277,7 @@ bool MethodDefinition::FilterForDeclGen(ir::SrcDumper *dumper) const
         return true;
     }
 
-    if (IsPrivate()) {
+    if (IsPrivate() || IsInternal()) {
         return true;
     }
 
@@ -310,18 +286,13 @@ bool MethodDefinition::FilterForDeclGen(ir::SrcDumper *dumper) const
 
 void MethodDefinition::Dump(ir::SrcDumper *dumper) const
 {
-    if (FilterForDeclGen(dumper)) {
+    if (dumper->IsDeclgen() && FilterForDeclGen()) {
         return;
     }
 
     if (compiler::HasGlobalClassParent(this) && Id() != nullptr && Id()->Name().Is(compiler::Signatures::INIT_METHOD)) {
         Function()->Body()->Dump(dumper);
         return;
-    }
-
-    for (auto method : Overloads()) {
-        method->Dump(dumper);
-        dumper->Endl();
     }
 
     auto value = Value();
@@ -348,6 +319,10 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
 
     if (value != nullptr) {
         value->Dump(dumper);
+    }
+
+    for (auto method : Overloads()) {
+        method->Dump(dumper);
     }
 }
 
