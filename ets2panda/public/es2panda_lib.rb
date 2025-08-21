@@ -1116,7 +1116,8 @@ module Es2pandaLibApi
 
   @info_log = false
   @debug_log = false
-  @warning_log = true
+  # 29204
+  @warning_log = false
   @backtrace_log = false
   @stat_log = false
   @type_stat_log = false
