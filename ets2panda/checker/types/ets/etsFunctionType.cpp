@@ -15,6 +15,7 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/types/globalTypesHolder.h"
+#include "checker/types/typeError.h"
 #include "compiler/lowering/phase.h"
 
 namespace ark::es2panda::checker {
@@ -157,7 +158,7 @@ ETSFunctionType *ETSFunctionType::MethodToArrow(ETSChecker *checker)
         return found->second;
     }
 
-    ES2PANDA_ASSERT(!IsETSArrowType() && CallSignatures().size() == 1);
+    ERROR_SANITY_CHECK(checker, !IsETSArrowType() && CallSignatures().size() == 1, return nullptr);
     return cached.emplace(this, checker->CreateETSArrowType(CallSignatures()[0])).first->second;
 }
 

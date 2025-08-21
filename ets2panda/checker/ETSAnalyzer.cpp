@@ -1875,7 +1875,8 @@ static Type *TransformTypeForMethodReference(ETSChecker *checker, ir::Expression
         checker->LogError(diagnostic::OVERLOADED_METHOD_AS_VALUE, getUseSite());
         return checker->GlobalTypeError();
     }
-    return functionType->MethodToArrow(checker);
+    auto *otherFuncType = functionType->MethodToArrow(checker);
+    return otherFuncType == nullptr ? checker->GlobalTypeError() : otherFuncType;
 }
 
 checker::Type *ETSAnalyzer::Check(ir::Identifier *expr) const
