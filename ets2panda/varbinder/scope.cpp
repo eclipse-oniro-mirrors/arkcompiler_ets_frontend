@@ -233,7 +233,7 @@ Variable *Scope::AddLocalVar(ArenaAllocator *allocator, Decl *newDecl)
         return scope->InsertBinding(newDecl->Name(), allocator->New<GlobalVariable>(newDecl, varFlags)).first->second;
     }
 
-    return scope->PropagateBinding<LocalVariable>(allocator, newDecl->Name(), newDecl, varFlags);
+    return PropagateBinding<LocalVariable>(allocator, newDecl->Name(), newDecl, varFlags);
 }
 
 Variable *Scope::AddLocalInterfaceVariable(ArenaAllocator *allocator, Decl *newDecl)
