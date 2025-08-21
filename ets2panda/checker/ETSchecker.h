@@ -275,6 +275,10 @@ public:
                                           ArenaVector<ETSFunctionType *> *target);
     void CheckCyclicConstructorCall(Signature *signature);
     void CheckAnnotationReference(const ir::MemberExpression *memberExpr, const varbinder::LocalVariable *prop);
+    std::vector<ResolveResult *> HandlePropertyResolution(varbinder::LocalVariable *const prop,
+                                                          ir::MemberExpression *const memberExpr,
+                                                          varbinder::Variable *const globalFunctionVar,
+                                                          PropertySearchFlags searchFlag);
     std::vector<ResolveResult *> ResolveMemberReference(const ir::MemberExpression *memberExpr,
                                                         const ETSObjectType *target);
     varbinder::LocalVariable *ResolveOverloadReference(const ir::Identifier *ident, ETSObjectType *objType,
