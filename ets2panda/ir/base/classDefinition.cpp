@@ -318,15 +318,39 @@ void ClassDefinition::Dump(ir::AstDumper *dumper) const
 void ClassDefinition::DumpGlobalClass(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(IsGlobal());
+    ir::ClassStaticBlock *classStaticBlock = nullptr;
     for (auto elem : Body()) {
         if (elem->IsClassProperty()) {
             elem->Dump(dumper);
             dumper->Endl();
         }
+
+        if (elem->IsClassStaticBlock()) {
+            classStaticBlock = elem->AsClassStaticBlock();
+        }
     }
     for (auto elem : Body()) {
         if (elem->IsMethodDefinition()) {
             elem->Dump(dumper);
+            dumper->Endl();
+        }
+    }
+
+    if (classStaticBlock == nullptr) {
+        return;
+    }
+
+    auto bodyStmts =
+        classStaticBlock->Value()->AsFunctionExpression()->Function()->Body()->AsBlockStatement()->Statements();
+    for (auto statement : bodyStmts) {
+        if (statement->IsExpressionStatement() &&
+            statement->AsExpressionStatement()->GetExpression()->IsAssignmentExpression() &&
+            statement->AsExpressionStatement()->GetExpression()->AsAssignmentExpression()->IsIgnoreConstAssign()) {
+            // skip the dummy assignment expression created for const variable decl in the class static block.
+            continue;
+        }
+        statement->Dump(dumper);
+        if (statement != bodyStmts.back()) {
             dumper->Endl();
         }
     }

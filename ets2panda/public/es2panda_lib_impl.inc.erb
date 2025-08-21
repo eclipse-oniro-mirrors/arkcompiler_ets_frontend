@@ -260,6 +260,11 @@ extern "C" <%= classData.constructor_type().lib_type_to_str()
     newE2pNode->AsMethodDefinition()->SetOverloads(std::move(oriOverloads));
     
 % end
+% if className == "AssignmentExpression"
+    if (e2pOriginal->AsAssignmentExpression()->IsIgnoreConstAssign()) {
+        newE2pNode->SetIgnoreConstAssign();
+    }
+% end
     return reinterpret_cast<<%= classData.constructor_type().lib_type_to_str()
     %>>(newE2pNode);
 }
