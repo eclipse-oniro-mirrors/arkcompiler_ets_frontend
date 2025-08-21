@@ -83,6 +83,16 @@
             "suggest": "",
             "rule": "Overriding with \"readonly\" field is not allowed when base field is not \"readonly\" (arkts-no-class-add-super-prop-with-readonly)",
             "severity": "ERROR"
+        },
+        {
+            "line": 90,
+            "column": 5,
+            "endLine": 90,
+            "endColumn": 28,
+            "problem": "NoClassSuperPropReadonly",
+            "suggest": "",
+            "rule": "Overriding with \"readonly\" field is not allowed when base field is not \"readonly\" (arkts-no-class-add-super-prop-with-readonly)",
+            "severity": "ERROR"
         }
     ]
 }
