@@ -23,5 +23,8 @@ const b = -(flag)
 const c = ~(flag)
 
 /* @@? 21:11 Error TypeError: Wrong operand type for unary expression */
+/* @@? 21:12 Error TypeError: Bad operand type, the type of the operand must be numeric type. */
 /* @@? 22:11 Error TypeError: Wrong operand type for unary expression */
+/* @@? 22:12 Error TypeError: Bad operand type, the type of the operand must be numeric type. */
 /* @@? 23:11 Error TypeError: Wrong operand type for unary expression */
+/* @@? 23:12 Error TypeError: Bad operand type, the type of the operand must be numeric type. */

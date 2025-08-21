@@ -27,4 +27,4 @@ function main(): void {
     updatePerson(person);
 }
 
-/* @@@ label Error TypeError: Cannot assign to a readonly variable name  */
+/* @@@ label Error TypeError: Cannot assign to a readonly field name  */

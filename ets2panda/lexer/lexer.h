@@ -234,8 +234,14 @@ public:
 
         bool outOfRange = false;
         if constexpr (!std::is_same_v<Ret, Tret>) {
-            outOfRange = tmp < static_cast<Tret>(std::numeric_limits<Ret>::denorm_min()) ||
-                         tmp > static_cast<Tret>(std::numeric_limits<Ret>::max());
+            auto min = std::numeric_limits<Ret>::lowest();
+            auto max = std::numeric_limits<Ret>::max();
+            if constexpr (std::is_same_v<Ret, float>) {
+                const double delta = 0.0000001e38;
+                outOfRange = (tmp < (min - delta)) || (tmp > (max + delta));
+            } else {
+                outOfRange = (tmp < min) || (tmp > max);
+            }
         }
 
         if constexpr (std::is_floating_point_v<Tret>) {
@@ -571,6 +577,7 @@ bool Lexer::ScanNumberRadix(bool leadingMinus, bool allowNumericSeparator)
         if (RANGE_CHECK(cp)) {
             auto const digit = HexValue(cp);
             if (!ScanTooLargeNumber<RADIX, RadixType, RadixLimit>(number, digit)) {
+                GetToken().number_ = lexer::Number();
                 return false;
             }
             number = number * RADIX + digit;

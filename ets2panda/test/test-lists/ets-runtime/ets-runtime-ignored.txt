@@ -127,3 +127,6 @@ first_match/namespace3.ets
 
 # Issue #28214
 large_number_parse.ets
+
+# Issue #28914
+non_null_number_as_index.ets

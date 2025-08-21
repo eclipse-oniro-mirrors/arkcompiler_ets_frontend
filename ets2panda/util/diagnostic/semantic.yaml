@@ -248,6 +248,10 @@ semantic:
   id: 205
   message: "Argument must be an instance of '{}' or '{}'"
 
+- name: CHAR_TO_STR_CONVERSION
+  id: 4201
+  message: "Implicit 'char->string' conversion disallowed."
+
 - name: CIRCULAR_DEPENDENCY
   id: 308
   message: "Circular dependency detected for identifier: {}"
@@ -278,7 +282,7 @@ semantic:
 
 - name: CONSTANT_FLOATING_POINT_COVERSION
   id: 344
-  message: "Floating-point value cannot be converted"
+  message: "Invalid destination type for floating-point constant value"
 
 - name: CONSTANT_VALUE_OUT_OF_RANGE
   id: 345
@@ -460,10 +464,14 @@ semantic:
   id: 80
   message: "The extension accessor '{}' has the same name with method in class {}"
 
-- name: FIELD_ASSIGN_TYPE_MISMATCH
-  id: 298
-  message: "Cannot assign to a {} variable {}"
+- name: FIELD_ASSIGN_TO_CONST
+  id: 4001
+  message: "Cannot assign to a constant variable {}"
   code_fix_ids: [FixConvertConstToLet]
+
+- name: FIELD_ASSIGN_TO_READONLY
+  id: 4002
+  message: "Cannot assign to a readonly field {}"
 
 - name: FIELD_REASSIGNMENT
   id: 297
@@ -1014,6 +1022,10 @@ semantic:
   id: 107
   message: "Bad operand type, the types of the operands must be numeric type."
 
+- name: OVERFLOW_ARITHMETIC
+  id: 4101
+  message: "Arithmetic operation causes an overflow."
+
 - name: OVERLOADED_MAIN
   id: 373
   message: "Main overload is not enabled"
@@ -1401,7 +1413,7 @@ semantic:
 - name: UNRESOLVED_REF
   id: 143
   message: "Unresolved reference {}"
-  code_fix_ids: [FixSpelling,AddLocalVariable]
+  code_fix_ids: [FixSpelling, AddLocalVariable]
 
 - name: UNSUPPORTED_CLASS_LITERAL
   id: 20
@@ -1499,6 +1511,7 @@ graveyard:
 - 254
 - 268
 - 271
+- 298
 - 302
 - 325
 - 328
@@ -1510,4 +1523,5 @@ graveyard:
 - 354
 - 383
 - 390
+
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

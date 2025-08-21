@@ -156,7 +156,53 @@
                             }
                           },
                           "init": {
-                            "type": "ThisExpression",
+                            "type": "ConditionalExpression",
+                            "test": {
+                              "type": "BooleanLiteral",
+                              "value": true,
+                              "loc": {
+                                "start": {
+                                  "line": 18,
+                                  "column": 26,
+                                  "program": "this_cmp_object.ets"
+                                },
+                                "end": {
+                                  "line": 18,
+                                  "column": 30,
+                                  "program": "this_cmp_object.ets"
+                                }
+                              }
+                            },
+                            "consequent": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 18,
+                                  "column": 33,
+                                  "program": "this_cmp_object.ets"
+                                },
+                                "end": {
+                                  "line": 18,
+                                  "column": 37,
+                                  "program": "this_cmp_object.ets"
+                                }
+                              }
+                            },
+                            "alternate": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 18,
+                                  "column": 40,
+                                  "program": "this_cmp_object.ets"
+                                },
+                                "end": {
+                                  "line": 18,
+                                  "column": 44,
+                                  "program": "this_cmp_object.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 18,

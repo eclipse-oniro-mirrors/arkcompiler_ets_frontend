@@ -47,12 +47,11 @@ declare const x51 = "abc"
 /* @@? 16:66 Error TypeError: Initializers are not allowed in ambient contexts: byte_2 */
 /* @@? 17:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_12 */
 /* @@? 17:38 Error TypeError: Type 'Int' cannot be assigned to type 'Byte' */
-/* @@? 17:64 Error TypeError: Initializers are not allowed in ambient contexts: byte_22 */
 /* @@? 17:64 Error TypeError: Type 'Int' cannot be assigned to type 'Byte' */
+/* @@? 17:64 Error TypeError: Initializers are not allowed in ambient contexts: byte_22 */
 /* @@? 18:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_13 */
 /* @@? 18:70 Error TypeError: Initializers are not allowed in ambient contexts: byte_23 */
 /* @@? 19:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_14 */
-/* @@? 22:31 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: int_12 */
 /* @@? 24:36 Error TypeError: Initializers are not allowed in ambient contexts: int_16 */
 /* @@? 26:39 Error TypeError: Initializers are not allowed in ambient contexts: int_18 */
 /* @@? 27:25 Error TypeError: Initializers are not allowed in ambient contexts: x1 */

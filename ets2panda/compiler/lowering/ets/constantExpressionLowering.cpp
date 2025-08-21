@@ -16,6 +16,7 @@
 #include "constantExpressionLowering.h"
 #include <cmath>
 #include <cstdint>
+#include <limits>
 
 #include "checker/ETSchecker.h"
 #include "checker/types/typeError.h"
@@ -23,104 +24,29 @@
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "util/helpers.h"
+#include "libpandabase/utils/small_vector.h"
 
 namespace ark::es2panda::compiler {
 
-constexpr static char32_t MAX_CHAR = 0xFFFF;
-
-static ir::BooleanLiteral *CreateBooleanLiteral(bool val, ir::AstNode *parent, const lexer::SourceRange &loc,
-                                                ArenaAllocator *allocator)
+static ir::PrimitiveType GetPrimitiveType(const lexer::Number &number)
 {
-    auto resNode = util::NodeAllocator::Alloc<ir::BooleanLiteral>(allocator, val);
-    resNode->SetParent(parent);
-    resNode->SetRange(loc);
-    resNode->SetFolded();
-    return resNode;
-}
-
-template <typename T>
-static ir::NumberLiteral *CreateNumberLiteral(T val, ir::AstNode *parent, const lexer::SourceRange &loc,
-                                              ArenaAllocator *allocator)
-{
-    auto resNum = lexer::Number(val);
-
-    auto *resNode = util::NodeAllocator::Alloc<ir::NumberLiteral>(allocator, resNum);
-
-    // Some hack to set string representation of lexer::Number
-    resNode->Number().SetStr(util::UString(resNode->ToString(), allocator).View());
-
-    resNode->SetParent(parent);
-    resNode->SetRange(loc);
-    resNode->SetFolded();
-    return resNode;
-}
-
-static ir::Identifier *CreateErrorIdentifier(const ir::AstNode *node, ArenaAllocator *allocator)
-{
-    // Creating Identifier without passing any arguments leads to creating Error Identifier with *ERROR_LITERAL*
-    auto res = util::NodeAllocator::Alloc<ir::Identifier>(allocator, allocator);
-
-    res->SetParent(const_cast<ir::AstNode *>(node)->Parent());
-    res->SetRange(node->Range());
-    return res;
-}
-
-static ir::CharLiteral *CreateCharLiteral(char16_t val, ir::AstNode *parent, const lexer::SourceRange &loc,
-                                          ArenaAllocator *allocator)
-{
-    auto *result = util::NodeAllocator::Alloc<ir::CharLiteral>(allocator, val);
-    result->SetParent(parent);
-    result->SetRange(loc);
-    result->SetFolded();
-    return result;
-}
-
-static ir::PrimitiveType TypeRankToPrimitiveType(TypeRank tr)
-{
-    switch (tr) {
-        case TypeRank::CHAR:
-            return ir::PrimitiveType::CHAR;
-        case TypeRank::INT8:
-            return ir::PrimitiveType::BYTE;
-        case TypeRank::INT16:
-            return ir::PrimitiveType::SHORT;
-        case TypeRank::INT32:
-            return ir::PrimitiveType::INT;
-        case TypeRank::INT64:
-            return ir::PrimitiveType::LONG;
-        case TypeRank::FLOAT:
-            return ir::PrimitiveType::FLOAT;
-        case TypeRank::DOUBLE:
-            return ir::PrimitiveType::DOUBLE;
+    if (number.IsByte()) {
+        return ir::PrimitiveType::BYTE;
     }
-    ES2PANDA_UNREACHABLE();
-}
-
-static TypeRank GetTypeRank(const ir::Literal *literal)
-{
-    if (literal->IsCharLiteral()) {
-        return TypeRank::CHAR;
+    if (number.IsShort()) {
+        return ir::PrimitiveType::SHORT;
     }
-    if (literal->IsNumberLiteral()) {
-        auto number = literal->AsNumberLiteral()->Number();
-        if (number.IsByte()) {
-            return TypeRank::INT8;
-        }
-        if (number.IsShort()) {
-            return TypeRank::INT16;
-        }
-        if (number.IsInt()) {
-            return TypeRank::INT32;
-        }
-        if (number.IsLong()) {
-            return TypeRank::INT64;
-        }
-        if (number.IsFloat()) {
-            return TypeRank::FLOAT;
-        }
-        if (number.IsDouble()) {
-            return TypeRank::DOUBLE;
-        }
+    if (number.IsInt()) {
+        return ir::PrimitiveType::INT;
+    }
+    if (number.IsLong()) {
+        return ir::PrimitiveType::LONG;
+    }
+    if (number.IsFloat()) {
+        return ir::PrimitiveType::FLOAT;
+    }
+    if (number.IsDouble()) {
+        return ir::PrimitiveType::DOUBLE;
     }
     ES2PANDA_UNREACHABLE();
 }
@@ -131,11 +57,6 @@ static TargetType GetVal(const ir::Literal *node)
     if constexpr (std::is_same_v<TargetType, bool>) {
         ES2PANDA_ASSERT(node->IsBooleanLiteral());
         return node->AsBooleanLiteral()->Value();
-    }
-
-    if constexpr (std::is_same_v<TargetType, char16_t>) {
-        ES2PANDA_ASSERT(node->IsCharLiteral());
-        return node->AsCharLiteral()->Char();
     }
 
     ES2PANDA_ASSERT(node->IsNumberLiteral());
@@ -168,393 +89,19 @@ static TargetType GetVal(const ir::Literal *node)
     ES2PANDA_UNREACHABLE();
 }
 
-template <typename To>
-static To CastValTo(const ir::Literal *lit)
+static bool IsBitwiseLogicalExpression(const ir::BinaryExpression *expr)
 {
-    if (lit->IsBooleanLiteral()) {
-        return static_cast<To>(GetVal<bool>(lit));
-    }
-
-    ES2PANDA_ASSERT(lit->IsNumberLiteral() || lit->IsCharLiteral());
-
-    auto rank = GetTypeRank(lit);
-    switch (rank) {
-        case TypeRank::DOUBLE:
-            return static_cast<To>(GetVal<double>(lit));
-        case TypeRank::FLOAT:
-            return static_cast<To>(GetVal<float>(lit));
-        case TypeRank::INT64:
-            return static_cast<To>(GetVal<int64_t>(lit));
-        case TypeRank::INT32:
-            return static_cast<To>(GetVal<int32_t>(lit));
-        case TypeRank::INT16:
-            return static_cast<To>(GetVal<int16_t>(lit));
-        case TypeRank::INT8:
-            return static_cast<To>(GetVal<int8_t>(lit));
-        case TypeRank::CHAR:
-            return static_cast<To>(GetVal<char16_t>(lit));
-    }
-
-    ES2PANDA_UNREACHABLE();
+    auto opType = expr->OperatorType();
+    return opType == lexer::TokenType::PUNCTUATOR_BITWISE_XOR || opType == lexer::TokenType::PUNCTUATOR_BITWISE_AND ||
+           opType == lexer::TokenType::PUNCTUATOR_BITWISE_OR;
 }
 
-static bool IsConvertibleToNumericType(const ir::Literal *lit)
+static bool IsAdditiveExpression(const ir::BinaryExpression *expr)
 {
-    return lit->IsCharLiteral() || lit->IsNumberLiteral();
-}
-
-static void LogError(public_lib::Context *context, const diagnostic::DiagnosticKind &diagnostic,
-                     const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos)
-{
-    context->diagnosticEngine->LogDiagnostic(diagnostic, diagnosticParams, pos);
-}
-
-static bool IsCorrectNumberLiteral(const ir::AstNode *lit)
-{
-    if (!lit->IsNumberLiteral()) {
-        return false;
-    }
-
-    return !lit->AsNumberLiteral()->Number().ConversionError();
-}
-
-static bool IsSupportedLiteral(ir::Expression *const node)
-{
-    if (!node->IsLiteral()) {
-        return false;
-    }
-
-    auto literal = node->AsLiteral();
-    return IsCorrectNumberLiteral(literal) || literal->IsCharLiteral() || literal->IsBooleanLiteral() ||
-           literal->IsStringLiteral();
-}
-
-template <typename To>
-static ir::AstNode *CommonCastNumberLiteralTo(const ir::Literal *num, ArenaAllocator *allocator)
-{
-    auto parent = const_cast<ir::Literal *>(num)->Parent();
-
-    if constexpr (std::is_same_v<To, char16_t>) {
-        return CreateCharLiteral(CastValTo<char16_t>(num), parent, num->Range(), allocator);
-    }
-
-    return CreateNumberLiteral(CastValTo<To>(num), parent, num->Range(), allocator);
-}
-
-template <typename From, typename To>
-static ir::AstNode *FloatingPointNumberLiteralCast(const ir::Literal *num, public_lib::Context *context)
-{
-    if (sizeof(From) > sizeof(To)) {
-        // double -> float
-        auto doubleVal = GetVal<double>(num);
-        if (doubleVal < std::numeric_limits<float>::min() || doubleVal > std::numeric_limits<float>::max()) {
-            LogError(context, diagnostic::CONSTANT_VALUE_OUT_OF_RANGE, {}, num->Start());
-            return const_cast<ir::Literal *>(num);
-        }
-
-        auto floatVal = static_cast<float>(doubleVal);
-        if (static_cast<double>(floatVal) == doubleVal) {
-            auto parent = const_cast<ir::Literal *>(num)->Parent();
-            return CreateNumberLiteral(floatVal, parent, num->Range(), context->allocator);
-        }
-
-        LogError(context, diagnostic::CONSTANT_FLOATING_POINT_COVERSION, {}, num->Start());
-        return const_cast<ir::Literal *>(num);
-    }
-
-    // float -> double
-    return CommonCastNumberLiteralTo<To>(num, context->allocator);
-}
-
-template <typename From, typename To>
-static ir::AstNode *NarrowingNumberLiteralCast(const ir::Literal *num, public_lib::Context *context)
-{
-    auto maxTo = std::numeric_limits<To>::max();
-    auto minTo = std::numeric_limits<To>::min();
-    auto val = GetVal<From>(num);
-    if (val < minTo || val > maxTo) {
-        LogError(context, diagnostic::CONSTANT_VALUE_OUT_OF_RANGE, {}, num->Start());
-        return const_cast<ir::Literal *>(num);
-    }
-
-    return CommonCastNumberLiteralTo<To>(num, context->allocator);
-}
-
-template <typename From, typename To>
-static ir::AstNode *IntegralNumberLiteralCast(const ir::Literal *num, public_lib::Context *context)
-{
-    if (sizeof(From) > sizeof(To)) {
-        return NarrowingNumberLiteralCast<From, To>(num, context);
-    }
-
-    // Widening
-    return CommonCastNumberLiteralTo<To>(num, context->allocator);
-}
-
-template <typename From, typename To>
-static ir::AstNode *CastNumberOrCharLiteralFromTo(const ir::Literal *num, public_lib::Context *context)
-{
-    if constexpr (std::is_same_v<From, To>) {
-        return const_cast<ir::Literal *>(num);
-    }
-
-    if constexpr (std::is_floating_point_v<From> && std::is_floating_point_v<To>) {
-        return FloatingPointNumberLiteralCast<From, To>(num, context);
-    }
-
-    if constexpr (std::is_integral_v<From> && std::is_integral_v<To>) {
-        return IntegralNumberLiteralCast<From, To>(num, context);
-    }
-
-    if constexpr (std::is_integral_v<From> && std::is_floating_point_v<To>) {
-        // integral -> floating point (widening)
-        return CommonCastNumberLiteralTo<To>(num, context->allocator);
-    }
-
-    if constexpr (std::is_floating_point_v<From> && std::is_integral_v<To>) {
-        // Constant narrowing floating point conversion is not permitted
-        LogError(context, diagnostic::CONSTANT_FLOATING_POINT_COVERSION, {}, num->Start());
-        return const_cast<ir::Literal *>(num);
-    }
-
-    ES2PANDA_UNREACHABLE();
-}
-
-template <typename From>
-static ir::AstNode *CastNumberOrCharLiteralFrom(const ir::Literal *lit, ir::PrimitiveType type,
-                                                public_lib::Context *context)
-{
-    switch (type) {
-        case ir::PrimitiveType::BOOLEAN:
-            // Note: we do nothing for `class A {b5 : boolean = 7;}` here, type error will be thrown in checker.
-            return const_cast<ir::Literal *>(lit);
-        case ir::PrimitiveType::CHAR:
-            return CastNumberOrCharLiteralFromTo<From, char16_t>(lit, context);
-        case ir::PrimitiveType::BYTE:
-            return CastNumberOrCharLiteralFromTo<From, int8_t>(lit, context);
-        case ir::PrimitiveType::SHORT:
-            return CastNumberOrCharLiteralFromTo<From, int16_t>(lit, context);
-        case ir::PrimitiveType::INT:
-            return CastNumberOrCharLiteralFromTo<From, int32_t>(lit, context);
-        case ir::PrimitiveType::LONG:
-            return CastNumberOrCharLiteralFromTo<From, int64_t>(lit, context);
-        case ir::PrimitiveType::FLOAT:
-            return CastNumberOrCharLiteralFromTo<From, float>(lit, context);
-        case ir::PrimitiveType::DOUBLE:
-            return CastNumberOrCharLiteralFromTo<From, double>(lit, context);
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-}
-
-static ir::AstNode *CorrectNumberOrCharLiteral(const ir::Literal *lit, ir::PrimitiveType type,
-                                               public_lib::Context *context)
-{
-    if (TypeRankToPrimitiveType(GetTypeRank(lit)) == type) {
-        return const_cast<ir::Literal *>(lit);
-    }
-
-    switch (GetTypeRank(lit)) {
-        case TypeRank::CHAR:
-            return CastNumberOrCharLiteralFrom<char16_t>(lit, type, context);
-        case TypeRank::INT8:
-            return CastNumberOrCharLiteralFrom<int8_t>(lit, type, context);
-        case TypeRank::INT16:
-            return CastNumberOrCharLiteralFrom<int16_t>(lit, type, context);
-        case TypeRank::INT32:
-            return CastNumberOrCharLiteralFrom<int32_t>(lit, type, context);
-        case TypeRank::INT64:
-            return CastNumberOrCharLiteralFrom<int64_t>(lit, type, context);
-        case TypeRank::FLOAT:
-            return CastNumberOrCharLiteralFrom<float>(lit, type, context);
-        case TypeRank::DOUBLE:
-            return CastNumberOrCharLiteralFrom<double>(lit, type, context);
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-}
-
-ir::TypeNode *GetTypeAnnotationFromVarDecl(const ir::Literal *lit)
-{
-    auto *parent = lit->Parent();
-    if (!parent->IsVariableDeclarator()) {
-        return nullptr;
-    }
-    auto vd = parent->AsVariableDeclarator();
-    if (!vd->Id()->IsIdentifier()) {
-        return nullptr;
-    }
-    return vd->Id()->AsIdentifier()->TypeAnnotation();
-}
-
-static ir::PrimitiveType GetRightTypeOfNumberOrCharLiteral(const ir::Literal *lit)
-{
-    auto *parent = lit->Parent();
-    if (parent->IsVariableDeclarator()) {
-        auto vb = parent->AsVariableDeclarator();
-        if (!vb->Id()->IsIdentifier()) {
-            return TypeRankToPrimitiveType(GetTypeRank(lit));
-        }
-
-        if (vb->Id()->AsIdentifier()->TypeAnnotation() == nullptr) {
-            return TypeRankToPrimitiveType(GetTypeRank(lit));
-        }
-
-        if (vb->Id()->AsIdentifier()->TypeAnnotation()->IsETSPrimitiveType()) {
-            return vb->Id()->AsIdentifier()->TypeAnnotation()->AsETSPrimitiveType()->GetPrimitiveType();
-        }
-    } else if (parent->IsClassProperty()) {
-        auto cp = parent->AsClassProperty();
-        if (cp->TypeAnnotation() == nullptr) {
-            return TypeRankToPrimitiveType(GetTypeRank(lit));
-        }
-
-        if (cp->TypeAnnotation()->IsETSPrimitiveType()) {
-            return cp->TypeAnnotation()->AsETSPrimitiveType()->GetPrimitiveType();
-        }
-    }
-
-    return TypeRankToPrimitiveType(GetTypeRank(lit));
-}
-
-static ir::AstNode *TryToCorrectNumberOrCharLiteral(ir::AstNode *node, public_lib::Context *context)
-{
-    if (IsCorrectNumberLiteral(node) || node->IsCharLiteral()) {
-        auto lit = node->AsExpression()->AsLiteral();
-        return CorrectNumberOrCharLiteral(lit, GetRightTypeOfNumberOrCharLiteral(lit), context);
-    }
-
-    return node;
-}
-
-// NOLINTBEGIN(readability-else-after-return)
-static bool TestLiteral(const ir::Literal *lit)
-{
-    // 15.10.1 Extended Conditional Expression
-    if (lit->IsBooleanLiteral()) {
-        return lit->AsBooleanLiteral()->Value();
-    }
-    if (lit->IsStringLiteral()) {
-        return !lit->AsStringLiteral()->Str().Empty();
-    }
-    if (lit->IsCharLiteral()) {
-        return lit->AsCharLiteral()->Char() != 0;
-    }
-    if (lit->IsNumberLiteral()) {
-        return !lit->AsNumberLiteral()->Number().IsZero();
-    }
-    ES2PANDA_UNREACHABLE();
-}
-// NOLINTEND(readability-else-after-return)
-
-ir::AstNode *ConstantExpressionLowering::FoldTernaryConstant(ir::ConditionalExpression *cond)
-{
-    auto const test = cond->Test()->AsLiteral();
-    auto res = TestLiteral(test) ? cond->Consequent() : cond->Alternate();
-    auto resNode = res->Clone(context_->allocator, cond->Parent());
-    auto *scope = NearestScope(resNode->Parent());
-    auto localCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder_, scope);
-    InitScopesPhaseETS::RunExternalNode(resNode, varbinder_);
-    resNode->SetRange(cond->Range());
-    return resNode;
-}
-
-template <typename InputType>
-static bool PerformRelationOperation(InputType left, InputType right, lexer::TokenType opType)
-{
-    switch (opType) {
-        case lexer::TokenType::PUNCTUATOR_GREATER_THAN: {
-            return left > right;
-        }
-        case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL: {
-            return left >= right;
-        }
-        case lexer::TokenType::PUNCTUATOR_LESS_THAN: {
-            return left < right;
-        }
-        case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL: {
-            return left <= right;
-        }
-        case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
-        case lexer::TokenType::PUNCTUATOR_EQUAL: {
-            return left == right;
-        }
-        case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
-        case lexer::TokenType::PUNCTUATOR_NOT_EQUAL: {
-            return left != right;
-        }
-        default: {
-            ES2PANDA_UNREACHABLE();
-        }
-    }
-}
-
-static ir::AstNode *HandleNumericalRelationalExpression(const ir::BinaryExpression *expr, ArenaAllocator *allocator)
-{
-    auto left = expr->Left()->AsLiteral();
-    auto right = expr->Right()->AsLiteral();
     auto opType = expr->OperatorType();
 
-    ES2PANDA_ASSERT(left->IsNumberLiteral() || left->IsCharLiteral());
-    ES2PANDA_ASSERT(right->IsNumberLiteral() || right->IsCharLiteral());
-
-    TypeRank targetRank = std::max(GetTypeRank(left), GetTypeRank(right));
-
-    bool res = false;
-    switch (targetRank) {
-        case TypeRank::DOUBLE: {
-            res = PerformRelationOperation(CastValTo<double>(left), CastValTo<double>(right), opType);
-            break;
-        }
-        case TypeRank::FLOAT: {
-            res = PerformRelationOperation(CastValTo<float>(left), CastValTo<float>(right), opType);
-            break;
-        }
-        case TypeRank::INT64: {
-            res = PerformRelationOperation(CastValTo<int64_t>(left), CastValTo<int64_t>(right), opType);
-            break;
-        }
-        case TypeRank::INT32:
-        case TypeRank::INT16:
-        case TypeRank::INT8:
-        case TypeRank::CHAR: {
-            res = PerformRelationOperation(CastValTo<int32_t>(left), CastValTo<int32_t>(right), opType);
-            break;
-        }
-        default: {
-            ES2PANDA_UNREACHABLE();
-        }
-    }
-
-    return CreateBooleanLiteral(res, const_cast<ir::BinaryExpression *>(expr)->Parent(), expr->Range(), allocator);
+    return opType == lexer::TokenType::PUNCTUATOR_PLUS || opType == lexer::TokenType::PUNCTUATOR_MINUS;
 }
-
-static ir::AstNode *HandleRelationalExpression(const ir::BinaryExpression *expr, public_lib::Context *context)
-{
-    auto left = expr->Left()->AsLiteral();
-    auto right = expr->Right()->AsLiteral();
-    auto opType = expr->OperatorType();
-
-    if (IsConvertibleToNumericType(left) && IsConvertibleToNumericType(right)) {
-        return HandleNumericalRelationalExpression(expr, context->allocator);
-    }
-
-    if (left->IsStringLiteral() && right->IsStringLiteral()) {
-        auto res = PerformRelationOperation(left->AsStringLiteral()->Str(), right->AsStringLiteral()->Str(), opType);
-        return CreateBooleanLiteral(res, const_cast<ir::BinaryExpression *>(expr)->Parent(), expr->Range(),
-                                    context->allocator);
-    }
-
-    if (left->IsBooleanLiteral() && right->IsBooleanLiteral()) {
-        auto res = PerformRelationOperation(GetVal<bool>(left), GetVal<bool>(right), opType);
-        return CreateBooleanLiteral(res, const_cast<ir::BinaryExpression *>(expr)->Parent(), expr->Range(),
-                                    context->allocator);
-    }
-
-    LogError(context, diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
-    return CreateErrorIdentifier(expr, context->allocator);
-}
-
 static bool IsMultiplicativeExpression(const ir::BinaryExpression *expr)
 {
     auto opType = expr->OperatorType();
@@ -573,220 +120,6 @@ static bool IsRelationalExpression(const ir::BinaryExpression *expr)
            opType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL;
 }
 
-static bool IsAdditiveExpression(const ir::BinaryExpression *expr)
-{
-    auto opType = expr->OperatorType();
-
-    return opType == lexer::TokenType::PUNCTUATOR_PLUS || opType == lexer::TokenType::PUNCTUATOR_MINUS;
-}
-
-static double CalculateFloatZeroDevision(double leftNum)
-{
-    if (leftNum == 0.0) {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
-    if (leftNum > 0) {
-        return std::numeric_limits<double>::infinity();
-    }
-    return -std::numeric_limits<double>::infinity();
-}
-
-template <typename TargetType>
-static TargetType PerformMultiplicativeOperation(TargetType leftNum, TargetType rightNum,
-                                                 const ir::BinaryExpression *expr, public_lib::Context *context)
-{
-    auto isForbiddenZeroDivision = [&rightNum]() { return std::is_integral_v<TargetType> && rightNum == 0; };
-    auto isFloatZeroDevision = [&rightNum]() { return std::is_floating_point_v<TargetType> && rightNum == 0; };
-    auto isIntegralDivideResOverflow = [&rightNum, &leftNum]() {
-        // Note: Handle corner cases
-        return std::is_integral_v<TargetType> && leftNum == std::numeric_limits<TargetType>::min() && rightNum == -1;
-    };
-    auto opType = expr->OperatorType();
-    switch (opType) {
-        case lexer::TokenType::PUNCTUATOR_MULTIPLY: {
-            return leftNum * rightNum;
-        }
-        case lexer::TokenType::PUNCTUATOR_DIVIDE: {
-            if (isForbiddenZeroDivision()) {
-                LogError(context, diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
-                // Max integral value
-                return std::numeric_limits<TargetType>::max();
-            }
-            if (isFloatZeroDevision()) {
-                return CalculateFloatZeroDevision(leftNum);
-            }
-
-            ES2PANDA_ASSERT(rightNum != 0);
-            if (isIntegralDivideResOverflow()) {
-                return std::numeric_limits<TargetType>::min();
-            }
-            return leftNum / rightNum;
-        }
-        case lexer::TokenType::PUNCTUATOR_MOD: {
-            if (isForbiddenZeroDivision()) {
-                LogError(context, diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
-                // Max integral value
-                return std::numeric_limits<TargetType>::max();
-            }
-            if constexpr (std::is_integral_v<TargetType>) {
-                if (isIntegralDivideResOverflow()) {
-                    return 0;
-                }
-                return leftNum % rightNum;
-            } else {
-                return std::fmod(leftNum, rightNum);
-            }
-        }
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-}
-
-static ir::AstNode *HandleMultiplicativeExpression(const ir::BinaryExpression *expr, public_lib::Context *context)
-{
-    auto left = expr->Left()->AsLiteral();
-    auto right = expr->Right()->AsLiteral();
-    if (!IsConvertibleToNumericType(left) || !IsConvertibleToNumericType(right)) {
-        LogError(context, diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
-        return CreateErrorIdentifier(expr, context->allocator);
-    }
-
-    auto allocator = context->allocator;
-    auto parent = const_cast<ir::BinaryExpression *>(expr)->Parent();
-    auto loc = expr->Range();
-
-    TypeRank targetRank = std::max(GetTypeRank(left), GetTypeRank(right));
-    switch (targetRank) {
-        case TypeRank::DOUBLE: {
-            double res =
-                PerformMultiplicativeOperation(CastValTo<double>(left), CastValTo<double>(right), expr, context);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        case TypeRank::FLOAT: {
-            float res = PerformMultiplicativeOperation(CastValTo<float>(left), CastValTo<float>(right), expr, context);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        case TypeRank::INT64: {
-            int64_t res =
-                PerformMultiplicativeOperation(CastValTo<int64_t>(left), CastValTo<int64_t>(right), expr, context);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        case TypeRank::INT32:
-        case TypeRank::INT16:
-        case TypeRank::INT8:
-        case TypeRank::CHAR: {
-            int32_t res =
-                PerformMultiplicativeOperation(CastValTo<int32_t>(left), CastValTo<int32_t>(right), expr, context);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-}
-
-template <typename TargetType>
-static TargetType PerformAdditiveOperation(TargetType left, TargetType right, lexer::TokenType opType)
-{
-    if constexpr (std::is_floating_point_v<TargetType>) {
-        switch (opType) {
-            case lexer::TokenType::PUNCTUATOR_PLUS:
-                return left + right;
-            case lexer::TokenType::PUNCTUATOR_MINUS:
-                return left - right;
-            default:
-                ES2PANDA_UNREACHABLE();
-        }
-    } else {
-        //  Integral types
-        // try bit cast to unsigned counterpart to avoid signed integer overflow
-        auto uLeft = bit_cast<std::make_unsigned_t<TargetType>, TargetType>(left);
-        auto uRight = bit_cast<std::make_unsigned_t<TargetType>, TargetType>(right);
-
-        switch (opType) {
-            case lexer::TokenType::PUNCTUATOR_PLUS: {
-                return bit_cast<TargetType, std::make_unsigned_t<TargetType>>(uLeft + uRight);
-            }
-            case lexer::TokenType::PUNCTUATOR_MINUS: {
-                return bit_cast<TargetType, std::make_unsigned_t<TargetType>>(uLeft - uRight);
-            }
-            default:
-                ES2PANDA_UNREACHABLE();
-        }
-    }
-}
-
-static ir::AstNode *PerformStringAdditiveOperation(const ir::BinaryExpression *expr, public_lib::Context *context)
-{
-    auto const lhs = expr->Left()->AsLiteral();
-    auto const rhs = expr->Right()->AsLiteral();
-    auto resStr = util::UString(context->allocator);
-
-    auto appendLiteral = [&resStr, allocator = context->allocator](const ir::Literal *lit) {
-        if (lit->IsCharLiteral()) {
-            resStr.Append(static_cast<char32_t>(lit->AsCharLiteral()->Char()) & MAX_CHAR);
-            return;
-        }
-        if (lit->IsStringLiteral()) {
-            // No need to create new temporary string (util::UString) for string literal
-            resStr.Append(lit->AsStringLiteral()->Str());
-            return;
-        }
-        resStr.Append(util::UString(lit->ToString(), allocator).View());
-    };
-
-    appendLiteral(lhs);
-    appendLiteral(rhs);
-
-    auto resNode = util::NodeAllocator::Alloc<ir::StringLiteral>(context->allocator, resStr.View());
-    resNode->SetParent(const_cast<ir::BinaryExpression *>(expr)->Parent());
-    resNode->SetRange(expr->Range());
-    return resNode;
-}
-
-static ir::AstNode *HandleAdditiveExpression(const ir::BinaryExpression *expr, public_lib::Context *context)
-{
-    auto left = expr->Left()->AsLiteral();
-    auto right = expr->Right()->AsLiteral();
-    auto opType = expr->OperatorType();
-    if ((opType == lexer::TokenType::PUNCTUATOR_PLUS) && (left->IsStringLiteral() || right->IsStringLiteral())) {
-        return PerformStringAdditiveOperation(expr, context);
-    }
-
-    if (!IsConvertibleToNumericType(left) || !IsConvertibleToNumericType(right)) {
-        LogError(context, diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
-        return CreateErrorIdentifier(expr, context->allocator);
-    }
-
-    auto allocator = context->allocator;
-    auto parent = const_cast<ir::BinaryExpression *>(expr)->Parent();
-    auto loc = expr->Range();
-
-    TypeRank targetRank = std::max(GetTypeRank(left), GetTypeRank(right));
-    switch (targetRank) {
-        case TypeRank::DOUBLE: {
-            auto res = PerformAdditiveOperation<double>(CastValTo<double>(left), CastValTo<double>(right), opType);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        case TypeRank::FLOAT: {
-            auto res = PerformAdditiveOperation<float>(CastValTo<float>(left), CastValTo<float>(right), opType);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        case TypeRank::INT64: {
-            int64_t res = PerformAdditiveOperation(CastValTo<int64_t>(left), CastValTo<int64_t>(right), opType);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        case TypeRank::INT32:
-        case TypeRank::INT16:
-        case TypeRank::INT8:
-        case TypeRank::CHAR: {
-            int32_t res = PerformAdditiveOperation(CastValTo<int32_t>(left), CastValTo<int32_t>(right), opType);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-}
-
 static bool IsShiftExpression(const ir::BinaryExpression *expr)
 {
     auto opType = expr->OperatorType();
@@ -794,370 +127,996 @@ static bool IsShiftExpression(const ir::BinaryExpression *expr)
            opType == lexer::TokenType::PUNCTUATOR_UNSIGNED_RIGHT_SHIFT;
 }
 
-template <typename SignedType>
-static SignedType PerformShiftOperation(SignedType left, SignedType right, lexer::TokenType opType)
-{
-    using UnsignedType = std::make_unsigned_t<SignedType>;
-
-    SignedType result = 0;
-    auto uLeft = bit_cast<UnsignedType, SignedType>(left);
-    auto uRight = bit_cast<UnsignedType, SignedType>(right);
-
-    auto mask = std::numeric_limits<UnsignedType>::digits - 1U;
-    UnsignedType shift = uRight & mask;
-
-    switch (opType) {
-        case lexer::TokenType::PUNCTUATOR_LEFT_SHIFT: {
-            static_assert(sizeof(UnsignedType) == 4 || sizeof(UnsignedType) == 8);
-            return bit_cast<SignedType, UnsignedType>(uLeft << shift);
-        }
-        case lexer::TokenType::PUNCTUATOR_RIGHT_SHIFT: {
-            static_assert(sizeof(SignedType) == 4 || sizeof(SignedType) == 8);
-            return bit_cast<SignedType, UnsignedType>(left >> shift);  // NOLINT(hicpp-signed-bitwise)
-        }
-        case lexer::TokenType::PUNCTUATOR_UNSIGNED_RIGHT_SHIFT: {
-            static_assert(sizeof(UnsignedType) == 4 || sizeof(UnsignedType) == 8);
-            return bit_cast<SignedType, UnsignedType>(uLeft >> shift);
-        }
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-    return result;
-}
-
-static ir::AstNode *HandleShiftExpression(const ir::BinaryExpression *expr, public_lib::Context *context)
-{
-    auto left = expr->Left()->AsLiteral();
-    auto right = expr->Right()->AsLiteral();
-    auto opType = expr->OperatorType();
-
-    if (!IsConvertibleToNumericType(left) || !IsConvertibleToNumericType(right)) {
-        LogError(context, diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
-        return CreateErrorIdentifier(expr, context->allocator);
-    }
-
-    auto allocator = context->allocator;
-    auto parent = const_cast<ir::BinaryExpression *>(expr)->Parent();
-    auto loc = expr->Range();
-
-    TypeRank targetRank = std::max(GetTypeRank(left), GetTypeRank(right));
-    switch (targetRank) {
-        case TypeRank::DOUBLE:
-        case TypeRank::INT64: {
-            int64_t res = PerformShiftOperation(CastValTo<int64_t>(left), CastValTo<int64_t>(right), opType);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        case TypeRank::FLOAT:
-        case TypeRank::INT32:
-        case TypeRank::INT16:
-        case TypeRank::INT8:
-        case TypeRank::CHAR: {
-            int32_t res = PerformShiftOperation(CastValTo<int32_t>(left), CastValTo<int32_t>(right), opType);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-}
-
-static bool IsBitwiseLogicalExpression(const ir::BinaryExpression *expr)
-{
-    auto opType = expr->OperatorType();
-    return opType == lexer::TokenType::PUNCTUATOR_BITWISE_XOR || opType == lexer::TokenType::PUNCTUATOR_BITWISE_AND ||
-           opType == lexer::TokenType::PUNCTUATOR_BITWISE_OR;
-}
-
-template <typename SignedType>
-static SignedType PerformBitwiseLogicalOperation(SignedType left, SignedType right, lexer::TokenType opType)
-{
-    using UnsignedType = std::make_unsigned_t<SignedType>;
-
-    auto uLeft = bit_cast<UnsignedType, SignedType>(left);
-    auto uRight = bit_cast<UnsignedType, SignedType>(right);
-
-    switch (opType) {
-        case lexer::TokenType::PUNCTUATOR_BITWISE_AND: {
-            return uLeft & uRight;
-        }
-        case lexer::TokenType::PUNCTUATOR_BITWISE_OR: {
-            return uLeft | uRight;
-        }
-        case lexer::TokenType::PUNCTUATOR_BITWISE_XOR: {
-            return uLeft ^ uRight;
-        }
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-}
-
-static ir::AstNode *HandleNumericBitwiseLogicalExpression(const ir::BinaryExpression *expr,
-                                                          public_lib::Context *context)
-{
-    auto left = expr->Left()->AsLiteral();
-    auto right = expr->Right()->AsLiteral();
-    auto opType = expr->OperatorType();
-
-    auto allocator = context->allocator;
-    auto parent = const_cast<ir::BinaryExpression *>(expr)->Parent();
-    auto loc = expr->Range();
-
-    TypeRank targetRank = std::max(GetTypeRank(left), GetTypeRank(right));
-    switch (targetRank) {
-        case TypeRank::DOUBLE:
-        case TypeRank::INT64: {
-            int64_t res = PerformBitwiseLogicalOperation(CastValTo<int64_t>(left), CastValTo<int64_t>(right), opType);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        case TypeRank::FLOAT:
-        case TypeRank::INT32:
-        case TypeRank::INT16:
-        case TypeRank::INT8:
-        case TypeRank::CHAR: {
-            int32_t res = PerformBitwiseLogicalOperation(CastValTo<int32_t>(left), CastValTo<int32_t>(right), opType);
-            return CreateNumberLiteral(res, parent, loc, allocator);
-        }
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-}
-
-static ir::AstNode *HandleBitwiseLogicalExpression(const ir::BinaryExpression *expr, public_lib::Context *context)
-{
-    auto left = expr->Left()->AsLiteral();
-    auto right = expr->Right()->AsLiteral();
-    auto opType = expr->OperatorType();
-
-    if (IsConvertibleToNumericType(left) && IsConvertibleToNumericType(right)) {
-        return HandleNumericBitwiseLogicalExpression(expr, context);
-    }
-
-    if (!left->IsBooleanLiteral() || !right->IsBooleanLiteral()) {
-        LogError(context, diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
-        return CreateErrorIdentifier(expr, context->allocator);
-    }
-
-    auto allocator = context->allocator;
-    auto parent = const_cast<ir::BinaryExpression *>(expr)->Parent();
-    auto loc = expr->Range();
-    bool res = false;
-
-    auto leftVal = left->AsBooleanLiteral()->Value();
-    auto rightVal = right->AsBooleanLiteral()->Value();
-    switch (opType) {
-        case lexer::TokenType::PUNCTUATOR_BITWISE_AND: {
-            res = ((static_cast<uint32_t>(leftVal) & static_cast<uint32_t>(rightVal)) != 0);
-            break;
-        }
-        case lexer::TokenType::PUNCTUATOR_BITWISE_OR: {
-            res = ((static_cast<uint32_t>(leftVal) | static_cast<uint32_t>(rightVal)) != 0);
-            break;
-        }
-        case lexer::TokenType::PUNCTUATOR_BITWISE_XOR: {
-            res = leftVal ^ rightVal;
-            break;
-        }
-        default:
-            ES2PANDA_UNREACHABLE();
-    }
-    return CreateBooleanLiteral(res, parent, loc, allocator);
-}
-
-static bool IsConditionalExpression(const ir::BinaryExpression *expr)
+static bool IsLogicalExpression(const ir::BinaryExpression *expr)
 {
     auto opType = expr->OperatorType();
     return opType == lexer::TokenType::PUNCTUATOR_LOGICAL_AND || opType == lexer::TokenType::PUNCTUATOR_LOGICAL_OR;
 }
 
-static ir::AstNode *HandleConditionalExpression(const ir::BinaryExpression *expr, public_lib::Context *context)
+static bool TestLiteral(const ir::Literal *lit)
 {
-    auto left = const_cast<ir::BinaryExpression *>(expr)->Left()->AsLiteral();
-    auto right = const_cast<ir::BinaryExpression *>(expr)->Right()->AsLiteral();
-
-    auto allocator = context->allocator;
-    auto parent = const_cast<ir::BinaryExpression *>(expr)->Parent();
-    auto loc = expr->Range();
-
-    bool lhs = TestLiteral(left);
-    bool rhs = TestLiteral(right);
-
-    auto opType = expr->OperatorType();
-    switch (opType) {
-        case lexer::TokenType::PUNCTUATOR_LOGICAL_AND: {
-            return CreateBooleanLiteral(lhs && rhs, parent, loc, allocator);
-        }
-        case lexer::TokenType::PUNCTUATOR_LOGICAL_OR: {
-            return CreateBooleanLiteral(lhs || rhs, parent, loc, allocator);
-        }
-        default: {
-            ES2PANDA_UNREACHABLE();
-        }
+    // 15.10.1 Extended Conditional Expression
+    if (lit->IsBooleanLiteral()) {
+        return lit->AsBooleanLiteral()->Value();
+    }
+    if (lit->IsStringLiteral()) {
+        return !lit->AsStringLiteral()->Str().Empty();
+    }
+    if (lit->IsCharLiteral()) {
+        return lit->AsCharLiteral()->Char() != 0;
+    }
+    if (lit->IsNumberLiteral()) {
+        return !lit->AsNumberLiteral()->Number().IsZero();
     }
     ES2PANDA_UNREACHABLE();
 }
 
-static ir::AstNode *FoldBinaryExpression(const ir::BinaryExpression *expr, public_lib::Context *context)
-{
-    if (IsMultiplicativeExpression(expr)) {
-        return HandleMultiplicativeExpression(expr, context);
+class NodeCalculator {
+public:
+    using DAGNode = ConstantExpressionLoweringImpl::DAGNode;
+    using TypeRank = lexer::Number::TypeRank;
+    NodeCalculator(public_lib::Context *ctx, size_t sz) : context_ {ctx}
+    {
+        inputs_.resize(sz);
     }
-    if (IsAdditiveExpression(expr)) {
-        return HandleAdditiveExpression(expr, context);
-    }
-    if (IsShiftExpression(expr)) {
-        return HandleShiftExpression(expr, context);
-    }
-    if (IsRelationalExpression(expr)) {
-        return HandleRelationalExpression(expr, context);
-    }
-    if (IsBitwiseLogicalExpression(expr)) {
-        return HandleBitwiseLogicalExpression(expr, context);
-    }
-    if (IsConditionalExpression(expr)) {
-        return HandleConditionalExpression(expr, context);
-    }
-    ES2PANDA_UNREACHABLE();
-}
-
-template <typename InputType>
-static lexer::Number HandleBitwiseNegate(InputType value, TypeRank rank)
-{
-    switch (rank) {
-        case TypeRank::DOUBLE:
-        case TypeRank::INT64: {
-            return lexer::Number(static_cast<int64_t>(~static_cast<uint64_t>(value)));
-        }
-        case TypeRank::FLOAT:
-        case TypeRank::INT32:
-        case TypeRank::INT16:
-        case TypeRank::INT8:
-        case TypeRank::CHAR: {
-            return lexer::Number(static_cast<int32_t>(~static_cast<uint32_t>(value)));
-        }
-        default: {
-            ES2PANDA_UNREACHABLE();
-        }
-    }
-}
-
-template <typename InputType>
-static ir::AstNode *FoldUnaryNumericConstantHelper(const ir::UnaryExpression *unary, const ir::Literal *node,
-                                                   TypeRank rank, ArenaAllocator *allocator)
-{
-    auto value = CastValTo<InputType>(node);
-
-    lexer::Number resNum {};
-    switch (unary->OperatorType()) {
-        case lexer::TokenType::PUNCTUATOR_PLUS: {
-            resNum = lexer::Number(value);
-            break;
-        }
-        case lexer::TokenType::PUNCTUATOR_MINUS: {
-            resNum = lexer::Number(-value);
-            break;
-        }
-        case lexer::TokenType::PUNCTUATOR_TILDE: {
-            resNum = std::move(HandleBitwiseNegate(value, rank));
-            break;
-        }
-        default: {
-            ES2PANDA_UNREACHABLE();
-        }
+    void SetInput(ir::Literal *node, size_t i)
+    {
+        ES2PANDA_ASSERT(i < inputs_.size());
+        inputs_[i] = node;
     }
 
-    ir::TypedAstNode *resNode = util::NodeAllocator::Alloc<ir::NumberLiteral>(allocator, resNum);
-    resNode->SetParent(const_cast<ir::UnaryExpression *>(unary)->Parent());
-    resNode->SetRange(unary->Range());
-    return resNode;
-}
+    ir::Literal *Calculate(DAGNode *node);
 
-static ir::AstNode *FoldUnaryNumericConstant(const ir::UnaryExpression *unary, ArenaAllocator *allocator)
-{
-    auto literal = unary->Argument()->AsLiteral();
-    TypeRank rank = GetTypeRank(literal);
-
-    switch (rank) {
-        case TypeRank::DOUBLE: {
-            return FoldUnaryNumericConstantHelper<double>(unary, literal, rank, allocator);
-        }
-        case TypeRank::FLOAT: {
-            return FoldUnaryNumericConstantHelper<float>(unary, literal, rank, allocator);
-        }
-        case TypeRank::INT64: {
-            return FoldUnaryNumericConstantHelper<int64_t>(unary, literal, rank, allocator);
-        }
-        case TypeRank::INT32:
-        case TypeRank::INT16:
-        case TypeRank::INT8:
-        case TypeRank::CHAR: {
-            return FoldUnaryNumericConstantHelper<int32_t>(unary, literal, rank, allocator);
-        }
-        default: {
-            ES2PANDA_UNREACHABLE();
-        }
-    }
-}
-
-static ir::AstNode *FoldLogicalUnaryExpression(const ir::UnaryExpression *unary, ArenaAllocator *allocator)
-{
-    auto resNode =
-        util::NodeAllocator::Alloc<ir::BooleanLiteral>(allocator, !TestLiteral(unary->Argument()->AsLiteral()));
-    ES2PANDA_ASSERT(resNode != nullptr);
-    resNode->SetParent(const_cast<ir::UnaryExpression *>(unary)->Parent());
-    resNode->SetRange(unary->Range());
-    return resNode;
-}
-
-static ir::AstNode *FoldUnaryExpression(const ir::UnaryExpression *unary, public_lib::Context *context)
-{
-    if (unary->OperatorType() == lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK) {
-        return FoldLogicalUnaryExpression(unary, context->allocator);
+private:
+    ir::Literal *SubstituteConstant()
+    {
+        ES2PANDA_ASSERT(inputs_.size() == 1);
+        return inputs_[0]->Clone(context_->allocator, nullptr)->AsExpression()->AsLiteral();
     }
 
-    auto lit = unary->Argument()->AsLiteral();
-    if (lit->IsNumberLiteral() || lit->IsCharLiteral()) {
-        return FoldUnaryNumericConstant(unary, context->allocator);
+    ir::Literal *SubstituteConstantConditionally()
+    {
+        ES2PANDA_ASSERT(inputs_.size() == 3U);
+        const auto *test = inputs_[0];
+        auto *conseq = inputs_[1];
+        auto *altern = inputs_[2U];
+        auto res = TestLiteral(test) ? conseq : altern;
+        auto resNode = res->Clone(context_->allocator, nullptr)->AsExpression()->AsLiteral();
+        return resNode;
     }
 
-    LogError(context, diagnostic::WRONG_OPERAND_TYPE_FOR_UNARY_EXPRESSION, {}, unary->Start());
-    return CreateErrorIdentifier(unary, context->allocator);
-}
+    // NOTE(dkofanov) Template literals will be simplified only if each subexpression is constant.
+    // It may worth to handle partial-simplification, e.g. after the algorithm stops.
+    ir::Literal *Calculate(ir::TemplateLiteral *expr)
+    {
+        std::string tmpStr {};
+        auto quasis = expr->Quasis();
+        auto const num = std::max(inputs_.size(), quasis.size());
+        for (std::size_t i = 0U; i < num; i++) {
+            if (i < quasis.size()) {
+                tmpStr += quasis[i]->Cooked().Utf8();
+            }
+            if (i < inputs_.size()) {
+                if (inputs_[i]->IsCharLiteral()) {
+                    LogError(diagnostic::CHAR_TO_STR_CONVERSION, {}, expr->Start());
+                }
+                if (inputs_[i]->IsNumberLiteral() || inputs_[i]->IsBooleanLiteral()) {
+                    tmpStr += inputs_[i]->ToString();
+                } else if (inputs_[i]->IsStringLiteral()) {
+                    tmpStr += inputs_[i]->AsStringLiteral()->Str().Utf8();
+                } else {
+                    ES2PANDA_UNREACHABLE();
+                }
+            }
+        }
 
-static ir::AstNode *FoldTemplateLiteral(ir::TemplateLiteral *expr, ArenaAllocator *allocator)
-{
-    auto litToString = [allocator](const ir::Literal *lit) {
+        util::UString result(tmpStr, context_->allocator);
+        return util::NodeAllocator::Alloc<ir::StringLiteral>(context_->allocator, result.View());
+    }
+
+    template <typename To>
+    To ExtractFromLiteral(const ir::NumberLiteral *lit)
+    {
+        if (lit->Number().CanGetValue<To>()) {
+            return lit->Number().GetValue<To>();
+        }
+
+        using Limits = std::numeric_limits<To>;
+        // Since bitwise operations are allowed on FP, handle truncation here:
+        if ((lit->Number().Is<double>() || lit->Number().Is<float>()) && std::is_integral_v<To>) {
+            auto fp = lit->Number().GetValue<double>();
+            if (((static_cast<double>(Limits::min()) <= fp)) && (fp <= static_cast<double>(Limits::max()))) {
+                return static_cast<To>(fp);
+            }
+        }
+
+        LogError(diagnostic::OVERFLOW_ARITHMETIC, {}, lit->Start());
+        return {};
+    }
+
+    ir::NumberLiteral *FoldUnaryNumericConstant(const ir::UnaryExpression *unary, ir::NumberLiteral *literal)
+    {
+        auto rank = literal->Number().GetTypeRank();
+        switch (rank) {
+            case TypeRank::DOUBLE: {
+                return FoldUnaryNumericConstantHelper<double>(unary, literal, rank);
+            }
+            case TypeRank::FLOAT: {
+                return FoldUnaryNumericConstantHelper<float>(unary, literal, rank);
+            }
+            case TypeRank::INT64: {
+                return FoldUnaryNumericConstantHelper<int64_t>(unary, literal, rank);
+            }
+            case TypeRank::INT32: {
+                return FoldUnaryNumericConstantHelper<int32_t>(unary, literal, rank);
+            }
+            case TypeRank::INT16: {
+                return FoldUnaryNumericConstantHelper<int16_t>(unary, literal, rank);
+            }
+            case TypeRank::INT8: {
+                return FoldUnaryNumericConstantHelper<int8_t>(unary, literal, rank);
+            }
+            default: {
+                ES2PANDA_UNREACHABLE();
+            }
+        }
+    }
+
+    template <typename InputType>
+    ir::NumberLiteral *FoldUnaryNumericConstantHelper(const ir::UnaryExpression *unary, const ir::NumberLiteral *node,
+                                                      TypeRank rank)
+    {
+        lexer::Number resNum {};
+        switch (unary->OperatorType()) {
+            case lexer::TokenType::PUNCTUATOR_PLUS: {
+                resNum = lexer::Number(ExtractFromLiteral<InputType>(node));
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_MINUS: {
+                resNum = lexer::Number(-ExtractFromLiteral<InputType>(node));
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_TILDE: {
+                resNum = HandleBitwiseNegate(node, rank);
+                break;
+            }
+            default: {
+                ES2PANDA_UNREACHABLE();
+            }
+        }
+
+        return CreateNumberLiteral(resNum);
+    }
+
+    lexer::Number HandleBitwiseNegate(const ir::NumberLiteral *node, TypeRank rank)
+    {
+        switch (rank) {
+            case TypeRank::DOUBLE:
+            case TypeRank::INT64: {
+                return lexer::Number(~static_cast<uint64_t>(ExtractFromLiteral<int64_t>(node)));
+            }
+            case TypeRank::FLOAT:
+            case TypeRank::INT32:
+            case TypeRank::INT16:
+            case TypeRank::INT8: {
+                return lexer::Number(~static_cast<uint32_t>(ExtractFromLiteral<int32_t>(node)));
+            }
+            default: {
+                ES2PANDA_UNREACHABLE();
+            }
+        }
+    }
+
+    ir::Literal *Calculate(ir::UnaryExpression *unary)
+    {
+        ES2PANDA_ASSERT(inputs_.size() == 1);
+        if (unary->OperatorType() == lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK) {
+            return CreateBooleanLiteral(!TestLiteral(inputs_[0]));
+        }
+
+        auto lit = inputs_[0];
         if (lit->IsNumberLiteral()) {
-            return util::UString(lit->AsNumberLiteral()->ToString(), allocator).View();
+            return FoldUnaryNumericConstant(unary, lit->AsNumberLiteral());
         }
-        if (lit->IsCharLiteral()) {
-            return util::UString(lit->AsCharLiteral()->ToString(), allocator).View();
+
+        LogError(diagnostic::WRONG_OPERAND_TYPE_FOR_UNARY_EXPRESSION, {}, unary->Start());
+        return nullptr;
+    }
+
+    template <typename OperatorType, typename OperandType>
+    void PerformArithmeticIntegral(const ir::Expression *expr, OperandType lhs, OperandType rhs, OperandType *res)
+    {
+        using Limits = std::numeric_limits<OperandType>;
+        static_assert(std::is_integral_v<OperandType> && std::is_signed_v<OperandType>);
+        bool overflowOccurred = false;
+        if constexpr (std::is_same_v<OperatorType, std::divides<>> || std::is_same_v<OperatorType, std::modulus<>>) {
+            if (rhs == 0) {
+                LogError(diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
+                *res = Limits::max();
+            } else if ((lhs == Limits::min()) && rhs == -1) {
+                // Note: Handle corner cases
+                overflowOccurred = true;
+                *res = std::is_same_v<OperatorType, std::divides<>> ? Limits::min() : 0;
+            } else {
+                *res = OperatorType {}(lhs, rhs);
+            }
+        } else {
+            if constexpr (sizeof(OperandType) >= sizeof(int32_t)) {
+                if constexpr (std::is_same_v<OperatorType, std::multiplies<>>) {
+                    overflowOccurred = __builtin_mul_overflow(lhs, rhs, res);
+                } else if constexpr (std::is_same_v<OperatorType, std::plus<>>) {
+                    overflowOccurred = __builtin_add_overflow(lhs, rhs, res);
+                } else if constexpr (std::is_same_v<OperatorType, std::minus<>>) {
+                    overflowOccurred = __builtin_sub_overflow(lhs, rhs, res);
+                }
+            } else {
+                auto tmpRes = OperatorType {}(static_cast<int32_t>(lhs), static_cast<int32_t>(rhs));
+                *res = static_cast<OperandType>(tmpRes);
+                overflowOccurred = tmpRes < Limits::min() || Limits::max() < tmpRes;
+            }
         }
-        if (lit->IsBooleanLiteral()) {
-            return util::UString(lit->AsBooleanLiteral()->ToString(), allocator).View();
+
+        if (overflowOccurred) {
+            LogError(diagnostic::OVERFLOW_ARITHMETIC, {}, expr->Start());
         }
-        if (lit->IsStringLiteral()) {
-            return lit->AsStringLiteral()->Str();
+    }
+
+    template <typename OperatorType, typename OperandType>
+    // CC-OFFNXT(huge_depth[C++]) solid logic
+    void PerformArithmetic(const ir::Expression *expr, OperandType lhs, OperandType rhs, OperandType *res)
+    {
+        if constexpr (std::is_integral_v<OperandType>) {
+            PerformArithmeticIntegral<OperatorType>(expr, lhs, rhs, res);
+            return;
+        } else if constexpr (std::is_floating_point_v<OperandType>) {
+            if constexpr (std::is_same_v<OperatorType, std::divides<>>) {
+                if ((rhs == 0) && (lhs == 0)) {
+                    *res = std::numeric_limits<OperandType>::quiet_NaN();
+                } else if ((rhs == 0) && (lhs > 0)) {
+                    *res = std::numeric_limits<OperandType>::infinity();
+                } else if ((rhs == 0) && (lhs < 0)) {
+                    *res = -std::numeric_limits<OperandType>::infinity();
+                } else {
+                    *res = OperatorType {}(lhs, rhs);
+                }
+            } else if constexpr (std::is_same_v<OperatorType, std::modulus<>>) {
+                if (rhs == 0) {
+                    LogError(diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
+                    *res = std::numeric_limits<OperandType>::quiet_NaN();
+                } else {
+                    *res = std::fmod(lhs, rhs);
+                }
+            } else {
+                *res = OperatorType {}(lhs, rhs);
+            }
+
+            return;
         }
         ES2PANDA_UNREACHABLE();
-    };
+    }
 
-    util::UString result(allocator);
-    auto quasis = expr->Quasis();
-    auto expressions = expr->Expressions();
-
-    auto const num = std::max(expressions.size(), quasis.size());
-    for (std::size_t i = 0U; i < num; i++) {
-        if (i < quasis.size()) {
-            result.Append(quasis[i]->Cooked());
+    template <typename TargetType>
+    ir::Literal *PerformMultiplicativeOperation(TargetType leftNum, TargetType rightNum,
+                                                const ir::BinaryExpression *expr)
+    {
+        auto opType = expr->OperatorType();
+        TargetType resNum {};
+        switch (opType) {
+            case lexer::TokenType::PUNCTUATOR_MULTIPLY: {
+                PerformArithmetic<std::multiplies<>>(expr, leftNum, rightNum, &resNum);
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_DIVIDE: {
+                PerformArithmetic<std::divides<>>(expr, leftNum, rightNum, &resNum);
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_MOD: {
+                PerformArithmetic<std::modulus<>>(expr, leftNum, rightNum, &resNum);
+                break;
+            }
+            default:
+                ES2PANDA_UNREACHABLE();
         }
-        if (i < expressions.size()) {
-            result.Append(litToString(expressions[i]->AsLiteral()));
+        return CreateNumberLiteral(resNum);
+    }
+
+    ir::Literal *HandleMultiplicativeExpression(const ir::BinaryExpression *expr, const ir::NumberLiteral *left,
+                                                const ir::NumberLiteral *right)
+    {
+        switch (std::max(left->Number().GetTypeRank(), right->Number().GetTypeRank())) {
+            case TypeRank::DOUBLE: {
+                return PerformMultiplicativeOperation(ExtractFromLiteral<double>(left),
+                                                      ExtractFromLiteral<double>(right), expr);
+            }
+            case TypeRank::FLOAT: {
+                return PerformMultiplicativeOperation(ExtractFromLiteral<float>(left), ExtractFromLiteral<float>(right),
+                                                      expr);
+            }
+            case TypeRank::INT64: {
+                return PerformMultiplicativeOperation(ExtractFromLiteral<int64_t>(left),
+                                                      ExtractFromLiteral<int64_t>(right), expr);
+            }
+            case TypeRank::INT32: {
+                return PerformMultiplicativeOperation(ExtractFromLiteral<int32_t>(left),
+                                                      ExtractFromLiteral<int32_t>(right), expr);
+            }
+            case TypeRank::INT16: {
+                return PerformMultiplicativeOperation(ExtractFromLiteral<int16_t>(left),
+                                                      ExtractFromLiteral<int16_t>(right), expr);
+            }
+            case TypeRank::INT8: {
+                return PerformMultiplicativeOperation(ExtractFromLiteral<int8_t>(left),
+                                                      ExtractFromLiteral<int8_t>(right), expr);
+            }
+            default:
+                ES2PANDA_UNREACHABLE();
         }
     }
 
-    auto *strLit = util::NodeAllocator::Alloc<ir::StringLiteral>(allocator, result.View());
-    strLit->SetParent(expr->Parent());
-    strLit->SetRange(expr->Range());
-    return strLit;
+    template <typename TargetType>
+    ir::Literal *PerformAdditiveOperation(TargetType left, TargetType right, const ir::BinaryExpression *expr)
+    {
+        TargetType res {};
+        switch (expr->OperatorType()) {
+            case lexer::TokenType::PUNCTUATOR_PLUS:
+                PerformArithmetic<std::plus<>>(expr, left, right, &res);
+                break;
+            case lexer::TokenType::PUNCTUATOR_MINUS:
+                PerformArithmetic<std::minus<>>(expr, left, right, &res);
+                break;
+            default:
+                ES2PANDA_UNREACHABLE();
+        }
+        return CreateNumberLiteral(res);
+    }
+
+    ir::Literal *HandleNumericAdditiveExpression(const ir::BinaryExpression *expr, const ir::NumberLiteral *left,
+                                                 const ir::NumberLiteral *right)
+    {
+        switch (std::max(left->Number().GetTypeRank(), right->Number().GetTypeRank())) {
+            case TypeRank::DOUBLE: {
+                return PerformAdditiveOperation(ExtractFromLiteral<double>(left), ExtractFromLiteral<double>(right),
+                                                expr);
+            }
+            case TypeRank::FLOAT: {
+                return PerformAdditiveOperation(ExtractFromLiteral<float>(left), ExtractFromLiteral<float>(right),
+                                                expr);
+            }
+            case TypeRank::INT64: {
+                return PerformAdditiveOperation(ExtractFromLiteral<int64_t>(left), ExtractFromLiteral<int64_t>(right),
+                                                expr);
+            }
+            case TypeRank::INT32: {
+                return PerformAdditiveOperation(ExtractFromLiteral<int32_t>(left), ExtractFromLiteral<int32_t>(right),
+                                                expr);
+            }
+            case TypeRank::INT16: {
+                return PerformAdditiveOperation(ExtractFromLiteral<int16_t>(left), ExtractFromLiteral<int16_t>(right),
+                                                expr);
+            }
+            case TypeRank::INT8: {
+                return PerformAdditiveOperation(ExtractFromLiteral<int8_t>(left), ExtractFromLiteral<int8_t>(right),
+                                                expr);
+            }
+            default:
+                ES2PANDA_UNREACHABLE();
+        }
+    }
+
+    ir::Literal *PerformStringAdditiveOperation(const ir::BinaryExpression *expr, const ir::Literal *left,
+                                                const ir::Literal *right)
+    {
+        if ((expr->OperatorType() != lexer::TokenType::PUNCTUATOR_PLUS) ||
+            (!left->IsStringLiteral() && !right->IsStringLiteral())) {
+            LogError(diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
+            return nullptr;
+        }
+        if (left->IsCharLiteral() || right->IsCharLiteral()) {
+            LogError(diagnostic::CHAR_TO_STR_CONVERSION, {}, expr->Start());
+            return nullptr;
+        }
+        std::string tmpStr {};
+        auto appendLiteral = [&tmpStr](const ir::Literal *lit) {
+            if (lit->IsStringLiteral()) {
+                tmpStr += lit->AsStringLiteral()->Str().Utf8();
+            } else {
+                tmpStr += lit->ToString();
+            }
+        };
+
+        appendLiteral(left);
+        appendLiteral(right);
+
+        auto resStr = util::UString(tmpStr, context_->allocator);
+        return util::NodeAllocator::Alloc<ir::StringLiteral>(context_->allocator, resStr.View());
+    }
+
+    template <typename SignedType>
+    ir::Literal *PerformShiftOperation(SignedType left, SignedType right, lexer::TokenType opType)
+    {
+        using UnsignedType = std::make_unsigned_t<SignedType>;
+
+        auto uLeft = bit_cast<UnsignedType, SignedType>(left);
+        auto uRight = bit_cast<UnsignedType, SignedType>(right);
+
+        auto mask = std::numeric_limits<UnsignedType>::digits - 1U;
+        UnsignedType shift = uRight & mask;
+
+        SignedType res {};
+        switch (opType) {
+            case lexer::TokenType::PUNCTUATOR_LEFT_SHIFT: {
+                static_assert(sizeof(UnsignedType) == 4 || sizeof(UnsignedType) == 8);
+                res = bit_cast<SignedType, UnsignedType>(uLeft << shift);
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_RIGHT_SHIFT: {
+                static_assert(sizeof(SignedType) == 4 || sizeof(SignedType) == 8);
+                res = bit_cast<SignedType, UnsignedType>(left >> shift);  // NOLINT(hicpp-signed-bitwise)
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_UNSIGNED_RIGHT_SHIFT: {
+                static_assert(sizeof(UnsignedType) == 4 || sizeof(UnsignedType) == 8);
+                res = bit_cast<SignedType, UnsignedType>(uLeft >> shift);
+                break;
+            }
+            default:
+                ES2PANDA_UNREACHABLE();
+        }
+        return CreateNumberLiteral(res);
+    }
+
+    ir::Literal *HandleShiftExpression(const ir::BinaryExpression *expr, const ir::NumberLiteral *left,
+                                       const ir::NumberLiteral *right)
+    {
+        auto opType = expr->OperatorType();
+        switch (std::max(left->Number().GetTypeRank(), right->Number().GetTypeRank())) {
+            case TypeRank::DOUBLE:
+            case TypeRank::INT64: {
+                return PerformShiftOperation(ExtractFromLiteral<int64_t>(left), ExtractFromLiteral<int64_t>(right),
+                                             opType);
+            }
+            case TypeRank::FLOAT:
+            case TypeRank::INT32:
+            case TypeRank::INT16:
+            case TypeRank::INT8: {
+                return PerformShiftOperation(ExtractFromLiteral<int32_t>(left), ExtractFromLiteral<int32_t>(right),
+                                             opType);
+            }
+            default:
+                ES2PANDA_UNREACHABLE();
+        }
+    }
+
+    ir::Literal *PerformRelationOperation(const ir::CharLiteral *left, const ir::CharLiteral *right,
+                                          lexer::TokenType opType)
+    {
+        bool res {};
+        switch (opType) {
+            case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
+            case lexer::TokenType::PUNCTUATOR_EQUAL: {
+                res = *left == *right;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
+            case lexer::TokenType::PUNCTUATOR_NOT_EQUAL: {
+                res = !(*left == *right);
+                break;
+            }
+            default: {
+                return nullptr;
+            }
+        }
+        return CreateBooleanLiteral(res);
+    }
+
+    template <typename InputType>
+    auto PerformRelationOperation(InputType left, InputType right, lexer::TokenType opType)
+    {
+        bool res {};
+        switch (opType) {
+            case lexer::TokenType::PUNCTUATOR_GREATER_THAN: {
+                res = left > right;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL: {
+                res = left >= right;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_LESS_THAN: {
+                res = left < right;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL: {
+                res = left <= right;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
+            case lexer::TokenType::PUNCTUATOR_EQUAL: {
+                res = left == right;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
+            case lexer::TokenType::PUNCTUATOR_NOT_EQUAL: {
+                res = left != right;
+                break;
+            }
+            default: {
+                ES2PANDA_UNREACHABLE();
+            }
+        }
+        return CreateBooleanLiteral(res);
+    }
+
+    ir::Literal *HandleNumericalRelationalExpression(const ir::BinaryExpression *expr, const ir::NumberLiteral *left,
+                                                     const ir::NumberLiteral *right)
+    {
+        auto opType = expr->OperatorType();
+        switch (std::max(left->Number().GetTypeRank(), right->Number().GetTypeRank())) {
+            case TypeRank::DOUBLE: {
+                return PerformRelationOperation(ExtractFromLiteral<double>(left), ExtractFromLiteral<double>(right),
+                                                opType);
+            }
+            case TypeRank::FLOAT: {
+                return PerformRelationOperation(ExtractFromLiteral<float>(left), ExtractFromLiteral<float>(right),
+                                                opType);
+            }
+            case TypeRank::INT64: {
+                return PerformRelationOperation(ExtractFromLiteral<int64_t>(left), ExtractFromLiteral<int64_t>(right),
+                                                opType);
+            }
+            case TypeRank::INT32: {
+                return PerformRelationOperation(ExtractFromLiteral<int32_t>(left), ExtractFromLiteral<int32_t>(right),
+                                                opType);
+            }
+            case TypeRank::INT16: {
+                return PerformRelationOperation(ExtractFromLiteral<int16_t>(left), ExtractFromLiteral<int16_t>(right),
+                                                opType);
+            }
+            case TypeRank::INT8: {
+                return PerformRelationOperation(ExtractFromLiteral<int8_t>(left), ExtractFromLiteral<int8_t>(right),
+                                                opType);
+            }
+            default: {
+                ES2PANDA_UNREACHABLE();
+            }
+        }
+    }
+
+    ir::Literal *HandleNonNumericRelationalExpression(const ir::BinaryExpression *expr, const ir::Literal *left,
+                                                      const ir::Literal *right)
+    {
+        auto opType = expr->OperatorType();
+
+        if (left->IsStringLiteral() && right->IsStringLiteral()) {
+            return PerformRelationOperation(left->AsStringLiteral()->Str(), right->AsStringLiteral()->Str(), opType);
+        }
+
+        if (left->IsBooleanLiteral() && right->IsBooleanLiteral()) {
+            return PerformRelationOperation(GetVal<bool>(left), GetVal<bool>(right), opType);
+        }
+
+        if (left->IsCharLiteral() && right->IsCharLiteral()) {
+            auto res = PerformRelationOperation(left->AsCharLiteral(), right->AsCharLiteral(), opType);
+            if (res != nullptr) {
+                return res;
+            }
+        }
+
+        LogError(diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
+        return nullptr;
+    }
+
+    template <typename SignedType>
+    ir::Literal *PerformBitwiseLogicalOperation(SignedType left, SignedType right, lexer::TokenType opType)
+    {
+        using UnsignedType = std::make_unsigned_t<SignedType>;
+
+        auto uLeft = bit_cast<UnsignedType, SignedType>(left);
+        auto uRight = bit_cast<UnsignedType, SignedType>(right);
+
+        SignedType res {};
+        switch (opType) {
+            case lexer::TokenType::PUNCTUATOR_BITWISE_AND: {
+                res = uLeft & uRight;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_BITWISE_OR: {
+                res = uLeft | uRight;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_BITWISE_XOR: {
+                res = uLeft ^ uRight;
+                break;
+            }
+            default:
+                ES2PANDA_UNREACHABLE();
+        }
+        return CreateNumberLiteral(res);
+    }
+
+    ir::Literal *HandleNumericBitwiseLogicalExpression(const ir::BinaryExpression *expr, const ir::NumberLiteral *left,
+                                                       const ir::NumberLiteral *right)
+    {
+        auto opType = expr->OperatorType();
+        switch (std::max(left->Number().GetTypeRank(), right->Number().GetTypeRank())) {
+            case TypeRank::DOUBLE: {
+                return PerformBitwiseLogicalOperation(ExtractFromLiteral<int64_t>(left),
+                                                      ExtractFromLiteral<int64_t>(right), opType);
+            }
+            case TypeRank::INT64: {
+                return PerformBitwiseLogicalOperation(ExtractFromLiteral<int64_t>(left),
+                                                      ExtractFromLiteral<int64_t>(right), opType);
+            }
+            case TypeRank::FLOAT:
+            case TypeRank::INT32:
+            case TypeRank::INT16:
+            case TypeRank::INT8: {
+                return PerformBitwiseLogicalOperation(ExtractFromLiteral<int32_t>(left),
+                                                      ExtractFromLiteral<int32_t>(right), opType);
+            }
+            default:
+                ES2PANDA_UNREACHABLE();
+        }
+    }
+
+    ir::Literal *HandleNonNumericBitwiseLogicalExpression(const ir::BinaryExpression *expr, const ir::Literal *left,
+                                                          const ir::Literal *right)
+    {
+        auto opType = expr->OperatorType();
+
+        if (!left->IsBooleanLiteral() || !right->IsBooleanLiteral()) {
+            LogError(diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
+            return nullptr;
+        }
+
+        bool res = false;
+        auto leftVal = left->AsBooleanLiteral()->Value();
+        auto rightVal = right->AsBooleanLiteral()->Value();
+        switch (opType) {
+            case lexer::TokenType::PUNCTUATOR_BITWISE_AND: {
+                res = leftVal && rightVal;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_BITWISE_OR: {
+                res = leftVal || rightVal;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_BITWISE_XOR: {
+                res = leftVal ^ rightVal;
+                break;
+            }
+            default:
+                ES2PANDA_UNREACHABLE();
+        }
+        return CreateBooleanLiteral(res);
+    }
+
+    ir::Literal *HandleLogicalExpression(const ir::BinaryExpression *expr, const ir::Literal *left,
+                                         const ir::Literal *right)
+    {
+        bool lhs = TestLiteral(left);
+        bool rhs = TestLiteral(right);
+
+        bool res {};
+        auto opType = expr->OperatorType();
+        switch (opType) {
+            case lexer::TokenType::PUNCTUATOR_LOGICAL_AND: {
+                res = lhs && rhs;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_LOGICAL_OR: {
+                res = lhs || rhs;
+                break;
+            }
+            default: {
+                ES2PANDA_UNREACHABLE();
+            }
+        }
+        return CreateBooleanLiteral(res);
+    }
+
+    ir::Literal *Calculate(const ir::BinaryExpression *expr)
+    {
+        ES2PANDA_ASSERT(inputs_.size() == 2U);
+        auto left = inputs_[0];
+        auto right = inputs_[1];
+        if (IsLogicalExpression(expr)) {
+            return HandleLogicalExpression(expr, left, right);
+        }
+
+        if (left->IsNumberLiteral() && right->IsNumberLiteral()) {
+            auto leftN = left->AsNumberLiteral();
+            auto rightN = right->AsNumberLiteral();
+            if (IsBitwiseLogicalExpression(expr)) {
+                return HandleNumericBitwiseLogicalExpression(expr, leftN, rightN);
+            }
+            if (IsMultiplicativeExpression(expr)) {
+                return HandleMultiplicativeExpression(expr, leftN, rightN);
+            }
+            if (IsAdditiveExpression(expr)) {
+                return HandleNumericAdditiveExpression(expr, leftN, rightN);
+            }
+            if (IsShiftExpression(expr)) {
+                return HandleShiftExpression(expr, leftN, rightN);
+            }
+            if (IsRelationalExpression(expr)) {
+                return HandleNumericalRelationalExpression(expr, leftN, rightN);
+            }
+        } else {
+            if (IsAdditiveExpression(expr)) {
+                return PerformStringAdditiveOperation(expr, left, right);
+            }
+            if (IsBitwiseLogicalExpression(expr)) {
+                return HandleNonNumericBitwiseLogicalExpression(expr, left, right);
+            }
+            if (IsRelationalExpression(expr)) {
+                return HandleNonNumericRelationalExpression(expr, left, right);
+            }
+        }
+
+        // If the expression cannot be folded, it has no sence (like `1 ?? 2`), so raise type error.
+        LogError(diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
+        return nullptr;
+    }
+
+    void LogError(const diagnostic::DiagnosticKind &diagnostic, const util::DiagnosticMessageParams &diagnosticParams,
+                  const lexer::SourcePosition &pos)
+    {
+        context_->diagnosticEngine->LogDiagnostic(diagnostic, diagnosticParams, pos);
+    }
+
+    ir::BooleanLiteral *CreateBooleanLiteral(bool val)
+    {
+        auto resNode = util::NodeAllocator::Alloc<ir::BooleanLiteral>(context_->allocator, val);
+        ES2PANDA_ASSERT(resNode != nullptr);
+        resNode->SetFolded();
+        return resNode;
+    }
+
+    template <typename T>
+    ir::NumberLiteral *CreateNumberLiteral(T val)
+    {
+        auto resNum = lexer::Number(val);
+        auto *resNode = util::NodeAllocator::Alloc<ir::NumberLiteral>(context_->allocator, resNum);
+        ES2PANDA_ASSERT(resNode != nullptr);
+
+        // Some hack to set string representation of lexer::Number
+        resNode->Number().SetStr(util::UString(resNode->ToString(), context_->allocator).View());
+
+        resNode->SetFolded();
+        return resNode;
+    }
+
+private:
+    public_lib::Context *context_;
+    SmallVector<ir::Literal *, 3U> inputs_;
+};
+
+template <typename T>
+static bool TryCastInteger(lexer::Number &number)
+{
+    if (number.Is<T>()) {
+        return true;
+    }
+    if (number.CanGetValue<T>()) {
+        number = lexer::Number(number.GetValue<T>());
+        return true;
+    }
+    return false;
+}
+
+auto TryExtractPrimitiveType(ir::TypeNode *constraint)
+{
+    if (constraint->IsETSPrimitiveType()) {
+        return constraint->AsETSPrimitiveType()->GetPrimitiveType();
+    }
+    // NOTE(dkofanov): Check for known primitive type alias. Need to consider a 'number'->'double' lowering.
+    if (auto typeRef = Cast<ir::ETSTypeReference>(constraint); typeRef != nullptr) {
+        if (auto part = typeRef->Part(); part->Name()->IsIdentifier() && (part->Previous() == nullptr)) {
+            const static std::map<std::string_view, ir::PrimitiveType> MAP {
+                {"Number", ir::PrimitiveType::DOUBLE}, {"number", ir::PrimitiveType::DOUBLE},
+                {"Double", ir::PrimitiveType::DOUBLE}, {"Float", ir::PrimitiveType::FLOAT},
+                {"Long", ir::PrimitiveType::LONG},     {"Int", ir::PrimitiveType::INT},
+                {"Short", ir::PrimitiveType::SHORT},   {"Char", ir::PrimitiveType::CHAR},
+                {"Byte", ir::PrimitiveType::BYTE},     {"Boolean", ir::PrimitiveType::BOOLEAN},
+            };
+
+            if (auto it = MAP.find(part->Name()->AsIdentifier()->Name().Utf8()); it != MAP.end()) {
+                return it->second;
+            }
+        }
+    }
+    return ir::PrimitiveType::VOID;
+}
+
+static void LogErrorUnconverted(ir::PrimitiveType dst, ir::PrimitiveType src, util::DiagnosticEngine *de,
+                                lexer::SourcePosition pos)
+{
+    if ((dst == ir::PrimitiveType::FLOAT) && (src == ir::PrimitiveType::DOUBLE)) {
+        de->LogDiagnostic(diagnostic::CONSTANT_FLOATING_POINT_COVERSION, util::DiagnosticMessageParams {}, pos);
+    } else if (((dst != ir::PrimitiveType::FLOAT) && (dst != ir::PrimitiveType::DOUBLE)) &&
+               ((src == ir::PrimitiveType::FLOAT) || (src == ir::PrimitiveType::DOUBLE))) {
+        de->LogDiagnostic(diagnostic::CONSTANT_FLOATING_POINT_COVERSION, util::DiagnosticMessageParams {}, pos);
+    } else {
+        de->LogDiagnostic(diagnostic::CONSTANT_VALUE_OUT_OF_RANGE, util::DiagnosticMessageParams {}, pos);
+    }
+}
+
+static bool CheckCastLiteral(util::DiagnosticEngine *de, ir::TypeNode *constraint, ir::Literal *literal)
+{
+    if (literal->IsStringLiteral()) {
+        return true;
+    }
+
+    auto dst = TryExtractPrimitiveType(constraint);
+    if (dst == ir::PrimitiveType::VOID) {
+        // NOTE(dkofanov): ConstFolding supported only for primitives or strings.
+        return false;
+    }
+
+    if (literal->IsBooleanLiteral() || literal->IsCharLiteral() || (dst == ir::PrimitiveType::BOOLEAN) ||
+        (dst == ir::PrimitiveType::CHAR)) {
+        return (literal->IsBooleanLiteral() && (dst == ir::PrimitiveType::BOOLEAN)) ||
+               (literal->IsCharLiteral() && (dst == ir::PrimitiveType::CHAR));
+    }
+
+    auto &number = literal->AsNumberLiteral()->Number();
+    bool converted = false;
+    switch (dst) {
+        case ir::PrimitiveType::DOUBLE:
+            converted = TryCastInteger<double>(number);
+            break;
+        case ir::PrimitiveType::FLOAT:
+            converted = TryCastInteger<float>(number);
+            break;
+        case ir::PrimitiveType::LONG:
+            converted = TryCastInteger<int64_t>(number);
+            break;
+        case ir::PrimitiveType::INT:
+            converted = TryCastInteger<int32_t>(number);
+            break;
+        case ir::PrimitiveType::SHORT:
+            converted = TryCastInteger<int16_t>(number);
+            break;
+        case ir::PrimitiveType::BYTE:
+            converted = TryCastInteger<int8_t>(number);
+            break;
+        default:
+            ES2PANDA_UNREACHABLE();
+    }
+
+    if (!converted) {
+        LogErrorUnconverted(dst, GetPrimitiveType(number), de, constraint->Start());
+    }
+    return converted;
+}
+
+static ir::TypeNode *GetTypeAnnotation(ir::AstNode *initParent)
+{
+    if (auto prop = Cast<ir::ClassProperty>(initParent); prop != nullptr) {
+        ES2PANDA_ASSERT(prop->Key()->AsIdentifier()->TypeAnnotation() == nullptr);
+        return prop->TypeAnnotation();
+    }
+    if (auto vardecl = Cast<ir::VariableDeclarator>(initParent);
+        (vardecl != nullptr) && vardecl->Id()->IsIdentifier()) {
+        return vardecl->Id()->AsIdentifier()->TypeAnnotation();
+    }
+    return nullptr;
+}
+
+bool ConstantExpressionLoweringImpl::CalculateAndCheck(DAGNode *user)
+{
+    auto *inputsIds = user->InputsIds();
+    NodeCalculator nc {context_, inputsIds->size()};
+    size_t i = 0;
+    for (auto inputId : *inputsIds) {
+        nc.SetInput(DNode(inputId)->Ir()->AsExpression()->AsLiteral(), i++);
+    }
+
+    auto *res = nc.Calculate(user);
+    ES2PANDA_ASSERT(!res || res->IsLiteral());
+
+    if (auto constr = GetTypeAnnotation(user->Ir()->Parent());
+        (res == nullptr) || ((constr != nullptr) && !CheckCastLiteral(context_->diagnosticEngine, constr, res))) {
+        user->UsersIds()->clear();
+        return false;
+    }
+
+    RegisterReplacement(user, res);
+    return true;
+}
+
+ir::Literal *NodeCalculator::Calculate(DAGNode *node)
+{
+    switch (node->Ir()->Type()) {
+        case ir::AstNodeType::IDENTIFIER:
+        case ir::AstNodeType::MEMBER_EXPRESSION:
+            return SubstituteConstant();
+        case ir::AstNodeType::CONDITIONAL_EXPRESSION:
+            return SubstituteConstantConditionally();
+        case ir::AstNodeType::UNARY_EXPRESSION:
+            return Calculate(node->Ir()->AsUnaryExpression());
+        case ir::AstNodeType::BINARY_EXPRESSION:
+            return Calculate(node->Ir()->AsBinaryExpression());
+        case ir::AstNodeType::TEMPLATE_LITERAL:
+            return Calculate(node->Ir()->AsTemplateLiteral());
+        default:
+            ES2PANDA_UNREACHABLE();
+    }
+}
+
+static ir::Expression *ExtendIdentToQualifiedName(ir::Identifier *ident)
+{
+    if (ident == nullptr) {
+        return nullptr;
+    }
+    ir::Expression *rvnode = ident;
+    if (auto mexp = Cast<ir::MemberExpression>(ident->Parent()); mexp != nullptr) {
+        if (mexp->Property() != ident) {
+            return nullptr;
+        }
+        // NOTE(dkofanov): 'MemberExpressionKind' should be eliminated and 'ir::MemberExpression' should be splitted
+        // accordingly:
+        if (mexp->Kind() == ir::MemberExpressionKind::PROPERTY_ACCESS) {
+            if (auto mexpPar = Cast<ir::MemberExpression>(mexp->Parent());
+                (mexpPar != nullptr) && (mexpPar->Object() == mexp)) {
+                return nullptr;
+            }
+            rvnode = mexp;
+        }
+    }
+    return rvnode;
+}
+
+// CC-OFFNXT(huge_cyclomatic_complexity, huge_cca_cyclomatic_complexity[C++]) solid logic
+static ir::Expression *AsRValue(ir::Identifier *ident)
+{
+    ir::Expression *rvnode = ExtendIdentToQualifiedName(ident);
+    if (rvnode == nullptr) {
+        return nullptr;
+    }
+    auto parent = rvnode->Parent();
+    ES2PANDA_ASSERT(parent != nullptr);
+    if (parent->IsUnaryExpression() || parent->IsBinaryExpression() || parent->IsConditionalExpression()) {
+        return rvnode;
+    }
+    auto isIn = [rvnode](auto &args) { return std::find(args.begin(), args.end(), rvnode) != args.end(); };
+    // A list of contexts in which there will be an attempt to fold ident/mexp. May be revisited.
+    if (auto vardecl = Cast<ir::VariableDeclarator>(parent); (vardecl != nullptr) && vardecl->Init() == rvnode) {
+        return rvnode;
+    }
+    if (auto propdecl = Cast<ir::ClassProperty>(parent); (propdecl != nullptr) && propdecl->Value() == rvnode) {
+        return rvnode;
+    }
+    if (auto enummemb = Cast<ir::TSEnumMember>(parent); (enummemb != nullptr) && enummemb->Init() == rvnode) {
+        return rvnode;
+    }
+    if (auto casestmt = Cast<ir::SwitchCaseStatement>(parent); (casestmt != nullptr) && casestmt->Test() == rvnode) {
+        return rvnode;
+    }
+    if (auto assignexp = Cast<ir::AssignmentExpression>(parent);
+        (assignexp != nullptr) && assignexp->Right() == rvnode) {
+        return rvnode;
+    }
+    if (auto callexp = Cast<ir::CallExpression>(parent); (callexp != nullptr) && isIn(callexp->Arguments())) {
+        return rvnode;
+    }
+    if (auto newarr = Cast<ir::ETSNewArrayInstanceExpression>(parent);
+        (newarr != nullptr) && (newarr->Dimension() == rvnode)) {
+        return rvnode;
+    }
+    if (auto ar = Cast<ir::ETSNewMultiDimArrayInstanceExpression>(parent); (ar != nullptr) && isIn(ar->Dimensions())) {
+        return rvnode;
+    }
+    if (auto cls = Cast<ir::ETSNewClassInstanceExpression>(parent); (cls != nullptr) && isIn(cls->GetArguments())) {
+        return rvnode;
+    }
+    if (auto indexexp = Cast<ir::MemberExpression>(parent);
+        (indexexp != nullptr) && (indexexp->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) &&
+        indexexp->Property() == rvnode) {
+        return rvnode;
+    }
+    return nullptr;
 }
 
 static varbinder::Variable *ResolveIdentifier(const ir::Identifier *ident)
@@ -1174,7 +1133,18 @@ static varbinder::Variable *ResolveIdentifier(const ir::Identifier *ident)
     return scope != nullptr ? scope->Find(ident->Name(), option).variable : nullptr;
 }
 
-static varbinder::Variable *ResolveMemberExpressionProperty(ir::MemberExpression *me)
+// NOTE(dkofanov): Remove after enum refactoring. The reason for this function is to limit contexts where
+// enum literals are folded because checker is not ready for implicit int->enum conversions required by the spec, while
+// there are requirements for them being folded. Also note, that type of enum literals is not taken into account.
+static bool AllowedEnumLiteralFoldingPosition(const ir::MemberExpression *enumLiteral)
+{
+    auto anotherEnumLitDecl = util::Helpers::FindAncestorGivenByType(enumLiteral, ir::AstNodeType::TS_ENUM_MEMBER);
+    ES2PANDA_ASSERT((anotherEnumLitDecl == nullptr) || (anotherEnumLitDecl->AsTSEnumMember()->Key() != enumLiteral));
+
+    return anotherEnumLitDecl != nullptr;
+}
+
+static varbinder::Variable *ResolveMemberExpressionProperty(const ir::MemberExpression *me)
 {
     varbinder::Variable *var = nullptr;
     auto meObject = me->Object();
@@ -1193,20 +1163,17 @@ static varbinder::Variable *ResolveMemberExpressionProperty(ir::MemberExpression
     if (decl->IsClassDecl()) {
         // NOTE(gogabr) : for some reason, ETSGLOBAL points to class declaration instead of definition.
         auto *declNode = decl->AsClassDecl()->Node();
-        if (declNode->IsClassDefinition()) {
-            scope = declNode->AsClassDefinition()->Scope();
-        } else if (declNode->IsClassDeclaration()) {
-            auto *classDef = declNode->AsClassDeclaration()->Definition();
-            if (classDef != nullptr) {
-                // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
-                scope = classDef->Scope();
-            }
-        }
+        auto *classDef = declNode->IsClassDefinition()    ? declNode->AsClassDefinition()
+                         : declNode->IsClassDeclaration() ? declNode->AsClassDeclaration()->Definition()
+                                                          : nullptr;
+        ES2PANDA_ASSERT(classDef != nullptr);
 
-        if (scope == nullptr) {
-            return nullptr;
-        }
-    } else if (decl->IsEnumLiteralDecl()) {
+        // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
+        scope = classDef->Scope();
+
+        // NOTE(dkofanov): For some reason, EnumLiteralDecl relates to enum-declaration, while EnumDecl - to enum
+        // members (i.e. enum literals declaration).
+    } else if (decl->IsEnumLiteralDecl() && AllowedEnumLiteralFoldingPosition(me)) {
         scope = decl->AsEnumLiteralDecl()->Node()->AsTSEnumDeclaration()->Scope();
     } else {
         return nullptr;
@@ -1221,252 +1188,108 @@ static varbinder::Variable *ResolveMemberExpressionProperty(ir::MemberExpression
     return scope->FindLocal(me->Property()->AsIdentifier()->Name(), option);
 }
 
-static bool IsConstantExpression(ir::AstNode *expr)
+static varbinder::Variable *Resolve(const ir::Expression *identOrMexp)
 {
-    if (!expr->IsExpression()) {
-        if (expr->IsETSTypeReference()) {
-            return false;
-        }
+    if (identOrMexp->IsIdentifier()) {
+        return ResolveIdentifier(identOrMexp->AsIdentifier());
     }
-
-    if (expr->IsETSPrimitiveType()) {
-        return true;
-    }
-
-    if (expr->IsIdentifier()) {
-        auto var = ResolveIdentifier(expr->AsIdentifier());
-        return var != nullptr && var->Declaration()->IsConstDecl();
-    }
-
-    if (expr->IsMemberExpression()) {
-        auto me = expr->AsMemberExpression();
-        if (me->Kind() != ir::MemberExpressionKind::PROPERTY_ACCESS) {
-            return false;
-        }
-
-        auto var = ResolveMemberExpressionProperty(me);
-        return var != nullptr && var->Declaration()->IsReadonlyDecl();
-    }
-
-    if (IsSupportedLiteral(expr->AsExpression())) {
-        return true;
-    }
-
-    auto isNotConstantExpression = [](ir::AstNode *node) { return !IsConstantExpression(node); };
-
-    return (expr->IsBinaryExpression() || expr->IsUnaryExpression() || expr->IsTSAsExpression() ||
-            expr->IsConditionalExpression() || expr->IsTemplateLiteral()) &&
-           !expr->IsAnyChild(isNotConstantExpression);
+    return ResolveMemberExpressionProperty(identOrMexp->AsMemberExpression());
 }
 
-static bool IsInTSEnumMemberInit(const ir::AstNode *n)
+// Access flags should be checked as use-site may be folded.
+static bool CheckPrivateAccess(ir::ClassProperty *propDecl, ir::Expression *rval)
 {
-    auto enumMember = util::Helpers::FindAncestorGivenByType(n, ir::AstNodeType::TS_ENUM_MEMBER);
-    if (enumMember == nullptr) {
-        return false;
+    ES2PANDA_ASSERT(propDecl->IsPrivateElement());
+    auto *const cls = propDecl->Parent();
+    auto *pred = rval->Parent();
+    while (pred != nullptr) {
+        if (pred == cls) {
+            return true;
+        }
+        pred = pred->Parent();
     }
-
-    auto init = enumMember->AsTSEnumMember()->Init();
-    return (init == n) || (init->FindChild([n](auto *child) { return child == n; }) != nullptr);
+    return false;
 }
 
-ir::AstNode *ConstantExpressionLowering::UnfoldResolvedReference(ir::AstNode *resolved, ir::AstNode *node)
+// CC-OFFNXT(huge_cyclomatic_complexity, huge_cca_cyclomatic_complexity[C++]) solid logic
+void ConstantExpressionLoweringImpl::PopulateDAGs(ir::Expression *node)
 {
-    checker::RecursionPreserver<const ir::AstNode> rPreserver(unfoldingSet_, resolved);
-    if (*rPreserver) {
-        isSelfDependence_ = true;
-        return node;
-    }
-
-    ir::AstNode *resNode = nullptr;
-    if (resolved->IsClassProperty()) {
-        auto propVal = resolved->AsClassElement()->Value();
-        if (propVal != nullptr && IsConstantExpression(propVal)) {
-            resNode = propVal->Clone(context_->allocator, node->Parent());
-            resNode->SetRange(node->Range());
+    if (auto literal = AsSupportedLiteral(node); literal != nullptr) {
+        if (auto constr = GetTypeAnnotation(node->Parent());
+            (constr == nullptr) || CheckCastLiteral(context_->diagnosticEngine, constr, literal)) {
+            AddRootDNode(literal);
         }
-    } else if (resolved->Parent()->IsVariableDeclarator()) {
-        auto init = resolved->Parent()->AsVariableDeclarator()->Init();
-        if (init != nullptr && IsConstantExpression(init) && !init->IsMemberExpression()) {
-            resNode = init->Clone(context_->allocator, node->Parent());
-            resNode->SetRange(node->Range());
-        }
-    } else if (resolved->IsTSEnumMember() && IsInTSEnumMemberInit(node)) {
-        auto init = resolved->AsTSEnumMember()->Init();
-        if (init != nullptr && IsConstantExpression(init)) {
-            resNode = init->Clone(context_->allocator, node->Parent());
-            resNode->SetRange(node->Range());
-        }
-    }
-
-    if (resNode != nullptr) {
-        auto res = MaybeUnfold(resNode);
-        if (isSelfDependence_) {
-            isSelfDependence_ = false;
-            return node;
-        }
-
-        return res;
-    }
-
-    // failed to unfold
-    return node;
-}
-
-ir::AstNode *ConstantExpressionLowering::MaybeUnfoldIdentifier(ir::Identifier *node)
-{
-    if (!node->IsReference(varbinder_->Extension())) {
-        return node;
-    }
-
-    // Left-Hand-Side identifiers in UpdateExpression or BinaryExpression cannot be unfolded
-    if (node->Parent()->IsUpdateExpression() && node->Parent()->AsUpdateExpression()->Argument() == node) {
-        return node;
-    }
-
-    if (node->Parent()->IsAssignmentExpression() && node->Parent()->AsAssignmentExpression()->Left() == node) {
-        return node;
-    }
-
-    auto *resolved = ResolveIdentifier(node);
-    if (resolved == nullptr || !(resolved->Declaration()->IsConstDecl() || resolved->Declaration()->IsReadonlyDecl())) {
-        return node;
-    }
-
-    auto *parent = node->Parent();
-    while (parent != nullptr && (parent->IsMemberExpression() || parent->IsTSQualifiedName())) {
-        parent = parent->Parent();
-    }
-    if (parent != nullptr && (parent->IsETSTypeReferencePart() || parent->IsETSTypeReference())) {
-        return node;
-    }
-    return UnfoldResolvedReference(resolved->Declaration()->Node(), node);
-}
-
-ir::AstNode *ConstantExpressionLowering::MaybeUnfoldMemberExpression(ir::MemberExpression *node)
-{
-    if (node->Kind() != ir::MemberExpressionKind::PROPERTY_ACCESS) {
-        return node;
-    }
-
-    auto resolved = ResolveMemberExpressionProperty(node);
-    if (resolved == nullptr || !resolved->Declaration()->IsReadonlyDecl()) {
-        return node;
-    }
-    return UnfoldResolvedReference(resolved->Declaration()->Node(), node);
-}
-
-ir::AstNode *ConstantExpressionLowering::MaybeUnfold(ir::AstNode *node)
-{
-    ir::NodeTransformer handleMaybeUnfold = [this](ir::AstNode *const n) {
-        if (n->IsIdentifier() && (!n->Parent()->IsMemberExpression() || n->Parent()->AsMemberExpression()->Kind() ==
-                                                                            ir::MemberExpressionKind::ELEMENT_ACCESS)) {
-            return MaybeUnfoldIdentifier(n->AsIdentifier());
-        }
-
-        if (n->IsMemberExpression()) {
-            return MaybeUnfoldMemberExpression(n->AsMemberExpression());
-        }
-
-        return n;
-    };
-
-    node->TransformChildrenRecursivelyPostorder(handleMaybeUnfold, Name());
-    return handleMaybeUnfold(node);
-}
-
-static bool IsPotentialConstant(const ir::AstNodeType type)
-{
-    return type == ir::AstNodeType::TEMPLATE_LITERAL || type == ir::AstNodeType::TS_AS_EXPRESSION ||
-           type == ir::AstNodeType::UNARY_EXPRESSION || type == ir::AstNodeType::BINARY_EXPRESSION ||
-           type == ir::AstNodeType::CONDITIONAL_EXPRESSION || type == ir::AstNodeType::IDENTIFIER;
-}
-
-ir::AstNode *ConstantExpressionLowering::Fold(ir::AstNode *constantNode)
-{
-    ir::NodeTransformer handleFoldConstant = [this](ir::AstNode *const node) {
-        if (node->IsTemplateLiteral()) {
-            auto tmpLiteral = node->AsTemplateLiteral();
-            auto exprs = tmpLiteral->Expressions();
-            auto notSupportedLit = std::find_if(exprs.begin(), exprs.end(),
-                                                [](ir::Expression *maybeLit) { return !IsSupportedLiteral(maybeLit); });
-            // Cannot fold TemplateLiteral containing unsupported literal
-            if (notSupportedLit != exprs.end()) {
-                return node;
+    } else if (auto numLiteral = Cast<ir::NumberLiteral>(node); numLiteral != nullptr) {
+        ES2PANDA_ASSERT(numLiteral->Number().ConversionError());
+        AddDNodeToPretransform(numLiteral);
+    } else if (auto identOrMExp = AsRValue(Cast<ir::Identifier>(node)); identOrMExp != nullptr) {
+        auto var = Resolve(identOrMExp);
+        auto decl = (var != nullptr) ? var->Declaration() : nullptr;
+        if ((decl != nullptr) && (decl->IsConstDecl() || decl->IsReadonlyDecl())) {
+            auto declnode = decl->Node();
+            // NOTE(dkofanov): Constants initialized via static block/constructor are not supported.
+            ir::Expression *init = nullptr;
+            if (auto prop = Cast<ir::ClassProperty>(declnode);
+                (prop != nullptr) && (!prop->IsPrivateElement() || CheckPrivateAccess(prop, identOrMExp))) {
+                init = prop->Value();
+                // NOTE(dkofanov): 'declnode' points to identifier instead of 'ir::VariableDeclarator'.
+            } else if (auto enumdecl = Cast<ir::TSEnumMember>(declnode); enumdecl != nullptr) {
+                init = enumdecl->Init();
+            } else if (auto vardecl = Cast<ir::VariableDeclarator>(declnode->Parent()); vardecl != nullptr) {
+                init = vardecl->Init();
             }
-            return FoldTemplateLiteral(tmpLiteral, context_->allocator);
-        }
-        if (node->IsUnaryExpression()) {
-            auto unaryOp = node->AsUnaryExpression();
-            if (IsSupportedLiteral(unaryOp->Argument())) {
-                return FoldUnaryExpression(unaryOp, context_);
+            if (init != nullptr) {
+                AddDNode(identOrMExp, init);
             }
         }
-        if (node->IsBinaryExpression()) {
-            auto binop = node->AsBinaryExpression();
-            if (IsSupportedLiteral(binop->Left()) && IsSupportedLiteral(binop->Right())) {
-                ERROR_SANITY_CHECK(context_->diagnosticEngine,
-                                   binop->OperatorType() != lexer::TokenType::PUNCTUATOR_NULLISH_COALESCING,
-                                   return node);
-                return FoldBinaryExpression(binop, context_);
-            }
+    } else if (auto tmpl = Cast<ir::TemplateLiteral>(node); tmpl) {
+        if (tmpl->Expressions().empty()) {
+            AddDNodeToPretransform(tmpl);
+        } else {
+            AddDNode(tmpl, tmpl->Expressions());
         }
-        if (node->IsConditionalExpression()) {
-            auto condExp = node->AsConditionalExpression();
-            if (IsSupportedLiteral(condExp->Test())) {
-                return FoldTernaryConstant(condExp);
-            }
-        }
-        if (node->IsTSNonNullExpression() && IsSupportedLiteral(node->AsTSNonNullExpression()->Expr())) {
-            auto expr = node->AsTSNonNullExpression()->Expr()->Clone(context_->allocator, node->Parent());
-            expr->SetRange(node->Range());
-            return expr;
-        }
-        return node;
-    };
-    constantNode->TransformChildrenRecursivelyPostorder(handleFoldConstant, Name());
-    return TryToCorrectNumberOrCharLiteral(handleFoldConstant(constantNode), context_);
+    } else if (auto unop = Cast<ir::UnaryExpression>(node); unop != nullptr) {
+        AddDNode(unop, unop->Argument());
+    } else if (auto binop = Cast<ir::BinaryExpression>(node); binop != nullptr) {
+        AddDNode(binop, {binop->Left(), binop->Right()});
+    } else if (auto condexpr = Cast<ir::ConditionalExpression>(node); condexpr != nullptr) {
+        // Reduce conditional expression only if each input is known to avoid hiding errors in 'dead' code.
+        AddDNode(condexpr, {condexpr->Test(), condexpr->Consequent(), condexpr->Alternate()});
+    }
 }
 
 // Note: memberExpression can be constant when it is enum property access, this check will be enabled after Issue23082.
 // for package, we need to check whether its every immediate-initializers is const expression.
-void ConstantExpressionLowering::IsInitByConstant(ir::AstNode *node)
+static void CheckInitializerInPackage(public_lib::Context *context, ir::AstNode *node)
 {
-    ir::AstNode *initTobeChecked = nullptr;
-    if (node->IsExpressionStatement() && node->AsExpressionStatement()->GetExpression()->IsAssignmentExpression()) {
-        auto assignExpr = node->AsExpressionStatement()->GetExpression()->AsAssignmentExpression();
-        initTobeChecked = assignExpr->Right();
-        if (initTobeChecked->IsExpression() && IsSupportedLiteral(initTobeChecked->AsExpression())) {
+    auto log = [context](const auto &kind, auto pos) {
+        context->diagnosticEngine->LogDiagnostic(kind, util::DiagnosticMessageParams {}, pos);
+    };
+    switch (node->Type()) {
+        case ir::AstNodeType::EXPRESSION_STATEMENT: {
+            auto assign = Cast<ir::AssignmentExpression>(node->AsExpressionStatement()->GetExpression());
+            if (assign == nullptr) {
+                return;
+            }
+            auto initTobeChecked = assign->Right();
+            if ((initTobeChecked != nullptr) && (AsSupportedLiteral(initTobeChecked) == nullptr)) {
+                log(diagnostic::INVALID_INIT_IN_PACKAGE, initTobeChecked->Start());
+            }
             return;
         }
-
-        if (!IsPotentialConstant(initTobeChecked->Type())) {
-            LogError(context_, diagnostic::INVALID_INIT_IN_PACKAGE, {}, initTobeChecked->Start());
+        case ir::AstNodeType::CLASS_PROPERTY: {
+            if (auto init = node->AsClassProperty()->Value();
+                (init != nullptr) && (AsSupportedLiteral(init) == nullptr)) {
+                log(diagnostic::INVALID_INIT_IN_PACKAGE, init->Start());
+            }
             return;
         }
-        assignExpr->SetRight(Fold(MaybeUnfold(initTobeChecked))->AsExpression());
-    }
-
-    if (node->IsClassProperty()) {
-        auto classProp = node->AsClassProperty();
-        initTobeChecked = classProp->Value();
-        if (initTobeChecked == nullptr) {
+        default:
             return;
-        }
-
-        if (initTobeChecked->IsExpression() && IsSupportedLiteral(initTobeChecked->AsExpression())) {
-            return;
-        }
-
-        if (!IsPotentialConstant(initTobeChecked->Type())) {
-            LogError(context_, diagnostic::INVALID_INIT_IN_PACKAGE, {}, initTobeChecked->Start());
-            return;
-        }
-        classProp->SetValue(Fold(MaybeUnfold(initTobeChecked))->AsExpression());
     }
 }
 
-void ConstantExpressionLowering::TryFoldInitializerOfPackage(ir::ClassDefinition *globalClass)
+static void PostCheckGlobalIfPackage(public_lib::Context *context, ir::ClassDefinition *globalClass)
 {
     for (auto element : globalClass->Body()) {
         if (element->IsMethodDefinition()) {
@@ -1482,35 +1305,53 @@ void ConstantExpressionLowering::TryFoldInitializerOfPackage(ir::ClassDefinition
             }
             auto const &initStatements = methodBody->AsBlockStatement()->Statements();
             std::for_each(initStatements.begin(), initStatements.end(),
-                          [this](ir::AstNode *node) { IsInitByConstant(node); });
+                          [context](ir::AstNode *node) { CheckInitializerInPackage(context, node); });
         }
 
         if (element->IsClassProperty() && element->AsClassProperty()->IsConst() &&
             !element->AsClassProperty()->NeedInitInStaticBlock()) {
-            IsInitByConstant(element);
+            CheckInitializerInPackage(context, element);
         }
     }
 }
 
-bool ConstantExpressionLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool ConstantExpressionLoweringImpl::PerformForModule(parser::Program *program, std::string_view name)
 {
     if (program->GetFlag(parser::ProgramFlags::AST_CONSTANT_EXPRESSION_LOWERED)) {
         return true;
     }
 
-    context_ = ctx;
-    program_ = program;
-    varbinder_ = ctx->parserProgram->VarBinder()->AsETSBinder();
+    program->Ast()->IterateRecursively([this](ir::AstNode *node) {
+        if (node->IsExpression()) {
+            PopulateDAGs(node->AsExpression());
+        }
+    });
 
-    program->Ast()->TransformChildrenRecursively(
-        [this](ir::AstNode *const node) -> checker::AstNodePtr {
-            // Note: Package need to check whether its immediate initializer is const expression.
-            if (this->program_->IsPackage() && node->IsClassDefinition() && node->AsClassDefinition()->IsGlobal()) {
-                TryFoldInitializerOfPackage(node->AsClassDefinition());
+    Pretransform();
+    while (PerformStep()) {
+    }
+
+    // Preorder to match the "super"-expression.
+    program->Ast()->TransformChildrenRecursivelyPreorder(
+        // CC-OFFNXT(G.FMT.14-CPP) project code style
+        [this](ir::AstNode *node) -> ir::AstNode * {
+            if (!node->IsExpression()) {
+                return node;
             }
-            return Fold(MaybeUnfold(node));
+            auto expr = node->AsExpression();
+            if (replacements_.find(expr) == replacements_.end()) {
+                return node;
+            }
+            auto folded = replacements_[expr];
+            folded->SetParent(expr->Parent());
+            folded->SetRange(expr->Range());
+            return folded;
         },
-        Name());
+        name);
+
+    if (program->IsPackage()) {
+        PostCheckGlobalIfPackage(context_, program->GlobalClass());
+    }
 
     program->SetFlag(parser::ProgramFlags::AST_CONSTANT_EXPRESSION_LOWERED);
     return true;

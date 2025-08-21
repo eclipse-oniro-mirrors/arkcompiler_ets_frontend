@@ -172,3 +172,5 @@ ast/compiler/ets/import_tests/export_multi_error.ets
 # remove decorator
 ast/parser/ts/test_decorator5.ts
 ast/parser/ts/InvalidStatements.ts
+
+ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.ets

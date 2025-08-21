@@ -13,13 +13,15 @@
  * limitations under the License.
  */
 
-export const floatInf: float = /* @@ label2 */1.0 / 0.0
-export const byteInf: byte = /* @@ label */1.0 / 0.0
-export const shortInf: short = /* @@ label1 */1.0 / 0.0
+export const floatInf: /* @@ dst_type1 */float = /* @@ value1 */1.0 / 0.0
+export const byteInf:  /* @@ dst_type2 */byte = /* @@ value2 */1.0 / 0.0
+export const shortInf: /* @@ dst_type3 */short = /* @@ value3 */1.0 / 0.0
 
-/* @@@ label Error TypeError: Type 'Double' cannot be assigned to type 'Byte'  */
-/* @@@ label1 Error TypeError: Type 'Double' cannot be assigned to type 'Short'  */
-/* @@@ label2 Error TypeError: Type 'Double' cannot be assigned to type 'Float'  */
-/* @@@ label2 Error TypeError: Value is out of range  */
-/* @@@ label1 Error TypeError: Floating-point value cannot be converted  */
-/* @@@ label Error TypeError: Floating-point value cannot be converted  */
+
+/* @@? 16:42 Error TypeError: Invalid destination type for floating-point constant value  */
+/* @@? 16:65 Error TypeError: Type 'Double' cannot be assigned to type 'Float'  */
+/* @@? 17:42 Error TypeError: Invalid destination type for floating-point constant value  */
+/* @@? 17:64 Error TypeError: Type 'Double' cannot be assigned to type 'Byte'  */
+/* @@? 18:42 Error TypeError: Invalid destination type for floating-point constant value  */
+/* @@? 18:65 Error TypeError: Type 'Double' cannot be assigned to type 'Short'  */
+

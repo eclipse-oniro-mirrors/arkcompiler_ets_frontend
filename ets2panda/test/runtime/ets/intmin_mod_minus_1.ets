@@ -14,7 +14,7 @@
  */
 
 function main() {
-  const INT_MIN:int = -2147483648;
+  let INT_MIN:int = -2147483648;
   let a = INT_MIN % -1;
   arktest.assertEQ(a, 0);
 }

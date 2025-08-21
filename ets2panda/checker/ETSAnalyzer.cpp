@@ -2986,14 +2986,14 @@ checker::Type *ETSAnalyzer::Check(ir::NumberLiteral *expr) const
         preferredType != nullptr && !expr->IsFolded() &&
         CheckIfLiteralValueIsAppropriate(checker, preferredType, expr)) {
         type = preferredType->Clone(checker);
-    } else if (expr->Number().IsInt()) {
-        type = checker->GlobalIntBuiltinType()->Clone(checker);
-    } else if (expr->Number().IsLong()) {
-        type = checker->GlobalLongBuiltinType()->Clone(checker);
-    } else if (expr->Number().IsFloat()) {
-        type = checker->GlobalFloatBuiltinType()->Clone(checker);
     } else if (expr->Number().IsDouble()) {
         type = checker->GlobalDoubleBuiltinType()->Clone(checker);
+    } else if (expr->Number().IsFloat()) {
+        type = checker->GlobalFloatBuiltinType()->Clone(checker);
+    } else if (expr->Number().IsLong()) {
+        type = checker->GlobalLongBuiltinType()->Clone(checker);
+    } else if (expr->Number().IsInt()) {
+        type = checker->GlobalIntBuiltinType()->Clone(checker);
     } else if (expr->Number().IsShort()) {
         type = checker->GlobalShortBuiltinType()->Clone(checker);
     } else if (expr->Number().IsByte()) {

@@ -20,4 +20,4 @@ const e = f + 1;
 const f = g + 1;
 const g = b + 1;
 
-/* @@? 16:7 Error TypeError: Circular dependency detected for identifier: b */
+/* @@? 17:7 Error TypeError: Circular dependency detected for identifier: c */

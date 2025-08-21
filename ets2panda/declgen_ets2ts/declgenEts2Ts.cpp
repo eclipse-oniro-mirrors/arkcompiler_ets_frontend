@@ -602,6 +602,14 @@ void TSDeclGen::GenLiteral(const ir::Literal *literal)
 {
     if (literal->IsNumberLiteral()) {
         const auto number = literal->AsNumberLiteral()->Number();
+        if (number.IsByte()) {
+            OutDts(std::to_string(number.GetByte()));
+            return;
+        }
+        if (number.IsShort()) {
+            OutDts(std::to_string(number.GetShort()));
+            return;
+        }
         if (number.IsInt()) {
             OutDts(std::to_string(number.GetInt()));
             return;

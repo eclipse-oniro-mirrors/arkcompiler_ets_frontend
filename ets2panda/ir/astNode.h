@@ -586,6 +586,8 @@ public:
     template <typename F1, typename F2>
     void PreTransformChildrenRecursively(const F1 &pre, const F2 &post, std::string_view transformationName)
     {
+        static_assert(std::is_convertible_v<std::invoke_result_t<F1, ir::AstNode *>, ir::AstNode *>);
+        static_assert(std::is_same_v<std::invoke_result_t<F2, ir::AstNode *>, void>);
         std::function<AstNode *(AstNode *)> hcb = [&](AstNode *child) {
             AstNode *upd = pre(child);
             upd->TransformChildren(hcb, transformationName);
@@ -596,9 +598,10 @@ public:
     }
 
     template <typename F1, typename F2>
-    void PostTransformChildrenRecursively(const NodeTraverser &pre, const NodeTransformer &post,
-                                          std::string_view transformationName)
+    void PostTransformChildrenRecursively(const F1 &pre, const F2 &post, std::string_view transformationName)
     {
+        static_assert(std::is_same_v<std::invoke_result_t<F1, ir::AstNode *>, void>);
+        static_assert(std::is_convertible_v<std::invoke_result_t<F2, ir::AstNode *>, ir::AstNode *>);
         std::function<AstNode *(AstNode *)> hcb = [&](AstNode *child) {
             pre(child);
             child->TransformChildren(hcb, transformationName);
@@ -838,4 +841,41 @@ private:
 };
 
 }  // namespace ark::es2panda::ir
+
+namespace ark::es2panda {
+
+template <typename NodeT>
+struct Node2Enum;
+
+/* CC-OFFNXT(G.PRE.02) code gen*/
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define REGISTER_MAPPING(nodeType, className)                                                          \
+    template <>                                                                                        \
+    struct Node2Enum<ir::className> {                                                                  \
+        static inline auto ENUM = ir::AstNodeType::nodeType; /* CC-OFF(G.PRE.02) qualified name part*/ \
+    };                                                       // CC-OFF(G.PRE.09) code gen
+AST_NODE_MAPPING(REGISTER_MAPPING)
+#undef REGISTER_MAPPING
+
+/* CC-OFFNXT(G.PRE.02) code gen*/
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define REGISTER_MAPPING(nodeType1, nodeType2, baseClass, reinterpretClass)                             \
+    template <>                                                                                         \
+    struct Node2Enum<ir::baseClass> {                                                                   \
+        static inline auto ENUM = ir::AstNodeType::nodeType1; /* CC-OFF(G.PRE.02) qualified name part*/ \
+    };                                                        // CC-OFF(G.PRE.09) code gen
+AST_NODE_REINTERPRET_MAPPING(REGISTER_MAPPING)
+#undef REGISTER_MAPPING
+
+template <typename NodeT>
+NodeT *Cast(ir::AstNode *node)
+{
+    if (node->Type() == Node2Enum<NodeT>::ENUM) {
+        return static_cast<NodeT *>(node);
+    }
+    return nullptr;
+}
+
+}  // namespace ark::es2panda
+
 #endif

@@ -25,7 +25,7 @@ let sector: float
   };
 }
 
-/* @@? 20:12 Error TypeError: key in class composite should be either identifier or string literal */
+/* @@? 21:5 Error TypeError: type Float has no property named radius */
 /* @@? 23:19 Error SyntaxError: Unexpected token, expected ')'. */
 /* @@? 23:20 Error SyntaxError: Unexpected token. */
 /* @@? 23:21 Error SyntaxError: Unexpected token ','. */

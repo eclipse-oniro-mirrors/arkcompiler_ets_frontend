@@ -117,6 +117,7 @@ static Type *EffectivePrimitiveTypeOfNumericOp(ETSChecker *checker, Type *left, 
     if (left->IsLongType() || right->IsLongType()) {
         return checker->GlobalLongType();
     }
+    // NOTE(dkofanov): Deprecated operations on 'char' #28006
     if (left->IsCharType() && right->IsCharType()) {
         return checker->GlobalCharType();
     }
@@ -167,6 +168,7 @@ static Type *EffectiveTypeOfNumericOp(ETSChecker *checker, Type *left, Type *rig
     return globalTypesHolder->GlobalIntegerBuiltinType();  // return Int for Byte, Short, Int
 }
 
+// NOTE(dkofanov): Deprecated operations on 'char' #28006
 static Type *BinaryGetPromotedType(ETSChecker *checker, Type *left, Type *right, bool const promote)
 {
     Type *const unboxedL = TryConvertToPrimitiveType(checker, left);
@@ -443,6 +445,7 @@ checker::Type *ETSChecker::CheckBinaryOperatorPlus(
     return nullptr;
 }
 
+// NOTE(dkofanov): Deprecated operations on 'char' #28006
 checker::Type *ETSChecker::CheckBinaryOperatorShift(
     std::tuple<ir::Expression *, ir::Expression *, lexer::TokenType, lexer::SourcePosition> op, bool isEqualOp,
     std::tuple<checker::Type *, checker::Type *, Type *, Type *> types)
@@ -490,6 +493,7 @@ checker::Type *ETSChecker::CheckBinaryOperatorShift(
     return nullptr;
 }
 
+// NOTE(dkofanov): Deprecated operations on 'char' #28006
 checker::Type *ETSChecker::CheckBinaryOperatorBitwise(
     std::tuple<ir::Expression *, ir::Expression *, lexer::TokenType, lexer::SourcePosition> op, bool isEqualOp,
     std::tuple<checker::Type *, checker::Type *, Type *, Type *> types)
@@ -741,6 +745,7 @@ static bool NonNumericTypesAreAppropriateForComparison(ETSChecker *checker, Type
     return false;
 }
 
+// NOTE(dkofanov): Deprecated operations on 'char' #28006
 std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expression *left, ir::Expression *right,
                                                                       lexer::TokenType operationType,
                                                                       lexer::SourcePosition pos, bool isEqualOp,

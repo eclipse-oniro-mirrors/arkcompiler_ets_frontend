@@ -4733,8 +4733,75 @@
                             }
                           },
                           "init": {
-                            "type": "CharLiteral",
-                            "value": "*",
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Int",
+                                "loc": {
+                                  "start": {
+                                    "line": 76,
+                                    "column": 21,
+                                    "program": "cast_expressions.ets"
+                                  },
+                                  "end": {
+                                    "line": 76,
+                                    "column": 24,
+                                    "program": "cast_expressions.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toChar",
+                                "loc": {
+                                  "start": {
+                                    "line": 76,
+                                    "column": 25,
+                                    "program": "cast_expressions.ets"
+                                  },
+                                  "end": {
+                                    "line": 76,
+                                    "column": 31,
+                                    "program": "cast_expressions.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 76,
+                                  "column": 21,
+                                  "program": "cast_expressions.ets"
+                                },
+                                "end": {
+                                  "line": 76,
+                                  "column": 31,
+                                  "program": "cast_expressions.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 42,
+                                "loc": {
+                                  "start": {
+                                    "line": 76,
+                                    "column": 32,
+                                    "program": "cast_expressions.ets"
+                                  },
+                                  "end": {
+                                    "line": 76,
+                                    "column": 34,
+                                    "program": "cast_expressions.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 76,
@@ -4743,7 +4810,7 @@
                               },
                               "end": {
                                 "line": 76,
-                                "column": 23,
+                                "column": 35,
                                 "program": "cast_expressions.ets"
                               }
                             }
@@ -4756,7 +4823,7 @@
                             },
                             "end": {
                               "line": 76,
-                              "column": 23,
+                              "column": 35,
                               "program": "cast_expressions.ets"
                             }
                           }
@@ -4771,7 +4838,7 @@
                         },
                         "end": {
                           "line": 76,
-                          "column": 24,
+                          "column": 36,
                           "program": "cast_expressions.ets"
                         }
                       }
@@ -4893,29 +4960,47 @@
                             },
                             "arguments": [
                               {
-                                "type": "TSAsExpression",
-                                "expression": {
-                                  "type": "NumberLiteral",
-                                  "value": 42,
+                                "type": "CallExpression",
+                                "callee": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "Int",
+                                    "loc": {
+                                      "start": {
+                                        "line": 77,
+                                        "column": 30,
+                                        "program": "cast_expressions.ets"
+                                      },
+                                      "end": {
+                                        "line": 77,
+                                        "column": 33,
+                                        "program": "cast_expressions.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "toChar",
+                                    "loc": {
+                                      "start": {
+                                        "line": 77,
+                                        "column": 34,
+                                        "program": "cast_expressions.ets"
+                                      },
+                                      "end": {
+                                        "line": 77,
+                                        "column": 40,
+                                        "program": "cast_expressions.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
                                   "loc": {
                                     "start": {
                                       "line": 77,
                                       "column": 30,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 77,
-                                      "column": 32,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
-                                "typeAnnotation": {
-                                  "type": "ETSPrimitiveType",
-                                  "loc": {
-                                    "start": {
-                                      "line": 77,
-                                      "column": 36,
                                       "program": "cast_expressions.ets"
                                     },
                                     "end": {
@@ -4925,6 +5010,25 @@
                                     }
                                   }
                                 },
+                                "arguments": [
+                                  {
+                                    "type": "NumberLiteral",
+                                    "value": 42,
+                                    "loc": {
+                                      "start": {
+                                        "line": 77,
+                                        "column": 41,
+                                        "program": "cast_expressions.ets"
+                                      },
+                                      "end": {
+                                        "line": 77,
+                                        "column": 43,
+                                        "program": "cast_expressions.ets"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "optional": false,
                                 "loc": {
                                   "start": {
                                     "line": 77,
@@ -4933,7 +5037,7 @@
                                   },
                                   "end": {
                                     "line": 77,
-                                    "column": 40,
+                                    "column": 44,
                                     "program": "cast_expressions.ets"
                                   }
                                 }
@@ -4947,7 +5051,7 @@
                               },
                               "end": {
                                 "line": 77,
-                                "column": 42,
+                                "column": 46,
                                 "program": "cast_expressions.ets"
                               }
                             }
@@ -4960,7 +5064,7 @@
                             },
                             "end": {
                               "line": 77,
-                              "column": 42,
+                              "column": 46,
                               "program": "cast_expressions.ets"
                             }
                           }
@@ -4975,7 +5079,7 @@
                         },
                         "end": {
                           "line": 77,
-                          "column": 42,
+                          "column": 46,
                           "program": "cast_expressions.ets"
                         }
                       }
