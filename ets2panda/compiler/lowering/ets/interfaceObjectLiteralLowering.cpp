@@ -375,7 +375,8 @@ static void HandleInterfaceLowering(public_lib::Context *ctx, ir::ObjectExpressi
         resultType = instantiationCtx.Result();
     }
 
-    if (const auto *const parent = objExpr->Parent(); parent->IsArrayExpression()) {
+    if (const auto *const parent = objExpr->Parent();
+        parent->IsArrayExpression() && !parent->AsArrayExpression()->TsType()->IsETSTupleType()) {
         for (auto *elem : parent->AsArrayExpression()->Elements()) {
             if (elem->IsObjectExpression()) {
                 elem->AsObjectExpression()->SetTsType(resultType);
