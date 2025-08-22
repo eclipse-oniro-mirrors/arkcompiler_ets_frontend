@@ -365,11 +365,19 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
     // Parse "package"
     package_ = ValueOrEmptyString(compilerOptions, PACKAGE);
 
-    // Parse "baseUrl", "outDir", "rootDir"
+    // Parse "baseUrl", "outDir", "rootDir", "cacheDir"
     baseUrl_ = MakeAbsolute(ValueOrEmptyString(compilerOptions, BASE_URL), arktsConfigDir);
     outDir_ = MakeAbsolute(ValueOrEmptyString(compilerOptions, OUT_DIR), arktsConfigDir);
-    rootDir_ = MakeAbsolute(ValueOrEmptyString(compilerOptions, ROOT_DIR), arktsConfigDir);
-
+    rootDir_ = ValueOrEmptyString(compilerOptions, ROOT_DIR);
+    if (!rootDir_.empty() &&
+        !Check(ark::os::file::File::IsDirectory(rootDir_), diagnostic::NOT_A_DIR, {"rootDir " + rootDir_})) {
+        return false;
+    }
+    cacheDir_ = ValueOrEmptyString(compilerOptions, CACHE_DIR);
+    if (!cacheDir_.empty() &&
+        !Check(ark::os::file::File::IsDirectory(cacheDir_), diagnostic::NOT_A_DIR, {"cacheDir " + cacheDir_})) {
+        return false;
+    }
     // Parse "useUrl"
     if (compilerOptions->get()->HasKey(USE_EMPTY_PACKAGE)) {
         auto *useUrl = compilerOptions->get()->GetValue<JsonObject::BoolT>(USE_EMPTY_PACKAGE);

@@ -28,6 +28,7 @@
 #include "abc2program_driver.h"
 #include "checker/types/signature.h"
 #include "compiler/lowering/ets/declGenPhase.h"
+#include "libpandabase/utils/logger.h"
 
 #ifdef USE_UNIX_SYSCALL
 #include <dirent.h>
@@ -62,7 +63,7 @@ static bool IsAbsolute(const std::string &path)
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
 }
 
-void ImportPathManager::ProcessExternalModuleImport(ImportMetadata &importData)
+void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
 {
     ES2PANDA_ASSERT(!IsAbsolute(std::string(importData.resolvedSource)));
     auto it = arktsConfig_->Dependencies().find(std::string(importData.resolvedSource));
@@ -111,6 +112,36 @@ void ImportPathManager::ProcessExternalModuleImport(ImportMetadata &importData)
     importData.declText = declText;
 }
 
+// If needed, the result of this function can be cached
+std::string_view ImportPathManager::tryImportFromDeclarationCache(std::string_view resolvedImportPath) const
+{
+    // if package or unresolved file, just skip
+    if (ark::os::file::File::IsDirectory(std::string(resolvedImportPath)) ||
+        !ark::os::file::File::IsRegularFile(std::string(resolvedImportPath))) {
+        return resolvedImportPath;
+    }
+    const std::string etsSuffix = ".ets";
+    const std::string dEtsSuffix = ".d.ets";
+    const auto &rootDir = ArkTSConfig().get()->RootDir();
+    const auto &cacheDir = ArkTSConfig().get()->CacheDir();
+    if (cacheDir.empty() || rootDir.empty()) {
+        return resolvedImportPath;
+    }
+    // declaration cache is used only for .ets files, located in the same library as compiling file
+    if (!Helpers::EndsWith(resolvedImportPath, etsSuffix) || !Helpers::StartsWith(resolvedImportPath, rootDir)) {
+        return resolvedImportPath;
+    }
+    const auto &relativeFilePath =
+        resolvedImportPath.substr(rootDir.size(), resolvedImportPath.size() - rootDir.size());
+    const auto &declarationCacheFile =
+        cacheDir + std::string(relativeFilePath.substr(0, relativeFilePath.size() - etsSuffix.size())) + dEtsSuffix;
+
+    if (!ark::os::file::File::IsRegularFile(declarationCacheFile)) {
+        return resolvedImportPath;
+    }
+    return UString(declarationCacheFile, allocator_).View().Utf8();
+}
+
 ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser::Program *program,
                                                                           ImportFlags importFlags,
                                                                           ir::StringLiteral *importPath)
@@ -132,9 +163,8 @@ ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser
     ImportMetadata importData {importFlags};
     importData.resolvedSource = resolvedImportPath;
     if (resolvedIsExternalModule) {
-        ProcessExternalModuleImport(importData);
+        ProcessExternalLibraryImport(importData);
     } else {
-        ES2PANDA_ASSERT(IsAbsolute(std::string(importData.resolvedSource)));
         importData.lang = ToLanguage(program->Extension()).GetId();
         importData.declPath = util::ImportPathManager::DUMMY_PATH;
         importData.ohmUrl = util::ImportPathManager::DUMMY_PATH;
@@ -144,6 +174,8 @@ ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser
         AddToParseList(importData);
     }
 
+    LOG(DEBUG, ES2PANDA) << "[" << curModulePath << "] "
+                         << "Import " << importPath->ToString() << " resolved to " << importData.resolvedSource;
     return importData;
 }
 
@@ -173,6 +205,7 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_vi
         diagnosticEngine_.LogDiagnostic(diagnostic::EMPTY_IMPORT_PATH, util::DiagnosticMessageParams {});
         return {*importPath};
     }
+    ResolvedPathRes result {};
     if (IsRelativePath(*importPath)) {
         size_t pos = curModulePath.find_last_of("/\\");
         auto currentDir = (pos != std::string::npos) ? curModulePath.substr(0, pos) : ".";
@@ -181,10 +214,15 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_vi
         resolvedPath.Append(pathDelimiter_);
         resolvedPath.Append(*importPath);
 
-        return AppendExtensionOrIndexFileIfOmitted(resolvedPath.View());
+        result = AppendExtensionOrIndexFileIfOmitted(resolvedPath.View());
+    } else {
+        result = ResolveAbsolutePath(*importPath);
     }
 
-    return ResolveAbsolutePath(*importPath);
+    if (!result.resolvedIsExternalModule) {
+        result.resolvedPath = tryImportFromDeclarationCache(result.resolvedPath);
+    }
+    return result;
 }
 
 ImportPathManager::ResolvedPathRes ImportPathManager::ResolveAbsolutePath(const ir::StringLiteral &importPathNode) const

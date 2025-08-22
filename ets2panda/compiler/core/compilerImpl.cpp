@@ -176,6 +176,16 @@ static bool RunVerifierAndPhases(public_lib::Context &context, parser::Program &
         if (afterCheckerPhase && context.diagnosticEngine->IsAnyError()) {
             return false;
         }
+
+        if (options.IsGenerateDeclEnabled() && name == compiler::CheckerPhase::NAME) {
+            std::string path;
+            if (!options.WasSetGenerateDeclPath()) {
+                path = ark::os::RemoveExtension(util::BaseName(options.SourceFileName())).append(".d.ets");
+            } else {
+                path = options.GetGenerateDeclPath();
+            }
+            HandleGenerateDecl(program, *context.diagnosticEngine, path);
+        }
     }
 
     verifier.After();

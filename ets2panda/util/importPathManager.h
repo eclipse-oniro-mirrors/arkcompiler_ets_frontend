@@ -184,7 +184,8 @@ private:
     ResolvedPathRes AppendExtensionOrIndexFileIfOmitted(StringView basePath) const;
     std::string TryMatchDependencies(std::string_view fixedPath) const;
     StringView GetRealPath(StringView path) const;
-    void ProcessExternalModuleImport(ImportMetadata &importData);
+    void ProcessExternalLibraryImport(ImportMetadata &importData);
+    std::string_view tryImportFromDeclarationCache(std::string_view resolvedImportPath) const;
 
 public:
     void AddToParseList(const ImportMetadata &importMetadata);
