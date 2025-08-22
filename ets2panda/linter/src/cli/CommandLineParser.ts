@@ -22,7 +22,11 @@ import type { CommandLineOptions } from '../lib/CommandLineOptions';
 import { cookBookTag } from '../lib/CookBookMsg';
 import { Logger } from '../lib/Logger';
 import { ARKTS_IGNORE_DIRS_OH_MODULES } from '../lib/utils/consts/ArktsIgnorePaths';
-import { getConfiguredRuleTags, getConfigureRulePath, getRulesFromConfig } from '../lib/utils/functions/ConfiguredRulesProcess';
+import {
+  getConfiguredRuleTags,
+  getConfigureRulePath,
+  getRulesFromConfig
+} from '../lib/utils/functions/ConfiguredRulesProcess';
 import { extractRuleTags } from '../lib/utils/functions/CookBookUtils';
 import { logTscDiagnostic } from '../lib/utils/functions/LogTscDiagnostic';
 

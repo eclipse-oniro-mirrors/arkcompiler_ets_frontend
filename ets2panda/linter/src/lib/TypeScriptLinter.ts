@@ -554,7 +554,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     [ts.SyntaxKind.AwaitExpression, this.handleAwaitExpression],
     [ts.SyntaxKind.PostfixUnaryExpression, this.handlePostfixUnaryExpression],
     [ts.SyntaxKind.BigIntLiteral, this.handleBigIntLiteral],
-    [ts.SyntaxKind.NumericLiteral, this.handleNumericLiteral]
+    [ts.SyntaxKind.NumericLiteral, this.handleNumericLiteral],
+    [ts.SyntaxKind.RestType, this.handleRestType]
   ]);
 
   lint(): void {
@@ -15605,5 +15606,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       `When calling the "${funcName}" method, the parameter list of the methods needs to include ` +
       '"toJson" and "fromJson" (arkui-persistencev2-connect-serialization)';
     this.incrementCounters(callExpr, FaultID.PersistenceV2ConnectNeedAddParam, undefined, errorMsg);
+  }
+
+  private handleRestType(node: ts.Node): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+    if (node.parent && ts.isTupleTypeNode(node.parent)) {
+      this.incrementCounters(node, FaultID.unfixedTuple);
+    }
   }
 }

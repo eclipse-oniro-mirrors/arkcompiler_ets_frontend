@@ -298,6 +298,7 @@ export enum FaultID {
   OptionalTupleType,
   LargeNumericLiteral,
   InstanceOfFunction,
+  unfixedTuple,
   SuperInStaticContext,
   // this should always be last enum
   LAST_ID

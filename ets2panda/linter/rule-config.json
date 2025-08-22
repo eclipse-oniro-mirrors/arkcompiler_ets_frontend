@@ -81,6 +81,7 @@
     "arkts-no-optional-tuple-type",
     "arkts-no-large-numeric-literal",
     "arkts-no-instanceof-func",
+    "arkts-no-unfixed-len-tuple",
     "arkts-no-super-call-in-static-context"
   ],
   "interop": [

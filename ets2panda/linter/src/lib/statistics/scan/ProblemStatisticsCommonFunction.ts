@@ -165,7 +165,10 @@ export async function generateScanProbelemStatisticsReport(
   );
 }
 
-function getProcessedRuleToNumbersMap(ruleToNumbersMap: Map<string, number>, wholeLinterRules: string[]) : Map<string, number> {
+function getProcessedRuleToNumbersMap(
+  ruleToNumbersMap: Map<string, number>,
+  wholeLinterRules: string[]
+): Map<string, number> {
   const processedRuleToNumbersMap: Map<string, number> = new Map();
   const homecheckRuleToNumbersMap: Map<string, number> = ruleToNumbersMap;
   wholeLinterRules.forEach((ruleName) => {
@@ -173,10 +176,10 @@ function getProcessedRuleToNumbersMap(ruleToNumbersMap: Map<string, number>, who
     homecheckRuleToNumbersMap.delete(ruleName);
     processedRuleToNumbersMap.set(ruleName, ruleNumber);
   });
-  
+
   homecheckRuleToNumbersMap.forEach((number, ruleName) => {
     processedRuleToNumbersMap.set(ruleName, number);
-  })
+  });
 
   return processedRuleToNumbersMap;
 }
