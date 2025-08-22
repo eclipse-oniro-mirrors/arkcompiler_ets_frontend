@@ -80,7 +80,8 @@
     "arkts-not-support-tuple-generic-validation",
     "arkts-no-optional-tuple-type",
     "arkts-no-large-numeric-literal",
-    "arkts-no-instanceof-func"
+    "arkts-no-instanceof-func",
+    "arkts-no-super-call-in-static-context"
   ],
   "interop": [
     "arkts-interop-js2s-inherit-js-class",
