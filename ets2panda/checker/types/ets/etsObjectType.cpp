@@ -902,6 +902,11 @@ void ETSObjectType::Cast(TypeRelation *const relation, Type *const target)
         return;
     }
 
+    if (target->IsGradualType()) {
+        relation->Result(true);
+        return;
+    }
+
     if (CastNumericObject(relation, target)) {
         return;
     }

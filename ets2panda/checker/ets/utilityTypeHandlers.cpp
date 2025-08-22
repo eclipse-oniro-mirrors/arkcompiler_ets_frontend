@@ -1019,6 +1019,10 @@ Type *ETSChecker::GetReadonlyType(Type *type)
         return *found;
     }
 
+    if (type->IsGradualType()) {
+        return GetReadonlyType(type->AsGradualType()->GetBaseType());
+    }
+
     NamedTypeStackElement ntse(this, type);
     ES2PANDA_ASSERT(type != nullptr);
     if (type->IsETSArrayType()) {

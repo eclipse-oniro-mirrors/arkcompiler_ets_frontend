@@ -691,9 +691,10 @@ ir::ClassDeclaration *GlobalClassHandler::CreateGlobalClass(const parser::Progra
     auto *ident = NodeAllocator::Alloc<ir::Identifier>(allocator_, compiler::Signatures::ETS_GLOBAL, allocator_);
     ES2PANDA_ASSERT(ident != nullptr);
     ident->SetRange(rangeToStartOfFile);
-    auto *classDef =
-        NodeAllocator::Alloc<ir::ClassDefinition>(allocator_, allocator_, ident, ir::ClassDefinitionModifiers::GLOBAL,
-                                                  ir::ModifierFlags::ABSTRACT, Language(Language::Id::ETS));
+    auto lang =
+        globalProgram->IsDeclForDynamicStaticInterop() ? Language(Language::Id::JS) : Language(Language::Id::ETS);
+    auto *classDef = NodeAllocator::Alloc<ir::ClassDefinition>(
+        allocator_, allocator_, ident, ir::ClassDefinitionModifiers::GLOBAL, ir::ModifierFlags::ABSTRACT, lang);
     ES2PANDA_ASSERT(classDef != nullptr);
     classDef->SetRange(rangeToStartOfFile);
     auto *classDecl = NodeAllocator::Alloc<ir::ClassDeclaration>(allocator_, classDef, allocator_);

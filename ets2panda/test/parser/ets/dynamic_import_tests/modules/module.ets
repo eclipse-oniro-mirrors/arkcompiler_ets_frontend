@@ -41,3 +41,21 @@ export declare class C {
 }
 
 export declare type requiredC = Required<C>
+
+export declare class C1{}
+
+export declare interface I1{}
+
+export declare class C2 extends C1 implements I1{}
+export declare interface I2 extends I1 {
+    name:string;
+    age:number
+}
+
+export declare namespace ns {
+    export class A{}
+}
+
+export declare class MyError extends Error {
+    mycode: number
+}
