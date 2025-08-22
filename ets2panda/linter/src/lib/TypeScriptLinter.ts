@@ -2018,40 +2018,38 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleNoDeprecatedApi(node);
 
     if (!this.options.arkts2) {
-        this.handleLiteralAsPropertyNameForPropertyAssignment(node);
-      }
+      this.handleLiteralAsPropertyNameForPropertyAssignment(node);
+    }
   }
 
   private handleLiteralAsPropertyNameForPropertyAssignment(node: ts.PropertyAssignment): void {
-  const propName = node.name;
-  if (!propName || !(ts.isNumericLiteral(propName) || ts.isStringLiteral(propName))) {
-    return;
+    const propName = node.name;
+    if (!propName || !(ts.isNumericLiteral(propName) || ts.isStringLiteral(propName))) {
+      return;
+    }
+
+    /*
+     * We can use literals as property names only when creating Record or any interop instances.
+     * We can also initialize with constant string literals.
+     * Assignment with string enum values is handled in handleComputedPropertyName
+     */
+    let isRecordObjectInitializer = false;
+    let isLibraryType = false;
+    let isDynamic = false;
+    const objectLiteralType = this.tsTypeChecker.getContextualType(node.parent);
+
+    if (objectLiteralType) {
+      isRecordObjectInitializer = this.tsUtils.checkTypeSet(objectLiteralType, this.tsUtils.isStdRecordType);
+      isLibraryType = this.tsUtils.isLibraryType(objectLiteralType);
+    }
+
+    isDynamic = isLibraryType || this.tsUtils.isDynamicLiteralInitializer(node.parent);
+
+    if (!isRecordObjectInitializer && !isDynamic) {
+      const autofix = this.autofixer?.fixLiteralAsPropertyNamePropertyAssignment(node);
+      this.incrementCounters(node.name, FaultID.LiteralAsPropertyName, autofix);
+    }
   }
-
-  /*
-   * We can use literals as property names only when creating Record or any interop instances.
-   * We can also initialize with constant string literals.
-   * Assignment with string enum values is handled in handleComputedPropertyName
-   */
-  let isRecordObjectInitializer = false;
-  let isLibraryType = false;
-  let isDynamic = false;
-  const objectLiteralType = this.tsTypeChecker.getContextualType(node.parent);
-
-  if (objectLiteralType) {
-    isRecordObjectInitializer = this.tsUtils.checkTypeSet(objectLiteralType, this.tsUtils.isStdRecordType);
-    isLibraryType = this.tsUtils.isLibraryType(objectLiteralType);
-
-  }
-
-  isDynamic = isLibraryType || this.tsUtils.isDynamicLiteralInitializer(node.parent);
-
-  if (!isRecordObjectInitializer && !isDynamic) {
-    const autofix = this.autofixer?.fixLiteralAsPropertyNamePropertyAssignment(node);
-    this.incrementCounters(node.name, FaultID.LiteralAsPropertyName, autofix);
-  }
-}
-
 
   private static getAllClassesFromSourceFile(sourceFile: ts.SourceFile): ts.ClassDeclaration[] {
     const allClasses: ts.ClassDeclaration[] = [];
@@ -12457,12 +12455,48 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2) {
       return;
     }
+
+    if (TypeScriptLinter.isInForLoopBody(tsAsExpr)) {
+      const identifier = TypeScriptLinter.getIdentifierFromAsExpression(tsAsExpr);
+      if (identifier && this.isDeclaredOutsideForLoop(identifier)) {
+        return;
+      }
+    }
+
     const asType = this.tsTypeChecker.getTypeAtLocation(tsAsExpr.type);
     const originType = this.tsTypeChecker.getTypeAtLocation(tsAsExpr.expression);
     const originTypeStr = this.tsTypeChecker.typeToString(originType);
     if (originTypeStr === 'never' && this.tsTypeChecker.typeToString(asType) !== originTypeStr) {
       this.incrementCounters(tsAsExpr, FaultID.NoTsLikeSmartType);
     }
+  }
+
+  private isDeclaredOutsideForLoop(identifier: ts.Identifier): boolean {
+    const symbol = this.tsTypeChecker.getSymbolAtLocation(identifier);
+    if (!symbol) {
+      return false;
+    }
+
+    const declarations = symbol.declarations ?? [];
+    for (const decl of declarations) {
+      if (ts.findAncestor(decl, ts.isForStatement)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private static getIdentifierFromAsExpression(asExpr: ts.AsExpression): ts.Identifier | undefined {
+    const expr = asExpr.expression;
+    if (ts.isIdentifier(expr)) {
+      // case: data as Type
+      return expr;
+    } else if (ts.isElementAccessExpression(expr) && ts.isIdentifier(expr.expression)) {
+      // case: data[i] as Type
+      return expr.expression;
+    }
+    return undefined;
   }
 
   private handleAssignmentNotsLikeSmartType(tsBinaryExpr: ts.BinaryExpression): void {
