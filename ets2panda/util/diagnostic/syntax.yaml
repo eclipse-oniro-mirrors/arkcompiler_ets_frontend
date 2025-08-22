@@ -251,6 +251,11 @@ syntax:
   message: "'in' operator is not supported. Use 'instanceof' operator to check whether an object is the instance of a class
     that contains the necessary class member."
 
+- name: ERROR_ARKTS_NO_IS_OPERATOR
+  id: 169587
+  message: "'is' operator is not supported. Use 'instanceof' instead to check whether a variable is instance of a given type\
+    \ and use 'as' operator to cast to the appropriate type!"
+
 - name: ERROR_ARKTS_NO_OBJ_LITERAL_TO_DECL_TYPE
   id: 177354
   message: "Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly!"

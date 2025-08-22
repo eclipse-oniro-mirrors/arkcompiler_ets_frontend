@@ -1055,6 +1055,13 @@ ir::TypeNode *ETSParser::ParseTypeReference(TypeAnnotationParsingOptions *option
         typeRefPart->SetRange({partPos, endPos});
 
         if (!Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_PERIOD)) {
+            if (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_IS) {
+                auto isPos = Lexer()->GetToken().Start();
+                Lexer()->NextToken();  // eat 'is'
+                Lexer()->TryEatTokenType(lexer::TokenType::LITERAL_IDENT);
+                LogError(diagnostic::ERROR_ARKTS_NO_IS_OPERATOR, {}, isPos);
+                return AllocBrokenType({partPos, Lexer()->GetToken().End()});
+            }
             break;
         }
 
