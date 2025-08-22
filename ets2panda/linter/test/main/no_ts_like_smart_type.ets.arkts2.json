@@ -175,16 +175,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 133,
-            "column": 11,
-            "endLine": 133,
-            "endColumn": 16,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
             "line": 137,
             "column": 5,
             "endLine": 137,
@@ -195,6 +185,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 143,
+            "column": 1,
+            "endLine": 147,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
             "line": 144,
             "column": 7,
             "endLine": 144,
@@ -202,16 +202,6 @@
             "problem": "NoTsLikeSmartType",
             "suggest": "",
             "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 151,
-            "column": 7,
-            "endLine": 151,
-            "endColumn": 20,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
         },
         {
@@ -265,6 +255,46 @@
             "severity": "ERROR"
         },
         {
+            "line": 261,
+            "column": 1,
+            "endLine": 268,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 278,
+            "column": 1,
+            "endLine": 278,
+            "endColumn": 6,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 292,
+            "column": 5,
+            "endLine": 292,
+            "endColumn": 10,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 307,
+            "column": 13,
+            "endLine": 307,
+            "endColumn": 18,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
             "line": 137,
             "column": 5,
             "endLine": 137,
@@ -302,6 +332,36 @@
             "problem": "StrictDiagnostic",
             "suggest": "Function lacks ending return statement and return type does not include 'undefined'.",
             "rule": "Function lacks ending return statement and return type does not include 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 278,
+            "column": 1,
+            "endLine": 278,
+            "endColumn": 4,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 292,
+            "column": 5,
+            "endLine": 292,
+            "endColumn": 8,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 307,
+            "column": 13,
+            "endLine": 307,
+            "endColumn": 16,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
             "severity": "ERROR"
         }
     ]
