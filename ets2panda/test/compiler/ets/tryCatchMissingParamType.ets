@@ -15,7 +15,7 @@
 
 function main(): void {
     try {
-        throw new Exception();
+        throw new Error();
     } catch (e) {
         //Do something.
     }

@@ -128,12 +128,12 @@ declare function addResult(): number;
 
 function main(): void {
     try {
-        throw new Exception();
+        throw new Error();
     } catch () {
         //Do something.
     }
     try {
-        throw new Exception();
+        throw new Error();
     } catch (e = 0) {
         //Do something.
     }

@@ -16,7 +16,7 @@
 function main() : int {
     try {
         try {
-            throw new Exception();
+            throw new Error();
         } catch (e:Error) {
           arktest.assertTrue(false)
         } finally {

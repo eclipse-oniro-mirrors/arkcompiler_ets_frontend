@@ -23,6 +23,6 @@ class cls {
 function foo(): void {
   let catch: int = 5;
   try {
-  } catch (catch: Exception) {
+  } catch (catch: Error) {
   }
 }

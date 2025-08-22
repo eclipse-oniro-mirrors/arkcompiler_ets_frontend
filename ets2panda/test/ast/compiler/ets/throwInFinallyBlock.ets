@@ -16,10 +16,10 @@
 function main(): void {
     try {
         try {
-            throw new Exception();
+            throw new Error();
         } catch (e) {}
         finally /* @@ label */{
-            throw new Exception();
+            throw new Error();
         }
     } catch (e) {}
 }

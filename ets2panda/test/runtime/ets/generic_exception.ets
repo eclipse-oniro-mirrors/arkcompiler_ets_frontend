@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class E<T> extends Exception {}
+class E<T> extends Error {}
 
 function main(): int {
     try {

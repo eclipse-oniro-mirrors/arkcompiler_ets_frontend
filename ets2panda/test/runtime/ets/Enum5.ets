@@ -77,9 +77,9 @@ function main(): void {
   try {
     let yellow: Color = Color.getValueOf("Yellow");
     arktest.assertTrue(false)
-  } catch (e: Exception) {
-    arktest.assertTrue((e as Object).toString().startsWith("No enum constant Color.Yellow"))
-  } catch (e) {}
+  } catch (e) {
+    arktest.assertTrue((e as Object).toString().startsWith("Error: No enum constant Color.Yellow"))    
+  }
 
   ord = "red";
   let green: Color = ord as Color;
@@ -88,7 +88,7 @@ function main(): void {
   try {
     let x = "a" as Color;
     arktest.assertTrue( false)
-  } catch (e: Error) {
+  } catch (e) {
     arktest.assertTrue( (e as Object).toString().startsWith("Error: No enum Color with value a"))
   }
 
