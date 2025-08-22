@@ -41,6 +41,7 @@ bool MatchTSClassImplements(ir::AstNode *childNode, const NodeInfo *info);
 ir::AstNode *ExtractExportSpecifierIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractTSClassImplementsIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractIdentifierFromNode(ir::AstNode *node, const NodeInfo *info);
-extern const std::unordered_map<ir::AstNodeType, NodeMatcher> nodeMatchers;
+const std::unordered_map<ir::AstNodeType, NodeExtractor> &GetNodeExtractors();
+const std::unordered_map<ir::AstNodeType, NodeMatcher> &GetNodeMatchers();
 }  // namespace ark::es2panda::lsp
 #endif  // NODE_MATCHERS_H

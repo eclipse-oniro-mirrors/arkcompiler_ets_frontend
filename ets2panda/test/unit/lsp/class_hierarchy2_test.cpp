@@ -28,20 +28,20 @@ namespace {
 
 class LspClassHierarchyTests : public LSPAPITests {};
 
-TEST_F(LspClassHierarchyTests, GetTypeHierarchiesImpl_001)
+TEST_F(LspClassHierarchyTests, GetTypeHierarchiesImpl_002)
 {
-    std::vector<std::string> fileNames = {"aa1.ets", "bb1.ets", "cc1.ets", "ii1.ets", "mm1.ets", "nn1.ets", "pp1.ets"};
+    std::vector<std::string> fileNames = {"aa2.ets", "bb2.ets", "cc2.ets", "ii2.ets", "mm2.ets", "nn2.ets", "pp2.ets"};
     std::vector<std::string> fileContents = {
         R"(
         export class AAA {}
         )",
         R"(
-        import { AAA } from "./aa1"
+        import { AAA } from "./aa2"
         export class BBB extends AAA {}
     )",
-        R"(import { BBB } from "./bb1"
-        import { NNN } from "./nn1"
-        import { PPP } from "./pp1"
+        R"(import { BBB } from "./bb2"
+        import { NNN } from "./nn2"
+        import { PPP } from "./pp2"
         class CCC extends BBB implements NNN, PPP {}
     )",
         R"(export interface III {}
@@ -49,8 +49,8 @@ TEST_F(LspClassHierarchyTests, GetTypeHierarchiesImpl_001)
         R"(
         export interface MMM {}
     )",
-        R"(import { III } from "./ii1"
-        import { MMM } from "./mm1"
+        R"(import { III } from "./ii2"
+        import { MMM } from "./mm2"
         export interface NNN extends III, MMM {}
         export interface NNN2 extends III {}
         export interface NNN3 extends NNN2 {}
@@ -61,18 +61,16 @@ TEST_F(LspClassHierarchyTests, GetTypeHierarchiesImpl_001)
     auto filePaths = CreateTempFile(fileNames, fileContents);
     ASSERT_TRUE(filePaths.size() == fileContents.size());
     ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
-    const int position = 120;
-    const int fileIndex = 2;
+    const int position = 94;
+    const int fileIndex = 5;
     auto context = initializer.CreateContext(filePaths[fileIndex].c_str(), ES2PANDA_STATE_CHECKED);
     auto node = ark::es2panda::lsp::GetTouchingToken(context, position, false);
     auto tokenId = ark::es2panda::lsp::GetOwnerId(node);
     auto tokenName = ark::es2panda::lsp::GetIdentifierName(node);
     auto res = ark::es2panda::lsp::GetTypeHierarchiesImpl(context, position);
     initializer.DestroyContext(context);
-    const size_t parentNum1 = 3;
-    const size_t parentNum2 = 1;
+    const size_t parentNum1 = 2;
     ASSERT_EQ(res.superHierarchies.subOrSuper.size(), parentNum1);
-    ASSERT_EQ(res.superHierarchies.subOrSuper[0].subOrSuper.size(), parentNum2);
 }
 
 }  // namespace

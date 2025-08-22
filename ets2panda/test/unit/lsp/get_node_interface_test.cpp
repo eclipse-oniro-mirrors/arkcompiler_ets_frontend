@@ -54,7 +54,7 @@ interface Worker extends a.User {})";
     // NOLINTBEGIN(fuchsia-statically-constructed-objects, cert-err58-cpp)
     static inline es2panda_Context *contexts_ = nullptr;
     static inline Initializer *initializer_ = nullptr;
-    static inline std::string sourceCode_ = "";
+    static inline std::string sourceCode_;
     // NOLINTEND(fuchsia-statically-constructed-objects, cert-err58-cpp)
 };
 
