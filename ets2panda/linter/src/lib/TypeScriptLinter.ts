@@ -555,7 +555,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     [ts.SyntaxKind.PostfixUnaryExpression, this.handlePostfixUnaryExpression],
     [ts.SyntaxKind.BigIntLiteral, this.handleBigIntLiteral],
     [ts.SyntaxKind.NumericLiteral, this.handleNumericLiteral],
-    [ts.SyntaxKind.RestType, this.handleRestType]
+    [ts.SyntaxKind.RestType, this.handleRestType],
+    [ts.SyntaxKind.SuperKeyword, this.handleSuperKeyword]
   ]);
 
   lint(): void {
@@ -1916,7 +1917,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleSdkGlobalApi(node);
     this.handleObjectLiteralAssignmentToClass(node);
     this.checkPropertyDeclarationReadonlyUsage(node);
-    this.handleSuperInStaticContext(node);
   }
 
   private checkPropertyDeclarationReadonlyUsage(propDecl: ts.PropertyDeclaration): void {
@@ -2009,12 +2009,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     });
     if (!this.tsUtils.isSendableTypeNode(typeNode)) {
       this.incrementCounters(node, FaultID.SendablePropType);
-    }
-  }
-
-  private handleSuperInStaticContext(node: ts.PropertyDeclaration): void {
-    if (!!node.initializer && TsUtils.hasModifier(node.modifiers, ts.SyntaxKind.StaticKeyword)) {
-      this.reportThisSuperKeywordsInStaticContext(node.initializer);
     }
   }
 
@@ -2255,7 +2249,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.incrementCounters(funcExpr, FaultID.GeneratorFunction);
     }
     if (!hasPredecessor(funcExpr, TypeScriptLinter.isClassLikeOrIface)) {
-      this.reportThisSuperKeywordsInStaticContext(funcExpr.body);
+      this.reportThisKeywordsInScope(funcExpr.body);
     }
     if (hasUnfixableReturnType) {
       this.incrementCounters(funcExpr, FaultID.LimitedReturnTypeInference);
@@ -2266,7 +2260,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private handleArrowFunction(node: ts.Node): void {
     const arrowFunc = node as ts.ArrowFunction;
     if (!hasPredecessor(arrowFunc, TypeScriptLinter.isClassLikeOrIface)) {
-      this.reportThisSuperKeywordsInStaticContext(arrowFunc.body);
+      this.reportThisKeywordsInScope(arrowFunc.body);
     }
     const contextType = this.tsTypeChecker.getContextualType(arrowFunc);
     if (!(contextType && this.tsUtils.isLibraryType(contextType))) {
@@ -2296,7 +2290,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.countDeclarationsWithDuplicateName(tsFunctionDeclaration.name, tsFunctionDeclaration);
     }
     if (tsFunctionDeclaration.body) {
-      this.reportThisSuperKeywordsInStaticContext(tsFunctionDeclaration.body);
+      this.reportThisKeywordsInScope(tsFunctionDeclaration.body);
     }
     if (this.options.arkts2) {
       this.handleParamType(tsFunctionDeclaration);
@@ -3996,7 +3990,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.handleParamType(tsMethodDecl);
     }
     if (tsMethodDecl.body && isStatic) {
-      this.reportThisSuperKeywordsInStaticContext(tsMethodDecl.body);
+      this.reportThisKeywordsInScope(tsMethodDecl.body);
     }
     if (!tsMethodDecl.type) {
       this.handleMissingReturnType(tsMethodDecl);
@@ -4770,7 +4764,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!ts.isClassDeclaration(classStaticBlockDecl.parent)) {
       return;
     }
-    this.reportThisSuperKeywordsInStaticContext(classStaticBlockDecl.body);
+    this.reportThisKeywordsInScope(classStaticBlockDecl.body);
   }
 
   private handleIdentifier(node: ts.Node): void {
@@ -7348,41 +7342,19 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.incrementCounters(entry.range as ts.CommentRange, FaultID.ErrorSuppression);
   }
 
-  private reportThisSuperKeywordsInStaticContext(node: ts.Block | ts.Expression): void {
-    if (!node.parent) {
-      return;
-    }
-    let callback: (node: ts.Node) => void;
-    if (ts.isFunctionDeclaration(node.parent)) {
-      callback = (node: ts.Node): void => {
-        if (node.kind === ts.SyntaxKind.ThisKeyword) {
-          this.incrementCounters(node, FaultID.FunctionContainsThis);
-        }
-      };
-    } else if (ts.isPropertyDeclaration(node.parent)) {
-      callback = (node: ts.Node): void => {
-        if (node.kind === ts.SyntaxKind.SuperKeyword) {
-          this.incrementCounters(node, FaultID.SuperInStaticContext);
-        }
-      };
-    } else {
-      callback = (node: ts.Node): void => {
-        if (node.kind === ts.SyntaxKind.ThisKeyword) {
-          this.incrementCounters(node, FaultID.FunctionContainsThis);
-        }
-        if (node.kind === ts.SyntaxKind.SuperKeyword) {
-          this.incrementCounters(node, FaultID.SuperInStaticContext);
-        }
-      };
-    }
-
+  private reportThisKeywordsInScope(scope: ts.Block | ts.Expression): void {
+    const callback = (node: ts.Node): void => {
+      if (node.kind === ts.SyntaxKind.ThisKeyword) {
+        this.incrementCounters(node, FaultID.FunctionContainsThis);
+      }
+    };
     const stopCondition = (node: ts.Node): boolean => {
       const isClassLike = ts.isClassDeclaration(node) || ts.isClassExpression(node);
       const isFunctionLike = ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node);
       const isModuleDecl = ts.isModuleDeclaration(node);
       return isClassLike || isFunctionLike || isModuleDecl;
     };
-    forEachNodeInSubtree(node, callback, stopCondition);
+    forEachNodeInSubtree(scope, callback, stopCondition);
   }
 
   private handleConstructorDeclaration(node: ts.Node): void {
@@ -10022,8 +9994,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const fileName = path.normalize(oriDecl?.getSourceFile().fileName || '');
     const apiNamesArr = [...setApiListItem];
     const hasSameApiName = apiNamesArr.some((apilistItem) => {
-      return apilistItem.api_info.api_name === errorNode.getText() &&
-        fileName.endsWith(path.normalize(apilistItem.file_path));
+      return (
+        apilistItem.api_info.api_name === errorNode.getText() &&
+        fileName.endsWith(path.normalize(apilistItem.file_path))
+      );
     });
     if (!hasSameApiName) {
       return;
@@ -15614,6 +15588,22 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     if (node.parent && ts.isTupleTypeNode(node.parent)) {
       this.incrementCounters(node, FaultID.unfixedTuple);
+    }
+  }
+
+  private handleSuperKeyword(node: ts.Node): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+    const staticContext = ts.findAncestor(node, (parent) => {
+      return (
+        parent &&
+        (ts.canHaveModifiers(parent) && TsUtils.hasModifier(parent.modifiers, ts.SyntaxKind.StaticKeyword) ||
+          ts.isClassStaticBlockDeclaration(parent))
+      );
+    });
+    if (staticContext) {
+      this.incrementCounters(node, FaultID.SuperInStaticContext);
     }
   }
 }
