@@ -1,18 +1,23 @@
-## 共享对象不添加装饰器@Sendable
+## arkts-limited-stdlib
 
-**规则：** arkts-limited-stdlib-no-sendable-decorator
+**规则：** `arkts-limited-stdlib`
 
-**级别：** error
+**规则解释：**
 
-新增对象天然共享特性，不再依赖Sendable特性，无需添加@Sendable装饰器。
+ArkTS1.2中禁止使用以下接口：
 
-**ArkTS1.1**
-```typescript
-@Sendable
-class A {}
-```
+- 全局对象的属性和方法：`eval`
 
-**ArkTS1.2**
-```typescript
-class A {}
-```
+- Object： `__proto__`、`__defineGetter__`、`__defineSetter__`、`__lookupGetter__`、`__lookupSetter__`、`assign`、`create`、`defineProperties`、`defineProperty`、`freeze`、`fromEntries`、`getOwnPropertyDescriptor`、`getOwnPropertyDescriptors`、`getOwnPropertySymbols`、`getPrototypeOf`、`hasOwnProperty`、`is`、`isExtensible`、`isFrozen`、`isPrototypeOf`、`isSealed`、`preventExtensions`、`propertyIsEnumerable`、`seal`、`setPrototypeOf`
+
+- Reflect：`apply`、`construct`、`defineProperty`、`deleteProperty`、`getOwnPropertyDescriptor`、`getPrototypeOf`、`isExtensible`、`preventExtensions`、`setPrototypeOf`
+
+- Proxy：`handler.apply()`、`handler.construct()`、`handler.defineProperty()`、`handler.deleteProperty()`、`handler.get()`、`handler.getOwnPropertyDescriptor()`、`handler.getPrototypeOf()`、`handler.has()`、`handler.isExtensible()`、`handler.ownKeys()`、`handler.preventExtensions()`、`handler.set()`、`handler.setPrototypeOf()`
+
+**变更原因：**
+ 
+ArkTS1.2不允许使用TypeScript或JavaScript标准库中的这些接口，这些接口大多与动态特性相关。
+
+**适配建议：**
+
+NA

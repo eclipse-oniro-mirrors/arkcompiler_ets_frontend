@@ -1,8 +1,6 @@
 ## taskpool不需要import
 
-**规则：** arkts-limited-stdlib-no-import-concurrency
-
-**级别：** error
+**规则：** `arkts-limited-stdlib-no-import-concurrency`
 
 taskpool实现基于ArkTS提供，不依赖其他模块，不再需要import。
 

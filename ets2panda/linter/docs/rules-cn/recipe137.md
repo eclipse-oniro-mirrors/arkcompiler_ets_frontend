@@ -1,10 +1,20 @@
 ## 不支持globalThis
 
-**规则：**`arkts-no-globalthis`
+**规则：** `arkts-no-globalthis`
 
-**级别：error**
+**规则解释：**
 
-由于ArkTS1.2不支持动态更改对象的布局，因此不支持全局作用域和globalThis。
+ArkTS1.2不支持globalThis。
+
+**变更原因：**
+ 
+ArkTS1.2不支持动态更改对象布局，因此不支持全局作用域和globalThis。
+
+**适配建议：**
+
+按示例修改。
+
+**示例：**
 
 **ArkTS1.1**
 

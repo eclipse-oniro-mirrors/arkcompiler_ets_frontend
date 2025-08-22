@@ -1,8 +1,8 @@
 ### ArkTS1.2判断js对象类型
 
-**规则：** arkts-interop-js2s-instanceof-js-type
+**规则：** `arkts-interop-js2s-instanceof-js-type`
 
-**级别：** error
+ArkTS1.2使用ESValue接口判断js对象类型。
 
 **ArkTS1.1**
 ```typescript
