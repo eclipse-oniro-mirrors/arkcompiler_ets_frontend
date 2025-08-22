@@ -308,3 +308,4 @@ faultsAttrs[FaultID.BuiltinDisableApi] = new FaultAttributes(407);
 faultsAttrs[FaultID.BuiltinIteratorResultValue] = new FaultAttributes(408);
 faultsAttrs[FaultID.OptionalTupleType] = new FaultAttributes(409);
 faultsAttrs[FaultID.LargeNumericLiteral] = new FaultAttributes(410);
+faultsAttrs[FaultID.InstanceOfFunction] = new FaultAttributes(411);
