@@ -77,6 +77,8 @@ struct ModuleInfo {
 class ImportPathManager {
 public:
     static constexpr auto DUMMY_PATH = "dummy_path";  // CC-OFF(G.NAM.03-CPP) project code style
+    static constexpr std::string_view ANNOTATION_MODULE_DECLARATION =
+        "Lstd/annotations/ModuleDeclaration;";  // CC-OFF(G.NAM.03-CPP) project code style
     struct ImportMetadata {
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
         ImportFlags importFlags {};

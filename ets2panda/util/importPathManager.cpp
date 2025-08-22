@@ -25,9 +25,12 @@
 #include "parser/program/program.h"
 #include "ir/expressions/literals/stringLiteral.h"
 
-#include "abc2program_driver.h"
 #include "compiler/lowering/ets/declGenPhase.h"
+
+#include "libpandafile/class_data_accessor-inl.h"
+#include "libpandafile/file-inl.h"
 #include "libpandabase/utils/logger.h"
+#include <algorithm>
 
 #ifdef USE_UNIX_SYSCALL
 #include <dirent.h>
@@ -62,6 +65,15 @@ static bool IsAbsolute(const std::string &path)
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
 }
 
+void RemoveEscapedNewlines(std::string &s)
+{
+    std::string pattern = "\\n";
+    size_t pos = 0;
+    while ((pos = s.find(pattern, pos)) != std::string::npos) {
+        s.erase(pos, pattern.size());
+    }
+}
+
 void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
 {
     ES2PANDA_ASSERT(!IsAbsolute(std::string(importData.resolvedSource)));
@@ -83,34 +95,49 @@ void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
     // process .abc "path" in "dependencies"
     ES2PANDA_ASSERT(Helpers::EndsWith(std::string(externalModuleImportData.Path()), ".abc"));
     importData.importFlags |= ImportFlags::EXTERNAL_BINARY_IMPORT;
-    abc2program::Abc2ProgramDriver driver;
-    driver.Compile(std::string {externalModuleImportData.Path()});
-    pandasm::Program &prog = driver.GetProgram();
-
     // NOTE(itrubachev): support binary file after ark_link #26280
-    auto etsGlobalRecord = std::find_if(prog.recordTable.begin(), prog.recordTable.end(), [](auto &record) {
-        auto annotations = record.second.metadata->GetAnnotations();
-        auto moduleDeclAnno = std::find_if(annotations.begin(), annotations.end(), [](auto &anno) {
-            return anno.GetName() == compiler::DeclGenPhase::MODULE_DECLARATION_ANNOTATION;
-        });
-        return moduleDeclAnno != annotations.end();
-    });
-    ES2PANDA_ASSERT(etsGlobalRecord != prog.recordTable.end());
-    // rely on the following mangling: <moduleName>.ETSGLOBAL
-    auto etsGlobalSuffix = std::string(".") + std::string(compiler::Signatures::ETS_GLOBAL);
-    ES2PANDA_ASSERT(Helpers::EndsWith(etsGlobalRecord->second.name, etsGlobalSuffix));
-    auto moduleName =
-        etsGlobalRecord->second.name.substr(0, etsGlobalRecord->second.name.size() - etsGlobalSuffix.size());
-    importData.ohmUrl = util::UString(moduleName, allocator_).View().Utf8();
+    auto pf = panda_file::OpenPandaFile(std::string {externalModuleImportData.Path()});
+    if (!pf) {
+        LOG(FATAL, ES2PANDA) << "Failed to load a provided abc file: " << externalModuleImportData.Path();
+    }
 
-    auto annotations = etsGlobalRecord->second.metadata->GetAnnotations();
-    auto moduleDeclarationAnno = std::find_if(annotations.begin(), annotations.end(), [](auto &anno) {
-        return anno.GetName() == compiler::DeclGenPhase::MODULE_DECLARATION_ANNOTATION;
-    });
-    ES2PANDA_ASSERT(moduleDeclarationAnno != annotations.end());
-    auto declText = util::UString(
-        moduleDeclarationAnno->GetElements()[0].GetValue()->GetAsScalar()->GetValue<std::string>(), allocator_);
-    importData.declText = declText.View().Utf8();
+    // take the classes that contain ModuleDeclaration annotation onlyy
+    for (auto id : pf->GetExported()) {
+        panda_file::File::EntityId classId(id);
+        panda_file::ClassDataAccessor cda(*pf, classId);
+
+        // processing annotation to extract string with declaration text
+        auto success =
+            cda.EnumerateAnnotation(ANNOTATION_MODULE_DECLARATION.data(),
+                                    [&importData, &pf, this](panda_file::AnnotationDataAccessor &annotationAccessor) {
+                                        auto elem = annotationAccessor.GetElement(0);
+                                        auto value = elem.GetScalarValue();
+                                        const auto idAnno = value.Get<panda_file::File::EntityId>();
+                                        std::stringstream ss;
+                                        ss << StringDataToString(pf->GetStringData(idAnno));
+                                        std::string declText = ss.str();
+                                        if (!declText.empty()) {
+                                            RemoveEscapedNewlines(declText);
+                                            importData.declText = util::UString(declText, allocator_).View().Utf8();
+                                            return true;
+                                        }
+                                        return false;
+                                    });
+        if (!success) {
+            return;
+        }
+        // processing name to get ohmUrl
+        std::string name = utf::Mutf8AsCString(pf->GetStringData(classId).data);
+        auto type = pandasm::Type::FromDescriptor(name);
+        type = pandasm::Type(type.GetNameWithoutRank(), type.GetRank());
+        auto recordName = type.GetPandasmName();
+
+        // rely on the following mangling: <moduleName>.ETSGLOBAL
+        auto etsGlobalSuffix = std::string(".") + std::string(compiler::Signatures::ETS_GLOBAL);
+        ES2PANDA_ASSERT(Helpers::EndsWith(recordName, etsGlobalSuffix));
+        auto moduleName = recordName.substr(0, recordName.size() - etsGlobalSuffix.size());
+        importData.ohmUrl = util::UString(moduleName, allocator_).View().Utf8();
+    }
 }
 
 // If needed, the result of this function can be cached
