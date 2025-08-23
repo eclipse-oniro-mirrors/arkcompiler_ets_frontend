@@ -193,16 +193,6 @@
             "suggest": "",
             "rule": "The ArkUI interface \"FlexAlign\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
-        },
-        {
-            "line": 36,
-            "column": 15,
-            "endLine": 36,
-            "endColumn": 29,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"NavigationType\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
         }
     ]
 }
