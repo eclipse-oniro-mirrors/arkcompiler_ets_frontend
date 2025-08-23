@@ -1,88 +1,118 @@
 {
-  "copyright": [
-    "Copyright (c) 2025 Huawei Device Co., Ltd.",
-    "Licensed under the Apache License, Version 2.0 (the 'License');",
-    "you may not use this file except in compliance with the License.",
-    "You may obtain a copy of the License at",
-    "",
-    "http://www.apache.org/licenses/LICENSE-2.0",
-    "",
-    "Unless required by applicable law or agreed to in writing, software",
-    "distributed under the License is distributed on an 'AS IS' BASIS,",
-    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
-    "See the License for the specific language governing permissions and",
-    "limitations under the License."
-  ],
-  "result": [
-    {
-      "line": 29,
-      "column": 3,
-      "endLine": 29,
-      "endColumn": 7,
-      "problem": "FieldTypeMismatch",
-      "suggest": "",
-      "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
-      "severity": "ERROR"
-    },
-    {
-      "line": 30,
-      "column": 3,
-      "endLine": 30,
-      "endColumn": 7,
-      "problem": "FieldTypeMismatch",
-      "suggest": "",
-      "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
-      "severity": "ERROR"
-    },
-    {
-      "line": 31,
-      "column": 3,
-      "endLine": 31,
-      "endColumn": 7,
-      "problem": "FieldTypeMismatch",
-      "suggest": "",
-      "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
-      "severity": "ERROR"
-    },
-    {
-      "line": 35,
-      "column": 3,
-      "endLine": 35,
-      "endColumn": 7,
-      "problem": "FieldTypeMismatch",
-      "suggest": "",
-      "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
-      "severity": "ERROR"
-    },
-    {
-      "line": 36,
-      "column": 3,
-      "endLine": 36,
-      "endColumn": 7,
-      "problem": "FieldTypeMismatch",
-      "suggest": "",
-      "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
-      "severity": "ERROR"
-    },
-    {
-      "line": 40,
-      "column": 21,
-      "endLine": 40,
-      "endColumn": 24,
-      "problem": "FieldTypeMismatch",
-      "suggest": "",
-      "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
-      "severity": "ERROR"
-    },
-    {
-      "line": 49,
-      "column": 3,
-      "endLine": 49,
-      "endColumn": 6,
-      "problem": "FieldTypeMismatch",
-      "suggest": "",
-      "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
-      "severity": "ERROR"
-    }
-  ]
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 29,
+            "column": 3,
+            "endLine": 29,
+            "endColumn": 7,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 3,
+            "endLine": 30,
+            "endColumn": 7,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 3,
+            "endLine": 31,
+            "endColumn": 7,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 3,
+            "endLine": 35,
+            "endColumn": 7,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 3,
+            "endLine": 36,
+            "endColumn": 7,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 21,
+            "endLine": 40,
+            "endColumn": 24,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 3,
+            "endLine": 49,
+            "endColumn": 6,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 3,
+            "endLine": 74,
+            "endColumn": 6,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 75,
+            "column": 3,
+            "endLine": 75,
+            "endColumn": 7,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 79,
+            "column": 3,
+            "endLine": 79,
+            "endColumn": 7,
+            "problem": "FieldTypeMismatch",
+            "suggest": "",
+            "rule": "The field types of the subclass and parent class must be the same (arkts-class-same-type-prop-with-super)",
+            "severity": "ERROR"
+        }
+    ]
 }

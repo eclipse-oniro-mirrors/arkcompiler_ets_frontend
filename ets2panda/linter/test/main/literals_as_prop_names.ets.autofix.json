@@ -127,38 +127,9 @@
             "column": 3,
             "endLine": 32,
             "endColumn": 4,
-            "problem": "LiteralAsPropertyName",
-            "autofix": [
-                {
-                    "replacementText": "__2",
-                    "start": 836,
-                    "end": 837,
-                    "line": 37,
-                    "column": 13,
-                    "endLine": 37,
-                    "endColumn": 29
-                },
-                {
-                    "replacementText": "__2",
-                    "start": 928,
-                    "end": 929,
-                    "line": 37,
-                    "column": 13,
-                    "endLine": 37,
-                    "endColumn": 29
-                },
-                {
-                    "replacementText": "litAsPropName.__2",
-                    "start": 1001,
-                    "end": 1017,
-                    "line": 37,
-                    "column": 13,
-                    "endLine": 37,
-                    "endColumn": 29
-                }
-            ],
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -166,38 +137,9 @@
             "column": 3,
             "endLine": 33,
             "endColumn": 8,
-            "problem": "LiteralAsPropertyName",
-            "autofix": [
-                {
-                    "replacementText": "Two",
-                    "start": 849,
-                    "end": 854,
-                    "line": 38,
-                    "column": 13,
-                    "endLine": 38,
-                    "endColumn": 33
-                },
-                {
-                    "replacementText": "Two",
-                    "start": 940,
-                    "end": 945,
-                    "line": 38,
-                    "column": 13,
-                    "endLine": 38,
-                    "endColumn": 33
-                },
-                {
-                    "replacementText": "litAsPropName.Two",
-                    "start": 1032,
-                    "end": 1052,
-                    "line": 38,
-                    "column": 13,
-                    "endLine": 38,
-                    "endColumn": 33
-                }
-            ],
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -310,26 +252,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
-            "column": 10,
-            "endLine": 57,
-            "endColumn": 16,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 57,
-            "column": 22,
-            "endLine": 57,
-            "endColumn": 23,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
             "line": 59,
             "column": 13,
             "endLine": 59,
@@ -390,18 +312,18 @@
                     "replacementText": "___2",
                     "start": 1726,
                     "end": 1727,
-                    "line": 80,
+                    "line": 75,
                     "column": 3,
-                    "endLine": 80,
+                    "endLine": 75,
                     "endColumn": 4
                 },
                 {
                     "replacementText": "___2",
                     "start": 1808,
                     "end": 1809,
-                    "line": 80,
+                    "line": 75,
                     "column": 3,
-                    "endLine": 80,
+                    "endLine": 75,
                     "endColumn": 4
                 }
             ],
@@ -420,18 +342,18 @@
                     "replacementText": "__2",
                     "start": 1739,
                     "end": 1744,
-                    "line": 81,
+                    "line": 76,
                     "column": 3,
-                    "endLine": 81,
+                    "endLine": 76,
                     "endColumn": 8
                 },
                 {
                     "replacementText": "__2",
                     "start": 1824,
                     "end": 1829,
-                    "line": 81,
+                    "line": 76,
                     "column": 3,
-                    "endLine": 81,
+                    "endLine": 76,
                     "endColumn": 8
                 }
             ],
@@ -454,29 +376,9 @@
             "column": 3,
             "endLine": 80,
             "endColumn": 4,
-            "problem": "LiteralAsPropertyName",
-            "autofix": [
-                {
-                    "replacementText": "___2",
-                    "start": 1726,
-                    "end": 1727,
-                    "line": 80,
-                    "column": 3,
-                    "endLine": 80,
-                    "endColumn": 4
-                },
-                {
-                    "replacementText": "___2",
-                    "start": 1808,
-                    "end": 1809,
-                    "line": 80,
-                    "column": 3,
-                    "endLine": 80,
-                    "endColumn": 4
-                }
-            ],
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -484,29 +386,9 @@
             "column": 3,
             "endLine": 81,
             "endColumn": 8,
-            "problem": "LiteralAsPropertyName",
-            "autofix": [
-                {
-                    "replacementText": "__2",
-                    "start": 1739,
-                    "end": 1744,
-                    "line": 81,
-                    "column": 3,
-                    "endLine": 81,
-                    "endColumn": 8
-                },
-                {
-                    "replacementText": "__2",
-                    "start": 1824,
-                    "end": 1829,
-                    "line": 81,
-                    "column": 3,
-                    "endLine": 81,
-                    "endColumn": 8
-                }
-            ],
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -514,9 +396,9 @@
             "column": 36,
             "endLine": 84,
             "endColumn": 37,
-            "problem": "LiteralAsPropertyName",
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -748,20 +630,9 @@
             "column": 13,
             "endLine": 128,
             "endColumn": 18,
-            "problem": "LiteralAsPropertyName",
-            "autofix": [
-                {
-                    "replacementText": "age",
-                    "start": 2432,
-                    "end": 2437,
-                    "line": 128,
-                    "column": 13,
-                    "endLine": 128,
-                    "endColumn": 18
-                }
-            ],
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -789,7 +660,7 @@
             "line": 136,
             "column": 3,
             "endLine": 136,
-            "endColumn": 15,
+            "endColumn": 12,
             "problem": "ObjectLiteralKeyType",
             "suggest": "",
             "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",

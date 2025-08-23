@@ -59,3 +59,22 @@ class B2 extends B1 { // no error
   obj3: boolean = false;
   obj4: string = 'hello';
 }
+
+interface I1 {
+  obj: number | string
+}
+
+interface I2 {
+  obj2: number | string;
+}
+
+interface I3 extends I2 {}
+
+class CI1 implements I1, I2 {
+  obj: number = 0.0;    // error
+  obj2: number = 0.0; // error
+}
+
+class CI2 implements I3 {
+  obj2: number = 0.0; // error
+}

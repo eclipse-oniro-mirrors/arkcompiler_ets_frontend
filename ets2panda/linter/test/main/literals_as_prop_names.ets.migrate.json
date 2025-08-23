@@ -25,26 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 62,
-            "column": 10,
-            "endLine": 62,
-            "endColumn": 16,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 62,
-            "column": 22,
-            "endLine": 62,
-            "endColumn": 23,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
             "line": 64,
             "column": 13,
             "endLine": 64,
@@ -79,9 +59,9 @@
             "column": 36,
             "endLine": 93,
             "endColumn": 37,
-            "problem": "LiteralAsPropertyName",
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -95,10 +75,20 @@
             "severity": "ERROR"
         },
         {
+            "line": 137,
+            "column": 13,
+            "endLine": 137,
+            "endColumn": 18,
+            "problem": "ObjectLiteralKeyType",
+            "suggest": "",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
+            "severity": "ERROR"
+        },
+        {
             "line": 145,
             "column": 3,
             "endLine": 145,
-            "endColumn": 15,
+            "endColumn": 12,
             "problem": "ObjectLiteralKeyType",
             "suggest": "",
             "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",

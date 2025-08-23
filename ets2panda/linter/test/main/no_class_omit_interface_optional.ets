@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-// 1) All fields implemented — no error
+// 1) Required Fields
 interface I1 {
   a: number;
   b: string;
@@ -23,21 +23,11 @@ class C1 implements I1 { // ✅ no error
   b: string = '';
 }
 
-// 2) One field missing — error
-interface I2 {
-  x: boolean;
-  y: number;
-  cb(): void;
-}
-class C2 implements I2 { // ❌ Error: missing `y`
-  x: boolean = true;
-}
-class C21 implements I2 { // ❌ Error: missing `cb()`
-  x: boolean = true;
-  y: number = 5.0;
+class C2 implements I1 { // ✅ no error - Required fields are already handled on ArkTS 1.1
+  a: number = 0.0;
 }
 
-// 3) Optional fields are treated as required — error
+// 2) Optional fields are treated as required
 interface I3 {
   foo?: string;
   bar?: number;
@@ -45,18 +35,17 @@ interface I3 {
 class C3 implements I3 { // ❌ Error: missing both `foo` and `bar` (first missing stops checking)
 }
 
-// 4) Optional field implemented
 class C4 implements I3 { // ✅ no error
   foo?: string;
   bar?: number;
 }
 
-// 5) Interface extends another
+// 3) Interface extends another
 interface A5 {
-  p: string;
+  p?: string;
 }
 interface B5 extends A5 {
-  q: string;
+  q?: string;
 }
 class C5 implements B5 { // ✅ no error
   p: string = 'hello';
@@ -69,9 +58,9 @@ class C61 implements B5 { // ❌ Error: missing `p`
   q: string = 'hello';
 }
 
-// 6) Multiple interfaces at once
-interface I6a { u: number }
-interface I6b { v: boolean }
+// 4) Multiple interfaces at once
+interface I6a { u?: number }
+interface I6b { v?: boolean }
 class C7 implements I6a, I6b { // ✅ no error
   u: number = 42.0;
   v: boolean = false;

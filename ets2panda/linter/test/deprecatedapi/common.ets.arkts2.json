@@ -35,16 +35,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 41,
-            "column": 13,
-            "endLine": 41,
-            "endColumn": 26,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
             "line": 42,
             "column": 13,
             "endLine": 42,
@@ -52,36 +42,6 @@
             "problem": "PropertyAccessByIndex",
             "suggest": "",
             "rule": "Indexed access is not supported for fields (arkts-no-props-by-index)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 42,
-            "column": 13,
-            "endLine": 42,
-            "endColumn": 26,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 47,
-            "column": 13,
-            "endLine": 47,
-            "endColumn": 26,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 48,
-            "column": 13,
-            "endLine": 48,
-            "endColumn": 26,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {

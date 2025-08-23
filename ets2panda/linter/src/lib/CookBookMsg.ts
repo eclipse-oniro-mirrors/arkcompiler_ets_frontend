@@ -288,7 +288,8 @@ cookBookTag[259] = 'The ArkUI interface should be imported before it is used (ar
 cookBookTag[260] = 'The "@Entry" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)';
 cookBookTag[261] =
   'The UIAbility of 1.2 needs to be listened by the new StaticAbilityLifecycleCallback. The original AbilityLifecycleCallback can only listen to the UIAbility of 1.1 (sdk-ability-lifecycle-monitor)';
-cookBookTag[262] = 'The makeObserved function is not supported (arkui-no-makeobserved-function)';
+cookBookTag[262] =
+  'The "makeObserved" function cannot observe custom class (arkui-makeobserved-cannot-observe-custom-class)';
 cookBookTag[263] =
   'The "@Provide" annotation does not support dynamic parameters (arkui-provide-annotation-parameters)';
 cookBookTag[264] =
@@ -309,7 +310,7 @@ cookBookTag[274] =
 cookBookTag[275] =
   'The Custom component with custom layout capability needs to add the "@CustomLayout" decorator (arkui-custom-layout-need-add-decorator)';
 cookBookTag[276] =
-  'ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)';
+  'ArkTS 1.2 should implement all optional fields from the interface in the class (arkts-no-class-omit-interface-optional-prop)';
 cookBookTag[277] = 'Creating local classes is not supported (arkts-no-local-class)';
 cookBookTag[281] = '"@Prop" decorator is not supported (arkui-no-prop-decorator)';
 cookBookTag[282] = '"@StorageProp" decorator is not supported (arkui-no-storageprop-decorator)';
@@ -436,7 +437,10 @@ cookBookTag[407] = 'API has been disabled (arkts-builtin-disable-api)';
 cookBookTag[408] = 'The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)';
 cookBookTag[409] = 'No optional tuple type (arkts-no-optional-tuple-type)';
 cookBookTag[410] = 'Numeric literal exceeds allowed range (arkts-no-large-numeric-literal)';
+cookBookTag[411] = '"instanceof" operator can\'t be applied to function (arkts-no-instanceof-func)';
+cookBookTag[412] = 'No unfixed length tuple support (arkts-no-unfixed-len-tuple)';
 
+cookBookTag[413] = 'Subclass can\'t call members of super class in static context (arkts-no-super-call-in-static-context)';
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';
 }

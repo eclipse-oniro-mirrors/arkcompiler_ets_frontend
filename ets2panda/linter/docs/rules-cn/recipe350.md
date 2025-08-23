@@ -49,7 +49,7 @@ let baseInstance: BaseClass = new BaseClass();
 let array = new Array<BaseClass>();
 array.push(baseInstance);
 let task = new taskpool.Task(testFunc, array);
-taskpool.execute(task).then((res: NullishType):void => {
+taskpool.execute(task).then((res: Any):void => {
   console.info('task res is: ' + res)
 });
 ```
