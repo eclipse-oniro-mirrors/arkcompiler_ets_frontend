@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_EVALUATE_DEBUG_INFO_DESERIALIZER_H
 #define ES2PANDA_EVALUATE_DEBUG_INFO_DESERIALIZER_H
 
-#include "libpandabase/utils/arena_containers.h"
+#include "utils/arena_containers.h"
 #include "libpandafile/debug_info_extractor.h"
 #include "libpandafile/file.h"
 

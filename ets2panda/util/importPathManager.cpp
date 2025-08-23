@@ -15,7 +15,7 @@
 
 #include "importPathManager.h"
 #include "es2panda.h"
-#include <libpandabase/os/filesystem.h>
+#include <os/filesystem.h>
 #include "util/arktsconfig.h"
 #include "util/diagnostic.h"
 #include "util/diagnosticEngine.h"

@@ -14,7 +14,7 @@
  */
 
 #include "arktsconfig.h"
-#include "libpandabase/os/filesystem.h"
+#include "os/filesystem.h"
 #include "util/language.h"
 #include "util/diagnosticEngine.h"
 #include "generated/signatures.h"

@@ -18,8 +18,8 @@
 
 #include "parser/program/program.h"
 #include "checker/ETSchecker.h"
-#include "libpandabase/os/file.h"
-#include "libpandabase/utils/arena_containers.h"
+#include "os/file.h"
+#include "utils/arena_containers.h"
 #include "util/options.h"
 #include "util/diagnosticEngine.h"
 

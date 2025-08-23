@@ -28,7 +28,7 @@
 #include "ir/base/methodDefinition.h"
 #include "public/public.h"
 #include "util/options.h"
-#include "abc2program/abc2program_driver.h"
+#include "abc2program_driver.h"
 
 // NOLINTBEGIN
 

@@ -15,7 +15,7 @@
 
 #include "helpers.h"
 
-#include <abc2program/common/abc_file_utils.h>
+#include <common/abc_file_utils.h>
 #include <ir/base/classDefinition.h>
 #include <ir/base/property.h>
 #include <ir/base/scriptFunction.h>
