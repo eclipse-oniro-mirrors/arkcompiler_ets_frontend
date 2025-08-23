@@ -475,8 +475,7 @@ Type *ETSChecker::MaybeGradualType(ir::AstNode *node, ETSObjectType *type)
     ES2PANDA_ASSERT(node->IsClassDefinition() || node->IsTSInterfaceDeclaration());
     auto isDynamic = node->IsClassDefinition() ? node->AsClassDefinition()->Language().IsDynamic()
                                                : node->AsTSInterfaceDeclaration()->Language().IsDynamic();
-    // Temporary solution, the struct loses 'language' while being converted to a class through the plugin API.
-    return isDynamic || Program()->IsDeclForDynamicStaticInterop() ? CreateGradualType(type) : type;
+    return isDynamic ? CreateGradualType(type) : type;
 }
 
 Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *interfaceDecl)

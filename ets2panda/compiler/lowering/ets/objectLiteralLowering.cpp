@@ -326,7 +326,9 @@ static ir::AstNode *HandleDynamicObjectLiteralLowering(public_lib::Context *ctx,
         ss << "@@I" << genSymId << ".setProperty('" << property->AsProperty()->Key()->DumpEtsSrc()
            << "', ESValue.wrap(@@E" << valueId << "));";
     }
-    blockStatements.push_back(parser->CreateFormattedStatement(ss.str(), args));
+    if (!objExpr->Properties().empty()) {
+        blockStatements.push_back(parser->CreateFormattedStatement(ss.str(), args));
+    }
     blockStatements.push_back(parser->CreateFormattedStatement("@@I1.unwrap();", gensym->Clone(allocator, nullptr)));
     auto *blockExpr = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));
     blockExpr->SetParent(objExpr->Parent());
