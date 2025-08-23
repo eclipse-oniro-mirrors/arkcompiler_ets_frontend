@@ -9978,25 +9978,33 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!setApiListItem) {
       return;
     }
+
     if (TypeScriptLinter.isInterfaceImplementation(errorNode)) {
       return;
     }
+
+    if (ts.isTypeReferenceNode(errorNode)) {
+      errorNode = errorNode.typeName;
+    }
+
+    const symbol = this.tsUtils.trueSymbolAtLocation(errorNode);
+    const oriDecl = TsUtils.getDeclaration(symbol);
+    const fileName = path.normalize(oriDecl?.getSourceFile().fileName || '');
     const apiNamesArr = [...setApiListItem];
     const hasSameApiName = apiNamesArr.some((apilistItem) => {
-      return apilistItem.api_info.api_name === errorNode.getText();
+      return apilistItem.api_info.api_name === errorNode.getText() &&
+        fileName.endsWith(path.normalize(apilistItem.file_path));
     });
     if (!hasSameApiName) {
       return;
     }
-    if (ts.isTypeReferenceNode(errorNode)) {
-      errorNode = errorNode.typeName;
-    }
+    
     const matchedApi = apiNamesArr.some((sdkInfo) => {
       const isSameName = sdkInfo.api_info.api_name === apiName;
       const isGlobal = sdkInfo.is_global;
       return isSameName && isGlobal;
     });
-    const checkSymbol = this.isIdentifierFromSDK(errorNode);
+    const checkSymbol = this.isIdentifierFromSDK(symbol);
     const type = this.tsTypeChecker.getTypeAtLocation(errorNode);
     const typeName = this.tsTypeChecker.typeToString(type);
 
@@ -10024,8 +10032,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return false;
   }
 
-  private isIdentifierFromSDK(node: ts.Node): boolean {
-    const symbol = this.tsTypeChecker.getSymbolAtLocation(node);
+  private isIdentifierFromSDK(symbol: ts.Symbol | undefined): boolean {
     if (!symbol) {
       return true;
     }
