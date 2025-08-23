@@ -17,6 +17,8 @@ export const DEBUG: string = 'debug';
 
 export const yellow: string = '\u001b[33m';
 
+export const red: string = '\u001b[31m';
+
 export let nameCacheMap: Map<string, string | {}> = new Map();
 
 // Record all unobfuscated names and reasons for each file.
