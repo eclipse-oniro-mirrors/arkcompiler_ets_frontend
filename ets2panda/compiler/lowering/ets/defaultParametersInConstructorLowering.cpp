@@ -286,8 +286,6 @@ static void ProcessGlobalFunctionDefinition(ir::MethodDefinition *method, public
             if (param->Initializer() == nullptr) {
                 ES2PANDA_ASSERT(param->IsOptional());
                 init = allocator->New<ir::UndefinedLiteral>();
-            } else if (param->Initializer()->IsArrowFunctionExpression()) {
-                init = param->Initializer();
             } else {
                 init = param->Initializer()->Clone(allocator, nullptr)->AsExpression();
             }
