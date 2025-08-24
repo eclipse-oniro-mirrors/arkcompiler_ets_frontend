@@ -1457,7 +1457,9 @@ bool ETSChecker::CheckLambdaAssignable(ir::Expression *param, ir::ScriptFunction
     if (typeAnn->IsETSTypeReference() && !typeAnn->AsETSTypeReference()->TsType()->IsETSArrayType()) {
         typeAnn = util::Helpers::DerefETSTypeReference(typeAnn);
     }
-
+    if (typeAnn->IsTSTypeParameter()) {
+        return true;
+    }
     if (!typeAnn->IsETSFunctionType()) {
         // the surrounding function is made so we can *bypass* the typecheck in the "inference" context,
         // however the body of the function has to be checked in any case
@@ -1482,6 +1484,10 @@ bool ETSChecker::CheckLambdaInfer(ir::AstNode *typeAnnotation, ir::ArrowFunction
 {
     if (typeAnnotation->IsETSTypeReference()) {
         typeAnnotation = util::Helpers::DerefETSTypeReference(typeAnnotation);
+    }
+
+    if (typeAnnotation->IsTSTypeParameter()) {
+        return true;
     }
 
     if (!typeAnnotation->IsETSFunctionType()) {
