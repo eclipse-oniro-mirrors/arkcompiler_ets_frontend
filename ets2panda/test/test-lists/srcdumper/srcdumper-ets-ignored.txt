@@ -41,18 +41,19 @@ runtime/ets/type_param_in_union.ets
 runtime/ets/StringFasta.ets
 runtime/ets/struct-identifier.ets
 runtime/ets/struct-init2.ets
-runtime/ets/too_many_minus.ets
-runtime/ets/too_many_plus.ets
-runtime/ets/too_many_plus_1.ets
-runtime/ets/too_many_tilde.ets
-runtime/ets/too_many_exclamation_mark.ets
+runtime/ets/fuzz/empty_variable.ets
+runtime/ets/fuzz/too_many_minus.ets
+runtime/ets/fuzz/too_many_plus.ets
+runtime/ets/fuzz/too_many_plus_1.ets
+runtime/ets/fuzz/too_many_tilde.ets
+runtime/ets/fuzz/too_many_exclamation_mark.ets
 runtime/ets/fuzz/too_many_async.ets
 runtime/ets/fuzz/too_many_await.ets
 runtime/ets/fuzz/too_many_call_expr.ets
 runtime/ets/fuzz/too_many_left_brace.ets
 runtime/ets/fuzz/too_many_left_square_brackets.ets
 runtime/ets/fuzz/too_many_new_expr.ets
-runtime/ets/too_many_token.ets
+runtime/ets/fuzz/too_many_token.ets
 ast/compiler/ets/DeclareIndexerTest.ets
 ast/parser/ets/import_tests/import_class_with_static_field/import_class_with_static_field.ets
 
