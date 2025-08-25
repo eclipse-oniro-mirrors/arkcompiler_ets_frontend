@@ -252,7 +252,7 @@ export enum FaultID {
   NoNeedStdlibWorker,
   BuiltinGetOwnPropertyNames,
   LocalBuilderDecoratorNotSupported,
-  MakeObservedIsNotSupported,
+  MakeObservedCannotObserveCustomClass,
   NoEnumPropAsType,
   NoAwaitJsPromise,
   NosparseArray,
