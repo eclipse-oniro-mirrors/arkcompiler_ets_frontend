@@ -23,6 +23,7 @@
 #include "varbinder/ETSBinder.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "checker/types/ets/etsAwaitedType.h"
+#include "compiler/lowering/util.h"
 #include "util/nameMangler.h"
 
 #include <checker/types/gradualType.h>
@@ -685,6 +686,8 @@ ir::MethodDefinition *ETSChecker::CreateNullishAccessor(ir::MethodDefinition *co
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ir::MethodDefinition *nullishAccessor = accessor->Clone(ProgramAllocator(), interface->Body());
+    nullishAccessor->SetRange(accessor->Range());
+    nullishAccessor->Function()->SetRange(accessor->Function()->Range());
 
     auto *decl = ProgramAllocator()->New<varbinder::FunctionDecl>(ProgramAllocator(), nullishAccessor->Id()->Name(),
                                                                   nullishAccessor);

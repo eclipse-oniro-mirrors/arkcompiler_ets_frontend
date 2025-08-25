@@ -17,5 +17,5 @@ class D{
   f7(x: string, y: D.f7){}
 }
 
-/* @@? 16:8 Error TypeError: Cyclic inheritance involving D.   */
-/* @@? 17:22 Error TypeError: 'f7' type does not exist.   */
+/* @@? 16:8 Error TypeError: Circular dependency detected for identifier: D */
+/* @@? 17:22 Error TypeError: 'f7' type does not exist. */
