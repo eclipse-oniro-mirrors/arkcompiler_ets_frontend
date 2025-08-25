@@ -560,6 +560,10 @@ ohos_executable("es2panda") {
     ]
   }
 
+  if (is_build_sdk && is_ohos) {
+    defines = [ "OHOS_PLATFORM" ]
+  }
+
   if (ark_standalone_build) {
     external_deps += [
       "protobuf:protobuf_lite_static",
