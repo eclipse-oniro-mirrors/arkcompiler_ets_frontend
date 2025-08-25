@@ -1105,7 +1105,7 @@ std::string TSDeclGen::RemoveModuleExtensionName(const std::string &filepath)
 template <class T>
 void TSDeclGen::GenAnnotations(const ir::AnnotationAllowed<T> *node)
 {
-    if (node == nullptr || !node->HasAnnotations()) {
+    if (node == nullptr || (!node->HasAnnotations() && node->Annotations().size() == 0U)) {
         return;
     }
     GenSeparated(
@@ -2285,6 +2285,7 @@ void TSDeclGen::GenMethodDeclaration(const ir::MethodDefinition *methodDef)
     if (ShouldSkipMethodDeclaration(methodDef)) {
         return;
     }
+    GenAnnotations(methodDef->Function());
     const auto methodIdent = GetKeyIdent(methodDef->Key());
     auto methodName = methodIdent->Name().Mutf8();
     if (methodName == "$_iterator") {
@@ -2323,8 +2324,6 @@ bool TSDeclGen::GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef
             !ShouldEmitDeclarationSymbol(methodIdent) && !methodDef->IsConstructor()) {
             return true;
         }
-        auto methDefFunc = methodDef->Function();
-        GenAnnotations(methDefFunc);
         ProcessIndent();
         GenModifier(methodDef);
     }
