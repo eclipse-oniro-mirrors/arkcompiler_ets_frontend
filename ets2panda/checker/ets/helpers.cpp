@@ -1263,8 +1263,7 @@ std::pair<Type *, Type *> ETSChecker::CheckTestObjectCondition(ETSArrayType *tes
 }
 
 // Auxiliary method to reduce the size of common 'CheckTestSmartCastConditions' function.
-std::pair<Type *, Type *> ETSChecker::CheckTestObjectCondition(ETSObjectType *testedType, Type *actualType,
-                                                               bool const strict)
+std::pair<Type *, Type *> ETSChecker::CheckTestObjectCondition(ETSObjectType *testedType, Type *actualType)
 {
     if (actualType->IsETSUnionType()) {
         return actualType->AsETSUnionType()->GetComplimentaryType(this, testedType);
@@ -1277,7 +1276,7 @@ std::pair<Type *, Type *> ETSChecker::CheckTestObjectCondition(ETSObjectType *te
 
         if (Relation()->IsIdenticalTo(objectType, testedType) ||
             objectType->AssemblerName() == testedType->AssemblerName()) {
-            return {testedType, strict ? GetGlobalTypesHolder()->GlobalETSNeverType() : actualType};
+            return {testedType, actualType};
         }
 
         if (Relation()->IsSupertypeOf(objectType, testedType)) {
@@ -1525,8 +1524,7 @@ std::optional<SmartCastTuple> CheckerContext::ResolveSmartCastTypes()
             checker->CheckTestNullishCondition(testCondition_.testedType, smartType, testCondition_.strict);
     } else if (testCondition_.testedType->IsETSObjectType()) {
         auto *const testedType = testCondition_.testedType->AsETSObjectType();
-        std::tie(consequentType, alternateType) =
-            checker->CheckTestObjectCondition(testedType, smartType, testCondition_.strict);
+        std::tie(consequentType, alternateType) = checker->CheckTestObjectCondition(testedType, smartType);
     } else if (testCondition_.testedType->IsETSArrayType()) {
         auto *const testedType = testCondition_.testedType->AsETSArrayType();
         std::tie(consequentType, alternateType) = checker->CheckTestObjectCondition(testedType, smartType);
