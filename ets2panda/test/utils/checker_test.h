@@ -50,7 +50,14 @@ public:
           checker_(allocator_.get(), diagnosticEngine_)
     {
     }
-    ~CheckerTest() override = default;
+
+    ~CheckerTest() override
+    {
+        if (publicContext_->phaseManager != nullptr) {
+            delete publicContext_->phaseManager;
+        }
+    }
+
     static void SetUpTestCase()
     {
         ark::mem::MemConfig::Initialize(0, 0, ark::es2panda::COMPILER_SIZE, 0, 0, 0);
@@ -146,7 +153,7 @@ public:
         varbinder->SetContext(publicContext_.get());
 
         auto emitter = Emitter(publicContext_.get());
-        auto phaseManager = compiler_alias::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
+        auto phaseManager = new compiler_alias::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
 
         auto config = plib_alias::ConfigImpl {};
         publicContext_->config = &config;
@@ -160,7 +167,7 @@ public:
         publicContext_->PushAnalyzer(publicContext_->GetChecker()->GetAnalyzer());
         publicContext_->emitter = &emitter;
         publicContext_->diagnosticEngine = &diagnosticEngine_;
-        publicContext_->phaseManager = &phaseManager;
+        publicContext_->phaseManager = phaseManager;
         publicContext_->GetChecker()->Initialize(varbinder);
         parser.ParseScript(unit.input,
                            unit.options.GetCompilationMode() == ark::es2panda::CompilationMode::GEN_STD_LIB);
@@ -201,7 +208,7 @@ public:
         varbinder->SetContext(publicContext_.get());
 
         auto emitter = Emitter(publicContext_.get());
-        auto phaseManager = compiler_alias::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
+        auto phaseManager = new compiler_alias::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
 
         auto config = plib_alias::ConfigImpl {};
         publicContext_->config = &config;
@@ -215,7 +222,7 @@ public:
         publicContext_->PushAnalyzer(publicContext_->GetChecker()->GetAnalyzer());
         publicContext_->emitter = &emitter;
         publicContext_->diagnosticEngine = &diagnosticEngine_;
-        publicContext_->phaseManager = &phaseManager;
+        publicContext_->phaseManager = phaseManager;
         publicContext_->GetChecker()->Initialize(varbinder);
         parser.ParseScript(unit.input,
                            unit.options.GetCompilationMode() == ark::es2panda::CompilationMode::GEN_STD_LIB);
