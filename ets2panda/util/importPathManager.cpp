@@ -26,7 +26,6 @@
 #include "ir/expressions/literals/stringLiteral.h"
 
 #include "abc2program_driver.h"
-#include "checker/types/signature.h"
 #include "compiler/lowering/ets/declGenPhase.h"
 #include "libpandabase/utils/logger.h"
 
@@ -73,9 +72,10 @@ void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
     importData.declPath = externalModuleImportData.Path();
 
     // process .d.ets "path" in "dependencies"
-    // process emptry "path" in dependencies, since in interop we allow imports without typecheck
-    if (!Helpers::EndsWith(std::string(externalModuleImportData.Path()), ".abc")) {
+    // process empty "path" in dependencies, since in interop we allow imports without typecheck
+    if (!Helpers::EndsWith(externalModuleImportData.Path(), ".abc")) {
         importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
+        importData.ohmUrl = externalModuleImportData.OhmUrl();
         importData.ohmUrl = externalModuleImportData.OhmUrl();
         return;
     }
@@ -101,15 +101,16 @@ void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
     ES2PANDA_ASSERT(Helpers::EndsWith(etsGlobalRecord->second.name, etsGlobalSuffix));
     auto moduleName =
         etsGlobalRecord->second.name.substr(0, etsGlobalRecord->second.name.size() - etsGlobalSuffix.size());
-    importData.ohmUrl = moduleName;
+    importData.ohmUrl = util::UString(moduleName, allocator_).View().Utf8();
 
     auto annotations = etsGlobalRecord->second.metadata->GetAnnotations();
     auto moduleDeclarationAnno = std::find_if(annotations.begin(), annotations.end(), [](auto &anno) {
         return anno.GetName() == compiler::DeclGenPhase::MODULE_DECLARATION_ANNOTATION;
     });
     ES2PANDA_ASSERT(moduleDeclarationAnno != annotations.end());
-    auto declText = moduleDeclarationAnno->GetElements()[0].GetValue()->GetAsScalar()->GetValue<std::string>();
-    importData.declText = declText;
+    auto declText = util::UString(
+        moduleDeclarationAnno->GetElements()[0].GetValue()->GetAsScalar()->GetValue<std::string>(), allocator_);
+    importData.declText = declText.View().Utf8();
 }
 
 // If needed, the result of this function can be cached
@@ -368,10 +369,10 @@ void ImportPathManager::AddToParseList(const ImportMetadata &importMetadata)
     }
 }
 
-void ImportPathManager::MarkAsParsed(StringView path)
+void ImportPathManager::MarkAsParsed(std::string_view const path) noexcept
 {
     for (auto &parseInfo : parseList_) {
-        if (parseInfo.importData.resolvedSource == path.Utf8()) {
+        if (parseInfo.importData.resolvedSource == path) {
             parseInfo.isParsed = true;
             return;
         }
@@ -570,7 +571,7 @@ util::StringView ImportPathManager::FormModuleName(const util::Path &path)
     }
 
     if (!parseList_.empty() && parseList_[0].importData.IsExternalBinaryImport()) {
-        return util::UString(parseList_[0].importData.ohmUrl, allocator_).View();
+        return util::StringView(parseList_[0].importData.ohmUrl);
     }
 
     if (arktsConfig_->Package().empty() && !arktsConfig_->UseUrl()) {

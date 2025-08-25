@@ -206,7 +206,7 @@ private:
     es2panda_Impl const *impl_ {};
     es2panda_Config *cfg_ {};
     es2panda_Context *ctx_ {};
-    ark::ThreadSafeArenaAllocator *allocator_ {};
+    ark::ThreadSafeArenaAllocator *allocator_;
     ark::es2panda::compiler::PhaseManager *phaseManager_;
 
     friend class ::LSPAPITests;

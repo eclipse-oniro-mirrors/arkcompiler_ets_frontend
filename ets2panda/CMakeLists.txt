@@ -545,6 +545,7 @@ set(ES2PANDA_LIB_SRC
   parser/TSparser.cpp
   parser/ThrowingTypedParser.cpp
   parser/TypedParser.cpp
+  parser/program/DeclarationCache.cpp
   parser/program/entityNameVisitor.cpp
   parser/program/program.cpp
   parser/statementParser.cpp
