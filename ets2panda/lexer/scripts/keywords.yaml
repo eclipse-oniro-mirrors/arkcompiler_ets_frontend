@@ -29,8 +29,8 @@ keywords:
 
   - name: 'any'
     token: KEYW_ANY
-    keyword_like: [ts]
-    flags: [reserved_type_name]
+    keyword_like: [ts, ets]
+    flags: [reserved_type_name, definable_type_name]
 
   - name: 'Any'
     token: KEYW_BUILTIN_ANY

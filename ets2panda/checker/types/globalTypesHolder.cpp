@@ -150,7 +150,7 @@ void GlobalTypesHolder::AddEtsSpecificTypes(ArenaAllocator *allocator)
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_UNDEFINED)] = allocator->New<ETSUndefinedType>();
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_WILDCARD)] = allocator->New<WildcardType>();
     globalTypes_[static_cast<size_t>(GlobalTypeId::TYPE_ERROR)] = allocator->New<TypeError>();
-    globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_ANY)] = allocator->New<ETSAnyType>();
+    globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_ANY)] = allocator->New<ETSAnyType>(false);
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_RELAXED_ANY)] = allocator->New<ETSAnyType>(true);
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_NEVER)] = allocator->New<ETSNeverType>();
 }
@@ -224,10 +224,6 @@ GlobalTypesHolder::GlobalTypesHolder(ArenaAllocator *allocator)
 
     // Tuple types
     AddTupleTypes(allocator);
-
-    // ETS interop js specific types
-    builtinNameMappings_.emplace("JSRuntime", GlobalTypeId::ETS_INTEROP_JSRUNTIME_BUILTIN);
-    builtinNameMappings_.emplace("JSValue", GlobalTypeId::ETS_INTEROP_JSVALUE_BUILTIN);
 }
 
 Type *GlobalTypesHolder::GlobalNumberType()
@@ -643,16 +639,6 @@ Type *GlobalTypesHolder::GlobalReadonlyArray()
 Type *GlobalTypesHolder::GlobalBoxBuiltinType()
 {
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_BOX_BUILTIN));
-}
-
-Type *GlobalTypesHolder::GlobalJSRuntimeBuiltinType()
-{
-    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_INTEROP_JSRUNTIME_BUILTIN));
-}
-
-Type *GlobalTypesHolder::GlobalJSValueBuiltinType()
-{
-    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_INTEROP_JSVALUE_BUILTIN));
 }
 
 Type *GlobalTypesHolder::GlobalBooleanBoxBuiltinType()

@@ -83,8 +83,6 @@ public:
         const ArenaVector<ir::AnnotationUsage *> &annotationUsages, const std::string &baseName);
 
 private:
-    using DynamicCallNamesMap = ArenaMap<const ArenaVector<util::StringView>, uint32_t>;
-
     void GenExternalRecord(varbinder::RecordTable *recordTable, const parser::Program *extProg);
     void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType, checker::Signature *signature);
     std::vector<pandasm::AnnotationData> GenAnnotations(const ir::ClassDefinition *classDef);
@@ -116,7 +114,6 @@ private:
     pandasm::AnnotationData GenAnnotationFunctionalReference(const ir::ClassDefinition *classDef);
     pandasm::AnnotationData GenAnnotationInnerClass(const ir::ClassDefinition *classDef, const ir::AstNode *parent);
     pandasm::AnnotationData GenAnnotationAsync(ir::ScriptFunction *scriptFunc);
-    pandasm::AnnotationData GenAnnotationDynamicCall(DynamicCallNamesMap &callNames);
     ir::MethodDefinition *FindAsyncImpl(ir::ScriptFunction *asyncFunc);
     void ProcessArrayExpression(std::string &baseName, LiteralArrayVector &result,
                                 std::vector<pandasm::LiteralArray::Literal> &literals, const ir::Expression *elem);

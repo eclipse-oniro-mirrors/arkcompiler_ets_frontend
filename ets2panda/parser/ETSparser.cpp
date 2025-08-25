@@ -1456,6 +1456,7 @@ bool TypedParser::IsPrimitiveType(const lexer::TokenType &tokenType)
         case lexer::TokenType::KEYW_LONG:
         case lexer::TokenType::KEYW_SHORT:
         case lexer::TokenType::KEYW_VOID:
+        case lexer::TokenType::KEYW_ANY:
             return true;
         default:
             return false;

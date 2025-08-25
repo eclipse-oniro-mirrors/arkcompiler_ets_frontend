@@ -833,7 +833,9 @@ ir::AstNode *Helpers::DerefETSTypeReference(ir::AstNode *node)
             return node;
         }
         auto *var = name->AsIdentifier()->Variable();
-        ES2PANDA_ASSERT(var != nullptr);
+        if (var == nullptr) {
+            return node;
+        }
         auto *declNode = var->Declaration()->Node();
         if (!declNode->IsTSTypeAliasDeclaration()) {
             return declNode;

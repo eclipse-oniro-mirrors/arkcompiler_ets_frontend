@@ -107,6 +107,7 @@ public:
     bool IsETSBigIntType() const;
     bool IsETSArrowType() const;
     bool IsETSMethodType() const;
+    bool IsETSRelaxedAnyType() const;
     bool IsETSPrimitiveType() const;
     bool IsETSReferenceType() const;
     bool IsETSAsyncFuncReturnType() const;

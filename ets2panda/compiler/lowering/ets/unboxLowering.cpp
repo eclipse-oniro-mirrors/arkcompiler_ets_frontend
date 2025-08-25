@@ -924,6 +924,21 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         call->SetTsType(call->GetTypeRef()->TsType());
     }
 
+    void VisitETSIntrinsicNode(ir::ETSIntrinsicNode *intrin) override
+    {
+        for (size_t i = 0; i < intrin->Arguments().size(); i++) {
+            auto arg = intrin->Arguments()[i];
+
+            auto expectedType = intrin->ExpectedTypeAt(uctx_->checker, i);
+            expectedType = expectedType == nullptr ? uctx_->checker->GlobalETSAnyType() : expectedType;
+            if (expectedType->IsETSPrimitiveType()) {
+                intrin->Arguments()[i] = AdjustType(uctx_, arg, expectedType);
+            } else {
+                intrin->Arguments()[i] = AdjustType(uctx_, arg, expectedType);
+            }
+        }
+    }
+
     void VisitSpreadElement(ir::SpreadElement *spread) override
     {
         spread->SetTsType(spread->Argument()->TsType());

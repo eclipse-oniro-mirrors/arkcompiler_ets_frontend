@@ -36,8 +36,8 @@ type NestedBroken<K extends keyof UndefinedType> = {
 type BrokenFunc<T extends UndefinedInterface> = (param: T) => void;
 
 // Test instantiation to trigger ValidateGenericTypeAliasForClonedNode
-declare const broken1: BrokenType<any>;
-declare const broken2: AnotherBroken<any>;
+declare const broken1: BrokenType<xny>;
+declare const broken2: AnotherBroken<xny>;
 
 /* @@? 21:33 Error TypeError: Cannot find type 'UndefinedMap'. */
 /* @@? 21:45 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
@@ -51,5 +51,5 @@ declare const broken2: AnotherBroken<any>;
 /* @@? 32:26 Error SyntaxError: Unexpected token ']'. */
 /* @@? 32:27 Error SyntaxError: Unexpected token ']'. */
 /* @@? 36:27 Error TypeError: Cannot find type 'UndefinedInterface'. */
-/* @@? 39:35 Error TypeError: Cannot find type 'any'. */
-/* @@? 40:38 Error TypeError: Cannot find type 'any'. */
+/* @@? 39:35 Error TypeError: Cannot find type 'xny'. */
+/* @@? 40:38 Error TypeError: Cannot find type 'xny'. */

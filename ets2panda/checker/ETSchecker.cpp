@@ -322,6 +322,7 @@ bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Optio
     if (options.IsParseOnly()) {
         return false;
     }
+    permitRelaxedAny_ = options.IsPermitRelaxedAny();
 
     auto *etsBinder = varbinder->AsETSBinder();
     InitializeBuiltins(etsBinder);
@@ -641,16 +642,6 @@ ETSObjectType *ETSChecker::GlobalBuiltinFunctionType() const
     return AsETSObjectType(&GlobalTypesHolder::GlobalFunctionBuiltinType);
 }
 
-ETSObjectType *ETSChecker::GlobalBuiltinJSRuntimeType() const
-{
-    return AsETSObjectType(&GlobalTypesHolder::GlobalJSRuntimeBuiltinType);
-}
-
-ETSObjectType *ETSChecker::GlobalBuiltinJSValueType() const
-{
-    return AsETSObjectType(&GlobalTypesHolder::GlobalJSValueBuiltinType);
-}
-
 ETSObjectType *ETSChecker::GlobalBuiltinFunctionType(size_t nargs, bool hasRest) const
 {
     return AsETSObjectType(&GlobalTypesHolder::GlobalFunctionBuiltinType, nargs, hasRest);
@@ -669,14 +660,6 @@ ETSObjectType *ETSChecker::GlobalBuiltinTupleType(size_t nargs) const
 size_t ETSChecker::GlobalBuiltinFunctionTypeVariadicThreshold() const
 {
     return GetGlobalTypesHolder()->VariadicFunctionTypeThreshold();
-}
-
-ETSObjectType *ETSChecker::GlobalBuiltinDynamicType(Language lang) const
-{
-    if (lang.GetId() == Language::Id::JS) {
-        return GlobalBuiltinJSValueType();
-    }
-    return nullptr;
 }
 
 ETSObjectType *ETSChecker::GlobalBuiltinBoxType(Type *contents)

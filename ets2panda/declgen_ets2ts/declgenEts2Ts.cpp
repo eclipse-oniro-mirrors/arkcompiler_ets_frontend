@@ -1966,8 +1966,7 @@ void TSDeclGen::PrepareClassDeclaration(const ir::ClassDefinition *classDef)
 
 bool TSDeclGen::ShouldSkipClassDeclaration(const std::string_view &className) const
 {
-    return className == compiler::Signatures::DYNAMIC_MODULE_CLASS || className == compiler::Signatures::JSNEW_CLASS ||
-           className == compiler::Signatures::JSCALL_CLASS || (className.find("$partial") != std::string::npos);
+    return className.find("$partial") != std::string::npos;
 }
 
 void TSDeclGen::EmitDeclarationPrefix(const ir::ClassDefinition *classDef, const std::string &typeName,

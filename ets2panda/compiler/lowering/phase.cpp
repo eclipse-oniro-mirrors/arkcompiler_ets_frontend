@@ -59,6 +59,7 @@
 #include "compiler/lowering/ets/primitiveConversionPhase.h"
 #include "compiler/lowering/ets/promiseVoid.h"
 #include "compiler/lowering/ets/recordLowering.h"
+#include "compiler/lowering/ets/relaxedAnyLowering.h"
 #include "compiler/lowering/ets/resizableArrayLowering.h"
 #include "compiler/lowering/ets/lateInitialization.h"
 #include "compiler/lowering/ets/restArgsLowering.h"
@@ -132,6 +133,7 @@ std::vector<Phase *> GetETSPhaseList()
         new PluginPhase {g_pluginsAfterCheck, ES2PANDA_STATE_CHECKED, &util::Plugin::AfterCheck},
         // new ConvertPrimitiveCastMethodCall,
         new DynamicImport,
+        new RelaxedAnyLoweringPhase,
         new AnnotationCopyPostLowering,
         new AsyncMethodLowering,
         new DeclareOverloadLowering,

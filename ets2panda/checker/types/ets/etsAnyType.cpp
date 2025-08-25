@@ -86,7 +86,7 @@ void ETSAnyType::IsSupertypeOf(TypeRelation *relation, Type *source)
 
 void ETSAnyType::ToString(std::stringstream &ss, [[maybe_unused]] bool precise) const
 {
-    ss << compiler::Signatures::ANY_TYPE_NAME;
+    ss << (IsRelaxed() ? compiler::Signatures::ANY : compiler::Signatures::ANY_TYPE_NAME);
 }
 
 void ETSAnyType::ToAssemblerType(std::stringstream &ss) const
@@ -107,6 +107,6 @@ void ETSAnyType::ToDebugInfoType(std::stringstream &ss) const
 Type *ETSAnyType::Instantiate(ArenaAllocator *allocator, [[maybe_unused]] TypeRelation *relation,
                               [[maybe_unused]] GlobalTypesHolder *globalTypes)
 {
-    return isRelaxedAny_ ? allocator->New<ETSAnyType>(true) : allocator->New<ETSAnyType>();
+    return allocator->New<ETSAnyType>(isRelaxed_);
 }
 }  // namespace ark::es2panda::checker

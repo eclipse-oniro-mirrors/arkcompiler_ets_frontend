@@ -59,10 +59,16 @@ void ETSBinder::LookupTypeArgumentReferences(ir::ETSTypeReference *typeRef)
 
 bool ETSBinder::IsSpecialName(const util::StringView &name)
 {
-    return name == compiler::Signatures::ANY_TYPE_NAME || name == compiler::Signatures::UNDEFINED ||
-           name == compiler::Signatures::NULL_LITERAL || name == compiler::Signatures::READONLY_TYPE_NAME ||
-           name == compiler::Signatures::PARTIAL_TYPE_NAME || name == compiler::Signatures::REQUIRED_TYPE_NAME ||
-           name == compiler::Signatures::FIXED_ARRAY_TYPE_NAME || name == compiler::Signatures::AWAITED_TYPE_NAME;
+    constexpr std::array specialKeywords = {compiler::Signatures::ANY_TYPE_NAME, compiler::Signatures::ANY,
+                                            compiler::Signatures::UNDEFINED, compiler::Signatures::NULL_LITERAL};
+
+    constexpr std::array utilityTypes = {
+        compiler::Signatures::READONLY_TYPE_NAME, compiler::Signatures::PARTIAL_TYPE_NAME,
+        compiler::Signatures::REQUIRED_TYPE_NAME, compiler::Signatures::FIXED_ARRAY_TYPE_NAME,
+        compiler::Signatures::AWAITED_TYPE_NAME};
+
+    return std::find(specialKeywords.begin(), specialKeywords.end(), name.Utf8()) != specialKeywords.end() ||
+           std::find(utilityTypes.begin(), utilityTypes.end(), name.Utf8()) != utilityTypes.end();
 }
 
 bool ETSBinder::LookupInDebugInfoPlugin(ir::Identifier *ident)

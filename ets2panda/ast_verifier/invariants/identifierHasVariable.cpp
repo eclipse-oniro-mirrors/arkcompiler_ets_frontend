@@ -17,6 +17,7 @@
 #include "ir/base/scriptFunction.h"
 #include "ir/expressions/memberExpression.h"
 #include "ir/ts/tsEnumDeclaration.h"
+#include "checker/types/ets/etsAnyType.h"
 
 namespace ark::es2panda::compiler::ast_verifier {
 
@@ -25,8 +26,8 @@ public:
     ExceptionsMatcher(const IdentifierHasVariable *inv, const ir::Identifier *ast) : inv_(inv), ast_(ast) {}
     bool Match()
     {
-        auto res = IsLengthProp() || IsEmptyName() || IsInObjectExpr() || IsInPackageDecl() || IsBuiltinType() ||
-                   IsUnionMemberAccess();
+        auto res = IsLengthProp() || IsAnyProp() || IsEmptyName() || IsInObjectExpr() || IsInPackageDecl() ||
+                   IsBuiltinType() || IsUnionMemberAccess();
         return res;
     }
 
@@ -34,6 +35,13 @@ private:
     bool IsLengthProp()
     {
         return ast_->Parent() != nullptr && ast_->Parent()->IsMemberExpression() && ast_->Name().Is("length");
+    }
+
+    bool IsAnyProp()
+    {
+        return ast_->Parent() != nullptr && ast_->Parent()->IsMemberExpression() &&
+               ast_->Parent()->AsMemberExpression()->Object()->TsType()->IsETSAnyType() &&
+               ast_->Parent()->AsMemberExpression()->Object()->TsType()->AsETSAnyType()->IsRelaxed();
     }
 
     bool IsEmptyName()
@@ -75,7 +83,8 @@ private:
         // NOTE(mmartin): find a better solution to handle utility type resolution
         return name.Is(Signatures::PARTIAL_TYPE_NAME) || name.Is(Signatures::REQUIRED_TYPE_NAME) ||
                name.Is(Signatures::READONLY_TYPE_NAME) || name.Is(Signatures::FIXED_ARRAY_TYPE_NAME) ||
-               name.Is(compiler::Signatures::ANY_TYPE_NAME) || name.Is(compiler::Signatures::AWAITED_TYPE_NAME);
+               name.Is(compiler::Signatures::ANY_TYPE_NAME) || name.Is(Signatures::ANY) ||
+               name.Is(compiler::Signatures::AWAITED_TYPE_NAME);
     }
 
     bool IsUnionMemberAccess()

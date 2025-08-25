@@ -97,6 +97,11 @@ void ETSCompiler::Compile(const ir::ETSClassLiteral *expr) const
     ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
 }
 
+void ETSCompiler::Compile([[maybe_unused]] const ir::ETSIntrinsicNode *node) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
 void ETSCompiler::Compile(const ir::ETSFunctionType *node) const
 {
     ETSGen *etsg = GetETSGen();
@@ -255,7 +260,7 @@ void ETSCompiler::Compile(const ir::ETSNewClassInstanceExpression *expr) const
         auto objReg = etsg->AllocReg();
         expr->GetTypeRef()->Compile(etsg);
         etsg->StoreAccumulator(expr->GetTypeRef(), objReg);
-        etsg->CallAnyNew(expr, expr->GetArguments(), objReg);
+        etsg->CallAnyNew(expr, Span<ir::Expression const *const>(expr->GetArguments()), objReg);
     } else {
         ConvertRestArguments(const_cast<checker::ETSChecker *>(etsg->Checker()->AsETSChecker()), expr);
         etsg->InitObject(expr, expr->signature_, expr->GetArguments());
@@ -388,9 +393,7 @@ void ETSCompiler::Compile(const ir::AssignmentExpression *expr) const
         etsg->CreateBigIntObject(expr, value, Signatures::BUILTIN_BIGINT_CTOR_BIGINT);
     }
 
-    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), exprType) ||
-                    etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(),
-                                                               etsg->Checker()->GlobalBuiltinJSValueType()));
+    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), exprType));
     lref.SetValue();
 }
 
@@ -498,7 +501,7 @@ static void CompileAnyInstanceOf(compiler::ETSGen *etsg, const VReg lhs, const i
     expr->Compile(etsg);
     etsg->StoreAccumulator(expr, objReg);
     etsg->LoadAccumulator(expr, lhs);
-    etsg->EmitAnyIsInstance(expr, objReg);
+    etsg->EmitAnyIsinstance(expr, objReg);
     etsg->SetAccumulatorType(etsg->Checker()->GlobalETSBooleanType());
 }
 
@@ -513,7 +516,7 @@ static void CompileInstanceof(compiler::ETSGen *etsg, const ir::BinaryExpression
     etsg->ApplyConversionAndStoreAccumulator(expr->Left(), lhs, expr->OperationType());
 
     auto target = expr->Right()->TsType();
-    if (target->IsETSAnyType() && target->AsETSAnyType()->IsRelaxedAny()) {
+    if (target->IsETSAnyType() && target->AsETSAnyType()->IsRelaxed()) {
         CompileAnyInstanceOf(etsg, lhs, expr->Right());
     } else {
         etsg->IsInstance(expr, lhs, target);
@@ -705,9 +708,11 @@ void ETSCompiler::CompileAny(const ir::CallExpression *expr, const ir::Expressio
     if (expr->Signature()->Function() != nullptr && expr->Signature()->Function()->IsStatic()) {
         etsg->LoadPropertyByNameAny(memberExpr, objReg, memberExpr->Property()->AsIdentifier()->Name());
         etsg->StoreAccumulator(expr, calleeReg);
-        etsg->CallAny(callee->AsMemberExpression()->Object(), expr->Arguments(), calleeReg);
+        etsg->CallAny(callee->AsMemberExpression()->Object(), Span<ir::Expression const *const>(expr->Arguments()),
+                      calleeReg);
     } else {
-        etsg->CallAnyThis(expr, memberExpr->Property()->AsIdentifier(), expr->Arguments(), objReg);
+        etsg->CallAnyThis(expr, memberExpr->Property()->AsIdentifier()->Name(),
+                          Span<ir::Expression const *const>(expr->Arguments()), objReg);
     }
     etsg->EmitAnyCheckCast(expr, expr->TsType());
 }
@@ -1019,19 +1024,6 @@ bool ETSCompiler::HandleStaticProperties(const ir::MemberExpression *expr, ETSGe
     }
 
     return false;
-}
-
-void ETSCompiler::Compile(const ir::ETSIntrinsicNode *expr) const
-{
-    ETSGen *etsg = GetETSGen();
-    // Note (daizihan): #27074, make it more scalable when IntrinsicNodeType is extended.
-    if (expr->Type() == ir::IntrinsicNodeType::TYPE_REFERENCE) {
-        // Note (daizihan): #27086, we should not use stringLiteral as argument in ETSIntrinsicNode, should be TypeNode.
-        etsg->EmitLdaType(expr, expr->Arguments()[0]->AsStringLiteral()->Str());
-        etsg->SetAccumulatorType(expr->TsType());
-        return;
-    }
-    ES2PANDA_UNREACHABLE();
 }
 
 void ETSCompiler::Compile(const ir::ObjectExpression *expr) const

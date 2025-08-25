@@ -101,7 +101,6 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_create_import compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_set_from_struct_modifier compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_default_access_modifier compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
-    "plugin_proceed_to_state_dynamic_class_recheck compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_assignment_expression_set_result compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_create_diagnostic_kind compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_is_optional_declaration compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"

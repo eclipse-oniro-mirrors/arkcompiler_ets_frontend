@@ -150,6 +150,13 @@ static checker::Type *CheckPredefinedBuiltinTypes(checker::ETSChecker *const che
     if (ident->Name() == compiler::Signatures::ANY_TYPE_NAME) {
         return checker->GlobalETSAnyType();
     }
+    if (ident->Name() == compiler::Signatures::ANY) {
+        if (!checker->IsRelaxedAnyTypeAnnotationAllowed()) {
+            checker->LogError(diagnostic::ANY_TYPE_ANNOTATION_FORBIDDEN, {}, ident->Start());
+            return checker->GlobalTypeError();
+        }
+        return checker->GetGlobalTypesHolder()->GlobalETSRelaxedAnyType();
+    }
     if (ident->Name() == compiler::Signatures::UNDEFINED) {
         return checker->GlobalETSUndefinedType();
     }

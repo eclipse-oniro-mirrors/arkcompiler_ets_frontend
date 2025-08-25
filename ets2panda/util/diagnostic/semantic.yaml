@@ -154,6 +154,10 @@ semantic:
   id: 230
   message: "Annotation missing '@' symbol before annotation name."
 
+- name: ANY_TYPE_ANNOTATION_FORBIDDEN
+  id: 153545
+  message: "'any' type annotation is forbidden"
+
 - name: ARG_IS_CLASS_ID
   id: 122
   message: "Class name can't be the argument of function or method."
@@ -696,6 +700,10 @@ semantic:
 - name: INVALID_INDEX_TYPE
   id: 236
   message: "Type '{}' cannot be used as an index type. Only primitive or unboxable integral types can be used as index."
+
+- name: INVALID_INTRINSIC
+  id: 61055
+  message: "Invalid internal intrinsic expression"
 
 - name: INVALID_LAMBDA_PARAMETER
   id: 395

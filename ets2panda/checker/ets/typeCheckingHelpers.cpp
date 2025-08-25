@@ -75,7 +75,7 @@ void ETSChecker::CheckTruthinessOfType(ir::Expression *expr)
 
 bool ETSChecker::CheckNonNullish(ir::Expression const *expr)
 {
-    if (!expr->TsType()->PossiblyETSNullish()) {
+    if (!expr->TsType()->PossiblyETSNullish() || expr->TsType()->IsETSRelaxedAnyType()) {
         return true;
     }
 
@@ -377,6 +377,11 @@ bool Type::IsETSArrowType() const
 bool Type::IsETSMethodType() const
 {
     return HasTypeFlag(TypeFlag::ETS_METHOD);
+}
+
+bool Type::IsETSRelaxedAnyType() const
+{
+    return IsETSAnyType() && AsETSAnyType()->IsRelaxed();
 }
 
 [[maybe_unused]] static bool IsSaneETSReferenceType(Type const *type)
