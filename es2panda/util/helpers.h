@@ -60,6 +60,7 @@ struct CompileContextInfo {
      **/
     bool needModifyRecord {false};
     std::string bundleName {};
+    std::unordered_map<std::string, std::vector<std::string>> replaceRecords {};
 };
 }  // namespace panda::es2panda
 

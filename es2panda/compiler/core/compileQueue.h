@@ -94,7 +94,7 @@ private:
     void CompileAbcFileJobInParallel(es2panda::Compiler &compiler);
     void InsertAbcCachePrograms(uint32_t hashCode,
                                 std::map<std::string, panda::es2panda::util::ProgramCache *> &abcProgramsInfo);
-
+    void EraseDuplicateRecordsForAbcFile(std::map<std::string, panda::es2panda::util::ProgramCache *> &abcProgramsInfo);
     static std::mutex globalMutex_;
     es2panda::SourceFile *src_;
     es2panda::CompilerOptions *options_;

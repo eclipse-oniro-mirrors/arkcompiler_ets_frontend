@@ -1,0 +1,154 @@
+slotNum = 0x7
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file1&1.0.0.#*#run(any a0, any a1, any a2) {
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str bytecodehar1.file1.run
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	ldexternalmodulevar 0x1
+	sta v0
+	throw.undefinedifholewithname test2
+	lda v0
+	callarg0 0x3
+	ldexternalmodulevar 0x2
+	sta v0
+	throw.undefinedifholewithname test3
+	lda v0
+	callarg0 0x5
+	lda.str @normalized:N&&&sourcehar/sourcehar-file1&1.0.0
+	dynamicimport
+	returnundefined
+}
+
+slotNum = 0x1
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file1&1.0.0.func_main_0(any a0, any a1, any a2) {
+	definefunc 0x0, &bytecodehar1/bytecodehar1-file1&1.0.0.#*#run, 0x0
+	stmodulevar 0x0
+	returnundefined
+}
+
+
+slotNum = 0x3
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file3&1.0.0.#*#test3(any a0, any a1, any a2) {
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str bytecodehar1.file2.test
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	lda.str @normalized:N&&&sourcehar/sourcehar-file2&1.0.0
+	dynamicimport
+	returnundefined
+}
+
+slotNum = 0x1
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file3&1.0.0.func_main_0(any a0, any a1, any a2) {
+	definefunc 0x0, &bytecodehar1/bytecodehar1-file3&1.0.0.#*#test3, 0x0
+	stmodulevar 0x0
+	returnundefined
+}
+
+
+
+
+
+slotNum = 0x8
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file2&1.0.0.#*#addFunction(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str addFunction
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	lda.str @normalized:N&&&sourcehar/sourcehar-file2&1.0.0
+	dynamicimport
+	tryldglobalbyname 0x3, test1
+	callarg0 0x4
+	ldexternalmodulevar 0x0
+	sta v0
+	throw.undefinedifholewithname addNewFile
+	lda v0
+	callarg0 0x6
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x9
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file2&1.0.0.#*#test2(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str bytecodehar1.file2.test
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	ldexternalmodulevar 0x1
+	sta v0
+	throw.undefinedifholewithname bytecodehar2test
+	lda v0
+	callarg0 0x3
+	ldexternalmodulevar 0x2
+	sta v0
+	throw.undefinedifholewithname test3
+	lda v0
+	callarg0 0x5
+	ldlexvar 0x0, 0x0
+	callarg0 0x7
+	lda.str @normalized:N&&&sourcehar/sourcehar-file2&1.0.0
+	dynamicimport
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x2
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file2&1.0.0.func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	definefunc 0x0, &bytecodehar1/bytecodehar1-file2&1.0.0.#*#addFunction, 0x0
+	stlexvar 0x0, 0x0
+	definefunc 0x1, &bytecodehar1/bytecodehar1-file2&1.0.0.#*#test2, 0x0
+	stmodulevar 0x0
+	returnundefined
+label_2: 
+}
+
+
+slotNum = 0x3
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file4&1.0.0.#*#addNewFile(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str this is new file
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x1
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file4&1.0.0.func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	definefunc 0x0, &bytecodehar1/bytecodehar1-file4&1.0.0.#*#addNewFile, 0x0
+	stmodulevar 0x0
+	returnundefined
+label_2: 
+}
+
+

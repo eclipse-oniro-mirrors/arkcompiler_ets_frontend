@@ -148,7 +148,6 @@ public:
     bool CollectInputFilesFromFileList(const std::string &input, const std::string &inputExtension);
     bool CollectInputFilesFromFileDirectory(const std::string &input, const std::string &extension);
     void ParseCacheFileOption(const std::string &cacheInput);
-    void ParseCompileContextInfo(const std::string compileContextInfoPath);
     bool NeedCollectDepsRelation();
     bool NeedRemoveRedundantRecord();
 
@@ -158,7 +157,10 @@ private:
     void CollectInputSourceFile(const std::vector<std::string> &itemList, const std::string &inputExtension);
     bool CheckFilesValidity(const std::string &input, const std::vector<std::string> &itemList,
                             const std::string &line);
-    void ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson);
+    bool ParseCompileContextInfo(const std::string compileContextInfoPath);
+    bool ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson);
+    bool ParseReplaceRecords(nlohmann::json &compileContextInfoJson);
+    bool CheckReplaceRecordsIsExist(const std::vector<std::string> &replaceRecords);
     bool IsAbcFile(const std::string &fileName, const std::string &inputExtension);
     es2panda::parser::ScriptKind scriptKind_ {es2panda::parser::ScriptKind::SCRIPT};
     OptionFlags options_ {OptionFlags::DEFAULT};
