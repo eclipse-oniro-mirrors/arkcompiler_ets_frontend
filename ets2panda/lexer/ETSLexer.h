@@ -36,7 +36,6 @@ public:
     void NextToken(NextTokenFlags flags = NextTokenFlags::NONE) override;
     void ScanHashMark() override;
     bool ScanCharLiteral() override;
-    void ScanAsteriskPunctuator() override;
 
     void ScanNumberLeadingZero(bool const leadingMinus) override
     {

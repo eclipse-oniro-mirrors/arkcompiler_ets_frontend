@@ -418,6 +418,10 @@ semantic:
   id: 274
   message: "Expected at least {} type arguments, but got {}."
 
+- name: EXPONENTIATION_BASE_LESS_ZERO
+  id: 22843
+  message: "Exponent must be an integer if base is less than 0."
+
 - name: EXPORT_INCORRECT
   id: 361
   message: "Incorrect export '{}'"
