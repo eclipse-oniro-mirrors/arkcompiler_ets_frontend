@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-class A {
-    private static instance:A = new A();
-        static get():A {
-        return A.instance; //
+class AW {
+    private static instance:AW = new AW();
+        static get():AW {
+        return AW.instance; //
     }
 }
 
@@ -155,7 +155,7 @@ function foo4(uri: string | number | boolean) : string {
   return uri as string
 }
 
-class AA {
+class AA5 {
   public static starUrl(url: string)  {
     if (url?startsWith('http')) {
       url = `https:/test?appid=2000?url=${foo4(url)}`;
@@ -185,7 +185,7 @@ class ClassA {
     }
 }
 
-class A {
+class AT {
     b?: boolean
 
     isRelease(): boolean {
@@ -250,3 +250,60 @@ export class AB {
         })
     }
 } 
+
+class AG {
+h?: number;
+f(): number | null {
+  return 1;
+}
+}
+
+function check(obj?: AG) {
+if (obj) {
+  console.log(obj.f()); // valid(guarded)
+}
+if (obj !== undefined) {
+  obj.f(); // valid(guarded)
+}
+}
+
+function check4(obj?: AG) {
+
+if (!obj) {
+  return;
+}
+obj.f(); // valid(guarded)
+}
+function check2(obj?: AG) {
+obj.f(); // ERROR
+
+if (obj == null) return;
+obj.f(); // valid(guarded)
+
+}
+function check3(obj?: AG) {
+
+return obj ? obj.f() : null; // guarded in ternary
+
+}
+
+function check35(obj?: AG) {
+
+if (obj.h == 3) { //error
+  console.log('3');
+}
+
+}
+
+function check36(obj?: AG) {
+
+if (obj && obj.h == 3) { // valid(guarded)
+  console.log('3');
+}
+
+}
+
+function check43(obj?: AG) {
+const val = obj.h; // NOT guarded
+return val;
+}

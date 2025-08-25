@@ -11583,7 +11583,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   handleInstanceOfFunction(node: ts.BinaryExpression): void {
     const right = node.right;
-    let symbol = this.tsUtils.trueSymbolAtLocation(right);
+    const symbol = this.tsUtils.trueSymbolAtLocation(right);
     if (!symbol) {
       return;
     }
@@ -12492,18 +12492,56 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2) {
       return;
     }
+    const symbol = this.tsTypeChecker.getSymbolAtLocation(expr.expression);
+    if (!symbol) {
+      return;
+    }
+    const declaredType = this.tsTypeChecker.getTypeOfSymbolAtLocation(symbol, expr.expression);
+    const usageType = this.tsTypeChecker.getTypeAtLocation(expr.expression);
+
     const declaration = this.tsUtils.getDeclarationNode(expr.expression);
     if (!declaration) {
       return;
     }
 
     if (
-      (ts.isParameter(declaration) || ts.isPropertyDeclaration(declaration)) &&
-      !!declaration.questionToken &&
-      !ts.isPropertyAccessChain(expr)
+      (ts.isParameter(declaration) || ts.isPropertyDeclaration(declaration) || ts.isVariableDeclaration(declaration)) &&
+      TsUtils.isNullableUnionType(declaredType) &&
+      TsUtils.isNullableUnionType(usageType) &&
+      !ts.isPropertyAccessChain(expr) &&
+      !this.isWriteAccess(expr.expression)
     ) {
       this.incrementCounters(expr, FaultID.NoTsLikeSmartType);
     }
+  }
+
+  private isWriteAccess(node: ts.Node): boolean {
+    const parent = node.parent;
+    if (!parent) {
+      return false;
+    }
+
+    if (ts.isBinaryExpression(parent) && parent.left === node) {
+      return isAssignmentOperator(parent.operatorToken);
+    }
+
+    if (ts.isVariableDeclaration(parent) && parent.name === node) {
+      return true;
+    }
+
+    if (ts.isPropertyAccessExpression(parent) && parent.name === node) {
+      return this.isWriteAccess(parent);
+    }
+
+    if (ts.isBindingElement(parent) && parent.name === node) {
+      return true;
+    }
+
+    if (ts.isParameter(parent) && parent.name === node) {
+      return true;
+    }
+
+    return false;
   }
 
   private handleNotsLikeSmartType(classDecl: ts.ClassDeclaration): void {
