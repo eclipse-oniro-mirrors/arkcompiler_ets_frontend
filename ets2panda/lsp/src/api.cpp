@@ -499,17 +499,10 @@ std::vector<NodeInfo> GetNodeInfosByDefinitionData(es2panda_Context *context, si
 
     std::vector<NodeInfo> result;
     while (node != nullptr) {
-        switch (node->Type()) {
-            case ir::AstNodeType::IDENTIFIER:
-                result.emplace_back(std::string(node->AsIdentifier()->Name()), ir::AstNodeType::IDENTIFIER);
-                break;
-            case ir::AstNodeType::CLASS_DEFINITION:
-                if (auto ident = node->AsClassDefinition()->Ident()) {
-                    result.emplace_back(std::string(ident->Name()), ir::AstNodeType::CLASS_DEFINITION);
-                }
-                break;
-            default:
-                break;
+        const auto &nodeInfoHandlers = GetNodeInfoHandlers();
+        auto it = nodeInfoHandlers.find(node->Type());
+        if (it != nodeInfoHandlers.end()) {
+            it->second(node, result);
         }
         node = node->Parent();
     }
@@ -568,6 +561,51 @@ DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::v
     return result;
 }
 
+ark::es2panda::lsp::RenameLocation FindRenameLocationsFromNode(es2panda_Context *context,
+                                                               const std::vector<NodeInfo *> &nodeInfos)
+{
+    ark::es2panda::lsp::RenameLocation result {"", 0, 0, 0};
+    if (context == nullptr || nodeInfos.empty()) {
+        return result;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto rootNode = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    if (rootNode == nullptr) {
+        return result;
+    }
+
+    ir::AstNode *lastFoundNode = nullptr;
+    NodeInfo *lastNodeInfo = nullptr;
+    for (auto info : nodeInfos) {
+        auto foundNode = rootNode->FindChild([info](ir::AstNode *childNode) -> bool {
+            const auto &nodeMatchers = GetNodeMatchers();
+            auto it = nodeMatchers.find(info->kind);
+            if (it != nodeMatchers.end()) {
+                return it->second(childNode, info);
+            }
+            return false;
+        });
+        if (foundNode == nullptr) {
+            return {"", 0, 0, 0};
+        }
+        lastFoundNode = foundNode;
+        lastNodeInfo = info;
+    }
+
+    if (lastFoundNode != nullptr && lastNodeInfo != nullptr) {
+        ir::AstNode *identifierNode = ExtractIdentifierFromNode(lastFoundNode, lastNodeInfo);
+        if (identifierNode != nullptr) {
+            result = {"", identifierNode->Start().index, identifierNode->End().index,
+                      identifierNode->End().index - identifierNode->Start().index};
+        } else {
+            result = {"", lastFoundNode->Start().index, lastFoundNode->End().index,
+                      lastFoundNode->End().index - lastFoundNode->Start().index};
+        }
+    }
+
+    return result;
+}
+
 LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetApplicableRefactors,
                     GetImplementationAtPosition,
@@ -616,7 +654,8 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetNodeInfosByDefinitionData,
                     GetClassDefinition,
                     GetIdentifier,
-                    GetDefinitionDataFromNode};
+                    GetDefinitionDataFromNode,
+                    FindRenameLocationsFromNode};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()

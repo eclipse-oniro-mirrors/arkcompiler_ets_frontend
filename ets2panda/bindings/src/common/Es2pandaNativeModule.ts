@@ -1042,6 +1042,10 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _findRenameLocationsFromNode(context: KPtr, nodeInfoPtrs: Uint8Array, arraySize: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
   _getIdentifier(astNode: KPtr, nodeName: String): KPtr {
     throw new Error('Not implemented');
   }

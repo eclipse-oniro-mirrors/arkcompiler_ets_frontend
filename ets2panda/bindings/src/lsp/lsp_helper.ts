@@ -49,7 +49,8 @@ import {
   LspRenameInfoSuccess,
   LspRenameInfoFailure,
   LspSourceLocation,
-  LspNodeInfo
+  LspNodeInfo,
+  LspNode,
 } from './lspNode';
 import { passStringArray, unpackString } from '../common/private';
 import { Es2pandaContextState } from '../generated/Es2pandaEnums';
@@ -260,7 +261,7 @@ export class Lsp {
 
   getDefinitionAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspDefinitionData {
     if (nodeInfos) {
-      return this.getDefinitionAtPositionByNodeInfos(filename, nodeInfos);
+      return this.getAtPositionByNodeInfos(filename, nodeInfos, 'definition') as LspDefinitionData;
     }
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename);
@@ -270,49 +271,11 @@ export class Lsp {
       this.destroyContext(cfg, ctx);
     }
     const result = new LspDefinitionData(ptr);
-    const moduleName = this.moduleInfos[filename.valueOf()].packageName;
-    const declgenOutDir = this.buildConfigs[moduleName].declgenOutDir;
-    if (
-      (result.fileName.endsWith(DECL_ETS_SUFFIX) && result.fileName.startsWith(declgenOutDir)) ||
-      (this.buildConfigs[moduleName].interopApiPath &&
-        result.fileName.startsWith(this.buildConfigs[moduleName].interopApiPath!))
-    ) {
-      let ptr: KPointer;
-      const [declFileCfg, declFileCtx] = this.createContext(result.fileName, false);
-      try {
-        ptr = global.es2panda._getNodeInfosByDefinitionData(declFileCtx, result.start);
-        result.nodeInfos = new NativePtrDecoder().decode(ptr).map((elPeer: KNativePointer) => {
-          return new LspNodeInfo(elPeer);
-        });
-      } finally {
-        this.destroyContext(declFileCfg, declFileCtx);
-      }
+    const nodeInfoTemp: NodeInfo[] = this.getNodeInfos(filename, result.fileName, result.start);
+    if (nodeInfoTemp.length > 0) {
+      result.nodeInfos = nodeInfoTemp;
     }
     return result;
-  }
-
-  private getDefinitionAtPositionByNodeInfos(declFilePath: String, nodeInfos: NodeInfo[]): LspDefinitionData {
-    let ptr: KPointer;
-    let nodeInfoPtrs: KPointer[] = [];
-    let sourceFilePath = this.declFileMap[declFilePath.valueOf()];
-    if (sourceFilePath === undefined) {
-      let unifiedPath = declFilePath.replace(/\\/g, '/');
-      const targetSegment = 'build-tools/interop/declaration';
-      if (unifiedPath.includes(targetSegment)) {
-        unifiedPath = unifiedPath.replace(targetSegment, '');
-        sourceFilePath = path.normalize(unifiedPath);
-      }
-    }
-    const [cfg, ctx] = this.createContext(sourceFilePath, false);
-    try {
-      nodeInfos.forEach((nodeInfo) => {
-        nodeInfoPtrs.push(global.es2panda._CreateNodeInfoPtr(nodeInfo.name, nodeInfo.kind));
-      });
-      ptr = global.es2panda._getDefinitionDataFromNode(ctx, passPointerArray(nodeInfoPtrs), nodeInfoPtrs.length);
-    } finally {
-      this.destroyContext(cfg, ctx);
-    }
-    return new LspDefinitionData(ptr, sourceFilePath);
   }
 
   private getMergedCompileFiles(filename: String): string[] {
@@ -381,7 +344,10 @@ export class Lsp {
     return result;
   }
 
-  getReferencesAtPosition(filename: String, offset: number): LspReferenceData[] {
+  getReferencesAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspReferenceData[] {
+    if (nodeInfos) {
+      return [this.getAtPositionByNodeInfos(filename, nodeInfos, 'reference') as LspReferenceData];
+    }
     let declInfo: KPointer;
     const [cfg, searchCtx] = this.createContext(filename);
     try {
@@ -391,6 +357,10 @@ export class Lsp {
     }
     let result: LspReferenceData[] = [];
     let compileFiles = this.getMergedCompileFiles(filename);
+    const declFilesJson = this.moduleInfos[filename.valueOf()].declFilesPath;
+    if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
+      this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
+    }
     for (let i = 0; i < compileFiles.length; i++) {
       let ptr: KPointer;
       const [cfg, ctx] = this.createContext(compileFiles[i]);
@@ -400,9 +370,99 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
       let refs = new LspReferences(ptr);
-      result.push(...refs.referenceInfos);
+      if (refs.referenceInfos.length === 0) {
+        continue;
+      }
+      refs.referenceInfos.forEach((ref) => {
+        const nodeInfoTemp: NodeInfo[] = this.getNodeInfos(filename, ref.fileName, ref.start);
+        if (nodeInfoTemp.length > 0) {
+          ref.nodeInfos = nodeInfoTemp;
+        }
+        result.push(ref);
+      });
     }
     return Array.from(new Set(result));
+  }
+
+  private addDynamicDeclFilePaths(declFilesJson: string, compileFiles: string[]): void {
+    try {
+      const data = fs.readFileSync(declFilesJson, 'utf-8');
+      const declFilesObj = JSON.parse(data);
+      if (declFilesObj && declFilesObj.files) {
+        Object.keys(declFilesObj.files).forEach((fileName) => {
+          const fileItem = declFilesObj.files[fileName];
+          if (fileItem && fileItem.declPath && compileFiles.indexOf(fileItem) < 0) {
+            compileFiles.push(fileItem.declPath);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to parse declFilesJson:', error);
+    }
+  }
+
+  private getNodeInfos(paramFileName: String, fileName: String, start: number): LspNodeInfo[] {
+    let nodeInfos: LspNodeInfo[] = [];
+    const moduleName = this.moduleInfos[paramFileName.valueOf()].packageName;
+    const declgenOutDir = this.buildConfigs[moduleName].declgenOutDir;
+    if (
+      (fileName.endsWith(DECL_ETS_SUFFIX) && fileName.startsWith(declgenOutDir)) ||
+      (this.buildConfigs[moduleName].interopApiPath &&
+        fileName.startsWith(this.buildConfigs[moduleName].interopApiPath!))
+      ) {
+      let ptr: KPointer;
+      const [declFileCfg, declFileCtx] = this.createContext(fileName, false);
+      try {
+        ptr = global.es2panda._getNodeInfosByDefinitionData(declFileCtx, start);
+        nodeInfos = new NativePtrDecoder().decode(ptr).map((elPeer: KNativePointer) => {
+          return new LspNodeInfo(elPeer);
+        });
+      } finally {
+        this.destroyContext(declFileCfg, declFileCtx);
+      }
+    }
+    return nodeInfos;
+  }
+
+  private getAtPositionByNodeInfos(
+    declFilePath: String,
+    nodeInfos: NodeInfo[],
+    type: 'definition' | 'reference' | 'renameLocation'
+  ): LspNode {
+    let ptr: KPointer;
+    let nodeInfoPtrs: KPointer[] = [];
+    let sourceFilePath = this.declFileMap[declFilePath.valueOf()];
+    if (sourceFilePath === undefined) {
+      let unifiedPath = declFilePath.replace(/\\/g, '/');
+      const targetSegment = 'build-tools/interop/declaration';
+      if (unifiedPath.includes(targetSegment)) {
+        unifiedPath = unifiedPath.replace(targetSegment, '');
+        sourceFilePath = path.normalize(unifiedPath);
+      }
+    }
+    const [cfg, ctx] = this.createContext(sourceFilePath, false);
+    try {
+      nodeInfos.forEach((nodeInfo) => {
+        nodeInfoPtrs.push(global.es2panda._CreateNodeInfoPtr(nodeInfo.name, nodeInfo.kind));
+      });
+      if (type === 'renameLocation') {
+        ptr = global.es2panda._findRenameLocationsFromNode(ctx, passPointerArray(nodeInfoPtrs), nodeInfoPtrs.length);
+      } else {
+        ptr = global.es2panda._getDefinitionDataFromNode(ctx, passPointerArray(nodeInfoPtrs), nodeInfoPtrs.length);
+      }
+    } finally {
+      this.destroyContext(cfg, ctx);
+    }
+    switch (type) {
+      case 'definition':
+        return new LspDefinitionData(ptr, sourceFilePath);
+      case 'reference':
+        return new LspReferenceData(ptr, sourceFilePath);
+      case 'renameLocation':
+        return new LspRenameLocation(ptr, sourceFilePath);
+      default:
+        return new LspNodeInfo(ptr);
+    }
   }
 
   getTypeHierarchies(filename: String, offset: number): LspTypeHierarchiesInfo | null {
@@ -681,7 +741,10 @@ export class Lsp {
     return result;
   }
 
-  findRenameLocations(filename: String, offset: number): LspRenameLocation[] {
+  findRenameLocations(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspRenameLocation[] {
+    if (nodeInfos) {
+      return [this.getAtPositionByNodeInfos(filename, nodeInfos, 'renameLocation') as LspRenameLocation];
+    }
     const [cfg, ctx] = this.createContext(filename);
     const needsCrossFileRename = global.es2panda._needsCrossFileRename(ctx, offset);
     if (!needsCrossFileRename) {
@@ -697,6 +760,10 @@ export class Lsp {
       return Array.from(new Set(result));
     } else {
       let compileFiles = this.getMergedCompileFiles(filename);
+      const declFilesJson = this.moduleInfos[filename.valueOf()].declFilesPath;
+      if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
+        this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
+      }
       const fileContexts: KPointer[] = [];
       const fileConfigs: Config[] = [];
       for (let i = 0; i < compileFiles.length; i++) {
@@ -712,6 +779,12 @@ export class Lsp {
       );
       const result: LspRenameLocation[] = new NativePtrDecoder().decode(ptr).map((elPeer: KPointer) => {
         return new LspRenameLocation(elPeer);
+      });
+      result.forEach((ref) => {
+        const nodeInfoTemp: NodeInfo[] = this.getNodeInfos(filename, ref.fileName, ref.start);
+        if (nodeInfoTemp.length > 0) {
+          ref.nodeInfos = nodeInfoTemp;
+        }
       });
       for (let i = 0; i < fileContexts.length; i++) {
         this.destroyContext(fileConfigs[i], fileContexts[i]);
