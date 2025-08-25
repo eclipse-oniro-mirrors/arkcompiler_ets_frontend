@@ -8,7 +8,7 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "rimraf ${npm_config_outdir:-dist}",
     "build": "npm run clean && tsc",
     "build_debug": "npm run clean && tsc --sourceMap",
     "demo_entry1.2_hsp1.2:gen_abc": "npm run build && node ./dist/entry.js test/e2e/demo_entry1.2_hsp1.2/build_config1.json && node ./dist/entry.js test/e2e/demo_entry1.2_hsp1.2/build_config2.json",
