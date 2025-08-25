@@ -46,12 +46,7 @@ void ContinueStatement::Dump(ir::AstDumper *dumper) const
 
 void ContinueStatement::Dump(ir::SrcDumper *dumper) const
 {
-    dumper->Add("continue");
-    if (Ident() != nullptr) {
-        dumper->Add(" ");
-        Ident()->Dump(dumper);
-    }
-    dumper->Add(";");
+    dumper->Add("continue;");
 }
 
 void ContinueStatement::Compile(compiler::PandaGen *pg) const

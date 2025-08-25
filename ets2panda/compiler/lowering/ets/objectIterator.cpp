@@ -176,17 +176,16 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(public_lib::Context
     loweringResult->SetParent(forOfStatement->Parent());
     loweringResult->SetRange(forOfStatement->Range());
 
-    auto loweredWhile = loweringResult->AsBlockStatement()->Statements()[WHILE_LOOP_POSITION]->AsWhileStatement();
-    auto whileBody = loweredWhile->Body()->AsBlockStatement();
-    TransferForOfLoopBody(forOfStatement->Body(), whileBody);
+    TransferForOfLoopBody(forOfStatement->Body(), loweringResult->AsBlockStatement()
+                                                      ->Statements()[WHILE_LOOP_POSITION]
+                                                      ->AsWhileStatement()
+                                                      ->Body()
+                                                      ->AsBlockStatement());
 
     auto *const checker = ctx->checker->AsETSChecker();
     ES2PANDA_ASSERT(checker != nullptr);
     CheckLoweredNode(varbinder, checker, loweringResult);
 
-    if (loweringResult->Parent()->IsLabelledStatement()) {
-        loweringResult->Parent()->AsLabelledStatement()->Ident()->Variable()->GetScope()->BindNode(loweringResult);
-    }
     return loweringResult;
 }
 
