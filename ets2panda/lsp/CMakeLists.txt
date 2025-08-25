@@ -120,7 +120,7 @@ set(ES2PANDA_LSP_SRC
   ./src/register_code_fix/add_name_to_nameless_parameter.cpp
   ./src/register_code_fix/add_missing_declare_property.cpp
   ./src/register_code_fix/convert_const_to_let.cpp
-  ./src/register_code_fix/constructor_for_derived_need_super_call
+  ./src/register_code_fix/constructor_for_derived_need_super_call.cpp
   ./src/register_code_fix/fix_missing_call_parantheses.cpp
   ./src/register_code_fix/fix_import_non_exported_member.cpp
   ./src/register_code_fix/fix_nan_equality.cpp
@@ -133,6 +133,7 @@ set(ES2PANDA_LSP_SRC
   ./src/register_code_fix/fix_spelling.cpp
   ./src/register_code_fix/fix_class_incorrectly_implements_interface.cpp
   ./src/get_signature.cpp
+  ./src/register_code_fix/fix_unreachable_code.cpp
   ./src/get_name_or_dotted_name_span.cpp
   ./src/get_node.cpp
   ./src/node_matchers.cpp

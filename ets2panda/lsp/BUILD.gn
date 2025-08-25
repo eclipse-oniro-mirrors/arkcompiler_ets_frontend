@@ -106,6 +106,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/register_code_fix/fix_nan_equality.cpp",
     "src/register_code_fix/fix_remove_override_modifier.cpp",
     "src/register_code_fix/fix_return_type_in_async_function.cpp",
+    "src/register_code_fix/fix_unreachable_code.cpp",
     "src/register_code_fix/forgotten_this_property_access.cpp",
     "src/register_code_fix/import_fixes.cpp",
     "src/register_code_fix/remove_accidental_call_parentheses.cpp",
