@@ -178,6 +178,12 @@ std::pair<checker::Type *, varbinder::LocalVariable *> MemberExpression::Resolve
             auto classMethodType = checker->GetTypeOfVariable(resolveRes[1]->Variable());
             auto extensionMethodType = checker->GetTypeOfVariable(resolveRes[0]->Variable());
             auto *resolvedType = extensionMethodType;
+            if (classMethodType->IsETSArrowType()) {
+                auto *callee = const_cast<ir::Expression *>(this->AsExpression());
+                callee->AsMemberExpression()->AddMemberKind(ir::MemberExpressionKind::EXTENSION_ACCESSOR);
+                return {resolveRes[0]->Variable()->TsType(), nullptr};
+            }
+
             if (classMethodType->IsETSFunctionType()) {
                 ES2PANDA_ASSERT(extensionMethodType->IsETSFunctionType());
                 resolvedType = checker->CreateETSExtensionFuncHelperType(classMethodType->AsETSFunctionType(),
