@@ -27,7 +27,7 @@ import type { RuleDetailedErrorInfo } from './RuleDetailedErrorInfo';
 import type { StatisticsReportInPutInfo } from './StatisticsReportInPutInfo';
 import type { TimeRecorder } from './TimeRecorder';
 import { WorkLoadInfo } from './WorkLoadInfo';
-import { getwholeRules } from '../../utils/functions/ConfiguredRulesProcess';
+import { getAllLinterRules } from '../../utils/functions/ConfiguredRulesProcess';
 
 export function getProblemStatisticsInfo(
   problemNumbers: ProblemNumbersInfo,
@@ -153,7 +153,7 @@ export async function generateScanProbelemStatisticsReport(
   workLoadInfo.calculateFixRate(problemNumbers);
   const statisticsReportData = getProblemStatisticsInfo(
     problemNumbers,
-    getProcessedRuleToNumbersMap(statisticsReportInPutInfo.ruleToNumbersMap, statisticsReportInPutInfo.wholeRules),
+    getProcessedRuleToNumbersMap(statisticsReportInPutInfo.ruleToNumbersMap, statisticsReportInPutInfo.allLinterRules),
     statisticsReportInPutInfo.ruleToAutoFixedNumbersMap,
     statisticsReportInPutInfo.timeRecorder,
     workLoadInfo
@@ -167,11 +167,11 @@ export async function generateScanProbelemStatisticsReport(
 
 function getProcessedRuleToNumbersMap(
   ruleToNumbersMap: Map<string, number>,
-  wholeLinterRules: string[]
+  allLinterRules: string[]
 ): Map<string, number> {
   const processedRuleToNumbersMap: Map<string, number> = new Map();
   const homecheckRuleToNumbersMap: Map<string, number> = ruleToNumbersMap;
-  wholeLinterRules.forEach((ruleName) => {
+  allLinterRules.forEach((ruleName) => {
     const ruleNumber = ruleToNumbersMap.get(ruleName) || 0;
     homecheckRuleToNumbersMap.delete(ruleName);
     processedRuleToNumbersMap.set(ruleName, ruleNumber);
@@ -216,7 +216,7 @@ export function generateMigrationStatisicsReport(
 
   const statisticsReportData = getProblemStatisticsInfo(
     problemNumbers,
-    getProcessedRuleToNumbersMap(ruleToNumbersMap, getwholeRules()),
+    getProcessedRuleToNumbersMap(ruleToNumbersMap, getAllLinterRules()),
     ruleToAutoFixedNumbersMap,
     timeRecorder
   );

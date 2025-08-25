@@ -10028,13 +10028,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!hasSameApiName) {
       return;
     }
-    
+
     const matchedApi = apiNamesArr.some((sdkInfo) => {
       const isSameName = sdkInfo.api_info.api_name === apiName;
       const isGlobal = sdkInfo.is_global;
       return isSameName && isGlobal;
     });
-    const checkSymbol = this.isIdentifierFromSDK(symbol);
+    const checkSymbol = TypeScriptLinter.isIdentifierFromSDK(symbol);
     const type = this.tsTypeChecker.getTypeAtLocation(errorNode);
     const typeName = this.tsTypeChecker.typeToString(type);
 
@@ -10062,7 +10062,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return false;
   }
 
-  private isIdentifierFromSDK(symbol: ts.Symbol | undefined): boolean {
+  static isIdentifierFromSDK(symbol: ts.Symbol | undefined): boolean {
     if (!symbol) {
       return true;
     }
