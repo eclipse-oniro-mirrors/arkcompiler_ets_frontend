@@ -393,3 +393,8 @@ ets2panda_add_gtest(lsp_api_get_node_export_test CPP_SOURCES
 ets2panda_add_gtest(lsp_api_get_node_ts_class_Implements_test CPP_SOURCES
     get_node_ts_class_Implements_test.cpp
 )
+
+
+ets2panda_add_gtest(lsp_api_fix_unreachable_code_test CPP_SOURCES
+    fix_unreachable_code_test.cpp
+)
