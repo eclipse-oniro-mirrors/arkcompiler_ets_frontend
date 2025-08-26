@@ -35,7 +35,8 @@ import {
   SourceObConfig,
   Obfuscation,
   printUnobfuscationReasons,
-  clearNameCache
+  clearNameCache,
+  generateobfLoggerPrinter
 } from '../../../src/initialization/ConfigResolver';
 import { HvigorErrorInfo, PropCollections, renameFileNameModule } from '../../../src/ArkObfuscator';
 import {
@@ -2265,6 +2266,30 @@ describe('test for ConfigResolve', function() {
       expect(atKeepContent).not.to.include('globalName2');
       expect(atKeepContent).not.to.include('propertyName2');
       FileUtils.deleteFile(atKeepExportedPath);
+    });
+  });
+
+  describe('generateobfLoggerPrinter', () => {
+    it('should print info if use function', () => {
+      let obfLoggerPrinter = generateobfLoggerPrinter(printObfLogger);
+      const stub = sinon.stub(console, 'warn');
+      const errorMessage = 'test log print1';
+      obfLoggerPrinter(errorMessage, errorMessage, 'warn');
+      expect(stub.calledWith(errorMessage)).to.be.true;
+      stub.restore();
+    });
+    
+    it('should print info if use object', () => {
+      const logger = {
+        warn: (color: string, info: string) => console.warn(info),
+        error: (color: string, info: string) => console.error(info)
+      };
+      let obfLoggerPrinter = generateobfLoggerPrinter(logger);
+      const stub = sinon.stub(console, 'warn');
+      const errorMessage = 'test log print2';
+      obfLoggerPrinter(errorMessage, errorMessage, 'warn');
+      expect(stub.calledWith(errorMessage)).to.be.true;
+      stub.restore();
     });
   });
 });
