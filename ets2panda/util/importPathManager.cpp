@@ -498,8 +498,29 @@ util::StringView ImportPathManager::FormModuleNameSolelyByAbsolutePath(const uti
     return util::UString(name, allocator_).View();
 }
 
-template <typename DynamicPaths, typename ModuleNameFormer>
-static std::string TryFormDynamicModuleName(const DynamicPaths &dynPaths, const ModuleNameFormer &tryFormModuleName)
+// should be implemented with a stable name -> path mapping list
+static std::optional<std::string> TryFormModuleName(std::string filePath, std::string_view unitName,
+                                                    std::string_view unitPath, std::string_view cachePath)
+{
+    if (cachePath.empty() && filePath.rfind(unitPath, 0) != 0) {
+        return std::nullopt;
+    }
+    if (!cachePath.empty() && filePath.rfind(cachePath, 0) != 0 && filePath.rfind(unitPath, 0) != 0) {
+        return std::nullopt;
+    }
+    std::string_view actualUnitPath = unitPath;
+    if (!cachePath.empty() && filePath.rfind(cachePath, 0) == 0) {
+        actualUnitPath = cachePath;
+    }
+    auto relativePath = FormRelativeModuleName(filePath.substr(actualUnitPath.size()));
+    if (relativePath.empty() || FormUnitName(unitName).empty()) {
+        return FormUnitName(unitName) + relativePath;
+    }
+    return FormUnitName(unitName) + "." + relativePath;
+}
+
+template <typename DynamicPaths>
+static std::string TryFormDynamicModuleName(const DynamicPaths &dynPaths, std::string const filePath)
 {
     for (auto const &[unitName, did] : dynPaths) {
         if (did.Path().empty()) {
@@ -507,7 +528,7 @@ static std::string TryFormDynamicModuleName(const DynamicPaths &dynPaths, const 
             // source, and, as soon it won't be parsed, no module should be created.
             continue;
         }
-        if (auto res = tryFormModuleName(unitName, did.Path()); res) {
+        if (auto res = TryFormModuleName(filePath, unitName, did.Path(), ""); res) {
             return res.value();
         }
     }
@@ -535,38 +556,35 @@ util::StringView ImportPathManager::FormModuleName(const util::Path &path)
     }
 
     std::string const filePath(path.GetAbsolutePath());
-
-    // should be implemented with a stable name -> path mapping list
-    auto const tryFormModuleName = [filePath](std::string_view unitName,
-                                              std::string_view unitPath) -> std::optional<std::string> {
-        if (filePath.rfind(unitPath, 0) != 0) {
-            return std::nullopt;
-        }
-        auto relativePath = FormRelativeModuleName(filePath.substr(unitPath.size()));
-        return FormUnitName(unitName) +
-               (relativePath.empty() || FormUnitName(unitName).empty() ? relativePath : ("." + relativePath));
-    };
-    if (auto res = tryFormModuleName(arktsConfig_->Package(), arktsConfig_->BaseUrl() + pathDelimiter_.data()); res) {
+    if (auto res = TryFormModuleName(filePath, arktsConfig_->Package(), arktsConfig_->BaseUrl() + pathDelimiter_.data(),
+                                     arktsConfig_->CacheDir());
+        res) {
         return util::UString(res.value(), allocator_).View();
     }
     if (!stdLib_.empty()) {
-        if (auto res = tryFormModuleName("std", stdLib_ + pathDelimiter_.at(0) + "std"); res) {
+        if (auto res =
+                TryFormModuleName(filePath, "std", stdLib_ + pathDelimiter_.at(0) + "std", arktsConfig_->CacheDir());
+            res) {
             return util::UString(res.value(), allocator_).View();
         }
-        if (auto res = tryFormModuleName("escompat", stdLib_ + pathDelimiter_.at(0) + "escompat"); res) {
+        if (auto res = TryFormModuleName(filePath, "escompat", stdLib_ + pathDelimiter_.at(0) + "escompat",
+                                         arktsConfig_->CacheDir());
+            res) {
             return util::UString(res.value(), allocator_).View();
         }
     }
     for (auto const &[unitName, unitPath] : arktsConfig_->Paths()) {
-        if (auto res = tryFormModuleName(unitName, unitPath[0]); res) {
+        if (auto res = TryFormModuleName(filePath, unitName, unitPath[0], arktsConfig_->CacheDir()); res) {
             return util::UString(res.value(), allocator_).View();
         }
     }
-    if (auto dmn = TryFormDynamicModuleName(arktsConfig_->Dependencies(), tryFormModuleName); !dmn.empty()) {
+    if (auto dmn = TryFormDynamicModuleName(arktsConfig_->Dependencies(), filePath); !dmn.empty()) {
         return util::UString(dmn, allocator_).View();
     }
     // NOTE (hurton): as a last step, try resolving using the BaseUrl again without a path delimiter at the end
-    if (auto res = tryFormModuleName(arktsConfig_->Package(), arktsConfig_->BaseUrl()); res) {
+    if (auto res =
+            TryFormModuleName(filePath, arktsConfig_->Package(), arktsConfig_->BaseUrl(), arktsConfig_->CacheDir());
+        res) {
         return util::UString(res.value(), allocator_).View();
     }
 

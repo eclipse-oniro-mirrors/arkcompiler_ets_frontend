@@ -55,13 +55,15 @@ import {
 export class ArkTSConfig {
   config: ArkTSConfigObject;
 
-  constructor(moduleInfo: ModuleInfo) {
+  constructor(moduleInfo: ModuleInfo, cacheDir: string) {
     this.config = {
       compilerOptions: {
         package: moduleInfo.packageName,
         baseUrl: path.resolve(moduleInfo.moduleRootPath, moduleInfo.sourceRoots[0]),
         paths: {},
-        dependencies: {}
+        dependencies: {},
+        rootDir: path.resolve(moduleInfo.moduleRootPath),
+        cacheDir: path.resolve(cacheDir, moduleInfo.packageName),
       }
     };
   }
@@ -315,7 +317,7 @@ export class ArkTSConfigGenerator {
       );
       this.logger.printErrorAndExit(logData);
     }
-    let arktsConfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
+    let arktsConfig: ArkTSConfig = new ArkTSConfig(moduleInfo, this.buildConfig.cachePath);
     this.arktsconfigs.set(moduleInfo.packageName, arktsConfig);
     this.getPathSection(moduleInfo, arktsConfig);
 
