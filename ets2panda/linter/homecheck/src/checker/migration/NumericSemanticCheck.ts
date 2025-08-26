@@ -2598,9 +2598,12 @@ export class NumericSemanticCheck implements BaseChecker {
                 logger.error('Failed to getting range info of issue file when generating auto fix info.');
                 return null;
             }
+
+            const valueStr = value.getValue();
+            const ruleFixText = NumericSemanticCheck.CreateFixTextForIntLiteral(valueStr);
             const ruleFix = new RuleFix();
             ruleFix.range = range;
-            ruleFix.text = value.getValue() + '.0';
+            ruleFix.text = ruleFixText;
             return ruleFix;
         }
         // 非整型字面量
@@ -2609,5 +2612,17 @@ export class NumericSemanticCheck implements BaseChecker {
             return this.generateRuleFixForLocalDefine(sourceFile, warnInfo, NumberCategory.int);
         }
         return this.generateRuleFixForLocalDefine(sourceFile, warnInfo, NumberCategory.number);
+    }
+    private static CreateFixTextForIntLiteral(valueStr: string): string {
+        if (!NumericSemanticCheck.IsNotDecimalNumber(valueStr)) {
+            return valueStr + '.0';
+        }
+
+        return valueStr + '.toDouble()';
+    }
+
+    private static IsNotDecimalNumber(value: string): boolean {
+        const loweredValue = value.toLowerCase();
+        return loweredValue.startsWith('0b') || loweredValue.startsWith('0x') || loweredValue.startsWith('0o') || loweredValue.includes('e');
     }
 }
