@@ -966,13 +966,13 @@ bool Helpers::IsInnerAnnotationRecordName(const std::string_view &name)
            name == panda::abc2program::EXPECTED_PROPERTY_COUNT_RECORD_NAME;
 }
 
-std::string Helpers::RemoveRecordSuffixAnnotationName(const std::string &name)
+size_t Helpers::RemoveRecordSuffixAnnotationName(std::string &name)
 {
     auto pos = name.rfind(abc2program::RECORD_ANNOTATION_SEPARATOR);
-    if (pos == std::string::npos) {
-        return name;
+    if (pos != std::string::npos) {
+        name = name.substr(0, pos);
     }
-    return name.substr(0, pos);
+    return pos;
 }
 
 void Helpers::RemoveProgramsRedundantData(std::map<std::string, panda::es2panda::util::ProgramCache*> &progsInfo,
@@ -980,18 +980,33 @@ void Helpers::RemoveProgramsRedundantData(std::map<std::string, panda::es2panda:
 {
     auto progInfoIter = progsInfo.begin();
     while (progInfoIter != progsInfo.end()) {
-        auto name = progInfoIter->first;
+        std::string name = progInfoIter->first;
         auto &program = progInfoIter->second->program;
+        auto &recordMetaData = program.record_table.begin()->second.metadata;
         /**
          * The record name of a user-defined annotation is the annotation name concatenated with the record name of the
          * file where it is declared. In order to preserve the annotated record, it is necessary to remove the
          * concatenated annotation name from the record name before perform dependency matching.
          */
-        if (!util::RecordNotGeneratedFromBytecode(name) &&
-            (program.record_table.begin()->second.metadata->GetAccessFlags() & ACC_ANNOTATION) != 0 &&
+        if (!util::RecordNotGeneratedFromBytecode(name) && (recordMetaData->GetAccessFlags() & ACC_ANNOTATION) != 0 &&
             !IsInnerAnnotationRecordName(program.record_table.begin()->first)) {
-            name = RemoveRecordSuffixAnnotationName(name);
+            RemoveRecordSuffixAnnotationName(name);
         }
+
+        /**
+         * Imported user-defined annotations will generate external records in the abc files. Its naming convention is
+         * consistent with the definition of annotations. But importing annotations supports qualified names,
+         * such as 'ns.Anno'. so it may need to remove suffixes multiple times to ensure that record name is found.
+         */
+        if (!util::RecordNotGeneratedFromBytecode(name) && recordMetaData->IsForeign()) {
+            auto versionStart = name.rfind(util::NORMALIZED_OHMURL_SEPARATOR);
+            size_t pos = name.length();
+            while (pos != std::string::npos && pos > versionStart &&
+                   resolvedDepsRelation.find(name) == resolvedDepsRelation.end()) {
+                pos = RemoveRecordSuffixAnnotationName(name);
+            }
+        }
+
         // remove redundant sourcefiles and bytecodefile data which are not dependant in compilation
         if (resolvedDepsRelation.find(name) == resolvedDepsRelation.end()) {
             progInfoIter = progsInfo.erase(progInfoIter);

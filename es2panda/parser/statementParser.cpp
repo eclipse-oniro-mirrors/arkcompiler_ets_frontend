@@ -2734,6 +2734,10 @@ ir::ExportNamedDeclaration *ParserImpl::ParseNamedExportDeclaration(const lexer:
                 ThrowSyntaxError("'interface' keyword expected.");
             }
 
+            if (!program_.IsEnableAnnotations()) {
+                ThrowAnnotationNotEnable();
+            }
+
             if (!decorators.empty()) {
                 ThrowSyntaxError("Decorators are not valid here.", decorators.front()->Start());
             }

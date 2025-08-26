@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,8 @@
  * limitations under the License.
  */
 
-import { test, __$$ETS_ANNOTATION$$__Anno1, A } from "@normalized:N&&&bytecodehar1/bytecodehar1-file1&2.0.0"
-import * as ns from "@normalized:N&&&bytecodehar1/bytecodehar1-file2&2.0.0"
-
-function main() {
-    test();
-    let a = new A();
-    ns.test();
+export @interface __$$ETS_ANNOTATION$$__Anno {
+    b: boolean = true
 }
 
-@__$$ETS_ANNOTATION$$__Anno1({ b: true })
-class B { }
-
-@__$$ETS_ANNOTATION$$__ns.Anno2({ b: true })
-class C { }
+class A { }
