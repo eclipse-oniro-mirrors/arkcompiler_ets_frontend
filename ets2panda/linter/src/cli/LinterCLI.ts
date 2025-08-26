@@ -32,7 +32,7 @@ import { logStatistics } from '../lib/statistics/StatisticsLogger';
 import { compileLintOptions, getEtsLoaderPath } from '../lib/ts-compiler/Compiler';
 import { processSyncErr, processSyncOut } from '../lib/utils/functions/ProcessWrite';
 import { parseCommandLine } from './CommandLineParser';
-import { getwholeRules } from '../lib/utils/functions/ConfiguredRulesProcess';
+import { getAllLinterRules } from '../lib/utils/functions/ConfiguredRulesProcess';
 
 export function run(): void {
   const commandLineArgs = process.argv.slice(2);
@@ -78,7 +78,7 @@ async function runIdeInteractiveMode(cmdOptions: CommandLineOptions): Promise<vo
   statisticsReportInPutInfo.totalProblemNumbers = getTotalProblemNumbers(scanTaskRelatedInfo.mergedProblems);
   statisticsReportInPutInfo.cmdOptions = cmdOptions;
   statisticsReportInPutInfo.timeRecorder = timeRecorder;
-  statisticsReportInPutInfo.wholeRules = getwholeRules();
+  statisticsReportInPutInfo.allLinterRules = getAllLinterRules();
 
   if (!cmdOptions.linterOptions.migratorMode && statisticsReportInPutInfo.cmdOptions.linterOptions.projectFolderList) {
     await statistic.generateScanProbelemStatisticsReport(statisticsReportInPutInfo);

@@ -97,7 +97,7 @@ function isStringArray(value: any): value is string[] {
   );
 }
 
-export function getwholeRules() : string[] {
+export function getAllLinterRules(): string[] {
   const configureRulePath = getDefaultConfigurePath();
   const configuredRulesMap = getRulesFromConfig(configureRulePath);
   return Array.from(configuredRulesMap.values()).flat();

@@ -554,7 +554,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     [ts.SyntaxKind.AwaitExpression, this.handleAwaitExpression],
     [ts.SyntaxKind.PostfixUnaryExpression, this.handlePostfixUnaryExpression],
     [ts.SyntaxKind.BigIntLiteral, this.handleBigIntLiteral],
-    [ts.SyntaxKind.NumericLiteral, this.handleNumericLiteral]
+    [ts.SyntaxKind.NumericLiteral, this.handleNumericLiteral],
+    [ts.SyntaxKind.RestType, this.handleRestType],
+    [ts.SyntaxKind.SuperKeyword, this.handleSuperKeyword]
   ]);
 
   lint(): void {
@@ -2018,40 +2020,38 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleNoDeprecatedApi(node);
 
     if (!this.options.arkts2) {
-        this.handleLiteralAsPropertyNameForPropertyAssignment(node);
-      }
+      this.handleLiteralAsPropertyNameForPropertyAssignment(node);
+    }
   }
 
   private handleLiteralAsPropertyNameForPropertyAssignment(node: ts.PropertyAssignment): void {
-  const propName = node.name;
-  if (!propName || !(ts.isNumericLiteral(propName) || ts.isStringLiteral(propName))) {
-    return;
+    const propName = node.name;
+    if (!propName || !(ts.isNumericLiteral(propName) || ts.isStringLiteral(propName))) {
+      return;
+    }
+
+    /*
+     * We can use literals as property names only when creating Record or any interop instances.
+     * We can also initialize with constant string literals.
+     * Assignment with string enum values is handled in handleComputedPropertyName
+     */
+    let isRecordObjectInitializer = false;
+    let isLibraryType = false;
+    let isDynamic = false;
+    const objectLiteralType = this.tsTypeChecker.getContextualType(node.parent);
+
+    if (objectLiteralType) {
+      isRecordObjectInitializer = this.tsUtils.checkTypeSet(objectLiteralType, this.tsUtils.isStdRecordType);
+      isLibraryType = this.tsUtils.isLibraryType(objectLiteralType);
+    }
+
+    isDynamic = isLibraryType || this.tsUtils.isDynamicLiteralInitializer(node.parent);
+
+    if (!isRecordObjectInitializer && !isDynamic) {
+      const autofix = this.autofixer?.fixLiteralAsPropertyNamePropertyAssignment(node);
+      this.incrementCounters(node.name, FaultID.LiteralAsPropertyName, autofix);
+    }
   }
-
-  /*
-   * We can use literals as property names only when creating Record or any interop instances.
-   * We can also initialize with constant string literals.
-   * Assignment with string enum values is handled in handleComputedPropertyName
-   */
-  let isRecordObjectInitializer = false;
-  let isLibraryType = false;
-  let isDynamic = false;
-  const objectLiteralType = this.tsTypeChecker.getContextualType(node.parent);
-
-  if (objectLiteralType) {
-    isRecordObjectInitializer = this.tsUtils.checkTypeSet(objectLiteralType, this.tsUtils.isStdRecordType);
-    isLibraryType = this.tsUtils.isLibraryType(objectLiteralType);
-
-  }
-
-  isDynamic = isLibraryType || this.tsUtils.isDynamicLiteralInitializer(node.parent);
-
-  if (!isRecordObjectInitializer && !isDynamic) {
-    const autofix = this.autofixer?.fixLiteralAsPropertyNamePropertyAssignment(node);
-    this.incrementCounters(node.name, FaultID.LiteralAsPropertyName, autofix);
-  }
-}
-
 
   private static getAllClassesFromSourceFile(sourceFile: ts.SourceFile): ts.ClassDeclaration[] {
     const allClasses: ts.ClassDeclaration[] = [];
@@ -9980,25 +9980,35 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!setApiListItem) {
       return;
     }
+
     if (TypeScriptLinter.isInterfaceImplementation(errorNode)) {
       return;
     }
+
+    if (ts.isTypeReferenceNode(errorNode)) {
+      errorNode = errorNode.typeName;
+    }
+
+    const symbol = this.tsUtils.trueSymbolAtLocation(errorNode);
+    const oriDecl = TsUtils.getDeclaration(symbol);
+    const fileName = path.normalize(oriDecl?.getSourceFile().fileName || '');
     const apiNamesArr = [...setApiListItem];
     const hasSameApiName = apiNamesArr.some((apilistItem) => {
-      return apilistItem.api_info.api_name === errorNode.getText();
+      return (
+        apilistItem.api_info.api_name === errorNode.getText() &&
+        fileName.endsWith(path.normalize(apilistItem.file_path))
+      );
     });
     if (!hasSameApiName) {
       return;
     }
-    if (ts.isTypeReferenceNode(errorNode)) {
-      errorNode = errorNode.typeName;
-    }
+
     const matchedApi = apiNamesArr.some((sdkInfo) => {
       const isSameName = sdkInfo.api_info.api_name === apiName;
       const isGlobal = sdkInfo.is_global;
       return isSameName && isGlobal;
     });
-    const checkSymbol = this.isIdentifierFromSDK(errorNode);
+    const checkSymbol = TypeScriptLinter.isIdentifierFromSDK(symbol);
     const type = this.tsTypeChecker.getTypeAtLocation(errorNode);
     const typeName = this.tsTypeChecker.typeToString(type);
 
@@ -10026,8 +10036,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return false;
   }
 
-  private isIdentifierFromSDK(node: ts.Node): boolean {
-    const symbol = this.tsTypeChecker.getSymbolAtLocation(node);
+  static isIdentifierFromSDK(symbol: ts.Symbol | undefined): boolean {
     if (!symbol) {
       return true;
     }
@@ -12457,12 +12466,48 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2) {
       return;
     }
+
+    if (TypeScriptLinter.isInForLoopBody(tsAsExpr)) {
+      const identifier = TypeScriptLinter.getIdentifierFromAsExpression(tsAsExpr);
+      if (identifier && this.isDeclaredOutsideForLoop(identifier)) {
+        return;
+      }
+    }
+
     const asType = this.tsTypeChecker.getTypeAtLocation(tsAsExpr.type);
     const originType = this.tsTypeChecker.getTypeAtLocation(tsAsExpr.expression);
     const originTypeStr = this.tsTypeChecker.typeToString(originType);
     if (originTypeStr === 'never' && this.tsTypeChecker.typeToString(asType) !== originTypeStr) {
       this.incrementCounters(tsAsExpr, FaultID.NoTsLikeSmartType);
     }
+  }
+
+  private isDeclaredOutsideForLoop(identifier: ts.Identifier): boolean {
+    const symbol = this.tsTypeChecker.getSymbolAtLocation(identifier);
+    if (!symbol) {
+      return false;
+    }
+
+    const declarations = symbol.declarations ?? [];
+    for (const decl of declarations) {
+      if (ts.findAncestor(decl, ts.isForStatement)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private static getIdentifierFromAsExpression(asExpr: ts.AsExpression): ts.Identifier | undefined {
+    const expr = asExpr.expression;
+    if (ts.isIdentifier(expr)) {
+      // case: data as Type
+      return expr;
+    } else if (ts.isElementAccessExpression(expr) && ts.isIdentifier(expr.expression)) {
+      // case: data[i] as Type
+      return expr.expression;
+    }
+    return undefined;
   }
 
   private handleAssignmentNotsLikeSmartType(tsBinaryExpr: ts.BinaryExpression): void {
@@ -15535,5 +15580,30 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       `When calling the "${funcName}" method, the parameter list of the methods needs to include ` +
       '"toJson" and "fromJson" (arkui-persistencev2-connect-serialization)';
     this.incrementCounters(callExpr, FaultID.PersistenceV2ConnectNeedAddParam, undefined, errorMsg);
+  }
+
+  private handleRestType(node: ts.Node): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+    if (node.parent && ts.isTupleTypeNode(node.parent)) {
+      this.incrementCounters(node, FaultID.unfixedTuple);
+    }
+  }
+
+  private handleSuperKeyword(node: ts.Node): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+    const staticContext = ts.findAncestor(node, (parent) => {
+      return (
+        parent &&
+        (ts.canHaveModifiers(parent) && TsUtils.hasModifier(parent.modifiers, ts.SyntaxKind.StaticKeyword) ||
+          ts.isClassStaticBlockDeclaration(parent))
+      );
+    });
+    if (staticContext) {
+      this.incrementCounters(node, FaultID.SuperInStaticContext);
+    }
   }
 }

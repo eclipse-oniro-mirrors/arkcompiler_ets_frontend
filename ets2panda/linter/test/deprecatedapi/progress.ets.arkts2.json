@@ -16,26 +16,6 @@
     "result": [
         {
             "line": 19,
-            "column": 26,
-            "endLine": 19,
-            "endColumn": 40,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 47,
-            "endLine": 19,
-            "endColumn": 61,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
             "column": 47,
             "endLine": 19,
             "endColumn": 61,

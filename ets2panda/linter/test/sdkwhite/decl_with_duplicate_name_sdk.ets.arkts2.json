@@ -16,52 +16,12 @@
     "result": [
         {
             "line": 20,
-            "column": 19,
-            "endLine": 20,
-            "endColumn": 28,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 35,
-            "endLine": 20,
-            "endColumn": 44,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
             "column": 35,
             "endLine": 20,
             "endColumn": 44,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 21,
-            "column": 19,
-            "endLine": 21,
-            "endColumn": 28,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 27,
-            "endLine": 22,
-            "endColumn": 36,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
             "severity": "ERROR"
         },
         {
@@ -89,89 +49,9 @@
             "column": 31,
             "endLine": 25,
             "endColumn": 40,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 25,
-            "column": 31,
-            "endLine": 25,
-            "endColumn": 40,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 30,
-            "column": 38,
-            "endLine": 30,
-            "endColumn": 47,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
-            "column": 30,
-            "endLine": 40,
-            "endColumn": 39,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 46,
-            "column": 42,
-            "endLine": 46,
-            "endColumn": 60,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 47,
-            "column": 42,
-            "endLine": 47,
-            "endColumn": 60,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 49,
-            "column": 31,
-            "endLine": 49,
-            "endColumn": 49,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 50,
-            "column": 31,
-            "endLine": 50,
-            "endColumn": 49,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 53,
-            "column": 18,
-            "endLine": 53,
-            "endColumn": 36,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
             "severity": "ERROR"
         },
         {
@@ -192,16 +72,6 @@
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 54,
-            "column": 19,
-            "endLine": 54,
-            "endColumn": 37,
-            "problem": "DuplicateDeclNameFromSdk",
-            "suggest": "",
-            "rule": "API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)",
             "severity": "ERROR"
         },
         {

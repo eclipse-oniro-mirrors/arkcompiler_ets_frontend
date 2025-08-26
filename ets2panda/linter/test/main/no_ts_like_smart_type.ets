@@ -249,7 +249,7 @@ export class AB {
             return this.count_; //legal
         })
     }
-} 
+}
 
 class AG {
 h?: number;
@@ -306,4 +306,62 @@ if (obj && obj.h == 3) { // valid(guarded)
 function check43(obj?: AG) {
 const val = obj.h; // NOT guarded
 return val;
+}
+
+}
+
+let NextID: number = 1;
+
+class downloadFilesData {
+  id: number;
+  url: string;
+  fileStatus: number;
+  downloadTime: number;
+
+  constructor(
+    url: string = '',
+    fileStatus: number = 0,
+    downloadTime: number = 0,
+  ) {
+    this.id = NextID++;
+    this.url = url;
+    this.fileStatus = fileStatus;
+    this.downloadTime = downloadTime;
+  }
+}
+
+class Downloader {
+  downloadFileArray: downloadFilesData[] = [];
+
+  loadInitializationDataSource() {
+    let stringData = JSON.stringify([
+      {
+        "url": "https://example.com/file1.zip",
+        "fileStatus": 1,
+        "downloadTime": 1734931200
+      },
+      {
+        "url": "https://example.com/file2.mp4",
+        "fileStatus": 0,
+        "downloadTime": 0
+      },
+      {
+        "url": "https://example.com/file3.pdf",
+        "fileStatus": 2,
+        "downloadTime": 1734931300
+      }
+    ]);
+
+    let data: [] = JSON.parse(stringData) as [];
+
+    for (let i = 0; i < data.length; i++) {
+      const downloadItemData = data[i] as downloadFilesData;
+      let downloadData: downloadFilesData = new downloadFilesData(
+        downloadItemData.url,
+        downloadItemData.fileStatus,
+        downloadItemData.downloadTime
+      );
+      this.downloadFileArray.push(downloadData);
+    }
+  }
 }

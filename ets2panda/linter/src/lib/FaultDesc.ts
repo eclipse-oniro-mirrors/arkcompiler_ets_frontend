@@ -298,3 +298,4 @@ faultDesc[FaultID.BuiltinDisableApi] = 'Disable Api';
 faultDesc[FaultID.BuiltinIteratorResultValue] = 'IteratorResult.value is not supported';
 faultDesc[FaultID.OptionalTupleType] = 'No optional tuple type';
 faultDesc[FaultID.LargeNumericLiteral] = 'Numeric literal exceeds allowed range';
+faultDesc[FaultID.unfixedTuple] = 'No unfixed tuple';

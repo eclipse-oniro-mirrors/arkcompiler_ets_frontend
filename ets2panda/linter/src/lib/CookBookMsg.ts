@@ -438,6 +438,9 @@ cookBookTag[408] = 'The property of IteratorResult is not supported (arkts-built
 cookBookTag[409] = 'No optional tuple type (arkts-no-optional-tuple-type)';
 cookBookTag[410] = 'Numeric literal exceeds allowed range (arkts-no-large-numeric-literal)';
 cookBookTag[411] = '"instanceof" operator can\'t be applied to function (arkts-no-instanceof-func)';
+cookBookTag[412] = 'No unfixed length tuple support (arkts-no-unfixed-len-tuple)';
+
+cookBookTag[413] = 'Subclass can\'t call members of super class in static context (arkts-no-super-call-in-static-context)';
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';
 }

@@ -3590,7 +3590,7 @@ export class TsUtils {
         return false;
       }
 
-      projectPath.concat(PATH_SEPARATOR + currentModule);
+      projectPath = projectPath.concat(PATH_SEPARATOR + currentModule);
     }
 
     const importedFile = path.resolve(projectPath, importFilePath + extension);

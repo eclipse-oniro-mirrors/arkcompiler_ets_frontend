@@ -15,13 +15,13 @@
     ],
     "result": [
         {
-            "line": 120,
-            "column": 26,
-            "endLine": 128,
-            "endColumn": 6,
-            "problem": "LimitedReturnTypeInference",
+            "line": 26,
+            "column": 3,
+            "endLine": 29,
+            "endColumn": 4,
+            "problem": "NoStaticOnClass",
             "suggest": "",
-            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
+            "rule": "Class cannot have static codeblocks. (arkts-class-lazy-import)",
             "severity": "ERROR"
         }
     ]
