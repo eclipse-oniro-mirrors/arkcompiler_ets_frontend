@@ -85,6 +85,7 @@ public:
 private:
     using DynamicCallNamesMap = ArenaMap<const ArenaVector<util::StringView>, uint32_t>;
 
+    void GenRecords(varbinder::RecordTable *globalRecordTable);
     void GenExternalRecord(varbinder::RecordTable *recordTable, const parser::Program *extProg);
     void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType, checker::Signature *signature);
     std::vector<pandasm::AnnotationData> GenAnnotations(const ir::ClassDefinition *classDef);
