@@ -1023,6 +1023,10 @@ syntax:
   id: 237
   message: "Readonly<T> utility type expected but readonly<T> found."
 
+- name: REPEATED_TYPE_KEYWORD
+  id: 135857
+  message: "Type keyword set on both the specifier list and on the specifier itself."
+
 - name: REQUIRED_PARAM_AFTER_DEFAULT
   id: 14
   message: "Required parameter follows default parameter(s)."

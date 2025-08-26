@@ -565,7 +565,8 @@ ir::OverloadDeclaration *ETSParser::ParseClassOverloadDeclaration(ir::ModifierFl
 
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::NONE,
-        [this, &overloads, overloadDef]() { return ParseOverloadListElement(overloads, overloadDef); }, &endLoc, true);
+        [this, &overloads, overloadDef](bool &) { return ParseOverloadListElement(overloads, overloadDef); }, &endLoc,
+        ParseListOptions::ALLOW_TRAILING_SEP);
     overloadDef->SetOverloadedList(std::move(overloads));
     overloadDef->SetRange({startLoc, endLoc});
     ValidateOverloadList(overloadDef->OverloadedList());
@@ -1122,7 +1123,8 @@ ir::OverloadDeclaration *ETSParser::ParseInterfaceOverload(ir::ModifierFlags mod
 
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::NONE,
-        [this, &overloads, overloadDef]() { return ParseOverloadListElement(overloads, overloadDef); }, &endLoc, true);
+        [this, &overloads, overloadDef](bool &) { return ParseOverloadListElement(overloads, overloadDef); }, &endLoc,
+        ParseListOptions::ALLOW_TRAILING_SEP);
 
     overloadDef->SetOverloadedList(std::move(overloads));
     overloadDef->SetRange({startLoc, endLoc});

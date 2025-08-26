@@ -22,6 +22,7 @@ namespace ark::es2panda::ir {
 class StringLiteral;
 
 enum class ImportKinds { ALL, TYPES };
+using ExportKinds = ImportKinds;
 
 class ImportDeclaration : public Statement {
 public:

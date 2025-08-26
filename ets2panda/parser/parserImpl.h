@@ -69,6 +69,12 @@ enum class TypeAnnotationParsingOptions : uint32_t {
     TYPE_ALIAS_CONTEXT = 1U << 19U
 };
 
+enum class ParseListOptions : uint32_t {
+    NO_OPT = 0U,
+    ALLOW_TRAILING_SEP = 1U << 0U,
+    ALLOW_TYPE_KEYWORD = 1U << 1U,
+};
+
 class ParserImpl {
 public:
     explicit ParserImpl(Program *program, const util::Options *options, util::DiagnosticEngine &diagnosticEngine,
@@ -582,8 +588,9 @@ protected:
     }
 
     bool ParseList(std::optional<lexer::TokenType> termToken, lexer::NextTokenFlags flags,
-                   const std::function<bool()> &parseElement, lexer::SourcePosition *sourceEnd = nullptr,
-                   bool allowTrailingSep = false);
+                   const std::function<bool(bool &typeKeywordOnSpecifier)> &parseElement,
+                   lexer::SourcePosition *sourceEnd = nullptr,
+                   ParseListOptions parseListOptions = ParseListOptions::NO_OPT);
 
     RecursiveContext &RecursiveCtx()
     {
@@ -606,6 +613,10 @@ private:
 
 template <>
 struct enumbitops::IsAllowedType<ark::es2panda::parser::TypeAnnotationParsingOptions> : std::true_type {
+};
+
+template <>
+struct enumbitops::IsAllowedType<ark::es2panda::parser::ParseListOptions> : std::true_type {
 };
 
 #endif

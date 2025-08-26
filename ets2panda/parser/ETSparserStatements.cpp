@@ -189,8 +189,7 @@ ir::Statement *ETSParser::ParseTopLevelDeclStatement(StatementParsingFlags flags
     }
 
     ir::Statement *result = nullptr;
-    auto token = Lexer()->GetToken();
-    switch (token.Type()) {
+    switch (Lexer()->GetToken().Type()) {
         case lexer::TokenType::KEYW_FUNCTION: {
             result = ParseFunctionDeclaration(false, memberModifiers);
             ES2PANDA_ASSERT(result != nullptr);

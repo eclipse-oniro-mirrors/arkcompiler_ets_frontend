@@ -1749,7 +1749,7 @@ ir::ExportNamedDeclaration *ParserImpl::ParseExportNamedSpecifiers(const lexer::
 
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::KEYWORD_TO_IDENT,
-        [this, &specifiers]() {
+        [this, &specifiers](bool &) {
             if (lexer_->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
                 // test exists for ts extension only
                 LogExpectedToken(lexer::TokenType::LITERAL_IDENT);
@@ -1778,7 +1778,7 @@ ir::ExportNamedDeclaration *ParserImpl::ParseExportNamedSpecifiers(const lexer::
             }
             return true;
         },
-        &endPos, true);
+        &endPos, ParseListOptions::ALLOW_TRAILING_SEP);
 
     ir::StringLiteral *source = nullptr;
 
@@ -1921,7 +1921,7 @@ void ParserImpl::ParseNamedImportSpecifiers(ArenaVector<ir::AstNode *> *specifie
 
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::KEYWORD_TO_IDENT,
-        [this, specifiers]() {
+        [this, specifiers](bool &) {
             if (lexer_->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
                 // test exists for ts extension only
                 LogExpectedToken(lexer::TokenType::LITERAL_IDENT);
@@ -1947,7 +1947,7 @@ void ParserImpl::ParseNamedImportSpecifiers(ArenaVector<ir::AstNode *> *specifie
             specifiers->push_back(specifier);
             return true;
         },
-        nullptr, true);
+        nullptr, ParseListOptions::ALLOW_TRAILING_SEP);
 }
 
 ir::AstNode *ParserImpl::ParseImportDefaultSpecifier(ArenaVector<ir::AstNode *> *specifiers)

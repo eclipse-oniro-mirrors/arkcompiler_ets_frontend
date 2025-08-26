@@ -202,7 +202,7 @@ private:
     bool ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *result,
                                    ArenaVector<ir::ExportSpecifier *> *resultExportDefault,
                                    const std::string &fileName);
-    SpecifiersInfo ParseNamedSpecifiers();
+    SpecifiersInfo ParseNamedSpecifiers(const ir::ImportKinds importKind);
     ir::ExportNamedDeclaration *ParseSingleExport(ir::ModifierFlags modifiers);
     ir::ExportNamedDeclaration *ParseSingleExportForAnonymousConst(ir::ModifierFlags modifiers);
     ArenaVector<ir::ETSImportDeclaration *> ParseImportDeclarations();
@@ -301,6 +301,9 @@ private:
     ir::Statement *ParseTryStatement() override;
     ir::Statement *ParseDebuggerStatement() override;
     ir::Statement *ParseDefaultIfSingleExport(ir::ModifierFlags modifiers);
+    ir::ExportNamedDeclaration *CreateExportNamedDeclaration(const SpecifiersInfo &specs,
+                                                             const ir::ModifierFlags &modifiers,
+                                                             const lexer::SourcePosition &startLoc);
     ir::Statement *ParseExport(lexer::SourcePosition startLoc, ir::ModifierFlags modifiers);
     ir::Statement *ParseImportDeclaration(StatementParsingFlags flags) override;
     ir::Statement *ParseExportDeclaration(StatementParsingFlags flags) override;

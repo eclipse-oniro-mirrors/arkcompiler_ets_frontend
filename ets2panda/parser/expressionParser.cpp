@@ -182,7 +182,7 @@ ir::ArrayExpression *ParserImpl::ParseArrayExpression(ExpressionParseFlags flags
     lexer::SourcePosition endLoc;
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET, lexer::NextTokenFlags::NONE,
-        [this, inPattern, startLoc, allowOmitted, &elements, &trailingComma]() {
+        [this, inPattern, startLoc, allowOmitted, &elements, &trailingComma](bool &) {
             if (allowOmitted && lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COMMA) {
                 auto *omitted = AllocNode<ir::OmittedExpression>();
                 omitted->SetRange(lexer_->GetToken().Loc());
@@ -204,7 +204,7 @@ ir::ArrayExpression *ParserImpl::ParseArrayExpression(ExpressionParseFlags flags
             trailingComma = ParseArrayExpressionRightBracketHelper(containsRest, startLoc);
             return true;
         },
-        &endLoc, true);
+        &endLoc, ParseListOptions::ALLOW_TRAILING_SEP);
 
     auto nodeType = inPattern ? ir::AstNodeType::ARRAY_PATTERN : ir::AstNodeType::ARRAY_EXPRESSION;
     auto *arrayExpressionNode =
@@ -806,7 +806,7 @@ ir::Expression *ParserImpl::ParseNewExpression()
     // parse argument part of NewExpression
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE,
-        [this, &arguments]() {
+        [this, &arguments](bool &) {
             ir::Expression *argument = nullptr;
 
             if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD) {
@@ -817,7 +817,7 @@ ir::Expression *ParserImpl::ParseNewExpression()
             arguments.push_back(argument);
             return true;
         },
-        &endLoc, true);
+        &endLoc, ParseListOptions::ALLOW_TRAILING_SEP);
 
     auto *newExprNode = AllocNode<ir::NewExpression>(callee, std::move(arguments));
     ES2PANDA_ASSERT(newExprNode != nullptr);
@@ -1381,7 +1381,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseCallExpressionArguments(bool &tra
     } else {
         ParseList(
             lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE,
-            [this, &trailingComma, &arguments]() {
+            [this, &trailingComma, &arguments](bool &) {
                 trailingComma = false;
                 ir::Expression *argument {};
                 if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD) {
@@ -1396,7 +1396,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseCallExpressionArguments(bool &tra
                 }
                 return true;
             },
-            &endLoc, true);
+            &endLoc, ParseListOptions::ALLOW_TRAILING_SEP);
     }
 
     return arguments;

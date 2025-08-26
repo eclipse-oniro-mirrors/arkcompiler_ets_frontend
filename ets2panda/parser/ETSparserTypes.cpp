@@ -250,7 +250,7 @@ ir::TypeNode *ETSParser::ParseETSTupleType(TypeAnnotationParsingOptions *const o
     ArenaVector<ir::TypeNode *> tupleTypeList(Allocator()->Adapter());
     auto *const tupleType = AllocNode<ir::ETSTuple>(Allocator());
 
-    auto parseElem = [this, options, &tupleTypeList, &tupleType]() {
+    auto parseElem = [this, options, &tupleTypeList, &tupleType](bool &) {
         auto *const currentTypeAnnotation = ParseTypeAnnotation(options);
         if (currentTypeAnnotation == nullptr) {  // Error processing.
             Lexer()->NextToken();
@@ -264,7 +264,8 @@ ir::TypeNode *ETSParser::ParseETSTupleType(TypeAnnotationParsingOptions *const o
     };
 
     lexer::SourcePosition endLoc;
-    ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET, lexer::NextTokenFlags::NONE, parseElem, &endLoc, true);
+    ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET, lexer::NextTokenFlags::NONE, parseElem, &endLoc,
+              ParseListOptions::ALLOW_TRAILING_SEP);
 
     ES2PANDA_ASSERT(tupleType != nullptr);
     tupleType->SetTypeAnnotationsList(std::move(tupleTypeList));

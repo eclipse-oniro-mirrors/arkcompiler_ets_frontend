@@ -898,7 +898,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams()
 
     ArenaVector<ir::Expression *> params(Allocator()->Adapter());
 
-    auto parseFunc = [this, &params]() {
+    auto parseFunc = [this, &params](bool &) {
         ir::Expression *parameter = ParseFunctionParameter();
         if (parameter == nullptr) {
             return false;
@@ -933,7 +933,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams()
         params = std::move(ParseExpressionsArrayFormatPlaceholder());
     } else {
         ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE, parseFunc, nullptr,
-                  true);
+                  ParseListOptions::ALLOW_TRAILING_SEP);
     }
 
     return params;
@@ -1497,15 +1497,22 @@ bool ParserImpl::CheckModuleAsModifier()
 }
 
 bool ParserImpl::ParseList(std::optional<lexer::TokenType> termToken, lexer::NextTokenFlags flags,
-                           const std::function<bool()> &parseElement, lexer::SourcePosition *sourceEnd,
-                           bool allowTrailingSep)
+                           const std::function<bool(bool &typeKeywordOnSpecifier)> &parseElement,
+                           lexer::SourcePosition *sourceEnd, ParseListOptions parseListOptions)
 {
     bool success = true;
+    bool allowTypeKeyword = (parseListOptions & ParseListOptions::ALLOW_TYPE_KEYWORD) != 0U;
     auto sep = lexer::TokenType::PUNCTUATOR_COMMA;
+    bool typeKeywordOnSpecifier = false;
     while (Lexer()->GetToken().Type() != termToken && Lexer()->GetToken().Type() != lexer::TokenType::EOS) {
         // ErrorRecursionGuard is not feasible because we can break without consuming any tokens
+        if (allowTypeKeyword && Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_TYPE) {
+            Lexer()->NextToken(flags);  // eat 'type'
+            typeKeywordOnSpecifier = true;
+            continue;
+        }
         auto savedPos = lexer_->Save();
-        auto elemSuccess = parseElement();
+        auto elemSuccess = parseElement(typeKeywordOnSpecifier);
         bool hasSep = false;
         if (Lexer()->GetToken().Type() == sep) {
             Lexer()->NextToken(flags);
@@ -1520,7 +1527,7 @@ bool ParserImpl::ParseList(std::optional<lexer::TokenType> termToken, lexer::Nex
             continue;
         }
         if (termToken == Lexer()->GetToken().Type() || (!termToken.has_value() && !hasSep)) {
-            if (hasSep && !allowTrailingSep) {
+            if (hasSep && (parseListOptions & ParseListOptions::ALLOW_TRAILING_SEP) == 0U) {
                 LogError(diagnostic::TRAILING_COMMA_NOT_ALLOWED);
             }
             break;
