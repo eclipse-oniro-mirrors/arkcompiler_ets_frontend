@@ -134,15 +134,6 @@ public:
     }
 };
 
-TEST_F(LspFindRenameLocationsTests, DISABLED_genTestData)
-{
-    auto data = genTestData("Foo");
-    data = genTestData("abc");
-    data = genTestData("dummy");
-    data = genTestData("name");
-    (void)data;
-}
-
 std::set<RenameLocation> expected_Foo = {
     {R"(/tmp/findRenameLocsTwo.ets)", 30, 33, 1, "Foo as "},
     {R"(/tmp/findRenameLocsTwo.ets)", 183, 186, 9},
