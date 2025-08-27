@@ -244,16 +244,9 @@ void FilterForSimultaneous(varbinder::ETSBinder *varbinder)
                     functions.end());
 }
 
-void ETSEmitter::GenAnnotation()
+void ETSEmitter::GenRecords(varbinder::RecordTable *globalRecordTable)
 {
-    Program()->lang = EXTENSION;
     auto *varbinder = static_cast<varbinder::ETSBinder *>(Context()->parserProgram->VarBinder());
-
-    if (Context()->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
-        FilterForSimultaneous(varbinder);
-    }
-
-    auto *globalRecordTable = varbinder->GetGlobalRecordTable();
     auto baseName = varbinder->GetRecordTable()->RecordName().Mutf8();
     for (auto *annoDecl : globalRecordTable->AnnotationDeclarations()) {
         std::string newBaseName = util::NameMangler::GetInstance()->CreateMangledNameForAnnotation(
@@ -268,6 +261,19 @@ void ETSEmitter::GenAnnotation()
     for (auto *interfaceDecl : globalRecordTable->InterfaceDeclarations()) {
         GenInterfaceRecord(interfaceDecl, interfaceDecl->IsDeclare());
     }
+}
+
+void ETSEmitter::GenAnnotation()
+{
+    Program()->lang = EXTENSION;
+    auto *varbinder = static_cast<varbinder::ETSBinder *>(Context()->parserProgram->VarBinder());
+
+    if (Context()->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
+        FilterForSimultaneous(varbinder);
+    }
+
+    auto *globalRecordTable = varbinder->GetGlobalRecordTable();
+    GenRecords(globalRecordTable);
 
     for (auto *signature : globalRecordTable->Signatures()) {
         auto *scriptFunc = signature->Node()->AsScriptFunction();
@@ -283,12 +289,15 @@ void ETSEmitter::GenAnnotation()
         Program()->AddToFunctionTable(std::move(func));
     }
 
+    auto *saveProgram = varbinder->Program();
     for (auto [extProg, recordTable] : varbinder->GetExternalRecordTable()) {
         if (recordTable == varbinder->GetRecordTable()) {
             continue;
         }
+        varbinder->SetProgram(extProg);
         GenExternalRecord(recordTable, extProg);
     }
+    varbinder->SetProgram(saveProgram);
 
     const auto *checker = static_cast<checker::ETSChecker *>(Context()->GetChecker());
 

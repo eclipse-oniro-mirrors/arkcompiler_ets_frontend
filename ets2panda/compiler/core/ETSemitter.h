@@ -83,6 +83,7 @@ public:
         const ArenaVector<ir::AnnotationUsage *> &annotationUsages, const std::string &baseName);
 
 private:
+    void GenRecords(varbinder::RecordTable *globalRecordTable);
     void GenExternalRecord(varbinder::RecordTable *recordTable, const parser::Program *extProg);
     void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType, checker::Signature *signature);
     std::vector<pandasm::AnnotationData> GenAnnotations(const ir::ClassDefinition *classDef);
