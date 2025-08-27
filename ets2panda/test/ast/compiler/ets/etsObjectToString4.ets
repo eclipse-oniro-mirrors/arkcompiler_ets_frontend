@@ -17,4 +17,4 @@ class A<T>{}
 
 let f: (() => int) | null = /* @@ label */5;
 
-/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type '(() => Int)|null'  */
+/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type '((() => Int))|null'  */

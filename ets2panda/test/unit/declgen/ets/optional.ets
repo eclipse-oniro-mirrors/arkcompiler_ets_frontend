@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,15 +13,7 @@
  * limitations under the License.
  */
 
-class A {
-    static $_instantiate(): void {
-
-    }
+export class C {
+    constructor(b?: boolean) {}
+    foo(b?: boolean){}
 }
-
-function main() {
-    A()
-}
-
-/* @@? 23:5 Error TypeError: Expected 0 arguments, got 1. */
-/* @@? 23:5 Error TypeError: No matching call signature for $_instantiate((() => A)) */

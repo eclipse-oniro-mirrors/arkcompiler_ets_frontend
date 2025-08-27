@@ -19,4 +19,4 @@ function main(){
     ]
 }
 
-/* @@? 17:38 Error TypeError: Type 'Array<() => Int>' cannot be assigned to type '() => Array<Int>' */
+/* @@@ label Error TypeError: Type 'Array<(() => Int)>' cannot be assigned to type '(() => Array<Int>)' */

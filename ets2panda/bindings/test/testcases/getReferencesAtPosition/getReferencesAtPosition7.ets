@@ -128,7 +128,7 @@ export class Child extends Parent {
   }
 }
 
-export { PI } from "std/math";
+export { PI } from "std/math/consts";
 
 export function test(){}
 

@@ -107,8 +107,8 @@ static bool CheckOptionsBeforePhase(const util::Options &options, const parser::
     return options.GetExitBeforePhase() == name;
 }
 
-void HandleGenerateDecl(const parser::Program &program, util::DiagnosticEngine &diagnosticEngine,
-                        const std::string &outputPath)
+static void WriteStringToFile(std::string &&str, util::DiagnosticEngine &diagnosticEngine,
+                              const std::string &outputPath)
 {
     //  Don't generate declarations for source code with errors!
     if (diagnosticEngine.IsAnyError()) {
@@ -122,14 +122,33 @@ void HandleGenerateDecl(const parser::Program &program, util::DiagnosticEngine &
         return;
     }
 
-    std::string result = program.Ast()->DumpDecl();
-    result = "'use static'\n" + result;
-
-    outFile << result;
+    outFile << str;
     outFile.close();
 
     // Try to add generated declaration to the cache (if it is activated)
-    parser::DeclarationCache::CacheIfPossible(outputPath, std::make_shared<std::string>(std::move(result)));
+    parser::DeclarationCache::CacheIfPossible(outputPath, std::make_shared<std::string>(std::move(str)));
+}
+
+void HandleGenerateDecl(const parser::Program &program, public_lib::Context *context, const std::string &outputPath)
+{
+    ir::Declgen dg {context};
+    ir::SrcDumper dumper {&dg};
+    program.Ast()->Dump(&dumper);
+    dumper.GetDeclgen()->Run();
+
+    std::string res = "'use static'\n";
+    res += dg.DumpImports();
+    res += dumper.Str();
+    WriteStringToFile(std::move(res), *context->diagnosticEngine, outputPath);
+}
+
+std::string ResolveDeclsOutputPath(const util::Options &options)
+{
+    if (!options.WasSetGenerateDeclPath()) {
+        return ark::os::RemoveExtension(util::BaseName(options.SourceFileName())).append(".d.ets");
+    } else {
+        return options.GetGenerateDeclPath();
+    }
 }
 
 static bool CheckOptionsAfterPhase(const util::Options &options, const parser::Program &program,
@@ -146,6 +165,31 @@ static bool CheckOptionsAfterPhase(const util::Options &options, const parser::P
     }
 
     return options.GetExitAfterPhase() == name;
+}
+
+static void GenDeclsForStdlib(public_lib::Context &context, const util::Options &options,
+                              const parser::Program &program)
+{
+    for (const auto &[moduleName, extPrograms] : program.ExternalSources()) {
+        ir::Declgen dg {&context};
+        ir::SrcDumper dumper {&dg};
+        for (const auto *extProg : extPrograms) {
+            extProg->Ast()->Dump(&dumper);
+        }
+        dumper.GetDeclgen()->Run();
+        std::string path = moduleName.Mutf8() + ".d.ets";
+        if (options.WasSetGenerateDeclPath()) {
+            // NOTE: "/" at the end needed because of bug in GetParentDir
+            auto parentDir = ark::os::GetParentDir(options.GetGenerateDeclPath() + "/");
+            ark::os::CreateDirectories(parentDir);
+            path = parentDir + "/" + path;
+        }
+
+        std::string res = "'use static'\n";
+        res += dg.DumpImports();
+        res += dumper.Str();
+        WriteStringToFile(std::move(res), *context.diagnosticEngine, path);
+    }
 }
 
 // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
@@ -185,13 +229,11 @@ static bool RunVerifierAndPhases(public_lib::Context &context, parser::Program &
         }
 
         if (options.IsGenerateDeclEnabled() && name == compiler::CheckerPhase::NAME) {
-            std::string path;
-            if (!options.WasSetGenerateDeclPath()) {
-                path = ark::os::RemoveExtension(util::BaseName(options.SourceFileName())).append(".d.ets");
+            if (options.IsGenStdlib()) {
+                GenDeclsForStdlib(context, options, program);
             } else {
-                path = options.GetGenerateDeclPath();
+                HandleGenerateDecl(program, &context, ResolveDeclsOutputPath(options));
             }
-            HandleGenerateDecl(program, *context.diagnosticEngine, path);
         }
     }
 

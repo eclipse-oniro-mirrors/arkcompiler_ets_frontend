@@ -30,8 +30,8 @@ protected:
     {
         initializer_ = new Initializer();
         sourceCode_ = R"(
-export { PI } from "std/math";
-export { E as CircleE } from "std/math";
+export { PI } from "std/math/consts";
+export { E as CircleE } from "std/math/consts";
 )";
         GenerateContexts(*initializer_);
     }

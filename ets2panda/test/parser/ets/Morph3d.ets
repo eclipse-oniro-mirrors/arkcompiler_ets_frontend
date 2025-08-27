@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { PI } from "std/math";
+import { PI } from "std/math/consts";
 
 export class Morph3d {
   private static readonly param: int = 120;

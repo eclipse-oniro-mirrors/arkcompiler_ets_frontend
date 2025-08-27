@@ -92,11 +92,9 @@ void TSTypeAliasDeclaration::Dump(ir::AstDumper *dumper) const
 
 bool TSTypeAliasDeclaration::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 {
-    if (!dumper->IsDeclgen()) {
-        return false;
-    }
+    ES2PANDA_ASSERT(dumper->IsDeclgen());
 
-    if (dumper->IsIndirectDepPhase()) {
+    if (dumper->GetDeclgen()->IsPostDumpIndirectDepsPhase()) {
         return false;
     }
 
@@ -105,14 +103,14 @@ bool TSTypeAliasDeclaration::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper)
     }
 
     auto name = id_->Name().Mutf8();
-    dumper->AddNode(name, this);
+    dumper->GetDeclgen()->AddNode(name, this);
     return true;
 }
 
 void TSTypeAliasDeclaration::Dump(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(id_);
-    if (RegisterUnexportedForDeclGen(dumper)) {
+    if (dumper->IsDeclgen() && RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
     DumpAnnotations(dumper);

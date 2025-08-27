@@ -79,11 +79,9 @@ void TSEnumDeclaration::Dump(ir::AstDumper *dumper) const
 
 bool TSEnumDeclaration::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 {
-    if (!dumper->IsDeclgen()) {
-        return false;
-    }
+    ES2PANDA_ASSERT(dumper->IsDeclgen());
 
-    if (dumper->IsIndirectDepPhase()) {
+    if (dumper->GetDeclgen()->IsPostDumpIndirectDepsPhase()) {
         return false;
     }
 
@@ -92,15 +90,16 @@ bool TSEnumDeclaration::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) cons
     }
 
     auto name = key_->AsIdentifier()->Name().Mutf8();
-    dumper->AddNode(name, this);
+    dumper->GetDeclgen()->AddNode(name, this);
     return true;
 }
 
 void TSEnumDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    auto guard = dumper->BuildAmbientContextGuard();
     ES2PANDA_ASSERT(isConst_ == false);
     ES2PANDA_ASSERT(key_ != nullptr);
-    if (RegisterUnexportedForDeclGen(dumper)) {
+    if (dumper->IsDeclgen() && RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
     if (key_->Parent()->IsExported() && dumper->IsDeclgen()) {
@@ -109,7 +108,7 @@ void TSEnumDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Add("export default ");
     }
     if (dumper->IsDeclgen()) {
-        dumper->TryDeclareAmbientContext();
+        dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
     } else if (IsDeclare()) {
         dumper->Add("declare ");
     }

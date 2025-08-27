@@ -711,9 +711,11 @@ std::pair<std::string_view, std::string_view> Helpers::SplitSignature(std::strin
 
 std::vector<std::string> const &Helpers::StdLib()
 {
-    static std::vector<std::string> stdlib {"std/core", "std/math",        "std/containers",        "std/interop/js",
-                                            "std/time", "std/debug",       "std/debug/concurrency", "std/testing",
-                                            "escompat", "std/concurrency", "std/annotations",       "std/interop"};
+    static std::vector<std::string> stdlib {
+        "std/core",       "std/math",        "std/containers",        "std/interop/js",
+        "std/time",       "std/debug",       "std/debug/concurrency", "std/testing",
+        "escompat",       "std/concurrency", "std/annotations",       "std/interop",
+        "std/math/consts"};
     return stdlib;
 }
 
@@ -770,6 +772,10 @@ bool Helpers::IsNumericGlobalBuiltIn(checker::Type *type, checker::ETSChecker *c
 
 bool Helpers::IsStdLib(const parser::Program *program)
 {
+    if (program->AbsoluteName().Utf8().find("stdlib") != std::string_view::npos) {
+        return true;
+    }
+
     // NOTE(rsipka): early check: if program is not in a package then it is not part of the stdlib either
     if (!program->IsPackage()) {
         return false;
@@ -778,10 +784,6 @@ bool Helpers::IsStdLib(const parser::Program *program)
     auto fileFolder = program->ModuleName().Mutf8();
     std::replace(fileFolder.begin(), fileFolder.end(), *compiler::Signatures::METHOD_SEPARATOR.begin(),
                  *compiler::Signatures::NAMESPACE_SEPARATOR.begin());
-
-    if (fileFolder == "std/math/consts") {
-        return true;
-    }
 
     auto const &stdlib = StdLib();
     return std::count(stdlib.begin(), stdlib.end(), fileFolder) != 0;

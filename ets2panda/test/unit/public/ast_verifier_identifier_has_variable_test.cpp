@@ -67,7 +67,7 @@ TEST_F(ASTVerifierTest, ExtensionFunction)
 TEST_F(ASTVerifierTest, DISABLED_Imports)
 {
     char const *text = R"(
-        import { PI } from "std/math";
+        import { PI } from "std/math/consts";
         import { A } from "dynamic_import_tests"
         import default_imported from "import_tests/modules/default_export";
         import * as Time from "std/time";

@@ -339,7 +339,7 @@ TEST_F(LspRenameInfoTests, RenameInfoTryGetImportFromModuleSpecifier)
     Initializer initializer = Initializer();
 
     std::vector<std::string> files = {"rename-module.ets"};
-    std::vector<std::string> texts = {R"(import { PI } from "std/math";
+    std::vector<std::string> texts = {R"(import { PI } from "std/math/consts";
     console.log(PI);)"};
 
     auto filePaths = CreateTempFile(files, texts);
@@ -449,7 +449,7 @@ TEST_F(LspRenameInfoTests, RenameInfoGetRenameInfoForNode1)
     Initializer initializer = Initializer();
 
     std::vector<std::string> files = {"rename.ets"};
-    std::vector<std::string> texts = {R"(import { PI } from "std/math"; console.log(PI);)"};
+    std::vector<std::string> texts = {R"(import { PI } from "std/math/consts"; console.log(PI);)"};
 
     auto filePaths = CreateTempFile(files, texts);
     size_t const expectedFileCount = 1;

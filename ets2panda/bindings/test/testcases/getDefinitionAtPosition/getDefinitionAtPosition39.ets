@@ -15,4 +15,4 @@
 
 'use static';
 
-export { PI } from "std/math";
+export { PI } from "std/math/consts";

@@ -128,7 +128,7 @@ TEST_F(LSPAPITests, GetFileReferencesImpl3)
 {
     using ark::es2panda::public_lib::Context;
     std::vector<std::string> files = {"package-module.ets"};
-    std::vector<std::string> texts = {R"(import { PI } from "std/math";
+    std::vector<std::string> texts = {R"(import { PI } from "std/math/consts";
 console.log(PI);)"};
     auto filePaths = CreateTempFile(files, texts);
     int const expectedFileCount = 1;
@@ -139,13 +139,12 @@ console.log(PI);)"};
     auto ctx = initializer.CreateContext(referenceFileName, ES2PANDA_STATE_CHECKED);
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
 
-    auto baseUrl = reinterpret_cast<Context *>(ctx)->config->options->ArkTSConfig()->BaseUrl();
-    auto searchFileName = baseUrl + "/plugins/ets/stdlib/std/math/math.ets";
+    auto searchFileName = "std/math/consts";
     auto result = References();
-    result = ark::es2panda::lsp::GetFileReferencesImpl(ctx, searchFileName.c_str(), true);
+    result = ark::es2panda::lsp::GetFileReferencesImpl(ctx, searchFileName, false);
     auto expectedFileName = filePaths[0];
     size_t const expectedStartPos = 19;
-    size_t const expectedLength = 10;
+    size_t const expectedLength = 17;
 
     ASSERT_EQ(result.referenceInfos.at(0).fileName, expectedFileName);
     ASSERT_EQ(result.referenceInfos.at(0).start, expectedStartPos);

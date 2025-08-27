@@ -88,7 +88,7 @@ static std::string g_source = R"('use static'
  * @param1 {} behindStr
  * @param2 preStr { p }
 */
-import { PI, E } from "std/math"
+import { PI, E } from "std/math/consts"
 
 @interface myMultiAnno {}
 
@@ -397,7 +397,7 @@ export { JsDocClassOutside, jsdocVal1, jsDocFunc }
  * @param1 {} behindStr
  * @param2 preStr { p }
 */
-export { PI, E } from "std/math"
+export { PI, E } from "std/math/consts"
 
 /**
  * ==== export specifier jsdoc3 ====

@@ -18,4 +18,4 @@ function main(): void {
     test1();
 }
 
-/* @@@ label Error TypeError: Type '() => String' cannot be assigned to type '() => Int'  */
+/* @@@ label Error TypeError: Type '(() => String)' cannot be assigned to type '(() => Int)'  */

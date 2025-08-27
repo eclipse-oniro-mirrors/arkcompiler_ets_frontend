@@ -256,7 +256,6 @@ static void ClearOptionalParameters(public_lib::Context *ctx, ir::ScriptFunction
             //  NOTE (DZ): temporary solution until node history starts working properly
             param->SetOriginalNode(oldParam);
             oldParam->SetParent(param);
-            param->SetOriginalNode(oldParam);
         }
         ES2PANDA_ASSERT(!param->AsETSParameterExpression()->IsOptional());
     }

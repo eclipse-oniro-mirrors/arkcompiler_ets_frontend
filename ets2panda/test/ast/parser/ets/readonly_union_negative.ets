@@ -61,4 +61,4 @@ function main(): void {
 /* @@? 44:5 Error TypeError: Expected 1 arguments, got 2. */
 /* @@? 44:5 Error TypeError: No matching call signature for test_negative_6(undefined, Int) */
 /* @@? 45:5 Error TypeError: Expected 1 arguments, got 2. */
-/* @@? 45:5 Error TypeError: No matching call signature for test_negative_7(() => void, "test") */
+/* @@? 45:5 Error TypeError: No matching call signature for test_negative_7((() => void), "test") */
