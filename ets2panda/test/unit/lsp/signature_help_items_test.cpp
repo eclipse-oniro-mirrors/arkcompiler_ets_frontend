@@ -68,9 +68,7 @@ TEST_F(LSPSignatureHelpItemsTests, GetSignatureHelpItemsTest)
     es2panda_Context *ctx =
         initializer.CreateContext(files.at(index0).c_str(), ES2PANDA_STATE_CHECKED, texts.at(index0).c_str());
     auto startingToken = FindTokenOnLeftOfPosition(ctx, position);
-    if (startingToken == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(startingToken != nullptr);
     std::vector<ark::es2panda::lsp::ArgumentListInfo> argumentInfo;
     GetArgumentOrParameterListAndIndex(startingToken, argumentInfo);
 
