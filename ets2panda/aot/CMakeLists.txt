@@ -15,20 +15,27 @@ set(ES2PANDA_AOT_SRC
   main.cpp
 )
 
-panda_frontend_add_executable(es2panda ${ES2PANDA_AOT_SRC})
-panda_target_link_libraries(es2panda es2panda-public es2panda-lib arkassembler arkbytecodeopt)
-panda_target_include_directories(es2panda PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-panda_target_include_directories(es2panda PRIVATE ${OUTPUT_DIR})
-panda_target_include_directories(es2panda PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
-
-if (PANDA_FUZZILLI)
-    panda_target_compile_options(es2panda
+function(add_es2panda_exec E2P_EXEC_NAME)
+  panda_frontend_add_executable(${E2P_EXEC_NAME} ${ES2PANDA_AOT_SRC})
+  panda_target_link_libraries(${E2P_EXEC_NAME} es2panda-public es2panda-lib arkassembler arkbytecodeopt)
+  panda_target_include_directories(${E2P_EXEC_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+  panda_target_include_directories(${E2P_EXEC_NAME} PRIVATE ${OUTPUT_DIR})
+  panda_target_include_directories(${E2P_EXEC_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
+  if (PANDA_FUZZILLI)
+    panda_target_compile_options(${E2P_EXEC_NAME}
         PRIVATE -fPIC
     )
-endif()
+  endif()
 
-panda_target_compile_options(es2panda
-  PRIVATE -Werror=shadow
-)
+  panda_target_compile_options(${E2P_EXEC_NAME}
+    PRIVATE -Werror=shadow
+  )
 
-panda_add_sanitizers(TARGET es2panda SANITIZERS ${PANDA_SANITIZERS_LIST})
+  panda_add_sanitizers(TARGET ${E2P_EXEC_NAME} SANITIZERS ${PANDA_SANITIZERS_LIST})
+endfunction()
+
+# A bootstrapper to provide reliable stdlib declarations within build tree (in case of stdlib/es2panda modifications).
+# This is needed since es2panda actually depends on stdlib. The 'es2panda' dependency on 'etsstdlib' is introduced in 
+# plugins/ets/CMakeLists.txt since 'plugins' directory are included after 'tools'.
+add_es2panda_exec(es2panda_stdlib_compiler)
+add_es2panda_exec(es2panda)

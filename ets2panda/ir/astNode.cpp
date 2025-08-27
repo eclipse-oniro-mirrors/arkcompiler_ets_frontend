@@ -141,20 +141,25 @@ std::string AstNode::DumpJSON() const
 
 std::string AstNode::DumpEtsSrc() const
 {
-    ir::SrcDumper dumper {this};
+    ir::SrcDumper dumper {};
+    Dump(&dumper);
     return dumper.Str();
 }
 
 std::string AstNode::DumpEtsSrcWithJsdoc() const
 {
-    ir::SrcDumper dumper {this, false, true};
+    ir::SrcDumper dumper {this, true, nullptr};
+    Dump(&dumper);
     return dumper.Str();
 }
 
-std::string AstNode::DumpDecl() const
+std::string AstNode::DumpDecl(public_lib::Context *context) const
 {
-    ir::SrcDumper dumper {this, true};
-    dumper.Run();
+    Declgen dg {context};
+
+    ir::SrcDumper dumper {&dg};
+    Dump(&dumper);
+    dumper.GetDeclgen()->Run();
     return dumper.Str();
 }
 

@@ -13,9 +13,7 @@
  * limitations under the License.
  */
 
-'use static'
-
-export declare function foo(): void;
-
-export default declare function baz(): void;
-
+export class C {
+    constructor(b?: boolean) {}
+    foo(b?: boolean){}
+}

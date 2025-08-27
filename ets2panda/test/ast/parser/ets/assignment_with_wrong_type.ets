@@ -26,4 +26,4 @@ function main()
     let b: B = /* @@ label */a
 }
 
-/* @@@ label Error TypeError: Type '() => void' cannot be assigned to type 'B'  */
+/* @@@ label Error TypeError: Type '(() => void)' cannot be assigned to type 'B' */

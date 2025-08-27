@@ -309,7 +309,7 @@ TEST_F(LspGetDefTests, GetDefinitionAtPositionForStdLibraryTaskPool)
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto result = lspApi->getDefinitionAtPosition(ctx, offset);
     initializer.DestroyContext(ctx);
-    std::string expectedFileName = "taskpool.ets";
+    std::string expectedFileName = "escompat.d.ets";
     size_t const expectedLength = 8;
     ASSERT_TRUE(result.fileName.find(expectedFileName) != std::string::npos);
     ASSERT_EQ(result.length, expectedLength);

@@ -28,8 +28,8 @@ foo5(()=>{})
 /* @@? 17:17 Error SyntaxError: 'Readonly' is reserved and cannot be used as a variable/type name */
 /* @@? 18:17 Error SyntaxError: 'Partial' is reserved and cannot be used as a variable/type name */
 /* @@? 19:17 Error TypeError: FixedArray<T> must have only one type parameter. */
-/* @@? 22:1 Error TypeError: No matching call signature for foo2(() => void) */
-/* @@? 23:1 Error TypeError: No matching call signature for foo3(() => void) */
-/* @@? 24:1 Error TypeError: No matching call signature for foo4(() => void) */
-/* @@? 25:1 Error TypeError: No matching call signature for foo5(() => void) */
+/* @@? 22:1 Error TypeError: No matching call signature for foo2((() => void)) */
+/* @@? 23:1 Error TypeError: No matching call signature for foo3((() => void)) */
+/* @@? 24:1 Error TypeError: No matching call signature for foo4((() => void)) */
+/* @@? 25:1 Error TypeError: No matching call signature for foo5((() => void)) */
 

@@ -87,11 +87,15 @@ endforeach()
 add_custom_target(declgen-ets-test)
 
 set(ETS_TESTS
-    test
     pckg/test
+    annotation
+    func_union
     global
-    overload
+    namespace_ret
     nested
+    optional
+    overload
+    test
 )
 
 set(WORKING_DIR ${CMAKE_CURRENT_BINARY_DIR}/ets)

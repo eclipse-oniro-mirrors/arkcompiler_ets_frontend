@@ -288,9 +288,7 @@ void ScriptFunction::Dump(ir::AstDumper *dumper) const
 
 void ScriptFunction::DumpCheckerTypeForDeclGen(ir::SrcDumper *dumper) const
 {
-    if (!dumper->IsDeclgen()) {
-        return;
-    }
+    ES2PANDA_ASSERT(dumper->IsDeclgen());
 
     if (IsConstructor()) {
         return;
@@ -312,7 +310,7 @@ void ScriptFunction::DumpCheckerTypeForDeclGen(ir::SrcDumper *dumper) const
     dumper->Add(": ");
     dumper->Add(typeStr);
 
-    dumper->PushTask([dumper, typeStr] { dumper->DumpNode(typeStr); });
+    dumper->GetDeclgen()->PushTask([dumper, typeStr] { dumper->GetDeclgen()->DumpNode(dumper, typeStr); });
 }
 
 void ScriptFunction::Dump(ir::SrcDumper *dumper) const
@@ -330,11 +328,12 @@ void ScriptFunction::Dump(ir::SrcDumper *dumper) const
         }
     }
     dumper->Add(")");
-    if (ReturnTypeAnnotation() != nullptr && !dumper->IsDeclgen()) {
+    if (ReturnTypeAnnotation() != nullptr) {
         dumper->Add(": ");
         ReturnTypeAnnotation()->Dump(dumper);
+    } else if (dumper->IsDeclgen()) {
+        DumpCheckerTypeForDeclGen(dumper);
     }
-    DumpCheckerTypeForDeclGen(dumper);
     if (dumper->IsDeclgen()) {
         dumper->Add(";");
         dumper->Endl();

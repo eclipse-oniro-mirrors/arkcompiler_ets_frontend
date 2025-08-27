@@ -156,11 +156,11 @@ void TSInterfaceDeclaration::Dump(ir::AstDumper *dumper) const
 
 bool TSInterfaceDeclaration::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 {
-    if (!dumper->IsDeclgen()) {
-        return false;
-    }
+    // This method isn't used.
+    ES2PANDA_ASSERT(false);
+    ES2PANDA_ASSERT(dumper->IsDeclgen());
 
-    if (dumper->IsIndirectDepPhase()) {
+    if (dumper->GetDeclgen()->IsPostDumpIndirectDepsPhase()) {
         return false;
     }
 
@@ -169,18 +169,19 @@ bool TSInterfaceDeclaration::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper)
     }
 
     auto name = id_->Name().Mutf8();
-    dumper->AddNode(name, this);
+    dumper->GetDeclgen()->AddNode(name, this);
     return true;
 }
 
 void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    auto guard = dumper->BuildAmbientContextGuard();
     ES2PANDA_ASSERT(id_);
     dumper->DumpJsdocBeforeTargetNode(this);
     if (!id_->Parent()->IsDefaultExported() && !id_->Parent()->IsExported() && dumper->IsDeclgen() &&
-        !dumper->IsIndirectDepPhase()) {
+        !dumper->GetDeclgen()->IsPostDumpIndirectDepsPhase()) {
         auto name = id_->Name().Mutf8();
-        dumper->AddNode(name, this);
+        dumper->GetDeclgen()->AddNode(name, this);
         return;
     }
     DumpAnnotations(dumper);
@@ -190,7 +191,7 @@ void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Add("export default ");
     }
     if (dumper->IsDeclgen()) {
-        dumper->TryDeclareAmbientContext();
+        dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
     } else if (IsDeclare()) {
         dumper->Add("declare ");
     }

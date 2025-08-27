@@ -16,3 +16,4 @@
 export function foo() {}
 export default function baz() {}
 function bar() {}
+export const P: number = 3.1

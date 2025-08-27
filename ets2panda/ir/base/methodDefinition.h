@@ -245,10 +245,7 @@ protected:
     void CopyTo(AstNode *other) const override;
 
 private:
-    void DumpPrefix(ir::SrcDumper *dumper) const;
     void ResetOverloads();
-    void DumpModifierPrefix(ir::SrcDumper *dumper) const;
-    void DumpAccessorPrefix(ir::SrcDumper *dumper) const;
     bool DumpNamespaceForDeclGen(ir::SrcDumper *dumper) const;
     void DumpPrefixForDeclGen(ir::SrcDumper *dumper) const;
     bool FilterForDeclGen() const;

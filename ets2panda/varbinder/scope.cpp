@@ -1011,7 +1011,7 @@ Variable *ClassScope::AddBinding(ArenaAllocator *allocator, [[maybe_unused]] Var
 
     if (auto node = newDecl->Node(); node->IsStatement() && (node->AsStatement()->IsMethodDefinition() ||
                                                              node->IsClassProperty() || node->IsClassStaticBlock())) {
-        if (node->AsStatement()->AsClassElement()->Value() != nullptr) {
+        if ((node->AsStatement()->AsClassElement()->Value() != nullptr) || node->IsDeclare()) {
             props.SetFlagsType(VariableFlags::INITIALIZED);
         }
 

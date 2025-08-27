@@ -25,4 +25,4 @@ function main(): void {
 
 /* @@? 23:5 Error TypeError: No matching indexing signature for $_set(Int, Int) */
 /* @@? 23:16 Error TypeError: Cannot find index access method with the required signature. */
-/* @@? 23:21 Error TypeError: Type 'Int' is not compatible with type '(p1: Double) => String' at index 2 */
+/* @@? 23:21 Error TypeError: Type 'Int' is not compatible with type '((p1: Double) => String)' at index 2 */

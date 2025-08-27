@@ -3248,7 +3248,8 @@ void ETSChecker::ImportNamespaceObjectTypeAddReExportType(ir::ETSImportDeclarati
 Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importDecl, ir::Identifier *ident,
                                                std::unordered_set<parser::Program *> *moduleStackCache)
 {
-    auto importPath = importDecl->IsPureDynamic() ? importDecl->DeclPath() : importDecl->ResolvedSource();
+    auto importPath =
+        importDecl->ImportMetadata().HasSpecifiedDeclPath() ? importDecl->DeclPath() : importDecl->ResolvedSource();
     parser::Program *program =
         SelectEntryOrExternalProgram(static_cast<varbinder::ETSBinder *>(VarBinder()), importPath);
     if (program == nullptr) {

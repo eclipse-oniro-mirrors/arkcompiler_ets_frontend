@@ -17,4 +17,4 @@ class A {
     applyNormalAttribute ?: () => void = /* @@ label */1
 }
 
-/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type '() => void|undefined'  */
+/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type '((() => void))|undefined' */

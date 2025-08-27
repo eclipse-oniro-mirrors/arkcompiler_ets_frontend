@@ -53,7 +53,7 @@ static es2panda_Impl *impl = nullptr;
 static es2panda_AstNode *program = nullptr;
 
 static std::string originalSourceCode = R"(
-import { PI as PI } from "std/math"
+import { PI as PI } from "std/math/consts"
 )";
 
 bool UpdateImportDeclaration(es2panda_Context *context)
@@ -62,7 +62,7 @@ bool UpdateImportDeclaration(es2panda_Context *context)
     auto *statements = impl->BlockStatementStatements(context, program, &sizeOfStatements);
     auto *importNode = statements[0];
 
-    const char *sourceName = "new/std/math";
+    const char *sourceName = "new/std/math/consts";
     auto *memForSource = static_cast<char *>(impl->AllocMemory(context, strlen(sourceName) + 1, 1));
     std::copy_n(sourceName, strlen(sourceName) + 1, memForSource);
     auto newSource = impl->CreateStringLiteral1(context, memForSource);
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     }
 
     const char *src = impl->AstNodeDumpEtsSrcConst(context, program);
-    const char *expected = "import { E as E } from \"new/std/math\"";
+    const char *expected = "import { E as E } from \"new/std/math/consts\"";
     if (strstr(src, expected) == nullptr) {
         return 1;
     }

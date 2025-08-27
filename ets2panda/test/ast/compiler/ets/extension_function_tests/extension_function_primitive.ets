@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-/* @@ label */function value(this: double): Double {
+/* @@ label */function valueOf(this: double): Double {
     return 1.2;
 }
 
-/* @@? 16:52 Error TypeError: The extension accessor or extension function 'value' has the same name with field of class Double */
+/* @@? 16:54 Error TypeError: The extension function 'valueOf' has the same name with public method in class Double */

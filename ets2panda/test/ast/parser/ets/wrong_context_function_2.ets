@@ -23,4 +23,4 @@ function main()
     b = /* @@ label */a
 }
 
-/* @@@ label Error TypeError: Type '() => void' cannot be assigned to type 'Int' */
+/* @@@ label Error TypeError: Type '(() => void)' cannot be assigned to type 'Int' */

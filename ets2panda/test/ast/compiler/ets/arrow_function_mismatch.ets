@@ -17,5 +17,5 @@ let foo: (P: string, Q: string) => void
 
 foo((value: Object): void => { }, (err: Error): void => { })
 
-/* @@? 18:1 Error TypeError: No matching call signature for ((p1: Object) => void, (p1: Error) => void) */
-/* @@? 18:5 Error TypeError: Type '(p1: Object) => void' is not compatible with type 'String' at index 1 */
+/* @@? 18:1 Error TypeError: No matching call signature for (((p1: Object) => void), ((p1: Error) => void)) */
+/* @@? 18:5 Error TypeError: Type '((p1: Object) => void)' is not compatible with type 'String' at index 1 */

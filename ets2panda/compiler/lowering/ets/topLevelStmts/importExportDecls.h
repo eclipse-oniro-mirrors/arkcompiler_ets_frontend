@@ -28,17 +28,6 @@ class SavedImportExportDeclsContext;
 class ImportExportDecls : ir::visitor::EmptyAstVisitor {
     static constexpr std::string_view DEFAULT_IMPORT_SOURCE_FILE = "<default_import>.ets";
 
-    static std::string CreateDefaultImportSource(const std::vector<std::string> &paths)
-    {
-        std::string importStdlibFile;
-        for (const auto &path : paths) {
-            importStdlibFile += "import * from \"" + path + "\";";
-        }
-        return importStdlibFile;
-    }
-
-    const std::string defaultImportSource_ = CreateDefaultImportSource(util::Helpers::StdLib());
-
 public:
     ImportExportDecls() = default;
     ImportExportDecls(varbinder::ETSBinder *varbinder, parser::ETSParser *parser, public_lib::Context *ctx)
