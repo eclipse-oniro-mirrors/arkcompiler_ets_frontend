@@ -2779,7 +2779,8 @@ Signature *ETSChecker::ValidateOrderSignature(
     if (!hasRestParameter || (count >= argCount && !signature->RestVar()->TsType()->IsETSTupleType())) {
         return signature;
     }
-    if (!ValidateSignatureRestParams(signature, arguments, flags, true, unique)) {
+    if (!ValidateSignatureRestParams(signature, arguments, flags, true, unique) ||
+        !signatureMatchContext.ValidSignatureMatchStatus()) {
         return nullptr;
     }
 
