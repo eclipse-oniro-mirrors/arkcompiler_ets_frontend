@@ -196,16 +196,6 @@
         },
         {
             "line": 48,
-            "column": 7,
-            "endLine": 48,
-            "endColumn": 11,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 48,
             "column": 23,
             "endLine": 48,
             "endColumn": 29,
@@ -372,16 +362,6 @@
             "problem": "BuiltinNarrowTypes",
             "suggest": "",
             "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 92,
-            "column": 7,
-            "endLine": 92,
-            "endColumn": 11,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
             "severity": "ERROR"
         },
         {

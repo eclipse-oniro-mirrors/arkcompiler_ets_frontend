@@ -26,16 +26,6 @@
         },
         {
             "line": 16,
-            "column": 7,
-            "endLine": 16,
-            "endColumn": 17,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 16,
             "column": 47,
             "endLine": 16,
             "endColumn": 56,
@@ -62,16 +52,6 @@
             "problem": "BuiltinFinalClass",
             "suggest": "",
             "rule": "API is not support use class in this API (arkts-builtin-final-class)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 7,
-            "endLine": 19,
-            "endColumn": 16,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
             "severity": "ERROR"
         },
         {
@@ -106,16 +86,6 @@
         },
         {
             "line": 28,
-            "column": 7,
-            "endLine": 28,
-            "endColumn": 18,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
             "column": 48,
             "endLine": 28,
             "endColumn": 56,
@@ -142,16 +112,6 @@
             "problem": "BuiltinFinalClass",
             "suggest": "",
             "rule": "API is not support use class in this API (arkts-builtin-final-class)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 31,
-            "column": 7,
-            "endLine": 31,
-            "endColumn": 20,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
             "severity": "ERROR"
         },
         {
@@ -206,16 +166,6 @@
         },
         {
             "line": 40,
-            "column": 7,
-            "endLine": 40,
-            "endColumn": 20,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
             "column": 32,
             "endLine": 40,
             "endColumn": 42,
@@ -246,16 +196,6 @@
         },
         {
             "line": 43,
-            "column": 7,
-            "endLine": 43,
-            "endColumn": 23,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 43,
             "column": 57,
             "endLine": 43,
             "endColumn": 70,
@@ -281,7 +221,7 @@
             "endColumn": 20,
             "problem": "InterfaceFieldNotImplemented",
             "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "rule": "ArkTS 1.2 should implement all optional fields from the interface in the class (arkts-no-class-omit-interface-optional-prop)",
             "severity": "ERROR"
         },
         {
@@ -346,16 +286,6 @@
         },
         {
             "line": 56,
-            "column": 7,
-            "endLine": 56,
-            "endColumn": 20,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 56,
             "column": 53,
             "endLine": 56,
             "endColumn": 65,
@@ -402,16 +332,6 @@
             "problem": "BuiltinFinalClass",
             "suggest": "",
             "rule": "API is not support use class in this API (arkts-builtin-final-class)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 60,
-            "column": 7,
-            "endLine": 60,
-            "endColumn": 13,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
             "severity": "ERROR"
         },
         {
@@ -472,16 +392,6 @@
             "problem": "BuiltinFinalClass",
             "suggest": "",
             "rule": "API is not support use class in this API (arkts-builtin-final-class)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 65,
-            "column": 7,
-            "endLine": 65,
-            "endColumn": 15,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
             "severity": "ERROR"
         },
         {

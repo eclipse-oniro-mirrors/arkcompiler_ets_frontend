@@ -8786,13 +8786,15 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   /**
-   * Ensures classes fully implement all properties from their interfaces.
+   * Ensures classes explicitly implement all optional properties from their interfaces.
+   * Required fields are ignored because the it's already enforced on ArkTS1.1.
    */
   private handleInterfaceFieldImplementation(clause: ts.HeritageClause): void {
     // Only process implements clauses
     if (clause.token !== ts.SyntaxKind.ImplementsKeyword) {
       return;
     }
+
     const classDecl = clause.parent as ts.ClassDeclaration;
     if (!ts.isClassDeclaration(classDecl) || !classDecl.name) {
       return;
@@ -8808,8 +8810,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (!interfaceDecl) {
         continue;
       }
+
       // Gather all inherited interfaces
       const allInterfaces = this.getAllInheritedInterfaces(interfaceDecl);
+
       // If the class fails to implement any member, report once and exit
       if (!this.classImplementsAllMembers(classDecl, allInterfaces)) {
         this.incrementCounters(classDecl.name, FaultID.InterfaceFieldNotImplemented);
@@ -8851,24 +8855,32 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   /**
-   * Returns true if the class declaration declares every property or method
+   * Returns true if the class declaration declares every optional property or method
    * signature from the provided list of interface declarations.
    */
   private classImplementsAllMembers(classDecl: ts.ClassDeclaration, interfaces: ts.InterfaceDeclaration[]): boolean {
     void this;
 
+    // Check optional members only
     for (const intf of interfaces) {
       for (const member of intf.members) {
-        if ((ts.isPropertySignature(member) || ts.isMethodSignature(member)) && ts.isIdentifier(member.name)) {
-          const name = member.name.text;
-          const found = classDecl.members.some((m) => {
+        if (
+          (ts.isPropertySignature(member) || ts.isMethodSignature(member)) &&
+          ts.isIdentifier(member.name) &&
+          member.questionToken
+        ) {
+          const propName = member.name.text;
+
+          // does derived class have this member?
+          const hasImpl = classDecl.members.some((m) => {
             return (
               (ts.isPropertyDeclaration(m) || ts.isMethodDeclaration(m)) &&
               ts.isIdentifier(m.name) &&
-              m.name.text === name
+              m.name.text === propName
             );
           });
-          if (!found) {
+
+          if (!hasImpl) {
             return false;
           }
         }

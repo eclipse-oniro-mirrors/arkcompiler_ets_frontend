@@ -310,7 +310,7 @@ cookBookTag[274] =
 cookBookTag[275] =
   'The Custom component with custom layout capability needs to add the "@CustomLayout" decorator (arkui-custom-layout-need-add-decorator)';
 cookBookTag[276] =
-  'ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)';
+  'ArkTS 1.2 should implement all optional fields from the interface in the class (arkts-no-class-omit-interface-optional-prop)';
 cookBookTag[277] = 'Creating local classes is not supported (arkts-no-local-class)';
 cookBookTag[281] = '"@Prop" decorator is not supported (arkui-no-prop-decorator)';
 cookBookTag[282] = '"@StorageProp" decorator is not supported (arkui-no-storageprop-decorator)';
