@@ -112,7 +112,7 @@ void Signature::ToAssemblerType(std::stringstream &ss) const
     ss << compiler::Signatures::MANGLE_SEPARATOR;
 }
 
-Signature *Signature::Copy(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes)
+Signature *Signature::Copy(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes) const
 {
     SignatureInfo *copiedInfo = allocator->New<SignatureInfo>(signatureInfo_, allocator);
     ES2PANDA_ASSERT(copiedInfo != nullptr);
