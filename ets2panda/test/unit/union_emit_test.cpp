@@ -24,6 +24,16 @@ public:
 
     ~UnionAsmTest() override = default;
 
+    void CheckFunction(std::string_view funcSig, bool found = true)
+    {
+        pandasm::Function *func = GetFunction(funcSig, program_->functionStaticTable);
+        if (found) {
+            ASSERT_TRUE(func != nullptr) << "Function '" << funcSig << "' not found";
+        } else {
+            ASSERT_TRUE(func == nullptr) << "Function '" << funcSig << "' found";
+        }
+    }
+
     void CheckUnionType(std::string_view recordName, bool found = true)
     {
         pandasm::Record *rec = GetRecord(recordName, program_);
@@ -232,6 +242,21 @@ TEST_F(UnionAsmTest, union_test_as)
     CheckInsInFunction("dummy.ETSGLOBAL.test1:std.core.String;void;", "checkcast {Ustd.core.Double,std.core.String}",
                        true);
     CheckInsInFunction("dummy.ETSGLOBAL.test1:std.core.String;void;", "std.core.Runtime.failedTypeCastException", true);
+}
+
+TEST_F(UnionAsmTest, union_null_object)
+{
+    SetCurrentProgram(R"(
+        type T1 = string | null | undefined | object
+        type T2 = string | object | null | undefined
+        function foo1(a: T1) {}
+        function foo2(a: T2) {}
+    )");
+
+    CheckFunction("dummy.ETSGLOBAL.foo1:{Ustd.core.Null,std.core.Object};void;");
+    CheckFunction("dummy.ETSGLOBAL.foo2:{Ustd.core.Null,std.core.Object};void;");
+    CheckFunction("dummy.ETSGLOBAL.foo1:std.core.Object;void;", false);
+    CheckFunction("dummy.ETSGLOBAL.foo2:std.core.Object;void;", false);
 }
 
 }  // namespace ark::es2panda::compiler::test
