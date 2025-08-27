@@ -826,7 +826,8 @@ std::pair<ir::ETSImportDeclaration *, ir::AstNode *> ETSBinder::FindImportDeclIn
     const ir::ETSImportDeclaration *const import, [[maybe_unused]] const util::StringView &imported,
     const ir::StringLiteral *const importPath)
 {
-    auto importMapIter = selectiveExportAliasMultimap_.find(import->ImportMetadata().resolvedSource);
+    auto sourcePath = import->ImportMetadata().HasSpecifiedDeclPath() ? import->DeclPath() : import->ResolvedSource();
+    auto importMapIter = selectiveExportAliasMultimap_.find(sourcePath);
     if (importMapIter == selectiveExportAliasMultimap_.end()) {
         return std::make_pair(nullptr, nullptr);
     }
@@ -835,7 +836,7 @@ std::pair<ir::ETSImportDeclaration *, ir::AstNode *> ETSBinder::FindImportDeclIn
         return std::make_pair(nullptr, nullptr);
     }
     auto [localName, declNode] = pairIter->second;
-    const auto records = GetExternalProgram(import->ImportMetadata().resolvedSource, importPath);
+    const auto records = GetExternalProgram(sourcePath, importPath);
     if (records.empty()) {
         return std::make_pair(nullptr, nullptr);
     }
@@ -1007,7 +1008,8 @@ bool ETSBinder::AddImportSpecifiersToTopBindings(Span<parser::Program *const> re
         }
     }
 
-    auto [nameToSearchFor, exportNode] = FindNameAndNodeInAliasMap(import->ResolvedSource(), imported);
+    auto sourcePath = import->ImportMetadata().HasSpecifiedDeclPath() ? import->DeclPath() : import->ResolvedSource();
+    auto [nameToSearchFor, exportNode] = FindNameAndNodeInAliasMap(sourcePath, imported);
     if (nameToSearchFor.Empty()) {
         nameToSearchFor = imported;
     }
@@ -1496,19 +1498,21 @@ void ETSBinder::ValidateReexportDeclaration(ir::ETSReExportDeclaration *decl)
         // Example: export {foo} from "./A"
         if (specifier->IsImportSpecifier()) {
             auto importSpecifier = specifier->AsImportSpecifier();
-            const auto reexported = importSpecifier->Imported()->Name();
+            auto imported = importSpecifier->Imported();
+            auto local = importSpecifier->Local();
+
             auto *const var = ValidateImportSpecifier(importSpecifier, import);
             if (var == nullptr) {
-                ThrowError(import->Start(), diagnostic::EXPORT_INCORRECT, {reexported});
+                ThrowError(import->Start(), diagnostic::EXPORT_INCORRECT, {imported->Name()});
                 continue;
             }
 
-            importSpecifier->Imported()->SetVariable(var);
-            importSpecifier->Local()->SetVariable(var);
+            imported->SetVariable(var);
+            local->SetVariable(var);
 
             // Remember reexported name to check for ambiguous reexports
-            if (!reexportedNames_.insert(reexported).second) {
-                ThrowError(import->Start(), diagnostic::AMBIGUOUS_EXPORT, {reexported});
+            if (!reexportedNames_.insert(imported->Name()).second && local->Name() == imported->Name()) {
+                ThrowError(import->Start(), diagnostic::AMBIGUOUS_EXPORT, {imported->Name()});
                 continue;
             }
         }
