@@ -332,6 +332,8 @@ export interface ArkTSConfigObject {
     paths: Record<string, string[]>;
     dependencies: Record<string, DependencyItem>;
     useEmptyPackage?: boolean;
+    rootDir?: string,
+    cacheDir?: string,
   }
 };
 
