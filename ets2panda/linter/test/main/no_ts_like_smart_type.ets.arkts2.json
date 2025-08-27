@@ -311,6 +311,26 @@
             "severity": "ERROR"
         },
         {
+            "line": 369,
+            "column": 21,
+            "endLine": 369,
+            "endColumn": 29,
+            "problem": "ParameterType",
+            "suggest": "",
+            "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 369,
+            "column": 21,
+            "endLine": 369,
+            "endColumn": 29,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
             "line": 137,
             "column": 5,
             "endLine": 137,

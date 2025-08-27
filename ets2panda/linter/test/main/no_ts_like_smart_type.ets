@@ -365,3 +365,12 @@ class Downloader {
     }
   }
 }
+
+function isOperator(operator) {
+  return (operator === '+' || operator === "-")
+}
+function test(value: string) {
+  if (isOperator(value)) { //no error
+    console.log('5')
+  }
+}
