@@ -4348,16 +4348,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const derivedParams = derivedMethod.parameters;
     const baseParams = baseMethod.parameters;
 
-    for (let i = 0; i < Math.min(derivedParams.length, baseParams.length); i++) {
-      const baseParam = baseParams[i];
-      const derivedParam = derivedParams[i];
-
-      if (!baseParam.questionToken && derivedParam.questionToken) {
-        this.incrementCounters(derivedParam, FaultID.MethodInheritRule);
-        return;
-      }
-    }
-
     if (derivedParams.length !== baseParams.length) {
       this.incrementCounters(derivedMethod.name, FaultID.MethodInheritRule);
       return;
