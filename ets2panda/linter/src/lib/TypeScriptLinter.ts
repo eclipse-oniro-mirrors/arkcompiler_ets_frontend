@@ -12458,7 +12458,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
         return;
       }
-      if (actualTypeName !== expectedType) {
+      if (actualTypeName !== expectedType && expectedType !== 'any') {
         this.incrementCounters(arg, FaultID.NoTsLikeSmartType);
       }
     }
