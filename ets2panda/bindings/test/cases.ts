@@ -231,7 +231,8 @@ export const basicCases: TestCases = {
     '1': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition1.ets'), 626],
     '2': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition2.ets'), 618],
     '3': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition3.ets'), 663],
-    '4': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition4.ets'), 697]
+    '4': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition4.ets'), 697],
+    '5': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition5.ets'), 701]
   },
   getDocumentHighlights: {
     expectedFilePath: resolveTestPath('test/expected/getDocumentHighlights.json'),

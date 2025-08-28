@@ -463,10 +463,20 @@ TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionClass)
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     LSPAPI const *lspApi = GetImpl();
 
-    size_t const offset1 = 8;  // class A
+    size_t const offset1 = 8;  // struct A
     auto quickInfo1 = lspApi->getQuickInfoAtPosition("GetQuickInfoAtPositionClass.ets", ctx, offset1);
     auto expectedQuickInfo1 = ExpectResultClass1();
     AssertQuickInfo(expectedQuickInfo1, quickInfo1);
+
+    auto context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    const ark::es2panda::ir::AstNode *ast = context->parserProgram->Ast();
+    const auto *structDefNode = ast->FindChild(
+        [](const auto *node) { return node->IsClassDefinition() && node->Parent()->IsETSStructDeclaration(); });
+    initializer.ClassDefinitionSetFromStructModifier(ctx, (es2panda_AstNode *)structDefNode);
+    auto isFromStruct = initializer.ClassDefinitionIsFromStructConst(ctx, (es2panda_AstNode *)structDefNode);
+    ASSERT_EQ(isFromStruct, true);
+    auto quickInfo3 = lspApi->getQuickInfoAtPosition("GetQuickInfoAtPositionClass.ets", ctx, offset1);
+    AssertQuickInfo(expectedQuickInfo1, quickInfo3);
 
     size_t const offset2 = 42;  // namespace S
     auto quickInfo2 = lspApi->getQuickInfoAtPosition("GetQuickInfoAtPositionClass.ets", ctx, offset2);

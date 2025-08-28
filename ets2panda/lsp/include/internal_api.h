@@ -94,6 +94,16 @@ public:
         return impl_->LogDiagnostic(context, ekind, args, argc, pos);
     }
 
+    void ClassDefinitionSetFromStructModifier(es2panda_Context *context, es2panda_AstNode *classInstance)
+    {
+        return impl_->ClassDefinitionSetFromStructModifier(context, classInstance);
+    }
+
+    bool ClassDefinitionIsFromStructConst(es2panda_Context *context, es2panda_AstNode *classInstance)
+    {
+        return impl_->ClassDefinitionIsFromStructConst(context, classInstance);
+    }
+
     NO_COPY_SEMANTIC(Initializer);
     NO_MOVE_SEMANTIC(Initializer);
 

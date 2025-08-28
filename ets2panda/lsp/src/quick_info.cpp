@@ -643,7 +643,7 @@ std::vector<SymbolDisplayPart> CreateDisplayForClass(ir::AstNode *node)
             displayParts.emplace_back(CreateKeyword("namespace"));
             displayParts.emplace_back(CreateSpace());
             displayParts.emplace_back(CreateNamespace(GetNameFromClassDefinition(node)));
-        } else if (node->Parent()->IsETSStructDeclaration()) {
+        } else if (node->AsClassDefinition()->IsFromStruct() || node->Parent()->IsETSStructDeclaration()) {
             displayParts.emplace_back(CreateKeyword("struct"));
             displayParts.emplace_back(CreateSpace());
             displayParts.emplace_back(SignatureCreateStructName(GetNameFromClassDefinition(node)));
