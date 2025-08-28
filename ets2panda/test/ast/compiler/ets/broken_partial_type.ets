@@ -38,8 +38,8 @@ function createEntityA(): EntityUnion {
 }
 
 
-/* @@? 26:3 Error TypeError: kind(): () => *ERROR_TYPE*|undefined in Partial<EntityA> cannot override kind(): () => Kind|undefined in Partial<Entity> because overriding return type is not compatible with the other return type. */
-/* @@? 26:3 Error TypeError: Method kind(): () => *ERROR_TYPE*|undefined in Partial<EntityA> not overriding any method */
+/* @@? 26:3 Error TypeError: kind(): (() => *ERROR_TYPE*)|undefined in Partial<EntityA> cannot override kind(): (() => Kind)|undefined in Partial<Entity> because overriding return type is not compatible with the other return type. */
+/* @@? 26:3 Error TypeError: Method kind(): (() => *ERROR_TYPE*)|undefined in Partial<EntityA> not overriding any method */
 /* @@? 26:3 Error TypeError: kind(): () => *ERROR_TYPE* in EntityA cannot override kind(): () => Kind in Entity because overriding return type is not compatible with the other return type. */
 /* @@? 26:3 Error TypeError: Method kind(): () => *ERROR_TYPE* in EntityA not overriding any method */
 /* @@? 26:20 Error TypeError: 'A' type does not exist. */

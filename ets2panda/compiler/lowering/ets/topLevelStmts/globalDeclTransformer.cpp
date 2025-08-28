@@ -187,7 +187,9 @@ ir::ExpressionStatement *GlobalDeclTransformer::CreateAssignmentStatement(ir::Cl
     auto expressionStatement = util::NodeAllocator::Alloc<ir::ExpressionStatement>(allocator_, assignmentExpression);
     ES2PANDA_ASSERT(expressionStatement != nullptr);
     expressionStatement->SetRange(classProperty->Range());
-    assignmentExpression->SetIgnoreConstAssign();
+    if ((classProperty->Modifiers() & ir::ModifierFlags::CONST) != 0) {
+        assignmentExpression->SetIgnoreConstAssign();
+    }
 
     return expressionStatement;
 }
