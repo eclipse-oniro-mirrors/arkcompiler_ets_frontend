@@ -1634,6 +1634,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private checkUsageOfTsTypes(baseType: ts.Type, node: ts.Node): void {
     const typeString = this.tsTypeChecker.typeToString(baseType);
+
+    const symbol = baseType.getSymbol();
+    if (symbol && !isStdLibrarySymbol(symbol)) {
+      return;
+    }
+
     if (
       TsUtils.isAnyType(baseType) ||
       TsUtils.isUnknownType(baseType) ||
