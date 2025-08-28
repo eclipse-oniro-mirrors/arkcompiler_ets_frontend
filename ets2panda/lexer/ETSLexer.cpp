@@ -20,6 +20,7 @@ namespace ark::es2panda::lexer {
 // NOLINTNEXTLINE(google-default-arguments)
 void ETSLexer::NextToken(NextTokenFlags flags)
 {
+    flags |= DefaultNextTokenFlags();
     ETSKeywords kws(this, static_cast<NextTokenFlags>(flags & ~NextTokenFlags::KEYWORD_TO_IDENT));
     Lexer::NextToken(&kws);
 }
