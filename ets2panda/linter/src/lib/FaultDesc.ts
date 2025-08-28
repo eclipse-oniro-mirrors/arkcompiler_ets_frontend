@@ -299,3 +299,4 @@ faultDesc[FaultID.BuiltinIteratorResultValue] = 'IteratorResult.value is not sup
 faultDesc[FaultID.OptionalTupleType] = 'No optional tuple type';
 faultDesc[FaultID.LargeNumericLiteral] = 'Numeric literal exceeds allowed range';
 faultDesc[FaultID.unfixedTuple] = 'No unfixed tuple';
+faultDesc[FaultID.EntryHasInvalidParams] = 'Entry has invalid parameters';

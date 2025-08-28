@@ -34,7 +34,8 @@ import {
   VALUE_IDENTIFIER,
   INDENT_STEP,
   ENTRY_DECORATOR_NAME,
-  ENTRY_STORAGE_PROPERITY,
+  ENTRY_STORAGE,
+  ENTRY_USE_SHARED_STORAGE,
   LOCAL_STORAGE_TYPE_NAME,
   GET_LOCAL_STORAGE_FUNC_NAME,
   PROVIDE_DECORATOR_NAME,
@@ -2934,23 +2935,22 @@ export class Autofixer {
       return undefined;
     }
 
-    const parentNode = entryDecorator.parent;
     const arg = args[0];
-    let getLocalStorageStatement: ts.VariableStatement | undefined;
+    let getLocalStorageStmt: ts.VariableStatement | undefined;
 
     if (ts.isIdentifier(arg) || ts.isNewExpression(arg) || ts.isCallExpression(arg)) {
-      getLocalStorageStatement = Autofixer.createGetLocalStorageLambdaStatement(arg);
+      getLocalStorageStmt = Autofixer.createGetLocalStorageLambdaStatement(arg);
     } else if (ts.isObjectLiteralExpression(arg)) {
-      getLocalStorageStatement = Autofixer.processEntryAnnotationObjectLiteralExpression(arg);
+      getLocalStorageStmt = Autofixer.processEntryAnnotationObjectLiteralExpression(arg);
     }
 
-    if (getLocalStorageStatement !== undefined) {
-      let text = this.printer.printNode(ts.EmitHint.Unspecified, getLocalStorageStatement, parentNode.getSourceFile());
+    if (getLocalStorageStmt !== undefined) {
+      let text = this.printer.printNode(ts.EmitHint.Unspecified, getLocalStorageStmt, entryDecorator.getSourceFile());
       const fixedEntryDecorator = Autofixer.createFixedEntryDecorator();
       const fixedEntryDecoratorText = this.printer.printNode(
         ts.EmitHint.Unspecified,
         fixedEntryDecorator,
-        parentNode.getSourceFile()
+        entryDecorator.getSourceFile()
       );
       text = text + this.getNewLine() + fixedEntryDecoratorText;
       return [{ start: entryDecorator.getStart(), end: entryDecorator.getEnd(), replacementText: text }];
@@ -2960,7 +2960,7 @@ export class Autofixer {
 
   private static createFixedEntryDecorator(): ts.Decorator {
     const storageProperty = ts.factory.createPropertyAssignment(
-      ts.factory.createIdentifier(ENTRY_STORAGE_PROPERITY),
+      ts.factory.createIdentifier(ENTRY_STORAGE),
       ts.factory.createStringLiteral(GET_LOCAL_STORAGE_FUNC_NAME)
     );
     const objectLiteralExpr = ts.factory.createObjectLiteralExpression([storageProperty], false);
@@ -2982,7 +2982,7 @@ export class Autofixer {
       return undefined;
     }
     if (ts.isIdentifier(objectProperty.name)) {
-      if (objectProperty.name.escapedText !== ENTRY_STORAGE_PROPERITY) {
+      if (objectProperty.name.escapedText !== ENTRY_STORAGE) {
         return undefined;
       }
       const properityInitializer = objectProperty.initializer;
@@ -5427,5 +5427,26 @@ export class Autofixer {
         replacementText: `${node.text}.0`
       }
     ];
+  }
+
+  fixEntryAndComponentV2(entryDecorator: ts.Decorator): Autofix[] | undefined {
+    const callExpr = entryDecorator.expression;
+    if (!ts.isCallExpression(callExpr)) {
+      return undefined;
+    }
+
+    const arg = callExpr.arguments?.[0];
+    if (!ts.isObjectLiteralExpression(arg)) {
+      return undefined;
+    }
+
+    const newProperties = arg.properties.filter((property) => {
+      const name = property.name?.getText();
+      return name !== ENTRY_STORAGE && name !== ENTRY_USE_SHARED_STORAGE;
+    });
+
+    const newArg = ts.factory.createObjectLiteralExpression(newProperties, false);
+    const text = this.printer.printNode(ts.EmitHint.Unspecified, newArg, entryDecorator.getSourceFile());
+    return [{ start: arg.getStart(), end: arg.getEnd(), replacementText: text }];
   }
 }
