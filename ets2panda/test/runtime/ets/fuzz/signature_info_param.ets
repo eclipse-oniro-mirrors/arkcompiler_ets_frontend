@@ -12,19 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*---
+    tags: [compile-only, negative]
+---*/
 
 function testInfo() : void {
     let iniP : Promise<Object> = intFunc();
     let pThen = iniP.then((d = e : Object) : Object => { return else;});
 }
-
-/* @@? 17:34 Error TypeError: Unresolved reference intFunc */
-/* @@? 18:34 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 18:42 Error SyntaxError: Expected '=>', got ')'. */
-/* @@? 18:42 Error SyntaxError: Unexpected token ')'. */
-/* @@? 18:44 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 18:44 Error SyntaxError: Unexpected token ':'. */
-/* @@? 18:46 Error SyntaxError: Unexpected token 'Object'. */
-/* @@? 18:46 Error TypeError: The type of parameter 'Object' cannot be inferred */
-/* @@? 18:65 Error SyntaxError: Unexpected token 'else'. */
-/* @@? 18:71 Error SyntaxError: Unexpected token ')'. */

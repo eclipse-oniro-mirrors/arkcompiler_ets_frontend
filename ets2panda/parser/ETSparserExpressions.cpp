@@ -74,6 +74,11 @@ ir::Expression *ETSParser::ParseFunctionParameterExpression(ir::AnnotatedExpress
         std::string value = GetArgumentsSourceView(Lexer(), lexerPos);
         paramExpression->SetLexerSaved(util::UString(value, Allocator()).View());
         paramExpression->SetRange({paramIdent->Start(), paramExpression->Initializer()->End()});
+
+        if (paramIdent->TypeAnnotation() == nullptr && defaultValue != nullptr) {
+            LogError(diagnostic::EXPLICIT_PARAM_TYPE, util::DiagnosticMessageParams {}, paramIdent->Start());
+            paramExpression->SetInitializer(nullptr);
+        }
     } else if (paramIdent->IsIdentifier()) {
         paramExpression = AllocNode<ir::ETSParameterExpression>(paramIdent->AsIdentifier(), isOptional, Allocator());
         ES2PANDA_ASSERT(paramExpression != nullptr);
