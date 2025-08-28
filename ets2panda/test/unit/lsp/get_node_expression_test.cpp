@@ -102,4 +102,165 @@ TEST_F(LspGetNodeExpressionTests, GetMemberExpression_NotFound)
     std::string extractedText(sourceCode_.substr(res.start, res.length));
     ASSERT_EQ(extractedText.find(nodeName), std::string::npos);
 }
+
+TEST_F(LspGetNodeExpressionTests, GetCallExpression_Identifier)
+{
+    Initializer initializer = Initializer();
+    const std::string sourceCode = R"(
+function a() {
+    return "hello";
+}
+a();
+)";
+    es2panda_Context *contexts =
+        initializer.CreateContext("GetExpression.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
+    LSPAPI const *lspApi = GetImpl();
+    const std::string nodeName = "a";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::CALL_EXPRESSION});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(contexts, nodeInfoPtrs);
+    std::string extractedText(sourceCode.substr(res.start, res.length));
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
+    ASSERT_EQ(nodeName, extractedText);
+    initializer.DestroyContext(contexts);
+}
+
+TEST_F(LspGetNodeExpressionTests, GetCallExpression_SpuerExpression)
+{
+    Initializer initializer = Initializer();
+    const std::string sourceCode = R"(
+class Parent {
+  name: string;
+  
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+class Child extends Parent {
+  age: number;
+  
+  constructor(name: string, age: number) {
+    super(name);
+    this.age = age;
+  }
+}
+)";
+    es2panda_Context *contexts =
+        initializer.CreateContext("GetExpression.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
+    LSPAPI const *lspApi = GetImpl();
+    const std::string nodeName = "super";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::CALL_EXPRESSION});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(contexts, nodeInfoPtrs);
+    std::string extractedText(sourceCode.substr(res.start, res.length));
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
+    ASSERT_EQ(nodeName, extractedText);
+    initializer.DestroyContext(contexts);
+}
+
+TEST_F(LspGetNodeExpressionTests, GetSpuerExpression)
+{
+    Initializer initializer = Initializer();
+    const std::string sourceCode = R"(
+class Parent {
+  name: string;
+  
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+class Child extends Parent {
+  age: number;
+  
+  constructor(name: string, age: number) {
+    super(name);
+    this.age = age;
+  }
+}
+)";
+    es2panda_Context *contexts =
+        initializer.CreateContext("GetExpression.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
+    LSPAPI const *lspApi = GetImpl();
+    const std::string nodeName = "super";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::SUPER_EXPRESSION});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(contexts, nodeInfoPtrs);
+    std::string extractedText(sourceCode.substr(res.start, res.length));
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
+    ASSERT_EQ(nodeName, extractedText);
+    initializer.DestroyContext(contexts);
+}
+
+TEST_F(LspGetNodeExpressionTests, GetCallExpression_MemberExpression)
+{
+    Initializer initializer = Initializer();
+    const std::string sourceCode = R"(
+class Foo {
+    bar() {}
+}
+let foo = new Foo();
+foo.bar();
+)";
+    es2panda_Context *contexts =
+        initializer.CreateContext("GetExpression.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
+    LSPAPI const *lspApi = GetImpl();
+    const std::string nodeName = "bar";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::CALL_EXPRESSION});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(contexts, nodeInfoPtrs);
+    std::string extractedText(sourceCode.substr(res.start, res.length));
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
+    ASSERT_EQ(nodeName, extractedText);
+    initializer.DestroyContext(contexts);
+}
+
+TEST_F(LspGetNodeExpressionTests, GetCallExpression_NotFound)
+{
+    Initializer initializer = Initializer();
+    const std::string sourceCode = R"(
+class Parent {
+  name: string;
+  
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+class Child extends Parent {
+  age: number;
+  
+  constructor(name: string, age: number) {
+    super(name);
+    this.age = age;
+  }
+}
+)";
+    es2panda_Context *contexts =
+        initializer.CreateContext("GetExpression.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
+    LSPAPI const *lspApi = GetImpl();
+    const std::string nodeName = "nonexistent";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::CALL_EXPRESSION});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(contexts, nodeInfoPtrs);
+    std::string extractedText(sourceCode.substr(res.start, res.length));
+    ASSERT_EQ(extractedText.find(nodeName), std::string::npos);
+    initializer.DestroyContext(contexts);
+}
 }  // namespace

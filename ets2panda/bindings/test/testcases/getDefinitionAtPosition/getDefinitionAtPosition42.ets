@@ -15,6 +15,20 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
+const numbers = [1, 2, 3];
+const moreNumbers = [0, ...numbers, 4, 5]; 
+const part1 = [1, 2];
+const part2 = [3, 4];
+const combined = [...part1, ...part2, 5]; 
+const original = [10, 20, 30];
+const copy = [...original];
+
+export class Test {
+   sum(...numbers: number[]): number {
+      return 0;
+   }
+   args = [1.5, 2.5, 3.0];
+   result = this.sum(...this.args);
+   testNums = [1, 2, 3];
+   moreTestNums  = [0, ...this.testNums, 4, 5]; 
 }

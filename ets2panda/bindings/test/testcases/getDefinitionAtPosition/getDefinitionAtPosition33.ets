@@ -15,6 +15,6 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
+export function foo1(p: Promise<Promise<string>>): void {
+    let result: string = await p;
 }

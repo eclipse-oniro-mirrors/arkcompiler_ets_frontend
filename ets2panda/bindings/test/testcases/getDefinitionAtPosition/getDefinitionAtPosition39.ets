@@ -15,6 +15,4 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
-}
+export { PI } from "std/math";

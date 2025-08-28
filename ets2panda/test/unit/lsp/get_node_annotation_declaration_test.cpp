@@ -24,15 +24,41 @@
 namespace {
 using ark::es2panda::lsp::Initializer;
 
-class LspGetNodeExportTests : public LSPAPITests {
+class LspGetAnnotationDeclarationTests : public LSPAPITests {
 protected:
     static void SetUpTestSuite()
     {
         initializer_ = new Initializer();
         sourceCode_ = R"(
-export { PI } from "std/math";
-export { E as CircleE } from "std/math";
-)";
+            @interface Validate {
+            }
+
+            @interface Log {
+                level: string;
+            }
+
+            @interface Component {
+                name: string;
+                version: number;
+            }
+
+            @interface Deprecated {
+            }
+
+            @Component({name: "Service", version: 1})
+            class Service {
+                @Validate
+                @Log({level: 'info'})
+                doSomething() {
+                    // ...
+                }
+                
+                @Deprecated
+                oldMethod() {
+                    // ...
+                }
+            }
+        )";
         GenerateContexts(*initializer_);
     }
 
@@ -43,10 +69,13 @@ export { E as CircleE } from "std/math";
         initializer_ = nullptr;
         sourceCode_ = "";
     }
+
     static void GenerateContexts(Initializer &initializer)
     {
-        contexts_ = initializer.CreateContext("GetNodeExportTest.ts", ES2PANDA_STATE_PARSED, sourceCode_.c_str());
+        contexts_ =
+            initializer.CreateContext("GetAnnotationDeclarationTest.ets", ES2PANDA_STATE_PARSED, sourceCode_.c_str());
     }
+
     // NOLINTBEGIN(fuchsia-statically-constructed-objects, cert-err58-cpp)
     static inline es2panda_Context *contexts_ = nullptr;
     static inline Initializer *initializer_ = nullptr;
@@ -54,73 +83,73 @@ export { E as CircleE } from "std/math";
     // NOLINTEND(fuchsia-statically-constructed-objects, cert-err58-cpp)
 };
 
-TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationTest)
+TEST_F(LspGetAnnotationDeclarationTests, GetSimpleAnnotationDeclaration)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "PI";
+    const std::string annotationName = "Validate";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::EXPORT_SPECIFIER});
+    nodeInfos.emplace_back(NodeInfo {annotationName, ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(annotationName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationAsNameTest1)
+TEST_F(LspGetAnnotationDeclarationTests, GetAnnotationDeclarationWithProperties)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "CircleE";
+    const std::string annotationName = "Log";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::EXPORT_SPECIFIER});
+    nodeInfos.emplace_back(NodeInfo {annotationName, ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(annotationName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest2)
+TEST_F(LspGetAnnotationDeclarationTests, GetComplexAnnotationDeclaration)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "PI";
+    const std::string annotationName = "Component";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {annotationName, ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(annotationName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest3)
+TEST_F(LspGetAnnotationDeclarationTests, GetAnotherSimpleAnnotationDeclaration)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "E";
+    const std::string annotationName = "Deprecated";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {annotationName, ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(annotationName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest4)
+TEST_F(LspGetAnnotationDeclarationTests, GetNonExistentAnnotationDeclaration)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "CircleE";
+    const std::string annotationName = "NonExistent";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {annotationName, ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
-    std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_EQ(res.start, static_cast<size_t>(0));
+    ASSERT_EQ(res.length, static_cast<size_t>(0));
 }
 }  // namespace

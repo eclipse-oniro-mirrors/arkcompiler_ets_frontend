@@ -394,7 +394,90 @@ ets2panda_add_gtest(lsp_api_get_node_ts_class_Implements_test CPP_SOURCES
     get_node_ts_class_Implements_test.cpp
 )
 
-
 ets2panda_add_gtest(lsp_api_fix_unreachable_code_test CPP_SOURCES
     fix_unreachable_code_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_etsstring_literal_test CPP_SOURCES
+    get_node_string_literal_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_type_reference_test CPP_SOURCES
+    get_node_type_reference_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_keyof_type_test CPP_SOURCES
+    get_node_etskeyof_type_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_newclass_instance_test CPP_SOURCES
+    get_node_newclass_instance_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_etsstruct_declaration_test CPP_SOURCES
+    get_node_etsstruct_declaration_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_spread_element_test CPP_SOURCES
+    get_node_spread_element_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_ts_type_reference_test CPP_SOURCES
+    get_node_ts_type_reference_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_script_function_test CPP_SOURCES
+    get_node_script_function_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_declaration_test CPP_SOURCES
+    get_node_declaration_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_declarator_test CPP_SOURCES
+    get_node_declarator_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_class_declaration_test CPP_SOURCES
+    get_node_class_declaration_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_annotation_declaration_test CPP_SOURCES
+    get_node_annotation_declaration_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_annotation_usage_test CPP_SOURCES
+    get_node_annotation_usage_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_await_expression_test CPP_SOURCES
+    get_node_await_expression_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_bigInt_literal_test CPP_SOURCES
+    get_node_bigInt_literal_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_import_test CPP_SOURCES
+	get_node_import_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_ts_type_param_test CPP_SOURCES
+    get_node_ts_type_param_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_ets_parameter_expression CPP_SOURCES
+    get_node_ets_parameter_expression_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_switch_statement CPP_SOURCES
+    get_node_switch_statement_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_ts_nonnull_expression CPP_SOURCES
+    get_node_ts_nonnull_expression_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_function_declaration_test CPP_SOURCES
+    get_node_function_declaration_test.cpp
 )

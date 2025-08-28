@@ -18,20 +18,35 @@
 #include "lsp_api_test.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
-#include "ir/ets/etsReExportDeclaration.h"
 #include <gtest/gtest.h>
 
 namespace {
 using ark::es2panda::lsp::Initializer;
 
-class LspGetNodeExportTests : public LSPAPITests {
+class LspGetNodeSpreadElementTests : public LSPAPITests {
 protected:
     static void SetUpTestSuite()
     {
         initializer_ = new Initializer();
         sourceCode_ = R"(
-export { PI } from "std/math";
-export { E as CircleE } from "std/math";
+const numbers = [1, 2, 3];
+const moreNumbers = [0, ...numbers, 4, 5];
+const part1 = [1, 2];
+const part2 = [3, 4];
+const combined = [...part1, ...part2, 5];
+const original = [10, 20, 30];
+const copy = [...original];
+
+class Test {
+   sum(...numbers: number[]): number {
+      return 0;
+   }
+   args = [1.5, 2.5, 3.0];
+   result = this.sum(...this.args);
+   testNums = [1, 2, 3];
+   moreTestNums  = [0, ...this.testNums, 4, 5];
+}
+
 )";
         GenerateContexts(*initializer_);
     }
@@ -45,7 +60,8 @@ export { E as CircleE } from "std/math";
     }
     static void GenerateContexts(Initializer &initializer)
     {
-        contexts_ = initializer.CreateContext("GetNodeExportTest.ts", ES2PANDA_STATE_PARSED, sourceCode_.c_str());
+        contexts_ =
+            initializer.CreateContext("GetNodeSpreadElementTest.ets", ES2PANDA_STATE_CHECKED, sourceCode_.c_str());
     }
     // NOLINTBEGIN(fuchsia-statically-constructed-objects, cert-err58-cpp)
     static inline es2panda_Context *contexts_ = nullptr;
@@ -54,73 +70,102 @@ export { E as CircleE } from "std/math";
     // NOLINTEND(fuchsia-statically-constructed-objects, cert-err58-cpp)
 };
 
-TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationTest)
+TEST_F(LspGetNodeSpreadElementTests, GetSpreadElementExistentTest)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "PI";
+    const std::string nodeName = "NonExistentSpreadElement";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::EXPORT_SPECIFIER});
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_EQ(extractedText.find(nodeName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationAsNameTest1)
+TEST_F(LspGetNodeSpreadElementTests, GetSpreadElementTest1)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "CircleE";
+    const std::string nodeName = "numbers";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::EXPORT_SPECIFIER});
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest2)
+TEST_F(LspGetNodeSpreadElementTests, GetSpreadElementTest2)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "PI";
+    const std::string nodeName = "part1";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest3)
+TEST_F(LspGetNodeSpreadElementTests, GetSpreadElementTest3)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "E";
+    const std::string nodeName = "part2";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest4)
+TEST_F(LspGetNodeSpreadElementTests, GetSpreadElementTest4)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "CircleE";
+    const std::string nodeName = "original";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
 }
+
+TEST_F(LspGetNodeSpreadElementTests, GetSpreadElementTest5)
+{
+    LSPAPI const *lspApi = GetImpl();
+    const std::string nodeName = "args";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
+    std::string extractedText(sourceCode_.substr(res.start, res.length));
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
+}
+
+TEST_F(LspGetNodeSpreadElementTests, GetSpreadElementTest6)
+{
+    LSPAPI const *lspApi = GetImpl();
+    const std::string nodeName = "testNums";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
+    std::string extractedText(sourceCode_.substr(res.start, res.length));
+    ASSERT_NE(extractedText.find(nodeName), std::string::npos);
+}
+
 }  // namespace

@@ -14,4 +14,4 @@
  */
 
 'use static';
-class Foo { }
+export class Foo { }

@@ -26,7 +26,7 @@ const timeout = setTimeout(() => {
     console.error('process timeout');
     child.kill('SIGKILL');
     process.exit(124);
-}, 900000);
+}, 1200000);
 
 child.on('exit', (code, signal) => {
     clearTimeout(timeout);

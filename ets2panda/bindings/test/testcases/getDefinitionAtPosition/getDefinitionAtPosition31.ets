@@ -15,6 +15,9 @@
 
 'use static';
 
-export class Foo {
-    static staticProperty: number = 42;
+export type Direction = 'up' | 'down' | 'left' | 'right';
+export function move(dir: Direction): void {
+  let a = 'aaa';
+  const b: Direction = 'up';
+  let c = true;
 }

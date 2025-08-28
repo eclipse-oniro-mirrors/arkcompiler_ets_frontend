@@ -15,7 +15,7 @@
 
 'use static';
 
-enum Color {
+export enum Color {
   Red,
   Green,
   Blue

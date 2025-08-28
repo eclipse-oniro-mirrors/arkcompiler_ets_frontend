@@ -24,15 +24,30 @@
 namespace {
 using ark::es2panda::lsp::Initializer;
 
-class LspGetNodeExportTests : public LSPAPITests {
+class LspGetClassDeclarationTests : public LSPAPITests {
 protected:
     static void SetUpTestSuite()
     {
         initializer_ = new Initializer();
         sourceCode_ = R"(
-export { PI } from "std/math";
-export { E as CircleE } from "std/math";
-)";
+            class Base {
+                prop1: number = 1;
+            }
+            
+            class Derived extends Base {
+                prop2: string = "test";
+            }
+            
+            class StaticClass {
+                static staticMethod() {}
+            }
+            
+            class PrivateClass {
+                private privProp: boolean = true;
+            }
+            
+            class EmptyClass {}
+        )";
         GenerateContexts(*initializer_);
     }
 
@@ -43,10 +58,13 @@ export { E as CircleE } from "std/math";
         initializer_ = nullptr;
         sourceCode_ = "";
     }
+
     static void GenerateContexts(Initializer &initializer)
     {
-        contexts_ = initializer.CreateContext("GetNodeExportTest.ts", ES2PANDA_STATE_PARSED, sourceCode_.c_str());
+        contexts_ =
+            initializer.CreateContext("GetClassDeclarationTest.ets", ES2PANDA_STATE_PARSED, sourceCode_.c_str());
     }
+
     // NOLINTBEGIN(fuchsia-statically-constructed-objects, cert-err58-cpp)
     static inline es2panda_Context *contexts_ = nullptr;
     static inline Initializer *initializer_ = nullptr;
@@ -54,73 +72,87 @@ export { E as CircleE } from "std/math";
     // NOLINTEND(fuchsia-statically-constructed-objects, cert-err58-cpp)
 };
 
-TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationTest)
+TEST_F(LspGetClassDeclarationTests, GetBaseClassDeclaration)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "PI";
+    const std::string className = "Base";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::EXPORT_SPECIFIER});
+    nodeInfos.emplace_back(NodeInfo {className, ark::es2panda::ir::AstNodeType::CLASS_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(className), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetExportSpecifierDeclarationAsNameTest1)
+TEST_F(LspGetClassDeclarationTests, GetDerivedClassDeclaration)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "CircleE";
+    const std::string className = "Derived";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::EXPORT_SPECIFIER});
+    nodeInfos.emplace_back(NodeInfo {className, ark::es2panda::ir::AstNodeType::CLASS_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(className), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest2)
+TEST_F(LspGetClassDeclarationTests, GetStaticClassDeclaration)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "PI";
+    const std::string className = "StaticClass";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {className, ark::es2panda::ir::AstNodeType::CLASS_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(className), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest3)
+TEST_F(LspGetClassDeclarationTests, GetPrivateClassDeclaration)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "E";
+    const std::string className = "PrivateClass";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {className, ark::es2panda::ir::AstNodeType::CLASS_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(className), std::string::npos);
 }
 
-TEST_F(LspGetNodeExportTests, GetReexportStatemenetDeclarationTest4)
+TEST_F(LspGetClassDeclarationTests, GetEmptyClassDeclaration)
 {
     LSPAPI const *lspApi = GetImpl();
-    const std::string moduleName = "CircleE";
+    const std::string className = "EmptyClass";
     std::vector<NodeInfo> nodeInfos;
-    nodeInfos.emplace_back(NodeInfo {moduleName, ark::es2panda::ir::AstNodeType::REEXPORT_STATEMENT});
+    nodeInfos.emplace_back(NodeInfo {className, ark::es2panda::ir::AstNodeType::CLASS_DECLARATION});
     std::vector<NodeInfo *> nodeInfoPtrs;
     nodeInfoPtrs.push_back(&nodeInfos[0]);
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find(moduleName), std::string::npos);
+    ASSERT_NE(extractedText.find(className), std::string::npos);
+}
+
+TEST_F(LspGetClassDeclarationTests, GetNonExistentClass)
+{
+    LSPAPI const *lspApi = GetImpl();
+    const std::string className = "NonExistentClass";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {className, ark::es2panda::ir::AstNodeType::CLASS_DECLARATION});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
+    ASSERT_EQ(res.start, static_cast<size_t>(0));
+    ASSERT_EQ(res.length, static_cast<size_t>(0));
 }
 }  // namespace
