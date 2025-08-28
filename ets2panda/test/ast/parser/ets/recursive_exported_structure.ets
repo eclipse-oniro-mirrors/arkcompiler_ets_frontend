@@ -93,10 +93,9 @@ export default _exported;
 /* @@? 41:23 Error TypeError: need to specify target type for class composite */
 /* @@? 54:20 Error TypeError: No matching call signature for (...) */
 /* @@? 54:31 Error TypeError: need to specify target type for class composite */
-/* @@? 61:64 Error SyntaxError: Unexpected token '&'. */
-/* @@? 61:66 Error SyntaxError: Unexpected token '{'. */
+/* @@? 61:66 Error SyntaxError: Intersection types are not supported, use inheritance instead! */
 /* @@? 62:12 Error SyntaxError: Label must be followed by a loop statement. */
 /* @@? 62:12 Error TypeError: Type name 'IndexableType' used in the wrong context */
-/* @@? 66:36 Error TypeError: Interfaces cannot extend classes, only other interfaces. */
+/* @@? 66:36 Error TypeError: Interface expected here. */
 /* @@? 73:6 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 76:16 Error TypeError: Cannot cast type 'ExportedStructure' to 'Record<String,() => Double|Record<String,() => Double>>' */
+/* @@? 85:1 Error TypeError: Indexed access is not supported for such expression type. */

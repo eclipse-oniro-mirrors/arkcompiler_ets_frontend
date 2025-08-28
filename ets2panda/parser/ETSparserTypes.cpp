@@ -535,6 +535,13 @@ ir::TypeNode *ETSParser::ParseTypeAnnotationNoPreferParam(TypeAnnotationParsingO
         return AllocBrokenType({Lexer()->GetToken().Start(), Lexer()->GetToken().End()});
     }
 
+    if (((*options) & TypeAnnotationParsingOptions::DISALLOW_UNION) == 0 &&
+        Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_BITWISE_AND)) {
+        LogError(diagnostic::INTERSECTION_TYPES);
+        Lexer()->TryEatTokenType(lexer::TokenType::LITERAL_IDENT);
+        return AllocBrokenType({Lexer()->GetToken().Start(), Lexer()->GetToken().End()});
+    }
+
     if (!needFurtherProcessing || typeAnnotation->IsBrokenTypeNode()) {
         return typeAnnotation;
     }

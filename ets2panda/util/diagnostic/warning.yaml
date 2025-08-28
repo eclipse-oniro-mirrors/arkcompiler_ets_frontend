@@ -124,7 +124,7 @@ warning:
 - name: UNREACHABLE_STMT
   id: 26
   message: "Unreachable statement."
-  code_fix_ids: [FixUnreachableCode] 
+  code_fix_ids: [FixUnreachableCode]
 
 graveyard:
 - 18

@@ -71,6 +71,15 @@ bool ETSBinder::IsSpecialName(const util::StringView &name)
            std::find(utilityTypes.begin(), utilityTypes.end(), name.Utf8()) != utilityTypes.end();
 }
 
+static bool IsAnyOrUnknown(ETSBinder *binder, const util::StringView &name, const lexer::SourcePosition &pos)
+{
+    if (name.Is("any") || name.Is("unknown")) {
+        binder->ThrowError(pos, diagnostic::ANY_UNKNOWN_TYPES);
+        return true;
+    }
+    return false;
+}
+
 bool ETSBinder::LookupInDebugInfoPlugin(ir::Identifier *ident)
 {
     auto *checker = GetContext()->GetChecker()->AsETSChecker();
@@ -110,7 +119,7 @@ void ETSBinder::LookupTypeReference(ir::Identifier *ident)
         return;
     }
 
-    if (ident->IsErrorPlaceHolder()) {
+    if (ident->IsErrorPlaceHolder() || IsAnyOrUnknown(this, name, ident->Start())) {
         CreateDummyVariable(this, ident);
         return;
     }
