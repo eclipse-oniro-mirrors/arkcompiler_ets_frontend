@@ -354,7 +354,7 @@ std::string GetKindOfClassDefinition(ir::AstNode *node)
     if (node->AsClassDefinition()->IsNamespaceTransformed()) {
         return "namespace";
     }
-    if (node->Parent()->IsETSStructDeclaration()) {
+    if (node->AsClassDefinition()->IsFromStruct() || node->Parent()->IsETSStructDeclaration()) {
         return "struct";
     }
     return "class";
