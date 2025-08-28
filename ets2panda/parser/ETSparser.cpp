@@ -108,6 +108,9 @@ std::unique_ptr<lexer::Lexer> ETSParser::InitLexer(const SourceFile &sourceFile)
 {
     GetProgram()->SetSource(sourceFile);
     auto lexer = std::make_unique<lexer::ETSLexer>(&GetContext(), DiagnosticEngine());
+    if (sourceFile.isExternalSourceImport) {
+        lexer->SetDefaultNextTokenFlags(lexer::NextTokenFlags::CHAR_PERCENT_ALLOWED);
+    }
     SetLexer(lexer.get());
     return lexer;
 }
@@ -311,6 +314,7 @@ void ETSParser::ParseParseListElement(const util::ImportPathManager::ParseInfo &
     auto src = importData.HasSpecifiedDeclPath() ? importData.declPath : importData.resolvedSource;
     ES2PANDA_ASSERT(!extSrc.empty());
     SourceFile sf {src, extSrc, importData.resolvedSource, false, importData.HasSpecifiedDeclPath()};
+    sf.isExternalSourceImport = importData.IsExternalSourceImport();
     parser::Program *newProg = ParseSource(sf);
     ES2PANDA_ASSERT(newProg != nullptr);
     if (!importData.IsImplicitPackageImported() || newProg->IsPackage()) {
