@@ -232,6 +232,10 @@ void CompileAbcClassJob::Run()
     auto *program = new panda::pandasm::Program();
     std::string record_name = "";
     compiler_.CompileAbcClass(recordId, *program, record_name);
+    if (program->record_table.size() == 0) {
+        delete program;
+        return;
+    }
     program->isGeneratedFromMergedAbc = true;
 
     if (!options_.modifiedPkgName.empty()) {
