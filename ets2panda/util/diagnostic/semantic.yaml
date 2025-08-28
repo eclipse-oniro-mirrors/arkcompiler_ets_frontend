@@ -450,7 +450,6 @@ semantic:
 - name: EXTENSION_ACCESSOR_INVALID_CALL
   id: 59
   message: "Extension accessor can't be used as a method call or function call."
-  code_fix_ids: [RemoveAccidetalCallParentheses]
 
 - name: EXTENSION_FUNC_NAME_CONFLICT_WITH_METH
   id: 81
@@ -951,7 +950,7 @@ semantic:
 - name: NO_CALL_SIGNATURE
   id: 2
   message: "Type '{}' has no call signatures."
-  code_fix_ids: [FixAddMissingNewOperator]
+  code_fix_ids: [FixAddMissingNewOperator, RemoveAccidentalCallParentheses]
 
 - name: NO_INDEX_ACCESS_METHOD
   id: 250
