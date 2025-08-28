@@ -16,16 +16,6 @@
     "result": [
         {
             "line": 18,
-            "column": 7,
-            "endLine": 18,
-            "endColumn": 11,
-            "problem": "InterfaceFieldNotImplemented",
-            "suggest": "",
-            "rule": "ArkTS 1.2 should implement all fields in the interface in the class (arkts-no-class-omit-interface-optional-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 18,
             "column": 23,
             "endLine": 18,
             "endColumn": 29,

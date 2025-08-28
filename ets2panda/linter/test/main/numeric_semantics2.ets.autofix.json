@@ -65,19 +65,19 @@
                     "replacementText": "name",
                     "start": 1117,
                     "end": 1123,
-                    "line": 37,
-                    "column": 18,
-                    "endLine": 37,
-                    "endColumn": 24
+                    "line": 35,
+                    "column": 20,
+                    "endLine": 35,
+                    "endColumn": 26
                 },
                 {
                     "replacementText": "name",
                     "start": 1210,
                     "end": 1216,
-                    "line": 37,
-                    "column": 18,
-                    "endLine": 37,
-                    "endColumn": 24
+                    "line": 35,
+                    "column": 20,
+                    "endLine": 35,
+                    "endColumn": 26
                 }
             ],
             "suggest": "",
@@ -149,29 +149,9 @@
             "column": 18,
             "endLine": 37,
             "endColumn": 24,
-            "problem": "LiteralAsPropertyName",
-            "autofix": [
-                {
-                    "replacementText": "name",
-                    "start": 1117,
-                    "end": 1123,
-                    "line": 37,
-                    "column": 18,
-                    "endLine": 37,
-                    "endColumn": 24
-                },
-                {
-                    "replacementText": "name",
-                    "start": 1210,
-                    "end": 1216,
-                    "line": 37,
-                    "column": 18,
-                    "endLine": 37,
-                    "endColumn": 24
-                }
-            ],
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -179,38 +159,9 @@
             "column": 32,
             "endLine": 37,
             "endColumn": 33,
-            "problem": "LiteralAsPropertyName",
-            "autofix": [
-                {
-                    "replacementText": "__2",
-                    "start": 1133,
-                    "end": 1134,
-                    "line": 38,
-                    "column": 17,
-                    "endLine": 38,
-                    "endColumn": 21
-                },
-                {
-                    "replacementText": "__2",
-                    "start": 1224,
-                    "end": 1225,
-                    "line": 38,
-                    "column": 17,
-                    "endLine": 38,
-                    "endColumn": 21
-                },
-                {
-                    "replacementText": "x.__2",
-                    "start": 1256,
-                    "end": 1260,
-                    "line": 38,
-                    "column": 17,
-                    "endLine": 38,
-                    "endColumn": 21
-                }
-            ],
+            "problem": "ObjectLiteralKeyType",
             "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
             "severity": "ERROR"
         },
         {
@@ -260,16 +211,6 @@
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 42,
-            "column": 30,
-            "endLine": 42,
-            "endColumn": 31,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
             "severity": "ERROR"
         },
         {

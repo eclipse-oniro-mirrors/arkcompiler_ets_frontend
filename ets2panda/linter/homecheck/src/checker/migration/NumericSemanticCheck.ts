@@ -2351,8 +2351,8 @@ export class NumericSemanticCheck implements BaseChecker {
             return null;
         }
 
-        // 场景1：变量或函数入参，无类型注解的场景，直接在localString后面添加': int'
-        if (!restString.trimStart().startsWith(':')) {
+        // 场景1：变量或函数入参，无类型注解的场景，直接在localString后面添加': int'，同时考虑可选参数即'?:'
+        if (!restString.trimStart().startsWith(':') && !restString.trimStart().startsWith('?')) {
             let ruleFix = new RuleFix();
             ruleFix.range = localRange;
             const localString = FixUtils.getSourceWithRange(sourceFile, ruleFix.range);
@@ -2363,8 +2363,8 @@ export class NumericSemanticCheck implements BaseChecker {
             ruleFix.text = `${localString}: ${numberCategory}`;
             return ruleFix;
         }
-        // 场景2：变量或函数入参，有类型注解的场景，需要将类型注解替换成新的类型
-        const match = restString.match(/^(\s*:[^,)=;]+)([\s\S]*)$/);
+        // 场景2：变量或函数入参，有类型注解的场景，需要将类型注解替换成新的类型，同时考虑可选参数即'?:'
+        const match = restString.match(/^(\s*\??\s*:[^=,);]+)([\s\S]*)$/);
         if (match === null || match.length < 3) {
             return null;
         }
@@ -2598,9 +2598,12 @@ export class NumericSemanticCheck implements BaseChecker {
                 logger.error('Failed to getting range info of issue file when generating auto fix info.');
                 return null;
             }
+
+            const valueStr = value.getValue();
+            const ruleFixText = NumericSemanticCheck.CreateFixTextForIntLiteral(valueStr);
             const ruleFix = new RuleFix();
             ruleFix.range = range;
-            ruleFix.text = value.getValue() + '.0';
+            ruleFix.text = ruleFixText;
             return ruleFix;
         }
         // 非整型字面量
@@ -2609,5 +2612,17 @@ export class NumericSemanticCheck implements BaseChecker {
             return this.generateRuleFixForLocalDefine(sourceFile, warnInfo, NumberCategory.int);
         }
         return this.generateRuleFixForLocalDefine(sourceFile, warnInfo, NumberCategory.number);
+    }
+    private static CreateFixTextForIntLiteral(valueStr: string): string {
+        if (!NumericSemanticCheck.IsNotDecimalNumber(valueStr)) {
+            return valueStr + '.0';
+        }
+
+        return valueStr + '.toDouble()';
+    }
+
+    private static IsNotDecimalNumber(value: string): boolean {
+        const loweredValue = value.toLowerCase();
+        return loweredValue.startsWith('0b') || loweredValue.startsWith('0x') || loweredValue.startsWith('0o') || loweredValue.includes('e');
     }
 }

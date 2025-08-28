@@ -1,0 +1,158 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 27,
+            "column": 43,
+            "endLine": 27,
+            "endColumn": 47,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 43,
+            "endLine": 30,
+            "endColumn": 44,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 40,
+            "endLine": 35,
+            "endColumn": 41,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 43,
+            "endLine": 41,
+            "endColumn": 50,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 43,
+            "endLine": 44,
+            "endColumn": 44,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 43,
+            "endLine": 47,
+            "endColumn": 47,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 43,
+            "endLine": 49,
+            "endColumn": 47,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 43,
+            "endLine": 51,
+            "endColumn": 47,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 43,
+            "endLine": 54,
+            "endColumn": 47,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 43,
+            "endLine": 57,
+            "endColumn": 47,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 43,
+            "endLine": 60,
+            "endColumn": 47,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 43,
+            "endLine": 63,
+            "endColumn": 48,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 43,
+            "endLine": 65,
+            "endColumn": 51,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 43,
+            "endLine": 67,
+            "endColumn": 51,
+            "problem": "InstanceOfFunction",
+            "suggest": "",
+            "rule": "\"instanceof\" operator can't be applied to function (arkts-no-instanceof-func)",
+            "severity": "ERROR"
+        }
+    ]
+}

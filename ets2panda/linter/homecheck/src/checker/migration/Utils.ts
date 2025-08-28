@@ -109,6 +109,7 @@ export const CALLBACK_METHOD_NAME: string[] = [
     'onMouse', // 鼠标事件，当鼠标按键点击或在组件上移动时触发
     'onAreaChange', // 组件区域变化事件，组件尺寸、位置变化时触发
     'onVisibleAreaChange', // 组件可见区域变化事件，组件在屏幕中的显示区域面积变化时触发
+    'onChange',
 ];
 
 export function getLanguageStr(language: Language): string {

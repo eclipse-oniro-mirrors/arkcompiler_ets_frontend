@@ -35,10 +35,40 @@
             "severity": "ERROR"
         },
         {
+            "line": 31,
+            "column": 3,
+            "endLine": 31,
+            "endColumn": 6,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
             "line": 36,
             "column": 3,
             "endLine": 36,
             "endColumn": 4,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 3,
+            "endLine": 37,
+            "endColumn": 6,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 3,
+            "endLine": 38,
+            "endColumn": 7,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
             "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
@@ -65,10 +95,40 @@
             "severity": "ERROR"
         },
         {
+            "line": 51,
+            "column": 3,
+            "endLine": 51,
+            "endColumn": 6,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 3,
+            "endLine": 52,
+            "endColumn": 7,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
             "line": 57,
             "column": 3,
             "endLine": 57,
             "endColumn": 4,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 3,
+            "endLine": 58,
+            "endColumn": 6,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
             "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",

@@ -3590,7 +3590,7 @@ export class TsUtils {
         return false;
       }
 
-      projectPath.concat(PATH_SEPARATOR + currentModule);
+      projectPath = projectPath.concat(PATH_SEPARATOR + currentModule);
     }
 
     const importedFile = path.resolve(projectPath, importFilePath + extension);
@@ -3618,6 +3618,10 @@ export class TsUtils {
     // Indirect import check
     const originalIdentifier = this.findOriginalIdentifier(identifier);
     return !!originalIdentifier && this.isImportedFromJS(originalIdentifier);
+  }
+
+  static isClassOrInterfaceDeclaration(d: ts.Declaration): d is ts.ClassDeclaration | ts.InterfaceDeclaration {
+    return ts.isClassDeclaration(d) || ts.isInterfaceDeclaration(d);
   }
 
   /**

@@ -79,7 +79,10 @@
     "arkts-no-esobject-support",
     "arkts-not-support-tuple-generic-validation",
     "arkts-no-optional-tuple-type",
-    "arkts-no-large-numeric-literal"
+    "arkts-no-large-numeric-literal",
+    "arkts-no-instanceof-func",
+    "arkts-no-unfixed-len-tuple",
+    "arkts-no-super-call-in-static-context"
   ],
   "interop": [
     "arkts-interop-js2s-inherit-js-class",
@@ -125,7 +128,7 @@
     "arkui-data-observation",
     "arkui-modular-interface",
     "arkui-entry-annotation-parameters",
-    "arkui-no-makeobserved-function",
+    "arkui-makeobserved-cannot-observe-custom-class",
     "arkui-provide-annotation-parameters",
     "arkui-custom-layout-need-add-decorator",
     "arkui-no-prop-decorator",

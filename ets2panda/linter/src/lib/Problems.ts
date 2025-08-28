@@ -252,7 +252,7 @@ export enum FaultID {
   NoNeedStdlibWorker,
   BuiltinGetOwnPropertyNames,
   LocalBuilderDecoratorNotSupported,
-  MakeObservedIsNotSupported,
+  MakeObservedCannotObserveCustomClass,
   NoEnumPropAsType,
   NoAwaitJsPromise,
   NosparseArray,
@@ -297,6 +297,9 @@ export enum FaultID {
   BuiltinIteratorResultValue,
   OptionalTupleType,
   LargeNumericLiteral,
+  InstanceOfFunction,
+  unfixedTuple,
+  SuperInStaticContext,
   // this should always be last enum
   LAST_ID
 }
