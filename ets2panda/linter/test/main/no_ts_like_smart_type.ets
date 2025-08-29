@@ -374,3 +374,23 @@ function test(value: string) {
     console.log('5')
   }
 }
+
+class Temp {
+  public ret: boolean = true;
+
+  async checkAppItem(elementNameVal: Want) {
+    logger.info(TAG, 'checkAppItem in bundleName:' + elementNameVal.bundleName + ' | abilityName:' +
+    elementNameVal.abilityName);
+    let want: Want = {
+      'bundleName': elementNameVal.bundleName,
+      'abilityName': elementNameVal.abilityName
+    };
+    let userId: UserId = { localId: 0 };
+    let retVal = await accountManager.getAccountUserId(userId);
+    if (!retVal) {
+      logger.warn(TAG, 'checkAppItem getAccountUserId fail!');
+      this.ret = false;
+      return this.ret;
+    }
+  }
+}
