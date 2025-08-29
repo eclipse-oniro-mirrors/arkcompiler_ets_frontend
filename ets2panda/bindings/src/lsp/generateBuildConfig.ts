@@ -31,6 +31,7 @@ export interface ModuleDescriptor {
   srcPath: string;
   arktsversion?: string;
   aceModuleJsonPath?: string;
+  sdkAliasConfigPath?: string;
 }
 
 interface Json5Object {
@@ -254,7 +255,8 @@ export function generateBuildConfigs(
       dependencies: dependencies.map((dep) => {
         const depModule = definedModules.find((m) => m.srcPath === dep);
         return depModule ? depModule.name : '';
-      })
+      }),
+      sdkAliasConfigPath: module.sdkAliasConfigPath ? module.sdkAliasConfigPath : undefined
     };
     addPluginPathConfigs(allBuildConfigs[module.name], module);
   }

@@ -272,7 +272,11 @@ export class Lsp {
     const result = new LspDefinitionData(ptr);
     const moduleName = this.moduleInfos[filename.valueOf()].packageName;
     const declgenOutDir = this.buildConfigs[moduleName].declgenOutDir;
-    if (result.fileName.endsWith(DECL_ETS_SUFFIX) && result.fileName.startsWith(declgenOutDir)) {
+    if (
+      (result.fileName.endsWith(DECL_ETS_SUFFIX) && result.fileName.startsWith(declgenOutDir)) ||
+      (this.buildConfigs[moduleName].interopApiPath &&
+        result.fileName.startsWith(this.buildConfigs[moduleName].interopApiPath!))
+    ) {
       let ptr: KPointer;
       const [declFileCfg, declFileCtx] = this.createContext(result.fileName, false);
       try {
@@ -290,7 +294,15 @@ export class Lsp {
   private getDefinitionAtPositionByNodeInfos(declFilePath: String, nodeInfos: NodeInfo[]): LspDefinitionData {
     let ptr: KPointer;
     let nodeInfoPtrs: KPointer[] = [];
-    const sourceFilePath = this.declFileMap[declFilePath.valueOf()];
+    let sourceFilePath = this.declFileMap[declFilePath.valueOf()];
+    if (sourceFilePath === undefined) {
+      let unifiedPath = declFilePath.replace(/\\/g, '/');
+      const targetSegment = 'build-tools/interop/declaration';
+      if (unifiedPath.includes(targetSegment)) {
+        unifiedPath = unifiedPath.replace(targetSegment, '');
+        sourceFilePath = path.normalize(unifiedPath);
+      }
+    }
     const [cfg, ctx] = this.createContext(sourceFilePath, false);
     try {
       nodeInfos.forEach((nodeInfo) => {

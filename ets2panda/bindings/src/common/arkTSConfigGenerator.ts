@@ -15,9 +15,10 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import * as JSON5 from 'json5';
 
 import { changeFileExtension, ensurePathExists, getFileLanguageVersion } from './utils';
-import { BuildConfig, ModuleInfo } from './types';
+import { AliasConfig, BuildConfig, ModuleInfo } from './types';
 import { LANGUAGE_VERSION, PANDA_SDK_PATH_FROM_SDK, SYSTEM_SDK_PATH_FROM_SDK } from './preDefine';
 
 interface DependencyItem {
@@ -82,6 +83,7 @@ export class ArkTSConfigGenerator {
   private traverse(
     pathSection: Record<string, string[] | DependencyItem>,
     currentDir: string,
+    aliasConfigObj: Record<string, AliasConfig> | undefined,
     prefix: string = '',
     isInteropSdk: boolean = false,
     relativePath: string = '',
@@ -103,11 +105,11 @@ export class ArkTSConfigGenerator {
         const key = isExcludedDir ? basename : relativePath ? `${relativePath}${separator}${basename}` : basename;
         pathSection[prefix + key] = isInteropSdk
           ? {
-              language: 'js',
-              path: itemPath,
-              ohmUrl: '',
-              alias: [key]
-            }
+            language: 'js',
+            path: itemPath,
+            ohmUrl: '',
+            alias: aliasConfigObj ? this.processAlias(basename, aliasConfigObj) : undefined
+          }
           : [changeFileExtension(itemPath, '', '.d.ets')];
       }
       if (stat.isDirectory()) {
@@ -120,6 +122,7 @@ export class ArkTSConfigGenerator {
         this.traverse(
           pathSection,
           path.resolve(currentDir, item),
+          aliasConfigObj,
           prefix,
           isInteropSdk,
           newRelativePath,
@@ -135,10 +138,10 @@ export class ArkTSConfigGenerator {
       let systemSdkPath = path.resolve(this.systemSdkPath, dir);
       let externalApiPath = path.resolve(this.externalApiPath, dir);
       fs.existsSync(systemSdkPath)
-        ? this.traverse(pathSection, systemSdkPath)
+        ? this.traverse(pathSection, systemSdkPath, undefined)
         : console.warn(`sdk path ${systemSdkPath} not exist.`);
       fs.existsSync(externalApiPath)
-        ? this.traverse(pathSection, externalApiPath)
+        ? this.traverse(pathSection, externalApiPath, undefined)
         : console.warn(`sdk path ${externalApiPath} not exist.`);
     });
   }
@@ -225,7 +228,40 @@ export class ArkTSConfigGenerator {
     });
   }
 
-  private generateSystemSdkDependenciesSection(dependencySection: Record<string, DependencyItem>): void {
+  private parseSdkAliasConfigFile(sdkAliasConfigFilePath?: string): Record<string, AliasConfig> | undefined {
+    if (!sdkAliasConfigFilePath) {
+      return;
+    }
+    const rawContent = fs.readFileSync(sdkAliasConfigFilePath, 'utf-8');
+    const jsonData = JSON5.parse(rawContent);
+    const aliasConfigObj: Record<string, AliasConfig> = {};
+    for (const [aliasKey, config] of Object.entries(jsonData)) {
+      const aliasConfig = config as AliasConfig;
+      aliasConfigObj[aliasKey] = aliasConfig;
+    }
+    return aliasConfigObj;
+  }
+
+  private processAlias(basename: string, aliasConfigObj: Record<string, AliasConfig>): string[] | undefined {
+    let alias: string[] = [];
+    for (const [aliasName, aliasConfig] of Object.entries(aliasConfigObj)) {
+      if (aliasConfig.isStatic) {
+        continue;
+      }
+      if (basename === aliasConfig.originalAPIName) {
+        alias.push(aliasName);
+      }
+    }
+    if (alias.length !== 0) {
+      return alias;
+    }
+  }
+
+  private generateSystemSdkDependenciesSection(
+    dependencySection: Record<string, DependencyItem>,
+    moduleInfo: ModuleInfo
+  ): void {
+    const aliasConfigObj = this.parseSdkAliasConfigFile(moduleInfo.sdkAliasConfigPath);
     let directoryNames: string[] = ['api', 'arkts', 'kits', 'component'];
     directoryNames.forEach((dirName) => {
       const basePath = path.resolve(this.interopApiPath, dirName);
@@ -234,15 +270,15 @@ export class ArkTSConfigGenerator {
         return;
       }
       if (dirName === 'component') {
-        this.traverse(dependencySection, basePath, 'component/', true);
+        this.traverse(dependencySection, basePath, aliasConfigObj, 'component/', true);
       } else {
-        this.traverse(dependencySection, basePath, 'dynamic/', true);
+        this.traverse(dependencySection, basePath, aliasConfigObj, 'dynamic/', true);
       }
     });
   }
 
   private getDependenciesSection(moduleInfo: ModuleInfo, dependencySection: Record<string, DependencyItem>): void {
-    this.generateSystemSdkDependenciesSection(dependencySection);
+    this.generateSystemSdkDependenciesSection(dependencySection, moduleInfo);
     let depModules: string[] = moduleInfo.dynamicDepModuleInfos;
     depModules.forEach((depModuleName: string) => {
       let depModuleInfo = this.moduleInfos[depModuleName];
