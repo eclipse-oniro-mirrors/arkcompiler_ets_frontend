@@ -1,2 +1,0 @@
-# Issue: ##29234
-parser/ets/dynamic_import_tests/dynamic_optional_decl.ets
