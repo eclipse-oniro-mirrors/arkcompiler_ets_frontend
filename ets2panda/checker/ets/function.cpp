@@ -727,6 +727,7 @@ bool ETSChecker::ValidateSignatureRestParams(Signature *substitutedSig, const Ar
         if (!invocationCtx.IsInvocable()) {
             if (restArgument->IsArrayExpression()) {
                 ModifyPreferredType(restArgument->AsArrayExpression(), nullptr);
+                argument->SetTsType(nullptr);
             }
             return false;
         }
