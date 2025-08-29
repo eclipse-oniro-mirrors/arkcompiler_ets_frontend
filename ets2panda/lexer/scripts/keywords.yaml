@@ -530,7 +530,6 @@ keywords:
   - name: 'type'
     token: KEYW_TYPE
     keyword_like: [ets, js, ts]
-    flags: [definable_type_name]
 
   - name: 'typeof'
     token: KEYW_TYPEOF

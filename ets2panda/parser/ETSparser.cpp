@@ -1358,8 +1358,7 @@ ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseImportDeclarations()
         auto startLoc = Lexer()->GetToken().Start();
         Lexer()->NextToken();  // eat import
 
-        ir::ImportKinds importKind =
-            Lexer()->TryEatTokenKeyword(lexer::TokenType::KEYW_TYPE) ? ir::ImportKinds::TYPES : ir::ImportKinds::ALL;
+        ir::ImportKinds importKind = TryEatTypeKeyword() ? ir::ImportKinds::TYPES : ir::ImportKinds::ALL;
 
         ArenaVector<ir::AstNode *> specifiers(Allocator()->Adapter());
         ArenaVector<ir::AstNode *> defaultSpecifiers(Allocator()->Adapter());

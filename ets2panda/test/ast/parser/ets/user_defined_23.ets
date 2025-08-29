@@ -16,5 +16,3 @@
 class /* @@ label */type {
   type: number = 0
 }
-
-/* @@@ label Error SyntaxError: Cannot be used as user-defined type.  */
