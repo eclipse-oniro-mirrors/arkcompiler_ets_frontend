@@ -24,6 +24,7 @@
 #include "checker/types/globalTypesHolder.h"
 #include "compiler/lowering/util.h"
 #include "util/es2pandaMacros.h"
+#include "generated/signatures.h"
 
 namespace ark::es2panda::compiler {
 
@@ -48,9 +49,6 @@ struct UnboxContext {
     ArenaSet<ir::AstNode *> handled;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
-
-// NOLINTNEXTLINE(readability-identifier-naming)
-char const *UNBOXER_METHOD_NAME = "unboxed";
 
 bool AnyOfElementTypes(checker::Type *type, const std::function<bool(checker::Type *)> &isFunc)
 {
@@ -342,6 +340,36 @@ static void HandleDeclarationNode(UnboxContext *uctx, ir::AstNode *ast)  ///
     uctx->handled.insert(ast);
 }
 
+std::string_view GetUnboxerMethodName(const checker::Type *unboxedType)
+{
+    if (unboxedType->IsETSBooleanType()) {
+        return Signatures::BOOLEAN_CAST;
+    }
+    if (unboxedType->IsByteType()) {
+        return Signatures::BYTE_CAST;
+    }
+    // NOTE(pronaip): #29054 Remove IsCharType once stdlib stops using legacy JS type
+    if (unboxedType->IsETSCharType() || unboxedType->IsCharType()) {
+        return Signatures::CHAR_CAST;
+    }
+    if (unboxedType->IsDoubleType()) {
+        return Signatures::DOUBLE_CAST;
+    }
+    if (unboxedType->IsFloatType()) {
+        return Signatures::FLOAT_CAST;
+    }
+    if (unboxedType->IsIntType()) {
+        return Signatures::INT_CAST;
+    }
+    if (unboxedType->IsLongType()) {
+        return Signatures::LONG_CAST;
+    }
+    if (unboxedType->IsShortType()) {
+        return Signatures::SHORT_CAST;
+    }
+    ES2PANDA_UNREACHABLE();
+}
+
 static ir::Expression *InsertUnboxing(UnboxContext *uctx, ir::Expression *expr)
 {
     auto *boxedType = expr->TsType();
@@ -363,7 +391,9 @@ static ir::Expression *InsertUnboxing(UnboxContext *uctx, ir::Expression *expr)
         return ret;
     }
 
-    auto *methodId = allocator->New<ir::Identifier>(UNBOXER_METHOD_NAME, allocator);
+    const std::string_view unboxerName = GetUnboxerMethodName(unboxedType);
+
+    auto *methodId = allocator->New<ir::Identifier>(unboxerName, allocator);
     auto *mexpr = util::NodeAllocator::ForceSetParent<ir::MemberExpression>(
         allocator, expr, methodId, ir::MemberExpressionKind::PROPERTY_ACCESS, false, false);
     auto *call = util::NodeAllocator::ForceSetParent<ir::CallExpression>(
@@ -425,13 +455,21 @@ static ir::Expression *CreateToIntrinsicCallExpression(UnboxContext *uctx, check
 
 static bool CheckIfOnTopOfUnboxing(UnboxContext *uctx, ir::Expression *expr, checker::Type *boxedType)
 {
-    return expr->IsCallExpression() && expr->AsCallExpression()->Arguments().empty() &&
-           expr->AsCallExpression()->Callee()->IsMemberExpression() &&
-           expr->AsCallExpression()->Callee()->AsMemberExpression()->Property()->IsIdentifier() &&
-           expr->AsCallExpression()->Callee()->AsMemberExpression()->Property()->AsIdentifier()->Name() ==
-               UNBOXER_METHOD_NAME &&
-           uctx->checker->Relation()->IsIdenticalTo(
-               expr->AsCallExpression()->Callee()->AsMemberExpression()->Object()->TsType(), boxedType);
+    constexpr std::array<std::string_view, 8> UNBOXER_METHOD_NAMES {
+        Signatures::BOOLEAN_CAST, Signatures::BYTE_CAST, Signatures::CHAR_CAST, Signatures::DOUBLE_CAST,
+        Signatures::FLOAT_CAST,   Signatures::INT_CAST,  Signatures::LONG_CAST, Signatures::SHORT_CAST,
+    };
+    if (expr->IsCallExpression() && expr->AsCallExpression()->Arguments().empty() &&
+        expr->AsCallExpression()->Callee()->IsMemberExpression() &&
+        expr->AsCallExpression()->Callee()->AsMemberExpression()->Property()->IsIdentifier()) {
+        const util::StringView &name =
+            expr->AsCallExpression()->Callee()->AsMemberExpression()->Property()->AsIdentifier()->Name();
+        return UNBOXER_METHOD_NAMES.cend() != std::find_if(UNBOXER_METHOD_NAMES.cbegin(), UNBOXER_METHOD_NAMES.cend(),
+                                                           [&name](const auto &hay) { return name.Is(hay); }) &&
+               uctx->checker->Relation()->IsIdenticalTo(
+                   expr->AsCallExpression()->Callee()->AsMemberExpression()->Object()->TsType(), boxedType);
+    }
+    return false;
 }
 
 static ir::Expression *LinkUnboxingExpr(ir::Expression *expr, ir::AstNode *parent)
