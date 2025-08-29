@@ -445,16 +445,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 53,
-            "column": 5,
-            "endLine": 53,
-            "endColumn": 14,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"animateTo\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
             "line": 55,
             "column": 14,
             "endLine": 55,

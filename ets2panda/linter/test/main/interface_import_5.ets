@@ -27,7 +27,6 @@ struct Index {
           .fontSize(50)
           .fontWeight(FontWeight.Bold)
           .onClick(() => {
-            // 建议使用this.getUIContext().getHostContext()
             let context: Context = getContext(this) as Context;
             console.info("CacheDir:" + context.cacheDir);
           })
