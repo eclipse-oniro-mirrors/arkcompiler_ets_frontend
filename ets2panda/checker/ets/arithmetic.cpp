@@ -905,6 +905,9 @@ Type *ETSChecker::CheckBinaryOperatorNullishCoalescing(ir::Expression *left, ir:
 {
     auto *leftType = left->TsType();
     leftType = GetNonNullishType(leftType);
+    if (leftType->IsTypeError() && HasStatus(checker::CheckerStatus::IN_TYPE_INFER)) {
+        return GlobalTypeError();
+    }
 
     ERROR_TYPE_CHECK(this, leftType, return GlobalTypeError());
 
