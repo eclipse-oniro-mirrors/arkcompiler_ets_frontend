@@ -59,3 +59,7 @@ export declare namespace ns {
 export declare class MyError extends Error {
     mycode: number
 }
+
+export declare interface OptionalInterface{
+    s?: string
+}
