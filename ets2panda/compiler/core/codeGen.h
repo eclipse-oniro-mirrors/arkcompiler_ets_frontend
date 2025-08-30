@@ -91,6 +91,7 @@ public:
     virtual ~CodeGen() = default;
     NO_COPY_SEMANTIC(CodeGen);
     NO_MOVE_SEMANTIC(CodeGen);
+    virtual IRNode *AllocSpillMov(const ir::AstNode *node, VReg vd, VReg vs, OperandType type) = 0;
 
     [[nodiscard]] virtual IRNode *AllocMov(const ir::AstNode *node, VReg vd, VReg vs) = 0;
     [[nodiscard]] virtual IRNode *AllocMov(const ir::AstNode *node, OutVReg vd, VReg vs) = 0;
@@ -153,6 +154,36 @@ public:
     [[nodiscard]] virtual checker::Type const *TypeForVar(varbinder::Variable const *var) const noexcept;
 
     compiler::AstCompiler *GetAstCompiler() const;
+
+    const ArenaList<IRNode *> &GetInsns() const noexcept
+    {
+        return insns_;
+    }
+
+    void SetInsns(const ArenaList<IRNode *> &insns)
+    {
+        insns_ = insns;
+    }
+
+    void AddSpillRegsToUsedRegs(VReg::Index spillRegs)
+    {
+        ES2PANDA_ASSERT(totalRegs_ >= spillRegs);
+        totalRegs_ -= spillRegs;
+        ES2PANDA_ASSERT(usedRegs_ >= spillRegs);
+        usedRegs_ -= spillRegs;
+    }
+
+    uint32_t GetRegsNum() const
+    {
+        uint32_t min = std::min(totalRegs_, usedRegs_);
+        ES2PANDA_ASSERT(min <= VReg::REG_START);
+        return static_cast<uint32_t>(VReg::REG_START - min);
+    }
+
+    void FinalizeRegAllocation()
+    {
+        Ra().AdjustInsRegWhenHasSpill();
+    }
 
 protected:
     [[nodiscard]] SimpleAllocator &Sa() noexcept;

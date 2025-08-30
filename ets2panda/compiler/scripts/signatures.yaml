@@ -30,6 +30,10 @@ defines:
     ref: GET_INDEX_METHOD
   - name: $_set
     ref: SET_INDEX_METHOD
+  - name: <get>
+    ref: GETTER_METHOD_BEGIN
+  - name: <set>
+    ref: SETTER_METHOD_BEGIN
   - name: $_iterator
     ref: ITERATOR_METHOD
   - name: Iterator 

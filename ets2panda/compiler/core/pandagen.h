@@ -72,6 +72,7 @@ public:
 
     [[nodiscard]] IRNode *AllocMov(const ir::AstNode *node, VReg vd, VReg vs) override;
     [[nodiscard]] IRNode *AllocMov(const ir::AstNode *node, OutVReg vd, VReg vs) override;
+    [[nodiscard]] IRNode *AllocSpillMov(const ir::AstNode *node, VReg vd, VReg vs, OperandType type) override;
     void MoveVreg(const ir::AstNode *node, VReg vd, VReg vs);
 
     void LoadAccumulatorDouble(const ir::AstNode *node, double num);

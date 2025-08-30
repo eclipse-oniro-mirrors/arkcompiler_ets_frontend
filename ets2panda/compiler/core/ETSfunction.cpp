@@ -168,6 +168,7 @@ void ETSFunction::Compile(ETSGen *etsg)
         CompileSourceBlock(etsg, etsg->RootNode()->AsBlockStatement());
     }
 
+    etsg->FinalizeRegAllocation();
     etsg->SortCatchTables();
 }
 

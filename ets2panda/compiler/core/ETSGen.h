@@ -56,6 +56,7 @@ public:
     void LoadAccumulator(const ir::AstNode *node, VReg vreg);
     [[nodiscard]] IRNode *AllocMov(const ir::AstNode *node, VReg vd, VReg vs) override;
     [[nodiscard]] IRNode *AllocMov(const ir::AstNode *node, OutVReg vd, VReg vs) override;
+    [[nodiscard]] IRNode *AllocSpillMov(const ir::AstNode *node, VReg vd, VReg vs, OperandType type) override;
     void MoveVreg(const ir::AstNode *node, VReg vd, VReg vs);
 
     [[nodiscard]] checker::Type const *TypeForVar(varbinder::Variable const *var) const noexcept override;
@@ -361,7 +362,7 @@ public:
 
     void EmitAnyIsinstance(const ir::AstNode *node, VReg typeReg)
     {
-        Sa().Emit<AnyIsinstance>(node, typeReg);
+        Ra().Emit<AnyIsinstance>(node, typeReg);
     }
 
     void CallExact(const ir::AstNode *node, checker::Signature *signature,
