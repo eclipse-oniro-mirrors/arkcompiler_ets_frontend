@@ -403,6 +403,24 @@ void TSDeclGen::GenExportNamedDeclarations()
     }
 }
 
+void TSDeclGen::GenInitModuleGlueCode()
+{
+    for (auto *stmt : program_->Ast()->Statements()) {
+        if (!stmt->IsExpressionStatement()) {
+            continue;
+        }
+        if (!stmt->AsExpressionStatement()->GetExpression()->IsCallExpression()) {
+            continue;
+        }
+        auto *callExpr = stmt->AsExpressionStatement()->GetExpression()->AsCallExpression();
+        if (callExpr->Callee()->IsIdentifier() &&
+            callExpr->Callee()->AsIdentifier()->Name() == compiler::Signatures::INIT_MODULE_METHOD) {
+            OutTs("import \"", callExpr->Arguments()[0]->ToString(), "\"");
+            OutEndlTs();
+        }
+    }
+}
+
 void TSDeclGen::GenImportDeclarations()
 {
     for (auto *globalStatement : program_->Ast()->Statements()) {
@@ -2575,13 +2593,17 @@ bool GenerateTsDeclarations(checker::ETSChecker *checker, const ark::es2panda::p
     declBuilder.ResetTsOutput();
     declBuilder.ResetDtsOutput();
 
+    declBuilder.GenInitModuleGlueCode();
+    std::string initModuleOutputEts = declBuilder.GetTsOutput();
+    declBuilder.ResetTsOutput();
+
     compiler::GetPhaseManager()->SetCurrentPhaseIdWithoutReCheck(afterCheckerId);
     declBuilder.GenImportDeclarations();
 
     std::string importOutputEts = declBuilder.GetTsOutput();
     std::string importOutputDEts = declBuilder.GetDtsOutput();
 
-    std::string combineEts = importOutputEts + outputEts + exportOutputEts;
+    std::string combineEts = importOutputEts + initModuleOutputEts + outputEts + exportOutputEts;
     std::string combinedDEts = importOutputDEts + outputDEts + exportOutputDEts;
 
     if (!declBuilder.GetDeclgenOptions().recordFile.empty()) {

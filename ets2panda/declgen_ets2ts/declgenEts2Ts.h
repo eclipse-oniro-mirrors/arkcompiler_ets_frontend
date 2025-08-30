@@ -75,6 +75,7 @@ public:
     bool Generate();
     void GenImportDeclarations();
     void GenExportNamedDeclarations();
+    void GenInitModuleGlueCode();
     void GenImportRecordDeclarations(const std::string &source);
 
     std::string GetDtsOutput() const
