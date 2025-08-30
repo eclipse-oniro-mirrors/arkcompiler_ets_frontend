@@ -15,13 +15,19 @@
 
 import { CompileFileInfo, ModuleInfo } from '../types';
 import { BuildConfig } from '../types';
-import { Logger } from '../logger';
+import {
+  Logger,
+  LogData,
+  LogDataFactory
+} from '../logger';
+import { ErrorCode } from '../error_code';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
   changeDeclgenFileExtension,
   changeFileExtension,
   createFileIfNotExists,
+  serializeWithIgnore,
   ensurePathExists
 } from '../util/utils';
 import {
@@ -54,7 +60,8 @@ process.on('message', async (message: {
   pluginDriver.initPlugins(buildConfig);
 
   let { arkts, arktsGlobal } = initKoalaModules(buildConfig)
-
+  let errorStatus = false;
+  let continueOnError = buildConfig.continueOnError ?? true;
   try {
     const source = fs.readFileSync(fileInfo.filePath, 'utf8');
     const moduleInfo = moduleInfosMap.get(fileInfo.packageName)!;
@@ -112,17 +119,25 @@ process.on('message', async (message: {
 
     logger.printInfo(`[declgen] ${fileInfo.filePath} processed successfully`);
 
-    process.send({ id, success: true });
+    process.send({ id, success: true, shouldKill: false });
   } catch (err) {
+    errorStatus = true;
     if (err instanceof Error) {
+      const logData: LogData = LogDataFactory.newInstance(
+        ErrorCode.BUILDSYSTEM_DECLGEN_FAIL,
+        'Declgen generates declaration files failed.',
+        err.message,
+        fileInfo.filePath
+      );
       process.send({
         id,
         success: false,
-        error: `Generate declaration files failed.\n${err?.message || err}`
+        shouldKill: !continueOnError,
+        error: serializeWithIgnore(logData)
       });
     }
   } finally {
-    if (arktsGlobal?.compilerContext?.peer) {
+    if (!errorStatus && arktsGlobal?.compilerContext?.peer) {
       arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
     }
     if (arktsGlobal?.config) {

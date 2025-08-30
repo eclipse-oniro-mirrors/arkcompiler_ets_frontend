@@ -105,7 +105,7 @@ process.on('message', async (message: {
     arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
 
     if (process.send) {
-      process.send({ id, success: true });
+      process.send({ id, success: true, shouldKill: false });
     }
   } catch (error) {
     errorStatus = true;
@@ -120,6 +120,7 @@ process.on('message', async (message: {
         process.send({
           id,
           success: false,
+          shouldKill: true,
           error: serializeWithIgnore(logData)
         });
       }
