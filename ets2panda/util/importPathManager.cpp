@@ -76,7 +76,7 @@ void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
     // process emptry "path" in dependencies, since in interop we allow imports without typecheck
     if (!Helpers::EndsWith(std::string(externalModuleImportData.Path()), ".abc")) {
         importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
-        importData.ohmUrl = externalModuleImportData.OhmUrl();
+        importData.ohmUrl.assign(externalModuleImportData.OhmUrl(), externalModuleImportData.OhmUrl().size());
         return;
     }
 
@@ -108,8 +108,9 @@ void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
         return anno.GetName() == compiler::DeclGenPhase::MODULE_DECLARATION_ANNOTATION;
     });
     ES2PANDA_ASSERT(moduleDeclarationAnno != annotations.end());
-    auto declText = moduleDeclarationAnno->GetElements()[0].GetValue()->GetAsScalar()->GetValue<std::string>();
-    importData.declText = declText;
+    util::UString declText {moduleDeclarationAnno->GetElements()[0].GetValue()->GetAsScalar()->GetValue<std::string>(),
+                            allocator_};
+    importData.declText = declText.View().Utf8();
 }
 
 // If needed, the result of this function can be cached

@@ -427,7 +427,7 @@ std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPat
             ss << inputStream.rdbuf();
             std::string externalSource;
             if (data.IsExternalBinaryImport()) {
-                externalSource = data.declText;
+                externalSource = std::string(data.declText);
             } else {
                 externalSource = ss.str();
             }

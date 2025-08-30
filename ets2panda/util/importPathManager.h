@@ -84,7 +84,7 @@ public:
         std::string_view resolvedSource {};
         std::string_view declPath {};
         std::string ohmUrl {};
-        std::string declText {};
+        std::string_view declText {};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
 
         bool HasSpecifiedDeclPath() const
