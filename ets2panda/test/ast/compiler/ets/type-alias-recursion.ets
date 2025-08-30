@@ -13,10 +13,12 @@
  * limitations under the License.
  */
 
-type RF = (p:string) => number
+type foo = () => bar;
+type bar = () => foo;
 
-function main(){
-    let v1 = () => {return RF}
+function baz() : bar {
+  return baz;
 }
 
-/* @@? 19:28 Error TypeError: Type name 'RF' used in the wrong context */
+/* @@? 17:1 Error TypeError: Circular type alias reference */
+/* @@? 20:10 Error TypeError: Type '(() => (() => (() => *ERROR_TYPE*)))' is not compatible with the enclosing method's return type '(() => (() => *ERROR_TYPE*))' */
