@@ -296,9 +296,9 @@ semantic:
   id: 363
   message: "Missing initializer in const declaration"
 
-- name: CONTINUE_TARGET_OUTSIDE_FUNCTION
+- name: CONTINUE_OR_BREAK_TARGET_OUTSIDE_FUNCTION
   id: 49316
-  message: "Continue target can't be outside the function"
+  message: "Continue or break target can't be outside the function"
 
 - name: CTOR_CLASS_NOT_FIRST
   id: 201
