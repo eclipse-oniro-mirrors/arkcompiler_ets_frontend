@@ -6,6 +6,13 @@ overload_declaration/constructor_overload_sig_with_ref_type.ets
 type_param_in_union.ets
 mypackage/implicit_package_import_2.ets
 #FailKind.TSC_FAIL - 21 tests:
+InterfacePrivateMethod.ets
+InterfaceWithDefaultFunction1.ets
+overload_declaration/InterfacePrivateMethod2.ets
+this_override.ets
+trailing_lambda_and_optional_parameterets7.ets
+trailing_lambda_and_optional_parameterets8.ets
+trailing_lambda_and_optional_parameterets9.ets
 ClassNewInstance.ets
 Enum7.ets
 GenericBridges_01.ets

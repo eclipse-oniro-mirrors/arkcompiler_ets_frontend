@@ -699,6 +699,16 @@ void TSDeclGen::ProcessFuncParameter(varbinder::LocalVariable *param)
     OutDts("ESObject");
 }
 
+void TSDeclGen::GenOptionalFlag(const checker::Signature *sig, const ir::MethodDefinition *methodDef)
+{
+    if (sig->HasSignatureFlag(checker::SignatureFlags::DEFAULT) ||
+        (state_.inInterface && methodDef != nullptr && methodDef->Value()->IsFunctionExpression() &&
+         methodDef->Value()->AsFunctionExpression()->Function()->IsScriptFunction() &&
+         methodDef->Value()->AsFunctionExpression()->Function()->AsScriptFunction()->HasBody())) {
+        OutDts("?");
+    }
+}
+
 void TSDeclGen::ProcessFuncParameters(const checker::Signature *sig)
 {
     GenSeparated(sig->Params(), [this](varbinder::LocalVariable *param) { ProcessFuncParameter(param); });
@@ -712,6 +722,7 @@ void TSDeclGen::GenFunctionType(const checker::ETSFunctionType *etsFunctionType,
     // CC-OFFNXT(G.FMT.14-CPP) project code style
     const auto *sig = GetFuncSignature(etsFunctionType, methodDef);
     ES2PANDA_ASSERT(sig != nullptr);
+    GenOptionalFlag(sig, methodDef);
     if (sig->HasFunction()) {
         GenTypeParameters(sig->Function()->TypeParams(), isStatic, sig->Owner()->AsETSObjectType());
         const auto *funcBody = sig->Function()->Body();
@@ -2079,28 +2090,6 @@ void TSDeclGen::EmitClassGlueCode(const ir::ClassDefinition *classDef, const std
     }
 }
 
-void TSDeclGen::ProcessMethodsFromInterfaces(std::unordered_set<std::string> &processedMethods,
-                                             const ArenaVector<checker::ETSObjectType *> &interfaces)
-{
-    if (interfaces.empty()) {
-        return;
-    }
-    for (const auto &interface : interfaces) {
-        auto methods = interface->Methods();
-        std::unordered_set<std::string> processedInterfaceMethods;
-        for (const auto &method : methods) {
-            if ((method->Flags() & (varbinder::VariableFlags::PUBLIC)) != 0U &&
-                (method->Flags() & (varbinder::VariableFlags::STATIC)) == 0U &&
-                processedMethods.find(method->Name().Mutf8()) == processedMethods.end()) {
-                ProcessMethodDefinition(
-                    method->AsLocalVariable()->Declaration()->AsFunctionDecl()->Node()->AsMethodDefinition(),
-                    processedInterfaceMethods);
-            }
-        }
-        ProcessMethodsFromInterfaces(processedMethods, interface->Interfaces());
-    }
-}
-
 void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
 {
     state_.inClass = true;
@@ -2142,9 +2131,6 @@ void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
         } else if (prop->IsClassDeclaration() && classDef->IsFromStruct()) {
             GenClassDeclaration(prop->AsClassDeclaration());
         }
-    }
-    if (classDef->TsType() != nullptr && classDef->TsType()->IsETSObjectType()) {
-        ProcessMethodsFromInterfaces(processedMethods, classDef->TsType()->AsETSObjectType()->Interfaces());
     }
 }
 
@@ -2261,7 +2247,6 @@ void TSDeclGen::GenMethodDeclaration(const ir::MethodDefinition *methodDef)
     if (ShouldSkipMethodDeclaration(methodDef)) {
         return;
     }
-    GenAnnotations(methodDef->Function());
     const auto methodIdent = GetKeyIdent(methodDef->Key());
     auto methodName = methodIdent->Name().Mutf8();
     if (methodName == "$_iterator") {
@@ -2289,6 +2274,7 @@ bool TSDeclGen::GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef
         if (!ShouldEmitDeclaration(methodDef)) {
             return true;
         }
+        GenAnnotations(methodDef->Function());
         if (methodDef->IsDefaultExported()) {
             OutDts("declare function ");
         } else {
@@ -2300,6 +2286,7 @@ bool TSDeclGen::GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef
             !ShouldEmitDeclaration(methodDef) && !methodDef->IsConstructor()) {
             return true;
         }
+        GenAnnotations(methodDef->Function());
         ProcessIndent();
         GenModifier(methodDef);
     }

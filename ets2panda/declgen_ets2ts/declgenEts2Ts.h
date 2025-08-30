@@ -204,6 +204,7 @@ private:
     void ProcessParameterName(varbinder::LocalVariable *param);
     void ProcessFuncParameter(varbinder::LocalVariable *param);
     void ProcessFuncParameters(const checker::Signature *sig);
+    void GenOptionalFlag(const checker::Signature *sig, const ir::MethodDefinition *methodDef);
     void ProcessClassPropertyType(const ir::ClassProperty *classProp);
     std::vector<ir::AstNode *> FilterValidImportSpecifiers(const ArenaVector<ir::AstNode *> &specifiers);
     std::vector<ir::AstNode *> FilterValidExportSpecifiers(const ArenaVector<ir::ExportSpecifier *> &specifiers);
