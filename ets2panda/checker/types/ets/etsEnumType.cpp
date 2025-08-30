@@ -134,4 +134,56 @@ void ETSIntEnumType::CastTarget(TypeRelation *relation, Type *source)
     conversion::Forbidden(relation);
 }
 
+bool ETSDoubleEnumType::AssignmentSource(TypeRelation *relation, Type *target)
+{
+    bool result = false;
+    if ((target->IsETSObjectType() && (target->AsETSObjectType()->IsGlobalETSObjectType() ||
+                                       target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE))) ||
+        target->HasTypeFlag(TypeFlag::DOUBLE)) {
+        result = true;
+        relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+    } else if (target->IsETSUnionType()) {
+        auto &unionConstituentTypes = target->AsETSUnionType()->ConstituentTypes();
+
+        // clang-format off
+        if (std::any_of(
+            unionConstituentTypes.begin(), unionConstituentTypes.end(),
+                [relation, this](auto *constituentType) { return relation->IsIdenticalTo(this, constituentType); })) {
+            result = true;
+        }
+        // clang-format on
+    }
+
+    return relation->Result(result);
+}
+
+void ETSDoubleEnumType::AssignmentTarget(TypeRelation *relation, Type *source)
+{
+    relation->Result(relation->IsIdenticalTo(this, source));
+}
+
+void ETSDoubleEnumType::Cast(TypeRelation *const relation, Type *const target)
+{
+    if (relation->IsIdenticalTo(this, target)) {
+        relation->Result(true);
+        return;
+    }
+    if (target->HasTypeFlag(TypeFlag::ETS_NUMERIC) || target->IsBuiltinNumeric()) {
+        relation->RaiseError(diagnostic::ENUM_DEPRECATED_CAST, {this, target}, relation->GetNode()->Start());
+        relation->Result(true);
+        return;
+    }
+    conversion::Forbidden(relation);
+}
+
+void ETSDoubleEnumType::CastTarget(TypeRelation *relation, Type *source)
+{
+    if (source->IsFloatType() || source->IsBuiltinNumeric()) {
+        relation->RaiseError(diagnostic::ENUM_DEPRECATED_CAST, {source, this}, relation->GetNode()->Start());
+        relation->Result(true);
+        return;
+    }
+    conversion::Forbidden(relation);
+}
+
 }  // namespace ark::es2panda::checker

@@ -375,9 +375,12 @@ ETSObjectType *ETSChecker::CreateETSObjectType(ir::AstNode *declNode, ETSObjectF
         if (declNode->AsClassDefinition()->IsIntEnumTransformed()) {
             objectType =
                 ProgramAllocator()->New<ETSIntEnumType>(ProgramAllocator(), name, internalName, declNode, Relation());
-        } else {
-            ES2PANDA_ASSERT(declNode->AsClassDefinition()->IsStringEnumTransformed());
+        } else if (declNode->AsClassDefinition()->IsStringEnumTransformed()) {
             objectType = ProgramAllocator()->New<ETSStringEnumType>(ProgramAllocator(), name, internalName, declNode,
+                                                                    Relation());
+        } else {
+            ES2PANDA_ASSERT(declNode->AsClassDefinition()->IsDoubleEnumTransformed());
+            objectType = ProgramAllocator()->New<ETSDoubleEnumType>(ProgramAllocator(), name, internalName, declNode,
                                                                     Relation());
         }
     } else if (internalName == compiler::Signatures::BUILTIN_ARRAY) {

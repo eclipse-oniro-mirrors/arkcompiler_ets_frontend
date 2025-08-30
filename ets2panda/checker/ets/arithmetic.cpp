@@ -140,6 +140,10 @@ static Type *TryConvertToPrimitiveType(ETSChecker *checker, Type *type)
         return checker->GlobalIntType();
     }
 
+    if (type->IsETSDoubleEnumType()) {
+        return checker->GlobalDoubleType();
+    }
+
     if (type->IsETSStringEnumType()) {
         return checker->GlobalETSStringLiteralType();
     }

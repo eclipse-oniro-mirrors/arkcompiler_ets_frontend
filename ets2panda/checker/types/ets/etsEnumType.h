@@ -162,6 +162,27 @@ public:
     void CastTarget(TypeRelation *relation, Type *source) override;
 };
 
+class ETSDoubleEnumType : public ETSEnumType {
+public:
+    explicit ETSDoubleEnumType(ThreadSafeArenaAllocator *allocator, util::StringView name,
+                               util::StringView internalName, ir::AstNode *declNode, TypeRelation *relation)
+        : ETSEnumType(allocator, name, internalName, declNode, relation, ETSObjectFlags::DOUBLE_ENUM_OBJECT)
+    {
+        AddTypeFlag(checker::TypeFlag::ETS_ENUM);  // TypeFlag enum is full, cannot add new ETS_DOUBLE_ENUM typeflag
+    }
+
+    NO_COPY_SEMANTIC(ETSDoubleEnumType);
+    NO_MOVE_SEMANTIC(ETSDoubleEnumType);
+
+    ETSDoubleEnumType() = delete;
+    ~ETSDoubleEnumType() override = default;
+
+    bool AssignmentSource(TypeRelation *relation, Type *target) override;
+    void AssignmentTarget(TypeRelation *relation, Type *source) override;
+    void Cast(TypeRelation *relation, Type *target) override;
+    void CastTarget(TypeRelation *relation, Type *source) override;
+};
+
 }  // namespace ark::es2panda::checker
 
 #endif

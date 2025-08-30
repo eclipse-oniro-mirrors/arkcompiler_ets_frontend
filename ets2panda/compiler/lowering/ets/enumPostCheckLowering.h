@@ -27,6 +27,7 @@ enum class EnumCastType {
     CAST_TO_INT,
     CAST_TO_INT_ENUM,
     CAST_TO_STRING_ENUM,
+    CAST_TO_DOUBLE_ENUM
 };
 
 class EnumPostCheckLoweringPhase : public PhaseForDeclarations {

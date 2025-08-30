@@ -60,6 +60,7 @@ enum class ClassDefinitionModifiers : uint32_t {
     FUNCTIONAL_REFERENCE = 1U << 17U,
     LAZY_IMPORT_OBJECT_CLASS = 1U << 18U,
     INIT_IN_CCTOR = 1U << 19U,
+    DOUBLE_ENUM_TRANSFORMED = 1U << 20U,
     DECLARATION_ID_REQUIRED = DECLARATION | ID_REQUIRED,
     ETS_MODULE = NAMESPACE_TRANSFORMED | GLOBAL
 };
@@ -256,6 +257,11 @@ public:
         return (Modifiers() & ClassDefinitionModifiers::INT_ENUM_TRANSFORMED) != 0;
     }
 
+    [[nodiscard]] bool IsDoubleEnumTransformed() const noexcept
+    {
+        return (Modifiers() & ClassDefinitionModifiers::DOUBLE_ENUM_TRANSFORMED) != 0;
+    }
+
     [[nodiscard]] bool IsStringEnumTransformed() const noexcept
     {
         return (Modifiers() & ClassDefinitionModifiers::STRING_ENUM_TRANSFORMED) != 0;
@@ -263,7 +269,7 @@ public:
 
     [[nodiscard]] bool IsEnumTransformed() const noexcept
     {
-        return IsIntEnumTransformed() || IsStringEnumTransformed();
+        return IsIntEnumTransformed() || IsStringEnumTransformed() || IsDoubleEnumTransformed();
     }
 
     [[nodiscard]] bool IsNamespaceTransformed() const noexcept
