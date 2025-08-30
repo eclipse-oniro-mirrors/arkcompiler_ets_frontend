@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -101,8 +101,8 @@ public:
     [[nodiscard]] const varbinder::Scope *Scope() const noexcept;
     [[nodiscard]] const ir::AstNode *RootNode() const noexcept;
 
-    [[nodiscard]] ArenaVector<IRNode *> &Insns() noexcept;
-    [[nodiscard]] const ArenaVector<IRNode *> &Insns() const noexcept;
+    [[nodiscard]] ArenaList<IRNode *> &Insns() noexcept;
+    [[nodiscard]] const ArenaList<IRNode *> &Insns() const noexcept;
 
     [[nodiscard]] VReg AllocReg();
     [[nodiscard]] VReg AllocRegWithType(const checker::Type *type);
@@ -173,7 +173,7 @@ private:
     varbinder::FunctionScope *topScope_ {};
     varbinder::Scope *scope_ {};
     const ir::AstNode *rootNode_ {};
-    ArenaVector<IRNode *> insns_;
+    ArenaList<IRNode *> insns_;
     ArenaVector<CatchTable *> catchList_;
     TypeMap typeMap_;
     ProgramElement *programElement_ {};
