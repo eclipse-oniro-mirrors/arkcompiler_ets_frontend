@@ -145,16 +145,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 34,
-            "column": 36,
-            "endLine": 34,
-            "endColumn": 46,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"getContext\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
             "line": 38,
             "column": 3,
             "endLine": 38,
