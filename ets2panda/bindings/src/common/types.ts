@@ -177,6 +177,7 @@ export interface BuildConfig extends DeclgenConfig, ModuleConfig, PathConfig {
   plugins: PluginsConfig;
   compileFiles: string[];
   depModuleCompileFiles: string[];
+  sdkAliasConfigPath?: string;
 }
 // ProjectConfig ends
 
@@ -195,6 +196,7 @@ export interface ModuleInfo {
   language: string;
   dependencies?: string[];
   declFilesPath?: string;
+  sdkAliasConfigPath?: string;
 }
 
 export interface Job {
@@ -284,4 +286,9 @@ export enum AstNodeType {
 export interface NodeInfo {
   name: string;
   kind: AstNodeType;
+}
+
+export interface AliasConfig {
+  originalAPIName: string;
+  isStatic: boolean;
 }

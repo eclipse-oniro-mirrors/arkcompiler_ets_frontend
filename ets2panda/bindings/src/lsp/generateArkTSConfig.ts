@@ -67,7 +67,8 @@ export function generateModuleInfo(allBuildConfig: Record<string, BuildConfig>, 
     dynamicDepModuleInfos: [],
     language: buildConfig.language,
     dependencies: buildConfig.dependencies,
-    declFilesPath: buildConfig.declFilesPath
+    declFilesPath: buildConfig.declFilesPath,
+    sdkAliasConfigPath: buildConfig.sdkAliasConfigPath ? buildConfig.sdkAliasConfigPath : undefined
   };
   collectDepModuleInfos(moduleInfo, allBuildConfig);
   return moduleInfo;
