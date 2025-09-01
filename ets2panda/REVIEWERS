@@ -40,7 +40,7 @@
 /ets2panda/declgen_ets2ts/ @dreamdoomwalker ^trubachevilya ^ivagin ^igelhaus ^Prof1983
 /ets2panda/driver/ @trubachevilya @dreamdoomwalker ^igelhaus ^Prof1983
 /ets2panda/ir/ @ziziziiziziz ^gavin1012_hw @csabaosztrogonac ^igelhaus ^Prof1983
-/ets2panda/linter/              @rosinskiyigor @eokolnov1 @yyytiancai ^utkugursel
+/ets2panda/linter/              @rosinskiyigor @eokolnov1 ^utkugursel
 /ets2panda/parser/ @robertsipka @shimenkovmikhail ^igelhaus ^csabaosztrogonac ^Prof1983 ^chernykhsergey ^zelentsovdmitry
 /ets2panda/scripts/*-build.sh @titovatatiana ^igelhaus ^Prof1983
 /ets2panda/scripts/arkui* @titovatatiana ^igelhaus ^Prof1983
