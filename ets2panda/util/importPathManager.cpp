@@ -363,6 +363,20 @@ std::string ImportPathManager::TryMatchDependencies(std::string_view fixedPath) 
     return {};
 }
 
+std::string ImportPathManager::TryResolvePath(std::string_view fixedPath) const
+{
+    auto normalizedPath = ark::os::NormalizePath(std::string(fixedPath));
+    std::replace_if(
+        normalizedPath.begin(), normalizedPath.end(), [&](auto &c) { return c == pathDelimiter_[0]; }, '/');
+    if (arktsConfig_->Dependencies().find(normalizedPath) != arktsConfig_->Dependencies().cend()) {
+        return normalizedPath;
+    }
+    if (arktsConfig_->Paths().find(normalizedPath) != arktsConfig_->Paths().cend()) {
+        return normalizedPath;
+    }
+    return {};
+}
+
 std::string_view ImportPathManager::DirOrDirWithIndexFile(StringView dir) const
 {
     // Supported index files: keep this checking order
@@ -386,8 +400,8 @@ ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFile
     std::replace_if(
         fixedPath.begin(), fixedPath.end(), [&](auto &c) { return ((delim != c) && ((c == '\\') || (c == '/'))); },
         delim);
-    if (auto resolvedDynamic = TryMatchDependencies(fixedPath); !resolvedDynamic.empty()) {
-        return {UString(resolvedDynamic, allocator_).View().Utf8(), true};
+    if (auto resolvedPath = TryResolvePath(fixedPath); !resolvedPath.empty()) {
+        return {UString(resolvedPath, allocator_).View().Utf8(), true};
     }
 
     auto path = UString(fixedPath, allocator_).View();
@@ -508,6 +522,9 @@ util::StringView ImportPathManager::FormModuleName(const util::Path &path)
         return FormUnitName(unitName) +
                (relativePath.empty() || FormUnitName(unitName).empty() ? relativePath : ("." + relativePath));
     };
+    if (auto dmn = TryFormDynamicModuleName(arktsConfig_->Dependencies(), tryFormModuleName); !dmn.empty()) {
+        return util::UString(dmn, allocator_).View();
+    }
     if (auto res = tryFormModuleName(arktsConfig_->Package(), arktsConfig_->BaseUrl() + pathDelimiter_.data()); res) {
         return util::UString(res.value(), allocator_).View();
     }
@@ -523,9 +540,6 @@ util::StringView ImportPathManager::FormModuleName(const util::Path &path)
         if (auto res = tryFormModuleName(unitName, unitPath[0]); res) {
             return util::UString(res.value(), allocator_).View();
         }
-    }
-    if (auto dmn = TryFormDynamicModuleName(arktsConfig_->Dependencies(), tryFormModuleName); !dmn.empty()) {
-        return util::UString(dmn, allocator_).View();
     }
     // NOTE (hurton): as a last step, try resolving using the BaseUrl again without a path delimiter at the end
     if (auto res = tryFormModuleName(arktsConfig_->Package(), arktsConfig_->BaseUrl()); res) {
