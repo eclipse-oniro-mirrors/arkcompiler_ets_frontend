@@ -5,6 +5,3 @@ test262/data/other_tests/built-ins/TypedArray/prototype/reduce/callbackfn-resize
 
 #23295
 test262/data/other_tests/built-ins/Array/prototype/reduceRight/callbackfn-resize-arraybuffer.js
-
-#29287
-test262/data/other_tests/built-ins/RegExp/property-escapes/generated/Emoji_Modifier.js
