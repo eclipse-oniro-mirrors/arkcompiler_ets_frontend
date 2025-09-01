@@ -82,17 +82,20 @@ export class DriverHelper {
     etsOutPath: string,
     exportAll: boolean,
     isolated: boolean,
-    recordFile: string
+    recordFile: string,
+    genAnnotations: boolean
   ): void {
     let exportAll_: KBoolean = exportAll ? 1 : 0;
     let isolated_: KBoolean = isolated ? 1 : 0;
+    let genAnnotations_: KBoolean = genAnnotations ? 1 : 0;
     global.es2panda._GenerateTsDeclarationsFromContext(
       this._cfg.peer,
       declOutPath,
       etsOutPath,
       exportAll_,
       isolated_,
-      recordFile
+      recordFile,
+      genAnnotations_
     );
   }
 }

@@ -1270,7 +1270,8 @@ extern "C" es2panda_AstNode **AllDeclarationsByNameFromProgram([[maybe_unused]] 
 extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(es2panda_Context *ctx,
                                                                          const char *outputDeclEts,
                                                                          const char *outputEts, bool exportAll,
-                                                                         bool isolated, const char *recordFile)
+                                                                         bool isolated, const char *recordFile,
+                                                                         bool genAnnotations)
 {
     auto *ctxImpl = reinterpret_cast<Context *>(ctx);
     auto *checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctxImpl->GetChecker());
@@ -1281,6 +1282,7 @@ extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(es2pand
     declgenOptions.outputEts = outputEts ? outputEts : "";
     declgenOptions.isolated = isolated;
     declgenOptions.recordFile = recordFile ? recordFile : "";
+    declgenOptions.genAnnotations = genAnnotations;
 
     return ark::es2panda::declgen_ets2ts::GenerateTsDeclarations(checker, ctxImpl->parserProgram, declgenOptions) ? 0
                                                                                                                   : 1;

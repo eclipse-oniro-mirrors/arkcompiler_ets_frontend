@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     impl->ProceedToState(context, ES2PANDA_STATE_CHECKED);
     CheckForErrors("CHECKED", context);
     std::string declName = GetDeclPrefix(argv[argc - 1]) + ".d.ets";
-    int result = impl->GenerateTsDeclarationsFromContext(context, declName.c_str(), "dump.ets", false, true, "");
+    int result = impl->GenerateTsDeclarationsFromContext(context, declName.c_str(), "dump.ets", false, true, "", false);
     if (result != 0) {
         std::cerr << "FAILED TO GENERATE DECLARATIONS" << std::endl;
         return result;

@@ -235,6 +235,9 @@ interface es2panda_Impl {
     ir.AstNode FirstDeclarationByNameFromProgram(es2panda_Context ctx, es2panda_Program program, String name);
     sequence<ir.AstNode> AllDeclarationsByNameFromNode(es2panda_Context ctx, ir.AstNode node, String name);
     sequence<ir.AstNode> AllDeclarationsByNameFromProgram(es2panda_Context ctx, es2panda_Program program, String name);
+    i32 GenerateTsDeclarationsFromContext(es2panda_Context ctx, String outputDeclEts, String outputEts,
+                                          boolean exportAll, boolean isolated, String recordFile,
+                                          boolean genAnnotations);
     void InsertETSImportDeclarationAndParse(es2panda_Context context, es2panda_Program program,
                                             ETSImportDeclaration node);
     i32 GenerateStaticDeclarationsFromContext(es2panda_Context context, String outputPath);

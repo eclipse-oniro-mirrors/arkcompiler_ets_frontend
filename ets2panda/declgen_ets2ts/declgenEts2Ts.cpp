@@ -1123,7 +1123,8 @@ std::string TSDeclGen::RemoveModuleExtensionName(const std::string &filepath)
 template <class T>
 void TSDeclGen::GenAnnotations(const ir::AnnotationAllowed<T> *node)
 {
-    if (node == nullptr || (!node->HasAnnotations() && node->Annotations().size() == 0U)) {
+    if (!declgenOptions_.genAnnotations || node == nullptr ||
+        (!node->HasAnnotations() && node->Annotations().size() == 0U)) {
         return;
     }
     GenSeparated(

@@ -274,7 +274,7 @@ struct CAPI_EXPORT es2panda_Impl {
 
     int (*GenerateTsDeclarationsFromContext)(es2panda_Context *context, const char *outputDeclEts,
                                              const char *outputEts, bool exportAll, bool isolated,
-                                             const char *recordFile);
+                                             const char *recordFile, bool genAnnotations);
     void (*InsertETSImportDeclarationAndParse)(es2panda_Context *context, es2panda_Program *program,
                                                es2panda_AstNode *importDeclaration);
     int (*GenerateStaticDeclarationsFromContext)(es2panda_Context *context, const char *outputPath);
