@@ -43,12 +43,15 @@ void ETSModule::Dump(ir::SrcDumper *dumper) const
         dumper->Endl();
         for (auto elem : Statements()) {
             elem->Dump(dumper);
-            if (elem == Statements().back()) {
-                dumper->DecrIndent();
+            if (elem != Statements().back()) {
+                dumper->Endl();
             }
-            dumper->Endl();
         }
     }
+    if (IsNamespace()) {
+        dumper->DecrIndent();
+    }
+    dumper->Endl();
     if (IsNamespace()) {
         dumper->Add("}");
     }

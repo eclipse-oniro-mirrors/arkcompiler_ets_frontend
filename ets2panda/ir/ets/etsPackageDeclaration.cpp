@@ -40,6 +40,9 @@ void ETSPackageDeclaration::Dump(ir::AstDumper *dumper) const
 
 void ETSPackageDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    if (dumper->IsDeclgen()) {
+        return;
+    }
     dumper->Add("package ");
     name_->Dump(dumper);
     dumper->Add(";");

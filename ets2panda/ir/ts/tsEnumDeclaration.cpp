@@ -108,7 +108,9 @@ void TSEnumDeclaration::Dump(ir::SrcDumper *dumper) const
     } else if (key_->Parent()->IsDefaultExported() && dumper->IsDeclgen()) {
         dumper->Add("export default ");
     }
-    if (IsDeclare() || dumper->IsDeclgen()) {
+    if (dumper->IsDeclgen()) {
+        dumper->TryDeclareAmbientContext();
+    } else if (IsDeclare()) {
         dumper->Add("declare ");
     }
     dumper->Add("enum ");

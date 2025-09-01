@@ -3,7 +3,6 @@ PROCEED TO PARSE SUCCESS
 SRC DUMP AFTER ADD ANNOTATION:
 
 @interface Component {}
-
 @Component() class A {
   public constructor() {}
   

@@ -37,9 +37,7 @@ function foo() {}
 
 static std::string expected = R"(
 let a: int;
-
 const b: int = 666;
-
 function main() {}
 
 function foo() {}

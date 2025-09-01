@@ -38,25 +38,62 @@ SrcDumper::SrcDumper(const ir::AstNode *node, bool isDeclgen) : isDeclgen_(isDec
 
 void SrcDumper::IncrIndent()
 {
-    indent_.push_back(' ');
-    indent_.push_back(' ');
+    indent_ += "  ";
 }
 
 void SrcDumper::DecrIndent()
 {
-    if (indent_.size() >= 2U) {
-        indent_.pop_back();
-        indent_.pop_back();
-    }
+    ES2PANDA_ASSERT(indent_.size() >= 2U);
+    indent_.resize(indent_.size() - 2U);
 }
 
-void SrcDumper::Endl(size_t num)
+// NOTE: `num` argument is unsed, should be deleted once bindings are no longer hardcoded (never?)
+void SrcDumper::Endl([[maybe_unused]] size_t num)
 {
-    while (num != 0U) {
-        ss_ << std::endl;
-        --num;
-    }
+    ss_ << std::endl;
     ss_ << indent_;
+}
+
+static bool OnlySpaces(const std::string &s)
+{
+    for (char c : s) {
+        if (!std::isspace(c)) {
+            return false;
+        }
+    }
+    return true;
+}
+static std::stringstream NormalizeStream(std::stringstream &iss)
+{
+    std::stringstream oss;
+    std::string line;
+    bool lastWasEmpty = false;
+    while (std::getline(iss, line)) {
+        if (OnlySpaces(line)) {
+            if (!lastWasEmpty) {
+                oss << std::endl;
+                lastWasEmpty = true;
+            }
+        } else {
+            oss << line << std::endl;
+            lastWasEmpty = false;
+        }
+    }
+    return oss;
+}
+
+std::string SrcDumper::Str() const
+{
+    // NOTE: at first place we should not print extra indentations and newlines
+    // NOTE: should we normalize for all calls?
+    if (IsDeclgen()) {
+        std::stringstream ss;
+        // NOTE: copy stream to save constness of Str() method (used in plugins)
+        ss << ss_.rdbuf();
+        ss = NormalizeStream(ss);
+        return ss.str();
+    }
+    return ss_.str();
 }
 
 void SrcDumper::Add(const std::string &str)
