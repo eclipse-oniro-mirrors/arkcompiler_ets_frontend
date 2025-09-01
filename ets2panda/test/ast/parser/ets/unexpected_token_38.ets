@@ -28,4 +28,3 @@ let func3: (f: (a: number, b: string) => number[]): number[] => (a: number, b: b
 /* @@? 22:51 Error SyntaxError: Unexpected token '=>'. */
 /* @@? 22:53 Error SyntaxError: Unexpected token 'number'. */
 /* @@? 22:62 Error SyntaxError: Unexpected token '=>'. */
-/* @@? 22:62 Error SyntaxError: Unexpected token. */

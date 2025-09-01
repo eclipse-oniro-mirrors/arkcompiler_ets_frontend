@@ -311,8 +311,14 @@ ir::Expression *ETSParser::ParseDefaultPrimaryExpression(ExpressionParseFlags fl
     ir::TypeNode *potentialType = ParseTypeAnnotation(&options);
 
     if (potentialType != nullptr) {
+        // #29702 remove special handling for TSArray.
         if (potentialType->IsTSArrayType()) {
-            return potentialType;
+            auto currentSavedPos = Lexer()->Save();
+            Lexer()->Rewind(savedPos);
+            const auto tokenNow = Lexer()->GetToken();
+            LogUnexpectedToken(tokenNow);
+            Lexer()->Rewind(currentSavedPos);
+            return AllocBrokenExpression(tokenNow.Loc());
         }
 
         if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD) {

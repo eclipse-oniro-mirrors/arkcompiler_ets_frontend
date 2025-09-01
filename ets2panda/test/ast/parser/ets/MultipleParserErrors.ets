@@ -198,6 +198,7 @@ function main(): void {
 /* @@? 51:25 Error SyntaxError: Rest parameter must be the last formal parameter. */
 /* @@? 51:27 Error SyntaxError: Unexpected token '...'. */
 /* @@? 51:30 Error SyntaxError: Unexpected token 'p'. */
+/* @@? 51:33 Error SyntaxError: Unexpected token 'int'. */
 /* @@? 51:33 Error SyntaxError: Label must be followed by a loop statement. */
 /* @@? 51:38 Error SyntaxError: Unexpected token ')'. */
 /* @@? 51:39 Error SyntaxError: Unexpected token ':'. */
@@ -288,4 +289,4 @@ function main(): void {
 /* @@? 165:5 Error TypeError: This expression is not callable. */
 /* @@? 166:5 Error TypeError: No matching call signature */
 /* @@? 166:5 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 292:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 293:1 Error SyntaxError: Expected '}', got 'end of stream'. */
