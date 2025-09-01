@@ -15,9 +15,9 @@ set(DEP_ANALYZER_SRC
   dep_analyzer.cpp
 )
 
-panda_add_executable(dependency_analyzer main.cpp)
+panda_frontend_add_executable(dependency_analyzer main.cpp)
 
-panda_add_library(dependency_analyzer_lib ${PANDA_DEFAULT_LIB_TYPE}  ${DEP_ANALYZER_SRC})
+panda_frontend_add_library(dependency_analyzer_lib ${PANDA_DEFAULT_LIB_TYPE}  ${DEP_ANALYZER_SRC})
 
 panda_target_link_libraries(dependency_analyzer_lib es2panda-public es2panda-lib arkassembler)
 panda_target_include_directories(dependency_analyzer_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

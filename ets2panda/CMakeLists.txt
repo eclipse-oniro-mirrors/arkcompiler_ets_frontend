@@ -14,9 +14,22 @@
 cmake_minimum_required (VERSION 3.5.0)
 
 include(cmake/coverage.cmake)
+include(cmake/PandaCmakeFunctions.cmake)
 
 project (es2panda)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# ----- Aliases ----------------------------------------------------------------
+
+add_custom_target(frontend_bins COMMENT "Build all common frontend binaries")
+add_dependencies(frontend_bins
+  es2panda
+  es2panda-lib
+  es2panda-public
+  dependency_analyzer
+  dependency_analyzer_lib
+  declgen_ets2ts
+)
 
 set(ES2PANDA_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(ES2PANDA_BINARY_ROOT ${CMAKE_CURRENT_BINARY_DIR})
@@ -660,7 +673,7 @@ set(ES2PANDA_LIB_SRC
 
 # libes2panda does not include bytecode optimizer, because it is used in
 # libarkruntime, and conflict with JIT setup ensues
-panda_add_library(es2panda-lib ${PANDA_DEFAULT_LIB_TYPE} ${ES2PANDA_LIB_SRC})
+panda_frontend_add_library(es2panda-lib ${PANDA_DEFAULT_LIB_TYPE} ${ES2PANDA_LIB_SRC})
 add_dependencies(es2panda-lib isa_gen_es2panda es2panda_options_gen es2panda_diagnostic_gen es2panda_keywords es2panda_signatures)
 
 set(ICU_INCLUDE_DIRS

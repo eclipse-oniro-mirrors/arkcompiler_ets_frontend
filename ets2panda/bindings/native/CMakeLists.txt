@@ -27,7 +27,7 @@ function(panda_add_node_library TARGET)
         set(ARG_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/bindings)
     endif()
 
-    panda_add_library(${TARGET} SHARED ${ARG_SOURCES})
+    panda_frontend_add_library(${TARGET} SHARED ${ARG_SOURCES})
     panda_target_link_libraries(${TARGET} ${ARG_LIBRARIES})
 
     if(PANDA_TARGET_OHOS)
@@ -98,6 +98,8 @@ panda_add_node_library(${NAPI_BINDINGS_LIB}
   LIBRARIES ${ES2PANDA_LIBS}
   OUTPUT_SUFFIX ".node"
 )
+
+add_dependencies(frontend_bins ${NAPI_BINDINGS_LIB})
 
 panda_target_include_directories(${NAPI_BINDINGS_LIB}
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
