@@ -13,17 +13,16 @@
  * limitations under the License.
  */
 
-import { test, __$$ETS_ANNOTATION$$__Anno1, A } from "@normalized:N&&&bytecodehar1/bytecodehar1-file1&2.0.0"
-import * as ns from "@normalized:N&&&bytecodehar1/bytecodehar1-file2&2.0.0"
-
-function main() {
-    test();
-    let a = new A();
-    ns.test();
+const enum E {
+    A = 1,
+    B = -2
 }
 
-@__$$ETS_ANNOTATION$$__Anno1({ b: true })
-class B { }
+export @interface __$$ETS_ANNOTATION$$__MyAnno {
+    a: E[][][] = [[new Array<E>(0)]];
+}
 
-@__$$ETS_ANNOTATION$$__ns.Anno2({ b: true })
-class C { }
+@__$$ETS_ANNOTATION$$__MyAnno({a: [[[1, -2, 1]]]})
+class A {
+
+}

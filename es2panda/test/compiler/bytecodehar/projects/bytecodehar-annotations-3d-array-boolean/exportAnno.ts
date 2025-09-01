@@ -13,17 +13,11 @@
  * limitations under the License.
  */
 
-import { test, __$$ETS_ANNOTATION$$__Anno1, A } from "@normalized:N&&&bytecodehar1/bytecodehar1-file1&2.0.0"
-import * as ns from "@normalized:N&&&bytecodehar1/bytecodehar1-file2&2.0.0"
-
-function main() {
-    test();
-    let a = new A();
-    ns.test();
+export @interface __$$ETS_ANNOTATION$$__MyAnno {
+    a: boolean[][][];
 }
 
-@__$$ETS_ANNOTATION$$__Anno1({ b: true })
-class B { }
+@__$$ETS_ANNOTATION$$__MyAnno({a: [[[true, false, true]]]})
+class A {
 
-@__$$ETS_ANNOTATION$$__ns.Anno2({ b: true })
-class C { }
+}

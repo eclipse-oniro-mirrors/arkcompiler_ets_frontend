@@ -183,7 +183,7 @@ public:
     static bool BelongingToRecords(const std::string &name, const std::unordered_set<std::string> &retainRecordSet,
                                    const std::string &delimiter = std::string(DOT));
     static bool IsInnerAnnotationRecordName(const std::string_view &name);
-    static std::string RemoveRecordSuffixAnnotationName(const std::string &name);
+    static size_t RemoveRecordSuffixAnnotationName(std::string &name);
     static void RemoveProgramsRedundantData(std::map<std::string, panda::es2panda::util::ProgramCache*> &progsInfo,
         const std::map<std::string, std::unordered_set<std::string>> &resolveDepsRelation);
     static bool IsDefaultApiVersion(int apiVersion, std::string subApiVersion);
