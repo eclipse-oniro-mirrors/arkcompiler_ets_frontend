@@ -157,12 +157,12 @@ std::vector<Phase *> GetETSPhaseList()
         new UnionLowering,
         new ExpandBracketsPhase,
         new PartialExportClassGen,
-        new InterfaceObjectLiteralLowering, // must be put after all classes are generated.
-        new ObjectLiteralLowering,
         new StringConstructorLowering,
         new StringComparisonLowering,
         new OptionalArgumentsLowering, // #22952 could be moved to earlier phase
         new GenericBridgesPhase,
+        new InterfaceObjectLiteralLowering,
+        new ObjectLiteralLowering,
         new TypeFromLowering,
         new GradualTypeNarrowing,
         new PrimitiveConversionPhase,

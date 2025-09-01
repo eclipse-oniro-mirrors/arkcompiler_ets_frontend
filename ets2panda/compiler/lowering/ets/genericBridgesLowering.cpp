@@ -17,8 +17,142 @@
 
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
+#include <sstream>
 
 namespace ark::es2panda::compiler {
+
+std::string GenericBridgesPhase::BuildMethodSignature(ir::ScriptFunction const *derivedFunction,
+                                                      checker::Signature const *baseSignature,
+                                                      std::vector<ir::AstNode *> &typeNodes) const noexcept
+{
+    std::ostringstream signature {};
+    auto const &functionName = derivedFunction->Id()->Name().Mutf8();
+
+    // Add method type prefix (get/set for accessors)
+    if (derivedFunction->IsGetter()) {
+        signature << "get ";
+    } else if (derivedFunction->IsSetter()) {
+        signature << "set ";
+    }
+
+    signature << functionName << '(';
+
+    // Add parameters
+    auto const &baseParameters = baseSignature->Params();
+    auto const &derivedParameters = derivedFunction->Signature()->Params();
+    auto const parameterNumber = baseParameters.size();
+
+    for (std::size_t i = 0U; i < parameterNumber; ++i) {
+        if (i != 0U) {
+            signature << ", ";
+        }
+
+        signature << GetAdjustedParameterName(derivedFunction, derivedParameters[i]->Name().Utf8());
+
+        // Add base parameter type
+        typeNodes.emplace_back(
+            context_->AllocNode<ir::OpaqueTypeNode>(baseParameters[i]->TsType(), context_->Allocator()));
+        signature << ": @@T" << typeNodes.size();
+    }
+
+    signature << ")";
+
+    // Add return type (not for setters)
+    if (!derivedFunction->IsSetter()) {
+        typeNodes.emplace_back(context_->AllocNode<ir::OpaqueTypeNode>(
+            const_cast<checker::Type *>(baseSignature->ReturnType()), context_->Allocator()));
+        signature << ": @@T" << typeNodes.size();
+    }
+
+    signature << " ";
+    return signature.str();
+}
+
+std::string GenericBridgesPhase::BuildMethodBody(ir::ClassDefinition const *classDefinition,
+                                                 ir::ScriptFunction const *derivedFunction,
+                                                 std::vector<ir::AstNode *> &typeNodes) const noexcept
+{
+    std::ostringstream body {};
+    auto const &functionName = derivedFunction->Id()->Name().Mutf8();
+
+    // Add class type for casting
+    typeNodes.emplace_back(context_->AllocNode<ir::OpaqueTypeNode>(
+        const_cast<checker::Type *>(classDefinition->TsType()), context_->Allocator()));
+    auto const classTypeIndex = typeNodes.size();
+
+    if (derivedFunction->IsGetter()) {
+        body << "{ return (this as @@T" << classTypeIndex << ")." << functionName << "; }";
+    } else if (derivedFunction->IsSetter()) {
+        body << "{ (this as @@T" << classTypeIndex << ")." << functionName
+             << BuildSetterAssignment(derivedFunction, typeNodes) << "; }";
+    } else {
+        body << "{ return (this as @@T" << classTypeIndex << ")." << functionName
+             << BuildMethodCall(derivedFunction, typeNodes) << "; }";
+    }
+
+    return body.str();
+}
+
+std::string GenericBridgesPhase::GetAdjustedParameterName(ir::ScriptFunction const *derivedFunction,
+                                                          std::string_view parameterName) const noexcept
+{
+    // For setters, remove property prefix if present
+    if (derivedFunction->IsSetter() && parameterName.rfind(compiler::Signatures::PROPERTY, 0) == 0) {
+        return std::string(parameterName.substr(compiler::Signatures::PROPERTY.size()));
+    }
+    return std::string(parameterName);
+}
+
+std::string GenericBridgesPhase::BuildSetterAssignment(ir::ScriptFunction const *derivedFunction,
+                                                       std::vector<ir::AstNode *> &typeNodes) const noexcept
+{
+    std::ostringstream assignment {};
+    auto const &derivedParameters = derivedFunction->Signature()->Params();
+
+    for (std::size_t i = 0U; i < derivedParameters.size(); ++i) {
+        if (i != 0U) {
+            assignment << ", ";
+        }
+
+        assignment << " = ";
+        auto const &parameterName = derivedParameters[i]->Name().Utf8();
+        auto const adjustedParameterName = GetAdjustedParameterName(derivedFunction, parameterName);
+        assignment << adjustedParameterName;
+
+        // Add derived parameter type for casting
+        typeNodes.emplace_back(
+            context_->AllocNode<ir::OpaqueTypeNode>(derivedParameters[i]->TsType(), context_->Allocator()));
+        assignment << " as @@T" << typeNodes.size();
+    }
+
+    return assignment.str();
+}
+
+std::string GenericBridgesPhase::BuildMethodCall(ir::ScriptFunction const *derivedFunction,
+                                                 std::vector<ir::AstNode *> &typeNodes) const noexcept
+{
+    std::ostringstream call {};
+    call << "(";
+    auto const &derivedParameters = derivedFunction->Signature()->Params();
+
+    for (std::size_t i = 0U; i < derivedParameters.size(); ++i) {
+        if (i != 0U) {
+            call << ", ";
+        }
+
+        auto const &parameterName = derivedParameters[i]->Name().Utf8();
+        auto const adjustedParameterName = GetAdjustedParameterName(derivedFunction, parameterName);
+        call << adjustedParameterName;
+
+        // Add derived parameter type for casting
+        typeNodes.emplace_back(
+            context_->AllocNode<ir::OpaqueTypeNode>(derivedParameters[i]->TsType(), context_->Allocator()));
+        call << " as @@T" << typeNodes.size();
+    }
+
+    call << ")";
+    return call.str();
+}
 
 std::string GenericBridgesPhase::CreateMethodDefinitionString(ir::ClassDefinition const *classDefinition,
                                                               checker::Signature const *baseSignature,
@@ -26,51 +160,17 @@ std::string GenericBridgesPhase::CreateMethodDefinitionString(ir::ClassDefinitio
                                                               std::vector<ir::AstNode *> &typeNodes) const noexcept
 {
     constexpr std::size_t SOURCE_CODE_LENGTH = 128U;
+    std::string result {};
+    result.reserve(2U * SOURCE_CODE_LENGTH);
 
-    std::string str1 {};
-    str1.reserve(2U * SOURCE_CODE_LENGTH);
+    // Build method signature (name, parameters, return type)
+    std::string signature = BuildMethodSignature(derivedFunction, baseSignature, typeNodes);
 
-    std::string str2 {};
-    str2.reserve(SOURCE_CODE_LENGTH);
+    // Build method body (implementation)
+    std::string body = BuildMethodBody(classDefinition, derivedFunction, typeNodes);
 
-    auto const &functionName = derivedFunction->Id()->Name().Mutf8();
-    str1 = functionName + '(';
-
-    str2 += ")." + functionName + '(';
-
-    auto const &baseParameters = baseSignature->Params();
-    auto const &derivedParameters = derivedFunction->Signature()->Params();
-    auto const parameterNumber = baseParameters.size();
-
-    for (std::size_t i = 0U; i < parameterNumber; ++i) {
-        if (i != 0U) {
-            str1 += ", ";
-            str2 += ", ";
-        }
-
-        auto const *const derivedParameter = derivedParameters[i];
-        auto const &parameterName = derivedParameter->Name().Utf8();
-        str1 += parameterName;
-        typeNodes.emplace_back(
-            context_->AllocNode<ir::OpaqueTypeNode>(baseParameters[i]->TsType(), context_->Allocator()));
-        str1 += ": @@T" + std::to_string(typeNodes.size());
-
-        str2 += parameterName;
-        typeNodes.emplace_back(
-            context_->AllocNode<ir::OpaqueTypeNode>(derivedParameter->TsType(), context_->Allocator()));
-        str2 += " as @@T" + std::to_string(typeNodes.size());
-    }
-
-    typeNodes.emplace_back(context_->AllocNode<ir::OpaqueTypeNode>(
-        const_cast<checker::Type *>(baseSignature->ReturnType()), context_->Allocator()));
-    str1 += "): @@T" + std::to_string(typeNodes.size()) + ' ';
-
-    typeNodes.emplace_back(context_->AllocNode<ir::OpaqueTypeNode>(
-        const_cast<checker::Type *>(classDefinition->TsType()), context_->Allocator()));
-    str2 = "{ return (this as @@T" + std::to_string(typeNodes.size()) + str2 + "); }";
-
-    str1 += str2;
-    return str1;
+    result = signature + body;
+    return result;
 }
 
 void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const classDefinition,
@@ -89,10 +189,16 @@ void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const clas
     ES2PANDA_ASSERT(bridgeMethodDefinition != nullptr);
     auto *const bridgeMethod = bridgeMethodDefinition->AsMethodDefinition();
     ES2PANDA_ASSERT(bridgeMethod != nullptr && methodDefinition->Id() != nullptr);
-    bridgeMethod->AddModifier(methodDefinition->Modifiers());
-    bridgeMethod->ClearModifier(ir::ModifierFlags::NATIVE | ir::ModifierFlags::ABSTRACT);
-    bridgeMethod->AddAstNodeFlags(methodDefinition->GetAstNodeFlags());
+
+    auto configureModifiersAndFlags = [](auto *target, auto *source) {
+        target->AddModifier(source->Modifiers());
+        target->ClearModifier(ir::ModifierFlags::NATIVE | ir::ModifierFlags::ABSTRACT);
+        target->AddAstNodeFlags(source->GetAstNodeFlags());
+    };
+
+    configureModifiersAndFlags(bridgeMethod, methodDefinition);
     bridgeMethod->SetParent(const_cast<ir::ClassDefinition *>(classDefinition));
+    configureModifiersAndFlags(bridgeMethod->Function(), methodDefinition->Function());
 
     auto *varBinder = context_->GetChecker()->VarBinder()->AsETSBinder();
     auto *scope = NearestScope(methodDefinition);
@@ -210,7 +316,10 @@ static ir::MethodDefinition *FindBridgeCandidate(ir::ClassDefinition const *cons
     auto const &classBody = classDefinition->Body();
 
     // Skip `static`, `final` and special methods...
-    if (baseMethod->Kind() != ir::MethodDefinitionKind::METHOD || baseMethod->IsStatic() || baseMethod->IsFinal() ||
+    bool const isSpecialMethodKind =
+        (baseMethod->Kind() != ir::MethodDefinitionKind::METHOD &&
+         baseMethod->Kind() != ir::MethodDefinitionKind::GET && baseMethod->Kind() != ir::MethodDefinitionKind::SET);
+    if (isSpecialMethodKind || baseMethod->IsStatic() || baseMethod->IsFinal() ||
         baseMethod->Id()->Name().Utf8().find("lambda_invoke-") != std::string_view::npos) {
         return nullptr;
     }
@@ -337,11 +446,9 @@ ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefini
         // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
         !substitutions.derivedSubstitutions.empty()) {
         // If it has, then probably the generic bridges should be created.
-        auto const &superClassBody =
-            classDefinition->Super()->TsType()->AsETSObjectType()->GetDeclNode()->AsClassDefinition()->Body();
+        auto const &superClassBody = superType->GetDeclNode()->AsClassDefinition()->Body();
         CreateGenericBridges(classDefinition, substitutions, superClassBody);
-        ArenaVector<checker::ETSObjectType *> interfaces =
-            classDefinition->Super()->TsType()->AsETSObjectType()->Interfaces();
+        ArenaVector<checker::ETSObjectType *> interfaces = superType->Interfaces();
         if (!interfaces.empty()) {
             for (checker::ETSObjectType *interface : interfaces) {
                 auto &interfaceBody = interface->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
