@@ -22,6 +22,7 @@
 #include "compiler/base/literals.h"
 #include "compiler/core/codeGen.h"
 #include "compiler/core/regSpiller.h"
+#include "compiler/core/ETSemitter.h"
 #include "compiler/debugger/debuginfoDumper.h"
 #include "compiler/base/catchTable.h"
 #include "es2panda.h"
@@ -125,6 +126,9 @@ static LiteralPair TransformLiteral(const compiler::Literal *literal)
 void FunctionEmitter::Generate()
 {
     auto *func = GenFunctionSignature();
+    if (func == nullptr) {
+        return;
+    }
     GenFunctionInstructions(func);
     GenVariablesDebugInfo(func);
     GenSourceFileDebugInfo(func);

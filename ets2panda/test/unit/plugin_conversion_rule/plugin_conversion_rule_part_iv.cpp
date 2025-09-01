@@ -343,23 +343,6 @@ TEST_F(PluginConversionRuleUnitTest, PropertyProcessorInputParameter)
     EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
 }
 
-// apiName: ETSObjectTypeIterateConst
-TEST_F(PluginConversionRuleUnitTest, PropertyTraverserInputParameter)
-{
-    std::string targetCAPI {R"(
-    extern "C" void ETSObjectTypeIterateConst([[maybe_unused]] es2panda_Context *context,
-    es2panda_Type *classInstance, [[maybe_unused]] PropertyTraverser cb/*return_args:*/)
-    {
-        std::function<void(const varbinder::LocalVariable *)> cbE2p =
-        [cb](const varbinder::LocalVariable *propertyTraverserLambdaVariable)
-        {cb(reinterpret_cast<const es2panda_Variable *>(propertyTraverserLambdaVariable));};
-        ((reinterpret_cast<const checker::ETSObjectType *>(classInstance))->Iterate(cbE2p));
-    })"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
 // apiName: CreateTSModuleDeclaration
 TEST_F(PluginConversionRuleUnitTest, TSModuleDeclarationConstructorFlagsInputParameter)
 {

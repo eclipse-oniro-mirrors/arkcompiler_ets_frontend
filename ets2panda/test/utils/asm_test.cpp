@@ -12,10 +12,105 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <gtest/gtest.h>
 #include <algorithm>
+#include <cstdint>
+#include <iomanip>
+#include <ios>
+#include <string>
+
+#include <gmock/gmock.h>
+
 #include "asm_test.h"
 #include "assembly-field.h"
+#include "assembly-literals.h"
+#include "assembly-program.h"
+
+#include "generated/signatures.h"
+#include "gmock/gmock.h"
+#include "libarkfile/literal_data_accessor.h"
+
+// Value printers for tests
+namespace ark::pandasm {
+
+namespace {
+
+template <class... Ts>
+struct LiteralOverloaded : Ts... {
+    using Ts::operator()...;
+};
+
+// explicit deduction guide (not needed as of C++20)
+template <class... Ts>
+LiteralOverloaded(Ts...) -> LiteralOverloaded<Ts...>;
+
+}  // namespace
+
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &s, decltype(LiteralArray::Literal::value) const &value)
+{
+    std::visit(LiteralOverloaded {
+                   [&s](bool v) { s << (v ? "true" : "false"); },
+                   [&s](uint8_t v) { s << std::to_string(v) << "_U8"; },
+                   [&s](uint16_t v) { s << std::to_string(v) << "_U16"; },
+                   [&s](uint32_t v) { s << std::to_string(v) << "_U32"; },
+                   [&s](uint64_t v) { s << std::to_string(v) << "_U64"; },
+                   [&s](float v) { s << std::fixed << v << std::defaultfloat << "f"; },
+                   [&s](double v) { s << std::fixed << v << std::defaultfloat; },
+                   [&s](const std::string &v) { s << std::quoted(v); },
+               },
+               value);
+    return s;
+}
+
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &s, panda_file::LiteralTag const &value)
+{
+    return s << "0x" << std::hex << uint64_t(value) << std::dec << "_LT";
+}
+
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &s, LiteralArray::Literal const &value)
+{
+    return s << "{" << value.tag << ", " << value.value << "}";
+}
+
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &s, LiteralArray const &value)
+{
+    s << "LA({ ";
+    auto it = value.literals.begin();
+    if (it != value.literals.end()) {
+        s << *it++;
+    }
+    while (it != value.literals.end()) {
+        s << ", " << *it++;
+    }
+    s << " })";
+    return s;
+}
+
+bool operator==(const LiteralArray &lhs, const LiteralArray &rhs)
+{
+    return lhs.literals == rhs.literals;
+}
+bool operator==(const LiteralArray::Literal &lhs, const LiteralArray::Literal &rhs)
+{
+    return lhs.tag == rhs.tag && lhs.value == rhs.value;
+}
+
+using ArrType = Program::LiteralArrayTableT;
+
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &s, ArrType::value_type const &value)
+{
+    return s << "{" << std::quoted(value.first) << ", " << value.second << "}";
+}
+
+[[maybe_unused]] static void PrintTo(const ArrType &value, std::ostream *s)
+{
+    *s << "{" << std::endl;
+    for (auto const &p : value) {
+        *s << "    " << p << "," << std::endl;
+    }
+    *s << "}" << std::endl;
+}
+
+}  // namespace ark::pandasm
 
 namespace test::utils {
 
@@ -85,15 +180,22 @@ void AsmTest::CheckAnnoDecl(ark::pandasm::Program *program, const std::string &a
     }
 }
 
-void AsmTest::CheckLiteralArrayTable(
-    ark::pandasm::Program *program,
-    const std::vector<std::pair<std::string, std::vector<AnnotationValueType>>> &expectedLiteralArrayTable)
+void AsmTest::ExpectLiteralArrayTable(
+    ark::pandasm::Program *program, const ::ark::pandasm::Program::LiteralArrayTableT &expectedLiteralArrayTable) const
+{
+    EXPECT_THAT(program->literalarrayTable, ::testing::ContainerEq(expectedLiteralArrayTable));
+}
+
+void AsmTest::CheckLiteralArrayTable(ark::pandasm::Program *program,
+                                     const AsmTest::ExpectedLiteralArrayTable &expectedLiteralArrayTable)
 {
     const auto &literalarrayTable = program->literalarrayTable;
     ASSERT_FALSE(literalarrayTable.empty()) << "literalarrayTable is empty!";
     for (const auto &literalArray : expectedLiteralArrayTable) {
+        // ASSERT_THAT(literalarrayTable, ::testing::Contains(::testing::Key(literalArray.first)));
         auto found = literalarrayTable.find(literalArray.first);
-        ASSERT_NE(found, literalarrayTable.end());
+        ASSERT_NE(found, literalarrayTable.end()) << "Not found " << std::quoted(literalArray.first) << std::endl
+                                                  << "Actual: " << ::testing::PrintToString(literalarrayTable);
         size_t i = 1;
         for (const auto &value : literalArray.second) {
             constexpr int STRIDE = 2;

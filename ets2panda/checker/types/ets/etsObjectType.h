@@ -346,11 +346,8 @@ public:
         return name_.EndsWith(PARTIAL_CLASS_SUFFIX);
     }
 
-    std::vector<const varbinder::LocalVariable *> ForeignProperties() const;
     varbinder::LocalVariable *GetProperty(util::StringView name, PropertySearchFlags flags) const;
     std::vector<varbinder::LocalVariable *> GetAllProperties() const;
-    void ForEachAllOwnProperties(const PropertyTraverser &cb) const;
-    void ForEachAllNonOwnProperties(const PropertyTraverser &cb) const;
     varbinder::LocalVariable *CopyProperty(varbinder::LocalVariable *prop, ArenaAllocator *allocator,
                                            TypeRelation *relation, GlobalTypesHolder *globalTypes);
     std::vector<varbinder::LocalVariable *> Methods() const;
@@ -370,7 +367,6 @@ public:
                                     TypeRelation *relation) const;
     bool CheckIdenticalFlags(ETSObjectType *other) const;
     ETSObjectType *CreateETSObjectType(ir::AstNode *declNode, ETSObjectFlags flags);
-    void Iterate(const PropertyTraverser &cb) const;
     void ToString(std::stringstream &ss, bool precise) const override;
     void Identical(TypeRelation *relation, Type *other) override;
     bool AssignmentSource(TypeRelation *relation, Type *target) override;

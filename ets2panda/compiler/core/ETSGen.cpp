@@ -13,9 +13,13 @@
  * limitations under the License.
  */
 
+#include <utility>
 #include "ETSGen-inl.h"
 
+#include "assembler/mangling.h"
+#include "compiler/core/ETSemitter.h"
 #include "compiler/core/codeGen.h"
+#include "compiler/core/emitter.h"
 #include "compiler/core/regScope.h"
 #include "generated/isa.h"
 #include "generated/signatures.h"
@@ -118,6 +122,11 @@ const checker::Type *ETSGen::ReturnType() const noexcept
 const checker::ETSObjectType *ETSGen::ContainingObjectType() const noexcept
 {
     return containingObjectType_;
+}
+
+ETSEmitter *ETSGen::Emitter() const
+{
+    return static_cast<ETSEmitter *>(Context()->emitter);
 }
 
 VReg &ETSGen::Acc() noexcept
@@ -248,14 +257,12 @@ void ETSGen::LoadVar(const ir::Identifier *node, varbinder::Variable const *cons
 
     switch (ETSLReference::ResolveReferenceKind(var)) {
         case ReferenceKind::STATIC_FIELD: {
-            auto fullName = FormClassPropReference(var);
-            LoadStaticProperty(node, var->TsType(), fullName);
+            LoadStaticProperty(node, var->TsType(), FormClassPropReference(var));
             break;
         }
         case ReferenceKind::FIELD: {
             ES2PANDA_ASSERT(GetVRegType(GetThisReg()) != nullptr);
-            const auto fullName = FormClassPropReference(GetVRegType(GetThisReg())->AsETSObjectType(), var->Name());
-            LoadProperty(node, var->TsType(), GetThisReg(), fullName);
+            LoadProperty(node, var->TsType(), GetThisReg(), FormClassPropReference(var));
             break;
         }
         case ReferenceKind::METHOD:
@@ -283,12 +290,11 @@ void ETSGen::StoreVar(const ir::Identifier *node, const varbinder::ConstScopeFin
 
     switch (ETSLReference::ResolveReferenceKind(result.variable)) {
         case ReferenceKind::STATIC_FIELD: {
-            auto fullName = FormClassPropReference(result.variable);
-            StoreStaticProperty(node, result.variable->TsType(), fullName);
+            StoreStaticProperty(node, result.variable->TsType(), FormClassPropReference(result.variable));
             break;
         }
         case ReferenceKind::FIELD: {
-            StoreProperty(node, result.variable->TsType(), GetThisReg(), result.name);
+            StoreProperty(node, result.variable->TsType(), GetThisReg(), FormClassPropReference(result.variable));
             break;
         }
         case ReferenceKind::LOCAL: {
@@ -302,25 +308,40 @@ void ETSGen::StoreVar(const ir::Identifier *node, const varbinder::ConstScopeFin
     }
 }
 
-util::StringView ETSGen::FormClassPropReference(const checker::ETSObjectType *classType, const util::StringView &name)
+util::StringView ETSGen::AssemblerReference(util::StringView ref)
+{
+    Emitter()->AddDependence(ref.Mutf8());
+    return ref;
+}
+
+util::StringView ETSGen::AssemblerSignatureReference(util::StringView ref)
+{
+    auto const funcName = pandasm::GetFunctionNameFromSignature(std::string(ref));
+    ES2PANDA_ASSERT(!funcName.empty());
+    auto const className = funcName.substr(0, funcName.rfind('.'));
+    AssemblerReference(util::StringView(className));
+
+    return AssemblerReference(ref);
+}
+
+util::StringView ETSGen::AssemblerReference(checker::Signature const *sig)
+{
+    return AssemblerSignatureReference(sig->InternalName());  // simplify
+}
+
+util::StringView ETSGen::FormClassOwnPropReference(const checker::ETSObjectType *classType,
+                                                   const util::StringView &name)
 {
     std::stringstream ss;
     ES2PANDA_ASSERT(classType != nullptr);
-    ss << classType->AssemblerName().Mutf8() << Signatures::METHOD_SEPARATOR << name;
-    return util::StringView(*ProgElement()->Strings().emplace(ss.str()).first);
+    ss << ToAssemblerType(classType) << Signatures::METHOD_SEPARATOR << name;
+    return util::StringView(*ProgElement()->Strings().emplace(Emitter()->AddDependence(ss.str())).first);
 }
 
 util::StringView ETSGen::FormClassPropReference(varbinder::Variable const *const var)
 {
     auto containingObjectType = util::Helpers::GetContainingObjectType(var->Declaration()->Node());
-    return FormClassPropReference(containingObjectType, var->Name());
-}
-
-void ETSGen::StoreStaticOwnProperty(const ir::AstNode *node, const checker::Type *propType,
-                                    const util::StringView &name)
-{
-    util::StringView fullName = FormClassPropReference(containingObjectType_, name);
-    StoreStaticProperty(node, propType, fullName);
+    return FormClassOwnPropReference(containingObjectType, var->Name());
 }
 
 void ETSGen::StoreStaticProperty(const ir::AstNode *const node, const checker::Type *propType,
@@ -369,12 +390,8 @@ void ETSGen::LoadStaticProperty(const ir::AstNode *const node, const checker::Ty
 }
 
 void ETSGen::StoreProperty(const ir::AstNode *const node, const checker::Type *propType, const VReg objReg,
-                           const util::StringView &name)
+                           const util::StringView &fullName)
 {
-    ES2PANDA_ASSERT(Checker()->GetApparentType(GetVRegType(objReg)) != nullptr);
-    auto *objType = Checker()->GetApparentType(GetVRegType(objReg))->AsETSObjectType();
-    const auto fullName = FormClassPropReference(objType, name);
-
     if (propType->IsETSReferenceType()) {
         Ra().Emit<StobjObj>(node, objReg, fullName);
     } else if (IsWidePrimitiveType(propType)) {
@@ -419,7 +436,7 @@ void ETSGen::StorePropertyByName([[maybe_unused]] const ir::AstNode *node, [[may
 {
 #ifdef PANDA_WITH_ETS
     auto [metaObj, propType, propName] = fieldMeta;
-    const auto fullName = FormClassPropReference(metaObj, propName);
+    const auto fullName = FormClassOwnPropReference(metaObj, propName);
 
     if (propType->IsETSReferenceType()) {
         Ra().Emit<EtsStobjNameObj>(node, objReg, fullName);
@@ -438,7 +455,7 @@ void ETSGen::LoadPropertyByName([[maybe_unused]] const ir::AstNode *const node, 
 {
 #ifdef PANDA_WITH_ETS
     auto [metaObj, propType, propName] = fieldMeta;
-    const auto fullName = FormClassPropReference(metaObj, propName);
+    const auto fullName = FormClassOwnPropReference(metaObj, propName);
 
     if (propType->IsETSReferenceType()) {
         Ra().Emit<EtsLdobjNameObj>(node, objReg, fullName);
@@ -511,7 +528,7 @@ void ETSGen::CallRangeFillUndefined(const ir::AstNode *const node, checker::Sign
     for (size_t idx = 0; idx < signature->ArgCount(); idx++) {
         Ra().Emit<MovObj>(node, AllocReg(), undef);
     }
-    Rra().Emit<CallRange>(node, argStart, signature->ArgCount() + 1, signature->InternalName(), argStart);
+    Rra().Emit<CallRange>(node, argStart, signature->ArgCount() + 1, AssemblerReference(signature), argStart);
 }
 
 void ETSGen::LoadThis(const ir::AstNode *node)
@@ -521,7 +538,7 @@ void ETSGen::LoadThis(const ir::AstNode *node)
 
 void ETSGen::CreateBigIntObject(const ir::AstNode *node, VReg arg0, std::string_view signature)
 {
-    Ra().Emit<InitobjShort>(node, signature, arg0, dummyReg_);
+    Ra().Emit<InitobjShort>(node, AssemblerSignatureReference(signature), arg0, dummyReg_);
 }
 
 VReg ETSGen::GetThisReg() const
@@ -833,7 +850,8 @@ void ETSGen::EmitFailedTypeCastException(const ir::AstNode *node, const VReg src
     }
     SetVRegType(errorReg, Checker()->GlobalETSBooleanType());
     LoadAccumulatorString(node, util::UString(target->ToString(), Allocator()).View());
-    Ra().Emit<CallAcc, 2U>(node, Signatures::BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCEPTION, src, errorReg, dummyReg_, 1);
+    Ra().Emit<CallAcc, 2U>(node, AssemblerSignatureReference(Signatures::BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCEPTION),
+                           src, errorReg, dummyReg_, 1);
     StoreAccumulator(node, errorReg);
     EmitThrow(node, errorReg);
     SetAccumulatorType(nullptr);
@@ -1571,7 +1589,7 @@ void ETSGen::ResolveConditionalResultReference(const ir::AstNode *node)
     StoreAccumulator(node, objReg);
 
     ES2PANDA_ASSERT(Checker()->GlobalBuiltinETSStringType() != nullptr);
-    EmitIsInstance(node, Checker()->GlobalBuiltinETSStringType()->AssemblerName());
+    EmitIsInstance(node, ToAssemblerType(Checker()->GlobalBuiltinETSStringType()));
     BranchIfTrue(node, isString);
     Sa().Emit<Ldai>(node, 1);
     Branch(node, end);
@@ -1965,7 +1983,7 @@ void ETSGen::HandlePossiblyNullishEquality(const ir::AstNode *node, VReg lhs, VR
 }
 
 static std::optional<std::pair<checker::Type const *, util::StringView>> SelectLooseObjComparator(
-    checker::ETSChecker *checker, checker::Type *lhs, checker::Type *rhs)
+    checker::ETSChecker *checker, checker::Type *lhs, checker::Type *rhs, ETSEmitter *emitter)
 {
     auto alhs = checker->GetApparentType(checker->GetNonNullishType(lhs));
     auto arhs = checker->GetApparentType(checker->GetNonNullishType(rhs));
@@ -1984,8 +2002,9 @@ static std::optional<std::pair<checker::Type const *, util::StringView>> SelectL
         return std::nullopt;
     }
     // NOTE(vpukhov): emit faster code
-    auto methodSig =
-        util::UString(std::string(obj->AssemblerName()) + ".equals:std.core.Object;u1;", checker->Allocator()).View();
+    auto methodSig = util::UString(emitter->AddDependence(obj->AssemblerName().Mutf8()) + ".equals:std.core.Object;u1;",
+                                   checker->Allocator())
+                         .View();
     return std::make_pair(checker->GetNonConstantType(obj), methodSig);
 }
 
@@ -2051,8 +2070,9 @@ void ETSGen::RefEqualityLoose(const ir::AstNode *node, VReg lhs, VReg rhs, Label
     } else if (auto spec = SelectLooseObjComparator(  // try to select specific type
                                                       // CC-OFFNXT(G.FMT.06-CPP) project code style
                    const_cast<checker::ETSChecker *>(Checker()), const_cast<checker::Type *>(ltype),
-                   const_cast<checker::Type *>(rtype));  // CC-OFF(G.FMT.02) project code style
-               spec.has_value()) {                       // CC-OFF(G.FMT.02-CPP) project code style
+                   const_cast<checker::Type *>(rtype),  // CC-OFF(G.FMT.02) project code style
+                   Emitter());
+               spec.has_value()) {  // CC-OFF(G.FMT.02-CPP) project code style
         auto ifTrue = AllocLabel();
         if (ltype->PossiblyETSNullish() || rtype->PossiblyETSNullish()) {
             HandlePossiblyNullishEquality<IS_STRICT>(node, lhs, rhs, ifFalse, ifTrue);
@@ -2408,7 +2428,8 @@ void ETSGen::StringBuilderAppend(const ir::AstNode *node, VReg builder)
             Label *ifUndefined = AllocLabel();
             Label *end = AllocLabel();
             BranchIfUndefined(node, ifUndefined);
-            Ra().Emit<CallVirtAccShort, 0>(node, Signatures::BUILTIN_OBJECT_TO_STRING, dummyReg_, 0);
+            Ra().Emit<CallVirtAccShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_OBJECT_TO_STRING),
+                                           dummyReg_, 0);
             JumpTo(node, end);
 
             SetLabel(node, ifUndefined);
@@ -2416,7 +2437,8 @@ void ETSGen::StringBuilderAppend(const ir::AstNode *node, VReg builder)
 
             SetLabel(node, end);
         } else {
-            Ra().Emit<CallVirtAccShort, 0>(node, Signatures::BUILTIN_OBJECT_TO_STRING, dummyReg_, 0);
+            Ra().Emit<CallVirtAccShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_OBJECT_TO_STRING),
+                                           dummyReg_, 0);
         }
     }
 
@@ -2466,7 +2488,8 @@ void ETSGen::CreateStringBuilder(const ir::Expression *node)
 {
     RegScope rs(this);
 
-    Ra().Emit<InitobjShort, 0>(node, Signatures::BUILTIN_STRING_BUILDER_CTOR, dummyReg_, dummyReg_);
+    Ra().Emit<InitobjShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_STRING_BUILDER_CTOR), dummyReg_,
+                               dummyReg_);
     SetAccumulatorType(Checker()->GlobalStringBuilderBuiltinType());
 
     auto builder = AllocReg();
@@ -2514,7 +2537,8 @@ void ETSGen::AppendTemplateString(const ir::TemplateLiteral *node)
 {
     RegScope rs(this);
 
-    Ra().Emit<InitobjShort, 0>(node, Signatures::BUILTIN_STRING_BUILDER_CTOR, dummyReg_, dummyReg_);
+    Ra().Emit<InitobjShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_STRING_BUILDER_CTOR), dummyReg_,
+                               dummyReg_);
     SetAccumulatorType(Checker()->GlobalStringBuilderBuiltinType());
 
     auto builder = AllocReg();
@@ -2594,23 +2618,22 @@ void ETSGen::ConcatTemplateString(const ir::TemplateLiteral *node)
 
 void ETSGen::NewObject(const ir::AstNode *const node, const util::StringView name, VReg athis)
 {
-    Ra().Emit<Newobj>(node, athis, name);
+    Ra().Emit<Newobj>(node, athis, AssemblerReference(name));
     SetVRegType(athis, Checker()->GlobalETSObjectType());
 }
 
 void ETSGen::NewArray(const ir::AstNode *const node, const VReg arr, const VReg dim, const checker::Type *const arrType)
 {
-    std::stringstream ss;
-    arrType->ToAssemblerTypeWithRank(ss);
-    const auto res = ProgElement()->Strings().emplace(ss.str());
+    auto str = ToAssemblerType(arrType);
+    const auto res = ProgElement()->Strings().emplace(str);
 
-    Ra().Emit<Newarr>(node, arr, dim, util::StringView(*res.first));
+    Ra().Emit<Newarr>(node, arr, dim, AssemblerReference(util::StringView(*res.first)));
     SetVRegType(arr, arrType);
 }
 
 void ETSGen::LoadResizableArrayLength(const ir::AstNode *node)
 {
-    Ra().Emit<CallAccShort, 0>(node, Signatures::BUILTIN_ARRAY_LENGTH, dummyReg_, 0);
+    Ra().Emit<CallAccShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_ARRAY_LENGTH), dummyReg_, 0);
     SetAccumulatorType(Checker()->GlobalIntType());
 }
 
@@ -2619,7 +2642,8 @@ void ETSGen::LoadResizableArrayElement(const ir::AstNode *node, const VReg arrOb
     auto *vRegType = GetVRegType(arrObj);
     ES2PANDA_ASSERT(vRegType != nullptr);
     auto *elementType = vRegType->AsETSResizableArrayType()->ElementType();
-    Ra().Emit<CallVirtShort>(node, Signatures::BUILTIN_ARRAY_GET_ELEMENT, arrObj, arrIndex);
+    Ra().Emit<CallVirtShort>(node, AssemblerSignatureReference(Signatures::BUILTIN_ARRAY_GET_ELEMENT), arrObj,
+                             arrIndex);
     SetAccumulatorType(elementType);
 }
 
@@ -2729,8 +2753,8 @@ void ETSGen::LoadTupleElement(const ir::AstNode *node, VReg objectReg, const che
                               std::size_t index)
 {
     ES2PANDA_ASSERT(GetVRegType(objectReg) != nullptr && GetVRegType(objectReg)->IsETSTupleType());
-    const auto propName = FormClassPropReference(GetVRegType(objectReg)->AsETSTupleType()->GetWrapperType(),
-                                                 GetTupleMemberNameForIndex(index));
+    const auto propName = FormClassOwnPropReference(GetVRegType(objectReg)->AsETSTupleType()->GetWrapperType(),
+                                                    GetTupleMemberNameForIndex(index));
 
     // NOTE (smartin): remove after generics without type erasure is possible
     const auto *const boxedElementType = Checker()->MaybeBoxType(elementType);
@@ -2743,10 +2767,11 @@ void ETSGen::StoreTupleElement(const ir::AstNode *node, VReg objectReg, const ch
     ES2PANDA_ASSERT(GetVRegType(objectReg) != nullptr && GetVRegType(objectReg)->IsETSTupleType());
     const auto *const tupleType = GetVRegType(objectReg)->AsETSTupleType();
     SetVRegType(objectReg, tupleType->GetWrapperType());
+    const auto fullName = FormClassOwnPropReference(tupleType->GetWrapperType(), GetTupleMemberNameForIndex(index));
 
     // NOTE (smartin): remove after generics without type erasure is possible
     const auto *const boxedElementType = Checker()->MaybeBoxType(elementType);
-    StoreProperty(node, boxedElementType, objectReg, GetTupleMemberNameForIndex(index));
+    StoreProperty(node, boxedElementType, objectReg, fullName);
 }
 
 template <typename T>
@@ -2785,28 +2810,28 @@ template void ETSGen::IncrementImmediateRegister<int32_t>(const ir::AstNode *nod
 
 void ETSGen::LoadStringLength(const ir::AstNode *node)
 {
-    Ra().Emit<CallAccShort, 0>(node, Signatures::BUILTIN_STRING_LENGTH, dummyReg_, 0);
+    Ra().Emit<CallAccShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_STRING_LENGTH), dummyReg_, 0);
     SetAccumulatorType(Checker()->GlobalIntType());
 }
 
 void ETSGen::FloatIsNaN(const ir::AstNode *node)
 {
-    Ra().Emit<CallAccShort, 0>(node, Signatures::BUILTIN_FLOAT_IS_NAN, dummyReg_, 0);
+    Ra().Emit<CallAccShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_FLOAT_IS_NAN), dummyReg_, 0);
     SetAccumulatorType(Checker()->GlobalETSBooleanType());
 }
 
 void ETSGen::DoubleIsNaN(const ir::AstNode *node)
 {
-    Ra().Emit<CallAccShort, 0>(node, Signatures::BUILTIN_DOUBLE_IS_NAN, dummyReg_, 0);
+    Ra().Emit<CallAccShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_DOUBLE_IS_NAN), dummyReg_, 0);
     SetAccumulatorType(Checker()->GlobalETSBooleanType());
 }
 
 void ETSGen::LoadStringChar(const ir::AstNode *node, const VReg stringObj, const VReg charIndex, bool needBox)
 {
-    Ra().Emit<CallShort>(node, Signatures::BUILTIN_STRING_CHAR_AT, stringObj, charIndex);
+    Ra().Emit<CallShort>(node, AssemblerSignatureReference(Signatures::BUILTIN_STRING_CHAR_AT), stringObj, charIndex);
     SetAccumulatorType(Checker()->GlobalCharType());
     if (needBox) {
-        Ra().Emit<CallAccShort, 0>(node, Signatures::BUILTIN_CHAR_VALUE_OF, dummyReg_, 0);
+        Ra().Emit<CallAccShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_CHAR_VALUE_OF), dummyReg_, 0);
         SetAccumulatorType(Checker()->GlobalCharBuiltinType());
     }
 }
@@ -2882,7 +2907,9 @@ util::StringView ETSGen::ToAssemblerType(const es2panda::checker::Type *type) co
 
     std::stringstream ss;
     type->ToAssemblerTypeWithRank(ss);
-    return util::UString(ss.str(), Allocator()).View();
+    auto const str = ss.str();
+    Emitter()->AddDependence(str);
+    return util::UString(str, Allocator()).View();
 }
 
 template <typename T>

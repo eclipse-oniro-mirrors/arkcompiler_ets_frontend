@@ -364,12 +364,10 @@ void ETSLReference::SetValue() const
         return;
     }
 
-    const auto &propName = memberExpr->Property()->AsIdentifier()->Name();
+    const util::StringView fullName = etsg_->FormClassPropReference(memberExpr->Property()->Variable());
+
     if (memberExpr->PropVar()->HasFlag(varbinder::VariableFlags::STATIC)) {
-        const util::StringView fullName = etsg_->FormClassPropReference(staticObjRef_->AsETSObjectType(), propName);
-
         etsg_->StoreStaticProperty(Node(), memberExprTsType, fullName);
-
         return;
     }
 
@@ -381,7 +379,7 @@ void ETSLReference::SetValue() const
 
     const auto *type = memberExpr->PropVar()->TsType();
 
-    etsg_->StoreProperty(Node(), type, baseReg_, propName);
+    etsg_->StoreProperty(Node(), type, baseReg_, fullName);
 }
 
 }  // namespace ark::es2panda::compiler

@@ -26,12 +26,6 @@
 
 namespace ark::es2panda::checker {
 
-void ETSObjectType::Iterate(const PropertyTraverser &cb) const
-{
-    ForEachAllOwnProperties(cb);
-    ForEachAllNonOwnProperties(cb);
-}
-
 void ETSObjectType::AddInterface(ETSObjectType *interfaceType)
 {
     if (std::find(interfaces_.begin(), interfaces_.end(), interfaceType) == interfaces_.end()) {
@@ -426,29 +420,6 @@ varbinder::LocalVariable *ETSObjectType::CollectSignaturesForSyntheticType(std::
     return nullptr;
 }
 
-void ETSObjectType::ForEachAllOwnProperties(const PropertyTraverser &cb) const
-{
-    EnsurePropertiesInstantiated();
-    for (size_t i = 0; i < static_cast<size_t>(PropertyType::COUNT); ++i) {
-        PropertyMap &map = properties_[i];
-        for (const auto &[_, prop] : map) {
-            (void)_;
-            cb(prop);
-        }
-    }
-}
-
-void ETSObjectType::ForEachAllNonOwnProperties(const PropertyTraverser &cb) const
-{
-    if (superType_ != nullptr) {
-        superType_->Iterate(cb);
-    }
-
-    for (const auto *interface : interfaces_) {
-        interface->Iterate(cb);
-    }
-}
-
 std::vector<varbinder::LocalVariable *> ETSObjectType::GetAllProperties() const
 {
     std::vector<varbinder::LocalVariable *> allProperties;
@@ -541,40 +512,6 @@ std::vector<varbinder::LocalVariable *> ETSObjectType::Fields() const
     }
 
     return fields;
-}
-
-std::vector<const varbinder::LocalVariable *> ETSObjectType::ForeignProperties() const
-{
-    std::vector<const varbinder::LocalVariable *> foreignProps;
-
-    // spec 9.3: all names in static and, separately, non-static class declaration scopes must be unique.
-    std::unordered_set<util::StringView> ownInstanceProps;
-    std::unordered_set<util::StringView> ownStaticProps;
-
-    EnsurePropertiesInstantiated();
-    ownInstanceProps.reserve(properties_.size());
-    ownStaticProps.reserve(properties_.size());
-
-    ForEachAllOwnProperties([&](const varbinder::LocalVariable *prop) {
-        if (prop->HasFlag(varbinder::VariableFlags::STATIC)) {
-            ownStaticProps.insert(prop->Name());
-        } else {
-            ownInstanceProps.insert(prop->Name());
-        }
-    });
-    ForEachAllNonOwnProperties([&](const varbinder::LocalVariable *var) {
-        if (var->HasFlag(varbinder::VariableFlags::STATIC)) {
-            if (ownStaticProps.find(var->Name()) == ownStaticProps.end()) {
-                foreignProps.push_back(var);
-            }
-        } else {
-            if (ownInstanceProps.find(var->Name()) == ownInstanceProps.end()) {
-                foreignProps.push_back(var);
-            }
-        }
-    });
-
-    return foreignProps;
 }
 
 void ETSObjectType::ToString(std::stringstream &ss, bool precise) const

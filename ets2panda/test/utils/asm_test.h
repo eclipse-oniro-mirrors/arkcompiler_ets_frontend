@@ -16,19 +16,77 @@
 #ifndef ES2PANDA_TEST_UTILS_ASM_TEST_H
 #define ES2PANDA_TEST_UTILS_ASM_TEST_H
 
-#include "compiler/lowering/phase.h"
-#include "util/options.h"
+#include <cstdint>
+#include <map>
+#include <memory>
+#include <string_view>
+#include <string>
+#include <utility>
+#include <variant>
+#include <vector>
+
 #include <gtest/gtest.h>
+
+#include "assembler/assembly-function.h"
+#include "assembler/assembly-record.h"
+#include "assembler/assembly-program.h"
+#include "assembly-literals.h"
+#include "util/diagnosticEngine.h"
+#include "util/options.h"
 
 namespace util_alias = ark::es2panda::util;
 
 using AnnotationMap = std::map<std::string, std::vector<std::pair<std::string, std::string>>>;
 using AnnotationValueType = std::variant<bool, uint8_t, uint16_t, uint32_t, uint64_t, float, double, std::string>;
+// helper type for the visitor
+
+namespace ark::pandasm {
+
+bool operator==(const LiteralArray &lhs, const LiteralArray &rhs);
+bool operator==(const LiteralArray::Literal &lhs, const LiteralArray::Literal &rhs);
+
+}  // namespace ark::pandasm
 
 namespace test::utils {
 
+namespace literals {
+
+inline ::ark::panda_file::LiteralTag operator""_LT(unsigned long long value)
+{
+    return ::ark::panda_file::LiteralTag(value);
+}
+
+inline ::ark::pandasm::LiteralArray LA(::ark::pandasm::LiteralArray::LiteralVector &&value)
+{
+    return ::ark::pandasm::LiteralArray {std::move(value)};
+}
+
+inline uint8_t operator""_U8(unsigned long long value)
+{
+    return uint8_t(value);
+}
+
+inline uint16_t operator""_U16(unsigned long long value)
+{
+    return uint16_t(value);
+}
+
+inline uint32_t operator""_U32(unsigned long long value)
+{
+    return uint32_t(value);
+}
+
+inline uint64_t operator""_U64(unsigned long long value)
+{
+    return uint64_t(value);
+}
+
+}  // namespace literals
+
 class AsmTest : public testing::Test {
 public:
+    using ExpectedLiteralArrayTable = std::vector<std::pair<std::string, std::vector<AnnotationValueType>>>;
+
     AsmTest();
     ~AsmTest() override;
 
@@ -61,9 +119,10 @@ public:
     void CheckAnnoDecl(ark::pandasm::Program *program, const std::string &annoName,
                        const std::vector<std::pair<std::string, std::string>> &expectedAnnotations);
 
-    void CheckLiteralArrayTable(
-        ark::pandasm::Program *program,
-        const std::vector<std::pair<std::string, std::vector<AnnotationValueType>>> &expectedLiteralArrayTable);
+    void ExpectLiteralArrayTable(ark::pandasm::Program *program,
+                                 const ::ark::pandasm::Program::LiteralArrayTableT &expectedLiteralArrayTable) const;
+    void CheckLiteralArrayTable(ark::pandasm::Program *program,
+                                const ExpectedLiteralArrayTable &expectedLiteralArrayTable);
 
     void CheckAnnotation(const std::vector<std::pair<std::string, std::string>> &expectedValues,
                          const ark::pandasm::AnnotationData &annotation);
