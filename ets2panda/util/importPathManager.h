@@ -183,6 +183,7 @@ private:
     std::string_view DirOrDirWithIndexFile(StringView dir) const;
     ResolvedPathRes AppendExtensionOrIndexFileIfOmitted(StringView basePath) const;
     std::string TryMatchDependencies(std::string_view fixedPath) const;
+    std::string TryResolvePath(std::string_view fixedPath) const;
     StringView GetRealPath(StringView path) const;
     void ProcessExternalLibraryImport(ImportMetadata &importData);
     std::string_view TryImportFromDeclarationCache(std::string_view resolvedImportPath) const;
