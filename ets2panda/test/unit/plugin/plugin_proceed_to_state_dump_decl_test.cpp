@@ -28,26 +28,37 @@
 static es2panda_Impl *impl = nullptr;
 
 static std::string g_source = R"(
-let a: int = 11;
-const b: int = 666;
-a = 20;
-foo()
-function foo() {}
+type CallType = ((done: () => void) => void) | ((done: () => void) => Promise<void>);
+class A {
+    public prop:CallType = () => {};
+}
 )";
 
-static std::string expected = R"(
-let a: int;
-
-const b: int = 666;
-
-function main() {}
-
-function foo() {}
-
-a = 11;
-a = 20;
-foo();
+static std::string expected = R"(public prop: ((done: () => void) => void)|((done: () => void) => Promise<void>);
 )";
+
+static es2panda_AstNode *prop = nullptr;
+static void FindClassElement(es2panda_AstNode *ast, void *context)
+{
+    auto ctx = reinterpret_cast<es2panda_Context *>(context);
+    if (!impl->IsClassProperty(ast)) {
+        return;
+    }
+    auto *ident = impl->ClassElementId(ctx, ast);
+    if (ident == nullptr) {
+        return;
+    }
+
+    auto name = std::string(impl->IdentifierName(ctx, ident));
+    if (name == "prop") {
+        prop = ast;
+    }
+}
+
+static void FindTargetAstAfterChecker(es2panda_Context *context, es2panda_AstNode *ast)
+{
+    impl->AstNodeForEach(ast, FindClassElement, context);
+}
 
 int main(int argc, char **argv)
 {
@@ -66,8 +77,9 @@ int main(int argc, char **argv)
     auto *program = impl->ContextProgram(context);
     impl->ProceedToState(context, ES2PANDA_STATE_CHECKED);
     auto *entryAst = impl->ProgramAst(context, program);
-    [[maybe_unused]] std::string actual = impl->AstNodeDumpEtsSrcConst(context, entryAst);
-    ASSERT(expected == actual);
+    FindTargetAstAfterChecker(context, entryAst);
+    [[maybe_unused]] std::string declOfProp = impl->AstNodeDumpDeclConst(context, prop);
+    ASSERT(expected == declOfProp);
     return 0;
 }
 
