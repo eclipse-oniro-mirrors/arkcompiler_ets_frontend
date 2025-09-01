@@ -2333,7 +2333,7 @@ export class NumericSemanticCheck implements BaseChecker {
         return sourceFile;
     }
 
-    private generateRuleFixForLocalDefine(sourceFile: ts.SourceFile, warnInfo: WarnInfo, numberCategory: NumberCategory): RuleFix | null {
+  private generateRuleFixForLocalDefine(sourceFile: ts.SourceFile, warnInfo: WarnInfo, numberCategory: NumberCategory, isOptional?: boolean): RuleFix | null {
         // warnInfo中对于变量声明语句的位置信息只包括变量名，不包括变量声明时的类型注解位置
         // 此处先获取变量名后到行尾的字符串信息，判断是替换‘: number’ 或增加 ‘: int’
         const localRange = FixUtils.getRangeWithAst(sourceFile, {
@@ -2362,7 +2362,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 logger.error('Failed to getting text of the fix range info when generating auto fix info.');
                 return null;
             }
-            ruleFix.text = `${localString}: ${numberCategory}`;
+            ruleFix.text = isOptional ? `${localString}: ${numberCategory} | undefined` : `${localString}: ${numberCategory}`;
             return ruleFix;
         }
         // 场景2：变量或函数入参，有类型注解的场景，需要将类型注解替换成新的类型，同时考虑可选参数即'?:'
@@ -2534,7 +2534,22 @@ export class NumericSemanticCheck implements BaseChecker {
         if (field) {
             return this.generateRuleFixForFieldDefine(sourceFile, warnInfo, numberCategory);
         }
-        return this.generateRuleFixForLocalDefine(sourceFile, warnInfo, numberCategory);
+
+        let isOptionalField: boolean | undefined;
+
+        if (issueStmt instanceof ArkAssignStmt) {
+          const rightOp = issueStmt.getRightOp();
+          if (rightOp instanceof ArkInstanceFieldRef) {
+            const fieldSig = rightOp.getFieldSignature();
+            const declaringSig = fieldSig.getDeclaringSignature();
+            if (declaringSig instanceof ClassSignature) {
+              const baseClass = this.scene.getClass(declaringSig);
+              const baseField = baseClass?.getField(fieldSig);
+              isOptionalField = !!baseField?.getQuestionToken();
+            }
+          }
+        }
+        return this.generateRuleFixForLocalDefine(sourceFile, warnInfo, numberCategory, isOptionalField);
     }
 
     private generateIntConstantIndexRuleFix(warnInfo: WarnInfo, issueStmt: Stmt, constant: NumberConstant): RuleFix | null {
