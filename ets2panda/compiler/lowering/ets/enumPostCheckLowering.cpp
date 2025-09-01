@@ -434,7 +434,7 @@ ir::AstNode *EnumPostCheckLoweringPhase::BuildEnumCasting(ir::AstNode *const nod
         return node;
     }
     return GenerateEnumCasting(node->AsTSAsExpression(), castFlag);
-};
+}
 
 bool EnumPostCheckLoweringPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {

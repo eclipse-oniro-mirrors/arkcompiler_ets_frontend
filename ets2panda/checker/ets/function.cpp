@@ -468,13 +468,13 @@ static void ClearPreferredTypeForArray(checker::ETSChecker *checker, ir::Express
 {
     if (argument->IsArrayExpression()) {
         // fixed array and resizeable array will cause problem here, so clear it.
-        argument->AsArrayExpression()->CleanCheckInformation();
+        argument->CleanCheckInformation();
         argument->AsArrayExpression()->SetPreferredTypeBasedOnFuncParam(checker, paramType, flags);
     } else if (argument->IsETSNewArrayInstanceExpression()) {
-        argument->AsETSNewArrayInstanceExpression()->CleanCheckInformation();
+        argument->CleanCheckInformation();
         argument->AsETSNewArrayInstanceExpression()->SetPreferredTypeBasedOnFuncParam(checker, paramType, flags);
     } else if (argument->IsETSNewMultiDimArrayInstanceExpression()) {
-        argument->AsETSNewMultiDimArrayInstanceExpression()->CleanCheckInformation();
+        argument->CleanCheckInformation();
         argument->AsETSNewMultiDimArrayInstanceExpression()->SetPreferredTypeBasedOnFuncParam(checker, paramType,
                                                                                               flags);
     } else {
@@ -631,7 +631,14 @@ bool ETSChecker::ValidateSignatureInvocationContext(Signature *substitutedSig, i
 {
     Type *targetType = substitutedSig->Params()[index]->TsType();
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    // NOTE (smartin): remove these flag hacks after the overload resolution is completely reworked
+    if ((flags & TypeRelationFlag::NO_THROW) != 0) {
+        argument->IterateRecursively([](ir::AstNode *node) { node->AddAstNodeFlags(ir::AstNodeFlags::NO_THROW); });
+    }
     Type *argumentType = argument->Check(this);
+    if ((flags & TypeRelationFlag::NO_THROW) != 0) {
+        argument->IterateRecursively([](ir::AstNode *node) { node->RemoveAstNodeFlags(ir::AstNodeFlags::NO_THROW); });
+    }
 
     flags |= (TypeRelationFlag::ONLY_CHECK_WIDENING);
 
@@ -2768,10 +2775,6 @@ Signature *ETSChecker::ValidateOrderSignature(
         return nullptr;
     }
 
-    // When process first match, if current signature is not matched, do not log TypeError
-    SignatureMatchContext signatureMatchContext(this, util::DiagnosticType::SEMANTIC,
-                                                (flags & TypeRelationFlag::NO_THROW) == 0);
-
     size_t const argCount = arguments.size();
     auto const hasRestParameter = signature->RestVar() != nullptr;
     size_t compareCount = argCount;
@@ -2780,8 +2783,11 @@ Signature *ETSChecker::ValidateOrderSignature(
         compareCount = compareCount - 1;
     }
 
+    const bool throwError = (flags & TypeRelationFlag::NO_THROW) == 0;
     if (compareCount < signature->MinArgCount() || (argCount > signature->ArgCount() && !hasRestParameter)) {
-        LogError(diagnostic::PARAM_COUNT_MISMATCH, {signature->MinArgCount(), argCount}, pos);
+        if (throwError) {
+            LogError(diagnostic::PARAM_COUNT_MISMATCH, {signature->MinArgCount(), argCount}, pos);
+        }
         return nullptr;
     }
 
@@ -2792,8 +2798,7 @@ Signature *ETSChecker::ValidateOrderSignature(
     auto count = std::min(signature->ArgCount(), argCount);
     // Check all required formal parameter(s) first
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    if (!ValidateOrderSignatureRequiredParams(signature, arguments, flags, argTypeInferenceRequired) ||
-        !signatureMatchContext.ValidSignatureMatchStatus()) {
+    if (!ValidateOrderSignatureRequiredParams(signature, arguments, flags, argTypeInferenceRequired)) {
         return nullptr;
     }
 
@@ -2801,8 +2806,8 @@ Signature *ETSChecker::ValidateOrderSignature(
     if (!hasRestParameter || (count >= argCount && !signature->RestVar()->TsType()->IsETSTupleType())) {
         return signature;
     }
-    if (!ValidateSignatureRestParams(signature, arguments, flags, true, unique) ||
-        !signatureMatchContext.ValidSignatureMatchStatus()) {
+
+    if (!ValidateSignatureRestParams(signature, arguments, flags, true, unique)) {
         return nullptr;
     }
 
@@ -2810,12 +2815,17 @@ Signature *ETSChecker::ValidateOrderSignature(
 }
 
 bool ETSChecker::SetPreferredTypeBeforeValidate(Signature *substitutedSig, ir::Expression *argument, size_t index,
-                                                TypeRelationFlag flags,
                                                 const std::vector<bool> &argTypeInferenceRequired)
 {
     auto const paramType = GetNonNullishType(substitutedSig->Params()[index]->TsType());
     if (argument->IsObjectExpression()) {
-        argument->AsObjectExpression()->SetPreferredType(paramType);
+        if (!paramType->IsETSObjectType()) {
+            return false;
+        }
+        if (paramType->AsETSObjectType()->IsBoxedPrimitive()) {
+            return false;
+        }
+        argument->SetPreferredType(paramType);
     }
 
     if (argument->IsMemberExpression()) {
@@ -2836,18 +2846,6 @@ bool ETSChecker::SetPreferredTypeBeforeValidate(Signature *substitutedSig, ir::E
         return CheckLambdaInfer(param->TypeAnnotation(), argument->AsArrowFunctionExpression(), paramType);
     }
 
-    if (argument->IsArrayExpression()) {
-        argument->AsArrayExpression()->SetPreferredTypeBasedOnFuncParam(this, paramType, flags);
-    }
-
-    if (argument->IsETSNewArrayInstanceExpression()) {
-        argument->AsETSNewArrayInstanceExpression()->SetPreferredTypeBasedOnFuncParam(this, paramType, flags);
-    }
-
-    if (argument->IsETSNewMultiDimArrayInstanceExpression()) {
-        argument->AsETSNewMultiDimArrayInstanceExpression()->SetPreferredTypeBasedOnFuncParam(this, paramType, flags);
-    }
-
     return true;
 }
 
@@ -2864,19 +2862,27 @@ bool ETSChecker::ValidateOrderSignatureRequiredParams(Signature *substitutedSig,
         }
         commonArity = commonArity - 1;
     }
+    bool throwError = (flags & TypeRelationFlag::NO_THROW) == 0;
     for (size_t index = 0; index < commonArity; ++index) {
-        auto &argument = arguments[index];
-        if (!SetPreferredTypeBeforeValidate(substitutedSig, argument, index, flags, argTypeInferenceRequired)) {
+        const auto &argument = arguments[index];
+        auto *const paramType = GetNonNullishType(substitutedSig->Params()[index]->TsType());
+        if (!SetPreferredTypeBeforeValidate(substitutedSig, argument, index, argTypeInferenceRequired)) {
             return false;
         }
 
         if (argument->IsSpreadElement()) {
-            LogError(diagnostic::SPREAD_ONTO_SINGLE_PARAM, {}, argument->Start());
+            if (throwError) {
+                LogError(diagnostic::SPREAD_ONTO_SINGLE_PARAM, {}, argument->Start());
+            }
             return false;
         }
 
+        ClearPreferredTypeForArray(this, argument, paramType, flags, false);
+
         if (argument->IsIdentifier() && IsInvalidArgumentAsIdentifier(Scope(), argument->AsIdentifier())) {
-            LogError(diagnostic::ARG_IS_CLASS_ID, {}, argument->Start());
+            if (throwError) {
+                LogError(diagnostic::ARG_IS_CLASS_ID, {}, argument->Start());
+            }
             return false;
         }
 
@@ -2910,8 +2916,42 @@ bool ETSChecker::ValidateOrderSignatureInvocationContext(Signature *substitutedS
                                                          std::size_t index, TypeRelationFlag flags)
 {
     Type *targetType = substitutedSig->Params()[index]->TsType();
+    // NOTE (smartin): remove these flag hacks after the overload resolution is completely reworked
+    if ((flags & TypeRelationFlag::NO_THROW) != 0) {
+        argument->AddAstNodeFlags(ir::AstNodeFlags::NO_THROW);
+        argument->IterateRecursively([](ir::AstNode *node) { node->AddAstNodeFlags(ir::AstNodeFlags::NO_THROW); });
+    }
+
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     Type *argumentType = argument->Check(this);
+
+    if ((flags & TypeRelationFlag::NO_THROW) != 0) {
+        argument->RemoveAstNodeFlags(ir::AstNodeFlags::NO_THROW);
+        argument->IterateRecursively([](ir::AstNode *node) { node->RemoveAstNodeFlags(ir::AstNodeFlags::NO_THROW); });
+    }
+
+    bool isAnyErroneousNodeInArgument = false;
+    argument->IterateRecursively([this, &isAnyErroneousNodeInArgument](ir::AstNode *node) {
+        if (node->IsExpression() && node->AsExpression()->TsType() == GlobalTypeError()) {
+            isAnyErroneousNodeInArgument = true;
+            return;
+        }
+    });
+    if (isAnyErroneousNodeInArgument || argument->TsType()->IsTypeError()) {
+        // Some checks invalidate the type of argument node (if the type is erroneous), but won't log an error into
+        // diagnostics. This is needed as overload signatures try to match a signature one after another, and a not
+        // matching signature doesn't necessarily indicate wrong code (as an overload later in the overload list may
+        // match with the argument type). This can happen with expressions that needs their type inferred (eg. array
+        // expressions, object literals ...). When we set a 'preferred type' to a non-matching type to the expression
+        // (eg. we set wrong arity tuple), we don't want to throw an error during the check of the expression (as said,
+        // because another overload may set the correct 'preferred type' for it). Type error type is assignable to
+        // anything (so the invocation ctx check on next line will pass), but we don't want to allow a call with
+        // incorrect arguments. In this case a signature with bad parameter type and argument with 'ErrorType' will be
+        // chosen, which may cause errors in later phases (as a phase terminates if an error happened).
+        // This solution is brittle (but better than deleting all diagnostics thrown during argument check), so when
+        // overload resolution will be reworked, it'll need to be deleted.
+        return false;
+    }
 
     flags |= TypeRelationFlag::ONLY_CHECK_WIDENING;
 

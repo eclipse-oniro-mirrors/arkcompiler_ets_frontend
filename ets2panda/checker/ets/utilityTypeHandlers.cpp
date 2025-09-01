@@ -1266,8 +1266,8 @@ void ETSChecker::ValidateObjectLiteralForRequiredType(const ETSObjectType *const
 
             auto fieldname = method->AsMethodDefinition()->Key()->AsIdentifier()->Name();
             if (!initObjExprContainsField(fieldname)) {
-                LogError(diagnostic::REQUIRED_PROP_MISSING_INIT, {fieldname, requiredType->Name()},
-                         initObjExpr->Start());
+                PossiblyLogError(initObjExpr, diagnostic::REQUIRED_PROP_MISSING_INIT, {fieldname, requiredType->Name()},
+                                 initObjExpr->Start());
             }
         }
 
@@ -1276,7 +1276,8 @@ void ETSChecker::ValidateObjectLiteralForRequiredType(const ETSObjectType *const
 
     for (const auto &[propName, _] : requiredType->InstanceFields()) {
         if (!initObjExprContainsField(propName)) {
-            LogError(diagnostic::REQUIRED_PROP_MISSING_INIT, {propName, requiredType->Name()}, initObjExpr->Start());
+            PossiblyLogError(initObjExpr, diagnostic::REQUIRED_PROP_MISSING_INIT, {propName, requiredType->Name()},
+                             initObjExpr->Start());
         }
     }
 }

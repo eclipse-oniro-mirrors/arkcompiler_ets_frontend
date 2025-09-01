@@ -27,12 +27,8 @@ class DummyArray<T> {
 
 let props: DummyArray<A> = new DummyArray<A>()
 
-/* @@ label1 */props.push(
-  /* @@ label2 */new A('eaw1', () => {
-    let s: string = /* @@ label3 */1
-  })
-)
+    props.push(new A('eaw1', () => {
+        let s: string = /* @@ label3 */1
+    }))
 
-/* @@@ label1 Error TypeError: No matching call signature for push(...) */
-/* @@@ label2 Error TypeError: No matching construct signature for A("eaw1", (() => void)) */
 /* @@@ label3 Error TypeError: Type 'Int' cannot be assigned to type 'String' */
