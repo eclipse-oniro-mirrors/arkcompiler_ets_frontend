@@ -499,6 +499,7 @@ libes2panda_sources = [
   "parser/expressionParser.cpp",
   "parser/expressionTSParser.cpp",
   "parser/parserImpl.cpp",
+  "parser/program/DeclarationCache.cpp",
   "parser/program/entityNameVisitor.cpp",
   "parser/program/program.cpp",
   "parser/statementParser.cpp",

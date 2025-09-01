@@ -35,6 +35,7 @@
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/checkerPhase.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
+#include "parser/program/DeclarationCache.h"
 #include "parser/parserImpl.h"
 #include "parser/JSparser.h"
 #include "parser/ASparser.h"
@@ -123,6 +124,10 @@ void HandleGenerateDecl(const parser::Program &program, util::DiagnosticEngine &
 
     outFile << result;
     outFile.close();
+
+    // Add generated declaration to the cache
+    auto &declarationCache = parser::DeclarationCache::Instance();
+    declarationCache.AddDeclaration(outputPath, std::make_shared<std::string>(std::move(result)));
 }
 
 static bool CheckOptionsAfterPhase(const util::Options &options, const parser::Program &program,

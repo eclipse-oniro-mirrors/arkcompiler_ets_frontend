@@ -16,6 +16,7 @@
 #ifndef ES2PANDA_PARSER_CORE_ETS_PARSER_H
 #define ES2PANDA_PARSER_CORE_ETS_PARSER_H
 
+#include "program/DeclarationCache.h"
 #include "util/arktsconfig.h"
 #include "util/importPathManager.h"
 #include "innerSourceParser.h"
@@ -193,7 +194,7 @@ private:
     void ParseNamedExportSpecifiers(ArenaVector<ir::AstNode *> *specifiers, bool defaultExport);
     void ParseUserSources(std::vector<std::string> userParths);
     ArenaVector<ir::Statement *> ParseTopLevelDeclaration();
-    void ParseParseListElement(const util::ImportPathManager::ParseInfo &parseListElem, util::UString *extSrc,
+    void ParseParseListElement(const util::ImportPathManager::ParseInfo &parseListElem, std::string_view extSrc,
                                const ArenaVector<util::StringView> &directImportsFromMainSource,
                                std::vector<Program *> *programs);
     bool IsDefaultImport();
@@ -210,6 +211,8 @@ private:
     ir::Statement *ParseImportDeclarationHelper(lexer::SourcePosition startLoc, ArenaVector<ir::AstNode *> &specifiers,
                                                 ir::ImportKinds importKind);
     bool TryMergeFromCache(size_t idx, ArenaVector<util::ImportPathManager::ParseInfo> &parseList);
+
+    DeclarationType GetDeclaration(std::string &&fileToParse) const;
     std::vector<Program *> SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,
                                               ArenaVector<util::StringView> &directImportsFromMainSource);
     parser::Program *ParseSource(const SourceFile &sourceFile);

@@ -83,7 +83,7 @@ public:
         Language::Id lang {Language::Id::COUNT};
         std::string_view resolvedSource {};
         std::string_view declPath {};
-        std::string ohmUrl {};
+        std::string_view ohmUrl {};
         std::string_view declText {};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
 
@@ -158,7 +158,7 @@ public:
     // API version for resolving paths. Kept only for API compatibility. Doesn't support 'dependencies'.
     util::StringView ResolvePathAPI(StringView curModulePath, ir::StringLiteral *importPath) const;
 
-    void MarkAsParsed(StringView path);
+    void MarkAsParsed(std::string_view path) noexcept;
     util::StringView FormRelativePath(const util::Path &path);
     std::shared_ptr<const ArkTsConfig> ArkTSConfig() const
     {

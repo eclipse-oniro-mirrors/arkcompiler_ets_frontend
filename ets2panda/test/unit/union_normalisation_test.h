@@ -32,7 +32,12 @@ public:
     {
     }
 
-    ~UnionNormalizationTest() override = default;
+    ~UnionNormalizationTest() override
+    {
+        if (publicContext_->phaseManager != nullptr) {
+            delete publicContext_->phaseManager;
+        }
+    }
 
     static void SetUpTestCase()
     {

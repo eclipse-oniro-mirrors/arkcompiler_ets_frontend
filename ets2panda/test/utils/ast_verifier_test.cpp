@@ -32,6 +32,14 @@ AstVerifierTest::AstVerifierTest()
 
 AstVerifierTest::~AstVerifierTest()
 {
+    if (phaseManager_ != nullptr) {
+        delete phaseManager_;
+        phaseManager_ = nullptr;
+    }
+    if (allocator_ != nullptr) {
+        delete allocator_;
+        allocator_ = nullptr;
+    }
     ASSERT(ctx_ == nullptr);
     impl_->MemFinalize();
     impl_->DestroyConfig(cfg_);
