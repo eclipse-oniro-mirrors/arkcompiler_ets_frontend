@@ -192,15 +192,18 @@ static void FillVarMapForImportSpecifiers(const ArenaVector<ir::AstNode *> &spec
                                           ArenaUnorderedMap<varbinder::Variable *, ir::ClassDefinition *> &varMap)
 {
     for (auto specifier : specifiers) {
+        varbinder::Variable *var = nullptr;
         if (specifier->IsImportSpecifier()) {
-            auto *var = specifier->AsImportSpecifier()->Imported()->Variable();
-            var->AddFlag(varbinder::VariableFlags::DYNAMIC);
-            varMap.insert({var, classDef});
+            var = specifier->AsImportSpecifier()->Imported()->Variable();
         } else if (specifier->IsImportNamespaceSpecifier()) {
-            auto *var = specifier->AsImportNamespaceSpecifier()->Local()->Variable();
-            var->AddFlag(varbinder::VariableFlags::DYNAMIC);
-            varMap.insert({var, classDef});
+            var = specifier->AsImportNamespaceSpecifier()->Local()->Variable();
+        } else if (specifier->IsImportDefaultSpecifier()) {
+            var = specifier->AsImportDefaultSpecifier()->Local()->Variable();
+        } else {
+            ES2PANDA_UNREACHABLE();
         }
+        var->AddFlag(varbinder::VariableFlags::DYNAMIC);
+        varMap.insert({var, classDef});
     }
 }
 
@@ -280,7 +283,8 @@ static AstNodePtr TransformIdentifier(ir::Identifier *ident, public_lib::Context
     auto varBinder = checker->VarBinder()->AsETSBinder();
     auto allocator = checker->ProgramAllocator();
     if (ident->Variable()->Declaration() != nullptr && ident->Variable()->Declaration()->Node() != nullptr &&
-        ident->Variable()->Declaration()->Node()->IsImportNamespaceSpecifier()) {
+        (ident->Variable()->Declaration()->Node()->IsImportNamespaceSpecifier() ||
+         ident->Variable()->Declaration()->Node()->IsImportDefaultSpecifier())) {
         return ident;
     }
 
@@ -288,8 +292,8 @@ static AstNodePtr TransformIdentifier(ir::Identifier *ident, public_lib::Context
     auto isTransformedNode =
         (parent->IsMemberExpression() && parent->AsMemberExpression()->ObjType() != nullptr &&
          parent->AsMemberExpression()->ObjType()->HasObjectFlag(checker::ETSObjectFlags::LAZY_IMPORT_OBJECT));
-    if (parent->IsImportSpecifier() || parent->IsImportNamespaceSpecifier() || parent->IsScriptFunction() ||
-        parent->IsMethodDefinition() || isTransformedNode) {
+    if (parent->IsImportSpecifier() || parent->IsImportNamespaceSpecifier() || parent->IsImportDefaultSpecifier() ||
+        parent->IsScriptFunction() || parent->IsMethodDefinition() || isTransformedNode) {
         return ident;
     }
 

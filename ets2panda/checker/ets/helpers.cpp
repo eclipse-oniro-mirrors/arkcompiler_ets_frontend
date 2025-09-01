@@ -1812,13 +1812,14 @@ void ETSChecker::BindingsModuleObjectAddProperty(checker::ETSObjectType *moduleO
     for (auto [_, var] : bindings) {
         (void)_;
         auto [found, aliasedName] = FindSpecifierForModuleObject(importDecl, var->AsLocalVariable()->Name());
-        if (!var->AsLocalVariable()->Declaration()->Node()->IsValidInCurrentPhase()) {
+        auto node = var->AsLocalVariable()->Declaration()->Node();
+        if (!node->IsValidInCurrentPhase()) {
             continue;
         }
-        if ((var->AsLocalVariable()->Declaration()->Node()->IsExported() ||
-             var->AsLocalVariable()->Declaration()->Node()->HasExportAlias()) &&
-            found) {
-            if (var->AsLocalVariable()->Declaration()->Node()->IsMethodDefinition()) {
+        auto isFromDynamicDefaultImport =
+            (node->IsDefaultExported() && var->HasFlag(varbinder::VariableFlags::DYNAMIC));
+        if ((node->IsExported() || isFromDynamicDefaultImport || node->HasExportAlias()) && found) {
+            if (node->IsMethodDefinition()) {
                 BuildExportedFunctionSignature(this, var);
             }
 
@@ -2858,7 +2859,7 @@ void ETSChecker::GenerateGetterSetterBody(ArenaVector<ir::Statement *> &stmts, A
     memberExpression->SetPropVar(field->Key()->Variable()->AsLocalVariable());
     memberExpression->SetRange(classDef->Range());
     if (memberExpression->ObjType() == nullptr && classDef->TsType() != nullptr) {
-        memberExpression->SetObjectType(classDef->TsType()->AsETSObjectType());
+        memberExpression->SetObjectType(classDef->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType());
     }
 
     if (!isSetter) {
