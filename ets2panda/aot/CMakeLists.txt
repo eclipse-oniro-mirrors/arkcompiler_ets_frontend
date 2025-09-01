@@ -15,7 +15,7 @@ set(ES2PANDA_AOT_SRC
   main.cpp
 )
 
-panda_add_executable(es2panda ${ES2PANDA_AOT_SRC})
+panda_frontend_add_executable(es2panda ${ES2PANDA_AOT_SRC})
 panda_target_link_libraries(es2panda es2panda-public es2panda-lib arkassembler arkbytecodeopt)
 panda_target_include_directories(es2panda PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 panda_target_include_directories(es2panda PRIVATE ${OUTPUT_DIR})
