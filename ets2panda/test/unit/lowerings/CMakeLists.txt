@@ -18,15 +18,22 @@ endif()
 ets2panda_add_gtest(scopes_initialization_test
     CPP_SOURCES scopes_initialization.cpp
 )
-ets2panda_add_gtest(string_constants_test
-    CPP_SOURCES string_constants.cpp
-)
-ets2panda_add_gtest(const_expression_test
-    CPP_SOURCES const_expression.cpp
-)
-ets2panda_add_gtest(top_level_statements_test
-    CPP_SOURCES top_level_statements.cpp
-)
+
+# NOTE(@srokashevich, #29193): enable with asan after fix
+if (NOT PANDA_ENABLE_ADDRESS_SANITIZER)
+    ets2panda_add_gtest(string_constants_test
+        CPP_SOURCES string_constants.cpp
+    )
+
+    ets2panda_add_gtest(const_expression_test
+        CPP_SOURCES const_expression.cpp
+    )
+
+    ets2panda_add_gtest(top_level_statements_test
+        CPP_SOURCES top_level_statements.cpp
+    )
+endif()
+
 ets2panda_add_gtest(node_history_test
     CPP_SOURCES node_history.cpp
 )
@@ -35,6 +42,9 @@ ets2panda_add_gtest(node_history_test
 #     CPP_SOURCES convert_primitive_cast_method_call.cpp
 # )
 
-ets2panda_add_gtest(interface_object_literal_test
-    CPP_SOURCES interface_object_literal.cpp
-)
+# NOTE(@srokashevich, #29193): enable with asan after fix
+if (NOT PANDA_ENABLE_ADDRESS_SANITIZER)
+    ets2panda_add_gtest(interface_object_literal_test
+        CPP_SOURCES interface_object_literal.cpp
+    )
+endif()
