@@ -37,8 +37,8 @@
 /ets2panda/checker/ETSAnalyzer.cpp ^akmaevaleksey @martinsajti @Ekkoruse ^igelhaus ^Prof1983
 /ets2panda/checker/ETSAnalyzerHelpers.* @lirismankarina ^igelhaus ^Prof1983
 /ets2panda/compiler/ @xuxjeeee @gogabr ^csabaosztrogonac ^igelhaus ^Prof1983 ^zelentsovdmitry
-/ets2panda/declgen_ets2ts/ @dreamdoomwalker ^trubachevilya ^ivagin ^igelhaus ^Prof1983
-/ets2panda/driver/ @trubachevilya @dreamdoomwalker ^igelhaus ^Prof1983
+/ets2panda/declgen_ets2ts/ @dreamdoomwalker ^trubachevilya ^ivagin ^igelhaus ^Prof1983 ^luobohua2025 @chenmudan
+/ets2panda/driver/ @trubachevilya @dreamdoomwalker ^igelhaus ^Prof1983 ^luobohua2025 @chenmudan
 /ets2panda/ir/ @ziziziiziziz ^gavin1012_hw @csabaosztrogonac ^igelhaus ^Prof1983
 /ets2panda/linter/              @rosinskiyigor @eokolnov1 @yyytiancai ^utkugursel
 /ets2panda/parser/ @robertsipka @shimenkovmikhail ^igelhaus ^csabaosztrogonac ^Prof1983 ^chernykhsergey ^zelentsovdmitry
@@ -83,7 +83,7 @@
 /ets2panda/ir/statements/ @dkofanov @Ekkoruse ^akmaevaleksey ^igelhaus ^Prof1983
 /ets2panda/ir/statements/annotation* @lirismankarina @xuxjeeee ^igelhaus ^Prof1983
 /ets2panda/test/test-lists/astchecker @chernykhsergey ^igelhaus ^Prof1983
-/ets2panda/test/test-lists/declgenets2ts @dreamdoomwalker ^igelhaus ^Prof1983
+/ets2panda/test/test-lists/declgenets2ts @dreamdoomwalker ^igelhaus ^Prof1983 ^luobohua2025 @chenmudan
 /ets2panda/test/test-lists/parser @chernykhsergey ^igelhaus ^Prof1983
 /ets2panda/test/unit/arktsconfig-parser @trubachevilya @dreamdoomwalker ^igelhaus ^Prof1983
 /ets2panda/test/unit/lsp @dreamdoomwalker @Ascnbio ^igelhaus ^Prof1983
