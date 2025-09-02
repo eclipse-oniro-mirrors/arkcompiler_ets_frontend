@@ -12698,6 +12698,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     methodReturnType: ts.Type
   ): void {
     const propName = propAccess.name.getText();
+    const decl = this.tsTypeChecker.getSymbolAtLocation(propAccess.name)?.declarations?.[0];
+    if (decl && ts.isPropertyDeclaration(decl) && decl.type) {
+      if (decl.type.kind === ts.SyntaxKind.BooleanKeyword && decl.questionToken === undefined) {
+        return;
+      } else if (!this.tsTypeChecker.getTypeAtLocation(decl.name).isUnion()) {
+        return;
+      }
+    }
     const propType = propsMap.get(propName);
 
     if (propType && this.isExactlySameType(propType, methodReturnType)) {
