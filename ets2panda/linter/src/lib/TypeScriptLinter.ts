@@ -14400,7 +14400,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const deprecatedApiCheckMap = TypeScriptLinter.getDeprecatedApiCheckMapForCallExpression(decl, parName);
     this.reportDeprecatedApi(node, name, deprecatedApiCheckMap);
     this.checkCallExpressionForSdkApi(node, name, parName, !!isNeedGetResolvedSignature, deprecatedApiCheckMap);
-    this.checkSpecialApiForDeprecatedApi(node, name, decl);
+    this.checkSpecialApiForDeprecatedApi(node, name);
+    this.checkOnScrollApiForDeprecatedApi(name, decl);
   }
 
   private static getDeprecatedApiCheckMapForCallExpression(
@@ -14519,11 +14520,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return sdkFaultId;
   }
 
-  private checkSpecialApiForDeprecatedApi(
-    node: ts.CallExpression,
-    name: ts.Identifier,
-    decl: ts.Declaration | undefined
-  ): void {
+  private checkSpecialApiForDeprecatedApi(node: ts.CallExpression, name: ts.Identifier): void {
     if (('mask' === name.getText() || 'clip' === name.getText()) && node.arguments.length === 1) {
       const types = ['CircleAttribute', 'EllipseAttribute', ' PathAttribute', 'RectAttribute'];
       const arg = node.arguments[0];
@@ -14542,13 +14539,25 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
           }
 
           const autofix = this.autofixer?.fixSpecialDeprecatedApiForCallExpression(node, name);
-          this.incrementCounters(name, FaultID.NoDeprecatedApi, autofix);
+          this.incrementCounters(
+            name,
+            FaultID.NoDeprecatedApi,
+            autofix,
+            TypeScriptLinter.getErrorMsgForSdkCommonApi(name.getText(), FaultID.NoDeprecatedApi)
+          );
           return;
         }
-        this.incrementCounters(name, FaultID.NoDeprecatedApi);
-        return;
+        this.incrementCounters(
+          name,
+          FaultID.NoDeprecatedApi,
+          undefined,
+          TypeScriptLinter.getErrorMsgForSdkCommonApi(name.getText(), FaultID.NoDeprecatedApi)
+        );
       }
     }
+  }
+
+  private checkOnScrollApiForDeprecatedApi(name: ts.Identifier, decl: ts.Declaration | undefined): void {
     if (decl?.parent && ts.isClassDeclaration(decl.parent) && 'onScroll' === name.getText()) {
       let parentName = '';
       decl.parent.heritageClauses?.forEach((clause) => {
@@ -14559,7 +14568,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         });
       });
       if (parentName === 'ScrollableCommonMethod') {
-        this.incrementCounters(name, FaultID.NoDeprecatedApi);
+        this.incrementCounters(
+          name,
+          FaultID.NoDeprecatedApi,
+          undefined,
+          TypeScriptLinter.getErrorMsgForSdkCommonApi(name.getText(), FaultID.NoDeprecatedApi)
+        );
       }
     }
   }
