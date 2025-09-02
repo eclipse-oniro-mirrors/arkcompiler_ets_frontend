@@ -1123,6 +1123,21 @@ void TryInferPreferredType(ir::ArrowFunctionExpression *expr, checker::Type *pre
     }
 }
 
+static bool IsUnionTypeContainingPromise(checker::Type *type, ETSChecker *checker)
+{
+    if (!type->IsETSUnionType()) {
+        return false;
+    }
+    for (auto subtype : type->AsETSUnionType()->ConstituentTypes()) {
+        if (subtype->IsETSObjectType() &&
+            subtype->AsETSObjectType()->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -1184,8 +1199,9 @@ checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
     if (expr->Function()->ReturnTypeAnnotation() == nullptr) {
         if (expr->Function()->IsAsyncFunc()) {
             auto *retType = signature->ReturnType();
-            if (!retType->IsETSObjectType() ||
-                retType->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType()) {
+            if (!IsUnionTypeContainingPromise(retType, checker) &&
+                (!retType->IsETSObjectType() ||
+                 retType->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType())) {
                 auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(signature->ReturnType());
                 ES2PANDA_ASSERT(returnType != nullptr);
                 expr->Function()->Signature()->SetReturnType(returnType->PromiseType());
