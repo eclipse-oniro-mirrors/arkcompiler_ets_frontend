@@ -24,12 +24,7 @@ namespace ark::es2panda::ir {
 void TSThisType::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
                                    [[maybe_unused]] std::string_view const transformationName)
 {
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSThisType::Iterate([[maybe_unused]] const NodeTraverser &cb) const
@@ -75,7 +70,11 @@ checker::VerifiedType TSThisType::Check([[maybe_unused]] checker::ETSChecker *ch
 
 checker::Type *TSThisType::GetType([[maybe_unused]] checker::ETSChecker *checker)
 {
-    return checker->Context().ContainingClass();
+    auto *containingClass = checker->Context().ContainingClass();
+    if (containingClass == nullptr) {
+        return checker->GlobalTypeError();
+    }
+    return containingClass;
 }
 
 TSThisType *TSThisType::Clone(ArenaAllocator *const allocator, AstNode *const parent)

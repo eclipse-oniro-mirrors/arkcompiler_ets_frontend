@@ -138,6 +138,50 @@ std::set<ark::es2panda::lsp::ReferencedNode> FindReferences(const ark::es2panda:
     initializer.DestroyContext(context);
     return res;
 }
+
+std::set<ark::es2panda::lsp::ReferencedNode> FindReferences(es2panda_Context *context, LocationId tokenLocationId,
+                                                            std::string tokenName)
+{
+    auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+    auto filePath = std::string {ctx->sourceFile->filePath};
+
+    // Clear before searching each file
+    std::set<ark::es2panda::lsp::ReferencedNode> res;
+    ark::es2panda::parser::Program *pprogram = nullptr;
+    auto cb = [&tokenName, &pprogram, &filePath, &tokenLocationId, &res](ark::es2panda::ir::AstNode *node) {
+        if (!node->IsIdentifier()) {
+            return false;
+        }
+        auto nodeName = ::GetIdentifierName(node);
+        if (nodeName != tokenName) {
+            return false;
+        }
+        auto owner = GetOwner(node);
+        auto nodeOwnerLocationId = GetLocationId(owner, pprogram);
+        auto nodeLocationId = GetLocationId(node, pprogram);
+        bool isDefinition = nodeLocationId == nodeOwnerLocationId;
+        if (nodeOwnerLocationId == tokenLocationId) {
+            res.insert(ark::es2panda::lsp::ReferencedNode {filePath, node->Start().index, node->End().index,
+                                                           node->Start().line, isDefinition});
+        }
+        return false;
+    };
+
+    // Search an ast
+    auto search = [&cb](ark::es2panda::parser::Program *program) -> void {
+        if (program == nullptr) {
+            return;
+        }
+        auto ast = program->Ast();
+        ast->FindChild(cb);
+    };
+
+    // Search the file
+    pprogram = ctx->parserProgram;
+    search(pprogram);
+
+    return res;
+}
 }  // namespace
 
 namespace ark::es2panda::lsp {
@@ -175,6 +219,42 @@ std::set<ReferencedNode> FindReferences(CancellationToken *tkn, const std::vecto
             return res;
         }
         auto refList = ::FindReferences(fl, tokenLocationId, tokenName);
+        for (const auto &entry : refList) {
+            res.insert(entry);
+        }
+    }
+
+    return res;
+}
+
+std::set<ReferencedNode> FindReferences(CancellationToken *tkn, const std::vector<es2panda_Context *> &fileContexts,
+                                        es2panda_Context *context, size_t position)
+{
+    std::string tokenName;
+    LocationId tokenLocationId;
+    // Part 1: Determine the type of token function/variable
+    {
+        auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+
+        auto touchingToken = GetTouchingToken(context, position, false);
+        tokenName = ::GetIdentifierName(touchingToken);
+        auto owner = GetOwner(touchingToken);
+        tokenLocationId = ::GetLocationId(owner, ctx->parserProgram);
+    }
+
+    if (tokenLocationId.empty()) {
+        return {};
+    }
+
+    std::set<ReferencedNode> res;
+    for (auto fc : fileContexts) {
+        // NOTE(muhammet): Need for more fine grained cancellation check but for now doing it before context
+        // creations
+        // should be good enough, thats where it's slowest
+        if (tkn->IsCancellationRequested()) {
+            return res;
+        }
+        auto refList = ::FindReferences(fc, tokenLocationId, tokenName);
         for (const auto &entry : refList) {
             res.insert(entry);
         }

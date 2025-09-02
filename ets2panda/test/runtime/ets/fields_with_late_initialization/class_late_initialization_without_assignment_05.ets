@@ -29,6 +29,6 @@ function main(): void {
     const child = new Child();
     child.parentId;
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

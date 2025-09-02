@@ -32,12 +32,8 @@ void ETSWildcardType::TransformChildren(const NodeTransformer &cb, std::string_v
             typeReference_ = transformedNode->AsETSTypeReference();
         }
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void ETSWildcardType::Iterate(const NodeTraverser &cb) const

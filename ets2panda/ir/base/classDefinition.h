@@ -21,8 +21,8 @@
 #include "ir/srcDump.h"
 #include "ir/annotationAllowed.h"
 #include "ir/astNode.h"
+#include "ir/astNodeHistory.h"
 #include "ir/expressions/identifier.h"
-#include "ir/jsDocAllowed.h"
 #include "ir/statements/annotationUsage.h"
 #include "ir/statements/classDeclaration.h"
 #include "util/language.h"
@@ -58,6 +58,8 @@ enum class ClassDefinitionModifiers : uint32_t {
     INT_ENUM_TRANSFORMED = 1U << 15U,
     FROM_STRUCT = 1U << 16U,
     FUNCTIONAL_REFERENCE = 1U << 17U,
+    LAZY_IMPORT_OBJECT_CLASS = 1U << 18U,
+    INIT_IN_CCTOR = 1U << 19U,
     DECLARATION_ID_REQUIRED = DECLARATION | ID_REQUIRED,
     ETS_MODULE = NAMESPACE_TRANSFORMED | GLOBAL
 };
@@ -70,7 +72,7 @@ struct enumbitops::IsAllowedType<ark::es2panda::ir::ClassDefinitionModifiers> : 
 
 namespace ark::es2panda::ir {
 
-class ClassDefinition : public JsDocAllowed<AnnotationAllowed<TypedAstNode>> {
+class ClassDefinition : public AnnotationAllowed<TypedAstNode> {
 public:
     ClassDefinition() = delete;
     ~ClassDefinition() override = default;
@@ -83,9 +85,8 @@ public:
                              ArenaVector<TSClassImplements *> &&implements, MethodDefinition *ctor,
                              Expression *superClass, ArenaVector<AstNode *> &&body, ClassDefinitionModifiers modifiers,
                              ModifierFlags flags, Language lang)
-        : JsDocAllowed<AnnotationAllowed<TypedAstNode>>(AstNodeType::CLASS_DEFINITION, flags,
-                                                        ArenaVector<AnnotationUsage *>(body.get_allocator()),
-                                                        ArenaVector<JsDocInfo>(body.get_allocator())),
+        : AnnotationAllowed<TypedAstNode>(AstNodeType::CLASS_DEFINITION, flags,
+                                          ArenaVector<AnnotationUsage *>(body.get_allocator())),
           ident_(ident),
           typeParams_(typeParams),
           superTypeParams_(superTypeParams),
@@ -101,11 +102,12 @@ public:
           localPrefix_("$" + std::to_string(localIndex_)),
           exportedClasses_(body_.get_allocator())
     {
+        InitHistory();
     }
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
     explicit ClassDefinition(ArenaAllocator *allocator, Identifier *ident, ArenaVector<AstNode *> &&body,
                              ClassDefinitionModifiers modifiers, ModifierFlags flags, Language lang)
-        : JsDocAllowed<AnnotationAllowed<TypedAstNode>>(AstNodeType::CLASS_DEFINITION, flags, allocator),
+        : AnnotationAllowed<TypedAstNode>(AstNodeType::CLASS_DEFINITION, flags, allocator),
           ident_(ident),
           implements_(allocator->Adapter()),
           body_(std::move(body)),
@@ -117,11 +119,12 @@ public:
           localPrefix_("$" + std::to_string(localIndex_)),
           exportedClasses_(body_.get_allocator())
     {
+        InitHistory();
     }
 
     explicit ClassDefinition(ArenaAllocator *allocator, Identifier *ident, ClassDefinitionModifiers modifiers,
                              ModifierFlags flags, Language lang)
-        : JsDocAllowed<AnnotationAllowed<TypedAstNode>>(AstNodeType::CLASS_DEFINITION, flags, allocator),
+        : AnnotationAllowed<TypedAstNode>(AstNodeType::CLASS_DEFINITION, flags, allocator),
           ident_(ident),
           implements_(allocator->Adapter()),
           body_(allocator->Adapter()),
@@ -133,6 +136,30 @@ public:
           localPrefix_("$" + std::to_string(localIndex_)),
           exportedClasses_(body_.get_allocator())
     {
+        InitHistory();
+    }
+
+    // CC-OFFNXT(G.FUN.01-CPP) solid logic
+    explicit ClassDefinition(ArenaAllocator *allocator, Identifier *ident, ArenaVector<AstNode *> &&body,
+                             ClassDefinitionModifiers modifiers, ModifierFlags flags, Language lang,
+                             AstNodeHistory *history)
+        : AnnotationAllowed<TypedAstNode>(AstNodeType::CLASS_DEFINITION, flags, allocator),
+          ident_(ident),
+          implements_(allocator->Adapter()),
+          body_(std::move(body)),
+          modifiers_(modifiers),
+          lang_(lang),
+          capturedVars_(allocator->Adapter()),
+          localVariableIsNeeded_(allocator->Adapter()),
+          localIndex_(classCounter_++),
+          localPrefix_("$" + std::to_string(localIndex_)),
+          exportedClasses_(body_.get_allocator())
+    {
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     [[nodiscard]] bool IsScopeBearer() const noexcept override
@@ -142,107 +169,97 @@ public:
 
     [[nodiscard]] varbinder::LocalScope *Scope() const noexcept override
     {
-        return scope_;
-    }
-
-    void SetScope(varbinder::LocalScope *scope)
-    {
-        ES2PANDA_ASSERT(scope_ == nullptr);
-        scope_ = scope;
+        return GetHistoryNodeAs<ClassDefinition>()->scope_;
     }
 
     void ClearScope() noexcept override
     {
-        scope_ = nullptr;
+        SetScope(nullptr);
     }
 
     [[nodiscard]] const Identifier *Ident() const noexcept
     {
-        return ident_;
+        return GetHistoryNodeAs<ClassDefinition>()->ident_;
     }
 
     [[nodiscard]] Identifier *Ident() noexcept
     {
-        return ident_;
+        return GetHistoryNodeAs<ClassDefinition>()->ident_;
     }
 
     void SetIdent(ir::Identifier *ident) noexcept;
 
     [[nodiscard]] const util::StringView &InternalName() const noexcept
     {
-        return internalName_;
-    }
-
-    void SetInternalName(util::StringView internalName) noexcept
-    {
-        internalName_ = internalName;
+        return GetHistoryNodeAs<ClassDefinition>()->internalName_;
     }
 
     [[nodiscard]] Expression *Super() noexcept
     {
-        return superClass_;
+        return GetHistoryNodeAs<ClassDefinition>()->superClass_;
     }
 
     [[nodiscard]] const Expression *Super() const noexcept
     {
-        return superClass_;
+        return GetHistoryNodeAs<ClassDefinition>()->superClass_;
     }
 
     void SetSuper(Expression *superClass)
     {
-        superClass_ = superClass;
-        if (superClass_ != nullptr) {
-            superClass_->SetParent(this);
+        auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+        newNode->superClass_ = superClass;
+        if (newNode->superClass_ != nullptr) {
+            newNode->superClass_->SetParent(this);
         }
     }
 
     [[nodiscard]] bool IsGlobal() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::GLOBAL) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::GLOBAL) != 0;
     }
 
     [[nodiscard]] bool IsLocal() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::LOCAL) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::LOCAL) != 0;
     }
 
     [[nodiscard]] bool IsExtern() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::EXTERN) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::EXTERN) != 0;
     }
 
     [[nodiscard]] bool IsFromExternal() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::FROM_EXTERNAL) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::FROM_EXTERNAL) != 0;
     }
     [[nodiscard]] bool IsInner() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::INNER) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::INNER) != 0;
     }
 
     [[nodiscard]] bool IsGlobalInitialized() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::GLOBAL_INITIALIZED) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::GLOBAL_INITIALIZED) != 0;
     }
 
     [[nodiscard]] bool IsClassDefinitionChecked() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::CLASSDEFINITION_CHECKED) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::CLASSDEFINITION_CHECKED) != 0;
     }
 
     [[nodiscard]] bool IsAnonymous() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::ANONYMOUS) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::ANONYMOUS) != 0;
     }
 
     [[nodiscard]] bool IsIntEnumTransformed() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::INT_ENUM_TRANSFORMED) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::INT_ENUM_TRANSFORMED) != 0;
     }
 
     [[nodiscard]] bool IsStringEnumTransformed() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::STRING_ENUM_TRANSFORMED) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::STRING_ENUM_TRANSFORMED) != 0;
     }
 
     [[nodiscard]] bool IsEnumTransformed() const noexcept
@@ -252,12 +269,22 @@ public:
 
     [[nodiscard]] bool IsNamespaceTransformed() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::NAMESPACE_TRANSFORMED) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::NAMESPACE_TRANSFORMED) != 0;
+    }
+
+    [[nodiscard]] bool IsLazyImportObjectClass() const noexcept
+    {
+        return (Modifiers() & ClassDefinitionModifiers::LAZY_IMPORT_OBJECT_CLASS) != 0;
     }
 
     [[nodiscard]] bool IsFromStruct() const noexcept
     {
-        return (modifiers_ & ClassDefinitionModifiers::FROM_STRUCT) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::FROM_STRUCT) != 0;
+    }
+
+    [[nodiscard]] bool IsInitInCctor() const noexcept
+    {
+        return (Modifiers() & ClassDefinitionModifiers::INIT_IN_CCTOR) != 0;
     }
 
     [[nodiscard]] bool IsModule() const noexcept
@@ -267,47 +294,52 @@ public:
 
     [[nodiscard]] es2panda::Language Language() const noexcept
     {
-        return lang_;
+        return GetHistoryNodeAs<ClassDefinition>()->lang_;
     }
 
     void SetGlobalInitialized() noexcept
     {
-        modifiers_ |= ClassDefinitionModifiers::GLOBAL_INITIALIZED;
+        AddClassModifiers(ClassDefinitionModifiers::GLOBAL_INITIALIZED);
     }
 
     void SetInnerModifier() noexcept
     {
-        modifiers_ |= ClassDefinitionModifiers::INNER;
+        AddClassModifiers(ClassDefinitionModifiers::INNER);
     }
 
     void SetClassDefinitionChecked() noexcept
     {
-        modifiers_ |= ClassDefinitionModifiers::CLASSDEFINITION_CHECKED;
+        AddClassModifiers(ClassDefinitionModifiers::CLASSDEFINITION_CHECKED);
     }
 
     void SetAnonymousModifier() noexcept
     {
-        modifiers_ |= ClassDefinitionModifiers::ANONYMOUS;
+        AddClassModifiers(ClassDefinitionModifiers::ANONYMOUS);
     }
 
     void SetNamespaceTransformed() noexcept
     {
-        modifiers_ |= ClassDefinitionModifiers::NAMESPACE_TRANSFORMED;
+        AddClassModifiers(ClassDefinitionModifiers::NAMESPACE_TRANSFORMED);
+    }
+
+    void SetLazyImportObjectClass() noexcept
+    {
+        AddClassModifiers(ClassDefinitionModifiers::LAZY_IMPORT_OBJECT_CLASS);
     }
 
     void SetFromStructModifier() noexcept
     {
-        modifiers_ |= ClassDefinitionModifiers::FROM_STRUCT;
+        AddClassModifiers(ClassDefinitionModifiers::FROM_STRUCT);
+    }
+
+    void SetInitInCctor()
+    {
+        AddClassModifiers(ClassDefinitionModifiers::INIT_IN_CCTOR);
     }
 
     [[nodiscard]] ClassDefinitionModifiers Modifiers() const noexcept
     {
-        return modifiers_;
-    }
-
-    void SetModifiers(ClassDefinitionModifiers modifiers) noexcept
-    {
-        modifiers_ = modifiers;
+        return GetHistoryNodeAs<ClassDefinition>()->modifiers_;
     }
 
     void AddProperties(ArenaVector<AstNode *> &&body)
@@ -316,64 +348,46 @@ public:
             prop->SetParent(this);
         }
 
-        body_.insert(body_.end(), body.begin(), body.end());
-    }
-
-    [[nodiscard]] ArenaVector<AstNode *> &Body() noexcept
-    {
-        return body_;
+        auto newNode = GetOrCreateHistoryNode()->AsClassDefinition();
+        newNode->body_.insert(newNode->body_.end(), body.begin(), body.end());
     }
 
     [[nodiscard]] const ArenaVector<AstNode *> &Body() const noexcept
     {
-        return body_;
+        return GetHistoryNodeAs<ClassDefinition>()->body_;
     }
 
     [[nodiscard]] MethodDefinition *Ctor() noexcept
     {
-        return ctor_;
-    }
-
-    void SetCtor(MethodDefinition *ctor)
-    {
-        ctor_ = ctor;
-    }
-
-    [[nodiscard]] ArenaVector<ir::TSClassImplements *> &Implements() noexcept
-    {
-        return implements_;
+        return GetHistoryNodeAs<ClassDefinition>()->ctor_;
     }
 
     [[nodiscard]] const ArenaVector<ir::TSClassImplements *> &Implements() const noexcept
     {
-        return implements_;
+        return GetHistoryNodeAs<ClassDefinition>()->implements_;
     }
 
     [[nodiscard]] const ir::TSTypeParameterDeclaration *TypeParams() const noexcept
     {
-        return typeParams_;
+        return GetHistoryNodeAs<ClassDefinition>()->typeParams_;
     }
 
     [[nodiscard]] ir::TSTypeParameterDeclaration *TypeParams() noexcept
     {
-        return typeParams_;
-    }
-
-    void SetTypeParams(ir::TSTypeParameterDeclaration *typeParams)
-    {
-        typeParams_ = typeParams;
+        return GetHistoryNodeAs<ClassDefinition>()->typeParams_;
     }
 
     const TSTypeParameterInstantiation *SuperTypeParams() const
     {
-        return superTypeParams_;
+        return GetHistoryNodeAs<ClassDefinition>()->superTypeParams_;
     }
 
     TSTypeParameterInstantiation *SuperTypeParams()
     {
-        return superTypeParams_;
+        return GetHistoryNodeAs<ClassDefinition>()->superTypeParams_;
     }
 
+    // ekkoruse: dangerous count for cache here
     [[nodiscard]] static int LocalTypeCounter() noexcept
     {
         return classCounter_;
@@ -381,7 +395,7 @@ public:
 
     [[nodiscard]] int LocalIndex() const noexcept
     {
-        return localIndex_;
+        return GetHistoryNodeAs<ClassDefinition>()->localIndex_;
     }
 
     [[nodiscard]] MethodDefinition *FunctionalReferenceReferencedMethod() const noexcept
@@ -396,52 +410,46 @@ public:
 
     [[nodiscard]] const std::string &LocalPrefix() const noexcept
     {
-        return localPrefix_;
+        return GetHistoryNodeAs<ClassDefinition>()->localPrefix_;
     }
 
     bool CaptureVariable(varbinder::Variable *var)
     {
-        return capturedVars_.insert(var).second;
+        auto newNode = GetOrCreateHistoryNode()->AsClassDefinition();
+        return newNode->capturedVars_.insert(var).second;
     }
 
     bool AddToLocalVariableIsNeeded(varbinder::Variable *var)
     {
-        return localVariableIsNeeded_.insert(var).second;
+        auto newNode = GetOrCreateHistoryNode()->AsClassDefinition();
+        return newNode->localVariableIsNeeded_.insert(var).second;
     }
 
     bool IsLocalVariableNeeded(varbinder::Variable *var) const
     {
-        return localVariableIsNeeded_.find(var) != localVariableIsNeeded_.end();
+        auto const newNode = GetHistoryNode()->AsClassDefinition();
+        return newNode->localVariableIsNeeded_.find(var) != newNode->localVariableIsNeeded_.end();
     }
 
     [[nodiscard]] const ArenaSet<varbinder::Variable *> &CapturedVariables() const noexcept
     {
-        return capturedVars_;
+        return GetHistoryNodeAs<ClassDefinition>()->capturedVars_;
     }
 
     bool EraseCapturedVariable(varbinder::Variable *var)
     {
-        return capturedVars_.erase(var) != 0;
-    }
-
-    void SetOrigEnumDecl(ir::TSEnumDeclaration *enumDecl)
-    {
-        origEnumDecl_ = enumDecl;
+        auto newNode = GetOrCreateHistoryNode()->AsClassDefinition();
+        return newNode->capturedVars_.erase(var) != 0;
     }
 
     ir::TSEnumDeclaration *OrigEnumDecl() const
     {
-        return origEnumDecl_;
+        return GetHistoryNodeAs<ClassDefinition>()->origEnumDecl_;
     }
 
     ClassDeclaration *GetAnonClass() noexcept
     {
-        return anonClass_;
-    }
-
-    void SetAnonClass(ClassDeclaration *anonClass) noexcept
-    {
-        anonClass_ = anonClass;
+        return GetHistoryNodeAs<ClassDefinition>()->anonClass_;
     }
 
     const FunctionExpression *Ctor() const;
@@ -450,6 +458,7 @@ public:
     bool HasComputedInstanceField() const;
     bool HasMatchingPrivateKey(const util::StringView &name) const;
 
+    void TransformBase(const NodeTransformer &cb, std::string_view transformationName);
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
 
@@ -483,13 +492,14 @@ public:
     void CleanUp() override
     {
         AstNode::CleanUp();
-        modifiers_ &= ~(ClassDefinitionModifiers::CLASSDEFINITION_CHECKED);
+        ClearClassModifiers(ClassDefinitionModifiers::CLASSDEFINITION_CHECKED);
     }
 
     void AddToExportedClasses(const ir::ClassDeclaration *cls)
     {
         ES2PANDA_ASSERT(cls->IsExported() || cls->Definition()->IsGlobal());
-        exportedClasses_.push_back(cls);
+        auto newNode = reinterpret_cast<ClassDefinition *>(this->GetOrCreateHistoryNode());
+        newNode->exportedClasses_.emplace_back(cls);
     }
 
     void BatchAddToExportedClasses(const ArenaVector<const ir::ClassDeclaration *> &classes)
@@ -501,15 +511,62 @@ public:
 
     [[nodiscard]] const ArenaVector<const ir::ClassDeclaration *> &ExportedClasses() const noexcept
     {
-        return exportedClasses_;
+        return GetHistoryNodeAs<ClassDefinition>()->exportedClasses_;
     }
+    void SetScope(varbinder::LocalScope *scope);
+    void SetModifiers(ClassDefinitionModifiers modifiers);
+
+    void EmplaceBody(AstNode *body);
+    void ClearBody();
+    void SetValueBody(AstNode *body, size_t index);
+    const ArenaVector<AstNode *> &Body();
+    [[nodiscard]] ArenaVector<AstNode *> &BodyForUpdate();
+
+    void EmplaceImplements(TSClassImplements *implements);
+    void ClearImplements();
+    void SetValueImplements(TSClassImplements *implements, size_t index);
+    const ArenaVector<TSClassImplements *> &Implements();
+    ArenaVector<TSClassImplements *> &ImplementsForUpdate();
+
+    void SetCtor(MethodDefinition *ctor);
+    void SetTypeParams(TSTypeParameterDeclaration *typeParams);
+    void SetOrigEnumDecl(TSEnumDeclaration *origEnumDecl);
+    void SetAnonClass(ClassDeclaration *anonClass);
+    void SetInternalName(util::StringView internalName);
 
 protected:
     ClassDefinition *Construct(ArenaAllocator *allocator) override;
 
+    void AddClassModifiers(ClassDefinitionModifiers const flags) noexcept
+    {
+        if (!All(Modifiers(), flags)) {
+            GetOrCreateHistoryNodeAs<ClassDefinition>()->modifiers_ |= flags;
+        }
+    }
+
+    void ClearClassModifiers(ClassDefinitionModifiers const flags) noexcept
+    {
+        if (Any(Modifiers(), flags)) {
+            GetOrCreateHistoryNodeAs<ClassDefinition>()->modifiers_ &= ~flags;
+        }
+    }
+
     void CopyTo(AstNode *other) const override;
 
 private:
+    void SetSuperClass(Expression *superClass);
+    void SetSuperTypeParams(TSTypeParameterInstantiation *superTypeParams);
+
+    [[nodiscard]] Expression *SuperClass()
+    {
+        return GetHistoryNodeAs<ClassDefinition>()->superClass_;
+    }
+
+    [[nodiscard]] const Expression *SuperClass() const
+    {
+        return GetHistoryNodeAs<ClassDefinition>()->superClass_;
+    }
+
     void CompileStaticFieldInitializers(compiler::PandaGen *pg, compiler::VReg classReg,
                                         const std::vector<compiler::VReg> &staticComputedFieldKeys) const;
 
@@ -535,7 +592,7 @@ private:
     ArenaSet<varbinder::Variable *> localVariableIsNeeded_;
     TSEnumDeclaration *origEnumDecl_ {};
     ClassDeclaration *anonClass_ {nullptr};
-    static int classCounter_;
+    static std::atomic<int> classCounter_;
     int localIndex_ {};
     std::string localPrefix_ {};
     MethodDefinition *functionalReferenceReferencedMethod_ {};

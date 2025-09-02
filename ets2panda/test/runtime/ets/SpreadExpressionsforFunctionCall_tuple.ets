@@ -31,30 +31,30 @@ function getStringArr() : [int, boolean, string] {
 function main() {
     let a = new A()
     let arr1 = [...a./*xxxxx*/foo(), ...foo()]
-    assertEQ(arr1.length, 5)
-    assertEQ(arr1[0], 7)
-    assertEQ(arr1[1], "a")
-    assertEQ(arr1[2], true)
-    assertEQ(arr1[3], "b")
-    assertEQ(arr1[4], 1)
+    arktest.assertEQ(arr1.length, 5)
+    arktest.assertEQ(arr1[0], 7)
+    arktest.assertEQ(arr1[1], "a")
+    arktest.assertEQ(arr1[2], true)
+    arktest.assertEQ(arr1[3], "b")
+    arktest.assertEQ(arr1[4], 1)
 
     let arr2 = [...getStringArr()]
-    assertEQ(arr2.length, 3)
-    assertEQ(arr2[0], 5)
-    assertEQ(arr2[1], true)
-    assertEQ(arr2[2], "A")
+    arktest.assertEQ(arr2.length, 3)
+    arktest.assertEQ(arr2[0], 5)
+    arktest.assertEQ(arr2[1], true)
+    arktest.assertEQ(arr2[2], "A")
 
     let getArr = (): [string, int] => {
         return ["a", 10]
     }
     let arr3 = [...arr2, ...getArr(), "B"]
-    assertEQ(arr3.length, 6)
-    assertEQ(arr3[0], 5)
-    assertEQ(arr3[1], true)
-    assertEQ(arr3[2], "A")
-    assertEQ(arr3[3], "a")
-    assertEQ(arr3[4], 10)
-    assertEQ(arr3[5], "B")
+    arktest.assertEQ(arr3.length, 6)
+    arktest.assertEQ(arr3[0], 5)
+    arktest.assertEQ(arr3[1], true)
+    arktest.assertEQ(arr3[2], "A")
+    arktest.assertEQ(arr3[3], "a")
+    arktest.assertEQ(arr3[4], 10)
+    arktest.assertEQ(arr3[5], "B")
 
 }
 

@@ -48,19 +48,11 @@ public:
         flags_ |= flags;
         relation->SetNode(node);
 
-        // NOTE (oeotvos) The narrowing flag will be applied here. It means, that the result of "let tmp: int = 1.5"
-        // will be 1, which could cause problems.
-        if (source->HasTypeFlag(TypeFlag::CONSTANT)) {
-            flags_ |= TypeRelationFlag::NARROWING;
-        }
-
         relation->SetFlags(flags_);
 
         if (!relation->IsAssignableTo(source, target)) {
             if (relation->IsLegalBoxedPrimitiveConversion(target, source)) {
-                Type *sourceUnboxedType = etsChecker->MaybeUnboxType(source);
-                relation->GetNode()->AddBoxingUnboxingFlags(etsChecker->GetUnboxingFlag(sourceUnboxedType));
-                relation->GetNode()->AddBoxingUnboxingFlags(etsChecker->GetBoxingFlag(target));
+                relation->Result(true);
             }
             if (((flags_ & TypeRelationFlag::UNBOXING) != 0) && !relation->IsTrue() && source->IsETSObjectType() &&
                 !target->IsETSObjectType()) {
@@ -110,6 +102,9 @@ public:
         relation->SetFlags(flags_ | initialFlags);
 
         if (!relation->IsAssignableTo(source, target)) {
+            if (relation->IsLegalBoxedPrimitiveConversion(target, source)) {
+                relation->Result(true);
+            }
             if (((flags_ & TypeRelationFlag::UNBOXING) != 0U) && !relation->IsTrue() && source->IsETSObjectType() &&
                 !target->IsETSObjectType()) {
                 etsChecker->CheckUnboxedSourceTypeWithWideningAssignable(relation, source, target);

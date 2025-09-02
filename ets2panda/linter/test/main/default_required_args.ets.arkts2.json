@@ -25,16 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 16,
-            "column": 29,
-            "endLine": 16,
-            "endColumn": 30,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 20,
             "column": 26,
             "endLine": 20,
@@ -42,16 +32,6 @@
             "problem": "DefaultArgsBehindRequiredArgs",
             "suggest": "",
             "rule": "Default parameters must be placed after mandatory parameters (arkts-default-args-behind-required-args)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 38,
-            "endLine": 20,
-            "endColumn": 39,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -75,56 +55,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 24,
-            "column": 27,
-            "endLine": 24,
-            "endColumn": 28,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
-            "column": 42,
-            "endLine": 24,
-            "endColumn": 43,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 27,
-            "endLine": 28,
-            "endColumn": 28,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 42,
-            "endLine": 28,
-            "endColumn": 43,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 57,
-            "endLine": 28,
-            "endColumn": 58,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 32,
             "column": 14,
             "endLine": 32,
@@ -142,26 +72,6 @@
             "problem": "DefaultArgsBehindRequiredArgs",
             "suggest": "",
             "rule": "Default parameters must be placed after mandatory parameters (arkts-default-args-behind-required-args)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 37,
-            "column": 24,
-            "endLine": 37,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 42,
-            "column": 42,
-            "endLine": 42,
-            "endColumn": 43,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

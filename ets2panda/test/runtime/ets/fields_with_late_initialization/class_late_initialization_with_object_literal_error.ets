@@ -20,9 +20,9 @@ class A {
 function main(): void {
   try {
     let a: A = {}
-    assertEQ(a.f, "aa");
+    arktest.assertEQ(a.f, "aa");
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }
 

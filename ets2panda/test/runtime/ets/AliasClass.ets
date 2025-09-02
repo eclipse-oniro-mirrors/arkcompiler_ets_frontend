@@ -35,23 +35,23 @@ type Alias5Class<T1, T2> = D<Alias1Class<T1>, AliasAlias<T2>[]>
 
 function main() {
     let v1 : C<double> = new C<double>(1);                     // C<Double>
-    assertEQ(v1.v, 1)
+    arktest.assertEQ(v1.v, 1)
 
     let v2 : Alias1Class<double> = new C<double>(2);           // C<Double>
-    assertEQ(v2.v, 2)
+    arktest.assertEQ(v2.v, 2)
 
     let v3 : Alias2Class<double> = new C<double[]>([3.0]);     // C<double[]>
-    assertEQ(v3.v[0], 3)
+    arktest.assertEQ(v3.v[0], 3)
 
     let v4: Alias3Class<double, int> = new D<double, int>(4.0, 5); // D<Double, Int>
-    assertEQ(v4.v, 4.0)
-    assertEQ(v4.w, 5)
+    arktest.assertEQ(v4.v, 4.0)
+    arktest.assertEQ(v4.w, 5)
 
     let v5: Alias4Class<double, int> = new D<int, double>(6, 7.0); // D<Int, Double>
-    assertEQ(v5.v, 6)
-    assertEQ(v5.w, 7.0)
+    arktest.assertEQ(v5.v, 6)
+    arktest.assertEQ(v5.w, 7.0)
 
     let v6: Alias5Class<double, double> = new D<C<double>, double[]>(new C<double>(8), [9.0]);  // D<C<Double>, double[]>
-    assertEQ(v6.v.v, 8)
-    assertEQ(v6.w[0], 9.0)
+    arktest.assertEQ(v6.v.v, 8)
+    arktest.assertEQ(v6.w[0], 9.0)
 }

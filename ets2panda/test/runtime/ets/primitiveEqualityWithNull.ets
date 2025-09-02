@@ -14,15 +14,15 @@
  */
 
 function main(){
-    assertTrue(!((1 as byte) == null))
-    assertTrue(!(null == (1 as short)))
-    assertTrue(!(1 == null))
-    assertTrue(!(null == (1 as long)))
-    assertTrue(!(1.2f == null))
-    assertTrue(!(null == 1.2))
-    assertTrue(!(c'a'== null))
-    assertTrue(!(null == true))
-    assertTrue(!(false == null))
-    assertEQ(null, null)
-    assertTrue(null == undefined)
+    arktest.assertTrue(!((1 as byte) == null))
+    arktest.assertTrue(!(null == (1 as short)))
+    arktest.assertTrue(!(1 == null))
+    arktest.assertTrue(!(null == (1 as long)))
+    arktest.assertTrue(!(1.2f == null))
+    arktest.assertTrue(!(null == 1.2))
+    arktest.assertTrue(!(c'a'== null))
+    arktest.assertTrue(!(null == true))
+    arktest.assertTrue(!(false == null))
+    arktest.assertEQ(null, null)
+    arktest.assertTrue(null == undefined)
 }

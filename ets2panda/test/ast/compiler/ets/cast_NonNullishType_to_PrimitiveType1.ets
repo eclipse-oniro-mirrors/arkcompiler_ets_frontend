@@ -16,5 +16,3 @@
 function foo<T>(data : T): void {
     let aNumber = data! as boolean
 }
-
-/* @@? 17:19 Error TypeError: Cannot cast type 'NonNullable<T>' to 'boolean' */

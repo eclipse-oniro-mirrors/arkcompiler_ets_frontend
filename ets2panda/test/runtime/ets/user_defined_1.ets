@@ -23,5 +23,5 @@ class B <T> {
 let x: B<boolean> = new B<boolean>(true);
 
 function main() {
-    assertEQ(x.a, true)
+    arktest.assertEQ(x.a, true)
 }

@@ -16,10 +16,10 @@
 function main():void{
     let x1 = [10,20,30,40];
     let x2 = x1[2];
-    assertEQ(x2, 30)
+    arktest.assertEQ(x2, 30)
 
     let x3 = [10,20,30,40][2]
     let x4 = [10,20,30,40][3]
-    assertEQ(x3, 30)
-    assertEQ(x4, 40)
+    arktest.assertEQ(x3, 30)
+    arktest.assertEQ(x4, 40)
 }

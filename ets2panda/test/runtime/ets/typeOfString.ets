@@ -15,5 +15,5 @@
 
 function main() {
     let V = typeof `m`
-    assertEQ(V, "string")
+    arktest.assertEQ(V, "string")
 }

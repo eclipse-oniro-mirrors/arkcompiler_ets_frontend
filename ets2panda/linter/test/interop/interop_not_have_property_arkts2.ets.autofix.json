@@ -30,26 +30,6 @@
             "endLine": 17,
             "endColumn": 106,
             "problem": "InterOpImportJs",
-            "autofix": [
-                {
-                    "start": 618,
-                    "end": 723,
-                    "replacementText": "",
-                    "line": 17,
-                    "column": 1,
-                    "endLine": 17,
-                    "endColumn": 106
-                },
-                {
-                    "start": 723,
-                    "end": 723,
-                    "replacementText": "let GeneratedImportVar_1 = ESValue.load('./interop_not_have_property_js');\nlet foo = GeneratedImportVar_1.getProperty('foo');\nlet person = GeneratedImportVar_1.getProperty('person');\nlet TestHelper = GeneratedImportVar_1.getProperty('TestHelper');\nlet Machine = GeneratedImportVar_1.getProperty('Machine');\nlet User = GeneratedImportVar_1.getProperty('User');\nlet Person = GeneratedImportVar_1.getProperty('Person');\nlet Employee = GeneratedImportVar_1.getProperty('Employee');\n",
-                    "line": 17,
-                    "column": 1,
-                    "endLine": 17,
-                    "endColumn": 106
-                }
-            ],
             "suggest": "",
             "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
@@ -118,27 +98,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 21,
-            "column": 14,
-            "endLine": 21,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 764,
-                    "end": 766,
-                    "replacementText": "23.0",
-                    "line": 21,
-                    "column": 14,
-                    "endLine": 21,
-                    "endColumn": 16
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 22,
             "column": 1,
             "endLine": 22,
@@ -160,48 +119,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 22,
-            "column": 16,
-            "endLine": 22,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 782,
-                    "end": 783,
-                    "replacementText": "2.0",
-                    "line": 22,
-                    "column": 16,
-                    "endLine": 22,
-                    "endColumn": 17
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 19,
-            "endLine": 22,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 785,
-                    "end": 786,
-                    "replacementText": "3.0",
-                    "line": 22,
-                    "column": 19,
-                    "endLine": 22,
-                    "endColumn": 20
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 23,
             "column": 1,
             "endLine": 23,
@@ -220,27 +137,6 @@
             ],
             "suggest": "",
             "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 23,
-            "column": 11,
-            "endLine": 23,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 798,
-                    "end": 800,
-                    "replacementText": "12.0",
-                    "line": 23,
-                    "column": 11,
-                    "endLine": 23,
-                    "endColumn": 13
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -338,27 +234,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 27,
-            "column": 9,
-            "endLine": 27,
-            "endColumn": 11,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 868,
-                    "end": 870,
-                    "replacementText": "12.0",
-                    "line": 27,
-                    "column": 9,
-                    "endLine": 27,
-                    "endColumn": 11
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 29,
             "column": 19,
             "endLine": 29,
@@ -431,7 +306,7 @@
                 {
                     "start": 1005,
                     "end": 1031,
-                    "replacementText": "machine.name.areStrictlyEqual(\"machine\")",
+                    "replacementText": "machine.getProperty(\"name\").areStrictlyEqual(\"machine\")",
                     "line": 32,
                     "column": 12,
                     "endLine": 32,
@@ -515,7 +390,7 @@
                 {
                     "start": 1173,
                     "end": 1190,
-                    "replacementText": "user.id.areStrictlyEqual(\"Bob\")",
+                    "replacementText": "user.getProperty(\"id\").areStrictlyEqual(\"Bob\")",
                     "line": 37,
                     "column": 12,
                     "endLine": 37,
@@ -590,27 +465,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 41,
-            "column": 21,
-            "endLine": 41,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1300,
-                    "end": 1302,
-                    "replacementText": "10.0",
-                    "line": 41,
-                    "column": 21,
-                    "endLine": 41,
-                    "endColumn": 23
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 42,
             "column": 8,
             "endLine": 42,
@@ -620,7 +474,7 @@
                 {
                     "start": 1312,
                     "end": 1326,
-                    "replacementText": "user.id.areStrictlyEqual(10)",
+                    "replacementText": "user.getProperty(\"id\").areStrictlyEqual(10)",
                     "line": 42,
                     "column": 8,
                     "endLine": 42,
@@ -650,27 +504,6 @@
             ],
             "suggest": "",
             "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 42,
-            "column": 20,
-            "endLine": 42,
-            "endColumn": 22,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1324,
-                    "end": 1326,
-                    "replacementText": "10.0",
-                    "line": 42,
-                    "column": 20,
-                    "endLine": 42,
-                    "endColumn": 22
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -725,7 +558,7 @@
                 {
                     "start": 1454,
                     "end": 1470,
-                    "replacementText": "user.id.areStrictlyEqual(123n)",
+                    "replacementText": "user.getProperty(\"id\").areStrictlyEqual(123n)",
                     "line": 47,
                     "column": 12,
                     "endLine": 47,
@@ -809,7 +642,7 @@
                 {
                     "start": 1601,
                     "end": 1617,
-                    "replacementText": "user.id.areStrictlyEqual(true)",
+                    "replacementText": "user.getProperty(\"id\").areStrictlyEqual(true)",
                     "line": 52,
                     "column": 12,
                     "endLine": 52,
@@ -884,27 +717,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 56,
-            "column": 38,
-            "endLine": 56,
-            "endColumn": 40,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1742,
-                    "end": 1744,
-                    "replacementText": "10.0",
-                    "line": 56,
-                    "column": 38,
-                    "endLine": 56,
-                    "endColumn": 40
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 57,
             "column": 12,
             "endLine": 57,
@@ -914,7 +726,7 @@
                 {
                     "start": 1758,
                     "end": 1784,
-                    "replacementText": "machine.name.areStrictlyEqual(\"machine\")",
+                    "replacementText": "machine.getProperty(\"name\").areStrictlyEqual(\"machine\")",
                     "line": 57,
                     "column": 12,
                     "endLine": 57,
@@ -998,7 +810,7 @@
                 {
                     "start": 1929,
                     "end": 1957,
-                    "replacementText": "employee.name.areStrictlyEqual(\"employee\")",
+                    "replacementText": "employee.getProperty(\"name\").areStrictlyEqual(\"employee\")",
                     "line": 62,
                     "column": 12,
                     "endLine": 62,

@@ -23,11 +23,6 @@ ParserContext::ParserContext(const Program *program, ParserStatus status)
 {
 }
 
-ParserContext::ParserContext(const Program *program, ParserStatus status, bool isEnableJsdoc)
-    : program_(program), status_(status), lang_(ToLanguage(program->Extension())), isEnableJsdoc_(isEnableJsdoc)
-{
-}
-
 const ParserContext *ParserContext::FindLabel(const util::StringView &label) const
 {
     const auto *iter = this;

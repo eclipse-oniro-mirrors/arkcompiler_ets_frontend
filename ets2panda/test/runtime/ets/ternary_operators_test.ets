@@ -23,50 +23,50 @@ function f1(b?: boolean | string | null | int | object): string {
 
 function f2(): void {
     let result = (2 + 2 === 4) ? "Yes" : "No";
-    assertEQ(result, "Yes");
+    arktest.assertEQ(result, "Yes");
     let result1 = (2 + 2 !== 4) ? "Yes" : "No";
-    assertEQ(result1, "No");
+    arktest.assertEQ(result1, "No");
     let result2 = (2 > 4) ? "Yes" : "No";
-    assertEQ(result2, "No");
+    arktest.assertEQ(result2, "No");
     let result3 = (2 < 4) ? "Yes" : "No";
-    assertEQ(result3, "Yes");
+    arktest.assertEQ(result3, "Yes");
 }
 
 function f3(): void {
     let result = true ? 1 : (false ? 2 : 3);
-    assertEQ(result, 1);
+    arktest.assertEQ(result, 1);
     let result1 = false ? 1 : (false ? 2 : 3);
-    assertEQ(result1, 3);
+    arktest.assertEQ(result1, 3);
 }
 
 function testF() {
-    assertEQ(f(true), "good");
-    assertEQ(f(false), "not good");
-    assertEQ(f("false"), "good");
-    assertEQ(f("true"), "good");
-    assertEQ(f(undefined), "not good");
-    assertEQ(f(null), "not good");
-    assertEQ(f(""), "not good");
-    assertEQ(f("Hello World"), "good");
-    assertEQ(f(0), "not good");
-    assertEQ(f(1), "good");
-    assertEQ(f({}), "good");
-    assertEQ(f(), "not good");
+    arktest.assertEQ(f(true), "good");
+    arktest.assertEQ(f(false), "not good");
+    arktest.assertEQ(f("false"), "good");
+    arktest.assertEQ(f("true"), "good");
+    arktest.assertEQ(f(undefined), "not good");
+    arktest.assertEQ(f(null), "not good");
+    arktest.assertEQ(f(""), "not good");
+    arktest.assertEQ(f("Hello World"), "good");
+    arktest.assertEQ(f(0), "not good");
+    arktest.assertEQ(f(1), "good");
+    arktest.assertEQ(f({}), "good");
+    arktest.assertEQ(f(), "not good");
 }
 
 function testF1() {
-    assertEQ(f1(true), "not good");
-    assertEQ(f1(false), "good");
-    assertEQ(f1("false"), "not good");
-    assertEQ(f1("true"), "not good");
-    assertEQ(f1(undefined), "good");
-    assertEQ(f1(null), "good");
-    assertEQ(f1(""), "good");
-    assertEQ(f1("Hello World"), "not good");
-    assertEQ(f1(0), "good");
-    assertEQ(f1(1), "not good");
-    assertEQ(f1({}), "not good");
-    assertEQ(f1(), "good");
+    arktest.assertEQ(f1(true), "not good");
+    arktest.assertEQ(f1(false), "good");
+    arktest.assertEQ(f1("false"), "not good");
+    arktest.assertEQ(f1("true"), "not good");
+    arktest.assertEQ(f1(undefined), "good");
+    arktest.assertEQ(f1(null), "good");
+    arktest.assertEQ(f1(""), "good");
+    arktest.assertEQ(f1("Hello World"), "not good");
+    arktest.assertEQ(f1(0), "good");
+    arktest.assertEQ(f1(1), "not good");
+    arktest.assertEQ(f1({}), "not good");
+    arktest.assertEQ(f1(), "good");
 }
 
 function main(): void {

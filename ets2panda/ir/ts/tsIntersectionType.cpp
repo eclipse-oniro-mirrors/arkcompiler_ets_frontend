@@ -31,12 +31,8 @@ void TSIntersectionType::TransformChildren(const NodeTransformer &cb, std::strin
             it = transformedNode->AsExpression();
         }
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSIntersectionType::Iterate(const NodeTraverser &cb) const

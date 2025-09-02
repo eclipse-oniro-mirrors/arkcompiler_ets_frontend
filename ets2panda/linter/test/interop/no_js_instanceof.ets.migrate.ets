@@ -13,14 +13,7 @@
  * limitations under the License.
  */
 
-let GeneratedImportVar_1 = ESValue.load('./no_js_instanceof_file.js');
-let Foo = GeneratedImportVar_1.getProperty('Foo');
-let foo = GeneratedImportVar_1.getProperty('foo');
-let CreatePerson = GeneratedImportVar_1.getProperty('CreatePerson');
-let a = GeneratedImportVar_1.getProperty('a');
-let b = GeneratedImportVar_1.getProperty('b');
-let MyNamespace = GeneratedImportVar_1.getProperty('MyNamespace');
-
+import { Foo, foo, CreatePerson, a , b, MyNamespace } from "./no_js_instanceof_file.js"
 
 class Foo1 {}
 
@@ -42,7 +35,7 @@ if(foo.isInstanceOf(Foo1)) {
 
 }
 
-let person: CreatePerson = CreatePerson.invoke(ESValue.wrap('xc'), ESValue.wrap(18.0))
+let person: CreatePerson = CreatePerson.invoke(ESValue.wrap('xc'), ESValue.wrap(18))
 
 if(person.isInstanceOf(CreatePerson)) {
 
@@ -72,12 +65,12 @@ if(a.isInstanceOf(Array)) {
 
 }
 
-if(b().isInstanceOf(Array)) {
+if(b.invoke().isInstanceOf(Array)) {
 
 }
 
-const myDog: MyNamespace.Dog = new MyNamespace.getProperty("Dog")('Buddy');
+const myDog: MyNamespace.Dog = new MyNamespace.getProperty("getProperty")("getProperty")("getProperty")("getProperty")("getProperty")("getProperty")("getProperty")("getProperty")("getProperty")("Dog")('Buddy');
 
-if (myDog.isInstanceOf(MyNamespace.Dog)) {
+if (myDog.isInstanceOf(MyNamespace.getProperty("Dog"))) {
   console.log("This is a Dog!");
 }

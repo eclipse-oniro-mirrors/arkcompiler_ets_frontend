@@ -64,7 +64,9 @@ enum class TypeAnnotationParsingOptions : uint32_t {
     ALLOW_DECLARATION_SITE_VARIANCE = 1U << 14U,
     DISALLOW_UNION = 1U << 15U,
     POTENTIAL_NEW_ARRAY = 1U << 16U,
-    ANNOTATION_NOT_ALLOW = 1U << 17U
+    ANNOTATION_NOT_ALLOW = 1U << 17U,
+    INSTANCEOF = 1U << 18U,
+    TYPE_ALIAS_CONTEXT = 1U << 19U
 };
 
 class ParserImpl {
@@ -80,6 +82,11 @@ public:
     [[nodiscard]] virtual bool IsETSParser() const noexcept
     {
         return false;
+    }
+
+    [[nodiscard]] virtual bool IsValidIdentifierName([[maybe_unused]] const lexer::Token &token) const noexcept
+    {
+        return true;
     }
 
     ETSParser *AsETSParser()
@@ -111,7 +118,7 @@ public:
         ctx_ = ctx;
     }
 
-    public_lib::Context *Context()
+    public_lib::Context *Context() const
     {
         return ctx_;
     }
@@ -128,7 +135,7 @@ protected:
 
     ir::VariableDeclaratorFlag GetFlag(VariableParsingFlags flags);
 
-    void ValidateAccessor(ExpressionParseFlags flags, lexer::TokenFlags currentTokenFlags);
+    void ValidateAccessor(ExpressionParseFlags flags);
     void CheckPropertyKeyAsyncModifier(ParserStatus *methodStatus);
     ir::Property *ParseShorthandProperty(const lexer::LexerPosition *startPos);
     void ParseGeneratorPropertyModifier(ExpressionParseFlags flags, ParserStatus *methodStatus);
@@ -191,6 +198,7 @@ protected:
     friend class ETSNolintParser;
     friend class lexer::RegExpParser;
     friend class util::SourcePositionHelper;
+    friend class JsdocHelper;
 
     void LogExpectedToken(lexer::TokenType tokenType);
     void LogUnexpectedToken(lexer::TokenType tokenType);
@@ -242,6 +250,9 @@ protected:
         return false;
     }
 
+    void ParseIndexSignature();
+    void EatTypeAnnotation();
+    bool ParsePunctuatorGreaterThan(bool throwError = true);
     util::StringView ParseSymbolIteratorIdentifier() const noexcept;
     ir::Identifier *ExpectIdentifier(bool isReference = false, bool isUserDefinedType = false,
                                      TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR);
@@ -306,8 +317,8 @@ protected:
     // NOLINTNEXTLINE(google-default-arguments)
     virtual ir::Statement *ParseStructStatement(StatementParsingFlags flags, ir::ClassDefinitionModifiers modifiers,
                                                 ir::ModifierFlags modFlags = ir::ModifierFlags::NONE);
-    // NOLINTNEXTLINE(google-default-arguments)
     virtual ir::Statement *ParseInterfaceStatement(StatementParsingFlags flags);
+    virtual ir::Statement *ParseEnumStatement(StatementParsingFlags flags);
     ir::Statement *ParseStatementBasedOnTokenType(StatementParsingFlags flags);
     ir::Statement *ParseVarStatement();
     ir::Statement *ParseLetStatement(StatementParsingFlags flags);
@@ -427,6 +438,7 @@ protected:
 
     virtual ir::AnnotatedExpression *ParseVariableDeclaratorKey(VariableParsingFlags flags);
     virtual ir::Statement *ParseAnnotationsInStatement(StatementParsingFlags flags);
+    virtual ir::Statement *ParseInitModuleStatement(StatementParsingFlags flags);
     virtual ir::VariableDeclarator *ParseVariableDeclarator(ir::Expression *init, lexer::SourcePosition startLoc,
                                                             VariableParsingFlags flags);
     virtual ir::VariableDeclarator *ParseVariableDeclaratorInitializer(ir::Expression *init, VariableParsingFlags flags,
@@ -475,11 +487,6 @@ protected:
     virtual ir::TypeNode *ParseFunctionReturnType([[maybe_unused]] ParserStatus status)
     {
         return nullptr;
-    }
-
-    virtual ir::ScriptFunctionFlags ParseFunctionThrowMarker([[maybe_unused]] const bool isRethrowsAllowed)
-    {
-        return ir::ScriptFunctionFlags::NONE;
     }
 
     using NodeFormatType = std::tuple<bool, char, std::size_t>;

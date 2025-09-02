@@ -18,4 +18,4 @@ package mypackage;
 let exist_but_checker_fails_in_file: number = 8;
 let wong_type: string = /* @@ label */9;
 
-/* @@@ label Error TypeError: Type 'int' cannot be assigned to type 'String'  */
+/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type 'String'  */

@@ -79,14 +79,17 @@ public:
      */
     ResultT TransformStatements(const ArenaVector<ir::Statement *> &stmts);
 
+    void VisitOverloadDeclaration(ir::OverloadDeclaration *overloadDeclaration) override;
     void VisitFunctionDeclaration(ir::FunctionDeclaration *funcDecl) override;
     void VisitVariableDeclaration(ir::VariableDeclaration *varDecl) override;
     void VisitClassStaticBlock(ir::ClassStaticBlock *classStaticBlock) override;
+    void VisitExpressionStatement(ir::ExpressionStatement *exprStmt) override;
     void HandleNode(ir::AstNode *node) override;
     bool CheckValidInitializer(ir::AstNode const *initializer) const;
 
     ir::Identifier *RefIdent(const util::StringView &name);
 
+    ir::ExpressionStatement *CreateAssignmentStatement(ir::ClassProperty *classProperty, ir::Expression *initializer);
     ir::ExpressionStatement *InitTopLevelProperty(ir::ClassProperty *classProperty);
 
     [[nodiscard]] bool IsMultiInitializer() const

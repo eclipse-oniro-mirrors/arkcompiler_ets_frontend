@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,6 +39,8 @@ private:
     void CheckLiteralsCompleteness(KeySetType &keySet, ir::ObjectExpression *expr, public_lib::Context *ctx);
     ir::Statement *CreateStatement(const std::string &src, ir::Expression *ident, ir::Expression *key,
                                    ir::Expression *value, public_lib::Context *ctx);
+    void CheckKeyType(checker::ETSChecker *checker, checker::Type const *keyType, ir::ObjectExpression const *expr,
+                      public_lib::Context *ctx) const noexcept;
 };
 
 }  // namespace ark::es2panda::compiler

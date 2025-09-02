@@ -14,8 +14,8 @@
  */
   function main(){
    let a = 1;
-   a/* @@ label */~/* @@ label1 */!/* @@ label2 */;
+   a/* @@ label */~/* @@ label2 */!/* @@ label3 */;
   }
 /* @@@ label Error SyntaxError: Unexpected token '~'. */
-/* @@@ label1 Error TypeError: Bad operand type, the type of the operand must be numeric type. */
-/* @@@ label2 Error SyntaxError: Unexpected token ';'. */
+/* @@@ label2 Error TypeError: Bad operand type, the type of the operand must be numeric type. */
+/* @@@ label3 Error SyntaxError: Unexpected token ';'. */

@@ -17,4 +17,4 @@
     return 1.2;
 }
 
-/* @@@ label Error TypeError: Extension function can only defined for class, interface or array.  */
+/* @@? 16:52 Error TypeError: The extension accessor or extension function 'value' has the same name with field of class Double */

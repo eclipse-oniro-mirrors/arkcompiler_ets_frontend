@@ -24,6 +24,6 @@ export class A {
 
 function main(){
     let a = new A()
-    assertEQ(A.x, 1)
-    assertEQ(a.x, -1)
+    arktest.assertEQ(A.x, 1)
+    arktest.assertEQ(a.x, -1)
 }

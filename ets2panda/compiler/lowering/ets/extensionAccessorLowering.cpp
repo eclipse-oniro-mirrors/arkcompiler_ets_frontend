@@ -71,7 +71,6 @@ static void TryHandleExtensionAccessor(checker::ETSChecker *checker, ir::MemberE
             checker, expr, ArenaVector<ir::Expression *>(checker->ProgramAllocator()->Adapter()));
 
         auto *rightExpr = assignExpr->AsAssignmentExpression()->Right();
-        rightExpr->SetBoxingUnboxingFlags(ir::BoxingUnboxingFlags::NONE);
         if (IsMemberExprExtensionAccessor(rightExpr)) {
             SwitchType(rightExpr->AsMemberExpression());
             checker::Type *tsType = rightExpr->AsMemberExpression()->TsType();
@@ -96,7 +95,6 @@ static void TryHandleExtensionAccessor(checker::ETSChecker *checker, ir::MemberE
         checker, expr, ArenaVector<ir::Expression *>(checker->ProgramAllocator()->Adapter()));
     callExpr->SetParent(oldParent);
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, callExpr);
-    callExpr->AddBoxingUnboxingFlags(expr->GetBoxingUnboxingFlags());
 }
 
 static ir::AstNode *CheckAndReturnNode(checker::ETSChecker *checker, ir::AstNode *node)
@@ -133,7 +131,7 @@ bool ExtensionAccessorPhase::PerformForModule(public_lib::Context *ctx, parser::
         return true;
     }
 
-    checker::ETSChecker *const checker = ctx->checker->AsETSChecker();
+    checker::ETSChecker *const checker = ctx->GetChecker()->AsETSChecker();
     program->Ast()->TransformChildrenRecursively(
         [&checker](ir::AstNode *const node) -> AstNodePtr { return CheckAndReturnNode(checker, node); }, Name());
     return true;

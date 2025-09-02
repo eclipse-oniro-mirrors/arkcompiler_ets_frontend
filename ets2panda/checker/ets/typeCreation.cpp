@@ -17,11 +17,13 @@
 
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "checker/types/ets/etsEnumType.h"
-#include "checker/types/ets/etsDynamicFunctionType.h"
 #include "checker/types/ets/etsResizableArrayType.h"
 #include "checker/types/globalTypesHolder.h"
+#include "checker/types/gradualType.h"
 #include "checker/types/type.h"
 #include "ir/statements/annotationDeclaration.h"
+
+#include <compiler/lowering/phase.h>
 
 namespace ark::es2panda::checker {
 
@@ -48,32 +50,6 @@ FloatType *ETSChecker::CreateFloatType(float value)
 IntType *ETSChecker::CreateIntType(int32_t value)
 {
     return ProgramAllocator()->New<IntType>(value);
-}
-
-IntType *ETSChecker::CreateIntTypeFromType(Type *type)
-{
-    if (!type->HasTypeFlag(TypeFlag::CONSTANT)) {
-        return GlobalIntType()->AsIntType();
-    }
-
-    if (type->IsIntType()) {
-        return type->AsIntType();
-    }
-
-    switch (ETSType(type)) {
-        case TypeFlag::CHAR: {
-            return CreateIntType(static_cast<int32_t>(type->AsCharType()->GetValue()));
-        }
-        case TypeFlag::BYTE: {
-            return CreateIntType(static_cast<int32_t>(type->AsByteType()->GetValue()));
-        }
-        case TypeFlag::SHORT: {
-            return CreateIntType(static_cast<int32_t>(type->AsShortType()->GetValue()));
-        }
-        default: {
-            return nullptr;
-        }
-    }
 }
 
 LongType *ETSChecker::CreateLongType(int64_t value)
@@ -111,10 +87,10 @@ ETSResizableArrayType *ETSChecker::CreateETSMultiDimResizableArrayType(Type *ele
     Type *baseArrayType = element;
 
     for (size_t dim = 0; dim < dimSize; ++dim) {
-        Substitution *tmpSubstitution = NewSubstitution();
-        EmplaceSubstituted(tmpSubstitution, arrayType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(),
+        auto tmpSubstitution = Substitution {};
+        EmplaceSubstituted(&tmpSubstitution, arrayType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(),
                            MaybeBoxType(baseArrayType));
-        baseArrayType = arrayType->Substitute(Relation(), tmpSubstitution);
+        baseArrayType = arrayType->Substitute(Relation(), &tmpSubstitution);
     }
     return baseArrayType->AsETSResizableArrayType();
 }
@@ -126,10 +102,10 @@ ETSResizableArrayType *ETSChecker::CreateETSResizableArrayType(Type *element)
     ETSResizableArrayType *arrayType = type->AsETSResizableArrayType();
     ES2PANDA_ASSERT(arrayType->TypeArguments().size() == 1U);
 
-    Substitution *substitution = NewSubstitution();
-    EmplaceSubstituted(substitution, arrayType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(),
+    auto substitution = Substitution {};
+    EmplaceSubstituted(&substitution, arrayType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(),
                        MaybeBoxType(element));
-    return arrayType->Substitute(Relation(), substitution);
+    return arrayType->Substitute(Relation(), &substitution);
 }
 
 ETSArrayType *ETSChecker::CreateETSArrayType(Type *elementType, bool isCachePolluting)
@@ -154,6 +130,27 @@ ETSArrayType *ETSChecker::CreateETSArrayType(Type *elementType, bool isCachePoll
     return arrayType;
 }
 
+Type *ETSChecker::CreateGradualType(Type *type, Language const lang)
+{
+    if (type == nullptr) {
+        return type;
+    }
+    if (type->IsGradualType()) {
+        return type;
+    }
+    if (type->IsETSAnyType()) {
+        return type;
+    }
+    if (type->IsETSUnionType()) {
+        ArenaVector<Type *> copied(ProgramAllocator()->Adapter());
+        for (auto const &t : type->AsETSUnionType()->ConstituentTypes()) {
+            copied.push_back(CreateGradualType(t, lang));
+        }
+        return CreateETSUnionType(std::move(copied));
+    }
+    return ProgramAllocator()->New<GradualType>(type);
+}
+
 Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes)
 {
     if (constituentTypes.empty()) {
@@ -167,8 +164,12 @@ Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes)
     if (newConstituentTypes.size() == 1) {
         return newConstituentTypes[0];
     }
-
-    return ProgramAllocator()->New<ETSUnionType>(this, std::move(newConstituentTypes));
+    auto *un = ProgramAllocator()->New<ETSUnionType>(this, std::move(newConstituentTypes));
+    auto ut = un->GetAssemblerType().Mutf8();
+    if (std::count_if(ut.begin(), ut.end(), [](char c) { return c == ','; }) > 0) {
+        unionAssemblerTypes_.insert(un->GetAssemblerType());
+    }
+    return un;
 }
 
 ETSTypeAliasType *ETSChecker::CreateETSTypeAliasType(util::StringView name, const ir::AstNode *declNode,
@@ -187,17 +188,6 @@ ETSFunctionType *ETSChecker::CreateETSMethodType(util::StringView name, ArenaVec
     return ProgramAllocator()->New<ETSFunctionType>(this, name, std::move(signatures));
 }
 
-ETSFunctionType *ETSChecker::CreateETSDynamicArrowType(Signature *signature, Language lang)
-{
-    return ProgramAllocator()->New<ETSDynamicFunctionType>(this, signature, lang);
-}
-
-ETSFunctionType *ETSChecker::CreateETSDynamicMethodType(util::StringView name, ArenaVector<Signature *> &&signatures,
-                                                        Language lang)
-{
-    return ProgramAllocator()->New<ETSDynamicFunctionType>(this, name, std::move(signatures), lang);
-}
-
 static SignatureFlags ConvertToSignatureFlags(ir::ModifierFlags inModifiers, ir::ScriptFunctionFlags inFunctionFlags)
 {
     SignatureFlags outFlags = SignatureFlags::NO_OPTS;
@@ -213,9 +203,6 @@ static SignatureFlags ConvertToSignatureFlags(ir::ModifierFlags inModifiers, ir:
         }
     };
 
-    convertFlag(ir::ScriptFunctionFlags::THROWS, SignatureFlags::THROWS);
-    convertFlag(ir::ScriptFunctionFlags::RETHROWS, SignatureFlags::RETHROWS);
-
     convertFlag(ir::ScriptFunctionFlags::CONSTRUCTOR, SignatureFlags::CONSTRUCTOR);
     convertFlag(ir::ScriptFunctionFlags::SETTER, SignatureFlags::SETTER);
     convertFlag(ir::ScriptFunctionFlags::GETTER, SignatureFlags::GETTER);
@@ -227,6 +214,7 @@ static SignatureFlags ConvertToSignatureFlags(ir::ModifierFlags inModifiers, ir:
     convertModifier(ir::ModifierFlags::PUBLIC, SignatureFlags::PUBLIC);
     convertModifier(ir::ModifierFlags::PRIVATE, SignatureFlags::PRIVATE);
     convertModifier(ir::ModifierFlags::INTERNAL, SignatureFlags::INTERNAL);
+    convertModifier(ir::ModifierFlags::DEFAULT, SignatureFlags::DEFAULT);
 
     return outFlags;
 }
@@ -339,6 +327,8 @@ static ETSObjectType *InitializeGlobalBuiltinObjectType(ETSChecker *checker, Glo
             setType(GlobalTypeId::ETS_ARRAY, programAllocator->New<ETSResizableArrayType>(programAllocator, arrayObj));
             return arrayObj;
         }
+        case GlobalTypeId::ETS_READONLY_ARRAY:
+            return setType(globalId, create(ETSObjectFlags::BUILTIN_READONLY_ARRAY))->AsETSObjectType();
         case GlobalTypeId::ETS_BOOLEAN_BUILTIN:
             return create(ETSObjectFlags::BUILTIN_BOOLEAN);
         case GlobalTypeId::ETS_BYTE_BUILTIN:
@@ -372,56 +362,27 @@ ETSObjectType *ETSChecker::CreateETSObjectTypeOrBuiltin(ir::AstNode *declNode, E
     return InitializeGlobalBuiltinObjectType(this, globalId.value(), declNode, flags);
 }
 
-std::tuple<Language, bool> ETSChecker::CheckForDynamicLang(ir::AstNode *declNode, util::StringView assemblerName)
-{
-    Language lang(Language::Id::ETS);
-    bool hasDecl = false;
-
-    if (declNode->IsClassDefinition()) {
-        auto *clsDef = declNode->AsClassDefinition();
-        lang = clsDef->Language();
-        hasDecl = clsDef->IsDeclare();
-    }
-
-    if (declNode->IsTSInterfaceDeclaration()) {
-        auto *ifaceDecl = declNode->AsTSInterfaceDeclaration();
-        lang = ifaceDecl->Language();
-        hasDecl = ifaceDecl->IsDeclare();
-    }
-
-    auto res = compiler::Signatures::Dynamic::LanguageFromType(assemblerName.Utf8());
-    if (res) {
-        lang = *res;
-    }
-
-    return std::make_tuple(lang, hasDecl);
-}
-
 ETSObjectType *ETSChecker::CreateETSObjectType(ir::AstNode *declNode, ETSObjectFlags flags)
 {
     auto const [name, internalName] = GetObjectTypeDeclNames(declNode);
-
+    ETSObjectType *objectType = nullptr;
     if (declNode->IsClassDefinition() && (declNode->AsClassDefinition()->IsEnumTransformed())) {
         if (declNode->AsClassDefinition()->IsIntEnumTransformed()) {
-            return ProgramAllocator()->New<ETSIntEnumType>(ProgramAllocator(), name, internalName, declNode,
-                                                           Relation());
+            objectType =
+                ProgramAllocator()->New<ETSIntEnumType>(ProgramAllocator(), name, internalName, declNode, Relation());
+        } else {
+            ES2PANDA_ASSERT(declNode->AsClassDefinition()->IsStringEnumTransformed());
+            objectType = ProgramAllocator()->New<ETSStringEnumType>(ProgramAllocator(), name, internalName, declNode,
+                                                                    Relation());
         }
-        ES2PANDA_ASSERT(declNode->AsClassDefinition()->IsStringEnumTransformed());
-        return ProgramAllocator()->New<ETSStringEnumType>(ProgramAllocator(), name, internalName, declNode, Relation());
+    } else if (internalName == compiler::Signatures::BUILTIN_ARRAY) {
+        objectType = ProgramAllocator()->New<ETSResizableArrayType>(ProgramAllocator(), name,
+                                                                    std::make_tuple(declNode, flags, Relation()));
+    } else {
+        objectType = ProgramAllocator()->New<ETSObjectType>(ProgramAllocator(), name, internalName,
+                                                            std::make_tuple(declNode, flags, Relation()));
     }
-
-    if (internalName == compiler::Signatures::BUILTIN_ARRAY) {
-        return ProgramAllocator()->New<ETSResizableArrayType>(ProgramAllocator(), name,
-                                                              std::make_tuple(declNode, flags, Relation()));
-    }
-
-    if (auto [lang, hasDecl] = CheckForDynamicLang(declNode, internalName); lang.IsDynamic()) {
-        return ProgramAllocator()->New<ETSDynamicType>(ProgramAllocator(), std::make_tuple(name, internalName, lang),
-                                                       std::make_tuple(declNode, flags, Relation()), hasDecl);
-    }
-
-    return ProgramAllocator()->New<ETSObjectType>(ProgramAllocator(), name, internalName,
-                                                  std::make_tuple(declNode, flags, Relation()));
+    return objectType;
 }
 
 std::tuple<util::StringView, SignatureInfo *> ETSChecker::CreateBuiltinArraySignatureInfo(const ETSArrayType *arrayType,
@@ -457,8 +418,11 @@ std::tuple<util::StringView, SignatureInfo *> ETSChecker::CreateBuiltinArraySign
 
 Signature *ETSChecker::CreateBuiltinArraySignature(const ETSArrayType *arrayType, size_t dim)
 {
-    auto res = globalArraySignatures_.find(arrayType);
-    if (res != globalArraySignatures_.end()) {
+    auto currentChecker =
+        compiler::GetPhaseManager()->Context() != nullptr ? compiler::GetPhaseManager()->Context()->GetChecker() : this;
+    auto &globalArraySignatures = currentChecker->AsETSChecker()->globalArraySignatures_;
+    auto res = globalArraySignatures.find(arrayType);
+    if (res != globalArraySignatures.end()) {
         return res->second;
     }
 
@@ -466,7 +430,7 @@ Signature *ETSChecker::CreateBuiltinArraySignature(const ETSArrayType *arrayType
     auto *signature = CreateSignature(info, GlobalVoidType(), ir::ScriptFunctionFlags::NONE, false);
     ES2PANDA_ASSERT(signature != nullptr);
     signature->SetInternalName(internalName);
-    globalArraySignatures_.insert({arrayType, signature});
+    globalArraySignatures.insert({arrayType, signature});
 
     return signature;
 }
@@ -476,11 +440,11 @@ ETSObjectType *ETSChecker::CreatePromiseOf(Type *type)
     ETSObjectType *const promiseType = GlobalBuiltinPromiseType();
     ES2PANDA_ASSERT(promiseType->TypeArguments().size() == 1U);
 
-    Substitution *substitution = NewSubstitution();
+    auto substitution = Substitution {};
     ES2PANDA_ASSERT(promiseType != nullptr);
-    EmplaceSubstituted(substitution, promiseType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(), type);
+    EmplaceSubstituted(&substitution, promiseType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(), type);
 
-    return promiseType->Substitute(Relation(), substitution);
+    return promiseType->Substitute(Relation(), &substitution);
 }
 
 static bool IsInValidKeyofTypeNode(ir::AstNode *node)

@@ -19,4 +19,4 @@ function main(): void {
     let b: [number, number, number] = /* @@ label */a;
 }
 
-/* @@@ label Error TypeError: Type '[double, double]' cannot be assigned to type '[double, double, double]'  */
+/* @@@ label Error TypeError: Type '[Double, Double]' cannot be assigned to type '[Double, Double, Double]'  */

@@ -32,4 +32,4 @@ function main() {
     }
 }
 
-/* @@@ label Error TypeError: Variable has same value with another switch case  */
+/* @@? 27:28 Error TypeError: Switch case type 'int' is not comparable to discriminant type 'char' */

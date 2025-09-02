@@ -13,13 +13,10 @@
  * limitations under the License.
  */
 
-final /* @@ label */kngkgj class /* @@ label1 */B /* @@ label2 */{
+final kngkgj class B {
 
 }
 
-/* @@@ label Error SyntaxError: Unexpected token 'kngkgj'. */
-/* @@? 16:21 Error TypeError: Cannot find type 'kngkgj'. */
-/* @@? 16:21 Error TypeError: Class literal is not yet supported. */
-/* @@@ label1 Error SyntaxError: Unexpected token 'B'. */
-/* @@? 16:49 Error TypeError: Unresolved reference B */
-/* @@@ label2 Error SyntaxError: Unexpected token '{'. */
+/* @@? 16:7 Error SyntaxError: Unexpected token 'kngkgj'. */
+/* @@? 16:7 Error TypeError: Unresolved reference kngkgj */
+/* @@? 16:14 Error SyntaxError: Unexpected token 'class'. */

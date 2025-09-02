@@ -14,55 +14,175 @@
         "limitations under the License."
     ],
     "result": [
-        {
-            "line": 16,
-            "column": 1,
-            "endLine": 16,
-            "endColumn": 52,
-            "problem": "InterOpImportJs",
-            "suggest": "",
-            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 17,
-            "column": 1,
-            "endLine": 17,
-            "endColumn": 7,
-            "problem": "InteropEqualityJudgment",
-            "suggest": "",
-            "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 18,
-            "column": 1,
-            "endLine": 18,
-            "endColumn": 7,
-            "problem": "InteropEqualityJudgment",
-            "suggest": "",
-            "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 1,
-            "endLine": 19,
-            "endColumn": 8,
-            "problem": "InteropEqualityJudgment",
-            "suggest": "",
-            "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 1,
-            "endLine": 20,
-            "endColumn": 8,
-            "problem": "InteropEqualityJudgment",
-            "suggest": "",
-            "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
-            "severity": "ERROR"
-        }
-    ]
+    {
+      "line": 16,
+      "column": 1,
+      "endLine": 16,
+      "endColumn": 58,
+      "problem": "InterOpImportJs",
+      "suggest": "",
+      "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 17,
+      "column": 1,
+      "endLine": 17,
+      "endColumn": 7,
+      "problem": "InteropEqualityJudgment",
+      "suggest": "",
+      "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 18,
+      "column": 1,
+      "endLine": 18,
+      "endColumn": 7,
+      "problem": "InteropEqualityJudgment",
+      "suggest": "",
+      "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 19,
+      "column": 1,
+      "endLine": 19,
+      "endColumn": 8,
+      "problem": "InteropEqualityJudgment",
+      "suggest": "",
+      "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 20,
+      "column": 1,
+      "endLine": 20,
+      "endColumn": 8,
+      "problem": "InteropEqualityJudgment",
+      "suggest": "",
+      "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 21,
+      "column": 1,
+      "endLine": 21,
+      "endColumn": 17,
+      "problem": "InteropEqualityJudgment",
+      "suggest": "",
+      "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 21,
+      "column": 1,
+      "endLine": 21,
+      "endColumn": 7,
+      "problem": "InteropObjectProperty",
+      "suggest": "",
+      "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 21,
+      "column": 11,
+      "endLine": 21,
+      "endColumn": 17,
+      "problem": "InteropObjectProperty",
+      "suggest": "",
+      "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 22,
+      "column": 1,
+      "endLine": 22,
+      "endColumn": 17,
+      "problem": "InteropEqualityJudgment",
+      "suggest": "",
+      "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 22,
+      "column": 1,
+      "endLine": 22,
+      "endColumn": 7,
+      "problem": "InteropObjectProperty",
+      "suggest": "",
+      "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 22,
+      "column": 11,
+      "endLine": 22,
+      "endColumn": 17,
+      "problem": "InteropObjectProperty",
+      "suggest": "",
+      "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 23,
+      "column": 1,
+      "endLine": 23,
+      "endColumn": 18,
+      "problem": "InteropEqualityJudgment",
+      "suggest": "",
+      "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 23,
+      "column": 1,
+      "endLine": 23,
+      "endColumn": 7,
+      "problem": "InteropObjectProperty",
+      "suggest": "",
+      "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 23,
+      "column": 12,
+      "endLine": 23,
+      "endColumn": 18,
+      "problem": "InteropObjectProperty",
+      "suggest": "",
+      "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 24,
+      "column": 1,
+      "endLine": 24,
+      "endColumn": 18,
+      "problem": "InteropEqualityJudgment",
+      "suggest": "",
+      "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 24,
+      "column": 1,
+      "endLine": 24,
+      "endColumn": 7,
+      "problem": "InteropObjectProperty",
+      "suggest": "",
+      "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 24,
+      "column": 12,
+      "endLine": 24,
+      "endColumn": 18,
+      "problem": "InteropObjectProperty",
+      "suggest": "",
+      "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+      "severity": "ERROR"
+    }
+  ]
 }

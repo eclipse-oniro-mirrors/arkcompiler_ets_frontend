@@ -20,9 +20,9 @@ function main() {
 	let type_array_var : type_array<boolean> = new Array<boolean>()
 	let type_union_array_var : type_union_array<string, string> = new Array<string>()
 	let type_array_alias_var : type_array_alias<char> = new Array<char | boolean>()
-    assertEQ((typeof type_union_var), string);
-    assertEQ((typeof type_array_var), object);
-    assertEQ((typeof type_union_array_var), object);
-    assertEQ((typeof type_array_alias_var), object);
+    arktest.assertEQ((typeof type_union_var), "string");
+    arktest.assertEQ((typeof type_array_var), "object");
+    arktest.assertEQ((typeof type_union_array_var), "object");
+    arktest.assertEQ((typeof type_array_alias_var), "object");
 }
 

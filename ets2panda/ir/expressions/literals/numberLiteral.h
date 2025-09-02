@@ -29,7 +29,6 @@ public:
     NO_COPY_SEMANTIC(NumberLiteral);
     NO_MOVE_SEMANTIC(NumberLiteral);
 
-    explicit NumberLiteral(util::StringView const str) : Literal(AstNodeType::NUMBER_LITERAL), number_(str) {}
     explicit NumberLiteral(lexer::Number const number) : Literal(AstNodeType::NUMBER_LITERAL), number_(number) {}
 
     [[nodiscard]] const util::StringView &Str() const noexcept

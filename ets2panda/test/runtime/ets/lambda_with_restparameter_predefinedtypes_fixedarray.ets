@@ -14,14 +14,14 @@
  */
 
 let f1 = (a:number, b:number, ...args:FixedArray<number>)=>{
-    assertEQ(a,0);
-    assertEQ(args[0],222);
+    arktest.assertEQ(a,0);
+    arktest.assertEQ(args[0],222);
 }
 
 function main(){
     let f2 = (a:number, b:number, ...args:FixedArray<number>)=>{
-        assertEQ(a,0);
-        assertEQ(args[0],222);
+        arktest.assertEQ(a,0);
+        arktest.assertEQ(args[0],222);
     }
     f1(0,111,222,333)
     f2(0,111,222,333)

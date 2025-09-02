@@ -41,8 +41,9 @@ void ETSNonNullishTypeNode::Dump(ir::SrcDumper *dumper) const
     for (auto *anno : Annotations()) {
         anno->Dump(dumper);
     }
+    dumper->Add("NonNullable<");
     typeNode_->Dump(dumper);
-    dumper->Add("!");
+    dumper->Add(">");
 }
 
 void ETSNonNullishTypeNode::Compile([[maybe_unused]] compiler::PandaGen *pg) const

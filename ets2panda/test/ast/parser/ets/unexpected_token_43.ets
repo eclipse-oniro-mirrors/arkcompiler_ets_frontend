@@ -20,4 +20,4 @@ let v2 = `--- ${y + abc /* @@ label */${y} = ${ n*2 }!`/* @@ label1 */} ---`;`
 /* @@@ label Error SyntaxError: Expected '}', got 'identification literal'. */
 /* @@? 16:49 Error TypeError: Unresolved reference n */
 /* @@@ label1 Error SyntaxError: Unexpected token '}'. */
-/* @@@ label1 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 16:71 Error TypeError: Bad operand type, the types of the operands must be numeric type. */

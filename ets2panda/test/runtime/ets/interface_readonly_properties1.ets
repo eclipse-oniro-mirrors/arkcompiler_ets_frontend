@@ -26,5 +26,5 @@ class VisiblePage{
 
 function main(): void {
  let A = new VisiblePage(1);
- assertNE(A.transitionState, null)
+ arktest.assertNE(A.transitionState, null)
 }

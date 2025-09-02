@@ -12,106 +12,111 @@
 # limitations under the License.
 
 fatal:
-- name: TBD1
-  id: 1
-  message: .
-
-- name: OPEN_FAILED
-  id: 2
-  message: "Failed to open file: {}"
-
-- name: NO_INPUT
-  id: 3
-  message: "No files to compile"
-
-- name: PLUGIN_LOAD_FAILED
-  id: 4
-  message: "Failed to load plugin {}"
-
-- name: EVAL_MODE_NOT_SINGLE_INPUT
-  id: 5
-  message: "When compiling with --debugger-eval-mode single input file must be provided"
-
-- name: PROJ_COMP_WITH_OUTPUT
-  id: 6
-  message: "When compiling in project mode --output key is not needed"
-
-- name: MODULE_INVALID_EXT
-  id: 7
-  message: "--module is not supported for this extension."
-
-- name: DUMP_ETS_INVALID_EXT
-  id: 8
-  message: "--dump-ets-src-* option is valid only with ETS extension"
-
-- name: PROJECT_EXT_NOT_ETS
-  id: 9
-  message: "Error: only '--extension=ets' is supported for project compilation mode."
-
-- name: UNKNOWN_EXT
-  id: 10
-  message: "Unknown extension of sourcefile, set the '--extension' option or change the file extension (available options: ets)"
-
-- name: JS_UNSUPPORTED
-  id: 11
-  message: "js extension is not supported within current build"
-
-- name: OPEN_FAILED_ARKTSCONF
-  id: 12
-  message: "Failed to open arktsconfig: {}"
-
-- name: INVALID_ARKTSCONFIG
-  id: 13
-  message: "Invalid ArkTsConfig: {}"
-
-- name: UNRESOLVED_MODULE
-  id: 14
-  message: "Unresolved module name {}"
-
-- name: EMPTY_IMPORT_PATH
-  id: 15
-  message: "Import path cannot be empty"
-
-- name: IMPORT_CANT_FIND_PREFIX
-  id: 16
-  message: "Can't find prefix for '{}' in {}"
-
-- name: OPEN_FOLDER_FAILED
-  id: 17
-  message: "Cannot open folder: {}"
-
-- name: UNAVAILABLE_SRC_PATH
-  id: 18
-  message: "Not an available source path: {}"
-
-- name: UNSUPPORTED_PATH
-  id: 19
-  message: "Not supported path: {}"
-
-- name: SOURCE_OUTSIDE_ETS_PATH
-  id: 20
-  message: "Source file {} outside ets-path"
-
-- name: COMPILE_FAILED
-  id: 21
-  message: "Failed to compile from {} to {}"
-
-- name: EMIT_FAILED
-  id: 22
-  message: "Failed to emit binary data: {}"
 
 - name: ASSIGN_PROFILE_INFO_FAILED
   id: 23
   message: "AssignProfileInfo failed"
 
+- name: COMPILE_FAILED
+  id: 21
+  message: "Failed to compile from {} to {}"
+
+- name: DUMP_ETS_INVALID_EXT
+  id: 8
+  message: "--dump-ets-src-* option is valid only with ETS extension"
+
+- name: EMIT_FAILED
+  id: 22
+  message: "Failed to emit binary data: {}"
+
+- name: EMPTY_IMPORT_PATH
+  id: 15
+  message: "Import path cannot be empty"
+
+- name: EVAL_MODE_NOT_SINGLE_INPUT
+  id: 5
+  message: "When compiling with --debugger-eval-mode single input file must be provided"
+
 - name: GENERATE_DYNAMIC_DECLARATIONS
   id: 24
   message: "Genate dynamic declarations, outputDeclEts and outputEts must be set together."
+
+- name: IMPORT_CANT_FIND_PREFIX
+  id: 16
+  message: "Can't find prefix for '{}' in {}"
+
+- name: INVALID_ARKTSCONFIG
+  id: 13
+  message: "Invalid ArkTsConfig: {}"
+
+- name: JS_UNSUPPORTED
+  id: 11
+  message: "js extension is not supported within current build"
 
 - name: MISSING_OUTPUT_FILE
   id: 25
   message: "Output file path must be specified."
 
+- name: MODULE_INVALID_EXT
+  id: 7
+  message: "--module is not supported for this extension."
+
+- name: NO_INPUT
+  id: 3
+  message: "No files to compile"
+
+- name: OPEN_FAILED
+  id: 2
+  message: "Failed to open file: {}"
+
+- name: OPEN_FAILED_ARKTSCONF
+  id: 12
+  message: "Failed to open arktsconfig: {}"
+
+- name: OPEN_FOLDER_FAILED
+  id: 17
+  message: "Cannot open folder: {}"
+
+- name: PLUGIN_LOAD_FAILED
+  id: 4
+  message: "Failed to load plugin {}"
+
+- name: PROJECT_EXT_NOT_ETS
+  id: 9
+  message: "Error: only '--extension=ets' is supported for project compilation mode."
+
+- name: PROJ_COMP_WITH_OUTPUT
+  id: 6
+  message: "When compiling in project mode --output key is not needed"
+
 - name: SIMULTANEOUSLY_MARK_FAILED
   id: 26
   message: "simultaneously compile is not work because of input file paths error."
+
+- name: SOURCE_OUTSIDE_ETS_PATH
+  id: 20
+  message: "Source file {} outside ets-path"
+
+- name: TBD1
+  id: 1
+  message: .
+
+- name: UNAVAILABLE_SRC_PATH
+  id: 18
+  message: "Not an available source path: {}"
+
+- name: UNKNOWN_EXT
+  id: 10
+  message: "Unknown extension of sourcefile, set the '--extension' option or change the file extension (available options:
+    js, ts, as, ets)"
+
+- name: UNRESOLVED_MODULE
+  id: 14
+  message: "Unresolved module name {}"
+
+- name: UNSUPPORTED_PATH
+  id: 19
+  message: "Not supported path: {}"
+
+graveyard: []
+# See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

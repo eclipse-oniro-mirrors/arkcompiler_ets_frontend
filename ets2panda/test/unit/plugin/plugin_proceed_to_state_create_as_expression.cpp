@@ -125,6 +125,8 @@ void CreateAsExpression()
     auto typeAnnotation = impl->CreateETSPrimitiveType(context, primitiveType);
     auto *asExpr = impl->CreateTSAsExpression(context, numberLiteral, typeAnnotation, true);
     impl->VariableDeclaratorSetInit(context, variableDeclarator, asExpr);
+    impl->AstNodeSetParent(context, numberLiteral, asExpr);
+    impl->AstNodeSetParent(context, typeAnnotation, asExpr);
     impl->AstNodeSetParent(context, asExpr, variableDeclarator);
     impl->AstNodeSetParent(context, variableDeclarator, letStatement);
 }

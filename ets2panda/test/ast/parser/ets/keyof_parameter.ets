@@ -28,9 +28,9 @@ function main():void{
   /* @@ label5 */getProperty(a, /* @@ label6 */1);
 }
 
-/* @@@ label1 Error TypeError: No matching call signature for getProperty(A, "other field")  */
-/* @@@ label2 Error TypeError: Type '"other field"' is not compatible with type '"method1"|"field1"|"field2"' at index 2  */
-/* @@@ label3 Error TypeError: No matching call signature for getProperty(A, "other method")  */
-/* @@@ label4 Error TypeError: Type '"other method"' is not compatible with type '"method1"|"field1"|"field2"' at index 2  */
-/* @@@ label5 Error TypeError: No matching call signature for getProperty(A, int)  */
-/* @@@ label6 Error TypeError: Type 'int' is not compatible with type '"method1"|"field1"|"field2"' at index 2  */
+/* @@@ label1 Error TypeError: No matching call signature for getProperty(A, "other field") */
+/* @@@ label2 Error TypeError: Type '"other field"' is not compatible with type '"method1"|"field1"|"field2"' at index 2 */
+/* @@@ label3 Error TypeError: No matching call signature for getProperty(A, "other method") */
+/* @@@ label4 Error TypeError: Type '"other method"' is not compatible with type '"method1"|"field1"|"field2"' at index 2 */
+/* @@@ label5 Error TypeError: No matching call signature for getProperty(A, Int) */
+/* @@@ label6 Error TypeError: Type 'Int' is not compatible with type '"method1"|"field1"|"field2"' at index 2 */

@@ -67,14 +67,14 @@ function cmpCharArr(arg0: char[], arg1: char[]): boolean {
 
 function main(): void {
   let arr : double[] = [1.1, 2.1, 3.5, 4.9];
-  assertTrue(arr[0] == 1.1 && arr[1] == 2.1 && arr[2] == 3.5 && arr[3] == 4.9)
-  assertEQ(add([1.1, 2.2, 3.3]), 6.6)
+  arktest.assertTrue(arr[0] == 1.1 && arr[1] == 2.1 && arr[2] == 3.5 && arr[3] == 4.9)
+  arktest.assertEQ(add([1.1, 2.2, 3.3]), 6.6)
 
   let arr2 : boolean[] = [false, true, false, true, true, false, false, true];
-  assertTrue(cmpBooleanArr(copyBooleanArr(arr2), arr2))
+  arktest.assertTrue(cmpBooleanArr(copyBooleanArr(arr2), arr2))
 
   let arr3 : char[] = [c'a', c'b', c'c', c'd'];
-  assertTrue(cmpCharArr(copyCharArr(arr3), arr3))
+  arktest.assertTrue(cmpCharArr(copyCharArr(arr3), arr3))
 
   return;
 }

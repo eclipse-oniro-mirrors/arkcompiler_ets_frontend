@@ -1,0 +1,10 @@
+# Known failure list for test262 -other -cmc-gc-fastverify-x64-int
+
+#25907
+test262/data/other_tests/built-ins/RegExp/property-escapes/generated/Script_Extensions_-Pau_Cin_Hau.js
+
+#26536
+test262/data/other_tests/language/statements/class/elements/after-same-line-static-async-gen-rs-private-method-alt.js
+
+#27147
+test262/data/other_tests/language/module-code/top-level-await/syntax/if-expr-await-expr-template-literal.js

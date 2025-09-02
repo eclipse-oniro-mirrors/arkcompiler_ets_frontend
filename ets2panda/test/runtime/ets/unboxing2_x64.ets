@@ -34,22 +34,22 @@ class A {
 }
 
 function main() {
-  assertEQ(global_boolean_, true)
-  assertEQ(global_byte_, 20)
-  assertEQ(global_char_, c'a')
-  assertEQ(global_double_, 1.797+308)
-  assertEQ(global_float_, 2.22 as float)
-  assertEQ(global_int_, 200000)
-  assertEQ(global_long_, 200000000000)
-  assertEQ(global_short_, 20)
+  arktest.assertEQ(global_boolean_, true)
+  arktest.assertEQ(global_byte_, 20)
+  arktest.assertEQ(global_char_, c'a')
+  arktest.assertEQ(global_double_, 1.797+308)
+  arktest.assertEQ(global_float_, 2.22 as float)
+  arktest.assertEQ(global_int_, 200000)
+  arktest.assertEQ(global_long_, 200000000000)
+  arktest.assertEQ(global_short_, 20)
 
   let a = new A();
-  assertEQ(a.boolean_, true)
-  assertEQ(a.byte_, 20)
-  assertEQ(a.char_, c'a')
-  assertEQ(a.double_, 1.797+308)
-  assertEQ(a.float_, 2.22 as float)
-  assertEQ(a.int_, 200000)
-  assertEQ(a.long_, 200000000000)
-  assertEQ(a.short_, 20)
+  arktest.assertEQ(a.boolean_, true)
+  arktest.assertEQ(a.byte_, 20)
+  arktest.assertEQ(a.char_, c'a')
+  arktest.assertEQ(a.double_, 1.797+308)
+  arktest.assertEQ(a.float_, 2.22 as float)
+  arktest.assertEQ(a.int_, 200000)
+  arktest.assertEQ(a.long_, 200000000000)
+  arktest.assertEQ(a.short_, 20)
 }

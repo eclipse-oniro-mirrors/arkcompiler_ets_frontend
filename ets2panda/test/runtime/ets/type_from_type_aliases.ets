@@ -41,42 +41,42 @@ type recordType =  Record<string,string>;
 function main(){
    let a = Type.from<intType>();
    let b = Type.from<int>();
-   assertTrue(a == b);
+   arktest.assertTrue(a == b);
 
    let stringA = Type.from<stringType>();
    let stringB = Type.from<string>();
-   assertTrue(stringA.toString() == stringB.toString());
+   arktest.assertTrue(stringA.toString() == stringB.toString());
 
    let c = Type.from<aClass>()
    let d = Type.from<A>()
-   assertTrue(c.toString() == d.toString());
+   arktest.assertTrue(c.toString() == d.toString());
 
    let e = Type.from<bInterface>()
    let f = Type.from<B>()
-   assertTrue(e.toString() == f.toString());
+   arktest.assertTrue(e.toString() == f.toString());
 
    let g = Type.from<arrayType>()
    let h = Type.from<Array<string>>()
-   assertTrue(g.toString() == h.toString());
+   arktest.assertTrue(g.toString() == h.toString());
 
 
    let mapA = Type.from<mapType>();
    let mapB = Type.from<Map<string,string>>();
-   assertTrue(mapA.toString() == mapB.toString());
+   arktest.assertTrue(mapA.toString() == mapB.toString());
 
    let recordA = Type.from<recordType>();
    let recordB = Type.from<Record<string,string>>();
-   assertTrue(recordA.toString() == recordB.toString());
+   arktest.assertTrue(recordA.toString() == recordB.toString());
 
 
    let functionA = Type.from<functionType>();
    let functionB = Type.from<()=>void>();
-   assertTrue(functionA.toString() == functionB.toString());
+   arktest.assertTrue(functionA.toString() == functionB.toString());
 
    let employeeA = Type.from<MyNamespace.EmployeeA>();
    let employeeB = Type.from<MyNamespace.EmployeeB>();
    let employeeC = Type.from<MyNamespace.stringType>();
-   assertTrue(employeeA.toString() == employeeB.toString());
-   assertTrue(employeeA.toString() != employeeC.toString());
+   arktest.assertTrue(employeeA.toString() == employeeB.toString());
+   arktest.assertTrue(employeeA.toString() != employeeC.toString());
 
 }

@@ -35,14 +35,14 @@ let rotate:F<int> = (this: B<int>): this => { return this }
 let rotate2 = (this: B<int>): this => { return this }
 function main() {
     let d = new D<int>(1).setX(3).rotate().setY(33);
-    assertEQ(d.x, 3)
-    assertEQ(d.y, 33)
+    arktest.assertEQ(d.x, 3)
+    arktest.assertEQ(d.y, 33)
     let dd = new D<int>(1).setX(6).rotate2().setY(66);
-    assertEQ(dd.x, 6)
-    assertEQ(dd.y, 66)
+    arktest.assertEQ(dd.x, 6)
+    arktest.assertEQ(dd.y, 66)
 
     let b = new B<int>(1).setX(6).rotate().setX(66);
-    assertEQ(b.x, 66)
+    arktest.assertEQ(b.x, 66)
     let bb = new B<int>(1).setX(6).rotate2().setX(66);
-    assertEQ(bb.x, 66)
+    arktest.assertEQ(bb.x, 66)
 }

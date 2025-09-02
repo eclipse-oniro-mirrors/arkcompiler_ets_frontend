@@ -29,7 +29,7 @@ enum class EnumCastType {
     CAST_TO_STRING_ENUM,
 };
 
-class EnumPostCheckLoweringPhase : public PhaseForBodies {
+class EnumPostCheckLoweringPhase : public PhaseForDeclarations {
 public:
     EnumPostCheckLoweringPhase() noexcept = default;
     std::string_view Name() const override

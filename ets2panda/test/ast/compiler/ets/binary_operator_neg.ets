@@ -15,7 +15,7 @@
 
 /* @@ label1 */@@/@
 
-/* @@@ label1 Error SyntaxError: Unexpected token '@@'.  */
+/* @@@ label1 Error SyntaxError: Unexpected token '@@'. */
 /* @@? 23:1 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 23:1 Error SyntaxError: Invalid annotation name. */
 /* @@? 23:1 Error SyntaxError: Unexpected token 'end of stream'. */

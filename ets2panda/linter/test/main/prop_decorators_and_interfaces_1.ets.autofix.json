@@ -15,27 +15,6 @@
     ],
     "result": [
         {
-            "line": 18,
-            "column": 17,
-            "endLine": 18,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 654,
-                    "end": 655,
-                    "replacementText": "0.0",
-                    "line": 18,
-                    "column": 17,
-                    "endLine": 18,
-                    "endColumn": 18
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 24,
             "column": 3,
             "endLine": 24,
@@ -43,9 +22,9 @@
             "problem": "PropDecoratorNotSupported",
             "autofix": [
                 {
-                    "start": 704,
+                    "start": 705,
                     "end": 709,
-                    "replacementText": "@PropRef",
+                    "replacementText": "PropRef",
                     "line": 24,
                     "column": 3,
                     "endLine": 24,
@@ -64,9 +43,9 @@
             "problem": "StoragePropDecoratorNotSupported",
             "autofix": [
                 {
-                    "start": 895,
-                    "end": 916,
-                    "replacementText": "@StoragePropRef",
+                    "start": 896,
+                    "end": 907,
+                    "replacementText": "StoragePropRef",
                     "line": 34,
                     "column": 3,
                     "endLine": 34,
@@ -85,9 +64,9 @@
             "problem": "LocalStoragePropDecoratorNotSupported",
             "autofix": [
                 {
-                    "start": 944,
-                    "end": 970,
-                    "replacementText": "@LocalStoragePropRef",
+                    "start": 945,
+                    "end": 961,
+                    "replacementText": "LocalStoragePropRef",
                     "line": 35,
                     "column": 3,
                     "endLine": 35,

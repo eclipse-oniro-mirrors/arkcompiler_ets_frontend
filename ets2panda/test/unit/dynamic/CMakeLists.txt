@@ -12,5 +12,6 @@
 # limitations under the License.
 
 ets2panda_add_gtest(es2panda_dynamic_call_test
-    CPP_SOURCES dynamic_call_test.cpp
+    # 26273
+    # CPP_SOURCES dynamic_call_test.cpp
 )

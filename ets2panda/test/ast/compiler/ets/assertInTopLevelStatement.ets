@@ -24,7 +24,7 @@ let promise1 = new Promise<string>((_reject: PromiseFunction): void => {
 
 let promise2 = promise1.catch((value: string): string => {
     result = value;
-    assertEQ(result, "hello");
+    arktest.assertEQ(result, "hello");
     return "bye";
 })
 

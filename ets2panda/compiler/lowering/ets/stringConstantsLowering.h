@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,10 +20,11 @@
 
 namespace ark::es2panda::compiler {
 
-class StringConstantsLowering : public Phase {
+class StringConstantsLowering : public PhaseForDeclarations {
 public:
     std::string_view Name() const override;
-    bool Perform(public_lib::Context *ctx, parser::Program *program) override;
+
+    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
 };
 
 }  // namespace ark::es2panda::compiler

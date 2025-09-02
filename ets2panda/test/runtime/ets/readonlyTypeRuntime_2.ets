@@ -24,11 +24,11 @@ function main() {
     let plain_a: A = new A();
 
     plain_a.fld = 3;
-    assertEQ(plain_a.fld, 3)
+    arktest.assertEQ(plain_a.fld, 3)
 
     plain_a.foo2();
-    assertEQ(plain_a.fld, 5)
+    arktest.assertEQ(plain_a.fld, 5)
 
-    assertEQ(readonly_a.fld, 6)
+    arktest.assertEQ(readonly_a.fld, 6)
     
 }

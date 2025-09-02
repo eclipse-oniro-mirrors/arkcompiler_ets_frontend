@@ -15,4 +15,4 @@
 
 package import_tests.packages;
 
-export const flt: float = 1.2345;
+export const flt: float = 1.2345f;

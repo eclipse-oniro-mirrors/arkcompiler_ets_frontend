@@ -18,4 +18,8 @@ a[0] = 1
 a[1] = "1"
 let b = a[0] + a[1]
 
-/* @@? 19:9 Error TypeError: Bad operand type, the types of the operands must be numeric type, enum or String.  */
+/* @@? 16:9 Error TypeError: Can't resolve array type */
+/* @@? 17:1 Error TypeError: Indexed access is not supported for such expression type. */
+/* @@? 18:1 Error TypeError: Indexed access is not supported for such expression type. */
+/* @@? 19:9 Error TypeError: Indexed access is not supported for such expression type. */
+/* @@? 19:16 Error TypeError: Indexed access is not supported for such expression type. */

@@ -27,7 +27,7 @@ using AstNodePtr = ir::AstNode *;
 
 ir::ClassProperty *TransformerClassProperty(public_lib::Context *ctx, ir::ClassProperty *property)
 {
-    auto checker = ctx->checker->AsETSChecker();
+    auto checker = ctx->GetChecker()->AsETSChecker();
     auto allocator = ctx->allocator;
     // Note: This code will be excluded after primitive type refactoring
     if (property->TsType()->IsETSPrimitiveType()) {
@@ -42,14 +42,15 @@ ir::ClassProperty *TransformerClassProperty(public_lib::Context *ctx, ir::ClassP
     property->SetTypeAnnotation(typeAnnotation);
     property->SetTsType(annotationType);
     property->Key()->Variable()->SetTsType(annotationType);
+    property->ClearModifier(ir::ModifierFlags::DEFINITE);
     return property;
 }
 
 static ir::AstNode *TransformerMemberExpression(ir::MemberExpression *memberExpr, public_lib::Context *ctx)
 {
-    auto checker = ctx->checker->AsETSChecker();
+    auto checker = ctx->GetChecker()->AsETSChecker();
     auto parser = ctx->parser->AsETSParser();
-    auto varbinder = ctx->checker->VarBinder()->AsETSBinder();
+    auto varbinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
     auto allocator = ctx->Allocator();
     auto originalType = memberExpr->TsType();
     // Note: This code will be excluded after primitive type refactoring
@@ -87,15 +88,6 @@ bool LateInitializationConvert::PerformForModule(public_lib::Context *ctx, parse
 {
     program->Ast()->TransformChildrenRecursively(
         [ctx](ir::AstNode *node) -> AstNodePtr {
-            if (node->IsClassProperty() && node->IsDefinite()) {
-                return TransformerClassProperty(ctx, node->AsClassProperty());
-            }
-            return node;
-        },
-        Name());
-
-    program->Ast()->TransformChildrenRecursively(
-        [ctx](ir::AstNode *node) -> AstNodePtr {
             if (node->IsMemberExpression()) {
                 auto property = node->AsMemberExpression()->Property();
                 if (!(property->IsIdentifier() && property->AsIdentifier()->Variable() != nullptr)) {
@@ -111,6 +103,14 @@ bool LateInitializationConvert::PerformForModule(public_lib::Context *ctx, parse
         },
         Name());
 
+    program->Ast()->TransformChildrenRecursively(
+        [ctx](ir::AstNode *node) -> AstNodePtr {
+            if (node->IsClassProperty() && node->IsDefinite()) {
+                return TransformerClassProperty(ctx, node->AsClassProperty());
+            }
+            return node;
+        },
+        Name());
     return true;
 }
 }  // namespace ark::es2panda::compiler

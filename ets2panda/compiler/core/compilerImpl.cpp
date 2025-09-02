@@ -14,7 +14,6 @@
  */
 
 #include "compilerImpl.h"
-#include <string>
 
 #include "es2panda.h"
 #include "ast_verifier/ASTVerifier.h"
@@ -35,10 +34,7 @@
 #include "compiler/lowering/phase.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/checkerPhase.h"
-#include "compiler/lowering/resolveIdentifiers.h"
-#include "compiler/lowering/ets/insertOptionalParametersAnnotation.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
-#include "generated/isa.h"
 #include "parser/parserImpl.h"
 #include "parser/JSparser.h"
 #include "parser/ASparser.h"
@@ -47,6 +43,7 @@
 #include "parser/program/program.h"
 #include "public/public.h"
 #include "util/ustring.h"
+#include "util/perfMetrics.h"
 #include "varbinder/JSBinder.h"
 #include "varbinder/ASBinder.h"
 #include "varbinder/TSBinder.h"
@@ -88,6 +85,7 @@ static public_lib::Context::CodeGenCb MakeCompileJob()
         RegSpiller regSpiller;
         ArenaAllocator allocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
         AstCompiler astcompiler;
+        compiler::SetPhaseManager(context->phaseManager);
         CodeGen cg(&allocator, &regSpiller, context, std::make_tuple(scope, programElement, &astcompiler));
         FunctionEmitter funcEmitter(&cg, programElement);
         funcEmitter.Generate();
@@ -111,7 +109,7 @@ static bool CheckOptionsBeforePhase(const util::Options &options, const parser::
 }
 
 void HandleGenerateDecl(const parser::Program &program, util::DiagnosticEngine &diagnosticEngine,
-                        const std::string &outputPath, bool isIsolatedDeclgen)
+                        const std::string &outputPath)
 {
     std::ofstream outFile(outputPath);
     if (!outFile.is_open()) {
@@ -119,14 +117,9 @@ void HandleGenerateDecl(const parser::Program &program, util::DiagnosticEngine &
                                        lexer::SourcePosition());
         return;
     }
-    std::string result;
-    if (!isIsolatedDeclgen) {
-        result = program.Ast()->DumpDecl();
-    } else {
-        result = program.Ast()->IsolatedDumpDecl();
-    }
-
+    std::string result = program.Ast()->DumpDecl();
     result.erase(0, result.find_first_not_of('\n'));
+    result = "'use static'\n" + result;
 
     outFile << result;
     outFile.close();
@@ -148,54 +141,25 @@ static bool CheckOptionsAfterPhase(const util::Options &options, const parser::P
     return options.GetExitAfterPhase() == name;
 }
 
-static bool DoIsolatedDeclgenCheck(const util::Options &options, const std::string &phaseName,
-                                   checker::IsolatedDeclgenChecker &isolatedDeclgenChecker,
-                                   public_lib::Context &context)
-{
-    if (!options.IsGenerateDeclEnableIsolated()) {
-        return true;
-    }
-    if (phaseName == compiler::ResolveIdentifiers::NAME) {
-        isolatedDeclgenChecker.CheckBeforeChecker();
-        if (context.diagnosticEngine->IsAnyError()) {
-            return false;
-        }
-    }
-
-    if (phaseName == compiler::CheckerPhase::NAME) {
-        isolatedDeclgenChecker.CheckAfterChecker();
-        if (context.diagnosticEngine->IsAnyError()) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
+// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
 static bool RunVerifierAndPhases(public_lib::Context &context, parser::Program &program)
 {
-    auto &options = const_cast<util::Options &>(*context.config->options);
+    const auto &options = *context.config->options;
     const auto verifierEachPhase = options.IsAstVerifierEachPhase();
 
     ast_verifier::ASTVerifier verifier(context, program);
     verifier.Before();
-    checker::IsolatedDeclgenChecker isolatedDeclgenChecker(*context.diagnosticEngine, program);
-    if (options.IsGenerateDeclEnableIsolated()) {
-        options.SetGenerateDeclEnabled(true);
-    }
 
-    bool skipPhase = false;
+    bool afterCheckerPhase = false;
     while (auto phase = context.phaseManager->NextPhase()) {
         const auto name = std::string {phase->Name()};
-        skipPhase = options.GetSkipPhases().count(name) > 0 ||
-                    (options.IsGenerateDeclEnableIsolated() &&
-                     phase->Name() == compiler::InsertOptionalParametersAnnotation::NAME);
-        if (skipPhase) {
-            continue;
+        if (name == "plugins-after-check") {
+            afterCheckerPhase = true;
         }
+        ES2PANDA_PERF_EVENT_SCOPE("@phases/" + name);
 
-        if (options.IsGenerateDeclEnableIsolated() && name == "plugins-after-check") {
-            return false;
+        if (options.GetSkipPhases().count(name) > 0) {
+            continue;
         }
 
         if (CheckOptionsBeforePhase(options, program, name) || !phase->Apply(&context, &program) ||
@@ -203,30 +167,14 @@ static bool RunVerifierAndPhases(public_lib::Context &context, parser::Program &
             return false;
         }
 
-        if (!DoIsolatedDeclgenCheck(options, name, isolatedDeclgenChecker, context)) {
-            return false;
-        }
-
-        if (!options.IsGenerateDeclEnableIsolated()) {
-            verifier.IntroduceNewInvariants(phase->Name());
-        }
-        if (verifierEachPhase || options.HasVerifierPhase(phase->Name())) {
+        if (verifier.IntroduceNewInvariants(phase->Name());
+            verifierEachPhase || options.HasVerifierPhase(phase->Name())) {
             verifier.Verify(phase->Name());
         }
 
         // Stop lowerings processing after Checker phase if any error happened.
-        if (name == "plugins-after-check" && context.diagnosticEngine->IsAnyError()) {
+        if (afterCheckerPhase && context.diagnosticEngine->IsAnyError()) {
             return false;
-        }
-
-        if (options.IsGenerateDeclEnabled() && name == compiler::CheckerPhase::NAME) {
-            std::string path;
-            if (!options.WasSetGenerateDeclPath()) {
-                path = ark::os::RemoveExtension(util::BaseName(options.SourceFileName())).append(".d.ets");
-            } else {
-                path = options.GetGenerateDeclPath();
-            }
-            HandleGenerateDecl(program, *context.diagnosticEngine, path, options.IsGenerateDeclEnableIsolated());
         }
     }
 
@@ -301,7 +249,18 @@ static void AddExternalPrograms(public_lib::Context *ctx, const CompilationUnit 
         if (gt != nullptr && gt->IsETSObjectType()) {
             auto *relation = gt->AsETSObjectType()->GetRelation();
             if (relation != nullptr) {
-                relation->SetChecker(ctx->checker);
+                relation->SetChecker(ctx->GetChecker());
+            }
+        }
+    }
+}
+
+[[maybe_unused]] static void MarkAsLowered(parser::Program &program)
+{
+    for (auto &[name, extPrograms] : program.ExternalSources()) {
+        for (auto &extProgram : extPrograms) {
+            if (!extProgram->IsASTLowered()) {
+                extProgram->MarkASTAsLowered();
             }
         }
     }
@@ -375,14 +334,16 @@ static void SavePermanents(public_lib::Context *ctx, parser::Program *program)
     varbinder->GetGlobalRecordTable()->CleanUp();
     varbinder->Functions().clear();
 
-    ctx->transitionMemory->SetGlobalTypes(ctx->checker->GetGlobalTypesHolder());
-    ctx->transitionMemory->SetCachechedComputedAbstracts(ctx->checker->AsETSChecker()->GetCachedComputedAbstracts());
+    ctx->transitionMemory->SetGlobalTypes(ctx->GetChecker()->GetGlobalTypesHolder());
+    ctx->transitionMemory->SetCachechedComputedAbstracts(
+        ctx->GetChecker()->AsETSChecker()->GetCachedComputedAbstracts());
     ctx->transitionMemory->AddCompiledProgram(ctx->parserProgram);
 }
 
 static pandasm::Program *EmitProgram(CompilerImpl *compilerImpl, public_lib::Context *context,
                                      const CompilationUnit &unit)
 {
+    ES2PANDA_PERF_SCOPE("@EmitProgram");
     context->emitter->GenAnnotation();
     auto result = compilerImpl->Emit(context);
     if (unit.ext == ScriptExtension::ETS && context->compilingState != public_lib::CompilingState::SINGLE_COMPILING) {
@@ -393,6 +354,7 @@ static pandasm::Program *EmitProgram(CompilerImpl *compilerImpl, public_lib::Con
 
 static bool ExecuteParsingAndCompiling(const CompilationUnit &unit, public_lib::Context *context)
 {
+    ES2PANDA_PERF_SCOPE("@phases");
     parser::Program *program = context->parserProgram;
     if (unit.ext == ScriptExtension::ETS &&
         context->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
@@ -433,9 +395,8 @@ static pandasm::Program *ClearContextAndReturnProgam(public_lib::Context *contex
 {
     context->config = nullptr;
     context->parser = nullptr;
-    context->checker->SetAnalyzer(nullptr);
-    context->checker = nullptr;
-    context->analyzer = nullptr;
+    context->ClearCheckers();
+    context->ClearAnalyzers();
     context->phaseManager = nullptr;
     context->parserProgram = nullptr;
     context->emitter = nullptr;
@@ -446,7 +407,9 @@ template <typename Parser, typename VarBinder, typename Checker, typename Analyz
           typename CodeGen, typename RegSpiller, typename FunctionEmitter, typename Emitter>
 static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *compilerImpl, public_lib::Context *context)
 {
+    ir::DisableContextHistory();
     auto config = public_lib::ConfigImpl {};
+    auto phaseManager = compiler::PhaseManager(context, unit.ext, context->allocator);
     context->config = &config;
     context->config->options = &unit.options;
     context->sourceFile = &unit.input;
@@ -460,13 +423,13 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
         Parser(&program, unit.options, unit.diagnosticEngine, static_cast<parser::ParserStatus>(unit.rawParserStatus));
     parser.SetContext(context);
     context->parser = &parser;
-    auto checker = Checker(unit.diagnosticEngine, context->allocator);
-    context->checker = &checker;
-    auto analyzer = Analyzer(&checker);
-    auto phaseManager = compiler::PhaseManager(unit.ext, context->allocator);
-    checker.SetAnalyzer(&analyzer);
-    context->analyzer = checker.GetAnalyzer();
+    parser.SetContext(context);
+    auto checker = Checker(context->allocator, unit.diagnosticEngine, context->allocator);
     context->parserProgram = &program;
+    context->PushChecker(&checker);
+    auto analyzer = Analyzer(&checker);
+    checker.SetAnalyzer(&analyzer);
+    context->PushAnalyzer(checker.GetAnalyzer());
     context->codeGenCb = MakeCompileJob<CodeGen, RegSpiller, FunctionEmitter, Emitter, AstCompiler>();
     context->diagnosticEngine = &unit.diagnosticEngine;
     context->phaseManager = &phaseManager;
@@ -475,7 +438,7 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
         CreateDebuggerEvaluationPlugin(checker, *context->allocator, &program, unit.options);
         if (context->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
             checker.SetCachedComputedAbstracts(context->transitionMemory->CachedComputedAbstracts());
-            checker.SetGlobalTypes(context->transitionMemory->GlobalTypes());
+            checker.SetGlobalTypesHolder(context->transitionMemory->GlobalTypes());
             checker.AddStatus(ark::es2panda::checker::CheckerStatus::BUILTINS_INITIALIZED);
         } else {
             checker.InitCachedComputedAbstracts();
@@ -486,11 +449,13 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
     auto *varbinder = program.VarBinder();
     varbinder->SetProgram(&program);
     varbinder->SetContext(context);
-    context->checker->Initialize(varbinder);
+    context->GetChecker()->Initialize(varbinder);
 
     if (!ExecuteParsingAndCompiling(unit, context)) {
         return ClearContextAndReturnProgam(context, nullptr);
     }
+
+    MarkAsLowered(program);
     return ClearContextAndReturnProgam(context, EmitProgram(compilerImpl, context, unit));
 }
 

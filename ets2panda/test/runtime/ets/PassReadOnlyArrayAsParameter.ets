@@ -20,4 +20,4 @@ constructor(entries: readonly [K,V][]) {}
 let entrs: readonly [Number, Number][] = [[1,2], [3,4]]
 let m = new M<Number, Number>(entrs)
 
-assertNE(m, null)
+arktest.assertNE(m, null)

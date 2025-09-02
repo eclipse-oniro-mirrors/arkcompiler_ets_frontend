@@ -14,7 +14,7 @@
  */
 
 (() => {
-    0.0;
+    0;
     return undefined;
 })();
 
@@ -24,7 +24,7 @@
 })();
 
 (() => {
-    (1.0 + 2.0);
+    (1 + 2);
     return undefined;
 })();
 
@@ -33,12 +33,12 @@ interface GeneratedObjectLiteralInterface_1 {
     b: number;
 }
 (() => {
-    ({ a: 1.0, b: 2.0 } as GeneratedObjectLiteralInterface_1);
+    ({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_1);
     return undefined;
 })();
 
 (() => {
-    [1.0, 2.0, 3.0];
+    [1, 2, 3];
     return undefined;
 })();
 
@@ -48,23 +48,23 @@ interface GeneratedObjectLiteralInterface_1 {
 })();
 
 const undefined_value = (() => {
-    1.0;
+    1;
     return undefined;
 })();
 
 const undefined_value2: undefined = (() => {
-    2.0;
+    2;
     return undefined;
 })();
 
 const undefined_value3: number | undefined = (() => {
-    3.0;
+    3;
     return undefined;
 })();
 
 (() => {
     (() => {
-    1.0;
+    1;
     return undefined;
 })();
     return undefined;
@@ -109,15 +109,15 @@ const undefined_value3: number | undefined = (() => {
 })();
 
 function foo() {
-  let a: number = 1.0;
+  let a = 1;
   (() => {
     a++;
     return undefined;
 })();
 
-  let b: number[] = [1.0, 2.0, 3.0];
+  let b = [1, 2, 3];
   (() => {
-    console.log(b.filter(x => x % 2.0 !== 0.0));
+    console.log(b.filter(x => x % 2 !== 0));
     return undefined;
 })();
   

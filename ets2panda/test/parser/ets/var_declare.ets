@@ -20,6 +20,6 @@ class VarDeclareTest  {
         b *= 10;
         let c : int , d : int = 5;
         const e : double = 2.781828;
-        const Pi : float = 3.14;
+        const Pi : float = 3.14f;
     }
 }

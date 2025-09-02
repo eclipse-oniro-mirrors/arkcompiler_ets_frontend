@@ -21,12 +21,7 @@ namespace ark::es2panda::ir {
 void ETSNeverType::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
                                      [[maybe_unused]] std::string_view const transformationName)
 {
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void ETSNeverType::Iterate([[maybe_unused]] const NodeTraverser &cb) const
@@ -82,7 +77,7 @@ ETSNeverType *ETSNeverType::Clone(ArenaAllocator *allocator, AstNode *parent)
     if (!Annotations().empty()) {
         ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
         for (auto *annotationUsage : Annotations()) {
-            auto *const annotationClone = annotationUsage->Clone(allocator, clone);
+            auto *const annotationClone = annotationUsage->Clone(allocator, nullptr);
             ES2PANDA_ASSERT(annotationClone != nullptr);
             annotationUsages.push_back(annotationClone->AsAnnotationUsage());
         }

@@ -31,10 +31,10 @@ function bar(arg: BarNameSpace.FooNameSpace.Callback2): void {
 
 function main(): void {
     foo((arg) => {
-        assertEQ(arg, 'hello');
+        arktest.assertEQ(arg, 'hello');
     });
 
     bar((arg) => {
-        assertEQ(arg, 'goodbye');
+        arktest.assertEQ(arg, 'goodbye');
     });
 }

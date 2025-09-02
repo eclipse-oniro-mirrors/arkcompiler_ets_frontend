@@ -14,7 +14,6 @@
  */
 
 #include "classProperty.h"
-#include <string>
 
 #include "checker/ETSchecker.h"
 #include "checker/TSchecker.h"
@@ -23,55 +22,75 @@
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::ir {
+
+void ClassProperty::SetTypeAnnotation(TypeNode *typeAnnotation)
+{
+    this->GetOrCreateHistoryNodeAs<ClassProperty>()->typeAnnotation_ = typeAnnotation;
+}
+
+void ClassProperty::SetDefaultAccessModifier(bool isDefault)
+{
+    this->GetOrCreateHistoryNodeAs<ClassProperty>()->isDefault_ = isDefault;
+}
+
 void ClassProperty::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
-    if (auto *transformedNode = cb(key_); key_ != transformedNode) {
-        key_->SetTransformedNode(transformationName, transformedNode);
-        key_ = transformedNode->AsExpression();
-    }
-
-    if (value_ != nullptr) {
-        if (auto *transformedNode = cb(value_); value_ != transformedNode) {
-            value_->SetTransformedNode(transformationName, transformedNode);
-            value_ = transformedNode->AsExpression();
+    auto *key = Key();
+    if (key != nullptr) {
+        if (auto *transformedNode = cb(key); key != transformedNode) {
+            key->SetTransformedNode(transformationName, transformedNode);
+            SetKey(transformedNode->AsExpression());
         }
     }
 
-    if (typeAnnotation_ != nullptr) {
-        if (auto *transformedNode = cb(typeAnnotation_); typeAnnotation_ != transformedNode) {
-            typeAnnotation_->SetTransformedNode(transformationName, transformedNode);
-            typeAnnotation_ = static_cast<TypeNode *>(transformedNode);
+    auto *value = Value();
+    if (value != nullptr) {
+        if (auto *transformedNode = cb(value); value != transformedNode) {
+            value->SetTransformedNode(transformationName, transformedNode);
+            SetValue(transformedNode->AsExpression());
         }
     }
 
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
+    auto *typeAnnotation = TypeAnnotation();
+    if (typeAnnotation != nullptr) {
+        if (auto *transformedNode = cb(typeAnnotation); typeAnnotation != transformedNode) {
+            typeAnnotation->SetTransformedNode(transformationName, transformedNode);
+            SetTypeAnnotation(static_cast<TypeNode *>(transformedNode));
         }
     }
 
-    for (auto *&it : Annotations()) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
+    auto const &decorators = Decorators();
+    for (size_t ix = 0; ix < decorators.size(); ix++) {
+        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
+            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueDecorators(transformedNode->AsDecorator(), ix);
+        }
+    }
+
+    auto const &annotations = Annotations();
+    for (size_t ix = 0; ix < annotations.size(); ix++) {
+        if (auto *transformedNode = cb(annotations[ix]); annotations[ix] != transformedNode) {
+            annotations[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueAnnotations(transformedNode->AsAnnotationUsage(), ix);
         }
     }
 }
 
 void ClassProperty::Iterate(const NodeTraverser &cb) const
 {
-    cb(key_);
+    auto const key = GetHistoryNode()->AsClassProperty()->key_;
+    cb(key);
 
-    if (value_ != nullptr) {
-        cb(value_);
+    auto const value = GetHistoryNode()->AsClassProperty()->value_;
+    if (value != nullptr) {
+        cb(value);
     }
 
-    if (typeAnnotation_ != nullptr) {
-        cb(typeAnnotation_);
+    if (TypeAnnotation() != nullptr) {
+        cb(TypeAnnotation());
     }
 
-    for (auto *it : VectorIterationGuard(decorators_)) {
+    for (auto *it : VectorIterationGuard(Decorators())) {
         cb(it);
     }
 
@@ -83,17 +102,17 @@ void ClassProperty::Iterate(const NodeTraverser &cb) const
 void ClassProperty::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", "ClassProperty"},
-                 {"key", key_},
-                 {"value", AstDumper::Optional(value_)},
-                 {"accessibility", AstDumper::Optional(AstDumper::ModifierToString(flags_))},
+                 {"key", Key()},
+                 {"value", AstDumper::Optional(Value())},
+                 {"accessibility", AstDumper::Optional(AstDumper::ModifierToString(Modifiers()))},
                  {"static", IsStatic()},
                  {"readonly", IsReadonly()},
                  {"declare", IsDeclare()},
                  {"optional", IsOptionalDeclaration()},
-                 {"computed", isComputed_},
-                 {"typeAnnotation", AstDumper::Optional(typeAnnotation_)},
+                 {"computed", IsComputed()},
+                 {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"definite", IsDefinite()},
-                 {"decorators", decorators_},
+                 {"decorators", Decorators()},
                  {"annotations", AstDumper::Optional(Annotations())}});
 }
 
@@ -114,11 +133,6 @@ void ClassProperty::DumpModifiers(ir::SrcDumper *dumper) const
         } else {
             dumper->Add("let ");
         }
-        return;
-    }
-
-    if (compiler::HasGlobalClassParent(this)) {
-        dumper->Add("let ");
         return;
     }
 
@@ -184,10 +198,6 @@ void ClassProperty::DumpCheckerTypeForDeclGen(ir::SrcDumper *dumper) const
     }
 
     auto typeStr = TsType()->ToString();
-    if (TsType()->IsTypeError() && dumper->IsIsolatedDeclgen() && typeAnnotation_ != nullptr) {
-        typeStr = typeAnnotation_->AsETSTypeReference()->Part()->Name()->AsIdentifier()->Name().Mutf8();
-    }
-
     dumper->Add(": ");
     dumper->Add(typeStr);
 
@@ -203,6 +213,10 @@ bool ClassProperty::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 
     auto name = key_->AsIdentifier()->Name().Mutf8();
     if (name.rfind('#', 0) == 0) {
+        return true;
+    }
+
+    if (IsPrivate()) {
         return true;
     }
 
@@ -229,8 +243,8 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
     }
     DumpPrefix(dumper);
 
-    if (key_ != nullptr) {
-        key_->Dump(dumper);
+    if (Key() != nullptr) {
+        Key()->Dump(dumper);
     }
 
     if (IsOptionalDeclaration()) {
@@ -243,14 +257,14 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
 
     if (typeAnnotation_ != nullptr && !dumper->IsDeclgen()) {
         dumper->Add(": ");
-        typeAnnotation_->Dump(dumper);
+        TypeAnnotation()->Dump(dumper);
     }
 
     DumpCheckerTypeForDeclGen(dumper);
 
     if (value_ != nullptr && !dumper->IsDeclgen()) {
         dumper->Add(" = ");
-        value_->Dump(dumper);
+        Value()->Dump(dumper);
     }
 
     dumper->Add(";");
@@ -279,11 +293,11 @@ checker::VerifiedType ClassProperty::Check(checker::ETSChecker *checker)
 
 ClassProperty *ClassProperty::Clone(ArenaAllocator *const allocator, AstNode *const parent)
 {
-    auto *const key = key_->Clone(allocator, nullptr)->AsExpression();
-    auto *const value = value_ != nullptr ? value_->Clone(allocator, nullptr)->AsExpression() : nullptr;
-    auto *const typeAnnotation = typeAnnotation_ != nullptr ? typeAnnotation_->Clone(allocator, nullptr) : nullptr;
+    auto *const key = Key()->Clone(allocator, nullptr)->AsExpression();
+    auto *const value = Value() != nullptr ? Value()->Clone(allocator, nullptr)->AsExpression() : nullptr;
+    auto *const typeAnnotation = TypeAnnotation() != nullptr ? TypeAnnotation()->Clone(allocator, nullptr) : nullptr;
 
-    auto *const clone = allocator->New<ClassProperty>(key, value, typeAnnotation, flags_, allocator, isComputed_);
+    auto *const clone = allocator->New<ClassProperty>(key, value, typeAnnotation, Modifiers(), allocator, IsComputed());
 
     if (parent != nullptr) {
         clone->SetParent(parent);
@@ -291,7 +305,7 @@ ClassProperty *ClassProperty::Clone(ArenaAllocator *const allocator, AstNode *co
 
     key->SetParent(clone);
     if (value != nullptr) {
-        value->SetTsType(value_->TsType());
+        value->SetTsType(Value()->TsType());
         value->SetParent(clone);
     }
     if (typeAnnotation != nullptr) {
@@ -299,7 +313,7 @@ ClassProperty *ClassProperty::Clone(ArenaAllocator *const allocator, AstNode *co
         typeAnnotation->SetParent(clone);
     }
 
-    for (auto *const decorator : decorators_) {
+    for (auto *const decorator : Decorators()) {
         clone->AddDecorator(decorator->Clone(allocator, clone));
     }
 
@@ -311,7 +325,7 @@ ClassProperty *ClassProperty::Clone(ArenaAllocator *const allocator, AstNode *co
         clone->SetAnnotations(std::move(annotationUsages));
     }
 
-    clone->SetRange(range_);
+    clone->SetRange(Range());
 
     return clone;
 }
@@ -327,9 +341,9 @@ void ClassProperty::CopyTo(AstNode *other) const
 
     otherImpl->typeAnnotation_ = typeAnnotation_;
     otherImpl->isDefault_ = isDefault_;
-    otherImpl->needInitInStaticBlock_ = needInitInStaticBlock_;
+    otherImpl->initMode_ = initMode_;
 
-    JsDocAllowed<AnnotationAllowed<ClassElement>>::CopyTo(other);
+    AnnotationAllowed<ClassElement>::CopyTo(other);
 }
 
 }  // namespace ark::es2panda::ir

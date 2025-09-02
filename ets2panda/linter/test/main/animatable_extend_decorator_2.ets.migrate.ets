@@ -24,18 +24,18 @@ function animatableWidth(this: TextAttribute, width: number): this {
 @Entry
 @Component
 struct AnimatablePropertyExample {
-  @State textWidth: number = 80.0;
+  @State textWidth: number = 80;
 
   build() {
     Column() {
       Text("AnimatableProperty")
         .animatableWidth(this.textWidth)
-        .animation({ duration: 2000.0, curve: Curve.Ease })
+        .animation({ duration: 2000, curve: Curve.Ease })
       Button("Play")
         .onClick(() => {
-          this.textWidth = this.textWidth == 80.0 ? 160.0 : 80.0;
+          this.textWidth = this.textWidth == 80 ? 160 : 80;
         })
     }.width("100%")
-    .padding(10.0)
+    .padding(10)
   }
 }

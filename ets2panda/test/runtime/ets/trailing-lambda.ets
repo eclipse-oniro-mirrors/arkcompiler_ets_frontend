@@ -35,31 +35,31 @@ function test_transform() {
     f1() {  // Test '{' at the same line as call expression, block statement can be transformed to trailing lambda
         x++
     }
-    assertEQ(x, 2, "expected: " + 2 + " actual: " + x)
+    arktest.assertEQ(x, 2, "expected: " + 2 + " actual: " + x)
 
     f1()
     {  // Test '{' not the same line as call expression, block statement can be transformed to trailing lambda
         x++
     }
-    assertEQ(x, 3, "expected: " + 3 + " actual: " + x)
+    arktest.assertEQ(x, 3, "expected: " + 3 + " actual: " + x)
 
     f2()
     {  // Test this block run as a standalone code block
         x++
     }
-    assertEQ(x, 5, "expected: " + 5 + " actual: " + x)
+    arktest.assertEQ(x, 5, "expected: " + 5 + " actual: " + x)
 
     let b = f3()
     { x++ }
-    assertEQ(x, 6, "expected: " + 6 + " actual: " + x)
-    assertEQ(b, y, "expected: " + y + " actual: " + b)
+    arktest.assertEQ(x, 6, "expected: " + 6 + " actual: " + x)
+    arktest.assertEQ(b, y, "expected: " + y + " actual: " + b)
 
     let a = f3() { x++ }
-    assertEQ(x, 7, "expected: " + 7 + " actual: " + x)
-    assertEQ(a, y, "expected: " + y + " actual: " + a)
+    arktest.assertEQ(x, 7, "expected: " + 7 + " actual: " + x)
+    arktest.assertEQ(a, y, "expected: " + y + " actual: " + a)
 
-    assertEQ(y, f3(){})
-    assertEQ(y, f3(()=>{}))
+    arktest.assertEQ(y, f3(){})
+    arktest.assertEQ(y, f3(()=>{}))
     {
     }
 }
@@ -78,7 +78,7 @@ function test_overload() {
     {
         // This block will be transform to a trailing lambda
     }
-    assertEQ(num, 0, "expected: " + 0 + " actual: " + num)
+    arktest.assertEQ(num, 0, "expected: " + 0 + " actual: " + num)
 }
 
 // test class methods using trailing lambda
@@ -100,12 +100,12 @@ function test_class_method() {
     a.set_n() {
         A.n++;
     }
-    assertEQ(A.n, 2, "expected: " + 2 + " actual: " + A.n)
+    arktest.assertEQ(A.n, 2, "expected: " + 2 + " actual: " + A.n)
 
     A.set_n_static() {
         A.n++;
     }
-    assertEQ(A.n, 3, "expected: " + 3 + " actual: " + A.n)
+    arktest.assertEQ(A.n, 3, "expected: " + 3 + " actual: " + A.n)
 }
 
 // test scenarios involving scope
@@ -133,25 +133,25 @@ class B {
 function test_scope(): void {
     foo() {
        let num: int = 3;
-       assertEQ(num, 3, "expected: " + 3 + " actual: " + num)
+       arktest.assertEQ(num, 3, "expected: " + 3 + " actual: " + num)
        {
             num++;
-            assertEQ(num, 4, "expected: " + 4 + " actual: " + num)
+            arktest.assertEQ(num, 4, "expected: " + 4 + " actual: " + num)
             {
                 num++;
-                assertEQ(num, 5, "expected: " + 5 + " actual: " + num)
+                arktest.assertEQ(num, 5, "expected: " + 5 + " actual: " + num)
             }
        }
 
        let a = foo2(num);
-       assertEQ(a, 6, "expected: " + 6 + " actual: " + a)
+       arktest.assertEQ(a, 6, "expected: " + 6 + " actual: " + a)
 
        let b = new B(num);
-       assertEQ(b.get_b(), 5, "expected: " + 5 + " actual: " + b.get_b())
+       arktest.assertEQ(b.get_b(), 5, "expected: " + 5 + " actual: " + b.get_b())
 
        foo() {
           let k = 1
-          assertEQ(k, 1, "expected: " + 1 + " actual: " + k)
+          arktest.assertEQ(k, 1, "expected: " + 1 + " actual: " + k)
        }
     };
 }
@@ -163,11 +163,11 @@ function test_recover_trailing_block() {
     {
         let k = a;
         let b = new B(k);
-        assertEQ(b.get_b(), k, "expected: " + k + " actual: " + b.get_b())
+        arktest.assertEQ(b.get_b(), k, "expected: " + k + " actual: " + b.get_b())
 
         a++;
     };
-    assertEQ(a, 101, "expected: " + 101 + " actual: " + a)
+    arktest.assertEQ(a, 101, "expected: " + 101 + " actual: " + a)
 }
 
 function main() {

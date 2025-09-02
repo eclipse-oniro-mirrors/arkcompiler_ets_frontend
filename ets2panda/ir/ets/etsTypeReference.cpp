@@ -21,23 +21,27 @@
 #include "compiler/core/pandagen.h"
 
 namespace ark::es2panda::ir {
+
+void ETSTypeReference::SetPart(ETSTypeReferencePart *part)
+{
+    this->GetOrCreateHistoryNodeAs<ETSTypeReference>()->part_ = part;
+}
+
 void ETSTypeReference::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
-    if (auto *transformedNode = cb(part_); part_ != transformedNode) {
-        part_->SetTransformedNode(transformationName, transformedNode);
-        part_ = transformedNode->AsETSTypeReferencePart();
+    auto const part = Part();
+    if (auto *transformedNode = cb(part); part != transformedNode) {
+        part->SetTransformedNode(transformationName, transformedNode);
+        SetPart(transformedNode->AsETSTypeReferencePart());
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void ETSTypeReference::Iterate(const NodeTraverser &cb) const
 {
-    cb(part_);
+    auto const part = GetHistoryNodeAs<ETSTypeReference>()->part_;
+    cb(part);
     for (auto *it : VectorIterationGuard(Annotations())) {
         cb(it);
     }
@@ -45,7 +49,7 @@ void ETSTypeReference::Iterate(const NodeTraverser &cb) const
 
 ir::Identifier *ETSTypeReference::BaseName() const
 {
-    ir::ETSTypeReferencePart *partIter = part_;
+    ir::ETSTypeReferencePart *partIter = Part();
 
     while (partIter->Previous() != nullptr) {
         partIter = partIter->Previous();
@@ -57,18 +61,49 @@ ir::Identifier *ETSTypeReference::BaseName() const
         return baseName->AsIdentifier();
     }
 
-    ir::TSQualifiedName *nameIter = baseName->AsTSQualifiedName();
-
-    while (nameIter->Left()->IsTSQualifiedName()) {
-        nameIter = nameIter->Left()->AsTSQualifiedName();
+    if (baseName->IsIdentifier()) {
+        return baseName->AsIdentifier();
     }
 
-    return nameIter->Left()->AsIdentifier();
+    if (baseName->IsTSQualifiedName()) {
+        ir::TSQualifiedName *iter = baseName->AsTSQualifiedName();
+
+        while (iter->Left()->IsTSQualifiedName()) {
+            iter = iter->Left()->AsTSQualifiedName();
+        }
+        if (iter->Left()->IsMemberExpression()) {
+            ES2PANDA_ASSERT(iter->Left()->AsMemberExpression()->ObjType()->HasObjectFlag(
+                checker::ETSObjectFlags::LAZY_IMPORT_OBJECT));
+            ir::MemberExpression *memberExprIter = iter->Left()->AsMemberExpression();
+            while (memberExprIter->Property()->IsMemberExpression()) {
+                memberExprIter = memberExprIter->Property()->AsMemberExpression();
+            }
+            return memberExprIter->Property()->AsIdentifier();
+        }
+        return iter->Left()->AsIdentifier();
+    }
+
+    if (baseName->IsMemberExpression()) {
+        ir::MemberExpression *iter = baseName->AsMemberExpression();
+
+        while (iter->Property()->IsMemberExpression()) {
+            iter = iter->Property()->AsMemberExpression();
+        }
+        return iter->Property()->AsIdentifier();
+    }
+
+    if (baseName->IsLiteral()) {
+        ES2PANDA_ASSERT(baseName->OriginalNode() != nullptr && baseName->OriginalNode()->IsIdentifier());
+        return baseName->OriginalNode()->AsIdentifier();
+    }
+
+    ES2PANDA_UNREACHABLE();
+    return nullptr;
 }
 
 void ETSTypeReference::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", "ETSTypeReference"}, {"part", part_}, {"annotations", AstDumper::Optional(Annotations())}});
+    dumper->Add({{"type", "ETSTypeReference"}, {"part", Part()}, {"annotations", AstDumper::Optional(Annotations())}});
 }
 
 void ETSTypeReference::Dump(ir::SrcDumper *dumper) const
@@ -76,8 +111,8 @@ void ETSTypeReference::Dump(ir::SrcDumper *dumper) const
     for (auto *anno : Annotations()) {
         anno->Dump(dumper);
     }
-    ES2PANDA_ASSERT(part_ != nullptr);
-    part_->Dump(dumper);
+    ES2PANDA_ASSERT(Part() != nullptr);
+    Part()->Dump(dumper);
 }
 
 void ETSTypeReference::Compile(compiler::PandaGen *pg) const
@@ -103,7 +138,7 @@ checker::Type *ETSTypeReference::GetType(checker::ETSChecker *checker)
     if (TsType() != nullptr) {
         return TsType();
     }
-    auto *type = part_->GetType(checker);
+    auto *type = Part()->GetType(checker);
     if (IsReadonlyType()) {
         type = checker->GetReadonlyType(type);
     }
@@ -113,19 +148,20 @@ checker::Type *ETSTypeReference::GetType(checker::ETSChecker *checker)
 ETSTypeReference *ETSTypeReference::Clone(ArenaAllocator *const allocator, AstNode *const parent)
 {
     ETSTypeReferencePart *partClone = nullptr;
-    if (part_ != nullptr) {
-        auto *const clone = part_->Clone(allocator, nullptr);
+    if (Part() != nullptr) {
+        auto *const clone = Part()->Clone(allocator, nullptr);
         ES2PANDA_ASSERT(clone != nullptr);
         partClone = clone->AsETSTypeReferencePart();
     }
     auto *const clone = allocator->New<ETSTypeReference>(partClone, allocator);
     ES2PANDA_ASSERT(clone != nullptr);
+    clone->SetRange(Range());
 
     if (partClone != nullptr) {
         partClone->SetParent(clone);
     }
 
-    clone->flags_ = flags_;
+    clone->flags_ = Modifiers();
 
     if (parent != nullptr) {
         clone->SetParent(parent);
@@ -134,14 +170,13 @@ ETSTypeReference *ETSTypeReference::Clone(ArenaAllocator *const allocator, AstNo
     if (!Annotations().empty()) {
         ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
         for (auto *annotationUsage : Annotations()) {
-            auto *annotationClone = annotationUsage->Clone(allocator, clone);
+            auto *annotationClone = annotationUsage->Clone(allocator, nullptr);
             ES2PANDA_ASSERT(annotationClone != nullptr);
             annotationUsages.push_back(annotationClone->AsAnnotationUsage());
         }
         clone->SetAnnotations(std::move(annotationUsages));
     }
 
-    clone->SetRange(Range());
     return clone;
 }
 

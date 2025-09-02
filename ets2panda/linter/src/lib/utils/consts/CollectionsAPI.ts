@@ -14,4 +14,8 @@
  */
 
 export const COLLECTIONS_TEXT = 'collections';
+export const ARKTS_COLLECTIONS_MODULE = '@arkts.collections';
+export const BIT_VECTOR = 'BitVector';
 export const COLLECTIONS_MODULES = ['@arkts.collections', '@kit.ArkTS'];
+
+export type BitVectorUsage = undefined | { ns: string; used: boolean };

@@ -26,7 +26,7 @@ class NumberLiteralBuilder : public AstBuilder<ir::NumberLiteral> {
 public:
     explicit NumberLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
-    NumberLiteralBuilder &SetValue(util::StringView value)
+    NumberLiteralBuilder &SetValue(lexer::Number const value)
     {
         value_ = value;
         return *this;
@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    util::StringView value_ {};
+    lexer::Number value_;
 };
 
 }  // namespace ark::es2panda::ir

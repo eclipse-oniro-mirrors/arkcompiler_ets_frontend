@@ -250,7 +250,8 @@ bool ETSTypeAliasType::SubstituteTypeArgs(TypeRelation *const relation, ArenaVec
 
     for (auto *const arg : typeArguments_) {
         auto *const newArg = arg->Substitute(relation, substitution);
-        newTypeArgs.push_back(newArg);
+        ES2PANDA_ASSERT(newArg->IsETSReferenceType());
+        newTypeArgs.emplace_back(newArg);
         anyChange = anyChange || (newArg != arg);
     }
 
@@ -283,10 +284,13 @@ Type *ETSTypeAliasType::Substitute(TypeRelation *relation, const Substitution *s
         return copiedType;
     }
 
+    auto arenaSubst = checker->NewArenaSubstitution();
+    std::copy(substitution->begin(), substitution->end(), std::inserter(*arenaSubst, arenaSubst->end()));
+
     copiedType = checker->CreateETSTypeAliasType(name_, declNode_, isRecursive_);
     copiedType->base_ = base_ == nullptr ? this : base_;
     copiedType->parent_ = this;
-    copiedType->substitution_ = substitution;
+    copiedType->substitution_ = arenaSubst;
     copiedType->typeArguments_ = newTypeArgs;
 
     EmplaceInstantiatedType(hash, copiedType);

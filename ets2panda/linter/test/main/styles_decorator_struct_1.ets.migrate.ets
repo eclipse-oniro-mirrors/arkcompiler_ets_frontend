@@ -34,7 +34,7 @@ import {
 struct MyCard1 {
   cardStyle1: CustomStyles = (instance: CommonMethod): void => {
     instance.backgroundColor('#ffffff');
-    instance.borderRadius(8.0);
+    instance.borderRadius(8);
   };
 
   build() {
@@ -61,7 +61,7 @@ struct MyCard2 {
   }
   
   private getWidth(): number {
-    return 10.0
+    return 10
   }
 
   build() {

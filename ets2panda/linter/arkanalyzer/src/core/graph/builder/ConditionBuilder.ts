@@ -18,6 +18,7 @@ import { ArkIRTransformer, DummyStmt } from '../../common/ArkIRTransformer';
 import { ArkAssignStmt, Stmt } from '../../base/Stmt';
 import { Local } from '../../base/Local';
 import { IRUtils } from '../../common/IRUtils';
+import { FullPosition } from '../../base/Position';
 
 /**
  * Builder for condition in CFG
@@ -228,6 +229,7 @@ export class ConditionBuilder {
         }
 
         const targetValue = firstStmtInBottom.getLeftOp();
+        const targetValuePosition = firstStmtInBottom.getOperandOriginalPosition(targetValue) ?? undefined;
         const tempResultValue = firstStmtInBottom.getRightOp();
         if (!(targetValue instanceof Local && IRUtils.isTempLocal(tempResultValue))) {
             return [bottomBlock];
@@ -236,7 +238,7 @@ export class ConditionBuilder {
         const newPredecessors: BasicBlock[] = [];
         for (const predecessor of oldPredecessors) {
             predecessor.removeSuccessorBlock(bottomBlock);
-            newPredecessors.push(...this.replaceTempRecursively(predecessor, targetValue as Local, tempResultValue as Local, allBlocks));
+            newPredecessors.push(...this.replaceTempRecursively(predecessor, targetValue as Local, tempResultValue as Local, allBlocks, targetValuePosition));
         }
 
         bottomBlock.remove(firstStmtInBottom);
@@ -256,17 +258,30 @@ export class ConditionBuilder {
         return [bottomBlock];
     }
 
-    private replaceTempRecursively(currBottomBlock: BasicBlock, targetLocal: Local, tempResultLocal: Local, allBlocks: Set<BasicBlock>): BasicBlock[] {
+    private replaceTempRecursively(
+        currBottomBlock: BasicBlock,
+        targetLocal: Local,
+        tempResultLocal: Local,
+        allBlocks: Set<BasicBlock>,
+        targetValuePosition?: FullPosition
+    ): BasicBlock[] {
         const stmts = currBottomBlock.getStmts();
         const stmtsCnt = stmts.length;
         let tempResultReassignStmt: Stmt | null = null;
         for (let i = stmtsCnt - 1; i >= 0; i--) {
             const stmt = stmts[i];
-            if (stmt instanceof ArkAssignStmt && stmt.getLeftOp() === tempResultLocal) {
-                if (IRUtils.isTempLocal(stmt.getRightOp())) {
-                    tempResultReassignStmt = stmt;
-                } else {
-                    stmt.setLeftOp(targetLocal);
+            if (!(stmt instanceof ArkAssignStmt) || stmt.getLeftOp() !== tempResultLocal) {
+                continue;
+            }
+            if (IRUtils.isTempLocal(stmt.getRightOp())) {
+                tempResultReassignStmt = stmt;
+                continue;
+            }
+            stmt.setLeftOp(targetLocal);
+            if (targetValuePosition) {
+                const restPositions = stmt.getOperandOriginalPositions()?.slice(1);
+                if (restPositions) {
+                    stmt.setOperandOriginalPositions([targetValuePosition, ...restPositions]);
                 }
             }
         }
@@ -278,7 +293,7 @@ export class ConditionBuilder {
             const prevTempResultLocal = (tempResultReassignStmt as ArkAssignStmt).getRightOp() as Local;
             for (const predecessor of oldPredecessors) {
                 predecessor.removeSuccessorBlock(currBottomBlock);
-                newPredecessors.push(...this.replaceTempRecursively(predecessor, targetLocal, prevTempResultLocal, allBlocks));
+                newPredecessors.push(...this.replaceTempRecursively(predecessor, targetLocal, prevTempResultLocal, allBlocks, targetValuePosition));
             }
 
             currBottomBlock.remove(tempResultReassignStmt);

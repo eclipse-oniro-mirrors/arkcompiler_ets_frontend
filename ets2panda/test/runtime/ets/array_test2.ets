@@ -17,13 +17,13 @@ function main() {
     let a : Array<int> = new int[2]
     a[0] = 1;
     a[1] = 2;
-    assertEQ(a.length, 2);
-    assertEQ(a.pop(), 2);
-    assertEQ(a.length, 1)
+    arktest.assertEQ(a.length, 2);
+    arktest.assertEQ(a.pop(), 2);
+    arktest.assertEQ(a.length, 1)
 
     let c : Array<Array<Array<int>>> = new int[2][2][2]
     c[1][1][1] = 10
     c[0][0][0] = 5
-    assertEQ(c[1][1][1], 10)
-    assertEQ(c[0][0][0], 5)
+    arktest.assertEQ(c[1][1][1], 10)
+    arktest.assertEQ(c[0][0][0], 5)
 }

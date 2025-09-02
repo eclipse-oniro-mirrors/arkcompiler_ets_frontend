@@ -28,13 +28,13 @@ function foo_n(value: Number): string {
 function main(): void {
     let i: int = 4
     let str_i: string = foo_i(i);
-    assertEQ(str_i, "4")
+    arktest.assertEQ(str_i, "4")
 
     let d: double = 3.14
     let str_d: string = foo_d(d);
-    assertEQ(str_d, "3.14")
+    arktest.assertEQ(str_d, "3.14")
 
     let n: number = 5
     let str_n: string = foo_n(n);
-    assertEQ(str_n, "5")
+    arktest.assertEQ(str_n, "5")
 }

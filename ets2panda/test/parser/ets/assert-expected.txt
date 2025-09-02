@@ -144,9 +144,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertLT",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 18,
+                                "column": 9,
+                                "program": "assert.ets"
+                              },
+                              "end": {
+                                "line": 18,
+                                "column": 16,
+                                "program": "assert.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertLT",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 18,
+                                "column": 17,
+                                "program": "assert.ets"
+                              },
+                              "end": {
+                                "line": 18,
+                                "column": 25,
+                                "program": "assert.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 18,
@@ -155,7 +189,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 17,
+                              "column": 25,
                               "program": "assert.ets"
                             }
                           }
@@ -167,12 +201,12 @@
                             "loc": {
                               "start": {
                                 "line": 18,
-                                "column": 18,
+                                "column": 26,
                                 "program": "assert.ets"
                               },
                               "end": {
                                 "line": 18,
-                                "column": 20,
+                                "column": 28,
                                 "program": "assert.ets"
                               }
                             }
@@ -184,12 +218,12 @@
                             "loc": {
                               "start": {
                                 "line": 18,
-                                "column": 22,
+                                "column": 30,
                                 "program": "assert.ets"
                               },
                               "end": {
                                 "line": 18,
-                                "column": 23,
+                                "column": 31,
                                 "program": "assert.ets"
                               }
                             }
@@ -204,7 +238,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 24,
+                            "column": 32,
                             "program": "assert.ets"
                           }
                         }
@@ -217,7 +251,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 25,
+                          "column": 33,
                           "program": "assert.ets"
                         }
                       }
@@ -227,9 +261,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertNE",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 19,
+                                "column": 9,
+                                "program": "assert.ets"
+                              },
+                              "end": {
+                                "line": 19,
+                                "column": 16,
+                                "program": "assert.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertNE",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 19,
+                                "column": 17,
+                                "program": "assert.ets"
+                              },
+                              "end": {
+                                "line": 19,
+                                "column": 25,
+                                "program": "assert.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 19,
@@ -238,7 +306,7 @@
                             },
                             "end": {
                               "line": 19,
-                              "column": 17,
+                              "column": 25,
                               "program": "assert.ets"
                             }
                           }
@@ -251,12 +319,12 @@
                             "loc": {
                               "start": {
                                 "line": 19,
-                                "column": 18,
+                                "column": 26,
                                 "program": "assert.ets"
                               },
                               "end": {
                                 "line": 19,
-                                "column": 19,
+                                "column": 27,
                                 "program": "assert.ets"
                               }
                             }
@@ -267,12 +335,12 @@
                             "loc": {
                               "start": {
                                 "line": 19,
-                                "column": 21,
+                                "column": 29,
                                 "program": "assert.ets"
                               },
                               "end": {
                                 "line": 19,
-                                "column": 22,
+                                "column": 30,
                                 "program": "assert.ets"
                               }
                             }
@@ -287,7 +355,7 @@
                           },
                           "end": {
                             "line": 19,
-                            "column": 23,
+                            "column": 31,
                             "program": "assert.ets"
                           }
                         }
@@ -300,7 +368,7 @@
                         },
                         "end": {
                           "line": 19,
-                          "column": 24,
+                          "column": 32,
                           "program": "assert.ets"
                         }
                       }
@@ -310,9 +378,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertTrue",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 9,
+                                "program": "assert.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 16,
+                                "program": "assert.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertTrue",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 17,
+                                "program": "assert.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 27,
+                                "program": "assert.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -321,7 +423,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 19,
+                              "column": 27,
                               "program": "assert.ets"
                             }
                           }
@@ -340,12 +442,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 20,
+                                    "column": 28,
                                     "program": "assert.ets"
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 21,
+                                    "column": 29,
                                     "program": "assert.ets"
                                   }
                                 }
@@ -356,12 +458,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 24,
+                                    "column": 32,
                                     "program": "assert.ets"
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 26,
+                                    "column": 34,
                                     "program": "assert.ets"
                                   }
                                 }
@@ -369,12 +471,12 @@
                               "loc": {
                                 "start": {
                                   "line": 20,
-                                  "column": 20,
+                                  "column": 28,
                                   "program": "assert.ets"
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 26,
+                                  "column": 34,
                                   "program": "assert.ets"
                                 }
                               }
@@ -389,12 +491,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 30,
+                                    "column": 38,
                                     "program": "assert.ets"
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 31,
+                                    "column": 39,
                                     "program": "assert.ets"
                                   }
                                 }
@@ -405,12 +507,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 34,
+                                    "column": 42,
                                     "program": "assert.ets"
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 35,
+                                    "column": 43,
                                     "program": "assert.ets"
                                   }
                                 }
@@ -418,12 +520,12 @@
                               "loc": {
                                 "start": {
                                   "line": 20,
-                                  "column": 30,
+                                  "column": 38,
                                   "program": "assert.ets"
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 35,
+                                  "column": 43,
                                   "program": "assert.ets"
                                 }
                               }
@@ -431,12 +533,12 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 20,
+                                "column": 32,
                                 "program": "assert.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 35,
+                                "column": 43,
                                 "program": "assert.ets"
                               }
                             }
@@ -447,12 +549,12 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 38,
+                                "column": 46,
                                 "program": "assert.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 56,
+                                "column": 64,
                                 "program": "assert.ets"
                               }
                             }
@@ -467,7 +569,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 57,
+                            "column": 65,
                             "program": "assert.ets"
                           }
                         }
@@ -480,7 +582,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 58,
+                          "column": 66,
                           "program": "assert.ets"
                         }
                       }
@@ -490,9 +592,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertTrue",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 21,
+                                "column": 9,
+                                "program": "assert.ets"
+                              },
+                              "end": {
+                                "line": 21,
+                                "column": 16,
+                                "program": "assert.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertTrue",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 21,
+                                "column": 17,
+                                "program": "assert.ets"
+                              },
+                              "end": {
+                                "line": 21,
+                                "column": 27,
+                                "program": "assert.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 21,
@@ -501,7 +637,7 @@
                             },
                             "end": {
                               "line": 21,
-                              "column": 19,
+                              "column": 27,
                               "program": "assert.ets"
                             }
                           }
@@ -520,12 +656,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 21,
-                                    "column": 21,
+                                    "column": 29,
                                     "program": "assert.ets"
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 22,
+                                    "column": 30,
                                     "program": "assert.ets"
                                   }
                                 }
@@ -536,12 +672,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 21,
-                                    "column": 25,
+                                    "column": 33,
                                     "program": "assert.ets"
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 27,
+                                    "column": 35,
                                     "program": "assert.ets"
                                   }
                                 }
@@ -549,12 +685,12 @@
                               "loc": {
                                 "start": {
                                   "line": 21,
-                                  "column": 21,
+                                  "column": 29,
                                   "program": "assert.ets"
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 27,
+                                  "column": 35,
                                   "program": "assert.ets"
                                 }
                               }
@@ -569,12 +705,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 21,
-                                    "column": 31,
+                                    "column": 39,
                                     "program": "assert.ets"
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 32,
+                                    "column": 40,
                                     "program": "assert.ets"
                                   }
                                 }
@@ -585,12 +721,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 21,
-                                    "column": 35,
+                                    "column": 43,
                                     "program": "assert.ets"
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 36,
+                                    "column": 44,
                                     "program": "assert.ets"
                                   }
                                 }
@@ -598,12 +734,12 @@
                               "loc": {
                                 "start": {
                                   "line": 21,
-                                  "column": 31,
+                                  "column": 39,
                                   "program": "assert.ets"
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 36,
+                                  "column": 44,
                                   "program": "assert.ets"
                                 }
                               }
@@ -611,12 +747,12 @@
                             "loc": {
                               "start": {
                                 "line": 21,
-                                "column": 20,
+                                "column": 28,
                                 "program": "assert.ets"
                               },
                               "end": {
                                 "line": 21,
-                                "column": 37,
+                                "column": 45,
                                 "program": "assert.ets"
                               }
                             }
@@ -627,12 +763,12 @@
                             "loc": {
                               "start": {
                                 "line": 21,
-                                "column": 40,
+                                "column": 48,
                                 "program": "assert.ets"
                               },
                               "end": {
                                 "line": 21,
-                                "column": 59,
+                                "column": 67,
                                 "program": "assert.ets"
                               }
                             }
@@ -647,7 +783,7 @@
                           },
                           "end": {
                             "line": 21,
-                            "column": 60,
+                            "column": 68,
                             "program": "assert.ets"
                           }
                         }
@@ -660,7 +796,7 @@
                         },
                         "end": {
                           "line": 21,
-                          "column": 61,
+                          "column": 69,
                           "program": "assert.ets"
                         }
                       }
@@ -931,12 +1067,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "assert.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "assert.ets"
                     }
                   }
                 },
@@ -944,12 +1080,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "assert.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "assert.ets"
                   }
                 }
               },
@@ -957,118 +1093,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "assert.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "assert.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "assert.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "assert.ets"
                 }
               }
             },

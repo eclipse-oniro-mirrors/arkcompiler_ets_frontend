@@ -30,5 +30,5 @@ class b extends a {
 }
 
 function main() {
-    assertEQ(b.xx(), "FOO")
+    arktest.assertEQ(b.xx(), "FOO")
 }

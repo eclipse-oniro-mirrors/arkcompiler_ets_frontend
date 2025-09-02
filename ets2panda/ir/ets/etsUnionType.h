@@ -24,11 +24,17 @@ public:
     explicit ETSUnionType(ArenaVector<TypeNode *> &&types, ArenaAllocator *const allocator)
         : TypeNode(AstNodeType::ETS_UNION_TYPE, allocator), types_(std::move(types))
     {
+        InitHistory();
     }
 
     const ArenaVector<TypeNode *> &Types() const
     {
-        return types_;
+        return GetHistoryNodeAs<ETSUnionType>()->types_;
+    }
+
+    void SetValueTypes(TypeNode *type, size_t index) const
+    {
+        GetOrCreateHistoryNodeAs<ETSUnionType>()->types_[index] = type;
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -46,6 +52,22 @@ public:
     }
 
     [[nodiscard]] ETSUnionType *Clone(ArenaAllocator *allocator, AstNode *parent) override;
+
+protected:
+    ETSUnionType *Construct(ArenaAllocator *allocator) override
+    {
+        ArenaVector<TypeNode *> types(allocator->Adapter());
+        return allocator->New<ETSUnionType>(std::move(types), allocator);
+    }
+
+    void CopyTo(AstNode *other) const override
+    {
+        auto otherImpl = reinterpret_cast<ETSUnionType *>(other);
+
+        otherImpl->types_ = types_;
+
+        TypeNode::CopyTo(other);
+    }
 
 private:
     ArenaVector<TypeNode *> types_;

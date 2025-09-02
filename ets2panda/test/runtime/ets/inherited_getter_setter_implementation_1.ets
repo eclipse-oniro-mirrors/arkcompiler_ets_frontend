@@ -27,5 +27,5 @@ function main() {
     let b = new B();
     b.a = 1;
     let c: int = b.a;
-    assertEQ(c, 1)
+    arktest.assertEQ(c, 1)
 }

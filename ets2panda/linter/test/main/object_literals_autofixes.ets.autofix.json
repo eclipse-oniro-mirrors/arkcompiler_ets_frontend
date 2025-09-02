@@ -34,12 +34,20 @@
                 {
                     "start": 1131,
                     "end": 1131,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n}\n",
+                    "line": 33,
+                    "column": 12,
+                    "endLine": 33,
+                    "endColumn": 13
                 },
                 {
                     "start": 1139,
                     "end": 1139,
-                    "replacementText": ": GeneratedObjectLiteralInterface_1"
+                    "replacementText": ": GeneratedObjectLiteralInterface_1",
+                    "line": 33,
+                    "column": 12,
+                    "endLine": 33,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -56,12 +64,20 @@
                 {
                     "start": 1146,
                     "end": 1146,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    hello: string;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    hello: string;\n}\n",
+                    "line": 34,
+                    "column": 12,
+                    "endLine": 34,
+                    "endColumn": 13
                 },
                 {
                     "start": 1154,
                     "end": 1154,
-                    "replacementText": ": GeneratedObjectLiteralInterface_2"
+                    "replacementText": ": GeneratedObjectLiteralInterface_2",
+                    "line": 34,
+                    "column": 12,
+                    "endLine": 34,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -88,12 +104,20 @@
                 {
                     "start": 1177,
                     "end": 1177,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_3 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_3 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 35,
+                    "column": 13,
+                    "endLine": 35,
+                    "endColumn": 14
                 },
                 {
                     "start": 1186,
                     "end": 1186,
-                    "replacementText": ": GeneratedObjectLiteralInterface_3"
+                    "replacementText": ": GeneratedObjectLiteralInterface_3",
+                    "line": 35,
+                    "column": 13,
+                    "endLine": 35,
+                    "endColumn": 14
                 }
             ],
             "suggest": "",
@@ -110,12 +134,20 @@
                 {
                     "start": 1203,
                     "end": 1203,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_5 {\n    field: string;\n    field1: number;\n    field2: string;\n    field3: number;\n    field4: boolean;\n    field5: boolean;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_5 {\n    field: string;\n    field1: number;\n    field2: string;\n    field3: number;\n    field4: boolean;\n    field5: boolean;\n}\n",
+                    "line": 36,
+                    "column": 12,
+                    "endLine": 36,
+                    "endColumn": 13
                 },
                 {
                     "start": 1211,
                     "end": 1211,
-                    "replacementText": ": GeneratedObjectLiteralInterface_5"
+                    "replacementText": ": GeneratedObjectLiteralInterface_5",
+                    "line": 36,
+                    "column": 12,
+                    "endLine": 36,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -142,12 +174,20 @@
                 {
                     "start": 1385,
                     "end": 1385,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_6 {\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_6 {\n}\n",
+                    "line": 51,
+                    "column": 8,
+                    "endLine": 51,
+                    "endColumn": 9
                 },
                 {
                     "start": 1464,
                     "end": 1466,
-                    "replacementText": "({} as GeneratedObjectLiteralInterface_6)"
+                    "replacementText": "({} as GeneratedObjectLiteralInterface_6)",
+                    "line": 51,
+                    "column": 8,
+                    "endLine": 51,
+                    "endColumn": 9
                 }
             ],
             "suggest": "",
@@ -164,12 +204,20 @@
                 {
                     "start": 1385,
                     "end": 1385,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_10 {\n    a: number;\n    b: string;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_10 {\n    a: number;\n    b: string;\n}\n",
+                    "line": 52,
+                    "column": 8,
+                    "endLine": 52,
+                    "endColumn": 9
                 },
                 {
                     "start": 1475,
                     "end": 1491,
-                    "replacementText": "({ a: 1, b: '2' } as GeneratedObjectLiteralInterface_10)"
+                    "replacementText": "({ a: 1, b: '2' } as GeneratedObjectLiteralInterface_10)",
+                    "line": 52,
+                    "column": 8,
+                    "endLine": 52,
+                    "endColumn": 9
                 }
             ],
             "suggest": "",
@@ -186,12 +234,20 @@
                 {
                     "start": 1385,
                     "end": 1385,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_13 {\n    q: number;\n    w: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_13 {\n    q: number;\n    w: number;\n}\n",
+                    "line": 53,
+                    "column": 8,
+                    "endLine": 53,
+                    "endColumn": 9
                 },
                 {
                     "start": 1500,
                     "end": 1536,
-                    "replacementText": "({ q: 10,\n    w: 20 } as GeneratedObjectLiteralInterface_13)"
+                    "replacementText": "({ q: 10,\n    w: 20 } as GeneratedObjectLiteralInterface_13)",
+                    "line": 53,
+                    "column": 8,
+                    "endLine": 53,
+                    "endColumn": 9
                 }
             ],
             "suggest": "",
@@ -218,12 +274,20 @@
                 {
                     "start": 1541,
                     "end": 1541,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_14 {\n    q: number;\n    w: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_14 {\n    q: number;\n    w: number;\n}\n",
+                    "line": 61,
+                    "column": 8,
+                    "endLine": 61,
+                    "endColumn": 9
                 },
                 {
                     "start": 1583,
                     "end": 1599,
-                    "replacementText": "({ q: 10, w: 20 } as GeneratedObjectLiteralInterface_14)"
+                    "replacementText": "({ q: 10, w: 20 } as GeneratedObjectLiteralInterface_14)",
+                    "line": 61,
+                    "column": 8,
+                    "endLine": 61,
+                    "endColumn": 9
                 }
             ],
             "suggest": "",
@@ -240,12 +304,20 @@
                 {
                     "start": 1541,
                     "end": 1541,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_16 {\n    q: number;\n    w: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_16 {\n    q: number;\n    w: number;\n}\n",
+                    "line": 63,
+                    "column": 8,
+                    "endLine": 63,
+                    "endColumn": 9
                 },
                 {
                     "start": 1621,
                     "end": 1637,
-                    "replacementText": "({ q: 30, w: 40 } as GeneratedObjectLiteralInterface_16)"
+                    "replacementText": "({ q: 30, w: 40 } as GeneratedObjectLiteralInterface_16)",
+                    "line": 63,
+                    "column": 8,
+                    "endLine": 63,
+                    "endColumn": 9
                 }
             ],
             "suggest": "",
@@ -262,12 +334,20 @@
                 {
                     "start": 1687,
                     "end": 1687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_17 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_17 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 67,
+                    "column": 12,
+                    "endLine": 67,
+                    "endColumn": 13
                 },
                 {
                     "start": 1698,
                     "end": 1710,
-                    "replacementText": "({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_17)"
+                    "replacementText": "({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_17)",
+                    "line": 67,
+                    "column": 12,
+                    "endLine": 67,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -284,12 +364,20 @@
                 {
                     "start": 1687,
                     "end": 1687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_18 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_18 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 67,
+                    "column": 29,
+                    "endLine": 67,
+                    "endColumn": 30
                 },
                 {
                     "start": 1715,
                     "end": 1727,
-                    "replacementText": "({ a: 3, b: 4 } as GeneratedObjectLiteralInterface_18)"
+                    "replacementText": "({ a: 3, b: 4 } as GeneratedObjectLiteralInterface_18)",
+                    "line": 67,
+                    "column": 29,
+                    "endLine": 67,
+                    "endColumn": 30
                 }
             ],
             "suggest": "",
@@ -316,12 +404,20 @@
                 {
                     "start": 1731,
                     "end": 1731,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_19 {\n    x: number;\n    y: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_19 {\n    x: number;\n    y: number;\n}\n",
+                    "line": 71,
+                    "column": 9,
+                    "endLine": 71,
+                    "endColumn": 10
                 },
                 {
                     "start": 1773,
                     "end": 1783,
-                    "replacementText": "{ x: 1, y: 2 } as GeneratedObjectLiteralInterface_19"
+                    "replacementText": "{ x: 1, y: 2 } as GeneratedObjectLiteralInterface_19",
+                    "line": 71,
+                    "column": 9,
+                    "endLine": 71,
+                    "endColumn": 10
                 }
             ],
             "suggest": "",
@@ -338,12 +434,20 @@
                 {
                     "start": 1731,
                     "end": 1731,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_20 {\n    q: number;\n    w: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_20 {\n    q: number;\n    w: number;\n}\n",
+                    "line": 72,
+                    "column": 12,
+                    "endLine": 72,
+                    "endColumn": 13
                 },
                 {
                     "start": 1797,
                     "end": 1807,
-                    "replacementText": "({ q: 1, w: 2 } as GeneratedObjectLiteralInterface_20)"
+                    "replacementText": "({ q: 1, w: 2 } as GeneratedObjectLiteralInterface_20)",
+                    "line": 72,
+                    "column": 12,
+                    "endLine": 72,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -360,12 +464,20 @@
                 {
                     "start": 1731,
                     "end": 1731,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_21 {\n    q: number;\n    w: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_21 {\n    q: number;\n    w: number;\n}\n",
+                    "line": 72,
+                    "column": 27,
+                    "endLine": 72,
+                    "endColumn": 28
                 },
                 {
                     "start": 1812,
                     "end": 1822,
-                    "replacementText": "({ q: 3, w: 4 } as GeneratedObjectLiteralInterface_21)"
+                    "replacementText": "({ q: 3, w: 4 } as GeneratedObjectLiteralInterface_21)",
+                    "line": 72,
+                    "column": 27,
+                    "endLine": 72,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -382,12 +494,20 @@
                 {
                     "start": 1874,
                     "end": 1874,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_22 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_22 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 77,
+                    "column": 10,
+                    "endLine": 77,
+                    "endColumn": 11
                 },
                 {
                     "start": 1890,
                     "end": 1890,
-                    "replacementText": ": GeneratedObjectLiteralInterface_22"
+                    "replacementText": ": GeneratedObjectLiteralInterface_22",
+                    "line": 77,
+                    "column": 10,
+                    "endLine": 77,
+                    "endColumn": 11
                 }
             ],
             "suggest": "",
@@ -404,12 +524,20 @@
                 {
                     "start": 1874,
                     "end": 1874,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_23 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_23 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 78,
+                    "column": 11,
+                    "endLine": 78,
+                    "endColumn": 12
                 },
                 {
                     "start": 1914,
                     "end": 1914,
-                    "replacementText": ": GeneratedObjectLiteralInterface_23"
+                    "replacementText": ": GeneratedObjectLiteralInterface_23",
+                    "line": 78,
+                    "column": 11,
+                    "endLine": 78,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -436,12 +564,20 @@
                 {
                     "start": 1874,
                     "end": 1874,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_24 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_24 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 79,
+                    "column": 11,
+                    "endLine": 79,
+                    "endColumn": 12
                 },
                 {
                     "start": 1938,
                     "end": 1938,
-                    "replacementText": ": GeneratedObjectLiteralInterface_24"
+                    "replacementText": ": GeneratedObjectLiteralInterface_24",
+                    "line": 79,
+                    "column": 11,
+                    "endLine": 79,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -458,12 +594,20 @@
                 {
                     "start": 1874,
                     "end": 1874,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_25 {\n    c: number;\n    d: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_25 {\n    c: number;\n    d: number;\n}\n",
+                    "line": 80,
+                    "column": 11,
+                    "endLine": 80,
+                    "endColumn": 12
                 },
                 {
                     "start": 1965,
                     "end": 1977,
-                    "replacementText": "{ c: 3, d: 4 } as GeneratedObjectLiteralInterface_25"
+                    "replacementText": "{ c: 3, d: 4 } as GeneratedObjectLiteralInterface_25",
+                    "line": 80,
+                    "column": 11,
+                    "endLine": 80,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -480,12 +624,20 @@
                 {
                     "start": 1874,
                     "end": 1874,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_26 {\n    e: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_26 {\n    e: number;\n}\n",
+                    "line": 81,
+                    "column": 10,
+                    "endLine": 81,
+                    "endColumn": 11
                 },
                 {
                     "start": 1989,
                     "end": 1995,
-                    "replacementText": "({ e: 5 } as GeneratedObjectLiteralInterface_26)"
+                    "replacementText": "({ e: 5 } as GeneratedObjectLiteralInterface_26)",
+                    "line": 81,
+                    "column": 10,
+                    "endLine": 81,
+                    "endColumn": 11
                 }
             ],
             "suggest": "",
@@ -502,12 +654,20 @@
                 {
                     "start": 1874,
                     "end": 1874,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_27 {\n    f: number;\n    g: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_27 {\n    f: number;\n    g: number;\n}\n",
+                    "line": 81,
+                    "column": 21,
+                    "endLine": 81,
+                    "endColumn": 22
                 },
                 {
                     "start": 2000,
                     "end": 2012,
-                    "replacementText": "({ f: 6, g: 7 } as GeneratedObjectLiteralInterface_27)"
+                    "replacementText": "({ f: 6, g: 7 } as GeneratedObjectLiteralInterface_27)",
+                    "line": 81,
+                    "column": 21,
+                    "endLine": 81,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -524,12 +684,20 @@
                 {
                     "start": 1874,
                     "end": 1874,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_28 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_28 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 84,
+                    "column": 17,
+                    "endLine": 84,
+                    "endColumn": 18
                 },
                 {
                     "start": 2040,
                     "end": 2040,
-                    "replacementText": ": GeneratedObjectLiteralInterface_28"
+                    "replacementText": ": GeneratedObjectLiteralInterface_28",
+                    "line": 84,
+                    "column": 17,
+                    "endLine": 84,
+                    "endColumn": 18
                 }
             ],
             "suggest": "",
@@ -546,12 +714,20 @@
                 {
                     "start": 1874,
                     "end": 1874,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_29 {\n    c: number;\n    d: number;\n    e: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_29 {\n    c: number;\n    d: number;\n    e: number;\n}\n",
+                    "line": 85,
+                    "column": 17,
+                    "endLine": 85,
+                    "endColumn": 18
                 },
                 {
                     "start": 2068,
                     "end": 2068,
-                    "replacementText": ": GeneratedObjectLiteralInterface_29"
+                    "replacementText": ": GeneratedObjectLiteralInterface_29",
+                    "line": 85,
+                    "column": 17,
+                    "endLine": 85,
+                    "endColumn": 18
                 }
             ],
             "suggest": "",
@@ -568,12 +744,20 @@
                 {
                     "start": 2150,
                     "end": 2150,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_30 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_30 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 90,
+                    "column": 22,
+                    "endLine": 90,
+                    "endColumn": 23
                 },
                 {
                     "start": 2168,
                     "end": 2168,
-                    "replacementText": ": GeneratedObjectLiteralInterface_30"
+                    "replacementText": ": GeneratedObjectLiteralInterface_30",
+                    "line": 90,
+                    "column": 22,
+                    "endLine": 90,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -610,12 +794,20 @@
                 {
                     "start": 2408,
                     "end": 2408,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_31 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_31 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 95,
+                    "column": 13,
+                    "endLine": 95,
+                    "endColumn": 14
                 },
                 {
                     "start": 2440,
                     "end": 2440,
-                    "replacementText": ": GeneratedObjectLiteralInterface_31"
+                    "replacementText": ": GeneratedObjectLiteralInterface_31",
+                    "line": 95,
+                    "column": 13,
+                    "endLine": 95,
+                    "endColumn": 14
                 }
             ],
             "suggest": "",
@@ -632,12 +824,20 @@
                 {
                     "start": 2408,
                     "end": 2408,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_32 {\n    c: number;\n    d: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_32 {\n    c: number;\n    d: number;\n}\n",
+                    "line": 96,
+                    "column": 13,
+                    "endLine": 96,
+                    "endColumn": 14
                 },
                 {
                     "start": 2466,
                     "end": 2466,
-                    "replacementText": ": GeneratedObjectLiteralInterface_32"
+                    "replacementText": ": GeneratedObjectLiteralInterface_32",
+                    "line": 96,
+                    "column": 13,
+                    "endLine": 96,
+                    "endColumn": 14
                 }
             ],
             "suggest": "",
@@ -654,12 +854,20 @@
                 {
                     "start": 2408,
                     "end": 2408,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_33 {\n    e: number;\n    f: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_33 {\n    e: number;\n    f: number;\n}\n",
+                    "line": 99,
+                    "column": 17,
+                    "endLine": 99,
+                    "endColumn": 18
                 },
                 {
                     "start": 2518,
                     "end": 2518,
-                    "replacementText": ": GeneratedObjectLiteralInterface_33"
+                    "replacementText": ": GeneratedObjectLiteralInterface_33",
+                    "line": 99,
+                    "column": 17,
+                    "endLine": 99,
+                    "endColumn": 18
                 }
             ],
             "suggest": "",
@@ -676,12 +884,20 @@
                 {
                     "start": 2408,
                     "end": 2408,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_34 {\n    g: number;\n    d: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_34 {\n    g: number;\n    d: number;\n}\n",
+                    "line": 102,
+                    "column": 13,
+                    "endLine": 102,
+                    "endColumn": 14
                 },
                 {
                     "start": 2551,
                     "end": 2551,
-                    "replacementText": ": GeneratedObjectLiteralInterface_34"
+                    "replacementText": ": GeneratedObjectLiteralInterface_34",
+                    "line": 102,
+                    "column": 13,
+                    "endLine": 102,
+                    "endColumn": 14
                 }
             ],
             "suggest": "",
@@ -698,12 +914,20 @@
                 {
                     "start": 2408,
                     "end": 2408,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_35 {\n    q: number;\n    w: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_35 {\n    q: number;\n    w: number;\n}\n",
+                    "line": 102,
+                    "column": 27,
+                    "endLine": 102,
+                    "endColumn": 28
                 },
                 {
                     "start": 2568,
                     "end": 2577,
-                    "replacementText": "({ q: 1, w: 2 } as GeneratedObjectLiteralInterface_35)"
+                    "replacementText": "({ q: 1, w: 2 } as GeneratedObjectLiteralInterface_35)",
+                    "line": 102,
+                    "column": 27,
+                    "endLine": 102,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -720,12 +944,20 @@
                 {
                     "start": 2408,
                     "end": 2408,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_36 {\n    q: number;\n    w: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_36 {\n    q: number;\n    w: number;\n}\n",
+                    "line": 102,
+                    "column": 41,
+                    "endLine": 102,
+                    "endColumn": 42
                 },
                 {
                     "start": 2582,
                     "end": 2591,
-                    "replacementText": "({ q: 3, w: 4 } as GeneratedObjectLiteralInterface_36)"
+                    "replacementText": "({ q: 3, w: 4 } as GeneratedObjectLiteralInterface_36)",
+                    "line": 102,
+                    "column": 41,
+                    "endLine": 102,
+                    "endColumn": 42
                 }
             ],
             "suggest": "",
@@ -747,6 +979,16 @@
             "column": 14,
             "endLine": 105,
             "endColumn": 15,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 105,
+            "column": 22,
+            "endLine": 105,
+            "endColumn": 25,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
             "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
@@ -852,12 +1094,20 @@
                 {
                     "start": 3051,
                     "end": 3051,
-                    "replacementText": "class GeneratedObjectLiteralClass_1 {\n    m() { }\n}\n\n"
+                    "replacementText": "class GeneratedObjectLiteralClass_1 {\n    m() { }\n}\n\n",
+                    "line": 115,
+                    "column": 13,
+                    "endLine": 115,
+                    "endColumn": 14
                 },
                 {
                     "start": 3063,
                     "end": 3073,
-                    "replacementText": "new GeneratedObjectLiteralClass_1()"
+                    "replacementText": "new GeneratedObjectLiteralClass_1()",
+                    "line": 115,
+                    "column": 13,
+                    "endLine": 115,
+                    "endColumn": 14
                 }
             ],
             "suggest": "",
@@ -924,7 +1174,11 @@
                 {
                     "start": 3759,
                     "end": 3799,
-                    "replacementText": "interface LocalType {\n    a: number;\n    b: string;\n}"
+                    "replacementText": "interface LocalType {\n    a: number;\n    b: string;\n}",
+                    "line": 134,
+                    "column": 22,
+                    "endLine": 134,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -1001,17 +1255,29 @@
                 {
                     "start": 4281,
                     "end": 4282,
-                    "replacementText": "\"a\""
+                    "replacementText": "\"a\"",
+                    "line": 145,
+                    "column": 33,
+                    "endLine": 145,
+                    "endColumn": 34
                 },
                 {
                     "start": 4291,
                     "end": 4292,
-                    "replacementText": "\"b\""
+                    "replacementText": "\"b\"",
+                    "line": 145,
+                    "column": 33,
+                    "endLine": 145,
+                    "endColumn": 34
                 },
                 {
                     "start": 4301,
                     "end": 4302,
-                    "replacementText": "\"c\""
+                    "replacementText": "\"c\"",
+                    "line": 145,
+                    "column": 33,
+                    "endLine": 145,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -1038,17 +1304,29 @@
                 {
                     "start": 4356,
                     "end": 4359,
-                    "replacementText": "\"foo\""
+                    "replacementText": "\"foo\"",
+                    "line": 151,
+                    "column": 42,
+                    "endLine": 151,
+                    "endColumn": 43
                 },
                 {
                     "start": 4368,
                     "end": 4371,
-                    "replacementText": "\"bar\""
+                    "replacementText": "\"bar\"",
+                    "line": 151,
+                    "column": 42,
+                    "endLine": 151,
+                    "endColumn": 43
                 },
                 {
                     "start": 4410,
                     "end": 4413,
-                    "replacementText": "\"baz\""
+                    "replacementText": "\"baz\"",
+                    "line": 151,
+                    "column": 42,
+                    "endLine": 151,
+                    "endColumn": 43
                 }
             ],
             "suggest": "",
@@ -1105,12 +1383,20 @@
                 {
                     "start": 4701,
                     "end": 4704,
-                    "replacementText": "\"key\""
+                    "replacementText": "\"key\"",
+                    "line": 171,
+                    "column": 13,
+                    "endLine": 171,
+                    "endColumn": 14
                 },
                 {
                     "start": 4719,
                     "end": 4726,
-                    "replacementText": "\"message\""
+                    "replacementText": "\"message\"",
+                    "line": 171,
+                    "column": 13,
+                    "endLine": 171,
+                    "endColumn": 14
                 }
             ],
             "suggest": "",

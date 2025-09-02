@@ -24,4 +24,4 @@ export function atomicTask() {
 }
 
 /* @@? 21:17 Error TypeError: Unresolved reference shareArray */
-/* @@? 23:12 Error TypeError: Call to `load` is ambiguous as `2` versions of `load` are available: `load(typedArray: BigInt64Array, index: double): BigInt` and `load(typedArray: BigUint64Array, index: double): BigInt` */
+/* @@? 23:12 Error TypeError: Call to `load` is ambiguous as `2` versions of `load` are available: `load(typedArray: BigInt64Array, index: Double): BigInt` and `load(typedArray: BigUint64Array, index: Double): BigInt` */

@@ -29,10 +29,11 @@ function main(): void {
         return y.length == x;
     });
     // Should report an error
-    /* @@ label1 */foo((x, y) => {
+    foo((x, y) => /* @@ label1 */{
         console.println("hello");
     });
 }
 
 /* @@@ label Error TypeError: Function foo with this assembly signature already declared.  */
-/* @@@ label1 Error TypeError: Reference to foo is ambiguous  */
+/* @@@ label1 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Boolean' */
+/* @@? 28:9 Error TypeError: Type '(x: Double, y: String) => Boolean' is not compatible with type '(x: Int, y: String) => Boolean' at index 1  */

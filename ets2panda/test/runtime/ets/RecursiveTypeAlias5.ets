@@ -20,7 +20,7 @@ type A = string | B<A>
 function main(): int {
   let a: A = "test";
   
-  assertEQ(a, "test")
+  arktest.assertEQ(a, "test")
 
   return 0;
 }

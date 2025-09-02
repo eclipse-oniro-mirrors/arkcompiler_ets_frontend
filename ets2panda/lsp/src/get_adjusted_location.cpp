@@ -383,6 +383,9 @@ std::optional<AstNode *> HandleModulesAndExports(AstNode *node, AstNode *parent,
 
 std::optional<AstNode *> GetAdjustedLocation(AstNode *node, bool forRename, ArenaAllocator *allocator)
 {
+    if (node == nullptr) {
+        return std::nullopt;
+    }
     node = GetOriginalNode(node);
     auto *parent = node->Parent();
     if (parent == nullptr) {

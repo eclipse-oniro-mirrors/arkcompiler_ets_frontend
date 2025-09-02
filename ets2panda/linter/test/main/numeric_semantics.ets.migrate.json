@@ -25,59 +25,79 @@
             "severity": "ERROR"
         },
         {
-            "line": 117,
+            "line": 102,
+            "column": 19,
+            "endLine": 102,
+            "endColumn": 24,
+            "problem": "ParameterType",
+            "suggest": "",
+            "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 102,
             "column": 26,
+            "endLine": 102,
+            "endColumn": 31,
+            "problem": "ParameterType",
+            "suggest": "",
+            "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 117,
+            "column": 19,
             "endLine": 117,
-            "endColumn": 26,
+            "endColumn": 19,
             "problem": "ArrayIndexExprType",
             "suggest": "",
             "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
             "severity": "ERROR"
         },
         {
-            "line": 156,
-            "column": 6,
-            "endLine": 156,
-            "endColumn": 7,
-            "problem": "ObjectLiteralNoContextType",
-            "suggest": "",
-            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 162,
-            "column": 9,
-            "endLine": 162,
-            "endColumn": 20,
-            "problem": "ObjectLiteralProperty",
-            "suggest": "",
-            "rule": "Object literal properties can only contain name-value pairs (arkts-obj-literal-props)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 162,
-            "column": 9,
-            "endLine": 162,
-            "endColumn": 11,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 162,
-            "column": 12,
-            "endLine": 162,
-            "endColumn": 15,
+            "line": 153,
+            "column": 7,
+            "endLine": 153,
+            "endColumn": 123,
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
         },
         {
-            "line": 196,
+            "line": 162,
+            "column": 9,
+            "endLine": 162,
+            "endColumn": 61,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 171,
+            "column": 61,
+            "endLine": 171,
+            "endColumn": 67,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 172,
+            "column": 61,
+            "endLine": 172,
+            "endColumn": 67,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 195,
             "column": 6,
-            "endLine": 196,
+            "endLine": 195,
             "endColumn": 13,
             "problem": "RuntimeArrayCheck",
             "suggest": "",
@@ -85,9 +105,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 210,
+            "line": 209,
             "column": 1,
-            "endLine": 210,
+            "endLine": 209,
             "endColumn": 40,
             "problem": "ImportAfterStatement",
             "suggest": "",
@@ -95,33 +115,153 @@
             "severity": "ERROR"
         },
         {
-            "line": 212,
+            "line": 211,
             "column": 5,
-            "endLine": 212,
-            "endColumn": 34,
+            "endLine": 211,
+            "endColumn": 35,
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
         },
         {
-            "line": 212,
-            "column": 15,
-            "endLine": 212,
-            "endColumn": 24,
+            "line": 211,
+            "column": 16,
+            "endLine": 211,
+            "endColumn": 25,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
             "severity": "ERROR"
         },
         {
-            "line": 218,
+            "line": 216,
+            "column": 33,
+            "endLine": 216,
+            "endColumn": 37,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 217,
+            "column": 33,
+            "endLine": 217,
+            "endColumn": 37,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 217,
             "column": 42,
-            "endLine": 218,
+            "endLine": 217,
             "endColumn": 51,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 263,
+            "column": 1,
+            "endLine": 263,
+            "endColumn": 7,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 267,
+            "column": 33,
+            "endLine": 267,
+            "endColumn": 36,
+            "problem": "NumericSemantics",
+            "suggest": "",
+            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 273,
+            "column": 31,
+            "endLine": 273,
+            "endColumn": 34,
+            "problem": "NumericSemantics",
+            "suggest": "",
+            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 273,
+            "column": 36,
+            "endLine": 273,
+            "endColumn": 39,
+            "problem": "NumericSemantics",
+            "suggest": "",
+            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 273,
+            "column": 41,
+            "endLine": 273,
+            "endColumn": 44,
+            "problem": "NumericSemantics",
+            "suggest": "",
+            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 276,
+            "column": 33,
+            "endLine": 276,
+            "endColumn": 36,
+            "problem": "NumericSemantics",
+            "suggest": "",
+            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 276,
+            "column": 38,
+            "endLine": 276,
+            "endColumn": 41,
+            "problem": "NumericSemantics",
+            "suggest": "",
+            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 276,
+            "column": 43,
+            "endLine": 276,
+            "endColumn": 46,
+            "problem": "NumericSemantics",
+            "suggest": "",
+            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 276,
+            "column": 48,
+            "endLine": 276,
+            "endColumn": 51,
+            "problem": "NumericSemantics",
+            "suggest": "",
+            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 285,
+            "column": 1,
+            "endLine": 285,
+            "endColumn": 7,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         }
     ]

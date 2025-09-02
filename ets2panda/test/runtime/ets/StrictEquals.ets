@@ -36,33 +36,33 @@ function nequs<T>(a: T, b:T){
 class A {}
 
 function main() {
-  assertEQ(equ<T0>(null, undefined), true)
-  assertEQ(equs<T0>(null, undefined), false)
+  arktest.assertEQ(equ<T0>(null, undefined), true)
+  arktest.assertEQ(equs<T0>(null, undefined), false)
 
-  assertEQ(nequ<T0>(null, undefined), false)
-  assertEQ(nequs<T0>(null, undefined), true)
+  arktest.assertEQ(nequ<T0>(null, undefined), false)
+  arktest.assertEQ(nequs<T0>(null, undefined), true)
 
-  assertTrue(null == undefined)
-  assertNE(null, undefined)
+  arktest.assertTrue(null == undefined)
+  arktest.assertNE(null, undefined)
 
-  assertTrue(!(null != undefined))
-  assertTrue(null !== undefined)
+  arktest.assertTrue(!(null != undefined))
+  arktest.assertTrue(null !== undefined)
 
   let f1 = (a:Int, b:Int) => { a=a-b; }
   let f2 = (a:Int, b:Int) => { a=a+b; }
 
-  assertEQ(equ<F1<Int>>(f1, f1), true)
-  assertEQ(equ<F1<Int>>(f1, f2), false)
-  assertEQ(equs<F1<Int>>(f1, f1), true)
-  assertEQ(equs<F1<Int>>(f1, f2), false)
+  arktest.assertEQ(equ<F1<Int>>(f1, f1), true)
+  arktest.assertEQ(equ<F1<Int>>(f1, f2), false)
+  arktest.assertEQ(equs<F1<Int>>(f1, f1), true)
+  arktest.assertEQ(equs<F1<Int>>(f1, f2), false)
 
   let a1 = new A()
   let a2 = new A()
 
-  assertEQ(equs<T0>(a1, a1), true)
-  assertEQ(nequs<T0>(a1, a1), false)
-  assertEQ(equs<T0>(a1, a2), false)
-  assertEQ(nequs<T0>(a1, a2), true)
+  arktest.assertEQ(equs<T0>(a1, a1), true)
+  arktest.assertEQ(nequs<T0>(a1, a1), false)
+  arktest.assertEQ(equs<T0>(a1, a2), false)
+  arktest.assertEQ(nequs<T0>(a1, a2), true)
 
-  assertTrue(10 === 10)
+  arktest.assertTrue(10 === 10)
 }

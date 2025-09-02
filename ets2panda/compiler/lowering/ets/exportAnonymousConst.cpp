@@ -57,14 +57,24 @@ static void HandleAnonymousConst(public_lib::Context *const ctx, parser::Program
             [](auto *specific) { return specific->IsDefault() && specific->GetConstantExpression() != nullptr; });
     };
     auto module = program->Ast();
-    auto iterator = std::find_if(module->Statements().begin(), module->Statements().end(), isExportAnonymousConst);
-    if (iterator == module->Statements().end()) {
+    auto iteratorForFind =
+        std::find_if(module->Statements().begin(), module->Statements().end(), isExportAnonymousConst);
+    if (iteratorForFind == module->Statements().end()) {
+        return;
+    }
+    auto &stmt = module->StatementsForUpdates();
+    auto iterator = std::find_if(stmt.begin(), stmt.end(), isExportAnonymousConst);
+
+    [[maybe_unused]] const size_t exportDefaultMaxSize = 1;
+    if ((*iterator)->AsExportNamedDeclaration()->Specifiers().size() != exportDefaultMaxSize) {
+        ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::MULTIPLE_DEFAULT_EXPORTS,
+                                                    (*iterator)->AsExportNamedDeclaration()->Start());
         return;
     }
 
     auto *anonymousVariableDecl =
         CreateAnonymousVariableDecl(ctx, (*iterator)->AsExportNamedDeclaration())->AsStatement();
-    module->Statements().insert(iterator, anonymousVariableDecl);
+    stmt.insert(iterator, anonymousVariableDecl);
 }
 
 static void HandleExportDefaultInExportNamedDecl(public_lib::Context *const ctx, parser::Program *const program)
@@ -85,11 +95,15 @@ static void HandleExportDefaultInExportNamedDecl(public_lib::Context *const ctx,
     };
 
     auto module = program->Ast();
-    auto iterator =
+    auto iteratorConst =
         std::find_if(module->Statements().begin(), module->Statements().end(), exportNamedDeclarationhasDefault);
-    if (iterator == module->Statements().end()) {
+    if (iteratorConst == module->Statements().end()) {
         return;
     }
+
+    auto &stmt = module->StatementsForUpdates();
+
+    auto iterator = std::find_if(stmt.begin(), stmt.end(), exportNamedDeclarationhasDefault);
 
     auto *allocator = ctx->allocator;
     auto *exportNamedDeclaration = (*iterator)->AsExportNamedDeclaration();
@@ -111,20 +125,13 @@ static void HandleExportDefaultInExportNamedDecl(public_lib::Context *const ctx,
         newSpecifiers.push_back(specifier);
     }
 
-    module->Statements().insert(iterator, exportDefaulNamedDeclarations.front());
+    stmt.insert(iterator, exportDefaulNamedDeclarations.front());
     exportNamedDeclaration->ReplaceSpecifiers(newSpecifiers);
     exportNamedDeclaration->ClearModifier(ir::ModifierFlags::DEFAULT_EXPORT);
 }
 
-bool ExportAnonymousConstPhase::Perform(public_lib::Context *const ctx, parser::Program *const program)
+bool ExportAnonymousConstPhase::PerformForModule(public_lib::Context *const ctx, parser::Program *const program)
 {
-    for (auto &[_, ext_programs] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : ext_programs) {
-            Perform(ctx, extProg);
-        }
-    }
-
     HandleExportDefaultInExportNamedDecl(ctx, program);
     HandleAnonymousConst(ctx, program);
     return true;

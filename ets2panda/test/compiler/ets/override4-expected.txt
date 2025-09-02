@@ -121,7 +121,7 @@
                 "loc": {
                   "start": {
                     "line": 17,
-                    "column": 5,
+                    "column": 3,
                     "program": "override4.ets"
                   },
                   "end": {
@@ -134,7 +134,7 @@
               "loc": {
                 "start": {
                   "line": 17,
-                  "column": 5,
+                  "column": 3,
                   "program": "override4.ets"
                 },
                 "end": {
@@ -198,8 +198,8 @@
           "program": "override4.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "override4.ets"
         }
       }
@@ -561,7 +561,7 @@
               },
               "end": {
                 "line": 24,
-                "column": 29,
+                "column": 18,
                 "program": "override4.ets"
               }
             }
@@ -574,7 +574,7 @@
             },
             "end": {
               "line": 24,
-              "column": 29,
+              "column": 18,
               "program": "override4.ets"
             }
           }
@@ -611,7 +611,7 @@
                   },
                   "end": {
                     "line": 24,
-                    "column": 33,
+                    "column": 31,
                     "program": "override4.ets"
                   }
                 }
@@ -624,7 +624,7 @@
                 },
                 "end": {
                   "line": 24,
-                  "column": 33,
+                  "column": 31,
                   "program": "override4.ets"
                 }
               }
@@ -855,12 +855,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "override4.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "override4.ets"
                     }
                   }
                 },
@@ -868,12 +868,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "override4.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "override4.ets"
                   }
                 }
               },
@@ -881,118 +881,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "override4.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "override4.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "override4.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "override4.ets"
                 }
               }
             },

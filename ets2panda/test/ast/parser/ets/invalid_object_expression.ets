@@ -20,8 +20,8 @@ let obj: Record<string, number> = {
 
 /* @@? 18:5 Error SyntaxError: Unexpected token. */
 /* @@? 18:6 Error SyntaxError: Unexpected token. */
-/* @@? 18:6 Error TypeError: Cannot reference 'this' in this context. */
-/* @@? 18:11 Error TypeError: Property 'viewModel' does not exist on type 'Error' */
+/* @@? 18:6 Error TypeError: 'this' cannot be referenced from a static context */
+/* @@? 18:11 Error TypeError: Property 'viewModel' does not exist on type 'ETSGLOBAL' */
 /* @@? 18:24 Error SyntaxError: Unexpected token. */
 /* @@? 18:26 Error SyntaxError: Unexpected token ':'. */
 /* @@? 18:28 Error SyntaxError: Unexpected token '123'. */

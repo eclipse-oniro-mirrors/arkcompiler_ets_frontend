@@ -20,7 +20,7 @@
 
 namespace ark::es2panda::compiler {
 
-class SetJumpTargetPhase : public Phase {
+class SetJumpTargetPhase : public PhaseForBodies {
 public:
     std::string_view Name() const override
     {
@@ -28,7 +28,8 @@ public:
     }
 
     void FindJumpTarget(const public_lib::Context *ctx, ir::AstNode *const node);
-    bool Perform(public_lib::Context *ctx, parser::Program *program) override;
+
+    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
 
 private:
     void LogError(const public_lib::Context *ctx, const diagnostic::DiagnosticKind &diagnostic,

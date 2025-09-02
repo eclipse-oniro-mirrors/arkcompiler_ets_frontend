@@ -22,7 +22,7 @@ function a(b: lambdaType): void {
 
 function main(): void {
     let d : lambdaType = (c?: int) => {
-        assertTrue(c == undefined || c == 10)
+        arktest.assertTrue(c == undefined || c == 10)
     }
 
     d();

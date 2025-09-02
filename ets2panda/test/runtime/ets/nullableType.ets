@@ -42,19 +42,19 @@ function nullableType(): void {
   let generic : Gen<A | null> | null = new Gen<A | null>;
 
   let h : Char | null = nullableArgsAndReturn(7, g);
-  assertEQ(h, c'C')
+  arktest.assertEQ(h, c'C')
 
   let gt1 : Gen<A | null> | null = nullableGenArgAndReturn(generic);
-  assertEQ(gt1, generic)
+  arktest.assertEQ(gt1, generic)
 
   let gt2 = new Gen2<A_alias>();
   let gt2_g = gt2.foo(g);
 
-  assertEQ(gt2_g, g)
+  arktest.assertEQ(gt2_g, g)
 
   let f_g = foo_gen<tmp>(g);
 
-  assertEQ(f_g, g)
+  arktest.assertEQ(f_g, g)
 
   let arr = new long[1024];
   a = arr;
@@ -112,10 +112,10 @@ function nullableTypeAlias(): void {
 function numericNullableType(): Object | null {
   let a: int = 5;
   let x: Int | null = 5 + a;
-  assertEQ(x, 10)
+  arktest.assertEQ(x, 10)
 
   let y: Long | null = null;
-  assertEQ(y, null)
+  arktest.assertEQ(y, null)
 
   return null;
 }

@@ -68,7 +68,7 @@ ir::ClassDeclaration *ClassBuilder::Build(parser::Program *program) &&
     classDecl->SetParent(programAst);
     // Here we assume that global statements of the passed `program` are not currently checked, so that
     // insertion is safe.
-    programAst->Statements().push_back(classDecl);
+    programAst->AddStatement(classDecl);
 
     return classDecl;
 }

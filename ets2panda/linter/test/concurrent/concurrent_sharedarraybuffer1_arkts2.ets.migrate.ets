@@ -14,16 +14,16 @@
  */
 import { SharedArrayBuffer } from './oh_modules/sharedArrayBuffer'
 
-let s1 = new SharedArrayBuffer(1.0)  //lib.es2017.sharedmemory.d.ts
-s1.slice(0.0)
+let s1 = new SharedArrayBuffer(1)  //lib.es2017.sharedmemory.d.ts
+s1.slice(0)
 type sharedArray = SharedArrayBuffer
 let s2: sharedArray;
 type mapShare = Map<string, SharedArrayBuffer>
 {
-  let s1 = new SharedArrayBuffer(1.0) //lib.es2017.sharedmemory.d.ts
+  let s1 = new SharedArrayBuffer(1) //lib.es2017.sharedmemory.d.ts
   let s2:sharedArray;
 }
 function fun6(pa:sharedArray) {
-  let s1 = new SharedArrayBuffer(1.0) //lib.es2017.sharedmemory.d.ts
+  let s1 = new SharedArrayBuffer(1) //lib.es2017.sharedmemory.d.ts
   let s2:sharedArray;
 }

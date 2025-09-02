@@ -12,25 +12,14 @@
 # limitations under the License.
 
 declgen_ets2ts_error:
+
 - name: IDENT_KEY_SUPPORT
   id: 1
   message: Only identifier keys are supported.
 
-- name: UNSUPPORTED_TYPE
-  id: 2
-  message: Unsupported type {}.
-
-- name: UNSUPPORTED_LITERAL_TYPE
-  id: 3
-  message: Unsupported literal type.
-
-- name: UNEXPECTED_NUMBER_LITERAL_TYPE
-  id: 4
-  message: Unexpected number literal type.
-
-- name: NOT_OVERLOAD_SUPPORT
-  id: 5
-  message: Method overloads are not supported.
+- name: IMPORT_SPECIFIERS_SUPPORT
+  id: 8
+  message: Only import specifiers are supported.
 
 - name: INCORRECT_ENUM_MEMBER
   id: 6
@@ -40,14 +29,30 @@ declgen_ets2ts_error:
   id: 7
   message: Only literal enum initializers are supported.
 
-- name: IMPORT_SPECIFIERS_SUPPORT
-  id: 8
-  message: Only import specifiers are supported.
+- name: NOT_OVERLOAD_SUPPORT
+  id: 5
+  message: Method overloads are not supported.
+
+- name: UNEXPECTED_NUMBER_LITERAL_TYPE
+  id: 4
+  message: Unexpected number literal type.
+
+- name: UNSUPPORTED_ENCODING_SPECIFICATIONS
+  id: 10
+  message: The source file does not comply with the encoding specifications. For details, please see the following error
+    information.
+
+- name: UNSUPPORTED_LITERAL_TYPE
+  id: 3
+  message: Unsupported literal type.
 
 - name: UNSUPPORTED_LOCAL_BINDINGS
   id: 9
   message: Imports with local bindings are not supported.
 
-- name: UNSUPPORTED_ENCODING_SPECIFICATIONS
-  id: 10
-  message: The source file does not comply with the encoding specifications. For details, please see the following error information.
+- name: UNSUPPORTED_TYPE
+  id: 2
+  message: Unsupported type {}.
+
+graveyard: []
+# See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

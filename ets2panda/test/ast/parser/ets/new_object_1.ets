@@ -15,7 +15,6 @@
 
 function main() : void
 {
-  let x : int = /* @@ label */new int();
+  let x : int = new int();
 }
 
-/* @@@ label Error TypeError: This expression is not constructible. */

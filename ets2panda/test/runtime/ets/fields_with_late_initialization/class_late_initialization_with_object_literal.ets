@@ -19,6 +19,5 @@ class A {
 
 function main(): void {
   let a: A = { f: "aa" }
-  assertEQ(a.f, "aa");
+  arktest.assertEQ(a.f, "aa");
 }
-

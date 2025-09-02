@@ -15,4 +15,4 @@
 
 class A {b5 : boolean = /* @@ label1 */7;}
 
-/* @@@ label1 Error TypeError: Type 'int' cannot be assigned to type 'boolean'  */
+/* @@@ label1 Error TypeError: Type 'Int' cannot be assigned to type 'Boolean'  */

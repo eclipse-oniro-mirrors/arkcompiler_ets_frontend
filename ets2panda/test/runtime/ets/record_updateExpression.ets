@@ -21,7 +21,7 @@ function main() {
         "3": ++idx,
     }
 
-    assertEQ(r["1"], 1)
-    assertEQ(r["2"], 1)
-    assertEQ(r["3"], 3)
+    arktest.assertEQ(r["1"], 1)
+    arktest.assertEQ(r["2"], 1)
+    arktest.assertEQ(r["3"], 3)
 }

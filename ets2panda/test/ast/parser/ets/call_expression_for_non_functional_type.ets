@@ -27,4 +27,5 @@ function main()
     /* @@ label */b(1, 2)
 }
 
-/* @@@ label Error TypeError: This expression is not callable.  */
+/* @@@ label Error TypeError: No static $_invoke method and static $_instantiate method in b. b() is not allowed.  */
+/* @@@ label Error TypeError: Type 'Int' has no call signatures.  */

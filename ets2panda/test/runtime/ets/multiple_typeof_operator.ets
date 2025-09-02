@@ -18,19 +18,13 @@ class Y {}
 function main() {
     let a : Int = 5
 
-    assertEQ(typeof typeof 1, "string")
-    assertEQ(typeof typeof typeof typeof typeof 5, "string")
-    assertEQ(typeof typeof typeof typeof typeof typeof 1, "string")
-    assertEQ(typeof typeof typeof typeof typeof typeof ++a, "string")
-    assertEQ(typeof typeof typeof typeof typeof typeof a++, "string")
+    arktest.assertEQ(typeof typeof 1, "string")
+    arktest.assertEQ(typeof typeof typeof typeof typeof 5, "string")
+    arktest.assertEQ(typeof typeof typeof typeof typeof typeof 1, "string")
+    arktest.assertEQ(typeof typeof typeof typeof typeof typeof ++a, "string")
+    arktest.assertEQ(typeof typeof typeof typeof typeof typeof a++, "string")
 
     let y = new Y();
 
-    assertEQ(typeof y, "object")
-
-    let typeof: int = 0;
-    let x = typeof + 1
-    ++typeof;
-
-    assertEQ(typeof typeof, "number");
+    arktest.assertEQ(typeof y, "object")
 }

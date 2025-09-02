@@ -20,26 +20,6 @@
             "endLine": 15,
             "endColumn": 51,
             "problem": "InterOpImportJs",
-            "autofix": [
-                {
-                    "start": 604,
-                    "end": 654,
-                    "replacementText": "",
-                    "line": 15,
-                    "column": 1,
-                    "endLine": 15,
-                    "endColumn": 51
-                },
-                {
-                    "start": 703,
-                    "end": 703,
-                    "replacementText": "let GeneratedImportVar_1 = ESValue.load('./interop_import_js_rules_js');\nlet ff3 = GeneratedImportVar_1.getProperty('ff3');\n",
-                    "line": 15,
-                    "column": 1,
-                    "endLine": 15,
-                    "endColumn": 51
-                }
-            ],
             "suggest": "",
             "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
@@ -50,26 +30,6 @@
             "endLine": 16,
             "endColumn": 49,
             "problem": "InterOpImportJs",
-            "autofix": [
-                {
-                    "start": 655,
-                    "end": 703,
-                    "replacementText": "",
-                    "line": 16,
-                    "column": 1,
-                    "endLine": 16,
-                    "endColumn": 49
-                },
-                {
-                    "start": 703,
-                    "end": 703,
-                    "replacementText": "let GeneratedImportVar_2 = ESValue.load('./interop_import_js_index_js');\nlet foo = GeneratedImportVar_2.getProperty('foo');\n",
-                    "line": 16,
-                    "column": 1,
-                    "endLine": 16,
-                    "endColumn": 49
-                }
-            ],
             "suggest": "",
             "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
@@ -158,27 +118,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 10,
-            "endLine": 19,
-            "endColumn": 11,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 738,
-                    "end": 739,
-                    "replacementText": "4.0",
-                    "line": 19,
-                    "column": 10,
-                    "endLine": 19,
-                    "endColumn": 11
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 21,
             "column": 12,
             "endLine": 21,
@@ -218,48 +157,6 @@
             ],
             "suggest": "",
             "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 23,
-            "column": 10,
-            "endLine": 23,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 801,
-                    "end": 806,
-                    "replacementText": "i: number = 0",
-                    "line": 23,
-                    "column": 10,
-                    "endLine": 23,
-                    "endColumn": 15
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 23,
-            "column": 14,
-            "endLine": 23,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 805,
-                    "end": 806,
-                    "replacementText": "0.0",
-                    "line": 23,
-                    "column": 14,
-                    "endLine": 23,
-                    "endColumn": 15
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -410,27 +307,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 26,
-            "column": 15,
-            "endLine": 26,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 913,
-                    "end": 914,
-                    "replacementText": "0.0",
-                    "line": 26,
-                    "column": 15,
-                    "endLine": 26,
-                    "endColumn": 16
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 27,
             "column": 17,
             "endLine": 27,
@@ -478,29 +354,28 @@
             "endLine": 34,
             "endColumn": 2,
             "problem": "InteropJsObjectTraverseJsInstance",
-            "suggest": "",
-            "rule": "Direct usage of interop JS objects is not supported (arkts-interop-js2s-traverse-js-instance)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 31,
-            "column": 18,
-            "endLine": 31,
-            "endColumn": 19,
-            "problem": "NumericSemantics",
             "autofix": [
                 {
-                    "start": 1019,
-                    "end": 1020,
-                    "replacementText": "8.0",
-                    "line": 31,
-                    "column": 18,
-                    "endLine": 31,
-                    "endColumn": 19
+                    "start": 970,
+                    "end": 989,
+                    "replacementText": "let tmp_1 = 0; tmp_1 < arr1.getProperty('length').toNumber(); ++tmp_1",
+                    "line": 30,
+                    "column": 1,
+                    "endLine": 34,
+                    "endColumn": 2
+                },
+                {
+                    "start": 1008,
+                    "end": 1015,
+                    "replacementText": "arr1.getProperty(tmp_1).toNumber()",
+                    "line": 30,
+                    "column": 1,
+                    "endLine": 34,
+                    "endColumn": 2
                 }
             ],
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "Direct usage of interop JS objects is not supported (arkts-interop-js2s-traverse-js-instance)",
             "severity": "ERROR"
         }
     ]

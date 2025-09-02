@@ -280,7 +280,7 @@ export class InteropJSModifyPropertyCheck implements BaseChecker {
         return Language.UNKNOWN;
     }
 
-    private reportIssue(problemStmt: Stmt) {
+    private reportIssue(problemStmt: Stmt): void {
         const line = problemStmt.getOriginPositionInfo().getLineNo();
         const column = problemStmt.getOriginPositionInfo().getColNo();
         const problem = 'Interop';

@@ -18,4 +18,4 @@ function foo(a : int = 10, /* @@ label */b : int, c : int = 15) : int
     return a + b;
 }
 
-/* @@@ label Error SyntaxError: Required parameter follows default parameter(s).  */
+/* @@@ label Error SyntaxError: A required parameter cannot follow an optional parameter. */

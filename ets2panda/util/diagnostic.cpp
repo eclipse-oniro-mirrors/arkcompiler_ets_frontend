@@ -142,6 +142,11 @@ DiagnosticType Diagnostic::Type() const
     return diagnosticKind_->Type();
 }
 
+uint32_t Diagnostic::GetId() const
+{
+    return diagnosticKind_->Id();
+}
+
 std::string Diagnostic::Message() const
 {
     return Format(diagnosticKind_->Message(), diagnosticParams_);
@@ -166,12 +171,12 @@ const char *DiagnosticTypeToString(DiagnosticType type)
             return "Declgen ets2ts error";
         case DiagnosticType::DECLGEN_ETS2TS_WARNING:
             return "Declgen ets2ts warning";
+        case DiagnosticType::ISOLATED_DECLGEN:
+            return "Isolated declgen error";
         case DiagnosticType::ARKTS_CONFIG_ERROR:
             return "ArkTS config error";
         case DiagnosticType::SUGGESTION:
             return "SUGGESTION";
-        case DiagnosticType::ISOLATED_DECLGEN:
-            return "Isolated declgen error";
         default:
             ES2PANDA_UNREACHABLE();
     }
@@ -222,14 +227,23 @@ ThrowableDiagnostic::ThrowableDiagnostic(const DiagnosticType type, const diagno
 }
 
 Suggestion::Suggestion(const diagnostic::DiagnosticKind *kind, std::vector<std::string> &params,
-                       const char *substitutionCode, const lexer::SourceRange *range)
-    : kind_(kind), substitutionCode_(substitutionCode), message_(Format(kind->Message(), params)), range_(range)
+                       const char *substitutionCode, const char *title, const lexer::SourceRange *range)
+    : kind_(kind),
+      substitutionCode_(substitutionCode),
+      title_(title),
+      message_(Format(kind->Message(), params)),
+      range_(range)
 {
 }
 
 DiagnosticType Suggestion::Type() const
 {
     return kind_->Type();
+}
+
+uint32_t Suggestion::GetId() const
+{
+    return kind_->Id();
 }
 
 Diagnostic::Diagnostic(const diagnostic::DiagnosticKind &diagnosticKind,

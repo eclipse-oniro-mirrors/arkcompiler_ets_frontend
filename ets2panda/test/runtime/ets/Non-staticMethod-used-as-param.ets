@@ -30,8 +30,8 @@ class A {
 
 let a = new A();
 a.doTask(a.method);
-assertEQ(a.data, "hello in method");
+arktest.assertEQ(a.data, "hello in method");
 a.data = "";
-assertEQ(a.data, "");
+arktest.assertEQ(a.data, "");
 doTaskOutSide(a.method);
-assertEQ(a.data, "hello in method");
+arktest.assertEQ(a.data, "hello in method");

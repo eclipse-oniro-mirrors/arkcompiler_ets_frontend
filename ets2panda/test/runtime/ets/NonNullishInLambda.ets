@@ -39,12 +39,12 @@ class A<T> {
 
 function main() {
     let x = (a: int) => { return a + 1; };
-    assertEQ(func<int>(10, x), 11)
-    assertEQ(func<int>(10, undefined), 0)
+    arktest.assertEQ(func<int>(10, x), 11)
+    arktest.assertEQ(func<int>(10, undefined), 0)
 
     let a = new A<int>;
     a.update(undefined);
-    assertTrue(a.value === undefined)
+    arktest.assertTrue(a.value === undefined)
     a.update(48);
-    assertEQ(a.value, 48)
+    arktest.assertEQ(a.value, 48)
 }

@@ -1826,7 +1826,7 @@ const checker::Type *PandaGen::GetVRegType(VReg vreg) const
 {
     // We assume that all used regs have any type
     if (vreg.GetIndex() > NextReg().GetIndex()) {
-        return Context()->checker->GetGlobalTypesHolder()->GlobalAnyType();
+        return Context()->GetChecker()->GetGlobalTypesHolder()->GlobalAnyType();
     }
 
     return nullptr;

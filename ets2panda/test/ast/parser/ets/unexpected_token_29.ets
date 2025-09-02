@@ -20,7 +20,7 @@ function main(): void {
 /*@@ label4 */}
 
 /* @@@ label1 Error SyntaxError: Expected ';', got 'identification literal'. */
-/* @@@ label1 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 17:44 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
 /* @@@ label2 Error SyntaxError: Unexpected token, expected ';'. */
 /* @@? 17:69 Error TypeError: need to specify target type for class composite */
 /* @@? 18:30 Error SyntaxError: Unexpected token, expected ':'. */

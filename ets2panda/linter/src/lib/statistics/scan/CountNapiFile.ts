@@ -15,6 +15,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { Logger } from '../../Logger';
 import type { NapiFileStatisticInfo } from './NapiFileStatisticInfo';
 
 const EXTENSIONS = ['.c', '.cpp', '.cc', '.cxx', '.h', '.hpp', '.hh', '.hxx'];
@@ -43,7 +44,7 @@ async function countLines(filePath: string): Promise<number> {
     });
     return validLines.length;
   } catch (e) {
-    console.error(`Error reading ${filePath}: ${e}`);
+    Logger.error(`Error reading ${filePath}: ${e}`);
     return 0;
   }
 }
@@ -62,7 +63,7 @@ async function countNapiLines(filePath: string): Promise<number> {
 
     return napiLines.size;
   } catch (e) {
-    console.error(`Error reading ${filePath}: ${e}`);
+    Logger.error(`Error reading ${filePath}: ${e}`);
     return 0;
   }
 }
@@ -125,7 +126,7 @@ async function processFile(filePath: string): Promise<NapiFileStatisticInfo> {
       result.napiFileLines = lines;
     }
   } catch (e) {
-    console.error(`Error processing ${filePath}: ${e}`);
+    Logger.error(`Error processing ${filePath}: ${e}`);
   }
   return result;
 }
@@ -140,12 +141,12 @@ export async function countNapiFiles(directory: string): Promise<NapiFileStatist
   try {
     const stat = await fs.promises.stat(directory);
     if (!stat.isDirectory()) {
-      console.log('The provided path is not a directory!');
+      Logger.error('The provided path is not a directory!');
       return DEFAULT_STATISTICS;
     }
     return await analyzeDirectoryAsync(directory);
   } catch (e) {
-    console.error(`Error accessing directory ${directory}: ${e}`);
+    Logger.error(`Error accessing directory ${directory}: ${e}`);
     return DEFAULT_STATISTICS;
   }
 }

@@ -33,7 +33,7 @@ function main() {
         caught_counter++
     }
 
-    assertEQ(caught_counter, 1)
+    arktest.assertEQ(caught_counter, 1)
 }
 
 function foo(obj: Object) {

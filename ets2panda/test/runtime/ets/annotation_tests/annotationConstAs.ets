@@ -14,15 +14,15 @@
 */
 
 @interface MyAnno {
-    a : int = 49 as char as int
-    b : byte = 1.0 as byte
-    c : short = c'c' as short
-    d : int = 12.2f as int
-    e : long = 123 as long
-    f : float = c'c' as float
-    g : double = c'c' as double
+    a : int = 49
+    b : byte = 1
+    c : short = 99
+    d : int = 12
+    e : long = 123
+    f : float = 99
+    g : double = 99
 }
 
 function main() {
-    assertTrue(true)
+    arktest.assertTrue(true)
 }

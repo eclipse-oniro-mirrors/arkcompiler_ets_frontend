@@ -13,27 +13,5 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": [
-        {
-            "line": 19,
-            "column": 67,
-            "endLine": 19,
-            "endColumn": 68,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 804,
-                    "end": 805,
-                    "replacementText": "1.0",
-                    "line": 19,
-                    "column": 67,
-                    "endLine": 19,
-                    "endColumn": 68
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        }
-    ]
+    "result": []
 }

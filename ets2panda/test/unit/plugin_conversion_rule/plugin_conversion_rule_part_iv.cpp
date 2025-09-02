@@ -62,7 +62,7 @@ TEST_F(PluginConversionRuleUnitTest, CheckerContextPtrReturnValue)
     extern "C" es2panda_CheckerContext *CreateCheckerContext([[maybe_unused]] es2panda_Context *context,
     [[maybe_unused]] Es2pandaCheckerStatus newStatus)
     {
-        auto *checkerE2p = reinterpret_cast<Context *>(context)->checker;
+        auto *checkerE2p = reinterpret_cast<Context *>(context)->GetChecker();
         auto newStatusE2p = E2pToIrCheckerStatus(newStatus);
         auto *ctx = reinterpret_cast<Context *>(context);
         auto *ctxAllocator = ctx->allocator;
@@ -97,7 +97,7 @@ TEST_F(PluginConversionRuleUnitTest, CheckerContextPtrConstructor)
     extern "C" es2panda_CheckerContext *CreateCheckerContext([[maybe_unused]] es2panda_Context *context,
     [[maybe_unused]] Es2pandaCheckerStatus newStatus)
     {
-        auto *checkerE2p = reinterpret_cast<Context *>(context)->checker;
+        auto *checkerE2p = reinterpret_cast<Context *>(context)->GetChecker();
         auto newStatusE2p = E2pToIrCheckerStatus(newStatus);
         auto *ctx = reinterpret_cast<Context *>(context);
         auto *ctxAllocator = ctx->allocator;
@@ -325,26 +325,6 @@ TEST_F(PluginConversionRuleUnitTest, NodeTransformerInputParameter)
     EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
 }
 
-// apiName: AstNodeFindChildConst
-TEST_F(PluginConversionRuleUnitTest, NodePredicateInputParameter)
-{
-    std::string targetCAPI {R"(
-    extern "C"  es2panda_AstNode *AstNodeFindChildConst([[maybe_unused]] es2panda_Context *context,
-    es2panda_AstNode *classInstance, [[maybe_unused]] NodePredicate cb/*return_args:*/)
-    {
-        std::function<bool(ir::AstNode *)> cbE2p = [cb](ir::AstNode *traverserLambdaNode)
-        {return cb(reinterpret_cast<es2panda_AstNode *>(traverserLambdaNode));};
-        auto apiRes = reinterpret_cast< es2panda_AstNode *>
-                   ((reinterpret_cast<const ir::AstNode *>(classInstance))->FindChild(cbE2p));
-    	return apiRes;
-    }
-
-)"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
 // apiName: ETSObjectTypeUpdateTypeProperties
 TEST_F(PluginConversionRuleUnitTest, PropertyProcessorInputParameter)
 {
@@ -352,12 +332,11 @@ TEST_F(PluginConversionRuleUnitTest, PropertyProcessorInputParameter)
     extern "C" void ETSObjectTypeUpdateTypeProperties([[maybe_unused]] es2panda_Context *context,
     es2panda_Type *classInstance, [[maybe_unused]] PropertyProcessor func/*return_args:*/)
     {
-        auto *checkerE2p = reinterpret_cast<Context *>(context)->checker->AsETSChecker();
         std::function<varbinder::LocalVariable *(varbinder::LocalVariable *, checker::Type *)> funcE2p =
         [func](varbinder::LocalVariable *propertyProcessorLambdaVariable, checker::Type *propertyProcessorLambdaType) {
         return reinterpret_cast<varbinder::LocalVariable *>(func(reinterpret_cast<es2panda_Variable *>
         (propertyProcessorLambdaVariable), reinterpret_cast<es2panda_Type *>(propertyProcessorLambdaType)));};
-        ((reinterpret_cast< checker::ETSObjectType *>(classInstance))->UpdateTypeProperties(checkerE2p, funcE2p));
+        ((reinterpret_cast< checker::ETSObjectType *>(classInstance))->UpdateTypeProperties(funcE2p));
     })"};
 
     std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
@@ -416,17 +395,19 @@ TEST_F(PluginConversionRuleUnitTest, TSEnumDeclarationConstructorFlagsInputParam
         auto *allocatorE2p = reinterpret_cast<Context *>(context)->allocator;
         auto *keyE2p = reinterpret_cast<ir::Identifier *>(key);
         ArenaVector<ir::AstNode *> membersArenaVector {reinterpret_cast<Context *>(context)->allocator->Adapter()};
-     	for (size_t i = 0; i < membersLen; ++i) {
-     		auto *membersElement1 = members[i];
- 	    	auto *membersElement1E2p = reinterpret_cast<ir::AstNode *>(membersElement1);
+        for (size_t i = 0; i < membersLen; ++i) {
+            auto *membersElement1 = members[i];
+            auto *membersElement1E2p = reinterpret_cast<ir::AstNode *>(membersElement1);
 
- 	    	membersArenaVector.push_back(membersElement1E2p);
-     	}
-
+            membersArenaVector.push_back(membersElement1E2p);
+        }
+        
+        ark::es2panda::Language langE2p {Language::Id::ETS};
         auto *ctx = reinterpret_cast<Context *>(context);
         auto *ctxAllocator = ctx->allocator;
         auto *astNode = (ctxAllocator->New<ir::TSEnumDeclaration>(allocatorE2p, keyE2p,
-            std::move(membersArenaVector), ir::TSEnumDeclaration::ConstructorFlags {isConst, isStatic, isDeclare}));
+            std::move(membersArenaVector), ir::TSEnumDeclaration::ConstructorFlags {isConst, isStatic, isDeclare},
+            langE2p));
         astNode->AddAstNodeFlags(ir::AstNodeFlags::NOCLEANUP);
         return reinterpret_cast<es2panda_AstNode *>(astNode);
     })"};

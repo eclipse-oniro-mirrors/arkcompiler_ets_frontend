@@ -37,5 +37,5 @@ function main() {
     let a = (new A).b
 }
 
-/* @@? 28:13 Error TypeError: Unresolved reference b */
+/* @@? 16:13 Error TypeError: Unresolved reference b */
 /* @@? 37:21 Error TypeError: Property 'b' does not exist on type 'A' */

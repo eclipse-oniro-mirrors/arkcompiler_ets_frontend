@@ -170,11 +170,6 @@ public:
         return astVerifierEachPhase_ || astVerifierPhases_.find(std::string(phase)) != astVerifierPhases_.end();
     }
 
-    bool IsEnableJsdocParse() const
-    {
-        return parseJsdoc_;
-    }
-
 private:
     template <typename T>
     static bool CallPandArgParser(const std::vector<std::string> &args, T &options,
@@ -209,7 +204,6 @@ private:
     Logger::Level logLevel_ {Logger::Level::ERROR};
     EvalMode evalMode_ = {EvalMode::NONE};
     util::DiagnosticEngine &diagnosticEngine_;
-    bool parseJsdoc_ {};
 };
 }  // namespace ark::es2panda::util
 

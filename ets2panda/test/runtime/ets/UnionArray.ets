@@ -31,11 +31,11 @@ function main() {
     let classArray: FixedArray<Item> = [new Item(1), new Item(2), new Item(3)];
     let unionArray: FixedArray<boolean|number|Item|string> = [true, 9.99, new Item(9), "success"];
 
-    assertTrue(objectArray instanceof FixedArray<Object>)
-    assertTrue(boolArray instanceof FixedArray<boolean>)
-    assertTrue(intArray instanceof FixedArray<int>)
-    assertTrue(doubleArray instanceof FixedArray<number>)
-    assertTrue(stringArray instanceof FixedArray<string>)
-    assertTrue(classArray instanceof FixedArray<Item>)
-    assertTrue(unionArray instanceof (FixedArray<boolean|number|Item|string>))
+    arktest.assertTrue(objectArray instanceof FixedArray<Object>)
+    arktest.assertTrue(boolArray instanceof FixedArray<boolean>)
+    arktest.assertTrue(intArray instanceof FixedArray<int>)
+    arktest.assertTrue(doubleArray instanceof FixedArray<number>)
+    arktest.assertTrue(stringArray instanceof FixedArray<string>)
+    arktest.assertTrue(classArray instanceof FixedArray<Item>)
+    arktest.assertTrue(unionArray instanceof (FixedArray<boolean|number|Item|string>))
 }

@@ -15,15 +15,12 @@
 
 #include "convertors-napi.h"
 #include "lsp/include/api.h"
-#include "lsp/include/completions.h"
 #include "common.h"
 #include "panda_types.h"
 #include "public/es2panda_lib.h"
 #include "lsp/include/refactors/refactor_types.h"
 #include <cstddef>
-#include <cstdint>
 #include <string>
-#include <variant>
 
 namespace {
 using ark::es2panda::lsp::ClassHierarchy;
@@ -64,6 +61,198 @@ KNativePointer impl_getClassPropertyInfo(KNativePointer context, KInt position, 
     return new std::vector<FieldsInfo>(info);
 }
 TS_INTEROP_3(getClassPropertyInfo, KNativePointer, KNativePointer, KInt, KBoolean)
+
+KNativePointer impl_getRenameLocationFileName(KNativePointer renameLocationPtr)
+{
+    auto *renameLocationRef = reinterpret_cast<ark::es2panda::lsp::RenameLocation *>(renameLocationPtr);
+    return new std::string(renameLocationRef->fileName);
+}
+TS_INTEROP_1(getRenameLocationFileName, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameLocationPrefixText(KNativePointer renameLocationPtr)
+{
+    auto *renameLocationRef = reinterpret_cast<ark::es2panda::lsp::RenameLocation *>(renameLocationPtr);
+    return new std::string(renameLocationRef->prefixText);
+}
+TS_INTEROP_1(getRenameLocationPrefixText, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameLocationSuffixText(KNativePointer renameLocationPtr)
+{
+    auto *renameLocationRef = reinterpret_cast<ark::es2panda::lsp::RenameLocation *>(renameLocationPtr);
+    return new std::string(renameLocationRef->suffixText);
+}
+TS_INTEROP_1(getRenameLocationSuffixText, KNativePointer, KNativePointer)
+
+KInt impl_getRenameLocationStart(KNativePointer renameLocationPtr)
+{
+    auto *renameLocationRef = reinterpret_cast<ark::es2panda::lsp::RenameLocation *>(renameLocationPtr);
+    return renameLocationRef->start;
+}
+TS_INTEROP_1(getRenameLocationStart, KInt, KNativePointer)
+
+KInt impl_getRenameLocationEnd(KNativePointer renameLocationPtr)
+{
+    auto *renameLocationRef = reinterpret_cast<ark::es2panda::lsp::RenameLocation *>(renameLocationPtr);
+    return renameLocationRef->end;
+}
+TS_INTEROP_1(getRenameLocationEnd, KInt, KNativePointer)
+
+KInt impl_getRenameLocationLine(KNativePointer renameLocationPtr)
+{
+    auto *renameLocationRef = reinterpret_cast<ark::es2panda::lsp::RenameLocation *>(renameLocationPtr);
+    return renameLocationRef->line;
+}
+TS_INTEROP_1(getRenameLocationLine, KInt, KNativePointer)
+
+// NOLINTBEGIN
+inline KUInt UnpackUInt(const KByte *bytes)
+{
+    return (bytes[0] | (bytes[1] << 8U) | (bytes[2U] << 16U) | (bytes[3U] << 24U));
+}
+// NOLINTEND
+
+/*
+ * Parses an array of pointers from a KStringArray.
+ * format:
+ * | header(4 bytes) | strLen(4 bytes) | strData(strLen bytes) | strLen(4 bytes) | strData(strLen bytes) | ...
+ */
+static std::vector<void *> ParsePointerArray(KInt argc, KStringArray pointerArrayPtr)
+{
+    const std::size_t headerLen = 4;
+    auto bigintPtrs = std::vector<void *>();
+    bigintPtrs.reserve(static_cast<std::size_t>(argc));
+    std::size_t offset = headerLen;
+    std::size_t strLen = 0;
+
+    for (std::size_t i = 0; i < static_cast<std::size_t>(argc); ++i) {
+        strLen = UnpackUInt(pointerArrayPtr + offset);
+        offset += headerLen;
+        std::string bigintStr(reinterpret_cast<const char *>(pointerArrayPtr + offset), strLen);
+        offset += strLen;
+
+        uintptr_t ptrValue = 0;
+        const size_t prefixLen = 2;
+        const size_t hex = 16;
+        const size_t decimal = 10;
+        if (bigintStr.substr(0, prefixLen) == "0x" || bigintStr.substr(0, prefixLen) == "0X") {
+            ptrValue = std::stoull(bigintStr, nullptr, hex);
+        } else {
+            ptrValue = std::stoull(bigintStr, nullptr, decimal);
+        }
+        bigintPtrs.push_back(reinterpret_cast<void *>(ptrValue));
+    }
+
+    return bigintPtrs;
+}
+
+KNativePointer impl_findRenameLocations(KInt argc, KStringArray pointerArrayPtr, KNativePointer context, KInt position)
+{
+    auto pointerArray = ParsePointerArray(argc, pointerArrayPtr);
+    auto fileContexts = std::vector<es2panda_Context *> {};
+    fileContexts.reserve(argc);
+    for (std::size_t i = 0; i < static_cast<std::size_t>(argc); ++i) {
+        auto contextPtr = reinterpret_cast<es2panda_Context *>(pointerArray[i]);
+        if (contextPtr != nullptr) {
+            fileContexts.push_back(contextPtr);
+        }
+    }
+    LSPAPI const *ctx = GetImpl();
+    auto result = ctx->findRenameLocations(fileContexts, reinterpret_cast<es2panda_Context *>(context),
+                                           static_cast<std::size_t>(position));
+    auto ptrs = std::make_unique<std::vector<void *>>();
+    ptrs->reserve(result.size());
+    for (auto &el : result) {
+        ptrs->push_back(new ark::es2panda::lsp::RenameLocation(std::move(el)));
+    }
+    return ptrs.release();
+}
+TS_INTEROP_4(findRenameLocations, KNativePointer, KInt, KStringArray, KNativePointer, KInt)
+
+KNativePointer impl_getRenameSuccessFileName(KNativePointer successPtr)
+{
+    auto successInfo = reinterpret_cast<ark::es2panda::lsp::RenameInfoSuccess *>(successPtr);
+    return new std::string(successInfo->GetFileToRename());
+}
+TS_INTEROP_1(getRenameSuccessFileName, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameSuccessKind(KNativePointer successPtr)
+{
+    auto successInfo = reinterpret_cast<ark::es2panda::lsp::RenameInfoSuccess *>(successPtr);
+    return new std::string(successInfo->GetKind());
+}
+TS_INTEROP_1(getRenameSuccessKind, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameSuccessDisplayName(KNativePointer successPtr)
+{
+    auto successInfo = reinterpret_cast<ark::es2panda::lsp::RenameInfoSuccess *>(successPtr);
+    return new std::string(successInfo->GetDisplayName());
+}
+TS_INTEROP_1(getRenameSuccessDisplayName, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameSuccessFullDisplayName(KNativePointer successPtr)
+{
+    auto successInfo = reinterpret_cast<ark::es2panda::lsp::RenameInfoSuccess *>(successPtr);
+    return new std::string(successInfo->GetFullDisplayName());
+}
+TS_INTEROP_1(getRenameSuccessFullDisplayName, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameSuccessKindModifiers(KNativePointer successPtr)
+{
+    auto successInfo = reinterpret_cast<ark::es2panda::lsp::RenameInfoSuccess *>(successPtr);
+    return new std::string(successInfo->GetKindModifiers());
+}
+TS_INTEROP_1(getRenameSuccessKindModifiers, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameSuccessTriggerSpan(KNativePointer successPtr)
+{
+    auto successInfo = reinterpret_cast<ark::es2panda::lsp::RenameInfoSuccess *>(successPtr);
+    return new TextSpan(successInfo->GetTriggerSpan());
+}
+TS_INTEROP_1(getRenameSuccessTriggerSpan, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameFailureLocalizedErrorMessage(KNativePointer failurePtr)
+{
+    auto failureInfo = reinterpret_cast<ark::es2panda::lsp::RenameInfoFailure *>(failurePtr);
+    return new std::string(failureInfo->GetLocalizedErrorMessage());
+}
+TS_INTEROP_1(getRenameFailureLocalizedErrorMessage, KNativePointer, KNativePointer)
+
+KBoolean impl_getRenameInfoIsSuccess(KNativePointer renameInfoPtr)
+{
+    auto renameInfo = reinterpret_cast<std::tuple<bool, ark::es2panda::lsp::RenameInfoType *> *>(renameInfoPtr);
+    return std::get<0>(*renameInfo) ? 1 : 0;
+}
+TS_INTEROP_1(getRenameInfoIsSuccess, KBoolean, KNativePointer)
+
+KNativePointer impl_getRenameInfoSuccess(KNativePointer renameInfoPtr)
+{
+    auto renameInfo = reinterpret_cast<std::tuple<bool, ark::es2panda::lsp::RenameInfoSuccess *> *>(renameInfoPtr);
+    auto [flag, successInfo] = *renameInfo;
+    return flag ? successInfo : nullptr;
+}
+TS_INTEROP_1(getRenameInfoSuccess, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameInfoFailure(KNativePointer renameInfoPtr)
+{
+    auto renameInfo = reinterpret_cast<std::tuple<bool, ark::es2panda::lsp::RenameInfoFailure *> *>(renameInfoPtr);
+    auto [flag, failureInfo] = *renameInfo;
+    return flag ? nullptr : failureInfo;
+}
+TS_INTEROP_1(getRenameInfoFailure, KNativePointer, KNativePointer)
+
+KNativePointer impl_getRenameInfo(KNativePointer context, KInt position, KStringPtr &pandaLibPath)
+{
+    LSPAPI const *ctx = GetImpl();
+    auto result = ctx->getRenameInfo(reinterpret_cast<es2panda_Context *>(context), static_cast<std::size_t>(position),
+                                     GetStringCopy(pandaLibPath));
+    if (std::holds_alternative<ark::es2panda::lsp::RenameInfoSuccess>(result)) {
+        auto &successInfo = std::get<ark::es2panda::lsp::RenameInfoSuccess>(result);
+        return new std::tuple(true, new ark::es2panda::lsp::RenameInfoSuccess(std::move(successInfo)));
+    }
+    auto &failureInfo = std::get<ark::es2panda::lsp::RenameInfoFailure>(result);
+    return new std::tuple(false, new ark::es2panda::lsp::RenameInfoFailure(std::move(failureInfo)));
+}
+TS_INTEROP_3(getRenameInfo, KNativePointer, KNativePointer, KInt, KStringPtr)
 
 KNativePointer impl_getFieldsInfoFromPropertyInfo(KNativePointer infoPtr)
 {
@@ -119,19 +308,19 @@ KNativePointer impl_getDisplayNameFromPropertyInfo(KNativePointer infoPtr)
 }
 TS_INTEROP_1(getDisplayNameFromPropertyInfo, KNativePointer, KNativePointer)
 
-KNativePointer impl_getStartFromPropertyInfo(KNativePointer infoPtr)
+KInt impl_getStartFromPropertyInfo(KNativePointer infoPtr)
 {
     auto info = reinterpret_cast<FieldListProperty *>(infoPtr);
-    return new std::size_t(info->start);
+    return info->start;
 }
-TS_INTEROP_1(getStartFromPropertyInfo, KNativePointer, KNativePointer)
+TS_INTEROP_1(getStartFromPropertyInfo, KInt, KNativePointer)
 
-KNativePointer impl_getEndFromPropertyInfo(KNativePointer infoPtr)
+KInt impl_getEndFromPropertyInfo(KNativePointer infoPtr)
 {
     auto info = reinterpret_cast<FieldListProperty *>(infoPtr);
-    return new std::size_t(info->end);
+    return info->end;
 }
-TS_INTEROP_1(getEndFromPropertyInfo, KNativePointer, KNativePointer)
+TS_INTEROP_1(getEndFromPropertyInfo, KInt, KNativePointer)
 
 KNativePointer impl_getSyntacticDiagnostics(KNativePointer context)
 {
@@ -256,7 +445,7 @@ TS_INTEROP_1(getDiagRelatedInfo, KNativePointer, KNativePointer)
 KNativePointer impl_getRelatedInfoMsg(KNativePointer relatedInfoPtr)
 {
     auto *relatedInfoRef = reinterpret_cast<DiagnosticRelatedInformation *>(relatedInfoPtr);
-    return &relatedInfoRef->message_;
+    return new std::string(relatedInfoRef->message_);
 }
 TS_INTEROP_1(getRelatedInfoMsg, KNativePointer, KNativePointer)
 
@@ -270,7 +459,7 @@ TS_INTEROP_1(getRelatedInfoLoc, KNativePointer, KNativePointer)
 KNativePointer impl_getLocUri(KNativePointer locPtr)
 {
     auto *locRef = reinterpret_cast<Location *>(locPtr);
-    return &locRef->uri_;
+    return new std::string(locRef->uri_);
 }
 TS_INTEROP_1(getLocUri, KNativePointer, KNativePointer)
 
@@ -800,14 +989,28 @@ KInt impl_getAliasScriptElementKind(KNativePointer context, KInt position)
 }
 TS_INTEROP_2(getAliasScriptElementKind, KInt, KNativePointer, KInt)
 
+KNativePointer impl_pushBackToNativeContextVector(KNativePointer context, KNativePointer contextList, KBoolean isNew)
+{
+    auto contextPtr = reinterpret_cast<es2panda_Context *>(context);
+    if (isNew != 0) {
+        auto *newVector = new std::vector<es2panda_Context *>();
+        newVector->push_back(contextPtr);
+        return newVector;
+    }
+    auto contextVector = reinterpret_cast<std::vector<es2panda_Context *> *>(contextList);
+    contextVector->push_back(contextPtr);
+    return contextVector;
+}
+TS_INTEROP_3(pushBackToNativeContextVector, KNativePointer, KNativePointer, KNativePointer, KBoolean)
+
 KNativePointer impl_getClassHierarchies(KNativePointer context, KStringPtr &fileNamePtr, KInt pos)
 {
     LSPAPI const *ctx = GetImpl();
     if (ctx == nullptr) {
         return nullptr;
     }
-    auto infos =
-        ctx->getClassHierarchiesImpl(reinterpret_cast<es2panda_Context *>(context), GetStringCopy(fileNamePtr), pos);
+    auto *contextlist = reinterpret_cast<std::vector<es2panda_Context *> *>(context);
+    auto infos = ctx->getClassHierarchiesImpl(contextlist, GetStringCopy(fileNamePtr), pos);
     std::vector<void *> ptrs;
     ptrs.reserve(infos.size());
     for (auto &info : infos) {
@@ -881,10 +1084,10 @@ TS_INTEROP_1(getApplicableRefactorAction, KNativePointer, KNativePointer)
 
 KNativePointer impl_getClassHierarchyList(KNativePointer infosPtr)
 {
-    auto *infos = reinterpret_cast<std::vector<ark::es2panda::lsp::ClassHierarchyItemInfo> *>(infosPtr);
+    auto *infos = reinterpret_cast<std::vector<ark::es2panda::lsp::ClassHierarchyItemInfo *> *>(infosPtr);
     std::vector<void *> infoPtrList;
     for (auto &info : *infos) {
-        infoPtrList.push_back(new ark::es2panda::lsp::ClassHierarchyItemInfo(info));
+        infoPtrList.push_back(info);
     }
     return new std::vector<void *>(infoPtrList);
 }
@@ -918,9 +1121,8 @@ KNativePointer impl_getOverriddenFromClassHierarchyItemInfo(KNativePointer infoP
     auto &overridden = info->overridden;
     std::vector<void *> overriddenPtrList;
     overriddenPtrList.reserve(overridden.size());
-    size_t idx = 0;
     for (auto &details : overridden) {
-        overriddenPtrList[idx++] = new ark::es2panda::lsp::ClassRelationDetails(details);
+        overriddenPtrList.push_back(new ark::es2panda::lsp::ClassRelationDetails(details));
     }
     return new std::vector<void *>(std::move(overriddenPtrList));
 }
@@ -932,9 +1134,8 @@ KNativePointer impl_getOverridingFromClassHierarchyItemInfo(KNativePointer infoP
     auto &overriding = info->overriding;
     std::vector<void *> overridingPtrList;
     overridingPtrList.reserve(overriding.size());
-    size_t idx = 0;
     for (auto &details : overriding) {
-        overridingPtrList[idx++] = new ark::es2panda::lsp::ClassRelationDetails(details);
+        overridingPtrList.push_back(new ark::es2panda::lsp::ClassRelationDetails(details));
     }
     return new std::vector<void *>(std::move(overridingPtrList));
 }
@@ -946,9 +1147,8 @@ KNativePointer impl_getImplementedFromClassHierarchyItemInfo(KNativePointer info
     auto implemented = info->implemented;
     std::vector<void *> implementedPtrList;
     implementedPtrList.reserve(implemented.size());
-    size_t idx = 0;
     for (auto &details : implemented) {
-        implementedPtrList[idx++] = new ark::es2panda::lsp::ClassRelationDetails(details);
+        implementedPtrList.push_back(new ark::es2panda::lsp::ClassRelationDetails(details));
     }
     return new std::vector<void *>(std::move(implementedPtrList));
 }
@@ -960,9 +1160,8 @@ KNativePointer impl_getImplementingFromClassHierarchyItemInfo(KNativePointer inf
     auto implementing = info->implementing;
     std::vector<void *> implementingPtrList;
     implementingPtrList.reserve(implementing.size());
-    size_t idx = 0;
     for (auto &details : implementing) {
-        implementingPtrList[idx++] = new ark::es2panda::lsp::ClassRelationDetails(details);
+        implementingPtrList.push_back(new ark::es2panda::lsp::ClassRelationDetails(details));
     }
     return new std::vector<void *>(std::move(implementingPtrList));
 }
@@ -1418,7 +1617,7 @@ TS_INTEROP_3(getSpanOfEnclosingComment, KNativePointer, KNativePointer, KInt, KB
 KNativePointer impl_getInlayHintText(KNativePointer hintPtr)
 {
     auto *hint = reinterpret_cast<InlayHint *>(hintPtr);
-    return &hint->text;
+    return new std::string(hint->text);
 }
 TS_INTEROP_1(getInlayHintText, KNativePointer, KNativePointer)
 
@@ -1473,7 +1672,7 @@ TS_INTEROP_2(getInlayHintList, KNativePointer, KNativePointer, KNativePointer)
 KNativePointer impl_getSignatureHelpParameterName(KNativePointer parameterPtr)
 {
     auto *parameterRef = reinterpret_cast<SignatureHelpParameter *>(parameterPtr);
-    return &parameterRef->GetName();
+    return new std::string(parameterRef->GetName());
 }
 TS_INTEROP_1(getSignatureHelpParameterName, KNativePointer, KNativePointer)
 
@@ -1601,3 +1800,11 @@ KNativePointer impl_getSignatureHelpItems(KNativePointer context, KInt position)
     return textSpan;
 }
 TS_INTEROP_2(getSignatureHelpItems, KNativePointer, KNativePointer, KInt)
+
+KInt impl_getOffsetByColAndLine(KNativePointer contextPtr, KInt line, KInt column)
+{
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    LSPAPI const *impl = GetImpl();
+    return impl->getOffsetByColAndLine(context, line, column);
+}
+TS_INTEROP_3(getOffsetByColAndLine, KInt, KNativePointer, KInt, KInt)

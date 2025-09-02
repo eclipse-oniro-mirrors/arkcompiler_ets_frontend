@@ -30,6 +30,7 @@ static bool HasDefaultParameters(const ir::ScriptFunction *function, util::Diagn
         if (it->IsBrokenExpression()) {
             continue;
         }
+
         auto const *const param = it->AsETSParameterExpression();
 
         if (param->IsRestParameter()) {
@@ -38,8 +39,11 @@ static bool HasDefaultParameters(const ir::ScriptFunction *function, util::Diagn
         }
 
         if (hasRestParameter) {
-            util::DiagnosticMessageParams diagnosticParams = {};
-            diagnosticEngine.LogDiagnostic(diagnostic::REST_PARAM_LAST, std::move(diagnosticParams), param->Start());
+            // NOTE(pronai): This seems to be covered in parser. As the comment above says, it's unclear why the
+            // lowering is needed.
+            ES2PANDA_UNREACHABLE_POS(param->Start());
+            diagnosticEngine.LogDiagnostic(diagnostic::REST_PARAM_NOT_LAST, util::DiagnosticMessageParams {},
+                                           param->Start());
         }
 
         if (param->IsOptional()) {
@@ -108,8 +112,8 @@ static ir::TSTypeParameterInstantiation *CreateTypeParameterInstantiation(ir::Me
 {
     auto const allocator = ctx->allocator;
 
-    if ((method->Function() != nullptr && method->Function()->TypeParams() == nullptr) ||
-        method->Function()->TypeParams()->Params().empty()) {
+    ES2PANDA_ASSERT(method->Function());
+    if (method->Function()->TypeParams() == nullptr || method->Function()->TypeParams()->Params().empty()) {
         return nullptr;
     }
     ArenaVector<ir::TypeNode *> selfParams(allocator->Adapter());
@@ -192,11 +196,11 @@ static void CreateFunctionOverload(ir::MethodDefinition *method, ArenaVector<ir:
         allocator, method->Kind(), ident, funcExpression, method->Modifiers(), allocator, false);
 
     ES2PANDA_ASSERT(overloadMethod != nullptr && overloadMethod->Function() != nullptr);
-    overloadMethod->Function()->AddFlag(ir::ScriptFunctionFlags::OVERLOAD);
+    overloadMethod->Function()->AddFlag(ir::ScriptFunctionFlags::OVERLOAD | ir::ScriptFunctionFlags::SYNTHETIC);
     overloadMethod->SetRange(funcExpression->Range());
 
     if (!method->IsDeclare() && method->Parent()->IsTSInterfaceBody()) {
-        overloadMethod->Function()->Body()->AsBlockStatement()->Statements().clear();
+        overloadMethod->Function()->Body()->AsBlockStatement()->ClearStatements();
     }
 
     method->AddOverload(overloadMethod);
@@ -212,11 +216,13 @@ static void ExpandOptionalParameterAnnotationsToUnions(public_lib::Context *ctx,
     for (auto p : function->Params()) {
         auto param = p->AsETSParameterExpression();
         if (param->IsOptional() && param->Initializer() == nullptr) {
-            param->SetTypeAnnotation(util::NodeAllocator::ForceSetParent<ir::ETSUnionType>(
-                allocator,
-                ArenaVector<ir::TypeNode *>({param->TypeAnnotation(), allocator->New<ir::ETSUndefinedType>(allocator)},
-                                            allocator->Adapter()),
-                allocator));
+            ArenaVector<ir::TypeNode *> typeNodes(allocator->Adapter());
+            if (param->TypeAnnotation() != nullptr) {
+                typeNodes.emplace_back(param->TypeAnnotation());
+            }
+            typeNodes.emplace_back(allocator->New<ir::ETSUndefinedType>(allocator));
+            param->SetTypeAnnotation(
+                util::NodeAllocator::ForceSetParent<ir::ETSUnionType>(allocator, std::move(typeNodes), allocator));
             param->TypeAnnotation()->SetParent(param->Ident());
         }
     }
@@ -226,7 +232,15 @@ static void ClearOptionalParameters(public_lib::Context *ctx, ir::ScriptFunction
 {
     auto allocator = ctx->allocator;
 
-    for (auto *&param : function->Params()) {
+    auto const &params = function->Params();
+    bool hasOptional = std::any_of(params.cbegin(), params.cend(),
+                                   [](ir::Expression *p) { return p->AsETSParameterExpression()->IsOptional(); });
+    if (!hasOptional) {
+        return;
+    }
+
+    auto &paramsToChange = function->ParamsForUpdate();
+    for (auto *&param : paramsToChange) {
         auto oldParam = param->AsETSParameterExpression();
         if (oldParam->IsOptional()) {
             param = util::NodeAllocator::ForceSetParent<ir::ETSParameterExpression>(allocator, oldParam->Ident(), false,
@@ -258,8 +272,8 @@ static void ProcessGlobalFunctionDefinition(ir::MethodDefinition *method, public
 
         for (size_t i = 0; i < params.size() - paramsToCut; ++i) {
             auto param = params[i]->AsETSParameterExpression();
-            auto cloneRef = param->Ident()->CloneReference(allocator, nullptr);
-            auto clone = param->Ident()->Clone(allocator, nullptr);
+            auto *cloneRef = param->Ident()->CloneReference(allocator, nullptr);
+            auto *clone = param->Ident()->Clone(allocator, nullptr);
             ES2PANDA_ASSERT(cloneRef != nullptr && clone != nullptr);
             callArgs.push_back(cloneRef->AsIdentifier());
             functionParams.push_back(
@@ -272,8 +286,6 @@ static void ProcessGlobalFunctionDefinition(ir::MethodDefinition *method, public
             if (param->Initializer() == nullptr) {
                 ES2PANDA_ASSERT(param->IsOptional());
                 init = allocator->New<ir::UndefinedLiteral>();
-            } else if (param->Initializer()->IsArrowFunctionExpression()) {
-                init = param->Initializer();
             } else {
                 init = param->Initializer()->Clone(allocator, nullptr)->AsExpression();
             }
@@ -316,7 +328,7 @@ bool DefaultParametersInConstructorLowering::PostconditionForModule([[maybe_unus
         }
         for (auto *const it : node->AsMethodDefinition()->Function()->Params()) {
             if (it->IsBrokenExpression()) {
-                return false;
+                continue;
             }
             auto const *const param = it->AsETSParameterExpression();
             if (param->IsOptional()) {

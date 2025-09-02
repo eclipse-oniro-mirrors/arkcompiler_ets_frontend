@@ -54,7 +54,7 @@ TEST_F(ASTVerifierTest, RefAnnotationNullDefaultParam)
         }
 
         function main() {
-            assertEQ(pair(1.0), 8.0)
+            arktest.assertEQ(pair(1.0), 8.0)
         }
     )";
 

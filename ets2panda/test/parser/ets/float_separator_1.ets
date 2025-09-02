@@ -14,5 +14,5 @@
  */
 
 function main() {
-    let a: float = -0.0e2_147_483_647 
+    let a: float = -0.0e2_147_483_647f
 }

@@ -15,7 +15,7 @@
 
 let x = "literal str" as const
 
-/* @@? 16:26 Error SyntaxError: Invalid Type. */
+/* @@? 16:26 Error SyntaxError: 'as const' assertion is not supported. */
 /* @@? 16:26 Error SyntaxError: Unexpected token 'const'. */
 /* @@? 23:1 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 23:1 Error SyntaxError: Variable must be initialized or it's type must be declared. */

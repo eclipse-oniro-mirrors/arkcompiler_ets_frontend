@@ -26,10 +26,10 @@ function foo(a: funcType | null) {
 
     let getPeach: funcType | null = dummy();
     fruit = getPeach?.() ?? "banana";
-    assertEQ(fruit, "peach")
+    arktest.assertEQ(fruit, "peach")
 
     fruit = getMelon() ?? "strawberry";
-    assertEQ(fruit, "melon")
+    arktest.assertEQ(fruit, "melon")
 
     let test = false;
     try {
@@ -38,7 +38,7 @@ function foo(a: funcType | null) {
         test = true;
     }
 
-    assertEQ(test, true)
+    arktest.assertEQ(test, true)
 }
 
 function main(): void {
@@ -47,5 +47,5 @@ function main(): void {
 
     let getPeach: funcType | null = dummy();
     let b = getPeach?.();
-    assertEQ(b, "peach")
+    arktest.assertEQ(b, "peach")
 }

@@ -34,10 +34,10 @@ class A {
   class B extends A{}
   
   function main() {
-    assertEQ(new A().foo([new Object(), new Long(), new Int()]), 0)
-    assertEQ(new A().foo([new A(), new A(), new Object()]), 2)
-    assertEQ(new A().foo(["aaa", new A(), new Object()]), 1)
-    assertEQ(new A().foo([1, "hello", new A()]), 1)
-    assertEQ(new A().bar([new B(), new B(), new A()]), 3)
+    arktest.assertEQ(new A().foo([new Object(), new Long(), new Int()]), 0)
+    arktest.assertEQ(new A().foo([new A(), new A(), new Object()]), 2)
+    arktest.assertEQ(new A().foo(["aaa", new A(), new Object()]), 1)
+    arktest.assertEQ(new A().foo([1, "hello", new A()]), 1)
+    arktest.assertEQ(new A().bar([new B(), new B(), new A()]), 3)
   }
   

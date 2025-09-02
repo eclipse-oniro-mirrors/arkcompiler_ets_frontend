@@ -18,15 +18,15 @@ class B {
     // Mix required and optional parameters (non-lambda first)
     bar(requiredFn: () => void, optionalNum?: number, optionalFn?: () => string) {
         requiredFn();
-        assertEQ(optionalNum, 42);
-        if (optionalFn) assertEQ(optionalFn(), "optional");
+        arktest.assertEQ(optionalNum, 42);
+        if (optionalFn) arktest.assertEQ(optionalFn(), "optional");
     }
 
     // Multiple optional lambda parameters
     baz(a: number, f1?: () => string, f2?: () => number) {
-        assertEQ(a, 10);
-        if (f1) assertEQ(f1(), "first");
-        if (f2) assertEQ(f2(), 42);
+        arktest.assertEQ(a, 10);
+        if (f1) arktest.assertEQ(f1(), "first");
+        if (f2) arktest.assertEQ(f2(), 42);
     }
 }
 

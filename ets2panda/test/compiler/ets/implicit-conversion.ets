@@ -17,18 +17,17 @@ function main(): void {
     let apple : Byte = 0;
     let banana : Short = 1;
     let cherry : Int = 2;
-    let date : Long = 3.0;
-    let elderberry : Float = 4.0;
-    let fig : Float = 4.0;
+    let date : Long = Double.toLong(3.0);
+    let elderberry : Float = Double.toFloat(4.0);
+    let fig : Float = Double.toFloat(4.0);
     let grape : Double = -5.0;
     let honeydewmelon : Double = 5.0;
     let indian_fig : Char = 65;
 
-    
-    let raspberry : Short = 1.0;
-    let strawberry : Int = 2.0;
-    let tomato : Long = 3.0;
-    let uglifruit : Char = 65.0;
+
+    let raspberry : Short = Double.toShort(1.0);
+    let strawberry : Int = Double.toInt(2.0);
+    let tomato : Long = Double.toLong(3.0);
 
   return;
 }

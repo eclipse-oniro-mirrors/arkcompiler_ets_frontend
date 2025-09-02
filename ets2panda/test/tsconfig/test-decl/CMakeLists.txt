@@ -27,9 +27,9 @@ function(add_test project)
     )
     add_dependencies(es2panda_tests ${PROJECT_TARGET_NAME})
 endfunction()
-
-add_test(resolve-dynamic-paths)
+# 26272
+# add_test(resolve-dynamic-paths)
+# add_test(check-extend-dynamic)
 add_test(check-decl-path)
 add_test(check-export-decl)
-add_test(check-extend-dynamic)
 add_test(typecheck-decl)

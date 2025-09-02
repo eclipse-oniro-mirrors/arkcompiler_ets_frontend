@@ -16,11 +16,11 @@
 type A<T,C,U> = T | T[] | A<C,U,T>[];
 
 function check(a: A<string, Int, Boolean>) {
-  assertEQ((a as A<Int,Boolean,string>[])[0] as Int, 1 as Int)
-  assertEQ((a as A<Int,Boolean,string>[])[1] as Int, 2 as Int)
-  assertEQ(((a as A<Int,Boolean,string>[])[2] as A<Boolean, string, Int>[])[0], true as Boolean)
-  assertEQ(((a as A<Int,Boolean,string>[])[2] as A<Boolean, string, Int>[])[1], false as Boolean)
-  assertEQ((((a as A<Int,Boolean,string>[])[2] as A<Boolean, string, Int>[])[2] as A<string, Int, Boolean>[])[0], "test")
+  arktest.assertEQ((a as A<Int,Boolean,string>[])[0] as Int, 1 as Int)
+  arktest.assertEQ((a as A<Int,Boolean,string>[])[1] as Int, 2 as Int)
+  arktest.assertEQ(((a as A<Int,Boolean,string>[])[2] as A<Boolean, string, Int>[])[0], true as Boolean)
+  arktest.assertEQ(((a as A<Int,Boolean,string>[])[2] as A<Boolean, string, Int>[])[1], false as Boolean)
+  arktest.assertEQ((((a as A<Int,Boolean,string>[])[2] as A<Boolean, string, Int>[])[2] as A<string, Int, Boolean>[])[0], "test")
 }
 
 function main(): int {

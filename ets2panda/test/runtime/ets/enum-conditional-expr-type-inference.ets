@@ -20,6 +20,6 @@ function foo(p: number): Color {
 }
 
 function main() {
-    assertEQ(foo(1), Color.Green)
-    assertEQ(foo(0), Color.Red)
+    arktest.assertEQ(foo(1), Color.Green)
+    arktest.assertEQ(foo(0), Color.Red)
 }

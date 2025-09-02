@@ -28,28 +28,142 @@
 #include "ir/ts/tsClassImplements.h"
 
 namespace ark::es2panda::ir {
+
+void ClassDefinition::SetCtor(MethodDefinition *ctor)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDefinition>()->ctor_ = ctor;
+}
+
+void ClassDefinition::SetTypeParams(TSTypeParameterDeclaration *typeParams)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDefinition>()->typeParams_ = typeParams;
+}
+
+void ClassDefinition::SetOrigEnumDecl(TSEnumDeclaration *origEnumDecl)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDefinition>()->origEnumDecl_ = origEnumDecl;
+}
+
+void ClassDefinition::SetAnonClass(ClassDeclaration *anonClass)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDefinition>()->anonClass_ = anonClass;
+}
+
+void ClassDefinition::SetSuperClass(Expression *superClass)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDefinition>()->superClass_ = superClass;
+}
+
+void ClassDefinition::SetSuperTypeParams(TSTypeParameterInstantiation *superTypeParams)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDefinition>()->superTypeParams_ = superTypeParams;
+}
+
+void ClassDefinition::SetScope(varbinder::LocalScope *scope)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDefinition>()->scope_ = scope;
+}
+
+void ClassDefinition::SetModifiers(ClassDefinitionModifiers modifiers)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDefinition>()->modifiers_ = modifiers;
+}
+
+void ClassDefinition::SetInternalName(util::StringView internalName)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDefinition>()->internalName_ = internalName;
+}
+
+void ClassDefinition::EmplaceBody(AstNode *body)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    newNode->body_.emplace_back(body);
+}
+
+void ClassDefinition::ClearBody()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    newNode->body_.clear();
+}
+
+void ClassDefinition::SetValueBody(AstNode *body, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    auto &arenaVector = newNode->body_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = body;
+}
+
+[[nodiscard]] const ArenaVector<AstNode *> &ClassDefinition::Body()
+{
+    auto newNode = this->GetHistoryNodeAs<ClassDefinition>();
+    return newNode->body_;
+}
+
+[[nodiscard]] ArenaVector<AstNode *> &ClassDefinition::BodyForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    return newNode->body_;
+}
+
+void ClassDefinition::EmplaceImplements(TSClassImplements *implements)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    newNode->implements_.emplace_back(implements);
+}
+
+void ClassDefinition::ClearImplements()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    newNode->implements_.clear();
+}
+
+void ClassDefinition::SetValueImplements(TSClassImplements *implements, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    auto &arenaVector = newNode->implements_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = implements;
+}
+
+[[nodiscard]] const ArenaVector<TSClassImplements *> &ClassDefinition::Implements()
+{
+    auto newNode = this->GetHistoryNodeAs<ClassDefinition>();
+    return newNode->implements_;
+}
+
+[[nodiscard]] ArenaVector<TSClassImplements *> &ClassDefinition::ImplementsForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    return newNode->implements_;
+}
+
 const FunctionExpression *ClassDefinition::Ctor() const
 {
-    return ctor_ != nullptr ? ctor_->Value()->AsFunctionExpression() : nullptr;
+    auto const newNode = GetHistoryNode()->AsClassDefinition();
+    return newNode->ctor_ != nullptr ? newNode->ctor_->Value()->AsFunctionExpression() : nullptr;
 }
 
 bool ClassDefinition::HasPrivateMethod() const
 {
-    return std::any_of(body_.cbegin(), body_.cend(), [](auto *element) {
+    auto const body = Body();
+    return std::any_of(body.cbegin(), body.cend(), [](auto const *element) {
         return element->IsMethodDefinition() && element->AsClassElement()->IsPrivateElement();
     });
 }
 
 bool ClassDefinition::HasNativeMethod() const
 {
-    return std::any_of(body_.cbegin(), body_.cend(), [](auto *element) {
+    auto const body = Body();
+    return std::any_of(body.cbegin(), body.cend(), [](auto const *element) {
         return element->IsMethodDefinition() && element->AsMethodDefinition()->IsNative();
     });
 }
 
 bool ClassDefinition::HasComputedInstanceField() const
 {
-    return std::any_of(body_.cbegin(), body_.cend(), [](auto *element) {
+    auto const body = Body();
+    return std::any_of(body.cbegin(), body.cend(), [](auto *element) {
         return element->IsClassProperty() && element->AsClassElement()->IsComputed() &&
                !(element->AsClassElement()->Modifiers() & ir::ModifierFlags::STATIC);
     });
@@ -57,115 +171,131 @@ bool ClassDefinition::HasComputedInstanceField() const
 
 bool ClassDefinition::HasMatchingPrivateKey(const util::StringView &name) const
 {
-    return std::any_of(body_.cbegin(), body_.cend(), [&name](auto *element) {
+    auto const body = Body();
+    return std::any_of(body.cbegin(), body.cend(), [&name](auto *element) {
         return element->AsClassElement()->IsPrivateElement() && element->AsClassElement()->Id()->Name() == name;
     });
 }
 
+void ClassDefinition::TransformBase(const NodeTransformer &cb, std::string_view transformationName)
+{
+    auto const ident = Ident();
+    if (ident != nullptr) {
+        if (auto *transformedNode = cb(ident); ident != transformedNode) {
+            ident->SetTransformedNode(transformationName, transformedNode);
+            SetIdent(transformedNode->AsIdentifier());
+        }
+    }
+
+    auto const typeParam = TypeParams();
+    if (typeParam != nullptr) {
+        if (auto *transformedNode = cb(typeParam); typeParam != transformedNode) {
+            typeParam->SetTransformedNode(transformationName, transformedNode);
+            SetTypeParams(transformedNode->AsTSTypeParameterDeclaration());
+        }
+    }
+
+    auto const superClass = SuperClass();
+    if (superClass != nullptr) {
+        if (auto *transformedNode = cb(superClass); superClass != transformedNode) {
+            superClass->SetTransformedNode(transformationName, transformedNode);
+            SetSuperClass(transformedNode->AsExpression());
+        }
+    }
+
+    auto const superTypeParam = SuperTypeParams();
+    if (superTypeParam != nullptr) {
+        if (auto *transformedNode = cb(superTypeParam); superTypeParam != transformedNode) {
+            superTypeParam->SetTransformedNode(transformationName, transformedNode);
+            SetSuperTypeParams(transformedNode->AsTSTypeParameterInstantiation());
+        }
+    }
+}
+
 void ClassDefinition::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    if (ident_ != nullptr) {
-        if (auto *transformedNode = cb(ident_); ident_ != transformedNode) {
-            ident_->SetTransformedNode(transformationName, transformedNode);
-            ident_ = transformedNode->AsIdentifier();
+    TransformBase(cb, transformationName);
+
+    auto const &implement = Implements();
+    for (size_t ix = 0; ix < implement.size(); ix++) {
+        if (auto *transformedNode = cb(implement[ix]); implement[ix] != transformedNode) {
+            implement[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueImplements(transformedNode->AsTSClassImplements(), ix);
         }
     }
 
-    if (typeParams_ != nullptr) {
-        if (auto *transformedNode = cb(typeParams_); typeParams_ != transformedNode) {
-            typeParams_->SetTransformedNode(transformationName, transformedNode);
-            typeParams_ = transformedNode->AsTSTypeParameterDeclaration();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 
-    if (superClass_ != nullptr) {
-        if (auto *transformedNode = cb(superClass_); superClass_ != transformedNode) {
-            superClass_->SetTransformedNode(transformationName, transformedNode);
-            superClass_ = transformedNode->AsExpression();
-        }
-    }
-
-    if (superTypeParams_ != nullptr) {
-        if (auto *transformedNode = cb(superTypeParams_); superTypeParams_ != transformedNode) {
-            superTypeParams_->SetTransformedNode(transformationName, transformedNode);
-            superTypeParams_ = transformedNode->AsTSTypeParameterInstantiation();
-        }
-    }
-
-    for (auto *&it : VectorIterationGuard(implements_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsTSClassImplements();
-        }
-    }
-
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
-
-    if (ctor_ != nullptr) {
-        if (auto *transformedNode = cb(ctor_); ctor_ != transformedNode) {
-            ctor_->SetTransformedNode(transformationName, transformedNode);
-            ctor_ = transformedNode->AsMethodDefinition();
+    auto const &ctor = Ctor();
+    if (ctor != nullptr) {
+        if (auto *transformedNode = cb(ctor); ctor != transformedNode) {
+            ctor->SetTransformedNode(transformationName, transformedNode);
+            SetCtor(transformedNode->AsMethodDefinition());
         }
     }
 
     // Survives adding new elements to the end
     // NOLINTNEXTLINE(modernize-loop-convert)
-    for (size_t ix = 0; ix < body_.size(); ix++) {
-        if (auto *transformedNode = cb(body_[ix]); body_[ix] != transformedNode) {
-            body_[ix]->SetTransformedNode(transformationName, transformedNode);
-            body_[ix] = transformedNode;
+    auto const &body = Body();
+    for (size_t ix = 0; ix < body.size(); ix++) {
+        if (auto *transformedNode = cb(body[ix]); body[ix] != transformedNode) {
+            body[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueBody(transformedNode, ix);
         }
     }
 }
 
 void ClassDefinition::Iterate(const NodeTraverser &cb) const
 {
-    if (ident_ != nullptr) {
-        cb(ident_);
+    auto const ident = GetHistoryNodeAs<ClassDefinition>()->ident_;
+    if (ident != nullptr) {
+        cb(ident);
     }
 
-    if (typeParams_ != nullptr) {
-        cb(typeParams_);
+    auto const typeParams = GetHistoryNodeAs<ClassDefinition>()->typeParams_;
+    if (typeParams != nullptr) {
+        cb(typeParams);
     }
 
-    if (superClass_ != nullptr) {
-        cb(superClass_);
+    auto const superClass = GetHistoryNodeAs<ClassDefinition>()->superClass_;
+    if (superClass != nullptr) {
+        cb(superClass);
     }
 
-    if (superTypeParams_ != nullptr) {
-        cb(superTypeParams_);
+    auto const superTypeParams = GetHistoryNodeAs<ClassDefinition>()->superTypeParams_;
+    if (superTypeParams != nullptr) {
+        cb(superTypeParams);
     }
 
     // Survives adding new elements to the end
     // NOLINTNEXTLINE(modernize-loop-convert)
-    for (size_t ix = 0; ix < implements_.size(); ix++) {
-        cb(implements_[ix]);
+    auto const &implements = GetHistoryNodeAs<ClassDefinition>()->implements_;
+    for (auto implement : implements) {
+        cb(implement);
     }
 
     for (auto *it : VectorIterationGuard(Annotations())) {
         cb(it);
     }
 
-    if (ctor_ != nullptr) {
-        cb(ctor_);
+    auto const ctor = GetHistoryNodeAs<ClassDefinition>()->ctor_;
+    if (ctor != nullptr) {
+        cb(ctor);
     }
 
+    auto const &body = GetHistoryNodeAs<ClassDefinition>()->body_;
     // NOLINTNEXTLINE(modernize-loop-convert)
-    for (size_t ix = 0; ix < body_.size(); ix++) {
-        cb(body_[ix]);
+    for (size_t ix = 0; ix < body.size(); ix++) {
+        cb(body[ix]);
     }
 }
 
 void ClassDefinition::SetIdent(ir::Identifier *ident) noexcept
 {
-    ident_ = ident;
-    if (ident_ != nullptr) {
-        ident_->SetParent(this);
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    newNode->ident_ = ident;
+    if (ident != nullptr) {
+        ident->SetParent(this);
     }
 }
 
@@ -174,28 +304,53 @@ void ClassDefinition::Dump(ir::AstDumper *dumper) const
     auto propFilter = [](AstNode *prop) -> bool {
         return !prop->IsClassStaticBlock() || !prop->AsClassStaticBlock()->Function()->IsHidden();
     };
-    dumper->Add({{"id", AstDumper::Nullish(ident_)},
-                 {"typeParameters", AstDumper::Optional(typeParams_)},
-                 {"superClass", AstDumper::Nullish(superClass_)},
-                 {"superTypeParameters", AstDumper::Optional(superTypeParams_)},
-                 {"implements", implements_},
+    auto ctor = GetHistoryNodeAs<ClassDefinition>()->ctor_;
+    dumper->Add({{"id", AstDumper::Nullish(Ident())},
+                 {"typeParameters", AstDumper::Optional(TypeParams())},
+                 {"superClass", AstDumper::Nullish(SuperClass())},
+                 {"superTypeParameters", AstDumper::Optional(SuperTypeParams())},
+                 {"implements", Implements()},
                  {"annotations", AstDumper::Optional(Annotations())},
-                 {"constructor", AstDumper::Optional(ctor_)},
-                 {"body", body_, propFilter}});
+                 {"constructor", AstDumper::Optional(ctor)},
+                 {"body", Body(), propFilter}});
 }
 
 void ClassDefinition::DumpGlobalClass(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(IsGlobal());
-    for (auto elem : body_) {
+    ir::ClassStaticBlock *classStaticBlock = nullptr;
+    for (auto elem : Body()) {
         if (elem->IsClassProperty()) {
             elem->Dump(dumper);
             dumper->Endl();
         }
+
+        if (elem->IsClassStaticBlock()) {
+            classStaticBlock = elem->AsClassStaticBlock();
+        }
     }
-    for (auto elem : body_) {
+    for (auto elem : Body()) {
         if (elem->IsMethodDefinition()) {
             elem->Dump(dumper);
+            dumper->Endl();
+        }
+    }
+
+    if (classStaticBlock == nullptr) {
+        return;
+    }
+
+    auto bodyStmts =
+        classStaticBlock->Value()->AsFunctionExpression()->Function()->Body()->AsBlockStatement()->Statements();
+    for (auto statement : bodyStmts) {
+        if (statement->IsExpressionStatement() &&
+            statement->AsExpressionStatement()->GetExpression()->IsAssignmentExpression() &&
+            statement->AsExpressionStatement()->GetExpression()->AsAssignmentExpression()->IsIgnoreConstAssign()) {
+            // skip the dummy assignment expression created for const variable decl in the class static block.
+            continue;
+        }
+        statement->Dump(dumper);
+        if (statement != bodyStmts.back()) {
             dumper->Endl();
         }
     }
@@ -204,13 +359,14 @@ void ClassDefinition::DumpGlobalClass(ir::SrcDumper *dumper) const
 // This method is needed by OHOS CI code checker
 void ClassDefinition::DumpBody(ir::SrcDumper *dumper) const
 {
+    auto const body = Body();
     dumper->Add(" {");
-    if (!body_.empty()) {
+    if (!body.empty()) {
         dumper->IncrIndent();
         dumper->Endl();
-        for (auto elem : body_) {
+        for (auto elem : body) {
             elem->Dump(dumper);
-            if (elem == body_.back()) {
+            if (elem == body.back()) {
                 dumper->DecrIndent();
             }
             dumper->Endl();
@@ -270,7 +426,8 @@ bool ClassDefinition::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 void ClassDefinition::Dump(ir::SrcDumper *dumper) const
 {
     // NOTE: plugin API fails
-    if ((ident_->Name().StartsWith("$dynmodule")) || (ident_->Name().StartsWith("$jscall"))) {
+    auto const ident = Ident();
+    if ((ident->Name().StartsWith("$dynmodule")) || (ident->Name().StartsWith("$jscall"))) {
         return;
     }
 
@@ -292,19 +449,20 @@ void ClassDefinition::Dump(ir::SrcDumper *dumper) const
     DumpPrefix(dumper);
     ident_->Dump(dumper);
 
-    if (typeParams_ != nullptr) {
+    if (TypeParams() != nullptr) {
         dumper->Add("<");
-        typeParams_->Dump(dumper);
+        TypeParams()->Dump(dumper);
         dumper->Add("> ");
     }
 
-    if (superClass_ != nullptr) {
+    if (SuperClass() != nullptr) {
         dumper->Add(" extends ");
-        superClass_->Dump(dumper);
+        SuperClass()->Dump(dumper);
     }
 
-    DumpItems(dumper, " implements ", implements_);
-    if (!IsDeclare() || !body_.empty()) {
+    DumpItems(dumper, " implements ", Implements());
+
+    if (!IsDeclare() || !Body().empty()) {
         DumpBody(dumper);
     }
     if (IsLocal()) {
@@ -337,7 +495,7 @@ ClassDefinition *ClassDefinition::Construct(ArenaAllocator *allocator)
 {
     ArenaVector<AstNode *> body {allocator->Adapter()};
     return allocator->New<ClassDefinition>(allocator, nullptr, std::move(body), ClassDefinitionModifiers::NONE,
-                                           ModifierFlags::NONE, Language::Id::COUNT);
+                                           ModifierFlags::NONE, Language::Id::COUNT, history_);
 }
 
 void ClassDefinition::CopyTo(AstNode *other) const
@@ -364,9 +522,9 @@ void ClassDefinition::CopyTo(AstNode *other) const
     otherImpl->functionalReferenceReferencedMethod_ = functionalReferenceReferencedMethod_;
     otherImpl->exportedClasses_ = exportedClasses_;
 
-    JsDocAllowed<AnnotationAllowed<TypedAstNode>>::CopyTo(other);
+    AnnotationAllowed<TypedAstNode>::CopyTo(other);
 }
 
-int ClassDefinition::classCounter_ = 0;
+std::atomic<int> ClassDefinition::classCounter_ = 0;
 
 }  // namespace ark::es2panda::ir

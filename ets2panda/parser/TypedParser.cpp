@@ -130,7 +130,11 @@ bool TypedParser::IsNamespaceDecl()
     }
     auto savedPos = Lexer()->Save();
     Lexer()->NextToken();
-    bool isNamespaceDecl = Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT;
+    // namespace is a soft keyword, so it can be used as an identifier outside declarations
+    // If followed by an identifier (literal or keyword), it's treated as a declaration
+    // Using keywords as identifiers is invalid, but that error is handled later during parsing
+    bool isNamespaceDecl =
+        Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT || Lexer()->GetToken().IsKeyword();
     Lexer()->Rewind(savedPos);
     return isNamespaceDecl;
 }
@@ -141,7 +145,7 @@ ir::Statement *TypedParser::ParsePotentialExpressionStatement(StatementParsingFl
 
     switch (Lexer()->GetToken().KeywordType()) {
         case lexer::TokenType::KEYW_TYPE: {
-            const auto maybeAlias = ParseTypeAliasDeclaration();
+            const auto maybeAlias = ParseTypeAliasStatement();
             if (maybeAlias != nullptr) {
                 return maybeAlias;
             }
@@ -192,6 +196,9 @@ ir::TSTypeAssertion *TypedParser::ParseTypeAssertion()
 
     Lexer()->NextToken();  // eat '>'
     ir::Expression *expression = ParseExpression();
+    if (expression == nullptr) {
+        return nullptr;
+    }
     auto *typeAssertion = AllocNode<ir::TSTypeAssertion>(typeAnnotation, expression);
     ES2PANDA_ASSERT(typeAssertion != nullptr);
     typeAssertion->SetRange({start, Lexer()->GetToken().End()});
@@ -234,7 +241,7 @@ ir::ArrowFunctionExpression *TypedParser::ParseGenericArrowFunction()
     ES2PANDA_ASSERT(Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LESS_THAN);
     lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
 
-    auto typeParamDeclOptions = TypeAnnotationParsingOptions::NO_OPTS;
+    auto typeParamDeclOptions = TypeAnnotationParsingOptions::REPORT_ERROR;
     ir::TSTypeParameterDeclaration *typeParamDecl = ParseTypeParameterDeclaration(&typeParamDeclOptions);
 
     if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
@@ -282,7 +289,7 @@ ir::TSModuleDeclaration *TypedParser::ParseAmbientExternalModuleDeclaration(cons
 
         name = AllocNode<ir::StringLiteral>(Lexer()->GetToken().String());
     }
-
+    ES2PANDA_ASSERT(name != nullptr);
     name->SetRange(Lexer()->GetToken().Loc());
 
     Lexer()->NextToken();
@@ -497,6 +504,7 @@ ir::Statement *TypedParser::ParseInterfaceDeclaration(bool isStatic)
     auto members = ParseTypeLiteralOrInterface();
 
     auto *body = AllocNode<ir::TSInterfaceBody>(std::move(members));
+    ES2PANDA_ASSERT(body != nullptr);
     body->SetRange({bodyStart, Lexer()->GetToken().End()});
 
     const auto isExternal = IsExternal();
@@ -573,10 +581,6 @@ ArenaVector<ir::AstNode *> TypedParser::ParseTypeLiteralOrInterfaceBody()
         util::ErrorRecursionGuard infiniteLoopBlocker(Lexer());
 
         ir::AstNode *member = ParseTypeLiteralOrInterfaceMember();
-        if (member == nullptr) {
-            break;
-        }
-
         if (member->IsMethodDefinition() && member->AsMethodDefinition()->Function() != nullptr &&
             member->AsMethodDefinition()->Function()->IsOverload() &&
             member->AsMethodDefinition()->Function()->Body() != nullptr) {
@@ -595,10 +599,6 @@ ArenaVector<ir::AstNode *> TypedParser::ParseTypeLiteralOrInterfaceBody()
             break;
         }
 
-        if (Lexer()->GetToken().Type() == lexer::TokenType::JS_DOC_START) {
-            continue;
-        }
-
         if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COMMA &&
             Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_SEMI_COLON) {
             if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
@@ -609,8 +609,9 @@ ArenaVector<ir::AstNode *> TypedParser::ParseTypeLiteralOrInterfaceBody()
                 LogExpectedToken(lexer::TokenType::PUNCTUATOR_COMMA);
             }
 
-            if (Lexer()->GetToken().IsKeyword() && ((Lexer()->GetToken().Type() != lexer::TokenType::KEYW_STATIC) &&
-                                                    (Lexer()->GetToken().Type() != lexer::TokenType::KEYW_PRIVATE))) {
+            if (Lexer()->GetToken().IsKeyword() && (Lexer()->GetToken().Type() != lexer::TokenType::KEYW_STATIC &&
+                                                    Lexer()->GetToken().Type() != lexer::TokenType::KEYW_PRIVATE &&
+                                                    Lexer()->GetToken().Type() != lexer::TokenType::KEYW_DEFAULT)) {
                 Lexer()->GetToken().SetTokenType(lexer::TokenType::LITERAL_IDENT);
                 Lexer()->GetToken().SetTokenStr(ERROR_LITERAL);
             }
@@ -701,8 +702,9 @@ ir::TSEnumDeclaration *TypedParser::ParseEnumMembers(ir::Identifier *key, const 
         },
         &endLoc, true);
 
-    auto *enumDeclaration = AllocNode<ir::TSEnumDeclaration>(Allocator(), key, std::move(members),
-                                                             ir::TSEnumDeclaration::ConstructorFlags {isConst});
+    auto *enumDeclaration =
+        AllocNode<ir::TSEnumDeclaration>(Allocator(), key, std::move(members),
+                                         ir::TSEnumDeclaration::ConstructorFlags {isConst}, GetContext().GetLanguage());
     ES2PANDA_ASSERT(enumDeclaration != nullptr);
     enumDeclaration->SetRange({enumStart, endLoc});
 
@@ -1293,7 +1295,6 @@ ir::AstNode *TypedParser::ParseTypeParameterInstantiationImpl(TypeAnnotationPars
         TypeAnnotationParsingOptions tmpOptions = *options &= ~TypeAnnotationParsingOptions::IGNORE_FUNCTION_TYPE;
         // Need to parse correctly the cases like `x: T|C<T|U>`
         tmpOptions &= ~TypeAnnotationParsingOptions::DISALLOW_UNION;
-        tmpOptions |= TypeAnnotationParsingOptions::ANNOTATION_NOT_ALLOW;
         ir::TypeNode *currentParam = ParseTypeAnnotation(&tmpOptions);
 
         if (currentParam == nullptr) {
@@ -1512,14 +1513,6 @@ ParserStatus TypedParser::ValidateArrowParameter(ir::Expression *expr, bool *see
 
             [[fallthrough]];
         }
-        case ir::AstNodeType::REST_ELEMENT: {
-            if (expr->AsRestElement()->IsOptional()) {
-                LogError(diagnostic::REST_PARAM_CANNOT_BE_OPTIONAL, {}, expr->Start());
-            }
-
-            ValidateArrowParameterBindings(expr->AsRestElement()->Argument());
-            return ParserStatus::HAS_COMPLEX_PARAM;
-        }
         case ir::AstNodeType::IDENTIFIER: {
             const util::StringView &identifier = expr->AsIdentifier()->Name();
             bool isOptional = expr->AsIdentifier()->IsOptional();
@@ -1549,6 +1542,11 @@ ParserStatus TypedParser::ValidateArrowParameter(ir::Expression *expr, bool *see
     }
     LogError(diagnostic::INSUFFICIENT_PARAM_IN_ARROW_FUN);
     return ParserStatus::NO_OPTS;
+}
+
+ir::Statement *TypedParser::ParseTypeAliasStatement()
+{
+    return ParseTypeAliasDeclaration();
 }
 
 }  // namespace ark::es2panda::parser

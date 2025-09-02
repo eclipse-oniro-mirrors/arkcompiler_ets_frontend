@@ -20,5 +20,5 @@ function f(p: int) {
 }
 
 function main() {
-    assertEQ(f(1), 2)
+    arktest.assertEQ(f(1), 2)
 }

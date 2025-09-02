@@ -18,6 +18,6 @@
     SECOND = 12345678910
  }
 
- let a: int = /* @@ label */E.FIRST
+ let a: int = E.FIRST
 
- /* @@@ label Error TypeError: Type 'long' cannot be assigned to type 'int' */
+ /* @@? 16:2 Error TypeError: Type 'Long' cannot be assigned to type 'Int' */

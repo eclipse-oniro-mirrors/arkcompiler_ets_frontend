@@ -19,7 +19,7 @@ let show = (this: A): string => {
     return "Hi," + this.name;
 }
 
-assertEQ(show(a), "Hi,Bob")
-assertEQ(a.show(), "Hi,Bob")
-assertEQ(new A().show(), "Hi,Bob")
-assertEQ(show(new A()), "Hi,Bob")
+arktest.assertEQ(show(a), "Hi,Bob")
+arktest.assertEQ(a.show(), "Hi,Bob")
+arktest.assertEQ(new A().show(), "Hi,Bob")
+arktest.assertEQ(show(new A()), "Hi,Bob")

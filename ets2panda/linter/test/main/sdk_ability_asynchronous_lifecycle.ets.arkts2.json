@@ -1,0 +1,128 @@
+{
+    "copyright": [
+        "Copyright (c) 2024 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 22,
+            "column": 10,
+            "endLine": 24,
+            "endColumn": 5,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 10,
+            "endLine": 28,
+            "endColumn": 14,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 3,
+            "endLine": 35,
+            "endColumn": 4,
+            "problem": "LimitedVoidTypeFromSdk",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(sdk-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 9,
+            "endLine": 32,
+            "endColumn": 18,
+            "problem": "SdkAbilityAsynchronousLifecycle",
+            "suggest": "",
+            "rule": "1.2 Void cannot be combined. OnDestroy/onDisconnect (The return type of the method is now void | Promise) needs to be split into two interfaces. (sdk-ability-asynchronous-lifecycle)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 3,
+            "endLine": 42,
+            "endColumn": 4,
+            "problem": "LimitedVoidTypeFromSdk",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(sdk-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 9,
+            "endLine": 39,
+            "endColumn": 18,
+            "problem": "SdkAbilityAsynchronousLifecycle",
+            "suggest": "",
+            "rule": "1.2 Void cannot be combined. OnDestroy/onDisconnect (The return type of the method is now void | Promise) needs to be split into two interfaces. (sdk-ability-asynchronous-lifecycle)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 9,
+            "endLine": 46,
+            "endColumn": 18,
+            "problem": "SdkAbilityAsynchronousLifecycle",
+            "suggest": "",
+            "rule": "1.2 Void cannot be combined. OnDestroy/onDisconnect (The return type of the method is now void | Promise) needs to be split into two interfaces. (sdk-ability-asynchronous-lifecycle)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 9,
+            "endLine": 53,
+            "endColumn": 21,
+            "problem": "SdkAbilityAsynchronousLifecycle",
+            "suggest": "",
+            "rule": "1.2 Void cannot be combined. OnDestroy/onDisconnect (The return type of the method is now void | Promise) needs to be split into two interfaces. (sdk-ability-asynchronous-lifecycle)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 3,
+            "endLine": 63,
+            "endColumn": 4,
+            "problem": "LimitedVoidTypeFromSdk",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(sdk-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 3,
+            "endLine": 60,
+            "endColumn": 12,
+            "problem": "SdkAbilityAsynchronousLifecycle",
+            "suggest": "",
+            "rule": "1.2 Void cannot be combined. OnDestroy/onDisconnect (The return type of the method is now void | Promise) needs to be split into two interfaces. (sdk-ability-asynchronous-lifecycle)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 3,
+            "endLine": 70,
+            "endColumn": 4,
+            "problem": "LimitedVoidTypeFromSdk",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(sdk-limited-void-type)",
+            "severity": "ERROR"
+        }
+    ]
+}

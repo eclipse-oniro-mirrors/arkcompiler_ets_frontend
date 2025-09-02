@@ -28,5 +28,5 @@ function main(): void {
 
     obj.field = 100;
     let get_field = obj._field;
-    assertEQ(get_field, 100)
+    arktest.assertEQ(get_field, 100)
 }

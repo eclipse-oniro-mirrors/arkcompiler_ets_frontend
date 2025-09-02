@@ -17,7 +17,7 @@ class A<T> {}
 
 function main(): void {
     let i: /* @@ label */A|undefined = undefined;
-    assertEQ(i, undefined);
+    arktest.assertEQ(i, undefined);
 }
 
 /* @@@ label Error TypeError: Type 'A<T>' is generic but type argument were not provided.  */

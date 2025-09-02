@@ -35,14 +35,14 @@ let u3: A<string>|A<Int> = new A<Int>(11)
 let u4: A<string>|A<Int> = new A<string>('a')
 
 function main() {
-    assertEQ(u1.fld, 'b')
-    assertEQ(u2.fld, 10)
+    arktest.assertEQ(u1.fld, 'b')
+    arktest.assertEQ(u2.fld, 10)
 
-    assertEQ(u3.fld, 11)
-    assertEQ(u4.fld, 'a')
+    arktest.assertEQ(u3.fld, 11)
+    arktest.assertEQ(u4.fld, 'a')
 }
 
-/* @@? 38:14 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 39:14 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 41:14 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 42:14 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 38:22 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 39:22 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 41:22 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 42:22 Error TypeError: Member type must be the same for all union objects. */

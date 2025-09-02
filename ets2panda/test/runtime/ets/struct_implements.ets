@@ -23,5 +23,5 @@ struct A implements I {
 
 function main() {
     let a: I = new A();
-    assertEQ(a.fn(), 42)
+    arktest.assertEQ(a.fn(), 42)
 }

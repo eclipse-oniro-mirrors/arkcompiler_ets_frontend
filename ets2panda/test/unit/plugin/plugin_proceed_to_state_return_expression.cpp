@@ -51,7 +51,7 @@ static std::string source = R"(
 function foo(): string {
 }
 let x = foo();
-assertEQ(x, "hello");
+arktest.assertEQ(x, "hello");
 )";
 
 static es2panda_Impl *impl = nullptr;

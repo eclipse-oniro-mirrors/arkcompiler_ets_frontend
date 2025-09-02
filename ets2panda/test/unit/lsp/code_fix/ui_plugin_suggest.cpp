@@ -17,11 +17,9 @@
 
 #include <gtest/gtest.h>
 
-#include "ir/astNode.h"
 #include "lsp/include/register_code_fix/ui_plugin_suggest.h"
 #include "lsp/include/internal_api.h"
 #include "public/es2panda_lib.h"
-#include "public/public.h"
 
 namespace {
 
@@ -44,8 +42,6 @@ void AssertDiagnosticContainsCodeAndMessage(const DiagnosticReferences &suggest,
 
 TEST_F(LspUISuggestionTests, UIPluginsErrorTest1)
 {
-    using ark::es2panda::ir::AstNode;
-    using ark::es2panda::public_lib::Context;
     Initializer initializer = Initializer();
     std::vector<std::string> files = {"ui_error1.ets"};
     std::vector<std::string> texts = {R"delimiter(function main() {})delimiter"};
@@ -60,6 +56,7 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest1)
     const char *dmessage1 = "origin {}";
     const size_t argc1 = 1;
     const char *substitutionCode = "replace b";
+    const char *title = "Title:";
     const char *dmessage2 = "error";
     const size_t argc0 = 0;
     const size_t index1 = 1;
@@ -68,17 +65,18 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest1)
     const size_t line2 = 0;
     const int code = 4000;
     auto suggestionkind = initializer.CreateDiagnosticKind(ctx, dmessage1, ES2PANDA_PLUGIN_SUGGESTION);
-    auto suggestionInfo = initializer.CreateSuggestionInfo(ctx, suggestionkind, params, argc1, substitutionCode);
     auto diagnostikind = initializer.CreateDiagnosticKind(ctx, dmessage2, ES2PANDA_PLUGIN_ERROR);
-    auto diagnosticInfo = initializer.CreateDiagnosticInfo(ctx, diagnostikind, nullptr, argc0);
     es2panda_SourcePosition *left = initializer.CreateSourcePosition(ctx, index1, line1);
     es2panda_SourcePosition *right = initializer.CreateSourcePosition(ctx, index2, line2);
     es2panda_SourceRange *range = initializer.CreateSourceRange(ctx, left, right);
-    initializer.LogDiagnosticWithSuggestion(ctx, diagnosticInfo, suggestionInfo, range);
+    auto suggestionInfo =
+        initializer.CreateSuggestionInfo(ctx, suggestionkind, params, argc1, substitutionCode, title, range);
+    auto diagnosticInfo = initializer.CreateDiagnosticInfo(ctx, diagnostikind, nullptr, argc0, left);
+    initializer.LogDiagnosticWithSuggestion(ctx, diagnosticInfo, suggestionInfo);
     auto suggest = lspApi->getSyntacticDiagnostics(ctx);
     AssertDiagnosticContainsCodeAndMessage(suggest, code, dmessage2);
     auto result = ark::es2panda::lsp::UIPluginSuggest::GetUIPluginCodeFixes(ctx, offset, false);
-    ASSERT_EQ(result.at(0).textChanges.at(0).newText, substitutionCode);
+    ASSERT_EQ(result.at(0).changes.at(0).textChanges.at(0).newText, substitutionCode);
     std::vector<int> codes;
     codes.emplace_back(code);
     CodeFixOptions emptyOptions;
@@ -91,8 +89,6 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest1)
 
 TEST_F(LspUISuggestionTests, UIPluginsErrorTest2)
 {
-    using ark::es2panda::ir::AstNode;
-    using ark::es2panda::public_lib::Context;
     Initializer initializer = Initializer();
     std::vector<std::string> files = {"ui_error2.ets"};
     std::vector<std::string> texts = {R"delimiter(function main() {})delimiter"};
@@ -126,16 +122,13 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest2)
 
 TEST_F(LspUISuggestionTests, UIPluginsErrorTest3)
 {
-    using ark::es2panda::ir::AstNode;
-    using ark::es2panda::public_lib::Context;
     Initializer initializer = Initializer();
-    std::vector<std::string> files = {"ui_error3.ets"};
-    std::vector<std::string> texts = {R"delimiter(function main() {})delimiter"};
-    auto filePaths = CreateTempFile(files, texts);
-    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto ctx =
+        initializer.CreateContext("ui_error3.ets", ES2PANDA_STATE_CHECKED, R"delimiter(function main() {})delimiter");
     LSPAPI const *lspApi = GetImpl();
     const char *dmessage1 = "origin a";
     const char *substitutionCode = "replace b";
+    const char *title1 = "Title1:";
     const char *dmessage2 = "error";
     const size_t argc0 = 0;
     const size_t index1 = 0;
@@ -144,23 +137,26 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest3)
     const size_t line2 = 0;
     const int code = 4000;
     auto suggestionkind = initializer.CreateDiagnosticKind(ctx, dmessage1, ES2PANDA_PLUGIN_SUGGESTION);
-    auto suggestionInfo = initializer.CreateSuggestionInfo(ctx, suggestionkind, nullptr, argc0, substitutionCode);
     auto diagnostikind = initializer.CreateDiagnosticKind(ctx, dmessage2, ES2PANDA_PLUGIN_ERROR);
-    auto diagnosticInfo = initializer.CreateDiagnosticInfo(ctx, diagnostikind, nullptr, argc0);
     es2panda_SourcePosition *left = initializer.CreateSourcePosition(ctx, index1, line1);
     es2panda_SourcePosition *right = initializer.CreateSourcePosition(ctx, index2, line2);
     es2panda_SourceRange *range = initializer.CreateSourceRange(ctx, left, right);
-    initializer.LogDiagnosticWithSuggestion(ctx, diagnosticInfo, suggestionInfo, range);
+    auto suggestionInfo =
+        initializer.CreateSuggestionInfo(ctx, suggestionkind, nullptr, argc0, substitutionCode, title1, range);
+    auto diagnosticInfo = initializer.CreateDiagnosticInfo(ctx, diagnostikind, nullptr, argc0, left);
+    initializer.LogDiagnosticWithSuggestion(ctx, diagnosticInfo, suggestionInfo);
 
     const char *substitutionCode2 = "replace c";
+    const char *title2 = "Title2:";
     auto suggestionkind2 = initializer.CreateDiagnosticKind(ctx, dmessage1, ES2PANDA_PLUGIN_SUGGESTION);
-    auto suggestionInfo2 = initializer.CreateSuggestionInfo(ctx, suggestionkind2, nullptr, argc0, substitutionCode2);
     auto diagnostikind2 = initializer.CreateDiagnosticKind(ctx, dmessage2, ES2PANDA_PLUGIN_ERROR);
-    auto diagnosticInfo2 = initializer.CreateDiagnosticInfo(ctx, diagnostikind2, nullptr, argc0);
     es2panda_SourcePosition *left2 = initializer.CreateSourcePosition(ctx, index1, line1);
     es2panda_SourcePosition *right2 = initializer.CreateSourcePosition(ctx, index2, line2);
     es2panda_SourceRange *range2 = initializer.CreateSourceRange(ctx, left2, right2);
-    initializer.LogDiagnosticWithSuggestion(ctx, diagnosticInfo2, suggestionInfo2, range2);
+    auto suggestionInfo2 =
+        initializer.CreateSuggestionInfo(ctx, suggestionkind2, nullptr, argc0, substitutionCode2, title2, range2);
+    auto diagnosticInfo2 = initializer.CreateDiagnosticInfo(ctx, diagnostikind2, nullptr, argc0, left2);
+    initializer.LogDiagnosticWithSuggestion(ctx, diagnosticInfo2, suggestionInfo2);
 
     auto suggest = lspApi->getSyntacticDiagnostics(ctx);
     AssertDiagnosticContainsCodeAndMessage(suggest, code, dmessage2);
@@ -174,6 +170,57 @@ TEST_F(LspUISuggestionTests, UIPluginsErrorTest3)
     auto fixAll = ark::es2panda::lsp::GetCombinedCodeFixImpl(ctx, fixId, emptyOptions);
     const size_t expectedCount = 2;
     ASSERT_EQ(fixAll.changes_.size(), expectedCount);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspUISuggestionTests, UIPluginsErrorTest4)
+{
+    Initializer initializer = Initializer();
+    std::vector<std::string> files = {"ui_error1.ets"};
+    std::vector<std::string> texts = {R"delimiter(function main() { return 1 })delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    int const offset = 9;
+    // NOLINTNEXTLINE
+    const char *params[] = {
+        "a",
+    };
+    const char *dmessage1 = "origin {}";
+    const size_t argc1 = 1;
+    const char *substitutionCode = "replace b";
+    const char *title = "Title:";
+    const char *dmessage2 = "error";
+    const size_t argc0 = 0;
+    const size_t index1 = 16;  // suggestion left
+    const size_t line1 = 0;
+    const size_t index2 = 27;  // suggestion right
+    const size_t line2 = 0;
+    const size_t index3 = 9;  // diag pos
+    const size_t line3 = 0;
+    const size_t index4 = 9;  // diag right virtual
+    const int code = 4000;
+    auto suggestionkind = initializer.CreateDiagnosticKind(ctx, dmessage1, ES2PANDA_PLUGIN_SUGGESTION);
+    auto diagnostikind = initializer.CreateDiagnosticKind(ctx, dmessage2, ES2PANDA_PLUGIN_ERROR);
+    es2panda_SourcePosition *left = initializer.CreateSourcePosition(ctx, index1, line1);
+    es2panda_SourcePosition *right = initializer.CreateSourcePosition(ctx, index2, line2);
+    es2panda_SourcePosition *diagPos = initializer.CreateSourcePosition(ctx, index3, line3);
+    es2panda_SourceRange *range = initializer.CreateSourceRange(ctx, left, right);
+    auto suggestionInfo =
+        initializer.CreateSuggestionInfo(ctx, suggestionkind, params, argc1, substitutionCode, title, range);
+    auto diagnosticInfo = initializer.CreateDiagnosticInfo(ctx, diagnostikind, nullptr, argc0, diagPos);
+    initializer.LogDiagnosticWithSuggestion(ctx, diagnosticInfo, suggestionInfo);
+    auto suggest = lspApi->getSyntacticDiagnostics(ctx);
+    AssertDiagnosticContainsCodeAndMessage(suggest, code, dmessage2);
+    auto result = ark::es2panda::lsp::UIPluginSuggest::GetUIPluginCodeFixes(ctx, offset, false);
+    ASSERT_EQ(result.at(0).changes.at(0).textChanges.at(0).newText, substitutionCode);
+    std::vector<int> codes;
+    codes.emplace_back(code);
+    CodeFixOptions emptyOptions;
+    auto fix = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(ctx, index3, index4, codes, emptyOptions);
+    ASSERT_EQ(fix.at(0).changes_.at(0).textChanges.at(0).newText, substitutionCode);
+    ASSERT_EQ(fix.at(0).changes_.at(0).textChanges.at(0).span.length, index2 - index1);
 
     initializer.DestroyContext(ctx);
 }

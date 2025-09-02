@@ -20,6 +20,4 @@ interface inter <T>{
 
 function foo(i: Partial<inter<String>>): void {}
 
-/* @@? 18:15 Error TypeError: The type of parameter 'A' cannot be inferred */
-/* @@? 18:15 Error TypeError: The type of parameter 'A' cannot be inferred */
 /* @@? 18:17 Error SyntaxError: Parameter declaration should have an explicit type annotation. */

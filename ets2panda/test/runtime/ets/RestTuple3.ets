@@ -35,10 +35,10 @@ function main() {
     let res5 = A.sum(...([30, 40, 50] as [number, number, number]))
     let res6 = A.sum2(10, ...([30, 40, 50] as [number, number, number]))
 
-    assertEQ(res, 60)
-    assertEQ(res2, 100)
-    assertEQ(res3, 120)
-    assertEQ(res4, 130)
-    assertEQ(res5, 120)
-    assertEQ(res6, 130)
+    arktest.assertEQ(res, 60)
+    arktest.assertEQ(res2, 100)
+    arktest.assertEQ(res3, 120)
+    arktest.assertEQ(res4, 130)
+    arktest.assertEQ(res5, 120)
+    arktest.assertEQ(res6, 130)
 }

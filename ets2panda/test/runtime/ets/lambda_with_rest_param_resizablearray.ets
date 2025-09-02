@@ -27,6 +27,6 @@ let fob:(...args:number[])=>number = (...args:number[]):number =>{
 
 
 function main(){
-    assertEQ(foa("1"), "c")
-    assertEQ(fob(1, 2, 3, 4), 10)
+    arktest.assertEQ(foa("1"), "c")
+    arktest.assertEQ(fob(1.0, 2.0, 3.0, 4.0), 10)
 }

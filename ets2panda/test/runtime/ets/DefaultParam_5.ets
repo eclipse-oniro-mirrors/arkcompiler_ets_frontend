@@ -14,19 +14,19 @@
  */
 
 function main():void{
-    assertEQ(foo2(), 5)
+    arktest.assertEQ(foo2(), 5)
 
     let bar = new Bar();
-    assertEQ(bar.bar2(), 5)
+    arktest.assertEQ(bar.bar2(), 5)
 
-    assertEQ(goo1(), 15)
-    assertEQ(goo2(), 15)
-    assertEQ(goo2((a0:int):int=>{return 25;}), 25)
+    arktest.assertEQ(goo1(), 15)
+    arktest.assertEQ(goo2(), 15)
+    arktest.assertEQ(goo2((a0:int):int=>{return 25;}), 25)
 
-    assertEQ(boo1(), 18)
-    assertEQ(boo2(1,2,3), 6)
+    arktest.assertEQ(boo1(), 18)
+    arktest.assertEQ(boo2(1,2,3), 6)
 
-    assertEQ(doo1(), 8)
+    arktest.assertEQ(doo1(), 8)
 
     too1();
     too2();

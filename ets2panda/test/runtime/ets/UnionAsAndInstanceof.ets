@@ -17,17 +17,17 @@ function assert_ccexc(f: () => void) {
     try {
         f();
     } catch (e) {
-        assertTrue(e instanceof ClassCastError)
+        arktest.assertTrue(e instanceof ClassCastError)
         return;
     }
-    assertTrue(false, "exception expected")
+    arktest.assertTrue(false, "exception expected")
 }
 
 function assert_nothrow(f: () => void) {
     try {
         f();
     } catch (e) {
-        assertTrue(false, "unexpected exception")
+        arktest.assertTrue(false, "unexpected exception")
     }
 }
 

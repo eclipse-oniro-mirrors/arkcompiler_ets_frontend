@@ -1,0 +1,448 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 19,
+            "column": 8,
+            "endLine": 19,
+            "endColumn": 25,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"isArgumentsObject\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 8,
+            "endLine": 20,
+            "endColumn": 27,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"isGeneratorFunction\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 8,
+            "endLine": 21,
+            "endColumn": 25,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"isGeneratorObject\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 8,
+            "endLine": 22,
+            "endColumn": 31,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"isModuleNamespaceObject\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 8,
+            "endLine": 23,
+            "endColumn": 15,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"isProxy\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 8,
+            "endLine": 24,
+            "endColumn": 22,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"isSymbolObject\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 13,
+            "endLine": 30,
+            "endColumn": 21,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"addAfter\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 13,
+            "endLine": 32,
+            "endColumn": 22,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"addBefore\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 13,
+            "endLine": 34,
+            "endColumn": 20,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"replace\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 27,
+            "endLine": 39,
+            "endColumn": 45,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"encodeToStringSync\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 17,
+            "endLine": 40,
+            "endColumn": 30,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"constructor\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 21,
+            "endLine": 41,
+            "endColumn": 24,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"put\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 47,
+            "endLine": 43,
+            "endColumn": 60,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"constructor\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 43,
+            "endLine": 43,
+            "endColumn": 62,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 20,
+            "endLine": 44,
+            "endColumn": 31,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"getCapacity\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 6,
+            "endLine": 46,
+            "endColumn": 9,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"put\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 20,
+            "endLine": 47,
+            "endColumn": 34,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"getCreateCount\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 6,
+            "endLine": 49,
+            "endColumn": 19,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"getMatchCount\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 33,
+            "endLine": 51,
+            "endColumn": 45,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"getMissCount\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 33,
+            "endLine": 52,
+            "endColumn": 44,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"getPutCount\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 6,
+            "endLine": 53,
+            "endColumn": 20,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"updateCapacity\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 6,
+            "endLine": 54,
+            "endColumn": 9,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"put\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 6,
+            "endLine": 55,
+            "endColumn": 12,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"length\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 6,
+            "endLine": 56,
+            "endColumn": 17,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"getCapacity\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 33,
+            "endLine": 57,
+            "endColumn": 48,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"getRemovalCount\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 33,
+            "endLine": 60,
+            "endColumn": 36,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"put\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 21,
+            "endLine": 63,
+            "endColumn": 27,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"length\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 5,
+            "endLine": 63,
+            "endColumn": 18,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"constructor\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 1,
+            "endLine": 63,
+            "endColumn": 20,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 66,
+            "column": 24,
+            "endLine": 66,
+            "endColumn": 38,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"getErrorString\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 16,
+            "endLine": 68,
+            "endColumn": 22,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"printf\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 72,
+            "column": 22,
+            "endLine": 72,
+            "endColumn": 36,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"promiseWrapper\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 63,
+            "endLine": 74,
+            "endColumn": 69,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stream\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 75,
+            "column": 24,
+            "endLine": 75,
+            "endColumn": 40,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"constructor\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 78,
+            "column": 1,
+            "endLine": 78,
+            "endColumn": 9,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 79,
+            "column": 1,
+            "endLine": 79,
+            "endColumn": 9,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 80,
+            "column": 1,
+            "endLine": 80,
+            "endColumn": 9,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 81,
+            "column": 1,
+            "endLine": 81,
+            "endColumn": 9,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 82,
+            "column": 1,
+            "endLine": 82,
+            "endColumn": 9,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 83,
+            "column": 1,
+            "endLine": 83,
+            "endColumn": 9,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 85,
+            "column": 14,
+            "endLine": 85,
+            "endColumn": 20,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"decode\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 93,
+            "column": 25,
+            "endLine": 93,
+            "endColumn": 31,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"encode\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 28,
+            "endLine": 98,
+            "endColumn": 38,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"encodeInto\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        }
+    ]
+}

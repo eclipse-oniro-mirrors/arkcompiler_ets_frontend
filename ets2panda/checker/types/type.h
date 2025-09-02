@@ -16,6 +16,7 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_TYPES_TYPE_H
 #define ES2PANDA_COMPILER_CHECKER_TYPES_TYPE_H
 
+#include <mutex>
 #include "generated/signatures.h"
 #include "checker/types/typeMapping.h"
 #include "checker/types/typeRelation.h"
@@ -28,12 +29,11 @@ class Variable;
 namespace ark::es2panda::checker {
 class ObjectDescriptor;
 class GlobalTypesHolder;
-class ETSDynamicType;
 class ETSAsyncFuncReturnType;
 class ETSChecker;
-class ETSDynamicFunctionType;
 class ETSTypeParameter;
 class ETSEnumType;
+class GradualType;
 
 // CC-OFFNXT(G.PRE.02) name part
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
@@ -44,13 +44,16 @@ class ETSStringType;
 class ETSBigIntType;
 class ETSResizableArrayType;
 
-using Substitution = ArenaMap<ETSTypeParameter *, Type *>;
+using Substitution = std::map<ETSTypeParameter *, Type *>;
+using ArenaSubstitution = ArenaMap<ETSTypeParameter *, Type *>;
 
 class Type {
 public:
     explicit Type(TypeFlag flag) : typeFlags_(flag)
     {
-        static uint64_t typeId = 0;
+        std::lock_guard<std::mutex> lock(idLock_);
+        static uint32_t typeId = 0;
+        ES2PANDA_ASSERT(typeId < std::numeric_limits<uint32_t>::max());
         id_ = ++typeId;
     }
 
@@ -58,6 +61,7 @@ public:
     NO_MOVE_SEMANTIC(Type);
 
     virtual ~Type() = default;
+    static std::mutex idLock_;
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define TYPE_IS_CHECKS(typeFlag, typeName)                                                  \
@@ -75,12 +79,20 @@ public:
     /* CC-OFFNXT(G.PRE.02) name part*/                                                      \
     typeName *As##typeName()                                                                \
     {                                                                                       \
+        if (IsTypeError()) {                                                                \
+            LOG(INFO, ES2PANDA) << "Erroneous cast to '" << #typeName << "' type.";         \
+            throw std::exception();                                                         \
+        }                                                                                   \
         ES2PANDA_ASSERT(Is##typeName());                                                    \
         /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed*/ \
         return reinterpret_cast<typeName *>(this); /* CC-OFF(G.PRE.02) name part*/          \
     }                                                                                       \
     const typeName *As##typeName() const                                                    \
     {                                                                                       \
+        if (IsTypeError()) {                                                                \
+            LOG(INFO, ES2PANDA) << "Erroneous cast to '" << #typeName << "' type.";         \
+            throw std::exception();                                                         \
+        }                                                                                   \
         ES2PANDA_ASSERT(Is##typeName());                                                    \
         /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed*/ \
         return reinterpret_cast<const typeName *>(this);                                    \
@@ -89,6 +101,7 @@ public:
 #undef TYPE_AS_CASTS
 
     bool IsETSResizableArrayType() const;
+    bool IsETSReadonlyArrayType() const;
     bool IsETSStringType() const;
     bool IsETSCharType() const;
     bool IsETSBigIntType() const;
@@ -109,6 +122,8 @@ public:
     bool PossiblyETSString() const;
     bool PossiblyETSValueTyped() const;
     bool PossiblyETSValueTypedExceptNullish() const;
+
+    bool PossiblyInForeignDomain() const;
 
     ETSStringType *AsETSStringType()
     {
@@ -140,22 +155,7 @@ public:
         return reinterpret_cast<const ETSResizableArrayType *>(this);
     }
 
-    bool IsETSDynamicType() const
-    {
-        return IsETSObjectType() && HasTypeFlag(TypeFlag::ETS_DYNAMIC_FLAG);
-    }
-
-    ETSDynamicType *AsETSDynamicType()
-    {
-        ES2PANDA_ASSERT(IsETSDynamicType());
-        return reinterpret_cast<ETSDynamicType *>(this);
-    }
-
-    const ETSDynamicType *AsETSDynamicType() const
-    {
-        ES2PANDA_ASSERT(IsETSDynamicType());
-        return reinterpret_cast<const ETSDynamicType *>(this);
-    }
+    [[nodiscard]] bool IsBuiltinNumeric() const noexcept;
 
     ETSAsyncFuncReturnType *AsETSAsyncFuncReturnType()
     {
@@ -169,27 +169,17 @@ public:
         return reinterpret_cast<const ETSAsyncFuncReturnType *>(this);
     }
 
-    bool IsETSDynamicFunctionType() const
-    {
-        return TypeFlags() == TypeFlag::ETS_DYNAMIC_FUNCTION_TYPE;
-    }
-
-    ETSDynamicFunctionType *AsETSDynamicFunctionType()
-    {
-        ES2PANDA_ASSERT(IsETSDynamicFunctionType());
-        return reinterpret_cast<ETSDynamicFunctionType *>(this);
-    }
-
-    const ETSDynamicFunctionType *AsETSDynamicFunctionType() const
-    {
-        ES2PANDA_ASSERT(IsETSDynamicFunctionType());
-        return reinterpret_cast<const ETSDynamicFunctionType *>(this);
-    }
-
     bool IsConstantType() const
     {
         return HasTypeFlag(checker::TypeFlag::CONSTANT);
     }
+
+    bool IsAnyETSArrayOrTupleType() const
+    {
+        return IsETSArrayType() || IsETSResizableArrayType() || IsETSReadonlyArrayType() || IsETSTupleType();
+    }
+
+    Type *MaybeBaseTypeOfGradualType();
 
     TypeFlag TypeFlags() const
     {
@@ -211,7 +201,7 @@ public:
         typeFlags_ &= ~typeFlag;
     }
 
-    uint64_t Id() const
+    uint32_t Id() const
     {
         return id_;
     }
@@ -262,15 +252,24 @@ public:
         ToAssemblerType(ss);
     }
 
+    std::string ToAssemblerType() const
+    {
+        std::stringstream ss;
+        ToAssemblerType(ss);
+        return ss.str();
+    }
+
+    std::string ToAssemblerTypeWithRank() const
+    {
+        std::stringstream ss;
+        ToAssemblerTypeWithRank(ss);
+        return ss.str();
+    }
+
     virtual uint32_t Rank() const
     {
         return 0;
     }
-
-    virtual std::tuple<bool, bool> ResolveConditionExpr() const
-    {
-        ES2PANDA_UNREACHABLE();
-    };
 
     virtual void Identical(TypeRelation *relation, Type *other);
     virtual void AssignmentTarget(TypeRelation *relation, Type *source) = 0;
@@ -285,7 +284,6 @@ public:
                                           [[maybe_unused]] VarianceFlag varianceFlag)
     {
     }
-    [[nodiscard]] static std::uint32_t GetPrecedence(Type const *type) noexcept;
 
     virtual Type *Instantiate(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes);
     [[nodiscard]] virtual Type *Clone(Checker *checker);
@@ -295,7 +293,7 @@ protected:
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     TypeFlag typeFlags_;
     varbinder::Variable *variable_ {};  // Variable associated with the type if any
-    uint64_t id_;
+    uint32_t id_;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
 

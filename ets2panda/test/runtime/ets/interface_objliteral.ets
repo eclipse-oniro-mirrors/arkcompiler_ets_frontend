@@ -29,6 +29,6 @@ function main() {
         propA: "Hello",
         propB: 42
     }
-    assertEQ(obj.propA, "Hello")
-    assertEQ(obj.propB, 42)
+    arktest.assertEQ(obj.propA, "Hello")
+    arktest.assertEQ(obj.propB, 42)
 }

@@ -14,23 +14,19 @@
  */
  
 
-let GeneratedImportVar_1 = ESValue.load('./interop_import_js_compare_js');
-let foo = GeneratedImportVar_1.getProperty('foo');
-let m = GeneratedImportVar_1.getProperty('m');
-let n = GeneratedImportVar_1.getProperty('n');
-
+import {foo, m, n} from "./interop_import_js_compare_js"
 let a = foo.getProperty("a")
 let b = foo.getProperty("b")
 a > b
 a < b
 a >= b
 a <= b
-a = 1.0
+a = 1
 
 m.toNumber() > n.toNumber()
-m = 1.0
+m = 1
 
-let x: number = 1.0, y: number = 2.0;
+let x = 1, y = 2;
 x > y;
 x < y;
 x >= y;
@@ -40,9 +36,9 @@ interface GeneratedObjectLiteralInterface_1 {
     a: number;
     b: number;
 }
-let bar: GeneratedObjectLiteralInterface_1 = { a: 1.0, b: 2.0 };
+let bar: GeneratedObjectLiteralInterface_1 = { a: 1, b: 2 };
 
-let x2: number = bar.a, y2: number = bar.b;
+let x2 = bar.a, y2 = bar.b;
 x2 > y2;
 x2 < y2;
 x2 >= y2;

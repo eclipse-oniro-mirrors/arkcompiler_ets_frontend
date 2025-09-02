@@ -27,12 +27,12 @@ interface I2{
 
 function main() {
     let x: Required<I> = {i: 1.9, j :"some str", k:10};
-    assertEQ(x.i, 1.9)
-    assertEQ(x.j, "some str")
-    assertEQ(x.k, 10)
+    arktest.assertEQ(x.i, 1.9)
+    arktest.assertEQ(x.j, "some str")
+    arktest.assertEQ(x.k, 10)
 
     let x2: Required<I2> = {i: 1.9, j :"some str", k:10};
-    assertEQ(x2.i, 1.9)
-    assertEQ(x2.j, "some str")
-    assertEQ(x2.k, 10)
+    arktest.assertEQ(x2.i, 1.9)
+    arktest.assertEQ(x2.j, "some str")
+    arktest.assertEQ(x2.k, 10)
 }

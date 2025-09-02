@@ -5,52 +5,7 @@
   "2": {
     "diagnostics": [
       {
-        "message": "Type '\"1\"' is not compatible with type 'double' at index 1",
-        "source": "\"1\"",
-        "range": {
-          "start": {
-            "line": 20,
-            "character": 5
-          },
-          "end": {
-            "line": 20,
-            "character": 8
-          }
-        },
-        "tags": [],
-        "relatedInfo": [],
-        "code": 1,
-        "data": 0,
-        "severity": 1,
-        "codeDescription": {
-          "href": "test code description"
-        }
-      },
-      {
-        "message": "No matching call signature for add(\"1\", int)",
-        "source": "add",
-        "range": {
-          "start": {
-            "line": 20,
-            "character": 1
-          },
-          "end": {
-            "line": 20,
-            "character": 4
-          }
-        },
-        "tags": [],
-        "relatedInfo": [],
-        "code": 1,
-        "data": 0,
-        "severity": 1,
-        "codeDescription": {
-          "href": "test code description"
-        }
-      },
-      {
-        "message": "Type '\"hello\"' cannot be assigned to type 'double'",
-        "source": "\"hello\"",
+        "message": "Type '\"hello\"' cannot be assigned to type 'Double'",
         "range": {
           "start": {
             "line": 16,
@@ -63,7 +18,95 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
+        "code": 2318,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      },
+      {
+        "message": "No matching call signature for add(\"1\", Int)",
+        "range": {
+          "start": {
+            "line": 20,
+            "character": 1
+          },
+          "end": {
+            "line": 20,
+            "character": 4
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 2127,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      },
+      {
+        "message": "Type '\"1\"' is not compatible with type 'Double' at index 1",
+        "range": {
+          "start": {
+            "line": 20,
+            "character": 5
+          },
+          "end": {
+            "line": 20,
+            "character": 8
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 2046,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      }
+    ]
+  },
+  "3": {
+    "diagnostics": [
+      {
+        "message": "No matching call signature for push(\"123\")",
+        "range": {
+          "start": {
+            "line": 19,
+            "character": 1
+          },
+          "end": {
+            "line": 19,
+            "character": 4
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 2127,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      },
+      {
+        "message": "Type '\"123\"' is not compatible with type 'Double' at index 1",
+        "range": {
+          "start": {
+            "line": 19,
+            "character": 10
+          },
+          "end": {
+            "line": 19,
+            "character": 15
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 2046,
         "data": 0,
         "severity": 1,
         "codeDescription": {

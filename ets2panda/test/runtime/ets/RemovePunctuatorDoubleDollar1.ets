@@ -18,26 +18,26 @@ class A {}
 function main(){
    let $$a = new A();
    let b = $$a;
-   assertNE(b, null)
+   arktest.assertNE(b, null)
 
    let c$$ = true;
    let d = c$$;
-   assertEQ(d, true)
+   arktest.assertEQ(d, true)
 
    let $$e$$ = 1;
    let f = $$e$$;
-   assertEQ(f, 1)
+   arktest.assertEQ(f, 1)
 
    let $$g$ = false;
    let h = $$g$;
-   assertEQ(h, false)
+   arktest.assertEQ(h, false)
 
    let $i$$ = false;
    let j = $i$$;
-   assertEQ(j, false)
+   arktest.assertEQ(j, false)
 
    let $k$ = "apple";
    let m = $k$;
-   assertEQ(m, "apple")
+   arktest.assertEQ(m, "apple")
 
 }

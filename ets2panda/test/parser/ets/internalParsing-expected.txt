@@ -144,12 +144,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "internalParsing.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "internalParsing.ets"
                 }
               }
             },
@@ -170,12 +170,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "internalParsing.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "internalParsing.ets"
                     }
                   }
                 },
@@ -641,7 +641,7 @@
             "loc": {
               "start": {
                 "line": 25,
-                "column": 3,
+                "column": 12,
                 "program": "internalParsing.ets"
               },
               "end": {
@@ -701,112 +701,6 @@
         "superClass": null,
         "implements": [],
         "body": [
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "internalParsing.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "internalParsing.ets"
-              }
-            }
-          },
           {
             "type": "MethodDefinition",
             "key": {
@@ -911,7 +805,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 21,
+                                    "column": 19,
                                     "program": "internalParsing.ets"
                                   }
                                 }
@@ -924,7 +818,7 @@
                                 },
                                 "end": {
                                   "line": 29,
-                                  "column": 21,
+                                  "column": 19,
                                   "program": "internalParsing.ets"
                                 }
                               }
@@ -974,7 +868,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 28,
+                                    "column": 27,
                                     "program": "internalParsing.ets"
                                   }
                                 }
@@ -987,7 +881,7 @@
                                 },
                                 "end": {
                                   "line": 29,
-                                  "column": 28,
+                                  "column": 27,
                                   "program": "internalParsing.ets"
                                 }
                               }

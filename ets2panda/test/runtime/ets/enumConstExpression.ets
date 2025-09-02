@@ -22,9 +22,9 @@ enum Color {
 }
 
 function main() : void{
-    assertEQ(Color.Red, 0)
-    assertEQ(Color.Blue, 1)
-    assertEQ(Color.Purple, 13)
-    assertEQ(Color.Green, 14)
-    assertEQ(Color.Yellow, 15)
+    arktest.assertEQ(Color.Red, 0)
+    arktest.assertEQ(Color.Blue, 1)
+    arktest.assertEQ(Color.Purple, 13)
+    arktest.assertEQ(Color.Green, 14)
+    arktest.assertEQ(Color.Yellow, 15)
 }

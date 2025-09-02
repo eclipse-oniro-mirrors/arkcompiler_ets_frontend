@@ -15,6 +15,7 @@
 
 #include "ETSAnalyzerHelpers.h"
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
+#include "checker/types/typeError.h"
 
 namespace ark::es2panda::checker {
 
@@ -55,6 +56,9 @@ void CheckExtensionIsShadowedInCurrentClassOrInterface(checker::ETSChecker *chec
         return;
     }
 
+    if (methodVariable->TsType()->IsTypeError()) {
+        return;
+    }
     const auto *const funcType = methodVariable->TsType()->AsETSFunctionType();
     for (auto *funcSignature : funcType->CallSignatures()) {
         ES2PANDA_ASSERT(signature != nullptr);
@@ -247,7 +251,7 @@ void ComposeAsyncImplFuncReturnType(ETSChecker *checker, ir::ScriptFunction *scr
 
     auto *objectId = checker->ProgramAllocNode<ir::Identifier>(compiler::Signatures::BUILTIN_OBJECT_CLASS,
                                                                checker->ProgramAllocator());
-    checker->VarBinder()->AsETSBinder()->LookupTypeReference(objectId, false);
+    checker->VarBinder()->AsETSBinder()->LookupTypeReference(objectId);
     auto *returnType = checker->ProgramAllocNode<ir::ETSTypeReference>(
         checker->ProgramAllocNode<ir::ETSTypeReferencePart>(objectId, nullptr, nullptr, checker->ProgramAllocator()),
         checker->ProgramAllocator());
@@ -308,14 +312,10 @@ static bool HasIteratorInterface(ETSObjectType const *const objectType)
 }
 
 void CheckIteratorMethodReturnType(ETSChecker *checker, ir::ScriptFunction *scriptFunc,
-                                   const lexer::SourcePosition &position, const std::string &methodName)
+                                   const lexer::SourcePosition &position,
+                                   [[maybe_unused]] const std::string &methodName)
 {
-    const auto *returnType = scriptFunc->Signature()->ReturnType();
-
-    if (returnType == nullptr) {
-        checker->LogError(diagnostic::MISSING_RETURN_TYPE_2, {util::StringView(methodName)}, position);
-        return;
-    }
+    const auto *returnType = scriptFunc->Signature()->ReturnType()->MaybeBaseTypeOfGradualType();
 
     if (returnType->IsETSTypeParameter()) {
         returnType = checker->GetApparentType(returnType->AsETSTypeParameter()->GetConstraintType());
@@ -372,12 +372,6 @@ checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, ch
             expr->Arguments().erase(expr->Arguments().begin());
             return nullptr;
         }
-        if (!signature->HasSignatureFlag(SignatureFlags::EXTENSION_FUNCTION)) {
-            checker->LogError(diagnostic::PROPERTY_NONEXISTENT,
-                              {memberExpr->Property()->AsIdentifier()->Name(), memberExpr->ObjType()->Name()},
-                              memberExpr->Property()->Start());
-            return nullptr;
-        }
 
         SwitchMethodCallToFunctionCall(checker, expr, signature);
         return signature;
@@ -425,7 +419,7 @@ checker::Signature *GetMostSpecificSigFromExtensionFuncAndClassMethod(checker::E
         methodCallSig->GetSignatureInfo()->minArgCount++;
         auto &paramsVar = methodCallSig->Params();
         paramsVar.insert(paramsVar.begin(), dummyReceiverVar);
-        auto &params = methodCallSig->Function()->Params();
+        auto &params = methodCallSig->Function()->ParamsForUpdate();
         params.insert(params.begin(), dummyReceiver);
         if (typeParamsNeeded) {
             auto &typeParams = methodCallSig->TypeParams();
@@ -441,7 +435,7 @@ checker::Signature *GetMostSpecificSigFromExtensionFuncAndClassMethod(checker::E
         methodCallSig->GetSignatureInfo()->minArgCount--;
         auto &paramsVar = methodCallSig->Params();
         paramsVar.erase(paramsVar.begin());
-        auto &params = methodCallSig->Function()->Params();
+        auto &params = methodCallSig->Function()->ParamsForUpdate();
         params.erase(params.begin());
         if (typeParamsNeeded) {
             auto &typeParams = methodCallSig->TypeParams();
@@ -514,27 +508,9 @@ ArenaVector<checker::Signature *> GetUnionTypeSignatures(ETSChecker *checker, ch
 
 void ProcessExclamationMark(ETSChecker *checker, ir::UnaryExpression *expr, checker::Type *operandType)
 {
-    if (checker->IsNullLikeOrVoidExpression(expr->Argument())) {
-        auto tsType = checker->CreateETSBooleanType(true);
-        CHECK_NOT_NULL(tsType);
-        tsType->AddTypeFlag(checker::TypeFlag::CONSTANT);
-        expr->SetTsType(tsType);
-        return;
-    }
+    FORWARD_VALUE_ON_TYPE_ERROR(checker, operandType, expr, EMPTY_VALUE);
 
-    if (operandType == nullptr || operandType->IsTypeError()) {
-        expr->SetTsType(checker->GlobalTypeError());
-        return;
-    }
-
-    auto exprRes = operandType->ResolveConditionExpr();
-    if (std::get<0>(exprRes)) {
-        auto tsType = checker->CreateETSBooleanType(!std::get<1>(exprRes));
-        tsType->AddTypeFlag(checker::TypeFlag::CONSTANT);
-        expr->SetTsType(tsType);
-        return;
-    }
-    expr->SetTsType(checker->GlobalETSBooleanType());
+    expr->SetTsType(checker->GlobalETSBooleanBuiltinType());
 }
 
 void SetTsTypeForUnaryExpression(ETSChecker *checker, ir::UnaryExpression *expr, checker::Type *operandType)
@@ -542,15 +518,10 @@ void SetTsTypeForUnaryExpression(ETSChecker *checker, ir::UnaryExpression *expr,
     switch (expr->OperatorType()) {
         case lexer::TokenType::PUNCTUATOR_MINUS:
         case lexer::TokenType::PUNCTUATOR_PLUS: {
-            if (operandType == nullptr || !operandType->HasTypeFlag(checker::TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC)) {
+            if (operandType == nullptr || !operandType->IsETSObjectType() ||
+                !operandType->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::CONVERTIBLE_TO_NUMERIC)) {
                 checker->LogError(diagnostic::OPERAND_NOT_NUMERIC, {}, expr->Argument()->Start());
                 expr->SetTsType(checker->GlobalTypeError());
-                break;
-            }
-
-            if (operandType->HasTypeFlag(checker::TypeFlag::CONSTANT) &&
-                expr->OperatorType() == lexer::TokenType::PUNCTUATOR_MINUS) {
-                expr->SetTsType(checker->NegateNumericType(operandType, expr));
                 break;
             }
 
@@ -558,13 +529,16 @@ void SetTsTypeForUnaryExpression(ETSChecker *checker, ir::UnaryExpression *expr,
             break;
         }
         case lexer::TokenType::PUNCTUATOR_TILDE: {
-            if (operandType == nullptr || !operandType->HasTypeFlag(checker::TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC)) {
+            if (operandType == nullptr || !operandType->IsETSObjectType() ||
+                !operandType->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::CONVERTIBLE_TO_NUMERIC)) {
                 checker->LogError(diagnostic::OPERAND_NOT_NUMERIC, {}, expr->Argument()->Start());
                 expr->SetTsType(checker->GlobalTypeError());
                 break;
             }
-
-            expr->Argument()->SetTsType(expr->SetTsType(checker->SelectGlobalIntegerTypeForNumeric(operandType)));
+            auto exprType = expr->SetTsType(checker->SelectGlobalIntegerTypeForNumeric(operandType));
+            if (!expr->Argument()->TsType()->IsETSIntEnumType()) {
+                expr->Argument()->SetTsType(exprType);
+            }
             break;
         }
         case lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK: {
@@ -619,11 +593,12 @@ checker::Type *GetIteratorType(ETSChecker *checker, checker::Type *elemType, ir:
     return checker->GetNonConstantType(iterType);
 }
 
-bool CheckArgumentVoidType(checker::Type *&funcReturnType, ETSChecker *checker, const std::string &name,
+bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, const std::string &name,
                            ir::ReturnStatement *st)
 {
     if (name.find(compiler::Signatures::ETS_MAIN_WITH_MANGLE_BEGIN) != std::string::npos) {
-        if (!funcReturnType->IsETSVoidType() && !funcReturnType->IsIntType()) {
+        if (!funcReturnType->IsETSVoidType() &&
+            !checker->Relation()->IsSupertypeOf(checker->GlobalIntBuiltinType(), funcReturnType)) {
             checker->LogError(diagnostic::MAIN_BAD_RETURN, {}, st->Start());
         }
     }
@@ -636,14 +611,6 @@ bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker
     if (funcReturnType->IsETSVoidType() || funcReturnType == checker->GlobalVoidType()) {
         if (argumentType != checker->GlobalVoidType()) {
             checker->LogError(diagnostic::UNEXPECTED_VALUE_RETURN, {}, stArgument->Start());
-            return false;
-        }
-        if (!checker::AssignmentContext(checker->Relation(), stArgument, argumentType, funcReturnType,
-                                        stArgument->Start(), std::nullopt,
-                                        checker::TypeRelationFlag::DIRECT_RETURN | checker::TypeRelationFlag::NO_THROW)
-                 // CC-OFFNXT(G.FMT.02) project code style
-                 .IsAssignable()) {
-            checker->LogError(diagnostic::RETURN_TYPE_MISMATCH, {}, stArgument->Start());
             return false;
         }
         return true;
@@ -671,16 +638,15 @@ bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker
     return true;
 }
 
-void InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, checker::Type *&funcReturnType,
-                     ir::Expression *stArgument)
+checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument)
 {
     //  First (or single) return statement in the function:
-    funcReturnType =
+    auto *funcReturnType =
         stArgument == nullptr ? checker->GlobalVoidType() : checker->GetNonConstantType(stArgument->Check(checker));
     ES2PANDA_ASSERT(funcReturnType != nullptr);
     if (funcReturnType->IsTypeError()) {
         containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
-        return;
+        return funcReturnType;
     }
 
     /*
@@ -690,40 +656,23 @@ void InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ch
     return () => {}
     ```
     */
-    if (stArgument != nullptr && stArgument->IsArrowFunctionExpression()) {
-        auto arrowFunc = stArgument->AsArrowFunctionExpression();
-        auto typeAnnotation = arrowFunc->CreateTypeAnnotation(checker);
-
-        auto *argumentType = arrowFunc->TsType();
-        ES2PANDA_ASSERT(typeAnnotation != nullptr);
-        funcReturnType = typeAnnotation->GetType(checker);
-        if (!checker::AssignmentContext(checker->Relation(), arrowFunc, argumentType, funcReturnType,
-                                        stArgument->Start(), std::nullopt,
-                                        checker::TypeRelationFlag::DIRECT_RETURN | checker::TypeRelationFlag::NO_THROW)
-                 // CC-OFFNXT(G.FMT.02) project code style
-                 .IsAssignable()) {
-            checker->LogError(diagnostic::ARROW_TYPE_MISMATCH, {argumentType, funcReturnType}, stArgument->Start());
-            funcReturnType = checker->GlobalTypeError();
-            return;
-        }
-    }
 
     containingFunc->Signature()->SetReturnType(funcReturnType);
     containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
     containingFunc->Signature()->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
     checker->VarBinder()->AsETSBinder()->BuildFunctionName(containingFunc);
 
-    if (stArgument != nullptr && stArgument->IsObjectExpression()) {
-        stArgument->AsObjectExpression()->SetPreferredType(funcReturnType);
+    if (stArgument != nullptr) {
+        stArgument->SetPreferredType(funcReturnType);
     }
+
+    return funcReturnType;
 }
 
 bool IsArrayExpressionValidInitializerForType(ETSChecker *checker, const Type *const arrayExprPreferredType)
 {
     const auto validForTarget = arrayExprPreferredType == nullptr  // preferred type will be inferred from elements
-                                || arrayExprPreferredType->IsETSArrayType()           // valid for fixed array type
-                                || arrayExprPreferredType->IsETSResizableArrayType()  // valid for resizable array type
-                                || arrayExprPreferredType->IsETSTupleType()           // valid for tuple type
+                                || arrayExprPreferredType->IsAnyETSArrayOrTupleType()  // valid for array or tuple types
                                 || checker->Relation()->IsSupertypeOf(arrayExprPreferredType,  // valid for 'Object'
                                                                       checker->GlobalETSObjectType());
 
@@ -744,16 +693,16 @@ void CastPossibleTupleOnRHS(ETSChecker *checker, ir::AssignmentExpression *expr)
     }
 }
 
-void ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containingFunc, checker::Type *&funcReturnType,
-                             ir::ReturnStatement *st, ir::Expression *stArgument)
+checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::ReturnStatement *st,
+                                       ir::Expression *stArgument)
 {
-    funcReturnType = containingFunc->Signature()->ReturnType();
+    auto *funcReturnType = containingFunc->Signature()->ReturnType();
 
     if (stArgument == nullptr) {
         // previous return statement(s) have value
         if (!funcReturnType->IsETSVoidType() && funcReturnType != checker->GlobalVoidType()) {
             checker->LogError(diagnostic::MIXED_VOID_NONVOID, {}, st->Start());
-            return;
+            return funcReturnType;
         }
     } else {
         if (stArgument->IsObjectExpression()) {
@@ -770,12 +719,12 @@ void ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containing
         ES2PANDA_ASSERT(argumentType != nullptr);
         if (funcReturnType->IsETSVoidType() && !argumentType->IsETSVoidType()) {
             checker->LogError(diagnostic::MIXED_VOID_NONVOID, {}, stArgument->Start());
-            return;
+            return funcReturnType;
         }
 
         const auto name = containingFunc->Scope()->InternalName().Mutf8();
         if (!CheckArgumentVoidType(funcReturnType, checker, name, st)) {
-            return;
+            return funcReturnType;
         }
 
         auto *const relation = checker->Relation();
@@ -788,6 +737,7 @@ void ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containing
         relation->SetNode(nullptr);
         relation->SetFlags(checker::TypeRelationFlag::NONE);
     }
+    return funcReturnType;
 }
 
 bool CheckReturnTypeNecessity(ir::MethodDefinition *node)
@@ -816,11 +766,40 @@ void CheckAllConstPropertyInitialized(checker::ETSChecker *checker, ir::ETSModul
             continue;
         }
 
-        if (prop->AsClassProperty()->Key()->Variable()->HasFlag(varbinder::VariableFlags::INIT_IN_STATIC_BLOCK) &&
-            !prop->AsClassProperty()->Key()->Variable()->HasFlag(varbinder::VariableFlags::INITIALIZED)) {
+        auto *classProp = prop->AsClassProperty();
+        if (classProp->Key()->Variable() == nullptr) {
+            continue;
+        }
+
+        if (classProp->Key()->Variable()->HasFlag(varbinder::VariableFlags::INIT_IN_STATIC_BLOCK) &&
+            !classProp->Key()->Variable()->HasFlag(varbinder::VariableFlags::INITIALIZED)) {
             checker->LogError(diagnostic::MISSING_INIT_FOR_CONST_PACKAGE_PROP, {}, prop->Start());
         }
     }
 }
+
+// NOLINTBEGIN(readability-else-after-return)
+std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr)
+{
+    if (expr->IsNullLiteral() || expr->IsUndefinedLiteral()) {
+        return {true, false};
+    } else if (expr->IsBooleanLiteral()) {
+        return {true, expr->AsBooleanLiteral()->Value()};
+    } else if (expr->IsStringLiteral()) {
+        return {true, expr->AsStringLiteral()->Str().Length() != 0};
+    } else if (expr->IsCharLiteral()) {
+        return {true, expr->AsCharLiteral()->Char() != 0};
+    } else if (expr->IsBigIntLiteral()) {
+        return {true, expr->AsBigIntLiteral()->Str() != "0"};
+    } else if (expr->IsNumberLiteral()) {
+        auto num = expr->AsNumberLiteral()->Number();
+        return {true, !num.IsZero()};
+    } else if (expr->TsType()->IsETSEnumType() && expr->TsType()->IsConstantType()) {
+        // NOTE(gogabr): Should handle enum constants
+        return {false, false};
+    }
+    return {false, false};
+}
+// NOLINTEND(readability-else-after-return)
 
 }  // namespace ark::es2panda::checker

@@ -18,6 +18,7 @@
 
 #include "ast_verifier/ASTVerifier.h"
 #include "panda_executable_path_getter.h"
+#include "compiler/lowering/phase.h"
 
 #include <gtest/gtest.h>
 
@@ -44,14 +45,14 @@ public:
     NO_MOVE_SEMANTIC(AstVerifierTest);
     ~AstVerifierTest() override;
 
-    ark::ArenaAllocator *Allocator() const
+    ark::ThreadSafeArenaAllocator *Allocator() const
     {
         return allocator_;
     }
 
     auto *GetChecker()
     {
-        return reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx_)->checker->AsETSChecker();
+        return reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx_)->GetChecker()->AsETSChecker();
     }
 
     auto *GetAst()
@@ -205,7 +206,8 @@ private:
     es2panda_Impl const *impl_ {};
     es2panda_Config *cfg_ {};
     es2panda_Context *ctx_ {};
-    ark::ArenaAllocator *allocator_ {};
+    ark::ThreadSafeArenaAllocator *allocator_ {};
+    ark::es2panda::compiler::PhaseManager *phaseManager_;
 
     friend class ::LSPAPITests;
 };

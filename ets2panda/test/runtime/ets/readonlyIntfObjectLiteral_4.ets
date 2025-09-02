@@ -24,5 +24,5 @@ interface A {
 }
 function main() {
     let a:A = {Age:{Age1:{age:20}}, name:"John"}
-    assertEQ(a.Age.Age1.age, 20)
+    arktest.assertEQ(a.Age.Age1.age, 20)
 }

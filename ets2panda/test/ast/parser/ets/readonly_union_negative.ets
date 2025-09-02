@@ -52,13 +52,13 @@ function main(): void {
 /* @@? 32:33 Error TypeError: 'void' used as type annotation. */
 /* @@? 32:47 Error SyntaxError: 'readonly' type modifier is only permitted on resizable array and tuple types. */
 /* @@? 36:55 Error SyntaxError: 'readonly' type modifier is only permitted on resizable array and tuple types. */
-/* @@? 41:5 Error TypeError: No matching call signature for test_negative_1(int, "test") */
 /* @@? 41:5 Error TypeError: Expected 1 arguments, got 2. */
+/* @@? 41:5 Error TypeError: No matching call signature for test_negative_1(Int, "test") */
 /* @@? 42:5 Error TypeError: Expected 1 arguments, got 2. */
 /* @@? 42:5 Error TypeError: No matching call signature for test_negative_2(MyObject, "test") */
 /* @@? 43:5 Error TypeError: Expected 1 arguments, got 2. */
-/* @@? 43:5 Error TypeError: No matching call signature for test_negative_5(boolean, Array<String>) */
+/* @@? 43:5 Error TypeError: No matching call signature for test_negative_5(Boolean, Array<String>) */
 /* @@? 44:5 Error TypeError: Expected 1 arguments, got 2. */
-/* @@? 44:5 Error TypeError: No matching call signature for test_negative_6(undefined, int) */
+/* @@? 44:5 Error TypeError: No matching call signature for test_negative_6(undefined, Int) */
 /* @@? 45:5 Error TypeError: Expected 1 arguments, got 2. */
 /* @@? 45:5 Error TypeError: No matching call signature for test_negative_7(() => void, "test") */

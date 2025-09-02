@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "installArkAnalyzer": "bash ./scripts/install_arkanalyzer.sh",
     "compile": "tsc -p ./tsconfig.prod.json",
     "test": "vitest --no-color run",
     "coverage": "vitest run --coverage",

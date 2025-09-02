@@ -74,5 +74,4 @@ void ETSStringType::IsSubtypeOf(TypeRelation *relation, Type *source)
     auto *const checker = relation->GetChecker()->AsETSChecker();
     relation->IsSupertypeOf(source, checker->GlobalBuiltinETSStringType());
 }
-
 }  // namespace ark::es2panda::checker

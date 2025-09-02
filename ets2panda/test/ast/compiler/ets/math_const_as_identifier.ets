@@ -26,5 +26,6 @@ function foo1() {
 /* @@? 21:9 Error TypeError: Variable 'NaN' has already been declared. */
 /* @@? 22:9 Error TypeError: Variable 'Infinity' has already been declared. */
 /* @@? 22:20 Error TypeError: Unresolved reference test */
+/* @@? 23:9 Error SyntaxError: Hard keyword 'undefined' cannot be used as identifier */
 /* @@? 23:9 Error SyntaxError: Identifier expected, got 'undefined'. */
 /* @@? 24:1 Error SyntaxError: Variable must be initialized or it's type must be declared. */

@@ -16,6 +16,7 @@
 #ifndef ES2PANDA_IR_ETS_PRIMITIVE_TYPE_H
 #define ES2PANDA_IR_ETS_PRIMITIVE_TYPE_H
 
+#include "ir/base/methodDefinition.h"
 #include "ir/typeNode.h"
 
 namespace ark::es2panda::ir {
@@ -26,11 +27,12 @@ public:
     explicit ETSPrimitiveType(PrimitiveType type, ArenaAllocator *const allocator)
         : TypeNode(AstNodeType::ETS_PRIMITIVE_TYPE, allocator), type_(type)
     {
+        InitHistory();
     }
 
     PrimitiveType GetPrimitiveType() const
     {
-        return type_;
+        return GetHistoryNodeAs<ETSPrimitiveType>()->type_;
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -50,6 +52,21 @@ public:
     }
 
     [[nodiscard]] ETSPrimitiveType *Clone(ArenaAllocator *allocator, AstNode *parent) override;
+
+protected:
+    ETSPrimitiveType *Construct(ArenaAllocator *allocator) override
+    {
+        return allocator->New<ETSPrimitiveType>(PrimitiveType::VOID, allocator);
+    }
+
+    void CopyTo(AstNode *other) const override
+    {
+        auto otherImpl = reinterpret_cast<ETSPrimitiveType *>(other);
+
+        otherImpl->type_ = type_;
+
+        TypeNode::CopyTo(other);
+    }
 
 private:
     PrimitiveType type_;

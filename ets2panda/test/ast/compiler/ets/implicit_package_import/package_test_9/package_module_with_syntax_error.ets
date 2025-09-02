@@ -17,7 +17,7 @@ package mypack;
 
 =)
 
-/* @@? package_module_with_semantic_error.ets:18:14 Error TypeError: Type '"I am a number, I promise..."' cannot be assigned to type 'int' */
+/* @@? package_module_with_semantic_error.ets:18:14 Error TypeError: Type '"I am a number, I promise..."' cannot be assigned to type 'Int' */
 
 /* @@? package_with_both_errors.ets:21:16 Error TypeError: Cannot find type 'good'. */
 /* @@? package_with_both_errors.ets:21:21 Error SyntaxError: Unexpected token 'Day'. */

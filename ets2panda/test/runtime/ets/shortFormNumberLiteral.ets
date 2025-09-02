@@ -15,4 +15,4 @@
 
 let x = -.0777
 let y = -0.0777
-assertEQ(x, y)
+arktest.assertEQ(x, y)

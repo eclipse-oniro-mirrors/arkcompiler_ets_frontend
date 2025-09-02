@@ -15,6 +15,6 @@
 
 let a : Array<int> = [1,2,3]
 function main() {
-    assertEQ(a.length, 3);
-    assertEQ(a[1], 2)
+    arktest.assertEQ(a.length, 3);
+    arktest.assertEQ(a[1], 2)
 }

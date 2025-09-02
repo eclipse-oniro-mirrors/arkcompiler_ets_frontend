@@ -18,4 +18,3 @@ function foo<T>(data: T, x: boolean): void {
     let aNumber = data2 as int
 }
 
-/* @@? 18:19 Error TypeError: Cannot cast type 'Boolean|NonNullable<T>' to 'int' */

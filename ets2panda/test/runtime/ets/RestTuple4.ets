@@ -36,10 +36,10 @@ function main() {
     let res5 : A = new A(...([30, 40, 50] as [number, number, number]))
     let res6 : A = new A(10, ...([30, 40, 50] as [number, number, number]))
 
-    assertEQ(res.field, 60)
-    assertEQ(res2.field, 100)
-    assertEQ(res3.field, 120)
-    assertEQ(res4.field, 130)
-    assertEQ(res5.field, 120)
-    assertEQ(res6.field, 130)
+    arktest.assertEQ(res.field, 60)
+    arktest.assertEQ(res2.field, 100)
+    arktest.assertEQ(res3.field, 120)
+    arktest.assertEQ(res4.field, 130)
+    arktest.assertEQ(res5.field, 120)
+    arktest.assertEQ(res6.field, 130)
 }

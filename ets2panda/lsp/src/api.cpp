@@ -49,8 +49,13 @@ namespace ark::es2panda::lsp {
 
 DefinitionInfo GetDefinitionAtPosition(es2panda_Context *context, size_t position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto declInfo = GetDefinitionAtPositionImpl(context, position);
     DefinitionInfo result {};
+    if (declInfo.first == nullptr) {
+        return result;
+    }
     auto node = declInfo.first;
     auto targetNode = declInfo.first->FindChild([&declInfo](ir::AstNode *childNode) {
         return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == declInfo.second;
@@ -85,17 +90,23 @@ bool IsPackageModule(es2panda_Context *context)
 
 CompletionEntryKind GetAliasScriptElementKind(es2panda_Context *context, size_t position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto result = GetAliasScriptElementKindImpl(context, position);
     return result;
 }
 
 References GetFileReferences(char const *fileName, es2panda_Context *context, bool isPackageModule)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     return GetFileReferencesImpl(context, fileName, isPackageModule);
 }
 
 DeclInfo GetDeclInfo(es2panda_Context *context, size_t position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     DeclInfo result;
     if (context == nullptr) {
         return result;
@@ -107,18 +118,28 @@ DeclInfo GetDeclInfo(es2panda_Context *context, size_t position)
     return result;
 }
 
-std::vector<ClassHierarchyItemInfo> GetClassHierarchies(es2panda_Context *context, const char *fileName, size_t pos)
+std::vector<ClassHierarchyItemInfo> GetClassHierarchies(std::vector<es2panda_Context *> *contextList,
+                                                        const char *fileName, size_t pos)
 {
-    return GetClassHierarchiesImpl(context, std::string(fileName), pos);
+    auto *ctxList = reinterpret_cast<std::vector<es2panda_Context *> *>(contextList);
+    for (auto *context : *ctxList) {
+        auto ctx = reinterpret_cast<public_lib::Context *>(context);
+        SetPhaseManager(ctx->phaseManager);
+    }
+    return GetClassHierarchiesImpl(contextList, std::string(fileName), pos);
 }
 
 bool GetSafeDeleteInfo(es2panda_Context *context, size_t position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     return GetSafeDeleteInfoImpl(context, position);
 }
 
 References GetReferencesAtPosition(es2panda_Context *context, DeclInfo *declInfo)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto result = GetReferencesAtPositionImpl(context, {declInfo->fileName, declInfo->fileText});
     auto compare = [](const ReferenceInfo &lhs, const ReferenceInfo &rhs) {
         if (lhs.fileName != rhs.fileName) {
@@ -136,24 +157,31 @@ References GetReferencesAtPosition(es2panda_Context *context, DeclInfo *declInfo
 es2panda_AstNode *GetPrecedingToken(es2panda_Context *context, const size_t pos)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto ast = ctx->parserProgram->Ast();
     return reinterpret_cast<es2panda_AstNode *>(FindPrecedingToken(pos, ast, ctx->allocator));
 }
 
 std::string GetCurrentTokenValue(es2panda_Context *context, size_t position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto result = GetCurrentTokenValueImpl(context, position);
     return result;
 }
 
 std::vector<FileTextChanges> OrganizeImportsImpl(es2panda_Context *context, char const *fileName)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto result = OrganizeImports::Organize(context, fileName);
     return result;
 }
 
 QuickInfo GetQuickInfoAtPosition(const char *fileName, es2panda_Context *context, size_t position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto res = GetQuickInfoAtPositionImpl(context, position, fileName);
     return res;
 }
@@ -162,6 +190,8 @@ QuickInfo GetQuickInfoAtPosition(const char *fileName, es2panda_Context *context
 CompletionEntryDetails GetCompletionEntryDetails(const char *entryName, const char *fileName, es2panda_Context *context,
                                                  size_t position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto result = GetCompletionEntryDetailsImpl(context, position, fileName, entryName);
     return result;
 }
@@ -169,6 +199,7 @@ CompletionEntryDetails GetCompletionEntryDetails(const char *entryName, const ch
 TextSpan GetSpanOfEnclosingComment(es2panda_Context *context, size_t pos, bool onlyMultiLine)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto *range = ctx->allocator->New<CommentRange>();
     GetRangeOfEnclosingComment(context, pos, range);
     return (range != nullptr) && (!onlyMultiLine || range->kind_ == CommentKind::MULTI_LINE)
@@ -180,6 +211,8 @@ DiagnosticReferences GetSemanticDiagnostics(es2panda_Context *context)
 {
     DiagnosticReferences result {};
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::SEMANTIC);
+    SetPhaseManager(ctx->phaseManager);
     const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::SEMANTIC);
     for (const auto &diagnostic : diagnostics) {
         result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
@@ -191,6 +224,8 @@ DiagnosticReferences GetSyntacticDiagnostics(es2panda_Context *context)
 {
     DiagnosticReferences result {};
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::SYNTAX);
+    SetPhaseManager(ctx->phaseManager);
     const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::SYNTAX);
     const auto &diagnosticsPluginError =
         ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::PLUGIN_ERROR);
@@ -271,6 +306,11 @@ std::vector<ark::es2panda::lsp::ReferencedNode> FindReferencesWrapper(
     return res;
 }
 
+RenameInfoType GetRenameInfoWrapper(es2panda_Context *context, size_t pos, const char *pandaLibPath)
+{
+    return GetRenameInfo(context, pos, std::string(pandaLibPath));
+}
+
 std::vector<TextSpan> GetBraceMatchingAtPositionWrapper(char const *fileName, size_t position)
 {
     Initializer initializer = Initializer();
@@ -281,23 +321,19 @@ std::vector<TextSpan> GetBraceMatchingAtPositionWrapper(char const *fileName, si
 }
 
 std::vector<ark::es2panda::lsp::RenameLocation> FindRenameLocationsWrapper(
-    const std::vector<ark::es2panda::SourceFile> &srcFiles, const ark::es2panda::SourceFile &srcFile, size_t position)
+    const std::vector<es2panda_Context *> &fileContexts, es2panda_Context *context, size_t position)
 {
-    auto tmp = FindRenameLocations(srcFiles, srcFile, position);
-    std::vector<ark::es2panda::lsp::RenameLocation> res(tmp.size());
-    for (const auto &entry : tmp) {
-        res.emplace_back(entry);
-    }
-    return res;
+    auto locations = FindRenameLocations(fileContexts, context, position);
+    return std::vector<ark::es2panda::lsp::RenameLocation> {locations.begin(), locations.end()};
 }
 
 std::vector<ark::es2panda::lsp::RenameLocation> FindRenameLocationsWithCancellationWrapper(
-    ark::es2panda::lsp::CancellationToken *tkn, const std::vector<ark::es2panda::SourceFile> &srcFiles,
-    const ark::es2panda::SourceFile &srcFile, size_t position)
+    ark::es2panda::lsp::CancellationToken *tkn, const std::vector<es2panda_Context *> &fileContexts,
+    es2panda_Context *context, size_t position)
 {
-    auto tmp = FindRenameLocations(tkn, srcFiles, srcFile, position);
-    std::vector<ark::es2panda::lsp::RenameLocation> res(tmp.size());
-    for (const auto &entry : tmp) {
+    auto locations = FindRenameLocations(tkn, fileContexts, context, position);
+    std::vector<ark::es2panda::lsp::RenameLocation> res(locations.size());
+    for (const auto &entry : locations) {
         res.emplace_back(entry);
     }
     return res;
@@ -313,8 +349,9 @@ DiagnosticReferences GetSuggestionDiagnostics(es2panda_Context *context)
 {
     DiagnosticReferences res {};
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto ast = ctx->parserProgram->Ast();
-    auto vec = GetSuggestionDiagnosticsImpl(ast);
+    auto vec = GetSuggestionDiagnosticsImpl(ast, context);
     res.diagnostic.reserve(vec.size());
     for (const auto &diag : vec) {
         res.diagnostic.push_back(diag.diagnostic);
@@ -324,6 +361,8 @@ DiagnosticReferences GetSuggestionDiagnostics(es2panda_Context *context)
 
 ark::es2panda::lsp::CompletionInfo GetCompletionsAtPosition(es2panda_Context *context, size_t position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto result = CompletionInfo(GetCompletionsAtPositionImpl(context, position));
     return result;
 }
@@ -391,6 +430,14 @@ SignatureHelpItems GetSignatureHelpItems(es2panda_Context *context, size_t posit
     auto cancellationToken = ark::es2panda::lsp::CancellationToken(defaultTime, nullptr);
     return ark::es2panda::lsp::GetSignatureHelpItems(context, position, invokedReason, cancellationToken);
 }
+
+size_t GetOffsetByColAndLine(es2panda_Context *context, size_t line, size_t column)
+{
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto index = lexer::LineIndex(ctx->parserProgram->SourceCode());
+    return index.GetOffset(lexer::SourceLocation(line, column, ctx->parserProgram));
+}
+
 std::vector<CodeFixActionInfo> GetCodeFixesAtPosition(es2panda_Context *context, size_t startPosition,
                                                       size_t endPosition, std::vector<int> &errorCodes,
                                                       CodeFixOptions &codeFixOptions)
@@ -441,6 +488,7 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     FindRenameLocationsWithCancellationWrapper,
                     FindSafeDeleteLocation,
                     FindReferencesWrapper,
+                    GetRenameInfoWrapper,
                     GetClassPropertyInfoWrapper,
                     GetSuggestionDiagnostics,
                     GetCompletionsAtPosition,
@@ -452,6 +500,7 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetTodoComments,
                     ProvideInlayHints,
                     GetSignatureHelpItems,
+                    GetOffsetByColAndLine,
                     GetCodeFixesAtPosition,
                     GetCombinedCodeFix,
                     GetNameOrDottedNameSpan};

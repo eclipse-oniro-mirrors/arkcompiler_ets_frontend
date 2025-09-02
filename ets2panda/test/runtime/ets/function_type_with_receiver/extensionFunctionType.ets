@@ -26,5 +26,5 @@ function foo(this: A): boolean {
 let f1: F1 = foo;
 
 let a = new A();
-assertTrue(a.f1())
-assertTrue(f1(a))
+arktest.assertTrue(a.f1())
+arktest.assertTrue(f1(a))

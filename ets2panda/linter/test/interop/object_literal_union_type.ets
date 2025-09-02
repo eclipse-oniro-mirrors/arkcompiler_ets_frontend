@@ -26,3 +26,5 @@ let xyz: X | Y | Z = { name: "xyz" }
 let ab: A | B = { name: "hello" } // legal
 
 let y: X | Y = { name: "hello" } as Y; // legal
+
+let res: Record<string, object> | object[] = {}

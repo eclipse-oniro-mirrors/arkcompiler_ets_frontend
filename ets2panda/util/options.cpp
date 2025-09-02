@@ -242,8 +242,6 @@ bool Options::Parse(Span<const char *const> args)
         logLevel_ = Logger::LevelFromString(GetLogLevel());
     }
 
-    parseJsdoc_ = WasSetParseJsdoc();
-
     InitCompilerOptions();
 
     return ProcessEtsSpecificOptions();
@@ -398,15 +396,12 @@ bool Options::ProcessEtsSpecificOptions()
 std::optional<ArkTsConfig> Options::ParseArktsConfig()
 {
     auto config = ArkTsConfig {GetArktsconfig(), diagnosticEngine_};
-    std::unordered_set<std::string> parsedConfigPath;
-    if (!config.Parse(parsedConfigPath)) {
+    if (!config.Parse()) {
         diagnosticEngine_.LogDiagnostic(diagnostic::INVALID_ARKTSCONFIG,
                                         util::DiagnosticMessageParams {util::StringView(GetArktsconfig())});
         return std::nullopt;
     }
     config.ResolveAllDependenciesInArkTsConfig();
-    // Don't need dependencies anymore, since all necessary information have been moved to current config
-    config.ResetDependencies();
     return std::make_optional(config);
 }
 

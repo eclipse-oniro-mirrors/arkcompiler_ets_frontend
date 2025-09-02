@@ -14,11 +14,11 @@
  */
 
 declare class A {
-  declare /* @@ label */constructor()
+  declare/* @@ label */ constructor()
 }
 class B {
-  declare /* @@ label1 */constructor()
+  declare/* @@ label1 */ constructor()
 }
-/* @@@ label Error SyntaxError: Field type annotation expected. */
-/* @@@ label1 Error SyntaxError: Field type annotation expected. */
+/* @@? 17:10 Error SyntaxError: Field type annotation expected. */
+/* @@? 20:10 Error SyntaxError: Field type annotation expected. */
 /* @@? 20:37 Error TypeError: Only abstract or native methods can't have body. */

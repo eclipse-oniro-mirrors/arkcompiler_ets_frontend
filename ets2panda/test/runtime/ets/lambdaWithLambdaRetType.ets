@@ -29,9 +29,9 @@ function foo2(x: boolean): (a: int) => int {
 }
 
 function main(): void {
-    assertEQ(foo(false)(), 2)
-    assertEQ(foo(true)(), 1)
+    arktest.assertEQ(foo(false)(), 2)
+    arktest.assertEQ(foo(true)(), 1)
     foo1();
-    assertEQ(foo2(false)(0), 2)
-    assertEQ(foo2(true)(0), 1)
+    arktest.assertEQ(foo2(false)(0), 2)
+    arktest.assertEQ(foo2(true)(0), 1)
 }

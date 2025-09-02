@@ -17,7 +17,7 @@ for (let i = 0; i < count; ++i /* @@ label */{
     result = result + p[i]!.awaitResolution() * /* @@label1 */a[i];
 }
 
-/* @@? 16:17 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 16:21 Error TypeError: Unresolved reference count */
 /* @@@ label Error SyntaxError: Expected ')', got '{'. */
 /* @@? 17:5 Error TypeError: Unresolved reference result */
 /* @@? 17:23 Error TypeError: Unresolved reference p */

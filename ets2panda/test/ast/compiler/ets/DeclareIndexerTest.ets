@@ -17,6 +17,13 @@ declare class A  {
   [index: number]: string  // indexer declaration
 }
 
+declare class B {
+    [index: int] : number
+}
+
+declare interface C {
+     [index :int]: string
+ }
 
 function main () {
 

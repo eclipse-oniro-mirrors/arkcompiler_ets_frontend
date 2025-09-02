@@ -25,4 +25,4 @@ class A {
   }
 }
 
-/* @@@ label Error TypeError: Type '"foo"' cannot be assigned to type 'int'  */
+/* @@@ label Error TypeError: Type '"foo"' cannot be assigned to type 'Int'  */

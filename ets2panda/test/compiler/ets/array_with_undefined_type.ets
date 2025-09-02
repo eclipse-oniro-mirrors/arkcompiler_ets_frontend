@@ -16,5 +16,5 @@
 function main(): void { 
     let foo: undefined[] = [undefined, undefined]
     let goo = foo
-    assertEQ(goo[1], undefined);
+    arktest.assertEQ(goo[1], undefined);
 }

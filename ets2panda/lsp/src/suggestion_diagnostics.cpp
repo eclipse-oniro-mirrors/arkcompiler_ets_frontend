@@ -22,13 +22,13 @@
 
 namespace ark::es2panda::lsp {
 
-std::vector<FileDiagnostic> GetSuggestionDiagnosticsImpl(ir::AstNode *astNode)
+std::vector<FileDiagnostic> GetSuggestionDiagnosticsImpl(ir::AstNode *astNode, es2panda_Context *context)
 {
     std::unordered_map<std::string, bool> visitedNestedConvertibleFunctions;
     std::vector<FileDiagnostic> diags;
 
     if (astNode != nullptr) {
-        Check(astNode, diags, visitedNestedConvertibleFunctions);
+        Check(astNode, diags, visitedNestedConvertibleFunctions, context);
         if (!diags.empty()) {
             std::sort(diags.begin(), diags.end(), [](const FileDiagnostic &d1, const FileDiagnostic &d2) {
                 return d1.diagnostic.range_.start.line_ < d2.diagnostic.range_.start.line_;
@@ -38,14 +38,18 @@ std::vector<FileDiagnostic> GetSuggestionDiagnosticsImpl(ir::AstNode *astNode)
     return diags;
 }
 
-void Check(ir::AstNode *node, std::vector<FileDiagnostic> &diag, std::unordered_map<std::string, bool> &visitedFunc)
+void Check(ir::AstNode *node, std::vector<FileDiagnostic> &diag, std::unordered_map<std::string, bool> &visitedFunc,
+           es2panda_Context *context)
 {
     if (CanBeConvertedToAsync(node)) {
-        AddConvertToAsyncFunctionDiagnostics(node, diag, visitedFunc);
+        AddConvertToAsyncFunctionDiagnostics(node, diag, visitedFunc, context);
     }
 
-    node->FindChild([&diag, &visitedFunc](ir::AstNode *childNode) {
-        Check(childNode, diag, visitedFunc);
+    node->FindChild([&diag, &visitedFunc, &node, &context](ir::AstNode *childNode) {
+        // It should only Check direct child node istead of all child and grandchild node, according to tsc
+        if (childNode->Parent() == node) {
+            Check(childNode, diag, visitedFunc, context);
+        }
         return false;
     });
 }
@@ -60,16 +64,21 @@ bool CheckGivenTypeExistInChilds(ir::AstNode *node, ir::AstNodeType type)
 }
 
 void AddConvertToAsyncFunctionDiagnostics(ir::AstNode *node, std::vector<FileDiagnostic> &diag,
-                                          std::unordered_map<std::string, bool> &visitedFunc)
+                                          std::unordered_map<std::string, bool> &visitedFunc, es2panda_Context *context)
 {
     if (IsConvertibleFunction(node, visitedFunc) && (visitedFunc.count(GetKeyFromNode(node)) == 0)) {
-        Position posStart(node->Range().start.line, node->Range().start.index);
-        Position posEnd(node->Range().end.line, node->Range().end.index);
+        auto ctx = reinterpret_cast<public_lib::Context *>(context);
+        // The line and col should start from 1 istead of 0
+        auto index = lexer::LineIndex(ctx->parserProgram->SourceCode());
+        auto sourceStartLocation = index.GetLocation(node->Range().start);
+        auto sourceEndLocation = index.GetLocation(node->Range().end);
+        Position posStart(sourceStartLocation.line, sourceStartLocation.col);
+        Position posEnd(sourceEndLocation.line, sourceEndLocation.col);
         Range range(posStart, posEnd);
         const std::string message = "This_may_be_converted_to_an_async_function";
         Diagnostic diagnostic(range, {}, {}, DiagnosticSeverity::Hint, 0, message, {}, {}, {});
 
-        diag.push_back(lsp::CreateDiagnosticForNode(reinterpret_cast<es2panda_AstNode *>(node), diagnostic));
+        diag.push_back(lsp::CreateDiagnosticForNode(reinterpret_cast<es2panda_AstNode *>(node), diagnostic, context));
     }
 }
 

@@ -1,0 +1,10 @@
+{
+    "symbols": {
+      "foo": {
+        "source": "@ohos.app.ability.common.d.ts"
+      },
+      "bar": {
+        "source": "@ohos.app.ability.ConfigurationConstant.d.ts"
+      }
+    }
+}

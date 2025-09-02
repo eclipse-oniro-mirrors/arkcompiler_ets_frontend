@@ -34,17 +34,20 @@ export const updateIfChanged = (t: Record<string, Object>) => {
   };
 };
 
-/* @@? 21:19 Error TypeError: Unresolved reference u */
 /* @@? 21:19 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 24:7 Error TypeError: Type '(v: Record<String,Object>) => Boolean' is not compatible with type '(previousValue: Boolean, currentValue: Boolean, index: Double, array: FixedArray<boolean>) => Boolean' at index 2 */
-/* @@? 27:11 Error SyntaxError: Property or signature expected. */
+/* @@? 21:19 Error TypeError: Unresolved reference u */
+/* @@? 24:7 Error TypeError: Type '(v: Record<String,Object>) => Boolean' is not compatible with type '(previousValue: Boolean, currentValue: Boolean, index: Double, array: FixedArray<Boolean>) => Boolean' at index 2 */
+/* @@? 27:11 Error TypeError: Invalid record property */
 /* @@? 28:11 Error SyntaxError: Unexpected token. */
 /* @@? 28:12 Error SyntaxError: Unexpected token. */
+/* @@? 28:12 Error TypeError: Type '*ERROR_TYPE*' is not compatible with type 'String' at index 1 */
 /* @@? 28:15 Error SyntaxError: Unexpected token. */
 /* @@? 28:16 Error SyntaxError: Unexpected token ':'. */
 /* @@? 28:18 Error SyntaxError: Unexpected token 'v'. */
 /* @@? 29:10 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 30:16 Error TypeError: Unresolved reference update */
+/* @@? 30:16 Error TypeError: This expression is not callable. */
 /* @@? 32:5 Error SyntaxError: Unexpected token ')'. */
 /* @@? 33:12 Error TypeError: Unresolved reference reduceResult */
+/* @@? 33:12 Error TypeError: Unexpected return value, enclosing method return type is void. */
 /* @@? 35:1 Error SyntaxError: Unexpected token '}'. */

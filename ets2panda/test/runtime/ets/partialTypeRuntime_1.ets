@@ -32,25 +32,25 @@ function main(): void {
         b_memb: new B()
     };
 
-    assertEQ(part_a_1.num_memb, 2.0)
-    assertEQ(part_a_1.str_memb, "part_a_1")
-    assertEQ(part_a_1.b_memb?.fld, 6)
+    arktest.assertEQ(part_a_1.num_memb, 2.0)
+    arktest.assertEQ(part_a_1.str_memb, "part_a_1")
+    arktest.assertEQ(part_a_1.b_memb?.fld, 6)
     part_a_1.num_memb = undefined
-    assertEQ(part_a_1.num_memb, undefined)
+    arktest.assertEQ(part_a_1.num_memb, undefined)
 
     let part_a_2: Partial<A> = {
         num_memb: 4.0,
         str_memb: "part_a_2"
     };
 
-    assertEQ(part_a_2.num_memb, 4.0)
-    assertEQ(part_a_2.str_memb, "part_a_2")
-    assertEQ(part_a_2.b_memb, undefined)
+    arktest.assertEQ(part_a_2.num_memb, 4.0)
+    arktest.assertEQ(part_a_2.str_memb, "part_a_2")
+    arktest.assertEQ(part_a_2.b_memb, undefined)
 
     let part_a_3: Partial<D> = { d_num_memb: 3.0, c_num_memb: 5.0 };
     part_a_3.d_num_memb = undefined
-    assertEQ(part_a_3.c_num_memb, 5.0)
-    assertEQ(part_a_3.d_num_memb, undefined)
+    arktest.assertEQ(part_a_3.c_num_memb, 5.0)
+    arktest.assertEQ(part_a_3.d_num_memb, undefined)
 
     let part_a_4: partial_A = {
         num_memb: 6.0,
@@ -58,9 +58,9 @@ function main(): void {
         b_memb: new B()
     };
 
-    assertEQ(part_a_4.num_memb, 6.0)
-    assertEQ(part_a_4.str_memb, "part_a_4")
-    assertEQ(part_a_4.b_memb?.fld, 6)
+    arktest.assertEQ(part_a_4.num_memb, 6.0)
+    arktest.assertEQ(part_a_4.str_memb, "part_a_4")
+    arktest.assertEQ(part_a_4.b_memb?.fld, 6)
     part_a_4.num_memb = undefined
-    assertEQ(part_a_4.num_memb, undefined)
+    arktest.assertEQ(part_a_4.num_memb, undefined)
 }

@@ -50,8 +50,8 @@ function main() {
     {
         Tracker.blockExecuted = true;
     }
-    assertTrue(Tracker.lambdaCalled, "Scenario 1: Lambda should be executed");
-    assertTrue(Tracker.blockExecuted, "Scenario 1: Block should be executed");
+    arktest.assertTrue(Tracker.lambdaCalled, "Scenario 1: Lambda should be executed");
+    arktest.assertTrue(Tracker.blockExecuted, "Scenario 1: Block should be executed");
 
     /* Scenario 2: Class method with optional parameter ​*/
     Tracker.reset();
@@ -61,8 +61,8 @@ function main() {
     {
         Tracker.blockExecuted = true;
     }
-    assertTrue(Tracker.lambdaCalled, "Scenario 2: Lambda should be executed");
-    assertTrue(Tracker.blockExecuted, "Scenario 2: Block should be executed");
+    arktest.assertTrue(Tracker.lambdaCalled, "Scenario 2: Lambda should be executed");
+    arktest.assertTrue(Tracker.blockExecuted, "Scenario 2: Block should be executed");
 
     /* Scenario 3: Function call with mandatory parameter ​*/
     Tracker.reset();
@@ -72,8 +72,8 @@ function main() {
     {
         Tracker.blockExecuted = true;
     }
-    assertTrue(Tracker.lambdaCalled, "Scenario 3: Lambda should be executed");
-    assertTrue(Tracker.blockExecuted, "Scenario 3: Block should be executed");
+    arktest.assertTrue(Tracker.lambdaCalled, "Scenario 3: Lambda should be executed");
+    arktest.assertTrue(Tracker.blockExecuted, "Scenario 3: Block should be executed");
 
     /* Scenario 4: No lambda + block ​*/
     Tracker.reset();
@@ -81,8 +81,8 @@ function main() {
     {
         Tracker.blockExecuted = true;
     }
-    assertTrue(Tracker.blockExecuted, "Boundary Test: Block should be executed");
-    assertEQ(Tracker.lambdaCalled, false)
+    arktest.assertTrue(Tracker.blockExecuted, "Boundary Test: Block should be executed");
+    arktest.assertEQ(Tracker.lambdaCalled, false)
 
     /* Scenario 5: only trailing lambda ​*/
     Tracker.reset();
@@ -90,6 +90,6 @@ function main() {
     {
         Tracker.lambdaCalled = true;
     }
-    assertTrue(Tracker.lambdaCalled, "Boundary Test: Lambda should be executed");
-    assertEQ(Tracker.blockExecuted, false)
+    arktest.assertTrue(Tracker.lambdaCalled, "Boundary Test: Lambda should be executed");
+    arktest.assertEQ(Tracker.blockExecuted, false)
 }

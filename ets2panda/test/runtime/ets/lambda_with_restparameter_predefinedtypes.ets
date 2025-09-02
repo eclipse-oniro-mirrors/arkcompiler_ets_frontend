@@ -14,15 +14,15 @@
  */
 
 let f1 = (a:number, b:number, ...args:number[])=>{
-    assertEQ(a,0);
-    assertEQ(args[0],222);
+    arktest.assertEQ(a,0.0);
+    arktest.assertEQ(args[0],222.0);
 }
 
 function main(){
     let f2 = (a:number, b:number, ...args:number[])=>{
-        assertEQ(a,0);
-        assertEQ(args[0],222);
+        arktest.assertEQ(a,0.0);
+        arktest.assertEQ(args[0],222.0);
     }
-    f1(0,111,222,333)
-    f2(0,111,222,333)
+    f1(0.0,111.0,222.0,333.0)
+    f2(0.0,111.0,222.0,333.0)
 }

@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_COMPILER_CORE_AST_VERIFIER_INVARIANTS_EVERYCHILDHASVALIDPARENT_H
 #define ES2PANDA_COMPILER_CORE_AST_VERIFIER_INVARIANTS_EVERYCHILDHASVALIDPARENT_H
 
-#include "../invariantBase.h"
+#include "ast_verifier/invariantBase.h"
 
 namespace ark::es2panda::compiler::ast_verifier {
 

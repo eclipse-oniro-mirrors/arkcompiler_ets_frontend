@@ -14,35 +14,35 @@
  */
 
 function main():void{
-    assertEQ(foo1(), 10)
-    assertEQ(foo2(), "a")
-    assertEQ(foo3(), true)
+    arktest.assertEQ(foo1(), 10)
+    arktest.assertEQ(foo2(), "a")
+    arktest.assertEQ(foo3(), true)
 
-    assertEQ(foo4(), 30)
-    assertEQ(foo4(new Int(5)), 25)
+    arktest.assertEQ(foo4(), 30)
+    arktest.assertEQ(foo4(new Int(5)), 25)
 
-    assertEQ(foo5(new Int(5)), 55)
-    assertEQ(foo5(new Int(5),new Int(10)), 45)
+    arktest.assertEQ(foo5(new Int(5)), 55)
+    arktest.assertEQ(foo5(new Int(5),new Int(10)), 45)
 
 
-    assertEQ(foo6(), undefined)
-    assertEQ(foo7(), undefined)
-    assertEQ(foo8(), undefined)
+    arktest.assertEQ(foo6(), undefined)
+    arktest.assertEQ(foo7(), undefined)
+    arktest.assertEQ(foo8(), undefined)
 
-    assertEQ(foo9(), 0)
-    assertEQ(foo9(new Int(5)), -1)
+    arktest.assertEQ(foo9(), 0)
+    arktest.assertEQ(foo9(new Int(5)), -1)
 
-    assertEQ(foo10(new Int(5)), 0)
-    assertEQ(foo10(new Int(5),new Int(10)), -1)
+    arktest.assertEQ(foo10(new Int(5)), 0)
+    arktest.assertEQ(foo10(new Int(5),new Int(10)), -1)
 
-    assertEQ(foo11(), 0)
-    assertEQ(foo12(), 0)
+    arktest.assertEQ(foo11(), 0)
+    arktest.assertEQ(foo12(), 0)
 
-    assertEQ(foo13(new Int(10)), 15)
-    assertEQ(foo14(new Int(10)), 25)
+    arktest.assertEQ(foo13(new Int(10)), 15)
+    arktest.assertEQ(foo14(new Int(10)), 25)
 
-    assertEQ(foo15(new Int(10),new Int(5)), 20)
-    assertEQ(foo16(new Int(10),new Int(5)), 30)
+    arktest.assertEQ(foo15(new Int(10),new Int(5)), 20)
+    arktest.assertEQ(foo16(new Int(10),new Int(5)), 30)
 }
 
 function foo1(a : Int = 10) : Int {
@@ -62,7 +62,7 @@ function foo4(a : Int = 10, b : Int = 20) : Int {
 }
 
 function foo5(a : Int = 10, b : Int = 20, c : Int = 30) : Int {
-    assertEQ(a, 5)
+    arktest.assertEQ(a, 5)
 
     return a + b + c;
 }
@@ -90,7 +90,7 @@ function foo9(a? : Int, b? : Int) : Int {
 }
 
 function foo10(a? : Int, b? : Int, c? : Int) : Int {
-    assertEQ(a!, 5)
+    arktest.assertEQ(a!, 5)
     if(b == undefined && c == undefined){
         return 0;
     }
@@ -109,7 +109,7 @@ function foo11(a : Int = 5, b? : Int) : Int {
 }
 
 function foo12(a? : Int, b : Int = 5, c? : Int) : Int {
-    assertEQ(b, 5)
+    arktest.assertEQ(b, 5)
 
     if(a == undefined && c == undefined){
         return 0;

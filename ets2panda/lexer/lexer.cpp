@@ -17,8 +17,6 @@
 
 #include "generated/keywords.h"
 
-#include <public/public.h>
-
 namespace ark::es2panda::lexer {
 LexerPosition::LexerPosition(const util::StringView &source) : iterator_(source) {}
 
@@ -122,6 +120,11 @@ LexerPosition Lexer::Save() const
     return pos_;
 }
 
+void Lexer::Reset(size_t offset)
+{
+    pos_.iterator_.Reset(offset);
+}
+
 void Lexer::BackwardToken(TokenType type, size_t offset)
 {
     pos_.token_.type_ = type;
@@ -136,12 +139,6 @@ void Lexer::ForwardToken(TokenType type, size_t offset)
     SkipWhiteSpaces();
 }
 
-void Lexer::ForwardToken(TokenType type)
-{
-    pos_.token_.type_ = type;
-    pos_.iterator_.Forward(1);
-}
-
 void Lexer::Rewind(const LexerPosition &pos)
 {
     pos_ = pos;
@@ -150,11 +147,6 @@ void Lexer::Rewind(const LexerPosition &pos)
 char32_t Lexer::Lookahead()
 {
     return Iterator().Peek();
-}
-
-size_t Lexer::GetIndex()
-{
-    return Iterator().Index();
 }
 
 util::StringView Lexer::SourceView(const util::StringView::Iterator &begin, const util::StringView::Iterator &end) const
@@ -977,20 +969,17 @@ void Lexer::ScanMinusPunctuator()
 void Lexer::ScanSlashPunctuator()
 {
     GetToken().type_ = TokenType::PUNCTUATOR_DIVIDE;
-    auto cp = Iterator().Peek();
-    if (cp == LEX_CHAR_EQUALS) {
-        GetToken().type_ = TokenType::PUNCTUATOR_DIVIDE_EQUAL;
-        Iterator().Forward(1);
-    }
 
-    Iterator().Backward(1);
-    if (!IsValidJsDocStart(&cp)) {
-        Iterator().Forward(1);
-        return;
+    switch (Iterator().Peek()) {
+        case LEX_CHAR_EQUALS: {
+            GetToken().type_ = TokenType::PUNCTUATOR_DIVIDE_EQUAL;
+            Iterator().Forward(1);
+            break;
+        }
+        default: {
+            break;
+        }
     }
-    Iterator().Forward(JS_DOC_START_SIZE + 1);
-    GetToken().type_ = TokenType::JS_DOC_START;
-    pos_.nextTokenLine_ += 1;
 }
 
 void Lexer::ScanDotPunctuator(KeywordsUtil &kwu)
@@ -1293,45 +1282,6 @@ bool Lexer::SkipWhiteSpacesHelperSlash(char32_t *cp)
     return false;
 }
 
-bool Lexer::IsEnableParseJsdoc() const
-{
-    return parserContext_->IsEnableJsdocParse();
-}
-
-bool Lexer::IsValidJsDocStart(char32_t *cp)
-{
-    if (!IsEnableParseJsdoc()) {
-        return false;
-    }
-
-    for (size_t idx = 0; idx < JS_DOC_START_SIZE; ++idx) {
-        Iterator().Forward(1);
-        *cp = Iterator().Peek();
-        if (*cp != JS_DOC_START_LEX[idx]) {
-            Iterator().Backward(idx + 1);
-            return false;
-        }
-    }
-
-    Iterator().Backward(JS_DOC_START_SIZE);
-    return true;
-}
-
-bool Lexer::IsValidJsDocEnd(char32_t *cp)
-{
-    for (size_t idx = 0; idx < JS_DOC_END_SIZE; ++idx) {
-        Iterator().Forward(1);
-        *cp = Iterator().Peek();
-        if (*cp != JS_DOC_END_LEX[idx]) {
-            Iterator().Backward(idx + 1);
-            return false;
-        }
-    }
-
-    Iterator().Backward(JS_DOC_END_SIZE);
-    return true;
-}
-
 bool Lexer::SkipWhiteSpacesHelperDefault(const char32_t &cp)
 {
     if (cp < LEX_ASCII_MAX_BITS) {
@@ -1390,10 +1340,6 @@ void Lexer::SkipWhiteSpaces()
                 Iterator().Forward(1);
                 continue;
             case LEX_CHAR_SLASH:
-                if ((GetContext()->Status() & parser::ParserStatus::ALLOW_JS_DOC_START) != 0 &&
-                    IsValidJsDocStart(&cp)) {
-                    return;
-                }
                 if (!SkipWhiteSpacesHelperSlash(&cp)) {
                     return;
                 }
@@ -1552,7 +1498,6 @@ void Lexer::NextToken(Keywords *kws)
             break;
         }
         case LEX_CHAR_DOLLAR_SIGN:
-        case LEX_CHAR_UPPERCASE_A:
         case LEX_CHAR_UPPERCASE_E:
         case LEX_CHAR_UPPERCASE_G:
         case LEX_CHAR_UPPERCASE_H:
@@ -1632,6 +1577,7 @@ void Lexer::NextToken(Keywords *kws)
         case LEX_CHAR_LOWERCASE_X:
         case LEX_CHAR_LOWERCASE_Y:
         case LEX_CHAR_LOWERCASE_Z:
+        case LEX_CHAR_UPPERCASE_A:
         case LEX_CHAR_UPPERCASE_B:
         case LEX_CHAR_UPPERCASE_C:
         case LEX_CHAR_UPPERCASE_D:
@@ -1783,15 +1729,6 @@ void Lexer::FinalizeTokenHelper(util::UString *str, const size_t &startPos, size
         GetToken().src_ = str->View();
     } else {
         GetToken().src_ = SourceView(startPos, Iterator().Index());
-    }
-}
-
-void Lexer::FinalizeJsDocInfoHelper(util::UString *str, const size_t &startPos, size_t escapeEnd)
-{
-    if ((GetToken().flags_ & TokenFlags::HAS_ESCAPE) != 0U) {
-        str->Append(SourceView(escapeEnd, Iterator().Index()));
-    } else {
-        str->Append(SourceView(startPos, Iterator().Index()));
     }
 }
 

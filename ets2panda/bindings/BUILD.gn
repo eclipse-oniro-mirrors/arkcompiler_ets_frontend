@@ -29,7 +29,6 @@ npm_path = "//prebuilts/build-tools/common/nodejs/current/bin/npm"
 
 shared_library("ts_bindings") {
   sources = [
-    "./native/src/callback-resource.cpp",
     "./native/src/common-interop.cpp",
     "./native/src/convertors-napi.cpp",
     "./native/src/lsp.cpp",
@@ -65,7 +64,8 @@ shared_library("ts_bindings") {
 
   if (ark_standalone_build) {
     deps += [
-      "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package",
+      "$ark_root/bytecode_optimizer:libarktsbytecodeopt_frontend_static",
+      "$ark_root/abc2program:arkts_abc2program_static",
       "$ark_third_party_root/bounds_checking_function:libsec_shared",
     ]
     include_dirs += [ "//third_party/node/src" ]
@@ -198,7 +198,6 @@ shared_library("ts_bindings") {
 shared_library("public") {
   sources = [
     "./native/src/bridges.cpp",
-    "./native/src/callback-resource.cpp",
     "./native/src/common-interop.cpp",
     "./native/src/common.cpp",
     "./native/src/convertors-napi.cpp",
@@ -353,24 +352,33 @@ action("build_bindings") {
     ":ts_bindings",
   ]
   sources = [
-    "./src/Es2pandaNativeModule.ts",
-    "./src/InteropNativeModule.ts",
-    "./src/InteropTypes.ts",
-    "./src/Platform.ts",
-    "./src/Wrapper.ts",
-    "./src/arrays.ts",
-    "./src/generated/Es2pandaEnums.ts",
-    "./src/generated/Es2pandaNativeModule.ts",
-    "./src/global.ts",
-    "./src/index.ts",
-    "./src/loadLibraries.ts",
-    "./src/lspNode.ts",
-    "./src/mainWrapper.ts",
-    "./src/private.ts",
-    "./src/strings.ts",
-    "./src/ts-reflection.ts",
-    "./src/types.ts",
-    "./src/utils.ts",
+    "src/common/Es2pandaNativeModule.ts",
+    "src/common/InteropNativeModule.ts",
+    "src/common/InteropTypes.ts",
+    "src/common/Platform.ts",
+    "src/common/Wrapper.ts",
+    "src/common/arrays.ts",
+    "src/common/driver_helper.ts",
+    "src/common/global.ts",
+    "src/common/loadLibraries.ts",
+    "src/common/mainWrapper.ts",
+    "src/common/preDefine.ts",
+    "src/common/private.ts",
+    "src/common/strings.ts",
+    "src/common/ts-reflection.ts",
+    "src/common/types.ts",
+    "src/common/ui_plugins_driver.ts",
+    "src/common/utils.ts",
+    "src/common/arkTSConfigGenerator.ts",
+    "src/generated/Es2pandaEnums.ts",
+    "src/generated/Es2pandaNativeModule.ts",
+    "src/index.ts",
+    "src/lsp/compile_thread_worker.ts",
+    "src/lsp/generateArkTSConfig.ts",
+    "src/lsp/generateBuildConfig.ts",
+    "src/lsp/index.ts",
+    "src/lsp/lspNode.ts",
+    "src/lsp/lsp_helper.ts",
   ]
   script = "build_bindings.py"
 

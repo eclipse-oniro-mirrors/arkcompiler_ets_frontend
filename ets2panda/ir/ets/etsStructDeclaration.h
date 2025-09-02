@@ -30,6 +30,17 @@ public:
     explicit ETSStructDeclaration(ClassDefinition *const def, ArenaAllocator *const allocator)
         : ClassDeclaration(AstNodeType::STRUCT_DECLARATION, def, allocator)
     {
+        InitHistory();
+    }
+
+    explicit ETSStructDeclaration(ClassDefinition *const def, ArenaAllocator *const allocator, AstNodeHistory *history)
+        : ClassDeclaration(AstNodeType::STRUCT_DECLARATION, def, allocator)
+    {
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     void Dump(ir::AstDumper *dumper) const override;
@@ -42,6 +53,16 @@ public:
     {
         v->Accept(this);
     }
+
+    ETSStructDeclaration *Construct(ArenaAllocator *allocator) override
+    {
+        return allocator->New<ETSStructDeclaration>(nullptr, allocator);
+    }
+
+    void CopyTo(AstNode *other) const override
+    {
+        ClassDeclaration::CopyTo(other);
+    };
 };
 }  // namespace ark::es2panda::ir
 

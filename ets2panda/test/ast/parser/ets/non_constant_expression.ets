@@ -22,4 +22,4 @@ let cc = 1
 function foo() {}
 
 
-/* @@? 21:14 Error SyntaxError: Only constant expression is expected in the field */
+/* @@? 21:14 Error TypeError: Invalid value for annotation field, expected a constant literal. */

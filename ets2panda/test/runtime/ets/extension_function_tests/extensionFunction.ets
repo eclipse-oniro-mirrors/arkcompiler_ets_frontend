@@ -25,6 +25,6 @@ function main() {
     let fruit = new Fruit();
     let res: int = fruit.name();
     let res2: int = name(fruit);
-    assertEQ(res, 2 )
-    assertEQ(res2, 2 )
+    arktest.assertEQ(res, 2 )
+    arktest.assertEQ(res2, 2 )
 }

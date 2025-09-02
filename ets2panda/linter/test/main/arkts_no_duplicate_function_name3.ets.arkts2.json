@@ -55,16 +55,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 31,
-            "column": 23,
-            "endLine": 31,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 35,
             "column": 3,
             "endLine": 35,
@@ -72,36 +62,6 @@
             "problem": "NoDuplicateFunctionName",
             "suggest": "",
             "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 35,
-            "column": 23,
-            "endLine": 35,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 39,
-            "column": 19,
-            "endLine": 39,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 39,
-            "column": 34,
-            "endLine": 39,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -125,66 +85,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 59,
-            "column": 19,
-            "endLine": 59,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 59,
-            "column": 34,
-            "endLine": 59,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 63,
-            "column": 19,
-            "endLine": 63,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 63,
-            "column": 34,
-            "endLine": 63,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 19,
-            "endLine": 67,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 34,
-            "endLine": 67,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 71,
             "column": 3,
             "endLine": 71,
@@ -192,26 +92,6 @@
             "problem": "NoDuplicateFunctionName",
             "suggest": "",
             "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 71,
-            "column": 19,
-            "endLine": 71,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 71,
-            "column": 34,
-            "endLine": 71,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

@@ -1,0 +1,468 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 17,
+            "column": 21,
+            "endLine": 17,
+            "endColumn": 34,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"constructor\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 31,
+            "endLine": 19,
+            "endColumn": 46,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 15,
+            "endLine": 20,
+            "endColumn": 21,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 28,
+            "endLine": 22,
+            "endColumn": 43,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 29,
+            "endLine": 23,
+            "endColumn": 44,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 29,
+            "endLine": 24,
+            "endColumn": 44,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 23,
+            "endLine": 26,
+            "endColumn": 38,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 50,
+            "endLine": 26,
+            "endColumn": 56,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"search\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 31,
+            "endLine": 28,
+            "endColumn": 46,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 15,
+            "endLine": 29,
+            "endColumn": 21,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 35,
+            "endLine": 31,
+            "endColumn": 50,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 52,
+            "endLine": 32,
+            "endColumn": 59,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 19,
+            "endLine": 33,
+            "endColumn": 23,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 15,
+            "endLine": 35,
+            "endColumn": 22,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 30,
+            "endLine": 35,
+            "endColumn": 37,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 26,
+            "endLine": 39,
+            "endColumn": 33,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 13,
+            "endLine": 39,
+            "endColumn": 25,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"searchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 40,
+            "endLine": 40,
+            "endColumn": 52,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"searchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 29,
+            "endLine": 43,
+            "endColumn": 44,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 26,
+            "endLine": 44,
+            "endColumn": 29,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 45,
+            "column": 25,
+            "endLine": 45,
+            "endColumn": 28,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 28,
+            "endLine": 46,
+            "endColumn": 31,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 23,
+            "endLine": 49,
+            "endColumn": 38,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 50,
+            "endLine": 49,
+            "endColumn": 56,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"search\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 9,
+            "endLine": 50,
+            "endColumn": 15,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 21,
+            "endLine": 51,
+            "endColumn": 27,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 29,
+            "endLine": 52,
+            "endColumn": 44,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 56,
+            "endLine": 52,
+            "endColumn": 62,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"search\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 15,
+            "endLine": 53,
+            "endColumn": 18,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 35,
+            "endLine": 55,
+            "endColumn": 50,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 18,
+            "endLine": 56,
+            "endColumn": 22,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 43,
+            "endLine": 56,
+            "endColumn": 47,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 28,
+            "endLine": 62,
+            "endColumn": 43,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 55,
+            "endLine": 62,
+            "endColumn": 61,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"search\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 14,
+            "endLine": 63,
+            "endColumn": 17,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 34,
+            "endLine": 65,
+            "endColumn": 49,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 66,
+            "column": 20,
+            "endLine": 66,
+            "endColumn": 24,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 32,
+            "endLine": 67,
+            "endColumn": 40,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 22,
+            "endLine": 69,
+            "endColumn": 37,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 48,
+            "endLine": 69,
+            "endColumn": 54,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"search\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 8,
+            "endLine": 70,
+            "endColumn": 14,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 71,
+            "column": 20,
+            "endLine": 71,
+            "endColumn": 28,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 73,
+            "column": 28,
+            "endLine": 73,
+            "endColumn": 43,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 20,
+            "endLine": 74,
+            "endColumn": 24,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 38,
+            "endLine": 74,
+            "endColumn": 44,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"url.URLSearchParams\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        }
+    ]
+}

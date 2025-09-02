@@ -13,17 +13,17 @@
  * limitations under the License.
  */
 
-function main():void {
-    enum Color {Red = 0, Green = 1, Blue = 0}
-    enum Commands { Open = "fopen", Close = "fclose", Open2 = "fopen" }
+enum Color {Red = 0, Green = 1, Blue = 0}
+enum Commands { Open = "fopen", Close = "fclose", Open2 = "fopen" }
 
+function main():void {
     let ie : Color = Color.Blue;
     switch (ie) {
         case Color.Red:
-            assertTrue(false)
+            arktest.assertTrue(false)
             break;
         case Color.Green:
-            assertTrue(false)
+            arktest.assertTrue(false)
             break;
         case Color.Blue:
             break;
@@ -32,12 +32,12 @@ function main():void {
     let se : Commands = Commands.Close;
     switch (se) {
         case Commands.Open:
-            assertTrue(false)
+            arktest.assertTrue(false)
             break;
         case Commands.Close:
             break;
         case Commands.Open2:
-            assertTrue(false)
+            arktest.assertTrue(false)
             break;
     }
 }

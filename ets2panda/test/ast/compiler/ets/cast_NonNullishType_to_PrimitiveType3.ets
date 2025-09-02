@@ -17,4 +17,3 @@ function foo<T>(data : T): void {
     let aNumber = data! as number
 }
 
-/* @@? 17:19 Error TypeError: Cannot cast type 'NonNullable<T>' to 'double' */

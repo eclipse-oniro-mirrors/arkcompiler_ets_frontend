@@ -29,12 +29,7 @@ void ETSTuple::TransformChildren(const NodeTransformer &cb, std::string_view con
         }
     }
 
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void ETSTuple::Iterate(const NodeTraverser &cb) const
@@ -97,10 +92,8 @@ checker::Type *ETSTuple::GetHolderTypeForTuple(checker::ETSChecker *const checke
         return typeList[0];
     }
 
-    std::for_each(typeList.begin(), typeList.end(), [checker](auto &t) { t = checker->MaybeBoxType(t); });
-
-    auto ctypes = typeList;
-    return checker->CreateETSUnionType(std::move(ctypes));
+    /* NOTE(gogabr): if we compute a union type, we'll lose smaller numeric types, so just return Object */
+    return checker->GlobalETSAnyType();
 }
 
 checker::Type *ETSTuple::GetType(checker::ETSChecker *const checker)
@@ -129,8 +122,7 @@ checker::Type *ETSTuple::GetType(checker::ETSChecker *const checker)
     }
 
     if (isTypeError) {
-        SetTsType(checker->GlobalTypeError());
-        return checker->GlobalTypeError();
+        return SetTsType(checker->GlobalTypeError());
     }
 
     auto *tupleType = checker->ProgramAllocator()->New<checker::ETSTupleType>(checker, typeList);
@@ -164,7 +156,7 @@ ETSTuple *ETSTuple::Clone(ArenaAllocator *const allocator, AstNode *const parent
     if (!Annotations().empty()) {
         ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
         for (auto *annotationUsage : Annotations()) {
-            auto *const annotationClone = annotationUsage->Clone(allocator, clone);
+            auto *const annotationClone = annotationUsage->Clone(allocator, nullptr);
             ES2PANDA_ASSERT(annotationClone != nullptr);
             annotationUsages.push_back(annotationClone->AsAnnotationUsage());
         }

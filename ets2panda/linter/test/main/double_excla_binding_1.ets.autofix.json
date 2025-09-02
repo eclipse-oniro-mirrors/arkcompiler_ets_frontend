@@ -15,27 +15,6 @@
     ],
     "result": [
         {
-            "line": 20,
-            "column": 26,
-            "endLine": 20,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 692,
-                    "end": 693,
-                    "replacementText": "0.0",
-                    "line": 20,
-                    "column": 26,
-                    "endLine": 20,
-                    "endColumn": 27
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 25,
             "column": 16,
             "endLine": 25,
@@ -78,90 +57,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 46,
-            "column": 26,
-            "endLine": 46,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1031,
-                    "end": 1032,
-                    "replacementText": "0.0",
-                    "line": 46,
-                    "column": 26,
-                    "endLine": 46,
-                    "endColumn": 27
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 58,
-            "column": 26,
-            "endLine": 58,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1182,
-                    "end": 1183,
-                    "replacementText": "0.0",
-                    "line": 58,
-                    "column": 26,
-                    "endLine": 58,
-                    "endColumn": 27
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 70,
-            "column": 26,
-            "endLine": 70,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1334,
-                    "end": 1335,
-                    "replacementText": "0.0",
-                    "line": 70,
-                    "column": 26,
-                    "endLine": 70,
-                    "endColumn": 27
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 83,
-            "column": 26,
-            "endLine": 83,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1489,
-                    "end": 1490,
-                    "replacementText": "0.0",
-                    "line": 83,
-                    "column": 26,
-                    "endLine": 83,
-                    "endColumn": 27
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 92,
             "column": 21,
             "endLine": 92,
@@ -171,7 +66,7 @@
                 {
                     "start": 1662,
                     "end": 1685,
-                    "replacementText": "{\n        value: this.value,\n        $value: value => {\n            this.value = value;\n        }\n      }",
+                    "replacementText": "{\n        value: this.value,\n        $value: (value: number) => {\n            this.value = value;\n        }\n      }",
                     "line": 92,
                     "column": 21,
                     "endLine": 92,
@@ -192,7 +87,7 @@
                 {
                     "start": 1700,
                     "end": 1719,
-                    "replacementText": "{\n        str: this.str,\n        $str: value => {\n            this.str = value;\n        }\n      }",
+                    "replacementText": "{\n        str: this.str,\n        $str: (value: string) => {\n            this.str = value;\n        }\n      }",
                     "line": 93,
                     "column": 21,
                     "endLine": 93,
@@ -201,48 +96,6 @@
             ],
             "suggest": "",
             "rule": "\"!!\" for bidirectional data binding is not supported (arkui-no-!!-bidirectional-data-binding)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 101,
-            "column": 26,
-            "endLine": 101,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1787,
-                    "end": 1788,
-                    "replacementText": "0.0",
-                    "line": 101,
-                    "column": 26,
-                    "endLine": 101,
-                    "endColumn": 27
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 108,
-            "column": 21,
-            "endLine": 108,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1974,
-                    "end": 1976,
-                    "replacementText": "10.0",
-                    "line": 108,
-                    "column": 21,
-                    "endLine": 108,
-                    "endColumn": 23
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

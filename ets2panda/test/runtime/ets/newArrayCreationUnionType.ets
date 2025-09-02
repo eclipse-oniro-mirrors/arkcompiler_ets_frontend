@@ -17,7 +17,7 @@
     let array = new (int|string|undefined)[10]
     array[0] = 1;
     array[2] = "test";
-    assertEQ(array[0], 1)
-    assertEQ(array[2], "test")
-    assertEQ(array[3], undefined)
+    arktest.assertEQ(array[0], 1)
+    arktest.assertEQ(array[2], "test")
+    arktest.assertEQ(array[3], undefined)
  }

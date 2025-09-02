@@ -1,0 +1,218 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 20,
+            "column": 31,
+            "endLine": 20,
+            "endColumn": 39,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"SizeType\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 40,
+            "endLine": 20,
+            "endColumn": 42,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"XS\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 29,
+            "endLine": 28,
+            "endColumn": 37,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"SizeType\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 38,
+            "endLine": 28,
+            "endColumn": 40,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"XS\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 29,
+            "endLine": 32,
+            "endColumn": 37,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"SizeType\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 38,
+            "endLine": 32,
+            "endColumn": 40,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"SM\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 29,
+            "endLine": 36,
+            "endColumn": 37,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"SizeType\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 38,
+            "endLine": 36,
+            "endColumn": 40,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"MD\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 29,
+            "endLine": 40,
+            "endColumn": 37,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"SizeType\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 38,
+            "endLine": 40,
+            "endColumn": 40,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"LG\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 17,
+            "column": 2,
+            "endLine": 17,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 2,
+            "endLine": 18,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 4,
+            "endLine": 20,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"State\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 5,
+            "endLine": 23,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Column\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 7,
+            "endLine": 24,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 7,
+            "endLine": 25,
+            "endColumn": 10,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Row\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 9,
+            "endLine": 26,
+            "endColumn": 15,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Button\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 9,
+            "endLine": 30,
+            "endColumn": 15,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Button\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 9,
+            "endLine": 34,
+            "endColumn": 15,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Button\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 9,
+            "endLine": 38,
+            "endColumn": 15,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Button\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        }
+    ]
+}

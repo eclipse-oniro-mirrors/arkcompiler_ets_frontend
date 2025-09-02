@@ -41,6 +41,6 @@ class B extends A {
 function main(): int {
     let b = new B;
     b.push('a', 11.0);
-    assertEQ(b.pull('a'), 11.0)
+    arktest.assertEQ(b.pull('a'), 11.0)
     return 0;
 }

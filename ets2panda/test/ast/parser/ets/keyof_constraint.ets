@@ -30,6 +30,6 @@ function main():void{
     /* @@ label2 */getProperty<keyof A>(/* @@ label3 */"field12345");
 }
 
-/* @@@ label1 Error TypeError: Type "field12345" is not assignable to constraint type "method1"|"field1"|"field2"  */
+/* @@@ label1 Error TypeError: Type argument '"field12345"' should be a subtype of '"method1"|"field1"|"field2"'-constraint */
 /* @@@ label2 Error TypeError: No matching call signature for getProperty("field12345")  */
 /* @@@ label3 Error TypeError: Type '"field12345"' is not compatible with type '"method1"|"field1"|"field2"' at index 1  */

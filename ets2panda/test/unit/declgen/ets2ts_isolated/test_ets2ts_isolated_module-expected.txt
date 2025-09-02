@@ -1,0 +1,6 @@
+import * as np from "./test_ets2ts_isolated_enum";
+import { B, C0 as C } from "./test_ets2ts_isolated_enum";
+export declare let b: np.A;
+declare let d: number;
+export default d;
+export declare function foo(a: number, c: C): Array<boolean> | Array<number> | Array<string> | B | np.A | number | string;

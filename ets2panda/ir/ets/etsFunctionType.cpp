@@ -23,18 +23,13 @@
 namespace ark::es2panda::ir {
 void ETSFunctionType::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    signature_.TransformChildren(cb, transformationName);
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    GetHistoryNodeAs<ETSFunctionType>()->signature_.TransformChildren(cb, transformationName);
+    TransformAnnotations(cb, transformationName);
 }
 
 void ETSFunctionType::Iterate(const NodeTraverser &cb) const
 {
-    signature_.Iterate(cb);
+    GetHistoryNodeAs<ETSFunctionType>()->signature_.Iterate(cb);
     for (auto *it : VectorIterationGuard(Annotations())) {
         cb(it);
     }
@@ -42,17 +37,10 @@ void ETSFunctionType::Iterate(const NodeTraverser &cb) const
 
 void ETSFunctionType::Dump(ir::AstDumper *dumper) const
 {
-    const char *throwMarker = nullptr;
-    if (IsThrowing()) {
-        throwMarker = "throws";
-    } else if (IsRethrowing()) {
-        throwMarker = "rethrows";
-    }
     dumper->Add({{"type", "ETSFunctionType"},
-                 {"params", signature_.Params()},
-                 {"typeParameters", AstDumper::Optional(signature_.TypeParams())},
-                 {"returnType", signature_.ReturnType()},
-                 {"throwMarker", AstDumper::Optional(throwMarker)},
+                 {"params", Params()},
+                 {"typeParameters", AstDumper::Optional(TypeParams())},
+                 {"returnType", ReturnType()},
                  {"annotations", AstDumper::Optional(Annotations())}});
 }
 
@@ -77,12 +65,6 @@ void ETSFunctionType::Dump(ir::SrcDumper *dumper) const
     if (ReturnType() != nullptr) {
         dumper->Add("=> ");
         ReturnType()->Dump(dumper);
-    }
-
-    if (IsThrowing()) {
-        dumper->Add(" throws");
-    } else if (IsRethrowing()) {
-        dumper->Add(" rethrows");
     }
 
     dumper->Add(")");
@@ -122,19 +104,17 @@ ETSFunctionType *ETSFunctionType::Clone(ArenaAllocator *const allocator, AstNode
 {
     ArenaVector<Expression *> paramsClone(allocator->Adapter());
 
-    for (auto *const param : signature_.Params()) {
+    for (auto *const param : Params()) {
         paramsClone.emplace_back(param->Clone(allocator, nullptr)->AsExpression());
     }
 
     auto *const typeParamsClone =
-        signature_.TypeParams() != nullptr
-            ? signature_.TypeParams()->Clone(allocator, nullptr)->AsTSTypeParameterDeclaration()
-            : nullptr;
+        TypeParams() != nullptr ? TypeParams()->Clone(allocator, nullptr)->AsTSTypeParameterDeclaration() : nullptr;
     auto *const returnTypeClone =
-        signature_.ReturnType() != nullptr ? signature_.ReturnType()->Clone(allocator, nullptr)->AsTypeNode() : nullptr;
+        ReturnType() != nullptr ? ReturnType()->Clone(allocator, nullptr)->AsTypeNode() : nullptr;
 
     auto *const clone = allocator->New<ETSFunctionType>(
-        FunctionSignature(typeParamsClone, std::move(paramsClone), returnTypeClone), funcFlags_, allocator);
+        FunctionSignature(typeParamsClone, std::move(paramsClone), returnTypeClone), Flags(), allocator);
 
     if (typeParamsClone != nullptr) {
         typeParamsClone->SetParent(clone);
@@ -163,8 +143,28 @@ ETSFunctionType *ETSFunctionType::Clone(ArenaAllocator *const allocator, AstNode
 
     // If the scope is set to empty, it will result in the inability to retrieve the scope after clone,
     // and an error cannot find type will be reported
-    clone->SetScope(this->scope_);
+    clone->SetScope(Scope());
 
     return clone;
 }
+
+ETSFunctionType *ETSFunctionType::Construct(ArenaAllocator *allocator)
+{
+    auto adapter = allocator->Adapter();
+    return allocator->New<ETSFunctionType>(FunctionSignature(nullptr, ArenaVector<Expression *>(adapter), nullptr),
+                                           ScriptFunctionFlags::NONE, allocator);
+}
+
+void ETSFunctionType::CopyTo(AstNode *other) const
+{
+    auto otherImpl = reinterpret_cast<ETSFunctionType *>(other);
+
+    otherImpl->scope_ = scope_;
+    otherImpl->signature_.CopyFrom(signature_);
+    otherImpl->functionalInterface_ = functionalInterface_;
+    otherImpl->funcFlags_ = funcFlags_;
+
+    TypeNode::CopyTo(other);
+}
+
 }  // namespace ark::es2panda::ir

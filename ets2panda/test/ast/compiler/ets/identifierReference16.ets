@@ -45,4 +45,4 @@ class A extends B {
 
 /* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
 /* @@? 41:7 Error TypeError: Expected 0 arguments, got 1. */
-/* @@? 41:7 Error TypeError: No matching call signature for foo(int) */
+/* @@? 41:7 Error TypeError: No matching call signature for foo(Int) */

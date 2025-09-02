@@ -78,12 +78,13 @@ void StringComparisonLowering::ProcessBinaryExpression(ir::BinaryExpression *exp
     // reset types is any, will re-run checker to set them once again properly
     expr->SetTsType(nullptr);
 
-    checker::ETSChecker *checker = ctx->checker->AsETSChecker();
+    checker::ETSChecker *checker = ctx->GetChecker()->AsETSChecker();
     ArenaVector<ir::Expression *> callArgs(checker->Allocator()->Adapter());
     ir::Expression *accessor = nullptr;
-    auto *zeroExpr = checker->AllocNode<ir::NumberLiteral>(util::StringView("0"));
+    auto *zeroExpr = checker->AllocNode<ir::NumberLiteral>(lexer::Number(int32_t(0)));
     auto *const callee = checker->AllocNode<ir::Identifier>("compareTo", checker->Allocator());
     ES2PANDA_ASSERT(callee != nullptr);
+    ES2PANDA_ASSERT(checker->GlobalBuiltinETSStringType() != nullptr);
     auto *var = checker->GlobalBuiltinETSStringType()->GetProperty(callee->AsIdentifier()->Name(),
                                                                    checker::PropertySearchFlags::SEARCH_METHOD);
     callee->SetVariable(var);
@@ -96,7 +97,7 @@ void StringComparisonLowering::ProcessBinaryExpression(ir::BinaryExpression *exp
     expr->SetRight(zeroExpr);
 
     auto *parent = expr->Parent();
-    InitScopesPhaseETS::RunExternalNode(expr, ctx->checker->VarBinder());
+    InitScopesPhaseETS::RunExternalNode(expr, ctx->GetChecker()->VarBinder());
     checker->VarBinder()->AsETSBinder()->ResolveReferencesForScope(parent, NearestScope(parent));
 
     if (parent->IsBinaryExpression() || parent->IsConditionalExpression()) {
@@ -109,7 +110,7 @@ void StringComparisonLowering::ProcessBinaryExpression(ir::BinaryExpression *exp
 
 bool StringComparisonLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
-    checker::ETSChecker *checker = ctx->checker->AsETSChecker();
+    checker::ETSChecker *checker = ctx->GetChecker()->AsETSChecker();
     [[maybe_unused]] ArenaVector<ir::BinaryExpression *> foundNodes(checker->Allocator()->Adapter());
     // CC-OFFNXT(G.FMT.14-CPP) project code style
     program->Ast()->IterateRecursively([&foundNodes, this](ir::AstNode *ast) -> ir::AstNode * {

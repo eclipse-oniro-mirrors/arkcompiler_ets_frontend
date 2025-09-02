@@ -22,12 +22,12 @@ function bool2Levels(): void {
         let a0 = true;
         force(() => {
             let a1 = a0;
-            assertTrue(a0 && a1)
+            arktest.assertTrue(a0 && a1)
             a0 = false;
-            assertTrue(!a0 && a1)
+            arktest.assertTrue(!a0 && a1)
             a0 = true;
             a1 = false;
-            assertTrue(a0 && !a1)
+            arktest.assertTrue(a0 && !a1)
         });
     });
 }
@@ -41,11 +41,11 @@ function bool4Levels(): void {
                 let a2 = a1;
                 force(() => {
                     let a3 = a2;
-                    assertTrue(a0 && a1 && a2 && a3)
+                    arktest.assertTrue(a0 && a1 && a2 && a3)
                     a0 = false;
-                    assertTrue(!a0 && a1 && a2 && a3)
+                    arktest.assertTrue(!a0 && a1 && a2 && a3)
                     a3 = false;
-                    assertTrue(!a0 && a1 && a2 && !a3)
+                    arktest.assertTrue(!a0 && a1 && a2 && !a3)
                 });
             });
         });
@@ -61,23 +61,23 @@ function bool4LevelsBi(): void {
                 let a2 = a1;
                 force(() => {
                     let a3 = a2;
-                    assertTrue(a0 && a1 && a2 && a3)
+                    arktest.assertTrue(a0 && a1 && a2 && a3)
                     a0 = false;
-                    assertTrue(!a0 && a1 && a2 && a3)
+                    arktest.assertTrue(!a0 && a1 && a2 && a3)
                     a3 = a0;
-                    assertTrue(!a0 && a1 && a2 && !a3)
+                    arktest.assertTrue(!a0 && a1 && a2 && !a3)
                 });
                 force(() => {
                     a2 = a0;
-                    assertTrue(!a0 && a1 && !a2)
+                    arktest.assertTrue(!a0 && a1 && !a2)
                 });
             });
             force(() => {
-                assertTrue(!a0 && a1)
+                arktest.assertTrue(!a0 && a1)
             });
         });
         force(() => {
-            assertTrue(!a0)
+            arktest.assertTrue(!a0)
         });
     });
 }
@@ -92,7 +92,7 @@ function number4Levels(): void {
                 force(() => {
                     let a3 = a2++;
                     a3++;
-                    assertEQ(8, a0 + a1 + a2 + a3)
+                    arktest.assertEQ(8, a0 + a1 + a2 + a3)
                 });
             });
         });
@@ -112,12 +112,12 @@ function arrays(): void {
                     let a3 = a2;
                     force(() => {
                         a3[3] = a2[2];
-                        assertEQ(a0[0] + a0[1] + a0[2] + a0[3], 4)
+                        arktest.assertEQ(a0[0] + a0[1] + a0[2] + a0[3], 4)
                         a0 = new double[5];
-                        assertEQ(a0.length, 5)
-                        assertEQ(a0[0] + a0[1] + a0[2] + a0[3] + a0[4], 0)
-                        assertEQ(a1[0] + a1[1] + a1[2] + a1[3], 4)
-                        assertTrue(a1 == a2 && a2 == a3)
+                        arktest.assertEQ(a0.length, 5)
+                        arktest.assertEQ(a0[0] + a0[1] + a0[2] + a0[3] + a0[4], 0)
+                        arktest.assertEQ(a1[0] + a1[1] + a1[2] + a1[3], 4)
+                        arktest.assertTrue(a1 == a2 && a2 == a3)
                     })
                 });
             });

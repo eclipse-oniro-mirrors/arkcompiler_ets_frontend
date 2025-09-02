@@ -30,11 +30,13 @@ Identifier::Identifier([[maybe_unused]] Tag const tag, Identifier const &other, 
     for (auto *decorator : other.decorators_) {
         decorators_.emplace_back(decorator->Clone(allocator, this));
     }
+    InitHistory();
 }
 
 Identifier::Identifier(ArenaAllocator *const allocator) : Identifier(ERROR_LITERAL, allocator)
 {
     flags_ |= IdentifierFlags::ERROR_PLACEHOLDER;
+    InitHistory();
 }
 
 Identifier::Identifier(util::StringView const name, ArenaAllocator *const allocator)
@@ -43,6 +45,7 @@ Identifier::Identifier(util::StringView const name, ArenaAllocator *const alloca
     if (name == ERROR_LITERAL) {
         flags_ |= IdentifierFlags::ERROR_PLACEHOLDER;
     }
+    InitHistory();
 }
 
 Identifier::Identifier(util::StringView const name, TypeNode *const typeAnnotation, ArenaAllocator *const allocator)
@@ -51,12 +54,13 @@ Identifier::Identifier(util::StringView const name, TypeNode *const typeAnnotati
     if (name == ERROR_LITERAL) {
         flags_ |= IdentifierFlags::ERROR_PLACEHOLDER;
     }
+    InitHistory();
 }
 
 void Identifier::SetName(const util::StringView &newName) noexcept
 {
     ES2PANDA_ASSERT(newName != ERROR_LITERAL);
-    name_ = newName;
+    GetOrCreateHistoryNodeAs<Identifier>()->name_ = newName;
 }
 
 Identifier *Identifier::Clone(ArenaAllocator *const allocator, AstNode *const parent)
@@ -71,6 +75,13 @@ Identifier *Identifier::Clone(ArenaAllocator *const allocator, AstNode *const pa
 
     clone->SetRange(Range());
     return clone;
+}
+
+void Identifier::SetValueDecorators(Decorator *source, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<Identifier>();
+    auto &arenaVector = newNode->decorators_;
+    arenaVector[index] = source;
 }
 
 Identifier *Identifier::CloneReference(ArenaAllocator *const allocator, AstNode *const parent)
@@ -92,10 +103,11 @@ void Identifier::TransformChildren(const NodeTransformer &cb, std::string_view c
         }
     }
 
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
+    auto const &decorators = Decorators();
+    for (size_t ix = 0; ix < decorators.size(); ix++) {
+        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
+            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueDecorators(transformedNode->AsDecorator(), ix);
         }
     }
 }
@@ -106,14 +118,14 @@ void Identifier::Iterate(const NodeTraverser &cb) const
         cb(TypeAnnotation());
     }
 
-    for (auto *it : VectorIterationGuard(decorators_)) {
+    for (auto *it : VectorIterationGuard(Decorators())) {
         cb(it);
     }
 }
 
 ValidationInfo Identifier::ValidateExpression()
 {
-    if ((flags_ & IdentifierFlags::OPTIONAL) != 0U) {
+    if ((IdFlags() & IdentifierFlags::OPTIONAL) != 0U) {
         return {"Unexpected token '?'.", Start()};
     }
 
@@ -128,10 +140,10 @@ ValidationInfo Identifier::ValidateExpression()
 void Identifier::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", IsPrivateIdent() ? "PrivateIdentifier" : "Identifier"},
-                 {"name", name_},
+                 {"name", Name()},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"optional", AstDumper::Optional(IsOptional())},
-                 {"decorators", decorators_}});
+                 {"decorators", Decorators()}});
 }
 
 void Identifier::Dump(ir::SrcDumper *dumper) const
@@ -145,7 +157,7 @@ void Identifier::Dump(ir::SrcDumper *dumper) const
         dumper->Add("private ");
     }
 
-    auto name = std::string(name_);
+    auto name = std::string(Name());
     std::string propertyStr = compiler::Signatures::PROPERTY.data();
     if (UNLIKELY(name.find(propertyStr) != std::string::npos)) {
         name.replace(name.find(propertyStr), propertyStr.length(), "_$property$_");
@@ -451,7 +463,8 @@ bool Identifier::CheckDeclarationsPart2(const ir::AstNode *parent, ScriptExtensi
     }
 
     if (parent->Parent() != nullptr) {
-        if (parent->Parent()->IsTSEnumDeclaration()) {
+        if (parent->Parent()->IsTSEnumDeclaration() &&
+            !(parent->IsTSEnumMember() && parent->AsTSEnumMember()->Init() == this)) {
             return true;
         }
     }

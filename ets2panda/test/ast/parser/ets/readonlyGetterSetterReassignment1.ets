@@ -32,7 +32,7 @@ class B extends A {
 
 function main() {
     let a = new A();
-    assertEQ(a.a, false);
+    arktest.assertEQ(a.a, false);
 }
 
 /* @@@ label Error TypeError: Cannot assign to this property because it is readonly.  */

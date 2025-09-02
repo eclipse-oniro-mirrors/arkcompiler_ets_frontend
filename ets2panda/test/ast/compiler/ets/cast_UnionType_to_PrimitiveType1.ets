@@ -16,5 +16,3 @@
 function foo<T>(data: T | boolean | null): void {
     let aNumber = data as int
 }
-
-/* @@? 17:19 Error TypeError: Cannot cast type 'T|Boolean|null' to 'int' */

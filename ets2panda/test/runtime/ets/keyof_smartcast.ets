@@ -21,13 +21,13 @@ class A{
 
 function foo(c: "abcd"|A|(keyof A)):string {
   if (c == "field1")  {
-    assertEQ(c, "field1")
+    arktest.assertEQ(c, "field1")
     return "Case 1";
   } else if (c == "abcd") {
-    assertEQ(c, "abcd")
+    arktest.assertEQ(c, "abcd")
     return "Case 2";
   } else if (c instanceof A) {
-    assertEQ(c.field1, 0)
+    arktest.assertEQ(c.field1, 0)
     return "Case 3";
   } else {
     return "Case 4";
@@ -52,11 +52,11 @@ function reducer(action:Action):string{
 }
 
 function main(): void {
-  assertEQ(foo("field1"), "Case 1");
-  assertEQ(foo("abcd"), "Case 2");
-  assertEQ(foo(new A()), "Case 3");
+  arktest.assertEQ(foo("field1"), "Case 1");
+  arktest.assertEQ(foo("abcd"), "Case 2");
+  arktest.assertEQ(foo(new A()), "Case 3");
   
-  assertEQ(reducer({type:"field1"}), "Case 1");
-  assertEQ(reducer({type:"field2"}), "Case 2");
-  assertEQ(reducer({type:"method1"}), "Case 3");
+  arktest.assertEQ(reducer({type:"field1"}), "Case 1");
+  arktest.assertEQ(reducer({type:"field2"}), "Case 2");
+  arktest.assertEQ(reducer({type:"method1"}), "Case 3");
 }

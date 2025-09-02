@@ -35,6 +35,6 @@ function main() : void {
     let foo1 = new Base();
     let foo2 = new Derived();
 
-    assertEQ(testLength(foo1), 1)
-    assertEQ(testLength(foo2), 2)
+    arktest.assertEQ(testLength(foo1), 1)
+    arktest.assertEQ(testLength(foo2), 2)
 }

@@ -226,7 +226,7 @@ export class ScopeHelper {
         const succStmts = succBlock.getStmts();
         if (succStmts.length > 0 && this.gTernaryConditionLines.has(succStmts[0].getOriginPositionInfo().getLineNo())) {
             return true;
-        } else if (predBlocks.length === 1 && this.gTernaryConditionLines.has(predBlocks?.[0].getStmts()?.at(-1)?.getOriginPositionInfo().getLineNo() ?? 0)) {
+        } else if (predBlocks.length === 1 && this.gTernaryConditionLines.has(predBlocks[0].getTail()?.getOriginPositionInfo().getLineNo() ?? 0)) {
             return true;
         } else {
             return false;

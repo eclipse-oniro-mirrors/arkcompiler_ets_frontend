@@ -167,7 +167,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 3,
+                "column": 10,
                 "program": "override17.ets"
               },
               "end": {
@@ -358,7 +358,7 @@
               },
               "end": {
                 "line": 22,
-                "column": 20,
+                "column": 18,
                 "program": "override17.ets"
               }
             }
@@ -371,7 +371,7 @@
             },
             "end": {
               "line": 22,
-              "column": 20,
+              "column": 18,
               "program": "override17.ets"
             }
           }
@@ -448,8 +448,77 @@
                     {
                       "type": "ReturnStatement",
                       "argument": {
-                        "type": "NumberLiteral",
-                        "value": 1,
+                        "type": "CallExpression",
+                        "callee": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Double",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 24,
+                                "column": 12,
+                                "program": "override17.ets"
+                              },
+                              "end": {
+                                "line": 24,
+                                "column": 18,
+                                "program": "override17.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "toFloat",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 24,
+                                "column": 19,
+                                "program": "override17.ets"
+                              },
+                              "end": {
+                                "line": 24,
+                                "column": 26,
+                                "program": "override17.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 24,
+                              "column": 12,
+                              "program": "override17.ets"
+                            },
+                            "end": {
+                              "line": 24,
+                              "column": 26,
+                              "program": "override17.ets"
+                            }
+                          }
+                        },
+                        "arguments": [
+                          {
+                            "type": "NumberLiteral",
+                            "value": 1,
+                            "loc": {
+                              "start": {
+                                "line": 24,
+                                "column": 27,
+                                "program": "override17.ets"
+                              },
+                              "end": {
+                                "line": 24,
+                                "column": 30,
+                                "program": "override17.ets"
+                              }
+                            }
+                          }
+                        ],
+                        "optional": false,
                         "loc": {
                           "start": {
                             "line": 24,
@@ -458,7 +527,7 @@
                           },
                           "end": {
                             "line": 24,
-                            "column": 15,
+                            "column": 31,
                             "program": "override17.ets"
                           }
                         }
@@ -471,7 +540,7 @@
                         },
                         "end": {
                           "line": 24,
-                          "column": 16,
+                          "column": 32,
                           "program": "override17.ets"
                         }
                       }
@@ -521,7 +590,7 @@
             "loc": {
               "start": {
                 "line": 23,
-                "column": 3,
+                "column": 10,
                 "program": "override17.ets"
               },
               "end": {
@@ -742,12 +811,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "override17.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "override17.ets"
                     }
                   }
                 },
@@ -755,12 +824,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "override17.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "override17.ets"
                   }
                 }
               },
@@ -768,118 +837,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "override17.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "override17.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "override17.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "override17.ets"
                 }
               }
             },

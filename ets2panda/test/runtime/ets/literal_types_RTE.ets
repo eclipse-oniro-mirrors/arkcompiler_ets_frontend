@@ -28,10 +28,10 @@ function f2(a: "aa"): "bb" {
 function main() {
     let s1 = id<"a" | "b" | "c">("d")
     let s = id<"a" | "b" | "c">("a")
-    assertEQ(s1 + s, "da")
+    arktest.assertEQ(s1 + s, "da")
 
     s as "b"
-    assertEQ((s as "c") == "c", false)
+    arktest.assertEQ((s as "c") == "c", false)
     f1("aa");
     f2("aa");
 }

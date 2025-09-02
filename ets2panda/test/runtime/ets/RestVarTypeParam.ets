@@ -21,5 +21,5 @@ function bar<T>(value?: T) {
 }
 
 function main() {
-    assertEQ(bar("hi"), "hi")
+    arktest.assertEQ(bar("hi"), "hi")
 }

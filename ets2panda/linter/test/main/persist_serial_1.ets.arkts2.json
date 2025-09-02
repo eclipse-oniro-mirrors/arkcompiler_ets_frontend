@@ -1,0 +1,348 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 38,
+            "column": 35,
+            "endLine": 38,
+            "endColumn": 40,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 31,
+            "endLine": 38,
+            "endColumn": 46,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 29,
+            "endLine": 39,
+            "endColumn": 47,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 37,
+            "endLine": 40,
+            "endColumn": 71,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 39,
+            "endLine": 41,
+            "endColumn": 66,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 44,
+            "endLine": 48,
+            "endColumn": 48,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 1,
+            "endLine": 49,
+            "endColumn": 43,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 1,
+            "endLine": 50,
+            "endColumn": 55,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 1,
+            "endLine": 52,
+            "endColumn": 49,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 1,
+            "endLine": 53,
+            "endColumn": 67,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 44,
+            "endLine": 55,
+            "endColumn": 49,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 40,
+            "endLine": 55,
+            "endColumn": 55,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 44,
+            "endLine": 56,
+            "endColumn": 49,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 40,
+            "endLine": 56,
+            "endColumn": 64,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 1,
+            "endLine": 57,
+            "endColumn": 58,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 44,
+            "endLine": 57,
+            "endColumn": 49,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 40,
+            "endLine": 57,
+            "endColumn": 57,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 1,
+            "endLine": 58,
+            "endColumn": 66,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 44,
+            "endLine": 58,
+            "endColumn": 49,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 40,
+            "endLine": 58,
+            "endColumn": 65,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 1,
+            "endLine": 59,
+            "endColumn": 54,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 44,
+            "endLine": 59,
+            "endColumn": 49,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 40,
+            "endLine": 59,
+            "endColumn": 53,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
+            "column": 40,
+            "endLine": 61,
+            "endColumn": 55,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 40,
+            "endLine": 62,
+            "endColumn": 64,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 1,
+            "endLine": 64,
+            "endColumn": 66,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 40,
+            "endLine": 64,
+            "endColumn": 65,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 1,
+            "endLine": 65,
+            "endColumn": 54,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 40,
+            "endLine": 65,
+            "endColumn": 53,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 40,
+            "endLine": 67,
+            "endColumn": 74,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 1,
+            "endLine": 68,
+            "endColumn": 68,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 40,
+            "endLine": 68,
+            "endColumn": 67,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 1,
+            "endLine": 70,
+            "endColumn": 47,
+            "problem": "PersistentPropNeedImplementMethod",
+            "suggest": "",
+            "rule": "The class of the second parameter passed to the \"persistProp\" method must be a primitive type or Date type, or implement the \"toJson\" and \"fromJson\" methods (arkui-persistent-prop-serialization)",
+            "severity": "ERROR"
+        }
+    ]
+}

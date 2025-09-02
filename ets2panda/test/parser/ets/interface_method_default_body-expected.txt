@@ -73,7 +73,7 @@
                 "loc": {
                   "start": {
                     "line": 17,
-                    "column": 6,
+                    "column": 3,
                     "program": "interface_method_default_body.ets"
                   },
                   "end": {
@@ -86,7 +86,7 @@
               "loc": {
                 "start": {
                   "line": 17,
-                  "column": 6,
+                  "column": 3,
                   "program": "interface_method_default_body.ets"
                 },
                 "end": {
@@ -150,8 +150,8 @@
           "program": "interface_method_default_body.ets"
         },
         "end": {
-          "line": 20,
-          "column": 10,
+          "line": 18,
+          "column": 2,
           "program": "interface_method_default_body.ets"
         }
       }
@@ -244,7 +244,7 @@
                 "loc": {
                   "start": {
                     "line": 21,
-                    "column": 6,
+                    "column": 3,
                     "program": "interface_method_default_body.ets"
                   },
                   "end": {
@@ -257,7 +257,7 @@
               "loc": {
                 "start": {
                   "line": 21,
-                  "column": 6,
+                  "column": 3,
                   "program": "interface_method_default_body.ets"
                 },
                 "end": {
@@ -349,7 +349,7 @@
                 "loc": {
                   "start": {
                     "line": 22,
-                    "column": 6,
+                    "column": 3,
                     "program": "interface_method_default_body.ets"
                   },
                   "end": {
@@ -362,7 +362,7 @@
               "loc": {
                 "start": {
                   "line": 22,
-                  "column": 6,
+                  "column": 3,
                   "program": "interface_method_default_body.ets"
                 },
                 "end": {
@@ -450,7 +450,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 26,
+                  "column": 24,
                   "program": "interface_method_default_body.ets"
                 }
               }
@@ -463,7 +463,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 26,
+                "column": 24,
                 "program": "interface_method_default_body.ets"
               }
             }
@@ -476,7 +476,7 @@
             },
             "end": {
               "line": 20,
-              "column": 26,
+              "column": 24,
               "program": "interface_method_default_body.ets"
             }
           }
@@ -489,8 +489,8 @@
           "program": "interface_method_default_body.ets"
         },
         "end": {
-          "line": 25,
-          "column": 6,
+          "line": 23,
+          "column": 2,
           "program": "interface_method_default_body.ets"
         }
       }
@@ -548,7 +548,7 @@
                   },
                   "end": {
                     "line": 25,
-                    "column": 24,
+                    "column": 22,
                     "program": "interface_method_default_body.ets"
                   }
                 }
@@ -561,7 +561,7 @@
                 },
                 "end": {
                   "line": 25,
-                  "column": 24,
+                  "column": 22,
                   "program": "interface_method_default_body.ets"
                 }
               }
@@ -857,112 +857,6 @@
         "superClass": null,
         "implements": [],
         "body": [
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "interface_method_default_body.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "interface_method_default_body.ets"
-              }
-            }
-          },
           {
             "type": "MethodDefinition",
             "key": {

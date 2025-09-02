@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "outDir": "outdir"
+    },
+    "files": [
+        "./src/file_1.ets",
+        "./src/file_2.ets"
+    ]
+}

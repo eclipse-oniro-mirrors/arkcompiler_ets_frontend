@@ -17,17 +17,17 @@ enum Color { Red, Green = 10, Blue }
 enum Commands { Open = "fopen",  Close = "fclose" }
 
 let colors = Color.values()
-assertEQ(colors[0], Color.Red)
+arktest.assertEQ(colors[0], Color.Red)
 try {
     let red = Color.getValueOf("Red")    
-    assertEQ(red, Color.Red)
-} catch (e) { assertTrue(false)}
+    arktest.assertEQ(red, Color.Red)
+} catch (e) { arktest.assertTrue(false)}
  
 
 let d: Commands = Commands.Close
-assertEQ(d.valueOf(), "fclose")
-assertEQ(d.getName(), "Close")
+arktest.assertEQ(d.valueOf(), "fclose")
+arktest.assertEQ(d.getName(), "Close")
 
 let c: Color = Color.Green
-assertEQ(c.valueOf(), 10)
-assertEQ(c.getName(), "Green")
+arktest.assertEQ(c.valueOf(), 10)
+arktest.assertEQ(c.getName(), "Green")

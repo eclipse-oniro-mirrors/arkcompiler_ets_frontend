@@ -25,19 +25,19 @@ function foo(a: Int | null): (() => Int) | undefined {
 
 function main(): void {
     let a = new Int(3);
-    // assertEQ(foo(a)?.(), 3 // bug)
-    assertEQ(foo(a)?.(), a)
+    // arktest.assertEQ(foo(a)?.(), 3 // bug)
+    arktest.assertEQ(foo(a)?.(), a)
 
-    assertTrue(foo(null)?.() == null)
-    assertTrue(null == foo(null)?.())
+    arktest.assertTrue(foo(null)?.() == null)
+    arktest.assertTrue(null == foo(null)?.())
 
-    assertEQ(foo(null)?.(), undefined)
-    assertEQ(undefined, foo(null)?.())
+    arktest.assertEQ(foo(null)?.(), undefined)
+    arktest.assertEQ(undefined, foo(null)?.())
 
-    assertNE(new Int(3), foo(null)?.())
+    arktest.assertNE(new Int(3), foo(null)?.())
 
     let b = new Bar();
-    assertEQ(b.cb?.(), 3)
+    arktest.assertEQ(b.cb?.(), 3)
     b.cb = undefined;
-    assertEQ(b.cb?.(), undefined)
+    arktest.assertEQ(b.cb?.(), undefined)
 }

@@ -23,4 +23,5 @@ class A{}
 class B{}
 
 /* @@@ label Error SyntaxError: Invalid value for annotation field, expected a constant literal.  */
+/* @@@ label Error TypeError: Invalid value for annotation field, expected a constant literal.  */
 /* @@? 22:23 Error TypeError: Type 'A' cannot be assigned to type 'String' */

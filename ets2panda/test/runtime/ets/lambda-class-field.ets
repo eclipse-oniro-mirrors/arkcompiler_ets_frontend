@@ -21,6 +21,6 @@ class cls {
 function main(): void {
   let c = new cls();
   c.lambda_field = (() => new Int(42)) as () => Int; // #15577
-  assertEQ(c.lambda_field!(), 42)
-  assertEQ(c.num, 0)
+  arktest.assertEQ(c.lambda_field!(), 42)
+  arktest.assertEQ(c.num, 0)
 }

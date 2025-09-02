@@ -20,5 +20,5 @@ class X {
 function main() {
     let f = (): object | null | undefined => await new X().m()
 
-    assertTrue(f() instanceof X)
+    arktest.assertTrue(f() instanceof X)
 }

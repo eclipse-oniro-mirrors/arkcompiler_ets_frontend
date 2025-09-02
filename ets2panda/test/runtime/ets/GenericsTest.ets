@@ -20,25 +20,25 @@ function main(): void {
     let doubleType: TypeGetter<Double> = new TypeGetter<Double>();
     intType.SetType(testInt);
     doubleType.SetType(testDouble);
-    assertEQ(intType.GetType(), 2)
-    assertEQ(doubleType.GetType(), 3.0)
+    arktest.assertEQ(intType.GetType(), 2)
+    arktest.assertEQ(doubleType.GetType(), 3.0)
 
     let aType: TypeGetter<A> = new TypeGetter<A>();
     let aClass: A = new A();
     aType.SetType(aClass);
-    assertEQ(aType.GetType().aValue(), 1)
+    arktest.assertEQ(aType.GetType().aValue(), 1)
 
     let ext1Class: Ext1 = new Ext1();
     let ext2Class: Ext2 = new Ext2();
-    assertEQ(bar(ext1Class, ext2Class), 7)
-    assertEQ(bar(ext2Class, ext1Class), -7)
+    arktest.assertEQ(bar(ext1Class, ext2Class), 7)
+    arktest.assertEQ(bar(ext2Class, ext1Class), -7)
 
     let bc: B = new B();
     let cc : C = new C();
     let dc: D = new D();
-    assertEQ(bc.bMet(cc).cMet(), 17)
-    assertEQ(bc.bMet(cc).ifaceMet(), 10)
-    assertEQ(bc.bMet(dc).dMet(), 8)
+    arktest.assertEQ(bc.bMet(cc).cMet(), 17)
+    arktest.assertEQ(bc.bMet(cc).ifaceMet(), 10)
+    arktest.assertEQ(bc.bMet(dc).dMet(), 8)
 }
 
 interface ifaceExt {

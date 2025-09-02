@@ -80,12 +80,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "await_keyword.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "await_keyword.ets"
                     }
                   }
                 },
@@ -93,12 +93,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "await_keyword.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "await_keyword.ets"
                   }
                 }
               },
@@ -106,2020 +106,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "await_keyword.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "await_keyword.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "await_keyword.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "asyncLambda",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 5,
-                              "program": "await_keyword.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 16,
-                              "program": "await_keyword.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ArrowFunctionExpression",
-                          "function": {
-                            "type": "ScriptFunction",
-                            "id": null,
-                            "generator": false,
-                            "async": true,
-                            "expression": false,
-                            "params": [],
-                            "returnType": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Promise",
-                                  "decorators": [],
-                                  "loc": {
-                                    "start": {
-                                      "line": 22,
-                                      "column": 59,
-                                      "program": "await_keyword.ets"
-                                    },
-                                    "end": {
-                                      "line": 22,
-                                      "column": 66,
-                                      "program": "await_keyword.ets"
-                                    }
-                                  }
-                                },
-                                "typeParams": {
-                                  "type": "TSTypeParameterInstantiation",
-                                  "params": [
-                                    {
-                                      "type": "ETSUnionType",
-                                      "types": [
-                                        {
-                                          "type": "ETSTypeReference",
-                                          "part": {
-                                            "type": "ETSTypeReferencePart",
-                                            "name": {
-                                              "type": "Identifier",
-                                              "name": "Object",
-                                              "decorators": [],
-                                              "loc": {
-                                                "start": {
-                                                  "line": 22,
-                                                  "column": 67,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 22,
-                                                  "column": 73,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            },
-                                            "loc": {
-                                              "start": {
-                                                "line": 22,
-                                                "column": 67,
-                                                "program": "await_keyword.ets"
-                                              },
-                                              "end": {
-                                                "line": 22,
-                                                "column": 75,
-                                                "program": "await_keyword.ets"
-                                              }
-                                            }
-                                          },
-                                          "loc": {
-                                            "start": {
-                                              "line": 22,
-                                              "column": 67,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 22,
-                                              "column": 75,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        },
-                                        {
-                                          "type": "ETSNullType",
-                                          "loc": {
-                                            "start": {
-                                              "line": 22,
-                                              "column": 76,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 22,
-                                              "column": 80,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        }
-                                      ],
-                                      "loc": {
-                                        "start": {
-                                          "line": 22,
-                                          "column": 67,
-                                          "program": "await_keyword.ets"
-                                        },
-                                        "end": {
-                                          "line": 22,
-                                          "column": 80,
-                                          "program": "await_keyword.ets"
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "loc": {
-                                    "start": {
-                                      "line": 22,
-                                      "column": 66,
-                                      "program": "await_keyword.ets"
-                                    },
-                                    "end": {
-                                      "line": 22,
-                                      "column": 81,
-                                      "program": "await_keyword.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 22,
-                                    "column": 59,
-                                    "program": "await_keyword.ets"
-                                  },
-                                  "end": {
-                                    "line": 22,
-                                    "column": 84,
-                                    "program": "await_keyword.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 59,
-                                  "program": "await_keyword.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 84,
-                                  "program": "await_keyword.ets"
-                                }
-                              }
-                            },
-                            "body": {
-                              "type": "BlockStatement",
-                              "statements": [
-                                {
-                                  "type": "VariableDeclaration",
-                                  "declarations": [
-                                    {
-                                      "type": "VariableDeclarator",
-                                      "id": {
-                                        "type": "Identifier",
-                                        "name": "promise",
-                                        "typeAnnotation": {
-                                          "type": "ETSUnionType",
-                                          "types": [
-                                            {
-                                              "type": "ETSTypeReference",
-                                              "part": {
-                                                "type": "ETSTypeReferencePart",
-                                                "name": {
-                                                  "type": "Identifier",
-                                                  "name": "Promise",
-                                                  "decorators": [],
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 23,
-                                                      "column": 18,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 23,
-                                                      "column": 25,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                },
-                                                "typeParams": {
-                                                  "type": "TSTypeParameterInstantiation",
-                                                  "params": [
-                                                    {
-                                                      "type": "ETSUnionType",
-                                                      "types": [
-                                                        {
-                                                          "type": "ETSTypeReference",
-                                                          "part": {
-                                                            "type": "ETSTypeReferencePart",
-                                                            "name": {
-                                                              "type": "Identifier",
-                                                              "name": "Object",
-                                                              "decorators": [],
-                                                              "loc": {
-                                                                "start": {
-                                                                  "line": 23,
-                                                                  "column": 26,
-                                                                  "program": "await_keyword.ets"
-                                                                },
-                                                                "end": {
-                                                                  "line": 23,
-                                                                  "column": 32,
-                                                                  "program": "await_keyword.ets"
-                                                                }
-                                                              }
-                                                            },
-                                                            "loc": {
-                                                              "start": {
-                                                                "line": 23,
-                                                                "column": 26,
-                                                                "program": "await_keyword.ets"
-                                                              },
-                                                              "end": {
-                                                                "line": 23,
-                                                                "column": 34,
-                                                                "program": "await_keyword.ets"
-                                                              }
-                                                            }
-                                                          },
-                                                          "loc": {
-                                                            "start": {
-                                                              "line": 23,
-                                                              "column": 26,
-                                                              "program": "await_keyword.ets"
-                                                            },
-                                                            "end": {
-                                                              "line": 23,
-                                                              "column": 34,
-                                                              "program": "await_keyword.ets"
-                                                            }
-                                                          }
-                                                        },
-                                                        {
-                                                          "type": "ETSNullType",
-                                                          "loc": {
-                                                            "start": {
-                                                              "line": 23,
-                                                              "column": 35,
-                                                              "program": "await_keyword.ets"
-                                                            },
-                                                            "end": {
-                                                              "line": 23,
-                                                              "column": 39,
-                                                              "program": "await_keyword.ets"
-                                                            }
-                                                          }
-                                                        }
-                                                      ],
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 23,
-                                                          "column": 26,
-                                                          "program": "await_keyword.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 23,
-                                                          "column": 39,
-                                                          "program": "await_keyword.ets"
-                                                        }
-                                                      }
-                                                    }
-                                                  ],
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 23,
-                                                      "column": 25,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 23,
-                                                      "column": 40,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                },
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 23,
-                                                    "column": 18,
-                                                    "program": "await_keyword.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 23,
-                                                    "column": 42,
-                                                    "program": "await_keyword.ets"
-                                                  }
-                                                }
-                                              },
-                                              "loc": {
-                                                "start": {
-                                                  "line": 23,
-                                                  "column": 18,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 23,
-                                                  "column": 42,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            },
-                                            {
-                                              "type": "ETSNullType",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 23,
-                                                  "column": 43,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 23,
-                                                  "column": 47,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            }
-                                          ],
-                                          "loc": {
-                                            "start": {
-                                              "line": 23,
-                                              "column": 18,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 23,
-                                              "column": 47,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        },
-                                        "decorators": [],
-                                        "loc": {
-                                          "start": {
-                                            "line": 23,
-                                            "column": 9,
-                                            "program": "await_keyword.ets"
-                                          },
-                                          "end": {
-                                            "line": 23,
-                                            "column": 16,
-                                            "program": "await_keyword.ets"
-                                          }
-                                        }
-                                      },
-                                      "init": {
-                                        "type": "CallExpression",
-                                        "callee": {
-                                          "type": "ArrowFunctionExpression",
-                                          "function": {
-                                            "type": "ScriptFunction",
-                                            "id": null,
-                                            "generator": false,
-                                            "async": false,
-                                            "expression": false,
-                                            "params": [],
-                                            "returnType": {
-                                              "type": "ETSUnionType",
-                                              "types": [
-                                                {
-                                                  "type": "ETSTypeReference",
-                                                  "part": {
-                                                    "type": "ETSTypeReferencePart",
-                                                    "name": {
-                                                      "type": "Identifier",
-                                                      "name": "Promise",
-                                                      "decorators": [],
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 23,
-                                                          "column": 54,
-                                                          "program": "await_keyword.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 23,
-                                                          "column": 61,
-                                                          "program": "await_keyword.ets"
-                                                        }
-                                                      }
-                                                    },
-                                                    "typeParams": {
-                                                      "type": "TSTypeParameterInstantiation",
-                                                      "params": [
-                                                        {
-                                                          "type": "ETSUnionType",
-                                                          "types": [
-                                                            {
-                                                              "type": "ETSTypeReference",
-                                                              "part": {
-                                                                "type": "ETSTypeReferencePart",
-                                                                "name": {
-                                                                  "type": "Identifier",
-                                                                  "name": "Object",
-                                                                  "decorators": [],
-                                                                  "loc": {
-                                                                    "start": {
-                                                                      "line": 23,
-                                                                      "column": 62,
-                                                                      "program": "await_keyword.ets"
-                                                                    },
-                                                                    "end": {
-                                                                      "line": 23,
-                                                                      "column": 68,
-                                                                      "program": "await_keyword.ets"
-                                                                    }
-                                                                  }
-                                                                },
-                                                                "loc": {
-                                                                  "start": {
-                                                                    "line": 23,
-                                                                    "column": 62,
-                                                                    "program": "await_keyword.ets"
-                                                                  },
-                                                                  "end": {
-                                                                    "line": 23,
-                                                                    "column": 70,
-                                                                    "program": "await_keyword.ets"
-                                                                  }
-                                                                }
-                                                              },
-                                                              "loc": {
-                                                                "start": {
-                                                                  "line": 23,
-                                                                  "column": 62,
-                                                                  "program": "await_keyword.ets"
-                                                                },
-                                                                "end": {
-                                                                  "line": 23,
-                                                                  "column": 70,
-                                                                  "program": "await_keyword.ets"
-                                                                }
-                                                              }
-                                                            },
-                                                            {
-                                                              "type": "ETSNullType",
-                                                              "loc": {
-                                                                "start": {
-                                                                  "line": 23,
-                                                                  "column": 71,
-                                                                  "program": "await_keyword.ets"
-                                                                },
-                                                                "end": {
-                                                                  "line": 23,
-                                                                  "column": 75,
-                                                                  "program": "await_keyword.ets"
-                                                                }
-                                                              }
-                                                            }
-                                                          ],
-                                                          "loc": {
-                                                            "start": {
-                                                              "line": 23,
-                                                              "column": 62,
-                                                              "program": "await_keyword.ets"
-                                                            },
-                                                            "end": {
-                                                              "line": 23,
-                                                              "column": 75,
-                                                              "program": "await_keyword.ets"
-                                                            }
-                                                          }
-                                                        }
-                                                      ],
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 23,
-                                                          "column": 61,
-                                                          "program": "await_keyword.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 23,
-                                                          "column": 76,
-                                                          "program": "await_keyword.ets"
-                                                        }
-                                                      }
-                                                    },
-                                                    "loc": {
-                                                      "start": {
-                                                        "line": 23,
-                                                        "column": 54,
-                                                        "program": "await_keyword.ets"
-                                                      },
-                                                      "end": {
-                                                        "line": 23,
-                                                        "column": 78,
-                                                        "program": "await_keyword.ets"
-                                                      }
-                                                    }
-                                                  },
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 23,
-                                                      "column": 54,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 23,
-                                                      "column": 78,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                },
-                                                {
-                                                  "type": "ETSNullType",
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 23,
-                                                      "column": 79,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 23,
-                                                      "column": 83,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                }
-                                              ],
-                                              "loc": {
-                                                "start": {
-                                                  "line": 23,
-                                                  "column": 54,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 23,
-                                                  "column": 83,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            },
-                                            "body": {
-                                              "type": "BlockStatement",
-                                              "statements": [
-                                                {
-                                                  "type": "ReturnStatement",
-                                                  "argument": {
-                                                    "type": "NullLiteral",
-                                                    "value": null,
-                                                    "loc": {
-                                                      "start": {
-                                                        "line": 23,
-                                                        "column": 96,
-                                                        "program": "await_keyword.ets"
-                                                      },
-                                                      "end": {
-                                                        "line": 23,
-                                                        "column": 100,
-                                                        "program": "await_keyword.ets"
-                                                      }
-                                                    }
-                                                  },
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 23,
-                                                      "column": 89,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 23,
-                                                      "column": 101,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                }
-                                              ],
-                                              "loc": {
-                                                "start": {
-                                                  "line": 23,
-                                                  "column": 87,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 23,
-                                                  "column": 103,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            },
-                                            "loc": {
-                                              "start": {
-                                                "line": 23,
-                                                "column": 50,
-                                                "program": "await_keyword.ets"
-                                              },
-                                              "end": {
-                                                "line": 23,
-                                                "column": 103,
-                                                "program": "await_keyword.ets"
-                                              }
-                                            }
-                                          },
-                                          "loc": {
-                                            "start": {
-                                              "line": 23,
-                                              "column": 50,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 23,
-                                              "column": 103,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        },
-                                        "arguments": [],
-                                        "optional": false,
-                                        "loc": {
-                                          "start": {
-                                            "line": 23,
-                                            "column": 50,
-                                            "program": "await_keyword.ets"
-                                          },
-                                          "end": {
-                                            "line": 23,
-                                            "column": 105,
-                                            "program": "await_keyword.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 23,
-                                          "column": 9,
-                                          "program": "await_keyword.ets"
-                                        },
-                                        "end": {
-                                          "line": 23,
-                                          "column": 105,
-                                          "program": "await_keyword.ets"
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "kind": "let",
-                                  "loc": {
-                                    "start": {
-                                      "line": 23,
-                                      "column": 5,
-                                      "program": "await_keyword.ets"
-                                    },
-                                    "end": {
-                                      "line": 23,
-                                      "column": 106,
-                                      "program": "await_keyword.ets"
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "VariableDeclaration",
-                                  "declarations": [
-                                    {
-                                      "type": "VariableDeclarator",
-                                      "id": {
-                                        "type": "Identifier",
-                                        "name": "obj",
-                                        "typeAnnotation": {
-                                          "type": "ETSUnionType",
-                                          "types": [
-                                            {
-                                              "type": "ETSTypeReference",
-                                              "part": {
-                                                "type": "ETSTypeReferencePart",
-                                                "name": {
-                                                  "type": "Identifier",
-                                                  "name": "Object",
-                                                  "decorators": [],
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 24,
-                                                      "column": 14,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 24,
-                                                      "column": 20,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                },
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 24,
-                                                    "column": 14,
-                                                    "program": "await_keyword.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 24,
-                                                    "column": 22,
-                                                    "program": "await_keyword.ets"
-                                                  }
-                                                }
-                                              },
-                                              "loc": {
-                                                "start": {
-                                                  "line": 24,
-                                                  "column": 14,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 24,
-                                                  "column": 22,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            },
-                                            {
-                                              "type": "ETSNullType",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 24,
-                                                  "column": 23,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 24,
-                                                  "column": 27,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            }
-                                          ],
-                                          "loc": {
-                                            "start": {
-                                              "line": 24,
-                                              "column": 14,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 24,
-                                              "column": 27,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        },
-                                        "decorators": [],
-                                        "loc": {
-                                          "start": {
-                                            "line": 24,
-                                            "column": 9,
-                                            "program": "await_keyword.ets"
-                                          },
-                                          "end": {
-                                            "line": 24,
-                                            "column": 12,
-                                            "program": "await_keyword.ets"
-                                          }
-                                        }
-                                      },
-                                      "init": {
-                                        "type": "AwaitExpression",
-                                        "argument": {
-                                          "type": "TSNonNullExpression",
-                                          "expression": {
-                                            "type": "Identifier",
-                                            "name": "promise",
-                                            "decorators": [],
-                                            "loc": {
-                                              "start": {
-                                                "line": 24,
-                                                "column": 36,
-                                                "program": "await_keyword.ets"
-                                              },
-                                              "end": {
-                                                "line": 24,
-                                                "column": 43,
-                                                "program": "await_keyword.ets"
-                                              }
-                                            }
-                                          },
-                                          "loc": {
-                                            "start": {
-                                              "line": 24,
-                                              "column": 36,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 24,
-                                              "column": 44,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        },
-                                        "loc": {
-                                          "start": {
-                                            "line": 24,
-                                            "column": 30,
-                                            "program": "await_keyword.ets"
-                                          },
-                                          "end": {
-                                            "line": 24,
-                                            "column": 44,
-                                            "program": "await_keyword.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 24,
-                                          "column": 9,
-                                          "program": "await_keyword.ets"
-                                        },
-                                        "end": {
-                                          "line": 24,
-                                          "column": 44,
-                                          "program": "await_keyword.ets"
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "kind": "let",
-                                  "loc": {
-                                    "start": {
-                                      "line": 24,
-                                      "column": 5,
-                                      "program": "await_keyword.ets"
-                                    },
-                                    "end": {
-                                      "line": 24,
-                                      "column": 45,
-                                      "program": "await_keyword.ets"
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "ReturnStatement",
-                                  "argument": {
-                                    "type": "Identifier",
-                                    "name": "promise",
-                                    "decorators": [],
-                                    "loc": {
-                                      "start": {
-                                        "line": 25,
-                                        "column": 12,
-                                        "program": "await_keyword.ets"
-                                      },
-                                      "end": {
-                                        "line": 25,
-                                        "column": 19,
-                                        "program": "await_keyword.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 25,
-                                      "column": 5,
-                                      "program": "await_keyword.ets"
-                                    },
-                                    "end": {
-                                      "line": 25,
-                                      "column": 20,
-                                      "program": "await_keyword.ets"
-                                    }
-                                  }
-                                }
-                              ],
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 85,
-                                  "program": "await_keyword.ets"
-                                },
-                                "end": {
-                                  "line": 26,
-                                  "column": 2,
-                                  "program": "await_keyword.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 22,
-                                "column": 55,
-                                "program": "await_keyword.ets"
-                              },
-                              "end": {
-                                "line": 26,
-                                "column": 2,
-                                "program": "await_keyword.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 55,
-                              "program": "await_keyword.ets"
-                            },
-                            "end": {
-                              "line": 26,
-                              "column": 2,
-                              "program": "await_keyword.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 22,
-                            "column": 5,
-                            "program": "await_keyword.ets"
-                          },
-                          "end": {
-                            "line": 26,
-                            "column": 2,
-                            "program": "await_keyword.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 22,
-                          "column": 5,
-                          "program": "await_keyword.ets"
-                        },
-                        "end": {
-                          "line": 26,
-                          "column": 2,
-                          "program": "await_keyword.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "lambda",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 33,
-                              "column": 5,
-                              "program": "await_keyword.ets"
-                            },
-                            "end": {
-                              "line": 33,
-                              "column": 11,
-                              "program": "await_keyword.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ArrowFunctionExpression",
-                          "function": {
-                            "type": "ScriptFunction",
-                            "id": null,
-                            "generator": false,
-                            "async": false,
-                            "expression": false,
-                            "params": [],
-                            "returnType": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 33,
-                                  "column": 30,
-                                  "program": "await_keyword.ets"
-                                },
-                                "end": {
-                                  "line": 33,
-                                  "column": 34,
-                                  "program": "await_keyword.ets"
-                                }
-                              }
-                            },
-                            "body": {
-                              "type": "BlockStatement",
-                              "statements": [
-                                {
-                                  "type": "VariableDeclaration",
-                                  "declarations": [
-                                    {
-                                      "type": "VariableDeclarator",
-                                      "id": {
-                                        "type": "Identifier",
-                                        "name": "promise",
-                                        "typeAnnotation": {
-                                          "type": "ETSUnionType",
-                                          "types": [
-                                            {
-                                              "type": "ETSTypeReference",
-                                              "part": {
-                                                "type": "ETSTypeReferencePart",
-                                                "name": {
-                                                  "type": "Identifier",
-                                                  "name": "Promise",
-                                                  "decorators": [],
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 34,
-                                                      "column": 18,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 34,
-                                                      "column": 25,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                },
-                                                "typeParams": {
-                                                  "type": "TSTypeParameterInstantiation",
-                                                  "params": [
-                                                    {
-                                                      "type": "ETSUnionType",
-                                                      "types": [
-                                                        {
-                                                          "type": "ETSTypeReference",
-                                                          "part": {
-                                                            "type": "ETSTypeReferencePart",
-                                                            "name": {
-                                                              "type": "Identifier",
-                                                              "name": "Object",
-                                                              "decorators": [],
-                                                              "loc": {
-                                                                "start": {
-                                                                  "line": 34,
-                                                                  "column": 26,
-                                                                  "program": "await_keyword.ets"
-                                                                },
-                                                                "end": {
-                                                                  "line": 34,
-                                                                  "column": 32,
-                                                                  "program": "await_keyword.ets"
-                                                                }
-                                                              }
-                                                            },
-                                                            "loc": {
-                                                              "start": {
-                                                                "line": 34,
-                                                                "column": 26,
-                                                                "program": "await_keyword.ets"
-                                                              },
-                                                              "end": {
-                                                                "line": 34,
-                                                                "column": 34,
-                                                                "program": "await_keyword.ets"
-                                                              }
-                                                            }
-                                                          },
-                                                          "loc": {
-                                                            "start": {
-                                                              "line": 34,
-                                                              "column": 26,
-                                                              "program": "await_keyword.ets"
-                                                            },
-                                                            "end": {
-                                                              "line": 34,
-                                                              "column": 34,
-                                                              "program": "await_keyword.ets"
-                                                            }
-                                                          }
-                                                        },
-                                                        {
-                                                          "type": "ETSNullType",
-                                                          "loc": {
-                                                            "start": {
-                                                              "line": 34,
-                                                              "column": 35,
-                                                              "program": "await_keyword.ets"
-                                                            },
-                                                            "end": {
-                                                              "line": 34,
-                                                              "column": 39,
-                                                              "program": "await_keyword.ets"
-                                                            }
-                                                          }
-                                                        }
-                                                      ],
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 34,
-                                                          "column": 26,
-                                                          "program": "await_keyword.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 34,
-                                                          "column": 39,
-                                                          "program": "await_keyword.ets"
-                                                        }
-                                                      }
-                                                    }
-                                                  ],
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 34,
-                                                      "column": 25,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 34,
-                                                      "column": 40,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                },
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 34,
-                                                    "column": 18,
-                                                    "program": "await_keyword.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 34,
-                                                    "column": 42,
-                                                    "program": "await_keyword.ets"
-                                                  }
-                                                }
-                                              },
-                                              "loc": {
-                                                "start": {
-                                                  "line": 34,
-                                                  "column": 18,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 34,
-                                                  "column": 42,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            },
-                                            {
-                                              "type": "ETSNullType",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 34,
-                                                  "column": 43,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 34,
-                                                  "column": 47,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            }
-                                          ],
-                                          "loc": {
-                                            "start": {
-                                              "line": 34,
-                                              "column": 18,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 34,
-                                              "column": 47,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        },
-                                        "decorators": [],
-                                        "loc": {
-                                          "start": {
-                                            "line": 34,
-                                            "column": 9,
-                                            "program": "await_keyword.ets"
-                                          },
-                                          "end": {
-                                            "line": 34,
-                                            "column": 16,
-                                            "program": "await_keyword.ets"
-                                          }
-                                        }
-                                      },
-                                      "init": {
-                                        "type": "CallExpression",
-                                        "callee": {
-                                          "type": "ArrowFunctionExpression",
-                                          "function": {
-                                            "type": "ScriptFunction",
-                                            "id": null,
-                                            "generator": false,
-                                            "async": false,
-                                            "expression": false,
-                                            "params": [],
-                                            "returnType": {
-                                              "type": "ETSUnionType",
-                                              "types": [
-                                                {
-                                                  "type": "ETSTypeReference",
-                                                  "part": {
-                                                    "type": "ETSTypeReferencePart",
-                                                    "name": {
-                                                      "type": "Identifier",
-                                                      "name": "Promise",
-                                                      "decorators": [],
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 34,
-                                                          "column": 54,
-                                                          "program": "await_keyword.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 34,
-                                                          "column": 61,
-                                                          "program": "await_keyword.ets"
-                                                        }
-                                                      }
-                                                    },
-                                                    "typeParams": {
-                                                      "type": "TSTypeParameterInstantiation",
-                                                      "params": [
-                                                        {
-                                                          "type": "ETSUnionType",
-                                                          "types": [
-                                                            {
-                                                              "type": "ETSTypeReference",
-                                                              "part": {
-                                                                "type": "ETSTypeReferencePart",
-                                                                "name": {
-                                                                  "type": "Identifier",
-                                                                  "name": "Object",
-                                                                  "decorators": [],
-                                                                  "loc": {
-                                                                    "start": {
-                                                                      "line": 34,
-                                                                      "column": 62,
-                                                                      "program": "await_keyword.ets"
-                                                                    },
-                                                                    "end": {
-                                                                      "line": 34,
-                                                                      "column": 68,
-                                                                      "program": "await_keyword.ets"
-                                                                    }
-                                                                  }
-                                                                },
-                                                                "loc": {
-                                                                  "start": {
-                                                                    "line": 34,
-                                                                    "column": 62,
-                                                                    "program": "await_keyword.ets"
-                                                                  },
-                                                                  "end": {
-                                                                    "line": 34,
-                                                                    "column": 70,
-                                                                    "program": "await_keyword.ets"
-                                                                  }
-                                                                }
-                                                              },
-                                                              "loc": {
-                                                                "start": {
-                                                                  "line": 34,
-                                                                  "column": 62,
-                                                                  "program": "await_keyword.ets"
-                                                                },
-                                                                "end": {
-                                                                  "line": 34,
-                                                                  "column": 70,
-                                                                  "program": "await_keyword.ets"
-                                                                }
-                                                              }
-                                                            },
-                                                            {
-                                                              "type": "ETSNullType",
-                                                              "loc": {
-                                                                "start": {
-                                                                  "line": 34,
-                                                                  "column": 71,
-                                                                  "program": "await_keyword.ets"
-                                                                },
-                                                                "end": {
-                                                                  "line": 34,
-                                                                  "column": 75,
-                                                                  "program": "await_keyword.ets"
-                                                                }
-                                                              }
-                                                            }
-                                                          ],
-                                                          "loc": {
-                                                            "start": {
-                                                              "line": 34,
-                                                              "column": 62,
-                                                              "program": "await_keyword.ets"
-                                                            },
-                                                            "end": {
-                                                              "line": 34,
-                                                              "column": 75,
-                                                              "program": "await_keyword.ets"
-                                                            }
-                                                          }
-                                                        }
-                                                      ],
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 34,
-                                                          "column": 61,
-                                                          "program": "await_keyword.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 34,
-                                                          "column": 76,
-                                                          "program": "await_keyword.ets"
-                                                        }
-                                                      }
-                                                    },
-                                                    "loc": {
-                                                      "start": {
-                                                        "line": 34,
-                                                        "column": 54,
-                                                        "program": "await_keyword.ets"
-                                                      },
-                                                      "end": {
-                                                        "line": 34,
-                                                        "column": 78,
-                                                        "program": "await_keyword.ets"
-                                                      }
-                                                    }
-                                                  },
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 34,
-                                                      "column": 54,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 34,
-                                                      "column": 78,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                },
-                                                {
-                                                  "type": "ETSNullType",
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 34,
-                                                      "column": 79,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 34,
-                                                      "column": 83,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                }
-                                              ],
-                                              "loc": {
-                                                "start": {
-                                                  "line": 34,
-                                                  "column": 54,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 34,
-                                                  "column": 83,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            },
-                                            "body": {
-                                              "type": "BlockStatement",
-                                              "statements": [
-                                                {
-                                                  "type": "ReturnStatement",
-                                                  "argument": {
-                                                    "type": "NullLiteral",
-                                                    "value": null,
-                                                    "loc": {
-                                                      "start": {
-                                                        "line": 34,
-                                                        "column": 96,
-                                                        "program": "await_keyword.ets"
-                                                      },
-                                                      "end": {
-                                                        "line": 34,
-                                                        "column": 100,
-                                                        "program": "await_keyword.ets"
-                                                      }
-                                                    }
-                                                  },
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 34,
-                                                      "column": 89,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 34,
-                                                      "column": 101,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                }
-                                              ],
-                                              "loc": {
-                                                "start": {
-                                                  "line": 34,
-                                                  "column": 87,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 34,
-                                                  "column": 103,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            },
-                                            "loc": {
-                                              "start": {
-                                                "line": 34,
-                                                "column": 50,
-                                                "program": "await_keyword.ets"
-                                              },
-                                              "end": {
-                                                "line": 34,
-                                                "column": 103,
-                                                "program": "await_keyword.ets"
-                                              }
-                                            }
-                                          },
-                                          "loc": {
-                                            "start": {
-                                              "line": 34,
-                                              "column": 50,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 34,
-                                              "column": 103,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        },
-                                        "arguments": [],
-                                        "optional": false,
-                                        "loc": {
-                                          "start": {
-                                            "line": 34,
-                                            "column": 50,
-                                            "program": "await_keyword.ets"
-                                          },
-                                          "end": {
-                                            "line": 34,
-                                            "column": 105,
-                                            "program": "await_keyword.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 34,
-                                          "column": 9,
-                                          "program": "await_keyword.ets"
-                                        },
-                                        "end": {
-                                          "line": 34,
-                                          "column": 105,
-                                          "program": "await_keyword.ets"
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "kind": "let",
-                                  "loc": {
-                                    "start": {
-                                      "line": 34,
-                                      "column": 5,
-                                      "program": "await_keyword.ets"
-                                    },
-                                    "end": {
-                                      "line": 34,
-                                      "column": 106,
-                                      "program": "await_keyword.ets"
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "VariableDeclaration",
-                                  "declarations": [
-                                    {
-                                      "type": "VariableDeclarator",
-                                      "id": {
-                                        "type": "Identifier",
-                                        "name": "obj",
-                                        "typeAnnotation": {
-                                          "type": "ETSUnionType",
-                                          "types": [
-                                            {
-                                              "type": "ETSTypeReference",
-                                              "part": {
-                                                "type": "ETSTypeReferencePart",
-                                                "name": {
-                                                  "type": "Identifier",
-                                                  "name": "Object",
-                                                  "decorators": [],
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 35,
-                                                      "column": 14,
-                                                      "program": "await_keyword.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 35,
-                                                      "column": 20,
-                                                      "program": "await_keyword.ets"
-                                                    }
-                                                  }
-                                                },
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 35,
-                                                    "column": 14,
-                                                    "program": "await_keyword.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 35,
-                                                    "column": 22,
-                                                    "program": "await_keyword.ets"
-                                                  }
-                                                }
-                                              },
-                                              "loc": {
-                                                "start": {
-                                                  "line": 35,
-                                                  "column": 14,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 35,
-                                                  "column": 22,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            },
-                                            {
-                                              "type": "ETSNullType",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 35,
-                                                  "column": 23,
-                                                  "program": "await_keyword.ets"
-                                                },
-                                                "end": {
-                                                  "line": 35,
-                                                  "column": 27,
-                                                  "program": "await_keyword.ets"
-                                                }
-                                              }
-                                            }
-                                          ],
-                                          "loc": {
-                                            "start": {
-                                              "line": 35,
-                                              "column": 14,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 35,
-                                              "column": 27,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        },
-                                        "decorators": [],
-                                        "loc": {
-                                          "start": {
-                                            "line": 35,
-                                            "column": 9,
-                                            "program": "await_keyword.ets"
-                                          },
-                                          "end": {
-                                            "line": 35,
-                                            "column": 12,
-                                            "program": "await_keyword.ets"
-                                          }
-                                        }
-                                      },
-                                      "init": {
-                                        "type": "AwaitExpression",
-                                        "argument": {
-                                          "type": "TSNonNullExpression",
-                                          "expression": {
-                                            "type": "Identifier",
-                                            "name": "promise",
-                                            "decorators": [],
-                                            "loc": {
-                                              "start": {
-                                                "line": 35,
-                                                "column": 36,
-                                                "program": "await_keyword.ets"
-                                              },
-                                              "end": {
-                                                "line": 35,
-                                                "column": 43,
-                                                "program": "await_keyword.ets"
-                                              }
-                                            }
-                                          },
-                                          "loc": {
-                                            "start": {
-                                              "line": 35,
-                                              "column": 36,
-                                              "program": "await_keyword.ets"
-                                            },
-                                            "end": {
-                                              "line": 35,
-                                              "column": 44,
-                                              "program": "await_keyword.ets"
-                                            }
-                                          }
-                                        },
-                                        "loc": {
-                                          "start": {
-                                            "line": 35,
-                                            "column": 30,
-                                            "program": "await_keyword.ets"
-                                          },
-                                          "end": {
-                                            "line": 35,
-                                            "column": 44,
-                                            "program": "await_keyword.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 35,
-                                          "column": 9,
-                                          "program": "await_keyword.ets"
-                                        },
-                                        "end": {
-                                          "line": 35,
-                                          "column": 44,
-                                          "program": "await_keyword.ets"
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "kind": "let",
-                                  "loc": {
-                                    "start": {
-                                      "line": 35,
-                                      "column": 5,
-                                      "program": "await_keyword.ets"
-                                    },
-                                    "end": {
-                                      "line": 35,
-                                      "column": 45,
-                                      "program": "await_keyword.ets"
-                                    }
-                                  }
-                                }
-                              ],
-                              "loc": {
-                                "start": {
-                                  "line": 33,
-                                  "column": 38,
-                                  "program": "await_keyword.ets"
-                                },
-                                "end": {
-                                  "line": 36,
-                                  "column": 2,
-                                  "program": "await_keyword.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 33,
-                                "column": 26,
-                                "program": "await_keyword.ets"
-                              },
-                              "end": {
-                                "line": 36,
-                                "column": 2,
-                                "program": "await_keyword.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 33,
-                              "column": 26,
-                              "program": "await_keyword.ets"
-                            },
-                            "end": {
-                              "line": 36,
-                              "column": 2,
-                              "program": "await_keyword.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 33,
-                            "column": 5,
-                            "program": "await_keyword.ets"
-                          },
-                          "end": {
-                            "line": 36,
-                            "column": 2,
-                            "program": "await_keyword.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 33,
-                          "column": 5,
-                          "program": "await_keyword.ets"
-                        },
-                        "end": {
-                          "line": 36,
-                          "column": 2,
-                          "program": "await_keyword.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "promise",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 38,
-                              "column": 5,
-                              "program": "await_keyword.ets"
-                            },
-                            "end": {
-                              "line": 38,
-                              "column": 12,
-                              "program": "await_keyword.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NullLiteral",
-                          "value": null,
-                          "loc": {
-                            "start": {
-                              "line": 38,
-                              "column": 46,
-                              "program": "await_keyword.ets"
-                            },
-                            "end": {
-                              "line": 38,
-                              "column": 50,
-                              "program": "await_keyword.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 38,
-                            "column": 5,
-                            "program": "await_keyword.ets"
-                          },
-                          "end": {
-                            "line": 38,
-                            "column": 50,
-                            "program": "await_keyword.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 38,
-                          "column": 5,
-                          "program": "await_keyword.ets"
-                        },
-                        "end": {
-                          "line": 38,
-                          "column": 50,
-                          "program": "await_keyword.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "obj",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 39,
-                              "column": 5,
-                              "program": "await_keyword.ets"
-                            },
-                            "end": {
-                              "line": 39,
-                              "column": 8,
-                              "program": "await_keyword.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "AwaitExpression",
-                          "argument": {
-                            "type": "TSNonNullExpression",
-                            "expression": {
-                              "type": "Identifier",
-                              "name": "promise",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 39,
-                                  "column": 32,
-                                  "program": "await_keyword.ets"
-                                },
-                                "end": {
-                                  "line": 39,
-                                  "column": 39,
-                                  "program": "await_keyword.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 39,
-                                "column": 32,
-                                "program": "await_keyword.ets"
-                              },
-                              "end": {
-                                "line": 39,
-                                "column": 40,
-                                "program": "await_keyword.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 39,
-                              "column": 26,
-                              "program": "await_keyword.ets"
-                            },
-                            "end": {
-                              "line": 39,
-                              "column": 40,
-                              "program": "await_keyword.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 39,
-                            "column": 5,
-                            "program": "await_keyword.ets"
-                          },
-                          "end": {
-                            "line": 39,
-                            "column": 40,
-                            "program": "await_keyword.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 39,
-                          "column": 5,
-                          "program": "await_keyword.ets"
-                        },
-                        "end": {
-                          "line": 39,
-                          "column": 40,
-                          "program": "await_keyword.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "await_keyword.ets"
                 }
               }
             },
@@ -2243,7 +235,7 @@
                                   },
                                   "end": {
                                     "line": 16,
-                                    "column": 44,
+                                    "column": 42,
                                     "program": "await_keyword.ets"
                                   }
                                 }
@@ -2256,7 +248,7 @@
                                 },
                                 "end": {
                                   "line": 16,
-                                  "column": 44,
+                                  "column": 42,
                                   "program": "await_keyword.ets"
                                 }
                               }
@@ -2312,7 +304,7 @@
                       },
                       "end": {
                         "line": 16,
-                        "column": 52,
+                        "column": 50,
                         "program": "await_keyword.ets"
                       }
                     }
@@ -2325,7 +317,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 52,
+                      "column": 50,
                       "program": "await_keyword.ets"
                     }
                   }
@@ -2400,7 +392,7 @@
                                                   },
                                                   "end": {
                                                     "line": 17,
-                                                    "column": 34,
+                                                    "column": 32,
                                                     "program": "await_keyword.ets"
                                                   }
                                                 }
@@ -2413,7 +405,7 @@
                                                 },
                                                 "end": {
                                                   "line": 17,
-                                                  "column": 34,
+                                                  "column": 32,
                                                   "program": "await_keyword.ets"
                                                 }
                                               }
@@ -2469,7 +461,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 42,
+                                        "column": 40,
                                         "program": "await_keyword.ets"
                                       }
                                     }
@@ -2482,7 +474,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 42,
+                                      "column": 40,
                                       "program": "await_keyword.ets"
                                     }
                                   }
@@ -2600,7 +592,7 @@
                                                       },
                                                       "end": {
                                                         "line": 17,
-                                                        "column": 70,
+                                                        "column": 68,
                                                         "program": "await_keyword.ets"
                                                       }
                                                     }
@@ -2613,7 +605,7 @@
                                                     },
                                                     "end": {
                                                       "line": 17,
-                                                      "column": 70,
+                                                      "column": 68,
                                                       "program": "await_keyword.ets"
                                                     }
                                                   }
@@ -2669,7 +661,7 @@
                                           },
                                           "end": {
                                             "line": 17,
-                                            "column": 78,
+                                            "column": 76,
                                             "program": "await_keyword.ets"
                                           }
                                         }
@@ -2682,7 +674,7 @@
                                         },
                                         "end": {
                                           "line": 17,
-                                          "column": 78,
+                                          "column": 76,
                                           "program": "await_keyword.ets"
                                         }
                                       }
@@ -2873,7 +865,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 22,
+                                        "column": 20,
                                         "program": "await_keyword.ets"
                                       }
                                     }
@@ -2886,7 +878,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 22,
+                                      "column": 20,
                                       "program": "await_keyword.ets"
                                     }
                                   }
@@ -3180,7 +1172,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 40,
+                                  "column": 38,
                                   "program": "await_keyword.ets"
                                 }
                               }
@@ -3193,7 +1185,7 @@
                               },
                               "end": {
                                 "line": 22,
-                                "column": 40,
+                                "column": 38,
                                 "program": "await_keyword.ets"
                               }
                             }
@@ -3249,7 +1241,7 @@
                     },
                     "end": {
                       "line": 22,
-                      "column": 48,
+                      "column": 46,
                       "program": "await_keyword.ets"
                     }
                   }
@@ -3262,7 +1254,7 @@
                   },
                   "end": {
                     "line": 22,
-                    "column": 48,
+                    "column": 46,
                     "program": "await_keyword.ets"
                   }
                 }
@@ -3275,7 +1267,7 @@
                 },
                 "end": {
                   "line": 22,
-                  "column": 48,
+                  "column": 46,
                   "program": "await_keyword.ets"
                 }
               }
@@ -3289,8 +1281,8 @@
                 "program": "await_keyword.ets"
               },
               "end": {
-                "line": 26,
-                "column": 2,
+                "line": 22,
+                "column": 55,
                 "program": "await_keyword.ets"
               }
             }
@@ -3429,7 +1421,7 @@
                                                   },
                                                   "end": {
                                                     "line": 29,
-                                                    "column": 34,
+                                                    "column": 32,
                                                     "program": "await_keyword.ets"
                                                   }
                                                 }
@@ -3442,7 +1434,7 @@
                                                 },
                                                 "end": {
                                                   "line": 29,
-                                                  "column": 34,
+                                                  "column": 32,
                                                   "program": "await_keyword.ets"
                                                 }
                                               }
@@ -3498,7 +1490,7 @@
                                       },
                                       "end": {
                                         "line": 29,
-                                        "column": 42,
+                                        "column": 40,
                                         "program": "await_keyword.ets"
                                       }
                                     }
@@ -3511,7 +1503,7 @@
                                     },
                                     "end": {
                                       "line": 29,
-                                      "column": 42,
+                                      "column": 40,
                                       "program": "await_keyword.ets"
                                     }
                                   }
@@ -3629,7 +1621,7 @@
                                                       },
                                                       "end": {
                                                         "line": 29,
-                                                        "column": 70,
+                                                        "column": 68,
                                                         "program": "await_keyword.ets"
                                                       }
                                                     }
@@ -3642,7 +1634,7 @@
                                                     },
                                                     "end": {
                                                       "line": 29,
-                                                      "column": 70,
+                                                      "column": 68,
                                                       "program": "await_keyword.ets"
                                                     }
                                                   }
@@ -3698,7 +1690,7 @@
                                           },
                                           "end": {
                                             "line": 29,
-                                            "column": 78,
+                                            "column": 76,
                                             "program": "await_keyword.ets"
                                           }
                                         }
@@ -3711,7 +1703,7 @@
                                         },
                                         "end": {
                                           "line": 29,
-                                          "column": 78,
+                                          "column": 76,
                                           "program": "await_keyword.ets"
                                         }
                                       }
@@ -3902,7 +1894,7 @@
                                       },
                                       "end": {
                                         "line": 30,
-                                        "column": 22,
+                                        "column": 20,
                                         "program": "await_keyword.ets"
                                       }
                                     }
@@ -3915,7 +1907,7 @@
                                     },
                                     "end": {
                                       "line": 30,
-                                      "column": 22,
+                                      "column": 20,
                                       "program": "await_keyword.ets"
                                     }
                                   }
@@ -4158,8 +2150,8 @@
                 "program": "await_keyword.ets"
               },
               "end": {
-                "line": 36,
-                "column": 2,
+                "line": 33,
+                "column": 26,
                 "program": "await_keyword.ets"
               }
             }
@@ -4248,7 +2240,7 @@
                                   },
                                   "end": {
                                     "line": 38,
-                                    "column": 30,
+                                    "column": 28,
                                     "program": "await_keyword.ets"
                                   }
                                 }
@@ -4261,7 +2253,7 @@
                                 },
                                 "end": {
                                   "line": 38,
-                                  "column": 30,
+                                  "column": 28,
                                   "program": "await_keyword.ets"
                                 }
                               }
@@ -4317,7 +2309,7 @@
                       },
                       "end": {
                         "line": 38,
-                        "column": 38,
+                        "column": 36,
                         "program": "await_keyword.ets"
                       }
                     }
@@ -4330,7 +2322,7 @@
                     },
                     "end": {
                       "line": 38,
-                      "column": 38,
+                      "column": 36,
                       "program": "await_keyword.ets"
                     }
                   }
@@ -4374,7 +2366,7 @@
               },
               "end": {
                 "line": 38,
-                "column": 50,
+                "column": 46,
                 "program": "await_keyword.ets"
               }
             }
@@ -4436,7 +2428,7 @@
                       },
                       "end": {
                         "line": 39,
-                        "column": 18,
+                        "column": 16,
                         "program": "await_keyword.ets"
                       }
                     }
@@ -4449,7 +2441,7 @@
                     },
                     "end": {
                       "line": 39,
-                      "column": 18,
+                      "column": 16,
                       "program": "await_keyword.ets"
                     }
                   }
@@ -4493,7 +2485,7 @@
               },
               "end": {
                 "line": 39,
-                "column": 40,
+                "column": 26,
                 "program": "await_keyword.ets"
               }
             }

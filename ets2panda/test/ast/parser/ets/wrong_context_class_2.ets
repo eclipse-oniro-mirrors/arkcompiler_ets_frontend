@@ -23,5 +23,5 @@ function main()
     b = a
 }
 
-/* @@? 23:9 Error TypeError: Class name 'a' used in the wrong context  */
-/* @@? 23:9 Error TypeError: Type 'a' cannot be assigned to type 'int'  */
+/* @@? 23:9 Error SyntaxError: Class cannot be used as object. */
+/* @@? 23:9 Error TypeError: Type 'a' cannot be assigned to type 'Int' */

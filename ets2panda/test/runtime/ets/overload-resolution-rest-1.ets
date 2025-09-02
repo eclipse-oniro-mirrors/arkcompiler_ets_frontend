@@ -29,7 +29,7 @@ function foo(f1: number, i: I, ...args: (Object | null | undefined)[]) {
 function main(): void {
     const i: I = {s: "sss"};
     foo(1, "sss");
-    assertEQ(res, 1);
+    arktest.assertEQ(res, 1);
     foo(1, i as I, "sss");
-    assertEQ(res, 2);
+    arktest.assertEQ(res, 2);
 }

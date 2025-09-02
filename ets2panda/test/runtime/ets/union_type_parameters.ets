@@ -27,6 +27,6 @@ function foo<T>(x: A<T>|B<T>) {
 }
 
 function main() {
-    assertEQ(foo<D>(new B<D>()), 42,  "Error! branch with return 42 must be executed")
-    assertEQ(foo<D>(new C<D>()), 41,  "Error! branch with return 41 must be executed")
+    arktest.assertEQ(foo<D>(new B<D>()), 42,  "Error! branch with return 42 must be executed")
+    arktest.assertEQ(foo<D>(new C<D>()), 41,  "Error! branch with return 41 must be executed")
 }

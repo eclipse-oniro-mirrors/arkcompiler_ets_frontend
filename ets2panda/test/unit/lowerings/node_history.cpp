@@ -34,6 +34,7 @@ public:
         allocator_ = std::make_unique<ArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER);
         phaseManager_ = std::make_unique<compiler::PhaseManager>(ScriptExtension::ETS, Allocator());
         compiler::SetPhaseManager(phaseManager_.get());
+        ir::EnableContextHistory();
     }
 
     NO_COPY_SEMANTIC(NodeHistoryTest);
@@ -54,12 +55,13 @@ private:
     std::unique_ptr<compiler::PhaseManager> phaseManager_;
 };
 
-constexpr int32_t PHASE_ID_0 = 0;
-constexpr int32_t PHASE_ID_1 = 1;
-constexpr int32_t PHASE_ID_2 = 2;
-constexpr int32_t PHASE_ID_3 = 3;
-constexpr int32_t PHASE_ID_4 = 4;
-constexpr int32_t PHASE_ID_5 = 5;
+constexpr compiler::PhaseId PARSER_PHASE_ID = {0, compiler::PARSER_PHASE_ID};
+constexpr compiler::PhaseId PHASE_ID_0 = {0, 0};
+constexpr compiler::PhaseId PHASE_ID_1 = {0, 1};
+constexpr compiler::PhaseId PHASE_ID_2 = {0, 2};
+constexpr compiler::PhaseId PHASE_ID_3 = {0, 3};
+constexpr compiler::PhaseId PHASE_ID_4 = {0, 4};
+constexpr compiler::PhaseId PHASE_ID_5 = {0, 5};
 
 constexpr int32_t INDEX_0 = 0;
 constexpr int32_t INDEX_1 = 1;
@@ -149,26 +151,26 @@ TEST_F(NodeHistoryTest, DoubleLinkedList)
 
 TEST_F(NodeHistoryTest, HistoryAt)
 {
-    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), compiler::PARSER_PHASE_ID);
+    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), PARSER_PHASE_ID);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0.minor);
     auto identifier = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     auto history = Allocator()->New<ir::AstNodeHistory>(identifier, PhaseManager()->CurrentPhaseId(), Allocator());
 
-    ASSERT_EQ(history->At(compiler::PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->At(PARSER_PHASE_ID), nullptr);
     ASSERT_EQ(history->At(PHASE_ID_0), identifier);
     ASSERT_EQ(history->At(PHASE_ID_1), nullptr);
 }
 
 TEST_F(NodeHistoryTest, HistoryGet)
 {
-    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), compiler::PARSER_PHASE_ID);
+    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), PARSER_PHASE_ID);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0.minor);
     auto identifier = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     auto history = Allocator()->New<ir::AstNodeHistory>(identifier, PhaseManager()->CurrentPhaseId(), Allocator());
 
-    ASSERT_EQ(history->Get(compiler::PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->Get(PARSER_PHASE_ID), nullptr);
     ASSERT_EQ(history->Get(PHASE_ID_0), identifier);
     ASSERT_EQ(history->Get(PHASE_ID_1), identifier);
     ASSERT_EQ(history->Get(PHASE_ID_2), identifier);
@@ -178,25 +180,25 @@ TEST_F(NodeHistoryTest, HistoryGet)
 // CC-OFFNXT(huge_method, G.FUN.01-CPP, G.FUD.05) solid logic
 TEST_F(NodeHistoryTest, HistorySet)
 {
-    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), compiler::PARSER_PHASE_ID);
+    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), PARSER_PHASE_ID);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0.minor);
     auto identifier0 = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     auto history = Allocator()->New<ir::AstNodeHistory>(identifier0, PhaseManager()->CurrentPhaseId(), Allocator());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1.minor);
     auto identifier1 = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     history->Set(identifier1, PhaseManager()->CurrentPhaseId());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2.minor);
     auto identifier2 = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     history->Set(identifier2, PhaseManager()->CurrentPhaseId());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_3);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_3.minor);
     history->Set(nullptr, PhaseManager()->CurrentPhaseId());
 
     // Search forward
-    ASSERT_EQ(history->Get(compiler::PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->Get(PARSER_PHASE_ID), nullptr);
     ASSERT_EQ(history->Get(PHASE_ID_0), identifier0);
     ASSERT_EQ(history->Get(PHASE_ID_1), identifier1);
     ASSERT_EQ(history->Get(PHASE_ID_2), identifier2);
@@ -211,7 +213,7 @@ TEST_F(NodeHistoryTest, HistorySet)
     ASSERT_EQ(history->Get(PHASE_ID_2), identifier2);
     ASSERT_EQ(history->Get(PHASE_ID_1), identifier1);
     ASSERT_EQ(history->Get(PHASE_ID_0), identifier0);
-    ASSERT_EQ(history->Get(compiler::PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->Get(PARSER_PHASE_ID), nullptr);
 
     // Search random
     ASSERT_EQ(history->Get(PHASE_ID_1), identifier1);
@@ -219,11 +221,11 @@ TEST_F(NodeHistoryTest, HistorySet)
     ASSERT_EQ(history->Get(PHASE_ID_2), identifier2);
     ASSERT_EQ(history->Get(PHASE_ID_4), nullptr);
     ASSERT_EQ(history->Get(PHASE_ID_0), identifier0);
-    ASSERT_EQ(history->Get(compiler::PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->Get(PARSER_PHASE_ID), nullptr);
     ASSERT_EQ(history->Get(PHASE_ID_3), nullptr);
 
     // Search precise
-    ASSERT_EQ(history->At(compiler::PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->At(PARSER_PHASE_ID), nullptr);
     ASSERT_EQ(history->At(PHASE_ID_0), identifier0);
     ASSERT_EQ(history->At(PHASE_ID_1), identifier1);
     ASSERT_EQ(history->At(PHASE_ID_2), identifier2);
@@ -234,47 +236,54 @@ TEST_F(NodeHistoryTest, HistorySet)
 
 TEST_F(NodeHistoryTest, HistoryReplace)
 {
-    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), compiler::PARSER_PHASE_ID);
+    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), PARSER_PHASE_ID);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0.minor);
     auto identifier0Orig = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     auto history = Allocator()->New<ir::AstNodeHistory>(identifier0Orig, PhaseManager()->CurrentPhaseId(), Allocator());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1.minor);
     auto identifier1Orig = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     history->Set(identifier1Orig, PhaseManager()->CurrentPhaseId());
 
-    ASSERT_EQ(history->Get(compiler::PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->Get(PARSER_PHASE_ID), nullptr);
     ASSERT_EQ(history->Get(PHASE_ID_0), identifier0Orig);
     ASSERT_EQ(history->Get(PHASE_ID_1), identifier1Orig);
     ASSERT_EQ(history->Get(PHASE_ID_2), identifier1Orig);
     ASSERT_EQ(history->Get(PHASE_ID_3), identifier1Orig);
 
-    ASSERT_EQ(history->At(compiler::PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->At(PARSER_PHASE_ID), nullptr);
     ASSERT_EQ(history->At(PHASE_ID_0), identifier0Orig);
     ASSERT_EQ(history->At(PHASE_ID_1), identifier1Orig);
     ASSERT_EQ(history->At(PHASE_ID_2), nullptr);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0.minor);
     auto identifier0New = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     history->Set(identifier0New, PhaseManager()->CurrentPhaseId());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1.minor);
     auto identifier1New = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     history->Set(identifier1New, PhaseManager()->CurrentPhaseId());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2.minor);
     history->Set(nullptr, PhaseManager()->CurrentPhaseId());
 
-    ASSERT_EQ(history->Get(compiler::PARSER_PHASE_ID), nullptr);
-    ASSERT_EQ(history->Get(PHASE_ID_0), identifier0New);
-    ASSERT_EQ(history->Get(PHASE_ID_1), identifier1New);
-    ASSERT_EQ(history->Get(PHASE_ID_2), nullptr);
-    ASSERT_EQ(history->Get(PHASE_ID_3), nullptr);
+    ASSERT_EQ(history->Get(PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->Get(PHASE_ID_0), identifier0Orig);
+    ASSERT_EQ(history->Get(PHASE_ID_1), identifier1Orig);
+    ASSERT_EQ(history->Get(PHASE_ID_2), identifier1Orig);
+    ASSERT_EQ(history->Get(PHASE_ID_3), identifier1Orig);
+    ASSERT_EQ(history->Get({1, PHASE_ID_0.minor}), identifier0New);
+    ASSERT_EQ(history->Get({1, PHASE_ID_1.minor}), identifier1New);
+    ASSERT_EQ(history->Get({1, PHASE_ID_2.minor}), nullptr);
+    ASSERT_EQ(history->Get({1, PHASE_ID_3.minor}), nullptr);
 
-    ASSERT_EQ(history->At(compiler::PARSER_PHASE_ID), nullptr);
-    ASSERT_EQ(history->At(PHASE_ID_0), identifier0New);
-    ASSERT_EQ(history->At(PHASE_ID_1), identifier1New);
+    ASSERT_EQ(history->At(PARSER_PHASE_ID), nullptr);
+    ASSERT_EQ(history->At(PHASE_ID_0), identifier0Orig);
+    ASSERT_EQ(history->At(PHASE_ID_1), identifier1Orig);
+    ASSERT_EQ(history->At(PHASE_ID_2), nullptr);
+    ASSERT_EQ(history->At({1, PHASE_ID_0.minor}), identifier0New);
+    ASSERT_EQ(history->At({1, PHASE_ID_1.minor}), identifier1New);
     ASSERT_EQ(history->At(PHASE_ID_2), nullptr);
 }
 
@@ -288,9 +297,9 @@ ir::ClassDefinition *NewClassDefinition(ArenaAllocator *allocator)
 }
 
 /// NOTE(mivanov): To be enabled after #24153/#24424 implemented
-TEST_F(NodeHistoryTest, DISABLED_UpdateField)
+TEST_F(NodeHistoryTest, UpdateField)
 {
-    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), compiler::PARSER_PHASE_ID);
+    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), PARSER_PHASE_ID);
 
     auto definition = NewClassDefinition(Allocator());
     ASSERT_FALSE(definition->IsAbstract());
@@ -299,35 +308,35 @@ TEST_F(NodeHistoryTest, DISABLED_UpdateField)
     definition->AddModifier(ir::ModifierFlags::FINAL);
     ASSERT_TRUE(definition->IsFinal());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0.minor);
     definition->AddModifier(ir::ModifierFlags::ABSTRACT);
     ASSERT_TRUE(definition->IsAbstract());
     definition->ClearModifier(ir::ModifierFlags::FINAL);
     ASSERT_FALSE(definition->IsFinal());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1.minor);
     definition->ClearModifier(ir::ModifierFlags::ABSTRACT);
     ASSERT_FALSE(definition->IsAbstract());
     definition->AddModifier(ir::ModifierFlags::FINAL);
     ASSERT_TRUE(definition->IsFinal());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2.minor);
     definition->ClearModifier(ir::ModifierFlags::FINAL);
     ASSERT_FALSE(definition->IsFinal());
 
-    PhaseManager()->Restart();
+    PhaseManager()->Reset();
     ASSERT_FALSE(definition->IsAbstract());
     ASSERT_TRUE(definition->IsFinal());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0.minor);
     ASSERT_TRUE(definition->IsAbstract());
     ASSERT_FALSE(definition->IsFinal());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1.minor);
     ASSERT_FALSE(definition->IsAbstract());
     ASSERT_TRUE(definition->IsFinal());
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2.minor);
     ASSERT_FALSE(definition->IsAbstract());
     ASSERT_FALSE(definition->IsFinal());
 }
@@ -335,36 +344,36 @@ TEST_F(NodeHistoryTest, DISABLED_UpdateField)
 /// NOTE(mivanov): To be enabled after #24153/#24424 implemented
 TEST_F(NodeHistoryTest, DISABLED_UpdateChild)
 {
-    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), compiler::PARSER_PHASE_ID);
+    ASSERT_EQ(PhaseManager()->CurrentPhaseId(), PARSER_PHASE_ID);
 
     auto declaration =
         Allocator()->New<ir::ClassDeclaration>(NewClassDefinition(Allocator()), Allocator())->AsClassDeclaration();
     ASSERT_EQ(declaration->Definition()->Ident(), nullptr);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0.minor);
     auto identifier0 = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     declaration->Definition()->SetIdent(identifier0);
     ASSERT_EQ(declaration->Definition()->Ident(), identifier0);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1.minor);
     auto identifier1 = Allocator()->New<ir::Identifier>(Allocator())->AsIdentifier();
     declaration->Definition()->SetIdent(identifier1);
     ASSERT_EQ(declaration->Definition()->Ident(), identifier1);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2.minor);
     declaration->Definition()->SetIdent(nullptr);
     ASSERT_EQ(declaration->Definition()->Ident(), nullptr);
 
-    PhaseManager()->Restart();
+    PhaseManager()->Reset();
     ASSERT_EQ(declaration->Definition()->Ident(), nullptr);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_0.minor);
     ASSERT_EQ(declaration->Definition()->Ident(), identifier0);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_1.minor);
     ASSERT_EQ(declaration->Definition()->Ident(), identifier1);
 
-    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2);
+    PhaseManager()->SetCurrentPhaseId(PHASE_ID_2.minor);
     ASSERT_EQ(declaration->Definition()->Ident(), nullptr);
 }
 }  // namespace ark::es2panda

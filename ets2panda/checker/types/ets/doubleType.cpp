@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,9 +28,6 @@ void DoubleType::Identical(TypeRelation *relation, Type *other)
 
 void DoubleType::AssignmentTarget(TypeRelation *relation, [[maybe_unused]] Type *source)
 {
-    if (relation->ApplyUnboxing() && !relation->IsTrue()) {
-        relation->GetChecker()->AsETSChecker()->MaybeAddUnboxingFlagInRelation(relation, source, this);
-    }
     WideningConverter(relation->GetChecker()->AsETSChecker(), relation, this, source);
 }
 
@@ -56,34 +53,9 @@ void DoubleType::Cast(TypeRelation *const relation, Type *const target)
         return;
     }
 
-    if (target->HasTypeFlag(TypeFlag::BYTE | TypeFlag::SHORT | TypeFlag::CHAR | TypeFlag::INT | TypeFlag::LONG |
-                            TypeFlag::FLOAT)) {
-        conversion::NarrowingPrimitive(relation, this, target);
-        return;
-    }
-
-    if (target->HasTypeFlag(TypeFlag::ETS_OBJECT)) {
-        if (target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
-            conversion::Boxing(relation, this);
-            return;
-        }
-
-        if (target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_TYPE)) {
-            auto unboxedTarget = relation->GetChecker()->AsETSChecker()->MaybeUnboxInRelation(target);
-            if (unboxedTarget == nullptr) {
-                conversion::Forbidden(relation);
-                return;
-            }
-            Cast(relation, unboxedTarget);
-            if (relation->IsTrue()) {
-                conversion::Boxing(relation, unboxedTarget);
-                return;
-            }
-            conversion::Forbidden(relation);
-            return;
-        }
-
-        conversion::BoxingWideningReference(relation, this, target->AsETSObjectType());
+    if (target->HasTypeFlag(TypeFlag::ETS_OBJECT) &&
+        target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
+        conversion::Boxing(relation, this);
         return;
     }
 

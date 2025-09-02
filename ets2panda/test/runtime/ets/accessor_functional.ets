@@ -23,6 +23,6 @@ class A {
 function main() {
     let a = new A();
     a.x = () => { return 123 }; // bug: no short form for return
-    assertEQ(a.xstate(), 123)
-    assertEQ(a.x(), 123)
+    arktest.assertEQ(a.xstate(), 123)
+    arktest.assertEQ(a.x(), 123)
 }

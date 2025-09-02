@@ -14,7 +14,7 @@
  */
  
 class A {
-    /* @@ label */fld: Number = 2
+    fld: Number = 2
     foo (a0: A) {
         a0.fld = 5
     }
@@ -25,9 +25,9 @@ class B extends A {}
 class C extends B {
     fld: Number = 2
     foo (a0: Readonly<A>) {
-        /* @@ label2 */a0.fld = 6
+        /* @@ label */a0.fld = 6
     }
 }
 
 /* @@@ label Error TypeError: Cannot assign to a readonly variable fld  */
-/* @@@ label2 Error TypeError: The 'Readonly' property cannot be reassigned.  */
+/* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned.  */

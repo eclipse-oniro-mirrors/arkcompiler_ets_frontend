@@ -20,7 +20,7 @@ function main() : void {
     let d: char = c'3';
     let e: int = 4;
     let f: long = 5;
-    let g: float = 6.0;
+    let g: float = 6.0f;
     let h: double = 7.0;
     let i: Object = a;
     let j: Object = b;
@@ -32,6 +32,6 @@ function main() : void {
     let p: Object = h;
     let q: Object = 8;
     let r: Object = 9.0;
-    let s: Float = 1.0;
-    let t: Int = 1.0;
+    let s: Float = Double.toFloat(1.0);
+    let t: Int = Double.toInt(1.0);
 }

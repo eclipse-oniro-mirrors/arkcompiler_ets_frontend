@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,9 @@
 
 #include "byteType.h"
 
+#include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
-#include "checker/ets/narrowingConverter.h"
+#include "checker/types/ets/etsObjectType.h"
 
 namespace ark::es2panda::checker {
 void ByteType::Identical(TypeRelation *relation, Type *other)
@@ -26,13 +27,7 @@ void ByteType::Identical(TypeRelation *relation, Type *other)
     }
 }
 
-void ByteType::AssignmentTarget(TypeRelation *relation, [[maybe_unused]] Type *source)
-{
-    if (relation->ApplyUnboxing()) {
-        relation->GetChecker()->AsETSChecker()->MaybeAddUnboxingFlagInRelation(relation, source, this);
-    }
-    NarrowingConverter(relation->GetChecker()->AsETSChecker(), relation, this, source);
-}
+void ByteType::AssignmentTarget([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *source) {}
 
 bool ByteType::AssignmentSource([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *target)
 {
@@ -57,38 +52,9 @@ void ByteType::Cast(TypeRelation *const relation, Type *const target)
         return;
     }
 
-    if (target->HasTypeFlag(TypeFlag::SHORT | TypeFlag::INT | TypeFlag::LONG | TypeFlag::FLOAT | TypeFlag::DOUBLE)) {
-        conversion::WideningPrimitive(relation, this, target);
-        return;
-    }
-
-    if (target->HasTypeFlag(TypeFlag::CHAR)) {
-        conversion::WideningNarrowingPrimitive(relation, this, target->AsCharType());
-        return;
-    }
-
-    if (target->HasTypeFlag(TypeFlag::ETS_OBJECT)) {
-        if (target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE)) {
-            conversion::Boxing(relation, this);
-            return;
-        }
-
-        if (target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_TYPE)) {
-            auto unboxedTarget = relation->GetChecker()->AsETSChecker()->MaybeUnboxInRelation(target);
-            if (unboxedTarget == nullptr) {
-                conversion::Forbidden(relation);
-                return;
-            }
-            Cast(relation, unboxedTarget);
-            if (relation->IsTrue()) {
-                conversion::Boxing(relation, unboxedTarget);
-                return;
-            }
-            conversion::Forbidden(relation);
-            return;
-        }
-
-        conversion::BoxingWideningReference(relation, this, target->AsETSObjectType());
+    if (target->HasTypeFlag(TypeFlag::ETS_OBJECT) &&
+        target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE)) {
+        conversion::Boxing(relation, this);
         return;
     }
 

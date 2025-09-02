@@ -19,10 +19,10 @@ enum E {
 }
 
 function main() {
-    assertEQ(E.A.toString(), "100")         // E.A.toString()                      
-    assertEQ(E.A as int, 100)               // cast(E.A) to int, E.A is a index    
-    assertEQ(E.B.toString(), "200")         // E.B.toString()                      
-    assertEQ(Int.toDouble(E.B), 200)            // cast(E.B) to number, E.B is a index 
-    assertEQ(E.A.valueOf() as int, 100)     // get value of E.A                    
-    assertEQ(Int.toDouble(E.B.valueOf()), 200)  // get value of E.B                    
+    arktest.assertEQ(E.A.toString(), "100")         // E.A.toString()                      
+    arktest.assertEQ(E.A as int, 100)               // cast(E.A) to int, E.A is a index    
+    arktest.assertEQ(E.B.toString(), "200")         // E.B.toString()                      
+    arktest.assertEQ(Int.toDouble(E.B), 200)            // cast(E.B) to number, E.B is a index 
+    arktest.assertEQ(E.A.valueOf() as int, 100)     // get value of E.A                    
+    arktest.assertEQ(Int.toDouble(E.B.valueOf()), 200)  // get value of E.B                    
 }

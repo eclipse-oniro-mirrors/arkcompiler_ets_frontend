@@ -73,6 +73,7 @@
     _(UNDEFINED_LITERAL, UndefinedLiteral)                                                \
     _(NUMBER_LITERAL, NumberLiteral)                                                      \
     _(OMITTED_EXPRESSION, OmittedExpression)                                              \
+    _(OVERLOAD_DECLARATION, OverloadDeclaration)                                          \
     _(PREFIX_ASSERTION_EXPRESSION, PrefixAssertionExpression)                             \
     _(PROPERTY, Property)                                                                 \
     _(REGEXP_LITERAL, RegExpLiteral)                                                      \
@@ -86,6 +87,7 @@
     _(ETS_UNDEFINED_TYPE, ETSUndefinedType)                                               \
     _(ETS_NEVER_TYPE, ETSNeverType)                                                       \
     _(ETS_STRING_LITERAL_TYPE, ETSStringLiteralType)                                      \
+    _(ETS_INTRINSIC_NODE_TYPE, ETSIntrinsicNode)                                          \
     _(ETS_FUNCTION_TYPE, ETSFunctionType)                                                 \
     _(ETS_WILDCARD_TYPE, ETSWildcardType)                                                 \
     _(ETS_PRIMITIVE_TYPE, ETSPrimitiveType)                                               \

@@ -11,6 +11,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+function(panda_code_fix_gen)
+    set(singlevalues SOURCE DESTINATION TARGET_NAME)
+    set(multivalues DATA TEMPLATES REQUIRES EXTRA_DEPENDENCIES EXTRA_ARGV)
+    cmake_parse_arguments(
+        CODE_FIX_GEN_ARG
+        ""
+        "${singlevalues}"
+        "${multivalues}"
+        ${ARGN}
+    )
+    list(LENGTH CODE_FIX_GEN_ARG_DATA DATA_COUNT)
+    set(CODE_FIX_API "${ES2PANDA_ROOT}/lsp/code_fix_register.rb")
+    foreach(i RANGE 1 ${DATA_COUNT})
+        list(APPEND API_LIST ${CODE_FIX_API})
+    endforeach()
+
+    panda_gen(DATA ${CODE_FIX_GEN_ARG_DATA}
+        API ${API_LIST}
+        TEMPLATES ${CODE_FIX_GEN_ARG_TEMPLATES}
+        SOURCE ${CODE_FIX_GEN_ARG_SOURCE}
+        TARGET_NAME ${CODE_FIX_GEN_ARG_TARGET_NAME}
+        DESTINATION ${CODE_FIX_GEN_ARG_DESTINATION}
+        REQUIRES ${CODE_FIX_GEN_ARG_REQUIRES}
+        EXTRA_DEPENDENCIES ${CODE_FIX_GEN_ARG_EXTRA_DEPENDENCIES}
+    )
+endfunction()
+
+set(DIAGNOSTIC_DIR
+   ${ES2PANDA_ROOT}/util/diagnostic/
+)
+
+panda_code_fix_gen(
+    DATA
+        ${DIAGNOSTIC_DIR}/syntax.yaml
+        ${DIAGNOSTIC_DIR}/semantic.yaml
+        ${DIAGNOSTIC_DIR}/warning.yaml
+        ${DIAGNOSTIC_DIR}/fatal.yaml
+        ${ES2PANDA_ROOT}/declgen_ets2ts/declgen_ets2ts_error.yaml
+        ${ES2PANDA_ROOT}/declgen_ets2ts/declgen_ets2ts_warning.yaml
+        ${ES2PANDA_ROOT}/declgen_ets2ts/isolated_declgen.yaml
+        ${DIAGNOSTIC_DIR}/arktsconfig_error.yaml
+    TARGET_NAME es2panda_code_fix_register_gen
+    TEMPLATES code_fix_register.h.erb
+    SOURCE ${CMAKE_CURRENT_SOURCE_DIR}
+    DESTINATION ${GENERATED_DIR}
+)
+
 set(ES2PANDA_LSP_SRC
   ./src/api.cpp
   ./src/class_hierarchy.cpp
@@ -63,16 +110,23 @@ set(ES2PANDA_LSP_SRC
   ./src/types.cpp
   ./src/navigate_to.cpp
   ./src/code_fix_provider.cpp
+  ./src/register_code_fix/add_missing_new_operator.cpp
+  ./src/register_code_fix/fix_class_doesnt_implement_inherited_abstract_member.cpp
+  ./src/register_code_fix/fix_expected_comma.cpp
+  ./src/register_code_fix/fix_return_type_in_async_function.cpp
   ./src/register_code_fix/add_missing_declare_property.cpp
+  ./src/register_code_fix/convert_const_to_let.cpp
   ./src/register_code_fix/fix_missing_call_parantheses.cpp
   ./src/register_code_fix/fix_nan_equality.cpp
-  ./src/register_code_fix/forgetten_this_property_access.cpp
+  ./src/register_code_fix/forgotten_this_property_access.cpp
   ./src/register_code_fix/import_fixes.cpp
+  ./src/register_code_fix/remove_accidental_call_parentheses.cpp
   ./src/register_code_fix/ui_plugin_suggest.cpp
   ./src/get_name_or_dotted_name_span.cpp
 )
 
 panda_add_library(${LSP_LIB} SHARED ${ES2PANDA_LSP_SRC})
+add_dependencies(${LSP_LIB} es2panda_code_fix_register_gen)
 
 panda_target_include_directories(${LSP_LIB}
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include

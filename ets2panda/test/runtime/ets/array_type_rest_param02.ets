@@ -22,5 +22,5 @@ function foo(...args:Array<number>):number{
 }
 
 function main() : void {
-    assertEQ(foo(1,2,3,4),10)
+    arktest.assertEQ(foo(1,2,3,4),10)
 }

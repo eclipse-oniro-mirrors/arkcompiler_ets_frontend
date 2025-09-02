@@ -1,0 +1,256 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * ==== export declare class A ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+ * ==== export abstract class B ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+ * ==== export enum EM1 ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+  * ==== JsDocClass ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+/**
+* ==== JsDocClassDefault with multi-anno ====
+* @param1 {} behindStr
+* @param2 preStr { p }
+*/
+/**
+* ==== JsDocClassOutside jsdoc1 ====
+* @param7
+*/
+/**
+* ==== JsDocClassOutside jsdoc2 ====
+* @param1 {} behindStr
+* @param2 preStr { p }
+*/
+/**
+  * ==== JsdocInnerNS ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  * @param3 preStr { p } behindStr
+  */
+/**
+* ==== JsdocNS ====
+* @param1 {} behindStr
+* @param2 preStr { p }
+*/
+/**
+  * ==== JsdocInterface ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+/**
+ * ==== JsdocInterfaceOutside ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+ */
+/**
+    * ==== classFoo1 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== classFoo2 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== classFoo3 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== interface getter ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== interface setter ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== interfaceFoo1 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== interfaceFoo2 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== interfaceFoo3 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== interfaceFoo4 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== private interfaceProp1 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== interfaceProp2 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== interfaceProp3 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== interfaceProp4 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+* ==== function decl jsdoc ====
+* @param1 {} behindStr
+* @param2 preStr { p }
+*/
+/**
+    * ==== test class getter ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== test class setter ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+this is jsdoc of tool
+*/
+Empty Jsdoc
+/**
+    * ==== ambient indexer jsdoc ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== ambient indexer jsdoc ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== private classProp1 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== public classProp2 jsdoc1 ====
+    * @param7
+    */
+
+    /**
+    * ==== public classProp2 jsdoc2 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+    * ==== classProp3 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+/**
+     * ==== enum prop1 jsdoc ====
+     * @param1 {} behindStr
+     * @param2 preStr { p }
+    */
+/**
+     * ==== enum prop2 jsdoc ====
+     * @param1 {} behindStr
+     * @param2 preStr { p }
+    */
+/**
+ * ==== variable decl ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+ */
+/**
+ * ==== variable decl with annotation ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+ */
+/**
+ * ==== export Annotation jsdoc ====
+ * @param1 preStr { p } behindStr
+ * @param2 preStr {} behindStr
+*/
+/**
+ * ==== my Annotation jsdoc ====
+ * @param1 preStr { p } behindStr
+ * @param2 preStr {} behindStr
+ */
+/**
+ * ==== my Annotation With Annotation jsdoc ====
+ * @param1 preStr { p } behindStr
+ * @param2 preStr {} behindStr
+*/
+/**
+ * ==== function param p1 jsdoc ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+ * ==== function param p2 jsdoc ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+ * ==== export specifier jsdoc1 ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+ * ==== export specifier jsdoc2 ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+ * ==== export specifier jsdoc3 ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+ * ==== import specifier jsdoc ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+ * ==== function overload declaration jsdoc ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+/**
+this is jsdoc of struct
+*/

@@ -20,6 +20,6 @@ function foo(num: number[]): number[]|undefined {
 function main() {
     let array: number[] = [3, 4]
     let result = foo(array)
-    assertEQ(result?.[0], 3)
-    assertEQ(result?.[1], 4)
+    arktest.assertEQ(result?.[0], 3)
+    arktest.assertEQ(result?.[1], 4)
 }

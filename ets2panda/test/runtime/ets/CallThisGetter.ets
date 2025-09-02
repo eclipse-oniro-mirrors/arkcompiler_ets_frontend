@@ -27,5 +27,5 @@ class Raw {
 function main(): void {
   let raw = new Raw;
   const my_raw = raw.callRaw();
-  assertEQ(my_raw, 42)
+  arktest.assertEQ(my_raw, 42)
 }

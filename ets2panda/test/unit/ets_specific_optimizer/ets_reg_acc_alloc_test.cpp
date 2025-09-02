@@ -57,7 +57,7 @@ TEST_F(RegAccAllocTest, Ets_Ldobj)
     pandasm::Parser p;
     auto source = std::string(R"(
         .language eTS
-        .record $NamedAccessMeta-std.core.String {
+        .record %%union_prop-std_core_String {
             std.core.String status
         }
         .record ETSGLOBAL <ets.abstract, ets.extends=std.core.Object, access.record=public> {
@@ -73,7 +73,7 @@ TEST_F(RegAccAllocTest, Ets_Ldobj)
             ldai 0x1
             ldarr.obj v0
             sta.obj v0
-            ets.ldobj.name.obj v0, $NamedAccessMeta-std.core.String.status
+            ets.ldobj.name.obj v0, %%union_prop-std_core_String.status
             return.void
         }
         )");

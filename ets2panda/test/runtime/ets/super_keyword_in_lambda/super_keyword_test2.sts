@@ -25,8 +25,8 @@ class SubType extends SupperType{
         {
             let a = this.foo()
             let b = super.foo()
-            assertEQ(a, 2)
-            assertEQ(b, 1)
+            arktest.assertEQ(a, 2)
+            arktest.assertEQ(b, 1)
         })
     }
 }

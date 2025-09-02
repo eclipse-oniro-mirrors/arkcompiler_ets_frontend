@@ -16,6 +16,9 @@ nullCoalesc.ets
 #11104
 unboxing.ets
 
+#27863
+UncheckedCasts.ets
+
 #11326
 GenericsTest.ets
 
@@ -46,6 +49,10 @@ type_param_in_union.ets
 n_overrideWithNullable.ets
 nullableType.ets
 
+#Issue 17949
+#SyntaxError: Cannot find type 'C'.
+
+#Issue 21065
 #21065
 implementsClassPropertyUnionType1.ets
 implementsClassPropertyUnionType2.ets
@@ -59,15 +66,10 @@ Object-type-in-binary-logical-expression.ets
 trailing-lambda.ets
 BitwiseOperationsOnFloat.ets
 RecursiveTypeAlias11.ets
-char-type.ets
 conversionFloatIntLong.ets
-enum_const_variable.ets
-local_enum03.ets
 inallyCatchExecutedNormally.ets
-finallyTryExecutedNormally.ets
-finallyCatchExecutedNormally.ets
-enumConstExpression.ets
 
+#Issue 48215
 #48215
 lambda_with_receiver/lambda_with_receiver_generics_return_this_rotate.ets
 lambda_with_receiver/lambda_with_receiver_return_this3.ets
@@ -81,6 +83,13 @@ GenericBridges_01.ets
 GenericBridges_02.ets
 override_for_partial_01.ets
 
+# Overloads involving primitives
+Override-4.ets
+
+# Arrays of primitives used interchangeably with arrays of reference (in generics and forOf)
+GenericArray_1.ets
+array-object.ets
+
 #HEAD FILE NO NEED TO RUN
 import_self_head_tests/B/test.d.ets
 
@@ -89,3 +98,34 @@ enum-initialize-with-enum3.ets
 
 # 27159 Recursive type alias with generics
 RecursiveTypeAlias10.ets
+#24986
+RecordKeyTypeCheck.ets
+nullishTypeCodesamples.ets
+
+# Issue #26178
+type_from_primitive_type.ets
+
+# Rebase no-primitives pathch onto master with merger Array refactoring
+union_generic_class.ets
+
+# New failures at #FailKind.VERIFIER_FAIL
+inferTypeLambda_14.ets
+
+enum_const_variable.ets
+enumConstExpression.ets
+local_enum03.ets
+overload-primitive-and-object.ets
+finallyTryAbruptedByReturn.ets
+Recursive_Parameter_2.ets
+Recursive_Parameter_3.ets
+
+# No-primitives #24986 [end]
+
+# 27159 Recursive type alias with generics
+RecursiveTypeAlias10.ets
+first_match/namespace.ets
+first_match/namespace2.ets
+first_match/namespace3.ets
+
+# Issue #28214
+large_number_parse.ets

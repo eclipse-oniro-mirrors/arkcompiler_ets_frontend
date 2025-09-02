@@ -12,26 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
-@interface Anno{}
+@Retention("SOURCE")
+@interface Anno{ }
 
-let array1: Array<@Anno() Int> = new Array<@Anno() Int>()
+let array1: Array<@Anno() Int > = new Array < @Anno() Int > ()
 
-class A{
-   foo<T>(){}
-   bar(){
-      foo<@Anno T>()
-      this.foo<@Anno T>()
-   }
+class A {
+    foo<T>() { }
+    bar() {
+        foo < @Anno number > ()
+        this.foo < @Anno number > ()
+    }
 }
 
-function foo<T>(){}
-foo<@Anno T>()
+function foo<T>() { }
+foo < @Anno string > ()
 
-/* @@? 17:27 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 17:52 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 22:17 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 22:17 Error TypeError: Cannot find type 'T'. */
-/* @@? 23:22 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 23:22 Error TypeError: Cannot find type 'T'. */
-/* @@? 28:11 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 28:11 Error TypeError: Cannot find type 'T'. */

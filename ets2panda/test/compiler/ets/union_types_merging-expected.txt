@@ -205,7 +205,7 @@
               },
               "end": {
                 "line": 30,
-                "column": 22,
+                "column": 20,
                 "program": "union_types_merging.ets"
               }
             }
@@ -218,7 +218,7 @@
             },
             "end": {
               "line": 30,
-              "column": 22,
+              "column": 20,
               "program": "union_types_merging.ets"
             }
           }
@@ -406,7 +406,7 @@
               },
               "end": {
                 "line": 31,
-                "column": 22,
+                "column": 20,
                 "program": "union_types_merging.ets"
               }
             }
@@ -419,7 +419,7 @@
             },
             "end": {
               "line": 31,
-              "column": 22,
+              "column": 20,
               "program": "union_types_merging.ets"
             }
           }
@@ -607,7 +607,7 @@
               },
               "end": {
                 "line": 32,
-                "column": 22,
+                "column": 20,
                 "program": "union_types_merging.ets"
               }
             }
@@ -620,7 +620,7 @@
             },
             "end": {
               "line": 32,
-              "column": 22,
+              "column": 20,
               "program": "union_types_merging.ets"
             }
           }
@@ -808,7 +808,7 @@
               },
               "end": {
                 "line": 33,
-                "column": 22,
+                "column": 20,
                 "program": "union_types_merging.ets"
               }
             }
@@ -821,7 +821,7 @@
             },
             "end": {
               "line": 33,
-              "column": 22,
+              "column": 20,
               "program": "union_types_merging.ets"
             }
           }
@@ -1164,7 +1164,7 @@
               },
               "end": {
                 "line": 36,
-                "column": 22,
+                "column": 20,
                 "program": "union_types_merging.ets"
               }
             }
@@ -1177,7 +1177,7 @@
             },
             "end": {
               "line": 36,
-              "column": 22,
+              "column": 20,
               "program": "union_types_merging.ets"
             }
           }
@@ -1365,7 +1365,7 @@
               },
               "end": {
                 "line": 37,
-                "column": 22,
+                "column": 20,
                 "program": "union_types_merging.ets"
               }
             }
@@ -1378,7 +1378,7 @@
             },
             "end": {
               "line": 37,
-              "column": 22,
+              "column": 20,
               "program": "union_types_merging.ets"
             }
           }
@@ -1566,7 +1566,7 @@
               },
               "end": {
                 "line": 38,
-                "column": 22,
+                "column": 20,
                 "program": "union_types_merging.ets"
               }
             }
@@ -1579,7 +1579,7 @@
             },
             "end": {
               "line": 38,
-              "column": 22,
+              "column": 20,
               "program": "union_types_merging.ets"
             }
           }
@@ -1767,7 +1767,7 @@
               },
               "end": {
                 "line": 39,
-                "column": 22,
+                "column": 20,
                 "program": "union_types_merging.ets"
               }
             }
@@ -1780,7 +1780,7 @@
             },
             "end": {
               "line": 39,
-              "column": 22,
+              "column": 20,
               "program": "union_types_merging.ets"
             }
           }
@@ -1946,112 +1946,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "union_types_merging.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "union_types_merging.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -2155,7 +2049,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 20,
+                                        "column": 18,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2168,7 +2062,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 20,
+                                      "column": 18,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2202,7 +2096,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 25,
+                                        "column": 23,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2215,7 +2109,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 25,
+                                      "column": 23,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2249,7 +2143,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 30,
+                                        "column": 28,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2262,7 +2156,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 30,
+                                      "column": 28,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2296,7 +2190,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 35,
+                                        "column": 33,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2309,7 +2203,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 35,
+                                      "column": 33,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2343,7 +2237,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 39,
+                                        "column": 38,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2356,7 +2250,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 39,
+                                      "column": 38,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2370,7 +2264,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 39,
+                                  "column": 38,
                                   "program": "union_types_merging.ets"
                                 }
                               }
@@ -2458,7 +2352,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 20,
+                                        "column": 18,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2471,7 +2365,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 20,
+                                      "column": 18,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2505,7 +2399,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 25,
+                                        "column": 23,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2518,7 +2412,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 25,
+                                      "column": 23,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2552,7 +2446,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 30,
+                                        "column": 28,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2565,7 +2459,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 30,
+                                      "column": 28,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2599,7 +2493,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 35,
+                                        "column": 33,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2612,7 +2506,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 35,
+                                      "column": 33,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2646,7 +2540,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 39,
+                                        "column": 38,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2659,7 +2553,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 39,
+                                      "column": 38,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2673,7 +2567,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 39,
+                                  "column": 38,
                                   "program": "union_types_merging.ets"
                                 }
                               }
@@ -2761,7 +2655,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 20,
+                                        "column": 18,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2774,7 +2668,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 20,
+                                      "column": 18,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2808,7 +2702,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 25,
+                                        "column": 23,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2821,7 +2715,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 25,
+                                      "column": 23,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2855,7 +2749,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 30,
+                                        "column": 28,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2868,7 +2762,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 30,
+                                      "column": 28,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2902,7 +2796,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 35,
+                                        "column": 33,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2915,7 +2809,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 35,
+                                      "column": 33,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2949,7 +2843,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 40,
+                                        "column": 38,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -2962,7 +2856,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 40,
+                                      "column": 38,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -2996,7 +2890,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 45,
+                                        "column": 43,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3009,7 +2903,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 45,
+                                      "column": 43,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3043,7 +2937,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 50,
+                                        "column": 48,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3056,7 +2950,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 50,
+                                      "column": 48,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3090,7 +2984,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 55,
+                                        "column": 53,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3103,7 +2997,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 55,
+                                      "column": 53,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3137,7 +3031,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 60,
+                                        "column": 58,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3150,7 +3044,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 60,
+                                      "column": 58,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3184,7 +3078,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 64,
+                                        "column": 63,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3197,7 +3091,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 64,
+                                      "column": 63,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3211,7 +3105,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 64,
+                                  "column": 63,
                                   "program": "union_types_merging.ets"
                                 }
                               }
@@ -3299,7 +3193,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 20,
+                                        "column": 18,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3312,7 +3206,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 20,
+                                      "column": 18,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3346,7 +3240,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 25,
+                                        "column": 23,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3359,7 +3253,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 25,
+                                      "column": 23,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3393,7 +3287,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 30,
+                                        "column": 28,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3406,7 +3300,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 30,
+                                      "column": 28,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3440,7 +3334,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 35,
+                                        "column": 33,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3453,7 +3347,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 35,
+                                      "column": 33,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3487,7 +3381,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 40,
+                                        "column": 38,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3500,7 +3394,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 40,
+                                      "column": 38,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3534,7 +3428,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 49,
+                                        "column": 47,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3547,7 +3441,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 49,
+                                      "column": 47,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3581,7 +3475,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 54,
+                                        "column": 52,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3594,7 +3488,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 54,
+                                      "column": 52,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3628,7 +3522,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 59,
+                                        "column": 57,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3641,7 +3535,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 59,
+                                      "column": 57,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3675,7 +3569,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 64,
+                                        "column": 62,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3688,7 +3582,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 64,
+                                      "column": 62,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3722,7 +3616,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 69,
+                                        "column": 67,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3735,7 +3629,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 69,
+                                      "column": 67,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3769,7 +3663,7 @@
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 73,
+                                        "column": 72,
                                         "program": "union_types_merging.ets"
                                       }
                                     }
@@ -3782,7 +3676,7 @@
                                     },
                                     "end": {
                                       "line": 20,
-                                      "column": 73,
+                                      "column": 72,
                                       "program": "union_types_merging.ets"
                                     }
                                   }
@@ -3796,7 +3690,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 73,
+                                  "column": 72,
                                   "program": "union_types_merging.ets"
                                 }
                               }
@@ -3897,7 +3791,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 19,
+                                  "column": 18,
                                   "program": "union_types_merging.ets"
                                 }
                               }
@@ -3910,7 +3804,7 @@
                               },
                               "end": {
                                 "line": 22,
-                                "column": 19,
+                                "column": 18,
                                 "program": "union_types_merging.ets"
                               }
                             }
@@ -4008,7 +3902,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 19,
+                                  "column": 18,
                                   "program": "union_types_merging.ets"
                                 }
                               }
@@ -4021,7 +3915,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 19,
+                                "column": 18,
                                 "program": "union_types_merging.ets"
                               }
                             }
@@ -4119,7 +4013,7 @@
                                 },
                                 "end": {
                                   "line": 24,
-                                  "column": 19,
+                                  "column": 18,
                                   "program": "union_types_merging.ets"
                                 }
                               }
@@ -4132,7 +4026,7 @@
                               },
                               "end": {
                                 "line": 24,
-                                "column": 19,
+                                "column": 18,
                                 "program": "union_types_merging.ets"
                               }
                             }
@@ -4230,7 +4124,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 19,
+                                  "column": 18,
                                   "program": "union_types_merging.ets"
                                 }
                               }
@@ -4243,7 +4137,7 @@
                               },
                               "end": {
                                 "line": 25,
-                                "column": 19,
+                                "column": 18,
                                 "program": "union_types_merging.ets"
                               }
                             }
@@ -4341,7 +4235,7 @@
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 23,
+                                  "column": 22,
                                   "program": "union_types_merging.ets"
                                 }
                               }
@@ -4354,7 +4248,7 @@
                               },
                               "end": {
                                 "line": 26,
-                                "column": 23,
+                                "column": 22,
                                 "program": "union_types_merging.ets"
                               }
                             }

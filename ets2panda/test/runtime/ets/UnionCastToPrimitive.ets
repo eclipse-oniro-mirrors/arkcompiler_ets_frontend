@@ -15,12 +15,12 @@
 
 function foo(value: number) {
     let v:number = 0.1;
-    assertEQ(value, v)
+    arktest.assertEQ(value, v)
 }
 
 function foo2(value: string | number | object | undefined) {
     let v:number = 0.1;
-    assertEQ(value, v)
+    arktest.assertEQ(value, v)
 }
 
 const value: string | number | object | undefined = 0.1;

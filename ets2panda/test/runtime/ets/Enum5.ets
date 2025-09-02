@@ -20,82 +20,82 @@ function main(): void {
   try {
     let name = Color.Blue.getName();
     let value:string = Color.getValueOf("Blue").toString();
-    assertEQ(name, "Blue")
-    assertEQ(value, "green")
+    arktest.assertEQ(name, "Blue")
+    arktest.assertEQ(value, "green")
   } catch (e) {
-    assertTrue((e as Object).toString().startsWith("No enum constant Color.Blue"))
+    arktest.assertTrue((e as Object).toString().startsWith("No enum constant Color.Blue"))
   }
 
   let x = Color.Red.valueOf();
-  assertEQ(x, "blue")
+  arktest.assertEQ(x, "blue")
 
   let blue = Color.Blue;
   let str = blue.getName();
-  assertEQ( "Blue", str)
-  assertEQ( blue.valueOf(), blue.toString())
+  arktest.assertEQ( "Blue", str)
+  arktest.assertEQ( blue.valueOf(), blue.toString())
 
   let values = Color.values();
-  assertEQ(values.length, 3)
-  assertEQ(values[1], Color.Red)
-  assertEQ(values[0], Color.Green)
-  assertEQ(values[2], Color.Blue)
+  arktest.assertEQ(values.length, 3)
+  arktest.assertEQ(values[1], Color.Red)
+  arktest.assertEQ(values[0], Color.Green)
+  arktest.assertEQ(values[2], Color.Blue)
 
   let red1: Color = Color.Red;
   let red2: Color = Color.Green;
-  assertEQ(red2 as string, "red")
-  assertEQ(red2.valueOf(), "red")
-  assertEQ(red2.getName(), "Green")
-  assertEQ(red2.toString(), "red")
+  arktest.assertEQ(red2 as string, "red")
+  arktest.assertEQ(red2.valueOf(), "red")
+  arktest.assertEQ(red2.getName(), "Green")
+  arktest.assertEQ(red2.toString(), "red")
 
   try {
     red2 = Color.getValueOf("Red");
   } catch (e) {
-    assertTrue( (e as Object).toString().startsWith("No enum constant Color.Red"))
+    arktest.assertTrue( (e as Object).toString().startsWith("No enum constant Color.Red"))
   }
 
-  assertEQ(red1 as string, "blue")
-  assertEQ(red1.valueOf(), "blue")
-  assertEQ(red1.getName(), "Red")
-  assertEQ(red1.toString(), "blue")
+  arktest.assertEQ(red1 as string, "blue")
+  arktest.assertEQ(red1.valueOf(), "blue")
+  arktest.assertEQ(red1.getName(), "Red")
+  arktest.assertEQ(red1.toString(), "blue")
 
-  assertEQ(red2 as string, "blue")
-  assertEQ(red2.valueOf(), "blue")
-  assertEQ(red2.getName(), "Red")
-  assertEQ(red2.toString(), "blue")
+  arktest.assertEQ(red2 as string, "blue")
+  arktest.assertEQ(red2.valueOf(), "blue")
+  arktest.assertEQ(red2.getName(), "Red")
+  arktest.assertEQ(red2.toString(), "blue")
 
-  assertEQ(red1, Color.Red)
-  assertEQ(red2, Color.Red)
-  assertEQ(red2, red1)
+  arktest.assertEQ(red1, Color.Red)
+  arktest.assertEQ(red2, Color.Red)
+  arktest.assertEQ(red2, red1)
 
   let ord: string = "green";
   blue = ord as Color;
-  assertEQ(blue as string, "green")
-  assertEQ(blue.valueOf(), "green")
-  assertEQ(blue.getName(), "Blue")
-  assertEQ(blue.toString(), "green")
+  arktest.assertEQ(blue as string, "green")
+  arktest.assertEQ(blue.valueOf(), "green")
+  arktest.assertEQ(blue.getName(), "Blue")
+  arktest.assertEQ(blue.toString(), "green")
 
   try {
     let yellow: Color = Color.getValueOf("Yellow");
-    assertTrue(false)
+    arktest.assertTrue(false)
   } catch (e: Exception) {
-    assertTrue((e as Object).toString().startsWith("No enum constant Color.Yellow"))
+    arktest.assertTrue((e as Object).toString().startsWith("No enum constant Color.Yellow"))
   } catch (e) {}
 
   ord = "red";
   let green: Color = ord as Color;
-  assertEQ( green, Color.Green)
+  arktest.assertEQ( green, Color.Green)
 
   try {
     let x = "a" as Color;
-    assertTrue( false)
+    arktest.assertTrue( false)
   } catch (e: Error) {
-    assertTrue( (e as Object).toString().startsWith("Error: No enum Color with value a"))
+    arktest.assertTrue( (e as Object).toString().startsWith("Error: No enum Color with value a"))
   }
 
-  assertEQ( "red" as Color as string, "red")
-  assertEQ( Color.Blue as string as Color, Color.Blue)
+  arktest.assertEQ( "red" as Color as string, "red")
+  arktest.assertEQ( Color.Blue as string as Color, Color.Blue)
   try {
-    assertEQ( (Color.Green as string) as Color, Color.getValueOf("red"))
+    arktest.assertEQ( (Color.Green as string) as Color, Color.getValueOf("red"))
   } catch (e) {
   }
 }

@@ -17,24 +17,24 @@ function main() {
   let x1 = (): number | undefined => { return 5; }();
   let y1: number = !x1 ? 3 : x1;
   let z1: number = x1 ? x1 : 4;
-  assertEQ(y1, 5.0)
-  assertEQ(z1, 5.0)
+  arktest.assertEQ(y1, 5.0)
+  arktest.assertEQ(z1, 5.0)
 
   let x2 = (): number | undefined => { return undefined; }();
   let y2: number = x2 == undefined ? 3 : x2;
   let z2: number = x2 != undefined ? x2 : 4;
-  assertEQ(y2, 3.0)
-  assertEQ(z2, 4.0)
+  arktest.assertEQ(y2, 3.0)
+  arktest.assertEQ(z2, 4.0)
 
   let x3 = (): int | undefined => { return 5; }();
   let y3: int = !x3 ? Double.toInt(3.1) : x3;
   let z3: int = x3 ? x3 : Double.toInt(4.1);
-  assertEQ(y3, 5)
-  assertEQ(z3, 5)
+  arktest.assertEQ(y3, 5)
+  arktest.assertEQ(z3, 5)
 
   let x4 = (): int | undefined => { return undefined; }();
   let y4: int = x4 == undefined ? Double.toInt(3.1) : x4;
   let z4: int = x4 != undefined ? x4 : Double.toInt(4.1);
-  assertEQ(y4, 3)
-  assertEQ(z4, 4)
+  arktest.assertEQ(y4, 3)
+  arktest.assertEQ(z4, 4)
 }

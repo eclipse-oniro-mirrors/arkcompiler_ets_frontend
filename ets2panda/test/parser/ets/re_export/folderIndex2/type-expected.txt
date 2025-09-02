@@ -48,8 +48,8 @@
               "program": "type.ets"
             },
             "end": {
-              "line": 17,
-              "column": 1,
+              "line": 16,
+              "column": 27,
               "program": "type.ets"
             }
           }
@@ -61,8 +61,8 @@
             "program": "type.ets"
           },
           "end": {
-            "line": 17,
-            "column": 1,
+            "line": 16,
+            "column": 27,
             "program": "type.ets"
           }
         }

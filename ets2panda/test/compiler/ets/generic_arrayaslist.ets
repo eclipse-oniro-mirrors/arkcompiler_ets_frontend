@@ -79,7 +79,7 @@ class ArrayAsListt<T> implements Listt<T> {
     public override pushFront(e: T): void {
         let dst = this.data;
         if (this.curSize == this.data.length) {
-            dst = new (T | undefined)[this.getNewCapacity(this.data.length as int)];
+            dst = new (T | undefined)[this.getNewCapacity(this.data.length.toInt())];
         }
         for (let i = this.curSize; i != 0; --i) {
             dst[i] = this.data[i-1];
@@ -90,7 +90,7 @@ class ArrayAsListt<T> implements Listt<T> {
     }
 
     public override popFront(): T {
-        assertLT(0, this.curSize, "No data to popFront from ArrayAsList!");
+        arktest.assertLT(0, this.curSize, "No data to popFront from ArrayAsList!");
         let res: T = this.data[0] as T;
         for (let i = 1; i < this.curSize; ++i) {
             this.data[i-1] = this.data[i];
@@ -101,7 +101,7 @@ class ArrayAsListt<T> implements Listt<T> {
 
     public override pushBack(e: T): void {
         if (this.curSize == this.data.length) {
-            let newData = new (T | undefined)[this.getNewCapacity(this.data.length as int)];
+            let newData = new (T | undefined)[this.getNewCapacity(this.data.length.toInt())];
             for (let i = 0; i < this.curSize; ++i) {
                 newData[i] = this.data[i];
             }
@@ -112,7 +112,7 @@ class ArrayAsListt<T> implements Listt<T> {
     }
 
     public override popBack(): T {
-        assertTrue(0, this.curSize, "No data to popBack in ArrayAsList!");
+        arktest.assertTrue(0, this.curSize, "No data to popBack in ArrayAsList!");
         --this.curSize;
         return this.data[this.curSize] as T;
     }
@@ -126,7 +126,7 @@ class ArrayAsListt<T> implements Listt<T> {
     }
 
     public override has(e: T): boolean {
-        assertTrue(false)
+        arktest.assertTrue(false)
 
         for (let i = 0; i < this.curSize; ++i) {
             if (__runtimeEquals(this.data[i], e)) {

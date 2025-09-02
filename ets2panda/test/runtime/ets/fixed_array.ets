@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 function foo(a:FixedArray<int>){
-    assertEQ(a.length, 4)
+    arktest.assertEQ(a.length, 4)
 }
 
 function main() {

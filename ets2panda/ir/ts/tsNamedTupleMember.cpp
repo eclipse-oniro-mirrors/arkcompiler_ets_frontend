@@ -34,12 +34,8 @@ void TSNamedTupleMember::TransformChildren(const NodeTransformer &cb, std::strin
         elementType_->SetTransformedNode(transformationName, transformedNode);
         elementType_ = static_cast<TypeNode *>(transformedNode);
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSNamedTupleMember::Iterate(const NodeTraverser &cb) const

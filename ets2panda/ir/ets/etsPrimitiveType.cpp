@@ -24,12 +24,7 @@ namespace ark::es2panda::ir {
 void ETSPrimitiveType::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
                                          [[maybe_unused]] std::string_view const transformationName)
 {
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void ETSPrimitiveType::Iterate([[maybe_unused]] const NodeTraverser &cb) const
@@ -109,37 +104,37 @@ checker::VerifiedType ETSPrimitiveType::Check(checker::ETSChecker *checker)
 
 checker::Type *ETSPrimitiveType::GetType([[maybe_unused]] checker::ETSChecker *checker)
 {
-    switch (type_) {
+    switch (GetPrimitiveType()) {
         case PrimitiveType::BYTE: {
-            SetTsType(checker->GlobalByteType());
+            SetTsType(checker->GlobalByteBuiltinType());
             return TsType();
         }
         case PrimitiveType::SHORT: {
-            SetTsType(checker->GlobalShortType());
+            SetTsType(checker->GlobalShortBuiltinType());
             return TsType();
         }
         case PrimitiveType::INT: {
-            SetTsType(checker->GlobalIntType());
+            SetTsType(checker->GlobalIntBuiltinType());
             return TsType();
         }
         case PrimitiveType::LONG: {
-            SetTsType(checker->GlobalLongType());
+            SetTsType(checker->GlobalLongBuiltinType());
             return TsType();
         }
         case PrimitiveType::FLOAT: {
-            SetTsType(checker->GlobalFloatType());
+            SetTsType(checker->GlobalFloatBuiltinType());
             return TsType();
         }
         case PrimitiveType::DOUBLE: {
-            SetTsType(checker->GlobalDoubleType());
+            SetTsType(checker->GlobalDoubleBuiltinType());
             return TsType();
         }
         case PrimitiveType::BOOLEAN: {
-            SetTsType(checker->GlobalETSBooleanType());
+            SetTsType(checker->GlobalETSBooleanBuiltinType());
             return TsType();
         }
         case PrimitiveType::CHAR: {
-            SetTsType(checker->GlobalCharType());
+            SetTsType(checker->GlobalCharBuiltinType());
             return TsType();
         }
         case PrimitiveType::VOID: {
@@ -158,7 +153,7 @@ checker::Type *ETSPrimitiveType::GetType([[maybe_unused]] checker::ETSChecker *c
 
 ETSPrimitiveType *ETSPrimitiveType::Clone(ArenaAllocator *const allocator, AstNode *const parent)
 {
-    auto *const clone = allocator->New<ETSPrimitiveType>(type_, allocator);
+    auto *const clone = allocator->New<ETSPrimitiveType>(GetPrimitiveType(), allocator);
     ES2PANDA_ASSERT(clone != nullptr);
 
     if (parent != nullptr) {
@@ -168,7 +163,7 @@ ETSPrimitiveType *ETSPrimitiveType::Clone(ArenaAllocator *const allocator, AstNo
     if (!Annotations().empty()) {
         ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
         for (auto *annotationUsage : Annotations()) {
-            auto *annotationClone = annotationUsage->Clone(allocator, clone);
+            auto *annotationClone = annotationUsage->Clone(allocator, nullptr);
             ES2PANDA_ASSERT(annotationClone != nullptr);
             annotationUsages.push_back(annotationClone->AsAnnotationUsage());
         }

@@ -25,9 +25,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 17,
+            "line": 16,
             "column": 1,
-            "endLine": 17,
+            "endLine": 16,
+            "endColumn": 39,
+            "problem": "InterOpImportJs",
+            "suggest": "",
+            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 1,
+            "endLine": 18,
             "endColumn": 6,
             "problem": "CallJSFunction",
             "suggest": "",
@@ -35,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 18,
+            "line": 19,
             "column": 1,
-            "endLine": 18,
+            "endLine": 19,
             "endColumn": 9,
             "problem": "CallJSFunction",
             "suggest": "",
@@ -45,13 +55,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 18,
-            "column": 5,
-            "endLine": 18,
-            "endColumn": 8,
-            "problem": "NumericSemantics",
+            "line": 22,
+            "column": 1,
+            "endLine": 22,
+            "endColumn": 4,
+            "problem": "CallJSFunction",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "ArkTS directly call JS functions or parameters is not supported (arkts-interop-js2s-call-js-func)",
             "severity": "ERROR"
         }
     ]

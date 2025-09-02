@@ -6,7 +6,6 @@
     "diagnostics": [
       {
         "message": "Unexpected token 'add'.",
-        "source": "add",
         "range": {
           "start": {
             "line": 16,
@@ -19,7 +18,7 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
+        "code": 1227,
         "data": 0,
         "severity": 1,
         "codeDescription": {
@@ -28,7 +27,6 @@
       },
       {
         "message": "Unexpected token, expected ',' or ')'.",
-        "source": "*ERROR_LITERAL*",
         "range": {
           "start": {
             "line": 16,
@@ -41,7 +39,7 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
+        "code": 1229,
         "data": 0,
         "severity": 1,
         "codeDescription": {
@@ -50,7 +48,6 @@
       },
       {
         "message": "Unexpected token ':'.",
-        "source": "*ERROR_LITERAL*",
         "range": {
           "start": {
             "line": 16,
@@ -63,29 +60,7 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
-        "data": 0,
-        "severity": 1,
-        "codeDescription": {
-          "href": "test code description"
-        }
-      },
-      {
-        "message": "Unexpected token ':'.",
-        "source": "*ERROR_LITERAL*",
-        "range": {
-          "start": {
-            "line": 16,
-            "character": 14
-          },
-          "end": {
-            "line": 16,
-            "character": 15
-          }
-        },
-        "tags": [],
-        "relatedInfo": [],
-        "code": 1,
+        "code": 1227,
         "data": 0,
         "severity": 1,
         "codeDescription": {
@@ -94,7 +69,6 @@
       },
       {
         "message": "Unexpected token 'number'.",
-        "source": "number",
         "range": {
           "start": {
             "line": 16,
@@ -107,7 +81,7 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
+        "code": 1227,
         "data": 0,
         "severity": 1,
         "codeDescription": {
@@ -116,7 +90,6 @@
       },
       {
         "message": "Unexpected token ','.",
-        "source": "*ERROR_LITERAL*",
         "range": {
           "start": {
             "line": 16,
@@ -129,29 +102,7 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
-        "data": 0,
-        "severity": 1,
-        "codeDescription": {
-          "href": "test code description"
-        }
-      },
-      {
-        "message": "Unexpected token ','.",
-        "source": "*ERROR_LITERAL*",
-        "range": {
-          "start": {
-            "line": 16,
-            "character": 22
-          },
-          "end": {
-            "line": 16,
-            "character": 23
-          }
-        },
-        "tags": [],
-        "relatedInfo": [],
-        "code": 1,
+        "code": 1227,
         "data": 0,
         "severity": 1,
         "codeDescription": {
@@ -160,7 +111,6 @@
       },
       {
         "message": "Unexpected token 'b'.",
-        "source": "",
         "range": {
           "start": {
             "line": 16,
@@ -173,7 +123,7 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
+        "code": 1227,
         "data": 0,
         "severity": 1,
         "codeDescription": {
@@ -182,7 +132,6 @@
       },
       {
         "message": "Label must be followed by a loop statement.",
-        "source": "",
         "range": {
           "start": {
             "line": 16,
@@ -195,7 +144,7 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
+        "code": 1038,
         "data": 0,
         "severity": 1,
         "codeDescription": {
@@ -204,7 +153,6 @@
       },
       {
         "message": "Unexpected token ')'.",
-        "source": "*ERROR_LITERAL*",
         "range": {
           "start": {
             "line": 16,
@@ -217,29 +165,7 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
-        "data": 0,
-        "severity": 1,
-        "codeDescription": {
-          "href": "test code description"
-        }
-      },
-      {
-        "message": "Unexpected token ')'.",
-        "source": "*ERROR_LITERAL*",
-        "range": {
-          "start": {
-            "line": 16,
-            "character": 33
-          },
-          "end": {
-            "line": 16,
-            "character": 34
-          }
-        },
-        "tags": [],
-        "relatedInfo": [],
-        "code": 1,
+        "code": 1227,
         "data": 0,
         "severity": 1,
         "codeDescription": {
@@ -248,7 +174,6 @@
       },
       {
         "message": "Unexpected token '{'.",
-        "source": "{\n  return ((a) + (b));\n}",
         "range": {
           "start": {
             "line": 16,
@@ -261,7 +186,7 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
+        "code": 1227,
         "data": 0,
         "severity": 1,
         "codeDescription": {
@@ -270,7 +195,6 @@
       },
       {
         "message": "return keyword should be used in function body.",
-        "source": "return ((a) + (b));",
         "range": {
           "start": {
             "line": 17,
@@ -283,7 +207,141 @@
         },
         "tags": [],
         "relatedInfo": [],
-        "code": 1,
+        "code": 1163,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      }
+    ]
+  },
+  "3": {
+    "diagnostics": [
+      {
+        "message": "Unexpected token, expected 'from'.",
+        "range": {
+          "start": {
+            "line": 16,
+            "character": 1
+          },
+          "end": {
+            "line": 16,
+            "character": 52
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 1228,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      }
+    ]
+  },
+  "4": {
+    "diagnostics": [
+      {
+        "message": "A function can only be decorated by the 'Builder'.",
+        "range": {
+          "start": {
+            "line": 22,
+            "character": 2
+          },
+          "end": {
+            "line": 22,
+            "character": 7
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 4000,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      },
+      {
+        "message": "The '@Track' annotation can decorate only member variables of a class.",
+        "range": {
+          "start": {
+            "line": 19,
+            "character": 2
+          },
+          "end": {
+            "line": 19,
+            "character": 7
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 4000,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      },
+      {
+        "message": "The '@Track' annotation can decorate only member variables of a class.",
+        "range": {
+          "start": {
+            "line": 22,
+            "character": 2
+          },
+          "end": {
+            "line": 22,
+            "character": 7
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 4000,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      },
+      {
+        "message": "The '@Track' annotation can decorate only member variables of a class.",
+        "range": {
+          "start": {
+            "line": 27,
+            "character": 2
+          },
+          "end": {
+            "line": 27,
+            "character": 7
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 4000,
+        "data": 0,
+        "severity": 1,
+        "codeDescription": {
+          "href": "test code description"
+        }
+      },
+      {
+        "message": "The '@Track' annotation can decorate only member variables of a class.",
+        "range": {
+          "start": {
+            "line": 36,
+            "character": 6
+          },
+          "end": {
+            "line": 36,
+            "character": 11
+          }
+        },
+        "tags": [],
+        "relatedInfo": [],
+        "code": 4000,
         "data": 0,
         "severity": 1,
         "codeDescription": {

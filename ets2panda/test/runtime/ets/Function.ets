@@ -25,7 +25,7 @@ class B extends A {
 }
 
 function test(f: Function, action: (f: Function) => Any, v: Any) {
-    assertEQ(action(f), v)
+    arktest.assertEQ(action(f), v)
 }
 
 function main() {

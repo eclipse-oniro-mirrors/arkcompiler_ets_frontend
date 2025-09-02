@@ -15,7 +15,7 @@
 
 type S = string
 
-function xassert(a: S, b: S) { assertEQ(a, b) }
+function xassert(a: S, b: S) { arktest.assertEQ(a, b) }
 
 function p0call(f: () => S, a: S[]) {
     return f()

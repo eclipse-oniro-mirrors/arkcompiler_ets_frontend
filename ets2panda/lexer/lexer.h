@@ -16,6 +16,8 @@
 #ifndef ES2PANDA_PARSER_CORE_LEXER_H
 #define ES2PANDA_PARSER_CORE_LEXER_H
 
+#include <limits>
+#include <type_traits>
 #include "lexer/regexp/regexp.h"
 #include "lexer/token/letters.h"
 #include "lexer/token/token.h"
@@ -124,7 +126,6 @@ public:
     // NOLINTNEXTLINE(google-default-arguments)
     virtual void NextToken(NextTokenFlags flags = NextTokenFlags::NONE);
     virtual void ScanAsteriskPunctuator();
-    bool IsEnableParseJsdoc() const;
 
     Token &GetToken();
     const Token &GetToken() const;
@@ -151,11 +152,6 @@ public:
         return false;
     }
 
-    void SkipCp()
-    {
-        Iterator().SkipCp();
-    }
-
     util::DiagnosticEngine &DiagnosticEngine()
     {
         return diagnosticEngine_;
@@ -173,9 +169,9 @@ public:
 
     LexerPosition Save() const;
     void Rewind(const LexerPosition &pos);
+    void Reset(size_t offset);
     void BackwardToken(TokenType type, size_t offset);
     void ForwardToken(TokenType type, size_t offset);
-    void ForwardToken(TokenType type);
 
     char32_t Lookahead();
     bool CheckArrow();
@@ -188,7 +184,6 @@ public:
     bool HandleDoubleQuoteHelper(const char32_t &end, const char32_t &cp);
     void PrepareStringTokenHelper();
     void FinalizeTokenHelper(util::UString *str, const size_t &startPos, size_t escapeEnd, bool finalize = true);
-    void FinalizeJsDocInfoHelper(util::UString *str, const size_t &startPos, size_t escapeEnd);
     template <char32_t END>
     void ScanString();
 
@@ -239,13 +234,19 @@ public:
 
         bool outOfRange = false;
         if constexpr (!std::is_same_v<Ret, Tret>) {
-            outOfRange = tmp < static_cast<Tret>(std::numeric_limits<Ret>::min()) ||
+            outOfRange = tmp < static_cast<Tret>(std::numeric_limits<Ret>::denorm_min()) ||
                          tmp > static_cast<Tret>(std::numeric_limits<Ret>::max());
+        }
+
+        if constexpr (std::is_floating_point_v<Tret>) {
+            outOfRange |= (tmp == std::numeric_limits<Tret>::infinity());
+        } else {
+            outOfRange |= (errno == ERANGE);
         }
 
         if (endPtr == str) {
             result = ConversionResult::INVALID_ARGUMENT;
-        } else if (errno == ERANGE || outOfRange) {
+        } else if (outOfRange) {
             result = ConversionResult::OUT_OF_RANGE;
         } else {
             result = ConversionResult::SUCCESS;
@@ -261,8 +262,6 @@ public:
     {
         return GetToken().Start();
     }
-
-    size_t GetIndex();
 
 protected:
     void NextToken(Keywords *kws);
@@ -294,8 +293,6 @@ protected:
     util::StringView SourceView(const util::StringView::Iterator &begin, const util::StringView::Iterator &end) const;
 
     bool SkipWhiteSpacesHelperSlash(char32_t *cp);
-    bool IsValidJsDocStart(char32_t *cp);
-    bool IsValidJsDocEnd(char32_t *cp);
     bool SkipWhiteSpacesHelperDefault(const char32_t &cp);
     void SkipWhiteSpaces();
     void SkipSingleLineComment();
@@ -379,10 +376,6 @@ private:
     util::StringView source_;
     LexerPosition pos_;
     util::DiagnosticEngine &diagnosticEngine_;
-    const parser::ParserContext *GetContext()
-    {
-        return parserContext_;
-    }
 };
 
 class TemplateLiteralParserContext {
@@ -615,6 +608,7 @@ bool Lexer::ScanNumberRadix(bool leadingMinus, bool allowNumericSeparator)
     }
 
     GetToken().number_ = lexer::Number(number);
+    GetToken().number_.SetStr(SourceView(GetToken().Start().index, Iterator().Index()));
     return true;
 }
 

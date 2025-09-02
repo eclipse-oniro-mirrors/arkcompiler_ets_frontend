@@ -38,17 +38,31 @@ public:
 
     [[nodiscard]] checker::Type const *TsType() const
     {
-        return tsType_;
+        return AstNode::GetHistoryNodeAs<Typed<T>>()->tsType_;
     }
 
     [[nodiscard]] checker::Type *TsType()
     {
-        return tsType_;
+        return AstNode::GetHistoryNodeAs<Typed<T>>()->tsType_;
     }
 
     checker::Type *SetTsType(checker::Type *tsType) noexcept
     {
-        return (tsType_ = tsType);
+        auto nowNode = AstNode::GetHistoryNodeAs<Typed<T>>();
+        if (nowNode->tsType_ != tsType) {
+            AstNode::GetOrCreateHistoryNodeAs<Typed<T>>()->tsType_ = tsType;
+        }
+        return tsType;
+    }
+
+    [[nodiscard]] checker::Type *PreferredType() const noexcept
+    {
+        return preferredType_;
+    }
+
+    checker::Type *SetPreferredType(checker::Type *type) noexcept
+    {
+        return (preferredType_ = type);
     }
 
     bool IsTyped() const override
@@ -67,12 +81,14 @@ protected:
     {
         auto otherImpl = static_cast<Typed<T> *>(other);
         otherImpl->tsType_ = tsType_;
+        otherImpl->preferredType_ = preferredType_;
         T::CopyTo(other);
     }
 
 private:
     friend class SizeOfNodeTest;
     checker::Type *tsType_ {};
+    checker::Type *preferredType_ {};  // used by the checker to supply information from context
 };
 
 class TypedAstNode : public Typed<AstNode> {

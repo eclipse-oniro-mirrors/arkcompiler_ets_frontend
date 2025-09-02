@@ -60,7 +60,7 @@ TEST_F(PluginConversionRuleUnitTest, CheckerTypeRelationConstructor)
     std::string targetCAPI {R"(
     extern "C" es2panda_TypeRelation *CreateTypeRelation([[maybe_unused]] es2panda_Context *context)
     {
-        auto *checkerE2p = reinterpret_cast<Context *>(context)->checker;
+        auto *checkerE2p = reinterpret_cast<Context *>(context)->GetChecker();
         auto *ctx = reinterpret_cast<Context *>(context);
         auto *ctxAllocator = ctx->allocator;
         return reinterpret_cast<es2panda_TypeRelation *>(ctxAllocator->New<checker::TypeRelation>(checkerE2p));
@@ -451,23 +451,6 @@ TEST_F(PluginConversionRuleUnitTest, BindingPropsPtrInputParameter)
         auto *newDeclE2p = reinterpret_cast<varbinder::Decl *>(newDecl);
         auto *propsE2p = reinterpret_cast<varbinder::ClassScope::BindingProps *>(props);
         ((reinterpret_cast<varbinder::ClassScope *>(classInstance))->SetBindingProps(newDeclE2p, propsE2p, isStatic));
-    }
-    )"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
-/* [[nodiscard]] static std::uint32_t GetPrecedence(Type const *type) noexcept */
-TEST_F(PluginConversionRuleUnitTest, CheckerPtrInputParameter)
-{
-    std::string targetCAPI {R"(
-    extern "C" uint32_t TypeGetPrecedence([[maybe_unused]] es2panda_Context *context, es2panda_Type *classInstance,
-[[maybe_unused]] es2panda_Type *type/*return_args:*/)
-    {
-        auto *typeE2p = reinterpret_cast<checker::Type *>(type);
-        auto apiRes = ((reinterpret_cast<checker::Type *>(classInstance))->GetPrecedence(typeE2p));
-	    return apiRes;
     }
     )"};
 

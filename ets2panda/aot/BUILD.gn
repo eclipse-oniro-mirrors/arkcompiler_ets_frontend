@@ -40,7 +40,7 @@ ohos_executable("ets2panda") {
       "//build/config/components/runtime_core/static_core:ark_common_config",
     ]
   }
-  
+
   if (ark_standalone_build || ark_static_standalone_build) {
     configs += [
       "$ark_root/assembler:arkassembler_public_config",
@@ -53,7 +53,7 @@ ohos_executable("ets2panda") {
   }
 
   configs += [
-    "$ark_es2panda_root:libes2panda_public_config",
+    "$ark_es2panda_root:libes2panda_public_config"
   ]
 
   deps = [
@@ -75,6 +75,7 @@ ohos_executable("ets2panda") {
     "runtime_core:libarktsbytecodeopt_package",
     "runtime_core:libarktscompiler_package",
     "runtime_core:libarktsfile_package",
+    "runtime_core:libarktsabc2program_package",
     sdk_libc_secshared_dep,
   ]
 
@@ -89,6 +90,10 @@ ohos_executable("ets2panda") {
       "runtime_core:compiler_headers",
       "runtime_core:verification_headers",
     ]
+  }
+
+  if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
+    external_deps += [ "icu:shared_icuuc" ]
   }
 
   libs = platform_libs

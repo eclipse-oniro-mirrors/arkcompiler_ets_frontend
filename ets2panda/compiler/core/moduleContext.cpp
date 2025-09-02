@@ -35,6 +35,7 @@ void CompileImports(PandaGen *pg, varbinder::ModuleScope *scope)
 
         for (const auto *decl : decls) {
             varbinder::Variable *v = scope->FindLocal(decl->LocalName(), varbinder::ResolveBindingOptions::BINDINGS);
+
             ES2PANDA_ASSERT(v != nullptr);
             if (!v->IsModuleVariable()) {
                 ES2PANDA_ASSERT(decl->ImportName() == "*");

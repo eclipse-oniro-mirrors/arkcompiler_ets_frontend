@@ -1,0 +1,518 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 17,
+            "column": 27,
+            "endLine": 17,
+            "endColumn": 37,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertXML\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 14,
+            "endLine": 18,
+            "endColumn": 39,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 3,
+            "endLine": 19,
+            "endColumn": 14,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 3,
+            "endLine": 20,
+            "endColumn": 21,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 3,
+            "endLine": 21,
+            "endColumn": 21,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 3,
+            "endLine": 22,
+            "endColumn": 20,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 3,
+            "endLine": 23,
+            "endColumn": 14,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 3,
+            "endLine": 24,
+            "endColumn": 15,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 3,
+            "endLine": 25,
+            "endColumn": 17,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 3,
+            "endLine": 26,
+            "endColumn": 17,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 3,
+            "endLine": 27,
+            "endColumn": 16,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 3,
+            "endLine": 28,
+            "endColumn": 14,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 3,
+            "endLine": 29,
+            "endColumn": 14,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 3,
+            "endLine": 30,
+            "endColumn": 18,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 19,
+            "endLine": 32,
+            "endColumn": 28,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 19,
+            "endLine": 32,
+            "endColumn": 28,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 34,
+            "endLine": 32,
+            "endColumn": 55,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"xml.ConvertXML\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 15,
+            "endLine": 33,
+            "endColumn": 40,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 3,
+            "endLine": 34,
+            "endColumn": 14,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 3,
+            "endLine": 35,
+            "endColumn": 27,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 3,
+            "endLine": 36,
+            "endColumn": 27,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 3,
+            "endLine": 37,
+            "endColumn": 26,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 3,
+            "endLine": 38,
+            "endColumn": 23,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 3,
+            "endLine": 39,
+            "endColumn": 21,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 3,
+            "endLine": 40,
+            "endColumn": 23,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 3,
+            "endLine": 41,
+            "endColumn": 20,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 3,
+            "endLine": 42,
+            "endColumn": 21,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 3,
+            "endLine": 43,
+            "endColumn": 21,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 3,
+            "endLine": 44,
+            "endColumn": 20,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 45,
+            "column": 3,
+            "endLine": 45,
+            "endColumn": 14,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 3,
+            "endLine": 46,
+            "endColumn": 15,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 3,
+            "endLine": 47,
+            "endColumn": 17,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 3,
+            "endLine": 48,
+            "endColumn": 17,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 3,
+            "endLine": 49,
+            "endColumn": 16,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 3,
+            "endLine": 50,
+            "endColumn": 14,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 3,
+            "endLine": 51,
+            "endColumn": 14,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 3,
+            "endLine": 52,
+            "endColumn": 18,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 9,
+            "endLine": 54,
+            "endColumn": 30,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertXML\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
+            "column": 3,
+            "endLine": 62,
+            "endColumn": 4,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertXML\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 32,
+            "endLine": 56,
+            "endColumn": 42,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertXML\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 3,
+            "endLine": 57,
+            "endColumn": 21,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 3,
+            "endLine": 58,
+            "endColumn": 19,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 3,
+            "endLine": 59,
+            "endColumn": 19,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 3,
+            "endLine": 60,
+            "endColumn": 23,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 66,
+            "endLine": 56,
+            "endColumn": 80,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
+            "column": 34,
+            "endLine": 61,
+            "endColumn": 59,
+            "problem": "SdkCommonApiDeprecated",
+            "suggest": "",
+            "rule": "The \"ConvertOptions\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 3,
+            "endLine": 57,
+            "endColumn": 12,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'parentKey' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'parentKey' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 3,
+            "endLine": 58,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'typeKey' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'typeKey' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 3,
+            "endLine": 59,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'nameKey' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'nameKey' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 3,
+            "endLine": 60,
+            "endColumn": 14,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'elementsKey' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'elementsKey' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        }
+    ]
+}

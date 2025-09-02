@@ -27,5 +27,5 @@ function hasResidence(person: Person | null) : boolean {
 
 function main(): void {
     let john = null;
-    assertEQ(hasResidence(john), false)
+    arktest.assertEQ(hasResidence(john), false)
 }

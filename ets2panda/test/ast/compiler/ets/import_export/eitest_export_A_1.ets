@@ -13,4 +13,10 @@
  * limitations under the License.
  */
 
+<<<<<<<< HEAD:ets2panda/test/ast/compiler/ets/import_export/eitest_export_A_2.ets
+class A{}
+
+export A;
+========
 export class A{}
+>>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/test/ast/compiler/ets/import_export/eitest_export_A_1.ets

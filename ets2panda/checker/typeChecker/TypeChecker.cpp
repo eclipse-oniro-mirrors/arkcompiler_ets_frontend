@@ -18,14 +18,6 @@
 
 namespace ark::es2panda::checker {
 
-void ETSTypeChecker::VisitArrowFunctionExpression(ir::ArrowFunctionExpression *node)
-{
-    Iterate(node);
-    if (!node->TsType()->IsETSObjectType()) {
-        LogError(diagnostic::INFER_FAIL_ON_LAMBDA, {node->TsType()}, node->Start());
-    }
-}
-
 bool RunTypeChecker(Checker *checker, ScriptExtension ext, ir::AstNode *node)
 {
     switch (ext) {

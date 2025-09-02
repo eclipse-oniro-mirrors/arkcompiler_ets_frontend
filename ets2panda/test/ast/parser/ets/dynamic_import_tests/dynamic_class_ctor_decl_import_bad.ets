@@ -20,7 +20,9 @@ flags: [dynamic-ast]
 import { A } from "dynamic_import_tests/modules/module"
 
 function main(): void {
-    let x = /* @@ label */new A(/* @@ label1 */"abc", 10)
+    let x = new A("abc", 10)
 }
-/* @@@ label1 Error TypeError: Type '"abc"' is not compatible with type 'double' at index 1  */
-/* @@@ label Error TypeError: No matching construct signature for module.A("abc", int)  */
+
+/* @@? 23:13 Error TypeError: Expected 0 arguments, got 2. */
+/* @@? 23:13 Error TypeError: No matching construct signature for module.A("abc", Int) */
+/* @@? 23:19 Error TypeError: Type '"abc"' is not compatible with type 'Double' at index 1 */

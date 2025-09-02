@@ -22,5 +22,4 @@ function main()
     /* @@ label */a = /* @@ label1 */5
 }
 
-/* @@@ label Error TypeError: Function name 'a' used in the wrong context  */
-/* @@@ label1 Error TypeError: Type 'int' cannot be assigned to type '() => void'  */
+/* @@@ label Error TypeError: Function name 'a' used in the wrong context */

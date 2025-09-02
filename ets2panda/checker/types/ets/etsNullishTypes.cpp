@@ -59,12 +59,12 @@ void ETSNullType::ToString(std::stringstream &ss, [[maybe_unused]] bool precise)
 
 void ETSNullType::ToAssemblerType(std::stringstream &ss) const
 {
-    ss << compiler::Signatures::BUILTIN_OBJECT;
+    ss << compiler::Signatures::NULL_ASSEMBLY_TYPE;
 }
 
 void ETSNullType::ToDebugInfoType(std::stringstream &ss) const
 {
-    ss << ETSObjectType::NameToDescriptor(compiler::Signatures::BUILTIN_OBJECT);
+    ss << ETSObjectType::NameToDescriptor(compiler::Signatures::NULL_ASSEMBLY_TYPE);
 }
 
 Type *ETSNullType::Instantiate([[maybe_unused]] ArenaAllocator *allocator, [[maybe_unused]] TypeRelation *relation,

@@ -15,21 +15,25 @@
 
 #include "ast_verifier_test.h"
 
+#include <compiler/lowering/phase.h>
+
 namespace test::utils {
 
 AstVerifierTest::AstVerifierTest()
 {
     impl_ = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+    impl_->MemInitialize();
     auto es2pandaPath = test::utils::PandaExecutablePathGetter::Get()[0];
     std::array argv = {es2pandaPath};
     cfg_ = impl_->CreateConfig(argv.size(), argv.data());
-    allocator_ = new ark::ArenaAllocator(ark::SpaceType::SPACE_TYPE_COMPILER);
+    allocator_ = new ark::ThreadSafeArenaAllocator(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+    phaseManager_ = new ark::es2panda::compiler::PhaseManager(nullptr, ark::es2panda::ScriptExtension::ETS, allocator_);
 }
 
 AstVerifierTest::~AstVerifierTest()
 {
     ASSERT(ctx_ == nullptr);
-    delete allocator_;
+    impl_->MemFinalize();
     impl_->DestroyConfig(cfg_);
 }
 

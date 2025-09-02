@@ -16,5 +16,5 @@
 function main() {
     let res : boolean = false;
     (() => { res = true; })()
-    assertTrue(res)
+    arktest.assertTrue(res)
 }

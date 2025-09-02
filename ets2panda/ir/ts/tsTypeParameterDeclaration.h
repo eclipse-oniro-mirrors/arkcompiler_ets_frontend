@@ -29,6 +29,20 @@ public:
           params_(std::move(params)),
           requiredParams_(requiredParams)
     {
+        InitHistory();
+    }
+
+    explicit TSTypeParameterDeclaration(ArenaVector<TSTypeParameter *> &&params, size_t requiredParams,
+                                        AstNodeHistory *history)
+        : Expression(AstNodeType::TS_TYPE_PARAMETER_DECLARATION),
+          params_(std::move(params)),
+          requiredParams_(requiredParams)
+    {
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     [[nodiscard]] bool IsScopeBearer() const noexcept override
@@ -38,36 +52,42 @@ public:
 
     [[nodiscard]] varbinder::LocalScope *Scope() const noexcept override
     {
-        return scope_;
+        return GetHistoryNodeAs<TSTypeParameterDeclaration>()->scope_;
     }
 
-    void SetScope(varbinder::LocalScope *scope)
-    {
-        scope_ = scope;
-    }
+    void SetScope(varbinder::LocalScope *source);
 
     void ClearScope() noexcept override
     {
-        scope_ = nullptr;
+        SetScope(nullptr);
     }
 
     const ArenaVector<TSTypeParameter *> &Params() const
     {
-        return params_;
+        return GetHistoryNodeAs<TSTypeParameterDeclaration>()->params_;
     }
 
     void AddParam(TSTypeParameter *param)
     {
         ES2PANDA_ASSERT(param != nullptr);
-        if (requiredParams_ == params_.size() && param->DefaultType() == nullptr) {
-            requiredParams_++;
+        if (RequiredParams() == Params().size() && param->DefaultType() == nullptr) {
+            SetRequiredParams(RequiredParams() + 1);
         }
-        params_.push_back(param);
+        auto newNode = reinterpret_cast<TSTypeParameterDeclaration *>(this->GetOrCreateHistoryNode());
+        newNode->params_.emplace_back(param);
+    }
+
+    void SetValueParams(TSTypeParameter *source, size_t index)
+    {
+        auto newNode = reinterpret_cast<TSTypeParameterDeclaration *>(this->GetOrCreateHistoryNode());
+        auto &arenaVector = newNode->params_;
+        ES2PANDA_ASSERT(arenaVector.size() > index);
+        arenaVector[index] = source;
     }
 
     size_t RequiredParams() const
     {
-        return requiredParams_;
+        return GetHistoryNodeAs<TSTypeParameterDeclaration>()->requiredParams_;
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -89,6 +109,9 @@ public:
 
 private:
     friend class SizeOfNodeTest;
+
+    void SetRequiredParams(size_t source);
+
     ArenaVector<TSTypeParameter *> params_;
     varbinder::LocalScope *scope_ {nullptr};
     size_t requiredParams_;

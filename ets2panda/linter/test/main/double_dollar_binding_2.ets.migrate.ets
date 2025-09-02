@@ -17,7 +17,7 @@ import { Component, State, Row, Slider, $$, Checkbox, Blank, Text } from '@kit.A
 
 @Component
 struct MyComponent {
-  @State value: number = 0.0
+  @State value: number = 0
 
   build() {
     Row() {

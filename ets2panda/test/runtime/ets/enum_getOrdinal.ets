@@ -18,7 +18,7 @@ enum Color {
 }
 
 function main() {
-    assertEQ(Color.A.getOrdinal(), 0);
-    assertEQ(Color.B.getOrdinal(), 1)
-    assertEQ(Color.C.getOrdinal(), 2)
+    arktest.assertEQ(Color.A.getOrdinal(), 0);
+    arktest.assertEQ(Color.B.getOrdinal(), 1)
+    arktest.assertEQ(Color.C.getOrdinal(), 2)
 }

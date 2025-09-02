@@ -115,7 +115,6 @@ public:
         left_ = expr;
         ES2PANDA_ASSERT(left_);
         left_->SetParent(this);
-        SetStart(left_->Start());
     }
 
     void SetRight(Expression *expr) noexcept
@@ -123,14 +122,12 @@ public:
         right_ = expr;
         ES2PANDA_ASSERT(right_);
         right_->SetParent(this);
-        SetEnd(right_->End());
     }
 
     void SetResult(Expression *expr) noexcept
     {
         result_ = expr;
         result_->SetParent(this);
-        SetStart(result_->Start());
     }
 
     void SetOperator(lexer::TokenType operatorType) noexcept

@@ -29,8 +29,8 @@ function foo(text?: string): boolean {
 }
 
 function main(): void {
-    assertEQ(isEmpty(), true)
-    assertEQ(isEmpty(""), true)
-    assertEQ(isEmpty("a"), false)
-    assertEQ(foo(), true)
+    arktest.assertEQ(isEmpty(), true)
+    arktest.assertEQ(isEmpty(""), true)
+    arktest.assertEQ(isEmpty("a"), false)
+    arktest.assertEQ(foo(), true)
 }

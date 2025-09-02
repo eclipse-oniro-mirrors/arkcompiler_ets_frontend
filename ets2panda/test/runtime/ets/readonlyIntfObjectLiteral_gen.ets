@@ -27,7 +27,7 @@ function main() {
     let b:B = {Age1:c}
     let a:A = {Age:b, name:"John"}
 
-    assertEQ(a.Age.Age1.age, 20)
-    assertEQ(a.name, "John")
+    arktest.assertEQ(a.Age.Age1.age, 20)
+    arktest.assertEQ(a.name, "John")
 }
 

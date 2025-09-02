@@ -17,7 +17,9 @@
 #define ES2PANDA_IR_EXPRESSION_CALL_EXPRESSION_H
 
 #include "varbinder/variable.h"
+#include "ir/base/scriptFunction.h"
 #include "ir/expression.h"
+#include "ir/expressions/arrowFunctionExpression.h"
 
 namespace ark::es2panda::checker {
 class ETSAnalyzer;
@@ -161,6 +163,8 @@ public:
     {
         return callee_->IsThisExpression() || callee_->IsSuperExpression();
     }
+
+    bool IsDynamicCall() const noexcept;
 
     [[nodiscard]] CallExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 

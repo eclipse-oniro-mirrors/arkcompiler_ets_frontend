@@ -17,6 +17,7 @@
 #define ES2PANDA_COMPILER_LOWERING_UTIL_H
 
 #include "varbinder/ETSBinder.h"
+#include "parser/program/program.h"
 
 namespace ark::es2panda::compiler {
 
@@ -42,9 +43,21 @@ void Recheck(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, checke
 
 // NOTE: used to get the declaration from identifier in Plugin API and LSP
 ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node);
+// NOTE: used to get the declaration name in Plugin API and LSP
+std::optional<std::string> GetNameOfDeclaration(const ir::AstNode *node);
+// NOTE: used to get the license string from the input root node.
+util::StringView GetLicenseFromRootNode(const ir::AstNode *node);
+util::StringView JsdocStringFromDeclaration(const ir::AstNode *node);
+
+// Note: run varbinder on the new node generated in lowering phases
+void BindLoweredNode(varbinder::ETSBinder *varBinder, ir::AstNode *node);
 
 // Note: run varbinder and checker on the new node generated in lowering phases
 void CheckLoweredNode(varbinder::ETSBinder *varBinder, checker::ETSChecker *checker, ir::AstNode *node);
+
+parser::Program *SearchExternalProgramInImport(const parser::Program::DirectExternalSource &extSource,
+                                               const util::ImportPathManager::ImportMetadata &importMetadata);
+
 bool IsAnonymousClassType(const checker::Type *type);
 bool ClassDefinitionIsEnumTransformed(const ir::AstNode *node);
 }  // namespace ark::es2panda::compiler

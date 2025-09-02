@@ -18,5 +18,5 @@ function foo() : string {
 }
 
 function main() {
-    assertEQ(foo(), 5);
+    arktest.assertEQ(foo(), 5);
 }

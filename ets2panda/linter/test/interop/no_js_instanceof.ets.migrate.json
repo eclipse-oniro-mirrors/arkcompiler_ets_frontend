@@ -16,78 +16,28 @@
     "result": [
         {
             "line": 16,
-            "column": 5,
+            "column": 1,
             "endLine": 16,
-            "endColumn": 70,
-            "problem": "AnyType",
+            "endColumn": 88,
+            "problem": "InterOpImportJs",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
         },
         {
-            "line": 17,
-            "column": 5,
-            "endLine": 17,
-            "endColumn": 50,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 18,
-            "column": 5,
-            "endLine": 18,
-            "endColumn": 50,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 5,
-            "endLine": 19,
-            "endColumn": 68,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 5,
-            "endLine": 20,
-            "endColumn": 46,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 21,
-            "column": 5,
-            "endLine": 21,
-            "endColumn": 46,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 5,
-            "endLine": 22,
-            "endColumn": 66,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 71,
+            "line": 64,
             "column": 19,
-            "endLine": 71,
+            "endLine": 64,
+            "endColumn": 24,
+            "problem": "InteropJsObjectExpandStaticInstance",
+            "suggest": "",
+            "rule": "Direct usage of interop JS functions is not supported (arkts-interop-js2s-js-expand-static-instance)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 19,
+            "endLine": 64,
             "endColumn": 24,
             "problem": "ClassAsObjectError",
             "suggest": "",
@@ -95,23 +45,43 @@
             "severity": "ERROR"
         },
         {
-            "line": 75,
-            "column": 21,
-            "endLine": 75,
-            "endColumn": 26,
+            "line": 68,
+            "column": 28,
+            "endLine": 68,
+            "endColumn": 33,
+            "problem": "InteropJsObjectExpandStaticInstance",
+            "suggest": "",
+            "rule": "Direct usage of interop JS functions is not supported (arkts-interop-js2s-js-expand-static-instance)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 28,
+            "endLine": 68,
+            "endColumn": 33,
             "problem": "ClassAsObjectError",
             "suggest": "",
             "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
             "severity": "ERROR"
         },
         {
-            "line": 79,
+            "line": 72,
             "column": 36,
-            "endLine": 79,
+            "endLine": 72,
             "endColumn": 59,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 72,
+            "column": 36,
+            "endLine": 72,
+            "endColumn": 59,
+            "problem": "InteropObjectProperty",
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
             "severity": "ERROR"
         }
     ]

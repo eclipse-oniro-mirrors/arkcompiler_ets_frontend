@@ -23,7 +23,7 @@ let f: char = c'a';
 
 let g: undefined;
 
-let k: float = 3.1415;
+let k: float = Double.toFloat(3.1415);
 let l: double = 3.1415;
 
 let c2: int = a;

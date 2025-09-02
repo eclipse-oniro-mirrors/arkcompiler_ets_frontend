@@ -25,16 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 16,
-            "column": 6,
-            "endLine": 16,
-            "endColumn": 7,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 18,
             "column": 1,
             "endLine": 18,
@@ -52,26 +42,6 @@
             "problem": "VoidOperator",
             "suggest": "",
             "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 7,
-            "endLine": 20,
-            "endColumn": 8,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 11,
-            "endLine": 20,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -95,26 +65,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 22,
-            "column": 11,
-            "endLine": 22,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 17,
-            "endLine": 22,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 24,
             "column": 1,
             "endLine": 24,
@@ -122,36 +72,6 @@
             "problem": "VoidOperator",
             "suggest": "",
             "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
-            "column": 7,
-            "endLine": 24,
-            "endColumn": 8,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
-            "column": 10,
-            "endLine": 24,
-            "endColumn": 11,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
-            "column": 13,
-            "endLine": 24,
-            "endColumn": 14,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -175,16 +95,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 28,
-            "column": 30,
-            "endLine": 28,
-            "endColumn": 31,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 30,
             "column": 37,
             "endLine": 30,
@@ -195,16 +105,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 30,
-            "column": 42,
-            "endLine": 30,
-            "endColumn": 43,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 32,
             "column": 46,
             "endLine": 32,
@@ -212,16 +112,6 @@
             "problem": "VoidOperator",
             "suggest": "",
             "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 32,
-            "column": 51,
-            "endLine": 32,
-            "endColumn": 52,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -242,16 +132,6 @@
             "problem": "VoidOperator",
             "suggest": "",
             "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
-            "column": 11,
-            "endLine": 34,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -365,26 +245,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 55,
-            "column": 7,
-            "endLine": 55,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 55,
-            "column": 11,
-            "endLine": 55,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 56,
             "column": 3,
             "endLine": 56,
@@ -395,46 +255,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 58,
-            "column": 7,
-            "endLine": 58,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 58,
-            "column": 12,
-            "endLine": 58,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 58,
-            "column": 15,
-            "endLine": 58,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 58,
-            "column": 18,
-            "endLine": 58,
-            "endColumn": 19,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 59,
             "column": 3,
             "endLine": 59,
@@ -442,26 +262,6 @@
             "problem": "VoidOperator",
             "suggest": "",
             "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 59,
-            "column": 38,
-            "endLine": 59,
-            "endColumn": 39,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 59,
-            "column": 44,
-            "endLine": 59,
-            "endColumn": 45,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

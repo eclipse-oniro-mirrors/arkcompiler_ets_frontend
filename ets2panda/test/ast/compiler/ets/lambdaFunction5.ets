@@ -36,4 +36,4 @@ function main(): void {
 }
 
 /* @@@ label1 Error TypeError: Type '"foo"' is not compatible with type 'Int' at index 2  */
-/* @@@ label Error TypeError: No matching call signature for (int, "foo")  */
+/* @@@ label Error TypeError: No matching call signature for (Int, "foo")  */

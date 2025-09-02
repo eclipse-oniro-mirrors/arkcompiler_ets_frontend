@@ -445,12 +445,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "imported_module_2.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "imported_module_2.ets"
                     }
                   }
                 },
@@ -458,12 +458,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "imported_module_2.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "imported_module_2.ets"
                   }
                 }
               },
@@ -471,183 +471,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "imported_module_2.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "imported_module_2.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "imported_module_2.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "c",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 18,
-                              "column": 12,
-                              "program": "imported_module_2.ets"
-                            },
-                            "end": {
-                              "line": 18,
-                              "column": 13,
-                              "program": "imported_module_2.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 3,
-                          "loc": {
-                            "start": {
-                              "line": 18,
-                              "column": 21,
-                              "program": "imported_module_2.ets"
-                            },
-                            "end": {
-                              "line": 18,
-                              "column": 22,
-                              "program": "imported_module_2.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 18,
-                            "column": 12,
-                            "program": "imported_module_2.ets"
-                          },
-                          "end": {
-                            "line": 18,
-                            "column": 22,
-                            "program": "imported_module_2.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 18,
-                          "column": 12,
-                          "program": "imported_module_2.ets"
-                        },
-                        "end": {
-                          "line": 18,
-                          "column": 22,
-                          "program": "imported_module_2.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "imported_module_2.ets"
                 }
               }
             },
@@ -696,7 +525,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 32,
+                  "column": 33,
                   "program": "imported_module_2.ets"
                 }
               }
@@ -732,7 +561,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 32,
+                "column": 33,
                 "program": "imported_module_2.ets"
               }
             }
@@ -787,7 +616,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 22,
+                "column": 21,
                 "program": "imported_module_2.ets"
               }
             }

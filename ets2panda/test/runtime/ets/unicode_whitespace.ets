@@ -14,4 +14,4 @@
  */
 
 // this function intentionally contains unicode whitespace
-function main() {　assertTrue(true)　}
+function main() {　arktest.assertTrue(true)　}

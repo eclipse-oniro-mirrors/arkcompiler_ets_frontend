@@ -87,7 +87,7 @@ pandasm::Program *Compiler::Compile(const SourceFile &input, const util::Options
                                     util::DiagnosticEngine &diagnosticEngine, uint32_t parseStatus)
 {
     public_lib::Context context;
-    ArenaAllocator allocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+    ThreadSafeArenaAllocator allocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
     context.allocator = &allocator;
     context.compilingState = public_lib::CompilingState::SINGLE_COMPILING;
 
@@ -105,7 +105,7 @@ unsigned int Compiler::CompileM(std::vector<SourceFile> &inputs, util::Options &
 {
     public_lib::Context context;
     context.transitionMemory =
-        new public_lib::TransitionMemory(new ArenaAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true));
+        new public_lib::TransitionMemory(new ThreadSafeArenaAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true));
     context.allocator = context.transitionMemory->PermanentAllocator();
 
     context.compilingState = public_lib::CompilingState::MULTI_COMPILING_INIT;
@@ -138,6 +138,6 @@ void Compiler::DumpAsm(const pandasm::Program *prog)
     compiler::CompilerImpl::DumpAsm(prog);
 }
 
-util::DiagnosticEngine *g_diagnosticEngine = nullptr;
-
+// When compiling multi thread, this is need by each thread indenpengdentlt
+thread_local util::DiagnosticEngine *g_diagnosticEngine = nullptr;
 }  // namespace ark::es2panda

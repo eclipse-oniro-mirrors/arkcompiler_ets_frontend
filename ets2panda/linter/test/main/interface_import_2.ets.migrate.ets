@@ -20,7 +20,7 @@ import { Slider } from '@kit.ArkUI';
 @Entry
 @Component
 struct Test {
-  @State num: number = 0.0
+  @State num: number = 0
   @State a: MyClassA = new MyClassA()
 
   build() {
@@ -50,7 +50,7 @@ function Circle() {
 
 @Component
 struct MyComponent1 {
-  @State count: number = 0.0;
+  @State count: number = 0;
 
   build() {
     Row() {
@@ -72,7 +72,7 @@ function animatableWidth(this: ColumnAttribute, width: number): this {
 
 @Component
 struct MyComponent2 {
-  @State value: number = 0.0;
+  @State value: number = 0;
 
   build() {
     Row() {

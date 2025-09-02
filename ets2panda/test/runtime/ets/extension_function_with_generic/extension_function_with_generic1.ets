@@ -24,10 +24,10 @@ function foo<T>(this: A<T>, p: T): T {
 
 function main() {
     let a1 = new A<int>();
-    assertEQ(a1.foo(1), 1)
-    assertEQ(foo(a1, 1), 1)
+    arktest.assertEQ(a1.foo(1), 1)
+    arktest.assertEQ(foo(a1, 1), 1)
 
     let a2 = new A<string>();
-    assertEQ(a2.foo("test"), "test")
-    assertEQ(foo(a2, "test"), "test")
+    arktest.assertEQ(a2.foo("test"), "test")
+    arktest.assertEQ(foo(a2, "test"), "test")
 }

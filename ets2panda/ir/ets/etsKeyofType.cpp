@@ -76,7 +76,7 @@ checker::Type *ETSKeyofType::GetType(checker::ETSChecker *checker)
         return checker->GlobalTypeError();
     }
 
-    checker::TypeStackElement tse(checker, this, {{diagnostic::CYCLIC_TYPE_OF, {}}}, Start());
+    checker::TypeStackElement tse(checker, GetHistoryNode(), {{diagnostic::CYCLIC_TYPE_OF, {}}}, Start());
     if (tse.HasTypeError()) {
         return checker->GlobalTypeError();
     }

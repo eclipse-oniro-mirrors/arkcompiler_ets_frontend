@@ -21,6 +21,7 @@
 #include "ir/statements/variableDeclarator.h"
 #include "ir/statements/variableDeclaration.h"
 #include "mem/pool_manager.h"
+#include "compiler/lowering/phase.h"
 
 #include <gtest/gtest.h>
 
@@ -30,7 +31,14 @@ namespace test::utils {
 
 class ScopeInitTest : public testing::Test {
 public:
-    ScopeInitTest() : allocator_(std::make_unique<ark::ArenaAllocator>(ark::SpaceType::SPACE_TYPE_COMPILER)) {}
+    ScopeInitTest()
+        : allocator_(
+              std::make_unique<ark::ThreadSafeArenaAllocator>(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true))
+    {
+        phaseManager_ = std::make_unique<ark::es2panda::compiler::PhaseManager>(ark::es2panda::ScriptExtension::ETS,
+                                                                                allocator_.get());
+        ark::es2panda::compiler::SetPhaseManager(phaseManager_.get());
+    }
 
     /*
      * Shortcut to convert single elemnt block expression body to it's name
@@ -44,13 +52,14 @@ public:
         ark::PoolManager::Initialize();
     }
 
-    ark::ArenaAllocator *Allocator()
+    ark::ThreadSafeArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
 
 private:
-    std::unique_ptr<ark::ArenaAllocator> allocator_;
+    std::unique_ptr<ark::ThreadSafeArenaAllocator> allocator_;
+    std::unique_ptr<ark::es2panda::compiler::PhaseManager> phaseManager_;
 };
 
 }  // namespace test::utils

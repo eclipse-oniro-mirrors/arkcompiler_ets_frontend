@@ -66,6 +66,7 @@ RegExpLiteral *RegExpLiteral::Clone(ArenaAllocator *const allocator, AstNode *co
         clone->SetParent(parent);
     }
     clone->SetRange(Range());
+    clone->SetFolded(IsFolded());
     return clone;
 }
 }  // namespace ark::es2panda::ir

@@ -74,7 +74,7 @@ ThrowStatement *ThrowStatement::Clone(ArenaAllocator *const allocator, AstNode *
     if (parent != nullptr) {
         clone->SetParent(parent);
     }
-    clone->SetRange(range_);
+    clone->SetRange(range_.GetRange());
     return clone;
 }
 }  // namespace ark::es2panda::ir

@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "string_template_2.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "string_template_2.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -205,97 +99,8 @@
                             }
                           },
                           "init": {
-                            "type": "TemplateLiteral",
-                            "expressions": [
-                              {
-                                "type": "BinaryExpression",
-                                "operator": "/",
-                                "left": {
-                                  "type": "NumberLiteral",
-                                  "value": 14,
-                                  "loc": {
-                                    "start": {
-                                      "line": 17,
-                                      "column": 47,
-                                      "program": "string_template_2.ets"
-                                    },
-                                    "end": {
-                                      "line": 17,
-                                      "column": 49,
-                                      "program": "string_template_2.ets"
-                                    }
-                                  }
-                                },
-                                "right": {
-                                  "type": "NumberLiteral",
-                                  "value": 2,
-                                  "loc": {
-                                    "start": {
-                                      "line": 17,
-                                      "column": 50,
-                                      "program": "string_template_2.ets"
-                                    },
-                                    "end": {
-                                      "line": 17,
-                                      "column": 51,
-                                      "program": "string_template_2.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 17,
-                                    "column": 47,
-                                    "program": "string_template_2.ets"
-                                  },
-                                  "end": {
-                                    "line": 17,
-                                    "column": 51,
-                                    "program": "string_template_2.ets"
-                                  }
-                                }
-                              }
-                            ],
-                            "quasis": [
-                              {
-                                "type": "TemplateElement",
-                                "value": {
-                                  "raw": "(escaped expression) \${14/2} = ",
-                                  "cooked": "(escaped expression) ${14/2} = "
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 17,
-                                    "column": 13,
-                                    "program": "string_template_2.ets"
-                                  },
-                                  "end": {
-                                    "line": 17,
-                                    "column": 45,
-                                    "program": "string_template_2.ets"
-                                  }
-                                }
-                              },
-                              {
-                                "type": "TemplateElement",
-                                "value": {
-                                  "raw": "",
-                                  "cooked": ""
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 17,
-                                    "column": 52,
-                                    "program": "string_template_2.ets"
-                                  },
-                                  "end": {
-                                    "line": 17,
-                                    "column": 52,
-                                    "program": "string_template_2.ets"
-                                  }
-                                }
-                              }
-                            ],
+                            "type": "StringLiteral",
+                            "value": "(escaped expression) ${14/2} = 7",
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -394,9 +199,8 @@
                         },
                         "arguments": [
                           {
-                            "type": "Identifier",
-                            "name": "v",
-                            "decorators": [],
+                            "type": "StringLiteral",
+                            "value": "(escaped expression) ${14/2} = 7",
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -509,9 +313,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 2,
+                                "program": "string_template_2.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 9,
+                                "program": "string_template_2.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 10,
+                                "program": "string_template_2.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 18,
+                                "program": "string_template_2.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -520,42 +358,40 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 10,
+                              "column": 18,
                               "program": "string_template_2.ets"
                             }
                           }
                         },
                         "arguments": [
                           {
-                            "type": "Identifier",
-                            "name": "v",
-                            "decorators": [],
+                            "type": "StringLiteral",
+                            "value": "(escaped expression) ${14/2} = 7",
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 11,
+                                "column": 19,
                                 "program": "string_template_2.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 12,
+                                "column": 20,
                                 "program": "string_template_2.ets"
                               }
                             }
                           },
                           {
-                            "type": "Identifier",
-                            "name": "expected",
-                            "decorators": [],
+                            "type": "StringLiteral",
+                            "value": "(escaped expression) ${14/2} = 7",
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 14,
+                                "column": 22,
                                 "program": "string_template_2.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 22,
+                                "column": 30,
                                 "program": "string_template_2.ets"
                               }
                             }
@@ -570,7 +406,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 23,
+                            "column": 31,
                             "program": "string_template_2.ets"
                           }
                         }
@@ -583,7 +419,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 24,
+                          "column": 32,
                           "program": "string_template_2.ets"
                         }
                       }

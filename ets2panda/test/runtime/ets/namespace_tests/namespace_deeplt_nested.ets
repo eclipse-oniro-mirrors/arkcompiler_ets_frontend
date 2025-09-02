@@ -28,8 +28,8 @@ namespace EdgeCasesNamespace {
 
 function main() {
     // Test access to deeply nested namespace function
-    assertEQ(EdgeCasesNamespace.Deeply.Nested.Namespace.deepFunction(), "Deeply Nested Function",  "Deeply nested function failed")
+    arktest.assertEQ(EdgeCasesNamespace.Deeply.Nested.Namespace.deepFunction(), "Deeply Nested Function",  "Deeply nested function failed")
 
     // Test recursive function
-    assertEQ(EdgeCasesNamespace.recursiveFunction(5), 15,  "Recursive function failed")
+    arktest.assertEQ(EdgeCasesNamespace.recursiveFunction(5), 15,  "Recursive function failed")
 }

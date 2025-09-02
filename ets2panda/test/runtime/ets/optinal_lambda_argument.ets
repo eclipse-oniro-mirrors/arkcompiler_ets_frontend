@@ -36,13 +36,13 @@ class B {
 function main() {
     let a = new A();
     a.on(() => { count = 100 })
-    assertEQ(count, 100)
+    arktest.assertEQ(count, 100)
 
     let lambda1 = () => { count = 200 };
     a.on(lambda1);
-    assertEQ(count, 200)
+    arktest.assertEQ(count, 200)
 
     let b = new B();
     b.on(() => { count = 300 }, () => { count = 400 });
-    assertEQ(count, 400)
+    arktest.assertEQ(count, 400)
 }

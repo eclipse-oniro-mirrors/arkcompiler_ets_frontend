@@ -34,6 +34,6 @@ function main() {
     let a: int|string = await multipleReturns(true, 42);
     let b: int|string = await multipleReturns(false);
 
-    assertEQ(a, 42)
-    assertEQ(b, "string2")
+    arktest.assertEQ(a, 42)
+    arktest.assertEQ(b, "string2")
 }

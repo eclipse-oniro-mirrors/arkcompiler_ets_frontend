@@ -67,6 +67,6 @@ function main() {
 
     let res: TestPromiseSettledResult<number | Error> = new TestPromiseFulfilledResult<number | Error>();
 
-    assertTrue(!functionOverValue(123))
-    assertTrue(functionOverValue(() => 123) as () => number))
+    arktest.assertTrue(!functionOverValue(123))
+    arktest.assertTrue(functionOverValue(() => 123) as () => number))
 }

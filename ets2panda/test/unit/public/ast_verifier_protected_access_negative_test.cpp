@@ -125,7 +125,7 @@ TEST_F(ASTVerifierTest, ProtectedAccessTestNegative4)
             ->AsClassDeclaration()
             ->Definition()
             ->AsClassDefinition()
-            ->Body()[1]
+            ->Body()[0]
             ->AsClassElement()
             ->Value()
             ->AsFunctionExpression()
@@ -167,7 +167,7 @@ TEST_F(ASTVerifierTest, ProtectedAccessTestNegative5)
             ->AsClassDeclaration()
             ->Definition()
             ->AsClassDefinition()
-            ->Body()[1]
+            ->Body()[0]
             ->AsClassElement()
             ->Value()
             ->AsFunctionExpression()
@@ -203,13 +203,14 @@ TEST_F(ASTVerifierTest, ProtectedAccessTestNegative6)
     )";
     CONTEXT(ES2PANDA_STATE_CHECKED, text)
     {
-        GetAst()
+        auto *x = GetAst();
+        x->AsETSModule()
             ->AsETSModule()
             ->Statements()[0]
             ->AsClassDeclaration()
             ->Definition()
             ->AsClassDefinition()
-            ->Body()[1]
+            ->Body()[0]
             ->AsClassElement()
             ->Value()
             ->AsFunctionExpression()

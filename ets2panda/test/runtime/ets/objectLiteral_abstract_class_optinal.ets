@@ -20,14 +20,14 @@ abstract class C{
 
 function main(){
     let x:C = {field1:1000,field2:"some str"}
-    assertEQ(x.field1, 1000)
-    assertEQ(x.field2, "some str")
+    arktest.assertEQ(x.field1, 1000)
+    arktest.assertEQ(x.field2, "some str")
 
     let x2:C = {field2:"some str"}
-    assertEQ(x2.field1, undefined)
-    assertEQ(x2.field2, "some str")
+    arktest.assertEQ(x2.field1, undefined)
+    arktest.assertEQ(x2.field2, "some str")
 
     let x3:C = {}
-    assertEQ(x3.field1, undefined)
-    assertEQ(x3.field2, undefined)
+    arktest.assertEQ(x3.field1, undefined)
+    arktest.assertEQ(x3.field2, undefined)
 }

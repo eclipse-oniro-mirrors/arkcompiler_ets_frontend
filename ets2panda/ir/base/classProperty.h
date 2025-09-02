@@ -19,17 +19,26 @@
 #include "ir/base/classElement.h"
 #include "ir/statements/annotationUsage.h"
 #include "ir/annotationAllowed.h"
-#include "ir/jsDocAllowed.h"
 
 namespace ark::es2panda::checker {
 class ETSAnalyzer;
 }  // namespace ark::es2panda::checker
 
 namespace ark::es2panda::ir {
+enum class InitMode : uint8_t { NONE = 0U, IMMEDIATE_INIT = 1U << 0U, NEED_INIT_IN_STATIC_BLOCK = 1U << 1U };
+}  // namespace ark::es2panda::ir
+
+namespace enumbitops {
+template <>
+struct IsAllowedType<ark::es2panda::ir::InitMode> : std::true_type {
+};
+}  // namespace enumbitops
+
+namespace ark::es2panda::ir {
 class Expression;
 class TypeNode;
 
-class ClassProperty : public JsDocAllowed<AnnotationAllowed<ClassElement>> {
+class ClassProperty : public AnnotationAllowed<ClassElement> {
 public:
     ClassProperty() = delete;
     ~ClassProperty() override = default;
@@ -39,31 +48,24 @@ public:
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
     explicit ClassProperty(Expression *const key, Expression *const value, TypeNode *const typeAnnotation,
                            ModifierFlags const modifiers, ArenaAllocator *const allocator, bool const isComputed)
-        : JsDocAllowed<AnnotationAllowed<ClassElement>>(AstNodeType::CLASS_PROPERTY, key, value, modifiers, allocator,
-                                                        isComputed),
+        : AnnotationAllowed<ClassElement>(AstNodeType::CLASS_PROPERTY, key, value, modifiers, allocator, isComputed),
           typeAnnotation_(typeAnnotation)
     {
     }
 
     [[nodiscard]] bool IsDefaultAccessModifier() const noexcept
     {
-        return isDefault_;
+        return GetHistoryNodeAs<ClassProperty>()->isDefault_;
     }
 
-    void SetDefaultAccessModifier(bool isDefault)
-    {
-        isDefault_ = isDefault;
-    }
+    void SetDefaultAccessModifier(bool isDefault);
 
     [[nodiscard]] TypeNode *TypeAnnotation() const noexcept
     {
-        return typeAnnotation_;
+        return GetHistoryNodeAs<ClassProperty>()->typeAnnotation_;
     }
 
-    void SetTypeAnnotation(TypeNode *typeAnnotation) noexcept
-    {
-        typeAnnotation_ = typeAnnotation;
-    }
+    void SetTypeAnnotation(TypeNode *typeAnnotation);
 
     [[nodiscard]] PrivateFieldKind ToPrivateFieldKind(bool const isStatic) const override
     {
@@ -89,12 +91,22 @@ public:
 
     [[nodiscard]] bool NeedInitInStaticBlock() const
     {
-        return needInitInStaticBlock_;
+        return (initMode_ & InitMode::NEED_INIT_IN_STATIC_BLOCK) != 0;
     }
 
-    void SetInitInStaticBlock(bool needInitInStaticBlock)
+    void SetNeedInitInStaticBlock()
     {
-        needInitInStaticBlock_ = needInitInStaticBlock;
+        initMode_ |= InitMode::NEED_INIT_IN_STATIC_BLOCK;
+    }
+
+    [[nodiscard]] bool IsImmediateInit() const
+    {
+        return (initMode_ & InitMode::IMMEDIATE_INIT) != 0;
+    }
+
+    void SetIsImmediateInit()
+    {
+        initMode_ |= InitMode::IMMEDIATE_INIT;
     }
 
 protected:
@@ -111,7 +123,7 @@ private:
     friend class SizeOfNodeTest;
     TypeNode *typeAnnotation_;
     bool isDefault_ = false;
-    bool needInitInStaticBlock_ = false;
+    InitMode initMode_ = InitMode::NONE;
 };
 }  // namespace ark::es2panda::ir
 

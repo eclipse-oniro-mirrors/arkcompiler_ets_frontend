@@ -57,7 +57,7 @@ public:
                                       std::vector<CodeActionCommand> &command);
     std::string GetFileName(const std::string &filePath);
     std::vector<std::string> GetSupportedErrorCodes();
-    DiagnosticReferences *GetDiagnostics(const CodeFixContextBase &context);
+    std::unique_ptr<DiagnosticReferences> GetDiagnostics(const CodeFixContextBase &context);
 
     bool ShouldIncludeFixAll(const CodeFixRegistration &registration, const std::vector<Diagnostic> &diagnostics);
     std::vector<CodeFixAction> GetFixes(const CodeFixContext &context);

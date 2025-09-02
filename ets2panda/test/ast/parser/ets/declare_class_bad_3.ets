@@ -20,4 +20,4 @@ declare class A {
 
 /* @@@ label Error SyntaxError: Initializers are not allowed in ambient contexts.  */
 /* @@? 17:25 Error TypeError: Initializers are not allowed in ambient contexts: f1 */
-/* @@? 17:25 Error TypeError: Type 'int' cannot be assigned to type 'String' */
+/* @@? 17:25 Error TypeError: Type 'Int' cannot be assigned to type 'String' */

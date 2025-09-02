@@ -16,62 +16,12 @@
     "result": [
         {
             "line": 16,
-            "column": 5,
-            "endLine": 16,
-            "endColumn": 24,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 16,
             "column": 10,
             "endLine": 16,
             "endColumn": 24,
             "problem": "MathPow",
             "suggest": "",
             "rule": "function \"Math.pow()\" behavior for ArkTS differs from Typescript version (arkts-math-pow-standard-diff)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 16,
-            "column": 19,
-            "endLine": 16,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 16,
-            "column": 22,
-            "endLine": 16,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 5,
-            "endLine": 19,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 9,
-            "endLine": 19,
-            "endColumn": 10,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -85,16 +35,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 14,
-            "endLine": 19,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 22,
             "column": 3,
             "endLine": 22,
@@ -105,16 +45,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 22,
-            "column": 7,
-            "endLine": 22,
-            "endColumn": 8,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 25,
             "column": 5,
             "endLine": 25,
@@ -122,16 +52,6 @@
             "problem": "MathPow",
             "suggest": "",
             "rule": "function \"Math.pow()\" behavior for ArkTS differs from Typescript version (arkts-math-pow-standard-diff)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 25,
-            "column": 15,
-            "endLine": 25,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

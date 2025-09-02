@@ -37,26 +37,26 @@ function test_signed_right_shift_int(): void
     // runtime tests
     for (let i: int = 0; i<tests.length; i++)
     {
-        assertEQ(tests[i][0] >> tests[i][1], tests[i][2])
+        arktest.assertEQ(tests[i][0] >> tests[i][1], tests[i][2])
     }
 
     // compile time tests
-    assertEQ(0x7FFFFFFF >>   0, 0x7FFFFFFF)
-    assertEQ(0x7FFFFFFF >>  32, 0x7FFFFFFF)
-    assertEQ(0x7FFFFFFF >> -32, 0x7FFFFFFF)
-    assertEQ(0x7FFFFFFF >>   1, 0x3FFFFFFF)
-    assertEQ(0x7FFFFFFF >>  33, 0x3FFFFFFF)
-    assertEQ(0x7FFFFFFF >>  30, 1)
-    assertEQ(0x7FFFFFFF >>  62, 1)
-    assertEQ(0x7FFFFFFF >>  31, 0)
-    assertEQ(0x7FFFFFFF >>  63, 0)
-    assertEQ(0x7FFFFFFF >>  -1, 0)
-    assertEQ(-1 >>  0, -1)
-    assertEQ(-1 >>  1, -1)
-    assertEQ(-1 >> 31, -1)
-    assertEQ(-4 >>  0, -4)
-    assertEQ(-4 >>  1, -2)
-    assertEQ(-4 >> 31, -1)
+    arktest.assertEQ(0x7FFFFFFF >>   0, 0x7FFFFFFF)
+    arktest.assertEQ(0x7FFFFFFF >>  32, 0x7FFFFFFF)
+    arktest.assertEQ(0x7FFFFFFF >> -32, 0x7FFFFFFF)
+    arktest.assertEQ(0x7FFFFFFF >>   1, 0x3FFFFFFF)
+    arktest.assertEQ(0x7FFFFFFF >>  33, 0x3FFFFFFF)
+    arktest.assertEQ(0x7FFFFFFF >>  30, 1)
+    arktest.assertEQ(0x7FFFFFFF >>  62, 1)
+    arktest.assertEQ(0x7FFFFFFF >>  31, 0)
+    arktest.assertEQ(0x7FFFFFFF >>  63, 0)
+    arktest.assertEQ(0x7FFFFFFF >>  -1, 0)
+    arktest.assertEQ(-1 >>  0, -1)
+    arktest.assertEQ(-1 >>  1, -1)
+    arktest.assertEQ(-1 >> 31, -1)
+    arktest.assertEQ(-4 >>  0, -4)
+    arktest.assertEQ(-4 >>  1, -2)
+    arktest.assertEQ(-4 >> 31, -1)
 }
 
 function test_signed_right_shift_long(): void
@@ -83,26 +83,26 @@ function test_signed_right_shift_long(): void
     // runtime tests
     for (let i: int = 0; i<tests.length; i++)
     {
-        assertEQ(tests[i][0] >> tests[i][1], tests[i][2])
+        arktest.assertEQ(tests[i][0] >> tests[i][1], tests[i][2])
     }
 
     // compile time tests
-    assertEQ(0x7FFFFFFFFFFFFFFF >>    0, 0x7FFFFFFFFFFFFFFF)
-    assertEQ(0x7FFFFFFFFFFFFFFF >>   64, 0x7FFFFFFFFFFFFFFF)
-    assertEQ(0x7FFFFFFFFFFFFFFF >>  -64, 0x7FFFFFFFFFFFFFFF)
-    assertEQ(0x7FFFFFFFFFFFFFFF >>    1, 0x3FFFFFFFFFFFFFFF)
-    assertEQ(0x7FFFFFFFFFFFFFFF >>   65, 0x3FFFFFFFFFFFFFFF)
-    assertEQ(0x7FFFFFFFFFFFFFFF >>   62, 1)
-    assertEQ(0x7FFFFFFFFFFFFFFF >>  126, 1)
-    assertEQ(0x7FFFFFFFFFFFFFFF >>   63, 0)
-    assertEQ(0x7FFFFFFFFFFFFFFF >>  127, 0)
-    assertEQ(0x7FFFFFFFFFFFFFFF >>   -1, 0)
-    assertEQ(-1 >>  0, -1)
-    assertEQ(-1 >>  1, -1)
-    assertEQ(-1 >> 63, -1)
-    assertEQ(-4 >>  0, -4)
-    assertEQ(-4 >>  1, -2)
-    assertEQ(-4 >> 63, -1)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>    0, 0x7FFFFFFFFFFFFFFF)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>   64, 0x7FFFFFFFFFFFFFFF)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>  -64, 0x7FFFFFFFFFFFFFFF)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>    1, 0x3FFFFFFFFFFFFFFF)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>   65, 0x3FFFFFFFFFFFFFFF)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>   62, 1)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>  126, 1)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>   63, 0)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>  127, 0)
+    arktest.assertEQ(0x7FFFFFFFFFFFFFFF >>   -1, 0)
+    arktest.assertEQ(-1 >>  0, -1)
+    arktest.assertEQ(-1 >>  1, -1)
+    arktest.assertEQ(-1 >> 63, -1)
+    arktest.assertEQ(-4 >>  0, -4)
+    arktest.assertEQ(-4 >>  1, -2)
+    arktest.assertEQ(-4 >> 63, -1)
 }
 
 

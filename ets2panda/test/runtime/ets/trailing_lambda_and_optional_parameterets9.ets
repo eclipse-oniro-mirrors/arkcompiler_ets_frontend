@@ -15,10 +15,10 @@
 
 interface I{
     foo(a?: number, b?: string, f?: () => string) {
-        assertEQ(a, a == undefined ? undefined : 1)
-        assertEQ(b, b == undefined ? undefined : "1")
+        arktest.assertEQ(a, a == undefined ? undefined : 1)
+        arktest.assertEQ(b, b == undefined ? undefined : "1")
         if(f != undefined) {
-            assertEQ(f(), "Ok")
+            arktest.assertEQ(f(), "Ok")
         }
     }
 }

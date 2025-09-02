@@ -28,5 +28,5 @@ class Foo {
 class Bar extends Foo { }
 Foo.s_instance = new Bar();
 Foo.foo<Bar>();
-assertTrue(Foo.s_instance?.value == true);
-assertTrue((Foo.s_instance as Bar).value);
+arktest.assertTrue(Foo.s_instance?.value == true);
+arktest.assertTrue((Foo.s_instance as Bar).value);

@@ -36,13 +36,13 @@ function amount(this:Fruit): int {
 function asFuncCall() {
     let fruit = new Fruit();
     let res = price(fruit);
-    assertEQ(res, 28 )
+    arktest.assertEQ(res, 28 )
 }
 
 function asMethodCall() {
     let fruit = new Fruit();
     let res = fruit.price();
-    assertEQ(res, 28 )
+    arktest.assertEQ(res, 28 )
 }
 
 function main() {

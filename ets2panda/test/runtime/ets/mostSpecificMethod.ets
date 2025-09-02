@@ -59,8 +59,8 @@ class KlassC extends KlassB {
     }
 
     public final CheckThisAndSuper() : void {
-        assertEQ(this.Foo(), "KlassC::Foo()");
-        assertEQ(super.Foo(), "KlassB::Foo()");
+        arktest.assertEQ(this.Foo(), "KlassC::Foo()");
+        arktest.assertEQ(super.Foo(), "KlassB::Foo()");
     }
 }
 
@@ -86,40 +86,40 @@ function main() : void {
     let b: KlassB = new KlassB();
     let c: KlassC = new KlassC();
 
-    assertEQ(a.Foo(), "KlassA::Foo()");
-    assertEQ(b.Foo(), "KlassB::Foo()");
-    assertEQ(c.Foo(), "KlassC::Foo()");
+    arktest.assertEQ(a.Foo(), "KlassA::Foo()");
+    arktest.assertEQ(b.Foo(), "KlassB::Foo()");
+    arktest.assertEQ(c.Foo(), "KlassC::Foo()");
 
     let d: KlassA = new KlassC();
     let f: KlassB = new KlassC();
 
-    assertEQ(d.Foo(), "KlassC::Foo()");
-    assertEQ(f.Foo(), "KlassC::Foo()");
-    assertEQ(c.Bar(), "KlassB::Bar()");
+    arktest.assertEQ(d.Foo(), "KlassC::Foo()");
+    arktest.assertEQ(f.Foo(), "KlassC::Foo()");
+    arktest.assertEQ(c.Bar(), "KlassB::Bar()");
 
     let objA : A = new A();
     let objB : B = new B();
 
-    assertEQ(c.Baz(objB, objB), "KlassC::Baz(B, B)");
-    assertEQ(c.Baz(objA, objB), "KlassB::Baz(A, B)");
-    assertEQ(c.Baz(objA, objA), "KlassA::Baz(A, A)");
+    arktest.assertEQ(c.Baz(objB, objB), "KlassC::Baz(B, B)");
+    arktest.assertEQ(c.Baz(objA, objB), "KlassB::Baz(A, B)");
+    arktest.assertEQ(c.Baz(objA, objA), "KlassA::Baz(A, A)");
 
     c.CheckThisAndSuper();
 
-    assertEQ(Foo(objA, objB), "GLOBAL::Foo(A, B)");
-    assertEQ(Foo(objB, objB), "GLOBAL::Foo(B, B)");
+    arktest.assertEQ(Foo(objA, objB), "GLOBAL::Foo(A, B)");
+    arktest.assertEQ(Foo(objB, objB), "GLOBAL::Foo(B, B)");
 
-    assertEQ(Baz(new Int(1)), "GLOBAL::Baz(Int)");
-    assertEQ(Baz(new Char(c'1')), "GLOBAL::Baz(Char)");
-    assertEQ(Baz(new Short(1 as short)), "GLOBAL::Baz(Short)");
-    assertEQ(Baz("hello"), "GLOBAL::Baz(String)");
+    arktest.assertEQ(Baz(new Int(1)), "GLOBAL::Baz(Int)");
+    arktest.assertEQ(Baz(new Char(c'1')), "GLOBAL::Baz(Char)");
+    arktest.assertEQ(Baz(new Short(1 as short)), "GLOBAL::Baz(Short)");
+    arktest.assertEQ(Baz("hello"), "GLOBAL::Baz(String)");
 
-    assertEQ(Bar(1), "GLOBAL::Bar(int)");
-    assertEQ(Bar(c'1'), "GLOBAL::Bar(char)");
-    assertEQ(Bar(3.14), "GLOBAL::Bar(double)");
+    arktest.assertEQ(Bar(1), "GLOBAL::Bar(int)");
+    arktest.assertEQ(Bar(c'1'), "GLOBAL::Bar(char)");
+    arktest.assertEQ(Bar(3.14), "GLOBAL::Bar(double)");
 
-    assertEQ(Bar2(1), "GLOBAL::Bar2(long)");
-    assertEQ(Bar2(1 as long), "GLOBAL::Bar2(long)");
-    assertEQ(Bar2(1.1), "GLOBAL::Bar2(double)");
+    arktest.assertEQ(Bar2(1), "GLOBAL::Bar2(long)");
+    arktest.assertEQ(Bar2(1 as long), "GLOBAL::Bar2(long)");
+    arktest.assertEQ(Bar2(1.1), "GLOBAL::Bar2(double)");
 
 }

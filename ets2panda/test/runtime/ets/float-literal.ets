@@ -18,7 +18,7 @@ function id(value: float): float {
 }
 
 function main(): void {
-    assertEQ(id(10), 10.0f)
-    assertEQ(id(-10), -10.0f)
-    assertEQ(id(0), 0.0f)
+    arktest.assertEQ(id(10), 10.0f)
+    arktest.assertEQ(id(-10), -10.0f)
+    arktest.assertEQ(id(0), 0.0f)
 }

@@ -38,10 +38,10 @@ function test(i: I = {f: -1, x: -2, s: "default", iv: {v: -3}},
               x: int = -2,
               s: String = "default",
               ivv: int = -3) {
-    assertEQ(i.f, f, "\"f\" is not equal \"" + i.f + "\" != \"" + f + "\"")
-    assertEQ(i.x, x, "\"x\" is not equal \"" + i.x + "\" != \"" + x + "\"")
-    assertEQ(i.s, s, "\"s\" is not equal \"" + i.s + "\" != \"" + s + "\"")
-    assertEQ(i.iv.v, ivv, "\"innervalue.v\" is not equal \"" + i.iv.v + "\" != \"" + ivv + "\"")
+    arktest.assertEQ(i.f, f, "\"f\" is not equal \"" + i.f + "\" != \"" + f + "\"")
+    arktest.assertEQ(i.x, x, "\"x\" is not equal \"" + i.x + "\" != \"" + x + "\"")
+    arktest.assertEQ(i.s, s, "\"s\" is not equal \"" + i.s + "\" != \"" + s + "\"")
+    arktest.assertEQ(i.iv.v, ivv, "\"innervalue.v\" is not equal \"" + i.iv.v + "\" != \"" + ivv + "\"")
 }
 
 function main(): int {

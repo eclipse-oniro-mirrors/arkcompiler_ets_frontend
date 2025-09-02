@@ -17,5 +17,5 @@ function main() {
 	const v = `nested ${`backtick = \``}`
 	console.log(v)
 	const expected = 'nested backtick = `'
-	assertEQ(v, expected)
+	arktest.assertEQ(v, expected)
 }

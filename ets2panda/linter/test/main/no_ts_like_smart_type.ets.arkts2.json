@@ -1,18 +1,4 @@
 {
-    "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
-        "Licensed under the Apache License, Version 2.0 (the 'License');",
-        "you may not use this file except in compliance with the License.",
-        "You may obtain a copy of the License at",
-        "",
-        "http://www.apache.org/licenses/LICENSE-2.0",
-        "",
-        "Unless required by applicable law or agreed to in writing, software",
-        "distributed under the License is distributed on an 'AS IS' BASIS,",
-        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
-        "See the License for the specific language governing permissions and",
-        "limitations under the License."
-    ],
     "result": [
         {
             "line": 30,
@@ -22,16 +8,6 @@
             "problem": "NoTsLikeSmartType",
             "suggest": "",
             "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 14,
-            "endLine": 28,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -45,16 +21,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 38,
-            "column": 14,
-            "endLine": 38,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 50,
             "column": 5,
             "endLine": 50,
@@ -65,16 +31,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 48,
-            "column": 14,
-            "endLine": 48,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 62,
             "column": 5,
             "endLine": 62,
@@ -82,26 +38,6 @@
             "problem": "NoTsLikeSmartType",
             "suggest": "",
             "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 58,
-            "column": 14,
-            "endLine": 58,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 60,
-            "column": 14,
-            "endLine": 60,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -145,6 +81,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 80,
+            "column": 11,
+            "endLine": 80,
+            "endColumn": 15,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
             "line": 87,
             "column": 16,
             "endLine": 87,
@@ -155,73 +101,33 @@
             "severity": "ERROR"
         },
         {
-            "line": 91,
-            "column": 20,
-            "endLine": 91,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
+            "line": 93,
+            "column": 66,
+            "endLine": 93,
+            "endColumn": 75,
+            "problem": "SdkCommonApiWhiteList",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
             "severity": "ERROR"
         },
         {
-            "line": 91,
-            "column": 27,
-            "endLine": 91,
-            "endColumn": 31,
-            "problem": "NumericSemantics",
+            "line": 93,
+            "column": 66,
+            "endLine": 93,
+            "endColumn": 75,
+            "problem": "BuiltinNarrowTypes",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
             "severity": "ERROR"
         },
         {
-            "line": 94,
-            "column": 23,
-            "endLine": 94,
-            "endColumn": 24,
-            "problem": "NumericSemantics",
+            "line": 101,
+            "column": 54,
+            "endLine": 101,
+            "endColumn": 58,
+            "problem": "BuiltinDisableApi",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 96,
-            "column": 25,
-            "endLine": 96,
-            "endColumn": 26,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 97,
-            "column": 26,
-            "endLine": 97,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 98,
-            "column": 25,
-            "endLine": 98,
-            "endColumn": 26,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 99,
-            "column": 28,
-            "endLine": 99,
-            "endColumn": 29,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
             "severity": "ERROR"
         },
         {
@@ -235,6 +141,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 109,
+            "column": 50,
+            "endLine": 109,
+            "endColumn": 54,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
             "line": 114,
             "column": 9,
             "endLine": 114,
@@ -242,6 +158,226 @@
             "problem": "NoTsLikeSmartType",
             "suggest": "",
             "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 137,
+            "column": 5,
+            "endLine": 137,
+            "endColumn": 10,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 143,
+            "column": 1,
+            "endLine": 147,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 144,
+            "column": 7,
+            "endLine": 144,
+            "endColumn": 12,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 151,
+            "column": 13,
+            "endLine": 151,
+            "endColumn": 18,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 169,
+            "column": 6,
+            "endLine": 169,
+            "endColumn": 47,
+            "problem": "IncompationbleFunctionType",
+            "suggest": "",
+            "rule": "Stricter assignments into variables of function type (arkts-incompatible-function-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 168,
+            "column": 10,
+            "endLine": 170,
+            "endColumn": 4,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 180,
+            "column": 13,
+            "endLine": 180,
+            "endColumn": 34,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 193,
+            "column": 13,
+            "endLine": 193,
+            "endColumn": 26,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 261,
+            "column": 1,
+            "endLine": 268,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 278,
+            "column": 1,
+            "endLine": 278,
+            "endColumn": 6,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 292,
+            "column": 5,
+            "endLine": 292,
+            "endColumn": 10,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 307,
+            "column": 13,
+            "endLine": 307,
+            "endColumn": 18,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 337,
+            "column": 27,
+            "endLine": 337,
+            "endColumn": 36,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 337,
+            "column": 27,
+            "endLine": 337,
+            "endColumn": 36,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 357,
+            "column": 25,
+            "endLine": 357,
+            "endColumn": 36,
+            "problem": "NoTuplesArrays",
+            "suggest": "",
+            "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 137,
+            "column": 5,
+            "endLine": 137,
+            "endColumn": 8,
+            "problem": "StrictDiagnostic",
+            "suggest": "'b.a' is possibly 'undefined'.",
+            "rule": "'b.a' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 144,
+            "column": 7,
+            "endLine": 144,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 151,
+            "column": 13,
+            "endLine": 151,
+            "endColumn": 16,
+            "problem": "StrictDiagnostic",
+            "suggest": "'b.a' is possibly 'undefined'.",
+            "rule": "'b.a' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 191,
+            "column": 18,
+            "endLine": 191,
+            "endColumn": 25,
+            "problem": "StrictDiagnostic",
+            "suggest": "Function lacks ending return statement and return type does not include 'undefined'.",
+            "rule": "Function lacks ending return statement and return type does not include 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 278,
+            "column": 1,
+            "endLine": 278,
+            "endColumn": 4,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 292,
+            "column": 5,
+            "endLine": 292,
+            "endColumn": 8,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 307,
+            "column": 13,
+            "endLine": 307,
+            "endColumn": 16,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
             "severity": "ERROR"
         }
     ]

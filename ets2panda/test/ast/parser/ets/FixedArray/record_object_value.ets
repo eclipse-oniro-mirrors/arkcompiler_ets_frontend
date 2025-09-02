@@ -57,7 +57,7 @@ function main(){
         "Mary":["20", "30"]
     };
 }
-/* @@@ label Error TypeError: Type '"10"' is not compatible with type 'double' at property 'age'  */
-/* @@@ label1 Error TypeError: Type '"100"' is not compatible with type 'double' at property 'salary'  */
+/* @@@ label Error TypeError: Type '"10"' is not compatible with type 'Double' at property 'age'  */
+/* @@@ label1 Error TypeError: Type '"100"' is not compatible with type 'Double' at property 'salary'  */
 /* @@@ label2 Error TypeError: type PersonInfoInterface has no property named agee  */
 /* @@@ label3 Error TypeError: type PersonInfoInterface has no property named other  */

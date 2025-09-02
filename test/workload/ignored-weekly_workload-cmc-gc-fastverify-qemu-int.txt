@@ -1,0 +1,10 @@
+# Known failures list for weekly workload - cmc-gc-fastverify-qemu-int
+
+#27147
+json-parse-inspector
+float-mm
+typescript-compiler
+wsl
+
+#18740
+splay

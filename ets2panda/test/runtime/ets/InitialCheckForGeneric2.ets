@@ -20,8 +20,8 @@ function foo<U, V>(temp : U, temp1 : V) {
     v = temp1
 
     console.log("What ? :-)", u, v)
-    assertEQ(u, "hello")
-    assertEQ(v, "world")
+    arktest.assertEQ(u, "hello")
+    arktest.assertEQ(v, "world")
 }
 
 

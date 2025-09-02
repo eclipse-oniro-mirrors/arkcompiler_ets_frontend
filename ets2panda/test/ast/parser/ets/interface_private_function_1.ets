@@ -34,5 +34,5 @@ function main(): void {
     i.xyz();
 }
 
-/* @@? 34:5 Error TypeError: Signature xyz(): int is not visible here.  */
-/* @@? 34:5 Error TypeError: No matching call signature  */
+/* @@? 34:5 Error TypeError: Signature xyz(): Int is not visible here. */
+/* @@? 34:5 Error TypeError: No matching call signature */

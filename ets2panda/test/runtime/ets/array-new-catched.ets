@@ -23,6 +23,6 @@ function baz(): number {
     } catch (e: TypeError) {
         catched = true
     }
-    assertTrue(catched)
+    arktest.assertTrue(catched)
   }
   

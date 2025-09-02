@@ -129,28 +129,26 @@ std::vector<std::string> CodeFixProvider::GetSupportedErrorCodes()
     return result;
 }
 
-DiagnosticReferences *CodeFixProvider::GetDiagnostics(const CodeFixContextBase &context)
+std::unique_ptr<DiagnosticReferences> CodeFixProvider::GetDiagnostics(const CodeFixContextBase &context)
 {
-    DiagnosticReferences *result = nullptr;
     LSPAPI const *lspApi = GetImpl();
+    ES2PANDA_ASSERT(lspApi != nullptr);
     Initializer initializer = Initializer();
     auto it = reinterpret_cast<public_lib::Context *>(context.context);
-    std::string fileNameStr(GetFileName(std::string(it->sourceFile->filePath)));
-    std::string sourceStr(it->sourceFile->source);
-    const auto ctx = initializer.CreateContext(fileNameStr.c_str(), ES2PANDA_STATE_CHECKED, sourceStr.c_str());
-    DiagnosticReferences semantic = lspApi->getSemanticDiagnostics(ctx);
-    DiagnosticReferences syntactic = lspApi->getSyntacticDiagnostics(ctx);
-    DiagnosticReferences suggestions = lspApi->getSuggestionDiagnostics(ctx);
+    ES2PANDA_ASSERT(it != nullptr && it->sourceFile != nullptr);
+    const std::string_view fileName(it->sourceFile->filePath);
+    const std::string_view source(it->sourceFile->source);
+    const auto ctx = initializer.CreateContext(fileName.data(), ES2PANDA_STATE_CHECKED, source.data());
+    auto [semantic, syntactic, suggestions] =
+        std::make_tuple(lspApi->getSemanticDiagnostics(ctx), lspApi->getSyntacticDiagnostics(ctx),
+                        lspApi->getSuggestionDiagnostics(ctx));
 
-    for (const auto &d : semantic.diagnostic) {
-        result->diagnostic.push_back(d);
-    }
-    for (const auto &d : syntactic.diagnostic) {
-        result->diagnostic.push_back(d);
-    }
-    for (const auto &d : suggestions.diagnostic) {
-        result->diagnostic.push_back(d);
-    }
+    auto result = std::make_unique<DiagnosticReferences>();
+    result->diagnostic.reserve(semantic.diagnostic.size() + syntactic.diagnostic.size() +
+                               suggestions.diagnostic.size());
+    std::move(semantic.diagnostic.begin(), semantic.diagnostic.end(), std::back_inserter(result->diagnostic));
+    std::move(syntactic.diagnostic.begin(), syntactic.diagnostic.end(), std::back_inserter(result->diagnostic));
+    std::move(suggestions.diagnostic.begin(), suggestions.diagnostic.end(), std::back_inserter(result->diagnostic));
     initializer.DestroyContext(ctx);
     return result;
 }
@@ -186,13 +184,36 @@ void CodeFixProvider::EachDiagnostic(const CodeFixAllContext &context, const std
                                      const std::function<void(const DiagnosticWithLocation &)> &cb)
 {
     if (errorCodes.empty()) {
+        return;
     }
-    if (cb) {
-    }
+
     auto diagnostics = GetDiagnostics(context);
-    if (diagnostics != nullptr) {
-        for (size_t i = 0; i <= diagnostics->diagnostic.size(); i++) {
+    if (diagnostics == nullptr) {
+        return;
+    }
+
+    auto it = reinterpret_cast<public_lib::Context *>(context.context);
+    ES2PANDA_ASSERT(it != nullptr && it->sourceFile != nullptr);
+    auto *parserProgram = it->parserProgram;
+    auto index = lexer::LineIndex(parserProgram->SourceCode());
+
+    for (auto &diag : diagnostics->diagnostic) {
+        auto isTargetError = [&diag](int code) {
+            return std::holds_alternative<int>(diag.code_) && std::get<int>(diag.code_) == code;
+        };
+        if (!std::any_of(errorCodes.begin(), errorCodes.end(), isTargetError)) {
+            continue;
         }
+
+        size_t startOffset = index.GetOffset(
+            lexer::SourceLocation(diag.range_.start.line_, diag.range_.start.character_, parserProgram));
+        size_t endOffset =
+            index.GetOffset(lexer::SourceLocation(diag.range_.end.line_, diag.range_.end.character_, parserProgram));
+
+        ES2PANDA_ASSERT(endOffset >= startOffset);
+        size_t length = endOffset - startOffset;
+        auto diagWithLocate = DiagnosticWithLocation(std::move(diag), *it->sourceFile, startOffset, length);
+        cb(diagWithLocate);
     }
 }
 

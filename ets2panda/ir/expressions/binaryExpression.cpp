@@ -100,6 +100,7 @@ BinaryExpression *BinaryExpression::Clone(ArenaAllocator *const allocator, AstNo
     auto *const right = right_ != nullptr ? right_->Clone(allocator, nullptr)->AsExpression() : nullptr;
     auto *const clone = allocator->New<BinaryExpression>(left, right, operator_);
     ES2PANDA_ASSERT(clone);
+    clone->SetRange(Range());
 
     if (operationType_ != nullptr) {
         clone->SetOperationType(operationType_);
@@ -117,7 +118,6 @@ BinaryExpression *BinaryExpression::Clone(ArenaAllocator *const allocator, AstNo
         clone->SetParent(parent);
     }
 
-    clone->SetRange(Range());
     return clone;
 }
 }  // namespace ark::es2panda::ir

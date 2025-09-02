@@ -35,7 +35,7 @@ function foo(a : boolean) : NSOuter.NSInner.XXXType | number | string {
 
 function main() {
     const res : NSOuter.NSInner.XXXType = foo(true) as NSOuter.NSInner.XXXType
-    assertEQ(res, NSOuter.NSInner.XXXType.TAP)
+    arktest.assertEQ(res, NSOuter.NSInner.XXXType.TAP)
     const res1 : NSOuter.NSInner.XXXType = 1 as NSOuter.NSInner.XXXType
-    assertEQ(res1, NSOuter.NSInner.XXXType.PAT)
+    arktest.assertEQ(res1, NSOuter.NSInner.XXXType.PAT)
 }

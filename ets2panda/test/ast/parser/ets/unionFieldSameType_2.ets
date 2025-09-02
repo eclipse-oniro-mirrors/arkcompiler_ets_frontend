@@ -23,6 +23,6 @@ let u1: A|B = new A
 let u2: A|B = new B
 
 function main() {
-    assertEQ(u1.fld[0], 42.0)
-    assertEQ(u2.fld[1], 'b')
+    arktest.assertEQ(u1.fld[0], 42.0)
+    arktest.assertEQ(u2.fld[1], 'b')
 }

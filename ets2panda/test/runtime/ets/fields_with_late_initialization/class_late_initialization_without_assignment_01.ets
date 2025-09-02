@@ -21,9 +21,9 @@ class C {
 function main(): void {
     try {
         let y = new C();
-        assertTrue(y.f != "aa")
+        arktest.assertTrue(y.f != "aa")
     } catch (e) {
-        assertTrue(e instanceof NullPointerError)
+        arktest.assertTrue(e instanceof NullPointerError)
     }
 }
 

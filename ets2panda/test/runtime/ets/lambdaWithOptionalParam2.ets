@@ -20,7 +20,7 @@ function a(b: (c?: int) => void): void {
 
 function main(): void {
     let d = (c?: int) => {
-        assertTrue(c == undefined || c == 10)
+        arktest.assertTrue(c == undefined || c == 10)
     }
 
     d();

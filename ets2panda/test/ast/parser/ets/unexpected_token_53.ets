@@ -26,7 +26,6 @@ export class MathSpectralNorm {
 }
 
 /* @@? 19:10 Error TypeError: Unresolved reference i */
-/* @@? 19:17 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 19:22 Error SyntaxError: Expected ';', got ':'. */
 /* @@? 19:22 Error SyntaxError: Unexpected token ':'. */
 /* @@? 19:24 Error SyntaxError: Expected ')', got 'identification literal'. */

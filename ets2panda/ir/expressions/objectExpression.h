@@ -66,24 +66,9 @@ public:
         return optional_;
     }
 
-    void SetPreferredType(checker::Type *const preferredType) noexcept
-    {
-        preferredType_ = preferredType;
-    }
-
-    [[nodiscard]] checker::Type *PreferredType() const noexcept
-    {
-        return preferredType_;
-    }
-
     [[nodiscard]] const ArenaVector<Decorator *> &Decorators() const noexcept
     {
         return decorators_;
-    }
-
-    const ArenaVector<Decorator *> *DecoratorsPtr() const override
-    {
-        return &Decorators();
     }
 
     void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
@@ -131,8 +116,10 @@ public:
     void CleanUp() override
     {
         AstNode::CleanUp();
-        preferredType_ = nullptr;
+        SetPreferredType(nullptr);
     }
+
+    void CleanCheckInformation() override;
 
 private:
     std::tuple<bool, varbinder::Variable *, checker::Type *, varbinder::LocalVariable *> CheckPatternIsShorthand(
@@ -140,7 +127,6 @@ private:
 
     ArenaVector<Decorator *> decorators_;
     ArenaVector<Expression *> properties_;
-    checker::Type *preferredType_ {};
     bool isDeclaration_ {};
     bool trailingComma_ {};
     bool optional_ {};

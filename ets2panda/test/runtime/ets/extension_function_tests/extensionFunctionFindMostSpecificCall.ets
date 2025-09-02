@@ -20,5 +20,5 @@ class A extends I {}
 function test(this: I, n: double): int { return 2 }
 
 let a = new A()
-assertEQ(a.test(4140100.0), 2)
-assertEQ(a.test(4140100), 1)
+arktest.assertEQ(a.test(4140100.0), 2)
+arktest.assertEQ(a.test(4140100), 1)

@@ -23,4 +23,4 @@ function main(): void {
    let m = new OldMap/* @@ label */<C, string>();
 }
 
-/* @@@ label Error TypeError: Type C is not assignable to constraint type Comparable<Object>  */
+/* @@@ label Error TypeError: Type argument 'C' should be a subtype of 'Comparable<Object>'-constraint */

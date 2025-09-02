@@ -20,8 +20,11 @@
 #include <vector>
 #include "macros.h"
 #include "util.h"
+#include "generated/signatures.h"
+#include "parser/program/program.h"
 #include "public/es2panda_lib.h"
 #include "ir/ets/etsImportDeclaration.h"
+#include "ir/statements/expressionStatement.h"
 #include "utils/arena_containers.h"
 
 // NOLINTBEGIN
@@ -97,6 +100,28 @@ bool TestInsertImportAfterParse(es2panda_Context *context, [[maybe_unused]] es2p
     return true;
 }
 
+bool CheckFirstUseStatic(es2panda_Program *program)
+{
+    auto *parserProgram = reinterpret_cast<ark::es2panda::parser::Program *>(program);
+    auto &stmts = parserProgram->Ast()->StatementsForUpdates();
+    if (stmts.empty()) {
+        return false;
+    }
+    auto *firstStmt = stmts.front();
+    if (!firstStmt->IsExpressionStatement()) {
+        return false;
+    }
+    auto *expr = firstStmt->AsExpressionStatement()->GetExpression();
+    if (!expr->IsStringLiteral()) {
+        return false;
+    }
+    auto *strLiteral = expr->AsStringLiteral();
+    if (strLiteral->Str() != ark::es2panda::compiler::Signatures::STATIC_PROGRAM_FLAG) {
+        return false;
+    }
+    return true;
+}
+
 void InsertImportInHeaderAfterParse(es2panda_Context *context, [[maybe_unused]] es2panda_Config *config,
                                     es2panda_Program *program)
 {
@@ -133,7 +158,7 @@ bool Find(es2panda_AstNode *ast)
 {
     if (g_impl->IsETSImportDeclaration(ast)) {
         size_t len = 0;
-        auto specifiers = g_impl->ImportDeclarationSpecifiers(g_ctx, ast, &len);
+        auto specifiers = g_impl->ImportDeclarationSpecifiersConst(g_ctx, ast, &len);
         auto source = g_impl->ImportDeclarationSource(g_ctx, ast);
         auto importDeclaration =
             g_impl->UpdateETSImportDeclaration(g_ctx, ast, source, specifiers, len, IMPORT_KINDS_ALL);
@@ -150,7 +175,7 @@ bool Find(es2panda_AstNode *ast)
         if (g_impl->AstNodeIsProgramConst(g_ctx, parent)) {
             size_t sizeOfStatements = 0;
             auto *statements = g_impl->BlockStatementStatements(g_ctx, parent, &sizeOfStatements);
-            statements[0] = importDeclaration;
+            statements[1] = importDeclaration;
             g_impl->BlockStatementSetStatements(g_ctx, parent, statements, sizeOfStatements);
             g_impl->AstNodeSetParent(g_ctx, importDeclaration, parent);
             std::string str(g_impl->AstNodeDumpEtsSrcConst(g_ctx, parent));
@@ -160,6 +185,12 @@ bool Find(es2panda_AstNode *ast)
         }
     }
     return false;
+}
+
+void DestroyConfigAndContext(es2panda_Context *context, es2panda_Config *config)
+{
+    g_impl->DestroyContext(context);
+    g_impl->DestroyConfig(config);
 }
 
 int main(int argc, char **argv)
@@ -176,7 +207,8 @@ int main(int argc, char **argv)
     std::cout << "LOAD SUCCESS" << std::endl;
     const char **args = const_cast<const char **>(std::next(argv));
     auto config = g_impl->CreateConfig(argc - 1, args);
-    auto source = std::string("import {A} from \"./export\" ;function foo() {let b:B = new B();let a:A = new A()}");
+    auto source = std::string(
+        "\"use static\";import {A} from \"./export\" ;function foo() {let b:B = new B();let a:A = new A()}");
 
     auto context = g_impl->CreateContextFromString(config, source.data(), *(std::next(argv, argc - 1)));
     if (context == nullptr) {
@@ -193,36 +225,35 @@ int main(int argc, char **argv)
         return TEST_ERROR_CODE;
     }
 
-    if (!TestInsertImportAfterParse(context, config, program)) {
+    if (!TestInsertImportAfterParse(context, config, program) || !CheckFirstUseStatic(program)) {
+        DestroyConfigAndContext(context, config);
         return 1;
     }
+
     InsertImportInHeaderAfterParse(context, config, program);
 
     g_impl->ProceedToState(context, ES2PANDA_STATE_BOUND);
     CheckForErrors("BOUND", context);
 
     g_impl->ProceedToState(context, ES2PANDA_STATE_CHECKED);
-    auto *rootAst = g_impl->ProgramAst(context, program);
-    std::cout << g_impl->AstNodeDumpEtsSrcConst(context, rootAst) << std::endl;
     CheckForErrors("CHECKED", context);
 
     auto *importDeclAfterCheck = CreateImportDecl(context, program, "A0", "A0", "./export2");
     g_impl->InsertETSImportDeclarationAndParse(context, program, importDeclAfterCheck);
 
-    std::cout << g_impl->AstNodeDumpEtsSrcConst(context, rootAst) << std::endl;
-    auto *tagetFunc = GetTargetFunc(context, rootAst);
+    auto *tagetFunc = GetTargetFunc(context, ast);
     InsertStatementInFunctionBody(context, tagetFunc);
-    std::cout << g_impl->AstNodeDumpEtsSrcConst(context, rootAst) << std::endl;
 
-    g_impl->AstNodeRecheck(context, rootAst);
+    g_impl->AstNodeRecheck(context, ast);
 
     g_impl->ProceedToState(context, ES2PANDA_STATE_BIN_GENERATED);
     CheckForErrors("BIN", context);
     if (g_impl->ContextState(context) == ES2PANDA_STATE_ERROR) {
+        DestroyConfigAndContext(context, config);
         return PROCEED_ERROR_CODE;
     }
-    g_impl->DestroyConfig(config);
 
+    DestroyConfigAndContext(context, config);
     return 0;
 }
 

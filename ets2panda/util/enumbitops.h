@@ -27,7 +27,9 @@
     enumbitops::operator^,   \
     enumbitops::operator|=,  \
     enumbitops::operator&=,  \
-    enumbitops::operator^=
+    enumbitops::operator^=,  \
+    enumbitops::All,         \
+    enumbitops::Any
 // clang-format on
 
 namespace enumbitops {
@@ -96,6 +98,20 @@ inline constexpr T &operator^=(T &a, T b)
 {
     // NOLINTNEXTLINE(hicpp-signed-bitwise)
     return a = a ^ b;
+}
+
+template <class T, std::enable_if_t<IsAllowedType<T>::value, bool> = true>
+inline constexpr bool All(T flags, T test)
+{
+    using Utype = std::underlying_type_t<T>;
+    return (flags & test) == static_cast<Utype>(test);
+}
+
+template <class T, std::enable_if_t<IsAllowedType<T>::value, bool> = true>
+inline constexpr bool Any(T flags, T test)
+{
+    using Utype = std::underlying_type_t<T>;
+    return (flags & test) != static_cast<Utype>(0);
 }
 
 }  // namespace enumbitops

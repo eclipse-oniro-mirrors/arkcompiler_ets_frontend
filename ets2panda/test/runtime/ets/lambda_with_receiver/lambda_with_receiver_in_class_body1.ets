@@ -30,8 +30,8 @@ class B {
 
     foo() {
         let getSum = (this: A): number => { return this.X + this.Y }
-        assertEQ(this.a.getSum(), 3)
-        assertEQ(getSum(this.a), 3)
+        arktest.assertEQ(this.a.getSum(), 3)
+        arktest.assertEQ(getSum(this.a), 3)
     }
 }
 

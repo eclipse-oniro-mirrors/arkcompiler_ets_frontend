@@ -55,8 +55,8 @@ struct ClassHierarchyItemInfo {
  * @param fileName Source file name.
  * @param pos Character offset in source code.
  */
-std::vector<ClassHierarchyItemInfo> GetClassHierarchiesImpl(es2panda_Context *context, const std::string &fileName,
-                                                            size_t pos);
+std::vector<ClassHierarchyItemInfo> GetClassHierarchiesImpl(std::vector<es2panda_Context *> *contextList,
+                                                            const std::string &fileName, size_t pos);
 }  // namespace ark::es2panda::lsp
 
 #endif

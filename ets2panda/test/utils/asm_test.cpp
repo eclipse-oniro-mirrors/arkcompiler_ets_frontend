@@ -225,7 +225,7 @@ void AsmTest::CheckFunctionParameterAnnotations(ark::pandasm::Program *program, 
     ASSERT_LT(paramIndex, found->second.params.size());
 
     for (const auto &expected : expectedAnnotations) {
-        auto annotations = found->second.params.at(paramIndex).GetOrCreateMetadata().GetAnnotations();
+        auto annotations = found->second.params.at(paramIndex).GetOrCreateMetadata()->GetAnnotations();
         auto it = std::find_if(annotations.begin(), annotations.end(),
                                [&expected](const ark::pandasm::AnnotationData &annotation) {
                                    return annotation.GetName() == expected.first;
@@ -246,7 +246,7 @@ void AsmTest::CheckFunctionParameterWithoutAnnotations(ark::pandasm::Program *pr
     auto found = functionTable.find(functionName);
     ASSERT_NE(found, functionTable.end());
     ASSERT_LT(paramIndex, found->second.params.size());
-    ASSERT(found->second.params.at(paramIndex).GetOrCreateMetadata().GetAnnotations().empty());
+    ASSERT(found->second.params.at(paramIndex).GetOrCreateMetadata()->GetAnnotations().empty());
 }
 
 void AsmTest::CheckClassFieldAnnotations(ark::pandasm::Program *program, const std::string &recordName,
@@ -298,7 +298,7 @@ void AsmTest::SetCurrentProgram(std::string_view src)
 
 std::unique_ptr<ark::pandasm::Program> AsmTest::GetCurrentProgram(std::string_view src)
 {
-    static constexpr std::string_view FILE_NAME = "annotation.ets";
+    static constexpr std::string_view FILE_NAME = "dummy.ets";
     std::array<char const *, 2> args = {"../../../../../bin/es2panda",
                                         "--ets-unnamed"};  // NOLINT(modernize-avoid-c-arrays)
 

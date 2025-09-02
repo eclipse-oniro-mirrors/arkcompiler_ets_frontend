@@ -16,7 +16,6 @@
 
 function main(): void {
     let a: [number] = [1];
-    let b: [Number] = /* @@ label */a;
+    let b: [Number] = a;
 }
 
-/* @@@ label Error TypeError: Type '[double]' cannot be assigned to type '[Double]'  */

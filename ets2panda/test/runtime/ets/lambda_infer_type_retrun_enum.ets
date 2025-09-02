@@ -20,5 +20,5 @@ function main () {
         return y
     }
     let expected : () => Color = x
-    assertEQ(x, expected)
+    arktest.assertEQ(x, expected)
 }

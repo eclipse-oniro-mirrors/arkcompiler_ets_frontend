@@ -20,12 +20,7 @@ class A {
 }    
     
 /* @@@ A_a Error SyntaxError: Invalid Type. */
-/* @@@ A_a Error SyntaxError: 'readonly' type modifier is only permitted on resizable array and tuple types. */
-
 /* @@@ A_b Error SyntaxError: Invalid Type. */
-/* @@@ A_b Error SyntaxError: 'readonly' type modifier is only permitted on resizable array and tuple types. */
 /* @@@ A_b Error SyntaxError: Unexpected token 'false'. */
-
 /* @@@ A_c Error SyntaxError: Invalid Type. */
-/* @@@ A_c Error SyntaxError: 'readonly' type modifier is only permitted on resizable array and tuple types. */
 /* @@@ A_c Error SyntaxError: Unexpected token '1'. */

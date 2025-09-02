@@ -34,7 +34,7 @@ TEST_F(LspQuickInfoTests, GetQuickInfoAtPosition1)
     ASSERT_NE(quickInfo, QuickInfo());
     std::vector<DocTagInfo> tags {};
     std::vector<SymbolDisplayPart> document {};
-    const std::string kind;
+    const std::string kind = "enum member";
     size_t const start = 17;
     size_t const length = 1;
     TextSpan span(start, length);
@@ -99,7 +99,7 @@ TEST_F(LspQuickInfoTests, GetQuickInfoAtPosition3)
     ASSERT_NE(quickInfo, QuickInfo());
     std::vector<DocTagInfo> tags {};
     std::vector<SymbolDisplayPart> document {};
-    const std::string kind = "property";
+    const std::string kind = "get";
     const std::string kindModifiers = "public abstract";
     size_t const start = 52;
     size_t const length = 3;
@@ -259,14 +259,14 @@ TEST_F(LspQuickInfoTests, GetNodeAtLocationForQuickInfo5)
     ASSERT_NE(node, nullptr);
     auto nodeAtLocationForQuickInfo = ark::es2panda::lsp::GetNodeAtLocationForQuickInfo(node);
     ASSERT_NE(nodeAtLocationForQuickInfo, nullptr);
-    ASSERT_EQ(nodeAtLocationForQuickInfo->Type(), ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION);
+    ASSERT_EQ(nodeAtLocationForQuickInfo->Type(), ark::es2panda::ir::AstNodeType::CLASS_DEFINITION);
 
     size_t const position = 70;
     node = ark::es2panda::lsp::GetTokenForQuickInfo(ctx, position);
     ASSERT_NE(node, nullptr);
     nodeAtLocationForQuickInfo = ark::es2panda::lsp::GetNodeAtLocationForQuickInfo(node);
     ASSERT_NE(nodeAtLocationForQuickInfo, nullptr);
-    ASSERT_EQ(nodeAtLocationForQuickInfo->Type(), ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION);
+    ASSERT_EQ(nodeAtLocationForQuickInfo->Type(), ark::es2panda::ir::AstNodeType::CLASS_DEFINITION);
 
     initializer.DestroyContext(ctx);
 }

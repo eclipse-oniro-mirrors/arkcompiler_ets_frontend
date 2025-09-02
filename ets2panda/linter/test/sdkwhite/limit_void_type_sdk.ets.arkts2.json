@@ -115,26 +115,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 53,
-            "column": 13,
-            "endLine": 53,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 69,
-            "column": 30,
-            "endLine": 69,
-            "endColumn": 33,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 72,
             "column": 5,
             "endLine": 72,
@@ -145,16 +125,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 72,
-            "column": 29,
-            "endLine": 72,
-            "endColumn": 32,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 76,
             "column": 10,
             "endLine": 76,
@@ -162,16 +132,6 @@
             "problem": "LimitedVoidTypeFromSdk",
             "suggest": "",
             "rule": "Type \"void\" has no instances.(sdk-limited-void-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 76,
-            "column": 20,
-            "endLine": 76,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -192,26 +152,6 @@
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 79,
-            "column": 14,
-            "endLine": 79,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 80,
-            "column": 12,
-            "endLine": 80,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

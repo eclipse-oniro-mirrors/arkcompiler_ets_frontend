@@ -13,19 +13,4 @@
  * limitations under the License.
  */
 
-export { Lsp } from './lsp_helper';
-export { DriverHelper } from './driver_helper';
-export { Es2pandaContextState } from './generated/Es2pandaEnums';
-export {
-  LspCompletionInfo,
-  LspCompletionEntryKind,
-  LspDefinitionData,
-  LspDiagsNode,
-  LspDiagnosticNode,
-  LspDiagSeverity,
-  LspQuickInfo,
-  LspSymbolDisplayPart
-} from './lspNode';
-export { generateArkTsConfigByModules } from './arktsConfigGenerate';
-export type { ModuleDescriptor } from './buildConfigGenerate';
-export type { TextDocumentChangeInfo } from './lsp_helper';
+export * from './lsp/index';

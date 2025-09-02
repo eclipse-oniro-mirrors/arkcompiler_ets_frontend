@@ -30,8 +30,8 @@ function main() {
     let a3 = newA.met('S', 'a');
     let b = new A().mat2();
 
-    assertTrue(a1)
-    assertTrue(a2)
-    assertTrue(a3)
-    assertTrue(b)
+    arktest.assertTrue(a1)
+    arktest.assertTrue(a2)
+    arktest.assertTrue(a3)
+    arktest.assertTrue(b)
 }

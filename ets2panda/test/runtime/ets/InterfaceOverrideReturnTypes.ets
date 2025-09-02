@@ -50,9 +50,9 @@ class D implements B {
 function main() {
     let c = new C();
     c.foo();
-    assertEQ(c.getValue(), "foo(): A")
+    arktest.assertEQ(c.getValue(), "foo(): A")
 
     let d = new D();
     d.foo();
-    assertEQ(d.getValue(), "foo(): B")
+    arktest.assertEQ(d.getValue(), "foo(): B")
 }

@@ -24,5 +24,4 @@ function main()
     b instanceof /* @@ label */a
 }
 
-/* @@@ label Error TypeError: Cannot find type 'a'.  */
-/* @@? 24:5 Error TypeError: Using the 'instance of' operator with non-object type 'b' */
+/* @@@ label Error TypeError: Cannot find type 'a'. */

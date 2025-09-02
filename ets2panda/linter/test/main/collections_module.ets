@@ -19,7 +19,7 @@ import { collections as collectionsAlias } from './oh_modules/@arkts.collections
 
 import { collections as kitCollections } from './oh_modules/@kit.ArkTS';
 
-import { collections as definedCollections } from 'user_defined_worker'; //legal
+import { collections as definedCollections } from './ignore_files/user_defined_collections'; //legal
 
 function tesCollectionsUsage() {
 
@@ -35,4 +35,12 @@ function tesCollectionsUsage() {
 
   let collections6: definedCollections.Array<number>; // legal
 
+}
+
+function test(array: collections.Array<string>) {
+    const map = collections.Map<string, string>();
+}
+
+function testBitVector(bv: collections.BitVector<string>) {
+    const bitVector = new collections.BitVector<string>();
 }

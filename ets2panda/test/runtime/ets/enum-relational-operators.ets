@@ -17,15 +17,15 @@ enum Color1 {Red = 0, Green = 1, Blue = 0}
 enum Color2 {First = "red", Second = "green", Third = "red"}
 
 if (Color1.Red < Color1.Blue)
-    assertTrue(false)
+    arktest.assertTrue(false)
 if (Color1.Red > Color1.Blue)                            
-    assertTrue(false)
+    arktest.assertTrue(false)
 if (Color1.Red == Color1.Blue)     
-    assertTrue(true)
+    arktest.assertTrue(true)
 
 if (Color2.First < Color2.Third)                            
-    assertTrue(false)
+    arktest.assertTrue(false)
 if (Color2.First > Color2.Third)                            
-    assertTrue(false)
+    arktest.assertTrue(false)
 if (Color2.First == Color2.Third)     
-    assertTrue(true)
+    arktest.assertTrue(true)

@@ -29,7 +29,7 @@ function main(): void {
                 break
             case 2:
                 break
-            default: assertTrue(false, "Not expected execution here");
+            default: arktest.assertTrue(false, "Not expected execution here");
         }
     }
 }

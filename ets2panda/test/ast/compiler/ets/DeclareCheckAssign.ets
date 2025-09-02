@@ -26,7 +26,7 @@ export declare const int_17 = 12345
 export declare const int_18: number = 12345
 declare const x1: int = 5
 declare const x2: int = -5
-declare const y1: float = 5.55
+declare const y1: float = 5.55f
 declare const y2: double = -5.55
 declare const x3: int = 0x5
 declare const x4: int = 0b101
@@ -43,24 +43,25 @@ declare const x31 = 0x5
 declare const x41 = 0b101
 declare const x51 = "abc"
 
-/* @@? 16:37 Error TypeError: Initializers are not allowed in ambient contexts: byte_1  */
-/* @@? 16:66 Error TypeError: Initializers are not allowed in ambient contexts: byte_2  */
-/* @@? 17:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_12  */
-/* @@? 17:64 Error TypeError: Initializers are not allowed in ambient contexts: byte_22  */
-/* @@? 18:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_13  */
-/* @@? 18:70 Error TypeError: Initializers are not allowed in ambient contexts: byte_23  */
-/* @@? 19:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_14  */
-/* @@? 20:30 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: int_1  */
-/* @@? 22:31 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: int_12  */
-/* @@? 24:36 Error TypeError: Initializers are not allowed in ambient contexts: int_16  */
-/* @@? 26:39 Error TypeError: Initializers are not allowed in ambient contexts: int_18  */
-/* @@? 27:25 Error TypeError: Initializers are not allowed in ambient contexts: x1  */
-/* @@? 28:25 Error TypeError: Initializers are not allowed in ambient contexts: x2  */
-/* @@? 29:27 Error TypeError: Initializers are not allowed in ambient contexts: y1  */
-/* @@? 30:28 Error TypeError: Initializers are not allowed in ambient contexts: y2  */
-/* @@? 31:25 Error TypeError: Initializers are not allowed in ambient contexts: x3  */
-/* @@? 32:25 Error TypeError: Initializers are not allowed in ambient contexts: x4  */
-/* @@? 33:28 Error TypeError: Initializers are not allowed in ambient contexts: x5  */
-/* @@? 34:27 Error TypeError: Initializers are not allowed in ambient contexts: x6  */
-/* @@? 35:20 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: x7  */
-/* @@? 36:20 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: x8  */
+/* @@? 16:37 Error TypeError: Initializers are not allowed in ambient contexts: byte_1 */
+/* @@? 16:66 Error TypeError: Initializers are not allowed in ambient contexts: byte_2 */
+/* @@? 17:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_12 */
+/* @@? 17:38 Error TypeError: Type 'Int' cannot be assigned to type 'Byte' */
+/* @@? 17:64 Error TypeError: Initializers are not allowed in ambient contexts: byte_22 */
+/* @@? 17:64 Error TypeError: Type 'Int' cannot be assigned to type 'Byte' */
+/* @@? 18:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_13 */
+/* @@? 18:70 Error TypeError: Initializers are not allowed in ambient contexts: byte_23 */
+/* @@? 19:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_14 */
+/* @@? 22:31 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: int_12 */
+/* @@? 24:36 Error TypeError: Initializers are not allowed in ambient contexts: int_16 */
+/* @@? 26:39 Error TypeError: Initializers are not allowed in ambient contexts: int_18 */
+/* @@? 27:25 Error TypeError: Initializers are not allowed in ambient contexts: x1 */
+/* @@? 28:25 Error TypeError: Initializers are not allowed in ambient contexts: x2 */
+/* @@? 29:27 Error TypeError: Initializers are not allowed in ambient contexts: y1 */
+/* @@? 30:28 Error TypeError: Initializers are not allowed in ambient contexts: y2 */
+/* @@? 31:25 Error TypeError: Initializers are not allowed in ambient contexts: x3 */
+/* @@? 32:25 Error TypeError: Initializers are not allowed in ambient contexts: x4 */
+/* @@? 33:28 Error TypeError: Initializers are not allowed in ambient contexts: x5 */
+/* @@? 34:27 Error TypeError: Initializers are not allowed in ambient contexts: x6 */
+/* @@? 35:20 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: x7 */
+/* @@? 36:20 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: x8 */

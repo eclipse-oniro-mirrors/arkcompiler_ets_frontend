@@ -71,7 +71,7 @@ let a = [1, 2, 3);
 /* @@? 32:10 Error TypeError: Variable 'f' has already been declared. */
 /* @@? 33:5 Error TypeError: Call to 'super' must be first statement in constructor */
 /* @@? 33:5 Error TypeError: Expected 0 arguments, got 1. */
-/* @@? 33:5 Error TypeError: No matching call signature for std.core.Object(int) */
+/* @@? 33:5 Error TypeError: No matching call signature for std.core.Object(Int) */
 /* @@? 33:10 Error SyntaxError: Unexpected super keyword. */
 /* @@? 36:1 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 36:8 Error SyntaxError: Unexpected token, expected ']'. */

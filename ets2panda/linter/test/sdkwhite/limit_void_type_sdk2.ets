@@ -59,3 +59,13 @@ function prefetchTest2(){
 
 export const res = new MyDataSource().cancel(222);  //report error
 export const res2 = ds.cancel(222);  //report error
+
+interface BackPressInterceptor {
+  onBackPress: ()=> boolean | void;
+}
+
+class A implements BackPressInterceptor{
+  onBackPress() : boolean | void {
+    return false;
+  }
+}

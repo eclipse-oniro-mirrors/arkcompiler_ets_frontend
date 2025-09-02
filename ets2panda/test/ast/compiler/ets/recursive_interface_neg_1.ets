@@ -16,4 +16,4 @@ interface A<T extends A<T>>{}
 interface D{}
 interface B extends A/* @@ label */<D>{}
 
-/* @@@ label Error TypeError: Type D is not assignable to constraint type A<D>  */
+/* @@@ label Error TypeError: Type argument 'D' should be a subtype of 'A<D>'-constraint */

@@ -16,3 +16,11 @@
 class A {}
 export let a = new A()
 export let b = new A()
+export let c = {
+  num1:1,
+  num2:2,
+}
+export let d = {
+  num1: 1,
+  num2: 2,
+}

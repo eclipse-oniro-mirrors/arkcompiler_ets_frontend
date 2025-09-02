@@ -29,15 +29,15 @@ class C {
 function main() {
     let a1: [A<Long>, B<Error>] = [new A<Long>, new B<Error>]
     
-    assertTrue((new C()).foo<Long, Error>(...a1) == false)
-    assertTrue((new C()).moo<Long, Error>(12, ...a1) == false)
+    arktest.assertTrue((new C()).foo<Long, Error>(...a1) == false)
+    arktest.assertTrue((new C()).moo<Long, Error>(12, ...a1) == false)
 
-    assertTrue((new C()).foo<Long, Error>(...[new A<Long>, new B<Error>]) == false)
-    assertTrue((new C()).moo<Long, Error>(12, ...[new A<Long>, new B<Error>]) == false)
+    arktest.assertTrue((new C()).foo<Long, Error>(...[new A<Long>, new B<Error>]) == false)
+    arktest.assertTrue((new C()).moo<Long, Error>(12, ...[new A<Long>, new B<Error>]) == false)
 
-    assertTrue((new C()).foo<Long, Error>(...[new A<Long>, new B<Error>] as [A<Long>, B<Error>]) == false)
-    assertTrue((new C()).moo<Long, Error>(12, ...[new A<Long>, new B<Error>] as [A<Long>, B<Error>]) == false)
+    arktest.assertTrue((new C()).foo<Long, Error>(...[new A<Long>, new B<Error>] as [A<Long>, B<Error>]) == false)
+    arktest.assertTrue((new C()).moo<Long, Error>(12, ...[new A<Long>, new B<Error>] as [A<Long>, B<Error>]) == false)
     
-    assertTrue((new C()).foo<Long, Error>(new A<Long>, new B<Error>) == false)
-    assertTrue((new C()).moo<Long, Error>(12, new A<Long>, new B<Error>) == false)
+    arktest.assertTrue((new C()).foo<Long, Error>(new A<Long>, new B<Error>) == false)
+    arktest.assertTrue((new C()).moo<Long, Error>(12, new A<Long>, new B<Error>) == false)
 }

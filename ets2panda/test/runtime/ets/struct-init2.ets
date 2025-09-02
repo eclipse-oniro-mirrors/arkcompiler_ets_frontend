@@ -22,9 +22,9 @@ struct cls {
 
 function main(): void {
     let a : cls = new cls();
-    assertEQ((a.const_member_int, 10)
-    assertEQ((a.member_int, 20)
-    assertEQ((cls.const_static_member_int, 30)
-    assertEQ((cls.static_member_int, 40)
+    arktest.assertEQ((a.const_member_int, 10)
+    arktest.assertEQ((a.member_int, 20)
+    arktest.assertEQ((cls.const_static_member_int, 30)
+    arktest.assertEQ((cls.static_member_int, 40)
     return;
 }

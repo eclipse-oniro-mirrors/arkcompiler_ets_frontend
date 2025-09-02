@@ -20,6 +20,7 @@
 #include "parser/parserFlags.h"
 #include "util/errorRecovery.h"
 #include "util/helpers.h"
+#include "util/importPathManager.h"
 #include "utils/arena_containers.h"
 #include "varbinder/varbinder.h"
 #include "varbinder/ETSBinder.h"
@@ -178,6 +179,7 @@ bool ETSParser::IsInitializerBlockStart() const
     return validStart;
 }
 
+// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic, big switch case
 ir::Statement *ETSParser::ParseTopLevelDeclStatement(StatementParsingFlags flags)
 {
     auto [memberModifiers, startLoc] = ParseMemberModifiers();
@@ -209,6 +211,9 @@ ir::Statement *ETSParser::ParseTopLevelDeclStatement(StatementParsingFlags flags
         case lexer::TokenType::KEYW_CLASS:
             result = ParseTypeDeclaration(IsInitializerBlockStart());
             break;
+        case lexer::TokenType::KEYW_OVERLOAD:
+            result = ParseOverloadDeclaration(memberModifiers);
+            break;
         case lexer::TokenType::PUNCTUATOR_AT:
             result = ParseTopLevelAnnotation(memberModifiers);
             break;
@@ -236,27 +241,40 @@ ir::Statement *ETSParser::ParseTopLevelDeclStatement(StatementParsingFlags flags
 ir::Statement *ETSParser::ParseTopLevelStatement()
 {
     const auto flags = StatementParsingFlags::ALLOW_LEXICAL;
-    ArenaVector<ir::JsDocInfo> jsDocInformation(Allocator()->Adapter());
-    if (Lexer()->TryEatTokenType(lexer::TokenType::JS_DOC_START)) {
-        jsDocInformation = ParseJsDocInfos();
-    }
 
-    if (Lexer()->GetToken().Type() == lexer::TokenType::EOS ||
-        ((GetContext().Status() & ParserStatus::IN_NAMESPACE) != 0 &&
-         Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_RIGHT_BRACE)) {
-        return nullptr;
-    }
-    GetContext().Status() |= ParserStatus::ALLOW_JS_DOC_START;
     auto result = ParseTopLevelDeclStatement(flags);
-    GetContext().Status() ^= ParserStatus::ALLOW_JS_DOC_START;
-    if (result != nullptr) {
-        ApplyJsDocInfoToSpecificNodeType(result, std::move(jsDocInformation));
-    }
-
     if (result == nullptr) {
         result = ParseStatement(flags);
     }
     return result;
+}
+
+ir::Statement *ETSParser::ParseInitModuleStatement(StatementParsingFlags flags)
+{
+    auto startLoc = Lexer()->GetToken().Start();
+    if ((flags & StatementParsingFlags::INIT_MODULE) == 0) {
+        LogError(diagnostic::INIT_MODULE_DECLARATION_POSITION);
+        return AllocBrokenStatement(startLoc);
+    }
+
+    auto *callee = AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator());
+    Lexer()->NextToken();  // eat initModule
+    if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
+        LogExpectedToken(lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS);
+        return AllocBrokenStatement(startLoc);
+    }
+    ir::CallExpression *expr = ParseCallExpression(callee, false, false);
+    expr->SetRange({startLoc, Lexer()->GetToken().End()});
+    if (expr->Arguments().size() != 1 || !expr->Arguments().front()->IsStringLiteral()) {
+        LogError(diagnostic::ONLY_STRING_LITERAL_IN_INIT_MODULE, {}, expr->Start());
+        return AllocBrokenStatement(startLoc);
+    }
+    // In order to build relationship between the current program and initModule program.
+    importPathManager_->GatherImportMetadata(const_cast<parser::Program *>(GetContext().GetProgram()),
+                                             util::ImportFlags::NONE, expr->Arguments().front()->AsStringLiteral());
+    auto initModuleStatement = AllocNode<ir::ExpressionStatement>(expr);
+    ConsumeSemicolon(initModuleStatement);
+    return initModuleStatement;
 }
 
 ir::Statement *ETSParser::ParseAnnotationsInStatement(StatementParsingFlags flags)
@@ -292,7 +310,7 @@ bool ETSParser::ValidateLabeledStatement(lexer::TokenType type)
 
 bool ETSParser::ValidateForInStatement()
 {
-    LogUnexpectedToken(lexer::TokenType::KEYW_IN);
+    LogError(diagnostic::ERROR_ARKTS_NO_FOR_IN_LOOP);
     return false;
 }
 
@@ -374,12 +392,30 @@ ir::Statement *ETSParser::ParseStructStatement([[maybe_unused]] StatementParsing
     return AllocBrokenStatement(rangeStruct);
 }
 
-// NOLINTNEXTLINE(google-default-arguments)
 ir::Statement *ETSParser::ParseInterfaceStatement([[maybe_unused]] StatementParsingFlags flags)
 {
     auto &rangeClass = Lexer()->GetToken().Loc();
     LogError(diagnostic::ILLEGAL_START_STRUCT_CLASS, {"INTERFACE"}, Lexer()->GetToken().Start());
     ParseInterfaceDeclaration(false);
+    return AllocBrokenStatement(rangeClass);
+}
+
+ir::Statement *ETSParser::ParseEnumStatement([[maybe_unused]] StatementParsingFlags flags)
+{
+    auto &rangeClass = Lexer()->GetToken().Loc();
+    LogError(diagnostic::ILLEGAL_START_STRUCT_CLASS, {"ENUM"}, Lexer()->GetToken().Start());
+    ParseEnumDeclaration();
+    return AllocBrokenStatement(rangeClass);
+}
+
+ir::Statement *ETSParser::ParseTypeAliasStatement()
+{
+    auto &rangeClass = Lexer()->GetToken().Loc();
+    lexer::SourcePosition start = rangeClass.start;
+    if (ParseTypeAliasDeclaration() == nullptr) {
+        return nullptr;
+    }
+    LogError(diagnostic::ILLEGAL_START_STRUCT_CLASS, {"Type Alias"}, start);
     return AllocBrokenStatement(rangeClass);
 }
 

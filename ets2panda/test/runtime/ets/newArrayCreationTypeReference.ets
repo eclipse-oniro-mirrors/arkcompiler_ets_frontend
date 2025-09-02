@@ -17,5 +17,5 @@ type NumberOrUndefined = Number | undefined
 
  function main() {
     let array = new (NumberOrUndefined)[10]
-    assertEQ(array[1], undefined)
+    arktest.assertEQ(array[1], undefined)
 }

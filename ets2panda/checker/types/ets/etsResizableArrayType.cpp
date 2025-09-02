@@ -14,6 +14,7 @@
  */
 
 #include "etsResizableArrayType.h"
+#include "etsUnionType.h"
 
 namespace ark::es2panda::checker {
 
@@ -22,6 +23,18 @@ ETSResizableArrayType *ETSResizableArrayType::Substitute(TypeRelation *relation,
     auto copiedType = ETSObjectType::Substitute(relation, substitution)->AsETSResizableArrayType();
     element_ = TypeArguments()[0];
     return copiedType;
+}
+
+void ETSResizableArrayType::ToString(std::stringstream &ss, [[maybe_unused]] bool precise) const
+{
+    if (ElementType() != nullptr) {
+        if (HasTypeFlag(TypeFlag::READONLY)) {
+            ss << "readonly ";
+        }
+        ss << "Array<";
+        ElementType()->ToString(ss, precise);
+        ss << ">";
+    }
 }
 
 }  // namespace ark::es2panda::checker

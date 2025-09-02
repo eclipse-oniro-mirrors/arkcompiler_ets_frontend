@@ -36,9 +36,9 @@ class A {
 
 let a = new A();
 a.foo() { this.data = 666 } 
-assertEQ(a.b.data, 666);
-assertEQ(a.data, 0);
+arktest.assertEQ(a.b.data, 666);
+arktest.assertEQ(a.data, 0);
 
 a.foo2() { this.data = 66 } 
-assertEQ(a.b.data, 66);
-assertEQ(a.data, 0);
+arktest.assertEQ(a.b.data, 66);
+arktest.assertEQ(a.data, 0);

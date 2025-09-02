@@ -70,8 +70,8 @@ let test4 = foo() {
 
 
 function main(): void {
-    assertEQ(test1, 1)
-    assertEQ(test2, 15)
-    assertEQ(test3, 1015)
-    assertEQ(test4, 5015)
+    arktest.assertEQ(test1, 1)
+    arktest.assertEQ(test2, 15)
+    arktest.assertEQ(test3, 1015)
+    arktest.assertEQ(test4, 5015)
 }

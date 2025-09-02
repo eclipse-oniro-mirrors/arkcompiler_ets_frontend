@@ -238,8 +238,13 @@ Variable *Scope::AddLocalVar(ArenaAllocator *allocator, Decl *newDecl)
 
 Variable *Scope::AddLocalInterfaceVariable(ArenaAllocator *allocator, Decl *newDecl)
 {
-    auto *var = bindings_.insert({newDecl->Name(), allocator->New<LocalVariable>(newDecl, VariableFlags::INTERFACE)})
-                    .first->second;
+    auto [iter, inserted] =
+        bindings_.try_emplace(newDecl->Name(), allocator->New<LocalVariable>(newDecl, VariableFlags::INTERFACE));
+    if (!inserted) {
+        return nullptr;
+    }
+
+    auto *var = iter->second;
     if (newDecl->Node() != nullptr) {
         newDecl->Node()->AsTSInterfaceDeclaration()->Id()->SetVariable(var);
     }
@@ -257,8 +262,16 @@ Variable *Scope::AddLocalTypeAliasVariable(ArenaAllocator *allocator, Decl *newD
 Variable *Scope::AddLocalClassVariable(ArenaAllocator *allocator, Decl *newDecl)
 {
     auto isNamespaceTransformed = newDecl->Node()->AsClassDefinition()->IsNamespaceTransformed();
-    VariableFlags flag = isNamespaceTransformed ? VariableFlags::NAMESPACE : VariableFlags::CLASS;
-    auto *var = bindings_.insert({newDecl->Name(), allocator->New<LocalVariable>(newDecl, flag)}).first->second;
+    auto isEnumTransformed = newDecl->Node()->AsClassDefinition()->IsEnumTransformed();
+    VariableFlags flag = isNamespaceTransformed ? VariableFlags::NAMESPACE
+                         : isEnumTransformed    ? VariableFlags::ENUM_LITERAL
+                                                : VariableFlags::CLASS;
+    auto [iter, inserted] = bindings_.try_emplace(newDecl->Name(), allocator->New<LocalVariable>(newDecl, flag));
+    if (!inserted) {
+        return nullptr;
+    }
+
+    auto *var = iter->second;
     newDecl->Node()->AsClassDefinition()->Ident()->SetVariable(var);
     return var;
 }
@@ -1032,6 +1045,7 @@ void LoopDeclarationScope::ConvertToVariableScope(ArenaAllocator *allocator)
         slotIndex_++;
         loopType_ = ScopeType::LOOP_DECL;
         auto *copiedVar = var->AsLocalVariable()->Copy(allocator, var->Declaration());
+        ES2PANDA_ASSERT(copiedVar != nullptr);
         copiedVar->AddFlag(VariableFlags::INITIALIZED | VariableFlags::PER_ITERATION);
         var->AddFlag(VariableFlags::LOOP_DECL);
         loopScope_->InsertBinding(name, copiedVar);
@@ -1043,6 +1057,7 @@ void LoopDeclarationScope::ConvertToVariableScope(ArenaAllocator *allocator)
         slotIndex_ = std::max(slotIndex_, parentVarScope->LexicalSlots());
         evalBindings_ = parentVarScope->EvalBindings();
         initScope_ = allocator->New<LocalScope>(allocator, Parent());
+        ES2PANDA_ASSERT(initScope_ != nullptr);
         initScope_->BindNode(Node());
         initScope_->MergeBindings(bindings);
     }

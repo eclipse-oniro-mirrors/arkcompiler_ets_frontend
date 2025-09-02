@@ -24,6 +24,6 @@ class Derived2<T> extends Base<T> {
 function main(): void {
     let a = new Derived2<Object>();
 
-    assertEQ(a.foo(12), "Hello");
-    assertEQ(Derived2.foo(12), "World");
+    arktest.assertEQ(a.foo(12), "Hello");
+    arktest.assertEQ(Derived2.foo(12), "World");
 }

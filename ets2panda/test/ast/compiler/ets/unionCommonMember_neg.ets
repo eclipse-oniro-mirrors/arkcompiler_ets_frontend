@@ -41,21 +41,20 @@ function getUnion(): A | B {
 
 function main() {
     const u = getUnion()
-    assertEQ(/* @@ label1 */u.fld1, 42)
-    assertEQ(/* @@ label2 */u.fld2, 42.0)
-    assertEQ(/* @@ label3 */u.fld3[0], "abc")
-    assertEQ(/* @@ label4 */u.fld4[0], "def")
-    assertEQ(/* @@ label5 */u.fld5, 42.0)
-    assertEQ(/* @@ label6 */u.fld6, 42.0)
-    assertEQ(/* @@ label7 */u.fld7, 42.0)
-    assertEQ(/* @@ label8 */u.fld8, new Map<string, string>())
+    arktest.assertEQ(/* @@ label1 */u.fld1, 42)
+    arktest.assertEQ(/* @@ label2 */u.fld2, 42.0)
+    arktest.assertEQ(/* @@ label3 */u.fld3[0], "abc")
+    arktest.assertEQ(/* @@ label4 */u.fld4[0], "def")
+    arktest.assertEQ(/* @@ label5 */u.fld5, 42.0)
+    arktest.assertEQ(/* @@ label6 */u.fld6, 42.0)
+    arktest.assertEQ(/* @@ label7 */u.fld7, 42.0)
+    arktest.assertEQ(/* @@ label8 */u.fld8, new Map<string, string>())
 }
 
-/* @@@ label1 Error TypeError: Member type must be the same for all union objects.  */
-/* @@@ label2 Error TypeError: Member type must be the same for all union objects.  */
-/* @@@ label3 Error TypeError: Member type must be the same for all union objects.  */
-/* @@@ label4 Error TypeError: Member type must be the same for all union objects.  */
-/* @@@ label5 Error TypeError: Member type must be the same for all union objects.  */
-/* @@@ label6 Error TypeError: Member type must be the same for all union objects.  */
-/* @@@ label7 Error TypeError: Member type must be the same for all union objects.  */
-/* @@@ label8 Error TypeError: Member type must be the same for all union objects.  */
+/* @@@ label1 Error TypeError: Member type must be the same for all union objects. */
+/* @@@ label3 Error TypeError: Member type must be the same for all union objects. */
+/* @@@ label4 Error TypeError: Member type must be the same for all union objects. */
+/* @@@ label5 Error TypeError: Member type must be the same for all union objects. */
+/* @@@ label6 Error TypeError: Member type must be the same for all union objects. */
+/* @@@ label7 Error TypeError: Member type must be the same for all union objects. */
+/* @@@ label8 Error TypeError: Member type must be the same for all union objects. */

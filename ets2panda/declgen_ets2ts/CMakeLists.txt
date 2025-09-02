@@ -14,6 +14,7 @@
 set(DECLGEN_ETS2TS_SRC
   main.cpp
   declgenEts2Ts.cpp
+  isolatedDeclgenChecker.cpp
 )
 
 set(DECLGEN_ETS2TS_INCLUDE_DIRS

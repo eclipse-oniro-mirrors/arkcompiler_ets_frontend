@@ -27,4 +27,4 @@ let a: int = "I am a number, I promise...";
 /* @@? package_with_both_errors.ets:21:21 Error TypeError: No static $_invoke method and static $_instantiate method in Day. Day() is not allowed. */
 /* @@? package_with_both_errors.ets:21:21 Error TypeError: Type 'Day' has no call signatures. */
 
-/* @@? package_module_with_semantic_error.ets:18:14 Error TypeError: Type '"I am a number, I promise..."' cannot be assigned to type 'int' */
+/* @@? package_module_with_semantic_error.ets:18:14 Error TypeError: Type '"I am a number, I promise..."' cannot be assigned to type 'Int' */

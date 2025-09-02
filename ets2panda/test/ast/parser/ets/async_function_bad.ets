@@ -24,4 +24,4 @@ async native function foo(): Promise;
 /* @@? 16:27 Error SyntaxError: Unexpected token ')'. */
 /* @@? 16:28 Error SyntaxError: Unexpected token, expected ')'. */
 /* @@? 16:30 Error SyntaxError: Unexpected token 'Promise'. */
-/* @@? 16:30 Error TypeError: Class name 'Promise' used in the wrong context */
+/* @@? 16:30 Error SyntaxError: Class cannot be used as object. */

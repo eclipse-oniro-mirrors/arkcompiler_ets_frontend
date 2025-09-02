@@ -14,8 +14,8 @@
  */
 
 function main(): void {
-    /* @@ label1 */assertTrue(/* @@ label2 */"true")
+    /* @@ label1 */arktest.assertTrue(/* @@ label2 */"true")
 }
 
 /* @@@ label1 Error TypeError: No matching call signature for assertTrue("true") */
-/* @@@ label2 Error TypeError: Type '"true"' is not compatible with type 'boolean' at index 1 */
+/* @@@ label2 Error TypeError: Type '"true"' is not compatible with type 'Boolean' at index 1 */

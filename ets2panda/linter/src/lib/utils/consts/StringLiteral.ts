@@ -25,3 +25,4 @@ export const STRINGLITERAL_ANY = 'ANY';
 export const STRINGLITERAL_ENUM = 'enum';
 export const STRINGLITERAL_FROM = 'from';
 export const STRINGLITERAL_ARRAY = 'Array';
+export const STRINGLITERAL_INFINITY = 'Infinity';

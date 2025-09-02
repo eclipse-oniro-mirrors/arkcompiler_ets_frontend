@@ -33,5 +33,6 @@ export const EXTENDED_BASE_TYPES = new Map<string, string[]>([
   ['ReadonlyArray', ['ConcatArray']],
   ['Array', ['ReadonlyArray']],
   ['Map', ['ReadonlyMap']],
-  ['Set', ['ReadonlySet']]
+  ['Set', ['ReadonlySet']],
+  ['Promise', ['PromiseLike']]
 ]);

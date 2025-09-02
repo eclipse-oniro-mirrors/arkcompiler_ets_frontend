@@ -14,14 +14,14 @@
  */
 
 class ABC {
-    public readonly /* @@ label */date: Date = new Date();
+    public readonly date: Date = new Date();
 
     constructor() {
         this.init()
     }
 
     private init(): void {
-        this.date = new Date();
+        /* @@ label */this.date = new Date();
     }
 
     public main(): void {}

@@ -32,7 +32,7 @@ class A {
         let j: Int = 200000;
         let k: long = new Long(200000000000);
         let l: Long = 200000000000;
-        let m: float = 2.22;
+        let m: float = 2.22f;
         let n: float = new Float(m);
         let o: Float = m;
         let p: double = new Double(2.2222222222);
@@ -71,7 +71,7 @@ class A {
         this.integerReference(200000);
         this.longPrimitive(new Long(200000000000000));
         this.longReference(200000000000000);
-        let f: float = 2.22;
+        let f: float = 2.22f;
         this.floatPrimitive(new Float(f));
         this.floatReference(f);
         this.doublePrimitive(new Double(2.2222222222));

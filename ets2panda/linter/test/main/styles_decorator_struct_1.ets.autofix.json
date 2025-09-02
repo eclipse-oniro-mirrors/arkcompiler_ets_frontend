@@ -54,27 +54,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 21,
-            "column": 19,
-            "endLine": 21,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 710,
-                    "end": 711,
-                    "replacementText": "8.0",
-                    "line": 21,
-                    "column": 19,
-                    "endLine": 21,
-                    "endColumn": 20
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 35,
             "column": 3,
             "endLine": 42,
@@ -111,27 +90,6 @@
             ],
             "suggest": "",
             "rule": "\"@Styles\" decorator is not supported (arkui-no-styles-decorator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 49,
-            "column": 12,
-            "endLine": 49,
-            "endColumn": 14,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1114,
-                    "end": 1116,
-                    "replacementText": "10.0",
-                    "line": 49,
-                    "column": 12,
-                    "endLine": 49,
-                    "endColumn": 14
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -174,16 +132,6 @@
             ],
             "suggest": "",
             "rule": "\"@Styles\" decorator is not supported (arkui-no-styles-decorator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 103,
-            "column": 24,
-            "endLine": 103,
-            "endColumn": 37,
-            "problem": "LimitedVoidTypeFromSdk",
-            "suggest": "",
-            "rule": "Type \"void\" has no instances.(sdk-limited-void-type)",
             "severity": "ERROR"
         },
         {

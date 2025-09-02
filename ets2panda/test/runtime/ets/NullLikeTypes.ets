@@ -20,6 +20,6 @@ function main() {
     let n: null = fnull();
     let u: undefined = fundefined();
 
-    assertTrue(n as null | undefined == u as null | undefined)
-    assertNE(n as null | undefined, u as null | undefined)
+    arktest.assertTrue(n as null | undefined == u as null | undefined)
+    arktest.assertNE(n as null | undefined, u as null | undefined)
 }

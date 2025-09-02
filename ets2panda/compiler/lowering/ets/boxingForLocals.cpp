@@ -14,6 +14,7 @@
  */
 
 #include "boxingForLocals.h"
+#include <cstddef>
 
 #include "compiler/lowering/util.h"
 #include "checker/ETSchecker.h"
@@ -119,7 +120,7 @@ static void HandleFunctionParam(public_lib::Context *ctx, ir::ETSParameterExpres
                                 ArenaMap<varbinder::Variable *, varbinder::Variable *> *varsMap)
 {
     auto *allocator = ctx->allocator;
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *varBinder = checker->VarBinder();
 
     auto *id = param->Ident()->AsIdentifier();
@@ -128,13 +129,14 @@ static void HandleFunctionParam(public_lib::Context *ctx, ir::ETSParameterExpres
     auto *func = param->Parent()->AsScriptFunction();
     ES2PANDA_ASSERT(func->Body()->IsBlockStatement());  // guaranteed after expressionLambdaLowering
     auto *body = func->Body()->AsBlockStatement();
-    auto &bodyStmts = body->Statements();
+    auto &bodyStmts = body->StatementsForUpdates();
     auto *scope = body->Scope();
 
     auto *initId = allocator->New<ir::Identifier>(id->Name(), allocator);
     ES2PANDA_ASSERT(initId != nullptr);
     initId->SetVariable(id->Variable());
     initId->SetTsType(oldType);
+    initId->SetRange(id->Range());
 
     // The new variable will have the same name as the parameter. This is not representable in source code.
     auto *boxedType = checker->GlobalBuiltinBoxType(oldType);
@@ -147,6 +149,7 @@ static void HandleFunctionParam(public_lib::Context *ctx, ir::ETSParameterExpres
     auto *newDeclarator = util::NodeAllocator::ForceSetParent<ir::VariableDeclarator>(
         allocator, ir::VariableDeclaratorFlag::CONST, allocator->New<ir::Identifier>(newVarName.View(), allocator),
         newInit);
+    newDeclarator->SetRange(param->Range());
     ArenaVector<ir::VariableDeclarator *> declVec {allocator->Adapter()};
     declVec.emplace_back(newDeclarator);
 
@@ -165,6 +168,7 @@ static void HandleFunctionParam(public_lib::Context *ctx, ir::ETSParameterExpres
         allocator, ir::VariableDeclaration::VariableDeclarationKind::CONST, allocator, std::move(declVec));
     ES2PANDA_ASSERT(newDeclaration != nullptr);
     newDeclaration->SetParent(body);
+    newDeclaration->SetRange(param->Range());
     bodyStmts.insert(bodyStmts.begin(), newDeclaration);
 
     auto lexScope = varbinder::LexicalScope<varbinder::Scope>::Enter(varBinder, scope);
@@ -180,7 +184,7 @@ static ir::AstNode *HandleVariableDeclarator(public_lib::Context *ctx, ir::Varia
                                              ArenaMap<varbinder::Variable *, varbinder::Variable *> *varsMap)
 {
     auto *allocator = ctx->allocator;
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *varBinder = checker->VarBinder();
 
     auto *id = declarator->Id()->AsIdentifier();
@@ -192,9 +196,11 @@ static ir::AstNode *HandleVariableDeclarator(public_lib::Context *ctx, ir::Varia
     auto initArgs = ArenaVector<ir::Expression *>(allocator->Adapter());
     if (declarator->Init() != nullptr) {
         auto *arg = declarator->Init();
-        if (arg->TsType() != type) {
+        if (!checker->IsTypeIdenticalTo(arg->TsType(), type)) {
             arg = util::NodeAllocator::ForceSetParent<ir::TSAsExpression>(
                 allocator, arg, allocator->New<ir::OpaqueTypeNode>(type, allocator), false);
+            arg->AsTSAsExpression()->TypeAnnotation()->SetRange(declarator->Init()->Range());
+            arg->SetRange(declarator->Init()->Range());
         }
         initArgs.push_back(arg);
     }
@@ -202,7 +208,14 @@ static ir::AstNode *HandleVariableDeclarator(public_lib::Context *ctx, ir::Varia
         allocator, allocator->New<ir::OpaqueTypeNode>(boxedType, allocator), std::move(initArgs));
     auto *newDeclarator = util::NodeAllocator::ForceSetParent<ir::VariableDeclarator>(
         allocator, declarator->Flag(), allocator->New<ir::Identifier>(id->Name(), allocator), newInit);
+    ES2PANDA_ASSERT(newDeclarator != nullptr);
+
     newDeclarator->SetParent(declarator->Parent());
+
+    newInit->GetTypeRef()->SetRange(declarator->Range());
+    newInit->SetRange(declarator->Range());
+    newDeclarator->Id()->SetRange(declarator->Range());
+    newDeclarator->SetRange(declarator->Range());
 
     auto *newDecl = allocator->New<varbinder::ConstDecl>(oldVar->Name(), newDeclarator);
     auto *newVar = allocator->New<varbinder::LocalVariable>(newDecl, oldVar->Flags());
@@ -235,7 +248,7 @@ static bool IsBeingDeclared(ir::AstNode *ast)
 static bool IsPartOfBoxInitializer(public_lib::Context *ctx, ir::AstNode *ast)
 {
     ES2PANDA_ASSERT(ast->IsIdentifier());
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *id = ast->AsIdentifier();
 
     // NOTE(gogabr): rely on caching for type instantiations, so we can use pointer comparison.
@@ -252,10 +265,10 @@ static bool OnLeftSideOfAssignment(ir::AstNode *ast)
 static ir::AstNode *HandleReference(public_lib::Context *ctx, ir::Identifier *id, varbinder::Variable *var)
 {
     auto *parser = ctx->parser->AsETSParser();
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
 
     // `as` is needed to account for smart types
-    auto *res = parser->CreateFormattedExpression("@@I1.get() as @@T2", var->Name(), id->TsType());
+    auto *res = parser->CreateFormattedExpression("@@I1.get() as @@T2", var->Name(), id->Variable()->TsType());
     res->SetParent(id->Parent());
     res->AsTSAsExpression()
         ->Expr()
@@ -270,8 +283,7 @@ static ir::AstNode *HandleReference(public_lib::Context *ctx, ir::Identifier *id
     // adjustment later.
     res->Check(checker);
 
-    ES2PANDA_ASSERT(res->TsType() == id->TsType());
-    res->SetBoxingUnboxingFlags(id->GetBoxingUnboxingFlags());
+    ES2PANDA_ASSERT(res->TsType() == id->Variable()->TsType());
 
     return res;
 }
@@ -283,8 +295,8 @@ static ir::AstNode *HandleAssignment(public_lib::Context *ctx, ir::AssignmentExp
     ES2PANDA_ASSERT(ass->OperatorType() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
 
     auto *parser = ctx->parser->AsETSParser();
-    auto *varBinder = ctx->checker->VarBinder()->AsETSBinder();
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
 
     auto *oldVar = ass->Left()->Variable();
     auto *newVar = varsMap.find(oldVar)->second;
@@ -305,7 +317,6 @@ static ir::AstNode *HandleAssignment(public_lib::Context *ctx, ir::AssignmentExp
     res->Check(checker);
 
     ES2PANDA_ASSERT(res->TsType() == ass->TsType());
-    res->SetBoxingUnboxingFlags(ass->GetBoxingUnboxingFlags());
 
     return res;
 }
@@ -356,6 +367,7 @@ bool BoxingForLocals::PerformForModule(public_lib::Context *ctx, parser::Program
     std::function<void(ir::AstNode *)> searchForFunctions = [&](ir::AstNode *ast) {
         if (ast->IsScriptFunction()) {
             HandleScriptFunction(ctx, ast->AsScriptFunction());  // no recursion
+            RefineSourceRanges(ast);
         } else {
             ast->Iterate(searchForFunctions);
         }

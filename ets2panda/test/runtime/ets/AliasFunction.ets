@@ -28,26 +28,26 @@ type Alias7Function<T> = (p : (p1 : C<T>) => double, q : double) => double;
 
 function main() {
     let v1 : (p : double) => double = (p : double) : double => { return p; }; // (p:Double) => Double
-    assertEQ(v1(1), 1)
+    arktest.assertEQ(v1(1), 1)
 
     let v2 : Alias1Function<double> = (p : double) : double => { return p; }; // (p:Double) => Double
-    assertEQ(v2(2), 2)
+    arktest.assertEQ(v2(2), 2)
 
     let v3 : Alias2Function<double> = (p : double) : double => { return p; }; // (p:Double) => Double
-    assertEQ(v3(3), 3)
+    arktest.assertEQ(v3(3), 3)
 
     let v4 : Alias3Function<double> = (p : Int) : double[] => { return [p]; }; // (p:Double) => double[]
-    assertEQ(v4(4)[0], 4)
+    arktest.assertEQ(v4(4)[0], 4)
 
     // let v5 : Alias4Function<double> = (p : double[], q: double) : double => { return p[0]; };  // (p: Double[], q: Double) => Double
-    // assertEQ(v5([5.0], 6), 5)
+    // arktest.assertEQ(v5([5.0], 6), 5)
 
     let v6 : Alias5Function<double, double> = (p : double[], q: double) : double => { return p[0]; };  // (p: double[], q: Double) => Double
-    assertEQ(v6([7.0], 8), 7.0)
+    arktest.assertEQ(v6([7.0], 8), 7.0)
 
     let v7 : Alias6Function<double, double, double> = (p: double, q: double) : double => { return p + q; }; // (p: Double, q: Double) => Double
-    assertEQ(v7(9, 10), 19)
+    arktest.assertEQ(v7(9, 10), 19)
     
     let v9 : Alias7Function<double> = (p : (p1 : C<double>) => double, q: double) : double => { return p(new C<double>(q)); }; // (p : (p1 : C<Double) => Double, Double) : Double
-    assertEQ(v9((p : C<double>) : double => { return p.v;}, 20), 20);
+    arktest.assertEQ(v9((p : C<double>) : double => { return p.v;}, 20), 20);
 }    

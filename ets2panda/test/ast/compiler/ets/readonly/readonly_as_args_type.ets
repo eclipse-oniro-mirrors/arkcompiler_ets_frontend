@@ -16,7 +16,4 @@
 function foo(param1: readonly/* @@ foo_param1 */, param2: readonly /* @@ foo_param2 */true) {}
 
 /* @@@ foo_param1 Error SyntaxError: Invalid Type. */
-/* @@@ foo_param1 Error SyntaxError: 'readonly' type modifier is only permitted on resizable array and tuple types. */
-
 /* @@@ foo_param2 Error SyntaxError: Invalid Type. */
-/* @@@ foo_param2 Error SyntaxError: 'readonly' type modifier is only permitted on resizable array and tuple types. */

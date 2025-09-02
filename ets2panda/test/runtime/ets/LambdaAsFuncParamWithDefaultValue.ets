@@ -14,11 +14,11 @@
  */
 
 function foo(a : (b: int) => int) {
-    assertEQ(a(3), 3)
+    arktest.assertEQ(a(3), 3)
 }
 
 function bar(a : (b: int, c: string) => int) {
-    assertEQ(a(4, "c"), 6)
+    arktest.assertEQ(a(4, "c"), 6)
 }
 
 function main() {
@@ -30,14 +30,14 @@ function main() {
         } else if (c == "c"){
             return b + 2;
         } else {
-            assertTrue(false)
+            arktest.assertTrue(false)
         }
 
         return 0;
     };
 
-    assertEQ(a(1), 1)
-    assertEQ(a(2,"c"), 4)
+    arktest.assertEQ(a(1), 1)
+    arktest.assertEQ(a(2,"c"), 4)
     foo(a);
     bar(a);
 }

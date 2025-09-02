@@ -152,7 +152,7 @@ private:
 class LocalVariable : public Variable {
 public:
     explicit LocalVariable(Decl *decl, VariableFlags flags);
-    explicit LocalVariable(VariableFlags flags);
+    explicit LocalVariable(const VariableFlags flags);
 
     VariableType Type() const override
     {

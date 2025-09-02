@@ -14,5 +14,5 @@
  */
 
 function main() {
-    assertEQ((() => 3)(), 3)
+    arktest.assertEQ((() => 3)(), 3)
 }

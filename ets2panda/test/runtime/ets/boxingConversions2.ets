@@ -16,6 +16,6 @@
 function main() {
     let s1: int = 0
     let d1: Float = s1
-    assertEQ(d1.unboxed(), 0.0)
+    arktest.assertEQ(d1.unboxed(), 0.0)
 }
 

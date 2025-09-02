@@ -28,4 +28,3 @@ class array_type  {
 /* @@@ label1 Error TypeError: Property 'f' might not have been initialized.  */
 /* @@@ label2 Error TypeError: Function with a non void return type must return a value.  */
 /* @@@ label3 Error TypeError: Function with a non void return type must return a value.  */
-

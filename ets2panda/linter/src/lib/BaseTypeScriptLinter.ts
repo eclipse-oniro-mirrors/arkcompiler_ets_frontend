@@ -14,19 +14,18 @@
  */
 
 import type * as ts from 'typescript';
+import type { Autofix } from './autofixes/Autofixer';
+import { cookBookRefToFixTitle } from './autofixes/AutofixTitles';
+import { cookBookTag } from './CookBookMsg';
+import { faultsAttrs } from './FaultAttrs';
+import { faultDesc } from './FaultDesc';
 import type { LinterOptions } from './LinterOptions';
 import type { ProblemInfo } from './ProblemInfo';
-import type { Autofix } from './autofixes/Autofixer';
-import { FileStatistics } from './statistics/FileStatistics';
-import { TsUtils } from './utils/TsUtils';
-import { cookBookRefToFixTitle } from './autofixes/AutofixTitles';
-import { faultDesc } from './FaultDesc';
-import { TypeScriptLinterConfig } from './TypeScriptLinterConfig';
-import { faultsAttrs } from './FaultAttrs';
-import { cookBookTag } from './CookBookMsg';
 import { FaultID } from './Problems';
 import { ProblemSeverity } from './ProblemSeverity';
-import { arkts2Rules, onlyArkts2SyntaxRules } from './utils/consts/ArkTS2Rules';
+import { FileStatistics } from './statistics/FileStatistics';
+import { TypeScriptLinterConfig } from './TypeScriptLinterConfig';
+import { TsUtils } from './utils/TsUtils';
 
 export abstract class BaseTypeScriptLinter {
   problemsInfos: ProblemInfo[] = [];
@@ -137,19 +136,11 @@ export abstract class BaseTypeScriptLinter {
   }
 
   private shouldSkipRule(badNodeInfo: ProblemInfo): boolean {
-    const ruleConfigTags = this.options.ruleConfigTags;
-    if (ruleConfigTags && !ruleConfigTags.has(badNodeInfo.ruleTag)) {
-      return true;
-    }
     if (this.options?.ideInteractive) {
-      if (this.options.onlySyntax) {
-        if (onlyArkts2SyntaxRules.has(badNodeInfo.ruleTag)) {
-          return false;
-        }
-      } else if (this.options.arkts2 && arkts2Rules.includes(badNodeInfo.ruleTag)) {
-        return false;
+      const ruleConfigTags = this.options.ruleConfigTags;
+      if (ruleConfigTags && !ruleConfigTags.has(badNodeInfo.ruleTag)) {
+        return true;
       }
-      return true;
     }
     return false;
   }

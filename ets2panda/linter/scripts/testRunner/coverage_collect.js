@@ -33,8 +33,14 @@ function processStatementMap(statementMap, consumer) {
         const startPos = consumer.originalPositionFor(statement.start);
         const endPos = consumer.originalPositionFor(statement.end);
         
-        statement.start = { line: startPos.line, column: startPos.column };
-        statement.end = { line: endPos.line, column: endPos.column };
+        statement.start = { 
+            line: startPos.line, 
+            column: 0 
+        };
+        statement.end = {
+            line: endPos.line,
+            column: Number.MAX_SAFE_INTEGER 
+        };
     }
 }
 
@@ -49,17 +55,21 @@ function processFunctionMap(functionMap, consumer) {
         
         const declStart = consumer.originalPositionFor(func.decl.start);
         const declEnd = consumer.originalPositionFor(func.decl.end);
-        const locStart = consumer.originalPositionFor(func.loc.start);
-        const locEnd = consumer.originalPositionFor(func.loc.end);
         
         func.decl = {
-            start: { line: declStart.line, column: declStart.column },
-            end: { line: declEnd.line, column: declEnd.column }
+            start: { 
+                line: declStart.line, 
+                column: 0  
+            },
+            end: {
+                line: declEnd.line,
+                column: Number.MAX_SAFE_INTEGER  
+            }
         };
         
         func.loc = {
-            start: { line: locStart.line, column: locStart.column },
-            end: { line: locEnd.line, column: locEnd.column }
+            start: { line: declStart.line, column: 0 },
+            end: { line: declEnd.line, column: Number.MAX_SAFE_INTEGER }
         };
         
         func.line = declStart.line;
@@ -97,6 +107,68 @@ function processBranchMap(branchMap, consumer) {
     }
 }
 
+
+/**
+ * Filter out coverage data before line 16 and remove function declaration coverage
+ * @param {Object} newCoverageData Original coverage data
+ * @returns {Object} Filtered coverage data
+ */
+function filterCoverageByLine(newCoverageData) {
+    const filteredCoverage = {};
+    for (const filePath in newCoverageData) {
+        const fileCoverage = newCoverageData[filePath];
+        const filteredFileCoverage = {
+            ...fileCoverage,
+            statementMap: {},
+            fnMap: {},
+            branchMap: {},
+            s: {}, 
+            f: {}, 
+            b: {}  
+        };
+        for (const stmtId in fileCoverage.statementMap) {
+            const stmt = fileCoverage.statementMap[stmtId];
+            if (stmt.start.line >= 16) {
+                filteredFileCoverage.statementMap[stmtId] = stmt;
+                filteredFileCoverage.s[stmtId] = fileCoverage.s[stmtId];
+            }
+        }
+        for (const fnId in fileCoverage.fnMap) {
+            const fn = fileCoverage.fnMap[fnId];
+            if (fn.decl.start.line >= 16) {
+                const newFn = {
+                    ...fn,
+                    decl: null, 
+                    loc: {
+                        start: { 
+                            line: fn.decl.end.line + 1, 
+                            column: 0 
+                        },
+                        end: fn.loc.end
+                    },
+                    line: fn.decl.end.line + 1 
+                };
+                filteredFileCoverage.fnMap[fnId] = newFn;
+                filteredFileCoverage.f[fnId] = fileCoverage.f[fnId];
+            }
+        }
+        for (const branchId in fileCoverage.branchMap) {
+            const branch = fileCoverage.branchMap[branchId];
+            if (branch.loc.start.line >= 16) {
+                filteredFileCoverage.branchMap[branchId] = branch;
+                filteredFileCoverage.b[branchId] = fileCoverage.b[branchId];
+            }
+        }
+        if (Object.keys(filteredFileCoverage.statementMap).length > 0 ||
+            Object.keys(filteredFileCoverage.fnMap).length > 0 ||
+            Object.keys(filteredFileCoverage.branchMap).length > 0) {
+            filteredCoverage[filePath] = filteredFileCoverage;
+        }
+    }
+    return filteredCoverage;
+}
+
+
 /**
  * Collects and processes coverage data using source maps
  */
@@ -132,9 +204,11 @@ async function collectCoverage() {
         });
     }
 
+    const filteredCoverage = filterCoverageByLine(newCoverageData);
+
     fs.writeFileSync(
         NEW_COVERAGE_FILE,
-        JSON.stringify(newCoverageData, null, 4)
+        JSON.stringify(filteredCoverage, null, 4)
     );
 }
 

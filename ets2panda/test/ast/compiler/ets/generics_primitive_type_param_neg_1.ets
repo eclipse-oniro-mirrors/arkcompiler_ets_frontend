@@ -22,10 +22,9 @@ function main(): void {
     let prim_int = 5;
 
     switch(prim_int) {
-        /* @@ label */case /* @@ label1 */a_int.value: // not allowed, because type of a_int.value is Int
+        /* @@ label */case a_int.value: // not allowed, because type of a_int.value is Int
         default:
     }
 }
 
-/* @@@ label1 Error TypeError: Switch case type 'Int' is not comparable to discriminant type 'int'  */
 /* @@@ label Error TypeError: Constant expression required  */

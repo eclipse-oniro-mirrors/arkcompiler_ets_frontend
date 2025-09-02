@@ -45,12 +45,7 @@ void NamedType::TransformChildren(const NodeTransformer &cb, std::string_view co
         }
     }
 
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void NamedType::Iterate(const NodeTraverser &cb) const

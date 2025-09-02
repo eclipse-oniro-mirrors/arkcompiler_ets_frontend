@@ -19,8 +19,8 @@ foo(1, "2")
 foo(1, 1)
 foo(1, () => { return "1" })
 
-/* @@? 18:1 Error TypeError: No matching call signature for foo(int, "2") */
+/* @@? 18:1 Error TypeError: No matching call signature for foo(Double, "2") */
 /* @@? 18:8 Error TypeError: Type '"2"' is not compatible with type '() => void|undefined' at index 2 */
-/* @@? 19:1 Error TypeError: No matching call signature for foo(int, int) */
-/* @@? 19:8 Error TypeError: Type 'int' is not compatible with type '() => void|undefined' at index 2 */
+/* @@? 19:1 Error TypeError: No matching call signature for foo(Double, Int) */
+/* @@? 19:8 Error TypeError: Type 'Int' is not compatible with type '() => void|undefined' at index 2 */
 /* @@? 20:23 Error TypeError: Unexpected return value, enclosing method return type is void. */

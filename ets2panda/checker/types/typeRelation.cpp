@@ -29,24 +29,20 @@ ArenaAllocator *TypeRelation::Allocator()
 RelationResult TypeRelation::CacheLookup(const Type *source, const Type *target, const RelationHolder &holder,
                                          RelationType type) const
 {
-    if (result_ == RelationResult::CACHE_MISS) {
-        return result_;
-    }
-
     ES2PANDA_ASSERT(source != nullptr);
     ES2PANDA_ASSERT(target != nullptr);
 
-    RelationKey relationKey {source->Id(), target->Id()};
-    auto res = holder.cached.find(relationKey);
-    if (res == holder.cached.end()) {
+    auto key = RelationHolder::MakeKey(source->Id(), target->Id());
+    auto res = holder.Find(key);
+    if (res == nullptr) {
         return RelationResult::CACHE_MISS;
     }
 
-    if (res->second.type >= type && res->second.result == RelationResult::TRUE) {
+    if (res->type >= type && res->result == RelationResult::TRUE) {
         return RelationResult::TRUE;
     }
 
-    if (res->second.type <= type && res->second.result == RelationResult::FALSE) {
+    if (res->type <= type && res->result == RelationResult::FALSE) {
         return RelationResult::FALSE;
     }
 
@@ -69,7 +65,8 @@ bool TypeRelation::IsIdenticalTo(Type *source, Type *target)
         checker_->ResolveStructuredTypeMembers(target);
         result_ = RelationResult::FALSE;
         target->Identical(this, source);
-        checker_->IdenticalResults().cached.insert({{source->Id(), target->Id()}, {result_, RelationType::IDENTICAL}});
+        auto key = RelationHolder::MakeKey(source->Id(), target->Id());
+        checker_->IdenticalResults().Insert(key, {result_, RelationType::IDENTICAL});
     }
 
     return IsTrue();
@@ -114,7 +111,6 @@ bool TypeRelation::IsIdenticalTo(IndexInfo *source, IndexInfo *target)
     return result_ == RelationResult::TRUE;
 }
 
-// NOTE: applyNarrowing -> flag
 bool TypeRelation::IsAssignableTo(Type *source, Type *target)
 {
     if (source == target) {
@@ -133,7 +129,9 @@ bool TypeRelation::IsAssignableTo(Type *source, Type *target)
             result_ = RelationResult::FALSE;
         }
 
+        auto key = RelationHolder::MakeKey(source->Id(), target->Id());
         if (result_ != RelationResult::FALSE && IsIdenticalTo(source, target)) {
+            checker_->AssignableResults().Insert(key, {result_, RelationType::ASSIGNABLE});
             return true;
         }
 
@@ -148,8 +146,7 @@ bool TypeRelation::IsAssignableTo(Type *source, Type *target)
         }
 
         if (flags_ == TypeRelationFlag::NONE) {
-            checker_->AssignableResults().cached.insert(
-                {{source->Id(), target->Id()}, {result_, RelationType::ASSIGNABLE}});
+            checker_->AssignableResults().Insert(key, {result_, RelationType::ASSIGNABLE});
         }
     }
 
@@ -159,16 +156,8 @@ bool TypeRelation::IsAssignableTo(Type *source, Type *target)
 bool TypeRelation::IsComparableTo(Type *source, Type *target)
 {
     result_ = CacheLookup(source, target, checker_->ComparableResults(), RelationType::COMPARABLE);
-
-    // NOTE: vpukhov. reimplement dynamic comparison and remove this check
     ES2PANDA_ASSERT(source != nullptr);
     ES2PANDA_ASSERT(target != nullptr);
-    if (source->IsETSDynamicType() || target->IsETSDynamicType()) {
-        if (!(source->IsETSDynamicType() && target->IsETSDynamicType())) {
-            return false;
-        }
-    }
-
     if (result_ == RelationResult::CACHE_MISS) {
         if (IsAssignableTo(source, target)) {
             return true;
@@ -176,8 +165,9 @@ bool TypeRelation::IsComparableTo(Type *source, Type *target)
 
         result_ = RelationResult::FALSE;
         target->Compare(this, source);
-        checker_->ComparableResults().cached.insert(
-            {{source->Id(), target->Id()}, {result_, RelationType::COMPARABLE}});
+        ES2PANDA_ASSERT(source != nullptr);
+        auto key = RelationHolder::MakeKey(source->Id(), target->Id());
+        checker_->ComparableResults().Insert(key, {result_, RelationType::COMPARABLE});
     }
 
     return result_ == RelationResult::TRUE;
@@ -199,12 +189,9 @@ bool TypeRelation::IsCastableTo(Type *const source, Type *const target)
             return false;
         }
 
-        // NOTE: Can't cache if the node has BoxingUnboxingFlags. These flags should be stored and restored on the node
-        // on cache hit.
-        if (UncheckedCast() && node_->GetBoxingUnboxingFlags() == ir::BoxingUnboxingFlags::NONE &&
-            !node_->HasAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF)) {
-            checker_->UncheckedCastableResult().cached.insert(
-                {{source->Id(), target->Id()}, {result_, RelationType::UNCHECKED_CASTABLE}});
+        if (UncheckedCast() && !node_->HasAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF)) {
+            auto key = RelationHolder::MakeKey(source->Id(), target->Id());
+            checker_->UncheckedCastableResult().Insert(key, {result_, RelationType::UNCHECKED_CASTABLE});
         }
 
         return true;
@@ -215,20 +202,43 @@ bool TypeRelation::IsCastableTo(Type *const source, Type *const target)
 
 bool TypeRelation::IsLegalBoxedPrimitiveConversion(Type *target, Type *source)
 {
-    if (!target->IsETSReferenceType() || !source->IsETSReferenceType()) {
+    ETSChecker *checker = this->GetChecker()->AsETSChecker();
+
+    if (target == nullptr || source == nullptr) {
         return false;
     }
+
+    if (target->IsETSUnionType() && source->IsETSObjectType()) {
+        Type *sourceUnboxedType = checker->MaybeUnboxType(source);
+        if (sourceUnboxedType == nullptr || !sourceUnboxedType->IsETSPrimitiveType()) {
+            return false;
+        }
+        Type *boxedUnionTarget = target->AsETSUnionType()->FindUnboxableType();
+        if (boxedUnionTarget == nullptr) {
+            return false;
+        }
+        Type *targetUnboxedType = checker->MaybeUnboxType(boxedUnionTarget);
+        if (targetUnboxedType == nullptr || !targetUnboxedType->IsETSPrimitiveType()) {
+            return false;
+        }
+        bool res = this->Result(this->IsAssignableTo(sourceUnboxedType, target));
+        return res;
+    }
+
     if (!target->IsETSObjectType() || !source->IsETSObjectType()) {
         return false;
     }
-    if (!target->AsETSObjectType()->IsBoxedPrimitive() || !source->AsETSObjectType()->IsBoxedPrimitive()) {
+
+    if (!target->AsETSObjectType()->IsBoxedPrimitive() && !source->AsETSObjectType()->IsBoxedPrimitive()) {
         return false;
     }
 
-    ETSChecker *checker = this->GetChecker()->AsETSChecker();
-
     Type *targetUnboxedType = checker->MaybeUnboxType(target);
     Type *sourceUnboxedType = checker->MaybeUnboxType(source);
+
+    if (source->IsETSIntEnumType()) {
+        targetUnboxedType = checker->GlobalIntType();
+    }
 
     if (targetUnboxedType == nullptr || sourceUnboxedType == nullptr) {
         return false;
@@ -237,33 +247,33 @@ bool TypeRelation::IsLegalBoxedPrimitiveConversion(Type *target, Type *source)
         return false;
     }
 
-    return this->Result(this->IsAssignableTo(sourceUnboxedType, targetUnboxedType));
+    bool res = this->Result(this->IsAssignableTo(sourceUnboxedType, targetUnboxedType));
+    return res;
 }
 
 bool TypeRelation::IsSupertypeOf(Type *super, Type *sub)
 {
-    if (super == sub) {
+    if (LIKELY(super == sub)) {
         return Result(true);
     }
-
     if (sub == nullptr) {
+        return false;
+    }
+    if (super->IsETSPrimitiveType() != sub->IsETSPrimitiveType()) {
         return false;
     }
 
     result_ = CacheLookup(super, sub, checker_->SupertypeResults(), RelationType::SUPERTYPE);
     if (result_ == RelationResult::CACHE_MISS) {
-        if (IsIdenticalTo(super, sub)) {
-            return true;
+        if (!IsIdenticalTo(super, sub)) {
+            result_ = RelationResult::FALSE;
+            if (super->IsSupertypeOf(this, sub), !IsTrue()) {
+                sub->IsSubtypeOf(this, super);
+            }
         }
 
-        result_ = RelationResult::FALSE;
-        if (super->IsSupertypeOf(this, sub), !IsTrue()) {
-            sub->IsSubtypeOf(this, super);
-        }
-
-        if (flags_ == TypeRelationFlag::NONE) {
-            checker_->SupertypeResults().cached.insert({{super->Id(), sub->Id()}, {result_, RelationType::SUPERTYPE}});
-        }
+        auto key = RelationHolder::MakeKey(super->Id(), sub->Id());
+        checker_->SupertypeResults().Insert(key, {result_, RelationType::SUPERTYPE});
     }
 
     return result_ == RelationResult::TRUE;

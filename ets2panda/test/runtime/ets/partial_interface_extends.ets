@@ -23,10 +23,10 @@ interface I2 extends I {
 
 function main(){
   let f: Partial<I2> = {}
-  assertEQ(f.i, undefined)
-  assertEQ(f.j, undefined)
+  arktest.assertEQ(f.i, undefined)
+  arktest.assertEQ(f.j, undefined)
 
   let f2: Partial<I2> = {i:10,j :"some str" }
-  assertEQ(f2.i, 10)
-  assertEQ(f2.j, "some str")
+  arktest.assertEQ(f2.i, 10)
+  arktest.assertEQ(f2.j, "some str")
 }

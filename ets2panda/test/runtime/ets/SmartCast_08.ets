@@ -37,7 +37,7 @@ function foo(flag: boolean): int {
 function main() {
   let flag: boolean = false;
   
-  assertEQ(foo(flag), 6)
+  arktest.assertEQ(foo(flag), 6)
 
   try {
     foo(!flag);
@@ -45,5 +45,5 @@ function main() {
     flag = true;
   }
 
-  assertTrue(flag)
+  arktest.assertTrue(flag)
 }

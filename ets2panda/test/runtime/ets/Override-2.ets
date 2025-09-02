@@ -28,5 +28,5 @@ class B extends A {
 
 function main() {
     let a: A = new B()
-    assertEQ(a.met(), "b")
+    arktest.assertEQ(a.met(), "b")
 }

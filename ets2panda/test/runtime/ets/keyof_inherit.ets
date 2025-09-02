@@ -23,13 +23,14 @@ class B extends A{
   bfoo(){}
 }
 
+type keyofB = keyof B;
+
 function main() : void {
   let c1:keyof B = "field1"
   let c2:keyof B = "foo"
   let c3:keyof B = "bfield1"
   let c4:keyof B = "bfoo"
 
-  type keyofB = keyof B;
   let c5:keyofB = "field1"
   let c6:keyofB = "foo"
   let c7:keyofB = "bfield1"

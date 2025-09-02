@@ -33,10 +33,10 @@ function returnC(): C {
 
 function test(c: int, f: int, x: int, s: String, ivv: int) {} // should not prevent calling the next fun
 function test(c: C, f: int, x: int, s: String, ivv: int) {
-    assertEQ(c.f, f)
-    assertEQ(c.x, x)
-    assertEQ(c.s, s)
-    assertEQ(c.iv.v, ivv)
+    arktest.assertEQ(c.f, f)
+    arktest.assertEQ(c.x, x)
+    arktest.assertEQ(c.s, s)
+    arktest.assertEQ(c.iv.v, ivv)
 }
 
 function main(): int {

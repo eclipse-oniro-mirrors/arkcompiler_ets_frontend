@@ -24,6 +24,7 @@
 #include "objectIndexAccess.h"
 
 #include "checker/ETSchecker.h"
+#include "checker/types/typeFlag.h"
 #include "compiler/lowering/util.h"
 #include "parser/ETSparser.h"
 #include "util/options.h"
@@ -36,7 +37,6 @@ ir::Expression *ObjectIndexLowering::ProcessIndexSetAccess(parser::ETSParser *pa
     //  required accessible index method[s] and all the types are properly resolved.
 
     auto indexSymbol = Gensym(checker->Allocator());
-    assignmentExpression->Right()->SetBoxingUnboxingFlags(ir::BoxingUnboxingFlags::NONE);
     auto *const memberExpression = assignmentExpression->Left()->AsMemberExpression();
     ir::Expression *loweringResult = nullptr;
     ir::AstNode *setter = nullptr;
@@ -71,10 +71,9 @@ ir::Expression *ObjectIndexLowering::ProcessIndexSetAccess(parser::ETSParser *pa
                                                            memberExpression->Property(), assignmentExpression->Right());
         setter = loweringResult;
     }
-    ES2PANDA_ASSERT(loweringResult != nullptr);
+    ES2PANDA_ASSERT(loweringResult != nullptr && setter != nullptr);
     loweringResult->SetParent(assignmentExpression->Parent());
     loweringResult->SetRange(assignmentExpression->Range());
-    loweringResult->SetBoxingUnboxingFlags(assignmentExpression->GetBoxingUnboxingFlags());
     setter->AddModifier(ir::ModifierFlags::ARRAY_SETTER);
     auto scope = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(),
                                                                   NearestScope(assignmentExpression->Parent()));
@@ -100,7 +99,6 @@ ir::Expression *ObjectIndexLowering::ProcessIndexGetAccess(parser::ETSParser *pa
     loweringResult->SetRange(memberExpression->Range());
 
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, loweringResult);
-    loweringResult->SetBoxingUnboxingFlags(memberExpression->GetBoxingUnboxingFlags());
     return loweringResult;
 }
 
@@ -108,18 +106,17 @@ bool ObjectIndexLowering::PerformForModule(public_lib::Context *ctx, parser::Pro
 {
     auto *const parser = ctx->parser->AsETSParser();
     ES2PANDA_ASSERT(parser != nullptr);
-    auto *const checker = ctx->checker->AsETSChecker();
+    auto *const checker = ctx->GetChecker()->AsETSChecker();
     ES2PANDA_ASSERT(checker != nullptr);
 
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
         [this, parser, checker](ir::AstNode *const ast) -> ir::AstNode * {
-            if (ast->IsAssignmentExpression() && ast->AsAssignmentExpression()->Left()->IsMemberExpression() &&
-                ast->AsAssignmentExpression()->Left()->AsMemberExpression()->Kind() ==
-                    ir::MemberExpressionKind::ELEMENT_ACCESS) {
-                if (auto const *const objectType =
-                        ast->AsAssignmentExpression()->Left()->AsMemberExpression()->ObjType();
-                    objectType != nullptr && !objectType->IsETSDynamicType()) {
+            if (ast->IsAssignmentExpression() && ast->AsAssignmentExpression()->Left()->IsMemberExpression()) {
+                auto memberExpr = ast->AsAssignmentExpression()->Left()->AsMemberExpression();
+                if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS &&
+                    memberExpr->AsMemberExpression()->ObjType() != nullptr &&
+                    !memberExpr->Object()->TsType()->IsGradualType()) {
                     return ProcessIndexSetAccess(parser, checker, ast->AsAssignmentExpression());
                 }
             }
@@ -130,10 +127,10 @@ bool ObjectIndexLowering::PerformForModule(public_lib::Context *ctx, parser::Pro
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
         [this, parser, checker](ir::AstNode *const ast) -> ir::AstNode * {
-            if (ast->IsMemberExpression() &&
-                ast->AsMemberExpression()->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) {
-                if (auto const *const objectType = ast->AsMemberExpression()->ObjType();
-                    objectType != nullptr && !objectType->IsETSDynamicType()) {
+            if (ast->IsMemberExpression()) {
+                auto memberExpr = ast->AsMemberExpression();
+                if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS &&
+                    memberExpr->ObjType() != nullptr && !memberExpr->Object()->TsType()->IsGradualType()) {
                     return ProcessIndexGetAccess(parser, checker, ast->AsMemberExpression());
                 }
             }
@@ -148,10 +145,11 @@ bool ObjectIndexLowering::PostconditionForModule([[maybe_unused]] public_lib::Co
                                                  const parser::Program *program)
 {
     return !program->Ast()->IsAnyChild([](const ir::AstNode *ast) {
-        if (ast->IsMemberExpression() &&
-            ast->AsMemberExpression()->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) {
-            if (auto const *const objectType = ast->AsMemberExpression()->ObjType(); objectType != nullptr) {
-                return !objectType->IsETSDynamicType();
+        if (ast->IsMemberExpression()) {
+            auto memberExpr = ast->AsMemberExpression();
+            if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr &&
+                !memberExpr->Object()->TsType()->IsGradualType()) {
+                return true;
             }
         }
         return false;

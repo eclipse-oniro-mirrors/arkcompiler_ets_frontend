@@ -24,31 +24,38 @@ public:
     explicit ClassDeclaration(ClassDefinition *def, ArenaAllocator *allocator)
         : Statement(AstNodeType::CLASS_DECLARATION), def_(def), decorators_(allocator->Adapter())
     {
+        InitHistory();
+    }
+
+    explicit ClassDeclaration(ClassDefinition *def, ArenaAllocator *allocator, AstNodeHistory *history)
+        : Statement(AstNodeType::CLASS_DECLARATION), def_(def), decorators_(allocator->Adapter())
+    {
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     ClassDefinition *Definition()
     {
-        return def_;
+        return GetHistoryNodeAs<ClassDeclaration>()->def_;
     }
 
     const ClassDefinition *Definition() const
     {
-        return def_;
+        return GetHistoryNodeAs<ClassDeclaration>()->def_;
     }
 
     const ArenaVector<Decorator *> &Decorators() const
     {
-        return decorators_;
-    }
-
-    const ArenaVector<Decorator *> *DecoratorsPtr() const override
-    {
-        return &Decorators();
+        return GetHistoryNodeAs<ClassDeclaration>()->decorators_;
     }
 
     void AddDecorators(ArenaVector<Decorator *> &&decorators) override
     {
-        decorators_ = std::move(decorators);
+        auto newNode = GetOrCreateHistoryNodeAs<ClassDeclaration>();
+        newNode->decorators_ = std::move(decorators);
     }
 
     bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
@@ -71,10 +78,19 @@ public:
         v->Accept(this);
     }
 
+    void EmplaceDecorators(Decorator *decorators);
+    void ClearDecorators();
+    void SetValueDecorators(Decorator *decorators, size_t index);
+    const ArenaVector<Decorator *> &Decorators();
+    ArenaVector<Decorator *> &DecoratorsForUpdate();
+
+    void SetDefinition(ClassDefinition *def);
+
 protected:
     explicit ClassDeclaration(AstNodeType type, ClassDefinition *const def, ArenaAllocator *const allocator)
         : Statement(type), def_(def), decorators_(allocator->Adapter())
     {
+        InitHistory();
     }
 
     ClassDeclaration *Construct(ArenaAllocator *allocator) override;

@@ -23,8 +23,8 @@ function regtest_1(): void {
     let Long1 = new Long();
     let Long2 = new Long();
 
-    assertEQ(obj, Long1)
-    assertEQ(Long1, Long2)
+    arktest.assertEQ(obj, Long1)
+    arktest.assertEQ(Long1, Long2)
 
     return;
 }

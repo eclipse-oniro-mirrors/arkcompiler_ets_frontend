@@ -28,40 +28,42 @@ function colorToInt(c: Color): int {
 
 function main(): void {
   let red: Color = Color.Red;
-  assertEQ(red, Color.Red);
-  assertEQ(colorToInt(red), 0);
+  arktest.assertEQ(red, Color.Red);
+  arktest.assertEQ(colorToInt(red), 0);
 
   let red2: Color = red;
-  assertEQ(red, red2);
-  assertEQ(Color.Red, red2);
+  arktest.assertEQ(red, red2);
+  arktest.assertEQ(Color.Red, red2);
 
   let red_int: int = red as int;
-  assertEQ(red_int, 0);
-  assertEQ(red_int, Color.Red as int);
+  arktest.assertEQ(red_int, 0);
+  arktest.assertEQ(red_int, Color.Red as int);
 
   let a: A = new A(red);
-  assertEQ(a.c, Color.Red);
+  arktest.assertEQ(a.c, Color.Red);
 
   switch(red) {
     case Color.Green:
-      assertTrue(false)
+      arktest.assertTrue(false)
       break;
     case Color.Red:
-      assertTrue(true)
+      arktest.assertTrue(true)
       break;
     default:
-      assertTrue(false)
+      arktest.assertTrue(false)
   }
 
   switch(Color.Blue) {
     case Color.Green:
     case Color.Red:
-      assertTrue(false)
+      arktest.assertTrue(false)
       break;
     case Color.Blue:
-      assertTrue(true)
+      arktest.assertTrue(true)
       break;
     default:
-      assertTrue(false)
+      arktest.assertTrue(false)
   }
 }
+
+/* @@? 26:10 Warning Warning: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. */

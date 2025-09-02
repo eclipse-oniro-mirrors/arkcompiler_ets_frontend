@@ -34,7 +34,7 @@ class Test implements Itf {
         return 3;
     }
     public callback4: ((temp: Array<string>) => Int) | number | string = 4
-    public callback5: [(temp: number) => void] = [(temp: number): void => { assertEQ(temp, 5); }]
+    public callback5: [(temp: number) => void] = [(temp: number): void => { arktest.assertEQ(temp, 5); }]
     public p1: string = "p1"
     public p2: Int = 2
 }
@@ -43,11 +43,11 @@ function main() {
     let a = new Test;
     let b: Array<string> = new Array<string>("hello");
 
-    assertEQ(a.callback1("hello1"), "hello1");
-    assertEQ(a.callback2(b), 2);
-    assertEQ(a.callback3(), 3);
-    assertEQ(a.callback4, 4);
+    arktest.assertEQ(a.callback1("hello1"), "hello1");
+    arktest.assertEQ(a.callback2(b), 2);
+    arktest.assertEQ(a.callback3(), 3);
+    arktest.assertEQ(a.callback4, 4);
     a.callback5[0](5);
-    assertEQ(a.p1, "p1");
-    assertEQ(a.p2, 2);
+    arktest.assertEQ(a.p1, "p1");
+    arktest.assertEQ(a.p2, 2);
 }

@@ -41,8 +41,8 @@ class ImportExportDecls : ir::visitor::EmptyAstVisitor {
 
 public:
     ImportExportDecls() = default;
-    ImportExportDecls(varbinder::ETSBinder *varbinder, parser::ETSParser *parser)
-        : varbinder_(varbinder), parser_(parser)
+    ImportExportDecls(varbinder::ETSBinder *varbinder, parser::ETSParser *parser, public_lib::Context *ctx)
+        : varbinder_(varbinder), parser_(parser), ctx_(ctx)
     {
     }
 
@@ -73,6 +73,7 @@ public:
     void PreMergeNamespaces(parser::Program *program);
 
 private:
+    void VisitOverloadDeclaration(ir::OverloadDeclaration *overloadDeclaration) override;
     void VisitFunctionDeclaration(ir::FunctionDeclaration *funcDecl) override;
     void VisitVariableDeclaration(ir::VariableDeclaration *varDecl) override;
     void VisitExportNamedDeclaration(ir::ExportNamedDeclaration *exportDecl) override;
@@ -83,6 +84,8 @@ private:
     void VisitETSImportDeclaration(ir::ETSImportDeclaration *importDecl) override;
     void VisitAnnotationDeclaration(ir::AnnotationDeclaration *annotationDecl) override;
     void VisitETSModule(ir::ETSModule *etsModule) override;
+    void HandleInitModuleCallExpression(ir::CallExpression *expr, parser::Program *program,
+                                        GlobalClassHandler::ModuleDependencies &moduleDependencies);
 
 private:
     varbinder::ETSBinder *varbinder_ {nullptr};
@@ -90,6 +93,7 @@ private:
     std::map<util::StringView, lexer::SourcePosition> exportNameMap_;
     std::set<util::StringView> exportedTypes_;
     parser::ETSParser *parser_ {nullptr};
+    public_lib::Context *ctx_ {nullptr};
     std::map<util::StringView, util::StringView> importedSpecifiersForExportCheck_;
     lexer::SourcePosition lastExportErrorPos_ {};
     util::StringView exportDefaultName_;

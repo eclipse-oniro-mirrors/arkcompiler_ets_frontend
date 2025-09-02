@@ -42,14 +42,14 @@ TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetails0)
     std::vector<SymbolDisplayPart> source {};
     std::vector<SymbolDisplayPart> sourceDisplay {};
     std::vector<SymbolDisplayPart> document {};
-    const std::string kind = "class";
+    const std::string kind = "enum";
     const std::string kindModifiers = "final";
     const std::string expectedFileName = "completion_entry_details.ets";
 
     std::vector<SymbolDisplayPart> expected;
     expected.emplace_back("enum", "keyword");
     expected.emplace_back(" ", "space");
-    expected.emplace_back("MyStrings", "className");
+    expected.emplace_back("MyStrings", "enumName");
 
     auto expectedCompletionEntryDetails = CompletionEntryDetails(entryName, kind, kindModifiers, expected, document,
                                                                  source, sourceDisplay, expectedFileName);
@@ -143,7 +143,7 @@ class CC {
     std::vector<SymbolDisplayPart> source {};
     std::vector<SymbolDisplayPart> sourceDisplay {};
     std::vector<SymbolDisplayPart> document {};
-    const std::string kind = "function";
+    const std::string kind = "method";
     const std::string kindModifiers = "public";
     const std::string expectedFileName = "completion_entry_details9.ets";
 
@@ -226,7 +226,7 @@ TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetails5)
     std::vector<SymbolDisplayPart> source {};
     std::vector<SymbolDisplayPart> sourceDisplay {};
     std::vector<SymbolDisplayPart> document {};
-    const std::string kind = "function";
+    const std::string kind = "method";
     const std::string kindModifiers = "static public";
     const std::string expectedFileName = "completion_entry_details11.ets";
 
@@ -238,12 +238,41 @@ TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetails5)
     expected.emplace_back("value", "functionParameter");
     expected.emplace_back(":", "punctuation");
     expected.emplace_back(" ", "space");
-    expected.emplace_back("string|number|boolean", "typeParameter");
+    expected.emplace_back("string | number | boolean", "typeParameter");
     expected.emplace_back(")", "punctuation");
     expected.emplace_back(":", "punctuation");
     expected.emplace_back(" ", "space");
     expected.emplace_back("number", "returnType");
 
+    auto expectedCompletionEntryDetails = CompletionEntryDetails(entryName, kind, kindModifiers, expected, document,
+                                                                 source, sourceDisplay, expectedFileName);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(completionEntryDetails, expectedCompletionEntryDetails);
+}
+
+TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetails6)
+{
+    Initializer initializer = Initializer();
+    std::string expectedFileName = "completion_entry_details12.ets";
+    es2panda_Context *ctx =
+        initializer.CreateContext(expectedFileName.c_str(), ES2PANDA_STATE_CHECKED,
+                                  R"(export const mqw1: [string, number, number] = ['Alice', 30, 10];)");
+    size_t const offset = 16;
+    const char *entryName = "mqw1";
+    LSPAPI const *lspApi = GetImpl();
+    auto completionEntryDetails = lspApi->getCompletionEntryDetails(entryName, expectedFileName.c_str(), ctx, offset);
+    std::vector<SymbolDisplayPart> source {};
+    std::vector<SymbolDisplayPart> sourceDisplay {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string kind = "property";
+    const std::string kindModifiers = "static public const export";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("const", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("mqw1", "property");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("[string, number, number]", "typeName");
     auto expectedCompletionEntryDetails = CompletionEntryDetails(entryName, kind, kindModifiers, expected, document,
                                                                  source, sourceDisplay, expectedFileName);
     initializer.DestroyContext(ctx);
@@ -329,7 +358,7 @@ TEST_F(LSPCompletionsEntryDetailsTests, CreateDisplayForUnionTypeAlias)
     expected.emplace_back(" ", "space");
     expected.emplace_back("=", "operator");
     expected.emplace_back(" ", "space");
-    expected.emplace_back("string|number", "typeName");
+    expected.emplace_back("string | number", "typeName");
     ASSERT_EQ(expected, display);
     initializer.DestroyContext(ctx);
 }

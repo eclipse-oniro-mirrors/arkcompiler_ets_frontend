@@ -27,31 +27,46 @@
 #include "ir/ts/tsTypeParameterDeclaration.h"
 
 namespace ark::es2panda::ir {
+
+void TSTypeAliasDeclaration::SetTypeParameters(TSTypeParameterDeclaration *typeParams)
+{
+    this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>()->typeParams_ = typeParams;
+}
+
+void TSTypeAliasDeclaration::SetId(Identifier *id)
+{
+    this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>()->id_ = id;
+}
+
 void TSTypeAliasDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
+    auto const &decorators = Decorators();
+    for (size_t ix = 0; ix < decorators.size(); ix++) {
+        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
+            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueDecorators(transformedNode->AsDecorator(), ix);
         }
     }
 
-    for (auto *&it : Annotations()) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
+    auto const &annotations = Annotations();
+    for (size_t ix = 0; ix < annotations.size(); ix++) {
+        if (auto *transformedNode = cb(annotations[ix]); annotations[ix] != transformedNode) {
+            annotations[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueAnnotations(transformedNode->AsAnnotationUsage(), ix);
         }
     }
 
-    if (auto *transformedNode = cb(id_); id_ != transformedNode) {
-        id_->SetTransformedNode(transformationName, transformedNode);
-        id_ = transformedNode->AsIdentifier();
+    auto const id = Id();
+    if (auto *transformedNode = cb(id); id != transformedNode) {
+        id->SetTransformedNode(transformationName, transformedNode);
+        SetId(transformedNode->AsIdentifier());
     }
 
-    if (typeParams_ != nullptr) {
-        if (auto *transformedNode = cb(typeParams_); typeParams_ != transformedNode) {
-            typeParams_->SetTransformedNode(transformationName, transformedNode);
-            typeParams_ = transformedNode->AsTSTypeParameterDeclaration();
+    auto const typeParams = TypeParams();
+    if (typeParams != nullptr) {
+        if (auto *transformedNode = cb(typeParams); typeParams != transformedNode) {
+            typeParams->SetTransformedNode(transformationName, transformedNode);
+            SetTypeParameters(transformedNode->AsTSTypeParameterDeclaration());
         }
     }
 
@@ -65,7 +80,7 @@ void TSTypeAliasDeclaration::TransformChildren(const NodeTransformer &cb, std::s
 
 void TSTypeAliasDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(decorators_)) {
+    for (auto *it : VectorIterationGuard(Decorators())) {
         cb(it);
     }
 
@@ -73,10 +88,12 @@ void TSTypeAliasDeclaration::Iterate(const NodeTraverser &cb) const
         cb(it);
     }
 
-    cb(id_);
+    auto const id = GetHistoryNode()->AsTSTypeAliasDeclaration()->id_;
+    cb(id);
 
-    if (typeParams_ != nullptr) {
-        cb(typeParams_);
+    auto typeParams = GetHistoryNode()->AsTSTypeAliasDeclaration()->typeParams_;
+    if (typeParams != nullptr) {
+        cb(typeParams);
     }
 
     if (TypeAnnotation() != nullptr) {
@@ -87,11 +104,11 @@ void TSTypeAliasDeclaration::Iterate(const NodeTraverser &cb) const
 void TSTypeAliasDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", "TSTypeAliasDeclaration"},
-                 {"decorators", AstDumper::Optional(decorators_)},
+                 {"decorators", AstDumper::Optional(Decorators())},
                  {"annotations", AstDumper::Optional(Annotations())},
-                 {"id", id_},
+                 {"id", Id()},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
-                 {"typeParameters", AstDumper::Optional(typeParams_)}});
+                 {"typeParameters", AstDumper::Optional(TypeParams())}});
 }
 
 bool TSTypeAliasDeclaration::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
@@ -126,14 +143,15 @@ void TSTypeAliasDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Add("export ");
     }
     dumper->Add("type ");
-    id_->Dump(dumper);
-    if (typeParams_ != nullptr) {
+    Id()->Dump(dumper);
+    auto const typeParams = TypeParams();
+    if (typeParams != nullptr) {
         dumper->Add("<");
-        typeParams_->Dump(dumper);
+        typeParams->Dump(dumper);
         dumper->Add(">");
     }
     dumper->Add(" = ");
-    if (id_->IsAnnotatedExpression()) {
+    if (Id()->IsAnnotatedExpression()) {
         auto type = TypeAnnotation();
         ES2PANDA_ASSERT(type);
         type->Dump(dumper);
@@ -177,7 +195,85 @@ void TSTypeAliasDeclaration::CopyTo(AstNode *other) const
     otherImpl->typeParams_ = typeParams_;
     otherImpl->typeParamTypes_ = typeParamTypes_;
 
-    JsDocAllowed<AnnotatedStatement>::CopyTo(other);
+    AnnotatedStatement::CopyTo(other);
+}
+
+void TSTypeAliasDeclaration::EmplaceDecorators(Decorator *decorators)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    newNode->decorators_.emplace_back(decorators);
+}
+
+void TSTypeAliasDeclaration::ClearDecorators()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    newNode->decorators_.clear();
+}
+
+void TSTypeAliasDeclaration::SetValueDecorators(Decorator *decorators, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    auto &arenaVector = newNode->decorators_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = decorators;
+}
+
+[[nodiscard]] ArenaVector<Decorator *> &TSTypeAliasDeclaration::DecoratorsForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    return newNode->decorators_;
+}
+
+void TSTypeAliasDeclaration::EmplaceTypeParamterTypes(checker::Type *typeParamTypes)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    newNode->typeParamTypes_.emplace_back(typeParamTypes);
+}
+
+void TSTypeAliasDeclaration::ClearTypeParamterTypes()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    newNode->typeParamTypes_.clear();
+}
+
+void TSTypeAliasDeclaration::SetValueTypeParamterTypes(checker::Type *typeParamTypes, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    auto &arenaVector = newNode->typeParamTypes_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = typeParamTypes;
+}
+
+[[nodiscard]] ArenaVector<checker::Type *> &TSTypeAliasDeclaration::TypeParamterTypesForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    return newNode->typeParamTypes_;
+}
+
+void TSTypeAliasDeclaration::EmplaceAnnotations(AnnotationUsage *annotations)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    newNode->annotations_.emplace_back(annotations);
+}
+
+void TSTypeAliasDeclaration::ClearAnnotations()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    newNode->annotations_.clear();
+}
+
+void TSTypeAliasDeclaration::SetValueAnnotations(AnnotationUsage *annotations, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    auto &arenaVector = newNode->annotations_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = annotations;
+}
+
+[[nodiscard]] ArenaVector<AnnotationUsage *> &TSTypeAliasDeclaration::AnnotationsForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    return newNode->annotations_;
 }
 
 }  // namespace ark::es2panda::ir

@@ -32,16 +32,16 @@ function asFuncCall() {
     x = 1;
     let fruit = new Fruit();
     let res:int = foo(fruit) { x++ };
-    assertEQ(res, 3 )
-    assertEQ(x, 2 )
+    arktest.assertEQ(res, 3 )
+    arktest.assertEQ(x, 2 )
 }
 
 function asMethodCall() {
     x = 1;
     let fruit = new Fruit();
     let res:int = fruit.foo() { x++ };
-    assertEQ(res, 3 )
-    assertEQ(x, 2 )
+    arktest.assertEQ(res, 3 )
+    arktest.assertEQ(x, 2 )
 }
 
 function main() {

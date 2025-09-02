@@ -15,10 +15,7 @@
 
 import {nn, nn1, nn2} from "./P3"
 
-/* @@? P3.ets:26:25 Error SyntaxError: Non-constant initializer of Package should be apply in Initializer Block. */
-/* @@? P3.ets:27:23 Error SyntaxError: Non-constant initializer of Package should be apply in Initializer Block. */
 /* @@? P3.ets:29:18 Error SyntaxError: Variable must be initialized or it's type must be declared. */
 /* @@? P3.ets:30:30 Error SyntaxError: Non-constant initializer of Package should be apply in Initializer Block. */
-/* @@? P3.ets:32:6 Error SyntaxError: Non-constant initializer of Package should be apply in Initializer Block. */
 /* @@? P3.ets:33:1 Error SyntaxError: Invalid package toplevel statement */
 /* @@? P3.ets:34:1 Error SyntaxError: Invalid package toplevel statement */

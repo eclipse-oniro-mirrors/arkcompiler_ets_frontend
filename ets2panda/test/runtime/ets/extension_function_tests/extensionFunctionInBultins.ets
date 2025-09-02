@@ -18,5 +18,5 @@ function test_add(this: Long, n: long): long {
 }
 
 let a: Long = 1002000
-assertEQ(test_add(a, 444), 1002444)
-assertEQ(a.test_add(444), 1002444)
+arktest.assertEQ(test_add(a, 444), 1002444)
+arktest.assertEQ(a.test_add(444), 1002444)

@@ -14,14 +14,12 @@
  */
 
 namespace NumericSemanticsReport {
-    const a: number = 11.0 // NOT OK
-    const b: number = 12.0 // NOT OK
- // NOT OK
-    const c: number = 13.0 // NOT OK
- // NOT OK
+    const a: number = 11 // NOT OK
+    const b = 12 // NOT OK
+    const c = 13.0 // NOT OK
     const d: number = 14.0
-    const e: number = 15.0 // NOT OK
-    console.log('' + 1.0/2.0) // NOT OK
+    const e: number = 15 // NOT OK
+    console.log('' + 1/2) // NOT OK
 }
 
 namespace NumericSemanticsDone {
@@ -67,28 +65,27 @@ namespace NoNumericSemantics {
 }
 
 namespace NumericSemanticsOther {
-    let e7: number = 1e4 + 11.0;
+    let e7: number = 1e4 + 11;
 }
 
 namespace BeCareful {
-    `${1.0/2.0}`
-    
+    `${1/2}`
+
 }
 
 namespace NoDiffInArk1_1To1_2 {
-    const a1 = `${1.0/2.0}` // NOT OK
+    const a1 = `${1/2}` // NOT OK
     const a2 = `${1.0/2.0}`
-    const b1 = `20${20.0 | 21.0 | 22.0 | 23.0}` // NOT OK
+    const b1 = `20${20 | 21 | 22 | 23}` // NOT OK
     const b2 = `20${20.0 | 21.0 | 22.0 | 23.0}`
-    const c1 = `20 + ${20.0}` // NOT OK
+    const c1 = `20 + ${20}` // NOT OK
     const c2 = `20 + ${20.0}`
     console.log(a1,a2,b1,b2,c1,c2)
 
     // Automatically delete decimal parts during bitwise operations
-    let e: number = 15.0 // NOT OK
- // NOT OK
-    let e1: number = e & 3.0; // NOT OK
-    let e2: number = e | 3.0; // NOT OK
+    let e = 15 // NOT OK
+    let e1 = e & 3; // NOT OK
+    let e2 = e | 3; // NOT OK
 }
 
 namespace GenericTypeCase {
@@ -100,9 +97,9 @@ namespace GenericTypeCase {
         return [a]
     }
 
-    ReturnGenericNumber(1.0) // NOT OK, generic type is
-    ReturnGenericNumber(true ? 1.0 : 2.0) // NOT OK
-    ReturnGenericArry(1.0) // NOT OK
+    ReturnGenericNumber(1) // NOT OK, generic type is
+    ReturnGenericNumber(true ? 1 : 2) // NOT OK
+    ReturnGenericArry(1) // NOT OK
 
     function TestReturnGenericNumber<T>(a: T[]): T[] {
         return a.map(item => item) // OK, not report arkts-numeric-semantic
@@ -114,16 +111,16 @@ namespace GenericTypeCase {
     }
 
     function foo<T>(v:T):T{return v}
-    foo(12.0)/24.0 // NOT OK
-    foo(12.0)/24.0 // NOT OK
+    foo(12)/24 // NOT OK
+    foo(12.0)/24 // NOT OK
 
     function foo1<T,U>(v:T, u:U, b:boolean):T|U{
         return b ? v: u
     }
-    foo1(12.0, 8.0, true)/24.0 // NOT OK
-    foo1(12.0, 8.0, false)/24.0 // NOT OK
+    foo1(12.0, 8, true)/24 // NOT OK
+    foo1(12.0, 8, false)/24 // NOT OK
 
-    console.log(foo1(12.0/24.0, 8.0, true)) // NOT OK
-    console.log(foo1<number,number>(12.0/24.0, 8.0, true)) // NOT OK
-    console.log(foo1<number,number>(12.0/24.0, 8.0, true))
+    console.log(foo1(12/24, 8, true)) // NOT OK
+    console.log(foo1<number,number>(12/24, 8, true)) // NOT OK
+    console.log(foo1<number,number>(12.0/24.0, 8, true))
 }

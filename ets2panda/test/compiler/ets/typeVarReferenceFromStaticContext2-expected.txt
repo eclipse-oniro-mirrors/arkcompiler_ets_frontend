@@ -175,7 +175,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 32,
+                                "column": 31,
                                 "program": "typeVarReferenceFromStaticContext2.ets"
                               }
                             }
@@ -188,7 +188,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 32,
+                              "column": 31,
                               "program": "typeVarReferenceFromStaticContext2.ets"
                             }
                           }
@@ -215,7 +215,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 34,
+                        "column": 32,
                         "program": "typeVarReferenceFromStaticContext2.ets"
                       }
                     }
@@ -228,7 +228,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 34,
+                      "column": 32,
                       "program": "typeVarReferenceFromStaticContext2.ets"
                     }
                   }
@@ -342,7 +342,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 26,
+                                        "column": 25,
                                         "program": "typeVarReferenceFromStaticContext2.ets"
                                       }
                                     }
@@ -355,7 +355,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 26,
+                                      "column": 25,
                                       "program": "typeVarReferenceFromStaticContext2.ets"
                                     }
                                   }
@@ -382,7 +382,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 27,
+                                "column": 26,
                                 "program": "typeVarReferenceFromStaticContext2.ets"
                               }
                             }
@@ -395,7 +395,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 27,
+                              "column": 26,
                               "program": "typeVarReferenceFromStaticContext2.ets"
                             }
                           }
@@ -472,7 +472,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 12,
                 "program": "typeVarReferenceFromStaticContext2.ets"
               },
               "end": {
@@ -693,12 +693,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "typeVarReferenceFromStaticContext2.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "typeVarReferenceFromStaticContext2.ets"
                     }
                   }
                 },
@@ -706,12 +706,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "typeVarReferenceFromStaticContext2.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "typeVarReferenceFromStaticContext2.ets"
                   }
                 }
               },
@@ -719,118 +719,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "typeVarReferenceFromStaticContext2.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "typeVarReferenceFromStaticContext2.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "typeVarReferenceFromStaticContext2.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "typeVarReferenceFromStaticContext2.ets"
                 }
               }
             },

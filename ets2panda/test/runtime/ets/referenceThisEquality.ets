@@ -24,5 +24,5 @@ class ThisEq {
 
 function main(): void {
     let a = new ThisEq()
-    assertTrue(a.test())
+    arktest.assertTrue(a.test())
 }

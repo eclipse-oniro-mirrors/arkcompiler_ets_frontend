@@ -30,26 +30,6 @@
             "endLine": 17,
             "endColumn": 106,
             "problem": "InterOpImportJs",
-            "autofix": [
-                {
-                    "start": 636,
-                    "end": 740,
-                    "replacementText": "",
-                    "line": 17,
-                    "column": 2,
-                    "endLine": 17,
-                    "endColumn": 106
-                },
-                {
-                    "start": 740,
-                    "end": 740,
-                    "replacementText": "let GeneratedImportVar_1 = ESValue.load('./interop_convert_import_js.js');\r\nlet foo = GeneratedImportVar_1.getProperty('foo');\r\nlet foo2 = GeneratedImportVar_1.getProperty('foo2');\r\nlet foo3 = GeneratedImportVar_1.getProperty('foo3');\r\nlet foo4 = GeneratedImportVar_1.getProperty('foo4');\r\nlet array_val = GeneratedImportVar_1.getProperty('array_val');\r\nlet null_val = GeneratedImportVar_1.getProperty('null_val');\r\nlet undefined_val = GeneratedImportVar_1.getProperty('undefined_val');\r\n",
-                    "line": 17,
-                    "column": 2,
-                    "endLine": 17,
-                    "endColumn": 106
-                }
-            ],
             "suggest": "",
             "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
@@ -234,75 +214,22 @@
         },
         {
             "line": 25,
+            "column": 48,
+            "endLine": 25,
+            "endColumn": 53,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
             "column": 44,
             "endLine": 25,
             "endColumn": 62,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 25,
-            "column": 54,
-            "endLine": 25,
-            "endColumn": 55,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 981,
-                    "end": 982,
-                    "replacementText": "1.0",
-                    "line": 25,
-                    "column": 54,
-                    "endLine": 25,
-                    "endColumn": 55
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 25,
-            "column": 57,
-            "endLine": 25,
-            "endColumn": 58,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 984,
-                    "end": 985,
-                    "replacementText": "2.0",
-                    "line": 25,
-                    "column": 57,
-                    "endLine": 25,
-                    "endColumn": 58
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 25,
-            "column": 60,
-            "endLine": 25,
-            "endColumn": 61,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 987,
-                    "end": 988,
-                    "replacementText": "3.0",
-                    "line": 25,
-                    "column": 60,
-                    "endLine": 25,
-                    "endColumn": 61
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -313,69 +240,6 @@
             "problem": "InterOpConvertImport",
             "suggest": "",
             "rule": "Casting interop JS objects to primitive types is not allowed (arkts-interop-js2s-convert-js-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 30,
-            "column": 48,
-            "endLine": 30,
-            "endColumn": 49,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1195,
-                    "end": 1196,
-                    "replacementText": "1.0",
-                    "line": 30,
-                    "column": 48,
-                    "endLine": 30,
-                    "endColumn": 49
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 30,
-            "column": 50,
-            "endLine": 30,
-            "endColumn": 51,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1197,
-                    "end": 1198,
-                    "replacementText": "2.0",
-                    "line": 30,
-                    "column": 50,
-                    "endLine": 30,
-                    "endColumn": 51
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 30,
-            "column": 52,
-            "endLine": 30,
-            "endColumn": 53,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1199,
-                    "end": 1200,
-                    "replacementText": "3.0",
-                    "line": 30,
-                    "column": 52,
-                    "endLine": 30,
-                    "endColumn": 53
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

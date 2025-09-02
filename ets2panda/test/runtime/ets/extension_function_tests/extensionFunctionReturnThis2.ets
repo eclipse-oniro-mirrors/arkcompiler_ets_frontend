@@ -24,8 +24,8 @@ class D extends B {
 function rotate(this: B): this { return this }
 
 new D().setX(3).rotate().setY(33);
-assertTrue(true)
+arktest.assertTrue(true)
 let d = new D();
 d.setX(3).rotate().setY(33);
-assertEQ(d.x, 3)
-assertEQ(d.y, 33)
+arktest.assertEQ(d.x, 3)
+arktest.assertEQ(d.y, 33)

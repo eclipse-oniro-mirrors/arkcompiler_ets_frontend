@@ -151,7 +151,7 @@ TEST_F(ASTVerifierTest, PrivateAccessTestNegative5)
             ->AsClassDeclaration()
             ->Definition()
             ->AsClassDefinition()
-            ->Body()[1]
+            ->Body()[0]
             ->AsClassElement()
             ->Value()
             ->AsFunctionExpression()
@@ -193,7 +193,7 @@ TEST_F(ASTVerifierTest, PrivateAccessTestNegative6)
             ->AsClassDeclaration()
             ->Definition()
             ->AsClassDefinition()
-            ->Body()[1]
+            ->Body()[0]
             ->AsClassElement()
             ->Value()
             ->AsFunctionExpression()
@@ -235,7 +235,7 @@ TEST_F(ASTVerifierTest, PrivateAccessTestNegative7)
             ->AsClassDeclaration()
             ->Definition()
             ->AsClassDefinition()
-            ->Body()[1]
+            ->Body()[0]
             ->AsClassElement()
             ->Value()
             ->AsFunctionExpression()

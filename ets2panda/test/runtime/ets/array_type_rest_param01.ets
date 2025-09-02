@@ -14,10 +14,10 @@
  */
 
 function foo(a:string, ...args:Array<number>){
-    assertEQ(a, "hello")
+    arktest.assertEQ(a, "hello")
     let i = 1;
     for(let e of args) {
-        assertEQ(i, e)
+        arktest.assertEQ(i, e)
         i++
     }
 }

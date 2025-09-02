@@ -39,7 +39,7 @@ private:
 
     static RulesMap rulesMap_;
 
-    static RulesMap CreateRulesMap(std::vector<RuleSpec> ruleSpec);
+    static RulesMap CreateRulesMap(const std::vector<RuleSpec> &ruleSpec);
 };
 
 }  // namespace ark::es2panda::lsp

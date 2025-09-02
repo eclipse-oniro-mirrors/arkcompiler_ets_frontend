@@ -315,6 +315,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 319,
+            "column": 12,
+            "endLine": 319,
+            "endColumn": 13,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
             "line": 187,
             "column": 3,
             "endLine": 187,

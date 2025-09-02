@@ -19,6 +19,7 @@
 #include "checker/types/type.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsUnionType.h"
+#include "checker/types/gradualType.h"
 #include "ir/statements/blockStatement.h"
 #include "ir/ets/etsModule.h"
 #include "parser/program/program.h"
@@ -50,18 +51,17 @@ bool IsBooleanType(const ir::AstNode *ast)
     }
 
     auto typedAst = static_cast<const ir::TypedAstNode *>(ast);
-
     if (typedAst->TsType() == nullptr) {
         return false;
     }
 
-    if (typedAst->TsType()->HasTypeFlag(checker::TypeFlag::ETS_OBJECT) &&
-        ast->HasBoxingUnboxingFlags(ir::BoxingUnboxingFlags::UNBOXING_FLAG)) {
-        return typedAst->TsType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_BOOLEAN);
+    auto type =
+        typedAst->TsType()->IsGradualType() ? typedAst->TsType()->AsGradualType()->GetBaseType() : typedAst->TsType();
+    if (type->HasTypeFlag(checker::TypeFlag::ETS_OBJECT)) {
+        return type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_BOOLEAN);
     }
 
-    return typedAst->TsType()->HasTypeFlag(checker::TypeFlag::ETS_BOOLEAN) ||
-           typedAst->TsType()->HasTypeFlag(checker::TypeFlag::BOOLEAN_LIKE);
+    return type->HasTypeFlag(checker::TypeFlag::ETS_BOOLEAN) || type->HasTypeFlag(checker::TypeFlag::BOOLEAN_LIKE);
 }
 
 bool IsValidTypeForBinaryOp(const ir::AstNode *ast, bool isBitwise)
@@ -75,30 +75,29 @@ bool IsValidTypeForBinaryOp(const ir::AstNode *ast, bool isBitwise)
     }
 
     auto typedAst = static_cast<const ir::TypedAstNode *>(ast);
-
     if (typedAst->TsType() == nullptr) {
         return false;
     }
 
+    auto type =
+        typedAst->TsType()->IsGradualType() ? typedAst->TsType()->AsGradualType()->GetBaseType() : typedAst->TsType();
     if (IsBooleanType(ast)) {
         return isBitwise;
     }
 
-    if (typedAst->TsType()->HasTypeFlag(checker::TypeFlag::ETS_OBJECT) &&
-        typedAst->TsType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_BIGINT)) {
+    if (type->HasTypeFlag(checker::TypeFlag::ETS_OBJECT) &&
+        type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_BIGINT)) {
         return true;
     }
 
-    if (typedAst->TsType()->HasTypeFlag(checker::TypeFlag::ETS_OBJECT) &&
-        ast->HasBoxingUnboxingFlags(ir::BoxingUnboxingFlags::UNBOXING_FLAG)) {
-        return typedAst->TsType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_TYPE) &&
-               !typedAst->TsType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_BOOLEAN);
+    if (type->HasTypeFlag(checker::TypeFlag::ETS_OBJECT)) {
+        return type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_TYPE) &&
+               !type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_BOOLEAN);
     }
 
-    return typedAst->TsType()->HasTypeFlag(checker::TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC) ||
-           typedAst->TsType()->HasTypeFlag(checker::TypeFlag::NUMBER_LITERAL) ||
-           typedAst->TsType()->HasTypeFlag(checker::TypeFlag::BIGINT) ||
-           typedAst->TsType()->HasTypeFlag(checker::TypeFlag::BIGINT_LITERAL);
+    return type->HasTypeFlag(checker::TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC) ||
+           type->HasTypeFlag(checker::TypeFlag::NUMBER_LITERAL) || type->HasTypeFlag(checker::TypeFlag::BIGINT) ||
+           type->HasTypeFlag(checker::TypeFlag::BIGINT_LITERAL);
 }
 
 bool IsStringType(const ir::AstNode *ast)
@@ -112,17 +111,18 @@ bool IsStringType(const ir::AstNode *ast)
     }
 
     auto typedAst = static_cast<const ir::TypedAstNode *>(ast);
-
     if (typedAst->TsType() == nullptr) {
         return false;
     }
 
-    if (typedAst->TsType()->HasTypeFlag(checker::TypeFlag::ETS_OBJECT)) {
-        return typedAst->TsType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::STRING) ||
-               typedAst->TsType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_STRING);
+    auto type =
+        typedAst->TsType()->IsGradualType() ? typedAst->TsType()->AsGradualType()->GetBaseType() : typedAst->TsType();
+    if (type->HasTypeFlag(checker::TypeFlag::ETS_OBJECT)) {
+        return type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::STRING) ||
+               type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_STRING);
     }
 
-    return typedAst->TsType()->HasTypeFlag(checker::TypeFlag::STRING_LIKE);
+    return type->HasTypeFlag(checker::TypeFlag::STRING_LIKE);
 }
 
 bool IsVisibleInternalNode(const ir::AstNode *ast, const ir::AstNode *objTypeDeclNode)
@@ -156,7 +156,8 @@ const checker::Type *GetClassDefinitionType(const ir::AstNode *ast)
         return nullptr;
     }
     auto *classDefinition = tmpNode->AsClassDefinition();
-    return classDefinition->TsType();
+    return classDefinition->TsType()->IsGradualType() ? classDefinition->TsType()->AsGradualType()->GetBaseType()
+                                                      : classDefinition->TsType();
 }
 
 const checker::Type *GetTSInterfaceDeclarationType(const ir::AstNode *ast)
@@ -169,7 +170,9 @@ const checker::Type *GetTSInterfaceDeclarationType(const ir::AstNode *ast)
         return nullptr;
     }
     auto *tsInterfaceDeclaration = tmpNode->AsTSInterfaceDeclaration();
-    return tsInterfaceDeclaration->TsType();
+    return tsInterfaceDeclaration->TsType()->IsGradualType()
+               ? tsInterfaceDeclaration->TsType()->AsGradualType()->GetBaseType()
+               : tsInterfaceDeclaration->TsType();
 }
 
 bool ValidateMethodAccessForClass(const ir::AstNode *ast, const ir::AstNode *ownerSignDeclNode,
@@ -325,8 +328,8 @@ bool ValidateMethodAccess(const ir::MemberExpression *memberExpression, const ir
     }
     if (memberObjType->HasObjectFlag(checker::ETSObjectFlags::RESOLVED_SUPER) &&
         memberObjType->SuperType() != nullptr &&
-        memberObjType->SuperType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_TYPE |
-                                                  checker::ETSObjectFlags::GLOBAL)) {
+        memberObjType->SuperType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_TYPE |
+                                                                     checker::ETSObjectFlags::GLOBAL)) {
         return true;
     }
     const auto *memberObjTypeDeclNode = memberObjType->GetDeclNode();

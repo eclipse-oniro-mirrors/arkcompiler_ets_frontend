@@ -52,7 +52,7 @@ export class Morph3d {
     }
     let epsilon: double = 1e-13;
 
-    assertTrue(abs(testOutput) < epsilon,  "Incorrect result")
+    arktest.assertTrue(abs(testOutput) < epsilon,  "Incorrect result")
   }
 }
 

@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 22,
+            "line": 27,
             "column": 16,
-            "endLine": 22,
+            "endLine": 27,
             "endColumn": 17,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 25,
+            "line": 30,
             "column": 5,
-            "endLine": 25,
+            "endLine": 30,
             "endColumn": 12,
             "problem": "AnyType",
             "suggest": "",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 29,
+            "line": 41,
             "column": 2,
-            "endLine": 29,
+            "endLine": 41,
             "endColumn": 7,
             "problem": "UIInterfaceImport",
             "autofix": [
@@ -45,9 +45,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  Entry,\n  Component,\n} from '@kit.ArkUI';",
-                    "line": 30,
+                    "line": 42,
                     "column": 2,
-                    "endLine": 30,
+                    "endLine": 42,
                     "endColumn": 11
                 }
             ],
@@ -56,9 +56,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 30,
+            "line": 42,
             "column": 2,
-            "endLine": 30,
+            "endLine": 42,
             "endColumn": 11,
             "problem": "UIInterfaceImport",
             "autofix": [
@@ -66,9 +66,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  Entry,\n  Component,\n} from '@kit.ArkUI';",
-                    "line": 30,
+                    "line": 42,
                     "column": 2,
-                    "endLine": 30,
+                    "endLine": 42,
                     "endColumn": 11
                 }
             ],

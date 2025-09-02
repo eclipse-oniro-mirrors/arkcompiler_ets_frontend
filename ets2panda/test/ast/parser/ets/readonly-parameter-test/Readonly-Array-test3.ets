@@ -19,5 +19,5 @@ function foo (p: Array<int>) {
 let x: readonly Array<int>
 /* @@ label */foo(/* @@ label1 */x)
 
-/* @@@ label Error TypeError: No matching call signature for foo(Readonly<Array<Int>>) */
-/* @@@ label1 Error TypeError: Type 'Readonly<Array<Int>>' is not compatible with type 'Array<Int>' at index 1 */
+/* @@@ label Error TypeError: No matching call signature for foo(readonly Array<Int>) */
+/* @@@ label1 Error TypeError: Type 'readonly Array<Int>' is not compatible with type 'Array<Int>' at index 1 */

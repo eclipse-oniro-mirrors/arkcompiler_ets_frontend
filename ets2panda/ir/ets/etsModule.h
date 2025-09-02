@@ -18,7 +18,6 @@
 
 #include "ir/statements/blockStatement.h"
 #include "ir/annotationAllowed.h"
-#include "ir/jsDocAllowed.h"
 #include "ir/expressions/identifier.h"
 #include "ir/srcDump.h"
 
@@ -44,57 +43,99 @@ struct enumbitops::IsAllowedType<ark::es2panda::ir::ModuleFlag> : std::true_type
 
 namespace ark::es2panda::ir {
 
-class ETSModule : public JsDocAllowed<AnnotationAllowed<BlockStatement>> {
+class ETSModule : public AnnotationAllowed<BlockStatement> {
 public:
+    // CC-OFFNXT(G.FUN.01-CPP) solid logic
     explicit ETSModule(ArenaAllocator *allocator, ArenaVector<Statement *> &&statementList, Identifier *ident,
-                       ModuleFlag flag, parser::Program *program)
-        : JsDocAllowed<AnnotationAllowed<BlockStatement>>(allocator, std::move(statementList)),
+                       ModuleFlag flag, Language lang, parser::Program *program)
+        : AnnotationAllowed<BlockStatement>(allocator, std::move(statementList)),
           ident_(ident),
           flag_(flag),
+          lang_(lang),
           program_(program)
     {
         type_ = AstNodeType::ETS_MODULE;
+        InitHistory();
+    }
+
+    // CC-OFFNXT(G.FUN.01-CPP) solid logic
+    explicit ETSModule(ArenaAllocator *allocator, ArenaVector<Statement *> &&statementList, Identifier *ident,
+                       ModuleFlag flag, Language lang, parser::Program *program, AstNodeHistory *history)
+        : AnnotationAllowed<BlockStatement>(allocator, std::move(statementList)),
+          ident_(ident),
+          flag_(flag),
+          lang_(lang),
+          program_(program)
+    {
+        type_ = AstNodeType::ETS_MODULE;
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     ir::Identifier *Ident()
     {
-        return ident_;
+        return GetHistoryNodeAs<ETSModule>()->ident_;
     }
 
     const ir::Identifier *Ident() const
     {
-        return ident_;
+        return GetHistoryNodeAs<ETSModule>()->ident_;
     }
 
     parser::Program *Program()
     {
-        return program_;
+        return GetHistoryNodeAs<ETSModule>()->program_;
+    }
+
+    const ir::ClassDefinition *GlobalClass() const
+    {
+        return GetHistoryNodeAs<ETSModule>()->globalClass_;
+    }
+
+    [[nodiscard]] es2panda::Language Language() const noexcept
+    {
+        return GetHistoryNodeAs<ETSModule>()->lang_;
+    }
+
+    ir::ClassDefinition *GlobalClass()
+    {
+        return GetHistoryNodeAs<ETSModule>()->globalClass_;
+    }
+
+    void SetGlobalClass(ir::ClassDefinition *globalClass)
+    {
+        if (globalClass != GlobalClass()) {
+            GetOrCreateHistoryNode()->AsETSModule()->globalClass_ = globalClass;
+        }
     }
 
     [[nodiscard]] bool IsETSScript() const noexcept
     {
-        return (flag_ & ModuleFlag::ETSSCRIPT) != 0;
+        return (ModuleFlags() & ModuleFlag::ETSSCRIPT) != 0;
     }
 
     [[nodiscard]] bool IsNamespace() const noexcept
     {
-        return (flag_ & ModuleFlag::NAMESPACE) != 0;
+        return (ModuleFlags() & ModuleFlag::NAMESPACE) != 0;
     }
 
     [[nodiscard]] bool IsNamespaceChainLastNode() const noexcept
     {
-        return (flag_ & ModuleFlag::NAMESPACE_CHAIN_LAST_NODE) != 0;
+        return (ModuleFlags() & ModuleFlag::NAMESPACE_CHAIN_LAST_NODE) != 0;
     }
 
     void SetNamespaceChainLastNode() noexcept
     {
         ES2PANDA_ASSERT(IsNamespace());
-        flag_ |= ModuleFlag::NAMESPACE_CHAIN_LAST_NODE;
+        AddModuleFlag(ModuleFlag::NAMESPACE_CHAIN_LAST_NODE);
     }
 
     const parser::Program *Program() const
     {
-        return program_;
+        return GetHistoryNodeAs<ETSModule>()->program_;
     }
     void Dump(ir::SrcDumper *dumper) const override;
     void Accept(ASTVisitorT *v) override
@@ -107,9 +148,30 @@ public:
 
 private:
     friend class SizeOfNodeTest;
+    ModuleFlag ModuleFlags() const
+    {
+        return GetHistoryNodeAs<ETSModule>()->flag_;
+    }
+
+    void AddModuleFlag(ModuleFlag flag) noexcept
+    {
+        if (!All(ModuleFlags(), flag)) {
+            GetOrCreateHistoryNode()->AsETSModule()->flag_ |= flag;
+        }
+    }
+
+    void ClearModuleFlag(ModuleFlag flag) noexcept
+    {
+        if (Any(ModuleFlags(), flag)) {
+            GetOrCreateHistoryNode()->AsETSModule()->flag_ &= ~flag;
+        }
+    }
+
     Identifier *ident_;
     ModuleFlag flag_;
+    es2panda::Language lang_;
     parser::Program *program_;
+    ir::ClassDefinition *globalClass_ {};
 };
 }  // namespace ark::es2panda::ir
 

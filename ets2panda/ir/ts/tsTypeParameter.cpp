@@ -25,44 +25,68 @@
 #include "utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
+
+void TSTypeParameter::SetConstraint(TypeNode *constraint)
+{
+    this->GetOrCreateHistoryNodeAs<TSTypeParameter>()->constraint_ = constraint;
+}
+
+void TSTypeParameter::SetDefaultType(TypeNode *defaultType)
+{
+    this->GetOrCreateHistoryNodeAs<TSTypeParameter>()->defaultType_ = defaultType;
+}
+
+void TSTypeParameter::SetName(Identifier *name)
+{
+    this->GetOrCreateHistoryNodeAs<TSTypeParameter>()->name_ = name;
+}
+
 void TSTypeParameter::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    if (auto *transformedNode = cb(name_); name_ != transformedNode) {
-        name_->SetTransformedNode(transformationName, transformedNode);
-        name_ = transformedNode->AsIdentifier();
+    auto const name = Name();
+    if (auto *transformedNode = cb(name); name != transformedNode) {
+        name->SetTransformedNode(transformationName, transformedNode);
+        SetName(transformedNode->AsIdentifier());
     }
 
-    if (constraint_ != nullptr) {
-        if (auto *transformedNode = cb(constraint_); constraint_ != transformedNode) {
-            constraint_->SetTransformedNode(transformationName, transformedNode);
-            constraint_ = static_cast<TypeNode *>(transformedNode);
+    auto const constraint = Constraint();
+    if (constraint != nullptr) {
+        if (auto *transformedNode = cb(constraint); constraint != transformedNode) {
+            constraint->SetTransformedNode(transformationName, transformedNode);
+            SetConstraint(static_cast<TypeNode *>(transformedNode));
         }
     }
 
-    if (defaultType_ != nullptr) {
-        if (auto *transformedNode = cb(defaultType_); defaultType_ != transformedNode) {
-            defaultType_->SetTransformedNode(transformationName, transformedNode);
-            defaultType_ = static_cast<TypeNode *>(transformedNode);
+    auto const defaultType = DefaultType();
+    if (defaultType != nullptr) {
+        if (auto *transformedNode = cb(defaultType); defaultType != transformedNode) {
+            defaultType->SetTransformedNode(transformationName, transformedNode);
+            SetDefaultType(static_cast<TypeNode *>(transformedNode));
         }
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
+
+    auto const annotations = Annotations();
+    for (size_t ix = 0; ix < annotations.size(); ix++) {
+        if (auto *transformedNode = cb(annotations[ix]); annotations[ix] != transformedNode) {
+            annotations[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueAnnotations(transformedNode->AsAnnotationUsage(), ix);
         }
     }
 }
 
 void TSTypeParameter::Iterate(const NodeTraverser &cb) const
 {
-    cb(name_);
+    auto const name = GetHistoryNodeAs<TSTypeParameter>()->name_;
+    cb(name);
 
-    if (constraint_ != nullptr) {
-        cb(constraint_);
+    auto const constraint = GetHistoryNodeAs<TSTypeParameter>()->constraint_;
+    if (constraint != nullptr) {
+        cb(constraint);
     }
 
-    if (defaultType_ != nullptr) {
-        cb(defaultType_);
+    auto const defaultType = GetHistoryNodeAs<TSTypeParameter>()->defaultType_;
+    if (defaultType != nullptr) {
+        cb(defaultType);
     }
     for (auto *it : VectorIterationGuard(Annotations())) {
         cb(it);
@@ -72,9 +96,9 @@ void TSTypeParameter::Iterate(const NodeTraverser &cb) const
 void TSTypeParameter::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", "TSTypeParameter"},
-                 {"name", name_},
-                 {"constraint", AstDumper::Optional(constraint_)},
-                 {"default", AstDumper::Optional(defaultType_)},
+                 {"name", Name()},
+                 {"constraint", AstDumper::Optional(Constraint())},
+                 {"default", AstDumper::Optional(DefaultType())},
                  {"in", AstDumper::Optional(IsIn())},
                  {"out", AstDumper::Optional(IsOut())},
                  {"annotations", AstDumper::Optional(Annotations())}});
@@ -92,15 +116,15 @@ void TSTypeParameter::Dump(ir::SrcDumper *dumper) const
         dumper->Add("out ");
     }
 
-    name_->Dump(dumper);
+    Name()->Dump(dumper);
 
-    if (defaultType_ != nullptr) {
+    if (DefaultType() != nullptr) {
         dumper->Add(" = ");
-        defaultType_->Dump(dumper);
+        DefaultType()->Dump(dumper);
     }
-    if (constraint_ != nullptr) {
+    if (Constraint() != nullptr) {
         dumper->Add(" extends ");
-        constraint_->Dump(dumper);
+        Constraint()->Dump(dumper);
     }
 }
 

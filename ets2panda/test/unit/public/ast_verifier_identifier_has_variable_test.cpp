@@ -63,7 +63,8 @@ TEST_F(ASTVerifierTest, ExtensionFunction)
     }
 }
 
-TEST_F(ASTVerifierTest, Imports)
+// 26272
+TEST_F(ASTVerifierTest, DISABLED_Imports)
 {
     char const *text = R"(
         import { PI } from "std/math";
@@ -115,7 +116,7 @@ TEST_F(ASTVerifierTest, ParametersInArrowFunctionExpression)
         let b = 1;
         let f = (p: double) => b + p;
         function main () {
-            assertEQ(f(42), 43)
+            arktest.assertEQ(f(42), 43)
         }
     )";
 

@@ -94,8 +94,8 @@ static es2panda_AstNode *CreateMemberExpression()
 {
     es2panda_AstNode *instanceName = CreateIdentifierFromString(context, "a");
     es2panda_AstNode *memberName = CreateIdentifierFromString(context, "age");
-    es2panda_AstNode *memberExpr =
-        impl->CreateMemberExpression(context, instanceName, memberName, MEMBER_EXPRESSION_KIND_NONE, false, false);
+    es2panda_AstNode *memberExpr = impl->CreateMemberExpression(context, instanceName, memberName,
+                                                                MEMBER_EXPRESSION_KIND_PROPERTY_ACCESS, false, false);
     impl->AstNodeSetParent(context, instanceName, memberExpr);
     impl->AstNodeSetParent(context, memberName, memberExpr);
     return memberExpr;
@@ -123,8 +123,8 @@ static void CheckUpdateMemberExpression(es2panda_AstNode *programNode)
 {
     es2panda_AstNode *instanceName = CreateIdentifierFromString(context, "a");
     es2panda_AstNode *memberName = CreateIdentifierFromString(context, "address");
-    es2panda_AstNode *newMemberExpr = impl->UpdateMemberExpression(context, memberExpression, instanceName, memberName,
-                                                                   MEMBER_EXPRESSION_KIND_NONE, false, false);
+    es2panda_AstNode *newMemberExpr = impl->UpdateMemberExpression(
+        context, memberExpression, instanceName, memberName, MEMBER_EXPRESSION_KIND_PROPERTY_ACCESS, false, false);
     impl->AstNodeSetParent(context, instanceName, newMemberExpr);
     impl->AstNodeSetParent(context, memberName, newMemberExpr);
     es2panda_AstNode *newMemberStat = impl->CreateExpressionStatement(context, newMemberExpr);

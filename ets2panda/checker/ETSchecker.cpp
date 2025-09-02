@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 
+#include <mutex>
+#include <public/public.h>
+#include <utility>
+
 #include "ETSchecker.h"
 
 #include "es2panda.h"
@@ -21,6 +25,8 @@
 #include "ir/expressions/callExpression.h"
 #include "ir/ts/tsInterfaceDeclaration.h"
 #include "ir/statements/blockStatement.h"
+#include "types/type.h"
+#include "utils/arena_containers.h"
 #include "varbinder/ETSBinder.h"
 #include "parser/program/program.h"
 #include "checker/ets/aliveAnalyzer.h"
@@ -30,43 +36,61 @@
 #include "ir/base/scriptFunction.h"
 #include "util/helpers.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
+#include "checker/types/ets/etsTupleType.h"
 
 namespace ark::es2panda::checker {
 
-ETSChecker::ETSChecker(util::DiagnosticEngine &diagnosticEngine)
-    // NOLINTNEXTLINE(readability-redundant-member-init)
-    : Checker(diagnosticEngine),
-      arrayTypes_(Allocator()->Adapter()),
-      pendingConstraintCheckRecords_(Allocator()->Adapter()),
-      globalArraySignatures_(Allocator()->Adapter()),
-      dynamicIntrinsics_ {DynamicCallIntrinsicsMap {Allocator()->Adapter()},
-                          DynamicCallIntrinsicsMap {Allocator()->Adapter()}},
-      dynamicClasses_ {DynamicClassIntrinsicsMap(Allocator()->Adapter()),
-                       DynamicClassIntrinsicsMap(Allocator()->Adapter())},
-      dynamicLambdaSignatureCache_(Allocator()->Adapter()),
-      functionalInterfaceCache_(Allocator()->Adapter()),
-      apparentTypes_(Allocator()->Adapter()),
-      dynamicCallNames_ {{DynamicCallNamesMap(Allocator()->Adapter()), DynamicCallNamesMap(Allocator()->Adapter())}},
-      overloadSigContainer_(Allocator()->Adapter())
+void ETSChecker::ReputCheckerData()
 {
-}
+    readdedChecker_.insert(this);
+    for (auto &[_, extPrograms] : Program()->ExternalSources()) {
+        (void)_;
+        auto *extProg = extPrograms.front();
+        if (!extProg->IsASTLowered()) {
+            continue;
+        }
+        auto eChecker = extProg->Checker()->AsETSChecker();
 
-ETSChecker::ETSChecker(util::DiagnosticEngine &diagnosticEngine, ArenaAllocator *programAllocator)
-    // NOLINTNEXTLINE(readability-redundant-member-init)
-    : Checker(diagnosticEngine, programAllocator),
-      arrayTypes_(Allocator()->Adapter()),
-      pendingConstraintCheckRecords_(Allocator()->Adapter()),
-      globalArraySignatures_(Allocator()->Adapter()),
-      dynamicIntrinsics_ {DynamicCallIntrinsicsMap {Allocator()->Adapter()},
-                          DynamicCallIntrinsicsMap {Allocator()->Adapter()}},
-      dynamicClasses_ {DynamicClassIntrinsicsMap(Allocator()->Adapter()),
-                       DynamicClassIntrinsicsMap(Allocator()->Adapter())},
-      dynamicLambdaSignatureCache_(Allocator()->Adapter()),
-      functionalInterfaceCache_(Allocator()->Adapter()),
-      apparentTypes_(Allocator()->Adapter()),
-      dynamicCallNames_ {{DynamicCallNamesMap(Allocator()->Adapter()), DynamicCallNamesMap(Allocator()->Adapter())}},
-      overloadSigContainer_(Allocator()->Adapter())
-{
+        if (!HasStatus(CheckerStatus::BUILTINS_INITIALIZED)) {
+            SetGlobalTypesHolder(eChecker->GetGlobalTypesHolder());
+            AddStatus(CheckerStatus::BUILTINS_INITIALIZED);
+        }
+
+        if (auto it = readdedChecker_.find(eChecker); it != readdedChecker_.end()) {
+            continue;
+        }
+        readdedChecker_.insert(eChecker->readdedChecker_.begin(), eChecker->readdedChecker_.end());
+        auto computedAbstractMapToCopy = eChecker->GetCachedComputedAbstracts();
+        for (auto &[key, value] : *computedAbstractMapToCopy) {
+            if (GetCachedComputedAbstracts()->find(key) != GetCachedComputedAbstracts()->end()) {
+                continue;
+            }
+            auto &[v1, v2] = value;
+            ArenaVector<ETSFunctionType *> newV1(Allocator()->Adapter());
+            ArenaUnorderedSet<ETSObjectType *> newV2(Allocator()->Adapter());
+            newV1.assign(v1.cbegin(), v1.cend());
+            newV2.insert(v2.cbegin(), v2.cend());
+            GetCachedComputedAbstracts()->try_emplace(key, newV1, newV2);
+        }
+
+        auto &globalArraySigs = eChecker->globalArraySignatures_;
+        globalArraySignatures_.insert(globalArraySigs.cbegin(), globalArraySigs.cend());
+
+        auto &apparentTypes = eChecker->apparentTypes_;
+        apparentTypes_.insert(apparentTypes.cbegin(), apparentTypes.cend());
+
+        auto &objectInstantiationMap = eChecker->objectInstantiationMap_;
+        for (auto &[key, value] : objectInstantiationMap) {
+            if (objectInstantiationMap_.find(key) == objectInstantiationMap_.end()) {
+                objectInstantiationMap_.insert(objectInstantiationMap.cbegin(), objectInstantiationMap.cend());
+            }
+        }
+
+        auto &invokeToArrowSignatures = eChecker->invokeToArrowSignatures_;
+        invokeToArrowSignatures_.insert(invokeToArrowSignatures.cbegin(), invokeToArrowSignatures.cend());
+        auto &arrowToFuncInterfaces = eChecker->arrowToFuncInterfaces_;
+        arrowToFuncInterfaces_.insert(arrowToFuncInterfaces.cbegin(), arrowToFuncInterfaces.cend());
+    }
 }
 
 static util::StringView InitBuiltin(ETSChecker *checker, std::string_view signature)
@@ -90,8 +114,7 @@ static util::StringView InitBuiltin(ETSChecker *checker, std::string_view signat
 
 void ETSChecker::CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &properties)
 {
-    static std::set<util::StringView> names;
-    names.clear();
+    std::set<util::StringView> names;
 
     for (auto property : properties) {
         if (!property->IsProperty()) {
@@ -235,7 +258,7 @@ static void IntializeFunctionInterfaces(GlobalTypesHolder *typeHolder)
         return typeHolder->GlobalFunctionBuiltinType(arity, hasRest)->AsETSObjectType();
     };
 
-    for (size_t arity = 0; arity < typeHolder->VariadicFunctionTypeThreshold(); arity++) {
+    for (size_t arity = 0; arity <= typeHolder->VariadicFunctionTypeThreshold(); arity++) {
         getItf(arity, false)->AddObjectFlag(ETSObjectFlags::FUNCTIONAL);
         getItf(arity, true)->AddObjectFlag(ETSObjectFlags::FUNCTIONAL);
     }
@@ -248,6 +271,9 @@ void ETSChecker::InitializeBuiltins(varbinder::ETSBinder *varbinder)
     }
 
     const auto varMap = varbinder->TopScope()->Bindings();
+    if (varMap.find(compiler::Signatures::BUILTIN_OBJECT_CLASS) == varMap.end()) {
+        return;
+    }
 
     auto const objectName = InitBuiltin(this, compiler::Signatures::BUILTIN_OBJECT_CLASS);
 
@@ -293,21 +319,12 @@ void ETSChecker::InitializeBuiltin(varbinder::Variable *var, const util::StringV
 
 bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Options &options)
 {
-    Initialize(varbinder);
-
     if (options.IsParseOnly()) {
         return false;
     }
 
     auto *etsBinder = varbinder->AsETSBinder();
     InitializeBuiltins(etsBinder);
-
-    for (auto &entry : etsBinder->DynamicImportVars()) {
-        auto &data = entry.second;
-        if (data.import->IsPureDynamic()) {
-            data.variable->SetTsType(GlobalBuiltinDynamicType(data.import->Language()));
-        }
-    }
 
     bool isEvalMode = (debugInfoPlugin_ != nullptr);
     if (UNLIKELY(isEvalMode)) {
@@ -354,29 +371,24 @@ void ETSChecker::SetDebugInfoPlugin(evaluate::ScopedDebugInfoPlugin *debugInfo)
 
 void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
 {
-    if (program->IsASTChecked()) {
-        return;
-    }
-
     auto *savedProgram = Program();
     SetProgram(program);
 
     for (auto &[_, extPrograms] : program->ExternalSources()) {
         (void)_;
         for (auto *extProg : extPrograms) {
-            if (extProg->IsASTChecked()) {
-                continue;
+            if (!extProg->IsASTLowered()) {
+                extProg->PushChecker(this);
+                auto *savedProgram2 = VarBinder()->AsETSBinder()->Program();
+                varbinder::RecordTableContext recordTableCtx(VarBinder()->AsETSBinder(), extProg);
+                VarBinder()->AsETSBinder()->SetProgram(extProg);
+                VarBinder()->AsETSBinder()->ResetTopScope(extProg->GlobalScope());
+                checker::SavedCheckerContext savedContext(this, Context().Status(), Context().ContainingClass());
+                AddStatus(checker::CheckerStatus::IN_EXTERNAL);
+                CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsGenAbcForExternal());
+                VarBinder()->AsETSBinder()->SetProgram(savedProgram2);
+                VarBinder()->AsETSBinder()->ResetTopScope(savedProgram2->GlobalScope());
             }
-
-            auto *savedProgram2 = VarBinder()->AsETSBinder()->Program();
-            VarBinder()->AsETSBinder()->SetProgram(extProg);
-            VarBinder()->AsETSBinder()->ResetTopScope(extProg->GlobalScope());
-            checker::SavedCheckerContext savedContext(this, Context().Status(), Context().ContainingClass());
-            AddStatus(checker::CheckerStatus::IN_EXTERNAL);
-            CheckProgram(extProg, VarBinder()->IsGenStdLib());
-            extProg->SetFlag(parser::ProgramFlags::AST_CHECK_PROCESSED);
-            VarBinder()->AsETSBinder()->SetProgram(savedProgram2);
-            VarBinder()->AsETSBinder()->ResetTopScope(savedProgram2->GlobalScope());
         }
     }
 
@@ -419,16 +431,14 @@ bool ETSChecker::IsClassStaticMethod(checker::ETSObjectType *objType, checker::S
 
 [[nodiscard]] TypeFlag ETSChecker::TypeKind(const Type *const type) noexcept
 {
-    // These types were not present in the ETS_TYPE list. Some of them are omited intentionally, other are just bugs
+    // These types were not present in the ETS_TYPE list. Some of them are omitted intentionally, other are just bugs
     static constexpr auto TO_CLEAR = TypeFlag::CONSTANT | TypeFlag::GENERIC | TypeFlag::ETS_INT_ENUM |
                                      TypeFlag::ETS_STRING_ENUM | TypeFlag::READONLY | TypeFlag::BIGINT_LITERAL |
                                      TypeFlag::ETS_TYPE_ALIAS | TypeFlag::TYPE_ERROR;
 
-    // Bugs: these types do not appear as a valid TypeKind, as the TypeKind has more then one bit set
-    [[maybe_unused]] static constexpr auto NOT_A_TYPE_KIND = TypeFlag::ETS_DYNAMIC_FLAG;
     CHECK_NOT_NULL(type);
     auto res = static_cast<checker::TypeFlag>(type->TypeFlags() & ~(TO_CLEAR));
-    ES2PANDA_ASSERT_POS(res == TypeFlag::NONE || helpers::math::IsPowerOfTwo(res & ~(NOT_A_TYPE_KIND)),
+    ES2PANDA_ASSERT_POS(res == TypeFlag::NONE || helpers::math::IsPowerOfTwo(res & ~(TypeFlag::NONE)),
                         ark::es2panda::GetPositionForDiagnostic());
     return res;
 }
@@ -539,6 +549,11 @@ Type *ETSChecker::GlobalETSAnyType() const
     return GetGlobalTypesHolder()->GlobalETSAnyType();
 }
 
+Type *ETSChecker::GlobalETSRelaxedAnyType() const
+{
+    return GetGlobalTypesHolder()->GlobalETSRelaxedAnyType();
+}
+
 Type *ETSChecker::GlobalETSNeverType() const
 {
     return GetGlobalTypesHolder()->GlobalETSNeverType();
@@ -574,6 +589,11 @@ ETSUnionType *ETSChecker::GlobalETSUnionUndefinedNullObject() const
 {
     auto *ret = (GetGlobalTypesHolder()->*&GlobalTypesHolder::GlobalETSUnionUndefinedNullObject)();
     return ret != nullptr ? ret->AsETSUnionType() : nullptr;
+}
+
+ETSObjectType *ETSChecker::GlobalBuiltinClassType() const
+{
+    return AsETSObjectType(&GlobalTypesHolder::GlobalClassBuiltinType);
 }
 
 ETSObjectType *ETSChecker::GlobalBuiltinETSResizableArrayType() const
@@ -661,29 +681,34 @@ ETSObjectType *ETSChecker::GlobalBuiltinDynamicType(Language lang) const
 
 ETSObjectType *ETSChecker::GlobalBuiltinBoxType(Type *contents)
 {
-    switch (TypeKind(contents)) {
-        case TypeFlag::ETS_BOOLEAN:
+    ES2PANDA_ASSERT(contents->IsETSReferenceType());
+    if (!contents->IsETSUnboxableObject()) {
+        auto *base = AsETSObjectType(&GlobalTypesHolder::GlobalBoxBuiltinType);
+        auto substitution = Substitution {};
+        ES2PANDA_ASSERT(base != nullptr);
+        substitution.emplace(base->TypeArguments()[0]->AsETSTypeParameter(), contents);
+        return base->Substitute(Relation(), &substitution);
+    }
+
+    switch (contents->AsETSObjectType()->UnboxableKind()) {
+        case ETSObjectFlags::BUILTIN_BOOLEAN:
             return AsETSObjectType(&GlobalTypesHolder::GlobalBooleanBoxBuiltinType);
-        case TypeFlag::BYTE:
+        case ETSObjectFlags::BUILTIN_BYTE:
             return AsETSObjectType(&GlobalTypesHolder::GlobalByteBoxBuiltinType);
-        case TypeFlag::CHAR:
-            return AsETSObjectType(&GlobalTypesHolder::GlobalCharBoxBuiltinType);
-        case TypeFlag::SHORT:
+        case ETSObjectFlags::BUILTIN_SHORT:
             return AsETSObjectType(&GlobalTypesHolder::GlobalShortBoxBuiltinType);
-        case TypeFlag::INT:
+        case ETSObjectFlags::BUILTIN_CHAR:
+            return AsETSObjectType(&GlobalTypesHolder::GlobalCharBoxBuiltinType);
+        case ETSObjectFlags::BUILTIN_INT:
             return AsETSObjectType(&GlobalTypesHolder::GlobalIntBoxBuiltinType);
-        case TypeFlag::LONG:
+        case ETSObjectFlags::BUILTIN_LONG:
             return AsETSObjectType(&GlobalTypesHolder::GlobalLongBoxBuiltinType);
-        case TypeFlag::FLOAT:
+        case ETSObjectFlags::BUILTIN_FLOAT:
             return AsETSObjectType(&GlobalTypesHolder::GlobalFloatBoxBuiltinType);
-        case TypeFlag::DOUBLE:
+        case ETSObjectFlags::BUILTIN_DOUBLE:
             return AsETSObjectType(&GlobalTypesHolder::GlobalDoubleBoxBuiltinType);
         default: {
-            auto *base = AsETSObjectType(&GlobalTypesHolder::GlobalBoxBuiltinType);
-            auto *substitution = NewSubstitution();
-            ES2PANDA_ASSERT(base != nullptr);
-            substitution->emplace(base->TypeArguments()[0]->AsETSTypeParameter(), contents);
-            return base->Substitute(Relation(), substitution);
+            ES2PANDA_UNREACHABLE();
         }
     }
 }
@@ -696,6 +721,16 @@ GlobalArraySignatureMap &ETSChecker::GlobalArrayTypes()
 const GlobalArraySignatureMap &ETSChecker::GlobalArrayTypes() const
 {
     return globalArraySignatures_;
+}
+
+const ArenaSet<util::StringView> &ETSChecker::UnionAssemblerTypes() const
+{
+    return unionAssemblerTypes_;
+}
+
+ArenaSet<util::StringView> &ETSChecker::UnionAssemblerTypes()
+{
+    return unionAssemblerTypes_;
 }
 
 Type *ETSChecker::GlobalTypeError() const
@@ -741,19 +776,20 @@ void ETSChecker::HandleUpdatedCallExpressionNode(ir::CallExpression *callExpr)
     VarBinder()->AsETSBinder()->HandleCustomNodes(callExpr);
 }
 
-Type *ETSChecker::SelectGlobalIntegerTypeForNumeric(Type *type)
+Type *ETSChecker::SelectGlobalIntegerTypeForNumeric(Type *type) const
 {
-    switch (ETSType(type)) {
-        case checker::TypeFlag::FLOAT: {
-            return GlobalIntType();
+    if (type->IsETSObjectType()) {
+        auto const *objectType = type->AsETSObjectType();
+
+        if (objectType->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT)) {
+            return GlobalIntBuiltinType();
         }
-        case checker::TypeFlag::DOUBLE: {
-            return GlobalLongType();
-        }
-        default: {
-            return type;
+
+        if (objectType->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
+            return GlobalLongBuiltinType();
         }
     }
+    return type;
 }
 
 Signature *ETSChecker::FindExtensionSetterInMap(util::StringView name, ETSObjectType *type)
@@ -775,4 +811,20 @@ void ETSChecker::InsertExtensionGetterToMap(util::StringView name, ETSObjectType
 {
     GetGlobalTypesHolder()->InsertExtensionGetterToMap(name, type, sig);
 }
+
+bool ETSChecker::TypeHasDefaultValue(Type *tp) const
+{
+    return tp->IsBuiltinNumeric() || tp->IsETSBooleanType() || tp->IsETSCharType() ||
+           Relation()->IsSupertypeOf(GlobalETSUndefinedType(), tp);
+}
+
+/* Invoke method name in functional interfaces */
+std::string ETSChecker::FunctionalInterfaceInvokeName(size_t arity, bool hasRest)
+{
+    if (arity < GlobalBuiltinFunctionTypeVariadicThreshold()) {
+        return (hasRest ? "invokeR" : "invoke") + std::to_string(arity);
+    }
+    return "unsafeCall";
+}
+
 }  // namespace ark::es2panda::checker

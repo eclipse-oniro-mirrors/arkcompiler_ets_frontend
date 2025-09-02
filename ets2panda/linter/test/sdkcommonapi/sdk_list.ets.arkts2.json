@@ -1,0 +1,158 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 21,
+            "column": 38,
+            "endLine": 21,
+            "endColumn": 54,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 25,
+            "endLine": 25,
+            "endColumn": 41,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"removeFirstFound\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 26,
+            "endLine": 26,
+            "endColumn": 41,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"removeLastFound\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 5,
+            "endLine": 29,
+            "endColumn": 38,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 15,
+            "endLine": 31,
+            "endColumn": 43,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 7,
+            "endLine": 34,
+            "endColumn": 14,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"constructor\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 11,
+            "endLine": 43,
+            "endColumn": 15,
+            "problem": "SdkCommonApiBehaviorChange",
+            "suggest": "",
+            "rule": "The \"sort\" in SDK has been changed.(sdk-method-changed)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 12,
+            "endLine": 48,
+            "endColumn": 19,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"forEach\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 29,
+            "endLine": 52,
+            "endColumn": 44,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 11,
+            "endLine": 55,
+            "endColumn": 29,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"replaceAllElements\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 11,
+            "endLine": 60,
+            "endColumn": 29,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"replaceAllElements\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 12,
+            "endLine": 63,
+            "endColumn": 19,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"forEach\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 30,
+            "endLine": 55,
+            "endColumn": 66,
+            "problem": "StrictDiagnostic",
+            "suggest": "Argument of type '(value: number) => number' is not assignable to parameter of type '(value: String | Number, index?: number | undefined, arrlist?: ArrayList<String | Number> | undefined) => String | Number'.\n  Types of parameters 'value' and 'value' are incompatible.\n    Type 'String | Number' is not assignable to type 'number'.\n      Type 'String' is not assignable to type 'number'.",
+            "rule": "Argument of type '(value: number) => number' is not assignable to parameter of type '(value: String | Number, index?: number | undefined, arrlist?: ArrayList<String | Number> | undefined) => String | Number'.\n  Types of parameters 'value' and 'value' are incompatible.\n    Type 'String | Number' is not assignable to type 'number'.\n      Type 'String' is not assignable to type 'number'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 30,
+            "endLine": 60,
+            "endColumn": 88,
+            "problem": "StrictDiagnostic",
+            "suggest": "Argument of type '(value: number) => number' is not assignable to parameter of type '(value: String | Number, index?: number | undefined, arrlist?: ArrayList<String | Number> | undefined) => String | Number'.\n  Types of parameters 'value' and 'value' are incompatible.\n    Type 'String | Number' is not assignable to type 'number'.\n      Type 'String' is not assignable to type 'number'.",
+            "rule": "Argument of type '(value: number) => number' is not assignable to parameter of type '(value: String | Number, index?: number | undefined, arrlist?: ArrayList<String | Number> | undefined) => String | Number'.\n  Types of parameters 'value' and 'value' are incompatible.\n    Type 'String | Number' is not assignable to type 'number'.\n      Type 'String' is not assignable to type 'number'.",
+            "severity": "ERROR"
+        }
+    ]
+}

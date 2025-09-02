@@ -32,8 +32,9 @@ class /* @@ label4 */{/* @@ label5 */}
 /* @@? 17:19 Error SyntaxError: Unexpected token 'function'. */
 /* @@? 21:20 Error SyntaxError: Unexpected token 'let'. */
 /* @@? 22:20 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 24:17 Error TypeError: Type '"abc"' cannot be assigned to type 'double' */
+/* @@? 24:17 Error TypeError: Type '"abc"' cannot be assigned to type 'Double' */
+/* @@? 28:22 Error SyntaxError: Number, string or computed value property name '77' is not allowed, use classes to access data by property names that are identifiers */
 /* @@? 28:22 Error SyntaxError: Identifier expected, got 'number literal'. */
 /* @@? 30:22 Error SyntaxError: Identifier expected, got '{'. */
 /* @@? 30:38 Error SyntaxError: Expected '{', got '}'. */
-/* @@? 40:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 41:1 Error SyntaxError: Expected '}', got 'end of stream'. */

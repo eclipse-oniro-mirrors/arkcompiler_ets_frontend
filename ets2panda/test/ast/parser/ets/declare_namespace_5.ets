@@ -54,6 +54,6 @@ class B {
 /* @@? 23:20 Error TypeError: Unresolved reference foo */
 /* @@? 27:11 Error TypeError: Property 'getInstance' does not exist on type 'B' */
 /* @@? 36:5 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */
-/* @@? 39:5 Error SyntaxError: Field type annotation expected. */
+/* @@? 38:13 Error SyntaxError: Field type annotation expected. */
 /* @@? 39:20 Error TypeError: This expression is not callable. */
 /* @@? 43:11 Error TypeError: Property 'getInstance' does not exist on type 'B' */

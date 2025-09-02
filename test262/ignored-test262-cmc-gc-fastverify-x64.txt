@@ -1,0 +1,4 @@
+# Known failure list for test262 - cmc-gc-fastverify-x64
+
+#26628
+test262/data/test_es2021/built-ins/RegExp/S15.10.2.8_A2_T11.js

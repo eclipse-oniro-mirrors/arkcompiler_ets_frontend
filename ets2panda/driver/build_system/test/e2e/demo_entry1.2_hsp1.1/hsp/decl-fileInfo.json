@@ -1,0 +1,13 @@
+{
+  "packageName": "hsp",
+  "files": {
+    "Index": {
+      "declPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_hsp1.1/hsp/Index.d.ets",
+      "ohmUrl": "@normalized:N&undefined&&hsp/Index&"
+    },
+    "Calc": {
+      "declPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_hsp1.1/hsp/Calc.d.ets",
+      "ohmUrl": "@normalized:N&undefined&&hsp/Calc&"
+    }
+  }
+}

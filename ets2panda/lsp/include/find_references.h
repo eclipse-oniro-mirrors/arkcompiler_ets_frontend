@@ -45,6 +45,8 @@ struct ReferencedNode {
 // Returns a map of file path and reference position list
 std::set<ReferencedNode> FindReferences(CancellationToken *tkn, const std::vector<SourceFile> &files,
                                         const SourceFile &file, size_t position);
+std::set<ReferencedNode> FindReferences(CancellationToken *tkn, const std::vector<es2panda_Context *> &fileContexts,
+                                        es2panda_Context *context, size_t position);
 }  // namespace ark::es2panda::lsp
 
 #endif

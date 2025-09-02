@@ -42,6 +42,11 @@ public:
         return test_;
     }
 
+    void SetTest(Expression *test)
+    {
+        test_ = test;
+    }
+
     const Statement *Body() const
     {
         return body_;

@@ -30,6 +30,12 @@ export let function_var: Function = function() {
   return true;
 };
 
+//mixed enum
+export enum enum_var {
+    a = 0,
+    b = '1',
+}
+
 export class A {
   static instance = new A();
 }

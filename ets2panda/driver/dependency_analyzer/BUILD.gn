@@ -62,6 +62,7 @@ ohos_executable("dependency_analyzer") {
     sdk_libc_secshared_dep,
   ]
 
+  use_exceptions = true
   libs = platform_libs
   ldflags = platform_ldflags
   if (is_linux) {

@@ -15,46 +15,6 @@
     ],
     "result": [
         {
-            "line": 19,
-            "column": 5,
-            "endLine": 19,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 16,
-            "endLine": 19,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 5,
-            "endLine": 20,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 16,
-            "endLine": 20,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 27,
             "column": 9,
             "endLine": 27,
@@ -92,26 +52,6 @@
             "problem": "ClassAsObjectError",
             "suggest": "",
             "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 32,
-            "column": 5,
-            "endLine": 32,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 33,
-            "column": 5,
-            "endLine": 33,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -215,36 +155,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 70,
-            "column": 9,
-            "endLine": 70,
-            "endColumn": 47,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 71,
-            "column": 9,
-            "endLine": 71,
-            "endColumn": 47,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 72,
-            "column": 9,
-            "endLine": 72,
-            "endColumn": 50,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 79,
             "column": 27,
             "endLine": 79,
@@ -262,26 +172,6 @@
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 87,
-            "column": 10,
-            "endLine": 87,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 87,
-            "column": 17,
-            "endLine": 87,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -352,26 +242,6 @@
             "problem": "UnsupportPropNameFromValue",
             "suggest": "",
             "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 116,
-            "column": 10,
-            "endLine": 116,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 116,
-            "column": 17,
-            "endLine": 116,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -795,43 +665,73 @@
             "severity": "ERROR"
         },
         {
-            "line": 172,
+            "line": 171,
             "column": 7,
-            "endLine": 172,
-            "endColumn": 32,
-            "problem": "NumericSemantics",
+            "endLine": 171,
+            "endColumn": 14,
+            "problem": "NoPropertyDescriptor",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 171,
+            "column": 17,
+            "endLine": 171,
+            "endColumn": 31,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
             "line": 172,
-            "column": 29,
+            "column": 15,
             "endLine": 172,
-            "endColumn": 31,
-            "problem": "NumericSemantics",
+            "endColumn": 20,
+            "problem": "BuiltinNoCtorFunc",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
-            "line": 173,
-            "column": 19,
-            "endLine": 173,
+            "line": 174,
+            "column": 14,
+            "endLine": 174,
             "endColumn": 21,
-            "problem": "NumericSemantics",
+            "problem": "BuiltinNoCtorFunc",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 175,
+            "column": 14,
+            "endLine": 175,
+            "endColumn": 18,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 176,
+            "column": 13,
+            "endLine": 176,
+            "endColumn": 18,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
             "line": 179,
-            "column": 7,
+            "column": 13,
             "endLine": 179,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
+            "endColumn": 19,
+            "problem": "BuiltinNoCtorFunc",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -845,6 +745,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 180,
+            "column": 13,
+            "endLine": 180,
+            "endColumn": 19,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
             "line": 183,
             "column": 15,
             "endLine": 183,
@@ -852,6 +762,16 @@
             "problem": "RegularExpressionLiteral",
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 184,
+            "column": 13,
+            "endLine": 184,
+            "endColumn": 19,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -875,13 +795,23 @@
             "severity": "ERROR"
         },
         {
+            "line": 192,
+            "column": 15,
+            "endLine": 192,
+            "endColumn": 21,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 193,
             "column": 9,
             "endLine": 193,
             "endColumn": 12,
             "problem": "SwitchExpression",
             "suggest": "",
-            "rule": "The switch expression type must be of type char, byte, short, int, long, string or enum (arkts-switch-expr)",
+            "rule": "The switch expression type must be of type number, string or enum (arkts-switch-expr)",
             "severity": "ERROR"
         },
         {
@@ -895,13 +825,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 209,
-            "column": 5,
-            "endLine": 209,
-            "endColumn": 40,
-            "problem": "NumericSemantics",
+            "line": 202,
+            "column": 30,
+            "endLine": 202,
+            "endColumn": 36,
+            "problem": "BuiltinNoCtorFunc",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         }
     ]

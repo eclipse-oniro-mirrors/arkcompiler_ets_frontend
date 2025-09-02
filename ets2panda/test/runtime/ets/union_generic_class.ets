@@ -35,9 +35,9 @@ let u3: A<Int>|C = new A<Int>(10)
 let u4: A<Int>|C = new C
 
 function main() {
-    assertEQ(u1.fld, 'a')
-    assertEQ(u2.fld, 'b')
+    arktest.assertEQ(u1.fld, 'a')
+    arktest.assertEQ(u2.fld, 'b')
 
-    assertEQ(u3.fld, 10)
-    assertEQ(u4.fld, 11)
+    arktest.assertEQ(u3.fld, 10)
+    arktest.assertEQ(u4.fld, 11)
 }

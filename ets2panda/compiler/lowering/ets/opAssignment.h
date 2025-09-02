@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,9 +22,10 @@ namespace ark::es2panda::compiler {
 
 class OpAssignmentLowering : public PhaseForBodies {
 public:
+    static constexpr std::string_view const NAME = "OpAssignmentLowering";
     std::string_view Name() const override
     {
-        return "OpAssignmentLowering";
+        return NAME;
     }
 
     bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;

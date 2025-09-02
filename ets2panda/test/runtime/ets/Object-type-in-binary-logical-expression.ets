@@ -18,13 +18,13 @@ function main() {
     let banana: boolean = true;
     let cherry: boolean = false;
 
-    assertTrue(apple && banana)
-    assertTrue(banana && !!(apple))
-    assertTrue(!!(apple) || cherry)
-    assertTrue(cherry || !!(apple))
+    arktest.assertTrue(apple && banana)
+    arktest.assertTrue(banana && !!(apple))
+    arktest.assertTrue(!!(apple) || cherry)
+    arktest.assertTrue(cherry || !!(apple))
 
-    assertTrue(apple && true)
-    assertTrue(true && !!(apple))
-    assertTrue(!(!(apple) || false))
-    assertTrue(false || !!(apple))
+    arktest.assertTrue(apple && true)
+    arktest.assertTrue(true && !!(apple))
+    arktest.assertTrue(!(!(apple) || false))
+    arktest.assertTrue(false || !!(apple))
 }

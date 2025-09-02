@@ -27,5 +27,5 @@ enum FileAccess2 {
     ReadWrite = Read
 }
 
-assertEQ(FileAccess.ReadWrite.valueOf(), 6)
-assertEQ(FileAccess2.ReadWrite.valueOf(), 2)
+arktest.assertEQ(FileAccess.ReadWrite.valueOf(), 6)
+arktest.assertEQ(FileAccess2.ReadWrite.valueOf(), 2)

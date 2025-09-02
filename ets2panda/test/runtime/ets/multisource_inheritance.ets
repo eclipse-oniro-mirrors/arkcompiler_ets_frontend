@@ -44,6 +44,6 @@ class Derived extends Base implements Interface {
 
 function main() {
     let d = new Derived
-    assertEQ(d.method(), 0 )
-    assertEQ(d.instance_field, -2)
+    arktest.assertEQ(d.method(), 0 )
+    arktest.assertEQ(d.instance_field, -2)
 }

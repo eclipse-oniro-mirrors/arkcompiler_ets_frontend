@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "lambda-type-inference.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "lambda-type-inference.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "callbackNoArgVoid",
               "decorators": [],
               "loc": {
@@ -788,7 +682,7 @@
                                     },
                                     "end": {
                                       "line": 24,
-                                      "column": 61,
+                                      "column": 60,
                                       "program": "lambda-type-inference.ets"
                                     }
                                   }
@@ -801,7 +695,7 @@
                                   },
                                   "end": {
                                     "line": 24,
-                                    "column": 61,
+                                    "column": 60,
                                     "program": "lambda-type-inference.ets"
                                   }
                                 }
@@ -815,7 +709,7 @@
                                 },
                                 "end": {
                                   "line": 24,
-                                  "column": 61,
+                                  "column": 60,
                                   "program": "lambda-type-inference.ets"
                                 }
                               }
@@ -828,7 +722,7 @@
                               },
                               "end": {
                                 "line": 24,
-                                "column": 61,
+                                "column": 60,
                                 "program": "lambda-type-inference.ets"
                               }
                             }
@@ -1633,28 +1527,43 @@
                                   {
                                     "type": "ReturnStatement",
                                     "argument": {
-                                      "type": "TSAsExpression",
-                                      "expression": {
+                                      "type": "CallExpression",
+                                      "callee": {
                                         "type": "MemberExpression",
                                         "object": {
-                                          "type": "ETSNewClassInstanceExpression",
-                                          "typeReference": {
-                                            "type": "ETSTypeReference",
-                                            "part": {
-                                              "type": "ETSTypeReferencePart",
-                                              "name": {
-                                                "type": "Identifier",
-                                                "name": "String",
-                                                "decorators": [],
+                                          "type": "MemberExpression",
+                                          "object": {
+                                            "type": "ETSNewClassInstanceExpression",
+                                            "typeReference": {
+                                              "type": "ETSTypeReference",
+                                              "part": {
+                                                "type": "ETSTypeReferencePart",
+                                                "name": {
+                                                  "type": "Identifier",
+                                                  "name": "String",
+                                                  "decorators": [],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 37,
+                                                      "column": 21,
+                                                      "program": "lambda-type-inference.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 37,
+                                                      "column": 27,
+                                                      "program": "lambda-type-inference.ets"
+                                                    }
+                                                  }
+                                                },
                                                 "loc": {
                                                   "start": {
                                                     "line": 37,
-                                                    "column": 20,
+                                                    "column": 21,
                                                     "program": "lambda-type-inference.ets"
                                                   },
                                                   "end": {
                                                     "line": 37,
-                                                    "column": 26,
+                                                    "column": 27,
                                                     "program": "lambda-type-inference.ets"
                                                   }
                                                 }
@@ -1662,7 +1571,7 @@
                                               "loc": {
                                                 "start": {
                                                   "line": 37,
-                                                  "column": 20,
+                                                  "column": 21,
                                                   "program": "lambda-type-inference.ets"
                                                 },
                                                 "end": {
@@ -1672,37 +1581,56 @@
                                                 }
                                               }
                                             },
+                                            "arguments": [
+                                              {
+                                                "type": "StringLiteral",
+                                                "value": "hello",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 37,
+                                                    "column": 28,
+                                                    "program": "lambda-type-inference.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 37,
+                                                    "column": 35,
+                                                    "program": "lambda-type-inference.ets"
+                                                  }
+                                                }
+                                              }
+                                            ],
                                             "loc": {
                                               "start": {
                                                 "line": 37,
-                                                "column": 20,
+                                                "column": 16,
                                                 "program": "lambda-type-inference.ets"
                                               },
                                               "end": {
                                                 "line": 37,
-                                                "column": 27,
+                                                "column": 37,
                                                 "program": "lambda-type-inference.ets"
                                               }
                                             }
                                           },
-                                          "arguments": [
-                                            {
-                                              "type": "StringLiteral",
-                                              "value": "hello",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 37,
-                                                  "column": 27,
-                                                  "program": "lambda-type-inference.ets"
-                                                },
-                                                "end": {
-                                                  "line": 37,
-                                                  "column": 34,
-                                                  "program": "lambda-type-inference.ets"
-                                                }
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "length",
+                                            "decorators": [],
+                                            "loc": {
+                                              "start": {
+                                                "line": 37,
+                                                "column": 38,
+                                                "program": "lambda-type-inference.ets"
+                                              },
+                                              "end": {
+                                                "line": 37,
+                                                "column": 44,
+                                                "program": "lambda-type-inference.ets"
                                               }
                                             }
-                                          ],
+                                          },
+                                          "computed": false,
+                                          "optional": false,
                                           "loc": {
                                             "start": {
                                               "line": 37,
@@ -1711,24 +1639,24 @@
                                             },
                                             "end": {
                                               "line": 37,
-                                              "column": 36,
+                                              "column": 44,
                                               "program": "lambda-type-inference.ets"
                                             }
                                           }
                                         },
                                         "property": {
                                           "type": "Identifier",
-                                          "name": "length",
+                                          "name": "toInt",
                                           "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 37,
-                                              "column": 36,
+                                              "column": 45,
                                               "program": "lambda-type-inference.ets"
                                             },
                                             "end": {
                                               "line": 37,
-                                              "column": 42,
+                                              "column": 50,
                                               "program": "lambda-type-inference.ets"
                                             }
                                           }
@@ -1743,26 +1671,13 @@
                                           },
                                           "end": {
                                             "line": 37,
-                                            "column": 42,
+                                            "column": 50,
                                             "program": "lambda-type-inference.ets"
                                           }
                                         }
                                       },
-                                      "typeAnnotation": {
-                                        "type": "ETSPrimitiveType",
-                                        "loc": {
-                                          "start": {
-                                            "line": 37,
-                                            "column": 46,
-                                            "program": "lambda-type-inference.ets"
-                                          },
-                                          "end": {
-                                            "line": 37,
-                                            "column": 49,
-                                            "program": "lambda-type-inference.ets"
-                                          }
-                                        }
-                                      },
+                                      "arguments": [],
+                                      "optional": false,
                                       "loc": {
                                         "start": {
                                           "line": 37,
@@ -1771,7 +1686,7 @@
                                         },
                                         "end": {
                                           "line": 37,
-                                          "column": 42,
+                                          "column": 52,
                                           "program": "lambda-type-inference.ets"
                                         }
                                       }
@@ -1784,7 +1699,7 @@
                                       },
                                       "end": {
                                         "line": 37,
-                                        "column": 50,
+                                        "column": 53,
                                         "program": "lambda-type-inference.ets"
                                       }
                                     }
@@ -1894,28 +1809,43 @@
                                   {
                                     "type": "ReturnStatement",
                                     "argument": {
-                                      "type": "TSAsExpression",
-                                      "expression": {
+                                      "type": "CallExpression",
+                                      "callee": {
                                         "type": "MemberExpression",
                                         "object": {
-                                          "type": "ETSNewClassInstanceExpression",
-                                          "typeReference": {
-                                            "type": "ETSTypeReference",
-                                            "part": {
-                                              "type": "ETSTypeReferencePart",
-                                              "name": {
-                                                "type": "Identifier",
-                                                "name": "String",
-                                                "decorators": [],
+                                          "type": "MemberExpression",
+                                          "object": {
+                                            "type": "ETSNewClassInstanceExpression",
+                                            "typeReference": {
+                                              "type": "ETSTypeReference",
+                                              "part": {
+                                                "type": "ETSTypeReferencePart",
+                                                "name": {
+                                                  "type": "Identifier",
+                                                  "name": "String",
+                                                  "decorators": [],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 40,
+                                                      "column": 21,
+                                                      "program": "lambda-type-inference.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 40,
+                                                      "column": 27,
+                                                      "program": "lambda-type-inference.ets"
+                                                    }
+                                                  }
+                                                },
                                                 "loc": {
                                                   "start": {
                                                     "line": 40,
-                                                    "column": 20,
+                                                    "column": 21,
                                                     "program": "lambda-type-inference.ets"
                                                   },
                                                   "end": {
                                                     "line": 40,
-                                                    "column": 26,
+                                                    "column": 27,
                                                     "program": "lambda-type-inference.ets"
                                                   }
                                                 }
@@ -1923,7 +1853,7 @@
                                               "loc": {
                                                 "start": {
                                                   "line": 40,
-                                                  "column": 20,
+                                                  "column": 21,
                                                   "program": "lambda-type-inference.ets"
                                                 },
                                                 "end": {
@@ -1933,37 +1863,56 @@
                                                 }
                                               }
                                             },
+                                            "arguments": [
+                                              {
+                                                "type": "StringLiteral",
+                                                "value": "hello",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 40,
+                                                    "column": 28,
+                                                    "program": "lambda-type-inference.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 40,
+                                                    "column": 35,
+                                                    "program": "lambda-type-inference.ets"
+                                                  }
+                                                }
+                                              }
+                                            ],
                                             "loc": {
                                               "start": {
                                                 "line": 40,
-                                                "column": 20,
+                                                "column": 16,
                                                 "program": "lambda-type-inference.ets"
                                               },
                                               "end": {
                                                 "line": 40,
-                                                "column": 27,
+                                                "column": 37,
                                                 "program": "lambda-type-inference.ets"
                                               }
                                             }
                                           },
-                                          "arguments": [
-                                            {
-                                              "type": "StringLiteral",
-                                              "value": "hello",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 40,
-                                                  "column": 27,
-                                                  "program": "lambda-type-inference.ets"
-                                                },
-                                                "end": {
-                                                  "line": 40,
-                                                  "column": 34,
-                                                  "program": "lambda-type-inference.ets"
-                                                }
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "length",
+                                            "decorators": [],
+                                            "loc": {
+                                              "start": {
+                                                "line": 40,
+                                                "column": 38,
+                                                "program": "lambda-type-inference.ets"
+                                              },
+                                              "end": {
+                                                "line": 40,
+                                                "column": 44,
+                                                "program": "lambda-type-inference.ets"
                                               }
                                             }
-                                          ],
+                                          },
+                                          "computed": false,
+                                          "optional": false,
                                           "loc": {
                                             "start": {
                                               "line": 40,
@@ -1972,24 +1921,24 @@
                                             },
                                             "end": {
                                               "line": 40,
-                                              "column": 36,
+                                              "column": 44,
                                               "program": "lambda-type-inference.ets"
                                             }
                                           }
                                         },
                                         "property": {
                                           "type": "Identifier",
-                                          "name": "length",
+                                          "name": "toInt",
                                           "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 40,
-                                              "column": 36,
+                                              "column": 45,
                                               "program": "lambda-type-inference.ets"
                                             },
                                             "end": {
                                               "line": 40,
-                                              "column": 42,
+                                              "column": 50,
                                               "program": "lambda-type-inference.ets"
                                             }
                                           }
@@ -2004,26 +1953,13 @@
                                           },
                                           "end": {
                                             "line": 40,
-                                            "column": 42,
+                                            "column": 50,
                                             "program": "lambda-type-inference.ets"
                                           }
                                         }
                                       },
-                                      "typeAnnotation": {
-                                        "type": "ETSPrimitiveType",
-                                        "loc": {
-                                          "start": {
-                                            "line": 40,
-                                            "column": 46,
-                                            "program": "lambda-type-inference.ets"
-                                          },
-                                          "end": {
-                                            "line": 40,
-                                            "column": 49,
-                                            "program": "lambda-type-inference.ets"
-                                          }
-                                        }
-                                      },
+                                      "arguments": [],
+                                      "optional": false,
                                       "loc": {
                                         "start": {
                                           "line": 40,
@@ -2032,7 +1968,7 @@
                                         },
                                         "end": {
                                           "line": 40,
-                                          "column": 42,
+                                          "column": 52,
                                           "program": "lambda-type-inference.ets"
                                         }
                                       }
@@ -2045,7 +1981,7 @@
                                       },
                                       "end": {
                                         "line": 40,
-                                        "column": 50,
+                                        "column": 53,
                                         "program": "lambda-type-inference.ets"
                                       }
                                     }
@@ -2230,7 +2166,7 @@
                                           },
                                           "end": {
                                             "line": 43,
-                                            "column": 46,
+                                            "column": 45,
                                             "program": "lambda-type-inference.ets"
                                           }
                                         }
@@ -2243,7 +2179,7 @@
                                         },
                                         "end": {
                                           "line": 43,
-                                          "column": 46,
+                                          "column": 45,
                                           "program": "lambda-type-inference.ets"
                                         }
                                       }
@@ -2257,7 +2193,7 @@
                                       },
                                       "end": {
                                         "line": 43,
-                                        "column": 46,
+                                        "column": 45,
                                         "program": "lambda-type-inference.ets"
                                       }
                                     }
@@ -2270,7 +2206,7 @@
                                     },
                                     "end": {
                                       "line": 43,
-                                      "column": 46,
+                                      "column": 45,
                                       "program": "lambda-type-inference.ets"
                                     }
                                   }

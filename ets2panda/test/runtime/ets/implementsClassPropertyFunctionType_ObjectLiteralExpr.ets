@@ -30,5 +30,5 @@ function main() {
         }
     }
     a.foo1()
-    assertEQ(a.foo2(), true)
+    arktest.assertEQ(a.foo2(), true)
 }

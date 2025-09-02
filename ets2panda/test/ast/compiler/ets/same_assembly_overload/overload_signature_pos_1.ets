@@ -15,10 +15,7 @@
 
 //Without rest parameter
 export class A<T> {}
-export declare function foo(a:A<number>):void 
+export declare function foo(a:A<number>):void
 export declare function foo(a:A<string>):number
 export declare function foo(a:int, b:int):void
 export declare function foo(a:double):void
-
-/* @@? 18:8 Warning Warning: Function foo with this assembly signature already declared.  */
-

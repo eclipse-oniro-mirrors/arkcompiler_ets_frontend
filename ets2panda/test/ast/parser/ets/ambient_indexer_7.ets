@@ -15,16 +15,12 @@
 
 declare class A {
     [index : number /* @@ label */: /* @@ label1 */string
-/* @@ label2 */}
+}
 
-/* @@ label3 */function main/* @@ label5 */() {
+function main() {
     let a : A = new A();
 }
 
 /* @@@ label Error SyntaxError: ] expected in index signature.  */
 /* @@@ label1 Error SyntaxError: An index signature must have a type annotation.  */
-/* @@@ label2 Error SyntaxError: Return type of index signature from exported class or interface need to be identifier.  */
-/* @@@ label3 Error SyntaxError: Unexpected token 'function'.  */
-/* @@@ label5 Error TypeError: Native and Declare methods should have explicit return type.  */
-/* @@@ label4 Error SyntaxError: Expected '}', got 'end of stream'.  */
-/* @@ label4 */
+/* @@@ label1 Error SyntaxError: Expected ':', got 'identification literal'.  */

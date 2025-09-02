@@ -27,5 +27,5 @@ class DateC extends MyDate {
 }
 
 function main() {
-    assertEQ(new DateC().bigY(), 20)
+    arktest.assertEQ(new DateC().bigY(), 20)
 }

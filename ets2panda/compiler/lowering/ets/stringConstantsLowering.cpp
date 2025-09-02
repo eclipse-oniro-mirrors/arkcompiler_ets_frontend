@@ -36,19 +36,8 @@ static ir::AstNode *FoldConcat(public_lib::Context *ctx, ir::BinaryExpression *c
     return resNode;
 }
 
-bool StringConstantsLowering::Perform(public_lib::Context *ctx, parser::Program *program)
+bool StringConstantsLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
-    for (auto &[_, ext_programs] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : ext_programs) {
-            if (program->GetFlag(parser::ProgramFlags::AST_STRING_CONSTANT_LOWERED)) {
-                continue;
-            }
-            Perform(ctx, extProg);
-            program->SetFlag(parser::ProgramFlags::AST_STRING_CONSTANT_LOWERED);
-        }
-    }
-
     program->Ast()->TransformChildrenRecursivelyPostorder(
         [ctx](checker::AstNodePtr const node) -> checker::AstNodePtr {
             if (node->IsBinaryExpression()) {
@@ -61,7 +50,6 @@ bool StringConstantsLowering::Perform(public_lib::Context *ctx, parser::Program 
             return node;
         },
         Name());
-
     return true;
 }
 

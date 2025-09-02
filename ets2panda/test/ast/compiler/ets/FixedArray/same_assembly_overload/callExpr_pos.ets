@@ -25,5 +25,4 @@ foo(1,2)
 foo(1.1)
 
 
-/* @@? 17:1 Warning Warning: Function foo with this assembly signature already declared. */
 /* @@? 23:5 Error TypeError: Variable 'b' is used before being assigned. */

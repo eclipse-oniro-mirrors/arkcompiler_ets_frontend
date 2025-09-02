@@ -14,6 +14,7 @@
  */
 
 #include "lsp/include/formatting/formatting_context.h"
+#include "lsp/include/formatting/formatting_settings.h"
 #include "lsp_api_test.h"
 #include <gtest/gtest.h>
 #include "ir/astNode.h"
@@ -24,79 +25,64 @@ class LSPFormattingContextTests : public LSPAPITests {};
 
 TEST_F(LSPFormattingContextTests, FormattingContextConstructorTest)
 {
-    const size_t defaultIndentSize = 4U;
-    const std::string defaultNewLine = "\n";
+    const std::string sourceCode = "let x = 10;";
 
-    ark::es2panda::lsp::FormatCodeSettings settings;
-    settings.SetIndentSize(defaultIndentSize);
-    settings.SetNewLineCharacter(defaultNewLine);
-    settings.SetConvertTabsToSpaces(true);
+    ark::es2panda::lsp::FormattingContext context(sourceCode);
 
-    ark::es2panda::lsp::FormattingContext context(ark::es2panda::lsp::FormattingRequestKind::FORMAT_DOCUMENT, settings);
-
-    EXPECT_EQ(context.GetformattingRequestKind(), ark::es2panda::lsp::FormattingRequestKind::FORMAT_DOCUMENT);
-    EXPECT_EQ(context.GetFormatCodeSettings().GetIndentSize(), defaultIndentSize);
+    EXPECT_EQ(context.GetSourceText(), sourceCode);
 }
 
-TEST_F(LSPFormattingContextTests, FormattingContextSameLineTest)
+TEST_F(LSPFormattingContextTests, FormattingContextTokenSettersTest)
 {
-    const size_t firstLine = 1U;
-    const size_t idStart = 4U;
-    const size_t numStart = 8U;
-    const size_t semiStart = 10U;
+    const std::string sourceCode = "let x = 10;";
 
-    ark::es2panda::lsp::Initializer initializer;
-    auto ctx = initializer.CreateContext("sameLineTest.ets", ES2PANDA_STATE_CHECKED, "let x = 10;");
-    auto contextPtr = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
-    auto program = contextPtr->parserProgram;
+    ark::es2panda::lsp::FormattingContext context(sourceCode);
 
-    ark::es2panda::lsp::FormatCodeSettings settings;
-    ark::es2panda::lsp::FormattingContext context(ark::es2panda::lsp::FormattingRequestKind::FORMAT_ON_ENTER, settings);
+    ark::es2panda::lexer::Token prevToken;
+    prevToken.SetTokenType(ark::es2panda::lexer::TokenType::KEYW_LET);
 
-    ark::es2panda::lexer::SourcePosition pos1(idStart, firstLine, program);
-    ark::es2panda::lexer::SourcePosition pos2(numStart, firstLine, program);
-    ark::es2panda::lexer::SourcePosition pos3(semiStart, firstLine, program);
-    ark::es2panda::lsp::RangeWithKind span1(pos1, pos2, ark::es2panda::ir::AstNodeType::IDENTIFIER);
-    ark::es2panda::lsp::RangeWithKind span2(pos2, pos3, ark::es2panda::ir::AstNodeType::NUMBER_LITERAL);
+    ark::es2panda::lexer::Token currentToken;
+    currentToken.SetTokenType(ark::es2panda::lexer::TokenType::LITERAL_IDENT);
 
-    context.UpdateContext(ctx, span1, span2);
+    ark::es2panda::lexer::Token nextToken;
+    nextToken.SetTokenType(ark::es2panda::lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
 
-    EXPECT_TRUE(context.TokensAreOnSameLine());
+    context.SetPreviousToken(prevToken);
+    context.SetCurrentToken(currentToken);
+    context.SetNextToken(nextToken);
 
-    initializer.DestroyContext(ctx);
+    EXPECT_EQ(context.GetPreviousToken().Type(), ark::es2panda::lexer::TokenType::KEYW_LET);
+    EXPECT_EQ(context.GetCurrentToken().Type(), ark::es2panda::lexer::TokenType::LITERAL_IDENT);
+    EXPECT_EQ(context.GetNextToken().Type(), ark::es2panda::lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
 }
 
-TEST_F(LSPFormattingContextTests, FormattingContextDifferentLinesTest)
+TEST_F(LSPFormattingContextTests, FormattingContextParentNodeTest)
 {
-    const size_t firstLine = 1U;
-    const size_t secondLine = 2U;
-    const size_t idStart = 4U;
-    const size_t numStart = 8U;
+    const std::string sourceCode = "let x = 10;";
 
-    ark::es2panda::lsp::Initializer initializer;
-    auto ctx = initializer.CreateContext("differentLinesTest.ets", ES2PANDA_STATE_CHECKED, "let x = 10;\nlet y = 20;");
-    auto contextPtr = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
-    auto program = contextPtr->parserProgram;
+    ark::es2panda::lsp::FormattingContext context(sourceCode);
 
-    ark::es2panda::lsp::FormatCodeSettings settings;
-    ark::es2panda::lsp::FormattingContext context(ark::es2panda::lsp::FormattingRequestKind::FORMAT_ON_SEMICOLON,
-                                                  settings);
+    ark::es2panda::ir::AstNode *mockParent = nullptr;
+    ark::es2panda::ir::AstNode *mockNextParent = nullptr;
 
-    ark::es2panda::lexer::SourcePosition pos1(idStart, firstLine, program);
-    ark::es2panda::lexer::SourcePosition pos2(numStart, firstLine, program);
-    ark::es2panda::lexer::SourcePosition pos3(idStart, secondLine, program);
-    ark::es2panda::lexer::SourcePosition pos4(numStart, secondLine, program);
-    ark::es2panda::lsp::RangeWithKind span1(pos1, pos2, ark::es2panda::ir::AstNodeType::IDENTIFIER);
-    ark::es2panda::lsp::RangeWithKind span2(pos3, pos4, ark::es2panda::ir::AstNodeType::IDENTIFIER);
+    context.SetCurrentTokenParent(mockParent);
+    context.SetNextTokenParent(mockNextParent);
 
-    context.UpdateContext(ctx, span1, span2);
-
-    EXPECT_TRUE(context.TokensAreOnSameLine());
-
-    initializer.DestroyContext(ctx);
+    EXPECT_EQ(context.GetCurrentTokenParent(), mockParent);
+    EXPECT_EQ(context.GetNextTokenParent(), mockNextParent);
 }
 
-TEST_F(LSPFormattingContextTests, FormattingCodeSettingsTest)
+TEST_F(LSPFormattingContextTests, FormattingContextBlockIsOnOneLineTest)
+{
+    const std::string sourceCode = "{ let x = 10; }";
+
+    ark::es2panda::lsp::FormattingContext context(sourceCode);
+
+    context.SetCurrentTokenParent(nullptr);
+    EXPECT_TRUE(context.ContextNodeBlockIsOnOneLine());
+}
+
+TEST_F(LSPFormattingContextTests, FormatCodeSettingsTest)
 {
     const size_t indentSize = 2U;
     const size_t tabSize = 4U;
@@ -112,16 +98,26 @@ TEST_F(LSPFormattingContextTests, FormattingCodeSettingsTest)
     settings.SetInsertSpaceAfterSemicolonInForStatements(true);
     settings.SetInsertSpaceBeforeAndAfterBinaryOperators(true);
 
-    ark::es2panda::lsp::FormattingContext context(ark::es2panda::lsp::FormattingRequestKind::FORMAT_DOCUMENT, settings);
+    EXPECT_EQ(settings.GetIndentSize(), indentSize);
+    EXPECT_EQ(settings.GetTabSize(), tabSize);
+    EXPECT_EQ(settings.GetNewLineCharacter(), newlineChar);
+    EXPECT_TRUE(settings.GetConvertTabsToSpaces());
+    EXPECT_TRUE(settings.GetInsertSpaceAfterCommaDelimiter());
+    EXPECT_TRUE(settings.GetInsertSpaceAfterSemicolonInForStatements());
+    EXPECT_TRUE(settings.GetInsertSpaceBeforeAndAfterBinaryOperators());
+}
 
-    auto contextSettings = context.GetFormatCodeSettings();
-    EXPECT_EQ(contextSettings.GetIndentSize(), indentSize);
-    EXPECT_EQ(contextSettings.GetTabSize(), tabSize);
-    EXPECT_EQ(contextSettings.GetNewLineCharacter(), newlineChar);
-    EXPECT_TRUE(contextSettings.GetConvertTabsToSpaces());
-    EXPECT_TRUE(contextSettings.GetInsertSpaceAfterCommaDelimiter());
-    EXPECT_TRUE(contextSettings.GetInsertSpaceAfterSemicolonInForStatements());
-    EXPECT_TRUE(contextSettings.GetInsertSpaceBeforeAndAfterBinaryOperators());
+TEST_F(LSPFormattingContextTests, FormatCodeSettingsDefaultValuesTest)
+{
+    ark::es2panda::lsp::FormatCodeSettings settings;
+
+    EXPECT_EQ(settings.GetIndentSize(), 4U);
+    EXPECT_EQ(settings.GetTabSize(), 4U);
+    EXPECT_EQ(settings.GetNewLineCharacter(), "\n");
+    EXPECT_TRUE(settings.GetConvertTabsToSpaces());
+    EXPECT_TRUE(settings.GetInsertSpaceAfterCommaDelimiter());
+    EXPECT_TRUE(settings.GetInsertSpaceAfterSemicolonInForStatements());
+    EXPECT_TRUE(settings.GetInsertSpaceBeforeAndAfterBinaryOperators());
 }
 
 }  // namespace

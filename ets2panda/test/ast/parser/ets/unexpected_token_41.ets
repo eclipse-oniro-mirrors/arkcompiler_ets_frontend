@@ -17,9 +17,8 @@ for (let i: int = 0; i < d?length/* @@ label */; ++i/* @@ label1 */) {
     arr.push(d[i]);
 }
 
-/* @@? 16:22 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 16:26 Error TypeError: Unresolved reference d */
 /* @@? 16:28 Error TypeError: Unresolved reference length */
-/* @@? 16:48 Error SyntaxError: Unexpected token, expected ':'. */
-/* @@? 16:68 Error SyntaxError: Expected ';', got ')'. */
+/* @@@ label Error SyntaxError: Unexpected token, expected ':'. */
+/* @@@ label1 Error SyntaxError: Expected ';', got ')'. */
 /* @@? 17:5 Error TypeError: Unresolved reference arr */

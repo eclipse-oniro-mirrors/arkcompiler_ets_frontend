@@ -66,7 +66,6 @@ export const OBJECT_LITERAL = 'Object';
 export const REFLECT_LITERAL = 'Reflect';
 export const NONE = 'none';
 export type ForbidenAPICheckResult = 'Object' | 'Reflect' | 'none';
-export const LOAD = 'load';
 export const GET_PROPERTY = 'getProperty';
 export const SET_PROPERTY = 'setProperty';
 export const TO_NUMBER = 'toNumber';

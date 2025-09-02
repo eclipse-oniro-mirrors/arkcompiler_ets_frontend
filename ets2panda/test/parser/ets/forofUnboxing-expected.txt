@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "forofUnboxing.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "forofUnboxing.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -430,7 +324,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 33,
+                                        "column": 32,
                                         "program": "forofUnboxing.ets"
                                       }
                                     }
@@ -443,7 +337,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 33,
+                                      "column": 32,
                                       "program": "forofUnboxing.ets"
                                     }
                                   }
@@ -490,7 +384,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 35,
+                                        "column": 43,
                                         "program": "forofUnboxing.ets"
                                       }
                                     }
@@ -540,7 +434,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 55,
+                                        "column": 54,
                                         "program": "forofUnboxing.ets"
                                       }
                                     }
@@ -553,7 +447,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 55,
+                                      "column": 54,
                                       "program": "forofUnboxing.ets"
                                     }
                                   }
@@ -600,7 +494,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 57,
+                                        "column": 65,
                                         "program": "forofUnboxing.ets"
                                       }
                                     }
@@ -650,7 +544,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 77,
+                                        "column": 76,
                                         "program": "forofUnboxing.ets"
                                       }
                                     }
@@ -663,7 +557,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 77,
+                                      "column": 76,
                                       "program": "forofUnboxing.ets"
                                     }
                                   }
@@ -710,7 +604,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 79,
+                                        "column": 87,
                                         "program": "forofUnboxing.ets"
                                       }
                                     }

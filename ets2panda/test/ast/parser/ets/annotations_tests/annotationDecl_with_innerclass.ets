@@ -17,6 +17,7 @@
     class A{}
 }
 
+/* @@? 17:5 Error SyntaxError: Hard keyword 'class' cannot be used as identifier */
 /* @@? 17:5 Error SyntaxError: Identifier expected, got 'class'. */
 /* @@? 17:12 Error SyntaxError: Missing type annotation for property 'A'. */
 /* @@? 17:12 Error SyntaxError: Identifier expected, got '{'. */

@@ -1,0 +1,468 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 16,
+            "column": 5,
+            "endLine": 16,
+            "endColumn": 35,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 16,
+            "column": 10,
+            "endLine": 16,
+            "endColumn": 33,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 16,
+            "column": 10,
+            "endLine": 16,
+            "endColumn": 33,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 5,
+            "endLine": 18,
+            "endColumn": 35,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 10,
+            "endLine": 18,
+            "endColumn": 33,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 10,
+            "endLine": 18,
+            "endColumn": 33,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 5,
+            "endLine": 20,
+            "endColumn": 35,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 10,
+            "endLine": 20,
+            "endColumn": 33,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 10,
+            "endLine": 20,
+            "endColumn": 33,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 5,
+            "endLine": 22,
+            "endColumn": 39,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 10,
+            "endLine": 22,
+            "endColumn": 37,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 10,
+            "endLine": 22,
+            "endColumn": 37,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 10,
+            "endLine": 24,
+            "endColumn": 33,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 5,
+            "endLine": 25,
+            "endColumn": 14,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 10,
+            "endLine": 25,
+            "endColumn": 12,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 5,
+            "endLine": 27,
+            "endColumn": 37,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 10,
+            "endLine": 27,
+            "endColumn": 35,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 10,
+            "endLine": 27,
+            "endColumn": 35,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 11,
+            "endLine": 27,
+            "endColumn": 19,
+            "problem": "ClassAsObjectError",
+            "suggest": "",
+            "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 5,
+            "endLine": 29,
+            "endColumn": 48,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 10,
+            "endLine": 29,
+            "endColumn": 46,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 10,
+            "endLine": 29,
+            "endColumn": 46,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 11,
+            "endLine": 29,
+            "endColumn": 30,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 22,
+            "endLine": 29,
+            "endColumn": 30,
+            "problem": "ClassAsObjectError",
+            "suggest": "",
+            "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 5,
+            "endLine": 31,
+            "endColumn": 40,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 10,
+            "endLine": 31,
+            "endColumn": 38,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 10,
+            "endLine": 31,
+            "endColumn": 38,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 11,
+            "endLine": 31,
+            "endColumn": 22,
+            "problem": "CommaOperator",
+            "suggest": "",
+            "rule": "The comma operator \",\" is supported only in \"for\" loops (arkts-no-comma-outside-loops)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 14,
+            "endLine": 31,
+            "endColumn": 22,
+            "problem": "ClassAsObjectError",
+            "suggest": "",
+            "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 5,
+            "endLine": 33,
+            "endColumn": 48,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 10,
+            "endLine": 33,
+            "endColumn": 46,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 20,
+            "endLine": 33,
+            "endColumn": 24,
+            "problem": "FunctionBindError",
+            "suggest": "",
+            "rule": "'Function.bind' is not supported (arkts-no-func-bind)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 5,
+            "endLine": 36,
+            "endColumn": 27,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 11,
+            "endLine": 36,
+            "endColumn": 25,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 11,
+            "endLine": 36,
+            "endColumn": 25,
+            "problem": "NoFunctionReturnThis",
+            "suggest": "",
+            "rule": "Function(\"return this\") is not supported (arkts-no-function-return-this)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 5,
+            "endLine": 38,
+            "endColumn": 34,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 10,
+            "endLine": 38,
+            "endColumn": 32,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 5,
+            "endLine": 40,
+            "endColumn": 37,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 10,
+            "endLine": 40,
+            "endColumn": 35,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 5,
+            "endLine": 42,
+            "endColumn": 40,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 10,
+            "endLine": 42,
+            "endColumn": 38,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 12,
+            "endLine": 44,
+            "endColumn": 20,
+            "problem": "ClassAsObjectError",
+            "suggest": "",
+            "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 5,
+            "endLine": 46,
+            "endColumn": 44,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 10,
+            "endLine": 46,
+            "endColumn": 42,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 5,
+            "endLine": 48,
+            "endColumn": 45,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        }
+    ]
+}

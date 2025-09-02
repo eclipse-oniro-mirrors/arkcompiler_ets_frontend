@@ -30,6 +30,7 @@ export class WorkLoadInfo {
   totalTsCodeLines = 0;
   totalJsonCodeLines = 0;
   totalXmlCodeLines = 0;
+  manualFixRate: string | undefined;
 
   addFloderResult(result: FloderScanResultInfo): void {
     this.scanFilePathList.push(result.normalizedPath);
@@ -42,10 +43,10 @@ export class WorkLoadInfo {
     this.totalXmlCodeLines += result.xmlCodeLines;
   }
 
-  calculateFixRate(problemNumbers: ProblemNumbersInfo): string {
+  calculateFixRate(problemNumbers: ProblemNumbersInfo): void {
     const totalLines = this.totalArkTSCodeLines + this.totalCAndCPPCodeLines;
     if (totalLines <= 0) {
-      return '0.00%';
+      this.manualFixRate = '0.00%';
     }
 
     const problemCount = problemNumbers.needToManualFixproblemNumbers;
@@ -54,6 +55,6 @@ export class WorkLoadInfo {
         this.totalNapiCodeLines * NPAI_REPAIRE_WORKLOADA_COEFFICIEN) /
       totalLines;
 
-    return `${(ratio * 100).toFixed(2)}%`;
+    this.manualFixRate = `${(ratio * 100).toFixed(2)}%`;
   }
 }

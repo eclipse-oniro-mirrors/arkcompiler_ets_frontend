@@ -19,10 +19,10 @@ function main() {
         2:"hello2",
         3:"world",
     };
-    assertEQ(x[1], "hello")
-    assertEQ(x[2], "hello2")
-    assertEQ(x[3], "world")
+    arktest.assertEQ(x[1], "hello")
+    arktest.assertEQ(x[2], "hello2")
+    arktest.assertEQ(x[3], "world")
 
     x[1] = "newHello";
-    assertEQ(x[1], "newHello")
+    arktest.assertEQ(x[1], "newHello")
 } 

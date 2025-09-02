@@ -101,7 +101,7 @@ class TSMethodSignature;
 class ChainExpression;
 class VariableDeclarator;
 
-enum class AstNodeType;
+enum class AstNodeType : uint8_t;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::checker {
@@ -121,8 +121,9 @@ struct TupleTypeInfo {
 class TSChecker : public Checker {
 public:
     // NOLINTNEXTLINE(readability-redundant-member-init)
-    explicit TSChecker(util::DiagnosticEngine &diagnosticEngine, [[maybe_unused]] ArenaAllocator *programAllocator)
-        : Checker(diagnosticEngine)
+    explicit TSChecker([[maybe_unused]] ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine,
+                       [[maybe_unused]] ThreadSafeArenaAllocator *programAllocator)
+        : Checker(allocator, diagnosticEngine, programAllocator)
     {
     }
 

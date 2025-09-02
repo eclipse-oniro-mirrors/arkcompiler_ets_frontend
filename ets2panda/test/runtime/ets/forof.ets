@@ -30,7 +30,7 @@ function sum3(...p: (Int | null)[]): int {
 }
 
 function main() {
-    assertEQ(6, sum1(1, 2, 3))
-    assertEQ(3, sum2(1, 2, undefined))
-    assertEQ(3, sum3(1, 2, null))
+    arktest.assertEQ(6, sum1(1, 2, 3))
+    arktest.assertEQ(3, sum2(1, 2, undefined))
+    arktest.assertEQ(3, sum3(1, 2, null))
 }

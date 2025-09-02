@@ -16,7 +16,7 @@
 function main() {
     let v1: Object = ((): Int => {return 24;}) as (()=>Int);
     let v2: ()=>Int = v1 as (()=>Int);
-    assertEQ(24, v2())
+    arktest.assertEQ(24, v2())
     let v3: Object = foo;
 }
 

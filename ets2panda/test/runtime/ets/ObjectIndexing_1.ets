@@ -42,9 +42,9 @@ function main(): void {
   c[1] = c[2];
   c[2] *= 2;
 
-  assertEQ(y, u)
-  assertEQ(z, v)
-  assertEQ(x[1], c[1])
-  assertEQ(x[2], c[2])
-  assertEQ(x[0], c[0])
+  arktest.assertEQ(y, u)
+  arktest.assertEQ(z, v)
+  arktest.assertEQ(x[1], c[1])
+  arktest.assertEQ(x[2], c[2])
+  arktest.assertEQ(x[0], c[0])
 }

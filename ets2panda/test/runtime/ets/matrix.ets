@@ -16,5 +16,5 @@
 function main(): void {
     let matrix = [[0, 0], [0, 0]];
     matrix[0][0] += 1;
-    assertEQ(matrix[0][0], 1);
+    arktest.assertEQ(matrix[0][0], 1);
 }

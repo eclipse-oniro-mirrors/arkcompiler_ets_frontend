@@ -30,11 +30,7 @@ public:
             return;
         }
 
-        if (!Source()->HasTypeFlag(TypeFlag::CONSTANT)) {
-            ApplyGlobalWidening();
-        } else {
-            ApplyConstWidening();
-        }
+        ApplyGlobalWidening();
     }
 
 private:
@@ -44,39 +40,6 @@ private:
     static constexpr TypeFlag WIDENABLE_TO_LONG = TypeFlag::INT | WIDENABLE_TO_INT;
     static constexpr TypeFlag WIDENABLE_TO_FLOAT = TypeFlag::LONG | WIDENABLE_TO_LONG;
     static constexpr TypeFlag WIDENABLE_TO_DOUBLE = TypeFlag::FLOAT | WIDENABLE_TO_FLOAT;
-
-    void ApplyConstWidening()
-    {
-        switch (ETSChecker::ETSChecker::ETSType(Target())) {
-            case TypeFlag::SHORT: {
-                ApplyWidening<ShortType>(WIDENABLE_TO_SHORT);
-                break;
-            }
-            case TypeFlag::CHAR: {
-                ApplyWidening<CharType>(WIDENABLE_TO_CHAR);
-                break;
-            }
-            case TypeFlag::INT: {
-                ApplyWidening<IntType>(WIDENABLE_TO_INT);
-                break;
-            }
-            case TypeFlag::LONG: {
-                ApplyWidening<LongType>(WIDENABLE_TO_LONG);
-                break;
-            }
-            case TypeFlag::FLOAT: {
-                ApplyWidening<FloatType>(WIDENABLE_TO_FLOAT);
-                break;
-            }
-            case TypeFlag::DOUBLE: {
-                ApplyWidening<DoubleType>(WIDENABLE_TO_DOUBLE);
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-    }
 
     void ApplyGlobalWidening()
     {
@@ -121,31 +84,31 @@ private:
             ES2PANDA_ASSERT(Relation()->GetNode());
             switch (ETSChecker::ETSChecker::ETSType(Source())) {
                 case TypeFlag::BYTE: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalByteType());
+                    Relation()->GetNode()->SetTsType(Checker()->GlobalByteBuiltinType());
                     break;
                 }
                 case TypeFlag::SHORT: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalShortType());
+                    Relation()->GetNode()->SetTsType(Checker()->GlobalShortBuiltinType());
                     break;
                 }
                 case TypeFlag::CHAR: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalCharType());
+                    Relation()->GetNode()->SetTsType(Checker()->GlobalCharBuiltinType());
                     break;
                 }
                 case TypeFlag::INT: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalIntType());
+                    Relation()->GetNode()->SetTsType(Checker()->GlobalIntBuiltinType());
                     break;
                 }
                 case TypeFlag::LONG: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalLongType());
+                    Relation()->GetNode()->SetTsType(Checker()->GlobalLongBuiltinType());
                     break;
                 }
                 case TypeFlag::FLOAT: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalFloatType());
+                    Relation()->GetNode()->SetTsType(Checker()->GlobalFloatBuiltinType());
                     break;
                 }
                 case TypeFlag::DOUBLE: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalDoubleType());
+                    Relation()->GetNode()->SetTsType(Checker()->GlobalDoubleBuiltinType());
                     break;
                 }
                 default: {
@@ -155,62 +118,6 @@ private:
         }
 
         Relation()->Result(true);
-    }
-
-    template <typename TargetType>
-    void ApplyWidening(TypeFlag flag)
-    {
-        if (!Source()->HasTypeFlag(flag)) {
-            return;
-        }
-
-        switch (ETSChecker::ETSChecker::ETSType(Source())) {
-            case TypeFlag::BYTE: {
-                ApplyWidening<TargetType, ByteType>();
-                break;
-            }
-            case TypeFlag::CHAR: {
-                ApplyWidening<TargetType, CharType>();
-                break;
-            }
-            case TypeFlag::SHORT: {
-                ApplyWidening<TargetType, ShortType>();
-                break;
-            }
-            case TypeFlag::INT: {
-                ApplyWidening<TargetType, IntType>();
-                break;
-            }
-            case TypeFlag::LONG: {
-                ApplyWidening<TargetType, LongType>();
-                break;
-            }
-            case TypeFlag::FLOAT: {
-                ApplyWidening<TargetType, FloatType>();
-                break;
-            }
-            case TypeFlag::DOUBLE: {
-                ApplyWidening<TargetType, DoubleType>();
-                break;
-            }
-            default: {
-                return;
-            }
-        }
-        Relation()->Result(true);
-    }
-
-    template <typename TargetType, typename SourceType>
-    void ApplyWidening()
-    {
-        using SType = typename SourceType::UType;
-        using TType = typename TargetType::UType;
-        SType value = reinterpret_cast<SourceType *>(Source())->GetValue();
-
-        if (!Relation()->OnlyCheckWidening()) {
-            ES2PANDA_ASSERT(Relation()->GetNode());
-            Relation()->GetNode()->SetTsType(Checker()->ProgramAllocator()->New<TargetType>(static_cast<TType>(value)));
-        }
     }
 };
 }  // namespace ark::es2panda::checker

@@ -17,4 +17,4 @@ package mypackage;
 
 let myvar: number = exist_but_checker_fails_in_file;
 
-/* @@? package_module_2.ets:19:39 Error TypeError: Type 'int' cannot be assigned to type 'String'  */
+/* @@? package_module_2.ets:19:39 Error TypeError: Type 'Int' cannot be assigned to type 'String'  */

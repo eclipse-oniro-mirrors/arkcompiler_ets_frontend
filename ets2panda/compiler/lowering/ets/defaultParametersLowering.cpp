@@ -16,8 +16,6 @@
 #include "defaultParametersLowering.h"
 #include "compiler/lowering/util.h"
 
-#include <checker/ETSchecker.h>
-
 namespace ark::es2panda::compiler {
 
 static ir::Statement *TransformInitializer(ArenaAllocator *allocator, parser::ETSParser *parser,
@@ -40,17 +38,48 @@ static ir::Statement *TransformInitializer(ArenaAllocator *allocator, parser::ET
                                             param->Ident()->Name(), init, typeAnnotation->Clone(allocator, nullptr));
 }
 
-static void ValidateDefaultParamInDeclare(public_lib::Context *ctx, ir::ScriptFunction *function,
-                                          std::vector<ir::ETSParameterExpression *> &params)
+static void TransformDefaultParameters(public_lib::Context *ctx, ir::ScriptFunction *function,
+                                       const std::vector<ir::ETSParameterExpression *> &params,
+                                       bool isInterfaceFunction)
 {
-    for (auto param : params) {
-        if (param->Initializer() == nullptr) {
-            continue;
+    auto validateDefaultParamInDeclare = [ctx, function, &params]() {
+        for (auto param : params) {
+            if (param->Initializer() == nullptr) {
+                continue;
+            }
+            param->SetInitializer(nullptr);
+            if ((function->Flags() & ir::ScriptFunctionFlags::EXTERNAL) != 0U) {
+                ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::DEFAULT_PARAM_IN_DECLARE, param->Start());
+            }
         }
-        param->SetInitializer(nullptr);
-        if ((function->Flags() & ir::ScriptFunctionFlags::EXTERNAL) != 0U) {
-            ctx->checker->AsETSChecker()->LogError(diagnostic::DEFAULT_PARAM_IN_DECLARE, param->Start());
+    };
+    if (isInterfaceFunction) {
+        for (const auto param : params) {
+            TransformInitializer(ctx->allocator, ctx->parser->AsETSParser(), param);
         }
+        return;
+    }
+
+    if (!function->HasBody()) {  // #23134
+        validateDefaultParamInDeclare();
+        return;
+    }
+
+    auto const body = function->Body()->AsBlockStatement();
+    auto const allocator = ctx->allocator;
+    auto const parser = ctx->parser->AsETSParser();
+    auto &bodyStmt = body->StatementsForUpdates();
+
+    bodyStmt.insert(bodyStmt.begin(), params.size(), nullptr);
+
+    for (size_t dfltIdx = 0; dfltIdx < params.size(); ++dfltIdx) {
+        auto const param = params.at(dfltIdx);
+        auto stmt = TransformInitializer(allocator, parser, param);
+        bodyStmt[dfltIdx] = stmt;
+        // From a developer's perspective, this locational information is more intuitive.
+        stmt->SetParent(param);
+        RefineSourceRanges(stmt);
+        stmt->SetParent(body);
     }
 }
 
@@ -69,6 +98,7 @@ static void TransformFunction(public_lib::Context *ctx, ir::ScriptFunction *func
         }
         if (param->AsETSParameterExpression()->TypeAnnotation() == nullptr) {  // #23134
             ES2PANDA_ASSERT(ctx->diagnosticEngine->IsAnyError());
+            param->AsETSParameterExpression()->SetInitializer(nullptr);
             continue;
         }
         defaultParams.push_back(param->AsETSParameterExpression());
@@ -77,25 +107,20 @@ static void TransformFunction(public_lib::Context *ctx, ir::ScriptFunction *func
     if (defaultParams.empty()) {
         return;
     }
-    if (!function->HasBody()) {  // #23134
-        ValidateDefaultParamInDeclare(ctx, function, defaultParams);
-        return;
-    }
-    auto const body = function->Body()->AsBlockStatement();
-    auto const allocator = ctx->allocator;
-    auto const parser = ctx->parser->AsETSParser();
 
-    body->Statements().insert(body->Statements().begin(), defaultParams.size(), nullptr);
-
-    for (size_t dfltIdx = 0; dfltIdx < defaultParams.size(); ++dfltIdx) {
-        auto const param = defaultParams.at(dfltIdx);
-        auto stmt = TransformInitializer(allocator, parser, param);
-        body->Statements()[dfltIdx] = stmt;
-        // From a developer's perspective, this locational information is more intuitive.
-        stmt->SetParent(param);
-        RefineSourceRanges(stmt);
-        stmt->SetParent(body);
+    bool isInterfaceFunction = function->IsTSInterfaceDeclaration();
+    if (!isInterfaceFunction) {
+        ir::AstNode *node = function->Parent();
+        while (node != nullptr) {
+            if (node->IsTSInterfaceDeclaration()) {
+                isInterfaceFunction = true;
+                break;
+            }
+            node = node->Parent();
+        }
     }
+
+    TransformDefaultParameters(ctx, function, defaultParams, isInterfaceFunction);
 }
 
 bool DefaultParametersLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)

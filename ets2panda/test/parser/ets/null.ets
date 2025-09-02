@@ -34,13 +34,13 @@ function main(): void {
     foo(null);
     foo(new cls());
 
-    assertEQ(b, null);
-    assertNE(c, null);
-    assertNE(null, c);
-    assertEQ(e, null);
-    assertNE(f, null);
-    assertEQ(b, e);
-    assertEQ(null, null);
+    arktest.assertEQ(b, null);
+    arktest.assertNE(c, null);
+    arktest.assertNE(null, c);
+    arktest.assertEQ(e, null);
+    arktest.assertNE(f, null);
+    arktest.assertEQ(b, e);
+    arktest.assertEQ(null, null);
 
     return;
 }

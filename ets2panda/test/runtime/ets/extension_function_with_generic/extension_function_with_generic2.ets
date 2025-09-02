@@ -24,11 +24,11 @@ function foo<T>(this: A<T>, p: T): T {
 
 function main() {
     let a1 = new A<Object>();
-    assertEQ(foo<Object>(a1, new String("hello")), "hello")
-    assertEQ(a1.foo<Object>(new String("hello")), "hello")
+    arktest.assertEQ(foo<Object>(a1, new String("hello")), "hello")
+    arktest.assertEQ(a1.foo<Object>(new String("hello")), "hello")
 
     let a2 = new A<Object>();
     let p = new Int(1);
-    assertEQ(foo<Object>(a2, p), p)
-    assertEQ(a2.foo<Object>(p), p)
+    arktest.assertEQ(foo<Object>(a2, p), p)
+    arktest.assertEQ(a2.foo<Object>(p), p)
 }

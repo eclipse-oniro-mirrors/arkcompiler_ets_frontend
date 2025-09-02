@@ -17,9 +17,6 @@
 
 #include "util/es2pandaMacros.h"
 
-#include <sstream>
-#include <string>
-
 namespace ark::es2panda::debuginfo {
 
 DebugInfoDumper::DebugInfoDumper(const pandasm::Program *prog) : prog_(prog) {}
@@ -88,24 +85,113 @@ void DebugInfoDumper::WrapArray(const char *name, const std::vector<T> &array, b
     ss_ << "]" << PutComma(comma);
 }
 
+void DebugInfoDumper::WrapRegArray(ark::pandasm::Ins const &ins, bool comma)
+{
+    ss_ << std::endl;
+    Indent();
+    ss_ << "\"regs\": "
+        << "[";
+
+    auto const size = ins.RegSize();
+    if (size == 0U) {
+        ss_ << "]" << PutComma(comma);
+        return;
+    }
+
+    ss_ << "\n";
+    ++indent_;
+
+    for (std::size_t i = 0U; i < size;) {
+        Indent();
+        ss_ << ins.GetReg(i);
+        if (++i < size) {
+            ss_ << ',';
+        }
+        ss_ << '\n';
+    }
+
+    --indent_;
+    Indent();
+
+    ss_ << "]" << PutComma(comma);
+}
+
+void DebugInfoDumper::WrapIDArray(ark::pandasm::Ins const &ins, bool comma)
+{
+    ss_ << std::endl;
+    Indent();
+    ss_ << "\"ids\": "
+        << "[";
+
+    auto const size = ins.IDSize();
+    if (size == 0U) {
+        ss_ << "]" << PutComma(comma);
+        return;
+    }
+
+    ss_ << "\n";
+    ++indent_;
+
+    for (std::size_t i = 0U; i < size;) {
+        Indent();
+        ss_ << ins.GetID(i);
+        if (++i < size) {
+            ss_ << ',';
+        }
+        ss_ << '\n';
+    }
+
+    --indent_;
+    Indent();
+
+    ss_ << "]" << PutComma(comma);
+}
+
+void DebugInfoDumper::WrapImmArray(ark::pandasm::Ins const &ins, bool comma)
+{
+    ss_ << std::endl;
+    Indent();
+    ss_ << "\"imms\": "
+        << "[";
+
+    auto const size = ins.ImmSize();
+    if (size == 0U) {
+        ss_ << "]" << PutComma(comma);
+        return;
+    }
+
+    ss_ << "\n";
+    ++indent_;
+
+    for (std::size_t i = 0U; i < size;) {
+        Indent();
+        auto value = ins.GetImm(i);
+        ss_ << (std::holds_alternative<int64_t>(value) ? std::to_string(std::get<int64_t>(value))
+                                                       : std::to_string(std::get<double>(value)));
+        if (++i < size) {
+            ss_ << ',';
+        }
+        ss_ << '\n';
+    }
+
+    --indent_;
+    Indent();
+
+    ss_ << "]" << PutComma(comma);
+}
+
 void DebugInfoDumper::WriteIns(const pandasm::Ins &ins)
 {
     ss_ << "{";
-    {
-        pandasm::Ins insCopy;
-        insCopy.opcode = ins.opcode;
-        insCopy.setLabel = ins.setLabel;
-        insCopy.label = ins.label;
-        WriteProperty("opcode", insCopy.ToString());
-    }
+    WriteProperty("opcode", ins.ToString());
     indent_++;
-    WrapArray("regs", ins.regs);
-    WrapArray("ids", ins.ids);
-    WrapArray("imms", ins.imms);
+    WrapRegArray(ins);
+    WrapIDArray(ins);
+    WrapImmArray(ins);
     ss_ << std::endl;
     Indent();
     ss_ << "\"label\": "
-        << "\"" << ins.label << "\",";
+        << "\"" << (ins.HasLabel() ? ins.Label().c_str() : "") << "\",";
     WritePosInfo(ins.insDebug);
     indent_--;
     Indent();
@@ -131,10 +217,10 @@ void DebugInfoDumper::WritePosInfo(const pandasm::debuginfo::Ins &posInfo)
     ss_ << std::endl;
     Indent();
     ss_ << "\"debug_pos_info\": {";
-    WriteProperty("boundLeft", posInfo.boundLeft);
-    WriteProperty("boundRight", posInfo.boundRight);
-    WriteProperty("sourceLineNum", static_cast<int32_t>(posInfo.lineNumber));
-    WriteProperty("wholeLine", posInfo.wholeLine, false);
+    WriteProperty("boundLeft", posInfo.BoundLeft());
+    WriteProperty("boundRight", posInfo.BoundRight());
+    WriteProperty("sourceLineNum", posInfo.LineNumber());
+    WriteProperty("wholeLine", posInfo.WholeLine(), false);
     Indent();
     ss_ << "}" << std::endl;
 }
@@ -152,7 +238,7 @@ void DebugInfoDumper::WriteVariableInfo(const pandasm::debuginfo::LocalVariable 
     ss_ << "}";
 }
 
-void DebugInfoDumper::DumpFuncBody(std::string name, const pandasm::Function &func)
+void DebugInfoDumper::DumpFuncBody(std::string const &name, const pandasm::Function &func)
 {
     indent_++;
     Indent();
@@ -216,18 +302,19 @@ void DebugInfoDumper::Dump()
     std::cout << ss_.str();
 }
 
-void DebugInfoDumper::WriteProperty(const char *key, const Value &value, bool comma)
+template <typename T>
+void DebugInfoDumper::WriteProperty(const char *key, T &&value, bool comma)
 {
+    static_assert(std::is_arithmetic_v<std::decay_t<T>> || std::is_same_v<std::string, std::decay_t<T>>,
+                  "Invalid data type.");
     ss_ << std::endl;
     indent_++;
     Indent();
     ss_ << "\"" << key << "\": ";
-    if (std::holds_alternative<std::string>(value)) {
-        ss_ << "\"" << std::get<std::string>(value) << "\"";
-    } else if (std::holds_alternative<size_t>(value)) {
-        ss_ << std::to_string(std::get<size_t>(value));
-    } else if (std::holds_alternative<int32_t>(value)) {
-        ss_ << std::to_string(std::get<int32_t>(value));
+    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
+        ss_ << std::to_string(std::forward<T>(value));
+    } else {
+        ss_ << "\"" << std::forward<T>(value) << "\"";
     }
 
     comma ? ss_ << "," : ss_ << std::endl;

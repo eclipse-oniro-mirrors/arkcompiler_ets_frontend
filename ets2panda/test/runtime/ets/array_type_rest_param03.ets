@@ -36,5 +36,5 @@ function main() : void {
     let b = new A("b" ,2)
     let c = new A("a" ,3)
     let d = new A("b" ,4)
-    assertEQ(foo(a,b,c,d),10)
+    arktest.assertEQ(foo(a,b,c,d),10)
 }

@@ -23,5 +23,5 @@ function main(){
     const isPauseReq:boolean = true;
     const onPausePolicy: OnPause = OnPause.Reset
     const onPause: OnPause = isPauseReq ? onPausePolicy : OnPause.Nothing;
-    assertEQ(onPause as int, 1)
+    arktest.assertEQ(onPause as int, 1)
 }

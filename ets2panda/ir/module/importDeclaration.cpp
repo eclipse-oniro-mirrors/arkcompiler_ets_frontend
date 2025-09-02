@@ -24,46 +24,55 @@
 
 namespace ark::es2panda::ir {
 
+void ImportDeclaration::SetSource(StringLiteral *source)
+{
+    this->GetOrCreateHistoryNodeAs<ImportDeclaration>()->source_ = source;
+}
+
 void ImportDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    if (auto *transformedNode = cb(source_); source_ != transformedNode) {
-        source_->SetTransformedNode(transformationName, transformedNode);
-        source_ = transformedNode->AsStringLiteral();
+    auto const source = Source();
+    if (auto *transformedNode = cb(source); source != transformedNode) {
+        source->SetTransformedNode(transformationName, transformedNode);
+        SetSource(transformedNode->AsStringLiteral());
     }
 
-    for (auto *&it : VectorIterationGuard(specifiers_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode;
+    auto const &specifiers = Specifiers();
+    for (size_t index = 0; index < specifiers.size(); ++index) {
+        if (auto *transformedNode = cb(specifiers[index]); specifiers[index] != transformedNode) {
+            specifiers[index]->SetTransformedNode(transformationName, transformedNode);
+            SetValueSpecifiers(transformedNode, index);
         }
     }
 }
 
 void ImportDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    cb(source_);
+    auto source = GetHistoryNodeAs<ImportDeclaration>()->source_;
+    cb(source);
 
-    for (auto *it : VectorIterationGuard(specifiers_)) {
+    for (auto *it : VectorIterationGuard(Specifiers())) {
         cb(it);
     }
 }
 
 void ImportDeclaration::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", "ImportDeclaration"}, {"source", source_}, {"specifiers", specifiers_}});
+    dumper->Add({{"type", "ImportDeclaration"}, {"source", Source()}, {"specifiers", Specifiers()}});
 }
 
 void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
 {
     dumper->Add("import ");
-    if (specifiers_.size() == 1 &&
-        (specifiers_[0]->IsImportNamespaceSpecifier() || specifiers_[0]->IsImportDefaultSpecifier())) {
-        specifiers_[0]->Dump(dumper);
+    auto const &specifiers = Specifiers();
+    if (specifiers.size() == 1 &&
+        (specifiers[0]->IsImportNamespaceSpecifier() || specifiers[0]->IsImportDefaultSpecifier())) {
+        specifiers[0]->Dump(dumper);
     } else {
         dumper->Add("{ ");
-        for (auto specifier : specifiers_) {
+        for (auto specifier : specifiers) {
             specifier->Dump(dumper);
-            if (specifier != specifiers_.back()) {
+            if (specifier != specifiers.back()) {
                 dumper->Add(", ");
             }
         }
@@ -71,7 +80,7 @@ void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
     }
 
     dumper->Add(" from ");
-    source_->Dump(dumper);
+    Source()->Dump(dumper);
     dumper->Add(";");
     dumper->Endl();
 }
@@ -104,13 +113,39 @@ ImportDeclaration *ImportDeclaration::Construct(ArenaAllocator *allocator)
 
 void ImportDeclaration::CopyTo(AstNode *other) const
 {
-    auto otherImpl = other->AsImportDeclaration();
+    auto otherImpl = static_cast<ImportDeclaration *>(other);
 
     otherImpl->source_ = source_;
     otherImpl->specifiers_ = specifiers_;
     otherImpl->importKinds_ = importKinds_;
 
     Statement::CopyTo(other);
+}
+
+void ImportDeclaration::EmplaceSpecifiers(AstNode *source)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ImportDeclaration>();
+    newNode->specifiers_.emplace_back(source);
+}
+
+void ImportDeclaration::ClearSpecifiers()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ImportDeclaration>();
+    newNode->specifiers_.clear();
+}
+
+void ImportDeclaration::SetValueSpecifiers(AstNode *source, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ImportDeclaration>();
+    auto &arenaVector = newNode->specifiers_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = source;
+}
+
+[[nodiscard]] ArenaVector<AstNode *> &ImportDeclaration::SpecifiersForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ImportDeclaration>();
+    return newNode->specifiers_;
 }
 
 }  // namespace ark::es2panda::ir

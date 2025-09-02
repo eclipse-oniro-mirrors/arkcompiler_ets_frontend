@@ -34,26 +34,26 @@ struct MyComponent {
   @Local arr: Array<string> = [];
   scroller: Scroller = new Scroller();
   build() {
-    Column({ space: 5.0 }) {
-      List({ scroller: this.scroller, space: 5.0, initialIndex: 100.0 }) {
+    Column({ space: 5 }) {
+      List({ scroller: this.scroller, space: 5, initialIndex: 100 }) {
         Repeat(this.arr)
           .virtualScroll({
-            onTotalCount: () => { return 1000.0; },
+            onTotalCount: () => { return 1000; },
             onLazyLoading: (index: number) => { this.arr[index as int] = index.toString(); }
           })
           .each((obj: RepeatItem<string>) => {
             ListItem() {
-              Row({ space: 5.0 }) {
+              Row({ space: 5 }) {
                 Text(`${obj.index}: Item_${obj.item}`)
               }
             }
-            .height(50.0)
+            .height(50)
           })
       }
       .height('80%')
-      .border({ width: 1.0})
+      .border({ width: 1})
       Button('ScrollToIndex 500')
-        .onClick(() => { this.scroller.scrollToIndex(500.0); })
+        .onClick(() => { this.scroller.scrollToIndex(500); })
     }
   }
 }

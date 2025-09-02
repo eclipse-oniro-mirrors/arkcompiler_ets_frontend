@@ -40,8 +40,8 @@ const y: string = -1.7976931348623157e308 + " min float" + 100;
 const z: string = 2.2250738585072014e-308 + " smallest positive float" + 0.0001;
 
 enum Color {
-    A = a as string,
-    B = b as String,
+    A = a,
+    B = b,
     C = c,
     D = d,
     E = e,
@@ -68,29 +68,29 @@ enum Color {
 }
 
 function main() {
-    assertEQ(Color.A.toString(), a)
-    assertEQ(Color.B.toString(), b)
-    assertEQ(Color.C.toString(), c)
-    assertEQ(Color.D.toString(), d)
-    assertEQ(Color.E.toString(), e)
-    assertEQ(Color.F.toString(), f)
-    assertEQ(Color.G.toString(), g)
-    assertEQ(Color.H.toString(), h)
-    assertEQ(Color.I.toString(), i)
-    assertEQ(Color.J.toString(), j)
-    assertEQ(Color.K.toString(), k)
-    assertEQ(Color.L.toString(), l)
-    assertEQ(Color.M.toString(), m)
-    assertEQ(Color.N.toString(), n)
-    assertEQ(Color.O.toString(), o)
-    assertEQ(Color.P.toString(), p)
-    assertEQ(Color.Q.toString(), q)
-    assertEQ(Color.R.toString(), r)
-    assertEQ(Color.S.toString(), s)
-    assertEQ(Color.T.toString(), t)
-    assertEQ(Color.U.toString(), u)
-    assertEQ(Color.V.toString(), v)
-    assertEQ(Color.X.toString(), x)
-    assertEQ(Color.Y.toString(), y)
-    assertEQ(Color.Z.toString(), z)
+    arktest.assertEQ(Color.A.toString(), a)
+    arktest.assertEQ(Color.B.toString(), b)
+    arktest.assertEQ(Color.C.toString(), c)
+    arktest.assertEQ(Color.D.toString(), d)
+    arktest.assertEQ(Color.E.toString(), e)
+    arktest.assertEQ(Color.F.toString(), f)
+    arktest.assertEQ(Color.G.toString(), g)
+    arktest.assertEQ(Color.H.toString(), h)
+    arktest.assertEQ(Color.I.toString(), i)
+    arktest.assertEQ(Color.J.toString(), j)
+    arktest.assertEQ(Color.K.toString(), k)
+    arktest.assertEQ(Color.L.toString(), l)
+    arktest.assertEQ(Color.M.toString(), m)
+    arktest.assertEQ(Color.N.toString(), n)
+    arktest.assertEQ(Color.O.toString(), o)
+    arktest.assertEQ(Color.P.toString(), p)
+    arktest.assertEQ(Color.Q.toString(), q)
+    arktest.assertEQ(Color.R.toString(), r)
+    arktest.assertEQ(Color.S.toString(), s)
+    arktest.assertEQ(Color.T.toString(), t)
+    arktest.assertEQ(Color.U.toString(), u)
+    arktest.assertEQ(Color.V.toString(), v)
+    arktest.assertEQ(Color.X.toString(), x)
+    arktest.assertEQ(Color.Y.toString(), y)
+    arktest.assertEQ(Color.Z.toString(), z)
 }

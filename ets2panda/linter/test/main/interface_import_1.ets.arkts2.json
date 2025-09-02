@@ -15,26 +15,6 @@
     ],
     "result": [
         {
-            "line": 21,
-            "column": 24,
-            "endLine": 21,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 51,
-            "column": 26,
-            "endLine": 51,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 60,
             "column": 1,
             "endLine": 64,
@@ -52,16 +32,6 @@
             "problem": "AnimatableExtendDecoratorTransform",
             "suggest": "",
             "rule": "\"@AnimatableExtend\" decorator should be transformed to use receiver (arkui-animatableextend-use-receiver)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 73,
-            "column": 26,
-            "endLine": 73,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

@@ -17,5 +17,5 @@ function main() : void {
     let a: Byte = 2;
     let b: Byte = new Byte(a);
 
-    assertEQ(a, b)
+    arktest.assertEQ(a, b)
 }

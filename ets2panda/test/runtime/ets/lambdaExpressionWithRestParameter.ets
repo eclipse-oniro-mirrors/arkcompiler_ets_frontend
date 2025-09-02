@@ -27,10 +27,10 @@ function main(): void {
   }
 
   let x: string = lam("Test 1:", " case 1,", " case 2,", " case 3.");
-  assertEQ(x, "Test 1,  case 1, case 2, case 3.")
+  arktest.assertEQ(x, "Test 1,  case 1, case 2, case 3.")
 
   let arr: string[] = [" case 4,", " case 5,", " case 6."];
 
   let y = lam("Test 2:", ...arr);
-  assertEQ(y, "Test 2,  case 4, case 5, case 6.")
+  arktest.assertEQ(y, "Test 2,  case 4, case 5, case 6.")
 }

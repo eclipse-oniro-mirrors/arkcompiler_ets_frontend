@@ -119,7 +119,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 14,
                 "program": "abstractNewClassInstanceExpression.ets"
               },
               "end": {
@@ -489,7 +489,7 @@
                     },
                     "end": {
                       "line": 26,
-                      "column": 20,
+                      "column": 19,
                       "program": "abstractNewClassInstanceExpression.ets"
                     }
                   }
@@ -502,7 +502,7 @@
                   },
                   "end": {
                     "line": 26,
-                    "column": 20,
+                    "column": 19,
                     "program": "abstractNewClassInstanceExpression.ets"
                   }
                 }
@@ -556,7 +556,7 @@
                   },
                   "end": {
                     "line": 26,
-                    "column": 13,
+                    "column": 11,
                     "program": "abstractNewClassInstanceExpression.ets"
                   }
                 }
@@ -569,7 +569,7 @@
                 },
                 "end": {
                   "line": 26,
-                  "column": 13,
+                  "column": 11,
                   "program": "abstractNewClassInstanceExpression.ets"
                 }
               }
@@ -700,7 +700,7 @@
             "loc": {
               "start": {
                 "line": 27,
-                "column": 9,
+                "column": 18,
                 "program": "abstractNewClassInstanceExpression.ets"
               },
               "end": {
@@ -921,12 +921,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "abstractNewClassInstanceExpression.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "abstractNewClassInstanceExpression.ets"
                     }
                   }
                 },
@@ -934,12 +934,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "abstractNewClassInstanceExpression.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "abstractNewClassInstanceExpression.ets"
                   }
                 }
               },
@@ -947,293 +947,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "abstractNewClassInstanceExpression.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "abstractNewClassInstanceExpression.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "abstractNewClassInstanceExpression.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "EmptyStatement",
-                      "loc": {
-                        "start": {
-                          "line": 32,
-                          "column": 11,
-                          "program": "abstractNewClassInstanceExpression.ets"
-                        },
-                        "end": {
-                          "line": 32,
-                          "column": 12,
-                          "program": "abstractNewClassInstanceExpression.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "H",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 32,
-                              "column": 11,
-                              "program": "abstractNewClassInstanceExpression.ets"
-                            },
-                            "end": {
-                              "line": 32,
-                              "column": 12,
-                              "program": "abstractNewClassInstanceExpression.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ETSNewClassInstanceExpression",
-                          "typeReference": {
-                            "type": "ETSTypeReference",
-                            "part": {
-                              "type": "ETSTypeReferencePart",
-                              "name": {
-                                "type": "Identifier",
-                                "name": "H",
-                                "decorators": [],
-                                "loc": {
-                                  "start": {
-                                    "line": 32,
-                                    "column": 19,
-                                    "program": "abstractNewClassInstanceExpression.ets"
-                                  },
-                                  "end": {
-                                    "line": 32,
-                                    "column": 20,
-                                    "program": "abstractNewClassInstanceExpression.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 32,
-                                  "column": 19,
-                                  "program": "abstractNewClassInstanceExpression.ets"
-                                },
-                                "end": {
-                                  "line": 32,
-                                  "column": 21,
-                                  "program": "abstractNewClassInstanceExpression.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 32,
-                                "column": 19,
-                                "program": "abstractNewClassInstanceExpression.ets"
-                              },
-                              "end": {
-                                "line": 32,
-                                "column": 21,
-                                "program": "abstractNewClassInstanceExpression.ets"
-                              }
-                            }
-                          },
-                          "arguments": [],
-                          "loc": {
-                            "start": {
-                              "line": 32,
-                              "column": 15,
-                              "program": "abstractNewClassInstanceExpression.ets"
-                            },
-                            "end": {
-                              "line": 32,
-                              "column": 24,
-                              "program": "abstractNewClassInstanceExpression.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 32,
-                            "column": 11,
-                            "program": "abstractNewClassInstanceExpression.ets"
-                          },
-                          "end": {
-                            "line": 32,
-                            "column": 24,
-                            "program": "abstractNewClassInstanceExpression.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 32,
-                          "column": 11,
-                          "program": "abstractNewClassInstanceExpression.ets"
-                        },
-                        "end": {
-                          "line": 32,
-                          "column": 24,
-                          "program": "abstractNewClassInstanceExpression.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "BlockStatement",
-                      "statements": [],
-                      "loc": {
-                        "start": {
-                          "line": 32,
-                          "column": 23,
-                          "program": "abstractNewClassInstanceExpression.ets"
-                        },
-                        "end": {
-                          "line": 34,
-                          "column": 6,
-                          "program": "abstractNewClassInstanceExpression.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "Identifier",
-                        "name": "*ERROR_LITERAL*",
-                        "decorators": [],
-                        "loc": {
-                          "start": {
-                            "line": 35,
-                            "column": 1,
-                            "program": "abstractNewClassInstanceExpression.ets"
-                          },
-                          "end": {
-                            "line": 35,
-                            "column": 2,
-                            "program": "abstractNewClassInstanceExpression.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 35,
-                          "column": 1,
-                          "program": "abstractNewClassInstanceExpression.ets"
-                        },
-                        "end": {
-                          "line": 35,
-                          "column": 2,
-                          "program": "abstractNewClassInstanceExpression.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "abstractNewClassInstanceExpression.ets"
                 }
               }
             },
@@ -1297,6 +1016,6 @@ TypeError: A is abstract therefore cannot be instantiated. [abstractNewClassInst
 SyntaxError: Unexpected token '{'. [abstractNewClassInstanceExpression.ets:26:22]
 TypeError: Method foo(): void in B not overriding any method [abstractNewClassInstanceExpression.ets:27:21]
 SyntaxError: Label must be followed by a loop statement. [abstractNewClassInstanceExpression.ets:32:11]
-TypeError: Class name 'H' used in the wrong context [abstractNewClassInstanceExpression.ets:32:11]
+SyntaxError: Class cannot be used as object. [abstractNewClassInstanceExpression.ets:32:11]
 SyntaxError: Unexpected token '{'. [abstractNewClassInstanceExpression.ets:32:23]
 SyntaxError: Unexpected token '}'. [abstractNewClassInstanceExpression.ets:35:1]

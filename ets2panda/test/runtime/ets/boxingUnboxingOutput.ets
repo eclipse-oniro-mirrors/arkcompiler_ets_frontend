@@ -14,8 +14,8 @@
  */
 
 function main() {
-  assertEQ(`${new Float(Float.MIN_VALUE)}`, `${Float.MIN_VALUE}`)
-  assertEQ(`${new Float(Float.MAX_VALUE)}`, `${Float.MAX_VALUE}`)
-  assertEQ(`${new Number(Number.MIN_VALUE)}`, `${Number.MIN_VALUE}`)
-  assertEQ(`${new Number(Number.MAX_VALUE)}`, `${Number.MAX_VALUE}`)
+  arktest.assertEQ(`${new Float(Float.MIN_VALUE)}`, `${Float.MIN_VALUE}`)
+  arktest.assertEQ(`${new Float(Float.MAX_VALUE)}`, `${Float.MAX_VALUE}`)
+  arktest.assertEQ(`${new Number(Number.MIN_VALUE)}`, `${Number.MIN_VALUE}`)
+  arktest.assertEQ(`${new Number(Number.MAX_VALUE)}`, `${Number.MAX_VALUE}`)
 }

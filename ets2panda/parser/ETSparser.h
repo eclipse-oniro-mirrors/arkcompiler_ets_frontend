@@ -67,11 +67,12 @@ public:
 
     [[nodiscard]] bool IsETSParser() const noexcept override;
 
+    [[nodiscard]] bool IsValidIdentifierName(const lexer::Token &token) const noexcept override;
+
     void AddDirectImportsToDirectExternalSources(const ArenaVector<util::StringView> &directImportsFromMainSource,
                                                  parser::Program *newProg) const;
-    bool CheckDupAndReplace(Program *&oldProg, Program *newProg);
+    bool CheckDupAndReplace(Program *&oldProg, Program *newProg) const;
     ArenaVector<ir::ETSImportDeclaration *> ParseDefaultSources(std::string_view srcFile, std::string_view importSrc);
-    lexer::LexerPosition HandleJsDocLikeComments();
 
 public:
     //============================================================================================//
@@ -152,7 +153,6 @@ private:
     ir::Identifier *ParseIdentifierFormatPlaceholder(std::optional<NodeFormatType> nodeFormat) override;
     ir::TypeNode *ParseTypeFormatPlaceholder(std::optional<NodeFormatType> nodeFormat = std::nullopt);
     ir::AstNode *ParseTypeParametersFormatPlaceholder() override;
-    void ApplyJsDocInfoToSpecificNodeType(ir::AstNode *node, ArenaVector<ir::JsDocInfo> &&jsDocInformation);
     void ApplyAnnotationsToArrayType(ir::AstNode *node, ArenaVector<ir::AnnotationUsage *> &&annotations,
                                      lexer::SourcePosition pos);
     void ApplyAnnotationsToSpecificNodeType(ir::AstNode *node, ArenaVector<ir::AnnotationUsage *> &&annotations,
@@ -187,6 +187,9 @@ private:
 #endif
     ir::ETSImportDeclaration *ParseImportPathBuildImport(ArenaVector<ir::AstNode *> &&specifiers, bool requireFrom,
                                                          lexer::SourcePosition startLoc, ir::ImportKinds importKind);
+    ir::Statement *CreateReExportDeclarationNode(ir::ETSImportDeclaration *reExportDeclaration,
+                                                 const lexer::SourcePosition &startLoc,
+                                                 const ir::ModifierFlags &modifiers);
     void ParseNamedExportSpecifiers(ArenaVector<ir::AstNode *> *specifiers, bool defaultExport);
     void ParseUserSources(std::vector<std::string> userParths);
     ArenaVector<ir::Statement *> ParseTopLevelDeclaration();
@@ -203,18 +206,20 @@ private:
     ir::ExportNamedDeclaration *ParseSingleExport(ir::ModifierFlags modifiers);
     ir::ExportNamedDeclaration *ParseSingleExportForAnonymousConst(ir::ModifierFlags modifiers);
     ArenaVector<ir::ETSImportDeclaration *> ParseImportDeclarations();
+    ArenaVector<ir::Statement *> ParseETSInitModuleStatements();
     ir::Statement *ParseImportDeclarationHelper(lexer::SourcePosition startLoc, ArenaVector<ir::AstNode *> &specifiers,
                                                 ir::ImportKinds importKind);
+    bool TryMergeFromCache(size_t idx, ArenaVector<util::ImportPathManager::ParseInfo> &parseList);
     std::vector<Program *> SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,
                                               ArenaVector<util::StringView> &directImportsFromMainSource);
     parser::Program *ParseSource(const SourceFile &sourceFile);
     ir::ETSModule *ParseETSGlobalScript(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> &statements);
     void ParseFileHeaderFlag(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> *statements);
-    ir::ETSModule *ParseImportsOnly(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> &statements);
+    ir::ETSModule *ParseImportsAndReExportOnly(lexer::SourcePosition startLoc,
+                                               ArenaVector<ir::Statement *> &statements);
     ir::AstNode *ParseImportDefaultSpecifier(ArenaVector<ir::AstNode *> *specifiers) override;
     void *ApplyAnnotationsToClassElement(ir::AstNode *property, ArenaVector<ir::AnnotationUsage *> &&annotations,
                                          lexer::SourcePosition pos);
-    void ApplyJsDocInfoToClassElement(ir::AstNode *property, ArenaVector<ir::JsDocInfo> &&jsDocInformation);
     ir::MethodDefinition *ParseClassGetterSetterMethod(const ArenaVector<ir::AstNode *> &properties,
                                                        ir::ClassDefinitionModifiers modifiers,
                                                        ir::ModifierFlags memberModifiers, bool isDefault);
@@ -225,14 +230,20 @@ private:
     ir::ModifierFlags ParseClassModifiers();
     ir::ModifierFlags ParseInterfaceMethodModifiers();
     ir::AstNode *ParseInterfaceField();
+    void ParseIndexedSignature();
     ir::TypeNode *ParseInterfaceTypeAnnotation(ir::Identifier *name);
     void ParseInterfaceModifiers(ir::ModifierFlags &fieldModifiers, bool &optionalField);
+    ir::OverloadDeclaration *ParseInterfaceOverload(ir::ModifierFlags modifiers);
     ir::MethodDefinition *ParseInterfaceMethod(ir::ModifierFlags flags, ir::MethodDefinitionKind methodKind);
     void ReportAccessModifierError(const lexer::Token &token);
     std::tuple<ir::ModifierFlags, bool, bool> ParseClassMemberAccessModifiers();
     ir::ModifierFlags ParseClassFieldModifiers(bool seenStatic);
     ir::ModifierFlags ParseClassMethodModifierFlag();
     ir::ModifierFlags ParseClassMethodModifiers(bool seenStatic);
+    void ValidateOverloadDeclarationModifiers(ir::ModifierFlags modifiers);
+    bool ParseOverloadListElement(ArenaVector<ir::Expression *> &overloads, ir::OverloadDeclaration *overloadDecl);
+    void ValidateOverloadList(ArenaVector<ir::Expression *> const &overloadList);
+    ir::OverloadDeclaration *ParseClassOverloadDeclaration(ir::ModifierFlags modifiers);
     ir::MethodDefinition *ParseClassMethodDefinition(ir::Identifier *methodName, ir::ModifierFlags modifiers,
                                                      bool isDefault);
     ir::ScriptFunction *ParseFunction(ParserStatus newStatus);
@@ -241,7 +252,6 @@ private:
     std::tuple<bool, ir::BlockStatement *, lexer::SourcePosition, bool> ParseFunctionBody(
         const ArenaVector<ir::Expression *> &params, ParserStatus newStatus, ParserStatus contextStatus) override;
     ir::TypeNode *ParseFunctionReturnType(ParserStatus status) override;
-    ir::ScriptFunctionFlags ParseFunctionThrowMarker(bool isRethrowsAllowed) override;
     ir::Expression *CreateParameterThis(ir::TypeNode *typeAnnotation) override;
     ir::TypeNode *ConvertToOptionalUnionType(ir::TypeNode *typeAnno);
     void ValidateFieldModifiers(ir::ModifierFlags modifiers, bool optionalField, ir::Expression *initializer,
@@ -261,7 +271,6 @@ private:
     ir::TypeNode *ParseETSTupleType(TypeAnnotationParsingOptions *options);
     ir::TypeNode *ParseTsArrayType(ir::TypeNode *typeNode, TypeAnnotationParsingOptions *options);
     bool ParseTriplePeriod(bool spreadTypePresent);
-    std::pair<bool, std::size_t> CheckDefaultParameters(const ir::ScriptFunction *function);
     std::string PrimitiveTypeToName(ir::PrimitiveType type) const;
     std::string GetNameForTypeNode(const ir::TypeNode *typeAnnotation) const;
     std::string GetNameForETSUnionType(const ir::TypeNode *typeAnnotation) const;
@@ -270,6 +279,8 @@ private:
     ir::ArrowFunctionExpression *ParseArrowFunctionExpression();
     void ReportIfVarDeclaration(VariableParsingFlags flags) override;
     ir::TypeNode *ParsePotentialFunctionalType(TypeAnnotationParsingOptions *options);
+    std::pair<ir::TypeNode *, bool> ParseNonNullableType(TypeAnnotationParsingOptions *options);
+    void CheckForConditionalTypeError(TypeAnnotationParsingOptions options, lexer::TokenType tokenType);
     std::pair<ir::TypeNode *, bool> GetTypeAnnotationFromToken(TypeAnnotationParsingOptions *options);
     std::pair<ir::TypeNode *, bool> GetTypeAnnotationFromParentheses(TypeAnnotationParsingOptions *options);
     ir::TypeNode *ParseLiteralIdent(TypeAnnotationParsingOptions *options);
@@ -287,21 +298,22 @@ private:
         ExpressionParseFlags flags = ExpressionParseFlags::NO_OPTS) override;
     ir::Statement *ParseTryStatement() override;
     ir::Statement *ParseDebuggerStatement() override;
+    ir::Statement *ParseDefaultIfSingleExport(ir::ModifierFlags modifiers);
     ir::Statement *ParseExport(lexer::SourcePosition startLoc, ir::ModifierFlags modifiers);
     ir::Statement *ParseImportDeclaration(StatementParsingFlags flags) override;
     ir::Statement *ParseExportDeclaration(StatementParsingFlags flags) override;
     ir::AnnotatedExpression *ParseVariableDeclaratorKey(VariableParsingFlags flags) override;
     ir::Statement *ParseAnnotationsInStatement(StatementParsingFlags flags) override;
+    ir::Statement *ParseInitModuleStatement(StatementParsingFlags flags) override;
     ir::VariableDeclarator *ParseVariableDeclarator(ir::Expression *init, lexer::SourcePosition startLoc,
                                                     VariableParsingFlags flags) override;
     ir::VariableDeclarator *ParseVariableDeclaratorInitializer(ir::Expression *init, VariableParsingFlags flags,
                                                                const lexer::SourcePosition &startLoc) override;
     bool IsFieldStartToken(lexer::TokenType t);
     ir::AstNode *ParseTypeLiteralOrInterfaceMember() override;
-    ir::AstNode *ParseJsDocInfoInInterfaceBody();
     ir::AstNode *ParseAnnotationsInInterfaceBody();
     void ParseNameSpaceSpecifier(ArenaVector<ir::AstNode *> *specifiers, bool isReExport = false);
-    bool CheckModuleAsModifier();
+    void CheckModuleAsModifier();
     bool IsFixedArrayTypeNode(ir::AstNode *node);
     ir::Expression *ParseFunctionParameterExpression(ir::AnnotatedExpression *paramIdent, bool isOptional);
     std::pair<ir::Expression *, std::string> TypeAnnotationValue(ir::TypeNode *typeAnnotation);
@@ -313,6 +325,8 @@ private:
     ir::Expression *ResolveArgumentUnaryExpr(ExpressionParseFlags flags);
     ir::Expression *CreateUnaryExpressionFromArgument(ir::Expression *argument, lexer::TokenType operatorType,
                                                       char32_t beginningChar);
+
+    ir::Expression *HandleDeepNesting();
     // NOLINTNEXTLINE(google-default-arguments)
     ir::Expression *ParseUnaryOrPrefixUpdateExpression(
         ExpressionParseFlags flags = ExpressionParseFlags::NO_OPTS) override;
@@ -338,12 +352,9 @@ private:
     // NOLINTNEXTLINE(google-default-arguments)
     ir::Statement *ParseStructStatement(StatementParsingFlags flags, ir::ClassDefinitionModifiers modifiers,
                                         ir::ModifierFlags modFlags = ir::ModifierFlags::NONE) override;
-    ir::AstNode *ParseClassElementHelper(
-        const ArenaVector<ir::AstNode *> &properties,
-        std::tuple<ir::ClassDefinitionModifiers, ir::ModifierFlags, ir::ModifierFlags> modifierInfo,
-        std::tuple<bool, bool, bool> elementFlag, std::tuple<lexer::SourcePosition, lexer::LexerPosition> posInfo);
-    // NOLINTNEXTLINE(google-default-arguments)
     ir::Statement *ParseInterfaceStatement(StatementParsingFlags flags) override;
+    ir::Statement *ParseEnumStatement(StatementParsingFlags flags) override;
+    ir::Statement *ParseTypeAliasStatement() override;
     ir::AstNode *ParseClassElement(const ArenaVector<ir::AstNode *> &properties, ir::ClassDefinitionModifiers modifiers,
                                    ir::ModifierFlags flags) override;
     std::tuple<bool, bool, bool> HandleClassElementModifiers(ir::ModifierFlags &memberModifiers);
@@ -386,6 +397,7 @@ private:
     ir::Statement *ParseInterfaceDeclaration(bool isStatic) override;
     ir::TypeNode *ParseThisType(TypeAnnotationParsingOptions *options);
     ir::Statement *ParseFunctionStatement(StatementParsingFlags flags) override;
+    ir::OverloadDeclaration *ParseOverloadDeclaration(ir::ModifierFlags modifiers);
     ir::FunctionDeclaration *ParseFunctionDeclaration(bool canBeAnonymous, ir::ModifierFlags modifiers);
     ir::FunctionDeclaration *ParseAccessorWithReceiver(ir::ModifierFlags modifiers);
     ir::TypeNode *ParseExtensionFunctionsTypeAnnotation();
@@ -429,18 +441,13 @@ private:
     ir::Expression *ParseExpression(ExpressionParseFlags flags = ExpressionParseFlags::NO_OPTS) override;
     ir::Expression *ParseExpressionOrTypeAnnotation(lexer::TokenType type, ExpressionParseFlags flags) override;
     ir::Expression *ParsePotentialExpressionSequence(ir::Expression *expr, ExpressionParseFlags flags) override;
+    ir::Expression *ParseGenericLambdaOrTypeAssertion();
     ir::ModifierFlags ParseTypeVarianceModifier(TypeAnnotationParsingOptions *const options);
     bool IsExportedDeclaration(ir::ModifierFlags memberModifiers);
     ir::Statement *ParseTopLevelDeclStatement(StatementParsingFlags flags);
     ir::Statement *ParseTopLevelStatement();
     void ParseTrailingBlock([[maybe_unused]] ir::CallExpression *callExpr) override;
     void CheckDeclare();
-
-    void ExcludeInvalidStart();
-    std::tuple<util::StringView, util::StringView> ParseJsDocInfoItemValue();
-    std::string ParseJsDocInfoItemParam();
-    ir::JsDocInfo ParseJsDocInfo();
-    ArenaVector<ir::JsDocInfo> ParseJsDocInfos();
 
     friend class ExternalSourceParser;
     friend class InnerSourceParser;

@@ -16,33 +16,41 @@
 #ifndef ES2PANDA_IR_AST_NODE_HISTORY_H
 #define ES2PANDA_IR_AST_NODE_HISTORY_H
 
+#include <mutex>
+
 #include "ir/astNode.h"
+#include "compiler/lowering/phase_id.h"
 #include "util/doubleLinkedList.h"
 
 namespace ark::es2panda::ir {
 
 class AstNodeHistory {
 public:
-    AstNodeHistory(AstNode *node, int32_t phaseId, ArenaAllocator *allocator);
+    AstNodeHistory(AstNode *node, compiler::PhaseId phaseId, ArenaAllocator *allocator);
 
-    AstNode *At(int32_t phaseId);
-    AstNode *Get(int32_t phaseId);
-    void Set(AstNode *node, int32_t phaseId);
+    AstNode *At(compiler::PhaseId phaseId);
+    AstNode *Get(compiler::PhaseId phaseId);
+    void Set(AstNode *node, compiler::PhaseId phaseId);
+    compiler::PhaseId FirstCreated()
+    {
+        return list_.Head()->data.phaseId;
+    }
 
 private:
     struct HistoryRecord {
         AstNode *node;
-        int32_t phaseId;
+        compiler::PhaseId phaseId;
     };
 
     using HistoryList = util::ArenaDoubleLinkedList<HistoryRecord>;
 
-    AstNode *FindBackwardEquals(int32_t phaseId);
-    AstNode *FindForwardEquals(int32_t phaseId);
-    HistoryList::Item *FindLessOrEquals(int32_t phaseId);
+    AstNode *FindBackwardEquals(compiler::PhaseId phaseId);
+    AstNode *FindForwardEquals(compiler::PhaseId phaseId);
+    HistoryList::Item *FindLessOrEquals(compiler::PhaseId phaseId);
 
     HistoryList list_;                   // Node history list
     HistoryList::Item *item_ {nullptr};  // Last accessed history record
+    std::mutex itemMutex_ {};
 };
 }  // namespace ark::es2panda::ir
 #endif

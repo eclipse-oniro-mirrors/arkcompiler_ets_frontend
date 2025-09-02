@@ -48,30 +48,30 @@ function main() {
     const foo = new Foo();
     const boxint = new Int(3);
 
-    assertEQ(is_null(null), true)
-    assertEQ(is_null(undefined), false)
-    assertEQ(is_null(obj), false)
+    arktest.assertEQ(is_null(null), true)
+    arktest.assertEQ(is_null(undefined), false)
+    arktest.assertEQ(is_null(obj), false)
 
-    assertEQ(is_obj(null), false)
-    assertEQ(is_obj(undefined), false)
-    assertEQ(is_obj(obj), true)
+    arktest.assertEQ(is_obj(null), false)
+    arktest.assertEQ(is_obj(undefined), false)
+    arktest.assertEQ(is_obj(obj), true)
 
-    assertEQ(is_nullish_obj(null), true)
-    assertEQ(is_nullish_obj(undefined), true)
-    assertEQ(is_nullish_obj(obj), true)
-    assertEQ(is_nullish_obj(foo), true)
+    arktest.assertEQ(is_nullish_obj(null), true)
+    arktest.assertEQ(is_nullish_obj(undefined), true)
+    arktest.assertEQ(is_nullish_obj(obj), true)
+    arktest.assertEQ(is_nullish_obj(foo), true)
 
-    assertEQ(is_nullish_int(null), true)
-    assertEQ(is_nullish_int(undefined), true)
-    assertEQ(is_nullish_int(boxint), true)
+    arktest.assertEQ(is_nullish_int(null), true)
+    arktest.assertEQ(is_nullish_int(undefined), true)
+    arktest.assertEQ(is_nullish_int(boxint), true)
 
-    assertEQ(is_nullish_foo(null), true)
-    assertEQ(is_nullish_foo(undefined), true)
-    assertEQ(is_nullish_foo(foo), true)
+    arktest.assertEQ(is_nullish_foo(null), true)
+    arktest.assertEQ(is_nullish_foo(undefined), true)
+    arktest.assertEQ(is_nullish_foo(foo), true)
 
-    assertEQ(is_nullish_foo_erased(null), true)
-    assertEQ(is_nullish_foo_erased(undefined), true)
-    assertEQ(is_nullish_foo_erased(obj), false)
-    assertEQ(is_nullish_foo_erased(boxint), false)
-    assertEQ(is_nullish_foo_erased(foo), true)
+    arktest.assertEQ(is_nullish_foo_erased(null), true)
+    arktest.assertEQ(is_nullish_foo_erased(undefined), true)
+    arktest.assertEQ(is_nullish_foo_erased(obj), false)
+    arktest.assertEQ(is_nullish_foo_erased(boxint), false)
+    arktest.assertEQ(is_nullish_foo_erased(foo), true)
 }

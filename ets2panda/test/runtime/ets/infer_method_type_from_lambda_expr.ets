@@ -24,5 +24,5 @@ class A {
 
 function main () {
     let a = new A()
-    assertEQ(a.test(), 1)
+    arktest.assertEQ(a.test(), 1)
 }

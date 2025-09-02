@@ -27,5 +27,6 @@ function main() : void {
     type t2<T> = Array<T>
 }
 
-/* @@? 26:6 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
 /* @@? 22:2 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+/* @@? 27:5 Error SyntaxError: Illegal start of Type Alias expression. */
+/* @@? 27:5 Error SyntaxError: Annotations are not allowed on this type of declaration. */

@@ -27,12 +27,12 @@ import {
 import {
   DECL_ETS_SUFFIX,
   DECL_TS_SUFFIX,
-  KOALA_WRAPPER_PATH_FROM_SDK,
   STATIC_RECORD_FILE,
   STATIC_RECORD_FILE_CONTENT,
   TS_SUFFIX
 } from '../pre_define';
 import { PluginDriver, PluginHook } from '../plugins/plugins_driver';
+import { initKoalaModules } from '../init/init_koala_modules';
 
 process.on('message', (message: {
   taskList: CompileFileInfo[];
@@ -49,8 +49,7 @@ process.on('message', (message: {
   const pluginDriver = PluginDriver.getInstance();
   pluginDriver.initPlugins(buildConfig);
 
-  const koalaWrapperPath = path.resolve(buildConfig.buildSdkPath, KOALA_WRAPPER_PATH_FROM_SDK);
-  let { arkts, arktsGlobal } = require(koalaWrapperPath);
+  let { arkts, arktsGlobal } = initKoalaModules(buildConfig)
 
   for (const fileInfo of taskList) {
     let errorStatus = false;
@@ -63,13 +62,13 @@ process.on('message', (message: {
         moduleInfo.packageName,
         filePathFromModuleRoot
       );
-      declEtsOutputPath = changeFileExtension(declEtsOutputPath, DECL_ETS_SUFFIX);
+      declEtsOutputPath = changeDeclgenFileExtension(declEtsOutputPath, DECL_ETS_SUFFIX);
       let etsOutputPath: string = path.join(
         moduleInfo.declgenBridgeCodePath as string,
         moduleInfo.packageName,
         filePathFromModuleRoot
       );
-      etsOutputPath = changeFileExtension(etsOutputPath, TS_SUFFIX);
+      etsOutputPath = changeDeclgenFileExtension(etsOutputPath, TS_SUFFIX);
 
       ensurePathExists(declEtsOutputPath);
       ensurePathExists(etsOutputPath);
@@ -80,7 +79,7 @@ process.on('message', (message: {
       )
       const declEtsOutputDir = path.dirname(declEtsOutputPath);
       const staticRecordRelativePath = changeFileExtension(
-        path.relative(declEtsOutputDir, staticRecordPath).replaceAll(/\\/g, '\/'),
+        path.relative(declEtsOutputDir, staticRecordPath).replace(/\\/g, '\/'),
         '',
         DECL_TS_SUFFIX
       );
@@ -95,16 +94,17 @@ process.on('message', (message: {
         fileInfo.arktsConfigFile,
         fileInfo.filePath
       ]).peer;
-      arktsGlobal.compilerContext = arkts.Context.createFromString(source);
+      arktsGlobal.compilerContext = arkts.Context.createFromStringWithHistory(source);
       pluginDriver.getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
+      const skipDeclCheck = buildConfig?.skipDeclCheck as boolean ?? true;
 
-      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, true);
+      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer, skipDeclCheck);
 
       let ast = arkts.EtsScript.fromContext();
       pluginDriver.getPluginContext().setArkTSAst(ast);
       pluginDriver.runPluginHook(PluginHook.PARSED);
 
-      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, true);
+      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer, skipDeclCheck);
 
       ast = arkts.EtsScript.fromContext();
       pluginDriver.getPluginContext().setArkTSAst(ast);
@@ -113,6 +113,7 @@ process.on('message', (message: {
       arkts.generateTsDeclarationsFromContext(
         declEtsOutputPath,
         etsOutputPath,
+        false,
         false,
         staticRecordRelativePath
       ); // Generate 1.0 declaration files & 1.0 glue code

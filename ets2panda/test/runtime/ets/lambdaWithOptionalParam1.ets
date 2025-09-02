@@ -15,7 +15,7 @@
 
 function main(): void {
     let foo = (a?: int) => {
-        assertTrue(a == undefined || a == 10)
+        arktest.assertTrue(a == undefined || a == 10)
     }
 
     foo();

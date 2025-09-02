@@ -17,5 +17,5 @@ interface I {
   toString(): int;
 }
 
-/* @@? 17:11 Error TypeError: toString(): int in I cannot override toString(): String in Object because overriding return type is not compatible with the other return type.  */
-/* @@? 17:11 Error TypeError: Method toString(): int in I not overriding any method  */
+/* @@? 17:3 Error TypeError: toString(): Int in I cannot override toString(): String in Object because overriding return type is not compatible with the other return type.  */
+/* @@? 17:3 Error TypeError: Method toString(): Int in I not overriding any method  */

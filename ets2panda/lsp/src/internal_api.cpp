@@ -20,6 +20,7 @@
 #include "api.h"
 #include "internal_api.h"
 #include "checker/types/type.h"
+#include "code_fixes/code_fix_types.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
 #include "lexer/token/sourceLocation.h"
@@ -30,7 +31,7 @@
 #include "formatting/formatting.h"
 #include "code_fix_provider.h"
 #include "get_class_property_info.h"
-#include "code_fixes/code_fix_types.h"
+#include "generated/code_fix_register.h"
 
 namespace ark::es2panda::lsp {
 
@@ -117,27 +118,37 @@ std::string FormatStringFromArgs(const std::string &textStr,
     return ss.str();
 }
 
-FileDiagnostic CreateFileDiagnostic(es2panda_AstNode *node, lexer::SourceRange span, Diagnostic diagnostic,
+FileDiagnostic CreateFileDiagnostic(es2panda_AstNode *node, Range span, Diagnostic diagnostic,
                                     const std::vector<std::string> &args = std::vector<std::string>())
 {
     if (!args.empty()) {
         std::string newMessageStr = FormatStringFromArgs(diagnostic.message_, args);
         diagnostic.message_ = newMessageStr;
     }
-    FileDiagnostic fileDiagnostic(node, diagnostic, TransSourcePositionToPosition(span.start),
-                                  TransSourcePositionToPosition(span.end));
+    FileDiagnostic fileDiagnostic(node, diagnostic, span.start, span.end);
     return fileDiagnostic;
 }
 
-lexer::SourceRange GetErrorRangeForNode(ir::AstNode *node)
+Range GetErrorRangeForNode(ir::AstNode *node, es2panda_Context *context)
 {
-    return lexer::SourceRange(node->Start(), node->End());
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    // The line and col should start from 1 istead of 0
+    auto index = lexer::LineIndex(ctx->parserProgram->SourceCode());
+    auto sourceStartLocation = index.GetLocation(node->Range().start);
+    auto sourceEndLocation = index.GetLocation(node->Range().end);
+    Position posStart(sourceStartLocation.line, sourceStartLocation.col);
+    Position posEnd(sourceEndLocation.line, sourceEndLocation.col);
+    return Range(posStart, posEnd);
 }
 
-FileDiagnostic CreateDiagnosticForNode(es2panda_AstNode *node, Diagnostic diagnostic,
+FileDiagnostic CreateDiagnosticForNode(es2panda_AstNode *node, Diagnostic diagnostic, es2panda_Context *context,
                                        const std::vector<std::string> &args)
 {
-    auto span = GetErrorRangeForNode(reinterpret_cast<ir::AstNode *>(node));
+    auto span = diagnostic.range_;
+    // Only genereate range when original range is invalid
+    if (span.start.character_ <= 0 || span.end.character_ <= 0 || span.start.line_ <= 0 || span.end.line_ <= 0) {
+        span = GetErrorRangeForNode(reinterpret_cast<ir::AstNode *>(node), context);
+    }
     auto res = CreateFileDiagnostic(node, span, std::move(diagnostic), args);
     return res;
 }
@@ -528,7 +539,8 @@ int CreateCodeForDiagnostic(const util::DiagnosticBase *error)
     if (error->Type() == util::DiagnosticType::PLUGIN_ERROR || error->Type() == util::DiagnosticType::PLUGIN_WARNING) {
         return uiCode;
     }
-    return 1;
+    auto code = static_cast<const util::Diagnostic *>(error)->GetId();
+    return static_cast<int>(error->Type()) * codefixes::DiagnosticCode::DIAGNOSTIC_CODE_MULTIPLIER + code;
 }
 
 Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::DiagnosticBase &error)
@@ -695,6 +707,7 @@ HighlightSpanKind GetHightlightSpanKind(ir::AstNode *identifierDeclaration, ir::
 DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto ast = ctx->parserProgram->Ast();
     std::string fileName(ctx->sourceFile->filePath);
     auto touchingToken = GetTouchingToken(context, position, false);
     if (!touchingToken->IsIdentifier()) {
@@ -704,13 +717,24 @@ DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size
     if (decl == nullptr) {
         return DocumentHighlights(fileName, {});
     }
-    auto references = FindReferencesByName(ctx->parserProgram->Ast(), decl, touchingToken, ctx->allocator);
+    auto checkFunc = [&touchingToken](ir::AstNode *child) {
+        return child->IsIdentifier() && child->AsIdentifier()->Name() == touchingToken->AsIdentifier()->Name();
+    };
+    // Find the identifier's declaration. We consider the first found to be the identifier's declaration.
+    auto identifierDeclaration = decl->FindChild(checkFunc);
+    if (identifierDeclaration == nullptr) {
+        // If the identifier is not found in the declaration, we try to find it in the AST.
+        // This is needed for cases like `import {Foo as foo} from './a';` where
+        // `foo` is a alias for the imported `Foo` identifier.
+        identifierDeclaration = ast->FindChild(checkFunc);
+    }
+    if (identifierDeclaration == nullptr) {
+        return DocumentHighlights(fileName, {});
+    }
+
+    auto references = FindReferencesByName(ast, decl, touchingToken, ctx->allocator);
 
     auto highlightSpans = std::vector<HighlightSpan>();
-    // Find the identifier's declaration. We consider the first found to be the identifier's declaration.
-    ir::AstNode *identifierDeclaration = decl->FindChild([&touchingToken](ir::AstNode *child) {
-        return child->IsIdentifier() && child->AsIdentifier()->Name() == touchingToken->AsIdentifier()->Name();
-    });
     for (const auto &reference : references) {
         auto start = reference->Start().index;
         auto length = reference->AsIdentifier()->Name().Length();
@@ -793,6 +817,50 @@ CombinedCodeActionsInfo GetCombinedCodeFixImpl(es2panda_Context *context, const 
     auto fixes = CodeFixProvider::Instance().GetAllFixes(codeFixAllContent);
 
     return CreateCombinedCodeActionsInfo(fixes);
+}
+
+varbinder::Decl *FindDeclInGlobalScope(varbinder::Scope *scope, const util::StringView &name)
+{
+    const auto *scopeIter = scope;
+    varbinder::Decl *resolved = nullptr;
+    while (scopeIter != nullptr && !scopeIter->IsGlobalScope()) {
+        bool isModule = scopeIter->Node() != nullptr && scopeIter->Node()->IsClassDefinition() &&
+                        scopeIter->Node()->AsClassDefinition()->IsModule();
+        if (isModule) {
+            resolved = scopeIter->FindDecl(name);
+            if (resolved != nullptr) {
+                break;
+            }
+        }
+        scopeIter = scopeIter->Parent();
+    }
+    if (resolved == nullptr && scopeIter != nullptr && scopeIter->IsGlobalScope()) {
+        resolved = scopeIter->FindDecl(name);
+    }
+    return resolved;
+}
+
+varbinder::Decl *FindDeclInFunctionScope(varbinder::Scope *scope, const util::StringView &name)
+{
+    const auto *scopeIter = scope;
+    while (scopeIter != nullptr && !scopeIter->IsGlobalScope()) {
+        if (!scopeIter->IsClassScope()) {
+            if (auto *const resolved = scopeIter->FindDecl(name); resolved != nullptr) {
+                return resolved;
+            }
+        }
+        scopeIter = scopeIter->Parent();
+    }
+
+    return nullptr;
+}
+
+varbinder::Decl *FindDeclInScopeWithFallback(varbinder::Scope *scope, const util::StringView &name)
+{
+    if (auto *decl = FindDeclInFunctionScope(scope, name)) {
+        return decl;
+    }
+    return FindDeclInGlobalScope(scope, name);
 }
 
 }  // namespace ark::es2panda::lsp

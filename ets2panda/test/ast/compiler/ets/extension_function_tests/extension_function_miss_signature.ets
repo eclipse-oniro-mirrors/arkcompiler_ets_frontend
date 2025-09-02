@@ -39,6 +39,6 @@ function main() {
     asMethodCall();
 }
 
-/* @@? 30:5 Error TypeError: Expected 2 arguments, got 3. */
-/* @@? 30:5 Error TypeError: No matching call signature for foo(Fruit, double, double) */
-/* @@? 34:5 Error TypeError: No matching call signature for foo(double, double) */
+/* @@? 30:5 Error TypeError: Expected 2 arguments, got 3.  */
+/* @@? 30:5 Error TypeError: No matching call signature for foo(Fruit, Double, Double)  */
+/* @@? 34:5 Error TypeError: No matching call signature for foo(Double, Double)  */

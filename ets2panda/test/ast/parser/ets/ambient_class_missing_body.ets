@@ -1,0 +1,51 @@
+<<<<<<<< HEAD:ets2panda/linter/test/concurrent/concurrent_sharedarraybuffer1_arkts2.ets.migrate.ets
+/*
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import { SharedArrayBuffer } from './oh_modules/sharedArrayBuffer'
+
+let s1 = new SharedArrayBuffer(1.0)  //lib.es2017.sharedmemory.d.ts
+s1.slice(0.0)
+type sharedArray = SharedArrayBuffer
+let s2: sharedArray;
+type mapShare = Map<string, SharedArrayBuffer>
+{
+  let s1 = new SharedArrayBuffer(1.0) //lib.es2017.sharedmemory.d.ts
+  let s2:sharedArray;
+}
+function fun6(pa:sharedArray) {
+  let s1 = new SharedArrayBuffer(1.0) //lib.es2017.sharedmemory.d.ts
+  let s2:sharedArray;
+}
+========
+/*
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+declare class B
+
+
+/* @@? 20:1 Error SyntaxError: Ambient class declarations must have a body. */
+>>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/test/ast/parser/ets/ambient_class_missing_body.ets

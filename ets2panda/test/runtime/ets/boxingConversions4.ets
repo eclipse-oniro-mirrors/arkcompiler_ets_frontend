@@ -19,9 +19,9 @@ function main() {
     let l: Long = c
     let f: Float = c
     let d: Double = c
-    assertEQ(i.unboxed(), 97)
-    assertEQ(l.unboxed(), 97)
-    assertEQ(f.unboxed(), 97.0)
-    assertEQ(d.unboxed(), 97.0)
+    arktest.assertEQ(i.unboxed(), 97)
+    arktest.assertEQ(l.unboxed(), 97)
+    arktest.assertEQ(f.unboxed(), 97.0)
+    arktest.assertEQ(d.unboxed(), 97.0)
 }
 

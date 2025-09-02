@@ -33,6 +33,8 @@ module Es2pandaLibApi
     @is_scope_type = false
     @is_code_gen = false
     @is_decl_type = false
+    @is_optional = false
+    @default_optional = false
     @const = ''
     @base_namespace = ''
 
@@ -245,7 +247,13 @@ module Es2pandaLibApi
       [found_change_type_link, err_msg]
     end
 
-    def initialize(arg_info, base_namespace)
+    def set_default_expression_cast(found_change_type)
+      return unless found_change_type && @is_optional && @default_optional
+      found_change_type.cast['expression'] = found_change_type.cast['default_expression']
+      found_change_type.new_args = found_change_type.default_new_args || []
+    end
+
+    def initialize(arg_info, base_namespace, default_optional = false)
       found_change_type_link, err_msg = Arg.get_change_type_info_with_err_msg(arg_info)
       raise err_msg unless err_msg.nil?
 
@@ -254,6 +262,7 @@ module Es2pandaLibApi
       @const = Arg.const(arg_info)
       @es2panda_arg['const'] = @const
       @base_namespace = base_namespace
+      @default_optional = default_optional
 
       @is_ast_node = Arg.is_ast_node(es2panda_arg)
       @is_ast_node_add_children = Arg.is_ast_node_add_children(es2panda_arg)
@@ -267,6 +276,8 @@ module Es2pandaLibApi
 
       if found_change_type_link
         found_change_type = Marshal.load(Marshal.dump(found_change_type_link))
+        @is_optional = found_change_type.es2panda_arg.respond_to?('optional') && found_change_type.es2panda_arg['optional']
+        set_default_expression_cast(found_change_type)
 
         placeholders = find_placeholders(found_change_type.es2panda_arg)
 
@@ -402,12 +413,13 @@ module Es2pandaLibApi
 
       Arg.set_const_modifier(@lib_args, @const)
       Arg.set_const_modifier(@idl_args, @const)
-      tmp = Arg.new(@lib_args[0], @base_namespace)
+      tmp = Arg.new(@lib_args[0], @base_namespace, @default_optional)
       @lib_args = tmp.lib_args
       @idl_args = tmp.idl_args
       @lib_cast = tmp.lib_cast
       @return_args = tmp.return_args
       @idl_return_args = tmp.idl_return_args
+      @is_optional = tmp.is_optional
       return if tmp.check_allowed_type(@lib_args[0])
 
       nested_arg_transform
@@ -508,6 +520,7 @@ module Es2pandaLibApi
     attr_reader :return_args
     attr_reader :idl_return_args
     attr_reader :const
+    attr_reader :is_optional
 
     def lib_args_to_str
       @lib_args.map do |lib_arg|
@@ -806,31 +819,43 @@ module Es2pandaLibApi
       usings = usings_map
       constructor_overload = {}
       idl_constructor_overload = {}
-      dig(:constructors)&.each do |constructor|
-        if check_no_gen_constructor(constructor)
-          args = []
-          begin
-            constructor_cast
-            constructor.args&.each do |arg|
-              arg['type'] = replace_with_usings(arg['type'], usings)
-              arg['type'] = add_base_namespace(arg['type'])
-              arg['type']['current_class'] = constructor.name
-              args << Arg.new(arg, class_base_namespace)
+      constructors = dig(:constructors)
+      constructors_with_optional = []
+      [constructors, constructors_with_optional].each do |constructors_list|
+        is_with_optional_list = constructors_list == constructors_with_optional
+        constructors_list&.each do |constructor|
+          if check_no_gen_constructor(constructor)
+            begin
+              args = []
+              constructor_cast
+              optional_args_info = []
+              constructor.args&.each do |arg|
+                arg['type'] = replace_with_usings(arg['type'], usings)
+                arg['type'] = add_base_namespace(arg['type'])
+                arg['type']['current_class'] = constructor.name
+                processed_arg = Arg.new(arg, class_base_namespace, !is_with_optional_list)
+                if processed_arg.is_optional && !is_with_optional_list
+                  optional_args_info << { name: arg['type']['name'] }
+                end
+                args << processed_arg
+              end
+              if !optional_args_info.empty? && !is_with_optional_list
+                constructors_with_optional << Marshal.load(Marshal.dump(constructor))
+              end
+            rescue StandardError => e
+              error_catch_log('Constructor', constructor, e, 'Create' + class_name)
+            else
+              Es2pandaLibApi.stat_add_constructor(1, class_name, class_base_namespace, 'Create' + class_name)
+              Es2pandaLibApi.stat_add_class(1, class_name)
+
+              Es2pandaLibApi.log('info', "Supported constructor for class '#{class_name}'\n")
+              res << { 'overload' => get_new_method_name(constructor_overload, '', ''),
+                      'idl_overload' => get_new_method_name(idl_constructor_overload, '', '', true),
+                      'args' => args, 'raw_decl' => constructor.raw_declaration }
             end
-          rescue StandardError => e
-            error_catch_log('Constructor', constructor, e, 'Create' + class_name)
           else
-            Es2pandaLibApi.stat_add_constructor(1, class_name, class_base_namespace, 'Create' + class_name)
-            Es2pandaLibApi.stat_add_class(1, class_name)
-
-            Es2pandaLibApi.log('info', "Supported constructor for class '#{class_name}'\n")
-
-            res << { 'overload' => get_new_method_name(constructor_overload, '', ''),
-                     'idl_overload' => get_new_method_name(idl_constructor_overload, '', '', true),
-                     'args' => args, 'raw_decl' => constructor.raw_declaration }
+            Es2pandaLibApi.log('info', "Banned constructor for class '#{class_name}'\n")
           end
-        else
-          Es2pandaLibApi.log('info', "Banned constructor for class '#{class_name}'\n")
         end
       end
       res
@@ -985,39 +1010,52 @@ module Es2pandaLibApi
       template_extends.each do |template_extend|
         methods += Es2pandaLibApi.classes['ir'][template_extend]['methods']
       end
-      methods.each do |method|
-        if check_no_gen_method(method)
-          begin
-            return_type = Type.new(add_base_namespace(replace_with_usings(method.return_type, usings)),
-                                   class_base_namespace, 'return')
-            const = get_const_modifier(method)
-            const_return = get_const_return_modifier(return_type)
+      methods_with_optional = []
+      [methods, methods_with_optional].each do |methods_list|
+        is_with_optional_list = methods_list == methods_with_optional
+        methods_list&.each do |method|
+          if check_no_gen_method(method)
+            begin
+              return_type = Type.new(add_base_namespace(replace_with_usings(method.return_type, usings)),
+                                    class_base_namespace, 'return')
+              const = get_const_modifier(method)
+              const_return = get_const_return_modifier(return_type)
 
-            args = []
-            method.args.each do |arg|
-              arg['type'] = add_base_namespace(replace_with_usings(arg['type'], usings))
-              args << Arg.new(arg, class_base_namespace)
+              args = []
+              optional_args_info = []
+              method.args.each_with_index do |arg, arg_index|
+                arg['type'] = add_base_namespace(replace_with_usings(arg['type'], usings))
+                processed_arg = Arg.new(arg, class_base_namespace, !is_with_optional_list)
+                if processed_arg.is_optional && !is_with_optional_list
+                  optional_args_info << { name: arg['type']['name'] }
+                end
+                args << processed_arg
+              end
+
+              if !optional_args_info.empty? && !is_with_optional_list
+                methods_with_optional << Marshal.load(Marshal.dump(method))
+              end
+
+              return_expr = get_return_expr(return_type, call_cast, [const, const_return], method, args, 'method')
+            rescue StandardError => e
+              stat_function_overload = Marshal.load(Marshal.dump(function_overload))
+              error_catch_log('Method', method, e, class_name +
+              get_new_method_name(stat_function_overload, method.name, const))
+            else
+              stat_function_overload = Marshal.load(Marshal.dump(function_overload))
+              Es2pandaLibApi.stat_add_method(1, class_name, class_base_namespace, class_name +
+              get_new_method_name(stat_function_overload, method.name, const))
+              Es2pandaLibApi.log('info', 'supported method: ', method.name, ' class: ', class_name, "\n")
+
+              res << { 'name' => method.name, 'const' => const, 'return_arg_to_str' => return_type.return_args_to_str,
+                      'overload_name' => get_new_method_name(function_overload, method.name, const), 'args' => args,
+                      'idl_name' => get_new_method_name(idl_function_overload, method.name, const, true),
+                      'return_type' => return_type, 'return_expr' => return_expr, 'raw_decl' => method.raw_declaration,
+                      'const_return' => const_return, 'get_modifier' => method['additional_attributes'] }
             end
-
-            return_expr = get_return_expr(return_type, call_cast, [const, const_return], method, args, 'method')
-          rescue StandardError => e
-            stat_function_overload = Marshal.load(Marshal.dump(function_overload))
-            error_catch_log('Method', method, e, class_name +
-            get_new_method_name(stat_function_overload, method.name, const))
           else
-            stat_function_overload = Marshal.load(Marshal.dump(function_overload))
-            Es2pandaLibApi.stat_add_method(1, class_name, class_base_namespace, class_name +
-            get_new_method_name(stat_function_overload, method.name, const))
-            Es2pandaLibApi.log('info', 'supported method: ', method.name, ' class: ', class_name, "\n")
-
-            res << { 'name' => method.name, 'const' => const, 'return_arg_to_str' => return_type.return_args_to_str,
-                     'overload_name' => get_new_method_name(function_overload, method.name, const), 'args' => args,
-                     'idl_name' => get_new_method_name(idl_function_overload, method.name, const, true),
-                     'return_type' => return_type, 'return_expr' => return_expr, 'raw_decl' => method.raw_declaration,
-                     'const_return' => const_return, 'get_modifier' => method['additional_attributes'] }
+            Es2pandaLibApi.log('info', "Banned method\n")
           end
-        else
-          Es2pandaLibApi.log('info', "Banned method\n")
         end
       end
       res
@@ -1242,9 +1280,7 @@ module Es2pandaLibApi
   def ast_type_additional_children
     %w[
       ETSStringType
-      ETSDynamicType
       ETSAsyncFuncReturnType
-      ETSDynamicFunctionType
       ETSEnumType
       ETSBigIntType
     ]
@@ -1302,7 +1338,7 @@ module Es2pandaLibApi
   end
 
   def template_extends_classes
-    %w[Annotated Typed AnnotationAllowed JsDocAllowed]
+    %w[Annotated Typed AnnotationAllowed]
   end
 
   def primitive_types
@@ -1380,8 +1416,7 @@ module Es2pandaLibApi
       es2panda_Options
       es2panda_Path
       es2panda_OverloadInfo
-      es2panda_JsDocRecord
-      es2panda_JsDocInfo
+      Es2pandaLanguage
     ]
   end
 

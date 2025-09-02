@@ -121,241 +121,6 @@
         "implements": [],
         "body": [
           {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "a",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 12,
-                              "program": "subpackage_module_2.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 13,
-                              "program": "subpackage_module_2.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "StringLiteral",
-                          "value": "SubpackageB",
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 24,
-                              "program": "subpackage_module_2.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 37,
-                              "program": "subpackage_module_2.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 19,
-                            "column": 12,
-                            "program": "subpackage_module_2.ets"
-                          },
-                          "end": {
-                            "line": 19,
-                            "column": 37,
-                            "program": "subpackage_module_2.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 19,
-                          "column": 12,
-                          "program": "subpackage_module_2.ets"
-                        },
-                        "end": {
-                          "line": 19,
-                          "column": 37,
-                          "program": "subpackage_module_2.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "a",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 12,
-                              "program": "subpackage_module_1.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 13,
-                              "program": "subpackage_module_1.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "StringLiteral",
-                          "value": "SubpackageB",
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 24,
-                              "program": "subpackage_module_1.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 37,
-                              "program": "subpackage_module_1.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 19,
-                            "column": 12,
-                            "program": "subpackage_module_1.ets"
-                          },
-                          "end": {
-                            "line": 19,
-                            "column": 37,
-                            "program": "subpackage_module_1.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 19,
-                          "column": 12,
-                          "program": "subpackage_module_1.ets"
-                        },
-                        "end": {
-                          "line": 19,
-                          "column": 37,
-                          "program": "subpackage_module_1.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "subpackage_module_2.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "subpackage_module_2.ets"
-              }
-            }
-          },
-          {
             "type": "ClassProperty",
             "key": {
               "type": "Identifier",
@@ -409,7 +174,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 23,
+                    "column": 21,
                     "program": "subpackage_module_2.ets"
                   }
                 }
@@ -422,7 +187,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 23,
+                  "column": 21,
                   "program": "subpackage_module_2.ets"
                 }
               }
@@ -437,7 +202,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 37,
+                "column": 24,
                 "program": "subpackage_module_2.ets"
               }
             }
@@ -496,7 +261,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 23,
+                    "column": 21,
                     "program": "subpackage_module_1.ets"
                   }
                 }
@@ -509,7 +274,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 23,
+                  "column": 21,
                   "program": "subpackage_module_1.ets"
                 }
               }
@@ -524,7 +289,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 37,
+                "column": 24,
                 "program": "subpackage_module_1.ets"
               }
             }

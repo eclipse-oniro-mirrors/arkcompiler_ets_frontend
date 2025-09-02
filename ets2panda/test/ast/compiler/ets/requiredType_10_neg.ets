@@ -25,4 +25,4 @@ function main(): void {
     let req_a: A<B> = {fld: /* @@ label */{}};
 }
 
-/* @@@ label Error TypeError: Class property 'b_fld' needs to be initialized for Required<B>.  */
+/* @@? 21:18 Error TypeError: T in Required<T> must be a class or an interface type. */

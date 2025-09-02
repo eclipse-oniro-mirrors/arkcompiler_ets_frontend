@@ -1,6 +1,6 @@
 {
   "1": {
-    "kind": "",
+    "kind": "enum member",
     "kindModifier": "static public readonly",
     "textSpan": {
       "start": 626,
@@ -70,7 +70,7 @@
     ]
   },
   "3": {
-    "kind": "property",
+    "kind": "get",
     "kindModifier": "public abstract",
     "textSpan": {
       "start": 661,
@@ -100,6 +100,65 @@
       },
       {
         "text": "string",
+        "kind": "returnType"
+      }
+    ]
+  },
+  "4": {
+    "kind": "method",
+    "kindModifier": "public declare",
+    "textSpan": {
+      "start": 695,
+      "length": 4
+    },
+    "fileName": "getQuickInfoAtPosition4.ets",
+    "displayParts": [
+      {
+        "text": "Stack",
+        "kind": "className"
+      },
+      {
+        "text": ".",
+        "kind": "punctuation"
+      },
+      {
+        "text": "push",
+        "kind": "functionName"
+      },
+      {
+        "text": "(",
+        "kind": "punctuation"
+      },
+      {
+        "text": "item",
+        "kind": "functionParameter"
+      },
+      {
+        "text": ":",
+        "kind": "punctuation"
+      },
+      {
+        "text": " ",
+        "kind": "space"
+      },
+      {
+        "text": "T",
+        "kind": "typeParameter"
+      },
+      {
+        "text": ")",
+        "kind": "punctuation"
+      },
+      {
+        "text": ":",
+        "kind": "punctuation"
+      },
+      {
+        "text": " ",
+        "kind": "space"
+      },
+      {
+        "text": "T",
         "kind": "returnType"
       }
     ]

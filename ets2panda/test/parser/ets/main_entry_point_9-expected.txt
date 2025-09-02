@@ -73,7 +73,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 30,
+                      "column": 29,
                       "program": "main_entry_point_9.ets"
                     }
                   }
@@ -86,7 +86,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 30,
+                    "column": 29,
                     "program": "main_entry_point_9.ets"
                   }
                 }
@@ -113,7 +113,7 @@
             },
             "end": {
               "line": 16,
-              "column": 31,
+              "column": 30,
               "program": "main_entry_point_9.ets"
             }
           }
@@ -126,7 +126,7 @@
           },
           "end": {
             "line": 16,
-            "column": 31,
+            "column": 30,
             "program": "main_entry_point_9.ets"
           }
         }
@@ -167,112 +167,6 @@
         "superClass": null,
         "implements": [],
         "body": [
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "main_entry_point_9.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "main_entry_point_9.ets"
-              }
-            }
-          },
           {
             "type": "MethodDefinition",
             "key": {
@@ -356,7 +250,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 23,
+                              "column": 22,
                               "program": "main_entry_point_9.ets"
                             }
                           }
@@ -369,7 +263,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 23,
+                            "column": 22,
                             "program": "main_entry_point_9.ets"
                           }
                         }
@@ -383,7 +277,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 23,
+                          "column": 22,
                           "program": "main_entry_point_9.ets"
                         }
                       }
@@ -396,7 +290,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 23,
+                        "column": 22,
                         "program": "main_entry_point_9.ets"
                       }
                     }

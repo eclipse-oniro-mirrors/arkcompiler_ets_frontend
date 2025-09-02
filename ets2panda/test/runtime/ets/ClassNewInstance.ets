@@ -32,5 +32,5 @@ function main(): void {
     let a = new A<C>;
 
     let c = a.foo(C.class);
-    assertEQ(c.a, 12)
+    arktest.assertEQ(c.a, 12)
 }

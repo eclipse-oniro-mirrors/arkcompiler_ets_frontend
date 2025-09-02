@@ -17,20 +17,20 @@ enum Color { Red, Green, Blue }
 
 function main(): void {
   let x: int = Color.Red.valueOf();
-  assertEQ(x, 0)
+  arktest.assertEQ(x, 0)
 
   let blue = Color.Blue;
   let str = blue.getName();
-  assertEQ("Blue", str)
+  arktest.assertEQ("Blue", str)
   str = blue.toString();
-  assertEQ("2", str)
+  arktest.assertEQ("2", str)
 
 
   let values = Color.values();
-  assertEQ(values.length, 3)
-  assertEQ(values[0], Color.Red)
-  assertEQ(values[1], Color.Green)
-  assertEQ(values[2], Color.Blue)
+  arktest.assertEQ(values.length, 3)
+  arktest.assertEQ(values[0], Color.Red)
+  arktest.assertEQ(values[1], Color.Green)
+  arktest.assertEQ(values[2], Color.Blue)
 
   let red: Color = Color.Red;
 
@@ -38,27 +38,27 @@ function main(): void {
     red = Color.getValueOf("Red");
   } catch (e) {}
 
-  assertEQ(red, Color.Red)
+  arktest.assertEQ(red, Color.Red)
 
   try {
     let yellow: Color = Color.getValueOf("Yellow");
-    assertTrue(false)
+    arktest.assertTrue(false)
   } catch (e: Exception) {
-    assertTrue((e as Object).toString().startsWith("No enum constant Color.Yellow"))
+    arktest.assertTrue((e as Object).toString().startsWith("No enum constant Color.Yellow"))
   } catch (e) {}
 
   let one: int = 1;
   let green = one as Color;
-  assertEQ(green, Color.Green)
+  arktest.assertEQ(green, Color.Green)
 
   try {
     let x = 5 as Color;
-    assertTrue( false)
+    arktest.assertTrue( false)
   } catch (e: Error) {
-    assertTrue( (e as Object).toString().startsWith("Error: No enum Color with value 5"))
+    arktest.assertTrue( (e as Object).toString().startsWith("Error: No enum Color with value 5"))
   }
 
-  assertEQ(2 as Color as int, 2)
-  assertEQ(Color.Blue as int as Color, Color.Blue)
-  assertEQ((Color.Red as int + 1) as Color, (Color.Blue as int - 1) as Color)
+  arktest.assertEQ(2 as Color as int, 2)
+  arktest.assertEQ(Color.Blue as int as Color, Color.Blue)
+  arktest.assertEQ((Color.Red as int + 1) as Color, (Color.Blue as int - 1) as Color)
 }

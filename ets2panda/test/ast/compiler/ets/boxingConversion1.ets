@@ -15,9 +15,5 @@
 
 function main() : void {
     let a: Byte = 2;
-    let b: Byte = /* @@ label */new Byte(2);
+    let b: Byte = new Byte(2);
 }
-
-/* @@@ label Error TypeError: Expected 0 arguments, got 1. */
-/* @@@ label Error TypeError: No matching construct signature for std.core.Byte(int)  */
-/* @@? 18:42 Error TypeError: Type 'int' is not compatible with type 'byte' at index 1 */

@@ -17,85 +17,85 @@ function main(): void {
   {
     let a: byte = 10;
     let b = ++a;
-    assertEQ(a, 11)
-    assertEQ(b, 11)
+    arktest.assertEQ(a, 11)
+    arktest.assertEQ(b, 11)
 
-    assertEQ(++a, 12)
-    assertEQ(a, 12)
-    assertEQ(b, 11)
+    arktest.assertEQ(++a, 12)
+    arktest.assertEQ(a, 12)
+    arktest.assertEQ(b, 11)
   }
 
   {
     let a: int = 20;
     let b = a++;
-    assertEQ(a, 21)
-    assertEQ(b, 20)
+    arktest.assertEQ(a, 21)
+    arktest.assertEQ(b, 20)
 
-    assertEQ(a++, 21)
-    assertEQ(a, 22)
-    assertEQ(b, 20)
+    arktest.assertEQ(a++, 21)
+    arktest.assertEQ(a, 22)
+    arktest.assertEQ(b, 20)
   }
 
   {
     let a: Double = new Double(30.0);
     let b = ++a;
-    assertEQ(a, 31.0)
-    assertEQ(a.toDouble(), 31.0)
-    assertEQ(b, 31.0)
-    assertEQ(b.toDouble(), 31.0)
+    arktest.assertEQ(a, 31.0)
+    arktest.assertEQ(a.toDouble(), 31.0)
+    arktest.assertEQ(b, 31.0)
+    arktest.assertEQ(b.toDouble(), 31.0)
 
-    assertEQ((++a).toDouble(), 32.0)
-    assertEQ(a, 32.0)
-    assertEQ(a.toDouble(), 32.0)
-    assertEQ(b, 31.0)
-    assertEQ(b.toDouble(), 31.0)
+    arktest.assertEQ((++a).toDouble(), 32.0)
+    arktest.assertEQ(a, 32.0)
+    arktest.assertEQ(a.toDouble(), 32.0)
+    arktest.assertEQ(b, 31.0)
+    arktest.assertEQ(b.toDouble(), 31.0)
   }
 
   {
     let a: Int = new Int(40);
     let b = a++;
-    assertEQ(a, 41)
-    assertEQ(a.toInt(), 41)
-    assertEQ(b, 40)
-    assertEQ(b.toInt(), 40)
+    arktest.assertEQ(a, 41)
+    arktest.assertEQ(a.toInt(), 41)
+    arktest.assertEQ(b, 40)
+    arktest.assertEQ(b.toInt(), 40)
 
-    assertEQ((a++).toInt(), 41)
-    assertEQ(a, 42)
-    assertEQ(a.toInt(), 42)
-    assertEQ(b, 40)
-    assertEQ(b.toInt(), 40)
+    arktest.assertEQ((a++).toInt(), 41)
+    arktest.assertEQ(a, 42)
+    arktest.assertEQ(a.toInt(), 42)
+    arktest.assertEQ(b, 40)
+    arktest.assertEQ(b.toInt(), 40)
   }
 
   {
     let fn: (x: Int) => Int = (x: Int): Int => { return x; };
     let a: Int = new Int(50);
     let b = fn(a++);
-    assertEQ(a, 51)
-    assertEQ(a.toInt(), 51)
-    assertEQ(b, 50)
-    assertEQ(b.toInt(), 50)
+    arktest.assertEQ(a, 51)
+    arktest.assertEQ(a.toInt(), 51)
+    arktest.assertEQ(b, 50)
+    arktest.assertEQ(b.toInt(), 50)
 
-    assertEQ(fn(++a), 52)
-    assertEQ(a, 52)
+    arktest.assertEQ(fn(++a), 52)
+    arktest.assertEQ(a, 52)
   }
 
   {
     let b: byte = 127;
-    assertEQ(++b as int, -128)
-    assertEQ(--b as int, 127)
+    arktest.assertEQ(Byte.toInt(++b), -128)
+    arktest.assertEQ(Byte.toInt(--b), 127)
 
     let c: char = 65535;
-    assertEQ(++c as int, 0)
-    assertEQ(--c as int, 65535)
+    arktest.assertEQ(Char.toInt(++c), 0)
+    arktest.assertEQ(Char.toInt(--c), 65535)
 
     let s: short = 32767;
-    assertEQ(++s as int, -32768)
-    assertEQ(--s as int, 32767)
+    arktest.assertEQ(Short.toInt(++s), -32768)
+    arktest.assertEQ(Short.toInt(--s), 32767)
   }
 
   {
     let b: Int[] = [1, 2]
-    assertEQ(++b[1], 3)
-    assertEQ(--b[1], 2)
+    arktest.assertEQ(++b[1], 3)
+    arktest.assertEQ(--b[1], 2)
   }
 }

@@ -19,4 +19,4 @@ function main(){
     const myCharClass = new X/* @@ label */<Char,String>();
 }
 
-/* @@@ label Error TypeError: Type Char is not assignable to constraint type Comparable<String>  */
+/* @@@ label Error TypeError: Type argument 'Char' should be a subtype of 'Comparable<String>'-constraint */

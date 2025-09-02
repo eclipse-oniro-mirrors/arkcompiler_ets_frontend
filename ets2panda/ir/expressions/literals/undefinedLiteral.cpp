@@ -70,6 +70,7 @@ UndefinedLiteral *UndefinedLiteral::Clone(ArenaAllocator *allocator, AstNode *pa
     }
     clone->SetTsType(TsType());
     clone->SetRange(Range());
+    clone->SetFolded(IsFolded());
     return clone;
 }
 }  // namespace ark::es2panda::ir

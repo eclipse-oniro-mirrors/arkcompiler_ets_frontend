@@ -22,7 +22,7 @@
 #include <variant>
 #include <cstddef>
 
-#include "api.h"
+#include "types.h"
 #include "ir/astNode.h"
 #include "public/es2panda_lib.h"
 #include "checker/types/type.h"
@@ -106,9 +106,9 @@ public:
 
 using RenameInfoType = std::variant<RenameInfoSuccess, RenameInfoFailure>;
 
-RenameInfoType GetRenameInfo(es2panda_Context *context, size_t pos);
+RenameInfoType GetRenameInfo(es2panda_Context *context, size_t pos, const std::string &pandaLibPath);
 std::optional<RenameInfoType> GetRenameInfoForNode(ir::AstNode *node, checker::ETSChecker *checker,
-                                                   parser::Program *program);
+                                                   parser::Program *program, const std::string &pandaLibPath);
 std::optional<checker::VerifiedType> GetContextualTypeFromParentOrAncestorTypeNode(ir::AstNode *node,
                                                                                    checker::ETSChecker *checker);
 std::string GetTextOfNode(ir::AstNode *node, parser::Program *program);

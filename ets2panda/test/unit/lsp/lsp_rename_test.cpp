@@ -22,10 +22,30 @@
 #include "lexer/token/letters.h"
 #include "lsp/include/internal_api.h"
 #include "lsp_api_test.h"
+#include "util/path.h"
 
 using ark::es2panda::lsp::Initializer;
 
-class LspRenameInfoTests : public LSPAPITests {};
+class LspRenameInfoTests : public LSPAPITests {
+public:
+    std::string GetPandalibPath(const ark::es2panda::ir::AstNode *consoleDecl)
+    {
+        auto consoleFilePath = std::string(consoleDecl->Range().start.Program()->SourceFile().GetAbsolutePath().Utf8());
+        size_t lastDelimPos = consoleFilePath.find_last_of(ark::es2panda::util::PATH_DELIMITER);
+        std::string consoleDir =
+            (lastDelimPos != std::string::npos) ? consoleFilePath.substr(0, lastDelimPos) : consoleFilePath;
+        std::string pandaLibPath = consoleDir;
+        size_t pos = 0;
+        const int threeLevelsUp = 3;
+        for (int i = 0; i < threeLevelsUp; ++i) {
+            pos = pandaLibPath.find_last_of(ark::es2panda::util::PATH_DELIMITER);
+            if (pos != std::string::npos) {
+                pandaLibPath = pandaLibPath.substr(0, pos);
+            }
+        }
+        return pandaLibPath;
+    }
+};
 
 TEST_F(LspRenameInfoTests, RenameInfoCreateTriggerSpanForNodeNumberLiteral)
 {
@@ -441,13 +461,18 @@ TEST_F(LspRenameInfoTests, RenameInfoGetRenameInfoForNode1)
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
 
     auto ast = GetAstFromContext<ark::es2panda::ir::AstNode>(ctx);
-    auto checker = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->checker->AsETSChecker();
+    auto consoleNode = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
+        return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "console";
+    });
+    auto consoleDecl = consoleNode->Variable()->Declaration()->Node();
+    std::string pandaLibPath = GetPandalibPath(consoleDecl);
+    auto checker = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->GetChecker()->AsETSChecker();
     auto program = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->parserProgram;
 
     auto targetNode = ast->FindChild([](ark::es2panda::ir::AstNode *node) {
         return node->IsIdentifier() && node->AsIdentifier()->ToString() == "PI";
     });
-    ASSERT_EQ(ark::es2panda::lsp::GetRenameInfoForNode(targetNode, checker, program), std::nullopt);
+    ASSERT_EQ(ark::es2panda::lsp::GetRenameInfoForNode(targetNode, checker, program, pandaLibPath), std::nullopt);
     initializer.DestroyContext(ctx);
 }
 
@@ -486,5 +511,38 @@ TEST_F(LspRenameInfoTests, RenameInfoNodeIsEligibleForRenameNumberLiteralEnumMem
 
     ASSERT_NE(targetNode, nullptr);
     ASSERT_FALSE(ark::es2panda::lsp::NodeIsEligibleForRename(targetNode));
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspRenameInfoTests, GetRenameInfo1)
+{
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext("GetRenameInfo1.ets", ES2PANDA_STATE_CHECKED,
+                                                      "let aaa = 123;let bbb = aaa + 123;console.log(\"456\")");
+    auto ast = GetAstFromContext<ark::es2panda::ir::AstNode>(ctx);
+    auto consoleNode = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
+        return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "console";
+    });
+    auto consoleDecl = consoleNode->Variable()->Declaration()->Node();
+    std::string pandaLibPath = GetPandalibPath(consoleDecl);
+    LSPAPI const *lspApi = GetImpl();
+    const size_t varIndex = 6;
+    auto varResult = lspApi->getRenameInfo(ctx, varIndex, const_cast<char *>(pandaLibPath.c_str()));
+    ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoSuccess>(varResult));
+    auto varRenameInfo = std::get<ark::es2panda::lsp::RenameInfoSuccess>(varResult);
+    const size_t expectedStart = 4;
+    const size_t expectedLength = 3;
+    ASSERT_EQ(varRenameInfo.GetCanRenameSuccess(), true);
+    ASSERT_EQ(varRenameInfo.GetKind(), "property");
+    ASSERT_EQ(varRenameInfo.GetDisplayName(), "aaa");
+    ASSERT_EQ(varRenameInfo.GetFullDisplayName(), "aaa");
+    ASSERT_EQ(varRenameInfo.GetTriggerSpan().start, expectedStart);
+    ASSERT_EQ(varRenameInfo.GetTriggerSpan().length, expectedLength);
+    const size_t consoleIndex = 38;
+    auto consoleResult = lspApi->getRenameInfo(ctx, consoleIndex, const_cast<char *>(pandaLibPath.c_str()));
+    ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoFailure>(consoleResult));
+    auto consoleRenameInfo = std::get<ark::es2panda::lsp::RenameInfoFailure>(consoleResult);
+    ASSERT_EQ(consoleRenameInfo.GetCanRenameFailure(), false);
+    ASSERT_EQ(consoleRenameInfo.GetLocalizedErrorMessage(), "You cannot rename this element");
     initializer.DestroyContext(ctx);
 }

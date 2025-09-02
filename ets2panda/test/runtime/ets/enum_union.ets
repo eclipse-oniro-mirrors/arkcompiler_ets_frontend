@@ -49,18 +49,18 @@ function main() {
 	const v5: Color = foo1(true) as Color
 	const v6: ColorInt = foo1(false) as ColorInt
 
-	assertEQ(v1, Color.Red)
-	assertEQ(v2, ColorInt.A)
-	assertEQ(v3, "aaa")
-	assertEQ(v4, 2222)
-	assertEQ(v5, Color.Yellow)
-	assertEQ(v6, ColorInt.B)
+	arktest.assertEQ(v1, Color.Red)
+	arktest.assertEQ(v2, ColorInt.A)
+	arktest.assertEQ(v3, "aaa")
+	arktest.assertEQ(v4, 2222)
+	arktest.assertEQ(v5, Color.Yellow)
+	arktest.assertEQ(v6, ColorInt.B)
 
     const a : Color | string | boolean = Color.Red
     const b : string | Color | boolean = Color.Red
-    assertEQ(a, Color.Red)
-    assertEQ(b, Color.Red)
+    arktest.assertEQ(a, Color.Red)
+    arktest.assertEQ(b, Color.Red)
 
-    assertEQ(testOptional(ColorInt.A), 1111)
-    assertEQ(testOptional(), 0);
+    arktest.assertEQ(testOptional(ColorInt.A), 1111)
+    arktest.assertEQ(testOptional(), 0);
 }

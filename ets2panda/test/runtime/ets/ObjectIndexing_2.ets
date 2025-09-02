@@ -56,26 +56,26 @@ function main(): void {
   c[1] = c[2];
   c[2] *= 2;
 
-  assertEQ(y, u)
-  assertEQ(z, v)
-  assertEQ(x[1], c[1])
-  assertEQ(x[2], c[2])
-  assertEQ(x[0], c[0])
+  arktest.assertEQ(y, u)
+  arktest.assertEQ(z, v)
+  arktest.assertEQ(x[1], c[1])
+  arktest.assertEQ(x[2], c[2])
+  arktest.assertEQ(x[0], c[0])
 
-  assertEQ(c['1'], "one")
-  assertEQ(c['2'], "two")
-  assertEQ(c["3"], 'three')
-  assertEQ(c['7'], "none")
-  assertEQ(c[""], "none")
+  arktest.assertEQ(c['1'], "one")
+  arktest.assertEQ(c['2'], "two")
+  arktest.assertEQ(c["3"], 'three')
+  arktest.assertEQ(c['7'], "none")
+  arktest.assertEQ(c[""], "none")
 
   c['1'] = "один";
   c["2"] = c["3"];
   c["3"] += '|три';
 
-  assertEQ(c['1'], 'один')
-  assertEQ(c["2"], 'three')
-  assertEQ(c['3'], "three|три")
-  assertEQ(c['7'], "none")
-  assertEQ(c[""], "none")
-  assertEQ(c['1'] + c[1], "один5")
+  arktest.assertEQ(c['1'], 'один')
+  arktest.assertEQ(c["2"], 'three')
+  arktest.assertEQ(c['3'], "three|три")
+  arktest.assertEQ(c['7'], "none")
+  arktest.assertEQ(c[""], "none")
+  arktest.assertEQ(c['1'] + c[1], "один5")
 }

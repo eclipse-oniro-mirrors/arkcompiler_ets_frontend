@@ -34,12 +34,8 @@ void TSIndexedAccessType::TransformChildren(const NodeTransformer &cb, std::stri
         indexType_->SetTransformedNode(transformationName, transformedNode);
         indexType_ = static_cast<TypeNode *>(transformedNode);
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSIndexedAccessType::Iterate(const NodeTraverser &cb) const
@@ -98,5 +94,34 @@ checker::Type *TSIndexedAccessType::GetType([[maybe_unused]] checker::TSChecker 
 checker::VerifiedType TSIndexedAccessType::Check([[maybe_unused]] checker::ETSChecker *checker)
 {
     return {this, checker->GetAnalyzer()->Check(this)};
+}
+
+TSIndexedAccessType *TSIndexedAccessType::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    auto *clonedObjectType = objectType_->Clone(allocator, nullptr)->AsTypeNode();
+    auto *clonedIndexType = indexType_->Clone(allocator, nullptr)->AsTypeNode();
+
+    auto *clone = allocator->New<TSIndexedAccessType>(clonedObjectType, clonedIndexType, allocator);
+
+    // Set parent relationships
+    clonedObjectType->SetParent(clone);
+    clonedIndexType->SetParent(clone);
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    // Clone annotations if any
+    if (!Annotations().empty()) {
+        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
+        for (auto *annotationUsage : Annotations()) {
+            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
+        }
+        clone->SetAnnotations(std::move(annotationUsages));
+    }
+
+    return clone;
 }
 }  // namespace ark::es2panda::ir

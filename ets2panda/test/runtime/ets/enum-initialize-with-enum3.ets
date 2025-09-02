@@ -25,4 +25,4 @@ enum F {
   O = NS.E.C
 }
 
-assertEQ(F.O.valueOf(), 5)
+arktest.assertEQ(F.O.valueOf(), 5)

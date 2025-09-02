@@ -14,20 +14,20 @@
  */
 
 function test_multiply(): void {
-    assertEQ(new BigInt(10).operatorMultiply(new BigInt(10)), 100n)
-    assertEQ(new BigInt(0).operatorMultiply(new BigInt(50)), 0n)
-    assertEQ(new BigInt(1).operatorMultiply(new BigInt(50)), 50n)
-    assertEQ(new BigInt(50).operatorMultiply(new BigInt(5)), 250n)
-    assertEQ(new BigInt(50).operatorMultiply(new BigInt(-5)), -250n)
-    assertEQ(new BigInt(-1).operatorMultiply(new BigInt(-5)), 5n)
-    assertEQ(new BigInt(0).operatorMultiply(new BigInt(0)), 0n)
-    assertEQ(new BigInt(123).operatorMultiply(new BigInt(1)), 123n)
-    assertEQ(new BigInt(1234).operatorMultiply(new BigInt(987)), 1217958n)
-    assertEQ(new BigInt(3241847031247230147213740214703214721047312n).operatorMultiply(new BigInt(412343124123421347812304712431421204731024n)), 1336753332794721625246945391107220242430725631478413717131017736872102322242538207488n)
-    assertEQ(new BigInt(-3241847031247230147213740214703214721047312n).operatorMultiply(new BigInt(-412343124123421347812304712431421204731024n)), 1336753332794721625246945391107220242430725631478413717131017736872102322242538207488n)
-    assertEQ(new BigInt(-3241847031247230147213740214703214721047312n).operatorMultiply(new BigInt(412343124123421347812304712431421204731024n)), -1336753332794721625246945391107220242430725631478413717131017736872102322242538207488n)
-    assertEQ(new BigInt(3241847031247230147213740214703214721047312n).operatorMultiply(new BigInt(-412343124123421347812304712431421204731024n)), -1336753332794721625246945391107220242430725631478413717131017736872102322242538207488n)
-    assertEQ(new BigInt(256).operatorMultiply(new BigInt(256)), 65536n)
+    arktest.assertEQ(new BigInt(10).operatorMultiply(new BigInt(10)), 100n)
+    arktest.assertEQ(new BigInt(0).operatorMultiply(new BigInt(50)), 0n)
+    arktest.assertEQ(new BigInt(1).operatorMultiply(new BigInt(50)), 50n)
+    arktest.assertEQ(new BigInt(50).operatorMultiply(new BigInt(5)), 250n)
+    arktest.assertEQ(new BigInt(50).operatorMultiply(new BigInt(-5)), -250n)
+    arktest.assertEQ(new BigInt(-1).operatorMultiply(new BigInt(-5)), 5n)
+    arktest.assertEQ(new BigInt(0).operatorMultiply(new BigInt(0)), 0n)
+    arktest.assertEQ(new BigInt(123).operatorMultiply(new BigInt(1)), 123n)
+    arktest.assertEQ(new BigInt(1234).operatorMultiply(new BigInt(987)), 1217958n)
+    arktest.assertEQ(new BigInt(3241847031247230147213740214703214721047312n).operatorMultiply(new BigInt(412343124123421347812304712431421204731024n)), 1336753332794721625246945391107220242430725631478413717131017736872102322242538207488n)
+    arktest.assertEQ(new BigInt(-3241847031247230147213740214703214721047312n).operatorMultiply(new BigInt(-412343124123421347812304712431421204731024n)), 1336753332794721625246945391107220242430725631478413717131017736872102322242538207488n)
+    arktest.assertEQ(new BigInt(-3241847031247230147213740214703214721047312n).operatorMultiply(new BigInt(412343124123421347812304712431421204731024n)), -1336753332794721625246945391107220242430725631478413717131017736872102322242538207488n)
+    arktest.assertEQ(new BigInt(3241847031247230147213740214703214721047312n).operatorMultiply(new BigInt(-412343124123421347812304712431421204731024n)), -1336753332794721625246945391107220242430725631478413717131017736872102322242538207488n)
+    arktest.assertEQ(new BigInt(256).operatorMultiply(new BigInt(256)), 65536n)
 }
 
 function test_multiplication(): void {
@@ -36,17 +36,17 @@ function test_multiplication(): void {
     const c = -245000234343499329134n
 
     /* Multiplication testing (*) */
-    assertEQ(978667632325344545n * 4534000101n, 4437279143808543031889799045n)
-    assertEQ(a * b, 5743661804677708098900659843374372544236731694n)
-    assertEQ(a * c, -5743661804677708098900659843374372544236731694n)
-    assertEQ(a * 0n, 0n)
-    assertEQ(c * 0n, 0n)
+    arktest.assertEQ(978667632325344545n * 4534000101n, 4437279143808543031889799045n)
+    arktest.assertEQ(a * b, 5743661804677708098900659843374372544236731694n)
+    arktest.assertEQ(a * c, -5743661804677708098900659843374372544236731694n)
+    arktest.assertEQ(a * 0n, 0n)
+    arktest.assertEQ(c * 0n, 0n)
 
     /* Division testing (/) */
-    assertEQ(39735235034886462n / 89221422n, 445355321n)
-    assertEQ(a / b, 95687n)
-    assertEQ(a / c, -95687n)
-    assertEQ(0n / a, 0n)
+    arktest.assertEQ(39735235034886462n / 89221422n, 445355321n)
+    arktest.assertEQ(a / b, 95687n)
+    arktest.assertEQ(a / c, -95687n)
+    arktest.assertEQ(0n / a, 0n)
 
     let err = false;
     try {
@@ -56,12 +56,12 @@ function test_multiplication(): void {
             err = true
         }
     }
-    assertTrue(err)
+    arktest.assertTrue(err)
 
     /* Remainder of the division (%) */
-    assertEQ(493433405047004109n % 111114444n, 18100749n)
-    assertEQ(a % b, a % c)
-    assertEQ(0n % a, 0n)
+    arktest.assertEQ(493433405047004109n % 111114444n, 18100749n)
+    arktest.assertEQ(a % b, a % c)
+    arktest.assertEQ(0n % a, 0n)
 
     err = false;
     try {
@@ -71,7 +71,7 @@ function test_multiplication(): void {
             err = true
         }
     }
-    assertTrue(err)
+    arktest.assertTrue(err)
 }
 
 function main() {

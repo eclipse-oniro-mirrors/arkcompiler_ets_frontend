@@ -21,31 +21,31 @@ class C  {
 
 function foo(c: Object|null|undefined): string {
   if (c instanceof string)  {
-    assertEQ(c.length, 11)
+    arktest.assertEQ(c.length, 11)
     c = "Case 1";
   } else if (c instanceof C) {
-    assertEQ(c.bar(), "Class C")
+    arktest.assertEQ(c.bar(), "Class C")
     c = "Case 2";
   } else if (c instanceof Int) {
-    assertEQ(c * 7, 49)
+    arktest.assertEQ(c * 7, 49)
     c = "Case 3";
   } else if (c instanceof null) {
-    assertEQ(c, null)
+    arktest.assertEQ(c, null)
     c = "Case 4";
   } else {
     c = "Case 5";
   }
 
-  assertEQ(c.length, 6)
+  arktest.assertEQ(c.length, 6)
   return c;
 }
 
 
 function main(): void {
-  assertEQ(foo("Test string"), "Case 1")
-  assertEQ(foo(new Int(7)), "Case 3")
-  assertEQ(foo(new C()), "Case 2")
-  assertEQ(foo(null), "Case 4")
-  assertEQ(foo(undefined), "Case 5")
-  assertEQ(foo(new Number(3.0)), "Case 5")
+  arktest.assertEQ(foo("Test string"), "Case 1")
+  arktest.assertEQ(foo(new Int(7)), "Case 3")
+  arktest.assertEQ(foo(new C()), "Case 2")
+  arktest.assertEQ(foo(null), "Case 4")
+  arktest.assertEQ(foo(undefined), "Case 5")
+  arktest.assertEQ(foo(new Number(3.0)), "Case 5")
 }

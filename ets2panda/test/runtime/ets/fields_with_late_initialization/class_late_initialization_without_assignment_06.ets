@@ -22,6 +22,6 @@ function main(): void {
   try {
     console.log(new Calculator().result)
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

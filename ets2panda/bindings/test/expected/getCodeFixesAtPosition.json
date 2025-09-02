@@ -1,0 +1,36 @@
+{
+  "1": [
+    {
+      "changes": [
+        {
+          "fileName": "getCodeFixesAtPosition1.ets",
+          "textChanges": [
+            {
+              "span": {
+                "start": 990,
+                "length": 6
+              },
+              "newText": ""
+            }
+          ]
+       }
+     ],
+     "description": "Remove the duplicate 'Entry' annotation",
+     "fixName": "Fix",
+     "fixId_": "UI_PLUGIN_SUGGEST",
+     "fixAllDescription_": "Fix All Description"
+   },
+   {
+     "changes": [
+        {
+          "fileName": "getCodeFixesAtPosition1.ets",
+          "textChanges": []
+        }
+      ],
+      "description": "Remove the duplicate 'Entry' annotation",
+      "fixName": "Fix",
+      "fixId_": "UI_PLUGIN_SUGGEST",
+      "fixAllDescription_": "Fix All Description"
+    }
+  ]
+}

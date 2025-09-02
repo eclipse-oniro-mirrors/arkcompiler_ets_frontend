@@ -31,23 +31,23 @@ function foo(this: A, f: (this: A) => void) {
 
 function goo(this: B, f: (this: A) => void) {
     this.a.f();
-    assertEQ(this.a.data, 555);
+    arktest.assertEQ(this.a.data, 555);
 
     this.a.foo(){this.data = 55;}
-    assertEQ(this.a.data, 55);
+    arktest.assertEQ(this.a.data, 55);
 
     f(this.a);
-    assertEQ(this.a.data, 555);
+    arktest.assertEQ(this.a.data, 555);
 
     foo(this.a){this.data = 55;}
-    assertEQ(this.a.data, 55);
+    arktest.assertEQ(this.a.data, 55);
 }
 
 let a = new A();
 a.foo(){this.data = 666}
-assertEQ(a.data, 666);
+arktest.assertEQ(a.data, 666);
 foo(a){this.data = 66}
-assertEQ(a.data, 66);
+arktest.assertEQ(a.data, 66);
 
 let b = new B();
 b.goo(){this.data = 555;}

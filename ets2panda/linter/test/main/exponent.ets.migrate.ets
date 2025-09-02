@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-let kk: number = Math.pow(6.0, 3.0);
+let kk = Math.pow(6, 3);
 console.log(kk);
 
-let k: number = Math.pow(5.0, 2.0);
+let k = Math.pow(5, 2);
 console.log(k);
 
-k = Math.pow(k, 2.0);
+k = Math.pow(k, 2);
 console.log(k);
 
-k = Math.pow(-1.0, Infinity);
+k = Math.pow(-1, Infinity);
 console.log(k);

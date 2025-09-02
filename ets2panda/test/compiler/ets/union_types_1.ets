@@ -34,33 +34,33 @@ class C {
 function foo(x : A | B | C) {
     if (x instanceof C) {
         let xx = x as C;
-        assertEQ(xx.num_to_return(), 777, "Error! The num field of class `C` must be 777");
+        arktest.assertEQ(xx.num_to_return(), 777, "Error! The num field of class `C` must be 777");
     }
     if (x instanceof A) {
-        assertTrue(false, "Error! x is instaceof C but not A");
+        arktest.assertTrue(false, "Error! x is instaceof C but not A");
     }
-    assertEQ(x.num, 777, "Error! The num field of union must be 777");
+    arktest.assertEQ(x.num, 777, "Error! The num field of union must be 777");
     let a: int = x.num + 3;
-    assertEQ(a, 780, "Error! Variable 'a' must be 780");
+    arktest.assertEQ(a, 780, "Error! Variable 'a' must be 780");
     x.num += 223;
-    assertEQ(x.num, 1000, "Error! The num field of union must be 1000");
+    arktest.assertEQ(x.num, 1000, "Error! The num field of union must be 1000");
 }
 
 function main() {
     let x : A | B | C;
     x = new C(777);
     foo(x);
-    assertEQ(x.num, 1000, "Error! The num field of union must be 1000");
+    arktest.assertEQ(x.num, 1000, "Error! The num field of union must be 1000");
     if (x instanceof C) {
         let xx = x as C;
-        assertEQ(xx.num_to_return(), 1000, "Error! The num field of class `C` must be 1000");
+        arktest.assertEQ(xx.num_to_return(), 1000, "Error! The num field of class `C` must be 1000");
     }
     if (x instanceof B) {
-        assertTrue(false, "Error! x is instaceof C but not B");
+        arktest.assertTrue(false, "Error! x is instaceof C but not B");
     }
     x = new A();
-    assertEQ(x.num, 41, "Error! The num field of union must be 41");
+    arktest.assertEQ(x.num, 41, "Error! The num field of union must be 41");
     x = new B();
-    assertEQ(x.num, 42, "Error! The num field of union must be 42");
+    arktest.assertEQ(x.num, 42, "Error! The num field of union must be 42");
 }
 

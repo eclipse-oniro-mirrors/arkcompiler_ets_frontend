@@ -16,11 +16,11 @@
 function main(){
     let f1:(a:String, b:String, c:String, ...args:String[]) =>void = (a:String, b:String, ...args:String[])=>{
         if(a != undefined){
-            assertEQ(a,"000");
+            arktest.assertEQ(a,"000");
         }
 
         if(args.length > 0){
-            assertEQ(args[0],"222");
+            arktest.assertEQ(args[0],"222");
         }
     }
     f1("000","111","222","333")

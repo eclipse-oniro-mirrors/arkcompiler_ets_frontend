@@ -20,5 +20,5 @@ function main(): void {
    let x: TNumberStringPair = [12.0, "Hello World"];
    let y: TTupleUnion = undefined;
 
-   assertEQ(x[0], 12.0);
+   arktest.assertEQ(x[0], 12.0);
 }

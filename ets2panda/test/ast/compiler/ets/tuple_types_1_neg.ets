@@ -18,4 +18,4 @@ function main(): void {
     const array: (number|boolean) [] = tuple
 }
 
-/* @@? 18:40 Error TypeError: Type '[double, double, boolean]' cannot be assigned to type 'Array<Double|Boolean>' */
+/* @@? 18:40 Error TypeError: Type '[Double, Double, Boolean]' cannot be assigned to type 'Array<Double|Boolean>' */

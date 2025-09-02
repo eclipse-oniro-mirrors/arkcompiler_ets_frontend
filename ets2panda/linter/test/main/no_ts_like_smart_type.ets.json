@@ -1,17 +1,164 @@
 {
-    "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
-        "Licensed under the Apache License, Version 2.0 (the 'License');",
-        "you may not use this file except in compliance with the License.",
-        "You may obtain a copy of the License at",
-        "",
-        "http://www.apache.org/licenses/LICENSE-2.0",
-        "",
-        "Unless required by applicable law or agreed to in writing, software",
-        "distributed under the License is distributed on an 'AS IS' BASIS,",
-        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
-        "See the License for the specific language governing permissions and",
-        "limitations under the License."
-    ],
-    "result": []
+    "result": [
+        {
+            "line": 339,
+            "column": 9,
+            "endLine": 339,
+            "endColumn": 14,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 340,
+            "column": 9,
+            "endLine": 340,
+            "endColumn": 21,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 341,
+            "column": 9,
+            "endLine": 341,
+            "endColumn": 23,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 344,
+            "column": 9,
+            "endLine": 344,
+            "endColumn": 14,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 345,
+            "column": 9,
+            "endLine": 345,
+            "endColumn": 21,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 346,
+            "column": 9,
+            "endLine": 346,
+            "endColumn": 23,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 349,
+            "column": 9,
+            "endLine": 349,
+            "endColumn": 14,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 350,
+            "column": 9,
+            "endLine": 350,
+            "endColumn": 21,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 351,
+            "column": 9,
+            "endLine": 351,
+            "endColumn": 23,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 137,
+            "column": 5,
+            "endLine": 137,
+            "endColumn": 8,
+            "problem": "StrictDiagnostic",
+            "suggest": "'b.a' is possibly 'undefined'.",
+            "rule": "'b.a' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 144,
+            "column": 7,
+            "endLine": 144,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 151,
+            "column": 13,
+            "endLine": 151,
+            "endColumn": 16,
+            "problem": "StrictDiagnostic",
+            "suggest": "'b.a' is possibly 'undefined'.",
+            "rule": "'b.a' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 191,
+            "column": 18,
+            "endLine": 191,
+            "endColumn": 25,
+            "problem": "StrictDiagnostic",
+            "suggest": "Function lacks ending return statement and return type does not include 'undefined'.",
+            "rule": "Function lacks ending return statement and return type does not include 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 278,
+            "column": 1,
+            "endLine": 278,
+            "endColumn": 4,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 292,
+            "column": 5,
+            "endLine": 292,
+            "endColumn": 8,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 307,
+            "column": 13,
+            "endLine": 307,
+            "endColumn": 16,
+            "problem": "StrictDiagnostic",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
+            "severity": "ERROR"
+        }
+    ]
 }

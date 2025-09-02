@@ -41,6 +41,10 @@ DeclInfoType GetDeclInfoImpl(ir::AstNode *astNode)
     auto declNode = compiler::DeclarationFromIdentifier(astNode->AsIdentifier());
     auto node = declNode;
     while (node != nullptr) {
+        if (node->Range().start.Program() != nullptr) {
+            auto name = std::string(node->Range().start.Program()->SourceFilePath());
+            return std::make_tuple(name, declNode->DumpEtsSrc());
+        }
         if (node->IsETSModule()) {
             auto name = std::string(node->AsETSModule()->Program()->SourceFilePath());
             return std::make_tuple(name, declNode->DumpEtsSrc());

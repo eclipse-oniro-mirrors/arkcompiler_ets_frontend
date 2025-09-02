@@ -52,18 +52,20 @@ ArenaVector<checker::Signature *> GetUnionTypeSignatures(ETSChecker *checker, ch
 void ProcessExclamationMark(ETSChecker *checker, ir::UnaryExpression *expr, checker::Type *operandType);
 void SetTsTypeForUnaryExpression(ETSChecker *checker, ir::UnaryExpression *expr, checker::Type *operandType);
 checker::Type *GetIteratorType(ETSChecker *checker, checker::Type *elemType, ir::AstNode *left);
-bool CheckArgumentVoidType(checker::Type *&funcReturnType, ETSChecker *checker, const std::string &name,
+bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, const std::string &name,
                            ir::ReturnStatement *st);
 bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                      ir::Expression *stArgument, ir::ScriptFunction *containingFunc);
-void InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, checker::Type *&funcReturnType,
-                     ir::Expression *stArgument);
+checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument);
 bool IsArrayExpressionValidInitializerForType(ETSChecker *checker, const Type *arrayExprPreferredType);
 void CastPossibleTupleOnRHS(ETSChecker *checker, ir::AssignmentExpression *expr);
-void ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containingFunc, checker::Type *&funcReturnType,
-                             ir::ReturnStatement *st, ir::Expression *stArgument);
+checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::ReturnStatement *st,
+                                       ir::Expression *stArgument);
 bool CheckReturnTypeNecessity(ir::MethodDefinition *node);
+
 void CheckAllConstPropertyInitialized(checker::ETSChecker *checker, ir::ETSModule *pkg);
+
+std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr);
 }  // namespace ark::es2panda::checker
 
 #endif  // ES2PANDA_CHECKER_ETSANALYZERHELPERS_H

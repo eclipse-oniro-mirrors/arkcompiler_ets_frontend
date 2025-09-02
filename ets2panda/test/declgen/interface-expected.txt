@@ -12,25 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+'use static'
 export declare interface User {
-  abstract set id(id: number): void;
+  set id(id: number);
   
-  abstract get id(): double;
-  abstract set name(name: string): void;
+  get id(): double;
+  set name(name: string);
   
-  abstract get name(): String;
-  abstract set age(age: number | undefined): void;
+  get name(): String;
+  set age(age: number | undefined);
   
-  abstract get age(): Double|undefined;
-  abstract get apiUrl(): String;
+  get age(): Double|undefined;
+  get apiUrl(): String;
   
 }
 
 export declare interface Animal {
-  abstract set name(name: string): void;
+  set name(name: string);
   
-  abstract get name(): String;
+  get name(): String;
   makeSound(): void;
   
 }

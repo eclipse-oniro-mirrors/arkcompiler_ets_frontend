@@ -16,7 +16,7 @@
 function foo<T>(...args:Array<T>){
     let s:StringBuilder = new StringBuilder("a")
     for(let e of args){
-        assertEQ(s.toString(), e);
+        arktest.assertEQ(s.toString(), e);
         s.append("a")
     }
 }

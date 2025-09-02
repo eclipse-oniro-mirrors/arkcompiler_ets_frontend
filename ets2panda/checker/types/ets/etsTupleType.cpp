@@ -65,7 +65,9 @@ void ETSTupleType::ToDebugInfoType(std::stringstream &ss) const
 
 Type *ETSTupleType::GetTypeAtIndex(const TupleSizeType index) const
 {
-    ES2PANDA_ASSERT(index < GetTupleSize());
+    if (index >= GetTupleSize()) {  // happens when dealing with type errors
+        return nullptr;
+    }
     return GetTupleTypesList().at(index);
 }
 

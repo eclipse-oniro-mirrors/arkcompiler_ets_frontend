@@ -24,7 +24,11 @@
                 {
                     "start": 612,
                     "end": 622,
-                    "replacementText": "{ m }"
+                    "replacementText": "{ m }",
+                    "line": 16,
+                    "column": 8,
+                    "endLine": 16,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -41,7 +45,179 @@
                 {
                     "start": 645,
                     "end": 658,
-                    "replacementText": "{ a, b }"
+                    "replacementText": "{ a, b }",
+                    "line": 18,
+                    "column": 8,
+                    "endLine": 18,
+                    "endColumn": 12
+                }
+            ],
+            "suggest": "",
+            "rule": "Lazy import is not supported(arkts-no-lazy-import)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 8,
+            "endLine": 21,
+            "endColumn": 12,
+            "problem": "ImportLazyIdentifier",
+            "autofix": [
+                {
+                    "start": 710,
+                    "end": 723,
+                    "replacementText": "{worker}",
+                    "line": 21,
+                    "column": 8,
+                    "endLine": 21,
+                    "endColumn": 12
+                }
+            ],
+            "suggest": "",
+            "rule": "Lazy import is not supported(arkts-no-lazy-import)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 8,
+            "endLine": 23,
+            "endColumn": 12,
+            "problem": "ImportLazyIdentifier",
+            "autofix": [
+                {
+                    "start": 779,
+                    "end": 793,
+                    "replacementText": "{harTest}",
+                    "line": 23,
+                    "column": 8,
+                    "endLine": 23,
+                    "endColumn": 12
+                }
+            ],
+            "suggest": "",
+            "rule": "Lazy import is not supported(arkts-no-lazy-import)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 8,
+            "endLine": 25,
+            "endColumn": 12,
+            "problem": "ImportLazyIdentifier",
+            "autofix": [
+                {
+                    "start": 840,
+                    "end": 850,
+                    "replacementText": "{add}",
+                    "line": 25,
+                    "column": 8,
+                    "endLine": 25,
+                    "endColumn": 12
+                }
+            ],
+            "suggest": "",
+            "rule": "Lazy import is not supported(arkts-no-lazy-import)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 19,
+            "endLine": 27,
+            "endColumn": 23,
+            "problem": "ImportLazyIdentifier",
+            "autofix": [
+                {
+                    "start": 908,
+                    "end": 934,
+                    "replacementText": "{WorkerEventListener}",
+                    "line": 27,
+                    "column": 19,
+                    "endLine": 27,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Lazy import is not supported(arkts-no-lazy-import)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 19,
+            "endLine": 29,
+            "endColumn": 23,
+            "problem": "ImportLazyIdentifier",
+            "autofix": [
+                {
+                    "start": 999,
+                    "end": 1023,
+                    "replacementText": "{WorkerEventTarget}",
+                    "line": 29,
+                    "column": 19,
+                    "endLine": 29,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Lazy import is not supported(arkts-no-lazy-import)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 31,
+            "endLine": 31,
+            "endColumn": 35,
+            "problem": "ImportLazyIdentifier",
+            "autofix": [
+                {
+                    "start": 1100,
+                    "end": 1132,
+                    "replacementText": "/* test */ {WorkerOptions}",
+                    "line": 31,
+                    "column": 31,
+                    "endLine": 31,
+                    "endColumn": 35
+                }
+            ],
+            "suggest": "",
+            "rule": "Lazy import is not supported(arkts-no-lazy-import)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 8,
+            "endLine": 33,
+            "endColumn": 12,
+            "problem": "ImportLazyIdentifier",
+            "autofix": [
+                {
+                    "start": 1198,
+                    "end": 1217,
+                    "replacementText": "{worker as wk}",
+                    "line": 33,
+                    "column": 8,
+                    "endLine": 33,
+                    "endColumn": 12
+                }
+            ],
+            "suggest": "",
+            "rule": "Lazy import is not supported(arkts-no-lazy-import)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 1,
+            "endLine": 36,
+            "endColumn": 5,
+            "problem": "ImportLazyIdentifier",
+            "autofix": [
+                {
+                    "start": 1293,
+                    "end": 1355,
+                    "replacementText": "// (arkts-no-lazy-import)\n/* test */ {worker as ttt}",
+                    "line": 36,
+                    "column": 1,
+                    "endLine": 36,
+                    "endColumn": 5
                 }
             ],
             "suggest": "",

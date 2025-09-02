@@ -196,8 +196,8 @@ class DiffTypes {
 } */
 
 function main(): void { 
-    assertEQ(SameName.a, 42);
-    assertEQ((new SameName()).a, 32);
-    assertEQ(DiffTypes.a, "a");
-    assertEQ((new DiffTypes()).a, 6);
+    arktest.assertEQ(SameName.a, 42);
+    arktest.assertEQ((new SameName()).a, 32);
+    arktest.assertEQ(DiffTypes.a, "a");
+    arktest.assertEQ((new DiffTypes()).a, 6);
 }

@@ -29,6 +29,7 @@ import { InteropJSModifyPropertyCheck } from '../../checker/migration/InteropJSM
 import { NoTSLikeAsCheck } from '../../checker/migration/NoTSLikeAsCheck';
 import { InteropS2DObjectLiteralCheck } from '../../checker/migration/InteropS2DObjectLiteralsCheck';
 import { InteropDeprecatedBuiltInAPICheck } from '../../checker/migration/InteropDeprecatedBuiltInAPICheck';
+import { NumericSemanticCheck } from '../../checker/migration/NumericSemanticCheck';
 
 const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'CheckerIndex');
 
@@ -51,6 +52,7 @@ export const projectRules = {
     '@migration/interop-dynamic-object-literals': InteropObjectLiteralCheck,
     '@migration/arkts-no-ts-like-as': NoTSLikeAsCheck,
     '@migration/arkts-interop-s2d-dynamic-call-builtin-api-not-in-static': InteropDeprecatedBuiltInAPICheck,
+    '@migration/arkts-numeric-semantic': NumericSemanticCheck,
 };
 
 // 新增文件级的checker，需要在此处注册

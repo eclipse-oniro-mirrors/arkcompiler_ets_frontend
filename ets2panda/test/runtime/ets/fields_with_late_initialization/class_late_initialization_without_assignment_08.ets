@@ -26,8 +26,8 @@ function main(): void {
   try {
     console.log(a.f);
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
   a.f = "1"
-  assertEQ(a.f, "1")
+  arktest.assertEQ(a.f, "1")
 }

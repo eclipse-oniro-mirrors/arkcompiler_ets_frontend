@@ -13,8 +13,23 @@
  * limitations under the License.
  */
 
-class A<T> {
-  foo(a: T):T!{
-    return a!;
+class NonNullableGenericParam<T extends NonNullable<(Object | null)>> {
+  foo(a: T):NonNullable<T>{
+    return a;
   }
+}
+
+class A{}
+
+type TesterUnionType = Int | A | null | undefined
+type NonNullableTesterUnionType = NonNullable<TesterUnionType>
+
+function main(){
+  let a: NonNullable<TesterUnionType>;
+  a = new A();
+  let b: NonNullable<NonNullable<Object>> = new Object();
+}
+
+function foo(param:NonNullable<TesterUnionType>){
+  let a: Object = param
 }

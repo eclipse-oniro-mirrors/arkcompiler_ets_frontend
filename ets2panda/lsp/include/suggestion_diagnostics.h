@@ -25,10 +25,12 @@
 
 namespace ark::es2panda::lsp {
 
-std::vector<FileDiagnostic> GetSuggestionDiagnosticsImpl(ir::AstNode *astNode);
-void Check(ir::AstNode *node, std::vector<FileDiagnostic> &diag, std::unordered_map<std::string, bool> &visitedFunc);
+std::vector<FileDiagnostic> GetSuggestionDiagnosticsImpl(ir::AstNode *astNode, es2panda_Context *context);
+void Check(ir::AstNode *node, std::vector<FileDiagnostic> &diag, std::unordered_map<std::string, bool> &visitedFunc,
+           es2panda_Context *context);
 void AddConvertToAsyncFunctionDiagnostics(ir::AstNode *node, std::vector<FileDiagnostic> &diag,
-                                          std::unordered_map<std::string, bool> &visitedFunc);
+                                          std::unordered_map<std::string, bool> &visitedFunc,
+                                          es2panda_Context *context);
 bool IsConvertibleFunction(ir::AstNode *node, std::unordered_map<std::string, bool> &visitedFunc);
 bool HasReturnStatementWithPromiseHandler(ir::AstNode *node, std::unordered_map<std::string, bool> &visitedFunc);
 bool IsReturnStatementWithFixablePromiseHandler(ir::AstNode *node, std::unordered_map<std::string, bool> &visitedFunc);

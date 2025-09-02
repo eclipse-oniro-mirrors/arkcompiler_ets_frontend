@@ -39,6 +39,7 @@ int main(int argc, char **argv)
     std::cout << "LOAD SUCCESS" << std::endl;
 
     const char **args = const_cast<const char **>(&(argv[1]));
+    impl->MemInitialize();
     auto config = impl->CreateConfig(argc - 1, args);
     auto context = impl->CreateContextFromFile(config, argv[argc - 1]);
     if (context == nullptr) {
@@ -67,6 +68,7 @@ int main(int argc, char **argv)
     CheckForErrors("BIN", context);
     impl->DestroyConfig(config);
 
+    impl->MemFinalize();
     return 0;
 }
 

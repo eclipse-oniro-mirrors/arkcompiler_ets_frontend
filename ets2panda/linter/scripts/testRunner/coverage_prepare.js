@@ -21,19 +21,19 @@ const buildDir = path.join(projectRoot, 'build');
 const coverageDir = path.join(projectRoot, 'coverage');
 const buildInstrumentDir = path.join(coverageDir, 'build_instrument');
 
-function copyDirectory(src, dest) {
-    fs.mkdirSync(dest, { recursive: true });
+function copyDirectory(srcDirectory, destDirectory) {
+    fs.mkdirSync(destDirectory, { recursive: true });
 
-    const entries = fs.readdirSync(src, { withFileTypes: true });
+    const directoryEntries = fs.readdirSync(srcDirectory, { withFileTypes: true });
 
-    for (const entry of entries) {
-        const srcPath = path.join(src, entry.name);
-        const destPath = path.join(dest, entry.name);
+    for (const dirent of directoryEntries) {
+        const srcFilepath = path.join(srcDirectory, dirent.name);
+        const destFilepath = path.join(destDirectory, dirent.name);
 
-        if (entry.isDirectory()) {
-            copyDirectory(srcPath, destPath);
+        if (dirent.isDirectory()) {
+            copyDirectory(srcFilepath, destFilepath);
         } else {
-            fs.copyFileSync(srcPath, destPath);
+            fs.copyFileSync(srcFilepath, destFilepath);
         }
     }
 }

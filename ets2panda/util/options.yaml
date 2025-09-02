@@ -22,6 +22,11 @@ options:
   default: false
   description: Print this message and exit
 
+- name: version
+  type: bool
+  default: false
+  description: Print version and exit
+
 - name: arktsconfig
   type: std::string
   default: $ORIGIN/arktsconfig.json
@@ -37,8 +42,7 @@ options:
   - ts
   - as
   - ets
-  possible_values:
-    - ets
+  possible_values: *ScriptExtension
 
 - name: module
   type: bool
@@ -75,11 +79,6 @@ options:
   default: false
   description: Print names of files that are part of compilation
 
-- name: parse-jsdoc
-  type: bool
-  default: false
-  description: Enable the ability to parse jsdoc
-
 # Compiler
 - name: dump-assembly
   type: bool
@@ -96,14 +95,9 @@ options:
   default: false
   description: Dump debug info
 
-- name: with-export-table
-  type: bool
-  default: false
-  description: enable abc file with export table info
-
 - name: opt-level
   type: int
-  default: 0
+  default: 1
   description: Compiler optimization level
   range: 0-2
 
@@ -183,10 +177,11 @@ options:
     type: std::string
     default: ""
     description: Output path for generated static declaration files
-  - name: enable-isolated
-    type: bool
-    default: false
-    description: Whether to enable isolated declaration file generation
+
+- name: emit-declaration
+  type: bool
+  default: false
+  description: Emit declaration to .abc file
 
 - name: thread
   type: int
@@ -380,7 +375,18 @@ options:
   default: false
   description: Place AST trees in permanent arena
 
+- name: dump-perf-metrics
+  type: bool
+  default: false
+  description: Dump es2panda performance metrics
+
 - name: simultaneous 
   type: bool
   default: false
   description: compile all the files to abc in once.
+
+#26986
+- name: ets-strings-concat
+  type: bool
+  default: false
+  description: "(experimental) Use StringBuilder.concat instead of StringBuilder.append"

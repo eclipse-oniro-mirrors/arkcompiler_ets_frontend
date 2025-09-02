@@ -82,8 +82,8 @@ class MyClassB {
 }
 
 const testMap: Map<string, number> = new Map<string, number>([
-  ['123', 1.0], // my comment 1
-  ['sfe', 2.0] // my comment 2
+  ['123', 1], // my comment 1
+  ['sfe', 2] // my comment 2
 ]);
 let a : Array<string> = new Array<string>();
 function foo(arr:Array<string>) { }
@@ -105,3 +105,43 @@ let a: Array<string> | undefined = new Array<string>();
 let aa: Array<string> | Set<string> | undefined = new Array<string>();
 let b: Array<string> | Array<number> | undefined = new Array();
 let test: string[] = new Array<string>();
+
+class A {
+  test(key: string): Promise<string> {
+    if (key == undefined || key.length == 0.0) {
+      return new Promise<string>((resolve, reject) => {
+        reject("empty key");});
+    } else {
+    }
+  }
+}
+class SubArr extends Array {}
+let subArr = new SubArr();
+class SubSet extends Set{}
+let subSet = new SubSet();
+class SubMap extends Map{}
+let subMap = new SubMap();
+class SubWeakMap extends WeakMap{}
+let subWeakMap = new SubWeakMap();
+class SubWeakSet extends WeakSet{}
+let subWeakSet = new SubWeakSet();
+
+class C {}
+class D<T> {}
+let a: D<[C]> = new D<[C]>();
+
+function fun(a?:Map<string,string>){
+  let c:Map<string,string>|undefined
+  if(a === undefined){
+    a = new Map<string, string>()
+  }
+  if(a){
+    a = new Map<string, string>()
+  }
+  if(c){
+    c = new Map<string, string>()
+  }
+  if(c === undefined){
+    c = new Map<string, string>()
+  }
+}

@@ -32,6 +32,6 @@ function main() : void {
     let b : B = new B();
     a.status = "hello_a";
     b.status = "hello_b";
-    assertTrue(fn(a) === "hello_a")
-    assertTrue(fn(b) === "hello_b")
+    arktest.assertTrue(fn(a) === "hello_a")
+    arktest.assertTrue(fn(b) === "hello_b")
 }

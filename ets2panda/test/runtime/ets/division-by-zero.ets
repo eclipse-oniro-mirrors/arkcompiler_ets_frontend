@@ -26,28 +26,28 @@ function main() : void {
     } catch (error: ArithmeticError) {
         caught_counter++;
     }
-    assertEQ(caught_counter, 1)
+    arktest.assertEQ(caught_counter, 1)
 
     try {
         let result : long = LONG_ONE / LONG_ZERO;
     } catch (error: ArithmeticError) {
         caught_counter++;
     }
-    assertEQ(caught_counter, 2)
+    arktest.assertEQ(caught_counter, 2)
 
     try {
         let result : int = INT_ONE % INT_ZERO;
     } catch (error: ArithmeticError) {
         caught_counter++;
     }
-    assertEQ(caught_counter, 3)
+    arktest.assertEQ(caught_counter, 3)
 
     try {
         let result : long = LONG_ONE % LONG_ZERO;
     } catch (error: ArithmeticError) {
         caught_counter++;
     }
-    assertEQ(caught_counter, 4)
+    arktest.assertEQ(caught_counter, 4)
 
     let DOUBLE_ONE : double = 1.0;
     let DOUBLE_ZERO : double = 0.0;
@@ -55,36 +55,36 @@ function main() : void {
     try {
         let result : double = DOUBLE_ONE / DOUBLE_ZERO;
     } catch (error: ArithmeticError) {
-        assertTrue(false)
+        arktest.assertTrue(false)
     }
 
     try {
         let result = INT_ONE / DOUBLE_ZERO;
     } catch (error: ArithmeticError) {
-        assertTrue(false)
+        arktest.assertTrue(false)
     }
 
     try {
         let result = DOUBLE_ONE / INT_ZERO;
     } catch (error: ArithmeticError) {
-        assertTrue(false)
+        arktest.assertTrue(false)
     }
 
     try {
         let result : double = DOUBLE_ONE % DOUBLE_ZERO;
     } catch (error: ArithmeticError) {
-        assertTrue(false)
+        arktest.assertTrue(false)
     }
 
     try {
         let result = INT_ONE % DOUBLE_ZERO;
     } catch (error: ArithmeticError) {
-        assertTrue(false)
+        arktest.assertTrue(false)
     }
 
     try {
         let result = DOUBLE_ONE % INT_ZERO;
     } catch (error: ArithmeticError) {
-        assertTrue(false)
+        arktest.assertTrue(false)
     }
 }

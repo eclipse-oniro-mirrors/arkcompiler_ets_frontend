@@ -24,6 +24,6 @@ function main() {
   try {
     new C().getProp();
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

@@ -43,8 +43,8 @@ class A {
 }
 
 function main(): void {
-    assertEQ(new A().foo(3), 1)
-    assertEQ(new A().foo2(3), 1)
-    assertEQ(new A().foo3(3), 1)
-    assertEQ(new A().foo4(3), 1)
+    arktest.assertEQ(new A().foo(3), 1)
+    arktest.assertEQ(new A().foo2(3), 1)
+    arktest.assertEQ(new A().foo3(3), 1)
+    arktest.assertEQ(new A().foo4(3), 1)
 }

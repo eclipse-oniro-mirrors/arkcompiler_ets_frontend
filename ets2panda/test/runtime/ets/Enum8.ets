@@ -62,38 +62,38 @@ enum VolumeEnum {
 }
 
 function main() {
-    assertEQ(StringEnum.A + StringEnum.B, "AppleBanana");
-    assertTrue(StringEnum.A < StringEnum.B);
-    assertTrue(StringEnum.A !== StringEnum.B);
-    assertTrue(StringEnum.C > StringEnum.A);
+    arktest.assertEQ(StringEnum.A + StringEnum.B, "AppleBanana");
+    arktest.assertTrue(StringEnum.A < StringEnum.B);
+    arktest.assertTrue(StringEnum.A !== StringEnum.B);
+    arktest.assertTrue(StringEnum.C > StringEnum.A);
 
-    assertEQ(IntEnum.One + IntEnum.Two, 3);
-    assertEQ(IntEnum.Three - IntEnum.One, 2);
-    assertEQ(IntEnum.Four * IntEnum.Two, 8);
-    assertEQ(IntEnum.Four / IntEnum.Two, 2);
+    arktest.assertEQ(IntEnum.One + IntEnum.Two, 3);
+    arktest.assertEQ(IntEnum.Three - IntEnum.One, 2);
+    arktest.assertEQ(IntEnum.Four * IntEnum.Two, 8);
+    arktest.assertEQ(IntEnum.Four / IntEnum.Two, 2);
 
-    assertEQ(ColorEnum.Red + ColorEnum.Green, 15);
-    assertEQ(ColorEnum.Blue - ColorEnum.Green > 0 ? "Greater" : "Smaller", "Greater");
+    arktest.assertEQ(ColorEnum.Red + ColorEnum.Green, 15);
+    arktest.assertEQ(ColorEnum.Blue - ColorEnum.Green > 0 ? "Greater" : "Smaller", "Greater");
 
     let status = StatusEnum.Active;
-    assertTrue(status === StatusEnum.Active);
-    assertTrue(status !== StatusEnum.Inactive);
+    arktest.assertTrue(status === StatusEnum.Active);
+    arktest.assertTrue(status !== StatusEnum.Inactive);
 
     status = StatusEnum.Inactive;
-    assertTrue(status === StatusEnum.Inactive);
+    arktest.assertTrue(status === StatusEnum.Inactive);
 
-    assertEQ(Number(TemperatureEnum.Cold) + 10, 10);
-    assertEQ(Number(TemperatureEnum.Warm) * 2, 40);
+    arktest.assertEQ(Number(TemperatureEnum.Cold) + 10, 10);
+    arktest.assertEQ(Number(TemperatureEnum.Warm) * 2, 40);
 
-    assertTrue((PermissionEnum.Read & PermissionEnum.Write) === 0);
-    assertTrue((PermissionEnum.Read | PermissionEnum.Execute) === 5);
-    assertTrue((PermissionEnum.Read ^ PermissionEnum.Write) === 3);
+    arktest.assertTrue((PermissionEnum.Read & PermissionEnum.Write) === 0);
+    arktest.assertTrue((PermissionEnum.Read | PermissionEnum.Execute) === 5);
+    arktest.assertTrue((PermissionEnum.Read ^ PermissionEnum.Write) === 3);
 
-    assertEQ(NumberEnum.Ten + 10, 20);
-    assertEQ(NumberEnum.Twenty - 10, 10);
-    assertEQ(NumberEnum.Thirty * 2, 60);
-    assertEQ(NumberEnum.Twenty / 2, 10);
+    arktest.assertEQ(NumberEnum.Ten + 10, 20);
+    arktest.assertEQ(NumberEnum.Twenty - 10, 10);
+    arktest.assertEQ(NumberEnum.Thirty * 2, 60);
+    arktest.assertEQ(NumberEnum.Twenty / 2, 10);
     let volumeLevel = VolumeEnum.Medium;
     let message = volumeLevel === VolumeEnum.Low ? "Low Volume" : (volumeLevel === VolumeEnum.Medium ? "Medium Volume" : "High Volume");
-    assertEQ(message, "Medium Volume");
+    arktest.assertEQ(message, "Medium Volume");
 }

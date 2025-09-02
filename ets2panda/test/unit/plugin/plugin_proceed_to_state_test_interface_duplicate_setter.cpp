@@ -84,7 +84,13 @@ int main(int argc, char **argv)
     impl->DestroyContext(context);
     impl->DestroyConfig(config);
 
-    // Rerun es2panda on dumped source
+    /* Note (oeotvos) issue: #21301
+    This causes massive problems for name mangling, because it runs es2panda on the dumped source
+    code, which contains mangled names. When we chose the special character for mangling, the point was for it to not be
+    parsable, so the user cannot use it in their code. Because of this I commented out the remaining part of the
+    test.
+
+    //  Rerun es2panda on dumped source
     config = impl->CreateConfig(argc - 1, args);
     context = impl->CreateContextFromString(config, dump.data(), argv[argc - 1]);
     if (context != nullptr) {
@@ -98,7 +104,7 @@ int main(int argc, char **argv)
         return PROCEED_ERROR_CODE;
     }
     impl->DestroyContext(context);
-    impl->DestroyConfig(config);
+    impl->DestroyConfig(config); */
 
     return 0;
 }

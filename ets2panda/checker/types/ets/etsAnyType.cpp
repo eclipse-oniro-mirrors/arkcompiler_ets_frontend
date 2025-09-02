@@ -14,6 +14,7 @@
  */
 
 #include "etsAnyType.h"
+#include <cstddef>
 
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
@@ -22,7 +23,7 @@
 namespace ark::es2panda::checker {
 void ETSAnyType::Identical(TypeRelation *relation, Type *other)
 {
-    relation->Result(other->IsAnyType());
+    relation->Result(other->IsETSAnyType());
 }
 
 void ETSAnyType::AssignmentTarget(TypeRelation *relation, Type *source)
@@ -33,8 +34,6 @@ void ETSAnyType::AssignmentTarget(TypeRelation *relation, Type *source)
     }
 
     if (relation->ApplyBoxing()) {
-        auto checker = relation->GetChecker()->AsETSChecker();
-        relation->GetNode()->AddBoxingUnboxingFlags(checker->GetBoxingFlag(checker->MaybeBoxType(source)));
         relation->Result(true);
     }
 }
@@ -108,6 +107,6 @@ void ETSAnyType::ToDebugInfoType(std::stringstream &ss) const
 Type *ETSAnyType::Instantiate(ArenaAllocator *allocator, [[maybe_unused]] TypeRelation *relation,
                               [[maybe_unused]] GlobalTypesHolder *globalTypes)
 {
-    return allocator->New<ETSAnyType>();
+    return isRelaxedAny_ ? allocator->New<ETSAnyType>(true) : allocator->New<ETSAnyType>();
 }
 }  // namespace ark::es2panda::checker

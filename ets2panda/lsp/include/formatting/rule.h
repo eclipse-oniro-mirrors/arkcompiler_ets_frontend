@@ -18,7 +18,8 @@
 
 #include <functional>
 #include <vector>
-#include "ir/astNode.h"
+#include "generated/tokenType.h"
+#include "lexer/lexer.h"
 #include "formatting_context.h"
 
 namespace ark::es2panda::lsp {
@@ -40,7 +41,7 @@ enum class RuleFlags { NONE, CAN_DELETE_NEWLINES };
 
 struct Rule {
 public:
-    explicit Rule(std::vector<ContextPredicate> &cb, RuleAction action, RuleFlags flag)
+    explicit Rule(std::vector<ContextPredicate> cb, RuleAction action, RuleFlags flag)
         : context_(std::move(cb)), action_(action), flags_(flag)
     {
     }
@@ -68,12 +69,12 @@ private:
 
 struct TokenRange {
 public:
-    explicit TokenRange(std::vector<ir::AstNodeType> &tokens, bool isSpecific)
+    explicit TokenRange(std::vector<lexer::TokenType> tokens, bool isSpecific)
         : tokens_(std::move(tokens)), isSpecific_(isSpecific)
     {
     }
 
-    std::vector<ir::AstNodeType> &GetTokens()
+    std::vector<lexer::TokenType> &GetTokens()
     {
         return tokens_;
     }
@@ -84,7 +85,7 @@ public:
     }
 
 private:
-    std::vector<ir::AstNodeType> tokens_;
+    std::vector<lexer::TokenType> tokens_;
     bool isSpecific_;
 };
 

@@ -15,7 +15,5 @@
 
 function main() : void
 {
-  let x = /* @@ label */new boolean();
+  let x = new boolean();
 }
-
-/* @@@ label Error TypeError: This expression is not constructible. */

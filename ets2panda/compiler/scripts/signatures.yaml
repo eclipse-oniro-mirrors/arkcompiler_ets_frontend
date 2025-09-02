@@ -24,13 +24,15 @@ defines:
     ref: INIT_METHOD
   - name: _$initializerBlockInit$_
     ref: INITIALIZER_BLOCK_INIT
+  - name: initModule
+    ref: INIT_MODULE_METHOD
   - name: $_get
     ref: GET_INDEX_METHOD
   - name: $_set
     ref: SET_INDEX_METHOD
   - name: $_iterator
     ref: ITERATOR_METHOD
-  - name: Iterator
+  - name: Iterator 
     ref: ITERATOR_CLASS
   - name: 'ambient_indexer'
     ref: AMBIENT_INDEXER
@@ -107,8 +109,8 @@ defines:
   - name: ets/annotation/FunctionalReference
     ref: ETS_ANNOTATION_FUNCTIONAL_REFERENCE
     comment: Ets record
-  - name: ets/annotation/Module
-    ref: ETS_ANNOTATION_MODULE
+  - name: ets/annotation/FunctionOverload
+    ref: ETS_ANNOTATION_FUNCTION_OVERLOAD
     comment: Ets record
   - name: ets/coroutine/Async
     ref: ETS_COROUTINE_ASYNC
@@ -122,10 +124,6 @@ defines:
     ref: GENERIC_END
   - name: ctor
     ref: CONSTRUCTOR
-  - name: <get>
-    ref: GETTER_BEGIN
-  - name: <set>
-    ref: SETTER_BEGIN
   - name: param0
     ref: CTOR_PARAM0
   - name: param1
@@ -150,6 +148,8 @@ defines:
     ref: UNDEFINED
   - name: 'null'
     ref: NULL_LITERAL
+  - name: 'std.core.Null'
+    ref: NULL_ASSEMBLY_TYPE
   - name: 'Readonly'
     ref: READONLY_TYPE_NAME
   - name: 'Partial'
@@ -160,6 +160,8 @@ defines:
     ref: REQUIRED_TYPE_NAME
   - name: 'Array'
     ref: ARRAY
+  - name: 'gradual'
+    ref: GRADUAL_TYPE_NAME
   - name: '<property>'
     ref: PROPERTY
   - name: 'Any'
@@ -218,19 +220,37 @@ defines:
     ref: MIN_ARGSCOUNT_OF_FUNC
   - name: 'gensym%%_anonymous_const'
     ref: EXPORT_DEFAULT_CONSTANT_ANONYMOUSLY
+  - name: 'toByte'
+    ref: BYTE_CAST
+  - name: 'toShort'
+    ref: SHORT_CAST
+  - name: 'toInt'
+    ref: INT_CAST
+  - name: 'toLong'
+    ref: LONG_CAST
+  - name: 'toFloat'
+    ref: FLOAT_CAST
+  - name: 'toDouble'
+    ref: DOUBLE_CAST
+  - name: 'toChar'
+    ref: CHAR_CAST
   - name: 'NamedFunctionObject'
     ref: NAMED_FUNCTION_OBJECT
   - name: 'InterfaceObjectLiteral'
     ref: INTERFACE_OBJ_LITERAL
     comment: ETS annotation type
+  - name: 'use static'
+    ref: STATIC_PROGRAM_FLAG
   - name: 'ETSGLOBAL.<cctor>:void;'
     ref: UNUSED_ETSGLOBAL_CTOR
   - name: 'ETSGLOBAL._$init$_:void;'
     ref: UNUSED_ETSGLOBAL_INIT
   - name: 'ETSGLOBAL.main:void;'
     ref: UNUSED_ETSGLOBAL_MAIN
-  - name: 'use static'
-    ref: STATIC_PROGRAM_FLAG
+  - name: "initialize"
+    ref: CLASS_INITIALIZE_METHOD
+  - name: 'constructor'
+    ref: CONSTRUCTOR_NAME
 
 packages:
   - name: 'std.core'
@@ -747,7 +767,7 @@ signatures:
   - callee: BUILTIN_ARRAY
     method_name: <get>length
     params: []
-    return_type: PRIMITIVE_DOUBLE
+    return_type: PRIMITIVE_INT
     ref: BUILTIN_ARRAY_LENGTH
 
   - callee: BUILTIN_ARRAY
@@ -764,7 +784,7 @@ signatures:
 
   - callee: BUILTIN_RUNTIME
     method_name: failedTypeCastException
-    params: [BUILTIN_OBJECT, BUILTIN_STRING]
+    params: [BUILTIN_OBJECT, BUILTIN_STRING, PRIMITIVE_BOOLEAN]
     return_type: BUILTIN_CLASS_CAST_ERROR
     ref: BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCEPTION
 
@@ -936,53 +956,115 @@ signatures:
     return_type: PRIMITIVE_VOID
     ref: BUILTIN_STRING_BUILDER_CTOR
 
+  #26986
   - callee: BUILTIN_STRING_BUILDER
     method_name: append
     params: [PRIMITIVE_BOOLEAN]
     return_type: BUILTIN_STRING_BUILDER
     ref: BUILTIN_STRING_BUILDER_APPEND_BOOLEAN
 
+  #26986
   - callee: BUILTIN_STRING_BUILDER
     method_name: append
     params: [PRIMITIVE_CHAR]
     return_type: BUILTIN_STRING_BUILDER
     ref: BUILTIN_STRING_BUILDER_APPEND_CHAR
 
+  #26986
   - callee: BUILTIN_STRING_BUILDER
     method_name: append
     params: [PRIMITIVE_INT]
     return_type: BUILTIN_STRING_BUILDER
     ref: BUILTIN_STRING_BUILDER_APPEND_INT
 
+  #26986
   - callee: BUILTIN_STRING_BUILDER
     method_name: append
     params: [PRIMITIVE_LONG]
     return_type: BUILTIN_STRING_BUILDER
     ref: BUILTIN_STRING_BUILDER_APPEND_LONG
 
+  #26986
   - callee: BUILTIN_STRING_BUILDER
     method_name: append
     params: [PRIMITIVE_FLOAT]
     return_type: BUILTIN_STRING_BUILDER
     ref: BUILTIN_STRING_BUILDER_APPEND_FLOAT
 
+  #26986
   - callee: BUILTIN_STRING_BUILDER
     method_name: append
     params: [PRIMITIVE_DOUBLE]
     return_type: BUILTIN_STRING_BUILDER
     ref: BUILTIN_STRING_BUILDER_APPEND_DOUBLE
 
+  #26986
   - callee: BUILTIN_STRING_BUILDER
     method_name: append
     params: [BUILTIN_STRING]
     return_type: BUILTIN_STRING_BUILDER
     ref: BUILTIN_STRING_BUILDER_APPEND_BUILTIN_STRING
 
+  #26986
   - callee: BUILTIN_STRING_BUILDER
     method_name: toString
     params: []
     return_type: BUILTIN_STRING
     ref: BUILTIN_STRING_BUILDER_TO_STRING
+
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: toString
+    params: [PRIMITIVE_BOOLEAN]
+    return_type: BUILTIN_STRING
+    ref: BUILTIN_STRING_BUILDER_TO_STRING_BOOLEAN
+
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: toString
+    params: [PRIMITIVE_CHAR]
+    return_type: BUILTIN_STRING
+    ref: BUILTIN_STRING_BUILDER_TO_STRING_CHAR
+
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: toString
+    params: [PRIMITIVE_SHORT]
+    return_type: BUILTIN_STRING
+    ref: BUILTIN_STRING_BUILDER_TO_STRING_SHORT
+
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: toString
+    params: [PRIMITIVE_BYTE]
+    return_type: BUILTIN_STRING
+    ref: BUILTIN_STRING_BUILDER_TO_STRING_BYTE
+
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: toString
+    params: [PRIMITIVE_INT]
+    return_type: BUILTIN_STRING
+    ref: BUILTIN_STRING_BUILDER_TO_STRING_INT
+
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: toString
+    params: [PRIMITIVE_LONG]
+    return_type: BUILTIN_STRING
+    ref: BUILTIN_STRING_BUILDER_TO_STRING_LONG
+
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: toString
+    params: [PRIMITIVE_FLOAT]
+    return_type: BUILTIN_STRING
+    ref: BUILTIN_STRING_BUILDER_TO_STRING_FLOAT
+
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: toString
+    params: [PRIMITIVE_DOUBLE]
+    return_type: BUILTIN_STRING
+    ref: BUILTIN_STRING_BUILDER_TO_STRING_DOUBLE
+
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: concatStrings
+    params: [BUILTIN_STRING, BUILTIN_STRING]
+    return_type: BUILTIN_STRING
+    ref: BUILTIN_STRING_BUILDER_CONCAT_STRING
 
   - callee: BUILTIN_BOOLEAN
     method_name: valueOf
@@ -1477,6 +1559,12 @@ signatures:
     ref: BUILTIN_JSRUNTIME_GET_UNDEFINED
 
   - callee: BUILTIN_JSRUNTIME
+    method_name: getNull
+    params: []
+    return_type: BUILTIN_JSVALUE
+    ref: BUILTIN_JSRUNTIME_GET_NULL
+
+  - callee: BUILTIN_JSRUNTIME
     method_name: strictEqual
     params: [BUILTIN_JSVALUE, BUILTIN_JSVALUE]
     return_type: PRIMITIVE_BOOLEAN
@@ -1803,3 +1891,4 @@ dynamiclangs:
         - type: dynamic
           builtin: BUILTIN_JSRUNTIME_SET_ELEMENT_JSVALUE
       get_undefined: BUILTIN_JSRUNTIME_GET_UNDEFINED
+      get_null: BUILTIN_JSRUNTIME_GET_NULL

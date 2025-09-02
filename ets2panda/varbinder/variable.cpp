@@ -33,6 +33,8 @@ LocalVariable::LocalVariable(VariableFlags flags) : Variable(flags) {}
 
 const util::StringView &Variable::Name() const
 {
+    // Synthetic var has no decl_
+    ES2PANDA_ASSERT(decl_ != nullptr);
     return decl_->Name();
 }
 

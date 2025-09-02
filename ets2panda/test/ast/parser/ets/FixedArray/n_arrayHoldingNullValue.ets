@@ -18,5 +18,5 @@ function main(): void {
     let d: FixedArray<char> = /* @@ label1 */null;
 }
 
-/* @@? 17:48 Error TypeError: Type 'null' cannot be assigned to type 'FixedArray<float>' */
-/* @@? 18:46 Error TypeError: Type 'null' cannot be assigned to type 'FixedArray<char>' */
+/* @@? 17:48 Error TypeError: Type 'null' cannot be assigned to type 'FixedArray<Float>' */
+/* @@? 18:46 Error TypeError: Type 'null' cannot be assigned to type 'FixedArray<Char>' */

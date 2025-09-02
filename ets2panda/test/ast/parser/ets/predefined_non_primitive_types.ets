@@ -35,6 +35,7 @@ let s: String = "abc";
 // see 3.2.2 Array types
 let a: int[] = new int[5];
 
-/* @@@ label Error TypeError: Variable 'non_prim_b' has already been declared.  */
+/* @@? 23:25 Error TypeError: Type 'Double' cannot be assigned to type 'Float' */
+/* @@@ label Error TypeError: Variable 'non_prim_b' has already been declared. */
 /* @@? 27:31 Error TypeError: Cannot find type 'Bool'. */
-/* @@? 27:38 Error TypeError: Type 'boolean' cannot be assigned to type 'Byte' */
+/* @@? 27:38 Error TypeError: Type 'Boolean' cannot be assigned to type 'Byte' */

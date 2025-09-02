@@ -43,6 +43,16 @@
             "suggest": "",
             "rule": "\"use concurrent\" is not supported (arkts-limited-stdlib-no-use-concurrent)",
             "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 3,
+            "endLine": 44,
+            "endColumn": 19,
+            "problem": "UseConcurrentDeprecated",
+            "suggest": "",
+            "rule": "\"use concurrent\" is not supported (arkts-limited-stdlib-no-use-concurrent)",
+            "severity": "ERROR"
         }
     ]
 }

@@ -20,11 +20,11 @@ function main(): int {
 
   a = new Array<A<string>>(a, new Array<string>("test1", "test2"), new Array<A<string>>(a, new Array<A<string>>(a))) as A<string>;
 
-  assertEQ((a as Array<A<string>>)[0], "test")
-  assertEQ(((a as Array<A<string>>)[1] as Array<A<string>>)[0], "test1")
-  assertEQ(((a as Array<A<string>>)[1] as Array<A<string>>)[1], "test2")
-  assertEQ(((a as Array<A<string>>)[2] as Array<A<string>>)[0], "test")
-  assertEQ((((a as Array<A<string>>)[2] as Array<A<string>>)[1] as Array<A<string>>)[0], "test")
+  arktest.assertEQ((a as Array<A<string>>)[0], "test")
+  arktest.assertEQ(((a as Array<A<string>>)[1] as Array<A<string>>)[0], "test1")
+  arktest.assertEQ(((a as Array<A<string>>)[1] as Array<A<string>>)[1], "test2")
+  arktest.assertEQ(((a as Array<A<string>>)[2] as Array<A<string>>)[0], "test")
+  arktest.assertEQ((((a as Array<A<string>>)[2] as Array<A<string>>)[1] as Array<A<string>>)[0], "test")
 
   return 0;
 }

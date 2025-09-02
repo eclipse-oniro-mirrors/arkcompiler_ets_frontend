@@ -23,7 +23,7 @@ function main(): void {
     const obj = new Static3();
     console.log(obj.data);
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }
 

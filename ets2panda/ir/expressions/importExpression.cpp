@@ -66,6 +66,7 @@ ImportExpression *ImportExpression::Clone(ArenaAllocator *const allocator, AstNo
 {
     auto *const source = source_ != nullptr ? source_->Clone(allocator, nullptr)->AsExpression() : nullptr;
     auto *const clone = allocator->New<ImportExpression>(source);
+    ES2PANDA_ASSERT(clone != nullptr);
 
     if (source != nullptr) {
         source->SetParent(clone);

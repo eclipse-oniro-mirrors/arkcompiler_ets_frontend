@@ -16,5 +16,5 @@
 function main(): void {
     let test: (a:int, b: int) => int = (a:int, b: int) => a - b;
 
-    assertEQ(test(0,10), -10)
+    arktest.assertEQ(test(0,10), -10)
 }

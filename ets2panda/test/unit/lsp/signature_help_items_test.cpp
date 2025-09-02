@@ -34,6 +34,7 @@
 
 namespace {
 
+using ark::es2panda::lsp::Initializer;
 class LSPSignatureHelpItemsTests : public LSPAPITests {};
 
 ark::es2panda::ir::AstNode *FindTokenOnLeftOfPosition(es2panda_Context *context, size_t position)
@@ -44,6 +45,52 @@ ark::es2panda::ir::AstNode *FindTokenOnLeftOfPosition(es2panda_Context *context,
     }
     const auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
     return ark::es2panda::lsp::FindPrecedingToken(position, ctx->parserProgram->Ast(), ctx->allocator);
+}
+
+TEST_F(LSPSignatureHelpItemsTests, StdLibMapGet)
+{
+    std::vector<std::string> files = {"getSignatureHelpItemsTest_map.ets"};
+    std::vector<std::string> texts = {R"(let map = new Map<string, number>();
+map.set("a", 1);
+let a = map.get("a");
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 68;
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getSignatureHelpItems(ctx, offset);
+    size_t const expectedSize = 2;
+    size_t const expectedStart = 62;
+    size_t const expectedLength = 12;
+    size_t const expectedArgumentCount = 1;
+    ASSERT_EQ(res.GetItems().size(), expectedSize);
+    ASSERT_EQ(res.GetApplicableSpan().start, expectedStart);
+    ASSERT_EQ(res.GetApplicableSpan().length, expectedLength);
+    ASSERT_EQ(res.GetArgumentCount(), expectedArgumentCount);
+    auto &item = res.GetItem(0);
+    auto &prefix = item.GetPrefixDisplayParts();
+    auto &suffix = item.GetSuffixDisplayParts();
+    auto &parameters = item.GetParameters()[0].GetDisplayParts();
+    auto expectedPrefix = std::vector<SymbolDisplayPart> {SymbolDisplayPart {"(", "punctuation"}};
+    auto expectedSuffix = std::vector<SymbolDisplayPart> {
+        SymbolDisplayPart {")", "punctuation"},
+        SymbolDisplayPart {":", "punctuation"},
+        SymbolDisplayPart {"Double|undefined", "typeName"},
+    };
+    auto expectedParameters = std::vector<SymbolDisplayPart> {
+        SymbolDisplayPart {"key", "paramName"},
+        SymbolDisplayPart {":", "punctuation"},
+        SymbolDisplayPart {"String", "typeName"},
+    };
+    ASSERT_EQ(prefix, expectedPrefix);
+    ASSERT_EQ(suffix, expectedSuffix);
+    ASSERT_EQ(parameters, expectedParameters);
+    initializer.DestroyContext(ctx);
 }
 
 TEST_F(LSPSignatureHelpItemsTests, GetSignatureHelpItemsTest)
@@ -64,7 +111,7 @@ TEST_F(LSPSignatureHelpItemsTests, GetSignatureHelpItemsTest)
     std::vector<std::string> files = {fileName};
     std::vector<std::string> texts = {fileText};
     auto filePaths = CreateTempFile(files, texts);
-    ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
+    Initializer initializer = Initializer();
     es2panda_Context *ctx =
         initializer.CreateContext(files.at(index0).c_str(), ES2PANDA_STATE_CHECKED, texts.at(index0).c_str());
     auto startingToken = FindTokenOnLeftOfPosition(ctx, position);
@@ -93,7 +140,7 @@ let result = add(1, 2);
     std::vector<std::string> texts = {fileText};
     auto filePaths = CreateTempFile(files, texts);
 
-    ark::es2panda::lsp::Initializer initializer;
+    Initializer initializer;
     es2panda_Context *ctx = initializer.CreateContext(files.at(index0).c_str(), ES2PANDA_STATE_CHECKED, fileText);
 
     auto callToken = FindTokenOnLeftOfPosition(ctx, position);
@@ -128,7 +175,7 @@ let result = multiply(10, 20);
     std::vector<std::string> texts = {fileText};
     auto filePaths = CreateTempFile(files, texts);
 
-    ark::es2panda::lsp::Initializer initializer;
+    Initializer initializer;
     es2panda_Context *ctx = initializer.CreateContext(files.at(index0).c_str(), ES2PANDA_STATE_CHECKED, fileText);
 
     auto callToken = ark::es2panda::lsp::FindTokenOnLeftOfPosition(ctx, position);
@@ -167,7 +214,7 @@ TEST_F(LSPSignatureHelpItemsTests, CreateSignatureHelpItemTest)
     std::vector<std::string> files = {fileName};
     std::vector<std::string> texts = {fileText};
     auto filePaths = CreateTempFile(files, texts);
-    ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
+    Initializer initializer = Initializer();
     es2panda_Context *ctx = initializer.CreateContext(files.at(index0).c_str(), ES2PANDA_STATE_CHECKED, fileText);
     auto callToken = FindTokenOnLeftOfPosition(ctx, position);
     const auto callNode = callToken->Parent();
@@ -216,7 +263,7 @@ TEST_F(LSPSignatureHelpItemsTests, CreateSignatureHelpItemParamsTest)
     std::vector<std::string> files = {fileName};
     std::vector<std::string> texts = {fileText};
     auto filePaths = CreateTempFile(files, texts);
-    ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
+    Initializer initializer = Initializer();
     es2panda_Context *ctx = initializer.CreateContext(files.at(index0).c_str(), ES2PANDA_STATE_CHECKED, fileText);
     auto callToken = FindTokenOnLeftOfPosition(ctx, position);
     const auto callNode = callToken->Parent();

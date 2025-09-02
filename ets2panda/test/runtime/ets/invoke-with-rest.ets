@@ -31,4 +31,4 @@ class A<T> {
 
 let x = A<number>(1)
 
-assertEQ(x.get(), 1)
+arktest.assertEQ(x.get(), 1)

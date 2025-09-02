@@ -24,14 +24,13 @@ class A{}
 type t1 = int
 
 function main(): void {
-    @MyAnno({testProperty1: /* @@ label2 */A})
-    type t2 = int
+    @MyAnno({testProperty1: A})
+    /* @@ label2 */type t2 = int
 }
 
 
-/* @@@ label1 Error TypeError: Class name 'A' used in the wrong context */
+/* @@@ label1 Error SyntaxError: Class cannot be used as object. */
 /* @@@ label1 Error TypeError: Type 'A' cannot be assigned to type 'String'  */
 /* @@@ label1 Error TypeError: Invalid value for annotation field, expected a constant literal.  */
-/* @@@ label2 Error TypeError: Class name 'A' used in the wrong context */
-/* @@@ label2 Error TypeError: Type 'A' cannot be assigned to type 'String'  */
-/* @@@ label2 Error TypeError: Invalid value for annotation field, expected a constant literal.  */
+/* @@@ label2 Error SyntaxError: Illegal start of Type Alias expression. */
+/* @@@ label2 Error SyntaxError: Annotations are not allowed on this type of declaration.  */

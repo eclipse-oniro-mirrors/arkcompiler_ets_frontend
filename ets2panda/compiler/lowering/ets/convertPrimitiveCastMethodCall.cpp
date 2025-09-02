@@ -36,7 +36,6 @@ static ir::AstNode *ConvertMemberExpressionToAsExpression(ir::CallExpression *ca
         allocator, me->Object()->Clone(allocator, nullptr)->AsExpression(),
         checker->AllocNode<ir::OpaqueTypeNode>(toType, allocator), false);
     res->SetParent(call->Parent());
-    res->SetBoxingUnboxingFlags(call->GetBoxingUnboxingFlags());
 
     {
         auto scope = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), NearestScope(me));
@@ -47,7 +46,7 @@ static ir::AstNode *ConvertMemberExpressionToAsExpression(ir::CallExpression *ca
 
 bool ConvertPrimitiveCastMethodCall::PerformForModule(public_lib::Context *const ctx, parser::Program *const program)
 {
-    auto checker = ctx->checker->AsETSChecker();
+    auto checker = ctx->GetChecker()->AsETSChecker();
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
         [checker](checker::AstNodePtr ast) -> checker::AstNodePtr {

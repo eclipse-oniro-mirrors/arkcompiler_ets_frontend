@@ -24,6 +24,7 @@
 #include "util/generateBin.h"
 #include "util/options.h"
 #include "util/plugin.h"
+#include "util/perfMetrics.h"
 #include "libpandabase/os/stacktrace.h"
 #include "generated/diagnostic.h"
 
@@ -109,8 +110,8 @@ static unsigned int ReleaseInputsAndReturn(std::vector<std::string *> &parserInp
     return returnCode;
 }
 
-static unsigned int CompileFromConfig(es2panda::Compiler &compiler, util::Options *options,
-                                      util::DiagnosticEngine &diagnosticEngine)
+static int CompileFromConfig(es2panda::Compiler &compiler, util::Options *options,
+                             util::DiagnosticEngine &diagnosticEngine)
 {
     auto compilationList = FindProjectSources(options->ArkTSConfig());
     if (compilationList.empty()) {
@@ -214,6 +215,9 @@ static int Run(Span<const char *const> args)
         }
         es2panda::SourceFile input(sourceFile, parserInput, options->IsModule(), options->GetOutput());
         res = CompileFromSource(compiler, input, *options.get(), diagnosticEngine);
+    }
+    if (options->IsDumpPerfMetrics()) {
+        util::DumpPerfMetrics();
     }
     diagnosticEngine.FlushDiagnostic();
     return res;

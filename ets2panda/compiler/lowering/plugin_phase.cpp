@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ bool PluginPhase::Perform(public_lib::Context *ctx, [[maybe_unused]] parser::Pro
     for (auto &plugin : *(ctx->plugins)) {
         (plugin.*methodCall_)(reinterpret_cast<es2panda_Context *>(ctx));
         if (ctx->state == ES2PANDA_STATE_ERROR) {
-            ctx->checker->LogTypeError(ctx->errorMessage, ctx->errorPos);
+            ctx->GetChecker()->LogTypeError(ctx->errorMessage, ctx->errorPos);
             return false;
         }
     }

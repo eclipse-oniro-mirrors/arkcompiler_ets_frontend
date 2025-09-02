@@ -21,18 +21,18 @@ function main() : void{
       for(let j = 0; j < 10; j++) {
         try {
         } catch (e) {
-          assertTrue(false)
+          arktest.assertTrue(false)
         } finally {
           break;
         }
       }
     } catch (e) {
-      assertTrue(false)
+      arktest.assertTrue(false)
     } finally {
       a++;
     }
   }
 
-  assertEQ(b, 0)
-  assertEQ(a, 10)
+  arktest.assertEQ(b, 0)
+  arktest.assertEQ(a, 10)
 }

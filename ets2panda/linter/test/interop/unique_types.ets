@@ -18,6 +18,7 @@ import {
  unknown_var,
  symbol_var,
  function_var,
+ enum_var,
  A,
  B,
  TestHelper,
@@ -71,6 +72,7 @@ typeof symbol_var === 'object';
 function_var() === true;
 A.instance;
 let obj: B = { name: "hello" };
+enum_var.a === 0;
 
 export function test_ts_non_standard_exception(testCaseRet: Array) {
   let test_helper = new TestHelper("TEST_TS_NON_STANDARD_EXCEPTION");

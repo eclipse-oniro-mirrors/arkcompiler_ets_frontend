@@ -16,6 +16,6 @@
    let bigintA = Type.from<bigint>();
    let bigintB = Type.from<bigint>();
    let bigintC = Type.from<BigInt>();
-   assertTrue(bigintA.toString() == bigintB.toString());
-   assertTrue(bigintA.toString() == bigintC.toString());
+   arktest.assertTrue(bigintA.toString() == bigintB.toString());
+   arktest.assertTrue(bigintA.toString() == bigintC.toString());
  }

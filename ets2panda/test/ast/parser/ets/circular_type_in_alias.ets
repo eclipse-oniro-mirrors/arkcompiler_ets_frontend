@@ -19,16 +19,18 @@ type Loop<T, U extends Loop<T, U>> = {
 
 /* @@? 16:24 Error TypeError: Circular type alias reference */
 /* @@? 16:38 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 17:6 Error SyntaxError: Unexpected token 'P'. */
-/* @@? 17:11 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:17 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:18 Error SyntaxError: Field type annotation expected. */
+/* @@? 17:6 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 17:10 Error SyntaxError: Field type annotation expected. */
+/* @@? 17:16 Error SyntaxError: Field type annotation expected. */
 /* @@? 17:18 Error SyntaxError: Unexpected token ']'. */
+/* @@? 17:18 Error SyntaxError: Field type annotation expected. */
 /* @@? 17:19 Error SyntaxError: Unexpected token ':'. */
 /* @@? 17:22 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:23 Error SyntaxError: Unexpected token 'P'. */
+/* @@? 17:23 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 17:24 Error SyntaxError: Unexpected token ']'. */
 /* @@? 17:26 Error SyntaxError: Unexpected token 'extends'. */
-/* @@? 17:34 Error SyntaxError: Unexpected token 'boolean'. */
+/* @@? 17:34 Error SyntaxError: boolean is a predefined type, cannot be used as an identifier */
 /* @@? 17:42 Error SyntaxError: Unexpected token '?'. */
 /* @@? 17:44 Error SyntaxError: number is a predefined type, cannot be used as an identifier */
+/* @@? 17:51 Error SyntaxError: Unexpected token ':'. */
+/* @@? 17:53 Error SyntaxError: string is a predefined type, cannot be used as an identifier */

@@ -21,7 +21,7 @@ function foo(): Day {
     return new good Day();
 }
 
-/* @@? package_module_with_semantic_error.ets:18:14 Error TypeError: Type '"I am a number, I promise..."' cannot be assigned to type 'int' */
+/* @@? package_module_with_semantic_error.ets:18:14 Error TypeError: Type '"I am a number, I promise..."' cannot be assigned to type 'Int' */
 
 /* @@? package_module_with_syntax_error.ets:18:1 Error SyntaxError: Unexpected token '='. */
 /* @@? package_module_with_syntax_error.ets:18:1 Error SyntaxError: Invalid package toplevel statement */

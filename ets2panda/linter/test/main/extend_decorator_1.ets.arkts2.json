@@ -25,46 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 36,
-            "column": 17,
-            "endLine": 36,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 37,
-            "column": 12,
-            "endLine": 37,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 39,
-            "column": 8,
-            "endLine": 39,
-            "endColumn": 9,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
-            "column": 8,
-            "endLine": 40,
-            "endColumn": 9,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 44,
             "column": 1,
             "endLine": 49,
@@ -72,16 +32,6 @@
             "problem": "ExtendDecoratorNotSupported",
             "suggest": "",
             "rule": "\"@Extend\" decorator is not supported (arkui-no-extend-decorator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 48,
-            "column": 12,
-            "endLine": 48,
-            "endColumn": 14,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

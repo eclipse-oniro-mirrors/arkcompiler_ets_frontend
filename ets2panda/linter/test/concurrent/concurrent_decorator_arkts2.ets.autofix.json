@@ -57,27 +57,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 22,
-            "column": 15,
-            "endLine": 22,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 702,
-                    "end": 704,
-                    "replacementText": "10.0",
-                    "line": 22,
-                    "column": 15,
-                    "endLine": 22,
-                    "endColumn": 17
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 24,
             "column": 1,
             "endLine": 24,

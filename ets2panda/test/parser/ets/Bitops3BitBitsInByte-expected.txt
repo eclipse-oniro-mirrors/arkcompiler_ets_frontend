@@ -945,7 +945,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 3,
+                "column": 18,
                 "program": "Bitops3BitBitsInByte.ets"
               },
               "end": {
@@ -1913,9 +1913,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 37,
+                                "column": 5,
+                                "program": "Bitops3BitBitsInByte.ets"
+                              },
+                              "end": {
+                                "line": 37,
+                                "column": 12,
+                                "program": "Bitops3BitBitsInByte.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 37,
+                                "column": 13,
+                                "program": "Bitops3BitBitsInByte.ets"
+                              },
+                              "end": {
+                                "line": 37,
+                                "column": 21,
+                                "program": "Bitops3BitBitsInByte.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 37,
@@ -1924,7 +1958,7 @@
                             },
                             "end": {
                               "line": 37,
-                              "column": 13,
+                              "column": 21,
                               "program": "Bitops3BitBitsInByte.ets"
                             }
                           }
@@ -1937,63 +1971,28 @@
                             "loc": {
                               "start": {
                                 "line": 37,
-                                "column": 14,
+                                "column": 22,
                                 "program": "Bitops3BitBitsInByte.ets"
                               },
                               "end": {
                                 "line": 37,
-                                "column": 17,
+                                "column": 25,
                                 "program": "Bitops3BitBitsInByte.ets"
                               }
                             }
                           },
                           {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "Bitops3BitBitsInByte",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 37,
-                                  "column": 19,
-                                  "program": "Bitops3BitBitsInByte.ets"
-                                },
-                                "end": {
-                                  "line": 37,
-                                  "column": 39,
-                                  "program": "Bitops3BitBitsInByte.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "expected",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 37,
-                                  "column": 40,
-                                  "program": "Bitops3BitBitsInByte.ets"
-                                },
-                                "end": {
-                                  "line": 37,
-                                  "column": 48,
-                                  "program": "Bitops3BitBitsInByte.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
+                            "type": "NumberLiteral",
+                            "value": 512000,
                             "loc": {
                               "start": {
                                 "line": 37,
-                                "column": 19,
+                                "column": 27,
                                 "program": "Bitops3BitBitsInByte.ets"
                               },
                               "end": {
                                 "line": 37,
-                                "column": 48,
+                                "column": 56,
                                 "program": "Bitops3BitBitsInByte.ets"
                               }
                             }
@@ -2004,12 +2003,12 @@
                             "loc": {
                               "start": {
                                 "line": 37,
-                                "column": 51,
+                                "column": 59,
                                 "program": "Bitops3BitBitsInByte.ets"
                               },
                               "end": {
                                 "line": 37,
-                                "column": 69,
+                                "column": 77,
                                 "program": "Bitops3BitBitsInByte.ets"
                               }
                             }
@@ -2024,7 +2023,7 @@
                           },
                           "end": {
                             "line": 37,
-                            "column": 70,
+                            "column": 78,
                             "program": "Bitops3BitBitsInByte.ets"
                           }
                         }
@@ -2037,7 +2036,7 @@
                         },
                         "end": {
                           "line": 37,
-                          "column": 71,
+                          "column": 79,
                           "program": "Bitops3BitBitsInByte.ets"
                         }
                       }
@@ -2087,7 +2086,7 @@
             "loc": {
               "start": {
                 "line": 30,
-                "column": 3,
+                "column": 10,
                 "program": "Bitops3BitBitsInByte.ets"
               },
               "end": {
@@ -2256,112 +2255,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "Bitops3BitBitsInByte.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "Bitops3BitBitsInByte.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -2478,7 +2371,7 @@
                                   },
                                   "end": {
                                     "line": 42,
-                                    "column": 36,
+                                    "column": 35,
                                     "program": "Bitops3BitBitsInByte.ets"
                                   }
                                 }
@@ -2491,7 +2384,7 @@
                                 },
                                 "end": {
                                   "line": 42,
-                                  "column": 36,
+                                  "column": 35,
                                   "program": "Bitops3BitBitsInByte.ets"
                                 }
                               }

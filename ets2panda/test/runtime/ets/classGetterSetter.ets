@@ -24,7 +24,7 @@ class A implements inter {
     my_field: int = 3;
 
     get_field(): int {
-      assertTrue(false)
+      arktest.assertTrue(false)
       return 1;
     }
 }
@@ -43,16 +43,16 @@ class B extends A{
 
 function main() {
     let a0: A = new A();
-    assertEQ(a0.my_field, 3)
+    arktest.assertEQ(a0.my_field, 3)
 
     let a1: inter = new A();
-    assertEQ(a1.my_field, 3)
+    arktest.assertEQ(a1.my_field, 3)
     a1.my_field = 5;
-    assertEQ(a1.my_field, 5)
+    arktest.assertEQ(a1.my_field, 5)
 
     let a2: inter = new B();
-    assertEQ(a2.my_field, a2.get_field())
+    arktest.assertEQ(a2.my_field, a2.get_field())
     a2.my_field = 2;
-    assertEQ(a2.get_field(), 2)
-    assertEQ(a2.my_field, a2.get_field())
+    arktest.assertEQ(a2.get_field(), 2)
+    arktest.assertEQ(a2.my_field, a2.get_field())
 }

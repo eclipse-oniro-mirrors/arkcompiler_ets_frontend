@@ -89,7 +89,6 @@ void ReturnStatement::SetReturnType(checker::ETSChecker *checker, checker::Type 
                 checker->LogError(diagnostic::INVALID_EXPR_IN_RETURN, {}, argument_->Start());
                 return;
             }
-            argument_->AddBoxingUnboxingFlags(checker->GetBoxingFlag(argumentType));
 
             relation->SetNode(nullptr);
         }

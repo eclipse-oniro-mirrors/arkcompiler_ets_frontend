@@ -27,12 +27,8 @@ void TSArrayType::TransformChildren(const NodeTransformer &cb, std::string_view 
         elementType_->SetTransformedNode(transformationName, transformedNode);
         elementType_ = static_cast<TypeNode *>(transformedNode);
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSArrayType::Iterate(const NodeTraverser &cb) const
@@ -128,7 +124,7 @@ TSArrayType *TSArrayType::Clone(ArenaAllocator *const allocator, AstNode *const 
         clone->SetAnnotations(std::move(annotationUsages));
     }
 
-    clone->SetRange(range_);
+    clone->SetRange(range_.GetRange());
     return clone;
 }
 }  // namespace ark::es2panda::ir

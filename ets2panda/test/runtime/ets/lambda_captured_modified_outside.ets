@@ -16,7 +16,7 @@
 function main() {
     let v = 1
     let lam: () => int = (): int => { return v }
-    assertEQ(lam(), 1)
+    arktest.assertEQ(lam(), 1)
     v = 2
-    assertEQ(lam(), 2)
+    arktest.assertEQ(lam(), 2)
 }

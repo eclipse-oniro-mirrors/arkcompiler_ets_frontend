@@ -66,6 +66,24 @@ public:
           baseOverloadMethod_(nullptr),
           asyncPairMethod_(nullptr)
     {
+        InitHistory();
+    }
+
+    // CC-OFFNXT(G.FUN.01-CPP) solid logic
+    explicit MethodDefinition(MethodDefinitionKind const kind, Expression *const key, Expression *const value,
+                              ModifierFlags const modifiers, ArenaAllocator *const allocator, bool const isComputed,
+                              AstNodeHistory *history)
+        : ClassElement(AstNodeType::METHOD_DEFINITION, key, value, modifiers, allocator, isComputed),
+          kind_(kind),
+          overloads_(allocator->Adapter()),
+          baseOverloadMethod_(nullptr),
+          asyncPairMethod_(nullptr)
+    {
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     // NOTE (csabahurton): these friend relationships can be removed once there are getters for private fields
@@ -73,106 +91,121 @@ public:
 
     MethodDefinitionKind Kind() const
     {
-        return kind_;
+        return GetHistoryNodeAs<MethodDefinition>()->kind_;
     }
 
     [[nodiscard]] bool IsConstructor() const noexcept
     {
-        return kind_ == MethodDefinitionKind::CONSTRUCTOR;
+        return Kind() == MethodDefinitionKind::CONSTRUCTOR;
     }
 
     [[nodiscard]] bool IsMethod() const noexcept
     {
-        return kind_ == MethodDefinitionKind::METHOD;
+        return Kind() == MethodDefinitionKind::METHOD;
     }
 
     [[nodiscard]] bool IsExtensionMethod() const noexcept
     {
-        return (kind_ == MethodDefinitionKind::EXTENSION_METHOD) || (kind_ == MethodDefinitionKind::EXTENSION_GET) ||
-               (kind_ == MethodDefinitionKind::EXTENSION_SET);
+        auto const kind = Kind();
+        return (kind == MethodDefinitionKind::EXTENSION_METHOD) || (kind == MethodDefinitionKind::EXTENSION_GET) ||
+               (kind == MethodDefinitionKind::EXTENSION_SET);
     }
 
     [[nodiscard]] bool IsGetter() const noexcept
     {
-        return kind_ == MethodDefinitionKind::GET;
+        return Kind() == MethodDefinitionKind::GET;
     }
 
     [[nodiscard]] bool IsSetter() const noexcept
     {
-        return kind_ == MethodDefinitionKind::SET;
+        return Kind() == MethodDefinitionKind::SET;
     }
 
     [[nodiscard]] bool IsDefaultAccessModifier() const noexcept
     {
-        return isDefault_;
+        return GetHistoryNodeAs<MethodDefinition>()->isDefault_;
     }
 
-    void SetDefaultAccessModifier(bool isDefault)
-    {
-        isDefault_ = isDefault;
-    }
+    void SetDefaultAccessModifier(bool isDefault);
 
     [[nodiscard]] const OverloadsT &Overloads() const noexcept
     {
-        return overloads_;
+        return GetHistoryNodeAs<MethodDefinition>()->overloads_;
     }
 
     [[nodiscard]] const MethodDefinition *BaseOverloadMethod() const noexcept
     {
-        return baseOverloadMethod_;
+        return GetHistoryNodeAs<MethodDefinition>()->baseOverloadMethod_;
     }
 
     [[nodiscard]] MethodDefinition *BaseOverloadMethod() noexcept
     {
-        return baseOverloadMethod_;
+        return GetHistoryNodeAs<MethodDefinition>()->baseOverloadMethod_;
     }
 
     [[nodiscard]] const MethodDefinition *AsyncPairMethod() const noexcept
     {
-        return asyncPairMethod_;
+        return GetHistoryNodeAs<MethodDefinition>()->asyncPairMethod_;
     }
 
     [[nodiscard]] MethodDefinition *AsyncPairMethod() noexcept
     {
-        return asyncPairMethod_;
+        return GetHistoryNodeAs<MethodDefinition>()->asyncPairMethod_;
     }
 
-    [[nodiscard]] OverloadInfo &GetOverloadInfo() noexcept
+    [[nodiscard]] const OverloadInfo &GetOverloadInfo() noexcept
     {
-        return overloadInfo_;
+        auto newNode = this->GetHistoryNode()->AsMethodDefinition();
+        return newNode->overloadInfo_;
+    }
+
+    [[nodiscard]] OverloadInfo &GetOverloadInfoForUpdate() noexcept
+    {
+        auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
+        return newNode->overloadInfo_;
+    }
+
+    [[nodiscard]] const OverloadInfo &GetOverloadInfo() const noexcept
+    {
+        return GetHistoryNodeAs<MethodDefinition>()->overloadInfo_;
+    }
+
+    void SetOverloadInfo(OverloadInfo &&overloadInfo)
+    {
+        auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
+        newNode->overloadInfo_ = overloadInfo;
+    }
+
+    void SetOverloadInfo(OverloadInfo &overloadInfo)
+    {
+        auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
+        newNode->overloadInfo_ = overloadInfo;
     }
 
     void SetOverloads(OverloadsT &&overloads)
     {
-        overloads_ = std::move(overloads);
-    }
-
-    void ClearOverloads()
-    {
-        overloads_.clear();
+        auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
+        newNode->overloads_ = std::move(overloads);
     }
 
     void AddOverload(MethodDefinition *const overload)
     {
-        ES2PANDA_ASSERT(overload != nullptr && overload->Function() != nullptr);
-        overloads_.emplace_back(overload);
+        ES2PANDA_ASSERT(overload != nullptr);
+        auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
+        newNode->overloads_.emplace_back(overload);
+        ES2PANDA_ASSERT(overload->Function() != nullptr);
         overload->Function()->AddFlag((ir::ScriptFunctionFlags::OVERLOAD));
         overload->SetBaseOverloadMethod(this);
     }
 
-    void SetBaseOverloadMethod(MethodDefinition *const baseOverloadMethod)
-    {
-        baseOverloadMethod_ = baseOverloadMethod;
-    }
+    void SetBaseOverloadMethod(MethodDefinition *const baseOverloadMethod);
 
-    void SetAsyncPairMethod(MethodDefinition *const method)
-    {
-        asyncPairMethod_ = method;
-    }
+    void SetAsyncPairMethod(MethodDefinition *const asyncPairMethod);
 
     [[nodiscard]] bool HasOverload(MethodDefinition *overload) noexcept
     {
-        return std::find(overloads_.begin(), overloads_.end(), overload) != overloads_.end();
+        auto const overloads = Overloads();
+        return std::find(overloads.begin(), overloads.end(), overload) != overloads.end();
     }
 
     ScriptFunction *Function();
@@ -200,6 +233,11 @@ public:
     }
 
     void CleanUp() override;
+
+    void EmplaceOverloads(MethodDefinition *overloads);
+    void ClearOverloads();
+    void SetValueOverloads(MethodDefinition *overloads, size_t index);
+    [[nodiscard]] ArenaVector<MethodDefinition *> &OverloadsForUpdate();
 
 protected:
     MethodDefinition *Construct(ArenaAllocator *allocator) override;

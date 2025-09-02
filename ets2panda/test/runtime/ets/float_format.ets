@@ -16,6 +16,6 @@
 
 function main(): void {
   let value = .1 + .1
-  assertEQ(value, 0.2)
+  arktest.assertEQ(value, 0.2)
   return;
 }

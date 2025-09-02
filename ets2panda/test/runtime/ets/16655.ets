@@ -14,5 +14,5 @@
  */
 
 function main() {
-    assertNE(((): void => {}), null);
+    arktest.assertNE(((): void => {}), null);
 }

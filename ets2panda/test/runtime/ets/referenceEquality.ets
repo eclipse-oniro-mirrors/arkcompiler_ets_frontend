@@ -24,36 +24,36 @@ function main(): void {
 function ClassEquality(): void {
     let a : A = new A();
     let b = a;
-    assertTrue(a === b)
+    arktest.assertTrue(a === b)
     let c : A = new A();
-    assertTrue(a !== c)
+    arktest.assertTrue(a !== c)
 }
 
 
 function NullEquality(): void {
     let a : A | null = null;
     let b = a;
-    assertTrue(a === b)
+    arktest.assertTrue(a === b)
     let c : A | null = null;
-    assertTrue(c === null)
-    assertTrue(null === null)
+    arktest.assertTrue(c === null)
+    arktest.assertTrue(null === null)
 }
 
 
 function ArrayEquality(): void {
     let a : int[] = [1, 2, 3];
     let b = a;
-    assertTrue(a === b)
+    arktest.assertTrue(a === b)
     let c : int[] = [1, 2, 3];
-    assertTrue(a !== c)
+    arktest.assertTrue(a !== c)
 }
 
 function NumericEquality(): void {
     let a : Int = 1;
     let b = a;
-    assertTrue(a === b)
+    arktest.assertTrue(a === b)
     let c : Int = 1;
-    assertTrue(a !== c)
+    arktest.assertTrue(a !== c)
     let d : Double = 1.0;
-    assertTrue(a !== c)
+    arktest.assertTrue(a !== c)
 }

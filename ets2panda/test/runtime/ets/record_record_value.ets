@@ -30,18 +30,18 @@ interface PersonInfoInterface3{
 
 function assertsalary1(inputval:PersonInfoInterface1|undefined, salary:int){
     if(inputval instanceof undefined){
-        assertTrue(false)
+        arktest.assertTrue(false)
     }
     let returnval = inputval as PersonInfoInterface1;
-    assertEQ(returnval.salary1, salary)
+    arktest.assertEQ(returnval.salary1, salary)
 }
 
 function assertsalary3(inputval:PersonInfoInterface3|undefined, salary:int){
     if(inputval instanceof undefined){
-        assertTrue(false)
+        arktest.assertTrue(false)
     }
     let returnval = inputval as PersonInfoInterface3;
-    assertEQ(returnval.salary3, salary)
+    arktest.assertEQ(returnval.salary3, salary)
 }
 
 function main(){

@@ -21,6 +21,6 @@ namespace NS {
 }
 
 let cc:NS.Color = NS.Color.RED;
-assertEQ(cc as Int, 1);
+arktest.assertEQ(cc as Int, 1);
 
 export default NS

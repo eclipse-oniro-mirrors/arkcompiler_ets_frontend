@@ -14,27 +14,27 @@
  */
 
 function test_bitwise_and(): void {
-    assertEQ(new BigInt(10).operatorBitwiseAnd(new BigInt(2)), (2n))
-    assertEQ(new BigInt(256).operatorBitwiseAnd(new BigInt(1)), (0n))
-    assertEQ(new BigInt(3124378143267041203423n).operatorBitwiseAnd(new BigInt(43621978)), (41948250n))
-    assertEQ(new BigInt(256).operatorBitwiseAnd(new BigInt(256)), (256n))
-    assertEQ(new BigInt(12345678).operatorBitwiseAnd(new BigInt(1234)), (66n))
+    arktest.assertEQ(new BigInt(10).operatorBitwiseAnd(new BigInt(2)), (2n))
+    arktest.assertEQ(new BigInt(256).operatorBitwiseAnd(new BigInt(1)), (0n))
+    arktest.assertEQ(new BigInt(3124378143267041203423n).operatorBitwiseAnd(new BigInt(43621978)), (41948250n))
+    arktest.assertEQ(new BigInt(256).operatorBitwiseAnd(new BigInt(256)), (256n))
+    arktest.assertEQ(new BigInt(12345678).operatorBitwiseAnd(new BigInt(1234)), (66n))
 }
 
 function test_bitwise_or(): void {
-    assertEQ(new BigInt(10).operatorBitwiseOr(new BigInt(2)), (10n))
-    assertEQ(new BigInt(256).operatorBitwiseOr(new BigInt(1)), (257n))
-    assertEQ(new BigInt(256).operatorBitwiseOr(new BigInt(256)), (256n))
-    assertEQ(new BigInt(3124378143267041203423n).operatorBitwiseOr(new BigInt(43621978)), (3124378143267042877151n))
-    assertEQ(new BigInt(12345678).operatorBitwiseOr(new BigInt(1234)), (12346846n))
+    arktest.assertEQ(new BigInt(10).operatorBitwiseOr(new BigInt(2)), (10n))
+    arktest.assertEQ(new BigInt(256).operatorBitwiseOr(new BigInt(1)), (257n))
+    arktest.assertEQ(new BigInt(256).operatorBitwiseOr(new BigInt(256)), (256n))
+    arktest.assertEQ(new BigInt(3124378143267041203423n).operatorBitwiseOr(new BigInt(43621978)), (3124378143267042877151n))
+    arktest.assertEQ(new BigInt(12345678).operatorBitwiseOr(new BigInt(1234)), (12346846n))
 }
 
 function test_bitwise_xor(): void {
-    assertEQ(new BigInt(10).operatorBitwiseXor(new BigInt(2)), (8n))
-    assertEQ(new BigInt(256).operatorBitwiseXor(new BigInt(1)), (257n))
-    assertEQ(new BigInt(256).operatorBitwiseXor(new BigInt(256)), (0n))
-    assertEQ(new BigInt(3124378143267041203423n).operatorBitwiseXor(new BigInt(43621978)), (3124378143267000928901n))
-    assertEQ(new BigInt(12345678).operatorBitwiseXor(new BigInt(1234)), (12346780n))
+    arktest.assertEQ(new BigInt(10).operatorBitwiseXor(new BigInt(2)), (8n))
+    arktest.assertEQ(new BigInt(256).operatorBitwiseXor(new BigInt(1)), (257n))
+    arktest.assertEQ(new BigInt(256).operatorBitwiseXor(new BigInt(256)), (0n))
+    arktest.assertEQ(new BigInt(3124378143267041203423n).operatorBitwiseXor(new BigInt(43621978)), (3124378143267000928901n))
+    arktest.assertEQ(new BigInt(12345678).operatorBitwiseXor(new BigInt(1234)), (12346780n))
 }
 
 function test_bitwise(): void {
@@ -42,8 +42,8 @@ function test_bitwise(): void {
     let b = 123456790n
     const zero = 0n
 
-    assertEQ(~zero, -1n)
-    assertEQ(~a, -123456789123456789123456789123456789123456789123456790n)
+    arktest.assertEQ(~zero, -1n)
+    arktest.assertEQ(~a, -123456789123456789123456789123456789123456789123456790n)
 }
 
 function main(): void {

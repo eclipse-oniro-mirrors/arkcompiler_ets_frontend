@@ -24,7 +24,7 @@
 
 static es2panda_Impl *impl = nullptr;
 
-static auto source = std::string("function main() { assertEQ(5, 10); }");
+static auto source = std::string("function main() { arktest.assertEQ(5, 10); }");
 
 static es2panda_AstNode *assertStatement = nullptr;
 static es2panda_Context *ctx = nullptr;

@@ -26,7 +26,7 @@ import {
 
 @Component
 struct MyComponent {
-  @State value: number = 0.0
+  @State value: number = 0
 
   build() {
     Row() {

@@ -23,4 +23,4 @@ function bar(p1: Derived, p2: Base,    p3: BaseOrDerived) {res = 2;}
 function bar(p1: Base,    p2: Base,    ...p3: BaseOrDerived[]) {res = 3;}
 
 bar (new Derived, new Base, new Derived);
-assertEQ(res, 2);
+arktest.assertEQ(res, 2);

@@ -52,7 +52,7 @@ export class AccessNSieve {
 
   public run(): void {
     let ret: int = AccessNSieve.sieve();
-    assertEQ(ret, AccessNSieve.expected,  "Invalid result")
+    arktest.assertEQ(ret, AccessNSieve.expected,  "Invalid result")
   }
 }
 

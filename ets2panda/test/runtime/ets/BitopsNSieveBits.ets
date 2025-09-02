@@ -51,7 +51,7 @@ export class BitopsNSieveBits {
       sum += result[i];
     }
 
-    assertEQ(sum, BitopsNSieveBits.expected,  "Incorrect result")
+    arktest.assertEQ(sum, BitopsNSieveBits.expected,  "Incorrect result")
   }
 }
 

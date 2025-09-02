@@ -32,16 +32,16 @@ function asFuncCall() {
     let fruit = new Fruit();
     let res: int = name(fruit);
     let res2: int = name2(fruit);
-    assertEQ(res, 6 )
-    assertEQ(res2, 6 )
+    arktest.assertEQ(res, 6 )
+    arktest.assertEQ(res2, 6 )
 }
 
 function asMethodCall() {
     let fruit = new Fruit();
     let res: int = fruit.name();
     let res2: int = fruit.name2();
-    assertEQ(res, 6 )
-    assertEQ(res2, 6 )
+    arktest.assertEQ(res, 6 )
+    arktest.assertEQ(res2, 6 )
 }
 
 function main() {

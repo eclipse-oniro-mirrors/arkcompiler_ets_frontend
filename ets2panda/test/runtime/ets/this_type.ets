@@ -44,7 +44,7 @@ class Button extends Component {
 function main() {
   let b = new Button().setWidth(50).setTitle("🍆");
 
-  assertTrue(b instanceof Button)
-  assertEQ(b.getWidth(), 50)
-  assertEQ(b.getTitle(), "🍆")
+  arktest.assertTrue(b instanceof Button)
+  arktest.assertEQ(b.getWidth(), 50)
+  arktest.assertEQ(b.getTitle(), "🍆")
 }

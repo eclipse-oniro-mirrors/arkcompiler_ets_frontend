@@ -23,12 +23,12 @@ class C {
 function part0() {
     let b = false
     let lam: () => void = () => {
-        assertEQ(b, true)
+        arktest.assertEQ(b, true)
         b = false
     }
     b = true
     lam()
-    assertEQ(b, false)
+    arktest.assertEQ(b, false)
 }
 
 function part1() {
@@ -37,10 +37,10 @@ function part1() {
     let i: int = 0;
     let c: char = 0;
     let lam: () => void = () => {
-        assertEQ(b, 1)
-        assertEQ(s, 2)
-        assertEQ(i, 3)
-        assertEQ(c, 4)
+        arktest.assertEQ(b, 1)
+        arktest.assertEQ(s, 2)
+        arktest.assertEQ(i, 3)
+        arktest.assertEQ(c, 4)
         b = 5;
         s = 6;
         i = 7;
@@ -51,10 +51,10 @@ function part1() {
     i = 3;
     c = 4;
     lam();
-    assertEQ(b, 5)
-    assertEQ(s, 6)
-    assertEQ(i, 7)
-    assertEQ(c, 8)
+    arktest.assertEQ(b, 5)
+    arktest.assertEQ(s, 6)
+    arktest.assertEQ(i, 7)
+    arktest.assertEQ(c, 8)
 }
 
 function part2() {
@@ -63,10 +63,10 @@ function part2() {
     let d: double = 0.0;
     let o = new C(0);
     let lam: () => void = () => {
-        assertEQ(l, 9)
-        assertEQ(f, 10.0)
-        assertEQ(d, 11.0)
-        assertEQ(o.v, 12)
+        arktest.assertEQ(l, 9)
+        arktest.assertEQ(f, 10.0)
+        arktest.assertEQ(d, 11.0)
+        arktest.assertEQ(o.v, 12)
         l = 13;
         f = Double.toFloat(14.0);
         d = 15.0;
@@ -77,10 +77,10 @@ function part2() {
     d = 11.0;
     o = new C(12);
     lam();
-    assertEQ(l, 13)
-    assertEQ(f, 14.0)
-    assertEQ(d, 15.0)
-    assertEQ(o.v, 16)
+    arktest.assertEQ(l, 13)
+    arktest.assertEQ(f, 14.0)
+    arktest.assertEQ(d, 15.0)
+    arktest.assertEQ(o.v, 16)
 }
 
 function main(): void {

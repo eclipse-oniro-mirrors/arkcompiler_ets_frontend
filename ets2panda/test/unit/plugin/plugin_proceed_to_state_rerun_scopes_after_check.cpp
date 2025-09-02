@@ -26,7 +26,7 @@
 
 static es2panda_Impl *impl = nullptr;
 
-static auto source = std::string("function main() { \nlet a = 5;\n assertEQ(a, 5);\n  }");
+static auto source = std::string("function main() { \nlet a = 5;\n arktest.assertEQ(a, 5);\n  }");
 constexpr int NUM_OF_CHANGE_IDENTIFIERS = 2;
 
 static es2panda_AstNode *mainScriptFunc = nullptr;
@@ -78,6 +78,7 @@ static bool ChangeAst(es2panda_Context *context)
     }
     std::cout << impl->AstNodeDumpEtsSrcConst(context, Ast) << std::endl;
     impl->AstNodeRecheck(context, Ast);
+    CheckForErrors("RECHECK", context);
     return true;
 }
 

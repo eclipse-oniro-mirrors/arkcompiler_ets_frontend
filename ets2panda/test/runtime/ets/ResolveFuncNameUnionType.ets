@@ -22,5 +22,5 @@ function pi(): number {
 
 function main() {
     let v: UT = pi
-    assertEQ((v as NumFunc)(), 3.14)
+    arktest.assertEQ((v as NumFunc)(), 3.14)
 }

@@ -14,7 +14,7 @@
  */
 
 function main() : int {
-    assertTrue(foo())
+    arktest.assertTrue(foo())
     return 0;
 }
 
@@ -29,7 +29,7 @@ function foo() : boolean {
     }
   } catch (e) {
   } finally {
-    assertTrue(!a)
+    arktest.assertTrue(!a)
   }
   return false;
 }

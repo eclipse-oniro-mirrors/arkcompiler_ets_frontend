@@ -29,13 +29,13 @@ function name(this:Fruit): int {
 function asFuncCall() {
     let fruit = new Fruit();
     let res: int = name(fruit);
-    assertEQ(res, 1 )
+    arktest.assertEQ(res, 1 )
 }
 
 function asMethodCall() {
     let fruit = new Fruit();
     let res: int = fruit.name();
-    assertEQ(res, 1 )
+    arktest.assertEQ(res, 1 )
 }
 
 function main() {
@@ -43,5 +43,5 @@ function main() {
     asMethodCall();
     let fruit = new Fruit();
     let res: int = fruit.foo()
-    assertEQ(res, 3 )
+    arktest.assertEQ(res, 3 )
 }

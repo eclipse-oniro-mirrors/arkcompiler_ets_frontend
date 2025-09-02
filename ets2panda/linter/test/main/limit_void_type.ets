@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-
+import {unionVoidVal,undefinedFooFun,func3Void,fun4undefined,fun5String} from './limit_void_type2'
 // Example 1: Basic function
 function func1(): void { }
 let a: void = func1();
@@ -261,3 +261,105 @@ function tryThing(): string | void {
     console.error(e);
   }
 }
+
+class A1 {
+  // test
+  aa?: boolean | void
+
+  test(a: number): boolean | void {
+    if (a > 0) {
+      // will return
+      return;
+    }
+    // will return
+    return;
+  }
+
+  test1(a: number): void | boolean {
+    if (a > 0) {
+      // will return
+      return true;
+    }
+    // will return
+    return;
+  }
+
+  test2(a: number): void | boolean {
+    if (a > 0) {
+      // will return
+      return;
+    }
+  }
+
+  test3(a: number): void | boolean {
+    if (a > 0) {
+      // will return
+      return;
+    }
+    return false;
+  }
+
+  test4(): void | boolean {
+    // will return
+  }
+}
+
+function test(a: number): boolean | void {
+  if (a > 0) {
+    // will return
+    return;
+  }
+  // will return
+  return;
+}
+
+function test1(a: number): void | boolean {
+  if (a > 0) {
+    // will return
+    return true;
+  }
+  // will return
+  return;
+}
+
+function test2(a: number): void | boolean {
+  if (a > 0) {
+    // will return
+    return;
+  }
+}
+
+function test3(a: number): void | boolean {
+  if (a > 0) {
+    // will return
+    return;
+  }
+  return false;
+}
+
+function test4(a: number): void | boolean {
+  // will return
+}
+
+let unionVoid = (()=>{
+  return undefined;
+})() as void;   //error
+function undefinedFoo(){
+  return undefined;
+}
+function unionFoo(): undefined | boolean{
+  return undefined;
+}
+let asVoidFun = undefinedFoo() as void;   //error
+let undefinedAsVoid = undefined as void;   //error
+let unionFooAsVoid = unionFoo() as void;  //error
+
+function func6() {
+  return undefined as void;   //error
+}
+
+let exportAsVoidFun = unionVoidVal as void;
+let exportUndefinedFooFun = undefinedFooFun() as void;   //error
+let exportfunc3Void = func3Void() as void;   //error
+console.log(fun5String() as void);
+typeof (fun4undefined() as void)   //error

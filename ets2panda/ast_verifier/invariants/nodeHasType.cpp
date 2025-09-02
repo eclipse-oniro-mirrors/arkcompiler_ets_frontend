@@ -38,7 +38,8 @@ public:
     {
         return nulltypeNode_->IsIdentifier() || MatchFunctionExpression() || nulltypeNode_->IsTSClassImplements() ||
                nulltypeNode_->IsSpreadElement() || nulltypeNode_->IsTSThisType() || nulltypeNode_->IsETSNullType() ||
-               nulltypeNode_->IsStringLiteral() || AnyChildStringLiteral();
+               nulltypeNode_->IsStringLiteral() || AnyChildStringLiteral() || nulltypeNode_->IsOverloadDeclaration() ||
+               nulltypeNode_->IsProperty();
     }
 
     auto ShouldSkipSubtree() const

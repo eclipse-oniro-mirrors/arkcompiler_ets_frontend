@@ -28,10 +28,10 @@ class A {
 function main(): void {
     let a = new A()
     a.foo()
-    assertEQ(a.global, true)
+    arktest.assertEQ(a.global, true)
 
     a.global = undefined
     a.current = new C()
     a.foo()
-    assertEQ(a.global, false)
+    arktest.assertEQ(a.global, false)
 }

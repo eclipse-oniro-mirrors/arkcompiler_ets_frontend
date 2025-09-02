@@ -23,46 +23,46 @@ function main(): void {
   } catch (e: NullPointerError) {
     catchCode = 1;
   } catch (e: Error) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } catch (e) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
 
-  assertEQ(catchCode, 1)
+  arktest.assertEQ(catchCode, 1)
 
   try {
     throw new NullPointerError();
   } catch (e: Error) {
     catchCode = 2;
   } catch (e: NullPointerError) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } catch (e) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
 
-  assertEQ(catchCode, 2)
+  arktest.assertEQ(catchCode, 2)
 
   try {
     throw new TestException();
   } catch(e: TestException) {
     catchCode = 3;
   } catch (e: Exception) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } catch (e) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
 
-  assertEQ(catchCode, 3)
+  arktest.assertEQ(catchCode, 3)
 
   try {
     throw new TestException();
   } catch (e: Exception) {
     catchCode = 4;
   } catch (e: TestException) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } catch (e) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
 
-  assertEQ(catchCode, 4)
+  arktest.assertEQ(catchCode, 4)
 }

@@ -123,6 +123,16 @@
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
             "severity": "ERROR"
+        },
+        {
+            "line": 103,
+            "column": 22,
+            "endLine": 103,
+            "endColumn": 37,
+            "problem": "StrictDiagnostic",
+            "suggest": "Function lacks ending return statement and return type does not include 'undefined'.",
+            "rule": "Function lacks ending return statement and return type does not include 'undefined'.",
+            "severity": "ERROR"
         }
     ]
 }

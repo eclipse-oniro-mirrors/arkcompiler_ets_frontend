@@ -25,9 +25,40 @@ module Diagnostic
     @diagnostics
   end
 
+  def normalization_error
+    warn "You probably need to run 'normalize_yaml', see ets_frontend/ets2panda/util/diagnostic/README.md"
+    Kernel.exit 1
+  end
+
   def wrap_data(data)
+    graveyard = data.delete_field(:graveyard)
+    data.freeze
+    graveyard.each_cons(2) do |lhs, rhs|
+      if lhs >= rhs
+        warn "Graveyard is not strictly monotonically sorted, '#{lhs}' should come before '#{rhs}'"
+        normalization_error
+      end
+    end
+    graveyard = graveyard.to_set
     data.each_pair do |diagnostic_type, diagnostics|
-      diagnostics.each.with_index(1) do |diagnostic, index|
+      # Check if the YAML is in normal form according to ets_frontend/ets2panda/util/diagnostic/normalize_yaml
+      diagnostics.map(&:name).each_cons(2) do |lhs, rhs|
+        if lhs >= rhs
+          warn "Message with name '#{lhs}' should come after '#{rhs}' for diagnostic type '#{diagnostic_type}'"
+          normalization_error
+        end
+      end
+      diagnostics.map(&:id).each do |id|
+        if graveyard.member? id
+          warn "'#{id}' used for diagnostic type #{diagnostic_type} is already in the graveyard, let it rest in peace"
+          normalization_error
+        end
+      end
+      diagnostics.map(&:id).group_by(&:itself).select{ |_, v| v.size > 1 }.map(&:first).each do |duplicate|
+        warn "Duplicate id '#{duplicate}' for diagnostic type '#{diagnostic_type}'"
+        normalization_error
+      end
+      diagnostics.each do |diagnostic|
         diagnostic.type = diagnostic_type
         @diagnostics.append(diagnostic)
       end

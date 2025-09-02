@@ -3,6 +3,8 @@ bundle
 bundle-2.1.0.tgz
 dist
 node_modules
+migration-results-statistics.json
 package-lock.json
 panda-tslinter-1.0.0.tgz
 coverage/
+test/local

@@ -72,15 +72,15 @@ namespace MySpace {
 }
 
 // Assertions outside the namespace
-MySpace.resetState();  // Reset the state before running assertions
+MySpace.resetState();  // Reset the state before running arktest.assertions
 MySpace.count = 456;
-assertEQ(MySpace.count, 456,  "Count should be updated to 456 outside namespace")
+arktest.assertEQ(MySpace.count, 456,  "Count should be updated to 456 outside namespace")
 
 MySpace.resetMessage();
-assertEQ(MySpace.message, "Message has been reset",  "Message should be reset outside namespace")
+arktest.assertEQ(MySpace.message, "Message has been reset",  "Message should be reset outside namespace")
 
 let rectangleShape: MySpace.IShape = new MySpace.Rectangle(5, 10);
-assertEQ(rectangleShape.area(), 50,  "Area of rectangleShape should be 50 outside namespace")
+arktest.assertEQ(rectangleShape.area(), 50,  "Area of rectangleShape should be 50 outside namespace")
 
 // Test code starts here
 function main() {
@@ -88,13 +88,13 @@ function main() {
     MySpace.resetState();
 
     // 1. Test variable assignment
-    assertEQ(MySpace.count, 123,  "Count should be updated to 456")
+    arktest.assertEQ(MySpace.count, 123,  "Count should be updated to 456")
 
     // 2. Test function call
     MySpace.resetMessage();
-    assertEQ(MySpace.message, "Message has been reset",  "Message should be reset after function call")
+    arktest.assertEQ(MySpace.message, "Message has been reset",  "Message should be reset after function call")
 
     // 3. Test class instantiation and interface implementation
     let rectangle = new MySpace.Rectangle(5, 10);
-    assertEQ(rectangle.area(), 50,  "Area of rectangle should be 50")
+    arktest.assertEQ(rectangle.area(), 50,  "Area of rectangle should be 50")
 }

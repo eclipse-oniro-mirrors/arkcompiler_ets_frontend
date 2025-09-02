@@ -23,5 +23,5 @@ abstract class A implements I {
   public override fn(): int { return 1; }
 }
 
-/* @@? 23:21 Error TypeError: fn(): int in A cannot override fn(): void in J because overriding return type is not compatible with the other return type.  */
-/* @@? 23:21 Error TypeError: Method fn(): int in A not overriding any method  */
+/* @@? 23:21 Error TypeError: fn(): Int in A cannot override fn(): void in J because overriding return type is not compatible with the other return type.  */
+/* @@? 23:21 Error TypeError: Method fn(): Int in A not overriding any method  */

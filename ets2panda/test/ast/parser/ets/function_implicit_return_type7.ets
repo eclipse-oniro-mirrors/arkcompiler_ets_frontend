@@ -18,12 +18,10 @@ function fn(i: int) {
   if (i > 0) { 
    return true;
   }
-  return /* @@ label */0; 
+  return 0;
 }
 
 function main() {
   let a = fn(0);
 }
 
-
-/* @@@ label Error TypeError: Function cannot have different primitive return types, require 'boolean', found 'int'  */

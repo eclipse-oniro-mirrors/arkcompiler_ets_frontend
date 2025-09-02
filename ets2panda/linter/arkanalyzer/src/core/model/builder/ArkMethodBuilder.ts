@@ -39,10 +39,20 @@ import { BasicBlock } from '../../graph/BasicBlock';
 import { Local } from '../../base/Local';
 import { Value } from '../../base/Value';
 import { CONSTRUCTOR_NAME, SUPER_NAME, THIS_NAME } from '../../common/TSConst';
-import { ANONYMOUS_METHOD_PREFIX, CALL_SIGNATURE_NAME, DEFAULT_ARK_CLASS_NAME, DEFAULT_ARK_METHOD_NAME, NAME_DELIMITER, NAME_PREFIX } from '../../common/Const';
+import {
+    ANONYMOUS_METHOD_PREFIX,
+    CALL_SIGNATURE_NAME,
+    DEFAULT_ARK_CLASS_NAME,
+    DEFAULT_ARK_METHOD_NAME,
+    GETTER_METHOD_PREFIX,
+    NAME_DELIMITER,
+    NAME_PREFIX,
+    SETTER_METHOD_PREFIX,
+} from '../../common/Const';
 import { ArkSignatureBuilder } from './ArkSignatureBuilder';
 import { IRUtils } from '../../common/IRUtils';
 import { ArkErrorCode } from '../../common/ArkError';
+import { FullPosition } from '../../base/Position';
 
 const logger = Logger.getLogger(LOG_MODULE_TYPE.ARKANALYZER, 'ArkMethodBuilder');
 
@@ -98,7 +108,8 @@ export function buildArkMethodFromArkClass(
     // build methodDeclareSignatures and methodSignature as well as corresponding positions
     const methodName = buildMethodName(methodNode, declaringClass, sourceFile, declaringMethod);
     const methodParameters: MethodParameter[] = [];
-    buildParameters(methodNode.parameters, mtd, sourceFile).forEach(parameter => {
+    let paramsPosition: Map<string, FullPosition> = new Map<string, FullPosition>();
+    buildParameters(methodNode.parameters, mtd, sourceFile, paramsPosition).forEach(parameter => {
         buildGenericType(parameter.getType(), mtd);
         methodParameters.push(parameter);
     });
@@ -114,6 +125,7 @@ export function buildArkMethodFromArkClass(
         mtd.setLine(line + 1);
         mtd.setColumn(character + 1);
         let bodyBuilder = new BodyBuilder(mtd.getSignature(), methodNode, mtd, sourceFile);
+        bodyBuilder.setParamsPositions(paramsPosition);
         mtd.setBodyBuilder(bodyBuilder);
     } else {
         mtd.setDeclareSignatures(methodSignature);
@@ -160,9 +172,9 @@ function buildMethodName(node: MethodLikeNode, declaringClass: ArkClass, sourceF
     } else if (ts.isCallSignatureDeclaration(node)) {
         name = CALL_SIGNATURE_NAME;
     } else if (ts.isGetAccessor(node) && ts.isIdentifier(node.name)) {
-        name = 'Get-' + node.name.text;
+        name = GETTER_METHOD_PREFIX + node.name.text;
     } else if (ts.isSetAccessor(node) && ts.isIdentifier(node.name)) {
-        name = 'Set-' + node.name.text;
+        name = SETTER_METHOD_PREFIX + node.name.text;
     } else if (ts.isArrowFunction(node)) {
         name = buildAnonymousMethodName(node, declaringClass);
     }

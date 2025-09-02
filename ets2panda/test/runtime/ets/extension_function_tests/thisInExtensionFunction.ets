@@ -28,13 +28,13 @@ function name(this: Fruit, id: int): int {
 function asFuncCall() {
     let fruit = new Fruit();
     let res = name(fruit, 1);
-    assertEQ(res, 8 )
+    arktest.assertEQ(res, 8 )
 }
 
 function asMethodCall() {
     let fruit = new Fruit();
     let res = fruit.name(1);
-    assertEQ(res, 8 )
+    arktest.assertEQ(res, 8 )
 }
 
 function main() {

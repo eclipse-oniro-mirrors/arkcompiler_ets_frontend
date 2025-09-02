@@ -108,14 +108,22 @@ void ETSNewArrayInstanceExpression::ClearPreferredType()
 {
     SetPreferredType(nullptr);
     SetTsType(nullptr);
-    TypeReference()->SetBoxingUnboxingFlags(BoxingUnboxingFlags::NONE);
+}
+
+void ETSNewArrayInstanceExpression::CleanCheckInformation()
+{
+    SetPreferredType(nullptr);
+    SetTsType(nullptr);
+    if (dimension_ != nullptr) {
+        dimension_->CleanCheckInformation();
+    }
 }
 
 void ETSNewArrayInstanceExpression::SetPreferredTypeBasedOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
                                                                      checker::TypeRelationFlag flags)
 {
     // NOTE (mmartin): This needs a complete solution
-    if (preferredType_ != nullptr) {
+    if (PreferredType() != nullptr) {
         return;
     }
 

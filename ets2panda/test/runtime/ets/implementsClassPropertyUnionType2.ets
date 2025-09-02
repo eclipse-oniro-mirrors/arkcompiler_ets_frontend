@@ -34,8 +34,8 @@ class A implements itf {
 
 function main() {
     let a: A = new A()
-    assertEQ(a.f1("f1"), "f1")
-    assertEQ(a.f2, null)
-    assertEQ(a.f3, "f3")
-    assertEQ(a.f4(), true)
+    arktest.assertEQ(a.f1("f1"), "f1")
+    arktest.assertEQ(a.f2, null)
+    arktest.assertEQ(a.f3, "f3")
+    arktest.assertEQ(a.f4(), true)
 }

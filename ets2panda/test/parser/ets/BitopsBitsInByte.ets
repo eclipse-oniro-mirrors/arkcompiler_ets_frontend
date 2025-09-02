@@ -37,7 +37,7 @@ export class BitopsBitsInByte {
         sum += BitopsBitsInByte.bitsinbyte(y);
       }
     }
-    assertEQ(sum, BitopsBitsInByte.expected,  "Incorrect result");
+    arktest.assertEQ(sum, BitopsBitsInByte.expected,  "Incorrect result");
   }
 }
 

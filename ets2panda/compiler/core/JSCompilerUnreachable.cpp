@@ -48,6 +48,11 @@ void JSCompiler::Compile([[maybe_unused]] const ir::MethodDefinition *node) cons
     ES2PANDA_UNREACHABLE();
 }
 
+void JSCompiler::Compile([[maybe_unused]] const ir::OverloadDeclaration *node) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
 void JSCompiler::Compile([[maybe_unused]] const ir::Property *expr) const
 {
     ES2PANDA_UNREACHABLE();
@@ -94,6 +99,11 @@ void JSCompiler::Compile([[maybe_unused]] const ir::ETSModule *expr) const
 }
 
 void JSCompiler::Compile([[maybe_unused]] const ir::ETSClassLiteral *expr) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
+void JSCompiler::Compile([[maybe_unused]] const ir::ETSIntrinsicNode *expr) const
 {
     ES2PANDA_UNREACHABLE();
 }

@@ -21,14 +21,16 @@ namespace ark::es2panda::compiler {
 
 bool CFGBuilderPhase::Perform(public_lib::Context *ctx, parser::Program *program)
 {
-    if (ctx->config->options->IsGenStdlib()) {
+    if (!ctx->config->options->IsDumpCfg() || ctx->config->options->IsGenStdlib()) {
         return true;
     }
 
     for (auto &[_, ext_programs] : program->ExternalSources()) {
         (void)_;
         for (auto *extProg : ext_programs) {
-            Perform(ctx, extProg);
+            if (!extProg->IsASTLowered()) {
+                Perform(ctx, extProg);
+            }
         }
     }
 
@@ -42,11 +44,8 @@ bool CFGBuilderPhase::Perform(public_lib::Context *ctx, parser::Program *program
 
     cfg->MergeEmptyBlocks();
 
-    if (ctx->config->options->IsDumpCfg()) {
-        std::string filename = program->AbsoluteName().Mutf8();
-        cfg->DumpDot((filename + ".dot").c_str());
-    }
-
+    std::string filename = program->AbsoluteName().Mutf8();
+    cfg->DumpDot((filename + ".dot").c_str());
     return true;
 }
 

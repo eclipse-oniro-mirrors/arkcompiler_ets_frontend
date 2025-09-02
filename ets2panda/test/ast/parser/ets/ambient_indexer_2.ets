@@ -21,10 +21,4 @@ function main() {
     let a : A = new A();
 }
 
-/* @@? 17:6 Error SyntaxError: Unexpected token 'index'. */
-/* @@? 17:12 Error SyntaxError: Unexpected token ':'. */
-/* @@? 17:14 Error SyntaxError: number is a predefined type, cannot be used as an identifier */
-/* @@? 17:20 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:20 Error SyntaxError: Unexpected token ']'. */
-/* @@? 17:22 Error SyntaxError: Unexpected token ':'. */
-/* @@? 18:1 Error SyntaxError: Field type annotation expected. */
+/* @@? 17:6 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */

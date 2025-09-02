@@ -18,5 +18,5 @@ function foo(gensym: int, _2: int) {
 }
 
 function main() {
-  assertEQ(foo(1,2), 1)
+  arktest.assertEQ(foo(1,2), 1)
 }

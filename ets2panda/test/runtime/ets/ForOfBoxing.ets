@@ -26,7 +26,7 @@ function check1() {
         }
     }
 
-    assertEQ(sum, 6)
+    arktest.assertEQ(sum, 6)
 }
 
 function check2() {
@@ -40,7 +40,7 @@ function check2() {
         }
     }
 
-    assertEQ(str, "ddd")
+    arktest.assertEQ(str, "ddd")
 }
 
 function check3() {
@@ -54,7 +54,7 @@ function check3() {
         }
     }
 
-    assertEQ(str, "1,2,3")
+    arktest.assertEQ(str, "1,2,3")
 }
 
 function check4() {
@@ -67,7 +67,7 @@ function check4() {
         }
     }
 
-    assertEQ(sum, 1887)
+    arktest.assertEQ(sum, 1887)
 }
 
 function check5() {
@@ -78,7 +78,7 @@ function check5() {
         sum += b5;
     }
 
-    assertEQ(sum, 33)
+    arktest.assertEQ(sum, 33)
 }
 
 function check6() {
@@ -91,7 +91,7 @@ function check6() {
         }
     }
 
-    assertEQ(sum, 1100)
+    arktest.assertEQ(sum, 1100)
 }
 
 function check7() {
@@ -102,7 +102,7 @@ function check7() {
         str += b7;
     }
 
-    assertEQ(str, "ffff")
+    arktest.assertEQ(str, "ffff")
 }
 function main() {
     check1();

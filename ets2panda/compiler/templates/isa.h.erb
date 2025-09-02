@@ -65,8 +65,7 @@ public:
                    [[maybe_unused]] uint32_t totalRegs) const override
     {
         ins->opcode = pandasm::Opcode::INVALID;
-        ins->setLabel = true;
-        ins->label = id_;
+        ins->SetLabel(id_);
     }
 
 private:
@@ -184,31 +183,22 @@ public:
     void Transform(pandasm::Ins *ins, [[maybe_unused]] ProgramElement *programElement,
                    [[maybe_unused]] uint32_t totalRegs) const override {
       ins->opcode = pandasm::Opcode::<%= node_kind %>;
-% if op_map['reg'].length != 0
-      ins->regs.reserve(<%= op_map['reg'].length %>);
-% end
-% if op_map['imm'].length != 0
-      ins->imms.reserve(<%= op_map['imm'].length %>);
-% end
-% if op_map['str'].length + op_map['lbl'].length != 0
-      ins->ids.reserve(<%= op_map['str'].length + op_map['lbl'].length %>);
-% end
 % for reg in op_map['reg']
-      ins->regs.emplace_back(MapRegister(<%= reg %>.GetIndex(), totalRegs));
+      ins->EmplaceReg(MapRegister(<%= reg %>.GetIndex(), totalRegs));
 % end
 % for imm in op_map['imm']
-      ins->imms.emplace_back(<%= imm %>);
+      ins->EmplaceImm(<%= imm %>);
 % end
 % if insn.properties.include? 'literalarray_id' and insn.properties.none? 'skip_literal_id_patch'
       programElement->LiteralBufferIns().push_back(ins);
 %end
 % for str in op_map['str']
       std::string <%= str %>mutf8 = <%= str %>.Mutf8();
-      ins->ids.emplace_back(<%= str %>mutf8);
+      ins->EmplaceID(<%= str %>mutf8);
       programElement->Strings().insert(std::move(<%= str %>mutf8));
 % end
 % for lbl in op_map['lbl']
-      ins->ids.emplace_back(<%= lbl %>->Id());
+      ins->EmplaceID(<%= lbl %>->Id());
 % end
     }
 

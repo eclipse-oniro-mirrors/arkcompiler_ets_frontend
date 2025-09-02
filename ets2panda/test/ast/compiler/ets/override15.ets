@@ -21,5 +21,5 @@ interface I2 extends I {
   fn(): float;
 }
 
-/* @@? 21:5 Error TypeError: fn(): float in I2 cannot override fn(): int in I because overriding return type is not compatible with the other return type.  */
-/* @@? 21:5 Error TypeError: Method fn(): float in I2 not overriding any method  */
+/* @@? 21:3 Error TypeError: fn(): Float in I2 cannot override fn(): Int in I because overriding return type is not compatible with the other return type.  */
+/* @@? 21:3 Error TypeError: Method fn(): Float in I2 not overriding any method  */

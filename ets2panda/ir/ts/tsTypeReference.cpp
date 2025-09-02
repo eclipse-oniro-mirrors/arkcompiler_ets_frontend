@@ -44,12 +44,8 @@ void TSTypeReference::TransformChildren(const NodeTransformer &cb, std::string_v
         typeName_->SetTransformedNode(transformationName, transformedNode);
         typeName_ = transformedNode->AsExpression();
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSTypeReference::Iterate(const NodeTraverser &cb) const
@@ -95,14 +91,20 @@ ir::Identifier *TSTypeReference::BaseName() const
     if (typeName_->IsIdentifier()) {
         return typeName_->AsIdentifier();
     }
+    if (typeName_->IsTSQualifiedName()) {
+        ir::TSQualifiedName *iter = typeName_->AsTSQualifiedName();
 
-    ir::TSQualifiedName *iter = typeName_->AsTSQualifiedName();
-
-    while (iter->Left()->IsTSQualifiedName()) {
-        iter = iter->Left()->AsTSQualifiedName();
+        while (iter->Left()->IsTSQualifiedName()) {
+            iter = iter->Left()->AsTSQualifiedName();
+        }
+        return iter->Left()->AsIdentifier();
     }
+    ir::MemberExpression *iter = typeName_->AsMemberExpression();
 
-    return iter->Left()->AsIdentifier();
+    while (iter->Property()->IsMemberExpression()) {
+        iter = iter->Property()->AsMemberExpression();
+    }
+    return iter->Property()->AsIdentifier();
 }
 
 checker::Type *TSTypeReference::Check([[maybe_unused]] checker::TSChecker *checker)
@@ -134,5 +136,37 @@ checker::Type *TSTypeReference::GetType([[maybe_unused]] checker::TSChecker *che
 checker::VerifiedType TSTypeReference::Check([[maybe_unused]] checker::ETSChecker *checker)
 {
     return {this, checker->GetAnalyzer()->Check(this)};
+}
+
+TSTypeReference *TSTypeReference::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    auto *clonedTypeName = typeName_->Clone(allocator, nullptr)->AsExpression();
+    auto *clonedTypeParams =
+        typeParams_ != nullptr ? typeParams_->Clone(allocator, nullptr)->AsTSTypeParameterInstantiation() : nullptr;
+
+    auto *clone = allocator->New<TSTypeReference>(clonedTypeName, clonedTypeParams, allocator);
+
+    // Set parent relationships
+    clonedTypeName->SetParent(clone);
+    if (clonedTypeParams != nullptr) {
+        clonedTypeParams->SetParent(clone);
+    }
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    // Clone annotations if any
+    if (!Annotations().empty()) {
+        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
+        for (auto *annotationUsage : Annotations()) {
+            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
+        }
+        clone->SetAnnotations(std::move(annotationUsages));
+    }
+
+    return clone;
 }
 }  // namespace ark::es2panda::ir

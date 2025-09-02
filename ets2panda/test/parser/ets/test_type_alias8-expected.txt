@@ -49,7 +49,7 @@
             },
             "end": {
               "line": 16,
-              "column": 20,
+              "column": 19,
               "program": "test_type_alias8.ets"
             }
           }
@@ -62,7 +62,7 @@
           },
           "end": {
             "line": 16,
-            "column": 20,
+            "column": 19,
             "program": "test_type_alias8.ets"
           }
         }
@@ -103,112 +103,6 @@
         "superClass": null,
         "implements": [],
         "body": [
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "test_type_alias8.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "test_type_alias8.ets"
-              }
-            }
-          },
           {
             "type": "MethodDefinition",
             "key": {
@@ -292,7 +186,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 24,
+                              "column": 23,
                               "program": "test_type_alias8.ets"
                             }
                           }
@@ -305,7 +199,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 24,
+                            "column": 23,
                             "program": "test_type_alias8.ets"
                           }
                         }
@@ -319,7 +213,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 24,
+                          "column": 23,
                           "program": "test_type_alias8.ets"
                         }
                       }
@@ -332,7 +226,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 24,
+                        "column": 23,
                         "program": "test_type_alias8.ets"
                       }
                     }
@@ -493,7 +387,7 @@
                             },
                             "end": {
                               "line": 21,
-                              "column": 22,
+                              "column": 21,
                               "program": "test_type_alias8.ets"
                             }
                           }
@@ -506,7 +400,7 @@
                           },
                           "end": {
                             "line": 21,
-                            "column": 22,
+                            "column": 21,
                             "program": "test_type_alias8.ets"
                           }
                         }
@@ -520,7 +414,7 @@
                         },
                         "end": {
                           "line": 21,
-                          "column": 22,
+                          "column": 21,
                           "program": "test_type_alias8.ets"
                         }
                       }
@@ -533,7 +427,7 @@
                       },
                       "end": {
                         "line": 21,
-                        "column": 22,
+                        "column": 21,
                         "program": "test_type_alias8.ets"
                       }
                     }
@@ -715,7 +609,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 18,
+                                    "column": 16,
                                     "program": "test_type_alias8.ets"
                                   }
                                 }
@@ -728,7 +622,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 18,
+                                  "column": 16,
                                   "program": "test_type_alias8.ets"
                                 }
                               }
@@ -828,7 +722,7 @@
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 20,
+                                    "column": 18,
                                     "program": "test_type_alias8.ets"
                                   }
                                 }
@@ -841,7 +735,7 @@
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 20,
+                                  "column": 18,
                                   "program": "test_type_alias8.ets"
                                 }
                               }

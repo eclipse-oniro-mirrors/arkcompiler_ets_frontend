@@ -17,5 +17,5 @@ function main() {
 	const v = `(escaped expression) \${14/2} = ${14/2}`
 	console.log(v)
 	const expected = '(escaped expression) ${14/2} = 7'
-	assertEQ(v, expected)
+	arktest.assertEQ(v, expected)
 }

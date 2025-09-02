@@ -12,149 +12,42 @@
 # limitations under the License.
 
 semantic:
-- name: ASYNC_FUNCTION_RETURN_TYPE
-  id: 1
-  message: Return type of async function must be 'Promise'.
-
-- name: NO_CALL_SIGNATURE
-  id: 2
-  message: Type '{}' has no call signatures.
-
-- name: INVALID_ANNOTATION_RETENTION
-  id: 3
-  message: Annotation '@Retention' can only be applied to annotation declarations.
-
-- name: ANNOTATION_POLICY_INVALID
-  id: 4
-  message: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'.
-
-- name: ANNOTATION_ON_LAMBDA_LOCAL_TYPE
-  id: 5
-  message: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types.
-
-- name: STANDARD_ANNOTATION_REQUIRED
-  id: 6
-  message: Only standard annotations are allowed to be applied on annotations.
-
-- name: TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE
-  id: 7
-  message: Cannot use array creation expression with type parameter.
-
-- name: VOID_IN_LOGIC
-  id: 9
-  message: "An expression of type 'void' cannot be tested for truthiness"
-
-- name: POSSIBLY_NULLISH
-  id: 10
-  message: "Value is possibly nullish."
-
-- name: ILLEGAL_UNARY_OP
-  id: 11
-  message: "Illegal unary operator."
-
-- name: ANNOTATION_FIELD_NONLITERAL
-  id: 12
-  message: "Invalid value for annotation field, expected a constant literal."
-
-- name: EXCEPTION_REDECLARATION
-  id: 13
-  message: "Redeclaration of exception type"
-
-- name: STATIC_INIT_IN_NESTED_CLASS
-  id: 14
-  message: "Static initializer is not allowed in inner class."
-
-- name: NATIVE_WITHOUT_RETURN
-  id: 15
-  message: "'Native' method should have explicit return type"
-
-- name: FUNC_EXPR_INVALID
-  id: 16
-  message: "Invalid function expression"
-
-- name: FUNCTION_WITHOUT_BODY
-  id: 17
-  message: "Only abstract or native methods can't have body."
-
-- name: MISSING_RETURN_TYPE
-  id: 18
-  message: "Native and Declare methods should have explicit return type."
-
-- name: ABSTRACT_IN_CONCRETE
-  id: 19
-  message: "Non abstract class has abstract method."
-
-- name: UNSUPPORTED_CLASS_LITERAL
-  id: 20
-  message: "Class literal is not yet supported."
-
-- name: INVALID_DOT_CLASS
-  id: 21
-  message: "Invalid .class reference"
-
-- name: ARRAY_OF_NEVER
-  id: 22
-  message: "Cannot use array creation expression with never type."
-
-- name: ASYNC_DOESNT_PROMISE
-  id: 23
-  message: "Return type of async lambda must be 'Promise'"
-
-- name: ARRAY_LENGTH_MODIFICATION
-  id: 24
-  message: "Setting the length of an array is not permitted"
-
-- name: ASSIGNMENT_INVALID_LHS
-  id: 25
-  message: "Invalid left-hand side of assignment expression"
 
 - name: ABSTRACT_CALL
   id: 26
   message: "Cannot call abstract method!"
 
-- name: READONLY_CALL
-  id: 27
-  message: "Cannot call readonly type methods."
+- name: ABSTRACT_CLASS_AS_ARRAY_ELEMENT_TYPE
+  id: 50
+  message: "Cannot use array creation expression with abstract classes and interfaces."
 
-- name: TEMPLATE_COUNT_MISMATCH
-  id: 28
-  message: "Invalid string template expression"
+- name: ABSTRACT_INSTANTIATION
+  id: 52
+  message: "{} is abstract therefore cannot be instantiated."
 
-- name: ASSERT_MESSAGE_NOT_STRING
-  id: 30
-  message: "Assert message must be string"
+- name: ABSTRACT_IN_CONCRETE
+  id: 19
+  message: "Non abstract class has abstract method."
 
-- name: RETURN_THIS_OUTSIDE_METHOD
-  id: 31
-  message: "Only extension function or a class method can return 'this'"
+- name: ABSTRACT_IS_FINAL
+  id: 186
+  message: "Cannot use both 'final' and 'abstract' modifiers."
 
-- name: RETURN_WITHOUT_VALUE
-  id: 32
-  message: "Missing return value."
+- name: ABSTRACT_METHOD_INVALID_MODIFIER
+  id: 47
+  message: "Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier."
 
-- name: NON_VOID_RETURN_IN_CONSTRUCTOR
-  id: 33
-  message: "Return statement with expression isn't allowed in constructor."
+- name: ABSTRACT_METH_IN_ABSTRACT_CLASS
+  id: 257
+  message: "Abstract class has abstract method {}"
 
-- name: CATCH_DEFAULT_NOT_LAST
-  id: 34
-  message: "Default catch clause should be the last in the try statement"
-
-- name: ENUM_TYPE_INVALID
-  id: 35
-  message: "Invalid enumeration value type."
+- name: ACCESSORS_MOD_MISMATCH
+  id: 220
+  message: "Getter and setter methods must have the same accessor modifiers"
 
 - name: AMBIENT_ANNOT_FIELD_INIT_MISMATCH
   id: 36
   message: "The initial value does not match the expected value."
-
-- name: AMBIENT_ANNOT_IMPL_OF_UNDEFINED_FIELD
-  id: 37
-  message: "Field '{}' is not defined in the ambient annotation '{}'"
-
-- name: AMBIENT_ANNOT_FIELD_TYPE_MISMATCH
-  id: 38
-  message: "Field '{}' has a type mismatch with the ambient annotation '{}'."
 
 - name: AMBIENT_ANNOT_FIELD_MISMATCH
   id: 39
@@ -164,281 +57,175 @@ semantic:
   id: 40
   message: "Field '{}' in annotation '{}' is declared in the ambient declaration but missing in the implementation."
 
+- name: AMBIENT_ANNOT_FIELD_TYPE_MISMATCH
+  id: 38
+  message: "Field '{}' has a type mismatch with the ambient annotation '{}'."
+
+- name: AMBIENT_ANNOT_IMPL_OF_UNDEFINED_FIELD
+  id: 37
+  message: "Field '{}' is not defined in the ambient annotation '{}'"
+
+- name: AMBIENT_CONST_INVALID_LIT
+  id: 175
+  message: "A 'const' initializer in an ambient context must be a string or numeric literal: {}"
+
+- name: AMBIGUOUS_AMBIENT
+  id: 399
+  message: "Method declaration `{}` must all ambient or non-ambient"
+
+- name: AMBIGUOUS_CALL
+  id: 142
+  message: "Call to `{}` is ambiguous as `2` versions of `{}` are available: `{}{}` and `{}{}`"
+
+- name: AMBIGUOUS_CALL_2
+  id: 129
+  message: "Call to `{}` is ambiguous "
+
+- name: AMBIGUOUS_EXPORT
+  id: 362
+  message: "Ambiguous export '{}'"
+
+- name: AMBIGUOUS_FUNC_INIT
+  id: 154
+  message: "Ambiguous function initialization because of multiple overloads"
+
+- name: AMBIGUOUS_FUNC_REF
+  id: 126
+  message: "Reference to {} is ambiguous"
+
+- name: AMBIGUOUS_REFERENCE
+  id: 61
+  message: "Ambiguous reference to '{}'"
+
+- name: AMBIGUOUS_UNION_TYPE_OP
+  id: 255
+  message: "Ambiguous union type operation"
+
+- name: ANALYSIS_ERRORS
+  id: 119
+  message: "There were errors during assign analysis ({})"
+
+- name: ANNOTATION_ARG_COUNT_MISMATCH
+  id: 68
+  message: "The number of arguments provided for the annotation exceeds the number of fields defined."
+
+- name: ANNOTATION_AS_TYPE
+  id: 159
+  message: "Annotations cannot be used as a type."
+
+- name: ANNOTATION_FIELD_NONLITERAL
+  id: 12
+  message: "Invalid value for annotation field, expected a constant literal."
+
+- name: ANNOTATION_INSTANTIATION
+  id: 396
+  message: "{} is an annotation therefore cannot be instantiated."
+
+- name: ANNOTATION_ON_LAMBDA_LOCAL_TYPE
+  id: 5
+  message: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types.
+
+- name: ANNOTATION_POLICY_INVALID
+  id: 4
+  message: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'.
+
+- name: ANNOTATION_UNUSED_GENERIC_ALIAS
+  id: 71
+  message: "Type alias generic parameter '{}' is not used in type annotation"
+
 - name: ANNOT_DUPLICATE
   id: 41
   message: "Duplicate annotations are not allowed. The annotation '{}' has already been applied to this element."
 
 - name: ANNOT_FIELD_INVALID_TYPE
   id: 42
-  message: "Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields."
-
-- name: ANNOT_MULTIPLE_FIELD
-  id: 43
-  message: "Annotation '{}' requires multiple fields to be specified."
+  message: "Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for
+    annotation fields."
 
 - name: ANNOT_FIELD_NO_VAL
   id: 44
   message: "The required field '{}' must be specified. Fields without default values cannot be omitted."
 
+- name: ANNOT_IS_VOID
+  id: 232
+  message: "'void' used as type annotation."
+
+- name: ANNOT_MULTIPLE_FIELD
+  id: 43
+  message: "Annotation '{}' requires multiple fields to be specified."
+
 - name: ANNOT_PROP_UNDEFINED
   id: 45
   message: "The parameter '{}' does not match any declared property in the annotation '{}'."
 
-- name: TYPE_MISMATCH_AT_IDX
-  id: 46
-  message: "Type '{}' is not compatible with type '{}' at index {}"
+- name: ANNOT_WITHOUT_AT
+  id: 230
+  message: "Annotation missing '@' symbol before annotation name."
 
-- name: ABSTRACT_METHOD_INVALID_MODIFIER
-  id: 47
-  message: "Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier."
+- name: ARG_IS_CLASS_ID
+  id: 122
+  message: "Class name can't be the argument of function or method."
 
-- name: FINAL_METHOD_INVALID_MODIFIER
-  id: 48
-  message: "Invalid method modifier(s): a final method can't have abstract or static modifier."
-
-- name: SPREAD_OF_INVALID_TYPE
-  id: 49
-  message: "Spread expression can be applied only to array or tuple type, but '{}' is provided"
-
-- name: ABSTRACT_CLASS_AS_ARRAY_ELEMENT_TYPE
-  id: 50
-  message: "Cannot use array creation expression with abstract classes and interfaces."
-
-- name: NON_SUPERTYPE_OF_UNDEFINED_AS_ARRAY_ELEMENT_TYPE
-  id: 51
-  message: "Cannot use array creation expression with non-constructable element type which is non-assignable from undefined."
-
-- name: ABSTRACT_INSTANTIATION
-  id: 52
-  message: "{} is abstract therefore cannot be instantiated."
-
-- name: NONLITERAL_INSTANTIATION
-  id: 53
-  message: "Required type can be instantiated only with object literal"
+- name: ARRAY_ELEMENT_INIT_TYPE_INCOMPAT
+  id: 227
+  message: "Array element at index {} with type '{}' is not compatible with the target array element type '{}'"
 
 - name: ARRAY_ELEMENT_UNASSIGNABLE
   id: 54
   message: "Array element type '{}' is not assignable to explicit type '{}'"
 
-- name: INVALID_SPREAD_IN_TUPLE
-  id: 55
-  message: "'{}' cannot be spread in tuple."
+- name: ARRAY_LENGTH_MODIFICATION
+  id: 24
+  message: "Setting the length of an array is not permitted"
 
-- name: TUPLE_SIZE_MISMATCH
-  id: 56
-  message: "Too many elements in array initializer for tuple with size of {}"
-
-- name: TUPLE_UNASSIGNABLE_ARRAY
-  id: 57
-  message: "Array initializer's type is not assignable to tuple type at index: {}"
-
-- name: READONLY_ARRAYLIKE_MODIFICATION
-  id: 58
-  message: "Cannot modify an array or tuple content that has the readonly parameter"
-
-- name: EXTENSION_ACCESSOR_INVALID_CALL
-  id: 59
-  message: "Extension accessor can't be used as a method call or function call."
-
-- name: UNCALLABLE_TYPE
-  id: 60
-  message: "Type '{}' has no call signatures."
-
-- name: AMBIGUOUS_REFERENCE
-  id: 61
-  message: "Ambiguous reference to '{}'"
-
-- name: CLASS_COMPOSITE_UNKNOWN_TYPE
-  id: 62
-  message: "need to specify target type for class composite"
-
-- name: CLASS_COMPOSITE_INVALID_TARGET
-  id: 63
-  message: "Target type for class composite needs to be an object type, found '{}'"
-
-- name: OBJECT_LITERAL_NOT_KV
-  id: 64
-  message: "The object literal properties must be key-value pairs"
-
-- name: UNDEFINED_PROPERTY
-  id: 65
-  message: "type {} has no property named {}"
-
-- name: OPERAND_NOT_NUMERIC
-  id: 66
-  message: "Bad operand type, the type of the operand must be numeric type."
-
-- name: NOT_AN_ANNOTATION
-  id: 67
-  message: "'{}' is not an annotation."
-
-- name: ANNOTATION_ARG_COUNT_MISMATCH
-  id: 68
-  message: "The number of arguments provided for the annotation exceeds the number of fields defined."
-
-- name: ITERATOR_ELEMENT_TYPE_MISMATCH
-  id: 69
-  message: "Source element type '{}' is not assignable to the loop iterator type '{}'."
-
-- name: NONEXISTENT_TYPE
-  id: 70
-  message: "'{}' type does not exist."
-
-- name: ANNOTATION_UNUSED_GENERIC_ALIAS
-  id: 71
-  message: "Type alias generic parameter '{}' is not used in type annotation"
-
-- name: UNEXPECTED_ARRAY
-  id: 72
-  message: "Expected type for array literal should be an array type, got {}"
-
-- name: CLASS_COMPOSITE_INVALID_KEY
-  id: 73
-  message: "key in class composite should be either identifier or string literal"
-
-- name: OBJECT_LITERAL_METHOD_KEY
-  id: 74
-  message: "Method '{}' cannot be used as a key of object literal."
-
-- name: FOROF_CANT_INFER_SOURCE
-  id: 75
-  message: "Cannot determine source expression type in the 'for-of' statement."
-
-- name: FOROF_SOURCE_NONITERABLE
-  id: 76
-  message: "'For-of' statement source expression is not of iterable type."
-
-- name: STATIC_METHOD_INVALID_MODIFIER
-  id: 77
-  message: "Invalid method modifier(s): a static method can't have abstract, final or override modifier."
-
-- name: VOID_VALUE
-  id: 78
-  message: "Cannot use type 'void' as value. "
-
-- name: EXTENSION_NAME_CONFLICT_WITH_FIELD
-  id: 79
-  message: "The extension accessor or extension function '{}' has the same name with field of class {}"
-
-- name: EXTENSION_NAME_CONFLICT_WITH_METHOD
-  id: 80
-  message: "The extension accessor '{}' has the same name with method in class {}"
-
-- name: EXTENSION_FUNC_NAME_CONFLICT_WITH_METH
-  id: 81
-  message: "The extension function '{}' has the same name with public method in class {}"
-
-- name: EXTENSION_FUNC_ON_INEXETENSIBLE
-  id: 82
-  message: "Extension function can only defined for class, interface or array."
-
-- name: UNEXPECTED_FUNC_BODY
-  id: 83
-  message: "Native, Abstract and Declare methods cannot have body."
-
-- name: NATIVE_WITH_BODY
-  id: 84
-  message: "Native constructor declaration cannot have a body."
-
-- name: SETTER_NONVOID
-  id: 85
-  message: "Setter must have void return type"
-
-- name: GETTER_VOID
-  id: 86
-  message: "Getter must return a value"
-
-- name: PROPERTY_NONEXISTENT
-  id: 87
-  message: "Property '{}' does not exist on type '{}'"
-
-- name: MAIN_BAD_RETURN
-  id: 88
-  message: "Bad return type, main enable only void or int type."
-
-- name: UNEXPECTED_VALUE_RETURN
-  id: 89
-  message: "Unexpected return value, enclosing method return type is void."
-
-- name: RETURN_TYPE_MISMATCH
-  id: 90
-  message: "Return statement type is not compatible with the enclosing method's return type."
+- name: ARRAY_OF_NEVER
+  id: 22
+  message: "Cannot use array creation expression with never type."
 
 - name: ARROW_TYPE_MISMATCH
   id: 91
   message: "Type '{}' is not compatible with the enclosing method's return type '{}'"
 
-- name: MIXED_VOID_NONVOID
-  id: 92
-  message: "All return statements in the function should be empty or have a value."
+- name: ASSERT_MESSAGE_NOT_STRING
+  id: 30
+  message: "Assert message must be string"
 
-- name: UNEXPECTED_VOID
-  id: 93
-  message: "'{}' shouldn't have void return type."
+- name: ASSIGNMENT_INVALID_LHS
+  id: 25
+  message: "Invalid left-hand side of assignment expression"
 
-- name: UNEXPECTED_NONVOID
-  id: 94
-  message: "'{}' should have void return type."
+- name: ASSIGN_TO_READONLY_PROP
+  id: 209
+  message: "Cannot assign to this property because it is readonly."
 
-- name: MISSING_RETURN_TYPE_2
-  id: 95
-  message: "'{}' doesn't have return type."
+- name: ASYNC_FUNCTION_RETURN_TYPE
+  id: 1
+  message: Return type of async function must be 'Promise'.
+  code_fix_ids: [FixReturnTypeInAsyncFunction]
 
-- name: RETURN_ISNT_ITERATOR
-  id: 96
-  message: "The return type of '{}' must be a type that implements Iterator interface."
+- name: AWAITED_NOT_PROMISE
+  id: 303
+  message: "'await' expressions require Promise object as argument."
 
-- name: INVALID_CONST_ASSIGNMENT
-  id: 97
-  message: "Cannot assign a value to a constant variable {}"
+- name: BINOP_DYN_UNIMPLEMENTED
+  id: 112
+  message: "Unimplemented case in dynamic type comparison."
 
-- name: INVALID_READONLY_ASSIGNMENT
-  id: 98
-  message: "Cannot assign a value to a readonly variable {}"
-
-- name: ITERATOR_TYPE_ABSENT
-  id: 99
-  message: "Cannot obtain iterator type in 'for-of' statement."
-
-- name: OBJ_LIT_PROPERTY_REDECLARATION
-  id: 100
-  message: "An object literal cannot have multiple properties with the same name."
-
-- name: INIT_DOESNT_COMPLETE
-  id: 101
-  message: "Initializer must be able to complete normally."
-
-- name: EXTEND_DYNAMIC
-  id: 102
-  message: "Class {} shouldn't extend dynamic class."
-
-- name: MISSING_RETURN_STMT
-  id: 103
-  message: "Function with a non void return type must return a value."
-
-- name: NONRETURNING_PATHS
-  id: 104
-  message: "Not all code paths return a value."
+- name: BINOP_INCOMPARABLE
+  id: 114
+  message: "Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type."
 
 - name: BINOP_INVALID_TYPE
   id: 105
   message: "Operator '{}' cannot be applied to types '{}' and '{}'."
 
-- name: BINOP_ON_UNION
-  id: 106
-  message: "Bad operand type: multiple types left in the normalized union type ({}). Unions are not allowed in binary expressions except equality."
-
-- name: OP_NONNUMERIC
-  id: 107
-  message: "Bad operand type, the types of the operands must be numeric type."
+- name: BINOP_MISMATCHED_ENUMS
+  id: 113
+  message: "Bad operand type, the types of the operands must be the same enum type."
 
 - name: BINOP_NONARITHMETIC_TYPE
   id: 108
   message: "Bad operand type, the types of the operands must be numeric type, enum or String."
-
-- name: BINOP_UNION
-  id: 109
-  message: "Bad operand type, unions are not allowed in binary expressions except equality."
 
 - name: BINOP_NOT_LOGICAL
   id: 110
@@ -448,501 +235,181 @@ semantic:
   id: 111
   message: "Both operands have to be reference types"
 
-- name: BINOP_DYN_UNIMPLEMENTED
-  id: 112
-  message: "Unimplemented case in dynamic type comparison."
-
-- name: BINOP_MISMATCHED_ENUMS
-  id: 113
-  message: "Bad operand type, the types of the operands must be the same enum type."
-
-- name: BINOP_INCOMPARABLE
-  id: 114
-  message: "Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type."
-
 - name: BINOP_NOT_SAME
   id: 115
   message: "Bad operand type, the types of the operands must be same type."
 
-- name: INSTANCEOF_NOT_TYPE
-  id: 116
-  message: "Right-hand side of instanceof expression must represent a type."
-
-- name: COALESCE_NOT_REF
-  id: 117
-  message: "Left-hand side of nullish-coalescing expression must be a reference type."
+- name: BINOP_ON_UNION
+  id: 106
+  message: "Bad operand type: multiple types left in the normalized union type ({}). Unions are not allowed in binary expressions
+    except equality."
 
 - name: BINOP_UNEXPECTED_ERROR
   id: 118
   message: "Unexpected type error in binary expression"
 
-- name: ANALYSIS_ERRORS
-  id: 119
-  message: "There were errors during assign analysis ({})"
+- name: BINOP_UNION
+  id: 109
+  message: "Bad operand type, unions are not allowed in binary expressions except equality."
 
-- name: INFERENCE_TYPE_INCOMPAT
-  id: 120
-  message: "{} is not compatible with type {}"
-
-- name: SPREAD_ONTO_SINGLE_PARAM
-  id: 121
-  message: "Spread argument cannot be passed for ordinary parameter."
-
-- name: ARG_IS_CLASS_ID
-  id: 122
-  message: "Class name can't be the argument of function or method."
-
-- name: MULTIPLE_SPREADS
-  id: 123
-  message: "Spread argument for the rest parameter can be only one."
-
-- name: PARAM_COUNT_MISMATCH
-  id: 124
-  message: "Expected {} arguments, got {}."
-
-- name: NO_SUCH_PARAMLESS_CTOR
-  id: 125
-  message: "No matching parameterless constructor"
-
-- name: AMBIGUOUS_FUNC_REF
-  id: 126
-  message: "Reference to {} is ambiguous"
-
-- name: NO_MATCHING_SIG
-  id: 127
-  message: "No matching {} signature for {}"
-
-- name: NO_MATCHING_SIG_2
-  id: 128
-  message: "No matching {} signature"
-
-- name: AMBIGUOUS_CALL_2
-  id: 129
-  message: "Call to `{}` is ambiguous "
-
-- name: FUNCTION_REDECL_BY_TYPE_SIG
-  id: 130
-  message: "Function {} is already declared."
-
-- name: FUNCTION_REDECL_BY_ASM_SIG
-  id: 131
-  message: "Function {} with this assembly signature already declared."
-
-- name: INFER_FAILURE_FUNC_PARAM
-  id: 132
-  message: "The type of parameter '{}' cannot be inferred"
-
-- name: MAIN_INVALID_ARG_COUNT
-  id: 133
-  message: "0 or 1 argument are allowed"
-
-- name: MAIN_WITH_REST
-  id: 134
-  message: "Rest parameter is not allowed in the 'main' function."
-
-- name: MAIN_PARAM_NOT_ARR_OF_STRING
-  id: 135
-  message: "Only 'FixedArray<string>' type argument is allowed."
-
-- name: OVERRIDE_DOESNT_OVERRIDE
-  id: 136
-  message: "Method {}{} in {} not overriding any method"
-
-- name: SIG_UNAVAILABLE
-  id: 137
-  message: "Signature is not available here."
-
-- name: THIS_OUTSIDE_METHOD_CTX
-  id: 138
-  message: "Cannot reference 'this' in this context."
-
-- name: SIG_INVISIBLE
-  id: 139
-  message: "Signature {}{} is not visible here."
-
-- name: NO_SUCH_SIG_WITH_TRAILING_LAMBDA
-  id: 140
-  message: "No matching call signature with trailing lambda"
-
-- name: CANNOT_OVERRIDE
-  id: 141
-  message: "{}{} in {} cannot override {}{} in {} because {}"
-
-- name: AMBIGUOUS_CALL
-  id: 142
-  message: "Call to `{}` is ambiguous as `2` versions of `{}` are available: `{}{}` and `{}{}`"
-
-- name: UNRESOLVED_REF
-  id: 143
-  message: "Unresolved reference {}"
-
-- name: ID_IN_WRONG_CTX
-  id: 144
-  message: "{} name '{}' used in the wrong context"
-
-- name: PROP_ACCESS_WITHOUT_THIS
-  id: 145
-  message: "Property '{}' must be accessed through 'this'"
-
-- name: PROPERTY_CAPTURE
-  id: 146
-  message: "Property '{}' of enclosing class '{}' is not allowed to be captured from the local class '{}'"
-
-- name: PROPERTY_CAPTURE_IN_STATIC
-  id: 147
-  message: "Not allowed to capture variable '{}' in static method"
-
-- name: INVALID_EXPR_IN_RETURN
-  id: 148
-  message: "Invalid return statement expression"
-
-- name: INVALID_RETURN_FUNC_EXPR
-  id: 149
-  message: "Invalid return function expression"
-
-- name: RETURN_DIFFERENT_PRIM
-  id: 150
-  message: "Function cannot have different primitive return types, require '{}', found '{}'"
-
-- name: MEMBER_OF_OBJECT_LIT
-  id: 151
-  message: "Class composite must be constructed separately before referring their members."
-
-- name: TYPE_MISMATCH_ENUM
-  id: 152
-  message: "Cannot assign type '{}' for variable {}."
-
-- name: INIT_IN_AMBIENT
-  id: 153
-  message: "Initializers are not allowed in ambient contexts: {}"
-
-- name: AMBIGUOUS_FUNC_INIT
-  id: 154
-  message: "Ambiguous function initialization because of multiple overloads"
-
-- name: GENERIC_ALIAS_WITHOUT_PARAMS
-  id: 155
-  message: "Type alias declaration is generic, but too few type arguments were provided"
-
-- name: NON_GENERIC_ALIAS_WITH_PARAMS
-  id: 156
-  message: "Type alias declaration is not generic, but type parameters were provided"
-
-- name: GENERIC_ALIAS_PARAM_COUNT_MISMATCH
-  id: 157
-  message: "Wrong number of type parameters for generic type alias"
-
-- name: NAMESPACE_AS_TYPE
-  id: 158
-  message: "Namespace '{}' cannot be used as a type."
-
-- name: ANNOTATION_AS_TYPE
-  id: 159
-  message: "Annotations cannot be used as a type."
-
-- name: FUNCTION_REDECLERATION
-  id: 160
-  message: "Function '{}{}' is redeclared with different signature '{}{}'"
-
-- name: FLOW_REDIRECTION_INVALID_CTX
-  id: 161
-  message: "Control flow redirection statement can not be used out of loop or switch statement."
-
-- name: ENUM_INVALID_DISCRIMINANT
-  id: 162
-  message: "Incompatible types. Found: {}, required: char , byte , short , int, long , Char , Byte , Short , Int, Long , String or an enum type"
-
-- name: NOT_CONSTANT
-  id: 163
-  message: "Constant expression required"
-
-- name: SWITCH_CASE_INVALID_TYPE
-  id: 164
-  message: "Unexpected type {}"
-
-- name: SWITCH_CASE_DUPLICATE
-  id: 165
-  message: "Case duplicate"
-
-- name: SWITCH_CASE_VAR_DUPLICATE_VAL
-  id: 166
-  message: "Variable has same value with another switch case"
-
-- name: INVALID_TYPE_PARAM
-  id: 168
-  message: "Type '{}' is not valid for generic type arguments"
-
-- name: NOT_GENERIC
-  id: 169
-  message: "Type '{}' is not generic."
-
-- name: GENERIC_WITHOUT_TYPE_PARAMS
-  id: 170
-  message: "Type '{}' is generic but type argument were not provided."
-
-- name: GENERIC_TYPE_PARAM_COUNT_MISMATCH
-  id: 171
-  message: "Type '{}' has {} number of type parameters, but {} type arguments were provided."
-
-- name: NO_STATIC_INVOKE
-  id: 172
-  message: "No static {} method and static {} method in {}. {}() is not allowed."
-
-- name: STATIC_PROP_INVALID_CTX
-  id: 173
-  message: "Static property '{}' must be accessed through it's class '{}'"
+- name: CALLEE_NONCONSTRUCTIBLE
+  id: 290
+  message: "Type '{}' is not constructible."
 
 - name: CANNOT_INFER_OBJ_LIT
   id: 174
   message: "Cannot infer type for {} because class composite needs an explicit target type"
 
-- name: AMBIENT_CONST_INVALID_LIT
-  id: 175
-  message: "A 'const' initializer in an ambient context must be a string or numeric literal: {}"
+- name: CANNOT_OVERRIDE
+  id: 141
+  message: "{}{} in {} cannot override {}{} in {} because {}"
 
-- name: EXTENDING_UTILITY_TYPE
-  id: 176
-  message: "The super type of '{}' class is not extensible."
+- name: CAST_FAIL_UNREACHABLE
+  id: 336
+  message: "this cast should never fail"
 
-- name: EXTENDING_STRUCT
-  id: 177
-  message: "struct {} is not extensible."
+- name: CAST_TO_NEVER
+  id: 305
+  message: "Cast to 'never' is prohibited"
 
-- name: EXTENDING_FINAL
-  id: 178
-  message: "Cannot inherit with 'final' modifier."
-
-- name: NOT_INTERFACE
-  id: 179
-  message: "Interface expected here."
-
-- name: REPEATED_INTERFACE
-  id: 180
-  message: "Repeated interface."
-
-- name: CONFLICTING_GENERIC_INTERFACE_IMPLS
-  id: 181
-  message: "Implements generic interface '{}' with different instantiations."
-
-- name: DUPLICATE_TYPE_PARAM
-  id: 182
-  message: "Duplicate type parameter '{}'."
-
-- name: TYPE_PARAM_USE_BEFORE_DEFINE
-  id: 183
-  message: "Type Parameter {} should be defined before use."
-
-- name: TYPE_PARAM_CIRCULAR_CONSTRAINT
-  id: 184
-  message: "Type parameter '{}' has circular constraint dependency."
-
-- name: EXTENDS_NON_OBJECT
-  id: 185
-  message: "Extends constraint must be an object"
-
-- name: ABSTRACT_IS_FINAL
-  id: 186
-  message: "Cannot use both 'final' and 'abstract' modifiers."
-
-- name: INTERFACE_METHOD_COLLISION
-  id: 187
-  message: "Method '{}' is declared in {} and {} interfaces."
-
-- name: GETTER_MISSING_IMPL
-  id: 188
-  message: "{} is not abstract and does not implement getter for {} property in {}"
-
-- name: SETTER_MISSING_IMPL
-  id: 189
-  message: "{} is not abstract and does not implement setter for {} property in {}"
-
-- name: MISSING_OVERRIDE_OF_ABSTRACT_METH
-  id: 190
-  message: "{} is not abstract and does not override abstract method {}{} in {}"
-
-- name: LOCAL_CLASS_INVALID_CTX
-  id: 191
-  message: "Local classes must be defined between balanced braces"
-
-- name: CTOR_MISSING_SUPER_CALL
-  id: 192
-  message: "Must call super constructor"
-
-- name: MAYBE_DOUBLE_INIT
-  id: 193
-  message: "Variable '{}' might already have been initialized"
-
-- name: MAYBE_MISSING_INIT
-  id: 194
-  message: "Variable '{}' might not have been initialized"
-
-- name: INNER_CLASS_WITH_STATIC_METH
-  id: 195
-  message: "Inner class cannot have static methods"
-
-- name: INNER_CLASS_MUTABLE_STATIC_PROP
-  id: 196
-  message: "Inner class cannot have non-readonly static properties"
-
-- name: INDEX_NONINTEGRAL_FLOAT
-  id: 197
-  message: "Index fractional part should be zero."
-
-- name: TUPLE_INDEX_OOB
-  id: 198
-  message: "Element accessor value is out of tuple size bounds."
-
-- name: TUPLE_INDEX_NONCONST
-  id: 199
-  message: "Only constant expression allowed for element access on tuples."
-
-- name: TUPLE_INDEX_NOT_INT
-  id: 200
-  message: "Only integer type allowed for element access on tuples."
-
-- name: CTOR_CLASS_NOT_FIRST
-  id: 201
-  message: "Call to '{}' must be first statement in constructor"
-
-- name: CTOR_REF_IN_STATIC_CTX
-  id: 202
-  message: "'{}' cannot be referenced from a static context"
-
-- name: CTOR_REF_INVALID_CTX_GLOBAL
-  id: 203
-  message: "Cannot reference '{}' in this context."
-
-- name: NO_SUCH_CTOR_SIG
-  id: 204
-  message: "No matching call signature for constructor"
+- name: CATCH_DEFAULT_NOT_LAST
+  id: 34
+  message: "Default catch clause should be the last in the try statement"
 
 - name: CATCH_OR_THROW_OF_INVALID_TYPE
   id: 205
   message: "Argument must be an instance of '{}' or '{}'"
 
-- name: NOT_EXPORTED
-  id: 206
-  message: "'{}' is not exported in '{}'"
+- name: CIRCULAR_DEPENDENCY
+  id: 308
+  message: "Circular dependency detected for identifier: {}"
 
-- name: PROP_IS_STATIC
-  id: 207
-  message: "'{}' is a static property of '{}'"
+- name: CLASS_COMPOSITE_INVALID_KEY
+  id: 73
+  message: "key in class composite should be either identifier or string literal"
 
-- name: PROP_NOT_STATIC
-  id: 208
-  message: "'{}' is an instance property of '{}'"
+- name: CLASS_COMPOSITE_INVALID_TARGET
+  id: 63
+  message: "Target type for class composite needs to be an object type, found '{}'"
 
-- name: ASSIGN_TO_READONLY_PROP
-  id: 209
-  message: "Cannot assign to this property because it is readonly."
+- name: CLASS_COMPOSITE_UNKNOWN_TYPE
+  id: 62
+  message: "need to specify target type for class composite"
 
-- name: READONLY_FIELD_MULTIPLE_INIT
-  id: 210
-  message: "Readonly field already initialized at declaration."
+- name: CLASS_OR_IFACE_AS_OBJ
+  id: 294
+  message: "Class or interface '{}' cannot be used as object"
 
-- name: READ_FROM_WRITEONLY_PROP
-  id: 211
-  message: "Cannot read from this property because it is writeonly."
+- name: COALESCE_NOT_REF
+  id: 117
+  message: "Left-hand side of nullish-coalescing expression must be a reference type."
 
-- name: UNDEFINED_METHOD
-  id: 212
-  message: "Method {} does not exist on this type."
+- name: CONFLICTING_GENERIC_INTERFACE_IMPLS
+  id: 181
+  message: "Implements generic interface '{}' with different instantiations."
 
-- name: METHOD_WRONG_CTX
-  id: 213
-  message: "Method used in wrong context"
+- name: CONSTANT_FLOATING_POINT_COVERSION
+  id: 344
+  message: "Floating-point value cannot be converted"
 
-- name: GENERIC_ERROR_OR_EXCEPTION
-  id: 214
-  message: "Generics are not allowed as '{}' or '{}' subclasses."
+- name: CONSTANT_VALUE_OUT_OF_RANGE
+  id: 345
+  message: "Value is out of range"
 
-- name: INHERITED_INTERFACE_TYPE_MISMATCH
-  id: 215
-  message: "Cannot inherit from interface {} because {} {} is inherited with a different declaration type"
+- name: CONST_WITHOUT_INIT
+  id: 363
+  message: "Missing initializer in const declaration"
 
-- name: INHERITED_CLASS_TYPE_MISMATCH
-  id: 216
-  message: "Cannot inherit from class {}, because {} {} is inherited with a different declaration type"
+- name: CONTINUE_TARGET_OUTSIDE_FUNCTION
+  id: 49316
+  message: "Continue target can't be outside the function"
 
-- name: INTERFACE_PROP_NOT_PUBLIC
-  id: 217
-  message: "Interface property implementation cannot be generated as non-public"
+- name: CTOR_CLASS_NOT_FIRST
+  id: 201
+  message: "Call to '{}' must be first statement in constructor"
 
-- name: METHOD_ACCESSOR_COLLISION
-  id: 218
-  message: "Method cannot use the same name as {} accessor property"
+- name: CTOR_MISSING_SUPER_CALL
+  id: 192
+  message: "Must call super constructor"
+
+- name: CTOR_REF_INVALID_CTX_GLOBAL
+  id: 203
+  message: "Cannot reference '{}' in this context."
+
+- name: CTOR_REF_IN_STATIC_CTX
+  id: 202
+  message: "'{}' cannot be referenced from a static context"
+
+- name: CYCLIC_ALIAS
+  id: 311
+  message: "Circular type alias reference"
+
+- name: CYCLIC_ALIAS_2
+  id: 313
+  message: "Type alias {} circularly refences itself"
+
+- name: CYCLIC_CALLEE
+  id: 381
+  message: "Circular call function"
+
+- name: CYCLIC_CLASS_SUPER_TYPE
+  id: 380
+  message: "Class's super type is itself"
+
+- name: CYCLIC_INHERITANCE
+  id: 310
+  message: "Cyclic inheritance involving {}."
+
+- name: CYCLIC_TYPE_OF
+  id: 379
+  message: "Circular type of reference"
+
+- name: CYCLIC_VAR_REF
+  id: 314
+  message: "'{}' is referenced directly or indirectly in its own initializer ot type annotation."
+
+- name: DEFAULT_DYNAMIC_IMPORT
+  id: 352
+  message: "Default import is currently not implemented in dynamic import"
+
+- name: DEFAULT_EXPORT_DIRECT_IMPORTED
+  id: 353
+  message: "Use the default import syntax to import a default exported element"
+
+- name: DEFAULT_IMPORT_NOT_FOUND
+  id: 358
+  message: "Cannot find default imported element in the target"
+
+- name: DIFFERENT_SUBSEQ_DECL
+  id: 316
+  message: "Subsequent variable declaration must have the same type. Variable '{}' must be of type '{}', but here has type
+    '{}'."
+
+- name: DIFFERENT_SUBSEQ_PROP_DECL
+  id: 317
+  message: "Subsequent variable declaration must have the same type. Variable '{}' must be of type '{}', but here has type
+    '{}'."
+
+- name: DISJOINT_CONVERSION
+  id: 322
+  message: "Conversion of type '{}' to type '{}' may be a mistake because neither type sufficiently overlaps with the other.
+    If this was intentional, convert the expression to 'unknown' first."
 
 - name: DUPLICATE_ACCESSOR
   id: 219
   message: "Duplicate accessor definition"
 
-- name: ACCESSORS_MOD_MISMATCH
-  id: 220
-  message: "Getter and setter methods must have the same accessor modifiers"
+- name: DUPLICATE_OVERLOADED_NAME
+  id: 385
+  message: "Duplicate overloaded method."
 
-- name: STATIC_METH_IN_CLASS_AND_INTERFACE
-  id: 221
-  message: "Static {} method and static {} method both exist in class/interface {} is not allowed."
+- name: DUPLICATE_TYPE_PARAM
+  id: 182
+  message: "Duplicate type parameter '{}'."
 
-- name: INFER_FAIL_ON_PARAM
-  id: 222
-  message: "The type of parameter '{}' cannot be inferred."
-
-- name: UTIL_TYPE_INVALID_TYPE_PARAM_COUNT
-  id: 223
-  message: "Invalid number of type parameters for {} type, should be 1."
-
-- name: UTIL_TYPE_OF_NONREFERENCE
-  id: 224
-  message: "Only reference types can be converted to utility types."
-
-- name: UTILITY_TYPE_UNIMPLEMENTED
-  id: 225
-  message: "This utility type is not yet implemented."
-
-- name: REQUIRED_PROP_MISSING_INIT
-  id: 226
-  message: "Class property '{}' needs to be initialized for Required<{}>."
-
-- name: ARRAY_ELEMENT_INIT_TYPE_INCOMPAT
-  id: 227
-  message: "Array element at index {} with type '{}' is not compatible with the target array element type '{}'"
-
-- name: INIT_NOT_ASSIGNABLE
-  id: 228
-  message: "Type {} is not assignable to constraint type {}"
-
-- name: OVERLOADED_FUNCTION_REFERENCE
-  id: 229
-  message: "Overloaded function identifier '{}' can not be used as value"
-
-- name: ANNOT_WITHOUT_AT
-  id: 230
-  message: "Annotation missing '@' symbol before annotation name."
-
-- name: TUPLE_WRONG_NUMBER_OF_ELEMS
-  id: 231
-  message: "Initializer has {} elements, but tuple requires {}"
-
-- name: ANNOT_IS_VOID
-  id: 232
-  message: "'void' used as type annotation."
-
-- name: THIS_OR_SUPER_IN_CTOR
-  id: 235
-  message: "Using {} is not allowed in constructor"
-
-- name: INVALID_INDEX_TYPE
-  id: 236
-  message: "Type '{}' cannot be used as an index type. Only primitive or unboxable integral types can be used as index."
-
-- name: INFER_FAIL_ON_LAMBDA
-  id: 237
-  message: "Cannot infer arrow function type from context for type: '{}', consider adding type explicitly"
-
-- name: ENUM_REFERENCE_VIA_ALIAS
-  id: 238
-  message: "Cannot refer to enum members through type alias."
+- name: DYMANIC_INIT_WITH_OBJEXPR
+  id: 382
+  message: "Dymanic Type {} cannot be initialize with an object expression"
 
 - name: ENUMB_REFERENCE_VIA_VAR
   id: 239
@@ -951,6 +418,11 @@ semantic:
 - name: ENUM_CONST_MISSING_PROP
   id: 240
   message: "Enum constant does not have property '{}'."
+
+- name: ENUM_INVALID_DISCRIMINANT
+  id: 162
+  message: "Incompatible types. Found: {}, required: char , byte , short , int, long , Char , Byte , Short , Int, Long , String
+    or an enum type"
 
 - name: ENUM_NO_SUCH_CONST
   id: 241
@@ -964,61 +436,505 @@ semantic:
   id: 243
   message: "No enum type method called '{}'"
 
-- name: MEMBER_TYPE_MISMATCH_ACROSS_UNION
-  id: 244
-  message: "Member type must be the same for all union objects."
+- name: ENUM_REFERENCE_VIA_ALIAS
+  id: 238
+  message: "Cannot refer to enum members through type alias."
 
-- name: UNION_MEMBER_ILLEGAL_TYPE
-  id: 245
-  message: "Type {} is illegal in union member expression."
+- name: ENUM_TYPE_INVALID
+  id: 35
+  message: "Invalid enumeration value type."
 
-- name: MISSING_EXTENSION_ACCESSOR
-  id: 246
-  message: "Can't find the extension accessor."
+- name: ERROR_ARKTS_NO_CONDITIONAL_TYPES
+  id: 136365
+  message: "Conditional type aliases are not supported. Introduce a new type with constraints explicitly, or rewrite logic
+    using Object!"
 
-- name: NEGATIVE_INDEX
-  id: 247
-  message: "Index value cannot be less than zero."
+- name: ERROR_ARKTS_NO_DECLARATION_MERGING
+  id: 341
+  message: "Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in
+    the codebase!"
+
+- name: ERROR_ARKTS_NO_ENUM_MIXED_TYPES
+  id: 342
+  message: "Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type."
+
+- name: ERROR_ARKTS_NO_LITERAL_INITIALIZATION_WITHOUT_PARAMETERLESS_CONSTRUCTOR
+  id: 340
+  message: "Initialization with literals is not supported if the type has no parameterless constructor. Declare the parameterless
+    constructor explicitly or remove parametered constructors!"
+
+- name: ERROR_ARKTS_NO_PROPERTIES_BY_INDEX
+  id: 343
+  message: "Indexed signatures are not allowed. Use arrays instead!"
+
+- name: EXCEPTION_REDECLARATION
+  id: 13
+  message: "Redeclaration of exception type"
+
+- name: EXPECTED_TYPE_ARGUMENTS
+  id: 274
+  message: "Expected at least {} type arguments, but got {}."
+
+- name: EXPORT_INCORRECT
+  id: 361
+  message: "Incorrect export '{}'"
+
+- name: EXPR_NONCONSTRUCTIBLE
+  id: 292
+  message: "This expression is not constructible."
+
+- name: EXPR_NOT_CALLABLE
+  id: 289
+  message: "This expression is not callable."
+
+- name: EXTENDING_FINAL
+  id: 178
+  message: "Cannot inherit with 'final' modifier."
+
+- name: EXTENDING_STRUCT
+  id: 177
+  message: "struct {} is not extensible."
+
+- name: EXTENDING_UTILITY_TYPE
+  id: 176
+  message: "The super type of '{}' class is not extensible."
+
+- name: EXTENDS_NON_OBJECT
+  id: 185
+  message: "Extends constraint must be an object"
+
+- name: EXTEND_DYNAMIC
+  id: 102
+  message: "Class {} shouldn't extend dynamic class."
+
+- name: EXTENSION_ACCESSOR_INVALID_CALL
+  id: 59
+  message: "Extension accessor can't be used as a method call or function call."
+  code_fix_ids: [RemoveAccidetalCallParentheses]
+
+- name: EXTENSION_FUNC_NAME_CONFLICT_WITH_METH
+  id: 81
+  message: "The extension function '{}' has the same name with public method in class {}"
+
+- name: EXTENSION_FUNC_ON_INEXETENSIBLE
+  id: 82
+  message: "Extension function can only defined for class, interface or array."
+
+- name: EXTENSION_GETTER_INVALID_CTX
+  id: 269
+  message: "Extension getter in wrong usage"
+
+- name: EXTENSION_NAME_CONFLICT_WITH_FIELD
+  id: 79
+  message: "The extension accessor or extension function '{}' has the same name with field of class {}"
+
+- name: EXTENSION_NAME_CONFLICT_WITH_METHOD
+  id: 80
+  message: "The extension accessor '{}' has the same name with method in class {}"
+
+- name: FIELD_ASSIGN_TYPE_MISMATCH
+  id: 298
+  message: "Cannot assign to a {} variable {}"
+  code_fix_ids: [FixConvertConstToLet]
+
+- name: FIELD_REASSIGNMENT
+  id: 297
+  message: "Cannot reassign {} {}"
+  code_fix_ids: [FixConvertConstToLet]
+
+- name: FINAL_METHOD_INVALID_MODIFIER
+  id: 48
+  message: "Invalid method modifier(s): a final method can't have abstract or static modifier."
+
+- name: FIXED_ARRAY_PARAM_ERROR
+  id: 277
+  message: "FixedArray<T> must have only one type parameter."
+
+- name: FLOW_REDIRECTION_INVALID_CTX
+  id: 161
+  message: "Control flow redirection statement can not be used out of loop or switch statement."
+
+- name: FOROF_CANT_INFER_SOURCE
+  id: 75
+  message: "Cannot determine source expression type in the 'for-of' statement."
+
+- name: FOROF_SOURCE_NONITERABLE
+  id: 76
+  message: "'For-of' statement source expression is not of iterable type."
+
+- name: FUNCTION_REDECLERATION
+  id: 160
+  message: "Function '{}{}' is redeclared with different signature '{}{}'"
+
+- name: FUNCTION_REDECL_BY_ASM_SIG
+  id: 131
+  message: "Function {} with this assembly signature already declared."
+
+- name: FUNCTION_REDECL_BY_TYPE_SIG
+  id: 130
+  message: "Function {} is already declared."
+
+- name: FUNCTION_WITHOUT_BODY
+  id: 17
+  message: "Only abstract or native methods can't have body."
+
+- name: FUNC_EXPR_INVALID
+  id: 16
+  message: "Invalid function expression"
+
+- name: GENERIC_ALIAS_PARAM_COUNT_MISMATCH
+  id: 157
+  message: "Wrong number of type parameters for generic type alias"
+
+- name: GENERIC_ALIAS_WITHOUT_PARAMS
+  id: 155
+  message: "Type alias declaration is generic, but too few type arguments were provided"
+
+- name: GENERIC_ERROR_OR_EXCEPTION
+  id: 214
+  message: "Generics are not allowed as '{}' or '{}' subclasses."
+
+- name: GENERIC_TYPE_PARAM_COUNT_MISMATCH
+  id: 171
+  message: "Type '{}' has {} number of type parameters, but {} type arguments were provided."
+
+- name: GENERIC_WITHOUT_TYPE_PARAMS
+  id: 170
+  message: "Type '{}' is generic but type argument were not provided."
+
+- name: GETTER_MISSING_IMPL
+  id: 188
+  message: "{} is not abstract and does not implement getter for {} property in {}"
+
+- name: GETTER_VOID
+  id: 86
+  message: "Getter must return a value"
+
+- name: ID_IN_WRONG_CTX
+  id: 144
+  message: "{} name '{}' used in the wrong context"
+
+- name: ID_REDECLARED
+  id: 369
+  message: "Identifier '{}' has already been declared."
+
+- name: ID_WRONG_CTX
+  id: 330
+  message: "Identifier '{}' is used in wrong context."
+
+- name: IFACE_INVALID_EXTENDS
+  id: 320
+  message: "Interface '{}' incorrectly extends interface '{}'"
+
+- name: IFACE_MULTIPLE_EXTENSION
+  id: 315
+  message: "Interface '{}' cannot simultaneously extend types '{}' and '{}'."
+
+- name: ILLEGAL_NON_NULLISH_TYPE
+  id: 339
+  message: "Only type parameters can be used as a nonnullish type"
+
+- name: ILLEGAL_UNARY_OP
+  id: 11
+  message: "Illegal unary operator."
+
+- name: IMPORTED_NOT_EXPORTED
+  id: 355
+  message: "Imported element not exported '{}'"
+
+- name: IMPORTING_NONEXPORTED_TYPE
+  id: 354
+  message: "Cannot import '{}', imported type imports only exported types."
+
+- name: IMPORT_ARG_NOT_STRING
+  id: 302
+  message: "'import' expressions require string as argument."
+
+- name: IMPORT_NOT_FOUND
+  id: 356
+  message: "Cannot find imported element '{}'"
+
+- name: IMPORT_NOT_FOUND_2
+  id: 360
+  message: "Cannot find import: {}"
+
+- name: IMPORT_RENAMES_ANNOTATION
+  id: 357
+  message: "Can not rename annotation '{}' in export or import statements."
 
 - name: INDEX_NEGATIVE_OR_FRACTIONAL
   id: 248
   message: "Index value cannot be less than zero or fractional."
 
-- name: INDEX_OOB
-  id: 249
-  message: "Index value cannot be greater than or equal to the array size."
-
-- name: NO_INDEX_ACCESS_METHOD
-  id: 250
-  message: "Object type doesn't have proper index access method."
-
-- name: MISSING_INDEX_ACCESSOR_WITH_SIG
-  id: 251
-  message: "Cannot find index access method with the required signature."
+- name: INDEX_NONINTEGRAL_FLOAT
+  id: 197
+  message: "Index fractional part should be zero."
 
 - name: INDEX_ON_INVALID_TYPE
   id: 252
   message: "Indexed access is not supported for such expression type."
 
-- name: MISSING_INIT_FOR_PARAM
-  id: 253
-  message: "Expected initializer for parameter {}."
+- name: INDEX_OOB
+  id: 249
+  message: "Index value cannot be greater than or equal to the array size."
+
+- name: INFERENCE_TYPE_INCOMPAT
+  id: 120
+  message: "{} is not compatible with type {}"
+
+- name: INFER_FAILURE_FUNC_PARAM
+  id: 132
+  message: "The type of parameter '{}' cannot be inferred"
 
 - name: INFER_FAIL_FOR_LAMBDA_SIG
   id: 254
   message: "Cannot deduce call signature"
 
-- name: AMBIGUOUS_UNION_TYPE_OP
-  id: 255
-  message: "Ambiguous union type operation"
+- name: INFER_FAIL_ON_LAMBDA
+  id: 237
+  message: "Cannot infer arrow function type from context for type: '{}', consider adding type explicitly"
+
+- name: INFER_FAIL_ON_PARAM
+  id: 222
+  message: "The type of parameter '{}' cannot be inferred."
+
+- name: INHERITED_CLASS_TYPE_MISMATCH
+  id: 216
+  message: "Cannot inherit from class {}, because {} {} is inherited with a different declaration type"
+
+- name: INHERITED_INTERFACE_TYPE_MISMATCH
+  id: 215
+  message: "Cannot inherit from interface {} because {} {} is inherited with a different declaration type"
+
+- name: INIT_DOESNT_COMPLETE
+  id: 101
+  message: "Initializer must be able to complete normally."
+
+- name: INIT_IN_AMBIENT
+  id: 153
+  message: "Initializers are not allowed in ambient contexts: {}"
+
+- name: INNER_CLASS_MUTABLE_STATIC_PROP
+  id: 196
+  message: "Inner class cannot have non-readonly static properties"
+
+- name: INNER_CLASS_WITH_STATIC_METH
+  id: 195
+  message: "Inner class cannot have static methods"
+
+- name: INSTANCEOF_NONOBJECT
+  id: 296
+  message: "Using the 'instance of' operator with non-object type '{}'"
+
+- name: INSTANCEOF_NOT_TYPE
+  id: 116
+  message: "Right-hand side of instanceof expression must represent a type."
+
+- name: INTERFACE_EXTENDS_CLASS
+  id: 378
+  message: "Interfaces cannot extend classes, only other interfaces."
+
+- name: INTERFACE_INSTANTIATION
+  id: 275
+  message: "{} is an interface therefore cannot be instantiated."
+
+- name: INTERFACE_METHOD_COLLISION
+  id: 187
+  message: "Method '{}' is declared in {} and {} interfaces."
+
+- name: INTERFACE_OR_CLASS_CANNOT_IMPL_OR_EXTEND_DYNAMIC
+  id: 24143
+  message: "{} {} can not {} {} {} which is from dynamic declaration file."
+
+- name: INTERFACE_PROPERTY_REQUIRES_SETTER
+  id: 337
+  message: "Cannot implement interface {}: property '{}' must have a setter, but the implementation is readonly"
+
+- name: INTERFACE_PROP_NOT_PUBLIC
+  id: 217
+  message: "Interface property implementation cannot be generated as non-public"
+
+- name: INTERFACE_REDECLARED
+  id: 372
+  message: "Interface redeclaration is not allowed"
 
 - name: INTERFACE_WITH_METHOD
   id: 256
   message: "Interface has methods"
 
-- name: ABSTRACT_METH_IN_ABSTRACT_CLASS
-  id: 257
-  message: "Abstract class has abstract method {}"
+- name: INVALID_ANNOTATION_RETENTION
+  id: 3
+  message: Annotation '@Retention' can only be applied to annotation declarations.
+
+- name: INVALID_ASSIGNMNENT
+  id: 318
+  message: "Type '{}' cannot be assigned to type '{}'"
+
+- name: INVALID_ASSIGNMNENT_2
+  id: 321
+  message: "Type '{}' is not assignable to type '{}'."
+
+- name: INVALID_CAPTURE
+  id: 366
+  message: "Cannot capture variable '{}'."
+
+- name: INVALID_CAST
+  id: 326
+  message: "Cannot cast type '{}' to '{}'"
+
+- name: INVALID_CONST_ASSIGNMENT
+  id: 97
+  message: "Cannot assign a value to a constant variable {}"
+
+- name: INVALID_DOT_CLASS
+  id: 21
+  message: "Invalid .class reference"
+
+- name: INVALID_EXPORT
+  id: 367
+  message: "Invalid exported binding"
+
+- name: INVALID_EXPR_IN_RETURN
+  id: 148
+  message: "Invalid return statement expression"
+
+- name: INVALID_INDEX_TYPE
+  id: 236
+  message: "Type '{}' cannot be used as an index type. Only primitive or unboxable integral types can be used as index."
+
+- name: INVALID_LAMBDA_PARAMETER
+  id: 395
+  message: "Invalid lambda parameter. Expected: 'identifier(: type)?', 'identifier?(: type)?' or '...identifier(: type)?'."
+
+- name: INVALID_READONLY_ASSIGNMENT
+  id: 98
+  message: "Cannot assign a value to a readonly variable {}"
+
+- name: INVALID_RECORD_PROPERTY
+  id: 393
+  message: "Invalid record property"
+
+- name: INVALID_RETURN_FUNC_EXPR
+  id: 149
+  message: "Invalid return function expression"
+
+- name: INVALID_SPREAD_IN_TUPLE
+  id: 55
+  message: "'{}' cannot be spread in tuple."
+
+- name: INVALID_TYPE_AS_VALUE
+  id: 134683
+  message: "'{}' only refers to a type, but is being used as a value here. "
+
+- name: INVALID_TYPE_PARAM
+  id: 168
+  message: "Type '{}' is not valid for generic type arguments"
+
+- name: INVALID_TYPE_REF
+  id: 299
+  message: "Invalid type reference."
+
+- name: INVISIBLE_INDEX_ACCESSOR
+  id: 268
+  message: "Index access method is not visible here."
+
+- name: INVISIBLE_ITERATOR
+  id: 272
+  message: "Iterator method is not visible here."
+
+- name: ITERATOR_DOESNT_RETURN_ITERABLE
+  id: 261
+  message: "Iterator method must return an object which implements Iterator<T>"
+
+- name: ITERATOR_ELEMENT_TYPE_MISMATCH
+  id: 69
+  message: "Source element type '{}' is not assignable to the loop iterator type '{}'."
+
+- name: ITERATOR_MISSING_NEXT
+  id: 260
+  message: "Iterator object doesn't have proper next method."
+
+- name: ITERATOR_TYPE_ABSENT
+  id: 99
+  message: "Cannot obtain iterator type in 'for-of' statement."
+
+- name: KEYOF_REFERENCE_TYPE
+  id: 276
+  message: "The `keyof` keyword can only be used for class or interface type."
+
+- name: LATE_INITIALIZATION_FIELD_HAS_INVALID_TYPE
+  id: 376
+  message: "Late-initialized field cannot be nullish types or possibly nullish types."
+
+
+- name: LOCAL_CLASS_INVALID_CTX
+  id: 191
+  message: "Local classes must be defined between balanced braces"
+
+- name: LOCAL_CLASS_NATIVE_METHOD
+  id: 278
+  message: "Local class '{}' shouldn't have native methods/constructors"
+
+- name: MAIN_BAD_RETURN
+  id: 88
+  message: "Bad return type, main enable only void or int type."
+
+- name: MAIN_INVALID_ARG_COUNT
+  id: 133
+  message: "0 or 1 argument are allowed"
+
+- name: MAIN_PARAM_NOT_ARR_OF_STRING
+  id: 135
+  message: "Only 'FixedArray<string>' type argument is allowed."
+
+- name: MAIN_WITH_REST
+  id: 134
+  message: "Rest parameter is not allowed in the 'main' function."
+
+- name: MAYBE_DOUBLE_INIT
+  id: 193
+  message: "Variable '{}' might already have been initialized"
+
+- name: MAYBE_MISSING_INIT
+  id: 194
+  message: "Variable '{}' might not have been initialized"
+
+- name: MEMBER_OF_OBJECT_LIT
+  id: 151
+  message: "Class composite must be constructed separately before referring their members."
+
+- name: MEMBER_TYPE_MISMATCH_ACROSS_UNION
+  id: 244
+  message: "Member type must be the same for all union objects."
+
+- name: MERGED_DECLS
+  id: 370
+  message: "Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in
+    the codebase!"
+
+- name: METHOD_ACCESSOR_COLLISION
+  id: 218
+  message: "Method cannot use the same name as {} accessor property"
+
+- name: METHOD_ASSIGNMENT
+  id: 394
+  message: "Class methods cannot be overwritten."
+
+- name: METHOD_WRONG_CTX
+  id: 213
+  message: "Method used in wrong context"
+
+- name: MISSING_EXTENSION_ACCESSOR
+  id: 246
+  message: "Can't find the extension accessor."
+
+- name: MISSING_INDEX_ACCESSOR_WITH_SIG
+  id: 251
+  message: "Cannot find index access method with the required signature."
+
+- name: MISSING_INIT_FOR_PARAM
+  id: 253
+  message: "Expected initializer for parameter {}."
 
 - name: MISSING_ITERATOR_METHOD
   id: 258
@@ -1028,17 +944,184 @@ semantic:
   id: 259
   message: "Cannot find iterator method with the required signature."
 
-- name: ITERATOR_MISSING_NEXT
-  id: 260
-  message: "Iterator object doesn't have proper next method."
+- name: MISSING_OVERRIDE_OF_ABSTRACT_METH
+  id: 190
+  message: "{} is not abstract and does not override abstract method {}{} in {}"
+  code_fix_ids: [FixClassNotImplementingInheritedMembers]
 
-- name: ITERATOR_DOESNT_RETURN_ITERABLE
-  id: 261
-  message: "Iterator method must return an object which implements Iterator<T>"
+- name: MISSING_RETURN_STMT
+  id: 103
+  message: "Function with a non void return type must return a value."
 
-- name: SWITCH_CASE_TYPE_INCOMPARABLE
-  id: 262
-  message: "Switch case type '{}' is not comparable to discriminant type '{}'"
+- name: MISSING_RETURN_TYPE
+  id: 18
+  message: "Native and Declare methods should have explicit return type."
+
+- name: MISSING_RETURN_TYPE_2
+  id: 95
+  message: "'{}' doesn't have return type."
+
+- name: MIXED_VOID_NONVOID
+  id: 92
+  message: "All return statements in the function should be empty or have a value."
+
+- name: MODULE_INDEX_MISSING
+  id: 359
+  message: "Cannot find index.[ets|ts] or package module in folder: {}"
+
+- name: MULTIPLE_DEFAULT_EXPORTS
+  id: 374
+  message: "Only one default export is allowed in a module"
+
+- name: MULTIPLE_SPREADS
+  id: 123
+  message: "Spread argument for the rest parameter can be only one."
+
+- name: MUST_BE_CLASS_INTERFACE_TYPE
+  id: 124644
+  message: "T in {}<T> must be a class or an interface type."
+
+- name: NAMESPACE_AS_TYPE
+  id: 158
+  message: "Namespace '{}' cannot be used as a type."
+
+- name: NAMESPACE_CALL
+  id: 295
+  message: "Namespace style identifier {} is not callable."
+
+- name: NATIVE_WITHOUT_RETURN
+  id: 15
+  message: "'Native' method should have explicit return type"
+
+- name: NATIVE_WITH_BODY
+  id: 84
+  message: "Native constructor declaration cannot have a body."
+
+- name: NEGATIVE_INDEX
+  id: 247
+  message: "Index value cannot be less than zero."
+
+- name: NONEXISTENT_TYPE
+  id: 70
+  message: "'{}' type does not exist."
+
+- name: NONLITERAL_INSTANTIATION
+  id: 53
+  message: "Required type can be instantiated only with object literal"
+
+- name: NONRETURNING_PATHS
+  id: 104
+  message: "Not all code paths return a value."
+
+- name: NON_GENERIC_ALIAS_WITH_PARAMS
+  id: 156
+  message: "Type alias declaration is not generic, but type parameters were provided"
+
+- name: NON_SUPERTYPE_OF_UNDEFINED_AS_ARRAY_ELEMENT_TYPE
+  id: 51
+  message: "Cannot use array creation expression with non-constructable element type which is non-assignable from undefined."
+
+- name: NON_VOID_RETURN_IN_CONSTRUCTOR
+  id: 33
+  message: "Return statement with expression isn't allowed in constructor."
+
+- name: NOT_ALLOWED_THIS_IN_ARRAY_TYPE
+  id: 283
+  message: "A 'this' cannot be used as type of array."
+
+- name: NOT_ALLOWED_THIS_IN_TUPLE_TYPE
+  id: 282
+  message: "A 'this' cannot be used as a part of tuple type."
+
+- name: NOT_ALLOWED_THIS_IN_UNION_TYPE
+  id: 281
+  message: "A 'this' cannot be used as a part of union type."
+
+- name: NOT_AN_ANNOTATION
+  id: 67
+  message: "'{}' is not an annotation."
+
+- name: NOT_CONSTANT
+  id: 163
+  message: "Constant expression required"
+
+- name: NOT_EXPORTED
+  id: 206
+  message: "'{}' is not exported in '{}'"
+
+- name: NOT_GENERIC
+  id: 169
+  message: "Type '{}' is not generic."
+
+- name: NOT_IMPLEMENTED
+  id: 368
+  message: "not implemented"
+
+- name: NOT_INTERFACE
+  id: 179
+  message: "Interface expected here."
+
+- name: NO_CALL_SIGNATURE
+  id: 2
+  message: Type '{}' has no call signatures.
+  code_fix_ids: [FixAddMissingNewOperator]
+
+- name: NO_INDEX_ACCESS_METHOD
+  id: 250
+  message: "Object type doesn't have proper index access method."
+
+- name: NO_MATCHING_SIG
+  id: 127
+  message: "No matching {} signature for {}"
+
+- name: NO_MATCHING_SIG_2
+  id: 128
+  message: "No matching {} signature"
+
+- name: NO_PARAMLESS_CTOR
+  id: 291
+  message: "Type {} has no parameterless constructor. Initialization with literals is not supported if the type has no parameterless
+    constructor. Declare the parameterless constructor explicitly or remove parametered constructors!"
+
+- name: NO_STATIC_INVOKE
+  id: 172
+  message: "No static {} method and static {} method in {}. {}() is not allowed."
+
+- name: NO_SUCH_CTOR_SIG
+  id: 204
+  message: "No matching call signature for constructor"
+
+- name: NO_SUCH_PARAMLESS_CTOR
+  id: 125
+  message: "No matching parameterless constructor"
+
+- name: NO_SUCH_PARAMLESS_CTOR_2
+  id: 270
+  message: "No Matching Parameterless Constructor, parameter count {}"
+
+- name: NO_SUCH_SIG_WITH_TRAILING_LAMBDA
+  id: 140
+  message: "No matching call signature with trailing lambda"
+
+- name: NULLISH_CAST_TO_NONNULLISH
+  id: 304
+  message: "Cannot cast 'null' or 'undefined' to non-nullish type."
+
+- name: OBJECT_LITERAL_METHOD_KEY
+  id: 74
+  message: "Method '{}' cannot be used as a key of object literal."
+
+- name: OBJECT_LITERAL_NOT_KV
+  id: 64
+  message: "The object literal properties must be key-value pairs"
+
+- name: OBJ_LIT_NOT_COVERING_UNION
+  id: 265
+  message: "All variants of literals listed in the union type must be listed in the object literal"
+
+- name: OBJ_LIT_PROPERTY_REDECLARATION
+  id: 100
+  message: "An object literal cannot have multiple properties with the same name."
 
 - name: OBJ_LIT_PROP_NAME_COLLISION
   id: 263
@@ -1048,461 +1131,49 @@ semantic:
   id: 264
   message: "Object literal may only specify known properties"
 
-- name: OBJ_LIT_NOT_COVERING_UNION
-  id: 265
-  message: "All variants of literals listed in the union type must be listed in the object literal"
+- name: OPERAND_NOT_NUMERIC
+  id: 66
+  message: "Bad operand type, the type of the operand must be numeric type."
 
-- name: PRECOND_FAILED
-  id: 266
-  message: "Precondition check failed for {}"
+- name: OP_NONNUMERIC
+  id: 107
+  message: "Bad operand type, the types of the operands must be numeric type."
 
-- name: POSTCOND_FAILED
-  id: 267
-  message: "Postcondition check failed for {}"
+- name: OVERLOADED_FUNCTION_REFERENCE
+  id: 229
+  message: "Overloaded function identifier '{}' can not be used as value"
 
-- name: INVISIBLE_INDEX_ACCESSOR
-  id: 268
-  message: "Index access method is not visible here."
-
-- name: EXTENSION_GETTER_INVALID_CTX
-  id: 269
-  message: "Extension getter in wrong usage"
-
-- name: NO_SUCH_PARAMLESS_CTOR_2
-  id: 270
-  message: "No Matching Parameterless Constructor, parameter count {}"
-
-- name: INVISIBLE_ITERATOR
-  id: 272
-  message: "Iterator method is not visible here."
-
-- name: RTYPE_PARAM_COUNT_MISMATCH
-  id: 273
-  message: "Expected {} type arguments, got {} ."
-
-- name: EXPECTED_TYPE_ARGUMENTS
-  id: 274
-  message: "Expected at least {} type arguments, but got {}."
-
-- name: INTERFACE_INSTANTIATION
-  id: 275
-  message: "{} is an interface therefore cannot be instantiated."
-
-- name: KEYOF_REFERENCE_TYPE
-  id: 276
-  message: "The `keyof` keyword can only be used for class or interface type."
-
-- name: FIXED_ARRAY_PARAM_ERROR
-  id: 277
-  message: "FixedArray<T> must have only one type parameter."
-
-- name: LOCAL_CLASS_NATIVE_METHOD
-  id: 278
-  message: "Local class '{}' shouldn't have native methods/constructors"
-
-- name: TUPLEN_NOT_IMPLEMENTED
-  id: 279
-  message: "Tuple types with arity >16 are not yet implemented"
-
-- name: PROPERTY_MAYBE_MISSING_INIT
-  id: 280
-  message: "Property '{}' might not have been initialized."
-
-- name: NOT_ALLOWED_THIS_IN_UNION_TYPE
-  id: 281
-  message: "A 'this' cannot be used as a part of union type."
-
-- name: NOT_ALLOWED_THIS_IN_TUPLE_TYPE
-  id: 282
-  message: "A 'this' cannot be used as a part of tuple type."
-
-- name: NOT_ALLOWED_THIS_IN_ARRAY_TYPE
-  id: 283
-  message: "A 'this' cannot be used as type of array."
-
-- name: TYPE_FROM_UNION_TYPE_UNSUPPORTED
-  id: 284
-  message: "Acquiring types for union types is not supported."
-
-- name: TYPE_FROM_UNRESOLVABLE_TYPE
-  id: 285
-  message: "Unable to resolve type."
-
-- name: TYPE_FROM_TUPLE_TYPE_UNSUPPORTED
-  id: 286
-  message: "Acquiring types for tuple types is not supported."
-
-- name: TYPE_FROM_STRING_LITERAL_TYPE_UNSUPPORTED
-  id: 287
-  message: "Acquiring types for string literal types is not supported."
-
-- name: STATIC_REF_TO_NONSTATIC
-  id: 288
-  message: "Cannot make a static reference to the non-static type {}"
-
-- name: EXPR_NOT_CALLABLE
-  id: 289
-  message: "This expression is not callable."
-
-- name: CALLEE_NONCONSTRUCTIBLE
-  id: 290
-  message: "Type '{}' is not constructible."
-
-- name: NO_PARAMLESS_CTOR
-  id: 291
-  message: "Type {} has no parameterless constructor. Initialization with literals is not supported if the type has no parameterless constructor. Declare the parameterless constructor explicitly or remove parametered constructors!"
-
-- name: EXPR_NONCONSTRUCTIBLE
-  id: 292
-  message: "This expression is not constructible."
-
-- name: PROP_INVISIBLE
-  id: 293
-  message: "Property {} is not visible here."
-
-- name: CLASS_OR_IFACE_AS_OBJ
-  id: 294
-  message: "Class or interface '{}' cannot be used as object"
-
-- name: NAMESPACE_CALL
-  id: 295
-  message: "Namespace style identifier {} is not callable."
-
-- name: INSTANCEOF_NONOBJECT
-  id: 296
-  message: "Using the 'instance of' operator with non-object type '{}'"
-
-- name: FIELD_REASSIGNMENT
-  id: 297
-  message: "Cannot reassign {} {}"
-
-- name: FIELD_ASSIGN_TYPE_MISMATCH
-  id: 298
-  message: "Cannot assign to a {} variable {}"
-
-- name: INVALID_TYPE_REF
-  id: 299
-  message: "Invalid type reference."
-
-- name: UNION_NONCONSTRUCTIBLE
-  id: 300
-  message: "The union type is not constructible."
-
-- name: UNRESOLVABLE_ARRAY
-  id: 301
-  message: "Can't resolve array type"
-
-- name: IMPORT_ARG_NOT_STRING
-  id: 302
-  message: "'import' expressions require string as argument."
-
-- name: AWAITED_NOT_PROMISE
-  id: 303
-  message: "'await' expressions require Promise object as argument."
-
-- name: NULLISH_CAST_TO_NONNULLISH
-  id: 304
-  message: "Cannot cast 'null' or 'undefined' to non-nullish type."
-
-- name: CAST_TO_NEVER
-  id: 305
-  message: "Cast to 'never' is prohibited"
-
-- name: PRIVATE_METHOD_AS_VALUE
-  id: 306
-  message: "Private method is used as value"
+- name: OVERLOADED_MAIN
+  id: 373
+  message: "Main overload is not enabled"
 
 - name: OVERLOADED_METHOD_AS_VALUE
   id: 307
   message: "Overloaded method is used as value"
 
-- name: CIRCULAR_DEPENDENCY
-  id: 308
-  message: "Circular dependency detected for identifier: {}"
-
-- name: RECURSIVE_CTOR
-  id: 309
-  message: "Recursive constructor invocation"
-
-- name: CYCLIC_INHERITANCE
-  id: 310
-  message: "Cyclic inheritance involving {}."
-
-- name: CYCLIC_ALIAS
-  id: 311
-  message: "Circular type alias reference"
-
-- name: RECURSIVE_EXTENSION
-  id: 312
-  message: "Type {} recursively references itself as a base type."
-
-- name: CYCLIC_ALIAS_2
-  id: 313
-  message: "Type alias {} circularly refences itself"
-
-- name: CYCLIC_VAR_REF
-  id: 314
-  message: "'{}' is referenced directly or indirectly in its own initializer ot type annotation."
-
-- name: IFACE_MULTIPLE_EXTENSION
-  id: 315
-  message: "Interface '{}' cannot simultaneously extend types '{}' and '{}'."
-
-- name: DIFFERENT_SUBSEQ_DECL
-  id: 316
-  message: "Subsequent variable declaration must have the same type. Variable '{}' must be of type '{}', but here has type '{}'."
-
-- name: DIFFERENT_SUBSEQ_PROP_DECL
-  id: 317
-  message: "Subsequent variable declaration must have the same type. Variable '{}' must be of type '{}', but here has type '{}'."
-
-- name: INVALID_ASSIGNMNENT
-  id: 318
-  message: "Type '{}' cannot be assigned to type '{}'"
-
-- name: PROP_INCOMPAT
-  id: 319
-  message: "Type '{}' is not compatible with type '{}' at property '{}'"
-
-- name: IFACE_INVALID_EXTENDS
-  id: 320
-  message: "Interface '{}' incorrectly extends interface '{}'"
-
-- name: INVALID_ASSIGNMNENT_2
-  id: 321
-  message: "Type '{}' is not assignable to type '{}'."
-
-- name: DISJOINT_CONVERSION
-  id: 322
-  message: "Conversion of type '{}' to type '{}' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first."
-
-- name: REST_PARAM_INCOMPAT_AT
-  id: 323
-  message: "Type '{}' is not compatible with rest parameter type '{}' at index {}"
-
-- name: PROP_ASSIGN_TO_NUMERIC_INDEX
-  id: 324
-  message: "Property '{}' of type '{}' is not assignable to numeric index type '{}'."
-
-- name: TUPLE_CONVERSION_FAILURE
-  id: 325
-  message: "Tuple type couldn't be converted "
-
-- name: INVALID_CAST
-  id: 326
-  message: "Cannot cast type '{}' to '{}'"
-
-- name: PROP_ASSIGN_TO_STRING_INDEX
-  id: 327
-  message: "Property '{}' of type '{}' is not assignable to string index type '{}'."
-
-- name: UNIMPLEMENTED_REST_TUPLE
-  id: 328
-  message: "Tuple types for rest arguments are not yet implemented"
-
-- name: REF_INVALID
-  id: 329
-  message: "Invalid reference '{}'."
-
-- name: ID_WRONG_CTX
-  id: 330
-  message: "Identifier '{}' is used in wrong context."
-
-- name: VARIANT_PARAM_INVARIAN_USE
-  id: 331
-  message: "Type Parameter '{}' is declared as{} but occurs in 'invariant' position."
-
-- name: VARIANCE_TPARAM_IN_OUT
-  id: 332
-  message: "Type Parameter '{}' is declared as 'in' but occurs in 'out' position."
-
-- name: VARIANCE_TPARAM_OUT_IN
-  id: 333
-  message: "Type Parameter '{}' is declared as 'out' but occurs in 'in' position."
-
-- name: SWITCH_ENUM_NOT_UNQUALIFIED_ENUM_CONST
-  id: 334
-  message: "Enum switch case must be unqualified name of an enum constant"
-
-- name: STATIC_UNION
-  id: 335
-  message: "Static union member expression cannot be interpreted."
-
-- name: CAST_FAIL_UNREACHABLE
-  id: 336
-  message: "this cast should never fail"
-
-- name: INTERFACE_PROPERTY_REQUIRES_SETTER
-  id: 337
-  message: "Cannot implement interface {}: property '{}' must have a setter, but the implementation is readonly"
-
-- name: READONLY_PROPERTY_REASSIGN
-  id: 338
-  message: "The 'Readonly' property cannot be reassigned."
-
-- name: ILLEGAL_NON_NULLISH_TYPE
-  id: 339
-  message: "Only type parameters can be used as a nonnullish type"
-
-- name: ERROR_ARKTS_NO_LITERAL_INITIALIZATION_WITHOUT_PARAMETERLESS_CONSTRUCTOR
-  id: 340
-  message: "Initialization with literals is not supported if the type has no parameterless constructor. Declare the parameterless constructor explicitly or remove parametered constructors!"
-
-- name: ERROR_ARKTS_NO_DECLARATION_MERGING
-  id: 341
-  message: "Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase!"
-
-- name: ERROR_ARKTS_NO_ENUM_MIXED_TYPES
-  id: 342
-  message: "Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type."
-
-- name: ERROR_ARKTS_NO_PROPERTIES_BY_INDEX
-  id: 343
-  message: "Indexed signatures are not allowed. Use arrays instead!"
-
-- name: USE_BEFORE_INIT
-  id: 344
-  message: "{} '{}' is used before being assigned."
-
-- name: TYPE_NOT_FOUND
-  id: 345
-  message: "Cannot find type '{}'."
-
-- name: INTERFACE_REDECLARED
-  id: 346
-  message: "Interface redeclaration is not allowed"
-
-- name: OVERLOADED_MAIN
-  id: 347
-  message: "Main overload is not enabled"
-
-- name: MULTIPLE_DEFAULT_EXPORTS
-  id: 348
-  message: "Only one default export is allowed in a module"
-
-- name: REDEFINITION
-  id: 349
-  message: "{} '{}' is already defined."
-
-- name: REDEFINITION_DIFF_TYPE
-  id: 350
-  message: "{} '{}' is already defined with different type."
-
-- name: VARIABLE_REDECLARED
-  id: 351
-  message: "Variable '{}' has already been declared."
-
-- name: DEFAULT_DYNAMIC_IMPORT
-  id: 352
-  message: "Default import is currently not implemented in dynamic import"
-
-- name: DEFAULT_EXPORT_DIRECT_IMPORTED
-  id: 353
-  message: "Use the default import syntax to import a default exported element"
-
-- name: IMPORTING_NONEXPORTED_TYPE
-  id: 354
-  message: "Cannot import '{}', imported type imports only exported types."
-
-- name: IMPORTED_NOT_EXPORTED
-  id: 355
-  message: "Imported element not exported '{}'"
-
-- name: IMPORT_NOT_FOUND
-  id: 356
-  message: "Cannot find imported element '{}'"
-
-- name: IMPORT_RENAMES_ANNOTATION
-  id: 357
-  message: "Can not rename annotation '{}' in export or import statements."
-
-- name: DEFAULT_IMPORT_NOT_FOUND
-  id: 358
-  message: "Cannot find default imported element in the target"
-
-- name: MODULE_INDEX_MISSING
-  id: 359
-  message: "Cannot find index.[ets|ts] or package module in folder: {}"
-
-- name: IMPORT_NOT_FOUND_2
-  id: 360
-  message: "Cannot find import: {}"
-
-- name: EXPORT_INCORRECT
-  id: 361
-  message: "Incorrect export '{}'"
-
-- name: AMBIGUOUS_EXPORT
-  id: 362
-  message: "Ambiguous export '{}'"
-
-- name: CONST_WITHOUT_INIT
-  id: 363
-  message: "Missing initializer in const declaration"
-
-- name: UNEXPECTED_STRUCT
-  id: 364
-  message: "Structs are only used to define UI components, it should be translated at 'plugin after parser' phase."
-
-- name: TEMPORAL_DEADZONE
-  id: 365
-  message: "Variable '{}' is accessed before it's initialization."
-
-- name: INVALID_CAPTURE
-  id: 366
-  message: "Cannot capture variable '{}'."
-
-- name: INVALID_EXPORT
-  id: 367
-  message: "Invalid exported binding"
-
-- name: NOT_IMPLEMENTED
-  id: 368
-  message: "not implemented"
-
-- name: ID_REDECLARED
-  id: 369
-  message: "Identifier '{}' has already been declared."
-
-- name: MERGED_DECLS
-  id: 370
-  message: "Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase!"
-
-- name: LATE_INITIALIZATION_FIELD_HAS_INVALID_TYPE
-  id: 371
-  message: "Late-initialized field cannot be nullish types or possibly nullish types."
-
-- name: SUPER_NOT_ACCESSIBLE
-  id: 372
-  message: "Class field '{}' defined by the parent class is not accessible in the child class via super."
-
-- name: CYCLIC_TYPE_OF
-  id: 379
-  message: "Circular type of reference"
-
-- name: CYCLIC_CLASS_SUPER_TYPE
-  id: 380
-  message: "Class's super type is itself"
-
-- name: CYCLIC_CALLEE
-  id: 381
-  message: "Circular call function"
-
-- name: DYMANIC_INIT_WITH_OBJEXPR
-  id: 382
-  message: "Dymanic Type {} cannot be initialize with an object expression"
-
-- name: OVERLOAD_NAME_MUST_BE_IDENTIFIER
-  id: 383
-  message: "The name of overload declaration should be an identifier."
+- name: OVERLOADED_NAME_MUST_ALSO_EXPORTED
+  id: 390
+  message: "Overload alias is exported, then overload functions must also be exported."
 
 - name: OVERLOADED_NAME_MUST_FUNCTION
   id: 384
   message: "overloaded name must refer to an accessible method."
 
-- name: DUPLICATE_OVERLOADED_NAME
-  id: 385
-  message: "Duplicate overloaded method."
+- name: OVERLOADED_NAME_REFER_TO_OVERLOAD_FUNCTION
+  id: 389
+  message: "The overloaded name '{}' can't refer to a function with overload signatures."
+
+- name: OVERLOADED_UNION_CALL
+  id: 391
+  message: "Overload declaration cannot be called by union."
+
+- name: OVERLOAD_MUST_BOTH_CONSTRUCT
+  id: 388
+  message: "The overload alias and the overloaded method must either both be constructors or both be non-constructors."
+
+- name: OVERLOAD_NAME_MUST_BE_IDENTIFIER
+  id: 383
+  message: "The name of overload declaration should be an identifier."
 
 - name: OVERLOAD_SAME_ACCESS_MODIFIERS
   id: 386
@@ -1512,34 +1183,446 @@ semantic:
   id: 387
   message: "Overload alias and overloaded method name must have exactly the same modifiers (static, async)."
 
-- name: OVERLOAD_MUST_BOTH_CONSTRUCT
-  id: 388
-  message: "The overload alias and the overloaded method must either both be constructors or both be non-constructors."
+- name: OVERLOAD_SAME_NAME_METHOD
+  id: 397
+  message: "Method with the same name as overload declaration '{}', overloadlist must list this medhod."
 
-- name: OVERLOADED_NAME_REFER_TO_OVERLOAD_FUNCTION
-  id: 389
-  message: "The overloaded name '{}' can't refer to a function with overload signatures."
+- name: OVERRIDE_DOESNT_OVERRIDE
+  id: 136
+  message: "Method {}{} in {} not overriding any method"
 
-- name: OVERLOADED_NAME_MUST_ALSO_EXPORTED
-  id: 390
-  message: "Overload alias is exported, then overload functions must also be exported."
+- name: PARAM_COUNT_MISMATCH
+  id: 124
+  message: "Expected {} arguments, got {}."
 
-- name: OVERLOADED_UNION_CALL
-  id: 391
-  message: "Overload declaration cannot be called by union."
+- name: POSSIBLY_NULLISH
+  id: 10
+  message: "Value is possibly nullish."
 
-- name: OVERLOAD_MODIFIERS_ABSTRACT
-  id: 392
-  message: "overload declaration cannot contain abstract methods."
- 
-- name: INVALID_RECORD_PROPERTY
-  id: 393
-  message: "Invalid record property"
+- name: POSTCOND_FAILED
+  id: 267
+  message: "Postcondition check failed for {}"
 
-- name: INVALID_LAMBDA_PARAMETER
-  id: 394
-  message: "Invalid lambda parameter. Expected: 'identifier(: type)?', 'identifier?(: type)?' or '...identifier(: type)?'."
+- name: PRECOND_FAILED
+  id: 266
+  message: "Precondition check failed for {}"
 
-- name: TYPEOF_IN_ANNOTATION
-  id: 395
-  message: "'typeof' is not allowed in type annotations."
+- name: PRIVATE_OR_PROTECTED_METHOD_AS_VALUE
+  id: 306
+  message: "{} method is used as value"
+
+- name: PROPERTY_CAPTURE
+  id: 146
+  message: "Property '{}' of enclosing class '{}' is not allowed to be captured from the local class '{}'"
+
+- name: PROPERTY_CAPTURE_IN_STATIC
+  id: 147
+  message: "Not allowed to capture variable '{}' in static method"
+
+- name: PROPERTY_MAYBE_MISSING_INIT
+  id: 280
+  message: "Property '{}' might not have been initialized."
+
+- name: PROPERTY_NONEXISTENT
+  id: 87
+  message: "Property '{}' does not exist on type '{}'"
+
+- name: PROP_ACCESS_WITHOUT_THIS
+  id: 145
+  message: "Property '{}' must be accessed through 'this'"
+  code_fix_ids: [ForgottenThisPropertyAccess]
+
+
+- name: PROP_ASSIGN_TO_NUMERIC_INDEX
+  id: 324
+  message: "Property '{}' of type '{}' is not assignable to numeric index type '{}'."
+
+- name: PROP_ASSIGN_TO_STRING_INDEX
+  id: 327
+  message: "Property '{}' of type '{}' is not assignable to string index type '{}'."
+
+- name: PROP_INCOMPAT
+  id: 319
+  message: "Type '{}' is not compatible with type '{}' at property '{}'"
+
+- name: PROP_INVISIBLE
+  id: 293
+  message: "Property {} is not visible here."
+
+- name: PROP_IS_STATIC
+  id: 207
+  message: "'{}' is a static property of '{}'"
+
+- name: PROP_NOT_STATIC
+  id: 208
+  message: "'{}' is an instance property of '{}'"
+
+- name: READONLY_ARRAYLIKE_MODIFICATION
+  id: 58
+  message: "Cannot modify an array or tuple content that has the readonly parameter"
+
+- name: READONLY_CALL
+  id: 27
+  message: "Cannot call readonly type methods."
+
+- name: READONLY_FIELD_MULTIPLE_INIT
+  id: 210
+  message: "Readonly field already initialized at declaration."
+
+- name: READONLY_PROPERTY_REASSIGN
+  id: 338
+  message: "The 'Readonly' property cannot be reassigned."
+
+- name: READ_FROM_WRITEONLY_PROP
+  id: 211
+  message: "Cannot read from this property because it is writeonly."
+
+- name: RECURSIVE_CTOR
+  id: 309
+  message: "Recursive constructor invocation"
+
+- name: RECURSIVE_EXTENSION
+  id: 312
+  message: "Type {} recursively references itself as a base type."
+
+- name: REDEFINITION
+  id: 349
+  message: "{} '{}' is already defined."
+
+- name: REDEFINITION_DIFF_TYPE
+  id: 350
+  message: "{} '{}' is already defined with different type."
+
+- name: REF_INVALID
+  id: 329
+  message: "Invalid reference '{}'."
+
+- name: REPEATED_INTERFACE
+  id: 180
+  message: "Repeated interface."
+
+- name: REQUIRED_PROP_MISSING_INIT
+  id: 226
+  message: "Class property '{}' needs to be initialized for Required<{}>."
+
+- name: REST_PARAM_INCOMPAT_AT
+  id: 323
+  message: "Type '{}' is not compatible with rest parameter type '{}' at index {}"
+
+- name: RETURN_DIFFERENT_PRIM
+  id: 150
+  message: "Function cannot have different primitive return types, require '{}', found '{}'"
+
+- name: RETURN_ISNT_ITERATOR
+  id: 96
+  message: "The return type of '{}' must be a type that implements Iterator interface."
+
+- name: RETURN_THIS_OUTSIDE_METHOD
+  id: 31
+  message: "Only extension function or a class method can return 'this'"
+
+- name: RETURN_TYPE_MISMATCH
+  id: 90
+  message: "Return statement type is not compatible with the enclosing method's return type."
+
+- name: RETURN_WITHOUT_VALUE
+  id: 32
+  message: "Missing return value."
+
+- name: RTYPE_PARAM_COUNT_MISMATCH
+  id: 273
+  message: "Expected {} type arguments, got {} ."
+
+- name: SETTER_MISSING_IMPL
+  id: 189
+  message: "{} is not abstract and does not implement setter for {} property in {}"
+
+- name: SETTER_NONVOID
+  id: 85
+  message: "Setter must have void return type"
+
+- name: SIG_INVISIBLE
+  id: 139
+  message: "Signature {}{} is not visible here."
+
+- name: SIG_UNAVAILABLE
+  id: 137
+  message: "Signature is not available here."
+
+- name: SPREAD_OF_INVALID_TYPE
+  id: 49
+  message: "Spread expression can be applied only to array or tuple type, but '{}' is provided"
+
+- name: SPREAD_ONTO_SINGLE_PARAM
+  id: 121
+  message: "Spread argument cannot be passed for ordinary parameter."
+
+- name: STANDARD_ANNOTATION_REQUIRED
+  id: 6
+  message: Only standard annotations are allowed to be applied on annotations.
+
+- name: STATIC_INIT_IN_NESTED_CLASS
+  id: 14
+  message: "Static initializer is not allowed in inner class."
+
+- name: STATIC_METHOD_INVALID_MODIFIER
+  id: 77
+  message: "Invalid method modifier(s): a static method can't have abstract, final or override modifier."
+
+- name: STATIC_METH_IN_CLASS_AND_INTERFACE
+  id: 221
+  message: "Static {} method and static {} method both exist in class/interface {} is not allowed."
+
+- name: STATIC_PROP_INVALID_CTX
+  id: 173
+  message: "Static property '{}' must be accessed through it's class '{}'"
+
+- name: STATIC_REF_TO_NONSTATIC
+  id: 288
+  message: "Cannot make a static reference to the non-static type {}"
+
+- name: STATIC_UNION
+  id: 335
+  message: "Static union member expression cannot be interpreted."
+
+- name: SUPER_NOT_ACCESSIBLE
+  id: 377
+  message: "Class field '{}' defined by the parent class is not accessible in the child class via super."
+
+- name: SWITCH_CASE_DUPLICATE
+  id: 165
+  message: "Case duplicate"
+
+- name: SWITCH_CASE_INVALID_TYPE
+  id: 164
+  message: "Unexpected type {}"
+
+- name: SWITCH_CASE_TYPE_INCOMPARABLE
+  id: 262
+  message: "Switch case type '{}' is not comparable to discriminant type '{}'"
+
+- name: SWITCH_CASE_VAR_DUPLICATE_VAL
+  id: 166
+  message: "Variable has same value with another switch case"
+
+- name: SWITCH_ENUM_NOT_UNQUALIFIED_ENUM_CONST
+  id: 334
+  message: "Enum switch case must be unqualified name of an enum constant"
+
+- name: TEMPLATE_COUNT_MISMATCH
+  id: 28
+  message: "Invalid string template expression"
+
+- name: TEMPORAL_DEADZONE
+  id: 365
+  message: "Variable '{}' is accessed before it's initialization."
+
+- name: THIS_OR_SUPER_IN_CTOR
+  id: 235
+  message: "Using {} is not allowed in constructor"
+
+- name: THIS_OUTSIDE_METHOD_CTX
+  id: 138
+  message: "Cannot reference 'this' in this context."
+
+- name: TUPLEN_NOT_IMPLEMENTED
+  id: 279
+  message: "Tuple types with arity >16 are not yet implemented"
+
+- name: TUPLE_CONVERSION_FAILURE
+  id: 325
+  message: "Tuple type couldn't be converted "
+
+- name: TUPLE_INDEX_NONCONST
+  id: 199
+  message: "Only constant expression allowed for element access on tuples."
+
+- name: TUPLE_INDEX_NOT_INT
+  id: 200
+  message: "Only integer type allowed for element access on tuples."
+
+- name: TUPLE_INDEX_OOB
+  id: 198
+  message: "Element accessor value is out of tuple size bounds."
+
+- name: TUPLE_SIZE_MISMATCH
+  id: 56
+  message: "Too many elements in array initializer for tuple with size of {}"
+
+- name: TUPLE_UNASSIGNABLE_ARRAY
+  id: 57
+  message: "Array initializer's type is not assignable to tuple type at index: {}"
+
+- name: TUPLE_WRONG_NUMBER_OF_ELEMS
+  id: 231
+  message: "Initializer has {} elements, but tuple requires {}"
+
+- name: TYPEARG_TYPEPARAM_SUBTYPING
+  id: 228
+  message: "Type argument '{}' should be a subtype of '{}'-constraint"
+
+- name: TYPE_FROM_STRING_LITERAL_TYPE_UNSUPPORTED
+  id: 287
+  message: "Acquiring types for string literal types is not supported."
+
+- name: TYPE_FROM_TUPLE_TYPE_UNSUPPORTED
+  id: 286
+  message: "Acquiring types for tuple types is not supported."
+
+- name: TYPE_FROM_UNION_TYPE_UNSUPPORTED
+  id: 284
+  message: "Acquiring types for union types is not supported."
+
+- name: TYPE_FROM_UNRESOLVABLE_TYPE
+  id: 285
+  message: "Unable to resolve type."
+
+- name: TYPE_MISMATCH_AT_IDX
+  id: 46
+  message: "Type '{}' is not compatible with type '{}' at index {}"
+
+- name: TYPE_MISMATCH_ENUM
+  id: 152
+  message: "Cannot assign type '{}' for variable {}."
+
+- name: TYPE_NOT_FOUND
+  id: 371
+  message: "Cannot find type '{}'."
+
+- name: TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE
+  id: 7
+  message: Cannot use array creation expression with type parameter.
+
+- name: TYPE_PARAM_CIRCULAR_CONSTRAINT
+  id: 184
+  message: "Type parameter '{}' has circular constraint dependency."
+
+- name: TYPE_PARAM_CIRCULAR_DEFAULT_TYPE
+  id: 398
+  message: "Default type of type parameter has circular dependency."
+
+- name: TYPE_PARAM_USE_BEFORE_DEFINE
+  id: 183
+  message: "Type Parameter {} should be defined before use."
+
+- name: UNCALLABLE_TYPE
+  id: 60
+  message: "Type '{}' has no call signatures."
+
+- name: UNDEFINED_METHOD
+  id: 212
+  message: "Method {} does not exist on this type."
+
+- name: UNDEFINED_PROPERTY
+  id: 65
+  message: "type {} has no property named {}"
+
+- name: UNEXPECTED_ARRAY
+  id: 72
+  message: "Expected type for array literal should be an array type, got {}"
+
+- name: UNEXPECTED_FUNC_BODY
+  id: 83
+  message: "Native, Abstract and Declare methods cannot have body."
+
+- name: UNEXPECTED_NONVOID
+  id: 94
+  message: "'{}' should have void return type."
+
+- name: UNEXPECTED_STRUCT
+  id: 364
+  message: "Structs are only used to define UI components, it should be translated at 'plugin after parser' phase."
+
+- name: UNEXPECTED_VALUE_RETURN
+  id: 89
+  message: "Unexpected return value, enclosing method return type is void."
+
+- name: UNEXPECTED_VOID
+  id: 93
+  message: "'{}' shouldn't have void return type."
+
+- name: UNIMPLEMENTED_REST_TUPLE
+  id: 328
+  message: "Tuple types for rest arguments are not yet implemented"
+
+- name: UNION_MEMBER_ILLEGAL_TYPE
+  id: 245
+  message: "Type {} is illegal in union member expression."
+
+- name: UNION_METHOD_SIGNATURE
+  id: 348
+  message: "Union constituent types should have only one common method signature."
+
+- name: UNION_NONCONSTRUCTIBLE
+  id: 300
+  message: "The union type is not constructible."
+
+- name: UNRESOLVABLE_ARRAY
+  id: 301
+  message: "Can't resolve array type"
+
+- name: UNRESOLVED_REF
+  id: 143
+  message: "Unresolved reference {}"
+
+- name: UNSUPPORTED_CLASS_LITERAL
+  id: 20
+  message: "Class literal is not yet supported."
+
+- name: USE_BEFORE_INIT
+  id: 375
+  message: "{} '{}' is used before being assigned."
+
+- name: UTILITY_TYPE_UNIMPLEMENTED
+  id: 225
+  message: "This utility type is not yet implemented."
+
+- name: UTIL_TYPE_INVALID_TYPE_PARAM_COUNT
+  id: 223
+  message: "Invalid number of type parameters for {} type, should be 1."
+
+- name: UTIL_TYPE_OF_NONREFERENCE
+  id: 224
+  message: "Only reference types can be converted to utility types."
+
+- name: VARIABLE_REDECLARED
+  id: 351
+  message: "Variable '{}' has already been declared."
+
+- name: VARIANCE_TPARAM_IN_OUT
+  id: 332
+  message: "Type Parameter '{}' is declared as 'in' but occurs in 'out' position."
+
+- name: VARIANCE_TPARAM_OUT_IN
+  id: 333
+  message: "Type Parameter '{}' is declared as 'out' but occurs in 'in' position."
+
+- name: VARIANT_PARAM_INVARIAN_USE
+  id: 331
+  message: "Type Parameter '{}' is declared as{} but occurs in 'invariant' position."
+
+- name: VOID_IN_LOGIC
+  id: 9
+  message: "An expression of type 'void' cannot be tested for truthiness"
+
+- name: VOID_VALUE
+  id: 78
+  message: "Cannot use type 'void' as value. "
+
+- name: WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION
+  id: 346
+  message: "Wrong type of operands for binary expression"
+
+- name: WRONG_OPERAND_TYPE_FOR_UNARY_EXPRESSION
+  id: 347
+  message: "Wrong operand type for unary expression"
+
+graveyard:
+- 8
+- 23
+- 29
+- 167
+- 233
+- 234
+- 271
+# See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

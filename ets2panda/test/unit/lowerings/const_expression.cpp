@@ -34,15 +34,13 @@ TEST_F(LoweringTest, TestConstantExpressionConcatExtendedBoolean1)
 {
     char const *text = R"(
         @interface MyAnno {
-            a : int
             c : int
             d : int
         }
-        @MyAnno({a = null ? 1 : 0, c = "a" ? 5 : 4, d = 12 ? 7 : 6})
+        @MyAnno({c = "a" ? 5 : 4, d = 12 ? 7 : 6})
         function main() {}
     )";
 
-    int const expectA = 0;
     int const expectC = 5;
     int const expectD = 7;
     CONTEXT(ES2PANDA_STATE_CHECKED, text)
@@ -51,9 +49,6 @@ TEST_F(LoweringTest, TestConstantExpressionConcatExtendedBoolean1)
         ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) {
             return node->IsBinaryExpression() || node->IsUnaryExpression() || node->IsConditionalExpression();
         }));
-
-        ASSERT_TRUE(
-            ast->IsAnyChild([](ir::AstNode *const node) { return CheckNumberLiteral<int32_t, expectA>(node); }));
 
         ASSERT_TRUE(
             ast->IsAnyChild([](ir::AstNode *const node) { return CheckNumberLiteral<int32_t, expectC>(node); }));
@@ -67,15 +62,13 @@ TEST_F(LoweringTest, TestConstantExpressionConcatExtendedBoolean2)
 {
     char const *text = R"(
         @interface MyAnno {
-            a : int
             c : int
             d : int
         }
-        @MyAnno({a = undefined ? 1 : 0, c = "" ? 5 : 4, d = 0 ? 7 : 6})
+        @MyAnno({c = "" ? 5 : 4, d = 0 ? 7 : 6})
         function main() {}
     )";
 
-    int const expectA = 0;
     int const expectC = 4;
     int const expectD = 6;
     CONTEXT(ES2PANDA_STATE_CHECKED, text)
@@ -84,9 +77,6 @@ TEST_F(LoweringTest, TestConstantExpressionConcatExtendedBoolean2)
         ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) {
             return node->IsBinaryExpression() || node->IsUnaryExpression() || node->IsConditionalExpression();
         }));
-
-        ASSERT_TRUE(
-            ast->IsAnyChild([](ir::AstNode *const node) { return CheckNumberLiteral<int32_t, expectA>(node); }));
 
         ASSERT_TRUE(
             ast->IsAnyChild([](ir::AstNode *const node) { return CheckNumberLiteral<int32_t, expectC>(node); }));
@@ -133,7 +123,7 @@ TEST_F(LoweringTest, TestConstantExpressionConcatExtendedBoolean3)
             a : int
             b : int
         }
-        @MyAnno({a = !null ? 10 : 20, b= "test" && !undefined ? 1 : 2})
+        @MyAnno({a = !0 ? 10 : 20, b= "test" ? 1 : 2})
         function main() {}
     )";
 

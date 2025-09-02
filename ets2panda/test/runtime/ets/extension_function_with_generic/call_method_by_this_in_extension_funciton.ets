@@ -33,8 +33,8 @@ function name<T>(this:Fruit<T>, p:T) : T{
 
 function main() {
     let f = new Fruit<Int>(1, 2);
-    assertEQ(f.name(1), 2)
-    assertEQ(new Fruit<Int>(2, 3).name(1), 3)
-    assertEQ(name(f, 1), 2)
-    assertEQ(name(new Fruit<Int>(2, 3), 1), 3)
+    arktest.assertEQ(f.name(1), 2)
+    arktest.assertEQ(new Fruit<Int>(2, 3).name(1), 3)
+    arktest.assertEQ(name(f, 1), 2)
+    arktest.assertEQ(name(new Fruit<Int>(2, 3), 1), 3)
 }

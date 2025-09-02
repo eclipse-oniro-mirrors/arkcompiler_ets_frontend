@@ -370,11 +370,45 @@
                     {
                       "type": "ReturnStatement",
                       "argument": {
-                        "type": "TSAsExpression",
-                        "expression": {
+                        "type": "CallExpression",
+                        "callee": {
                           "type": "MemberExpression",
                           "object": {
-                            "type": "ThisExpression",
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 30,
+                                  "column": 12,
+                                  "program": "cast_expressions5.ets"
+                                },
+                                "end": {
+                                  "line": 30,
+                                  "column": 16,
+                                  "program": "cast_expressions5.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "decorators": [],
+                              "loc": {
+                                "start": {
+                                  "line": 30,
+                                  "column": 17,
+                                  "program": "cast_expressions5.ets"
+                                },
+                                "end": {
+                                  "line": 30,
+                                  "column": 18,
+                                  "program": "cast_expressions5.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 30,
@@ -383,24 +417,24 @@
                               },
                               "end": {
                                 "line": 30,
-                                "column": 16,
+                                "column": 18,
                                 "program": "cast_expressions5.ets"
                               }
                             }
                           },
                           "property": {
                             "type": "Identifier",
-                            "name": "a",
+                            "name": "toLong",
                             "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 30,
-                                "column": 17,
+                                "column": 19,
                                 "program": "cast_expressions5.ets"
                               },
                               "end": {
                                 "line": 30,
-                                "column": 18,
+                                "column": 25,
                                 "program": "cast_expressions5.ets"
                               }
                             }
@@ -415,26 +449,13 @@
                             },
                             "end": {
                               "line": 30,
-                              "column": 18,
+                              "column": 25,
                               "program": "cast_expressions5.ets"
                             }
                           }
                         },
-                        "typeAnnotation": {
-                          "type": "ETSPrimitiveType",
-                          "loc": {
-                            "start": {
-                              "line": 30,
-                              "column": 22,
-                              "program": "cast_expressions5.ets"
-                            },
-                            "end": {
-                              "line": 30,
-                              "column": 26,
-                              "program": "cast_expressions5.ets"
-                            }
-                          }
-                        },
+                        "arguments": [],
+                        "optional": false,
                         "loc": {
                           "start": {
                             "line": 30,
@@ -443,7 +464,7 @@
                           },
                           "end": {
                             "line": 30,
-                            "column": 18,
+                            "column": 27,
                             "program": "cast_expressions5.ets"
                           }
                         }
@@ -456,7 +477,7 @@
                         },
                         "end": {
                           "line": 30,
-                          "column": 27,
+                          "column": 28,
                           "program": "cast_expressions5.ets"
                         }
                       }
@@ -727,12 +748,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "cast_expressions5.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "cast_expressions5.ets"
                     }
                   }
                 },
@@ -740,12 +761,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "cast_expressions5.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "cast_expressions5.ets"
                   }
                 }
               },
@@ -753,183 +774,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "cast_expressions5.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "cast_expressions5.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "cast_expressions5.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "globalLong",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 16,
-                              "column": 5,
-                              "program": "cast_expressions5.ets"
-                            },
-                            "end": {
-                              "line": 16,
-                              "column": 15,
-                              "program": "cast_expressions5.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 0,
-                          "loc": {
-                            "start": {
-                              "line": 16,
-                              "column": 24,
-                              "program": "cast_expressions5.ets"
-                            },
-                            "end": {
-                              "line": 16,
-                              "column": 25,
-                              "program": "cast_expressions5.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 16,
-                            "column": 5,
-                            "program": "cast_expressions5.ets"
-                          },
-                          "end": {
-                            "line": 16,
-                            "column": 25,
-                            "program": "cast_expressions5.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 16,
-                          "column": 5,
-                          "program": "cast_expressions5.ets"
-                        },
-                        "end": {
-                          "line": 16,
-                          "column": 25,
-                          "program": "cast_expressions5.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "cast_expressions5.ets"
                 }
               }
             },
@@ -998,7 +848,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 25,
+                "column": 24,
                 "program": "cast_expressions5.ets"
               }
             }

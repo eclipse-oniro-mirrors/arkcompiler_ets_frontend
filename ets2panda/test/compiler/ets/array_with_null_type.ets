@@ -16,5 +16,5 @@
 function main(): void { 
     let foo: null[] = [null, null]
     let goo = foo
-    assertEQ(goo[1], null);
+    arktest.assertEQ(goo[1], null);
 }

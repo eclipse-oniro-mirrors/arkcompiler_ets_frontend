@@ -28,9 +28,9 @@ class B{
 }
 
 
-/* @@@ label1 Error TypeError: Class name 'A' used in the wrong context */
+/* @@@ label1 Error SyntaxError: Class cannot be used as object. */
 /* @@@ label1 Error TypeError: Type 'A' cannot be assigned to type 'String'  */
 /* @@@ label1 Error TypeError: Invalid value for annotation field, expected a constant literal.  */
-/* @@@ label2 Error TypeError: Class name 'A' used in the wrong context */
+/* @@@ label2 Error SyntaxError: Class cannot be used as object. */
 /* @@@ label2 Error TypeError: Type 'A' cannot be assigned to type 'String'  */
 /* @@@ label2 Error TypeError: Invalid value for annotation field, expected a constant literal.  */

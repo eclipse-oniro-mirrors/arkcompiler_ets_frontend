@@ -65,6 +65,7 @@ checker::VerifiedType FunctionExpression::Check([[maybe_unused]] checker::ETSChe
 
 FunctionExpression *FunctionExpression::Clone(ArenaAllocator *const allocator, AstNode *const parent)
 {
+    ES2PANDA_ASSERT(func_->Clone(allocator, nullptr) != nullptr);
     auto *const func = func_->Clone(allocator, nullptr)->AsScriptFunction();
     auto *const clone = allocator->New<FunctionExpression>(func);
     ES2PANDA_ASSERT(clone != nullptr);

@@ -16,8 +16,8 @@
 let a1: Object|null|undefined = new Object
 
 function main() {
-    assertEQ([...a1, new Object].length, 2);
+    arktest.assertEQ([...a1, new Object].length, 2);
 }
 
 
-/* @@? 19:15 Error TypeError: Spread expression can be applied only to array or tuple type, but 'Object|null|undefined' is provided */
+/* @@? 19:23 Error TypeError: Spread expression can be applied only to array or tuple type, but 'Object|null|undefined' is provided */

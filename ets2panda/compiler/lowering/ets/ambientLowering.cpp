@@ -21,6 +21,8 @@
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
+constexpr size_t MAX_ALLOWED_INDEXERS = 1;
+
 std::string_view AmbientLowering::Name() const
 {
     static std::string const NAME = "AmbientLowering";
@@ -56,26 +58,28 @@ ir::MethodDefinition *CreateMethodFunctionDefinition(ir::DummyNode *node, public
                                                      ir::MethodDefinitionKind funcKind)
 {
     auto parser = ctx->parser->AsETSParser();
+    auto allocator = ctx->allocator;
 
     auto indexName = node->GetIndexName();
-    auto const returnType = node->GetReturnTypeLiteral()->AsETSTypeReferencePart()->GetIdent();
-    if (returnType->IsErrorPlaceHolder()) {
+    if (node->IsBrokenStatement()) {
         return nullptr;
     }
     if (indexName == ERROR_LITERAL) {
         indexName = "_";
     }
     std::string sourceCode;
+
     if (funcKind == ir::MethodDefinitionKind::GET) {
-        sourceCode = "$_get(" + std::string(indexName) + " : number) : " + std::string(returnType->Name());
+        sourceCode = "$_get (" + std::string(indexName) + " : @@T1) : @@T2 ";
     } else if (funcKind == ir::MethodDefinitionKind::SET) {
-        sourceCode = "$_set(" + std::string(indexName) + " : number, " + "value : " + std::string(returnType->Name()) +
-                     " ) : void";
+        sourceCode = "$_set (" + std::string(indexName) + " : @@T1, value : @@T2) : void";
     } else {
         ES2PANDA_UNREACHABLE();
     }
 
-    auto methodDefinition = parser->CreateFormattedClassMethodDefinition(sourceCode);
+    auto methodDefinition =
+        parser->CreateFormattedClassMethodDefinition(sourceCode, node->IndexTypeAnno()->Clone(allocator, nullptr),
+                                                     node->GetReturnTypeLiteral()->Clone(allocator, nullptr));
 
     // NOTE(kaskov): #23399 It is temporary solution, we set default SourcePosition in all nodes in generated code
     compiler::SetSourceRangesRecursively(methodDefinition, node->Range());
@@ -93,13 +97,28 @@ ir::AstNode *AmbientLowering::CreateIndexerMethodIfNeeded(ir::AstNode *ast, publ
         return ast;
     }
 
-    ArenaVector<ir::AstNode *> &classBody =
+    const ArenaVector<ir::AstNode *> &classBodyConst =
         ast->IsClassDefinition() ? ast->AsClassDefinition()->Body() : ast->AsTSInterfaceBody()->Body();
+    size_t dummyCount = std::count_if(classBodyConst.cbegin(), classBodyConst.cend(),
+                                      [](const ir::AstNode *node) { return node->IsDummyNode(); });
+    if (dummyCount > MAX_ALLOWED_INDEXERS) {
+        ctx->diagnosticEngine->LogSemanticError("Only one index signature is allowed in a class or interface.",
+                                                ast->Start());
+        RemoveRedundantIndexerDeclarations(ast);
+        return ast;
+    }
+    // Only one DummyNode is allowed in classBody for now
+    ES2PANDA_ASSERT(dummyCount <= MAX_ALLOWED_INDEXERS);
+    if (!std::any_of(classBodyConst.cbegin(), classBodyConst.cend(), [](const ir::AstNode *node) {
+            return node->IsDummyNode() && node->AsDummyNode()->IsDeclareIndexer();
+        })) {
+        return ast;
+    }
+
+    ArenaVector<ir::AstNode *> &classBody =
+        ast->IsClassDefinition() ? ast->AsClassDefinition()->BodyForUpdate() : ast->AsTSInterfaceBody()->Body();
 
     auto it = classBody.begin();
-    // Only one DummyNode is allowed in classBody for now
-    ES2PANDA_ASSERT(
-        std::count_if(classBody.begin(), classBody.end(), [](ir::AstNode *node) { return node->IsDummyNode(); }) <= 1);
     while (it != classBody.end()) {
         if ((*it)->IsDummyNode() && (*it)->AsDummyNode()->IsDeclareIndexer()) {
             auto setDefinition =
@@ -119,4 +138,15 @@ ir::AstNode *AmbientLowering::CreateIndexerMethodIfNeeded(ir::AstNode *ast, publ
 
     return ast;
 }
+
+void AmbientLowering::RemoveRedundantIndexerDeclarations(ir::AstNode *ast)
+{
+    ArenaVector<ir::AstNode *> &body =
+        ast->IsClassDefinition() ? ast->AsClassDefinition()->BodyForUpdate() : ast->AsTSInterfaceBody()->Body();
+    auto dummyStart = std::remove_if(body.begin(), body.end(), [](ir::AstNode *node) {
+        return node->IsDummyNode() && node->AsDummyNode()->IsDeclareIndexer();
+    });
+    body.erase(dummyStart, body.end());
+}
+
 }  // namespace ark::es2panda::compiler

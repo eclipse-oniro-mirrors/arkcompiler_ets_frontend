@@ -27,5 +27,5 @@ function demo(p1: A) {
 
 function main() {
     let a1 = new A()
-    assertEQ(demo(a1), 1)
+    arktest.assertEQ(demo(a1), 1)
 }

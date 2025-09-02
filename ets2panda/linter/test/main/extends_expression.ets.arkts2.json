@@ -15,16 +15,6 @@
     ],
     "result": [
         {
-            "line": 18,
-            "column": 15,
-            "endLine": 18,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 21,
             "column": 9,
             "endLine": 21,
@@ -42,26 +32,6 @@
             "problem": "ExtendsExpression",
             "suggest": "",
             "rule": "Extends or implements expression are not supported(arkts-no-extends-expression)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
-            "column": 15,
-            "endLine": 24,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 21,
-            "endLine": 28,
-            "endColumn": 22,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -113,6 +83,26 @@
             "suggest": "",
             "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
             "severity": "ERROR"
+        },
+        {
+          "line": 62,
+          "column": 3,
+          "endLine": 66,
+          "endColumn": 4,
+          "problem": "NoLocalClass",
+          "suggest": "",
+          "rule": "Creating local classes is not supported (arkts-no-local-class)",
+          "severity": "ERROR"
+        },
+        {
+          "line": 67,
+          "column": 3,
+          "endLine": 71,
+          "endColumn": 4,
+          "problem": "NoLocalClass",
+          "suggest": "",
+          "rule": "Creating local classes is not supported (arkts-no-local-class)",
+          "severity": "ERROR"
         },
         {
             "line": 73,

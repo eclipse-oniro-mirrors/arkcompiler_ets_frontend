@@ -24,8 +24,8 @@ get idx2(this: A): int { return this.idx_2 }
 function main(): void {
     let a = new A();
     let arr = ["getIdx1", "getIdx2"];
-    assertEQ(arr[a.idx1], "getIdx1")
-    assertEQ(arr[a.idx2], "getIdx2")
-    assertEQ(arr[new A().idx1], "getIdx1")
-    assertEQ(arr[new A().idx2], "getIdx2")
+    arktest.assertEQ(arr[a.idx1], "getIdx1")
+    arktest.assertEQ(arr[a.idx2], "getIdx2")
+    arktest.assertEQ(arr[new A().idx1], "getIdx1")
+    arktest.assertEQ(arr[new A().idx2], "getIdx2")
 }

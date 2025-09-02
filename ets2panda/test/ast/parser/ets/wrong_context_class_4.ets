@@ -26,5 +26,5 @@ function main()
     a[3]
 }
 
-/* @@? 26:5 Error TypeError: Indexed signatures are not allowed. Use arrays instead!  */
-/* @@? 26:5 Error TypeError: Class name 'a' used in the wrong context  */
+/* @@? 26:5 Error TypeError: Object type doesn't have proper index access method.  */
+/* @@? 26:5 Error SyntaxError: Class cannot be used as object.  */

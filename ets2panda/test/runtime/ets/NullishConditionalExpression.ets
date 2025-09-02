@@ -14,7 +14,7 @@
  */
 
 let a = !null ? "true" : "false"
-assertEQ(a, "true")
+arktest.assertEQ(a, "true")
 
 a = null ? "true" : "false"
-assertEQ(a, "false")
+arktest.assertEQ(a, "false")

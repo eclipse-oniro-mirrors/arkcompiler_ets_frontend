@@ -49,6 +49,6 @@ class A {
 /* @@? 26:31 Error TypeError: Property 'bar' does not exist on type 'A' */
 /* @@? 27:5 Error SyntaxError: Unexpected token ')'. */
 /* @@? 27:7 Error SyntaxError: Unexpected token '{'. */
-/* @@? 28:9 Error TypeError: Cannot reference 'this' in this context. */
-/* @@? 28:14 Error TypeError: Property 'x' does not exist on type 'Error' */
+/* @@? 28:9 Error TypeError: 'this' cannot be referenced from a static context */
+/* @@? 28:14 Error TypeError: Property 'x' does not exist on type 'ETSGLOBAL' */
 /* @@? 30:1 Error SyntaxError: Unexpected token '}'. */

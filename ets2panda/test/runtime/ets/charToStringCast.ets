@@ -15,5 +15,5 @@
 
 function main(): void {
     let s:string = new Char(c'X').toString();
-    assertEQ(s, "X")
+    arktest.assertEQ(s, "X")
 }

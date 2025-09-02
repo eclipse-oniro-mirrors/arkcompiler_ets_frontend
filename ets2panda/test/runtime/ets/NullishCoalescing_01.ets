@@ -15,18 +15,18 @@
 
 function main() {
   let x1 = (): int | undefined => { return 5; }();
-  let y1: int = x1 ?? 3.1;
-  assertEQ(y1, 5)
+  let y1: int = x1 ?? Double.toInt(3.1);
+  arktest.assertEQ(y1, 5)
 
   let x2 = (): int | undefined => { return undefined; }();
-  let y2: int = x2 ?? 3.1;
-  assertEQ(y2, 3)
+  let y2: int = x2 ?? Double.toInt(3.1);
+  arktest.assertEQ(y2, 3)
 
   let x3 = (): number | undefined => { return 5; }();
   let y3: number = x3 ?? 3;
-  assertEQ(y3, 5.0)
+  arktest.assertEQ(y3, 5.0)
 
   let x4 = (): number | undefined => { return undefined; }();
   let y4: number = x4 ?? 3;
-  assertEQ(y4, 3.0)
+  arktest.assertEQ(y4, 3.0)
 }

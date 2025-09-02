@@ -22,7 +22,6 @@ function /* @@ label1 */(): /* @@ label2 */{
 
 /* @@@ label Error SyntaxError: Unexpected token, expected an identifier. */
 /* @@@ label1 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@@ label1 Error TypeError: Only abstract or native methods can't have body. */
 /* @@@ label2 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@@ label3 Error SyntaxError: Unexpected token 'return'. */
 /* @@@ label4 Error SyntaxError: Unexpected token '77'. */

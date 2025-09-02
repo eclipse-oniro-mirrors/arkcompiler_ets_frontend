@@ -30,64 +30,64 @@ function main(): void {
 
     // left side
     objectos.field += 10;
-    assertEQ(objectos.field, 40)
+    arktest.assertEQ(objectos.field, 40)
 
     objectos.field -= 200;
-    assertEQ(objectos.field, -160)
+    arktest.assertEQ(objectos.field, -160)
 
     objectos.field += 260;
     objectos.field *= 10;
-    assertEQ(objectos.field, 1000)
+    arktest.assertEQ(objectos.field, 1000)
 
     objectos.field /= 100;
-    assertEQ(objectos.field, 10)
+    arktest.assertEQ(objectos.field, 10)
 
     objectos.field = 16;
     objectos.field >>= 2
-    assertEQ(objectos.field, 4)
+    arktest.assertEQ(objectos.field, 4)
 
     objectos.field = 16;
     objectos.field >>>= 1
-    assertEQ(objectos.field, 8)
+    arktest.assertEQ(objectos.field, 8)
 
     objectos.field = 8;
     objectos.field <<= 1
-    assertEQ(objectos.field, 16)
+    arktest.assertEQ(objectos.field, 16)
 
     objectos.field = 5;
     objectos.field %= 2
-    assertEQ(objectos.field, 1)
+    arktest.assertEQ(objectos.field, 1)
 
     objectos.field = 15;
     objectos.field &= 7
-    assertEQ(objectos.field, 7)
+    arktest.assertEQ(objectos.field, 7)
 
     objectos.field = 15;
     objectos.field |= 7
-    assertEQ(objectos.field, 15)
+    arktest.assertEQ(objectos.field, 15)
 
     objectos.field = 15;
     objectos.field ^= 7
-    assertEQ(objectos.field, 8)
+    arktest.assertEQ(objectos.field, 8)
 
     // left and right side
 
     objectos.field = 100;
     objectos.field += objectos.field;
-    assertEQ(objectos.field, 200)
+    arktest.assertEQ(objectos.field, 200)
 
     objectos.field -= objectos.field;
-    assertEQ(objectos.field, 0)
+    arktest.assertEQ(objectos.field, 0)
 
     objectos.field += 100;
     objectos.field *= objectos.field;
-    assertEQ(objectos.field, 10000)
+    arktest.assertEQ(objectos.field, 10000)
 
     objectos.field /= objectos.field;
-    assertEQ(objectos.field, 1)
+    arktest.assertEQ(objectos.field, 1)
 
     objectos.field |= objectos.field
-    assertEQ(objectos.field, 1)
+    arktest.assertEQ(objectos.field, 1)
 
     // right side
 
@@ -95,42 +95,42 @@ function main(): void {
     objectos.field = 2;
 
     value += objectos.field;
-    assertEQ(value, 102)
+    arktest.assertEQ(value, 102)
 
     value -= objectos.field;
-    assertEQ(value, 100)
+    arktest.assertEQ(value, 100)
 
     value *= objectos.field;
-    assertEQ(value, 200)
+    arktest.assertEQ(value, 200)
 
     value /= objectos.field;
-    assertEQ(value, 100)
+    arktest.assertEQ(value, 100)
 
     value = 16;
     value >>= objectos.field
-    assertEQ(value, 4)
+    arktest.assertEQ(value, 4)
 
     value = 16;
     value >>>= objectos.field
-    assertEQ(value, 4)
+    arktest.assertEQ(value, 4)
 
     value = 8;
     value <<= objectos.field
-    assertEQ(value, 32)
+    arktest.assertEQ(value, 32)
 
     value = 5;
     value %= objectos.field
-    assertEQ(value, 1)
+    arktest.assertEQ(value, 1)
 
     value = 15;
     value &= objectos.field
-    assertEQ(value, 2)
+    arktest.assertEQ(value, 2)
 
     value = 15;
     value |= objectos.field
-    assertEQ(value, 15)
+    arktest.assertEQ(value, 15)
 
     value = 15;
     value ^= objectos.field
-    assertEQ(value, 13)
+    arktest.assertEQ(value, 13)
 }

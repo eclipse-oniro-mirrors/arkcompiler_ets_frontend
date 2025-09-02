@@ -106,7 +106,7 @@ void SwitchCaseStatement::CheckAndTestCase(checker::ETSChecker *checker, checker
                                            checker::Type *unboxedDiscType, ir::Expression *node, bool &isDefaultCase)
 {
     if (test_ != nullptr) {
-        auto caseType = test_->Check(checker);
+        auto *caseType = checker->MaybeUnboxType(test_->Check(checker));
         bool validCaseType = true;
 
         if (caseType->HasTypeFlag(checker::TypeFlag::CHAR)) {
@@ -146,7 +146,10 @@ void SwitchCaseStatement::CheckAndTestCase(checker::ETSChecker *checker, checker
 
 SwitchCaseStatement *SwitchCaseStatement::Clone(ArenaAllocator *const allocator, AstNode *const parent)
 {
-    auto *const test = test_->Clone(allocator, nullptr)->AsExpression();
+    Expression *test = nullptr;
+    if (test_ != nullptr) {
+        test = test_ == nullptr ? nullptr : test_->Clone(allocator, nullptr)->AsExpression();
+    }
     ArenaVector<Statement *> consequent(allocator->Adapter());
 
     for (auto *statement : consequent_) {

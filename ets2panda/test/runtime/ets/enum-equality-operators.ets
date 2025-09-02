@@ -17,11 +17,11 @@ enum Color {Red = 0, Green = 1, Blue = 0}
 enum Commands { Open = "fopen", Close = "fclose", Open2 = "fopen" }
 
 if (Color.Red != Color.Blue)
-    assertTrue(false)
+    arktest.assertTrue(false)
 if (Color.Red == Color.Blue)
-    assertTrue(true)
+    arktest.assertTrue(true)
 
 if (Commands.Open != Commands.Open2)
-    assertTrue(false)
+    arktest.assertTrue(false)
 if (Commands.Open == Commands.Open2)
-    assertTrue(true)
+    arktest.assertTrue(true)

@@ -18,11 +18,11 @@ function main() : void{
     try {
         a = 1;
     } catch (e) {
-        assertTrue(false)
+        arktest.assertTrue(false)
     } finally {
-        assertEQ(a, 1)
+        arktest.assertEQ(a, 1)
         a = 2;
     } 
 
-    assertEQ(a, 2)
+    arktest.assertEQ(a, 2)
 }

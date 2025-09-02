@@ -22,7 +22,11 @@ import type { CommandLineOptions } from '../lib/CommandLineOptions';
 import { cookBookTag } from '../lib/CookBookMsg';
 import { Logger } from '../lib/Logger';
 import { ARKTS_IGNORE_DIRS_OH_MODULES } from '../lib/utils/consts/ArktsIgnorePaths';
-import { getConfiguredRuleTags, getRulesFromConfig } from '../lib/utils/functions/ConfiguredRulesProcess';
+import {
+  getConfiguredRuleTags,
+  getConfigureRulePath,
+  getRulesFromConfig
+} from '../lib/utils/functions/ConfiguredRulesProcess';
 import { extractRuleTags } from '../lib/utils/functions/CookBookUtils';
 import { logTscDiagnostic } from '../lib/utils/functions/LogTscDiagnostic';
 
@@ -134,9 +138,6 @@ function formIdeInteractive(cmdOptions: CommandLineOptions, commanderOpts: Optio
   if (commanderOpts.checkTsAndJs) {
     cmdOptions.linterOptions.checkTsAndJs = true;
   }
-  if (commanderOpts.onlyArkts2SyntaxRules) {
-    cmdOptions.linterOptions.onlySyntax = true;
-  }
   if (commanderOpts.autofixCheck) {
     cmdOptions.linterOptions.autofixCheck = true;
   }
@@ -200,6 +201,7 @@ function formCommandLineOptions(parsedCmd: ParsedCommand): CommandLineOptions {
     opts.linterOptions.useRtLogic = options.useRtLogic;
   }
   processRuleConfig(opts, options);
+  processAutofixRuleConfig(opts, options);
   formIdeInteractive(opts, options);
   formSdkOptions(opts, options);
   formMigrateOptions(opts, options);
@@ -208,16 +210,28 @@ function formCommandLineOptions(parsedCmd: ParsedCommand): CommandLineOptions {
 }
 
 function processRuleConfig(commandLineOptions: CommandLineOptions, options: OptionValues): void {
-  if (options.ruleConfig !== undefined) {
-    const stats = fs.statSync(path.normalize(options.ruleConfig));
-    if (!stats.isFile()) {
-      console.error(`The file at ${options.ruleConfigPath} path does not exist!`);
-    } else {
-      const configuredRulesMap = getRulesFromConfig(options.ruleConfig);
-      const arkTSRulesMap = extractRuleTags(cookBookTag);
-      commandLineOptions.linterOptions.ruleConfigTags = getConfiguredRuleTags(arkTSRulesMap, configuredRulesMap);
-    }
+  const configureRulePath = getConfigureRulePath(options);
+  const configuredRulesMap = getRulesFromConfig(configureRulePath);
+  const arkTSRulesMap = extractRuleTags(cookBookTag);
+  commandLineOptions.linterOptions.ruleConfigTags = getConfiguredRuleTags(arkTSRulesMap, configuredRulesMap);
+}
+
+function processAutofixRuleConfig(commandLineOptions: CommandLineOptions, options: OptionValues): void {
+  if (options.ruleConfig) {
+    return;
   }
+  const autofixConfigureRulePath = options.autofixRuleConfig;
+  if (!autofixConfigureRulePath || autofixConfigureRulePath.length === 0) {
+    return;
+  }
+  const stats = fs.statSync(path.normalize(options.autofixRuleConfig));
+  if (!stats.isFile()) {
+    Logger.error(`The file at ${options.autofixRuleConfig} path does not exist!`);
+    return;
+  }
+  const configuredRulesMap = getRulesFromConfig(autofixConfigureRulePath);
+  const arkTSRulesMap = extractRuleTags(cookBookTag);
+  commandLineOptions.linterOptions.autofixRuleConfigTags = getConfiguredRuleTags(arkTSRulesMap, configuredRulesMap);
 }
 
 function createCommand(): Command {
@@ -258,6 +272,7 @@ function createCommand(): Command {
     option('--enable-interop', 'scan whole project to report 1.1 import 1.2').
     option('--rule-config <path>', 'Path to the rule configuration file').
     option('--autofix-check', 'confirm whether the user needs automatic repair').
+    option('--autofix-rule-config <path>', 'Path to the autofix rule configuration file').
     addOption(new Option('--warnings-as-errors', 'treat warnings as errors').hideHelp(true)).
     addOption(new Option('--no-check-ts-as-source', 'check TS files as third-party libary').hideHelp(true)).
     addOption(new Option('--no-use-rt-logic', 'run linter with SDK logic').hideHelp(true)).

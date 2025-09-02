@@ -22,7 +22,7 @@ function foo(this: B): this {
 }
 
 let b = new B();
-assertEQ(foo(b).data, 1)
-assertEQ(b.foo().data, 1)
-assertEQ(new B().foo().data, 1)
-assertEQ(foo(new B()).data, 1)
+arktest.assertEQ(foo(b).data, 1)
+arktest.assertEQ(b.foo().data, 1)
+arktest.assertEQ(new B().foo().data, 1)
+arktest.assertEQ(foo(new B()).data, 1)

@@ -38,11 +38,11 @@ function main(): void {
 
     obj._field = 100;
     let get_field = obj.field;
-    assertEQ(get_field, 100)
+    arktest.assertEQ(get_field, 100)
 
     let b_obj: B = new B();
 
     b_obj.field = 100;
     let get_b_field = b_obj._field;
-    assertEQ(get_b_field, 100)
+    arktest.assertEQ(get_b_field, 100)
 }

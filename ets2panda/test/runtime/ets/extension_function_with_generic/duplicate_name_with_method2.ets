@@ -42,8 +42,8 @@ function foo<T, T1, T2>(this: A<T, T1, T2>, p: T): T2 {
 
 function main() {
     let a1 = new A<String, Int, Number>("test", 1, 2.1);
-    assertEQ(foo(a1, a1.data0), 2.1)
-    assertEQ(a1.foo(a1.data0), 2.1)
-    assertEQ(a1.goo1(), 1)
-    assertEQ(a1.goo2(), 2.1)
+    arktest.assertEQ(foo(a1, a1.data0), 2.1)
+    arktest.assertEQ(a1.foo(a1.data0), 2.1)
+    arktest.assertEQ(a1.goo1(), 1)
+    arktest.assertEQ(a1.goo2(), 2.1)
 }

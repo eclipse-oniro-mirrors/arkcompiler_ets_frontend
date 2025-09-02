@@ -52,6 +52,45 @@ private:
     bool valid_ = true;
 };
 
+class WhileLoopGuard {
+public:
+    explicit WhileLoopGuard(unsigned maxIterations = MAX_RECURSION_DEPTH) : maxIterations_(maxIterations) {}
+
+    bool ShouldContinue()
+    {
+        return ++currentIterations_ <= maxIterations_;
+    }
+
+    bool IsLimitReached() const
+    {
+        return currentIterations_ >= maxIterations_;
+    }
+
+    unsigned GetCurrentIterations() const
+    {
+        return currentIterations_;
+    }
+
+    unsigned GetMaxIterations() const
+    {
+        return maxIterations_;
+    }
+
+    void Reset()
+    {
+        currentIterations_ = 0;
+    }
+
+    void SetMaxIterations(unsigned maxIterations)
+    {
+        maxIterations_ = maxIterations;
+    }
+
+private:
+    unsigned maxIterations_;
+    unsigned currentIterations_ {0};
+};
+
 }  // namespace ark::es2panda::parser
 
 #endif  // UTIL_GUARD_H

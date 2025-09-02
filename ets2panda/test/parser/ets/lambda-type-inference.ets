@@ -34,10 +34,10 @@ function main(): void {
     });
 
     callbackNoArgInt((): int => {
-        return new String("hello").length as int;
+        return (new String("hello")).length.toInt();
     });
     callbackNoArgInt(() => {
-        return new String("hello").length as int;
+        return (new String("hello")).length.toInt();
     });
 
     callbackIntStringBool((x: int, y: String): boolean => {

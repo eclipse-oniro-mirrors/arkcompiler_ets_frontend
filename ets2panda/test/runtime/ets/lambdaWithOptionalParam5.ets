@@ -18,6 +18,6 @@ function main(): void {
         return a;
     }
 
-    assertEQ(func(), 1)
-    assertEQ(func(2), 2)
+    arktest.assertEQ(func(), 1)
+    arktest.assertEQ(func(2), 2)
 }

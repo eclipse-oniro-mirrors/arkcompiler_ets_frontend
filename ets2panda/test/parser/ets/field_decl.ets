@@ -20,7 +20,7 @@ export class field_decl  {
     public d : boolean = true;
     f : short ;
     static g : long ;
-    static readonly pi : float = 3.14;
+    static readonly pi : float = 3.14f;
     public static readonly e : double = 2.71828;
     private readonly h : byte = 2;
 }

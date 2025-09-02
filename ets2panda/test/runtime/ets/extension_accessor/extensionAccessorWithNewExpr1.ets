@@ -26,70 +26,70 @@ set bfield(this: A, b: boolean) { A.bfield_ = b; }
 function main(): void {
     A.field_ = 30;
     A.bfield_ = true;
-    assertEQ(new A().field, 30)
+    arktest.assertEQ(new A().field, 30)
     new A().field = 29;
-    assertEQ(new A().field, 29)
+    arktest.assertEQ(new A().field, 29)
     new A().field = 15 + 15;
 
     let z = new A().field + new A().field;
-    assertEQ(z, 60)
+    arktest.assertEQ(z, 60)
     z = new A().field + new A().field + new A().field;
-    assertEQ(z, 90)
+    arktest.assertEQ(z, 90)
 
     let u = new A().field + 10;
-    assertEQ(u, 40)
+    arktest.assertEQ(u, 40)
     let i = 10 + new A().field;
-    assertEQ(i, 40)
+    arktest.assertEQ(i, 40)
     u = 10 + new A().field + new A().field + 10;
     new A().field =  10 + new A().field + new A().field + 10;
-    assertEQ(u, 80)
-    assertEQ(new A().field, 80)
+    arktest.assertEQ(u, 80)
+    arktest.assertEQ(new A().field, 80)
 
     new A().field = 10;
     let k = new A().field;
-    assertEQ(k, 10)
+    arktest.assertEQ(k, 10)
 
     new A().field = new A().field;
     k = new A().field;
-    assertEQ(k, 10)
+    arktest.assertEQ(k, 10)
 
     new A().field = new A().field + new A().field;
     k = new A().field;
-    assertEQ(new A().field, 20)
+    arktest.assertEQ(new A().field, 20)
 
     new A().field = new A().field + 10;
     k = new A().field;
-    assertEQ(k, 30)
+    arktest.assertEQ(k, 30)
 
     new A().field = 10 + new A().field;
     k = new A().field;
-    assertEQ(k, 40)
+    arktest.assertEQ(k, 40)
 
     new A().field = 10 * new A().field;
     k = new A().field;
-    assertEQ(k, 400)
+    arktest.assertEQ(k, 400)
 
     new A().field = new A().field / 2;
     k = new A().field;
-    assertEQ(k, 200)
+    arktest.assertEQ(k, 200)
 
     new A().field = 1;
     new A().field = new A().field & 0;
     k = new A().field;
-    assertEQ(k, 0)
+    arktest.assertEQ(k, 0)
 
     new A().bfield = true;
     new A().bfield = new A().bfield & false;
     let boolk = new A().bfield;
-    assertEQ(boolk, false)
+    arktest.assertEQ(boolk, false)
 
     new A().bfield = true;
     new A().bfield = new A().bfield | false;
     boolk = new A().bfield;
-    assertEQ(boolk, true)
+    arktest.assertEQ(boolk, true)
 
     new A().bfield = true;
     new A().bfield = new A().bfield | new A().bfield;
     boolk = new A().bfield;
-    assertEQ(boolk, true)
+    arktest.assertEQ(boolk, true)
 }

@@ -290,12 +290,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "objectLiteralReadonlyKey.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "objectLiteralReadonlyKey.ets"
                     }
                   }
                 },
@@ -303,12 +303,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "objectLiteralReadonlyKey.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "objectLiteralReadonlyKey.ets"
                   }
                 }
               },
@@ -316,236 +316,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "objectLiteralReadonlyKey.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "objectLiteralReadonlyKey.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "objectLiteralReadonlyKey.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "c",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 20,
-                              "column": 5,
-                              "program": "objectLiteralReadonlyKey.ets"
-                            },
-                            "end": {
-                              "line": 20,
-                              "column": 6,
-                              "program": "objectLiteralReadonlyKey.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ObjectExpression",
-                          "properties": [
-                            {
-                              "type": "Property",
-                              "method": false,
-                              "shorthand": false,
-                              "computed": false,
-                              "key": {
-                                "type": "Identifier",
-                                "name": "f",
-                                "decorators": [],
-                                "loc": {
-                                  "start": {
-                                    "line": 21,
-                                    "column": 5,
-                                    "program": "objectLiteralReadonlyKey.ets"
-                                  },
-                                  "end": {
-                                    "line": 21,
-                                    "column": 6,
-                                    "program": "objectLiteralReadonlyKey.ets"
-                                  }
-                                }
-                              },
-                              "value": {
-                                "type": "NumberLiteral",
-                                "value": 44,
-                                "loc": {
-                                  "start": {
-                                    "line": 21,
-                                    "column": 8,
-                                    "program": "objectLiteralReadonlyKey.ets"
-                                  },
-                                  "end": {
-                                    "line": 21,
-                                    "column": 10,
-                                    "program": "objectLiteralReadonlyKey.ets"
-                                  }
-                                }
-                              },
-                              "kind": "init",
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 5,
-                                  "program": "objectLiteralReadonlyKey.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 10,
-                                  "program": "objectLiteralReadonlyKey.ets"
-                                }
-                              }
-                            }
-                          ],
-                          "loc": {
-                            "start": {
-                              "line": 20,
-                              "column": 12,
-                              "program": "objectLiteralReadonlyKey.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 2,
-                              "program": "objectLiteralReadonlyKey.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 20,
-                            "column": 5,
-                            "program": "objectLiteralReadonlyKey.ets"
-                          },
-                          "end": {
-                            "line": 22,
-                            "column": 2,
-                            "program": "objectLiteralReadonlyKey.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 20,
-                          "column": 5,
-                          "program": "objectLiteralReadonlyKey.ets"
-                        },
-                        "end": {
-                          "line": 22,
-                          "column": 2,
-                          "program": "objectLiteralReadonlyKey.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "objectLiteralReadonlyKey.ets"
                 }
               }
             },
@@ -618,7 +394,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 11,
+                    "column": 9,
                     "program": "objectLiteralReadonlyKey.ets"
                   }
                 }
@@ -631,7 +407,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 11,
+                  "column": 9,
                   "program": "objectLiteralReadonlyKey.ets"
                 }
               }
@@ -645,8 +421,8 @@
                 "program": "objectLiteralReadonlyKey.ets"
               },
               "end": {
-                "line": 22,
-                "column": 2,
+                "line": 20,
+                "column": 12,
                 "program": "objectLiteralReadonlyKey.ets"
               }
             }

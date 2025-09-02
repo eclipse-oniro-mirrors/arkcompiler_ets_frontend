@@ -30,12 +30,12 @@ function testConst(): void {
             });
         });
     };
-    assertEQ(4, force(f1))
+    arktest.assertEQ(4, force(f1))
 }
 
 function testConstShadow(): void {
     const a = 1;
-    assertEQ(3, force(() => {
+    arktest.assertEQ(3, force(() => {
         const a = 2;
         return force(() => {
             const a = 3;

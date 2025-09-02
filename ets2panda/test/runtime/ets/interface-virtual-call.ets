@@ -33,8 +33,8 @@ function main() : void {
     let a : A = new A();
     let b : B = new B();
 
-    assertEQ(a.foo(), 10)
-    assertEQ((a as iface).foo(), 10)
-    assertEQ(b.foo(), 20)
-    assertEQ((b as iface).foo(), 20)
+    arktest.assertEQ(a.foo(), 10)
+    arktest.assertEQ((a as iface).foo(), 10)
+    arktest.assertEQ(b.foo(), 20)
+    arktest.assertEQ((b as iface).foo(), 20)
 }

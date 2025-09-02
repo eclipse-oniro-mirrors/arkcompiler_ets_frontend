@@ -22,7 +22,6 @@ declare class A {
 }
 
 /* @@@ label Error SyntaxError: An index signature must have a type annotation.  */
-/* @@@ label1 Error SyntaxError: Return type of index signature from exported class or interface need to be identifier.  */
-/* @@@ label3 Error TypeError: Native and Declare methods should have explicit return type.  */
-/* @@@ label2 Error SyntaxError: Expected '}', got 'end of stream'.  */
-/* @@ label2 */
+/* @@@ label Error SyntaxError: Expected ':', got '}'.  */
+/* @@@ label Error SyntaxError: Invalid Type.  */
+/* @@@ label Error SyntaxError: Return type of index signature from exported class or interface need to be identifier.  */

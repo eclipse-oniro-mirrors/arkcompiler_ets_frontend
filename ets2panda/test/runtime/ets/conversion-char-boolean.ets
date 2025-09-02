@@ -14,14 +14,14 @@
  */
 
 function check(): Boolean {
-  assertTrue(false)
+  arktest.assertTrue(false)
   return true;
 }
 
 function main(): void {
   let x: Boolean = false;
-  assertTrue(!x || check())
+  arktest.assertTrue(!x || check())
 
   let y: Char = c'a';
-  assertNE(y, c'b')
+  arktest.assertNE(y, c'b')
 }

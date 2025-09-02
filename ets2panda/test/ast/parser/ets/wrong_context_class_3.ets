@@ -22,5 +22,5 @@ function main()
     a++
 }
 
-/* @@? 22:5 Error TypeError: Class name 'a' used in the wrong context  */
+/* @@? 22:5 Error SyntaxError: Class cannot be used as object.  */
 /* @@? 22:5 Error TypeError: Bad operand type, the type of the operand must be numeric type.  */

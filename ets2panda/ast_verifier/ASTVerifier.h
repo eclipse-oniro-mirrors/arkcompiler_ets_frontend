@@ -139,7 +139,8 @@ public:
                  i <= VerifierInvariants::AFTER_CHECKER_PHASE_LAST; i++) {
                 allowed_[i] = true;
             }
-            // NOTE(dkofanov): This should be called after "NumberLowering" phase:
+        }
+        if (occurredPhaseName == "Unbox") {
             Get<NoPrimitiveTypes>()->SetNumberLoweringOccured();
         }
         if (occurredPhaseName == "UnionLowering") {

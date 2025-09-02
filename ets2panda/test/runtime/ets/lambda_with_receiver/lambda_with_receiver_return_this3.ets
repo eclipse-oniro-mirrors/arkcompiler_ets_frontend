@@ -21,10 +21,10 @@ class A {
 }
 function apply(aa: A[], ff: (this: A) => this) {
     for (let a of aa) {
-        assertEQ(a.ff().name, a.name)
-        assertEQ(a.ff().ff().name, a.name)
-        assertEQ(ff(a).name, a.name)
-        assertEQ(ff(a).ff().name, a.name)
+        arktest.assertEQ(a.ff().name, a.name)
+        arktest.assertEQ(a.ff().ff().name, a.name)
+        arktest.assertEQ(ff(a).name, a.name)
+        arktest.assertEQ(ff(a).ff().name, a.name)
     }
 }
 let aa: A[] = [new A("aa"), new A("bb")]

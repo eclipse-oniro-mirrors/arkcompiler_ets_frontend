@@ -24,19 +24,23 @@ static void GeneratePartialDeclForExported(const public_lib::Context *const ctx,
 {
     // NOTE (mmartin): handle interfaces
     if (node->IsClassDeclaration()) {
-        ctx->checker->AsETSChecker()->CreatePartialType(node->AsClassDeclaration()->Definition()->TsType());
+        ctx->GetChecker()->AsETSChecker()->CreatePartialType(node->AsClassDeclaration()->Definition()->TsType());
+    }
+    if (node->IsTSInterfaceDeclaration()) {
+        ctx->GetChecker()->AsETSChecker()->CreatePartialType(node->AsTSInterfaceDeclaration()->TsType());
     }
 }
 
 bool PartialExportClassGen::PerformForModule(public_lib::Context *const ctx, parser::Program *const program)
 {
     program->Ast()->TransformChildrenRecursively(
-        [ctx, &program](ir::AstNode *const ast) {
-            if ((ast->IsClassDeclaration() || ast->IsTSInterfaceDeclaration()) && ast->IsExported()) {
-                auto *const savedProg = ctx->checker->VarBinder()->AsETSBinder()->Program();
-                ctx->checker->VarBinder()->AsETSBinder()->SetProgram(program);
+        [ctx, program](ir::AstNode *const ast) {
+            if ((ast->IsClassDeclaration() || ast->IsTSInterfaceDeclaration()) &&
+                (ast->IsExported() || ast->IsDefaultExported())) {
+                auto *const savedProg = ctx->GetChecker()->VarBinder()->AsETSBinder()->Program();
+                ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(program);
                 GeneratePartialDeclForExported(ctx, ast);
-                ctx->checker->VarBinder()->AsETSBinder()->SetProgram(savedProg);
+                ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(savedProg);
             }
 
             return ast;

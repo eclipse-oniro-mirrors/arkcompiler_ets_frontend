@@ -40,6 +40,6 @@ class A extends B implements J, I {
 
 function main(): void {
     let a = new A();
-    assertEQ(a.foo(1.1 as number), 4);
-    assertEQ(a.foo("some string"), 3);
+    arktest.assertEQ(a.foo(1.1 as number), 4);
+    arktest.assertEQ(a.foo("some string"), 3);
 }

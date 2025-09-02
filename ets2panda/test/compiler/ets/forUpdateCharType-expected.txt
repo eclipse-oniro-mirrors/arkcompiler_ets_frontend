@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "forUpdateCharType.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "forUpdateCharType.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -234,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 26,
+                                    "column": 24,
                                     "program": "forUpdateCharType.ets"
                                   }
                                 }
@@ -247,7 +141,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 26,
+                                  "column": 24,
                                   "program": "forUpdateCharType.ets"
                                 }
                               }
@@ -576,9 +470,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 23,
+                                "column": 3,
+                                "program": "forUpdateCharType.ets"
+                              },
+                              "end": {
+                                "line": 23,
+                                "column": 10,
+                                "program": "forUpdateCharType.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 23,
+                                "column": 11,
+                                "program": "forUpdateCharType.ets"
+                              },
+                              "end": {
+                                "line": 23,
+                                "column": 19,
+                                "program": "forUpdateCharType.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 23,
@@ -587,7 +515,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 11,
+                              "column": 19,
                               "program": "forUpdateCharType.ets"
                             }
                           }
@@ -600,12 +528,12 @@
                             "loc": {
                               "start": {
                                 "line": 23,
-                                "column": 12,
+                                "column": 20,
                                 "program": "forUpdateCharType.ets"
                               },
                               "end": {
                                 "line": 23,
-                                "column": 20,
+                                "column": 28,
                                 "program": "forUpdateCharType.ets"
                               }
                             }
@@ -616,12 +544,12 @@
                             "loc": {
                               "start": {
                                 "line": 23,
-                                "column": 22,
+                                "column": 30,
                                 "program": "forUpdateCharType.ets"
                               },
                               "end": {
                                 "line": 23,
-                                "column": 28,
+                                "column": 36,
                                 "program": "forUpdateCharType.ets"
                               }
                             }
@@ -636,7 +564,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 29,
+                            "column": 37,
                             "program": "forUpdateCharType.ets"
                           }
                         }
@@ -649,7 +577,7 @@
                         },
                         "end": {
                           "line": 23,
-                          "column": 30,
+                          "column": 38,
                           "program": "forUpdateCharType.ets"
                         }
                       }

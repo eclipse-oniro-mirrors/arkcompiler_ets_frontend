@@ -62,7 +62,10 @@ export class FixUtils {
     }
 
     // 根据输入的代码片段的起始、结束行列号信息，计算此代码片段在该文件中的起始偏移量、结束偏移量数据
-    public static getRangeWithAst(sourceFile: ts.SourceFile, fixPosition: FixPosition): Range {
+    public static getRangeWithAst(sourceFile: ts.SourceFile, fixPosition: FixPosition): Range | null {
+        if (fixPosition.startLine < 1 || fixPosition.startCol < 1 || fixPosition.endLine < 1 || fixPosition.endCol < 1) {
+            return null;
+        }
         const startNumber = ts.getPositionOfLineAndCharacter(sourceFile, fixPosition.startLine - 1, fixPosition.startCol - 1);
         const endNumber = ts.getPositionOfLineAndCharacter(sourceFile, fixPosition.endLine - 1, fixPosition.endCol - 1);
         return [startNumber, endNumber];
@@ -87,6 +90,19 @@ export class FixUtils {
             endPos = lineStarts[lineNumber] - 1;
         }
         return [startPos, endPos];
+    }
+
+    public static getLineRangeWithStartCol(sourceFile: ts.SourceFile, lineNumber: number, startCol: number): Range | null {
+        const lineRange = this.getLineRange(sourceFile, lineNumber);
+        if (lineRange === null) {
+            return null;
+        }
+        const newStartPos = lineRange[0] + startCol - 1;
+        const endPos = lineRange[1];
+        if (newStartPos <= endPos) {
+            return [newStartPos, endPos];
+        }
+        return null;
     }
 
     // 根据给定的起始、结束偏移量数据，获取此段代码片段的源码字符串，位置信息不合法则返回null

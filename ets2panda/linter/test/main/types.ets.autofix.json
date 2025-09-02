@@ -54,12 +54,20 @@
                 {
                     "start": 610,
                     "end": 610,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    name: string;\n    idx: number;\n    handler: string;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    name: string;\n    idx: number;\n    handler: string;\n}\n",
+                    "line": 26,
+                    "column": 18,
+                    "endLine": 26,
+                    "endColumn": 19
                 },
                 {
                     "start": 829,
                     "end": 829,
-                    "replacementText": ": GeneratedObjectLiteralInterface_1"
+                    "replacementText": ": GeneratedObjectLiteralInterface_1",
+                    "line": 26,
+                    "column": 18,
+                    "endLine": 26,
+                    "endColumn": 19
                 }
             ],
             "suggest": "",
@@ -76,7 +84,11 @@
                 {
                     "start": 969,
                     "end": 1007,
-                    "replacementText": "interface Point {\n    x: number;\n    y: number;\n}"
+                    "replacementText": "interface Point {\n    x: number;\n    y: number;\n}",
+                    "line": 32,
+                    "column": 16,
+                    "endLine": 32,
+                    "endColumn": 17
                 }
             ],
             "suggest": "",
@@ -123,7 +135,11 @@
                 {
                     "start": 1235,
                     "end": 1313,
-                    "replacementText": "let isNumber: (x: any) => x is number = (x: any): x is number => {\n    return typeof x === 'number';\n};"
+                    "replacementText": "let isNumber: (x: any) => x is number = (x: any): x is number => {\n    return typeof x === 'number';\n};",
+                    "line": 43,
+                    "column": 3,
+                    "endLine": 43,
+                    "endColumn": 11
                 }
             ],
             "suggest": "",
@@ -160,7 +176,11 @@
                 {
                     "start": 1405,
                     "end": 1570,
-                    "replacementText": "interface ComputedPropertyT {\n    a: string; // String-like name\n    5: string; // Number-like name\n    [c]: string; // String-like name\n    [d]: string; // Number-like name\n}"
+                    "replacementText": "interface ComputedPropertyT {\n    a: string; // String-like name\n    5: string; // Number-like name\n    [c]: string; // String-like name\n    [d]: string; // Number-like name\n}",
+                    "line": 54,
+                    "column": 26,
+                    "endLine": 54,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -207,12 +227,20 @@
                 {
                     "replacementText": "__2",
                     "start": 1604,
-                    "end": 1605
+                    "end": 1605,
+                    "line": 67,
+                    "column": 3,
+                    "endLine": 67,
+                    "endColumn": 4
                 },
                 {
                     "replacementText": "__2",
                     "start": 1684,
-                    "end": 1685
+                    "end": 1685,
+                    "line": 67,
+                    "column": 3,
+                    "endLine": 67,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -229,12 +257,50 @@
                 {
                     "replacementText": "__2",
                     "start": 1604,
-                    "end": 1605
+                    "end": 1605,
+                    "line": 67,
+                    "column": 3,
+                    "endLine": 67,
+                    "endColumn": 4
                 },
                 {
                     "replacementText": "__2",
                     "start": 1684,
-                    "end": 1685
+                    "end": 1685,
+                    "line": 67,
+                    "column": 3,
+                    "endLine": 67,
+                    "endColumn": 4
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 3,
+            "endLine": 68,
+            "endColumn": 8,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "Two",
+                    "start": 1617,
+                    "end": 1622,
+                    "line": 68,
+                    "column": 3,
+                    "endLine": 68,
+                    "endColumn": 8
+                },
+                {
+                    "replacementText": "Two",
+                    "start": 1696,
+                    "end": 1701,
+                    "line": 68,
+                    "column": 3,
+                    "endLine": 68,
+                    "endColumn": 8
                 }
             ],
             "suggest": "",
@@ -251,7 +317,11 @@
                 {
                     "start": 1710,
                     "end": 1758,
-                    "replacementText": "interface Dictionary {\n    [key: string]: unknown;\n}"
+                    "replacementText": "interface Dictionary {\n    [key: string]: unknown;\n}",
+                    "line": 71,
+                    "column": 19,
+                    "endLine": 71,
+                    "endColumn": 20
                 }
             ],
             "suggest": "",
@@ -328,7 +398,11 @@
                 {
                     "start": 1999,
                     "end": 2083,
-                    "replacementText": "interface DescribableFunction {\n    description: string;\n    (someArg: number): boolean;\n}"
+                    "replacementText": "interface DescribableFunction {\n    description: string;\n    (someArg: number): boolean;\n}",
+                    "line": 94,
+                    "column": 28,
+                    "endLine": 94,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -355,12 +429,20 @@
                 {
                     "start": 2405,
                     "end": 2405,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    x: 2;\n}\n"
+                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    x: 2;\n}\n",
+                    "line": 111,
+                    "column": 19,
+                    "endLine": 111,
+                    "endColumn": 20
                 },
                 {
                     "start": 2423,
                     "end": 2431,
-                    "replacementText": "GeneratedTypeLiteralInterface_1"
+                    "replacementText": "GeneratedTypeLiteralInterface_1",
+                    "line": 111,
+                    "column": 19,
+                    "endLine": 111,
+                    "endColumn": 20
                 }
             ],
             "suggest": "",
@@ -377,12 +459,20 @@
                 {
                     "start": 2436,
                     "end": 2436,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_2 {\n    y: string;\n}\n"
+                    "replacementText": "interface GeneratedTypeLiteralInterface_2 {\n    y: string;\n}\n",
+                    "line": 112,
+                    "column": 12,
+                    "endLine": 112,
+                    "endColumn": 13
                 },
                 {
                     "start": 2447,
                     "end": 2460,
-                    "replacementText": "GeneratedTypeLiteralInterface_2"
+                    "replacementText": "GeneratedTypeLiteralInterface_2",
+                    "line": 112,
+                    "column": 12,
+                    "endLine": 112,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -399,12 +489,20 @@
                 {
                     "start": 2436,
                     "end": 2436,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_3 {\n    y: 'constant';\n}\n"
+                    "replacementText": "interface GeneratedTypeLiteralInterface_3 {\n    y: 'constant';\n}\n",
+                    "line": 112,
+                    "column": 35,
+                    "endLine": 112,
+                    "endColumn": 36
                 },
                 {
                     "start": 2470,
                     "end": 2487,
-                    "replacementText": "GeneratedTypeLiteralInterface_3"
+                    "replacementText": "GeneratedTypeLiteralInterface_3",
+                    "line": 112,
+                    "column": 35,
+                    "endLine": 112,
+                    "endColumn": 36
                 }
             ],
             "suggest": "",
@@ -421,12 +519,20 @@
                 {
                     "start": 2543,
                     "end": 2543,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_4 {\n    z: boolean;\n}\n"
+                    "replacementText": "interface GeneratedTypeLiteralInterface_4 {\n    z: boolean;\n}\n",
+                    "line": 116,
+                    "column": 9,
+                    "endLine": 116,
+                    "endColumn": 10
                 },
                 {
                     "start": 2551,
                     "end": 2565,
-                    "replacementText": "GeneratedTypeLiteralInterface_4"
+                    "replacementText": "GeneratedTypeLiteralInterface_4",
+                    "line": 116,
+                    "column": 9,
+                    "endLine": 116,
+                    "endColumn": 10
                 }
             ],
             "suggest": "",
@@ -463,7 +569,11 @@
                 {
                     "start": 2630,
                     "end": 2636,
-                    "replacementText": "1 as any"
+                    "replacementText": "1 as any",
+                    "line": 119,
+                    "column": 15,
+                    "endLine": 119,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -490,7 +600,11 @@
                 {
                     "start": 2657,
                     "end": 2714,
-                    "replacementText": "document.getElementById('main_canvas') as HTMLCanvasElement"
+                    "replacementText": "document.getElementById('main_canvas') as HTMLCanvasElement",
+                    "line": 120,
+                    "column": 20,
+                    "endLine": 120,
+                    "endColumn": 77
                 }
             ],
             "suggest": "",
@@ -507,12 +621,20 @@
                 {
                     "start": 2719,
                     "end": 2719,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    a: number;\n    b: string;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    a: number;\n    b: string;\n}\n",
+                    "line": 124,
+                    "column": 13,
+                    "endLine": 124,
+                    "endColumn": 14
                 },
                 {
                     "start": 2765,
                     "end": 2765,
-                    "replacementText": ": GeneratedObjectLiteralInterface_2"
+                    "replacementText": ": GeneratedObjectLiteralInterface_2",
+                    "line": 124,
+                    "column": 13,
+                    "endLine": 124,
+                    "endColumn": 14
                 }
             ],
             "suggest": "",
@@ -559,7 +681,11 @@
                 {
                     "start": 3075,
                     "end": 3192,
-                    "replacementText": "let arrayFunc: <T extends object>(array: Array<T>) => Array<string> = <T extends object>(array: Array<T>): Array<string> => {\n    return array.map((x) => x.toString());\n};"
+                    "replacementText": "let arrayFunc: <T extends object>(array: Array<T>) => Array<string> = <T extends object>(array: Array<T>): Array<string> => {\n    return array.map((x) => x.toString());\n};",
+                    "line": 138,
+                    "column": 3,
+                    "endLine": 138,
+                    "endColumn": 11
                 }
             ],
             "suggest": "",

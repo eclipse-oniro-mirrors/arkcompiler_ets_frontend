@@ -24,19 +24,36 @@
 
 namespace ark::es2panda::ir {
 
+void MethodDefinition::SetDefaultAccessModifier(bool isDefault)
+{
+    this->GetOrCreateHistoryNodeAs<MethodDefinition>()->isDefault_ = isDefault;
+}
+
+void MethodDefinition::SetBaseOverloadMethod(MethodDefinition *const baseOverloadMethod)
+{
+    this->GetOrCreateHistoryNodeAs<MethodDefinition>()->baseOverloadMethod_ = baseOverloadMethod;
+}
+
+void MethodDefinition::SetAsyncPairMethod(MethodDefinition *const asyncPairMethod)
+{
+    this->GetOrCreateHistoryNodeAs<MethodDefinition>()->asyncPairMethod_ = asyncPairMethod;
+}
+
 ScriptFunction *MethodDefinition::Function()
 {
-    return value_->IsFunctionExpression() ? value_->AsFunctionExpression()->Function() : nullptr;
+    auto const value = Value();
+    return value->IsFunctionExpression() ? value->AsFunctionExpression()->Function() : nullptr;
 }
 
 const ScriptFunction *MethodDefinition::Function() const
 {
-    return value_->IsFunctionExpression() ? value_->AsFunctionExpression()->Function() : nullptr;
+    auto const value = Value();
+    return value->IsFunctionExpression() ? value->AsFunctionExpression()->Function() : nullptr;
 }
 
 PrivateFieldKind MethodDefinition::ToPrivateFieldKind(bool const isStatic) const
 {
-    switch (kind_) {
+    switch (Kind()) {
         case MethodDefinitionKind::METHOD: {
             return isStatic ? PrivateFieldKind::STATIC_METHOD : PrivateFieldKind::METHOD;
         }
@@ -54,57 +71,65 @@ PrivateFieldKind MethodDefinition::ToPrivateFieldKind(bool const isStatic) const
 
 void MethodDefinition::ResolveReferences(const NodeTraverser &cb) const
 {
-    cb(key_);
-    cb(value_);
+    auto key = GetHistoryNode()->AsMethodDefinition()->key_;
+    auto value = GetHistoryNode()->AsMethodDefinition()->value_;
+    cb(key);
+    cb(value);
 
-    for (auto *it : VectorIterationGuard(overloads_)) {
+    for (auto *it : VectorIterationGuard(Overloads())) {
         cb(it);
     }
 
-    for (auto *it : VectorIterationGuard(decorators_)) {
+    for (auto *it : VectorIterationGuard(Decorators())) {
         cb(it);
     }
 }
 
 void MethodDefinition::Iterate(const NodeTraverser &cb) const
 {
-    cb(key_);
-    cb(value_);
+    auto key = GetHistoryNode()->AsMethodDefinition()->key_;
+    auto value = GetHistoryNode()->AsMethodDefinition()->value_;
+    cb(key);
+    cb(value);
 
-    for (auto *it : overloads_) {
+    for (auto *it : Overloads()) {
         if (it->Parent() == this) {
             cb(it);
         }
     }
 
-    for (auto *it : VectorIterationGuard(decorators_)) {
+    for (auto *it : VectorIterationGuard(Decorators())) {
         cb(it);
     }
 }
 
 void MethodDefinition::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
-    if (auto *transformedNode = cb(key_); key_ != transformedNode) {
-        key_->SetTransformedNode(transformationName, transformedNode);
-        key_ = transformedNode->AsExpression();
+    auto *key = Key();
+    if (auto *transformedNode = cb(key); key != transformedNode) {
+        key->SetTransformedNode(transformationName, transformedNode);
+        SetKey(transformedNode->AsExpression());
     }
 
-    if (auto *transformedNode = cb(value_); value_ != transformedNode) {
-        value_->SetTransformedNode(transformationName, transformedNode);
-        value_ = transformedNode->AsExpression();
+    auto *value = Value();
+    if (auto *transformedNode = cb(value); value != transformedNode) {
+        value->SetTransformedNode(transformationName, transformedNode);
+        SetValue(transformedNode->AsExpression());
     }
 
-    for (auto *&it : VectorIterationGuard(overloads_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsMethodDefinition();
+    auto const &overloads = Overloads();
+    for (size_t ix = 0; ix < overloads.size(); ix++) {
+        if (auto *transformedNode = cb(overloads[ix]); overloads[ix] != transformedNode) {
+            overloads[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueOverloads(transformedNode->AsMethodDefinition(), ix);
         }
     }
 
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
+    auto const &decorators = Decorators();
+    for (size_t ix = 0; ix < decorators.size(); ix++) {
+        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
+            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueDecorators(transformedNode->AsDecorator(), ix);
         }
     }
 }
@@ -113,7 +138,7 @@ void MethodDefinition::Dump(ir::AstDumper *dumper) const
 {
     const char *kind = nullptr;
 
-    switch (kind_) {
+    switch (Kind()) {
         case MethodDefinitionKind::CONSTRUCTOR: {
             kind = "constructor";
             break;
@@ -148,15 +173,15 @@ void MethodDefinition::Dump(ir::AstDumper *dumper) const
     }
 
     dumper->Add({{"type", "MethodDefinition"},
-                 {"key", key_},
+                 {"key", Key()},
                  {"kind", kind},
-                 {"accessibility", AstDumper::Optional(AstDumper::ModifierToString(flags_))},
+                 {"accessibility", AstDumper::Optional(AstDumper::ModifierToString(Modifiers()))},
                  {"static", IsStatic()},
                  {"optional", IsOptionalDeclaration()},
-                 {"computed", isComputed_},
-                 {"value", value_},
-                 {"overloads", overloads_},
-                 {"decorators", decorators_}});
+                 {"computed", IsComputed()},
+                 {"value", Value()},
+                 {"overloads", Overloads()},
+                 {"decorators", Decorators()}});
 }
 
 void MethodDefinition::DumpModifierPrefix(ir::SrcDumper *dumper) const
@@ -178,7 +203,7 @@ void MethodDefinition::DumpModifierPrefix(ir::SrcDumper *dumper) const
     if (IsNative()) {
         dumper->Add("native ");
     }
-    if (IsAsync()) {
+    if (IsAsync() && !dumper->IsDeclgen()) {
         dumper->Add("async ");
     }
     if (IsOverride()) {
@@ -276,7 +301,7 @@ bool MethodDefinition::FilterForDeclGen(ir::SrcDumper *dumper) const
 
     ES2PANDA_ASSERT(Id() != nullptr);
     auto name = Id()->Name().Mutf8();
-    if (name.find("$asyncimpl") != std::string::npos || name == compiler::Signatures::INITIALIZER_BLOCK_INIT ||
+    if (name.find("%%async") != std::string::npos || name == compiler::Signatures::INITIALIZER_BLOCK_INIT ||
         name == compiler::Signatures::INIT_METHOD) {
         return true;
     }
@@ -293,6 +318,10 @@ bool MethodDefinition::FilterForDeclGen(ir::SrcDumper *dumper) const
         return true;
     }
 
+    if (IsPrivate()) {
+        return true;
+    }
+
     return false;
 }
 
@@ -302,18 +331,18 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
         return;
     }
 
-    if (compiler::HasGlobalClassParent(this) && Id() != nullptr && Id()->Name().Is(compiler::Signatures::INIT_METHOD) &&
-        Function() != nullptr) {
+    if (compiler::HasGlobalClassParent(this) && Id() != nullptr && Id()->Name().Is(compiler::Signatures::INIT_METHOD)) {
         Function()->Body()->Dump(dumper);
         return;
     }
 
-    for (auto method : overloads_) {
+    for (auto method : Overloads()) {
         method->Dump(dumper);
         dumper->Endl();
     }
 
-    for (auto *anno : value_->AsFunctionExpression()->Function()->Annotations()) {
+    auto value = Value();
+    for (auto *anno : value->AsFunctionExpression()->Function()->Annotations()) {
         // NOTE(zhelyapov): workaround, see #26031
         if (anno->GetBaseName()->Name() != compiler::Signatures::DEFAULT_ANNO_FOR_FUNC) {
             anno->Dump(dumper);
@@ -321,12 +350,18 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
     }
     DumpPrefix(dumper);
 
-    if (key_ != nullptr) {
-        key_->Dump(dumper);
+    if (IsConstructor() &&
+        !(Key()->IsIdentifier() && Key()->AsIdentifier()->Name().Is(compiler::Signatures::CONSTRUCTOR_NAME))) {
+        dumper->Add(std::string(compiler::Signatures::CONSTRUCTOR_NAME) + " ");
     }
 
-    if (value_ != nullptr) {
-        value_->Dump(dumper);
+    auto key = Key();
+    if (key != nullptr) {
+        key->Dump(dumper);
+    }
+
+    if (value != nullptr) {
+        value->Dump(dumper);
     }
 }
 
@@ -352,9 +387,9 @@ checker::VerifiedType MethodDefinition::Check(checker::ETSChecker *checker)
 
 MethodDefinition *MethodDefinition::Clone(ArenaAllocator *const allocator, AstNode *const parent)
 {
-    auto *const key = key_->Clone(allocator, nullptr)->AsExpression();
-    auto *const value = value_->Clone(allocator, nullptr)->AsExpression();
-    auto *const clone = allocator->New<MethodDefinition>(kind_, key, value, flags_, allocator, isComputed_);
+    auto *const key = Key()->Clone(allocator, nullptr)->AsExpression();
+    auto *const value = Value()->Clone(allocator, nullptr)->AsExpression();
+    auto *const clone = allocator->New<MethodDefinition>(Kind(), key, value, Modifiers(), allocator, IsComputed());
 
     if (parent != nullptr) {
         clone->SetParent(parent);
@@ -363,13 +398,13 @@ MethodDefinition *MethodDefinition::Clone(ArenaAllocator *const allocator, AstNo
     key->SetParent(clone);
     value->SetParent(clone);
 
-    for (auto *const decorator : decorators_) {
+    for (auto *const decorator : Decorators()) {
         clone->AddDecorator(decorator->Clone(allocator, clone));
     }
 
-    clone->baseOverloadMethod_ = baseOverloadMethod_;
+    clone->SetBaseOverloadMethod(BaseOverloadMethod());
 
-    for (auto *const overloads : overloads_) {
+    for (auto *const overloads : Overloads()) {
         clone->AddOverload(overloads->Clone(allocator, clone));
     }
 
@@ -380,19 +415,16 @@ void MethodDefinition::InitializeOverloadInfo()
 {
     ES2PANDA_ASSERT(this->Function() != nullptr);
 
-    overloadInfo_ = {this->Function()->Signature()->MinArgCount(),
-                     this->Function()->Signature()->ArgCount(),
-                     false,
-                     this->IsDeclare(),
-                     (this->Function()->Signature()->RestVar() != nullptr),
-                     this->Function()->Signature()->ReturnType()->IsETSVoidType()};
+    SetOverloadInfo({this->Function()->Signature()->MinArgCount(), this->Function()->Signature()->ArgCount(), false,
+                     this->IsDeclare(), (this->Function()->Signature()->RestVar() != nullptr),
+                     this->Function()->Signature()->ReturnType()->IsETSVoidType()});
 }
 
 void MethodDefinition::ResetOverloads()
 {
-    auto baseOverloadMethod = baseOverloadMethod_;
-    baseOverloadMethod_ = nullptr;
-    for (auto *overload : overloads_) {
+    auto baseOverloadMethod = BaseOverloadMethod();
+    SetBaseOverloadMethod(nullptr);
+    for (auto *overload : Overloads()) {
         overload->CleanUp();
     }
     ClearOverloads();
@@ -421,7 +453,8 @@ void MethodDefinition::ResetOverloads()
         }
     }
 
-    body.emplace_back(this);
+    parent->IsClassDefinition() ? parent->AsClassDefinition()->EmplaceBody(this)
+                                : parent->AsTSInterfaceBody()->Body().push_back(this);
 }
 
 void MethodDefinition::CleanUp()
@@ -448,6 +481,32 @@ void MethodDefinition::CopyTo(AstNode *other) const
     otherImpl->overloadInfo_ = overloadInfo_;
 
     ClassElement::CopyTo(other);
+}
+
+void MethodDefinition::EmplaceOverloads(MethodDefinition *overloads)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<MethodDefinition>();
+    newNode->overloads_.emplace_back(overloads);
+}
+
+void MethodDefinition::ClearOverloads()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<MethodDefinition>();
+    newNode->overloads_.clear();
+}
+
+void MethodDefinition::SetValueOverloads(MethodDefinition *overloads, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<MethodDefinition>();
+    auto &arenaVector = newNode->overloads_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = overloads;
+}
+
+[[nodiscard]] ArenaVector<MethodDefinition *> &MethodDefinition::OverloadsForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<MethodDefinition>();
+    return newNode->overloads_;
 }
 
 }  // namespace ark::es2panda::ir

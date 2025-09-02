@@ -27,5 +27,5 @@ function main() {
 function foo(a?: Empty) { }
 
 function foo2(a?: Empty | string | TestClass) {
-    assertEQ(a, "123")
+    arktest.assertEQ(a, "123")
 }

@@ -17,10 +17,9 @@ declaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaare struct MainProg2 {
     @@Stave
 }
 
-/* @@? 16:1 Error TypeError: Cannot find type 'declaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaare'. */
-/* @@? 16:1 Error TypeError: Class literal is not yet supported. */
-/* @@? 16:46 Error SyntaxError: Unexpected token 'MainProg2'. */
-/* @@? 16:46 Error TypeError: Unresolved reference MainProg2 */
-/* @@? 16:56 Error SyntaxError: Unexpected token '{'. */
+/* @@? 16:1 Error TypeError: Unresolved reference declaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaare */
+/* @@? 16:39 Error SyntaxError: Unexpected token 'struct'. */
+/* @@? 16:39 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
 /* @@? 17:5 Error SyntaxError: There is no any node to insert at the placeholder position. */
-/* @@? 17:7 Error TypeError: Unresolved reference Stave */
+/* @@? 17:5 Error SyntaxError: Unexpected token '@@'. */
+/* @@? 17:12 Error SyntaxError: Field type annotation expected. */

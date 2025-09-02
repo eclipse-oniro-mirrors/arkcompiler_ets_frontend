@@ -19,5 +19,4 @@ x = true ? x:():long=>32
 let y:()=>int = ()=>16 as int
 y = true ? y:():int=>32
 y = true ? ():int=>32:y
-x = /* @@ label */true ? x:"apple"
-/* @@@ label Error TypeError: Type '() => Long|"apple"' cannot be assigned to type '() => Long' */
+x = true ? x:"apple"

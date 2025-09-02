@@ -23,4 +23,4 @@ function main(): void {
     foo(/* @@ label */a == b);
 }
 
-/* @@@ label Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type.  */
+/* @@@ label Error TypeError: Operator '==' cannot be applied to types '"alma"' and 'Int'. */

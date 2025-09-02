@@ -21,7 +21,7 @@ function main(): void {
     a += aa;
     b += bb;
   }
-  assertTrue(a == 10 && b == 10)
+  arktest.assertTrue(a == 10 && b == 10)
 
   let aa : int = 10;
   let bb : int = 10;
@@ -29,5 +29,5 @@ function main(): void {
     a += aa;
     b += bb;
   }
-  assertTrue(a == 20 && b == 20)
+  arktest.assertTrue(a == 20 && b == 20)
 }

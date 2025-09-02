@@ -18,6 +18,7 @@ class Racer {
 }
 
 /* @@? 17:9 Error TypeError: Only abstract or native methods can't have body. */
+/* @@? 17:16 Error TypeError: Default type of type parameter has circular dependency. */
 /* @@? 17:22 Error TypeError: 'f' type does not exist. */
 /* @@? 17:23 Error SyntaxError: Unexpected token, expected '>'. */
 /* @@? 17:24 Error SyntaxError: Unexpected token, expected '('. */

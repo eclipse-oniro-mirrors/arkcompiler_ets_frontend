@@ -15,7 +15,6 @@
 
 function main(): void {
     let value: byte = 0;
-    /* @@ label */value.toString()
+    value.toString()
 }
 
-/* @@@ label Error TypeError: Property 'toString' does not exist on type 'byte'  */

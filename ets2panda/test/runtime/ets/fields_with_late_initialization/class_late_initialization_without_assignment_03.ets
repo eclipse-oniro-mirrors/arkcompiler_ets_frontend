@@ -25,6 +25,6 @@ function main() {
     const ad = new AsyncDemo();
     ad.payload;
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

@@ -15,16 +15,6 @@
     ],
     "result": [
         {
-            "line": 16,
-            "column": 7,
-            "endLine": 16,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 19,
             "column": 7,
             "endLine": 19,
@@ -65,16 +55,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 28,
-            "column": 18,
-            "endLine": 28,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 30,
             "column": 7,
             "endLine": 30,
@@ -112,16 +92,6 @@
             "problem": "GlobalThisError",
             "suggest": "",
             "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
-            "column": 18,
-            "endLine": 34,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

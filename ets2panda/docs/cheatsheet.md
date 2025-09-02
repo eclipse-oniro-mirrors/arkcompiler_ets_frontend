@@ -139,7 +139,7 @@ in each module that we compile. The default config file looks like this:
       "import_tests": ["/path/to/static_core/tools/es2panda/test/parser/ets/import_tests"],
       "dynamic_import_tests": ["/path/to/static_core/tools/es2panda/test/parser/ets/dynamic_import_tests"]
     },
-    "dynamicPaths": {
+    "dependencies": {
       "dynamic_import_tests": {"language": "js", "hasDecl": false},
       "/path/to/static_core/tools/es2panda/test/parser/ets/dynamic_import_tests": {"language": "js", "hasDecl": true}
     }

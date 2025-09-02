@@ -32,12 +32,12 @@ class StsTestComponent extends StructBase<StsTestComponent, Options>{
 
     build() {
         let s1 = StsTestComponent.$_instantiate(() => new StsTestComponent(), {} as Options);
-        assertEQ(s1.base_value, 10);
-        assertEQ(s1.child_value, 20);
+        arktest.assertEQ(s1.base_value, 10);
+        arktest.assertEQ(s1.child_value, 20);
 
         let s2 = StsTestComponent({} as Options);
-        assertEQ(s2.base_value, 10);
-        assertEQ(s2.child_value, 20);
+        arktest.assertEQ(s2.base_value, 10);
+        arktest.assertEQ(s2.child_value, 20);
     }
 }
 

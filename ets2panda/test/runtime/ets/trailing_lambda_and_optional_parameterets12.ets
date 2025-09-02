@@ -20,7 +20,7 @@ function foo(this: A, a: number, f?: () => number) {
 }
 
 function main() {
-    assertEQ(foo(new A(), 1) {
+    arktest.assertEQ(foo(new A(), 1) {
         {{ return 1; }}
     }, 1)
 }

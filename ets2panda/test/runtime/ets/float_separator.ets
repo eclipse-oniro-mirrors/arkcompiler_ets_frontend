@@ -15,5 +15,5 @@
 
 function main(): void {
     let a = 0.0e2_147_483_647 
-    assertEQ(a, 0)
+    arktest.assertEQ(a, 0)
 }

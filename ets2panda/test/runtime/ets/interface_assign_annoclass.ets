@@ -25,7 +25,7 @@ function main(){
     let subValue2:Value2 = {Value2Field:subValue1}
     let subValue3:Value2 = {Value2Field:{Value1Field:"Me"}}
     
-    assertEQ(subValue2.Value2Field, subValue1)
-    assertEQ(subValue2.Value2Field.Value1Field, "Me")
-    assertEQ(subValue3.Value2Field.Value1Field, "Me")
+    arktest.assertEQ(subValue2.Value2Field, subValue1)
+    arktest.assertEQ(subValue2.Value2Field.Value1Field, "Me")
+    arktest.assertEQ(subValue3.Value2Field.Value1Field, "Me")
 }

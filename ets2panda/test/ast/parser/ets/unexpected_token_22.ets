@@ -27,9 +27,9 @@ function callAsyncLambda(): void {
         is_call_async_lambda = true;
     }
 
-    assertEQ(is_call_async_lambda, false);
+    arktest.assertEQ(is_call_async_lambda, false);
     await async_lambda();
-    assertEQ(is_call_async_lambda, true);
+    arktest.assertEQ(is_call_async_lambda, true);
 }
 
 function main(): void {
@@ -40,6 +40,3 @@ function main(): void {
 /* @@? 25:43 Error TypeError: Type '(_: Promise<void>) => Promise<void>' cannot be assigned to type '() => Promise<void>' */
 /* @@? 25:44 Error SyntaxError: Unexpected token, expected an identifier. */
 /* @@? 25:60 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 31:11 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 31:11 Error TypeError: No matching call signature */
-/* @@? 31:11 Error TypeError: 'await' expressions require Promise object as argument. */

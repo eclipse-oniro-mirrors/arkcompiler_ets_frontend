@@ -25,5 +25,6 @@ TEST(RefactorProviderRegistrationTest, RegistersConvertFunctionRefactor)
     const auto &fixIdToRegistration = provider.GetFixIdToRegistration();
     EXPECT_FALSE(errors.empty());
     EXPECT_FALSE(fixIdToRegistration.empty());
+    EXPECT_TRUE(errors.size() >= fixIdToRegistration.size());
 }
 }  // namespace

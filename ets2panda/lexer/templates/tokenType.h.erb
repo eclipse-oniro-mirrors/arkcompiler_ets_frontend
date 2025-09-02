@@ -34,8 +34,6 @@ enum class TokenType {
 %     end
     <%= token.token %>,
 %   end
-    JS_DOC_START,
-    JS_DOC_END,
     FIRST_PUNCTUATOR = <%= Tokens::tokens[0].token %>,
     FIRST_KEYW = <%= Keywords::keywords[0].token %>
 };

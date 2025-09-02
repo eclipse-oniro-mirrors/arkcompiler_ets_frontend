@@ -16,7 +16,7 @@
 import { Entry, Component, Text, LocalStorage } from '@ohos.arkui.components';
 import { getLocalStorage } from './storage-manager';
 
-const __get_local_storage__ = (): LocalStorage => getLocalStorage(1.0);
+const __get_local_storage__ = (): LocalStorage => getLocalStorage(1);
 @Entry({storage: "__get_local_storage__"})
 @Component
 struct MyPage {

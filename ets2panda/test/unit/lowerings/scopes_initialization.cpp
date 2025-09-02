@@ -30,11 +30,12 @@ public:
     ~ScopesInitPhaseTest() override = default;
 
     ScopesInitPhaseTest()
-        : allocator_(std::make_unique<ArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER)), nodeGen_(allocator_.get())
+        : allocator_(std::make_unique<ark::ThreadSafeArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER, nullptr, true)),
+          nodeGen_(allocator_.get())
     {
     }
 
-    ArenaAllocator *Allocator()
+    ark::ThreadSafeArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
@@ -48,7 +49,7 @@ public:
     NO_MOVE_SEMANTIC(ScopesInitPhaseTest);
 
 private:
-    std::unique_ptr<ArenaAllocator> allocator_;
+    std::unique_ptr<ark::ThreadSafeArenaAllocator> allocator_;
     gtests::NodeGenerator nodeGen_;
 };
 

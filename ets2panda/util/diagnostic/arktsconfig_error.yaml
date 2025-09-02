@@ -12,45 +12,22 @@
 # limitations under the License.
 
 arkts_config_error:
-- name: UNRESOLVABLE_CONFIG_PATH
-  id: 1
-  message: Can't resolve config path {}
 
 - name: CYCLIC_IMPORT
   id: 2
   message: Encountered cyclic import in 'extends' field
 
-- name: WRONG_BASE_CONFIG
-  id: 3
-  message: Failed to parse base config {}
+- name: DEPENDENCIES_ABSOLUTE
+  id: 18
+  message: "Don't use absolute path '{}' as key in 'dependencies'"
 
-- name: INVALID_VALUE
-  id: 4
-  message: Invalid value for '{}' with key '{}'
+- name: DUPLICATED_DEPENDENCIES
+  id: 9
+  message: Duplicated dynamic path '{}' for key '{}'
 
 - name: EMPTY_ARRAY_SUBSTITOTIONS
   id: 5
   message: Substitutions for pattern '{}' shouldn't be an empty array
-
-- name: INVALID_LANGUAGE
-  id: 6
-  message: Invalid '{}' value for dynamic path with key '{}'. Should be one of {}
-
-- name: UNSUPPORTED_LANGUAGE_FOR_INTEROP
-  id: 7
-  message: Interoperability with language '{}' is not supported
-
-- name: INVALID_NAMED_VALUE
-  id: 8
-  message: Invalid {} value for '{}' with key '{}'
-
-- name: DUPLICATED_DYNAMIC_PATH
-  id: 9
-  message: Duplicated dynamic path '{}' for key '{}'
-
-- name: INVALID_JSON_TYPE
-  id: 10
-  message: The '{}' must have {} type
 
 - name: EMPTY_LIST
   id: 11
@@ -60,22 +37,53 @@ arkts_config_error:
   id: 12
   message: Failed to open file {}
 
+- name: INVALID_DESTINATION_FILE
+  id: 16
+  message: Invalid destination file
+
 - name: INVALID_JSON
   id: 13
   message: ArkTsConfig is not valid json
+
+- name: INVALID_JSON_TYPE
+  id: 10
+  message: The '{}' must have {} type
+
+- name: INVALID_LANGUAGE
+  id: 6
+  message: Invalid '{}' value for dynamic path with key '{}'. Should be one of {}
+
+- name: INVALID_NAMED_VALUE
+  id: 8
+  message: Invalid {} value for '{}' with key '{}'
+
+- name: INVALID_PATH
+  id: 17
+  message: Invalid path for '{}' in dependencies
+
+- name: INVALID_VALUE
+  id: 4
+  message: Invalid value for '{}' with key '{}'
+
+- name: NOT_ROOT_DIR
+  id: 15
+  message: '{} is not root directory for {}'
 
 - name: NO_FILE
   id: 14
   message: No such file {}
 
-- name: NOT_ROOT_DIR
-  id: 15
-  message: '{} is not root directory for {}'
- 
-- name: INVALID_DESTINATION_FILE
-  id: 16
-  message: Invalid destination file
+- name: UNRESOLVABLE_CONFIG_PATH
+  id: 1
+  message: Can't resolve config path {}
 
-- name: INVALID_DYNAMIC_PATH
-  id: 17
-  message: Invalid dynamic path '{}'
+- name: UNSUPPORTED_LANGUAGE_FOR_INTEROP
+  id: 7
+  message: Interoperability with language '{}' is not supported
+
+- name: WRONG_BASE_CONFIG
+  id: 3
+  message: Failed to parse base config {}
+
+graveyard: []
+# See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

@@ -45,43 +45,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 28,
-            "column": 17,
-            "endLine": 28,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
+            "line": 34,
+            "column": 33,
+            "endLine": 34,
+            "endColumn": 34,
+            "problem": "DefaultArgsBehindRequiredArgs",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 20,
-            "endLine": 28,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 23,
-            "endLine": 28,
-            "endColumn": 24,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 32,
-            "column": 22,
-            "endLine": 32,
-            "endColumn": 24,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "Default parameters must be placed after mandatory parameters (arkts-default-args-behind-required-args)",
             "severity": "ERROR"
         },
         {
@@ -112,46 +82,6 @@
             "problem": "ParameterProperties",
             "suggest": "",
             "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
-            "column": 92,
-            "endLine": 34,
-            "endColumn": 93,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
-            "column": 95,
-            "endLine": 34,
-            "endColumn": 96,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
-            "column": 98,
-            "endLine": 34,
-            "endColumn": 99,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 39,
-            "column": 17,
-            "endLine": 39,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -205,26 +135,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 51,
-            "column": 15,
-            "endLine": 51,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 52,
-            "column": 15,
-            "endLine": 52,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 54,
             "column": 15,
             "endLine": 54,
@@ -275,16 +185,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 69,
-            "column": 22,
-            "endLine": 69,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 76,
             "column": 15,
             "endLine": 76,
@@ -295,16 +195,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 78,
-            "column": 22,
-            "endLine": 78,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 84,
             "column": 15,
             "endLine": 84,
@@ -312,26 +202,6 @@
             "problem": "ParameterProperties",
             "suggest": "",
             "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 85,
-            "column": 22,
-            "endLine": 85,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 89,
-            "column": 22,
-            "endLine": 89,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

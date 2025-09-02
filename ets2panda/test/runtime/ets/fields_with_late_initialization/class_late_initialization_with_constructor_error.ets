@@ -29,12 +29,12 @@ class Base2 {
 
 function main(): void {
   let a = new Base("aa");
-  assertEQ(a.f, "aa");
+  arktest.assertEQ(a.f, "aa");
 
   try {
     let b = new Base2();
-    assertEQ(b.g, "aa");
+    arktest.assertEQ(b.g, "aa");
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

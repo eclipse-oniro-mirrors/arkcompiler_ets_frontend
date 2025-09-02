@@ -235,16 +235,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 42,
-            "column": 24,
-            "endLine": 42,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 44,
             "column": 3,
             "endLine": 44,
@@ -272,16 +262,6 @@
             "problem": "LimitedVoidType",
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 47,
-            "column": 35,
-            "endLine": 47,
-            "endColumn": 38,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -422,16 +402,6 @@
             "problem": "InstantiatedJsOjbect",
             "suggest": "",
             "rule": "ArkTS directly instantiated JS objects is not supported (arkts-interop-js2s-create-js-instance)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 72,
-            "column": 28,
-            "endLine": 72,
-            "endColumn": 30,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

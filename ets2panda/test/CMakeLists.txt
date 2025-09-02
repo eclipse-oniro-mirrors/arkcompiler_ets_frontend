@@ -29,6 +29,8 @@ if(PANDA_TARGET_ARM32 OR PANDA_ARM64_TESTS_WITH_SANITIZER)
     return()
 endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
+
 add_custom_target(es2panda_tests COMMENT "Running es2panda test suites")
 add_custom_target(es2panda_gtests COMMENT "Running es2panda gtest suites")
 set(DEFAULT_TEST_GROUP ets_tests)
@@ -58,6 +60,7 @@ function(ets2panda_add_gtest TARGET)
                 ${ES2PANDA_ROOT}/test/utils/checker_test.cpp
                 ${ES2PANDA_ROOT}/test/utils/scope_init_test.cpp
                 ${ES2PANDA_ROOT}/test/utils/plugin_conversion_rule_test.cpp
+                ${ES2PANDA_ROOT}/test/utils/panda_executable_path_getter.cpp
                 ${ARG_CPP_SOURCES}
             LIBRARIES
                 es2panda-public

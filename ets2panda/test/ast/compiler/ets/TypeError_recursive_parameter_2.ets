@@ -17,4 +17,4 @@ class A<T2,T1 extends A<T2,T1>>{}
 class P2{}
 class P1 extends A/* @@ label */<P1,P2>{}
 
-/* @@@ label Error TypeError: Type P2 is not assignable to constraint type A<P1,P2>  */
+/* @@@ label Error TypeError: Type argument 'P2' should be a subtype of 'A<P1,P2>'-constraint */

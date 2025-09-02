@@ -26,6 +26,7 @@ public:
 
 private:
     ir::AstNode *CreateIndexerMethodIfNeeded(ir::AstNode *ast, public_lib::Context *ctx);
+    void RemoveRedundantIndexerDeclarations(ir::AstNode *ast);
 };
 }  // namespace ark::es2panda::compiler
 

@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
-let a: (c: int, b: int) => char rethrows/* @@ label */;
+let a: (c: int, b: int) => char /* @@ label */rethrows;
 
-/* @@@ label Error SyntaxError: Only 'throws' can be used with function types.  */
+
+/* @@@ label Error SyntaxError: Unexpected token 'rethrows'. */
+/* @@@ label Error TypeError: Unresolved reference rethrows */

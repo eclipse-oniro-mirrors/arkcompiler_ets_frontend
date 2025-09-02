@@ -22,12 +22,12 @@ function price(this:Banana): int {
 
 function asFuncCall() {
     let res: int = price(new Banana());
-    assertEQ(res, 1 )
+    arktest.assertEQ(res, 1 )
 }
 
 function asMethodCall() {
     let res: int = (new Banana()).price();
-    assertEQ(res, 1 )
+    arktest.assertEQ(res, 1 )
 }
 
 function main() {

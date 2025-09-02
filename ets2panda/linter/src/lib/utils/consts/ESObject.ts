@@ -14,3 +14,4 @@
  */
 
 export const ES_VALUE = 'ESValue';
+export const ES_OBJECT = 'ESObject';

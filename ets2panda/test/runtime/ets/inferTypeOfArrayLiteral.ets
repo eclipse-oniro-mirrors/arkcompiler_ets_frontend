@@ -23,20 +23,20 @@ function main(): void {
     let a = [new Object(), new Object(), new Object()]
     a[0] = "b"
     a[1] = new A()
-    assertEQ(a[0], "b")
-    assertEQ((a[1] as A).foo(), 2)
+    arktest.assertEQ(a[0], "b")
+    arktest.assertEQ((a[1] as A).foo(), 2)
     let b = [new Object()]
     b[0] = 5.0
-    assertEQ(b[0] as Number + 5, 10)
+    arktest.assertEQ(b[0] as Number + 5, 10)
     let c = ["a", "b"]
-    assertEQ(c[0], "a")
-    assertEQ(c[1], "b")
+    arktest.assertEQ(c[0], "a")
+    arktest.assertEQ(c[1], "b")
     c[0] = "b"
     c[1] = "c"
-    assertEQ(c[0], "b")
-    assertEQ(c[1], "c")
+    arktest.assertEQ(c[0], "b")
+    arktest.assertEQ(c[1], "c")
     let d = [1, 2, 3]
     d[0] = 2.5
-    assertEQ(d[0], 2.5)
-    assertEQ(d[0] + d[1], 4.5)
+    arktest.assertEQ(d[0], 2.5)
+    arktest.assertEQ(d[0] + d[1], 4.5)
 }

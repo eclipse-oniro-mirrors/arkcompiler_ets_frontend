@@ -15,5 +15,5 @@
  
  function main() : void {  // gets to result_.classProperties
     let a = 0;
-    assertEQ(a, 0)
+    arktest.assertEQ(a, 0)
 }

@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 22,
+            "line": 27,
             "column": 7,
-            "endLine": 22,
+            "endLine": 27,
             "endColumn": 25,
             "problem": "AnyType",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 22,
+            "line": 27,
             "column": 20,
-            "endLine": 22,
+            "endLine": 27,
             "endColumn": 24,
             "problem": "ArrayIndexExprType",
             "suggest": "",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 23,
+            "line": 28,
             "column": 7,
-            "endLine": 23,
+            "endLine": 28,
             "endColumn": 28,
             "problem": "AnyType",
             "suggest": "",
@@ -45,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 23,
+            "line": 28,
             "column": 20,
-            "endLine": 23,
+            "endLine": 28,
             "endColumn": 27,
             "problem": "ArrayIndexExprType",
             "suggest": "",
@@ -55,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 24,
+            "line": 29,
             "column": 7,
-            "endLine": 24,
+            "endLine": 29,
             "endColumn": 30,
             "problem": "AnyType",
             "suggest": "",
@@ -65,9 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 24,
+            "line": 29,
             "column": 20,
-            "endLine": 24,
+            "endLine": 29,
             "endColumn": 29,
             "problem": "ArrayIndexExprType",
             "suggest": "",
@@ -75,9 +75,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 25,
+            "line": 30,
             "column": 7,
-            "endLine": 25,
+            "endLine": 30,
             "endColumn": 25,
             "problem": "AnyType",
             "suggest": "",
@@ -85,9 +85,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 25,
+            "line": 30,
             "column": 20,
-            "endLine": 25,
+            "endLine": 30,
             "endColumn": 24,
             "problem": "ArrayIndexExprType",
             "suggest": "",
@@ -95,40 +95,40 @@
             "severity": "ERROR"
         },
         {
-            "line": 26,
-            "column": 28,
-            "endLine": 26,
-            "endColumn": 28,
+            "line": 31,
+            "column": 20,
+            "endLine": 31,
+            "endColumn": 20,
             "problem": "ArrayIndexExprType",
             "suggest": "",
             "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
             "severity": "ERROR"
         },
         {
-            "line": 29,
-            "column": 19,
-            "endLine": 29,
-            "endColumn": 30,
+            "line": 34,
+            "column": 11,
+            "endLine": 34,
+            "endColumn": 22,
             "problem": "RuntimeArrayCheck",
             "suggest": "",
             "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {
-            "line": 64,
-            "column": 3,
-            "endLine": 64,
-            "endColumn": 12,
-            "problem": "EnumMemberNonConstInit",
+            "line": 46,
+            "column": 1,
+            "endLine": 46,
+            "endColumn": 15,
+            "problem": "RuntimeArrayCheck",
             "suggest": "",
-            "rule": "Enumeration members can be initialized only with compile time expressions of the same type (arkts-no-enum-mixed-types)",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {
-            "line": 68,
+            "line": 50,
             "column": 1,
-            "endLine": 68,
-            "endColumn": 12,
+            "endLine": 50,
+            "endColumn": 15,
             "problem": "RuntimeArrayCheck",
             "suggest": "",
             "rule": "Array bound not checked. (arkts-runtime-array-check)",
@@ -136,8 +136,28 @@
         },
         {
             "line": 69,
-            "column": 1,
+            "column": 3,
             "endLine": 69,
+            "endColumn": 12,
+            "problem": "EnumMemberNonConstInit",
+            "suggest": "",
+            "rule": "Enumeration members can be initialized only with compile time expressions of the same type (arkts-no-enum-mixed-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 73,
+            "column": 1,
+            "endLine": 73,
+            "endColumn": 12,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 1,
+            "endLine": 74,
             "endColumn": 9,
             "problem": "RuntimeArrayCheck",
             "suggest": "",
@@ -145,9 +165,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 70,
+            "line": 75,
             "column": 1,
-            "endLine": 70,
+            "endLine": 75,
             "endColumn": 9,
             "problem": "RuntimeArrayCheck",
             "suggest": "",
@@ -155,9 +175,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 71,
+            "line": 76,
             "column": 1,
-            "endLine": 71,
+            "endLine": 76,
             "endColumn": 9,
             "problem": "RuntimeArrayCheck",
             "suggest": "",
@@ -165,9 +185,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 72,
+            "line": 77,
             "column": 1,
-            "endLine": 72,
+            "endLine": 77,
             "endColumn": 9,
             "problem": "IndexNegative",
             "suggest": "",
@@ -175,9 +195,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 72,
+            "line": 77,
             "column": 1,
-            "endLine": 72,
+            "endLine": 77,
             "endColumn": 9,
             "problem": "RuntimeArrayCheck",
             "suggest": "",
@@ -185,9 +205,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 81,
+            "line": 86,
             "column": 1,
-            "endLine": 81,
+            "endLine": 86,
             "endColumn": 18,
             "problem": "RuntimeArrayCheck",
             "suggest": "",
@@ -195,13 +215,23 @@
             "severity": "ERROR"
         },
         {
-            "line": 81,
+            "line": 86,
             "column": 5,
-            "endLine": 81,
+            "endLine": 86,
             "endColumn": 17,
             "problem": "ArrayIndexExprType",
             "suggest": "",
             "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 29,
+            "endLine": 101,
+            "endColumn": 38,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
         }
     ]

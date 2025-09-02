@@ -14,17 +14,17 @@
  */
 
 let typeName: ArrayBuffer; // ERROR
-let sab: ArrayBuffer = new ArrayBuffer(0.0) // 2 ERROR
+let sab: ArrayBuffer = new ArrayBuffer(0) // 2 ERROR
 
 type NewTypeName = ArrayBuffer // ERROR
 let newTypeName: NewTypeName
 // disable use new NewTypeName()
-let ntn: NewTypeName = new ArrayBuffer(0.0) // ERROR
+let ntn: NewTypeName = new ArrayBuffer(0) // ERROR
 
 function foo(atmo: Atomics) {} // NOT ERROR
 
 class A extends ArrayBuffer {
     constructor() {
-        supper(1.0)
+        supper(1)
     }
 }

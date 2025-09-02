@@ -111,7 +111,7 @@ void ETSArrayType::AssignmentTarget(TypeRelation *relation, Type *source)
             source->AsETSArrayType()->ElementType()->IsETSPrimitiveOrEnumType()) {
             return;
         }
-        relation->IsAssignableTo(source->AsETSArrayType()->ElementType(), element_);
+        relation->IsSupertypeOf(element_, source->AsETSArrayType()->ElementType());
     }
 }
 

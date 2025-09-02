@@ -54,15 +54,15 @@ class A {
 function main(){
     let a = new A();
     a._init1()
-    assertEQ(a.aa(),"function ccc")
+    arktest.assertEQ(a.aa(),"function ccc")
     a._init2()
-    assertEQ(a.aa(),"function ccc")
+    arktest.assertEQ(a.aa(),"function ccc")
     a._init3()
-    assertEQ(a.aa(),"lambda foo")
+    arktest.assertEQ(a.aa(),"lambda foo")
     a._init4()
-    assertEQ(a.aa(),"function ccc")
+    arktest.assertEQ(a.aa(),"function ccc")
     a._init5()
-    assertEQ(a.aa(),"function ccc")
+    arktest.assertEQ(a.aa(),"function ccc")
     a._init6()
-    assertEQ(a.aa(),"function ccc")
+    arktest.assertEQ(a.aa(),"function ccc")
 }

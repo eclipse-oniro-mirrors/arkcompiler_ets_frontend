@@ -139,7 +139,7 @@ class FunctionTypes {
 class ComplexTypes {
   static uninitializedComplexArray: Array<{ id: number; data: Map<string, Set<number>> }>;
   static uninitializedRecord: Record<string, { value: number }>;
-  static uninitializedTuple: [string, number, boolean?];
+  static uninitializedTuple: [string, number, boolean];
 }
 
 // Custom Class Types

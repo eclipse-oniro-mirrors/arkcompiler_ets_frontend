@@ -15,6 +15,56 @@
     ],
     "result": [
         {
+            "line": 17,
+            "column": 18,
+            "endLine": 17,
+            "endColumn": 23,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 18,
+            "endLine": 21,
+            "endColumn": 31,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 18,
+            "endLine": 25,
+            "endColumn": 29,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 18,
+            "endLine": 29,
+            "endColumn": 27,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 18,
+            "endLine": 36,
+            "endColumn": 23,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
             "line": 36,
             "column": 28,
             "endLine": 36,
@@ -32,6 +82,16 @@
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 18,
+            "endLine": 37,
+            "endColumn": 31,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {
@@ -56,6 +116,16 @@
         },
         {
             "line": 38,
+            "column": 18,
+            "endLine": 38,
+            "endColumn": 29,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
             "column": 34,
             "endLine": 38,
             "endColumn": 50,
@@ -72,6 +142,16 @@
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 18,
+            "endLine": 39,
+            "endColumn": 27,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {
@@ -95,133 +175,33 @@
             "severity": "ERROR"
         },
         {
-            "line": 43,
-            "column": 1,
-            "endLine": 50,
-            "endColumn": 2,
-            "problem": "NumericSemantics",
+            "line": 49,
+            "column": 12,
+            "endLine": 49,
+            "endColumn": 16,
+            "problem": "RuntimeArrayCheck",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {
-            "line": 44,
-            "column": 29,
-            "endLine": 44,
+            "line": 49,
+            "column": 19,
+            "endLine": 49,
+            "endColumn": 23,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 26,
+            "endLine": 49,
             "endColumn": 30,
-            "problem": "NumericSemantics",
+            "problem": "RuntimeArrayCheck",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 44,
-            "column": 31,
-            "endLine": 44,
-            "endColumn": 32,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 44,
-            "column": 33,
-            "endLine": 44,
-            "endColumn": 34,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 45,
-            "column": 37,
-            "endLine": 45,
-            "endColumn": 38,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 45,
-            "column": 39,
-            "endLine": 45,
-            "endColumn": 40,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 45,
-            "column": 41,
-            "endLine": 45,
-            "endColumn": 42,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 46,
-            "column": 35,
-            "endLine": 46,
-            "endColumn": 36,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 46,
-            "column": 37,
-            "endLine": 46,
-            "endColumn": 38,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 46,
-            "column": 39,
-            "endLine": 46,
-            "endColumn": 40,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 47,
-            "column": 33,
-            "endLine": 47,
-            "endColumn": 34,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 47,
-            "column": 35,
-            "endLine": 47,
-            "endColumn": 36,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 47,
-            "column": 37,
-            "endLine": 47,
-            "endColumn": 38,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {

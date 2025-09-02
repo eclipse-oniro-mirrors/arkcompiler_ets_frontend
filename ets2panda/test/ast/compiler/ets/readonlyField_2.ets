@@ -14,12 +14,12 @@
  */
 
 class ReadonlyPerson {
-    readonly /* @@ label */name: string;
+    readonly name: string;
     readonly age: number;
 }
 
 function updatePerson(person: ReadonlyPerson): ReadonlyPerson {
-    person.name = "Bob"; //CTE
+    /* @@ label */person.name = "Bob"; //CTE
     return person;
 }
 function main(): void {

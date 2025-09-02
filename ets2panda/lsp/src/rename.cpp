@@ -17,25 +17,27 @@
 #include "get_adjusted_location.h"
 #include "macros.h"
 #include "lexer/token/letters.h"
+#include "compiler/lowering/util.h"
 #include "public/public.h"
+#include "util/path.h"
 #include <string>
 #include <utility>
 
 namespace ark::es2panda::lsp {
-
 constexpr size_t FIRST_CHAR_INDEX = 0;
 constexpr size_t QUOTE_END_OFFSET = 2;
 constexpr size_t MIN_QUOTED_LENGTH = 2;
 constexpr size_t QUOTE_START_OFFSET = 1;
 
-RenameInfoType GetRenameInfo(es2panda_Context *context, size_t pos)
+RenameInfoType GetRenameInfo(es2panda_Context *context, size_t pos, const std::string &pandaLibPath)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto checker = reinterpret_cast<public_lib::Context *>(ctx)->checker->AsETSChecker();
-    auto program = reinterpret_cast<public_lib::Context *>(ctx)->parserProgram;
+    SetPhaseManager(ctx->phaseManager);
+    auto checker = ctx->GetChecker()->AsETSChecker();
+    auto program = ctx->parserProgram;
     auto node = GetAdjustedLocation(GetTouchingPropertyName(context, pos), true, ctx->allocator);
     if (node.has_value() && NodeIsEligibleForRename(node.value())) {
-        auto renameInfo = GetRenameInfoForNode(node.value(), checker, program);
+        auto renameInfo = GetRenameInfoForNode(node.value(), checker, program, pandaLibPath);
         if (renameInfo.has_value()) {
             return renameInfo.value();
         }
@@ -69,25 +71,88 @@ TextSpan CreateTriggerSpanForNode(ir::AstNode *node)
     return span;
 }
 
-std::optional<RenameInfoType> GetRenameInfoForNode(ir::AstNode *node, checker::ETSChecker *checker,
-                                                   parser::Program *program)
+ir::AstNode *GetDeclaration(ir::AstNode *node)
 {
-    if (node->IsStringLiteral()) {
-        auto type = GetContextualTypeFromParentOrAncestorTypeNode(node, checker);
-        if (type) {
-            const std::string kind = "string";
-            return GetRenameInfoSuccess(node->AsStringLiteral()->ToString(), node->AsStringLiteral()->ToString(), kind,
-                                        "", node);
+    if (node == nullptr) {
+        return nullptr;
+    }
+    auto var = node->Variable();
+    if (var == nullptr) {
+        return nullptr;
+    }
+    auto decl = var->Declaration();
+    if (decl == nullptr) {
+        return nullptr;
+    }
+    return decl->Node();
+}
+
+bool IsDefinedInLibraryFile(const ir::AstNode *node, const std::string &pandaLibPath)
+{
+    if (node == nullptr) {
+        return false;
+    }
+    auto filePath = node->Range().start.Program()->SourceFile().GetAbsolutePath().Utf8();
+    if (filePath.find(pandaLibPath) != std::string::npos) {
+        return true;
+    }
+    std::string etsPath = pandaLibPath;
+    size_t pos = 0;
+    const int threeLevelsUp = 3;
+    for (int i = 0; i < threeLevelsUp; ++i) {
+        pos = etsPath.find_last_of(util::PATH_DELIMITER);
+        if (pos != std::string::npos) {
+            etsPath = etsPath.substr(0, pos);
         }
     }
-    if (node->IsLabelledStatement() ||
-        (node->IsIdentifier() && (node->Parent()->IsContinueStatement() || node->Parent()->IsBreakStatement()))) {
-        const std::string name = GetTextOfNode(node, program);
-        const std::string kind = "label";
-        return GetRenameInfoSuccess(name, name, kind, "", node);
+    // check etsPath in openharmony sdk
+    if (filePath.find(etsPath) != std::string::npos) {
+        return true;
+    }
+    std::string oh = "openharmony";
+    pos = etsPath.rfind(oh);
+    if (pos != std::string::npos) {
+        etsPath.replace(pos, oh.size(), "hms");
+        // check etsPath in hms sdk
+        if (filePath.find(etsPath) != std::string::npos) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool IsDefinedInOhModules(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return false;
+    }
+    auto filePath = node->Range().start.Program()->SourceFile().GetAbsolutePath().Utf8();
+    return filePath.find("oh_modules") != std::string::npos;
+}
+
+std::optional<RenameInfoType> GetRenameInfoForNode(ir::AstNode *node, checker::ETSChecker *checker,
+                                                   parser::Program *program, const std::string &pandaLibPath)
+{
+    auto decl = GetDeclaration(node);
+    if (decl == nullptr) {
+        if (node->IsStringLiteral()) {
+            auto type = GetContextualTypeFromParentOrAncestorTypeNode(node, checker);
+            if (type) {
+                const std::string kind = "string";
+                return GetRenameInfoSuccess(node->AsStringLiteral()->ToString(), node->AsStringLiteral()->ToString(),
+                                            kind, "", node);
+            }
+        }
+        if (node->IsLabelledStatement() ||
+            (node->IsIdentifier() && (node->Parent()->IsContinueStatement() || node->Parent()->IsBreakStatement()))) {
+            const std::string name = GetTextOfNode(node, program);
+            const std::string kind = "label";
+            return GetRenameInfoSuccess(name, name, kind, "", node);
+        }
+        return std::nullopt;
     }
 
-    if (node->IsIdentifier()) {
+    if (IsDefinedInLibraryFile(decl, pandaLibPath) || IsDefinedInOhModules(decl)) {
         return std::nullopt;
     }
 
@@ -95,7 +160,7 @@ std::optional<RenameInfoType> GetRenameInfoForNode(ir::AstNode *node, checker::E
         return GetRenameInfoForModule(node, program);
     }
 
-    const std::string kind = GetNodeKindForRenameInfo(node);
+    const std::string kind = GetNodeKindForRenameInfo(decl);
 
     std::optional<std::string> specifierName;
     if ((IsImportOrExportSpecifierName(node) || IsStringOrNumericLiteralLike(node)) &&
@@ -104,8 +169,13 @@ std::optional<RenameInfoType> GetRenameInfoForNode(ir::AstNode *node, checker::E
     } else {
         specifierName = std::nullopt;
     }
-    const std::string displayName = specifierName.has_value() ? specifierName.value() : "";
-    const std::string fullDisplayName = specifierName.has_value() ? specifierName.value() : "";
+    auto name = compiler::GetNameOfDeclaration(decl);
+    const std::string displayName = specifierName.has_value() ? specifierName.value()
+                                    : name.has_value()        ? name.value()
+                                                              : "";
+    const std::string fullDisplayName = specifierName.has_value() ? specifierName.value()
+                                        : name.has_value()        ? name.value()
+                                                                  : "";
     return GetRenameInfoSuccess(displayName, fullDisplayName, kind, "", node);
 }
 
@@ -254,13 +324,76 @@ std::optional<RenameInfoSuccess> GetRenameInfoForModule(ir::AstNode *node, parse
                              "", triggerSpan);
 }
 
+std::string GetKindOfMethod(ir::AstNode *node)
+{
+    if (!node->IsMethodDefinition()) {
+        return "";
+    }
+    switch (node->AsMethodDefinition()->Kind()) {
+        case ir::MethodDefinitionKind::METHOD:
+            return "method";
+        case ir::MethodDefinitionKind::GET:
+            return "get";
+        case ir::MethodDefinitionKind::SET:
+            return "set";
+        case ir::MethodDefinitionKind::CONSTRUCTOR:
+            return "constructor";
+        default:
+            return "";
+    }
+}
+
+std::string GetKindOfClassDefinition(ir::AstNode *node)
+{
+    if (!node->IsClassDefinition()) {
+        return "";
+    }
+    if (node->AsClassDefinition()->OrigEnumDecl() != nullptr) {
+        return "enum";
+    }
+    if (node->AsClassDefinition()->IsNamespaceTransformed()) {
+        return "namespace";
+    }
+    if (node->Parent()->IsETSStructDeclaration()) {
+        return "struct";
+    }
+    return "class";
+}
+
+std::optional<std::string> GetKindOfPropertyMethodFunctionOrVar(ir::AstNode *node)
+{
+    switch (node->Type()) {
+        case ir::AstNodeType::CLASS_PROPERTY:
+            if (compiler::ClassDefinitionIsEnumTransformed(node->Parent())) {
+                return "enum member";
+            }
+            return "property";
+        case ir::AstNodeType::FUNCTION_DECLARATION:
+            return "function";
+        case ir::AstNodeType::METHOD_DEFINITION:
+            return GetKindOfMethod(node);
+        case ir::AstNodeType::VARIABLE_DECLARATION:
+            return "variable";
+        case ir::AstNodeType::IMPORT_DECLARATION:
+            return "import";
+        case ir::AstNodeType::CLASS_DEFINITION:
+            return GetKindOfClassDefinition(node);
+        default:
+            return std::nullopt;
+    }
+}
+
 std::string GetNodeKindForRenameInfo(ir::AstNode *node)
 {
+    auto kind = GetKindOfPropertyMethodFunctionOrVar(node);
+    if (kind.has_value()) {
+        return kind.value();
+    }
     switch (node->Type()) {
         case ir::AstNodeType::TS_ENUM_DECLARATION:
             return "enum";
         case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
-            return "type";
+            return "type alias";
         case ir::AstNodeType::TS_INTERFACE_DECLARATION:
             return "interface";
         case ir::AstNodeType::TS_TYPE_PARAMETER:
@@ -269,6 +402,8 @@ std::string GetNodeKindForRenameInfo(ir::AstNode *node)
             return "enum member";
         case ir::AstNodeType::TS_MODULE_DECLARATION:
             return "module";
+        case ir::AstNodeType::ETS_PARAMETER_EXPRESSION:
+            return "parameter";
         default:
             return "";
     }

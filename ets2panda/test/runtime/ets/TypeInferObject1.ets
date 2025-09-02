@@ -36,7 +36,7 @@ class B <U, T, K> {
 }
 
 function func1<U, T, K>(arg: A<T, U>, arg1: K){
-    assertEQ(typeof arg1, "number")
+    arktest.assertEQ(typeof arg1, "number")
     return new A<U, T>(arg.value2, arg.value1);
 }
 
@@ -50,22 +50,22 @@ function func3<U, T>(arg: A<T, U>){
 
 function main(): void {
     let a = new A<int, String>(10, "Test");
-    assertEQ(typeof a, "object")
-    assertEQ(typeof a.value1, "number")
-    assertEQ(typeof a.value2, "string")
+    arktest.assertEQ(typeof a, "object")
+    arktest.assertEQ(typeof a.value1, "number")
+    arktest.assertEQ(typeof a.value2, "string")
 
     let funcValue1 = func1(a, 12);
-    assertEQ(typeof funcValue1.value1, "string")
-    assertEQ(typeof funcValue1.value2, "number",  `got ${typeof funcValue1.value2}`)
+    arktest.assertEQ(typeof funcValue1.value1, "string")
+    arktest.assertEQ(typeof funcValue1.value2, "number",  `got ${typeof funcValue1.value2}`)
 
     let b = new B<int, String, int>(10, "Test", 40);
     let funcValue2 = func2(b);
-    assertEQ(typeof funcValue2.value1, "string")
-    assertEQ(typeof funcValue2.value2, "number")
-    assertEQ(typeof funcValue2.value3, "number")
+    arktest.assertEQ(typeof funcValue2.value1, "string")
+    arktest.assertEQ(typeof funcValue2.value2, "number")
+    arktest.assertEQ(typeof funcValue2.value3, "number")
 
     let c = new A<int, String>(10, "Test");
     let funcValue3 = func3(c);
-    assertEQ(typeof funcValue3.value1, "string")
-    assertEQ(typeof funcValue3.value2, "number")
+    arktest.assertEQ(typeof funcValue3.value1, "string")
+    arktest.assertEQ(typeof funcValue3.value2, "number")
 }

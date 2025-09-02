@@ -39,10 +39,10 @@ function main(): void {
   try {
     console.log(gen.genericField);
   } catch (e) {
-    assertTrue(e instanceof ClassCastError)
+    arktest.assertTrue(e instanceof ClassCastError)
   }
   gen.genericField = "1"
-  assertEQ(gen.genericField, "1")
+  arktest.assertEQ(gen.genericField, "1")
   gen.genericField = new A()
-  assertTrue(gen.genericField instanceof A)
+  arktest.assertTrue(gen.genericField instanceof A)
 }

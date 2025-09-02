@@ -19,17 +19,17 @@ type UnionTypeUndefinedAndNull = int | undefined | null | string
 function main(): int {
     let v: UnionTypeUndefined[] = new UnionTypeUndefined[33]
     for (let i = 0; i < 33; i++) {
-      assertTrue(v[i] instanceof undefined, "v[i] value has to be undefined.")
+      arktest.assertTrue(v[i] instanceof undefined, "v[i] value has to be undefined.")
     }
 
     let y: UnionTypeUndefinedAndNull[] = new UnionTypeUndefinedAndNull[33]
     for (let i = 0; i < 33; i++) {
-      assertTrue(y[i] instanceof undefined, "y[i] value has to be undefined.")
+      arktest.assertTrue(y[i] instanceof undefined, "y[i] value has to be undefined.")
     }
 
     let m : FixedArray<int> = new int[33]
     for (let i = 0; i < 33; i++) {
-      assertEQ(m[i], 0, "m[i] value has to be 0.")
+      arktest.assertEQ(m[i], 0, "m[i] value has to be 0.")
     }
 
     return 0

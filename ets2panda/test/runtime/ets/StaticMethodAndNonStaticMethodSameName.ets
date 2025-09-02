@@ -33,9 +33,9 @@ class B {
 
 function main(){
     let a = new A();
-    assertEQ(A.func(), 1);
-    assertEQ(a.func(), 2);
+    arktest.assertEQ(A.func(), 1);
+    arktest.assertEQ(a.func(), 2);
     let b = new B();
-    assertEQ(b.func(), 1);
-    assertEQ(B.func(), 2);
+    arktest.assertEQ(b.func(), 1);
+    arktest.assertEQ(B.func(), 2);
 }

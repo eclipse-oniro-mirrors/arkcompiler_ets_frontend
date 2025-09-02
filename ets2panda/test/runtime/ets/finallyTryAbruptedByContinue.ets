@@ -37,8 +37,8 @@ function main() : void{
     a++;
     b++;
   }
-  assertEQ(b, 11)
-  assertEQ(a, 11)
+  arktest.assertEQ(b, 11)
+  arktest.assertEQ(a, 11)
 
   a = 0;
   b = 0;
@@ -64,6 +64,6 @@ function main() : void{
     b++;
   }
 
-  assertEQ(b, 101)
-  assertEQ(a, 11)
+  arktest.assertEQ(b, 101)
+  arktest.assertEQ(a, 11)
 }

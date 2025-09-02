@@ -21,4 +21,4 @@ function foo(this: B): this {
     return /* @@ label */2;
 }
 
-/* @@@ label Error TypeError: Type 'int' is not compatible with the enclosing method's return type 'B'  */
+/* @@@ label Error TypeError: Type 'Int' is not compatible with the enclosing method's return type 'B'  */

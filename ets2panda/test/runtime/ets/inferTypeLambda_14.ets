@@ -21,5 +21,5 @@ function bar(arr:FixedArray<Number>){
 }
 
 function main(){
-    assertTrue(bar([1,2,3,4]) == "1,2,3,4")
+    arktest.assertTrue(bar([1,2,3,4]) == "1,2,3,4")
 }

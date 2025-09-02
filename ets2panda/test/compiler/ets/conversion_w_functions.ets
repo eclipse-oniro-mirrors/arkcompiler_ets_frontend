@@ -22,55 +22,51 @@ function getD(d : double): double {
 }
 
 function apple(): Byte {
-    return getI(0) as byte;
+    return getI(0).toByte();
 }
 
 function banana(): Short {
-    return getI(1) as short;
+    return getI(1).toShort();
 }
 
 function cherry(): Int {
-    return getI(2) as int;
+    return getI(2).toInt();
 }
 
 function date(): Long {
-    return getI(3) as long;
+    return getI(3).toLong();
 }
 
 function elderberry(): Float {
-    return getI(4) as float;
+    return getI(4).toFloat();
 }
 
 function fig(): Float {
-    return getD(4.0) as float;
+    return getD(4.0).toFloat();
 }
 
 function grape(): Double {
-    return getI(5) as double;
+    return getI(5).toDouble();
 }
 
 function honeydewmelon(): Double {
-    return getD(5.0) as double;
+    return getD(5.0).toDouble();
 }
 
 function indian_fig(): Char {
-    return getI(65) as char;
+    return getI(65).toChar();
 }
 
 function raspberry(): Short {
-    return getD(1.0) as short;
+    return getD(1.0).toShort();
 }
 
 function strawberry(): Int {
-    return getD(2.0) as int;
+    return getD(2.0).toInt();
 }
 
 function tomato(): Long {
-    return getD(3.0) as long;
-}
-
-function uglifruit(): Char {
-    return getD(65.0) as char;
+    return getD(3.0).toLong();
 }
 
 function main(): void {}

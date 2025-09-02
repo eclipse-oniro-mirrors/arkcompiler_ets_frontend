@@ -26,5 +26,5 @@ function main(): void {
 
     let result = test4(5, 4);
 
-    assertEQ(result, 2871)
+    arktest.assertEQ(result, 2871)
 }

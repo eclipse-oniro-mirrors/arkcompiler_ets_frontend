@@ -18,7 +18,8 @@
 
 #include "varbinder/scope.h"
 #include "ir/annotationAllowed.h"
-#include "ir/jsDocAllowed.h"
+#include "ir/statement.h"
+#include "ir/statements/annotationUsage.h"
 
 namespace ark::es2panda::varbinder {
 class Variable;
@@ -30,7 +31,7 @@ class TSInterfaceBody;
 class TSInterfaceHeritage;
 class TSTypeParameterDeclaration;
 
-class TSInterfaceDeclaration : public JsDocAllowed<AnnotationAllowed<TypedStatement>> {
+class TSInterfaceDeclaration : public AnnotationAllowed<TypedStatement> {
 public:
     // NOLINTBEGIN(cppcoreguidelines-pro-type-member-init)
     struct ConstructorData {
@@ -45,7 +46,7 @@ public:
 
     explicit TSInterfaceDeclaration(ArenaAllocator *allocator, ArenaVector<TSInterfaceHeritage *> &&extends,
                                     ConstructorData &&data)
-        : JsDocAllowed<AnnotationAllowed<TypedStatement>>(AstNodeType::TS_INTERFACE_DECLARATION, allocator),
+        : AnnotationAllowed<TypedStatement>(AstNodeType::TS_INTERFACE_DECLARATION, allocator),
           decorators_(allocator->Adapter()),
           id_(data.id),
           typeParams_(data.typeParams),
@@ -58,6 +59,29 @@ public:
         if (isStatic_) {
             AddModifier(ir::ModifierFlags::STATIC);
         }
+        InitHistory();
+    }
+
+    explicit TSInterfaceDeclaration(ArenaAllocator *allocator, ArenaVector<TSInterfaceHeritage *> &&extends,
+                                    ConstructorData &&data, AstNodeHistory *history)
+        : AnnotationAllowed<TypedStatement>(AstNodeType::TS_INTERFACE_DECLARATION, allocator),
+          decorators_(allocator->Adapter()),
+          id_(data.id),
+          typeParams_(data.typeParams),
+          body_(data.body),
+          extends_(std::move(extends)),
+          isStatic_(data.isStatic),
+          isExternal_(data.isExternal),
+          lang_(data.lang)
+    {
+        if (isStatic_) {
+            AddModifier(ir::ModifierFlags::STATIC);
+        }
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     [[nodiscard]] bool IsScopeBearer() const noexcept override
@@ -67,93 +91,84 @@ public:
 
     [[nodiscard]] varbinder::LocalScope *Scope() const noexcept override
     {
-        return scope_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->scope_;
     }
 
     void SetScope(varbinder::LocalScope *scope)
     {
-        ES2PANDA_ASSERT(scope_ == nullptr);
-        scope_ = scope;
+        ES2PANDA_ASSERT(Scope() == nullptr);
+        GetOrCreateHistoryNode()->AsTSInterfaceDeclaration()->scope_ = scope;
     }
 
     void ClearScope() noexcept override
     {
-        scope_ = nullptr;
+        GetOrCreateHistoryNode()->AsTSInterfaceDeclaration()->scope_ = nullptr;
     }
 
     TSInterfaceBody *Body()
     {
-        return body_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->body_;
     }
 
     const TSInterfaceBody *Body() const
     {
-        return body_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->body_;
     }
 
     Identifier *Id()
     {
-        return id_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->id_;
     }
 
     const Identifier *Id() const
     {
-        return id_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->id_;
     }
 
     const util::StringView &InternalName() const
     {
-        return internalName_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->internalName_;
     }
 
-    void SetInternalName(util::StringView internalName)
-    {
-        internalName_ = internalName;
-    }
+    void SetInternalName(util::StringView internalName);
 
     bool IsStatic() const
     {
-        return isStatic_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->isStatic_;
     }
 
     bool IsFromExternal() const
     {
-        return isExternal_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->isExternal_;
     }
 
     const TSTypeParameterDeclaration *TypeParams() const
     {
-        return typeParams_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->typeParams_;
     }
 
     TSTypeParameterDeclaration *TypeParams()
     {
-        return typeParams_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->typeParams_;
     }
 
-    ArenaVector<TSInterfaceHeritage *> &Extends()
-    {
-        return extends_;
-    }
+    [[nodiscard]] const ArenaVector<TSInterfaceHeritage *> &Extends();
+    [[nodiscard]] ArenaVector<TSInterfaceHeritage *> &ExtendsForUpdate();
 
     const ArenaVector<TSInterfaceHeritage *> &Extends() const
     {
-        return extends_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->extends_;
     }
 
     const ArenaVector<Decorator *> &Decorators() const
     {
-        return decorators_;
-    }
-
-    const ArenaVector<Decorator *> *DecoratorsPtr() const override
-    {
-        return &Decorators();
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->decorators_;
     }
 
     void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
     {
-        decorators_ = std::move(decorators);
+        auto newNode = reinterpret_cast<TSInterfaceDeclaration *>(this->GetOrCreateHistoryNode());
+        newNode->decorators_ = std::move(decorators);
     }
 
     bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
@@ -163,25 +178,22 @@ public:
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
 
-    es2panda::Language Language() const
+    [[nodiscard]] es2panda::Language Language() const noexcept
     {
-        return lang_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->lang_;
     }
 
     ClassDeclaration *GetAnonClass() noexcept
     {
-        return anonClass_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->anonClass_;
     }
 
     ClassDeclaration *GetAnonClass() const noexcept
     {
-        return anonClass_;
+        return GetHistoryNodeAs<TSInterfaceDeclaration>()->anonClass_;
     }
 
-    void SetAnonClass(ClassDeclaration *anonClass) noexcept
-    {
-        anonClass_ = anonClass;
-    }
+    void SetAnonClass(ClassDeclaration *anonClass);
 
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
@@ -200,9 +212,23 @@ public:
     TSInterfaceDeclaration *Construct(ArenaAllocator *allocator) override;
     void CopyTo(AstNode *other) const override;
 
+    void EmplaceExtends(TSInterfaceHeritage *extends);
+    void ClearExtends();
+    void SetValueExtends(TSInterfaceHeritage *extends, size_t index);
+
+    void EmplaceDecorators(Decorator *decorators);
+    void ClearDecorators();
+    void SetValueDecorators(Decorator *decorators, size_t index);
+    [[nodiscard]] const ArenaVector<Decorator *> &Decorators();
+    [[nodiscard]] ArenaVector<Decorator *> &DecoratorsForUpdate();
+
 private:
     bool RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const;
     friend class SizeOfNodeTest;
+    void SetId(Identifier *id);
+    void SetTypeParams(TSTypeParameterDeclaration *typeParams);
+    void SetBody(TSInterfaceBody *body);
+
     ArenaVector<Decorator *> decorators_;
     varbinder::LocalScope *scope_ {nullptr};
     Identifier *id_;

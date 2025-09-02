@@ -7,7 +7,7 @@ function foo(): string {
 }
 
 let x = foo()
-assertEQ(x, "hello")
+arktest.assertEQ(x, "hello")
 
 PROCEED TO BOUND SUCCESS
 PROCEED TO CHECKED SUCCESS

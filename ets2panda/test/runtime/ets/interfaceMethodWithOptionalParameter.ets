@@ -24,6 +24,6 @@ class A<T> implements RA<T> {
 
 function main(): void {
     let a = new A<Number>();
-    assertEQ(a.foo(1, 2), 2)
-    assertEQ(a.foo(1), undefined)
+    arktest.assertEQ(a.foo(1, 2), 2)
+    arktest.assertEQ(a.foo(1), undefined)
 }

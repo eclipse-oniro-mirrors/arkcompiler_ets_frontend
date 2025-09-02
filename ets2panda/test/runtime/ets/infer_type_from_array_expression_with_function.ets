@@ -24,5 +24,5 @@ function foo(p: BAR[], q: int): int {
 }
 
 function main() {
-    assertEQ(foo([bar], 3), 6)
+    arktest.assertEQ(foo([bar], 3), 6)
 }

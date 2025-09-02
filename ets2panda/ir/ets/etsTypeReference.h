@@ -25,16 +25,27 @@ public:
     explicit ETSTypeReference(ir::ETSTypeReferencePart *part, ArenaAllocator *const allocator)
         : TypeNode(AstNodeType::ETS_TYPE_REFERENCE, allocator), part_(part)
     {
+        InitHistory();
+    }
+
+    explicit ETSTypeReference(ir::ETSTypeReferencePart *part, ArenaAllocator *const allocator, AstNodeHistory *history)
+        : TypeNode(AstNodeType::ETS_TYPE_REFERENCE, allocator), part_(part)
+    {
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     ir::ETSTypeReferencePart *Part()
     {
-        return part_;
+        return GetHistoryNodeAs<ETSTypeReference>()->part_;
     }
 
     ir::ETSTypeReferencePart *Part() const
     {
-        return part_;
+        return GetHistoryNodeAs<ETSTypeReference>()->part_;
     }
 
     ir::Identifier *BaseName() const;
@@ -61,6 +72,8 @@ public:
 
 private:
     friend class SizeOfNodeTest;
+    void SetPart(ETSTypeReferencePart *part);
+
     ir::ETSTypeReferencePart *part_;
 };
 }  // namespace ark::es2panda::ir

@@ -24,7 +24,7 @@ namespace ark::es2panda::compiler {
 void GenerateOverloadHelperParams(public_lib::Context *ctx, uint32_t minArg, size_t maxArg, bool hasRestVar,
                                   ArenaVector<ir::Expression *> &params)
 {
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *allocator = ctx->allocator;
 
     if (!hasRestVar) {
@@ -50,6 +50,7 @@ void GenerateOverloadHelperParams(public_lib::Context *ctx, uint32_t minArg, siz
     spread->SetTsType(arr);
     restIdent->SetTsType(arr);
     auto *param = ctx->AllocNode<ir::ETSParameterExpression>(spread, nullptr, allocator);
+    ES2PANDA_ASSERT(param);
 
     restIdent->SetParent(spread);
     typeAnnotation->SetParent(spread);
@@ -59,9 +60,9 @@ void GenerateOverloadHelperParams(public_lib::Context *ctx, uint32_t minArg, siz
 
 void BuildOverloadHelperFunction(public_lib::Context *ctx, ir::MethodDefinition *method)
 {
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *allocator = ctx->allocator;
-    auto *varBinder = ctx->checker->VarBinder()->AsETSBinder();
+    auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
 
     auto const &[minArg, maxArg, needHelperOverload, isDeclare, hasRestVar, returnVoid] = method->GetOverloadInfo();
     ES2PANDA_ASSERT(needHelperOverload && method->Function() != nullptr);
@@ -111,7 +112,7 @@ void UpdateCallSignature(public_lib::Context *ctx, ir::CallExpression *expr)
 {
     ES2PANDA_ASSERT(expr->Signature()->HasSignatureFlag(checker::SignatureFlags::DUPLICATE_ASM));
 
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     expr->SetTsType(nullptr);
     expr->Check(checker);
 }
@@ -119,27 +120,27 @@ void UpdateCallSignature(public_lib::Context *ctx, ir::CallExpression *expr)
 bool DeclareOverloadLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
     // Note: Generate helper overload method
-    program->Ast()->TransformChildrenRecursively(
-        [ctx](ir::AstNode *ast) {
-            if (ast->IsMethodDefinition() && ast->AsMethodDefinition()->GetOverloadInfo().needHelperOverload) {
-                BuildOverloadHelperFunction(ctx, ast->AsMethodDefinition());
-            }
-            return ast;
-        },
-        Name());
+    auto const transformMethodDef = [ctx](ir::AstNode *ast) {
+        if (ast->IsMethodDefinition() && ast->AsMethodDefinition()->GetOverloadInfo().needHelperOverload) {
+            BuildOverloadHelperFunction(ctx, ast->AsMethodDefinition());
+        }
+        return ast;
+    };
 
     // Note: Update signature for call expression
-    program->Ast()->TransformChildrenRecursively(
-        [ctx](ir::AstNode *ast) {
-            if (!ast->IsCallExpression() || ast->AsCallExpression()->Signature() == nullptr) {
-                return ast;
-            }
-
-            if (ast->AsCallExpression()->Signature()->HasSignatureFlag(checker::SignatureFlags::DUPLICATE_ASM)) {
-                UpdateCallSignature(ctx, ast->AsCallExpression());
-            }
-
+    auto const transformCallExpr = [ctx](ir::AstNode *ast) {
+        if (!ast->IsCallExpression() || ast->AsCallExpression()->Signature() == nullptr) {
             return ast;
+        }
+        if (ast->AsCallExpression()->Signature()->HasSignatureFlag(checker::SignatureFlags::DUPLICATE_ASM)) {
+            UpdateCallSignature(ctx, ast->AsCallExpression());
+        }
+        return ast;
+    };
+
+    program->Ast()->TransformChildrenRecursively(
+        [transformMethodDef, transformCallExpr](ir::AstNode *ast) {
+            return transformMethodDef(transformCallExpr(ast));
         },
         Name());
     return true;

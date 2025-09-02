@@ -16,6 +16,6 @@
 function main() {
     let a:FixedArray<char> = [c'b', c'c']
     let r:FixedArray<char> = [c'a', ...a, c'd']
-    assertTrue(r.length == 4 && (new String(r) == "abcd"))
+    arktest.assertTrue(r.length == 4 && (new String(r) == "abcd"))
   }
   

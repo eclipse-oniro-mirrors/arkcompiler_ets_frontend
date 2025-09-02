@@ -18,7 +18,7 @@ import {foo as test1foo} from "import_tests/packages/aliasWithoutAlias/import1"
 import * as all from "import_tests/packages/aliasWithoutAlias/import1"
 
 function main():void{
-    assertEQ(100, test1foo());
-    assertEQ(200, all.bar());
-    assertEQ(300, foo());
+    arktest.assertEQ(100, test1foo());
+    arktest.assertEQ(200, all.bar());
+    arktest.assertEQ(300, foo());
 }

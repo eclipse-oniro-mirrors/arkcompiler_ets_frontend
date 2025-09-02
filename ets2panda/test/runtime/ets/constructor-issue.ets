@@ -47,11 +47,11 @@ class B {
 }
 
 function main(): void {
-  assertEQ(new A(true).field, 5);  // field = 5
-  assertEQ(new A(10).field, 15);   // field = 5 + 10
-  assertEQ(new A().field, 25);     // field = 5 + 20
+  arktest.assertEQ(new A(true).field, 5);  // field = 5
+  arktest.assertEQ(new A(10).field, 15);   // field = 5 + 10
+  arktest.assertEQ(new A().field, 25);     // field = 5 + 20
 
-  assertEQ(new B(true).field, 5);  // field = 5
-  assertEQ(new B(20).field, 25);   // field = 5 + 20
-  assertEQ(new B().field, 50);     // field = 5 + 15 + 30
+  arktest.assertEQ(new B(true).field, 5);  // field = 5
+  arktest.assertEQ(new B(20).field, 25);   // field = 5 + 20
+  arktest.assertEQ(new B().field, 50);     // field = 5 + 15 + 30
 }

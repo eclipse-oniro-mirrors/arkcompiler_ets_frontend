@@ -48,9 +48,6 @@ public:
             case ETSWarnings::ETS_REMOVE_LAMBDA:
                 ETSWarningRemoveLambda(node);
                 break;
-            case ETSWarnings::ETS_IMPLICIT_BOXING_UNBOXING:
-                ETSWarningImplicitBoxingUnboxing(node);
-                break;
             default:
                 break;
         }
@@ -63,12 +60,8 @@ private:
 
     void AnalyzeClassDefForFinalModifier(const ir::ClassDefinition *classDef);
     void AnalyzeClassMethodForFinalModifier(const ir::MethodDefinition *methodDef, const ir::ClassDefinition *classDef);
-    void CheckTypeOfBoxing(const ir::AstNode *node);
-    void CheckTypeOfUnboxing(const ir::AstNode *node);
     void CheckTopLevelExpressions(const ir::Expression *expression);
     void CheckProhibitedTopLevelStatements(const ir::Statement *statement);
-    std::string GetBoxingUnboxingType(const ir::AstNode *node);
-    void CheckTypeOfBoxingUnboxing(const ir::AstNode *node);
 
     void ETSWarningAnnotationUnusedGenericAliasWarn(const ir::AstNode *node);
     void ETSWarningSuggestFinal(const ir::AstNode *node);
@@ -76,7 +69,6 @@ private:
     void ETSWarningBoostEqualityStatement(const ir::AstNode *node);
     void ETSWarningRemoveAsync(const ir::AstNode *node);
     void ETSWarningRemoveLambda(const ir::AstNode *node);
-    void ETSWarningImplicitBoxingUnboxing(const ir::AstNode *node);
 
     parser::Program *program_;
     util::DiagnosticEngine &diagnosticEngine_;

@@ -18,6 +18,7 @@
 
 #include "macros.h"
 #include "lexer/token/sourceLocation.h"
+
 namespace ark::es2panda::parser {
 class Program;
 }  // namespace ark::es2panda::parser

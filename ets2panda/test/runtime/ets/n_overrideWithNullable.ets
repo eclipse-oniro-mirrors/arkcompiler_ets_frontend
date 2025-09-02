@@ -20,8 +20,8 @@ function main() {
     let a = new A();
     let b = new B();
 
-    assertEQ(similarParam(a), 1)
-    assertEQ(similarParam<B>(b), 0)
+    arktest.assertEQ(similarParam(a), 1)
+    arktest.assertEQ(similarParam<B>(b), 0)
 }
 
 function similarParam(a : A) : int {

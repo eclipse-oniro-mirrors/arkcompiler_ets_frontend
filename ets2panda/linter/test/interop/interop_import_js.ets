@@ -18,5 +18,5 @@ import { fjs } from '../main/js_lib';
 import { CPreview,bar,foo } from "./jsfiles/preview_import_js";
 import myAaa from "./interop_import_js_js";
 import myAaa,{ClassA,Dog} from "./interop_import_js_js";
-import * as namespace from "./interop_import_js_js";
+import * as tjs from "./interop_import_js_js";
 import { Wiki, Dog as Doge } from './interop_import_js_js'

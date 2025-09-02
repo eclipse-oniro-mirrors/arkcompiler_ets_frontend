@@ -13,5 +13,36 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": []
+    "result": [
+        {
+            "line": 320,
+            "column": 12,
+            "endLine": 320,
+            "endColumn": 14,
+            "problem": "StrictDiagnostic",
+            "suggest": "Variable 'aa' is used before being assigned.",
+            "rule": "Variable 'aa' is used before being assigned.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 326,
+            "column": 12,
+            "endLine": 326,
+            "endColumn": 14,
+            "problem": "StrictDiagnostic",
+            "suggest": "Variable 'aa' is used before being assigned.",
+            "rule": "Variable 'aa' is used before being assigned.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 332,
+            "column": 12,
+            "endLine": 332,
+            "endColumn": 14,
+            "problem": "StrictDiagnostic",
+            "suggest": "Variable 'aa' is used before being assigned.",
+            "rule": "Variable 'aa' is used before being assigned.",
+            "severity": "ERROR"
+        }
+    ]
 }

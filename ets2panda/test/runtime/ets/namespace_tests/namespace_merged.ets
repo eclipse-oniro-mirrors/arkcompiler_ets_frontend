@@ -27,6 +27,6 @@ namespace MergedNamespace {
 
 function main() {
     // Test merged namespace access
-    assertEQ(MergedNamespace.functionOne(), "Function One",  "Function one failed")
-    assertEQ(MergedNamespace.functionTwo(), "Function Two",  "Function two failed")
+    arktest.assertEQ(MergedNamespace.functionOne(), "Function One",  "Function one failed")
+    arktest.assertEQ(MergedNamespace.functionTwo(), "Function Two",  "Function two failed")
 }

@@ -35,6 +35,26 @@
             "severity": "ERROR"
         },
         {
+            "line": 21,
+            "column": 12,
+            "endLine": 21,
+            "endColumn": 19,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 12,
+            "endLine": 23,
+            "endColumn": 18,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 24,
             "column": 9,
             "endLine": 24,

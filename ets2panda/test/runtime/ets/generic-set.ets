@@ -66,31 +66,31 @@ class MyArrayStack<Item> implements MyStack<Item> {
 function main() : void {
   let stack1 : MyArrayStack<Int>;
   stack1 = new MyArrayStack<Int>();
-  assertEQ(stack1.isEmpty(), true)
-  assertEQ(stack1.size(), 0)
+  arktest.assertEQ(stack1.isEmpty(), true)
+  arktest.assertEQ(stack1.size(), 0)
 
   stack1.push(new Int(10));
-  assertEQ(stack1.isEmpty(), false)
-  assertEQ(stack1.size(), 1)
-  assertEQ((stack1.getTop() as Int), 10)
+  arktest.assertEQ(stack1.isEmpty(), false)
+  arktest.assertEQ(stack1.size(), 1)
+  arktest.assertEQ((stack1.getTop() as Int), 10)
 
   stack1.push(new Int(20));
   stack1.push(new Int(30));
-  assertEQ(stack1.isEmpty(), false)
-  assertEQ(stack1.size(), 3)
-  assertEQ((stack1.getTop() as Int), 30)
+  arktest.assertEQ(stack1.isEmpty(), false)
+  arktest.assertEQ(stack1.size(), 3)
+  arktest.assertEQ((stack1.getTop() as Int), 30)
 
-  assertEQ((stack1.pop() as Int), 30)
-  assertEQ(stack1.size(), 2)
-  assertEQ((stack1.pop() as Int), 20)
-  assertEQ(stack1.size(), 1)
-  assertEQ((stack1.pop() as Int), 10)
-  assertEQ(stack1.size(), 0)
-  assertEQ(stack1.isEmpty(), true)
+  arktest.assertEQ((stack1.pop() as Int), 30)
+  arktest.assertEQ(stack1.size(), 2)
+  arktest.assertEQ((stack1.pop() as Int), 20)
+  arktest.assertEQ(stack1.size(), 1)
+  arktest.assertEQ((stack1.pop() as Int), 10)
+  arktest.assertEQ(stack1.size(), 0)
+  arktest.assertEQ(stack1.isEmpty(), true)
 
-  assertEQ(stack1.getTop(), null)
-  assertEQ(stack1.pop(), null)
-  assertEQ(stack1.size(), 0)
-  assertEQ(stack1.isEmpty(), true)
+  arktest.assertEQ(stack1.getTop(), null)
+  arktest.assertEQ(stack1.pop(), null)
+  arktest.assertEQ(stack1.size(), 0)
+  arktest.assertEQ(stack1.isEmpty(), true)
 
 }

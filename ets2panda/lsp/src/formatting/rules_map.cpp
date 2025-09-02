@@ -17,8 +17,6 @@
 
 namespace ark::es2panda::lsp {
 
-RulesMap RulesMapCache::rulesMap_;
-
 RulesMapCache &RulesMapCache::Instance()
 {
     static RulesMapCache cache;
@@ -27,15 +25,13 @@ RulesMapCache &RulesMapCache::Instance()
 
 RulesMap &RulesMapCache::GetRulesMap()
 {
-    if (!rulesMap_) {
-        rulesMap_ = CreateRulesMap(GetAllRules());
-    }
-    return rulesMap_;
+    static RulesMap rulesMap = CreateRulesMap(GetAllRules());
+    return rulesMap;
 }
 
-RulesMap RulesMapCache::CreateRulesMap(std::vector<RuleSpec> ruleSpec)
+RulesMap RulesMapCache::CreateRulesMap(const std::vector<RuleSpec> &ruleSpec)
 {
-    return [&ruleSpec]([[maybe_unused]] const FormattingContext &ctx) { return ruleSpec; };
+    return [ruleSpec]([[maybe_unused]] const FormattingContext &ctx) { return ruleSpec; };
 }
 
 }  // namespace ark::es2panda::lsp

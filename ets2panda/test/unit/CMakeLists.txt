@@ -16,6 +16,7 @@ if(NOT PANDA_REGRESSION_TESTS)
 endif()
 
 add_subdirectory(cfg)
+add_subdirectory(declgen)
 add_subdirectory(dynamic)
 add_subdirectory(lowerings)
 add_subdirectory(public)
@@ -26,9 +27,14 @@ add_subdirectory(arktsconfig-parser)
 add_subdirectory(annotations)
 add_subdirectory(lsp)
 add_subdirectory(relative_path)
+add_subdirectory(any_ins_test)
 
 ets2panda_add_gtest(es2panda_astdumper_tests
     CPP_SOURCES ast_dumper_test.cpp
+)
+
+ets2panda_add_gtest(es2panda_name_mangling_tests
+    CPP_SOURCES name_mangling_test.cpp
 )
 
 ets2panda_add_gtest(es2panda_union_normalization_tests_1
@@ -39,6 +45,10 @@ ets2panda_add_gtest(es2panda_union_normalization_tests_2
 )
 ets2panda_add_gtest(es2panda_globalETSObjectType_tests
     CPP_SOURCES globalETSObjectType_test.cpp
+)
+
+ets2panda_add_gtest(es2panda_union_emit_standard_test
+    CPP_SOURCES union_emit_test.cpp
 )
 
 if (PANDA_TARGET_LINUX AND PANDA_TARGET_64)

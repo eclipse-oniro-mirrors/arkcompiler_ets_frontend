@@ -18,4 +18,4 @@ function test_generic<K>(values: K[]): K[] {
 }
 
 let generic_values = test_generic<int>([20])
-assertEQ(generic_values[0], 20)
+arktest.assertEQ(generic_values[0], 20)

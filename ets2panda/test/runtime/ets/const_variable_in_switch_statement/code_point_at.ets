@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-const a = 'X'.codePointAt(0) as int
-assertEQ(a, 88);
-const b = 'x'.codePointAt(0) as int
-assertEQ(b, 120);
+const a = ('X'.codePointAt(0)!).toInt()
+arktest.assertEQ(a, 88);
+const b = ('x'.codePointAt(0)!).toInt()
+arktest.assertEQ(b, 120);
 let c = 88
 let d = 0
 switch (c) {
@@ -30,5 +30,5 @@ switch (c) {
         break;
 }
 
-assertEQ(d, a);
-assertNE(d, b);
+arktest.assertEQ(d, a);
+arktest.assertNE(d, b);

@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "conversion-w-ASExpr.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "conversion-w-ASExpr.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -234,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 23,
+                                    "column": 21,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -247,7 +141,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 23,
+                                  "column": 21,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -307,7 +201,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 25,
+                                "column": 33,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -320,7 +214,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 25,
+                              "column": 33,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -377,7 +271,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 25,
+                                    "column": 23,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -390,7 +284,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 25,
+                                  "column": 23,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -450,7 +344,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 27,
+                                "column": 36,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -463,7 +357,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 27,
+                              "column": 36,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -520,7 +414,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 23,
+                                    "column": 21,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -533,7 +427,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 23,
+                                  "column": 21,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -593,7 +487,7 @@
                               },
                               "end": {
                                 "line": 19,
-                                "column": 25,
+                                "column": 32,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -606,7 +500,7 @@
                             },
                             "end": {
                               "line": 19,
-                              "column": 25,
+                              "column": 32,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -663,7 +557,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 22,
+                                    "column": 20,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -676,7 +570,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 22,
+                                  "column": 20,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -736,7 +630,7 @@
                               },
                               "end": {
                                 "line": 20,
-                                "column": 24,
+                                "column": 32,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -749,7 +643,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 24,
+                              "column": 32,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -806,7 +700,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 29,
+                                    "column": 27,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -819,7 +713,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 29,
+                                  "column": 27,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -879,7 +773,7 @@
                               },
                               "end": {
                                 "line": 21,
-                                "column": 31,
+                                "column": 40,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -892,7 +786,7 @@
                             },
                             "end": {
                               "line": 21,
-                              "column": 31,
+                              "column": 40,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -949,7 +843,7 @@
                                   },
                                   "end": {
                                     "line": 22,
-                                    "column": 22,
+                                    "column": 20,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -962,7 +856,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 22,
+                                  "column": 20,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -982,38 +876,8 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 4,
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 23,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 26,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 30,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 35,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "type": "NumberLiteral",
+                            "value": 4,
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -1022,7 +886,7 @@
                               },
                               "end": {
                                 "line": 22,
-                                "column": 26,
+                                "column": 27,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -1035,7 +899,7 @@
                             },
                             "end": {
                               "line": 22,
-                              "column": 26,
+                              "column": 27,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -1050,7 +914,7 @@
                         },
                         "end": {
                           "line": 22,
-                          "column": 36,
+                          "column": 28,
                           "program": "conversion-w-ASExpr.ets"
                         }
                       }
@@ -1092,7 +956,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 25,
+                                    "column": 23,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -1105,7 +969,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 25,
+                                  "column": 23,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -1165,7 +1029,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 27,
+                                "column": 37,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -1178,7 +1042,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 27,
+                              "column": 37,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -1235,7 +1099,7 @@
                                   },
                                   "end": {
                                     "line": 24,
-                                    "column": 33,
+                                    "column": 31,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -1248,7 +1112,7 @@
                                 },
                                 "end": {
                                   "line": 24,
-                                  "column": 33,
+                                  "column": 31,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -1308,7 +1172,7 @@
                               },
                               "end": {
                                 "line": 24,
-                                "column": 37,
+                                "column": 47,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -1321,7 +1185,7 @@
                             },
                             "end": {
                               "line": 24,
-                              "column": 37,
+                              "column": 47,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -1378,7 +1242,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 28,
+                                    "column": 26,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -1391,7 +1255,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 28,
+                                  "column": 26,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -1451,7 +1315,7 @@
                               },
                               "end": {
                                 "line": 25,
-                                "column": 31,
+                                "column": 39,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -1464,7 +1328,7 @@
                             },
                             "end": {
                               "line": 25,
-                              "column": 31,
+                              "column": 39,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -1521,7 +1385,7 @@
                                   },
                                   "end": {
                                     "line": 28,
-                                    "column": 28,
+                                    "column": 26,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -1534,7 +1398,7 @@
                                 },
                                 "end": {
                                   "line": 28,
-                                  "column": 28,
+                                  "column": 26,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -1554,10 +1418,44 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 1,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "NumberLiteral",
+                                "value": 1,
+                                "loc": {
+                                  "start": {
+                                    "line": 28,
+                                    "column": 29,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  },
+                                  "end": {
+                                    "line": 28,
+                                    "column": 34,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toShort",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 28,
+                                    "column": 35,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  },
+                                  "end": {
+                                    "line": 28,
+                                    "column": 42,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 28,
@@ -1566,26 +1464,13 @@
                                 },
                                 "end": {
                                   "line": 28,
-                                  "column": 32,
+                                  "column": 42,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
                             },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 28,
-                                  "column": 36,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 28,
-                                  "column": 41,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "arguments": [],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 28,
@@ -1594,7 +1479,7 @@
                               },
                               "end": {
                                 "line": 28,
-                                "column": 32,
+                                "column": 44,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -1607,7 +1492,7 @@
                             },
                             "end": {
                               "line": 28,
-                              "column": 32,
+                              "column": 44,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -1622,7 +1507,7 @@
                         },
                         "end": {
                           "line": 28,
-                          "column": 42,
+                          "column": 45,
                           "program": "conversion-w-ASExpr.ets"
                         }
                       }
@@ -1664,7 +1549,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 27,
+                                    "column": 25,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -1677,7 +1562,7 @@
                                 },
                                 "end": {
                                   "line": 29,
-                                  "column": 27,
+                                  "column": 25,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -1697,10 +1582,44 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 2,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "NumberLiteral",
+                                "value": 2,
+                                "loc": {
+                                  "start": {
+                                    "line": 29,
+                                    "column": 28,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  },
+                                  "end": {
+                                    "line": 29,
+                                    "column": 33,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toInt",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 29,
+                                    "column": 34,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  },
+                                  "end": {
+                                    "line": 29,
+                                    "column": 39,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 29,
@@ -1709,26 +1628,13 @@
                                 },
                                 "end": {
                                   "line": 29,
-                                  "column": 31,
+                                  "column": 39,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
                             },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 29,
-                                  "column": 35,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 29,
-                                  "column": 38,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "arguments": [],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 29,
@@ -1737,7 +1643,7 @@
                               },
                               "end": {
                                 "line": 29,
-                                "column": 31,
+                                "column": 41,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -1750,7 +1656,7 @@
                             },
                             "end": {
                               "line": 29,
-                              "column": 31,
+                              "column": 41,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -1765,7 +1671,7 @@
                         },
                         "end": {
                           "line": 29,
-                          "column": 39,
+                          "column": 42,
                           "program": "conversion-w-ASExpr.ets"
                         }
                       }
@@ -1807,7 +1713,7 @@
                                   },
                                   "end": {
                                     "line": 30,
-                                    "column": 24,
+                                    "column": 22,
                                     "program": "conversion-w-ASExpr.ets"
                                   }
                                 }
@@ -1820,7 +1726,7 @@
                                 },
                                 "end": {
                                   "line": 30,
-                                  "column": 24,
+                                  "column": 22,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
@@ -1840,10 +1746,44 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 3,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "NumberLiteral",
+                                "value": 3,
+                                "loc": {
+                                  "start": {
+                                    "line": 30,
+                                    "column": 25,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  },
+                                  "end": {
+                                    "line": 30,
+                                    "column": 30,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toLong",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 30,
+                                    "column": 31,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  },
+                                  "end": {
+                                    "line": 30,
+                                    "column": 37,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 30,
@@ -1852,26 +1792,13 @@
                                 },
                                 "end": {
                                   "line": 30,
-                                  "column": 28,
+                                  "column": 37,
                                   "program": "conversion-w-ASExpr.ets"
                                 }
                               }
                             },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 30,
-                                  "column": 32,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 30,
-                                  "column": 36,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "arguments": [],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 30,
@@ -1880,7 +1807,7 @@
                               },
                               "end": {
                                 "line": 30,
-                                "column": 28,
+                                "column": 39,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -1893,7 +1820,7 @@
                             },
                             "end": {
                               "line": 30,
-                              "column": 28,
+                              "column": 39,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -1908,150 +1835,7 @@
                         },
                         "end": {
                           "line": 30,
-                          "column": 37,
-                          "program": "conversion-w-ASExpr.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "VariableDeclaration",
-                      "declarations": [
-                        {
-                          "type": "VariableDeclarator",
-                          "id": {
-                            "type": "Identifier",
-                            "name": "uglifruit",
-                            "typeAnnotation": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Char",
-                                  "decorators": [],
-                                  "loc": {
-                                    "start": {
-                                      "line": 31,
-                                      "column": 21,
-                                      "program": "conversion-w-ASExpr.ets"
-                                    },
-                                    "end": {
-                                      "line": 31,
-                                      "column": 25,
-                                      "program": "conversion-w-ASExpr.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 31,
-                                    "column": 21,
-                                    "program": "conversion-w-ASExpr.ets"
-                                  },
-                                  "end": {
-                                    "line": 31,
-                                    "column": 27,
-                                    "program": "conversion-w-ASExpr.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 31,
-                                  "column": 21,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 31,
-                                  "column": 27,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "decorators": [],
-                            "loc": {
-                              "start": {
-                                "line": 31,
-                                "column": 9,
-                                "program": "conversion-w-ASExpr.ets"
-                              },
-                              "end": {
-                                "line": 31,
-                                "column": 18,
-                                "program": "conversion-w-ASExpr.ets"
-                              }
-                            }
-                          },
-                          "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 65,
-                              "loc": {
-                                "start": {
-                                  "line": 31,
-                                  "column": 28,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 31,
-                                  "column": 32,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 31,
-                                  "column": 36,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 31,
-                                  "column": 40,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 31,
-                                "column": 28,
-                                "program": "conversion-w-ASExpr.ets"
-                              },
-                              "end": {
-                                "line": 31,
-                                "column": 32,
-                                "program": "conversion-w-ASExpr.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 31,
-                              "column": 9,
-                              "program": "conversion-w-ASExpr.ets"
-                            },
-                            "end": {
-                              "line": 31,
-                              "column": 32,
-                              "program": "conversion-w-ASExpr.ets"
-                            }
-                          }
-                        }
-                      ],
-                      "kind": "let",
-                      "loc": {
-                        "start": {
-                          "line": 31,
-                          "column": 5,
-                          "program": "conversion-w-ASExpr.ets"
-                        },
-                        "end": {
-                          "line": 31,
-                          "column": 41,
+                          "column": 40,
                           "program": "conversion-w-ASExpr.ets"
                         }
                       }
@@ -2061,12 +1845,12 @@
                       "argument": null,
                       "loc": {
                         "start": {
-                          "line": 32,
+                          "line": 31,
                           "column": 3,
                           "program": "conversion-w-ASExpr.ets"
                         },
                         "end": {
-                          "line": 32,
+                          "line": 31,
                           "column": 10,
                           "program": "conversion-w-ASExpr.ets"
                         }
@@ -2080,7 +1864,7 @@
                       "program": "conversion-w-ASExpr.ets"
                     },
                     "end": {
-                      "line": 33,
+                      "line": 32,
                       "column": 2,
                       "program": "conversion-w-ASExpr.ets"
                     }
@@ -2093,7 +1877,7 @@
                     "program": "conversion-w-ASExpr.ets"
                   },
                   "end": {
-                    "line": 33,
+                    "line": 32,
                     "column": 2,
                     "program": "conversion-w-ASExpr.ets"
                   }
@@ -2106,7 +1890,7 @@
                   "program": "conversion-w-ASExpr.ets"
                 },
                 "end": {
-                  "line": 33,
+                  "line": 32,
                   "column": 2,
                   "program": "conversion-w-ASExpr.ets"
                 }
@@ -2121,7 +1905,7 @@
                 "program": "conversion-w-ASExpr.ets"
               },
               "end": {
-                "line": 33,
+                "line": 32,
                 "column": 2,
                 "program": "conversion-w-ASExpr.ets"
               }
@@ -2162,7 +1946,7 @@
       "program": "conversion-w-ASExpr.ets"
     },
     "end": {
-      "line": 35,
+      "line": 34,
       "column": 1,
       "program": "conversion-w-ASExpr.ets"
     }

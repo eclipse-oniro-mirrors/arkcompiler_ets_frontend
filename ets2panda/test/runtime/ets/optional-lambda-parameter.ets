@@ -20,5 +20,5 @@ function foo(f1: () => void, f2?: () => void): number {
 }
 
 function main() {
-    assertEQ(foo(() => { g1 = 2.0 }), 2.0)
+    arktest.assertEQ(foo(() => { g1 = 2.0 }), 2.0)
 }

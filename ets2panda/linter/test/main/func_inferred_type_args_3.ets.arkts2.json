@@ -1,0 +1,248 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 24,
+            "column": 11,
+            "endLine": 24,
+            "endColumn": 20,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 11,
+            "endLine": 28,
+            "endColumn": 20,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 11,
+            "endLine": 32,
+            "endColumn": 20,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 15,
+            "endLine": 43,
+            "endColumn": 22,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 11,
+            "endLine": 43,
+            "endColumn": 24,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 27,
+            "endLine": 48,
+            "endColumn": 31,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 46,
+            "endLine": 51,
+            "endColumn": 61,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 46,
+            "endLine": 52,
+            "endColumn": 75,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 47,
+            "endLine": 53,
+            "endColumn": 62,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 77,
+            "endLine": 53,
+            "endColumn": 106,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 33,
+            "endLine": 59,
+            "endColumn": 53,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 49,
+            "endLine": 60,
+            "endColumn": 70,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
+            "column": 57,
+            "endLine": 61,
+            "endColumn": 77,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 33,
+            "endLine": 63,
+            "endColumn": 56,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 49,
+            "endLine": 64,
+            "endColumn": 73,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 57,
+            "endLine": 65,
+            "endColumn": 80,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 2,
+            "endLine": 46,
+            "endColumn": 13,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"ComponentV2\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 4,
+            "endLine": 48,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Param\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 4,
+            "endLine": 49,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Monitor\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 9,
+            "endLine": 51,
+            "endColumn": 20,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
+            "rule": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 9,
+            "endLine": 52,
+            "endColumn": 20,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
+            "rule": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 5,
+            "endLine": 60,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
+            "rule": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 5,
+            "endLine": 64,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
+            "rule": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
+            "severity": "ERROR"
+        }
+    ]
+}

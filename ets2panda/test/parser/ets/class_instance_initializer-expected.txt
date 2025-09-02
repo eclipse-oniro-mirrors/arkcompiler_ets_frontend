@@ -176,12 +176,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "class_instance_initializer.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "class_instance_initializer.ets"
                 }
               }
             },
@@ -202,12 +202,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     }
                   }
                 },
@@ -653,12 +653,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     }
                   }
                 },
@@ -679,12 +679,12 @@
                         "start": {
                           "line": 1,
                           "column": 1,
-                          "program": null
+                          "program": "class_instance_initializer.ets"
                         },
                         "end": {
                           "line": 1,
                           "column": 1,
-                          "program": null
+                          "program": "class_instance_initializer.ets"
                         }
                       }
                     },
@@ -1047,12 +1047,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     }
                   }
                 },
@@ -1073,12 +1073,12 @@
                         "start": {
                           "line": 1,
                           "column": 1,
-                          "program": null
+                          "program": "class_instance_initializer.ets"
                         },
                         "end": {
                           "line": 1,
                           "column": 1,
-                          "program": null
+                          "program": "class_instance_initializer.ets"
                         }
                       }
                     },
@@ -1120,7 +1120,7 @@
                                 },
                                 "end": {
                                   "line": 32,
-                                  "column": 35,
+                                  "column": 34,
                                   "program": "class_instance_initializer.ets"
                                 }
                               }
@@ -1133,7 +1133,7 @@
                               },
                               "end": {
                                 "line": 32,
-                                "column": 35,
+                                "column": 34,
                                 "program": "class_instance_initializer.ets"
                               }
                             }
@@ -1147,7 +1147,7 @@
                             },
                             "end": {
                               "line": 32,
-                              "column": 35,
+                              "column": 34,
                               "program": "class_instance_initializer.ets"
                             }
                           }
@@ -1160,7 +1160,7 @@
                           },
                           "end": {
                             "line": 32,
-                            "column": 35,
+                            "column": 34,
                             "program": "class_instance_initializer.ets"
                           }
                         }
@@ -1699,7 +1699,7 @@
               },
               "end": {
                 "line": 41,
-                "column": 21,
+                "column": 18,
                 "program": "class_instance_initializer.ets"
               }
             }
@@ -1712,7 +1712,7 @@
             },
             "end": {
               "line": 41,
-              "column": 21,
+              "column": 18,
               "program": "class_instance_initializer.ets"
             }
           }
@@ -1871,12 +1871,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "class_instance_initializer.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "class_instance_initializer.ets"
                 }
               }
             },
@@ -1897,12 +1897,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     }
                   }
                 },
@@ -2348,12 +2348,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     }
                   }
                 },
@@ -2374,12 +2374,12 @@
                         "start": {
                           "line": 1,
                           "column": 1,
-                          "program": null
+                          "program": "class_instance_initializer.ets"
                         },
                         "end": {
                           "line": 1,
                           "column": 1,
-                          "program": null
+                          "program": "class_instance_initializer.ets"
                         }
                       }
                     },
@@ -2742,12 +2742,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     }
                   }
                 },
@@ -2768,12 +2768,12 @@
                         "start": {
                           "line": 1,
                           "column": 1,
-                          "program": null
+                          "program": "class_instance_initializer.ets"
                         },
                         "end": {
                           "line": 1,
                           "column": 1,
-                          "program": null
+                          "program": "class_instance_initializer.ets"
                         }
                       }
                     },
@@ -2815,7 +2815,7 @@
                                 },
                                 "end": {
                                   "line": 57,
-                                  "column": 35,
+                                  "column": 34,
                                   "program": "class_instance_initializer.ets"
                                 }
                               }
@@ -2828,7 +2828,7 @@
                               },
                               "end": {
                                 "line": 57,
-                                "column": 35,
+                                "column": 34,
                                 "program": "class_instance_initializer.ets"
                               }
                             }
@@ -2842,7 +2842,7 @@
                             },
                             "end": {
                               "line": 57,
-                              "column": 35,
+                              "column": 34,
                               "program": "class_instance_initializer.ets"
                             }
                           }
@@ -2855,7 +2855,7 @@
                           },
                           "end": {
                             "line": 57,
-                            "column": 35,
+                            "column": 34,
                             "program": "class_instance_initializer.ets"
                           }
                         }
@@ -3488,12 +3488,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_instance_initializer.ets"
                     }
                   }
                 },
@@ -3501,12 +3501,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "class_instance_initializer.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "class_instance_initializer.ets"
                   }
                 }
               },
@@ -3514,118 +3514,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "class_instance_initializer.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "class_instance_initializer.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "class_instance_initializer.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "class_instance_initializer.ets"
                 }
               }
             },

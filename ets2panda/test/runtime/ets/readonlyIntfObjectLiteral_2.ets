@@ -17,5 +17,5 @@ interface A {
 }
 function main(): void {
     let a: A = {name: "John"};
-    assertEQ(a.name, "John")
+    arktest.assertEQ(a.name, "John")
 }

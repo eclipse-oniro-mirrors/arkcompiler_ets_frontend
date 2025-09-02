@@ -36,5 +36,5 @@ function main() {
     let b = new B();
     let temp = new C(b);
     const s = (temp.callback as (c: String) => String)("hello");
-    assertEQ(s, "hello");
+    arktest.assertEQ(s, "hello");
 }

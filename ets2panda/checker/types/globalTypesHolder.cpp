@@ -58,6 +58,7 @@ void GlobalTypesHolder::AddETSEscompatLayer()
 {
     // ETS escompat layer
     builtinNameMappings_.emplace("Array", GlobalTypeId::ETS_ARRAY_BUILTIN);
+    builtinNameMappings_.emplace("ReadonlyArray", GlobalTypeId::ETS_READONLY_ARRAY);
     builtinNameMappings_.emplace("Date", GlobalTypeId::ETS_DATE_BUILTIN);
     builtinNameMappings_.emplace("Error", GlobalTypeId::ETS_ERROR_BUILTIN);
     builtinNameMappings_.emplace("DivideByZeroError", GlobalTypeId::ETS_DIVIDE_BY_ZERO_ERROR_BUILTIN);
@@ -85,7 +86,7 @@ void GlobalTypesHolder::AddFunctionTypes(ArenaAllocator *allocator)
     addTypes("LambdaR", GlobalTypeId::ETS_LAMBDAR0_CLASS, GlobalTypeId::ETS_LAMBDAR16_CLASS);
 
     builtinNameMappings_.emplace("FunctionN", GlobalTypeId::ETS_FUNCTIONN_CLASS);
-    builtinNameMappings_.emplace("LambdaN", GlobalTypeId::ETS_FUNCTIONN_CLASS);
+    builtinNameMappings_.emplace("LambdaN", GlobalTypeId::ETS_LAMBDAN_CLASS);
 }
 
 void GlobalTypesHolder::AddTupleTypes(ArenaAllocator *allocator)
@@ -150,6 +151,7 @@ void GlobalTypesHolder::AddEtsSpecificTypes(ArenaAllocator *allocator)
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_WILDCARD)] = allocator->New<WildcardType>();
     globalTypes_[static_cast<size_t>(GlobalTypeId::TYPE_ERROR)] = allocator->New<TypeError>();
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_ANY)] = allocator->New<ETSAnyType>();
+    globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_RELAXED_ANY)] = allocator->New<ETSAnyType>(true);
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_NEVER)] = allocator->New<ETSNeverType>();
 }
 
@@ -159,6 +161,7 @@ void GlobalTypesHolder::AddEtsSpecificBuiltinTypes()
     builtinNameMappings_.emplace("Boolean", GlobalTypeId::ETS_BOOLEAN_BUILTIN);
     builtinNameMappings_.emplace("Byte", GlobalTypeId::ETS_BYTE_BUILTIN);
     builtinNameMappings_.emplace("Char", GlobalTypeId::ETS_CHAR_BUILTIN);
+    builtinNameMappings_.emplace("Class", GlobalTypeId::ETS_CLASS_BUILTIN);
     builtinNameMappings_.emplace("Comparable", GlobalTypeId::ETS_COMPARABLE_BUILTIN);
     builtinNameMappings_.emplace("Console", GlobalTypeId::ETS_CONSOLE_BUILTIN);
     builtinNameMappings_.emplace("Double", GlobalTypeId::ETS_DOUBLE_BUILTIN);
@@ -168,6 +171,7 @@ void GlobalTypesHolder::AddEtsSpecificBuiltinTypes()
     builtinNameMappings_.emplace("Int", GlobalTypeId::ETS_INT_BUILTIN);
     builtinNameMappings_.emplace("Integral", GlobalTypeId::ETS_INTEGRAL_BUILTIN);
     builtinNameMappings_.emplace("Long", GlobalTypeId::ETS_LONG_BUILTIN);
+    builtinNameMappings_.emplace("Numeric", GlobalTypeId::ETS_NUMERIC_BUILTIN);
     builtinNameMappings_.emplace("Object", GlobalTypeId::ETS_OBJECT_BUILTIN);
     builtinNameMappings_.emplace("Runtime", GlobalTypeId::ETS_RUNTIME_BUILTIN);
     builtinNameMappings_.emplace("RuntimeLinker", GlobalTypeId::ETS_RUNTIME_LINKER_BUILTIN);
@@ -411,6 +415,11 @@ Type *GlobalTypesHolder::GlobalETSAnyType()
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_ANY));
 }
 
+Type *GlobalTypesHolder::GlobalETSRelaxedAnyType()
+{
+    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_RELAXED_ANY));
+}
+
 Type *GlobalTypesHolder::GlobalETSNeverType()
 {
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_NEVER));
@@ -439,6 +448,11 @@ Type *GlobalTypesHolder::GlobalETSBooleanBuiltinType()
 Type *GlobalTypesHolder::GlobalByteBuiltinType()
 {
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_BYTE_BUILTIN));
+}
+
+Type *GlobalTypesHolder::GlobalClassBuiltinType()
+{
+    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_CLASS_BUILTIN));
 }
 
 Type *GlobalTypesHolder::GlobalCharBuiltinType()
@@ -489,6 +503,11 @@ Type *GlobalTypesHolder::GlobalIntegralBuiltinType()
 Type *GlobalTypesHolder::GlobalLongBuiltinType()
 {
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_LONG_BUILTIN));
+}
+
+Type *GlobalTypesHolder::GlobalNumericBuiltinType()
+{
+    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_NUMERIC_BUILTIN));
 }
 
 Type *GlobalTypesHolder::GlobalMapBuiltinType()
@@ -614,6 +633,11 @@ Type *GlobalTypesHolder::GlobalRegExpBuiltinType()
 Type *GlobalTypesHolder::GlobalArrayBuiltinType()
 {
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_ARRAY_BUILTIN));
+}
+
+Type *GlobalTypesHolder::GlobalReadonlyArray()
+{
+    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_READONLY_ARRAY));
 }
 
 Type *GlobalTypesHolder::GlobalBoxBuiltinType()

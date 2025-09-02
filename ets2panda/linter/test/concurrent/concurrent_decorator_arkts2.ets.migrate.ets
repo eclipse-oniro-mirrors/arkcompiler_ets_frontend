@@ -19,7 +19,7 @@ function func() {}
 
 
 type a2 = number
-let n18: a2 = 10.0;
+let n18: a2 = 10;
 
 
 type funtType1 = () => void

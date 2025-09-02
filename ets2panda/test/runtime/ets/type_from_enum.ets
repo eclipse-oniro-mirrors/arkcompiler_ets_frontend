@@ -22,6 +22,6 @@ enum ColorNumber { Green = 1 , Red = 2, Blue = 3 }
    let enumColorA = Type.from<Color>();
    let enumColorB = Type.from<Color>();
    let enumColorC = Type.from<ColorNumber>();
-   assertTrue(enumColorA.toString() == enumColorB.toString());
-   assertTrue(enumColorA.toString() != enumColorC.toString());
+   arktest.assertTrue(enumColorA.toString() == enumColorB.toString());
+   arktest.assertTrue(enumColorA.toString() != enumColorC.toString());
  }

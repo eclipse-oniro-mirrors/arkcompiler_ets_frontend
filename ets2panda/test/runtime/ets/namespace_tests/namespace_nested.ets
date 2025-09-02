@@ -42,10 +42,10 @@ function main() {
     OuterNamespace.resetOuterState();
 
     // Test access to outer and inner namespace members
-    assertEQ(OuterNamespace.outerFunction(), "Outer function",  "Outer function failed")
-    assertEQ(OuterNamespace.InnerNamespace.innerFunction(), "Inner function",  "Inner function failed")
+    arktest.assertEQ(OuterNamespace.outerFunction(), "Outer function",  "Outer function failed")
+    arktest.assertEQ(OuterNamespace.InnerNamespace.innerFunction(), "Inner function",  "Inner function failed")
 
     // Test modification of shared value in inner namespace
     OuterNamespace.InnerNamespace.sharedValue = OuterNamespace.InnerNamespace.sharedValue + 25;
-    assertEQ(OuterNamespace.InnerNamespace.sharedValue, 75,  "Shared value update failed")
+    arktest.assertEQ(OuterNamespace.InnerNamespace.sharedValue, 75,  "Shared value update failed")
 }

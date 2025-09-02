@@ -29,20 +29,20 @@ function bar(arg?: boolean): C | undefined {
 
 function baz(arg?: boolean): int {
     if (arg == undefined) return 0;
-    assertEQ(typeof arg, "boolean")
+    arktest.assertEQ(typeof arg, "boolean")
     return 1;
 }
 
 function main() {
-    assertTrue(foo(true) instanceof C)
-    assertEQ(foo(false), undefined)
-    assertEQ(foo(), undefined)
+    arktest.assertTrue(foo(true) instanceof C)
+    arktest.assertEQ(foo(false), undefined)
+    arktest.assertEQ(foo(), undefined)
 
-    assertTrue(bar(true) instanceof C)
-    assertEQ(bar(false), undefined)
-    assertTrue(bar() instanceof C)
+    arktest.assertTrue(bar(true) instanceof C)
+    arktest.assertEQ(bar(false), undefined)
+    arktest.assertTrue(bar() instanceof C)
 
-    assertEQ(baz(true), 1)
-    assertEQ(baz(false), 1)
-    assertEQ(baz(), 0)
+    arktest.assertEQ(baz(true), 1)
+    arktest.assertEQ(baz(false), 1)
+    arktest.assertEQ(baz(), 0)
 }

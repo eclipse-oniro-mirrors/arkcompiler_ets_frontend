@@ -15,5 +15,5 @@
 
 function main() {
     let array = new int[10][10];
-    assertEQ(array[1][0], 0)
+    arktest.assertEQ(array[1][0], 0)
 }

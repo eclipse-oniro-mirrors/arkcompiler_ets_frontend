@@ -21,13 +21,13 @@ class A{
 
 function foo(c: (keyof A)|"abcd"|A|undefined): string {
   if (c instanceof (keyof A))  {
-    assertEQ(c, "field1")
+    arktest.assertEQ(c, "field1")
     return "Case 1";
   } else if (c instanceof "abcd") {
-    assertEQ(c, "abcd")
+    arktest.assertEQ(c, "abcd")
     return "Case 2";
   } else if (c instanceof A) {
-    assertEQ(c.field1, 0)
+    arktest.assertEQ(c.field1, 0)
     return "Case 3";
   } else {
     return "Case 4";

@@ -52,11 +52,11 @@ public:
             {"authorAge", "35.000000"},
             {"testBool", "0"},
             {"favorColor", "1"},
-            {"color", "ETSGLOBAL$ClassAuthor$color$0"},
-            {"reviewers", "ETSGLOBAL$ClassAuthor$reviewers$1"},
-            {"reviewersAge", "ETSGLOBAL$ClassAuthor$reviewersAge$2"},
-            {"testBools", "ETSGLOBAL$ClassAuthor$testBools$3"},
-            {"mutiArray", "ETSGLOBAL$ClassAuthor$mutiArray$7"},
+            {"color", "ETSGLOBAL%%annotation-ClassAuthor-color-0"},
+            {"reviewers", "ETSGLOBAL%%annotation-ClassAuthor-reviewers-1"},
+            {"reviewersAge", "ETSGLOBAL%%annotation-ClassAuthor-reviewersAge-2"},
+            {"testBools", "ETSGLOBAL%%annotation-ClassAuthor-testBools-3"},
+            {"mutiArray", "ETSGLOBAL%%annotation-ClassAuthor-mutiArray-7"},
         };
         AnnotationEmitTest::CheckAnnoDecl(program, annoName, expectedAnnotations);
     }
@@ -71,11 +71,11 @@ public:
                  {"authorAge", "35.000000"},
                  {"testBool", "0"},
                  {"favorColor", "1"},
-                 {"color", "MyClass$ClassAuthor$color$12"},
-                 {"reviewers", "MyClass$ClassAuthor$reviewers$14"},
-                 {"reviewersAge", "MyClass$ClassAuthor$reviewersAge$15"},
-                 {"testBools", "MyClass$ClassAuthor$testBools$13"},
-                 {"mutiArray", "MyClass$ClassAuthor$mutiArray$11"},
+                 {"color", "MyClass%%annotation-ClassAuthor-color-12"},
+                 {"reviewers", "MyClass%%annotation-ClassAuthor-reviewers-14"},
+                 {"reviewersAge", "MyClass%%annotation-ClassAuthor-reviewersAge-15"},
+                 {"testBools", "MyClass%%annotation-ClassAuthor-testBools-13"},
+                 {"mutiArray", "MyClass%%annotation-ClassAuthor-mutiArray-11"},
              }},
         };
         AnnotationEmitTest::CheckRecordAnnotations(program, recordName, expectedClassAnnotations);
@@ -87,13 +87,13 @@ public:
         const AnnotationMap expectedFuncAnnotations = {
             {"ClassAuthor",
              {
-                 {"mutiArray", "MyClass.foo:void;$ClassAuthor$mutiArray$19"},
-                 {"color", "MyClass.foo:void;$ClassAuthor$color$20"},
-                 {"testBools", "MyClass.foo:void;$ClassAuthor$testBools$21"},
-                 {"reviewers", "MyClass.foo:void;$ClassAuthor$reviewers$22"},
+                 {"mutiArray", "MyClass.foo:void;%%annotation-ClassAuthor-mutiArray-19"},
+                 {"color", "MyClass.foo:void;%%annotation-ClassAuthor-color-20"},
+                 {"testBools", "MyClass.foo:void;%%annotation-ClassAuthor-testBools-21"},
+                 {"reviewers", "MyClass.foo:void;%%annotation-ClassAuthor-reviewers-22"},
                  {"favorColor", "1"},
                  {"testBool", "0"},
-                 {"reviewersAge", "MyClass.foo:void;$ClassAuthor$reviewersAge$23"},
+                 {"reviewersAge", "MyClass.foo:void;%%annotation-ClassAuthor-reviewersAge-23"},
                  {"authorAge", "35.000000"},
                  {"authorName", "Jim"},
              }},
@@ -104,50 +104,75 @@ public:
     void CheckLiteralArrayTable(pandasm::Program *program)
     {
         std::vector<std::pair<std::string, std::vector<AnnotationValueType>>> expectedLiteralArrayTable = {
-            {"ETSGLOBAL$ClassAuthor$color$0", std::vector<AnnotationValueType> {COLOR_OPTION_0, COLOR_OPTION_1}},
-            {"ETSGLOBAL$ClassAuthor$reviewers$1",
-             std::vector<AnnotationValueType> {std::string("Bob"), std::string("Jim"), std::string("Tom")}},
-            {"ETSGLOBAL$ClassAuthor$reviewersAge$2", std::vector<AnnotationValueType> {AGE_18, AGE_21, AGE_32}},
-            {"ETSGLOBAL$ClassAuthor$testBools$3", std::vector<AnnotationValueType> {false, true, false}},
-            {"ETSGLOBAL$ClassAuthor$mutiArray$4", std::vector<AnnotationValueType> {VALUE_1, VALUE_2, VALUE_3}},
-            {"ETSGLOBAL$ClassAuthor$mutiArray$5", std::vector<AnnotationValueType> {VALUE_4, VALUE_5, VALUE_6}},
-            {"ETSGLOBAL$ClassAuthor$mutiArray$6", std::vector<AnnotationValueType> {VALUE_7, VALUE_8, VALUE_9}},
-            {"ETSGLOBAL$ClassAuthor$mutiArray$7",
-             std::vector<AnnotationValueType> {std::string("ETSGLOBAL$ClassAuthor$mutiArray$4"),
-                                               std::string("ETSGLOBAL$ClassAuthor$mutiArray$5"),
-                                               std::string("ETSGLOBAL$ClassAuthor$mutiArray$6")}},
-            {"MyClass$ClassAuthor$color$12", std::vector<AnnotationValueType> {COLOR_OPTION_0, COLOR_OPTION_1}},
-            {"MyClass$ClassAuthor$reviewers$14",
-             std::vector<AnnotationValueType> {std::string("Bob"), std::string("Jim"), std::string("Tom")}},
-            {"MyClass$ClassAuthor$reviewersAge$15", std::vector<AnnotationValueType> {AGE_18, AGE_21, AGE_32}},
-            {"MyClass$ClassAuthor$testBools$13", std::vector<AnnotationValueType> {false, true, false}},
-            {"MyClass$ClassAuthor$mutiArray$8", std::vector<AnnotationValueType> {VALUE_1, VALUE_2, VALUE_3}},
-            {"MyClass$ClassAuthor$mutiArray$9", std::vector<AnnotationValueType> {VALUE_4, VALUE_5, VALUE_6}},
-            {"MyClass$ClassAuthor$mutiArray$10", std::vector<AnnotationValueType> {VALUE_7, VALUE_8, VALUE_9}},
-            {"MyClass$ClassAuthor$mutiArray$11",
-             std::vector<AnnotationValueType> {std::string("MyClass$ClassAuthor$mutiArray$8"),
-                                               std::string("MyClass$ClassAuthor$mutiArray$9"),
-                                               std::string("MyClass$ClassAuthor$mutiArray$10")}},
-            {"MyClass.foo:void;$ClassAuthor$color$20",
+            {"ETSGLOBAL%%annotation-ClassAuthor-color-0",
              std::vector<AnnotationValueType> {COLOR_OPTION_0, COLOR_OPTION_1}},
-            {"MyClass.foo:void;$ClassAuthor$reviewers$22",
+            {"ETSGLOBAL%%annotation-ClassAuthor-reviewers-1",
              std::vector<AnnotationValueType> {std::string("Bob"), std::string("Jim"), std::string("Tom")}},
-            {"MyClass.foo:void;$ClassAuthor$reviewersAge$23",
+            {"ETSGLOBAL%%annotation-ClassAuthor-reviewersAge-2",
              std::vector<AnnotationValueType> {AGE_18, AGE_21, AGE_32}},
-            {"MyClass.foo:void;$ClassAuthor$testBools$21", std::vector<AnnotationValueType> {false, true, false}},
-            {"MyClass.foo:void;$ClassAuthor$mutiArray$16",
+            {"ETSGLOBAL%%annotation-ClassAuthor-testBools-3", std::vector<AnnotationValueType> {false, true, false}},
+            {"ETSGLOBAL%%annotation-ClassAuthor-mutiArray-4",
              std::vector<AnnotationValueType> {VALUE_1, VALUE_2, VALUE_3}},
-            {"MyClass.foo:void;$ClassAuthor$mutiArray$17",
+            {"ETSGLOBAL%%annotation-ClassAuthor-mutiArray-5",
              std::vector<AnnotationValueType> {VALUE_4, VALUE_5, VALUE_6}},
-            {"MyClass.foo:void;$ClassAuthor$mutiArray$18",
+            {"ETSGLOBAL%%annotation-ClassAuthor-mutiArray-6",
              std::vector<AnnotationValueType> {VALUE_7, VALUE_8, VALUE_9}},
-            {"MyClass.foo:void;$ClassAuthor$mutiArray$19",
-             std::vector<AnnotationValueType> {std::string("MyClass.foo:void;$ClassAuthor$mutiArray$16"),
-                                               std::string("MyClass.foo:void;$ClassAuthor$mutiArray$17"),
-                                               std::string("MyClass.foo:void;$ClassAuthor$mutiArray$18")}},
+            {"ETSGLOBAL%%annotation-ClassAuthor-mutiArray-7",
+             std::vector<AnnotationValueType> {std::string("ETSGLOBAL%%annotation-ClassAuthor-mutiArray-4"),
+                                               std::string("ETSGLOBAL%%annotation-ClassAuthor-mutiArray-5"),
+                                               std::string("ETSGLOBAL%%annotation-ClassAuthor-mutiArray-6")}},
+            {"MyClass%%annotation-ClassAuthor-color-12",
+             std::vector<AnnotationValueType> {COLOR_OPTION_0, COLOR_OPTION_1}},
+            {"MyClass%%annotation-ClassAuthor-reviewers-14",
+             std::vector<AnnotationValueType> {std::string("Bob"), std::string("Jim"), std::string("Tom")}},
+            {"MyClass%%annotation-ClassAuthor-reviewersAge-15",
+             std::vector<AnnotationValueType> {AGE_18, AGE_21, AGE_32}},
+            {"MyClass%%annotation-ClassAuthor-testBools-13", std::vector<AnnotationValueType> {false, true, false}},
+            {"MyClass%%annotation-ClassAuthor-mutiArray-8",
+             std::vector<AnnotationValueType> {VALUE_1, VALUE_2, VALUE_3}},
+            {"MyClass%%annotation-ClassAuthor-mutiArray-9",
+             std::vector<AnnotationValueType> {VALUE_4, VALUE_5, VALUE_6}},
+            {"MyClass%%annotation-ClassAuthor-mutiArray-10",
+             std::vector<AnnotationValueType> {VALUE_7, VALUE_8, VALUE_9}},
         };
 
+        std::vector<std::pair<std::string, std::vector<AnnotationValueType>>> remainingExpectedValues =
+            GetRemainingExpectedValues();
+        expectedLiteralArrayTable.insert(expectedLiteralArrayTable.end(), remainingExpectedValues.begin(),
+                                         remainingExpectedValues.end());
+
         AnnotationEmitTest::CheckLiteralArrayTable(program, expectedLiteralArrayTable);
+    }
+
+    // After the new name mangling names, the expected values array was too long to fit the 50 lines rule.
+    std::vector<std::pair<std::string, std::vector<AnnotationValueType>>> GetRemainingExpectedValues()
+    {
+        std::vector<std::pair<std::string, std::vector<AnnotationValueType>>> expectedArray = {
+            {"MyClass%%annotation-ClassAuthor-mutiArray-11",
+             std::vector<AnnotationValueType> {std::string("MyClass%%annotation-ClassAuthor-mutiArray-8"),
+                                               std::string("MyClass%%annotation-ClassAuthor-mutiArray-9"),
+                                               std::string("MyClass%%annotation-ClassAuthor-mutiArray-10")}},
+            {"MyClass.foo:void;%%annotation-ClassAuthor-color-20",
+             std::vector<AnnotationValueType> {COLOR_OPTION_0, COLOR_OPTION_1}},
+            {"MyClass.foo:void;%%annotation-ClassAuthor-reviewers-22",
+             std::vector<AnnotationValueType> {std::string("Bob"), std::string("Jim"), std::string("Tom")}},
+            {"MyClass.foo:void;%%annotation-ClassAuthor-reviewersAge-23",
+             std::vector<AnnotationValueType> {AGE_18, AGE_21, AGE_32}},
+            {"MyClass.foo:void;%%annotation-ClassAuthor-testBools-21",
+             std::vector<AnnotationValueType> {false, true, false}},
+            {"MyClass.foo:void;%%annotation-ClassAuthor-mutiArray-16",
+             std::vector<AnnotationValueType> {VALUE_1, VALUE_2, VALUE_3}},
+            {"MyClass.foo:void;%%annotation-ClassAuthor-mutiArray-17",
+             std::vector<AnnotationValueType> {VALUE_4, VALUE_5, VALUE_6}},
+            {"MyClass.foo:void;%%annotation-ClassAuthor-mutiArray-18",
+             std::vector<AnnotationValueType> {VALUE_7, VALUE_8, VALUE_9}},
+            {"MyClass.foo:void;%%annotation-ClassAuthor-mutiArray-19",
+             std::vector<AnnotationValueType> {std::string("MyClass.foo:void;%%annotation-ClassAuthor-mutiArray-16"),
+                                               std::string("MyClass.foo:void;%%annotation-ClassAuthor-mutiArray-17"),
+                                               std::string("MyClass.foo:void;%%annotation-ClassAuthor-mutiArray-18")}},
+        };
+
+        return expectedArray;
     }
 
 private:

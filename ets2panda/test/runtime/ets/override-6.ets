@@ -21,4 +21,4 @@ class B implements Partial<A> {
     a?: number = 1
 }
 
-assertEQ(new B().a, 1)
+arktest.assertEQ(new B().a, 1)

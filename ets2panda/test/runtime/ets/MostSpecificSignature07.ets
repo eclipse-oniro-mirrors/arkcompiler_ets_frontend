@@ -15,7 +15,7 @@
 
 function main() : void
 {
-    assertEQ(foo("1"), 3);
+    arktest.assertEQ(foo("1"), 3);
 }
 
 class A{}

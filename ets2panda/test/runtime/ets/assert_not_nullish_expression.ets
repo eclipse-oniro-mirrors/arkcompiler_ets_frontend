@@ -15,10 +15,10 @@
 
 function main():void{
     let a = (): Int|undefined => {return 3; }();
-    assertTrue(!!(a!))
+    arktest.assertTrue(!!(a!))
     foo(5);
 }
 
 function foo(i: Int|undefined): void {
-    assertTrue(!!(i!))
+    arktest.assertTrue(!!(i!))
 }

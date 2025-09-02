@@ -1,0 +1,36 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_hsp1.2/entry/a.ets"
+    ],
+
+    "packageName": "entry",
+    "moduleType": "shared",
+
+    "buildType": "build",
+    "buildMode": "Debug",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_hsp1.2/entry/",
+    "sourceRoots": ["./", "src/main1/ets"],
+
+    "loaderOutPath": "./dist/out/",
+    "cachePath": "./dist/cache",
+
+    "enableDeclgenEts2Ts": false,
+    "declgenV1OutPath": "./dist/declgen/decl_ets1",
+    "declgenV2OutPath": "./dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+
+    "dependentModuleList": [
+        {
+            "packageName": "hsp",
+            "moduleName": "hsp",
+            "moduleType": "shared",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_hsp1.2/hsp",
+            "sourceRoots": ["./"],
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_hsp1.2/hsp/index.ets",
+            "language": "1.2"
+        }
+    ],
+    "hasMainModule": true
+}

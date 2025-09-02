@@ -27,6 +27,7 @@
 #include "util/enumbitops.h"
 
 #include <set>
+#include <ir/statements/blockStatement.h>
 
 namespace ark::es2panda::ir {
 class BlockStatement;
@@ -41,9 +42,12 @@ namespace ark::es2panda::compiler {
 class CFG;
 }  // namespace ark::es2panda::compiler
 
+namespace ark::es2panda::checker {
+class Checker;
+}  // namespace ark::es2panda::checker
+
 namespace ark::es2panda::parser {
 enum class ScriptKind { SCRIPT, MODULE, STDLIB, GENEXTERNAL };
-enum EntityType { CLASS_PROPERTY = 0, METHOD_DEFINITION = 1, CLASS_DEFINITION = 2, TS_INTERFACE_DECLARATION = 3 };
 
 #ifndef NDEBUG
 constexpr uint32_t POISON_VALUE {0x12346789};
@@ -98,20 +102,16 @@ public:
         return allocator_;
     }
 
-    const varbinder::VarBinder *VarBinder() const
-    {
-        return varbinder_;
-    }
+    void PushVarBinder(varbinder::VarBinder *varbinder);
 
-    varbinder::VarBinder *VarBinder()
-    {
-        return varbinder_;
-    }
+    const varbinder::VarBinder *VarBinder() const;
 
-    void SetVarBinder(varbinder::VarBinder *varbinder)
-    {
-        varbinder_ = varbinder;
-    }
+    varbinder::VarBinder *VarBinder();
+
+    checker::Checker *Checker();
+    const checker::Checker *Checker() const;
+
+    void PushChecker(checker::Checker *checker);
 
     ScriptExtension Extension() const
     {
@@ -190,20 +190,11 @@ public:
         MaybeTransformToDeclarationModule();
     }
 
-    ir::ClassDefinition *GlobalClass()
-    {
-        return globalClass_;
-    }
+    ir::ClassDefinition *GlobalClass();
 
-    const ir::ClassDefinition *GlobalClass() const
-    {
-        return globalClass_;
-    }
+    const ir::ClassDefinition *GlobalClass() const;
 
-    void SetGlobalClass(ir::ClassDefinition *globalClass)
-    {
-        globalClass_ = globalClass;
-    }
+    void SetGlobalClass(ir::ClassDefinition *globalClass);
 
     ExternalSource &ExternalSources()
     {
@@ -284,11 +275,26 @@ public:
         return moduleInfo_.kind == util::ModuleKind::PACKAGE;
     }
 
+    bool IsDeclForDynamicStaticInterop() const
+    {
+        return moduleInfo_.isDeclForDynamicStaticInterop;
+    }
+
     void SetFlag(ProgramFlags flag);
     bool GetFlag(ProgramFlags flag) const;
     void SetASTChecked();
-    void ClearASTCheckedStatus();
+    void RemoveAstChecked();
     bool IsASTChecked();
+
+    void MarkASTAsLowered()
+    {
+        isASTlowered_ = true;
+    }
+
+    bool IsASTLowered() const
+    {
+        return isASTlowered_;
+    }
 
     bool IsStdLib() const
     {
@@ -317,16 +323,7 @@ public:
     void AddNodeToETSNolintCollection(const ir::AstNode *node, const std::set<ETSWarnings> &warningsCollection);
     bool NodeContainsETSNolint(const ir::AstNode *node, ETSWarnings warning);
 
-    std::vector<std::pair<std::string, ir::AstNode *>> &DeclGenExportNodes()
-    {
-        // NOTE: ExportNodes is not supported now.
-        return declGenExportNodes_;
-    }
-
-    void AddDeclGenExportNode(const std::string &declGenExportStr, ir::AstNode *node)
-    {
-        declGenExportNodes_.emplace_back(declGenExportStr, node);
-    }
+    bool MergeExternalSource(const ExternalSource *externalSource);
 
     // The name "IsDied", because correct value of canary is a necessary condition for the life of "Program", but
     // not sufficient
@@ -375,10 +372,9 @@ public:
 private:
     void MaybeTransformToDeclarationModule();
 
+private:
     ArenaAllocator *allocator_ {};
-    varbinder::VarBinder *varbinder_ {nullptr};
     ir::BlockStatement *ast_ {};
-    ir::ClassDefinition *globalClass_ {};
     util::StringView sourceCode_ {};
     util::Path sourceFile_ {};
     util::StringView sourceFileFolder_ {};
@@ -387,16 +383,20 @@ private:
     ExternalSource externalSources_;
     DirectExternalSource directExternalSources_;
     ScriptKind kind_ {};
+    bool isASTlowered_ {};
     bool genAbcForExternalSource_ {false};
     ScriptExtension extension_ {};
     ETSNolintsCollectionMap etsnolintCollection_;
     util::ModuleInfo moduleInfo_;
+
     lexer::SourcePosition packageStartPosition_ {};
     compiler::CFG *cfg_;
-    std::vector<std::pair<std::string, ir::AstNode *>> declGenExportNodes_;
     ArenaVector<varbinder::FunctionScope *> functionScopes_;
     std::unordered_map<std::string, std::unordered_set<std::string>> fileDependencies_;
 
+private:
+    ArenaMap<int32_t, varbinder::VarBinder *> varbinders_;
+    ArenaVector<checker::Checker *> checkers_;
 #ifndef NDEBUG
     uint32_t poisonValue_ {POISON_VALUE};
 #endif

@@ -27,4 +27,12 @@ function main() {
     console.println(A./* @@ label */price(1));
 }
 
-/* @@@ label Error TypeError: Property 'price' does not exist on type 'A'  */
+/* @@? 27:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Boolean): void` */
+/* @@? 27:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Byte): void` */
+/* @@? 27:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Short): void` */
+/* @@? 27:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Char): void` */
+/* @@? 27:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Int): void` */
+/* @@? 27:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Long): void` */
+/* @@? 27:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Float): void` */
+/* @@? 27:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Double): void` */
+/* @@@ label Error TypeError: Property 'price' does not exist on type 'A' */

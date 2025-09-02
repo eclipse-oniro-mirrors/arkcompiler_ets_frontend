@@ -31,8 +31,8 @@ class B {
 
     apply(ff: (this: A) => number) {
         for (let a of this.aa) {
-            assertEQ(a.ff(), a.sum)
-            assertEQ(ff(a), a.sum)
+            arktest.assertEQ(a.ff(), a.sum)
+            arktest.assertEQ(ff(a), a.sum)
         }
     }
 }

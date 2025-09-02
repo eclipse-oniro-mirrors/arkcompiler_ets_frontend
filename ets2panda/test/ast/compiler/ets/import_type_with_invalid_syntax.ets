@@ -13,13 +13,12 @@
  * limitations under the License.
  */
 
-import type /* @@ label */* /* @@ label1 */from './export_type.ets'
+import type * /* @@ label1 */from './export_type.ets'
 
 let a = new A();
 class C implements B {};
 let c = new C()
 
-/* @@@ label Error SyntaxError: Type import requires selective binding to define the required imported elements.  */
 /* @@@ label1 Error SyntaxError: Unexpected token, expected 'as'.  */
-/* @@? 16:49 Error TypeError: Class 'C' is already defined. */
+/* @@? 16:35 Error TypeError: Class 'C' is already defined. */
 /* @@? export_type.ets:1:1 Error TypeError: Function main is already declared. */

@@ -12,453 +12,34 @@
 # limitations under the License.
 
 syntax:
-- name: MISSING_TYPE_ANNOTATION
-  id: 1
-  message: "Missing type annotation for property '{}'."
 
-- name: DIFFERENT_PACKAGE_NAME
-  id: 2
-  message: "Files '{}' and '{}' are in the same folder, but have different package names."
+- name: ABSTRACT_METHODS_ONLY_IN_ABSTRACT_CLASS
+  id: 184
+  message: "Abstract methods can only appear within an abstract class."
 
-- name: PACKAGE_MODULE_IMPORT_OWN_PACKAGE
-  id: 3
-  message: "Package module cannot import from a file in it's own package."
+- name: ABSTRACT_METHOD_ASYNC
+  id: 118
+  message: "Abstract method cannot be async."
+
+- name: ACCESS_BEFORE_FIELD_METHOD
+  id: 120
+  message: "Access modifier must precede field and method modifiers."
+
+- name: ALREADY_EXPORTED
+  id: 282
+  message: "Cannot export '{}', it was already exported."
 
 - name: AMBIENT_CLASS_MISSING_BODY
   id: 4
   message: "Ambient class declarations must have a body."
 
-- name: EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER
-  id: 5
-  message: "export default is not allowed to export multiple specifiers."
-
-- name: NAMESPACE_MERGE_ERROR
-  id: 6
-  message: "Unable to merge namespaces '{}', because their modifiers are different."
-
-- name: NAMESPACE_ANNOTATION_CONFLICT
-  id: 7
-  message: "Annotation conflict! Multiple namespace declarations for '{}' cannot each have annotations."
-
-- name: INVALID_NODE_NUMBER
-  id: 8
-  message: "Invalid node number in format expression."
-
-- name: INVALID_NODE_TYPE
-  id: 9
-  message: "Invalid node type in format expression."
-
-- name: INSERT_NODE_ABSENT
-  id: 10
-  message: "There is no any node to insert at the placeholder position."
-
-- name: INVALID_INSERT_NODE
-  id: 11
-  message: "Inserting node type differs from that required by format specification."
-
-- name: INVALID_CLASS_FIELD
-  id: 12
-  message: "Cannot parse class field definition property."
-
-- name: INVALID_CLASS_METHOD
-  id: 13
-  message: "Cannot parse class method definition property."
-
-- name: REQUIRED_PARAM_AFTER_DEFAULT
-  id: 14
-  message: "Required parameter follows default parameter(s)."
-
-- name: REST_AND_DEFAULT_SAME_TIME
-  id: 15
-  message: "Both optional and rest parameters are not allowed in function's parameter list."
-
-- name: UNEXPECTED_TOKEN
-  id: 16
-  message: "Unexpected token."
-
-- name: INDEX_TYPE_EXPECTED
-  id: 17
-  message: "Index type expected in index signature."
-
-- name: INDEX_TYPE_NOT_NUMBER
-  id: 18
-  message: "Index type must be number in index signature."
-
-- name: EXPECTED_BRACKETS_IN_INDEX
-  id: 19
-  message: "] expected in index signature."
-
-- name: INDEX_MISSING_TYPE
-  id: 20
-  message: "An index signature must have a type annotation."
-
-- name: INDEX_MISSING_IDENTIFIER
-  id: 21
-  message: "Return type of index signature from exported class or interface need to be identifier."
-
-- name: EXTENSION_GETTER_WRONG_PARAM
-  id: 22
-  message: "Extension Getter can only have 1 parameter."
-
-- name: EXTENSION_SETTER_WRONG_PARAM
-  id: 23
-  message: "Extension Setter can only have 2 parameters."
-
-- name: ANNOTATION_PROPERTY_ACCESS_MODIFIERS
-  id: 24
-  message: "Annotation property can not have access modifiers."
+- name: ANNOTATION_DECLARATION_ACCESS_MODIFIER
+  id: 210
+  message: "Annotation declaration can not have access modifier."
 
 - name: ANNOTATION_METHOD_AS_PROP
   id: 25
   message: "Annotation can not have method as property."
-
-- name: INVALID_ARGUMENT_PASSED
-  id: 26
-  message: "Invalid argument passed to '{}'."
-
-- name: INVALID_VAL_ANNOTATION_FIELD
-  id: 27
-  message: "Invalid value for annotation field, expected a constant literal."
-
-- name: ANNOTATION_WRONG_DEC
-  id: 28
-  message: "Annotations are not allowed on this type of declaration."
-
-- name: ANNOTATION_ABSTRACT
-  id: 29
-  message: "Annotations are not allowed on an abstract class or methods."
-
-- name: LOCAL_CLASS_ACCESS_MOD
-  id: 30
-  message: "Local class or interface declaration members can not have access modifies."
-
-- name: GETTER_SETTER_NOT_ABSTRACT
-  id: 31
-  message: "Getter and setter methods must be abstracts in the interface body."
-
-- name: PRIVATE_INTERFACE_MISSING_BODY
-  id: 32
-  message: "Private interface methods must have body."
-
-- name: READONLY_INTERFACE_METHOD
-  id: 33
-  message: "Modifier 'readonly' cannot be applied to an interface method."
-
-- name: MULTIPLE_STATIC_BLOCK
-  id: 34
-  message: "Only one static block is allowed in one namespace or class."
-
-- name: INVALID_ENUM_TYPE
-  id: 35
-  message: "Invalid enum initialization type."
-
-- name: ENUM_INVALID_INIT
-  id: 36
-  message: "Invalid enum initialization value"
-
-- name: ONLY_CALL_AFTER_LAUNCH
-  id: 37
-  message: "Only call expressions are allowed after 'launch'."
-
-- name: MISSING_LOOP_AFTER_LABEL
-  id: 38
-  message: "Label must be followed by a loop statement."
-
-- name: MISSING_CATCH_OR_FINALLY_AFTER_TRY
-  id: 39
-  message: "A try statement should contain either finally clause or at least one catch clause."
-
-- name: ILLEGAL_START_STRUCT_CLASS
-  id: 40
-  message: "Illegal start of {} expression."
-
-- name: ONLY_EXPORT_CLASS_OR_INTERFACE
-  id: 41
-  message: "Can only type export class or interface."
-
-- name: INVALID_EXPORT_DEFAULT
-  id: 42
-  message: "Can not export annotation default."
-
-- name: EXPORT_NON_DECLARATION
-  id: 43
-  message: "Export is allowed only for declarations."
-
-- name: THIS_IN_NON_STATIC_METHOD
-  id: 44
-  message: "A 'this' type is available only as return type in a non-static method of a class or struct and extension functions."
-
-- name: UNEXPECTED_ID
-  id: 45
-  message: "Unexpected identifier."
-
-- name: AWAIT_IN_ARROW_FUN_PARAM
-  id: 46
-  message: "await is not allowed in arrow function parameters."
-
-- name: UNEXPECTED_PRIVATE
-  id: 47
-  message: "Unexpected private identifier."
-
-- name: IMPORT_META_DIRECT_EVAL
-  id: 48
-  message: "'import.Meta' is not allowed in direct eval in module code."
-
-- name: INVALID_DESTRUCTURING_TARGET
-  id: 49
-  message: "Invalid destructuring assignment target."
-
-- name: DELETING_LOCAL_VAR
-  id: 50
-  message: "Deleting local variable in strict mode."
-
-- name: ASSIGN_TO_EVAL_INVALID
-  id: 51
-  message: "Assigning to 'eval' in strict mode is invalid."
-
-- name: EXPECTED_EXPRESSION_GOT_ARROW
-  id: 52
-  message: "Expected expression, got '=>'."
-
-- name: INVALID_LEFT_SITE_OPERATOR
-  id: 53
-  message: "Invalid left-hand side operator."
-
-- name: YIELD_IN_GENERATOR_PARAM
-  id: 54
-  message: "Yield is not allowed in generator parameters."
-
-- name: INVALID_REST_ELEMENT
-  id: 55
-  message: "Invalid rest element."
-
-- name: TAGGED_TEMPLATE_LITERALS_IN_OPTIONALCHAIN
-  id: 56
-  message: "Tagged Template Literals are not allowed in optionalChain."
-
-- name: ASSIGN_TO_ARGS_INVALID
-  id: 57
-  message: "Assigning to 'arguments' in strict mode is invalid."
-
-- name: GETTER_FORMAL_PARAMS
-  id: 58
-  message: "Getter must not have formal parameters."
-
-- name: NULLISH_COALESCING_MISSING_PARENS
-  id: 59
-  message: "Nullish coalescing operator ?? requires parens when mixing with logical operators."
-
-- name: NEW_WITH_IMPORT
-  id: 60
-  message: "Cannot use new with import(...)."
-
-- name: UNEXPECTED_SUPER
-  id: 61
-  message: "Unexpected super keyword."
-
-- name: OBJECT_PATTER_CONTAIN_METHODS
-  id: 62
-  message: "Object pattern can't contain methods."
-
-- name: SETTER_FORMAL_PARAMS
-  id: 63
-  message: "Setter must have exactly one formal parameter."
-
-- name: INSUFFICIENT_PARAM_IN_ARROW_FUN
-  id: 64
-  message: "Insufficient formal parameter in arrow function."
-
-- name: ILLEGAL_AWAIT_IN_ASYNC_FUN
-  id: 65
-  message: "Illegal await-expression in formal parameters of async function."
-
-- name: YIELD_IN_ARROW_FUN_PARAM
-  id: 66
-  message: "yield is not allowed in arrow function parameters."
-
-- name: REST_PARAM_NOT_LAST
-  id: 67
-  message: "Rest parameter must be the last formal parameter."
-
-- name: META_PROP_FOR_IMPORT
-  id: 68
-  message: "The only valid meta property for import is import.Meta."
-
-- name: IMPORT_META_ONLY_MODULE
-  id: 69
-  message: "'import.Meta' may appear only with 'sourceType: module'."
-
-- name: DELETING_PRIVATE_FIELDS
-  id: 70
-  message: "Private fields can not be deleted."
-
-- name: INVALID_LEFT_IN_PREFIX
-  id: 71
-  message: "Invalid left-hand side in prefix operation."
-
-- name: INVALID_LEFT_SIDE_IN_ASSIGNMENT
-  id: 72
-  message: "Invalid left-hand side in assignment expression."
-
-- name: NEW_TARGET_IS_NOT_ALLOWED
-  id: 73
-  message: "'new.Target' is not allowed here."
-
-- name: NEW_TARGET_WITH_ESCAPED_CHARS
-  id: 74
-  message: "'new.Target' must not contain escaped characters."
-
-- name: INVALID_CLOSING_PARENTHESIS
-  id: 75
-  message: "Invalid closing parenthesis."
-
-- name: INVALID_CAPTURING_GROUP
-  id: 76
-  message: "Invalid capturing group."
-
-- name: INVALID_CHAR
-  id: 77
-  message: "Invalid character."
-
-- name: QUANTIFIER_OUT_OF_ORDER
-  id: 78
-  message: "Quantifier range out of order."
-
-- name: INVALIDE_CHAR_CLASS
-  id: 79
-  message: "Invalid character class."
-
-- name: CLASS_OUT_OF_ORDER
-  id: 80
-  message: "Class range out of order."
-
-- name: INVALID_DECIMAL_ESCAPE
-  id: 81
-  message: "Invalid decimal escape."
-
-- name: DUPLICATE_GROUP_NAME
-  id: 82
-  message: "Duplicate group name."
-
-- name: INVALID_HEX_ESCAPE
-  id: 83
-  message: "Invalid hex escape."
-
-- name: INVALID_GROUP_NAME
-  id: 84
-  message: "Invalid group name."
-
-- name: INVALID_GROUP
-  id: 85
-  message: "Invalid group."
-
-- name: UNTERMINATED_UNICODE_PROP_ESCAPE
-  id: 86
-  message: "Unterminated Unicode property escape."
-
-- name: INVALID_ESCAPE
-  id: 87
-  message: "Invalid escape."
-
-- name: INVALID_QUANTIFIER
-  id: 88
-  message: "Invalid quantifier, nothing to repeat."
-
-- name: INVALID_NAME_BACKREFERENCE
-  id: 89
-  message: "Invalid named backreference."
-
-- name: INVALID_NON_CAPTURING_GROUP
-  id: 90
-  message: "Invalid non-capturing group."
-
-- name: INVALID_UNICODE_ESCAPE
-  id: 91
-  message: "Invalid Unicode escape."
-
-- name: INVALID_CONTROL_ESCAPE
-  id: 92
-  message: "Invalid control escape."
-
-- name: INVALID_ASSERT
-  id: 93
-  message: "Invalid assertion."
-
-- name: INVALID_UNICODE_PROP_ESCAPE
-  id: 94
-  message: "Invalid Unicode property escape."
-
-- name: UNEXPECTED_TOKEN_AS
-  id: 95
-  message: "Unexpected token, expected 'as'."
-
-- name: OPTIONAL_VAR_IN_FOR_OF
-  id: 96
-  message: "Optional variable is not allowed in for of statements."
-
-- name: FOR_AWAIT_OF_VAR_NOT_INIT
-  id: 97
-  message: "for-await-of loop variable declaration may not have an initializer."
-
-- name: VARIANCE_NOD_ALLOWED
-  id: 98
-  message: "Variance modifier is not allowed here."
-
-- name: FUN_PARAM_THIS_MISSING_TYPE
-  id: 99
-  message: "The function parameter 'this' must explicitly specify the typeAnnotation."
-
-- name: MISSING_INIT_OR_CONST_DEC
-  id: 100
-  message: "Missing initializer in const declaration."
-
-- name: CATCH_CLAUSE_VAR_HAS_INIT
-  id: 101
-  message: "Catch clause variable cannot have an initializer."
-
-- name: ASTERIKS_NOT_ALLOWED_IN_SELECTIVE_BINDING
-  id: 102
-  message: "The '*' token is not allowed as a selective binding (between braces)."
-
-- name: ONLY_THROWS_IN_FUN_TYPE
-  id: 103
-  message: "Only 'throws' can be used with function types."
-
-- name: DECALRE_IN_AMBIENT_CONTEXT
-  id: 104
-  message: "A 'declare' modifier cannot be used in an already ambient context."
-
-- name: MISSING_INIT_OR_TYPE
-  id: 105
-  message: "Variable must be initialized or it's type must be declared."
-
-- name: ASYNC_IN_AMBIENT_CONTEXT
-  id: 106
-  message: "The modifier async cannot be used in an ambient context."
-
-- name: MODIFIERS_OF_GET_SET_LIMITED
-  id: 107
-  message: "Modifiers of getter and setter are limited to ('abstract', 'static', 'final', 'override', 'native')."
-
-- name: ESCAPE_SEQUENCES_IN_AS
-  id: 108
-  message: "Escape sequences are not allowed in 'as' keyword."
-
-- name: LOCAL_TYPE_DEC_NO_IMPLEMENTED
-  id: 109
-  message: "Local type declaration (class, struct, interface and enum) support is not yet implemented."
-
-- name: TYPE_IMPORT_MISSING_SELECTIVE_BINDING
-  id: 110
-  message: "Type import requires selective binding to define the required imported elements."
-
-- name: EXPORT_IN_NAMESPACE
-  id: 111
-  message: "Export declarations are not permitted in a namespace."
-
-- name: UNEXPECTED_TOKEN_ID
-  id: 112
-  message: "Unexpected token, expected an identifier."
 
 - name: ANNOTATION_NOT_ALLOWED
   id: 113
@@ -468,181 +49,477 @@ syntax:
   id: 114
   message: "Annotations can only be declared at the top level."
 
-- name: DUPLICATED_MODIFIER
-  id: 115
-  message: "Duplicated modifier is not allowed."
+- name: ANNOTATION_PROPERTY_ACCESS_MODIFIERS
+  id: 24
+  message: "Annotation property can not have access modifiers."
 
-- name: NATIVE_METHOD_ASYNC
-  id: 116
-  message: "Native method cannot be async."
+- name: ANNOTATION_WRONG_DEC
+  id: 28
+  message: "Annotations are not allowed on this type of declaration."
 
-- name: KEYWORD_CONTAINS_ESCAPED_CHARS
-  id: 117
-  message: "Keyword must not contain escaped characters."
+- name: ASSIGN_TO_ARGS_INVALID
+  id: 57
+  message: "Assigning to 'arguments' in strict mode is invalid."
 
-- name: ABSTRACT_METHOD_ASYNC
-  id: 118
-  message: "Abstract method cannot be async."
+- name: ASSIGN_TO_EVAL_INVALID
+  id: 51
+  message: "Assigning to 'eval' in strict mode is invalid."
 
-- name: INTERFACE_FIELDS_TYPE_ANNOTATION
-  id: 119
-  message: "Interface fields must have type annotation."
+- name: ASTERIKS_NOT_ALLOWED_IN_SELECTIVE_BINDING
+  id: 102
+  message: "The '*' token is not allowed as a selective binding (between braces)."
 
-- name: ACCESS_BEFORE_FIELD_METHOD
-  id: 120
-  message: "Access modifier must precede field and method modifiers."
+- name: ASYNC_CONSTRUCTOR
+  id: 200
+  message: "Constructor should not be async."
 
-- name: FIELD_TPYE_ANNOTATION_MISSING
-  id: 121
-  message: "Field type annotation expected."
+- name: ASYNC_FLAG_ONLY_FOR_TOP_FUN
+  id: 202
+  message: "'async' flags must be used for functions only at top-level."
 
-- name: ID_EXPECTED
-  id: 122
-  message: "Identifier expected."
+- name: ASYNC_IN_AMBIENT_CONTEXT
+  id: 106
+  message: "The modifier async cannot be used in an ambient context."
 
-- name: INITIALIZERS_INTERFACE_PROPS
-  id: 123
-  message: "Initializers are not allowed on interface properties."
+- name: ASYNC_METHOD_LINE_TERM
+  id: 197
+  message: "Async methods cannot have a line terminator between 'async' and the property name."
 
-- name: UNEXPECTED_TOKEN_PRIVATE_ID
-  id: 124
-  message: "Unexpected token, expected 'private' or identifier."
+- name: AS_CONST_USAGE
+  id: 311
+  message: "'as const' assertion is not supported."
 
-- name: INITIALIZERS_IN_AMBIENT_CONTEXTS
-  id: 125
-  message: "Initializers are not allowed in ambient contexts."
+- name: AWAIT_IN_ARROW_FUN_PARAM
+  id: 46
+  message: "await is not allowed in arrow function parameters."
 
-- name: VAR_DEC_EXPECTED
-  id: 126
-  message: "Variable declaration expected."
+- name: AWAIT_RESERVED_IDENTIFIER_IN_MODULE
+  id: 213
+  message: "'await' is a reserved identifier in module code."
 
-- name: CONFLICTING_FIELD_MODIFIERS
-  id: 127
-  message: "Conflicting modifiers '!' and '?' on field."
+- name: BINDING_ARGS_INVALID
+  id: 182
+  message: "Binding 'arguments' in strict mode is invalid."
 
-- name: VALUE_IS_NOT_SET
-  id: 128
-  message: "You didn't set the value."
+- name: BINDING_EVAL_INVALID
+  id: 190
+  message: "Binding 'eval' in strict mode is invalid."
 
-- name: TYPE_ALIAS_ONLY_TOP_LEVEL
-  id: 129
-  message: "Type alias is allowed only as top-level declaration."
+- name: BINDING_PATTERN_PARAM_CANNOT_BE_OPTIONAL
+  id: 217
+  message: "A binding pattern parameter cannot be optional in an implementation signature."
 
-- name: INVALID_RIGHT_INSTANCEOF
-  id: 130
-  message: "Invalid right-hand side in 'instanceof' expression."
+- name: CALL_SIG_IN_OBJECT
+  id: 103145
+  message: "{} signatures in object types are not supported. Use '$_invoke' method instead."
 
-- name: IDENTIFIER_EXPECTED
-  id: 131
-  message: "Identifier is needed here."
+- name: CANNOT_EXPORT_DIFFERENT_OBJECTS_WITH_SAME_NAME
+  id: 344
+  message: "Cannot export two different names with the same export alias name '{}'."
 
-- name: DEFAULT_UNDEF_NOT_ALLOWED
-  id: 132
-  message: "Not enable default value with default undefined."
+- name: CAN_NOT_FIND_NAME_TO_EXPORT
+  id: 279
+  message: "Cannot find name '{}' to export."
 
-- name: DEFAULT_ONLY_FOR_OPTIONAL
-  id: 133
-  message: "Default value is allowed only for optional parameters."
+- name: CAN_NOT_RENAME_ANNOTATION
+  id: 280
+  message: "Can not rename annotation '{}' in export or import statements."
 
-- name: NAMESPACE_ONLY_TOP_OR_IN_NAMESPACE
-  id: 134
-  message: "Namespace is allowed only at the top level or inside a namespace."
-
-- name: NESTED_FUNCTIONS_NOT_ALLOWED
-  id: 135
-  message: "Nested functions are not allowed."
-
-- name: SPREAD_MUST_BE_LAST_IN_TUPLE
-  id: 136
-  message: "Spread type must be at the last index in the tuple type."
-
-- name: PRIMITIVE_NOT_ALLOWED
-  id: 137
-  message: "Primitive type is not allowed here."
-
-- name: INVALID_TYPE
-  id: 138
-  message: "Invalid Type."
-
-- name: SPREAD_TYPE_MUST_BE_ARRAY
-  id: 139
-  message: "Spread type must be an array type."
-
-- name: TYPE_ANNOTATION_FOR_CONSTRUCTOR
-  id: 140
-  message: "Type annotation isn't allowed for constructor."
-
-- name: READONLY_ONLY_ON_ARRAY_OR_TUPLE
-  id: 141
-  message: "'readonly' type modifier is only permitted on resizable array and tuple types."
-
-- name: OPTIONAL_TYPES_IN_TUPLE_NOT_IMPLEMENTED
-  id: 142
-  message: "Optional types in tuples are not yet implemented."
-
-- name: ONLY_SPREAD_AT_LAST_INDEX
-  id: 143
-  message: "Only one spread type declaration allowed, at the last index."
+- name: CATCH_CLAUSE_VAR_HAS_INIT
+  id: 101
+  message: "Catch clause variable cannot have an initializer."
 
 - name: CLASS_FIELD_CONSTRUCTOR
   id: 144
   message: "Classes may not have a field named 'constructor'."
 
-- name: NOT_ALLOWED_USER_DEFINED_TYPE
-  id: 145
-  message: "Cannot be used as user-defined type."
+- name: CLASS_INTERFACE_METHOD_OVERLOADED_NAME_MUST_IDENT
+  id: 324
+  message: "The overloaded method name in class/interface method overload declaration must be identifier."
+
+- name: CLASS_OUT_OF_ORDER
+  id: 80
+  message: "Class range out of order."
+
+- name: CONFLICTING_FIELD_MODIFIERS
+  id: 127
+  message: "Conflicting modifiers '!' and '?' on field."
+
+- name: CONSTRUCTOR_FUNC_TYPE_NOT_SUPPORTED
+  id: 93489
+  message: "Constructor function types are not supported."
+
+- name: DECALRE_IN_AMBIENT_CONTEXT
+  id: 104
+  message: "A 'declare' modifier cannot be used in an already ambient context."
+
+- name: DECORATORS_INVALID
+  id: 183
+  message: "Decorators are not valid here."
+
+- name: DEEP_NESTING
+  id: 305
+  message: "Maximum allowed nesting level exceeded."
+
+- name: DEFAULT_ONLY_FOR_OPTIONAL
+  id: 133
+  message: "Default value is allowed only for optional parameters."
+
+- name: DEFAULT_PARAM_IN_DECLARE
+  id: 328
+  message: "A parameter initializer is only allowed in a function or constructor implementation."
+
+- name: DEFAULT_UNDEF_NOT_ALLOWED
+  id: 132
+  message: "Not enable default value with default undefined."
+
+- name: DELETING_LOCAL_VAR
+  id: 50
+  message: "Deleting local variable in strict mode."
+
+- name: DELETING_PRIVATE_FIELDS
+  id: 70
+  message: "Private fields can not be deleted."
+
+- name: DIFFERENT_PACKAGE_NAME
+  id: 2
+  message: "Files '{}' and '{}' are in the same folder, but have different package names."
+
+- name: DIVISION_BY_ZERO
+  id: 273
+  message: "Division by zero is not allowed."
+
+- name: DUPLICATED_IDENTIFIER
+  id: 215
+  message: "Duplicated identifier."
+
+- name: DUPLICATED_MODIFIER
+  id: 115
+  message: "Duplicated modifier is not allowed."
+
+- name: DUPLICATE_EXPORT_NAME
+  id: 281
+  message: "The given name '{}' is already used in another export."
+
+- name: DUPLICATE_GROUP_NAME
+  id: 82
+  message: "Duplicate group name."
+
+- name: ENUM_INVALID_INIT
+  id: 36
+  message: "Invalid enum initialization value"
+
+- name: ENUM_STRING_TYPE_ALL_ITEMS_INIT
+  id: 276
+  message: "All items of string-type enumeration should be explicitly initialized."
+
+- name: ERROR_ARKTS_NO_AMBIENT_DECLS
+  id: 308
+  message: "Ambient module declaration is not supported!"
+
+- name: ERROR_ARKTS_NO_COMMA_OUTSIDE_LOOPS
+  id: 133681
+  message: "Comma operator is supported only in 'for' loops."
+
+- name: ERROR_ARKTS_NO_DEBUGGER_STATEMENT
+  id: 299
+  message: "Debugger statement is not supported!"
+
+- name: ERROR_ARKTS_NO_EXPORT_ASSIGNMENT
+  id: 307
+  message: "'export = ...' syntax is not supported, use regular import/export instead!"
+
+- name: ERROR_ARKTS_NO_FOR_IN_LOOP
+  id: 6987
+  message: "'for ... in' loop is not supported, please use regular 'for' or 'for ... of ...' loop to iterate through arrays
+    and iterable objects."
+
+- name: ERROR_ARKTS_NO_IMPORT_ASSERTIONS
+  id: 313
+  message: "Import assertion is not supported, please use the ordinary import syntax instead!"
+
+- name: ERROR_ARKTS_NO_INTERFACE_CONSTRUCTOR_SIGNATURES
+  id: 81515
+  message: "Constructor signatures are not supported in interfaces, use methods instead!"
+
+- name: ERROR_ARKTS_NO_OBJ_LITERAL_TO_DECL_TYPE
+  id: 177354
+  message: "Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly!"
+
+- name: ERROR_ARKTS_NO_PRIVATE_IDENTIFIERS
+  id: 298
+  message: "Use 'private' keyword to declare an identifier as private."
+
+- name: ERROR_ARKTS_NO_REQUIRE
+  id: 312
+  message: "Importing by 'require' and 'import' assignment is not supported, use 'import * as ... from ...' form instead!"
+
+- name: ERROR_ARKTS_NO_SIDE_EFFECT_IMPORT
+  id: 73297
+  message: "Importing for side-effect only is prohibited! Please provide objects to be imported explicitly or use * to import
+    all objects declared in the module!"
+
+- name: ERROR_ARKTS_NO_UMD
+  id: 114179
+  message: "Universal module definitions are not supported, please use ordinary import/export syntax instead."
+
+- name: ERROR_ARKTS_NO_VAR
+  id: 297
+  message: "'var' keyword is not supported. Use 'let' instead."
+
+- name: ESCAPE_SEQUENCES_IN_AS
+  id: 108
+  message: "Escape sequences are not allowed in 'as' keyword."
+
+- name: ESCAPE_SEQUENCES_IN_KEYWORD
+  id: 271
+  message: "Escape sequences are not allowed in keyword."
+
+- name: EVAL_OR_ARGUMENTS_IN_STRICT_MODE
+  id: 207
+  message: "'eval' or 'arguments' can't be defined or assigned to in strict mode code."
+
+- name: EXPECTED_ARROW_SAME_LINE
+  id: 195
+  message: "expected '=>' on the same line after an argument list, got line terminator."
+
+- name: EXPECTED_BRACKETS_IN_INDEX
+  id: 19
+  message: "] expected in index signature."
+
+- name: EXPECTED_EXPRESSION_GOT_ARROW
+  id: 52
+  message: "Expected expression, got '=>'."
+
+- name: EXPECTED_PARAM_GOT_PARAM
+  id: 230
+  message: "Expected '{}', got '{}'."
+
+- name: EXPLICIT_PARAM_TYPE
+  id: 194
+  message: "Parameter declaration should have an explicit type annotation."
+
+- name: EXPORT_DEFAULT_NO_REEXPORT
+  id: 244
+  message: "Cannot use 'export default' in re-export context"
+
+- name: EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER
+  id: 5
+  message: "export default is not allowed to export multiple specifiers."
+
+- name: EXPORT_IN_NAMESPACE
+  id: 111
+  message: "Export declarations are not permitted in a namespace."
+
+- name: EXPORT_NON_DECLARATION
+  id: 43
+  message: "Export is allowed only for declarations."
+
+- name: EXPORT_WITHOUT_DECLARE_IN_DECL_MODULE
+  id: 296
+  message: "Export keyword without declare shouldn't be used in declaration module."
 
 - name: EXTENSION_ACCESSOR_RECEIVER
   id: 146
   message: "Extension Accessor must have a receiver."
 
-- name: UNEXPECTED_TOKEN_ID_FUN
-  id: 147
-  message: "Unexpected token, expected function identifier."
+- name: EXTENSION_GETTER_WRONG_PARAM
+  id: 22
+  message: "Extension Getter can only have 1 parameter."
 
-- name: UNEXPECTED_ARROWPARAM_ELEMENT
-  id: 148
-  message: "Unexpected ArrowParameter element."
+- name: EXTENSION_SETTER_WRONG_PARAM
+  id: 23
+  message: "Extension Setter can only have 2 parameters."
 
-- name: SPECIAL_METHOD_CONSTRUCTOR
-  id: 149
-  message: "Constructor can not be special method."
+- name: FIELD_IN_PARAM
+  id: 319
+  message: "Declaring fields in parameter list is not supported"
 
-- name: TRAILING_COMMA_NOT_ALLOWED
-  id: 150
-  message: "Trailing comma is not allowed in this context."
+- name: FIELD_TPYE_ANNOTATION_MISSING
+  id: 121
+  message: "Field type annotation expected."
 
-- name: UNEXPECTED_TOKEN_STRING_LITERAL
-  id: 151
-  message: "Unexpected token, expected string literal."
+- name: FOR_AWAIT_OF_VAR_NOT_INIT
+  id: 97
+  message: "for-await-of loop variable declaration may not have an initializer."
 
-- name: RESTPARAM_INIT
-  id: 152
-  message: "RestParameter does not support an initializer."
+- name: FOR_IN_LOOP_HAS_INIT
+  id: 164
+  message: "for-in loop variable declaration may not have an initializer."
 
-- name: UNEXPECTED_MODIFIER
-  id: 153
-  message: "Unexpected modifier."
+- name: FOR_OF_LOOP_HAS_INIT
+  id: 168
+  message: "for-of loop variable declaration may not have an initializer."
 
-- name: PRIVATE_FIELD_REDEC
-  id: 154
-  message: "Private field has already been declared."
+- name: FUNCTION_OVERLOADED_NAME_MUST_QUALIFIED_NAME
+  id: 325
+  message: "The overloaded method name in function overload declaration must be qualified name."
 
-- name: STATIC_PROPERTY_PROTOTYPE
-  id: 155
-  message: "Classes may not have static property named prototype."
-
-- name: RESTPARAM_ID_IN_DEC_CONTEXT
-  id: 156
-  message: "RestParameter must be followed by an identifier in declaration contexts"
-
-- name: DECLARE_MODIFIER_ON_INVALID_CLASS_ELEMENT
-  id: 157
-  message: "'declare modifier cannot appear on class elements of this kind."
+- name: FUNC_EXPR
+  id: 320
+  message: "Function expressions are not supported, use arrow functions instead"
 
 - name: FUNC_PARAM_THIS_FIRST
   id: 158
   message: "Function Parameter 'this' must be the first."
+
+- name: FUN_PARAM_THIS_MISSING_TYPE
+  id: 99
+  message: "The function parameter 'this' must explicitly specify the typeAnnotation."
+
+- name: GENERATORS_ONLY_TOP_LEVEL_OR_INSIDE_BLOCK
+  id: 173
+  message: "Generators can only be declared at the top level or inside a block."
+
+- name: GENERATOR_FUNCTION
+  id: 314
+  message: "Generator functions are not supported, please use async/await mechanism for multitasking"
+
+- name: GENERIC_LAMBDA_NOT_SUPPORTED
+  id: 12842
+  message: "Generic lambda expressions are not supported."
+
+- name: GETTER_FORMAL_PARAMS
+  id: 58
+  message: "Getter must not have formal parameters."
+
+- name: GETTER_SETTER_NOT_ABSTRACT
+  id: 31
+  message: "Getter and setter methods must be abstracts in the interface body."
+
+- name: GET_ACCESSOR_MUST_BE_AT_LEAST_AS_ACCESSIBLE
+  id: 205
+  message: "A get accessor must be at least as accessible as the setter."
+
+- name: HARD_KEYWORD_IDENT
+  id: 316
+  message: "Hard keyword '{}' cannot be used as identifier"
+
+- name: HEXADECIMAL_EXPECTED
+  id: 248
+  message: "Hexadecimal digit expected."
+
+- name: IDENTIFIER_EXPECTED
+  id: 131
+  message: "Identifier is needed here."
+
+- name: IDENTIFIER_EXPECTED_HERE
+  id: 224
+  message: "Identifier expected, got '{}'."
+
+- name: ID_EXPECTED
+  id: 122
+  message: "Identifier expected."
+
+- name: ILLEGALE_CONTINUE
+  id: 165
+  message: "Illegal continue statement."
+
+- name: ILLEGAL_AWAIT_IN_ASYNC_FUN
+  id: 65
+  message: "Illegal await-expression in formal parameters of async function."
+
+- name: ILLEGAL_BREAK
+  id: 209
+  message: "Illegal break statement."
+
+- name: ILLEGAL_EXPRESSION_WRAP
+  id: 196
+  message: "Illegal expression. Wrap left hand side or entire exponentiation in parentheses."
+
+- name: ILLEGAL_NEW_LINE
+  id: 172
+  message: "Illegal newline after throw."
+
+- name: ILLEGAL_START_STRUCT_CLASS
+  id: 40
+  message: "Illegal start of {} expression."
+
+- name: ILLEGAL_USE_STRICT
+  id: 199
+  message: "Illegal 'use strict' directive in function with non-simple parameter list."
+
+- name: IMPLEMENTS_CLAUSE_EMPTY
+  id: 185
+  message: "Implements clause can not be empty."
+
+- name: IMPLICIT_OCTAL_NOT_ALLOWED
+  id: 257
+  message: "Implicit octal literal not allowed."
+
+- name: IMPORT_EXPORT_ONLY_AT_TOP_LEVEL
+  id: 166
+  message: "'import' and 'export' may only appear at the top level."
+
+- name: IMPORT_META_DIRECT_EVAL
+  id: 48
+  message: "'import.Meta' is not allowed in direct eval in module code."
+
+- name: IMPORT_META_ONLY_MODULE
+  id: 69
+  message: "'import.Meta' may appear only with 'sourceType: module'."
+
+- name: IMPORT_TOP_LEVEL
+  id: 226
+  message: "Import declarations can only be used on the top level and before any other declaration, top level statement or
+    directive."
+
+- name: IMPROPER_NESTING_CLASS
+  id: 233
+  message: "Unexpected token. A constructor, method, accessor, or property was expected."
+
+- name: IMPROPER_NESTING_INTERFACE
+  id: 234
+  message: "Property or signature expected."
+
+- name: INDEX_MISSING_IDENTIFIER
+  id: 21
+  message: "Return type of index signature from exported class or interface need to be identifier."
+
+- name: INDEX_MISSING_TYPE
+  id: 20
+  message: "An index signature must have a type annotation."
+
+- name: INDEX_TYPE_EXPECTED
+  id: 17
+  message: "Index type expected in index signature."
+
+- name: INDEX_TYPE_NOT_NUMBER
+  id: 18
+  message: "Index type must be number in index signature."
+
+- name: INITIALIZERS_IN_AMBIENT_CONTEXTS
+  id: 125
+  message: "Initializers are not allowed in ambient contexts."
+
+- name: INIT_MODULE_DECLARATION_POSITION
+  id: 322
+  message: "initModule() must only be called immediately after the import statement, and before any other declarations or
+    statements."
+
+- name: INSERT_NODE_ABSENT
+  id: 10
+  message: "There is no any node to insert at the placeholder position."
+
+- name: INSUFFICIENT_PARAM_IN_ARROW_FUN
+  id: 64
+  message: "Insufficient formal parameter in arrow function."
+
+- name: INTERFACE_DEC_IMPLEMENTS
+  id: 177
+  message: "Interface declaration cannot have 'implements' clause."
+
+- name: INTERFACE_FIELDS_TYPE_ANNOTATION
+  id: 119
+  message: "Interface fields must have type annotation."
+
+- name: INTERFACE_MEMBER_INIT_NOT_ALLOWED
+  id: 180
+  message: "Interface member initialization is prohibited."
+
+- name: INVALIDE_CHAR_CLASS
+  id: 79
+  message: "Invalid character class."
 
 - name: INVALID_ACCESSOR
   id: 159
@@ -652,245 +529,515 @@ syntax:
   id: 329
   message: "Invalid annotation name."
 
-- name: UNEXPECTED_TOKEN_IN_PRIVATE
-  id: 160
-  message: "Unexpected token in private field."
+- name: INVALID_ARGUMENT_ETSNOLINT
+  id: 278
+  message: "Invalid argument for ETSNOLINT!"
 
-- name: WITH_DEPRECATED
-  id: 161
-  message: "'With' is deprecated and not supported any more."
+- name: INVALID_ARGUMENT_PASSED
+  id: 26
+  message: "Invalid argument passed to '{}'."
 
-- name: UNDEFINED_LABEL
-  id: 162
-  message: "Undefined label."
+- name: INVALID_ASSERT
+  id: 93
+  message: "Invalid assertion."
 
-- name: RETURN_IN_FUN_BODY
-  id: 163
-  message: "return keyword should be used in function body."
+- name: INVALID_BIGINT
+  id: 255
+  message: "Invalid BigInt number."
 
-- name: FOR_IN_LOOP_HAS_INIT
-  id: 164
-  message: "for-in loop variable declaration may not have an initializer."
+- name: INVALID_CAPTURING_GROUP
+  id: 76
+  message: "Invalid capturing group."
 
-- name: ILLEGALE_CONTINUE
-  id: 165
-  message: "Illegal continue statement."
+- name: INVALID_CHAR
+  id: 77
+  message: "Invalid character."
 
-- name: IMPORT_EXPORT_ONLY_AT_TOP_LEVEL
-  id: 166
-  message: "'import' and 'export' may only appear at the top level."
+- name: INVALID_CHAR_ESCAPE
+  id: 258
+  message: "Invalid character escape sequence."
 
-- name: INVALID_LEFT_FOR_IN_OF
-  id: 167
-  message: "Invalid left-hand side in 'For[In/Of]Statement'."
+- name: INVALID_CLASS_FIELD
+  id: 12
+  message: "Cannot parse class field definition property."
 
-- name: FOR_OF_LOOP_HAS_INIT
-  id: 168
-  message: "for-of loop variable declaration may not have an initializer."
+- name: INVALID_CLASS_METHOD
+  id: 13
+  message: "Cannot parse class method definition property."
 
-- name: MISSING_CATCH_OR_FINALLY
-  id: 169
-  message: "Missing catch or finally clause."
+- name: INVALID_CLOSING_PARENTHESIS
+  id: 75
+  message: "Invalid closing parenthesis."
 
-- name: UNEXPECTED_TOKEN_WHILE
-  id: 170
-  message: "Unexpected token, expected 'while'."
+- name: INVALID_CONTROL_ESCAPE
+  id: 92
+  message: "Invalid control escape."
 
-- name: MULTIPLE_DEFAULT
-  id: 171
-  message: "Multiple default clauses."
+- name: INVALID_DECIMAL_ESCAPE
+  id: 81
+  message: "Invalid decimal escape."
 
-- name: ILLEGAL_NEW_LINE
-  id: 172
-  message: "Illegal newline after throw."
+- name: INVALID_DECORATOR_CONSTRUCTOR
+  id: 201
+  message: "The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and
+    'native' modifiers."
 
-- name: GENERATORS_ONLY_TOP_LEVEL_OR_INSIDE_BLOCK
-  id: 173
-  message: "Generators can only be declared at the top level or inside a block."
+- name: INVALID_DESTRUCTURING_TARGET
+  id: 49
+  message: "Invalid destructuring assignment target."
+
+- name: INVALID_DIGIT
+  id: 266
+  message: "Invalid digit."
+
+- name: INVALID_ENUM_TYPE
+  id: 35
+  message: "Invalid enum initialization type."
+
+- name: INVALID_ESCAPE
+  id: 87
+  message: "Invalid escape."
+
+- name: INVALID_EXPORT_DEFAULT
+  id: 42
+  message: "Can not export annotation default."
+
+- name: INVALID_GROUP
+  id: 85
+  message: "Invalid group."
+
+- name: INVALID_GROUP_NAME
+  id: 84
+  message: "Invalid group name."
+
+- name: INVALID_HEX_ESCAPE
+  id: 83
+  message: "Invalid hex escape."
+
+- name: INVALID_IDENTIFIER_PART
+  id: 263
+  message: "Invalid identifier part."
+
+- name: INVALID_INIT_IN_PACKAGE
+  id: 288
+  message: "Non-constant initializer of Package should be apply in Initializer Block."
+
+- name: INVALID_INSERT_NODE
+  id: 11
+  message: "Inserting node type differs from that required by format specification."
 
 - name: INVALID_LEFT_FOR_IN
   id: 174
   message: "Invalid left-hand side in for-in statement."
 
-- name: LEXICAL_DEC_NOT_ALLOWED_IN_SINGLE_STATEMENT_CONTEXT
-  id: 175
-  message: "Lexical declaration is not allowed in single statement context."
-
-- name: TYPE_PARAM_DEC_EXPECTED
-  id: 176
-  message: "Type parameter declaration expected."
-
-- name: INTERFACE_DEC_IMPLEMENTS
-  id: 177
-  message: "Interface declaration cannot have 'implements' clause."
-
-- name: UNEXPECTED_TOKEN_ENUM
-  id: 178
-  message: "Unexpected token in enum member."
-
-- name: REQUIRED_TYPE_PARAM_AFTER_OPTIONAL
-  id: 179
-  message: "Required type parameters may not follow optional type parameters."
-
-- name: INTERFACE_MEMBER_INIT_NOT_ALLOWED
-  id: 180
-  message: "Interface member initialization is prohibited."
-
-- name: ONLY_AMBIENT_MODULES_QUOTED_NAMES
-  id: 181
-  message: "Only ambient modules can use quoted names."
-
-- name: BINDING_ARGS_INVALID
-  id: 182
-  message: "Binding 'arguments' in strict mode is invalid."
-
-- name: DECORATORS_INVALID
-  id: 183
-  message: "Decorators are not valid here."
-
-- name: ABSTRACT_METHODS_ONLY_IN_ABSTRACT_CLASS
-  id: 184
-  message: "Abstract methods can only appear within an abstract class."
-
-- name: IMPLEMENTS_CLAUSE_EMPTY
-  id: 185
-  message: "Implements clause can not be empty."
-
-- name: MISSING_INIT_IN_DEST_DEC
-  id: 186
-  message: "Missing initializer in destructuring declaration."
-
-- name: UNEXPECTED_TOKEN_FOR_PARAM
-  id: 187
-  message: "Unexpected '?' for parameter."
-
-- name: TYPE_EXPECTED
-  id: 188
-  message: "Type expected."
-
-- name: OVERRIDE_IN_INTERFACE
-  id: 189
-  message: "'override' modifier cannot appear in interfaces."
-
-- name: BINDING_EVAL_INVALID
-  id: 190
-  message: "Binding 'eval' in strict mode is invalid."
-
-- name: TYPE_PARAM_LIST_EMPTY
-  id: 191
-  message: "Type parameter list cannot be empty."
-
-- name: NO_DEFAULT_FOR_REST
-  id: 192
-  message: "Rest parameter cannot have the default value."
-
-- name: ONLY_ARRAY_OR_TUPLE_FOR_REST
-  id: 193
-  message: "Rest parameter should be either array or tuple type."
-
-- name: EXPLICIT_PARAM_TYPE
-  id: 194
-  message: "Parameter declaration should have an explicit type annotation."
-
-- name: EXPECTED_ARROW_SAME_LINE
-  id: 195
-  message: "expected '=>' on the same line after an argument list, got line terminator."
-
-- name: ILLEGAL_EXPRESSION_WRAP
-  id: 196
-  message: "Illegal expression. Wrap left hand side or entire exponentiation in parentheses."
-
-- name: ASYNC_METHOD_LINE_TERM
-  id: 197
-  message: "Async methods cannot have a line terminator between 'async' and the property name."
-
-- name: STRICT_MODE_FUNC_DECL
-  id: 198
-  message: "In strict mode code, functions can only be declared at top level, inside a block, or as the body of an if statement."
-
-- name: ILLEGAL_USE_STRICT
-  id: 199
-  message: "Illegal 'use strict' directive in function with non-simple parameter list."
-
-- name: ASYNC_CONSTRUCTOR
-  id: 200
-  message: "Constructor should not be async."
-
-- name: INVALID_DECORATOR_CONSTRUCTOR
-  id: 201
-  message: "The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and 'native' modifiers."
-
-- name: ASYNC_FLAG_ONLY_FOR_TOP_FUN
-  id: 202
-  message: "'async' flags must be used for functions only at top-level."
-
-- name: NATIVE_FLAG_ONLY_FOR_TOP_FUN
-  id: 203
-  message: "'native' flags must be used for functions only at top-level."
-
-- name: INVALID_LEFT_SIDE_ARRAY_DESTRUCTURING
-  id: 204
-  message: "Invalid left-hand side in array destructuring pattern."
-
-- name: GET_ACCESSOR_MUST_BE_AT_LEAST_AS_ACCESSIBLE
-  id: 205
-  message: "A get accessor must be at least as accessible as the setter."
-
-- name: MULTIPLE_CONSTRUCTOR_IMPLEMENTATIONS
-  id: 206
-  message: "Multiple constructor implementations are not allowed."
-
-- name: EVAL_OR_ARGUMENTS_IN_STRICT_MODE
-  id: 207
-  message: "'eval' or 'arguments' can't be defined or assigned to in strict mode code."
-
-- name: ILLEGAL_START_EXPRESSION
-  id: 208
-  message: "Illegal start of expression."
-
-- name: ILLEGAL_BREAK
-  id: 209
-  message: "Illegal break statement."
-
-- name: ANNOTATION_DECLARATION_ACCESS_MODIFIER
-  id: 210
-  message: "Annotation declaration can not have access modifier."
+- name: INVALID_LEFT_FOR_IN_OF
+  id: 167
+  message: "Invalid left-hand side in 'For[In/Of]Statement'."
 
 - name: INVALID_LEFT_HAND_IN_FOR_OF
   id: 211
   message: "Invalid left-hand side in 'for' statement: must have a single binding."
 
+- name: INVALID_LEFT_IN_PREFIX
+  id: 71
+  message: "Invalid left-hand side in prefix operation."
+
+- name: INVALID_LEFT_SIDE_ARRAY_DESTRUCTURING
+  id: 204
+  message: "Invalid left-hand side in array destructuring pattern."
+
+- name: INVALID_LEFT_SIDE_IN_ASSIGNMENT
+  id: 72
+  message: "Invalid left-hand side in assignment expression."
+
+- name: INVALID_LEFT_SITE_OPERATOR
+  id: 53
+  message: "Invalid left-hand side operator."
+
+- name: INVALID_NAME_BACKREFERENCE
+  id: 89
+  message: "Invalid named backreference."
+
+- name: INVALID_NODE_NUMBER
+  id: 8
+  message: "Invalid node number in format expression."
+
+- name: INVALID_NODE_TYPE
+  id: 9
+  message: "Invalid node type in format expression."
+
+- name: INVALID_NON_CAPTURING_GROUP
+  id: 90
+  message: "Invalid non-capturing group."
+
+- name: INVALID_NUM
+  id: 249
+  message: "Invalid number."
+
+- name: INVALID_NUMERIC_LIT
+  id: 251
+  message: "Invalid numeric literal."
+
+- name: INVALID_NUMERIC_SEP
+  id: 254
+  message: "Invalid numeric separator."
+
+- name: INVALID_NUMERIC_SEP_AT_END_OF_NUM
+  id: 250
+  message: "Numeric separators are not allowed at the end of numeric literals."
+
+- name: INVALID_OCTAL_DIGIT
+  id: 239
+  message: "Invalid octal digit."
+
+- name: INVALID_PACKAGE_TOP_LEVEL_STMT
+  id: 291
+  message: "Invalid package toplevel statement"
+
+- name: INVALID_QUANTIFIER
+  id: 88
+  message: "Invalid quantifier, nothing to repeat."
+
+- name: INVALID_REGEX_FLAG
+  id: 246
+  message: "Invalid RegExp flag."
+
+- name: INVALID_REST_ELEMENT
+  id: 55
+  message: "Invalid rest element."
+
+- name: INVALID_RIGHT_INSTANCEOF
+  id: 130
+  message: "Invalid right-hand side in 'instanceof' expression."
+
+- name: INVALID_TYPE
+  id: 138
+  message: "Invalid Type."
+
 - name: INVALID_TYPE_ANNOTATION_IN_FOR
   id: 212
   message: "Type annotation is not allowed when existing variable is used as loop iterator in 'for' statement."
 
-- name: AWAIT_RESERVED_IDENTIFIER_IN_MODULE
-  id: 213
-  message: "'await' is a reserved identifier in module code."
+- name: INVALID_UNICODE_ESCAPE
+  id: 91
+  message: "Invalid Unicode escape."
+
+- name: INVALID_UNICODE_PROP_ESCAPE
+  id: 94
+  message: "Invalid Unicode property escape."
+
+- name: INVALID_VAL_ANNOTATION_FIELD
+  id: 27
+  message: "Invalid value for annotation field, expected a constant literal."
+
+- name: KEYWORD_CONTAINS_ESCAPED_CHARS
+  id: 117
+  message: "Keyword must not contain escaped characters."
 
 - name: LABEL_ALREADY_DECLARED
   id: 214
   message: "Label already declared."
 
-- name: DUPLICATED_IDENTIFIER
-  id: 215
-  message: "Duplicated identifier."
+- name: LATE_INITIALIZATION_FIELD_HAS_DEFAULT_VALUE
+  id: 304
+  message: "Late-initialized field cannot have default value."
+
+- name: LEXICAL_DEC_NOT_ALLOWED_IN_SINGLE_STATEMENT_CONTEXT
+  id: 175
+  message: "Lexical declaration is not allowed in single statement context."
+
+- name: LITERAL_VALUE_IDENT
+  id: 315
+  message: "Number, string or computed value property name '{}' is not allowed, use classes to access data by property names
+    that are identifiers"
+
+- name: LOCAL_CLASS_ACCESS_MOD
+  id: 30
+  message: "Local class or interface declaration members can not have access modifies."
+
+- name: META_PROP_FOR_IMPORT
+  id: 68
+  message: "The only valid meta property for import is import.Meta."
+
+- name: MISSING_CATCH_OR_FINALLY
+  id: 169
+  message: "Missing catch or finally clause."
+
+- name: MISSING_CATCH_OR_FINALLY_AFTER_TRY
+  id: 39
+  message: "A try statement should contain either finally clause or at least one catch clause."
+
+- name: MISSING_INIT_FOR_CONST_PACKAGE_PROP
+  id: 294
+  message: "Missing initialization for const package property"
+
+- name: MISSING_INIT_IN_DEST_DEC
+  id: 186
+  message: "Missing initializer in destructuring declaration."
+
+- name: MISSING_INIT_OR_CONST_DEC
+  id: 100
+  message: "Missing initializer in const declaration."
+
+- name: MISSING_INIT_OR_TYPE
+  id: 105
+  message: "Variable must be initialized or it's type must be declared."
+
+- name: MISSING_LOOP_AFTER_LABEL
+  id: 38
+  message: "Label must be followed by a loop statement."
+
+- name: MISSING_LOOP_BODY
+  id: 300
+  message: "Missing body in {} statement"
+
+- name: MISSING_LOOP_CONDITION
+  id: 301
+  message: "Missing condition in {} statement"
+
+- name: MISSING_TYPE_ANNOTATION
+  id: 1
+  message: "Missing type annotation for property '{}'."
+
+- name: MODIFIERS_OF_GET_SET_LIMITED
+  id: 107
+  message: "Modifiers of getter and setter are limited to ('abstract', 'static', 'final', 'override', 'native')."
+
+- name: MORE_INDEXER
+  id: 326
+  message: "Only one index signature can exist in a class"
+
+- name: MULTIPLE_CONSTRUCTOR_IMPLEMENTATIONS
+  id: 206
+  message: "Multiple constructor implementations are not allowed."
+
+- name: MULTIPLE_DEFAULT
+  id: 171
+  message: "Multiple default clauses."
+
+- name: MULTIPLE_STATIC_BLOCK
+  id: 34
+  message: "Only one static block is allowed in one namespace or class."
+
+- name: NAMESPACE_ANNOTATION_CONFLICT
+  id: 7
+  message: "Annotation conflict! Multiple namespace declarations for '{}' cannot each have annotations."
+
+- name: NAMESPACE_MERGE_ERROR
+  id: 6
+  message: "Unable to merge namespaces '{}', because their modifiers are different."
+
+- name: NAMESPACE_ONLY_TOP_OR_IN_NAMESPACE
+  id: 134
+  message: "Namespace is allowed only at the top level or inside a namespace."
+
+- name: NATIVE_FLAG_ONLY_FOR_TOP_FUN
+  id: 203
+  message: "'native' flags must be used for functions only at top-level."
+
+- name: NATIVE_METHOD_ASYNC
+  id: 116
+  message: "Native method cannot be async."
+
+- name: NESTED_FUNCTIONS_NOT_ALLOWED
+  id: 135
+  message: "Nested functions are not allowed."
+
+- name: NEWLINE_NOT_ALLOWED_IN_STRING
+  id: 265
+  message: "Newline is not allowed in strings"
+
+- name: NEW_TARGET_IS_NOT_ALLOWED
+  id: 73
+  message: "'new.Target' is not allowed here."
+
+- name: NEW_WITH_IMPORT
+  id: 60
+  message: "Cannot use new with import(...)."
+
+- name: NON_OCTAL_DECIAML_INTEGER_LIT_IN_STRICT_MODE
+  id: 256
+  message: "NonOctalDecimalIntegerLiteral is not enabled in strict mode code."
+
+- name: NOT_ALLOWED_USER_DEFINED_TYPE
+  id: 145
+  message: "Cannot be used as user-defined type."
+
+- name: NOT_AS_OBJECT
+  id: 318
+  message: "{} cannot be used as object."
+
+- name: NO_DEFAULT_FOR_REST
+  id: 192
+  message: "Rest parameter cannot have the default value."
+
+- name: NULLISH_COALESCING_MISSING_PARENS
+  id: 59
+  message: "Nullish coalescing operator ?? requires parens when mixing with logical operators."
+
+- name: NUMERIC_SEP_UNDERSCORE_IN_NUMBER
+  id: 252
+  message: "Numeric separator '_' is not allowed in numbers that start with '0'."
+
+- name: OBJECT_PATTER_CONTAIN_METHODS
+  id: 62
+  message: "Object pattern can't contain methods."
+
+- name: OCTAL_ESCAPE_IN_TEMPLATE_STRINGS
+  id: 247
+  message: "Octal escape sequences are not allowed in template strings."
+
+- name: ONLY_AMBIENT_MODULES_QUOTED_NAMES
+  id: 181
+  message: "Only ambient modules can use quoted names."
+
+- name: ONLY_ARRAY_OR_TUPLE_FOR_REST
+  id: 193
+  message: "Rest parameter should be either array or tuple type."
+
+- name: ONLY_SPREAD_AT_LAST_INDEX
+  id: 143
+  message: "Only one spread type declaration allowed, at the last index."
+
+- name: ONLY_STRING_LITERAL_IN_INIT_MODULE
+  id: 321
+  message: "initModule() only accept string literal as argument."
+
+- name: OPTIONAL_VARIABLE
+  id: 306
+  message: "Optional variable is deprecated and no longer supported."
+
+- name: OPTIONAL_VAR_IN_FOR_OF
+  id: 96
+  message: "Optional variable is not allowed in for of statements."
+
+- name: OVERLOAD_MODIFIERS
+  id: 323
+  message: "Overload Declaration only allow use modifier 'static' | 'async'."
+
+- name: OVERRIDE_IN_INTERFACE
+  id: 189
+  message: "'override' modifier cannot appear in interfaces."
+
+- name: PACKAGE_MODULE_IMPORT_OWN_PACKAGE
+  id: 3
+  message: "Package module cannot import from a file in it's own package."
+
+- name: PACKAGE_MULTIPLE_STATIC_BLOCK
+  id: 289
+  message: "static block cannot apply to multi-files for one package"
 
 - name: PARAM_CANNOT_HAVE_QUESTION_MARK
   id: 216
   message: "Parameter cannot have question mark and initializer."
 
-- name: BINDING_PATTERN_PARAM_CANNOT_BE_OPTIONAL
-  id: 217
-  message: "A binding pattern parameter cannot be optional in an implementation signature."
+- name: PARAM_MODIFIER_CANNOT_APPEAR_ON_PARAMETER
+  id: 232
+  message: "'{}' modifier cannot appear on a parameter."
 
-- name: REST_PARAM_CANNOT_BE_OPTIONAL
-  id: 218
-  message: "A rest parameter cannot be optional."
+- name: PREDEFINED_TYPE_AS_IDENTIFIER
+  id: 295
+  message: "{} is a predefined type, cannot be used as an identifier"
+
+- name: PRIMITIVE_NOT_ALLOWED
+  id: 137
+  message: "Primitive type is not allowed here."
+
+- name: PRIVATE_FIELD_MISMATCH
+  id: 302
+  message: "Private field '{}' must be declared in an enclosing class"
+
+- name: PRIVATE_FIELD_REDEC
+  id: 154
+  message: "Private field has already been declared."
+
+- name: PRIVATE_IDENTIFIER_NOT_CONSTRUCTOR
+  id: 267
+  message: "Private identifier can not be constructor."
+
+- name: PRIVATE_IDENTIFIER_NUMBER
+  id: 269
+  message: "Private identifier name can not be number."
+
+- name: PRIVATE_IDENTIFIER_STRING
+  id: 268
+  message: "Private identifier name can not be string."
+
+- name: PRIVATE_INTERFACE_MISSING_BODY
+  id: 32
+  message: "Private interface methods must have body."
+
+- name: PROHIBITED_ACCESS_MODIFIER_IN_AMBIENT_CLASS
+  id: 238
+  message: "Methods or fields should not be decorated with {} in ambient class."
+
+- name: PROTOTYPE_ACCESS
+  id: 30818
+  message: "Runtime prototype assignment is not supported because of static typing"
+
+- name: QUANTIFIER_OUT_OF_ORDER
+  id: 78
+  message: "Quantifier range out of order."
+
+- name: READONLY_INTERFACE_METHOD
+  id: 33
+  message: "Modifier 'readonly' cannot be applied to an interface method."
+
+- name: READONLY_ONLY_ON_ARRAY_OR_TUPLE
+  id: 141
+  message: "'readonly' type modifier is only permitted on resizable array and tuple types."
+
+- name: READONLY_TYPE_EXPECTED
+  id: 237
+  message: "Readonly<T> utility type expected but readonly<T> found."
+
+- name: REQUIRED_PARAM_AFTER_DEFAULT
+  id: 14
+  message: "Required parameter follows default parameter(s)."
 
 - name: REQUIRED_PARAM_AFTER_OPTIONAL
   id: 219
   message: "A required parameter cannot follow an optional parameter."
+
+- name: REQUIRED_TYPE_PARAM_AFTER_OPTIONAL
+  id: 179
+  message: "Required type parameters may not follow optional type parameters."
+
+- name: RESTPARAM_ID_IN_DEC_CONTEXT
+  id: 156
+  message: "RestParameter must be followed by an identifier in declaration contexts"
+
+- name: REST_AND_DEFAULT_SAME_TIME
+  id: 15
+  message: "Both optional and rest parameters are not allowed in function's parameter list."
+
+- name: REST_PARAM_NOT_LAST
+  id: 67
+  message: "Rest parameter must be the last formal parameter."
+
+- name: RETURN_IN_FUN_BODY
+  id: 163
+  message: "return keyword should be used in function body."
+
+- name: RETURN_WITH_VALUE
+  id: 287
+  message: "Unexpected return value."
+
+- name: RE_EXPORTING_LOCAL_BINDINGS_IS_NOT_ALLOWED
+  id: 138237
+  message: "Re-exporting local bindings is not allowed"
+
+- name: SETTER_FORMAL_PARAMS
+  id: 63
+  message: "Setter must have exactly one formal parameter."
+
+- name: SETTER_NO_RETURN_TYPE
+  id: 241
+  message: "Setter must not have return type even if it is void."
+
+- name: SPECIAL_METHOD_CONSTRUCTOR
+  id: 149
+  message: "Constructor can not be special method."
 
 - name: SPECIAL_PREDEFINED_METHOD_CANNOT_BE_ASYNC
   id: 220
@@ -908,21 +1055,126 @@ syntax:
   id: 223
   message: "The special predefined method '{}' should not have parameters."
 
-- name: IDENTIFIER_EXPECTED_HERE
-  id: 224
-  message: "Identifier expected, got '{}'."
+- name: SPREAD_MUST_BE_LAST_IN_TUPLE
+  id: 136
+  message: "Spread type must be at the last index in the tuple type."
+
+- name: STATIC_LATE_INITIALIZATION_FIELD_INVALID_MODIFIER
+  id: 303
+  message: "Late-initialized field cannot be defined as static."
+
+- name: STATIC_PROPERTY_PROTOTYPE
+  id: 155
+  message: "Classes may not have static property named prototype."
+
+- name: STRICT_MODE_FUNC_DECL
+  id: 198
+  message: "In strict mode code, functions can only be declared at top level, inside a block, or as the body of an if statement."
+
+- name: TAGGED_TEMPLATE_LITERALS_IN_OPTIONALCHAIN
+  id: 56
+  message: "Tagged Template Literals are not allowed in optionalChain."
+
+- name: THIS_IN_NON_STATIC_METHOD
+  id: 44
+  message: "A 'this' type is available only as return type in a non-static method of a class or struct and extension functions."
+
+- name: TOO_LARGE_NUM
+  id: 262
+  message: "Number is too large."
+
+- name: TRAILING_COMMA_NOT_ALLOWED
+  id: 150
+  message: "Trailing comma is not allowed in this context."
+
+- name: TS_TYPE_ASSERTION
+  id: 178094
+  message: "Type cast syntax '<type>' is not supported, please use 'as' keyword instead"
+
+- name: TYPEOF_IN_ANNOTATION
+  id: 309
+  message: "Result of 'typeof' operator is not supported to be used as type annotation."
 
 - name: TYPE_ALIAS_INVALID_NAME
   id: 225
   message: "Type alias name cannot be '{}'."
 
-- name: IMPORT_TOP_LEVEL
-  id: 226
-  message: "Import declarations can only be used on the top level and before any other declaration, top level statement or directive."
+- name: TYPE_ALIAS_ONLY_TOP_LEVEL
+  id: 129
+  message: "Type alias is allowed only as top-level declaration."
 
-- name: UNEXPECTED_TOKEN_PARAM
-  id: 227
-  message: "Unexpected token '{}'."
+- name: TYPE_ANNOTATION_FOR_CONSTRUCTOR
+  id: 140
+  message: "Type annotation isn't allowed for constructor."
+
+- name: TYPE_EXPECTED
+  id: 188
+  message: "Type expected."
+
+- name: TYPE_PARAM_DEC_EXPECTED
+  id: 176
+  message: "Type parameter declaration expected."
+
+- name: TYPE_PARAM_LIST_EMPTY
+  id: 191
+  message: "Type parameter list cannot be empty."
+
+- name: UNDEFINED_LABEL
+  id: 162
+  message: "Undefined label."
+
+- name: UNEXPECTED_ARROWPARAM_ELEMENT
+  id: 148
+  message: "Unexpected ArrowParameter element."
+
+- name: UNEXPECTED_CHAR_ETSNOLINT
+  id: 277
+  message: "Unexpected character for ETSNOLINT argument! [VALID ONLY: a-z, '-']."
+
+- name: UNEXPECTED_CHAR_PRIVATE_IDENTIFIER
+  id: 270
+  message: "Unexpected character in private identifier."
+
+- name: UNEXPECTED_ID
+  id: 45
+  message: "Unexpected identifier."
+
+- name: UNEXPECTED_MODIFIER
+  id: 153
+  message: "Unexpected modifier."
+
+- name: UNEXPECTED_PRIVATE
+  id: 47
+  message: "Unexpected private identifier."
+
+- name: UNEXPECTED_STRICT_MODE_RESERVED_KEYWORD
+  id: 264
+  message: "Unexpected strict mode reserved keyword."
+
+- name: UNEXPECTED_SUPER
+  id: 61
+  message: "Unexpected super keyword."
+
+- name: UNEXPECTED_THIS
+  id: 240
+  message: "Unexpected 'this' keyword in non-receiver context."
+
+- name: UNEXPECTED_TOKEN
+  id: 16
+  message: "Unexpected token."
+  code_fix_ids: [FixExpectedToken]
+
+- name: UNEXPECTED_TOKEN_AS
+  id: 95
+  message: "Unexpected token, expected 'as'."
+
+- name: UNEXPECTED_TOKEN_ENUM
+  id: 178
+  message: "Unexpected token in enum member."
+
+- name: UNEXPECTED_TOKEN_EXPECTED_BACKTICK_OR_DOLLAR_LBRACE
+  id: 259
+  message: "Unexpected token, expected '${' or '`'"
 
 - name: UNEXPECTED_TOKEN_EXPECTED_PARAM
   id: 228
@@ -932,314 +1184,129 @@ syntax:
   id: 229
   message: "Unexpected token, expected '{}' or '{}'."
 
-- name: EXPECTED_PARAM_GOT_PARAM
-  id: 230
-  message: "Expected '{}', got '{}'."
+- name: UNEXPECTED_TOKEN_FOR_PARAM
+  id: 187
+  message: "Unexpected '?' for parameter."
+
+- name: UNEXPECTED_TOKEN_ID
+  id: 112
+  message: "Unexpected token, expected an identifier."
+
+- name: UNEXPECTED_TOKEN_ID_FUN
+  id: 147
+  message: "Unexpected token, expected function identifier."
+
+- name: UNEXPECTED_TOKEN_IN_PRIVATE
+  id: 160
+  message: "Unexpected token in private field."
+
+- name: UNEXPECTED_TOKEN_PARAM
+  id: 227
+  message: "Unexpected token '{}'."
 
 - name: UNEXPECTED_TOKEN_PARAM_EXPECTED_CASE_OR_DEFAULT
   id: 231
   message: "Unexpected token '{}', expected 'case' or 'default'."
 
-- name: PARAM_MODIFIER_CANNOT_APPEAR_ON_PARAMETER
-  id: 232
-  message: "'{}' modifier cannot appear on a parameter."
+- name: UNEXPECTED_TOKEN_PRIVATE_ID
+  id: 124
+  message: "Unexpected token, expected 'private' or identifier."
 
-- name: IMPROPER_NESTING_CLASS
-  id: 233
-  message: "Unexpected token. A constructor, method, accessor, or property was expected."
+- name: UNEXPECTED_TOKEN_STRING_LITERAL
+  id: 151
+  message: "Unexpected token, expected string literal."
 
-- name: IMPROPER_NESTING_INTERFACE
-  id: 234
-  message: "Property or signature expected."
-
-- name: UNEXPECTED_DEFAULT
-  id: 235
-  message: "Unexpected token 'default'. Only declarations are allowed after 'export default'."
-
-- name: REST_PARAM_LAST
-  id: 236
-  message: "Rest parameter should be the last one."
-
-- name: READONLY_TYPE_EXPECTED
-  id: 237
-  message: "Readonly<T> utility type expected but readonly<T> found."
-
-- name: PROHIBITED_ACCESS_MODIFIER_IN_AMBIENT_CLASS
-  id: 238
-  message: "Methods or fields should not be decorated with {} in ambient class."
-
-- name: INVALID_OCTAL_DIGIT
-  id: 239
-  message: "Invalid octal digit."
-
-- name: UNEXPECTED_THIS
-  id: 240
-  message: "Unexpected 'this' keyword in non-receiver context."
-
-- name: SETTER_NO_RETURN_TYPE
-  id: 241
-  message: "Setter must not have return type even if it is void."
-
-- name: USING_RESERVED_NAME_AS_VARIABLE_OR_TYPE_NAME
-  id: 242
-  message: "'{}' is reserved and cannot be used as a variable/type name"
+- name: UNEXPECTED_TOKEN_WHILE
+  id: 170
+  message: "Unexpected token, expected 'while'."
 
 - name: UNHANDLED_THROW_IN_INITIALIZER
   id: 243
   message: "Unhandled throw statement."
 
-- name: EXPORT_DEFAULT_NO_REEXPORT
-  id: 244
-  message: "Cannot use 'export default' in re-export context"
+- name: UNSUPPORTED_CHAR_LIT
+  id: 261
+  message: "Unsupported character literal."
+
+- name: UNSUPPORTED_ENUM_TYPE
+  id: 327
+  message: "Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal
+    types, not annotations."
 
 - name: UNTERMINATED_MULTI_LINE_COMMENT
   id: 245
   message: "Unterminated multi-line comment."
 
-- name: INVALID_REGEX_FLAG
-  id: 246
-  message: "Invalid RegExp flag."
-
-- name: OCTAL_ESCAPE_IN_TEMPLATE_STRINGS
-  id: 247
-  message: "Octal escape sequences are not allowed in template strings."
-
-- name: HEXADECIMAL_EXPECTED
-  id: 248
-  message: "Hexadecimal digit expected."
-
-- name: INVALID_NUM
-  id: 249
-  message: "Invalid number."
-
-- name: INVALID_NUMERIC_SEP_AT_END_OF_NUM
-  id: 250
-  message: "Numeric separators are not allowed at the end of numeric literals."
-
-- name: INVALID_NUMERIC_LIT
-  id: 251
-  message: "Invalid numeric literal."
-
-- name: NUMERIC_SEP_UNDERSCORE_IN_NUMBER
-  id: 252
-  message: "Numeric separator '_' is not allowed in numbers that start with '0'."
+- name: UNTERMINATED_REGEX
+  id: 260
+  message: "Unterminated RegExp."
 
 - name: UNTERMINATED_STRING
   id: 253
   message: "Unterminated string."
 
-- name: INVALID_NUMERIC_SEP
-  id: 254
-  message: "Invalid numeric separator."
+- name: UNTERMINATED_UNICODE_PROP_ESCAPE
+  id: 86
+  message: "Unterminated Unicode property escape."
 
-- name: INVALID_BIGINT
-  id: 255
-  message: "Invalid BigInt number."
+- name: USING_RESERVED_NAME_AS_VARIABLE_OR_TYPE_NAME
+  id: 242
+  message: "'{}' is reserved and cannot be used as a variable/type name"
 
-- name: NON_OCTAL_DECIAML_INTEGER_LIT_IN_STRICT_MODE
-  id: 256
-  message: "NonOctalDecimalIntegerLiteral is not enabled in strict mode code."
+- name: VALUE_IS_NOT_SET
+  id: 128
+  message: "You didn't set the value."
 
-- name: IMPLICIT_OCTAL_NOT_ALLOWED
-  id: 257
-  message: "Implicit octal literal not allowed."
+- name: VARIANCE_NOD_ALLOWED
+  id: 98
+  message: "Variance modifier is not allowed here."
 
-- name: INVALID_CHAR_ESCAPE
-  id: 258
-  message: "Invalid character escape sequence."
+- name: VAR_DEC_EXPECTED
+  id: 126
+  message: "Variable declaration expected."
 
-- name: UNEXPECTED_TOKEN_EXPECTED_BACKTICK_OR_DOLLAR_LBRACE
-  id: 259
-  message: "Unexpected token, expected '${' or '`'"
+- name: WITH_DEPRECATED
+  id: 161
+  message: "'With' is deprecated and not supported any more."
 
-- name: UNTERMINATED_REGEX
-  id: 260
-  message: "Unterminated RegExp."
+- name: WRONG_LEFT_OF_INSTANCEOF
+  id: 310
+  message: "The left operand of 'instanceof' operator cannot be a type."
 
-- name: UNSUPPORTED_CHAR_LIT
-  id: 261
-  message: "Unsupported character literal."
+- name: YIELD_IN_ARROW_FUN_PARAM
+  id: 66
+  message: "yield is not allowed in arrow function parameters."
 
-- name: TOO_LARGE_NUM
-  id: 262
-  message: "Number is too large."
+- name: YIELD_IN_GENERATOR_PARAM
+  id: 54
+  message: "Yield is not allowed in generator parameters."
 
-- name: INVALID_IDENTIFIER_PART
-  id: 263
-  message: "Invalid identifier part."
-
-- name: UNEXPECTED_STRICT_MODE_RESERVED_KEYWORD
-  id: 264
-  message: "Unexpected strict mode reserved keyword."
-
-- name: NEWLINE_NOT_ALLOWED_IN_STRING
-  id: 265
-  message: "Newline is not allowed in strings"
-
-- name: INVALID_DIGIT
-  id: 266
-  message: "Invalid digit."
-
-- name: PRIVATE_IDENTIFIER_NOT_CONSTRUCTOR
-  id: 267
-  message: "Private identifier can not be constructor."
-
-- name: PRIVATE_IDENTIFIER_STRING
-  id: 268
-  message: "Private identifier name can not be string."
-
-- name: PRIVATE_IDENTIFIER_NUMBER
-  id: 269
-  message: "Private identifier name can not be number."
-
-- name: UNEXPECTED_CHAR_PRIVATE_IDENTIFIER
-  id: 270
-  message: "Unexpected character in private identifier."
-
-- name: ESCAPE_SEQUENCES_IN_KEYWORD
-  id: 271
-  message: "Escape sequences are not allowed in keyword."
-
-- name: ONLY_CONSTANT_EXPRESSION
-  id: 272
-  message: "Only constant expression is expected in the field"
-
-- name: DIVISION_BY_ZERO
-  id: 273
-  message: "Division by zero are not allowed in Enum or Annotation."
-
-- name: UNSUPPORTED_OPERATOR_FOR_STRING
-  id: 274
-  message: "Unsupported operator for String."
-
-- name: STRING_INTERPOLATION_NOT_CONSTANT
-  id: 275
-  message: "String Interpolation Expression is not constant expression."
-
-- name: ENUM_STRING_TYPE_ALL_ITEMS_INIT
-  id: 276
-  message: "All items of string-type enumeration should be explicitly initialized."
-
-- name: UNEXPECTED_CHAR_ETSNOLINT
-  id: 277
-  message: "Unexpected character for ETSNOLINT argument! [VALID ONLY: a-z, '-']."
-
-- name: INVALID_ARGUMENT_ETSNOLINT
-  id: 278
-  message: "Invalid argument for ETSNOLINT!"
-
-- name: CAN_NOT_FIND_NAME_TO_EXPORT
-  id: 279
-  message: "Cannot find name '{}' to export."
-
-- name: CAN_NOT_RENAME_ANNOTATION
-  id: 280
-  message: "Can not rename annotation '{}' in export or import statements."
-
-- name: DUPLICATE_EXPORT_NAME
-  id: 281
-  message: "The given name '{}' is already used in another export."
-
-- name: ALREADY_EXPORTED
-  id: 282
-  message: "Cannot export '{}', it was already exported."
-
-- name: NAME_CANNOT_BE_EXPORTED_AND_TYPE_EXPORTED
-  id: 283
-  message: "Name '{}' cannot be exported and type exported at the same time."
-
-- name: DUPLICATE_PROTO_FIELDS
-  id: 285
-  message: "Duplicate __proto__ fields are not allowed in object literals"
-
-- name: INVALID_SHORTHAND_PROPERTY_INITIALIZER
-  id: 286
-  message: "Invalid shorthand property initializer."
-
-- name: RETURN_WITH_VALUE
-  id: 287
-  message: "Unexpected return value."
-
-- name: INVALID_INIT_IN_PACKAGE
-  id: 288
-  message: "Non-constant initializer of Package should be apply in Initializer Block."
-
-- name: PACKAGE_MULTIPLE_STATIC_BLOCK
-  id: 289
-  message: "static block cannot apply to multi-files for one package"
-
-- name: CONSTANT_MULTI_INITIALIZED_IN_STATIC_BLOCK
-  id: 290
-  message: "package constant property initialization can only be applied once in static block"
-
-- name: INVALID_PACKAGE_TOP_LEVEL_STMT
-  id: 291
-  message: "Invalid package toplevel statement"
-
-- name: ONLY_CONSTANT_ALLOWED
-  id: 292
-  message: "Only constant expression is expected in the field"
-
-- name: ENUM_OR_ANNOTATION_DIVIDE_BY_ZERO
-  id: 293
-  message: "Division by zero are not allowed in Enum or Annotation"
-
-- name: MISSING_INIT_FOR_CONST_PACKAGE_PROP
-  id: 294
-  message: "Missing initialization for const package property"
-
-- name: PREDEFINED_TYPE_AS_IDENTIFIER
-  id: 295
-  message: "{} is a predefined type, cannot be used as an identifier"
-
-- name: EXPORT_WITHOUT_DECLARE_IN_DECL_MODULE
-  id: 296
-  message: "Export keyword without declare shouldn't be used in declaration module."
-
-- name: ERROR_ARKTS_NO_VAR
-  id: 297
-  message: "'var' keyword is not supported. Use 'let' instead."
-
-- name: ERROR_ARKTS_NO_PRIVATE_IDENTIFIERS
-  id: 298
-  message: "Use 'private' keyword to declare an identifier as private."
-
-- name: ERROR_ARKTS_NO_DEBUGGER_STATEMENT
-  id: 299
-  message: "Debugger statement is not supported!"
-
-- name: MISSING_LOOP_BODY
-  id: 300
-  message: "Missing body in {} statement"
-
-- name: MISSING_LOOP_CONDITION
-  id: 301
-  message: "Missing condition in {} statement"
-
-- name: PRIVATE_FIELD_MISMATCH
-  id: 302
-  message: "Private field '{}' must be declared in an enclosing class"
-
-- name: STATIC_LATE_INITIALIZATION_FIELD_INVALID_MODIFIER
-  id: 303
-  message: "Late-initialized field cannot be defined as static."
-
-- name: LATE_INITIALIZATION_FIELD_HAS_DEFAULT_VALUE
-  id: 304
-  message: "Late-initialized field cannot have default value."
-
-- name: DEEP_NESTING
-  id: 305
-  message: "Maximum allowed nesting level exceeded."
-
-- name: FUNC_EXPR
-  id: 306
-  message: "Function expressions are not supported, use arrow functions instead"
-
-- name: DEFAULT_PARAM_IN_DECLARE
-  id: 307
-  message: "A parameter initializer is only allowed in a function or constructor implementation."
-
-- name: ERROR_ARKTS_NO_OBJ_LITERAL_TO_DECL_TYPE
-  id: 308
-  message: "Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly!"
+graveyard:
+- 29
+- 37
+- 41
+- 74
+- 103
+- 109
+- 110
+- 123
+- 139
+- 142
+- 152
+- 157
+- 208
+- 218
+- 235
+- 236
+- 272
+- 274
+- 275
+- 283
+- 284
+- 285
+- 286
+- 290
+- 292
+- 293
+- 317
+# See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

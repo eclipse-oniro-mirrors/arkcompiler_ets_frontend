@@ -27,5 +27,5 @@ class B {
 function main() {
     let a: A = new A()
     let b: B = new B(a)
-    assertEQ(b.a.f(), "A")
+    arktest.assertEQ(b.a.f(), "A")
 }

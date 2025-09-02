@@ -180,288 +180,6 @@
         "implements": [],
         "body": [
           {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "b",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 18,
-                              "column": 5,
-                              "program": "null.ets"
-                            },
-                            "end": {
-                              "line": 18,
-                              "column": 6,
-                              "program": "null.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NullLiteral",
-                          "value": null,
-                          "loc": {
-                            "start": {
-                              "line": 18,
-                              "column": 22,
-                              "program": "null.ets"
-                            },
-                            "end": {
-                              "line": 18,
-                              "column": 26,
-                              "program": "null.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 18,
-                            "column": 5,
-                            "program": "null.ets"
-                          },
-                          "end": {
-                            "line": 18,
-                            "column": 26,
-                            "program": "null.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 18,
-                          "column": 5,
-                          "program": "null.ets"
-                        },
-                        "end": {
-                          "line": 18,
-                          "column": 26,
-                          "program": "null.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "c",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 5,
-                              "program": "null.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 6,
-                              "program": "null.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ETSNewClassInstanceExpression",
-                          "typeReference": {
-                            "type": "ETSTypeReference",
-                            "part": {
-                              "type": "ETSTypeReferencePart",
-                              "name": {
-                                "type": "Identifier",
-                                "name": "cls",
-                                "decorators": [],
-                                "loc": {
-                                  "start": {
-                                    "line": 19,
-                                    "column": 19,
-                                    "program": "null.ets"
-                                  },
-                                  "end": {
-                                    "line": 19,
-                                    "column": 22,
-                                    "program": "null.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 19,
-                                  "column": 19,
-                                  "program": "null.ets"
-                                },
-                                "end": {
-                                  "line": 19,
-                                  "column": 23,
-                                  "program": "null.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 19,
-                                "column": 19,
-                                "program": "null.ets"
-                              },
-                              "end": {
-                                "line": 19,
-                                "column": 23,
-                                "program": "null.ets"
-                              }
-                            }
-                          },
-                          "arguments": [],
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 15,
-                              "program": "null.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 25,
-                              "program": "null.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 19,
-                            "column": 5,
-                            "program": "null.ets"
-                          },
-                          "end": {
-                            "line": 19,
-                            "column": 25,
-                            "program": "null.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 19,
-                          "column": 5,
-                          "program": "null.ets"
-                        },
-                        "end": {
-                          "line": 19,
-                          "column": 25,
-                          "program": "null.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "null.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "null.ets"
-              }
-            }
-          },
-          {
             "type": "ClassProperty",
             "key": {
               "type": "Identifier",
@@ -518,7 +236,7 @@
                       },
                       "end": {
                         "line": 18,
-                        "column": 14,
+                        "column": 12,
                         "program": "null.ets"
                       }
                     }
@@ -531,7 +249,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 14,
+                      "column": 12,
                       "program": "null.ets"
                     }
                   }
@@ -575,7 +293,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 26,
+                "column": 22,
                 "program": "null.ets"
               }
             }
@@ -634,7 +352,7 @@
                   },
                   "end": {
                     "line": 19,
-                    "column": 14,
+                    "column": 12,
                     "program": "null.ets"
                   }
                 }
@@ -647,7 +365,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 14,
+                  "column": 12,
                   "program": "null.ets"
                 }
               }
@@ -662,7 +380,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 25,
+                "column": 15,
                 "program": "null.ets"
               }
             }
@@ -753,7 +471,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 24,
+                                  "column": 22,
                                   "program": "null.ets"
                                 }
                               }
@@ -766,7 +484,7 @@
                               },
                               "end": {
                                 "line": 21,
-                                "column": 24,
+                                "column": 22,
                                 "program": "null.ets"
                               }
                             }
@@ -1141,7 +859,7 @@
                                       },
                                       "end": {
                                         "line": 28,
-                                        "column": 18,
+                                        "column": 16,
                                         "program": "null.ets"
                                       }
                                     }
@@ -1154,7 +872,7 @@
                                     },
                                     "end": {
                                       "line": 28,
-                                      "column": 18,
+                                      "column": 16,
                                       "program": "null.ets"
                                     }
                                   }
@@ -1283,7 +1001,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 18,
+                                    "column": 16,
                                     "program": "null.ets"
                                   }
                                 }
@@ -1296,7 +1014,7 @@
                                 },
                                 "end": {
                                   "line": 29,
-                                  "column": 18,
+                                  "column": 16,
                                   "program": "null.ets"
                                 }
                               }
@@ -1346,7 +1064,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 27,
+                                    "column": 26,
                                     "program": "null.ets"
                                   }
                                 }
@@ -1359,7 +1077,7 @@
                                 },
                                 "end": {
                                   "line": 29,
-                                  "column": 27,
+                                  "column": 26,
                                   "program": "null.ets"
                                 }
                               }
@@ -1659,7 +1377,7 @@
                                   },
                                   "end": {
                                     "line": 35,
-                                    "column": 17,
+                                    "column": 16,
                                     "program": "null.ets"
                                   }
                                 }
@@ -1672,7 +1390,7 @@
                                 },
                                 "end": {
                                   "line": 35,
-                                  "column": 17,
+                                  "column": 16,
                                   "program": "null.ets"
                                 }
                               }
@@ -1724,9 +1442,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 37,
+                                "column": 5,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 37,
+                                "column": 12,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 37,
+                                "column": 13,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 37,
+                                "column": 21,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 37,
@@ -1735,7 +1487,7 @@
                             },
                             "end": {
                               "line": 37,
-                              "column": 13,
+                              "column": 21,
                               "program": "null.ets"
                             }
                           }
@@ -1748,12 +1500,12 @@
                             "loc": {
                               "start": {
                                 "line": 37,
-                                "column": 14,
+                                "column": 22,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 37,
-                                "column": 15,
+                                "column": 23,
                                 "program": "null.ets"
                               }
                             }
@@ -1764,12 +1516,12 @@
                             "loc": {
                               "start": {
                                 "line": 37,
-                                "column": 17,
+                                "column": 25,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 37,
-                                "column": 21,
+                                "column": 29,
                                 "program": "null.ets"
                               }
                             }
@@ -1784,7 +1536,7 @@
                           },
                           "end": {
                             "line": 37,
-                            "column": 22,
+                            "column": 30,
                             "program": "null.ets"
                           }
                         }
@@ -1797,7 +1549,7 @@
                         },
                         "end": {
                           "line": 37,
-                          "column": 23,
+                          "column": 31,
                           "program": "null.ets"
                         }
                       }
@@ -1807,9 +1559,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertNE",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 38,
+                                "column": 5,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 38,
+                                "column": 12,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertNE",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 38,
+                                "column": 13,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 38,
+                                "column": 21,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 38,
@@ -1818,7 +1604,7 @@
                             },
                             "end": {
                               "line": 38,
-                              "column": 13,
+                              "column": 21,
                               "program": "null.ets"
                             }
                           }
@@ -1831,12 +1617,12 @@
                             "loc": {
                               "start": {
                                 "line": 38,
-                                "column": 14,
+                                "column": 22,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 38,
-                                "column": 15,
+                                "column": 23,
                                 "program": "null.ets"
                               }
                             }
@@ -1847,12 +1633,12 @@
                             "loc": {
                               "start": {
                                 "line": 38,
-                                "column": 17,
+                                "column": 25,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 38,
-                                "column": 21,
+                                "column": 29,
                                 "program": "null.ets"
                               }
                             }
@@ -1867,7 +1653,7 @@
                           },
                           "end": {
                             "line": 38,
-                            "column": 22,
+                            "column": 30,
                             "program": "null.ets"
                           }
                         }
@@ -1880,7 +1666,7 @@
                         },
                         "end": {
                           "line": 38,
-                          "column": 23,
+                          "column": 31,
                           "program": "null.ets"
                         }
                       }
@@ -1890,9 +1676,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertNE",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 39,
+                                "column": 5,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 39,
+                                "column": 12,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertNE",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 39,
+                                "column": 13,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 39,
+                                "column": 21,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 39,
@@ -1901,7 +1721,7 @@
                             },
                             "end": {
                               "line": 39,
-                              "column": 13,
+                              "column": 21,
                               "program": "null.ets"
                             }
                           }
@@ -1913,12 +1733,12 @@
                             "loc": {
                               "start": {
                                 "line": 39,
-                                "column": 14,
+                                "column": 22,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 39,
-                                "column": 18,
+                                "column": 26,
                                 "program": "null.ets"
                               }
                             }
@@ -1930,12 +1750,12 @@
                             "loc": {
                               "start": {
                                 "line": 39,
-                                "column": 20,
+                                "column": 28,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 39,
-                                "column": 21,
+                                "column": 29,
                                 "program": "null.ets"
                               }
                             }
@@ -1950,7 +1770,7 @@
                           },
                           "end": {
                             "line": 39,
-                            "column": 22,
+                            "column": 30,
                             "program": "null.ets"
                           }
                         }
@@ -1963,7 +1783,7 @@
                         },
                         "end": {
                           "line": 39,
-                          "column": 23,
+                          "column": 31,
                           "program": "null.ets"
                         }
                       }
@@ -1973,9 +1793,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 40,
+                                "column": 5,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 40,
+                                "column": 12,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 40,
+                                "column": 13,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 40,
+                                "column": 21,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 40,
@@ -1984,7 +1838,7 @@
                             },
                             "end": {
                               "line": 40,
-                              "column": 13,
+                              "column": 21,
                               "program": "null.ets"
                             }
                           }
@@ -1997,12 +1851,12 @@
                             "loc": {
                               "start": {
                                 "line": 40,
-                                "column": 14,
+                                "column": 22,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 40,
-                                "column": 15,
+                                "column": 23,
                                 "program": "null.ets"
                               }
                             }
@@ -2013,12 +1867,12 @@
                             "loc": {
                               "start": {
                                 "line": 40,
-                                "column": 17,
+                                "column": 25,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 40,
-                                "column": 21,
+                                "column": 29,
                                 "program": "null.ets"
                               }
                             }
@@ -2033,7 +1887,7 @@
                           },
                           "end": {
                             "line": 40,
-                            "column": 22,
+                            "column": 30,
                             "program": "null.ets"
                           }
                         }
@@ -2046,7 +1900,7 @@
                         },
                         "end": {
                           "line": 40,
-                          "column": 23,
+                          "column": 31,
                           "program": "null.ets"
                         }
                       }
@@ -2056,9 +1910,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertNE",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 41,
+                                "column": 5,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 41,
+                                "column": 12,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertNE",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 41,
+                                "column": 13,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 41,
+                                "column": 21,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 41,
@@ -2067,7 +1955,7 @@
                             },
                             "end": {
                               "line": 41,
-                              "column": 13,
+                              "column": 21,
                               "program": "null.ets"
                             }
                           }
@@ -2080,12 +1968,12 @@
                             "loc": {
                               "start": {
                                 "line": 41,
-                                "column": 14,
+                                "column": 22,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 41,
-                                "column": 15,
+                                "column": 23,
                                 "program": "null.ets"
                               }
                             }
@@ -2096,12 +1984,12 @@
                             "loc": {
                               "start": {
                                 "line": 41,
-                                "column": 17,
+                                "column": 25,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 41,
-                                "column": 21,
+                                "column": 29,
                                 "program": "null.ets"
                               }
                             }
@@ -2116,7 +2004,7 @@
                           },
                           "end": {
                             "line": 41,
-                            "column": 22,
+                            "column": 30,
                             "program": "null.ets"
                           }
                         }
@@ -2129,7 +2017,7 @@
                         },
                         "end": {
                           "line": 41,
-                          "column": 23,
+                          "column": 31,
                           "program": "null.ets"
                         }
                       }
@@ -2139,9 +2027,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 42,
+                                "column": 5,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 42,
+                                "column": 12,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 42,
+                                "column": 13,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 42,
+                                "column": 21,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 42,
@@ -2150,7 +2072,7 @@
                             },
                             "end": {
                               "line": 42,
-                              "column": 13,
+                              "column": 21,
                               "program": "null.ets"
                             }
                           }
@@ -2163,12 +2085,12 @@
                             "loc": {
                               "start": {
                                 "line": 42,
-                                "column": 14,
+                                "column": 22,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 42,
-                                "column": 15,
+                                "column": 23,
                                 "program": "null.ets"
                               }
                             }
@@ -2180,12 +2102,12 @@
                             "loc": {
                               "start": {
                                 "line": 42,
-                                "column": 17,
+                                "column": 25,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 42,
-                                "column": 18,
+                                "column": 26,
                                 "program": "null.ets"
                               }
                             }
@@ -2200,7 +2122,7 @@
                           },
                           "end": {
                             "line": 42,
-                            "column": 19,
+                            "column": 27,
                             "program": "null.ets"
                           }
                         }
@@ -2213,7 +2135,7 @@
                         },
                         "end": {
                           "line": 42,
-                          "column": 20,
+                          "column": 28,
                           "program": "null.ets"
                         }
                       }
@@ -2223,9 +2145,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 43,
+                                "column": 5,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 43,
+                                "column": 12,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 43,
+                                "column": 13,
+                                "program": "null.ets"
+                              },
+                              "end": {
+                                "line": 43,
+                                "column": 21,
+                                "program": "null.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 43,
@@ -2234,7 +2190,7 @@
                             },
                             "end": {
                               "line": 43,
-                              "column": 13,
+                              "column": 21,
                               "program": "null.ets"
                             }
                           }
@@ -2246,12 +2202,12 @@
                             "loc": {
                               "start": {
                                 "line": 43,
-                                "column": 14,
+                                "column": 22,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 43,
-                                "column": 18,
+                                "column": 26,
                                 "program": "null.ets"
                               }
                             }
@@ -2262,12 +2218,12 @@
                             "loc": {
                               "start": {
                                 "line": 43,
-                                "column": 20,
+                                "column": 28,
                                 "program": "null.ets"
                               },
                               "end": {
                                 "line": 43,
-                                "column": 24,
+                                "column": 32,
                                 "program": "null.ets"
                               }
                             }
@@ -2282,7 +2238,7 @@
                           },
                           "end": {
                             "line": 43,
-                            "column": 25,
+                            "column": 33,
                             "program": "null.ets"
                           }
                         }
@@ -2295,7 +2251,7 @@
                         },
                         "end": {
                           "line": 43,
-                          "column": 26,
+                          "column": 34,
                           "program": "null.ets"
                         }
                       }

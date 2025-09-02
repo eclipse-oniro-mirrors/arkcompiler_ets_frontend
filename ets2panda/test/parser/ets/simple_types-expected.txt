@@ -80,12 +80,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "simple_types.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "simple_types.ets"
                     }
                   }
                 },
@@ -93,12 +93,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "simple_types.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "simple_types.ets"
                   }
                 }
               },
@@ -106,696 +106,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "simple_types.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "simple_types.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "simple_types.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "a",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 16,
-                              "column": 5,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 16,
-                              "column": 6,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 127,
-                          "loc": {
-                            "start": {
-                              "line": 16,
-                              "column": 15,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 16,
-                              "column": 18,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 16,
-                            "column": 5,
-                            "program": "simple_types.ets"
-                          },
-                          "end": {
-                            "line": 16,
-                            "column": 18,
-                            "program": "simple_types.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 16,
-                          "column": 5,
-                          "program": "simple_types.ets"
-                        },
-                        "end": {
-                          "line": 16,
-                          "column": 18,
-                          "program": "simple_types.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "b",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 17,
-                              "column": 5,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 17,
-                              "column": 6,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": -32768,
-                          "loc": {
-                            "start": {
-                              "line": 17,
-                              "column": 16,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 17,
-                              "column": 22,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 17,
-                            "column": 5,
-                            "program": "simple_types.ets"
-                          },
-                          "end": {
-                            "line": 17,
-                            "column": 22,
-                            "program": "simple_types.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 17,
-                          "column": 5,
-                          "program": "simple_types.ets"
-                        },
-                        "end": {
-                          "line": 17,
-                          "column": 22,
-                          "program": "simple_types.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "c",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 18,
-                              "column": 5,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 18,
-                              "column": 6,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 2147483647,
-                          "loc": {
-                            "start": {
-                              "line": 18,
-                              "column": 14,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 18,
-                              "column": 24,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 18,
-                            "column": 5,
-                            "program": "simple_types.ets"
-                          },
-                          "end": {
-                            "line": 18,
-                            "column": 24,
-                            "program": "simple_types.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 18,
-                          "column": 5,
-                          "program": "simple_types.ets"
-                        },
-                        "end": {
-                          "line": 18,
-                          "column": 24,
-                          "program": "simple_types.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "d",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 5,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 6,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": -9223372036854775808,
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 15,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 35,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 19,
-                            "column": 5,
-                            "program": "simple_types.ets"
-                          },
-                          "end": {
-                            "line": 19,
-                            "column": 35,
-                            "program": "simple_types.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 19,
-                          "column": 5,
-                          "program": "simple_types.ets"
-                        },
-                        "end": {
-                          "line": 19,
-                          "column": 35,
-                          "program": "simple_types.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "e",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 21,
-                              "column": 5,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 21,
-                              "column": 6,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "BooleanLiteral",
-                          "value": true,
-                          "loc": {
-                            "start": {
-                              "line": 21,
-                              "column": 18,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 21,
-                              "column": 22,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 21,
-                            "column": 5,
-                            "program": "simple_types.ets"
-                          },
-                          "end": {
-                            "line": 21,
-                            "column": 22,
-                            "program": "simple_types.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 21,
-                          "column": 5,
-                          "program": "simple_types.ets"
-                        },
-                        "end": {
-                          "line": 21,
-                          "column": 22,
-                          "program": "simple_types.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "f",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 5,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 6,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "CharLiteral",
-                          "value": "a",
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 15,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 19,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 22,
-                            "column": 5,
-                            "program": "simple_types.ets"
-                          },
-                          "end": {
-                            "line": 22,
-                            "column": 19,
-                            "program": "simple_types.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 22,
-                          "column": 5,
-                          "program": "simple_types.ets"
-                        },
-                        "end": {
-                          "line": 22,
-                          "column": 19,
-                          "program": "simple_types.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "k",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 26,
-                              "column": 5,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 26,
-                              "column": 6,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 3.1415,
-                          "loc": {
-                            "start": {
-                              "line": 26,
-                              "column": 16,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 26,
-                              "column": 22,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 26,
-                            "column": 5,
-                            "program": "simple_types.ets"
-                          },
-                          "end": {
-                            "line": 26,
-                            "column": 22,
-                            "program": "simple_types.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 26,
-                          "column": 5,
-                          "program": "simple_types.ets"
-                        },
-                        "end": {
-                          "line": 26,
-                          "column": 22,
-                          "program": "simple_types.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "l",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 27,
-                              "column": 5,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 27,
-                              "column": 6,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 3.1415,
-                          "loc": {
-                            "start": {
-                              "line": 27,
-                              "column": 17,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 27,
-                              "column": 23,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 27,
-                            "column": 5,
-                            "program": "simple_types.ets"
-                          },
-                          "end": {
-                            "line": 27,
-                            "column": 23,
-                            "program": "simple_types.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 27,
-                          "column": 5,
-                          "program": "simple_types.ets"
-                        },
-                        "end": {
-                          "line": 27,
-                          "column": 23,
-                          "program": "simple_types.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "c2",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 29,
-                              "column": 5,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 29,
-                              "column": 7,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "Identifier",
-                          "name": "a",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 29,
-                              "column": 15,
-                              "program": "simple_types.ets"
-                            },
-                            "end": {
-                              "line": 29,
-                              "column": 16,
-                              "program": "simple_types.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 29,
-                            "column": 5,
-                            "program": "simple_types.ets"
-                          },
-                          "end": {
-                            "line": 29,
-                            "column": 16,
-                            "program": "simple_types.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 29,
-                          "column": 5,
-                          "program": "simple_types.ets"
-                        },
-                        "end": {
-                          "line": 29,
-                          "column": 16,
-                          "program": "simple_types.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "simple_types.ets"
                 }
               }
             },
@@ -864,7 +180,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 18,
+                "column": 15,
                 "program": "simple_types.ets"
               }
             }
@@ -919,7 +235,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 22,
+                "column": 16,
                 "program": "simple_types.ets"
               }
             }
@@ -974,7 +290,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 24,
+                "column": 14,
                 "program": "simple_types.ets"
               }
             }
@@ -1029,7 +345,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 35,
+                "column": 15,
                 "program": "simple_types.ets"
               }
             }
@@ -1084,7 +400,7 @@
               },
               "end": {
                 "line": 21,
-                "column": 22,
+                "column": 18,
                 "program": "simple_types.ets"
               }
             }
@@ -1139,7 +455,7 @@
               },
               "end": {
                 "line": 22,
-                "column": 19,
+                "column": 15,
                 "program": "simple_types.ets"
               }
             }
@@ -1249,7 +565,7 @@
               },
               "end": {
                 "line": 26,
-                "column": 22,
+                "column": 16,
                 "program": "simple_types.ets"
               }
             }
@@ -1304,7 +620,7 @@
               },
               "end": {
                 "line": 27,
-                "column": 23,
+                "column": 17,
                 "program": "simple_types.ets"
               }
             }
@@ -1359,7 +675,7 @@
               },
               "end": {
                 "line": 29,
-                "column": 16,
+                "column": 15,
                 "program": "simple_types.ets"
               }
             }

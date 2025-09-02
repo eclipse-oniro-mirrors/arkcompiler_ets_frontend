@@ -18,7 +18,7 @@ let a: UT1 = "bcd"
 
 function foo<T extends "abc"|"ff">(a: T): string {
     let b: "abc"|"ff" = a
-    assertEQ(b, "abc")
+    arktest.assertEQ(b, "abc")
     b = "ff"
     return b
 }
@@ -62,28 +62,28 @@ function f5(x: "aa"|"bbb") {
 }
 
 function main(): void {
-    assertEQ(foo<"abc">("abc"), "ff")
-    assertEQ(foo<"ff"|"abc">("abc"), "ff")
+    arktest.assertEQ(foo<"abc">("abc"), "ff")
+    arktest.assertEQ(foo<"ff"|"abc">("abc"), "ff")
 
-    assertEQ(a, "bcd")
+    arktest.assertEQ(a, "bcd")
 
-    assertEQ(bar("abc"), "abc")
-    assertEQ(bar(42), 42)
+    arktest.assertEQ(bar("abc"), "abc")
+    arktest.assertEQ(bar(42), 42)
 
     let x = baz("bcd")
     x = "some string"
-    assertEQ(x, "some string")
-    assertEQ(baz("ab1"), "ab1")
+    arktest.assertEQ(x, "some string")
+    arktest.assertEQ(baz("ab1"), "ab1")
     x = "abc"
 
-    assertTrue(f1("abc", x))
-    assertTrue(f2("abc", x))
-    assertTrue(!f2("abc", "xyz"))
+    arktest.assertTrue(f1("abc", x))
+    arktest.assertTrue(f2("abc", x))
+    arktest.assertTrue(!f2("abc", "xyz"))
 
     // #22952
-    // assertEQ(f3(), "bb")
-    // assertEQ(f3("aa"), "aa")
+    // arktest.assertEQ(f3(), "bb")
+    // arktest.assertEQ(f3("aa"), "aa")
 
-    assertEQ(f5("aa"), 2)
-    assertEQ(f5("bbb"), 3)
+    arktest.assertEQ(f5("aa"), 2)
+    arktest.assertEQ(f5("bbb"), 3)
 }

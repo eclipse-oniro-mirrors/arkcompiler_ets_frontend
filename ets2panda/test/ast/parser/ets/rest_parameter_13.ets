@@ -41,7 +41,7 @@ function main() {
 /* @@@ label2 Error TypeError: Expected 2 arguments, got 1. */
 /* @@@ label2 Error TypeError: Expected 3 arguments, got 1. */
 /* @@@ label2 Error TypeError: No matching construct signature for rest_parameter_13.C(A<Long>) */
-/* @@? 33:37 Error TypeError: Type 'A<Long>' is not compatible with type 'int' at index 1 */
+/* @@? 33:37 Error TypeError: Type 'A<Long>' is not compatible with type 'Int' at index 1 */
 /* @@@ label3 Error TypeError: Expected 2 arguments, got 3. */
 /* @@@ label3 Error TypeError: No matching construct signature for rest_parameter_13.C(A<Long>, B<Error>, B<Error>) */
-/* @@? 34:37 Error TypeError: Type 'A<Long>' is not compatible with type 'int' at index 1 */
+/* @@? 34:37 Error TypeError: Type 'A<Long>' is not compatible with type 'Int' at index 1 */

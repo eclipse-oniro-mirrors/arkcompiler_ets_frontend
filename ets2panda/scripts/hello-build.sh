@@ -19,13 +19,6 @@ set -ex
 set -o pipefail
 
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
-source "${SCRIPT_DIR}"/arkui-setup.sh
-
-pushd arkoala-arkts || exit 1
-NINJA_OPTIONS="${NINJA_OPTIONS}" npm run trivial:all:node:ci | tee out.txt
-if [ -n "$(grep 'Error:' out.txt)" ] ; then
-    exit 1
-fi
-popd >/dev/null 2>&1 || exit 1
+"${SCRIPT_DIR}"/arkui-setup.sh --demo trivial
 
 exit 0

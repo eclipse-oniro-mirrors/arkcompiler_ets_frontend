@@ -22,5 +22,5 @@ function testLocalArray() : void {
 
     arr![2][1] = 42;
 
-    assertEQ(arr[2][1].toString(), "42", "arr[2][1].toString() must be '42'")
+    arktest.assertEQ(arr[2][1].toString(), "42", "arr[2][1].toString() must be '42'")
 }

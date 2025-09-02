@@ -560,38 +560,8 @@
                               }
                             },
                             {
-                              "type": "TSAsExpression",
-                              "expression": {
-                                "type": "NumberLiteral",
-                                "value": 2,
-                                "loc": {
-                                  "start": {
-                                    "line": 23,
-                                    "column": 31,
-                                    "program": "tuple_type_1.ets"
-                                  },
-                                  "end": {
-                                    "line": 23,
-                                    "column": 32,
-                                    "program": "tuple_type_1.ets"
-                                  }
-                                }
-                              },
-                              "typeAnnotation": {
-                                "type": "ETSPrimitiveType",
-                                "loc": {
-                                  "start": {
-                                    "line": 23,
-                                    "column": 36,
-                                    "program": "tuple_type_1.ets"
-                                  },
-                                  "end": {
-                                    "line": 23,
-                                    "column": 42,
-                                    "program": "tuple_type_1.ets"
-                                  }
-                                }
-                              },
+                              "type": "NumberLiteral",
+                              "value": 2,
                               "loc": {
                                 "start": {
                                   "line": 23,

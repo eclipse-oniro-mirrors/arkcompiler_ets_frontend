@@ -30,7 +30,7 @@ function conversion3(x: int): long {
 }
 
 function main() : void {
-    assertEQ(conversion1(1,2) as Int, 3)
-    assertEQ(conversion2(5), (5 as long))
-    assertEQ(conversion3(7), (7 as long))
+    arktest.assertEQ(conversion1(1,2) as Int, 3)
+    arktest.assertEQ(conversion2(5), (5 as long))
+    arktest.assertEQ(conversion3(7), (7 as long))
 }

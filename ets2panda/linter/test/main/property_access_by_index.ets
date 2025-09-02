@@ -194,3 +194,16 @@ a["i"] = 2.0;
 (b as object)["i"] = 2.0;
 (b as object)["func"](1.0);
 (b as object)["func1"](1.0);
+
+class A1 {
+  foo1() {}
+  static foo() {}
+  aa: number = 1.0;
+}
+class B1{
+  a: A1 = new A1();
+}
+let b1: B1 = new B1();
+(b1 as object)["a"]["foo1"]();
+(b1 as object)["a"]["foo"]();
+(b1 as object)["a"]["aa"];

@@ -16,6 +16,7 @@
 #ifndef PANDA_UNION_NORMALISATION_TEST_H
 #define PANDA_UNION_NORMALISATION_TEST_H
 
+#include "ir/astNode.h"
 #include "util/options.h"
 
 namespace ark::es2panda::gtests {
@@ -23,10 +24,11 @@ namespace ark::es2panda::gtests {
 class UnionNormalizationTest : public testing::Test {
 public:
     UnionNormalizationTest()
-        : allocator_(std::make_unique<ArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER)),
+        : allocator_(std::make_unique<ark::ThreadSafeArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER, nullptr, true)),
           publicContext_ {std::make_unique<public_lib::Context>()},
+          phaseManager_ {ScriptExtension::ETS, Allocator()},
           program_ {parser::Program::NewProgram<varbinder::ETSBinder>(Allocator())},
-          checker_ {diagnosticEngine_}
+          checker_ {Allocator(), diagnosticEngine_}
     {
     }
 
@@ -38,7 +40,7 @@ public:
         PoolManager::Initialize();
     }
 
-    ArenaAllocator *Allocator()
+    ark::ThreadSafeArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
@@ -104,7 +106,7 @@ public:
         varbinder->SetContext(publicContext_.get());
 
         auto emitter = Emitter(publicContext_.get());
-        auto phaseManager = compiler::PhaseManager(unit.ext, allocator_.get());
+        auto phaseManager = new compiler::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
 
         auto config = public_lib::ConfigImpl {};
         publicContext_->config = &config;
@@ -112,12 +114,14 @@ public:
         publicContext_->sourceFile = &unit.input;
         publicContext_->allocator = allocator_.get();
         publicContext_->parser = &parser;
-        publicContext_->checker = checker;
-        publicContext_->analyzer = publicContext_->checker->GetAnalyzer();
-        publicContext_->emitter = &emitter;
+        parser.SetContext(publicContext_.get());
         publicContext_->parserProgram = program;
+        publicContext_->PushChecker(checker);
+        publicContext_->PushAnalyzer(publicContext_->GetChecker()->GetAnalyzer());
+        publicContext_->emitter = &emitter;
         publicContext_->diagnosticEngine = &diagnosticEngine_;
-        publicContext_->phaseManager = &phaseManager;
+        publicContext_->phaseManager = phaseManager;
+        publicContext_->GetChecker()->Initialize(varbinder);
         parser.ParseScript(unit.input, unit.options.GetCompilationMode() == CompilationMode::GEN_STD_LIB);
         while (auto phase = publicContext_->phaseManager->NextPhase()) {
             if (!phase->Apply(publicContext_.get(), program)) {
@@ -159,8 +163,9 @@ protected:
     static constexpr uint8_t IDX2 = 2;
 
 private:
-    std::unique_ptr<ArenaAllocator> allocator_;
+    std::unique_ptr<ark::ThreadSafeArenaAllocator> allocator_;
     std::unique_ptr<public_lib::Context> publicContext_;
+    ark::es2panda::compiler::PhaseManager phaseManager_;
     parser::Program program_;
     util::DiagnosticEngine diagnosticEngine_;
     checker::ETSChecker checker_;

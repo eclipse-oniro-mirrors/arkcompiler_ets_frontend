@@ -21,4 +21,4 @@ function main(): void {
     /* @@ label */new A().x();
 }
 
-/* @@@ label Error TypeError: Type 'int' has no call signatures.  */
+/* @@@ label Error TypeError: Type 'Int' has no call signatures.  */

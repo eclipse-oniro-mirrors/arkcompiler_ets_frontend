@@ -31,15 +31,15 @@ class C<T, U> {
 function main() {
     let a1: [A<Long>, B<Error>] = [new A<Long>, new B<Error>]
 
-    assertTrue((new C<Long, Error>(...a1)).field == false)
-    assertTrue((new C<Long, Error>(22, ...a1)).field == false)
+    arktest.assertTrue((new C<Long, Error>(...a1)).field == false)
+    arktest.assertTrue((new C<Long, Error>(22, ...a1)).field == false)
 
-    assertTrue((new C<Long, Error>(...[new A<Long>, new B<Error>])).field == false)
-    assertTrue((new C<Long, Error>(22, ...[new A<Long>, new B<Error>])).field == false)
+    arktest.assertTrue((new C<Long, Error>(...[new A<Long>, new B<Error>])).field == false)
+    arktest.assertTrue((new C<Long, Error>(22, ...[new A<Long>, new B<Error>])).field == false)
 
-    assertTrue((new C<Long, Error>(...[new A<Long>, new B<Error>] as [A<Long>, B<Error>])).field == false)
-    assertTrue((new C<Long, Error>(22, ...[new A<Long>, new B<Error>] as [A<Long>, B<Error>])).field == false)
+    arktest.assertTrue((new C<Long, Error>(...[new A<Long>, new B<Error>] as [A<Long>, B<Error>])).field == false)
+    arktest.assertTrue((new C<Long, Error>(22, ...[new A<Long>, new B<Error>] as [A<Long>, B<Error>])).field == false)
 
-    assertTrue((new C<Long, Error>(new A<Long>, new B<Error>)).field == false)
-    assertTrue((new C<Long, Error>(22, new A<Long>, new B<Error>)).field == false)
+    arktest.assertTrue((new C<Long, Error>(new A<Long>, new B<Error>)).field == false)
+    arktest.assertTrue((new C<Long, Error>(22, new A<Long>, new B<Error>)).field == false)
 }

@@ -17,8 +17,11 @@
 #include "internal_api.h"
 #include "ir/astNode.h"
 #include "public/public.h"
+#include "ir/ets/etsTuple.h"
 #include "ir/ets/etsUnionType.h"
 #include "api.h"
+#include "rename.h"
+#include "isolated_declaration.h"
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::lsp {
@@ -190,24 +193,8 @@ ir::AstNode *GetNodeAtLocation(ir::AstNode *node)
     if (node->IsProgram()) {
         return node->Modifiers() == ir::ModifierFlags::EXPORT ? node : nullptr;
     }
-    auto parent = node->Parent();
-    if (IsIdentifierOfDeclaration(node)) {
-        return parent;
-    }
     if (node->Type() == ir::AstNodeType::IDENTIFIER) {
-        if (IsDeclaration(parent) || IsDefinition(parent)) {
-            if (compiler::ClassDefinitionIsEnumTransformed(parent)) {
-                parent = parent->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
-            }
-            return parent;
-        }
-        if (parent->Type() == ir::AstNodeType::MEMBER_EXPRESSION) {
-            auto declNode = compiler::DeclarationFromIdentifier(parent->AsMemberExpression()->Object()->AsIdentifier());
-            if (compiler::ClassDefinitionIsEnumTransformed(declNode)) {
-                declNode = declNode->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
-            }
-            return declNode;
-        }
+        // could get decl instead of getting parant declaration and then child
         return compiler::DeclarationFromIdentifier(node->AsIdentifier());
     }
 
@@ -396,14 +383,38 @@ std::string GetNameForUnionType(const ir::TypeNode *unionType)
     for (size_t i = 0; i < types.size(); ++i) {
         newstr += GetNameForTypeNode(types[i]);
         if (i != types.size() - 1) {
-            newstr += "|";
+            newstr += " | ";
         }
     }
     return newstr;
 }
 
+std::string GetNameForTupleType(const ir::TypeNode *tupleType)
+{
+    const auto &types = tupleType->AsETSTuple()->GetTupleTypeAnnotationsList();
+    std::string newstr = "[";
+    for (size_t i = 0; i < types.size(); ++i) {
+        newstr += GetNameForTypeNode(types[i]);
+        if (i != types.size() - 1) {
+            newstr += ", ";
+        }
+    }
+    newstr += "]";
+    return newstr;
+}
+
 std::string GetNameForTypeReference(const ir::TypeNode *typeReference)
 {
+    auto type = typeReference->AsETSTypeReference()->Part();
+    if (type != nullptr && type->IsETSTypeReferencePart()) {
+        auto tmp = type->AsETSTypeReferencePart()->Name();
+        if (tmp != nullptr && tmp->IsTSQualifiedName()) {
+            auto leftStr = tmp->AsTSQualifiedName()->Left()->AsIdentifier()->Name().Mutf8();
+            auto rightStr = tmp->AsTSQualifiedName()->Right()->AsIdentifier()->Name().Mutf8();
+            return leftStr + "." + rightStr;
+        }
+    }
+
     std::string typeParamNames;
     auto typeParam = typeReference->AsETSTypeReference()->Part()->TypeParams();
     if (typeParam != nullptr && typeParam->IsTSTypeParameterInstantiation()) {
@@ -431,6 +442,68 @@ std::string GetNameForFunctionType(const ir::TypeNode *functionType)
     return "((" + params + ") => " + returnType + ")";
 }
 
+std::string EscapeJsonString(const std::string &input)
+{
+    std::ostringstream oss;
+    oss << "\"";
+    for (char c : input) {
+        switch (c) {
+            case '\"':
+                oss << "\\\"";
+                break;
+            case '\\':
+                oss << "\\\\";
+                break;
+            case '\n':
+                oss << "\\n";
+                break;
+            case '\r':
+                oss << "\\r";
+                break;
+            case '\t':
+                oss << "\\t";
+                break;
+            default:
+                oss << c;
+                break;
+        }
+    }
+    oss << "\"";
+    return oss.str();
+}
+
+std::string GetNameForLiteralTypeNode(const ir::AstNode *node, bool iskindModifier = false)
+{
+    if (node == nullptr) {
+        return "undefined";
+    }
+    if (node->IsStringLiteral()) {
+        return iskindModifier ? EscapeJsonString(std::string(node->AsStringLiteral()->Str())) : "String";
+    }
+    if (node->IsNumberLiteral()) {
+        return iskindModifier ? std::string(node->AsNumberLiteral()->Str()) : "Number";
+    }
+    if (node->IsBooleanLiteral()) {
+        return iskindModifier ? node->AsBooleanLiteral()->Value() ? "true" : "false" : "Boolean";
+    }
+    if (node->IsBigIntLiteral()) {
+        return "Bigint";
+    }
+    if (node->IsIdentifier()) {
+        auto name = node->AsIdentifier()->Name();
+        if (name.Is("NaN")) {
+            return "Number";
+        }
+    }
+    if (node->IsNullLiteral()) {
+        return "null";
+    }
+    if (node->IsETSStringLiteralType()) {
+        return "String";
+    }
+    return "undefined";
+}
+
 std::string GetNameForTypeNode(const ir::TypeNode *typeAnnotation)
 {
     if (typeAnnotation->IsETSUnionType()) {
@@ -439,27 +512,25 @@ std::string GetNameForTypeNode(const ir::TypeNode *typeAnnotation)
     if (typeAnnotation->IsETSPrimitiveType()) {
         return PrimitiveTypeToName(typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType());
     }
-
     if (typeAnnotation->IsETSTypeReference()) {
         return GetNameForTypeReference(typeAnnotation);
     }
-
     if (typeAnnotation->IsETSFunctionType()) {
         return GetNameForFunctionType(typeAnnotation);
     }
-
     if (typeAnnotation->IsTSArrayType()) {
         return GetNameForTypeNode(typeAnnotation->AsTSArrayType()->ElementType()) + "[]";
     }
-
     if (typeAnnotation->IsETSNullType()) {
         return "null";
     }
-
     if (typeAnnotation->IsETSUndefinedType()) {
         return "undefined";
     }
-    return "undefined";
+    if (typeAnnotation->IsETSTuple()) {
+        return GetNameForTupleType(typeAnnotation);
+    }
+    return GetNameForLiteralTypeNode(typeAnnotation);
 }
 
 std::string GetNameForETSUnionType(const ir::TypeNode *typeAnnotation)
@@ -471,7 +542,7 @@ std::string GetNameForETSUnionType(const ir::TypeNode *typeAnnotation)
         std::string str = GetNameForTypeNode(type);
         newstr += str;
         if (i != typeAnnotation->AsETSUnionType()->Types().size() - 1) {
-            newstr += "|";
+            newstr += " | ";
         }
     }
     return newstr;
@@ -566,11 +637,21 @@ std::vector<SymbolDisplayPart> CreateDisplayForClass(ir::AstNode *node)
         // class definition
         if (node->AsClassDefinition()->OrigEnumDecl() != nullptr) {
             displayParts.emplace_back(CreateKeyword("enum"));
+            displayParts.emplace_back(CreateSpace());
+            displayParts.emplace_back(CreateEnumName(GetNameFromClassDefinition(node)));
+        } else if (node->AsClassDefinition()->IsNamespaceTransformed()) {
+            displayParts.emplace_back(CreateKeyword("namespace"));
+            displayParts.emplace_back(CreateSpace());
+            displayParts.emplace_back(CreateNamespace(GetNameFromClassDefinition(node)));
+        } else if (node->Parent()->IsETSStructDeclaration()) {
+            displayParts.emplace_back(CreateKeyword("struct"));
+            displayParts.emplace_back(CreateSpace());
+            displayParts.emplace_back(SignatureCreateStructName(GetNameFromClassDefinition(node)));
         } else {
             displayParts.emplace_back(CreateKeyword("class"));
+            displayParts.emplace_back(CreateSpace());
+            displayParts.emplace_back(CreateClassName(GetNameFromClassDefinition(node)));
         }
-        displayParts.emplace_back(CreateSpace());
-        displayParts.emplace_back(CreateClassName(GetNameFromClassDefinition(node)));
     }
     return displayParts;
 }
@@ -689,6 +770,21 @@ std::vector<SymbolDisplayPart> CreateDisplayOfReturnType(ark::es2panda::ir::Type
         auto typeName = part->Name()->AsIdentifier()->Name();
         displayParts.emplace_back(CreateReturnType(std::string(typeName)));
     }
+    if (returnType->Type() == ir::AstNodeType::ETS_UNION_TYPE) {
+        auto unionType = returnType->AsETSUnionType();
+        auto types = unionType->Types();
+        for (size_t i = 0; i < types.size(); ++i) {
+            auto typeName = GetNameForTypeNode(types[i]);
+            displayParts.emplace_back(CreateReturnType(typeName));
+            if (i != types.size() - 1) {
+                displayParts.emplace_back(CreatePunctuation("|"));
+                displayParts.emplace_back(CreateSpace());
+            }
+        }
+    }
+    if (returnType->Type() == ir::AstNodeType::TS_THIS_TYPE) {
+        displayParts.emplace_back(CreateReturnType("this"));
+    }
     return displayParts;
 }
 
@@ -797,7 +893,7 @@ std::vector<SymbolDisplayPart> CreateDisplayForEnumMember(ir::AstNode *node)
     displayParts.emplace_back(CreateSpace());
     auto init = node->AsTSEnumMember()->Init();
     if (init->Type() == ir::AstNodeType::NUMBER_LITERAL) {
-        displayParts.emplace_back(CreateText(std::string(init->AsNumberLiteral()->Str())));
+        displayParts.emplace_back(CreateText(std::to_string(init->AsNumberLiteral()->Number().GetInt())));
     }
     if (init->Type() == ir::AstNodeType::STRING_LITERAL) {
         displayParts.emplace_back(CreatePunctuation("\""));
@@ -934,7 +1030,73 @@ std::vector<SymbolDisplayPart> CreateDisplayForMethodDefinitionOfInterfaceBody(i
     return displayParts;
 }
 
-std::vector<SymbolDisplayPart> CreateDisplayForMethodDefinition(ir::AstNode *node, const std::string &kindModifier)
+void AppendClassOrGlobalPrefix(std::vector<SymbolDisplayPart> &parts, ir::AstNode *parent)
+{
+    if (!parent->IsClassDefinition()) {
+        return;
+    }
+
+    auto className = parent->AsClassDefinition()->Ident()->Name();
+    if (className != "ETSGLOBAL") {
+        parts.emplace_back(CreateClassName(std::string(className)));
+        parts.emplace_back(CreatePunctuation("."));
+    } else {
+        parts.emplace_back(CreateKeyword("function"));
+        parts.emplace_back(CreateSpace());
+    }
+}
+
+void AppendFunctionName(std::vector<SymbolDisplayPart> &parts, ir::MethodDefinition *method)
+{
+    auto name = method->Key()->AsIdentifier()->Name();
+    parts.emplace_back(CreateFunctionName(std::string(name)));
+}
+
+static void AppendSignature(std::vector<SymbolDisplayPart> &parts, ir::MethodDefinition *method,
+                            checker::ETSChecker *checker)
+{
+    auto *funcExpr = method->Value();
+    if (funcExpr == nullptr) {
+        return;
+    }
+    auto *script = funcExpr->AsFunctionExpression()->Function();
+    if (script == nullptr || script->Type() != ir::AstNodeType::SCRIPT_FUNCTION) {
+        return;
+    }
+    // <T, U>
+    if (auto *typeParams = script->TypeParams()) {
+        auto display = CreateDisplayOfTypeParams(typeParams->AsTSTypeParameterDeclaration()->Params());
+        parts = MergeSymbolDisplayPart(parts, display);
+    }
+    // (a: number, b: string)
+    auto paramDisplay = CreateDisplayOfFunctionParams(script);
+    parts = MergeSymbolDisplayPart(parts, paramDisplay);
+    // return type
+    auto returnType = script->ReturnTypeAnnotation();
+    if (returnType == nullptr) {
+        auto signature = GetFuncSignature(method->TsType()->AsETSFunctionType(), method);
+        auto typeStr = GetReturnTypeStr(signature->ReturnType(), checker);
+        parts.emplace_back(CreatePunctuation(":"));
+        parts.emplace_back(CreateSpace());
+        parts.emplace_back(CreateReturnType(typeStr));
+    } else {
+        auto retDisplay = CreateDisplayOfReturnType(script->ReturnTypeAnnotation());
+        parts = MergeSymbolDisplayPart(parts, retDisplay);
+    }
+}
+
+static std::vector<SymbolDisplayPart> CreateDisplayForRegularOrClassMethod(ir::AstNode *node,
+                                                                           checker::ETSChecker *checker)
+{
+    std::vector<SymbolDisplayPart> parts;
+    AppendClassOrGlobalPrefix(parts, node->Parent());
+    AppendFunctionName(parts, node->AsMethodDefinition());
+    AppendSignature(parts, node->AsMethodDefinition(), checker);
+    return parts;
+}
+
+std::vector<SymbolDisplayPart> CreateDisplayForMethodDefinition(ir::AstNode *node, const std::string &kindModifier,
+                                                                checker::ETSChecker *checker)
 {
     std::vector<SymbolDisplayPart> displayParts;
     if (node->Type() != ir::AstNodeType::METHOD_DEFINITION) {
@@ -950,53 +1112,11 @@ std::vector<SymbolDisplayPart> CreateDisplayForMethodDefinition(ir::AstNode *nod
     if (node->Parent() != nullptr && node->Parent()->Type() == ir::AstNodeType::TS_INTERFACE_BODY) {
         return CreateDisplayForMethodDefinitionOfInterfaceBody(node);
     }
-    if (node->Parent() != nullptr && node->Parent()->IsClassDefinition()) {
-        auto className = node->Parent()->AsClassDefinition()->Ident()->Name();
-        if (className != "ETSGLOBAL") {
-            displayParts.emplace_back(CreateClassName(std::string(className)));
-            displayParts.emplace_back(CreatePunctuation("."));
-        } else {
-            displayParts.emplace_back(CreateKeyword("function"));
-            displayParts.emplace_back(CreateSpace());
-        }
-    }
 
-    auto functionName = node->AsMethodDefinition()->Key()->AsIdentifier()->Name();
-    displayParts.emplace_back(CreateFunctionName(std::string(functionName)));
-
-    if (node->AsMethodDefinition()->Value() == nullptr) {
-        return displayParts;
-    }
-    auto scriptFunction = node->AsMethodDefinition()->Value()->AsFunctionExpression()->Function();
-    if (scriptFunction == nullptr) {
-        return displayParts;
-    }
-    if (scriptFunction->Type() == ir::AstNodeType::SCRIPT_FUNCTION) {
-        auto script = scriptFunction->AsScriptFunction();
-        auto typeParameter = script->TypeParams();
-        if (typeParameter != nullptr) {
-            auto params = typeParameter->AsTSTypeParameterDeclaration()->Params();
-            auto displayOfTypeParams = CreateDisplayOfTypeParams(params);
-            displayParts = MergeSymbolDisplayPart(displayParts, displayOfTypeParams);
-        }
-
-        auto displayOfFunctionParam = CreateDisplayOfFunctionParams(script);
-        displayParts = MergeSymbolDisplayPart(displayParts, displayOfFunctionParam);
-
-        auto returnType = script->ReturnTypeAnnotation();
-        auto displayOfReturnType = CreateDisplayOfReturnType(returnType);
-        displayParts = MergeSymbolDisplayPart(displayParts, displayOfReturnType);
-    }
-    return displayParts;
+    return CreateDisplayForRegularOrClassMethod(node, checker);
 }
 
-bool IsKindModifierInSet(const std::string &target)
-{
-    static std::set<std::string> kindModifierSet = {"const", "static public declare const"};
-    return kindModifierSet.find(target) != kindModifierSet.end();
-}
-
-std::vector<SymbolDisplayPart> CreateDisplayForClassProperty(ir::AstNode *node, const std::string &kindModifier)
+std::vector<SymbolDisplayPart> CreateDisplayForClassProperty(ir::AstNode *node)
 {
     std::vector<SymbolDisplayPart> displayParts;
     if (node->Type() != ir::AstNodeType::CLASS_PROPERTY) {
@@ -1005,10 +1125,11 @@ std::vector<SymbolDisplayPart> CreateDisplayForClassProperty(ir::AstNode *node, 
     auto classDef = node->Parent();
     if (classDef->Type() == ir::AstNodeType::CLASS_DEFINITION) {
         auto className = classDef->AsClassDefinition()->Ident()->Name();
+        auto isConst = (node->Modifiers() & ir::ModifierFlags::CONST) != 0;
         if (className != "ETSGLOBAL") {
             displayParts.emplace_back(CreateClassName(std::string(className)));
             displayParts.emplace_back(CreatePunctuation("."));
-        } else if (IsKindModifierInSet(kindModifier)) {
+        } else if (isConst) {
             displayParts.emplace_back(CreateKeyword("const"));
             displayParts.emplace_back(CreateSpace());
         } else {
@@ -1025,7 +1146,8 @@ std::vector<SymbolDisplayPart> CreateDisplayForClassProperty(ir::AstNode *node, 
         if (typeAnnotation == nullptr) {
             if (node->AsClassProperty()->Value() == nullptr ||
                 !node->AsClassProperty()->Value()->IsETSNewClassInstanceExpression()) {
-                displayParts.emplace_back(CreateTypeName("undefined"));
+                displayParts.emplace_back(
+                    CreateTypeName(GetNameForLiteralTypeNode(node->AsClassProperty()->Value(), isConst)));
                 return displayParts;
             }
             auto newClassExpr = node->AsClassProperty()->Value()->AsETSNewClassInstanceExpression();
@@ -1088,14 +1210,13 @@ std::vector<SymbolDisplayPart> CreateDisplayForImportDeclaration(ir::AstNode *no
 }
 
 QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNode *nodeForQuickInfo,
-                       const std::string &fileName)
+                       const std::string &fileName, checker::ETSChecker *checker)
 {
     if (containerNode == nullptr || nodeForQuickInfo == nullptr || node == nullptr) {
         return QuickInfo();
     }
     auto kindModifiers = GetKindModifiers(node);
     TextSpan span(nodeForQuickInfo->Start().index, nodeForQuickInfo->End().index - nodeForQuickInfo->Start().index);
-    auto nodeKind = GetNodeKind(node);
     std::vector<SymbolDisplayPart> displayParts;
 
     std::string kind;
@@ -1104,7 +1225,6 @@ QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNod
 
     if (IsClass(node)) {
         displayParts = CreateDisplayForClass(node);
-        kind = "class";
     } else if (node->Type() == ir::AstNodeType::ETS_PARAMETER_EXPRESSION) {
         displayParts = CreateDisplayForETSParameterExpression(node);
     } else if (node->Type() == ir::AstNodeType::CLASS_PROPERTY) {
@@ -1114,12 +1234,12 @@ QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNod
             auto enumMember = GetEnumMemberByName(enumDecl, node->AsClassProperty()->Key()->AsIdentifier()->Name());
             displayParts = CreateDisplayForEnumMember(enumMember);
         } else {
-            displayParts = CreateDisplayForClassProperty(node, kindModifiers);
-            kind = "property";
+            displayParts = CreateDisplayForClassProperty(node);
         }
+    } else if (node->Type() == ir::AstNodeType::TS_ENUM_MEMBER) {
+        displayParts = CreateDisplayForEnumMember(node);
     } else if (node->Type() == ir::AstNodeType::TS_INTERFACE_DECLARATION) {
         displayParts = CreateDisplayForInterface(node);
-        kind = "interface";
     } else if (node->Type() == ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION) {
         displayParts = CreateDisplayForTypeAlias(node);
     } else if (node->Type() == ir::AstNodeType::TS_ENUM_DECLARATION) {
@@ -1129,12 +1249,10 @@ QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNod
     } else if (node->Type() == ir::AstNodeType::TS_TYPE_PARAMETER) {
         displayParts = CreateDisplayForTypeParameter(node);
     } else if (node->Type() == ir::AstNodeType::METHOD_DEFINITION) {
-        displayParts = CreateDisplayForMethodDefinition(node, kindModifiers);
-        kind = "function";
-        if (node->Parent() != nullptr && node->Parent()->Type() == ir::AstNodeType::TS_INTERFACE_BODY) {
-            kind = "property";
-        }
+        displayParts = CreateDisplayForMethodDefinition(node, kindModifiers, checker);
     }
+    // Unify this kind
+    kind = GetNodeKindForRenameInfo(node);
     return QuickInfo(kind, kindModifiers, span, displayParts, document, tags, fileName);
 }
 
@@ -1147,6 +1265,9 @@ QuickInfo GetQuickInfoAtPositionImpl(es2panda_Context *context, size_t position,
     if (touchingToken == nullptr || touchingToken->IsProgram()) {
         return QuickInfo();
     }
+    auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->GetChecker());
+    // The nodeForQuickInfo will be identifier in all of currently known scenarios
     auto nodeForQuickInfo = GetTokenForQuickInfo(context, position);
     auto node = GetNodeAtLocationForQuickInfo(nodeForQuickInfo);
     auto object = GetContainingObjectLiteralNode(nodeForQuickInfo);
@@ -1161,7 +1282,7 @@ QuickInfo GetQuickInfoAtPositionImpl(es2panda_Context *context, size_t position,
         return QuickInfo();
     }
 
-    return GetQuickInfo(node, GetContainerNode(nodeForQuickInfo), nodeForQuickInfo, nodeFileName);
+    return GetQuickInfo(node, GetContainerNode(nodeForQuickInfo), nodeForQuickInfo, nodeFileName, checker);
 }
 
 }  // namespace ark::es2panda::lsp

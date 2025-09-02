@@ -22,8 +22,8 @@ function testNested<U>(data: A<B<U>> | U): string {
 
 function main() {
     const validInput: A<B<number>> = new A<B<number>>();
-    assertEQ(testNested(validInput), "nested passed");
+    arktest.assertEQ(testNested(validInput), "nested passed");
 
     const validValue = 42;
-    assertEQ(testNested(validValue), "nested passed");
+    arktest.assertEQ(testNested(validValue), "nested passed");
 }

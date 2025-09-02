@@ -19,10 +19,10 @@ enum Commands { Open = "fopen", Close = "fclose", Open2 = "fopen" }
 let ie : Color = Color.Blue;
 switch (ie) {
     case Color.Red:
-        assertTrue(false)
+        arktest.assertTrue(false)
         break;
     case Color.Green:
-        assertTrue(false)
+        arktest.assertTrue(false)
         break;
     case Color.Blue:
         break;
@@ -31,11 +31,11 @@ switch (ie) {
 let se : Commands = Commands.Close;
 switch (se) {
     case Commands.Open:
-        assertTrue(false)
+        arktest.assertTrue(false)
         break;
     case Commands.Close:
         break;
     case Commands.Open2:
-        assertTrue(false)
+        arktest.assertTrue(false)
         break;
 }

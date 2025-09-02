@@ -25,5 +25,5 @@ class B implements A {
 
 function main(): void {
     let b: B = new B()
-    assertEQ(b.foo1(), "B")
+    arktest.assertEQ(b.foo1(), "B")
 }

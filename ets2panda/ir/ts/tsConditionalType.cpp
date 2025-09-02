@@ -43,12 +43,8 @@ void TSConditionalType::TransformChildren(const NodeTransformer &cb, std::string
         falseType_->SetTransformedNode(transformationName, transformedNode);
         falseType_ = transformedNode->AsExpression();
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSConditionalType::Iterate(const NodeTraverser &cb) const

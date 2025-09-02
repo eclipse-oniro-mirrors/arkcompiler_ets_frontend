@@ -24,8 +24,8 @@ import {
 
 @Component
 struct MyComponent {
-  @State count: number = 0.0
-  @State $$: number = 0.0
+  @State count: number = 0
+  @State $$: number = 0
 
   build() {
     Column() {

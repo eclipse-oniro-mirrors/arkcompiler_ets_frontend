@@ -23,8 +23,10 @@ import {
 } from '../utils';
 import { PluginDriver } from '../plugins/plugins_driver';
 import {
-  BUILD_MODE,
-  KOALA_WRAPPER_PATH_FROM_SDK,
+  API,
+  ARKTS,
+  COMPONENT,
+  KITS,
   PANDA_SDK_PATH_FROM_SDK,
   PROJECT_BUILD_CONFIG_FILE
 } from '../pre_define';
@@ -34,7 +36,12 @@ import {
   Logger
 } from '../logger';
 import { ErrorCode } from '../error_code';
-import { BuildConfig } from '../types';
+import {
+  BuildConfig,
+  BUILD_MODE,
+  AliasConfig
+} from '../types';
+import { initKoalaModules } from './init_koala_modules';
 
 export function processBuildConfig(projectConfig: BuildConfig): BuildConfig {
   let buildConfig: BuildConfig = { 
@@ -51,9 +58,10 @@ export function processBuildConfig(projectConfig: BuildConfig): BuildConfig {
   checkCacheProjectConfig(buildConfig);
   initPlatformSpecificConfig(buildConfig);
   initBuildEnv(buildConfig);
-  initKoalaWrapper(buildConfig);
+  initKoalaModules(buildConfig);
   PluginDriver.getInstance().initPlugins(buildConfig);
-
+  initAliasConfig(buildConfig);
+  initInteropSDKInfo(buildConfig);
   return buildConfig;
 }
 
@@ -99,7 +107,7 @@ function initPlatformSpecificConfig(buildConfig: BuildConfig): void {
     buildConfig.dependencyAnalyzerPath = path.join(pandaSdkPath, 'bin', 'dependency_analyzer');
   }
 
-  if (!fs.existsSync(buildConfig.abcLinkerPath as string)) {
+  if (!buildConfig.enableDeclgenEts2Ts && !fs.existsSync(buildConfig.abcLinkerPath as string)) {
     const logData: LogData = LogDataFactory.newInstance(
       ErrorCode.BUILDSYSTEM_ARK_LINK_NOT_FOUND_FAIL,
       'Ark_link not found in path.',
@@ -109,7 +117,7 @@ function initPlatformSpecificConfig(buildConfig: BuildConfig): void {
     logger.printError(logData);
   }
 
-  if (!buildConfig.frameworkMode && !fs.existsSync(buildConfig.dependencyAnalyzerPath as string)) {
+  if (!buildConfig.frameworkMode && !buildConfig.enableDeclgenEts2Ts && !fs.existsSync(buildConfig.dependencyAnalyzerPath as string)) {
     const logData: LogData = LogDataFactory.newInstance(
       ErrorCode.BUILDSYSTEM_Dependency_Analyzer_NOT_FOUND_FAIL,
       'Dependency_analyzer not found in path.',
@@ -134,10 +142,84 @@ export function initBuildEnv(buildConfig: BuildConfig): void {
   logger.printInfo(`Updated PATH: ${process.env.PATH}`);
 }
 
-function initKoalaWrapper(buildConfig: BuildConfig): void {
-  let koalaWrapperPath: string = path.resolve(buildConfig.buildSdkPath as string, KOALA_WRAPPER_PATH_FROM_SDK);
-  const { arkts, arktsGlobal } = require(koalaWrapperPath);
-  buildConfig.arkts = arkts;
-  buildConfig.arktsGlobal = arktsGlobal;
-  buildConfig.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+function initAliasConfig(buildConfig: BuildConfig): void {
+  buildConfig.aliasConfig = {};
+  buildConfig.sdkAliasMap = buildConfig.sdkAliasMap instanceof Map
+    ? buildConfig.sdkAliasMap
+    : new Map(Object.entries(buildConfig.sdkAliasMap || {}));
+
+  if (buildConfig.sdkAliasMap.size === 0) {
+    return;
+  }
+  for (const [pkgName, filePath] of buildConfig.sdkAliasMap) {
+    const rawContent = fs.readFileSync(filePath, 'utf-8');
+    const jsonData = JSON.parse(rawContent);
+    const pkgAliasObj: Record<string, AliasConfig> = {};
+
+    for (const [aliasKey, config] of Object.entries(jsonData)) {
+      if (typeof config !== 'object' || config === null ||
+        !('originalAPIName' in config) || !('isStatic' in config)) {
+        const logData: LogData = LogDataFactory.newInstance(
+          ErrorCode.BUILDSYSTEM_INIT_ALIAS_CONFIG_FAILED,
+          'Init Alias Config Failed',
+          `Invalid AliasConfig format in ${pkgName} -> ${aliasKey}`
+        );
+        Logger.getInstance().printErrorAndExit(logData);
+      }
+
+      const aliasConfig = config as AliasConfig;
+      pkgAliasObj[aliasKey] = {
+        originalAPIName: aliasConfig.originalAPIName,
+        isStatic: aliasConfig.isStatic
+      };
+    }
+
+    buildConfig.aliasConfig[pkgName] = pkgAliasObj;
+  }
+}
+
+function initInteropSDKInfo(buildConfig: BuildConfig): void {
+  buildConfig.interopSDKPaths = new Set<string>();
+
+  const basePaths = buildConfig.interopApiPaths?.length
+    ? buildConfig.interopApiPaths
+    : [path.resolve(buildConfig.buildSdkPath as string, '../ets1.1/build-tools/interop')];
+
+  for (const basePath of basePaths) {
+    /**
+     * dynamic public api from 1.1
+     */
+    const arktsPath = path.resolve(basePath, ARKTS);
+    /**
+     * dynamic public api from 1.1
+     */
+    const apiPath = path.resolve(basePath, API);
+    /**
+     * a router file from 1.1, whicl will export * from manay api file
+     * and kit have not runtime_name,is alias for edit,
+     * and will be transformed before compile in 1.1
+     */
+    const kitsPath = path.resolve(basePath, KITS);
+    /**
+     * component is inner api for apiPath and artsPath
+     * bcs apiPath and artsPath is dynamic module,
+     * apiPath will depend component, we should also add component to dependenciesection,
+     * or it will fatal error
+     */
+    const component = path.resolve(basePath, COMPONENT);
+
+
+    if (fs.existsSync(arktsPath)) {
+      buildConfig.interopSDKPaths.add(arktsPath);
+    }
+    if (fs.existsSync(apiPath)) {
+      buildConfig.interopSDKPaths.add(apiPath);
+    }
+    if (fs.existsSync(kitsPath)) {
+      buildConfig.interopSDKPaths.add(kitsPath);
+    }
+    if (fs.existsSync(component)) {
+      buildConfig.interopSDKPaths.add(component);
+    }
+  }
 }

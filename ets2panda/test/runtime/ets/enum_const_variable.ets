@@ -24,8 +24,8 @@ enum Color {
 }
 
 function main() {
-    assertEQ(Color.Red, 3)
-    assertEQ(Color.Blue, 13)
-    assertEQ(Color.Yellow, 14)
-    assertEQ(Color.Purple, 177)
+    arktest.assertEQ(Color.Red, 3)
+    arktest.assertEQ(Color.Blue, 13)
+    arktest.assertEQ(Color.Yellow, 14)
+    arktest.assertEQ(Color.Purple, 177)
 }

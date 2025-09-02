@@ -20,5 +20,5 @@ class C{
 function main() : void {
     let x = new C();
     x.f = "aa"
-    assertEQ(x.f, "aa")
+    arktest.assertEQ(x.f, "aa")
 }

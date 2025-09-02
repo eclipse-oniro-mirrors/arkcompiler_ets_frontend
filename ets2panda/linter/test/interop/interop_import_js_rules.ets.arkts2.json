@@ -245,16 +245,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 34,
-            "column": 14,
-            "endLine": 34,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 38,
             "column": 1,
             "endLine": 38,
@@ -315,26 +305,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 52,
-            "column": 10,
-            "endLine": 52,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 52,
-            "column": 14,
-            "endLine": 52,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 53,
             "column": 11,
             "endLine": 53,
@@ -392,16 +362,6 @@
             "problem": "InterOpImportJsIndex",
             "suggest": "",
             "rule": "Interop objects can't be indexed directly (arkts-interop-js2s-access-js-index)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 54,
-            "column": 12,
-            "endLine": 54,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -442,66 +402,6 @@
             "problem": "CallJSFunction",
             "suggest": "",
             "rule": "ArkTS directly call JS functions or parameters is not supported (arkts-interop-js2s-call-js-func)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 9,
-            "endLine": 67,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 13,
-            "endLine": 67,
-            "endColumn": 14,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 16,
-            "endLine": 67,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 19,
-            "endLine": 67,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 22,
-            "endLine": 67,
-            "endColumn": 26,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 25,
-            "endLine": 67,
-            "endColumn": 26,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -585,16 +485,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 84,
-            "column": 29,
-            "endLine": 84,
-            "endColumn": 32,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 88,
             "column": 1,
             "endLine": 92,
@@ -602,16 +492,6 @@
             "problem": "InteropJsObjectTraverseJsInstance",
             "suggest": "",
             "rule": "Direct usage of interop JS objects is not supported (arkts-interop-js2s-traverse-js-instance)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 89,
-            "column": 18,
-            "endLine": 89,
-            "endColumn": 19,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

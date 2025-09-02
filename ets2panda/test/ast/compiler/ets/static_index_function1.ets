@@ -29,5 +29,5 @@ function main() {
 
 /* @@@ label Error TypeError: '$_get' is a static property of 'A' */
 /* @@@ label1 Error TypeError: '$_get' is a static property of 'A' */
-/* @@@ label2 Error TypeError: Class name 'A' used in the wrong context */
+/* @@@ label2 Error SyntaxError: Class cannot be used as object. */
 /* @@@ label3 Error TypeError: '$_get' is a static property of 'A' */

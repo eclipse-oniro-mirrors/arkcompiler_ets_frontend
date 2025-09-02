@@ -119,7 +119,7 @@ TEST_F(ASTVerifierTest, ScopeNodeTest)
 TEST_F(ASTVerifierTest, ArithmeticExpressionCorrect1)
 {
     DiagnosticEngine de {};
-    ETSChecker etschecker {de};
+    ETSChecker etschecker {Allocator(), de};
 
     auto left = NumberLiteral(Number {1});
     auto right = NumberLiteral(Number {6});
@@ -134,7 +134,7 @@ TEST_F(ASTVerifierTest, ArithmeticExpressionCorrect1)
 TEST_F(ASTVerifierTest, ArithmeticExpressionCorrect2)
 {
     DiagnosticEngine de {};
-    ETSChecker etschecker {de};
+    ETSChecker etschecker {Allocator(), de};
 
     constexpr uint32_t LEFT1_PARAM = 1;
     constexpr uint32_t LEFT2_PARAM = 12;
@@ -156,7 +156,7 @@ TEST_F(ASTVerifierTest, ArithmeticExpressionCorrect2)
 TEST_F(ASTVerifierTest, ArithmeticExpressionNegative1)
 {
     DiagnosticEngine de {};
-    ETSChecker etschecker {de};
+    ETSChecker etschecker {Allocator(), de};
 
     const StringView leftParam("1");
     constexpr uint32_t RIGHT_PARAM = 1;
@@ -174,7 +174,7 @@ TEST_F(ASTVerifierTest, ArithmeticExpressionNegative1)
 TEST_F(ASTVerifierTest, ArithmeticExpressionNegative2)
 {
     DiagnosticEngine de {};
-    ETSChecker etschecker {de};
+    ETSChecker etschecker {Allocator(), de};
 
     auto left = BooleanLiteral(true);
     auto right = NumberLiteral(Number {1});
@@ -190,7 +190,7 @@ TEST_F(ASTVerifierTest, ArithmeticExpressionNegative2)
 TEST_F(ASTVerifierTest, PrimitiveType)
 {
     DiagnosticEngine de {};
-    ETSChecker etschecker {de};
+    ETSChecker etschecker {Allocator(), de};
 
     auto ast = BooleanLiteral(true);
     ast.SetTsType(etschecker.CreateETSBooleanType(true));
@@ -204,7 +204,7 @@ TEST_F(ASTVerifierTest, PrimitiveType)
 TEST_F(ASTVerifierTest, SequenceExpressionType)
 {
     auto de = DiagnosticEngine();
-    auto checker = ETSChecker(de);
+    auto checker = ETSChecker(Allocator(), de);
     const auto literalsCount = 3;
     std::array<NumberLiteral, literalsCount> literals {NumberLiteral {Number {1}}, NumberLiteral {Number {2}},
                                                        NumberLiteral {Number {3}}};
@@ -241,7 +241,7 @@ TEST_F(ASTVerifierTest, VariableNameIdentifierNameSameNegative)
             ->AsClassDeclaration()
             ->Definition()
             ->AsClassDefinition()
-            ->Body()[1]
+            ->Body()[0]
             ->AsClassElement()
             ->Value()
             ->AsFunctionExpression()

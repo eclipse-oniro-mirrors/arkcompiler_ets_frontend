@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-class A {
-    private static instance:A = new A();
-        static get():A {
-        return A.instance; //
+class AW {
+    private static instance:AW = new AW();
+        static get():AW {
+        return AW.instance; //
     }
 }
 
@@ -116,6 +116,252 @@ async function taskInfo():Promise<void> {//nopass
       }
       hilog.info(0x0000, 'testTag-----',"getTaskPoolInfo: --taskId is:" + taskId + ", state is:" + state + ", duration is:" + duration +
         ", name is:" + name);
+    }
+  }
+}
+
+class A {
+    f(): number| null {
+        return 1
+    }
+}
+
+class B {
+    a?:A = new A()
+}
+let b = new B()
+if(b.a && b.a.f() !== null){ //Error
+    console.log('23')
+}
+
+if (b.a.f() !== null) { //Error
+  console.log('warn');
+}
+if (b.a?.f() !== null) {
+  console.log('ok');
+}
+function check(obj?: A) {
+  if (obj.f() !== null) { //Error
+    console.log('warn');
+  }
+}
+if ((b.a?.f() ?? 0) > 0) {
+  console.log('ok');
+}
+const val = b.a.f(); //Error
+
+
+function foo4(uri: string | number | boolean) : string {
+  return uri as string
+}
+
+class AA5 {
+  public static starUrl(url: string)  {
+    if (url?startsWith('http')) {
+      url = `https:/test?appid=2000?url=${foo4(url)}`;
+    }
+  }
+}
+
+
+function sleep<T = void>(ms: number): PromiseLike {
+  return new Promise(
+    (resolve: (value: T | PromiseLike) => void): number => setTimeout(resolve, ms)
+  );
+}
+
+type TypeA = (key: string) => string | undefined
+
+class ClassA {
+    static sA?: TypeA = undefined
+
+    static funA(key: string): string | undefined {
+        if (ClassA.sA) {
+            return ClassA.sA(key) //error
+        }
+        else {
+            return undefined;
+        }
+    }
+}
+
+class AT {
+    b?: boolean
+
+    isRelease(): boolean {
+        if (this.b != undefined) {
+            return this.b //error
+        }
+    }
+}
+
+export class K {
+    _t:string
+    constructor(t:string) {
+        this._t = t;
+    }
+}
+
+export class P extends K {
+    constructor(t:string){
+        super(t)
+    }
+    toString(): string {
+        return this._t // legal
+    }
+}
+
+export class H {
+  protected _t:string
+  constructor(t:string) {
+      this._t = t;
+  }
+}
+
+export class T extends H {
+    constructor(t:string) {
+      super(t)
+    }
+}
+
+export class N extends T {
+    constructor(t:string){
+        super(t)
+    }
+    toString(): string {
+        return this._t // legal
+    }
+}
+
+type AsyncCB<T> = () => T | Promise<T>;
+
+class AsyncLock {
+    lockAsync<T>(callback: AsyncCB<T>): Promise<T> {
+    }
+}
+
+export class AB {
+    private count_: number = 0
+    public lock_: AsyncLock = new AsyncLock();
+
+    public async getCount(): Promise<number> {
+        return this.lock_.lockAsync(() => {
+            return this.count_; //legal
+        })
+    }
+}
+
+class AG {
+h?: number;
+f(): number | null {
+  return 1;
+}
+}
+
+function check(obj?: AG) {
+if (obj) {
+  console.log(obj.f()); // valid(guarded)
+}
+if (obj !== undefined) {
+  obj.f(); // valid(guarded)
+}
+}
+
+function check4(obj?: AG) {
+
+if (!obj) {
+  return;
+}
+obj.f(); // valid(guarded)
+}
+function check2(obj?: AG) {
+obj.f(); // ERROR
+
+if (obj == null) return;
+obj.f(); // valid(guarded)
+
+}
+function check3(obj?: AG) {
+
+return obj ? obj.f() : null; // guarded in ternary
+
+}
+
+function check35(obj?: AG) {
+
+if (obj.h == 3) { //error
+  console.log('3');
+}
+
+}
+
+function check36(obj?: AG) {
+
+if (obj && obj.h == 3) { // valid(guarded)
+  console.log('3');
+}
+
+}
+
+function check43(obj?: AG) {
+const val = obj.h; // NOT guarded
+return val;
+}
+
+}
+
+let NextID: number = 1;
+
+class downloadFilesData {
+  id: number;
+  url: string;
+  fileStatus: number;
+  downloadTime: number;
+
+  constructor(
+    url: string = '',
+    fileStatus: number = 0,
+    downloadTime: number = 0,
+  ) {
+    this.id = NextID++;
+    this.url = url;
+    this.fileStatus = fileStatus;
+    this.downloadTime = downloadTime;
+  }
+}
+
+class Downloader {
+  downloadFileArray: downloadFilesData[] = [];
+
+  loadInitializationDataSource() {
+    let stringData = JSON.stringify([
+      {
+        "url": "https://example.com/file1.zip",
+        "fileStatus": 1,
+        "downloadTime": 1734931200
+      },
+      {
+        "url": "https://example.com/file2.mp4",
+        "fileStatus": 0,
+        "downloadTime": 0
+      },
+      {
+        "url": "https://example.com/file3.pdf",
+        "fileStatus": 2,
+        "downloadTime": 1734931300
+      }
+    ]);
+
+    let data: [] = JSON.parse(stringData) as [];
+
+    for (let i = 0; i < data.length; i++) {
+      const downloadItemData = data[i] as downloadFilesData;
+      let downloadData: downloadFilesData = new downloadFilesData(
+        downloadItemData.url,
+        downloadItemData.fileStatus,
+        downloadItemData.downloadTime
+      );
+      this.downloadFileArray.push(downloadData);
     }
   }
 }

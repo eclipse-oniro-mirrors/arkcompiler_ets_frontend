@@ -32,3 +32,24 @@ export const LIMITED_STANDARD_UTILITY_TYPES = [
   'Pick',
   'Awaited'
 ];
+
+export const LIMITED_STANDARD_UTILITY_TYPES2 = [
+  'Uncapitalize',
+  'Capitalize',
+  'Lowercase',
+  'Uppercase',
+  'ThisType',
+  'OmitThisParameter',
+  'ThisParameterType',
+  'InstanceType',
+  'ReturnType',
+  'ConstructorParameters',
+  'Parameters',
+  'NonNullable',
+  'Extract',
+  'Exclude',
+  'Omit',
+  'Pick',
+  'Awaited',
+  'NoInfer'
+];

@@ -1,0 +1,58 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 35,
+            "column": 7,
+            "endLine": 35,
+            "endColumn": 9,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all optional fields from the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 7,
+            "endLine": 54,
+            "endColumn": 9,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all optional fields from the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 7,
+            "endLine": 57,
+            "endColumn": 10,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all optional fields from the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 7,
+            "endLine": 68,
+            "endColumn": 9,
+            "problem": "InterfaceFieldNotImplemented",
+            "suggest": "",
+            "rule": "ArkTS 1.2 should implement all optional fields from the interface in the class (arkts-no-class-omit-interface-optional-prop)",
+            "severity": "ERROR"
+        }
+    ]
+}

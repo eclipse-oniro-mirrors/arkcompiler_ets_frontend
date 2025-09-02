@@ -38,6 +38,5 @@ export class AccessNSieve {
 /* @@? 29:14 Error SyntaxError: Unexpected token ':'. */
 /* @@? 29:16 Error SyntaxError: Expected ')', got 'int'. */
 /* @@? 29:16 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 29:25 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 29:36 Error SyntaxError: Unexpected token ')'. */
 /* @@? 29:38 Error SyntaxError: Unexpected token '{'. */

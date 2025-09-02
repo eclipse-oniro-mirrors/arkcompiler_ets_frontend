@@ -34,7 +34,7 @@ void ETSModule::Dump(ir::SrcDumper *dumper) const
         }
 
         dumper->Add("namespace ");
-        ident_->Dump(dumper);
+        Ident()->Dump(dumper);
         dumper->Add(" {");
         dumper->IncrIndent();
     }
@@ -57,7 +57,7 @@ void ETSModule::Dump(ir::SrcDumper *dumper) const
 ETSModule *ETSModule::Construct(ArenaAllocator *allocator)
 {
     ArenaVector<Statement *> statementList(allocator->Adapter());
-    return allocator->New<ETSModule>(allocator, std::move(statementList), nullptr, ModuleFlag::NONE, nullptr);
+    return allocator->New<ETSModule>(allocator, std::move(statementList), nullptr, ModuleFlag::NONE, lang_, nullptr);
 }
 
 void ETSModule::CopyTo(AstNode *other) const
@@ -67,8 +67,9 @@ void ETSModule::CopyTo(AstNode *other) const
     otherImpl->ident_ = ident_;
     otherImpl->flag_ = flag_;
     otherImpl->program_ = program_;
+    otherImpl->globalClass_ = globalClass_;
 
-    JsDocAllowed<AnnotationAllowed<BlockStatement>>::CopyTo(other);
+    AnnotationAllowed<BlockStatement>::CopyTo(other);
 }
 
 }  // namespace ark::es2panda::ir

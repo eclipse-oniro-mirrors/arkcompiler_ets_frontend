@@ -325,16 +325,20 @@ std::optional<ArgumentListInfo> GetImmediatelyContainingArgumentInfo(ir::AstNode
     if (position == 0) {
         return std::nullopt;
     }
-    if (node->Parent()->Type() == ir::AstNodeType::CALL_EXPRESSION ||
-        node->Parent()->Type() == ir::AstNodeType::NEW_EXPRESSION) {
-        auto const invocation = node->Parent();
+    auto parent = node->Parent();
+    if (parent->Type() == ir::AstNodeType::CALL_EXPRESSION || parent->Type() == ir::AstNodeType::NEW_EXPRESSION ||
+        parent->Type() == ir::AstNodeType::MEMBER_EXPRESSION) {
+        if (parent->IsMemberExpression() && parent->Parent() != nullptr && parent->Parent()->IsCallExpression()) {
+            parent = parent->Parent();
+        }
+        auto const invocation = parent;
 
-        auto const argument = GetArgumentOrParameterListInfo(node->Parent());
+        auto const argument = GetArgumentOrParameterListInfo(parent);
         const auto &list = argument.GetList();
         if (!list.empty()) {
             auto const argumentIndex = argument.GetArgumentIndex();
-            auto const argumentCount = GetArgumentCount(node->Parent(), false);
-            auto const span = CreateTextSpanForNode(node->Parent());
+            auto const argumentCount = GetArgumentCount(parent, false);
+            auto const span = CreateTextSpanForNode(parent);
             ArgumentListInfo argumentList;
             argumentList.SetInvocation(Invocation(CallInvocation {InvocationKind::CALL, invocation}));
             argumentList.SetApplicableSpan(span);
@@ -342,8 +346,8 @@ std::optional<ArgumentListInfo> GetImmediatelyContainingArgumentInfo(ir::AstNode
             argumentList.SetArgumentCount(argumentCount);
             return argumentList;
         }
-    } else if (node->Parent()->Type() == ir::AstNodeType::METHOD_DEFINITION) {
-        auto const info = GetContextualSignatureLocationInfo(node->Parent());
+    } else if (parent->Type() == ir::AstNodeType::METHOD_DEFINITION) {
+        auto const info = GetContextualSignatureLocationInfo(parent);
         if (!info) {
             return std::nullopt;
         }
@@ -352,7 +356,7 @@ std::optional<ArgumentListInfo> GetImmediatelyContainingArgumentInfo(ir::AstNode
         auto const span = info->GetArgumentsSpan();
         std::optional<ArgumentListInfo> argumentList = ArgumentListInfo();
         const ContextualInvocation invocation = ContextualInvocation {
-            InvocationKind::CONTEXTUAL, node->Parent()->AsMethodDefinition()->Function()->Signature(), node->Parent()};
+            InvocationKind::CONTEXTUAL, parent->AsMethodDefinition()->Function()->Signature(), parent};
         argumentList->SetInvocation(invocation);
         argumentList->SetApplicableSpan(span);
         argumentList->SetArgumentIndex(index);

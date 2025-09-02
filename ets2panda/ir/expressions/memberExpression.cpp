@@ -21,6 +21,7 @@
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/pandagen.h"
 #include "util/diagnostic.h"
+#include "util/es2pandaMacros.h"
 
 namespace ark::es2panda::ir {
 MemberExpression::MemberExpression([[maybe_unused]] Tag const tag, MemberExpression const &other,
@@ -206,10 +207,29 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
             return;
         }
 
+        if (memberType->IsETSMethodType() && memberType->Variable()->HasFlag(varbinder::VariableFlags::OVERLOAD)) {
+            checker->LogError(diagnostic::OVERLOADED_UNION_CALL, {}, Start());
+            return;
+        }
+
+        if (memberType->IsETSMethodType() && memberType->AsETSFunctionType()->CallSignatures().size() > 1U) {
+            if (!Parent()->IsCallExpression() || Parent()->AsCallExpression()->Callee() != this) {
+                commonPropType = checker->GlobalTypeError();
+                checker->LogError(diagnostic::OVERLOADED_METHOD_AS_VALUE, Start());
+                return;
+            }
+        }
+
         if (!commonPropType->IsETSMethodType() && !memberType->IsETSMethodType()) {
             if (!checker->IsTypeIdenticalTo(commonPropType, memberType)) {
                 checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
             }
+            return;
+        }
+
+        if (!commonPropType->IsETSFunctionType() || !memberType->IsETSFunctionType()) {
+            checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
+            commonPropType = checker->GlobalTypeError();
             return;
         }
 
@@ -326,33 +346,10 @@ checker::Type *MemberExpression::SetAndAdjustType(checker::ETSChecker *checker, 
 
 std::optional<std::size_t> MemberExpression::GetTupleIndexValue() const
 {
-    auto *propType = property_->TsType();
-    if (object_->TsType() == nullptr || !object_->TsType()->IsETSTupleType() ||
-        !propType->HasTypeFlag(checker::TypeFlag::CONSTANT | checker::TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC)) {
+    if (object_->TsType() == nullptr || !object_->TsType()->IsETSTupleType() || !property_->IsNumberLiteral()) {
         return std::nullopt;
     }
-
-    if (propType->IsByteType()) {
-        return propType->AsByteType()->GetValue();
-    }
-
-    if (propType->IsShortType()) {
-        return propType->AsShortType()->GetValue();
-    }
-
-    if (propType->IsIntType()) {
-        return propType->AsIntType()->GetValue();
-    }
-
-    if (propType->IsLongType()) {
-        if (auto val = propType->AsLongType()->GetValue();
-            val <= std::numeric_limits<int32_t>::max() && val >= std::numeric_limits<int32_t>::min()) {
-            return static_cast<std::size_t>(val);
-        }
-        return std::nullopt;
-    }
-
-    ES2PANDA_UNREACHABLE();
+    return property_->AsNumberLiteral()->Number().GetValueAndCastTo<std::size_t>();
 }
 
 bool MemberExpression::CheckArrayIndexValue(checker::ETSChecker *checker) const
@@ -362,7 +359,7 @@ bool MemberExpression::CheckArrayIndexValue(checker::ETSChecker *checker) const
     auto const &number = property_->AsNumberLiteral()->Number();
 
     if (number.IsInteger()) {
-        auto const value = number.GetLong();
+        auto const value = number.GetValueAndCastTo<int64_t>();
         if (value < 0) {
             checker->LogError(diagnostic::NEGATIVE_INDEX, {}, property_->Start());
             return false;
@@ -370,8 +367,7 @@ bool MemberExpression::CheckArrayIndexValue(checker::ETSChecker *checker) const
         index = static_cast<std::size_t>(value);
     } else {
         ES2PANDA_ASSERT(number.IsReal());
-
-        double value = number.GetDouble();
+        auto value = number.GetValueAndCastTo<double>();
         double fraction = std::modf(value, &value);
         if (value < 0.0 || fraction >= std::numeric_limits<double>::epsilon()) {
             checker->LogError(diagnostic::INDEX_NEGATIVE_OR_FRACTIONAL, {}, property_->Start());
@@ -439,8 +435,12 @@ checker::Type *MemberExpression::CheckIndexAccessMethod(checker::ETSChecker *che
         isSetter ? compiler::Signatures::SET_INDEX_METHOD : compiler::Signatures::GET_INDEX_METHOD;
     auto *const method = objType_->GetProperty(methodName, searchFlag);
     if (method == nullptr || !method->HasFlag(varbinder::VariableFlags::METHOD)) {
-        checker->LogError(diagnostic::ERROR_ARKTS_NO_PROPERTIES_BY_INDEX, {}, Start());
+        checker->LogError(diagnostic::NO_INDEX_ACCESS_METHOD, {}, Start());
         return nullptr;
+    }
+
+    if (objType_->IsETSResizableArrayType() && property_->IsNumberLiteral()) {
+        CheckArrayIndexValue(checker);
     }
 
     ArenaVector<Expression *> arguments {checker->ProgramAllocator()->Adapter()};
@@ -460,20 +460,8 @@ checker::Type *MemberExpression::CheckIndexAccessMethod(checker::ETSChecker *che
 checker::Type *MemberExpression::GetTypeOfTupleElement(checker::ETSChecker *checker, checker::Type *baseType)
 {
     ES2PANDA_ASSERT(baseType->IsETSTupleType());
-    checker::Type *type = nullptr;
-    if (Property()->HasBoxingUnboxingFlags(ir::BoxingUnboxingFlags::UNBOXING_FLAG)) {
-        ES2PANDA_ASSERT(Property()->Variable()->Declaration()->Node()->AsClassElement()->Value());
-        type = Property()->Variable()->Declaration()->Node()->AsClassElement()->Value()->TsType();
-    } else {
-        type = Property()->TsType();
-    }
-
-    auto idxIfAny = checker->GetTupleElementAccessValue(type);
-    if (!idxIfAny.has_value()) {
-        return nullptr;
-    }
-
-    return baseType->AsETSTupleType()->GetTypeAtIndex(*idxIfAny);
+    auto const idxIfAny = checker->GetTupleElementAccessValue(Property());
+    return idxIfAny.has_value() ? baseType->AsETSTupleType()->GetTypeAtIndex(*idxIfAny) : nullptr;
 }
 
 static void CastTupleElementFromClassMemberType(checker::ETSChecker *checker,
@@ -488,15 +476,39 @@ static void CastTupleElementFromClassMemberType(checker::ETSChecker *checker,
                                                   tupleElementAccessor->Start(), checker::TypeRelationFlag::NO_THROW});
 }
 
+checker::Type *MemberExpression::HandleComputedInGradualType(checker::ETSChecker *checker, checker::Type *baseType)
+{
+    property_->Check(checker);
+    if (baseType->IsETSObjectType()) {
+        util::StringView searchName;
+        if (property_->IsLiteral()) {
+            searchName = util::StringView {property_->AsLiteral()->ToString()};
+        }
+        auto found = baseType->AsETSObjectType()->GetProperty(searchName, checker::PropertySearchFlags::SEARCH_ALL);
+        if (found == nullptr) {
+            // Try to find indexer method
+            checker::Type *indexType = CheckIndexAccessMethod(checker);
+            if (indexType != nullptr) {
+                return indexType;
+            }
+            checker->LogError(diagnostic::PROPERTY_NONEXISTENT, {searchName, baseType->AsETSObjectType()->Name()},
+                              property_->Start());
+            return nullptr;
+        }
+        return found->TsType();
+    }
+    ES2PANDA_UNREACHABLE();
+    return nullptr;
+}
+
 checker::Type *MemberExpression::CheckComputed(checker::ETSChecker *checker, checker::Type *baseType)
 {
-    if (baseType->IsETSDynamicType()) {
-        if (!property_->Check(checker)->IsETSStringType()) {
-            checker->ValidateArrayIndex(property_);
-        }
-        return checker->GlobalBuiltinDynamicType(baseType->AsETSDynamicType()->Language());
+    if (baseType->IsETSObjectType() && baseType->AsETSObjectType()->GetDeclNode() != nullptr &&
+        baseType->AsETSObjectType()->GetDeclNode()->AsTyped()->TsType() != nullptr &&
+        baseType->AsETSObjectType()->GetDeclNode()->AsTyped()->TsType()->IsGradualType()) {
+        SetObjectType(baseType->AsETSObjectType());
+        return HandleComputedInGradualType(checker, baseType);
     }
-
     if (baseType->IsETSArrayType()) {
         auto *dflt = baseType->AsETSArrayType()->ElementType();
         if (!checker->ValidateArrayIndex(property_)) {

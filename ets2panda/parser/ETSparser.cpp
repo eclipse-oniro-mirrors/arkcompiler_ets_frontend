@@ -99,12 +99,15 @@ bool ETSParser::IsETSParser() const noexcept
     return true;
 }
 
+bool ETSParser::IsValidIdentifierName(const lexer::Token &token) const noexcept
+{
+    return !token.IsPredefinedType() || util::Helpers::IsStdLib(GetProgram());
+}
+
 std::unique_ptr<lexer::Lexer> ETSParser::InitLexer(const SourceFile &sourceFile)
 {
     GetProgram()->SetSource(sourceFile);
-    GetContext().Status() |= ParserStatus::ALLOW_JS_DOC_START;
     auto lexer = std::make_unique<lexer::ETSLexer>(&GetContext(), DiagnosticEngine());
-    GetContext().Status() ^= ParserStatus::ALLOW_JS_DOC_START;
     SetLexer(lexer.get());
     return lexer;
 }
@@ -134,17 +137,15 @@ void ETSParser::ParseProgram(ScriptKind kind)
     if ((GetContext().Status() & parser::ParserStatus::DEPENDENCY_ANALYZER_MODE) == 0) {
         script = ParseETSGlobalScript(startLoc, statements);
     } else {
-        script = ParseImportsOnly(startLoc, statements);
+        script = ParseImportsAndReExportOnly(startLoc, statements);
     }
 
     if ((GetContext().Status() & ParserStatus::IN_PACKAGE) != 0) {
         GetContext().Status() &= ~ParserStatus::IN_PACKAGE;
     }
-
-    if (!GetOptions().IsGenerateDeclEnableIsolated()) {
-        AddExternalSource(ParseSources(true));
-    }
-
+#ifndef ENABLE_ISOLATED_DECLGEN
+    AddExternalSource(ParseSources(true));
+#endif
     GetProgram()->SetAst(script);
 }
 
@@ -173,43 +174,43 @@ ir::ETSModule *ETSParser::ParseETSGlobalScript(lexer::SourcePosition startLoc, A
     auto imports = ParseImportDeclarations();
     statements.insert(statements.end(), imports.begin(), imports.end());
 
+    auto initModules = ParseETSInitModuleStatements();
+    statements.insert(statements.end(), initModules.begin(), initModules.end());
+
     auto topLevelStatements = ParseTopLevelDeclaration();
     statements.insert(statements.end(), topLevelStatements.begin(), topLevelStatements.end());
 
     etsnolintParser.ApplyETSNolintsToStatements(statements);
 
     auto ident = AllocNode<ir::Identifier>(compiler::Signatures::ETS_GLOBAL, Allocator());
-    auto *etsModule =
-        AllocNode<ir::ETSModule>(Allocator(), std::move(statements), ident, ir::ModuleFlag::ETSSCRIPT, GetProgram());
+    auto *etsModule = AllocNode<ir::ETSModule>(Allocator(), std::move(statements), ident, ir::ModuleFlag::ETSSCRIPT,
+                                               GetContext().GetLanguage(), GetProgram());
     ES2PANDA_ASSERT(etsModule != nullptr);
     etsModule->SetRange({startLoc, Lexer()->GetToken().End()});
     return etsModule;
 }
 
-ir::ETSModule *ETSParser::ParseImportsOnly(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> &statements)
+ir::ETSModule *ETSParser::ParseImportsAndReExportOnly(lexer::SourcePosition startLoc,
+                                                      ArenaVector<ir::Statement *> &statements)
 {
     ETSNolintParser etsnolintParser(this);
     etsnolintParser.CollectETSNolints();
 
-    if (Lexer()->TryEatTokenType(lexer::TokenType::JS_DOC_START)) {
-        // Note: Not Support JS_DOC for Import declaration now, just go on;
-        ParseJsDocInfos();
-    }
     auto imports = ParseImportDeclarations();
     statements.insert(statements.end(), imports.begin(), imports.end());
     etsnolintParser.ApplyETSNolintsToStatements(statements);
 
     auto ident = AllocNode<ir::Identifier>(compiler::Signatures::ETS_GLOBAL, Allocator());
-    auto *etsModule =
-        AllocNode<ir::ETSModule>(Allocator(), std::move(statements), ident, ir::ModuleFlag::ETSSCRIPT, GetProgram());
+    auto *etsModule = AllocNode<ir::ETSModule>(Allocator(), std::move(statements), ident, ir::ModuleFlag::ETSSCRIPT,
+                                               GetContext().GetLanguage(), GetProgram());
     ES2PANDA_ASSERT(etsModule != nullptr);
     etsModule->SetRange({startLoc, Lexer()->GetToken().End()});
     return etsModule;
 }
 
-bool ETSParser::CheckDupAndReplace(Program *&oldProg, Program *newProg)
+bool ETSParser::CheckDupAndReplace(Program *&oldProg, Program *newProg) const
 {
-    if (!importPathManager_->ArkTSConfig()->UseUrl() && oldProg->FileName() == newProg->FileName() &&
+    if (oldProg->FileName() == newProg->FileName() &&
         oldProg->FileNameWithExtension() != newProg->FileNameWithExtension()) {
         bool oldIsDeclare = oldProg->FileNameWithExtension().Length() > newProg->FileNameWithExtension().Length();
         if (oldIsDeclare) {
@@ -234,7 +235,7 @@ void ETSParser::AddExternalSource(const std::vector<Program *> &programs)
         }
         bool found = false;
         auto &extProgs = extSources.at(name);
-        for (auto prog : extProgs) {
+        for (auto &prog : extProgs) {
             if (prog->SourceFilePath() == newProg->SourceFilePath()) {
                 found = true;
                 break;
@@ -265,11 +266,20 @@ ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseDefaultSources(std::stri
 
     std::vector<Program *> programs;
     auto *ctx = GetProgram()->VarBinder()->GetContext();
-    if (ctx->compilingState != public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-        programs = ParseSources();
-        AddExternalSource(programs);
+    if (ctx->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
+        return statements;
     }
 
+    if (!Context()->compiledByCapi) {
+        AddExternalSource(ParseSources());
+    } else {
+        if (Context()->globalContext != nullptr && Context()->globalContext->stdLibAstCache != nullptr) {
+            globalProgram_->MergeExternalSource(Context()->globalContext->stdLibAstCache);
+            importPathManager_->ClearParseList();
+        } else {
+            AddExternalSource(ParseSources());
+        }
+    }
     return statements;
 }
 
@@ -286,7 +296,13 @@ void ETSParser::AddDirectImportsToDirectExternalSources(
     if (GetProgram()->DirectExternalSources().count(name) == 0) {
         GetProgram()->DirectExternalSources().try_emplace(name, Allocator()->Adapter());
     }
-    GetProgram()->DirectExternalSources().at(name).emplace_back(newProg);
+    auto &dirExternal = GetProgram()->DirectExternalSources().at(name);
+    for (auto &prog : dirExternal) {
+        if (CheckDupAndReplace(prog, newProg)) {
+            return;
+        }
+    }
+    dirExternal.emplace_back(newProg);
 }
 
 void ETSParser::ParseParseListElement(const util::ImportPathManager::ParseInfo &parseListElem, util::UString *extSrc,
@@ -311,8 +327,10 @@ void ETSParser::AddGenExtenralSourceToParseList(public_lib::Context *ctx)
     auto allocator = ctx->allocator;
     auto ident = allocator->New<ir::Identifier>(compiler::Signatures::ETS_GLOBAL, allocator);
     ArenaVector<ir::Statement *> stmts(allocator->Adapter());
-    auto etsModule = allocator->New<ir::ETSModule>(allocator, std::move(stmts), ident, ir::ModuleFlag::ETSSCRIPT,
-                                                   ctx->parserProgram);
+
+    auto etsModule =
+        allocator->New<ir::ETSModule>(allocator, std::move(stmts), ident, ir::ModuleFlag::ETSSCRIPT,
+                                      ctx->parser->AsETSParser()->GetContext().GetLanguage(), ctx->parserProgram);
     ctx->parserProgram->SetAst(etsModule);
     for (auto &sourceName : ctx->sourceFileNames) {
         util::ImportPathManager::ImportMetadata importData {util::ImportFlags::NONE};
@@ -341,6 +359,25 @@ static bool SearchImportedExternalSources(ETSParser *parser, const std::string_v
     return false;
 }
 
+bool ETSParser::TryMergeFromCache(size_t idx, ArenaVector<util::ImportPathManager::ParseInfo> &parseList)
+{
+    if (Context()->globalContext == nullptr) {
+        return false;
+    }
+
+    auto &importData = parseList[idx].importData;
+    auto src = importData.HasSpecifiedDeclPath() ? importData.declPath : importData.resolvedSource;
+    const auto &absPath = std::string {util::Path {src, Allocator()}.GetAbsolutePath()};
+    auto cacheExtProgs = Context()->globalContext->cachedExternalPrograms;
+    if (cacheExtProgs.find(absPath) != cacheExtProgs.end() && cacheExtProgs[absPath] != nullptr) {
+        if (globalProgram_->MergeExternalSource(cacheExtProgs[absPath])) {
+            importPathManager_->MarkAsParsed(parseList[idx].importData.resolvedSource);
+            return true;
+        }
+    }
+    return false;
+}
+
 // NOTE (mmartin): Need a more optimal solution here
 // This is needed, as during a parsing of a file, programs can be re-added to the parseList, which needs to be
 // re-parsed. This won't change the size of the list, so with only the 'for loop', there can be unparsed files
@@ -362,6 +399,11 @@ std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPat
             if (parseList[idx].isParsed) {
                 continue;
             }
+
+            if (TryMergeFromCache(idx, parseList)) {
+                continue;
+            }
+
             const auto &data = parseList[idx].importData;
             if (data.declPath.empty()) {
                 importPathManager_->MarkAsParsed(data.resolvedSource);
@@ -373,15 +415,23 @@ std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPat
                 importPathManager_->MarkAsParsed(data.resolvedSource);
                 return programs;
             }
-            util::DiagnosticMessageParams diagParams = {std::string(parseCandidate)};
-            std::ifstream inputStream {std::string(parseCandidate)};
+
+            std::string parseCandidateStr {parseCandidate};
+            util::DiagnosticMessageParams diagParams = {parseCandidateStr};
+            std::ifstream inputStream {parseCandidateStr};
             if (!inputStream) {
                 DiagnosticEngine().LogDiagnostic(diagnostic::OPEN_FAILED, diagParams);
                 return programs;  // Error processing.
             }
             std::stringstream ss;
             ss << inputStream.rdbuf();
-            std::string externalSource = ss.str();
+            std::string externalSource;
+            if (data.IsExternalBinaryImport()) {
+                externalSource = data.declText;
+            } else {
+                externalSource = ss.str();
+            }
+
             auto preservedLang = GetContext().SetLanguage(data.lang);
             auto extSrc = Allocator()->New<util::UString>(externalSource, Allocator());
             importPathManager_->MarkAsParsed(data.resolvedSource);
@@ -513,6 +563,11 @@ ir::ScriptFunction *ETSParser::ParseFunction(ParserStatus newStatus)
         LogError(diagnostic::ASYNC_IN_AMBIENT_CONTEXT);
     }
 
+    if (isDeclare && signature.ReturnType() != nullptr) {
+        // Note: if the return type annotation is null, the error handler will set later.
+        endLoc = signature.ReturnType()->Range().end;
+    }
+
     // clang-format off
     ir::ModifierFlags mFlags = isDeclare ? ir::ModifierFlags::DECLARE : ir::ModifierFlags::NONE;
     ir::ScriptFunctionFlags funcFlags =
@@ -543,25 +598,6 @@ std::tuple<bool, ir::BlockStatement *, lexer::SourcePosition, bool> ETSParser::P
     return {true, body, body->End(), false};
 }
 
-ir::ScriptFunctionFlags ETSParser::ParseFunctionThrowMarker(bool isRethrowsAllowed)
-{
-    ir::ScriptFunctionFlags throwMarker = ir::ScriptFunctionFlags::NONE;
-
-    if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT) {
-        if (Lexer()->TryEatTokenKeyword(lexer::TokenType::KEYW_THROWS)) {
-            throwMarker = ir::ScriptFunctionFlags::THROWS;
-        } else if (Lexer()->TryEatTokenKeyword(lexer::TokenType::KEYW_RETHROWS)) {
-            if (isRethrowsAllowed) {
-                throwMarker = ir::ScriptFunctionFlags::RETHROWS;
-            } else {
-                LogError(diagnostic::ONLY_THROWS_IN_FUN_TYPE);
-            }
-        }
-    }
-
-    return throwMarker;
-}
-
 ir::AstNode *ETSParser::ParseInnerTypeDeclaration(ir::ModifierFlags memberModifiers, lexer::LexerPosition savedPos,
                                                   bool isStepToken, bool seenStatic)
 {
@@ -578,7 +614,7 @@ ir::AstNode *ETSParser::ParseInnerTypeDeclaration(ir::ModifierFlags memberModifi
     Lexer()->GetToken().SetTokenType(Lexer()->GetToken().KeywordType());
     ir::AstNode *typeDecl = ParseTypeDeclaration(true);
     if (typeDecl == nullptr) {
-        return AllocBrokenStatement({savedPos.GetToken().Start(), Lexer()->GetToken().End()});
+        return nullptr;
     }
     memberModifiers &= (ir::ModifierFlags::PUBLIC | ir::ModifierFlags::PROTECTED | ir::ModifierFlags::PRIVATE |
                         ir::ModifierFlags::INTERNAL);
@@ -602,9 +638,15 @@ ir::AstNode *ETSParser::ParseInnerConstructorDeclaration(ir::ModifierFlags membe
         0) {
         LogError(diagnostic::INVALID_DECORATOR_CONSTRUCTOR);
     }
-    auto *memberName = AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator());
+
+    lexer::Token constructorToken = Lexer()->GetToken();
+    Lexer()->TryEatTokenType(lexer::TokenType::KEYW_CONSTRUCTOR);
     memberModifiers |= ir::ModifierFlags::CONSTRUCTOR;
-    Lexer()->NextToken();
+
+    ir::Identifier *memberName = Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT
+                                     ? ExpectIdentifier(false, true)
+                                     : AllocNode<ir::Identifier>(constructorToken.Ident(), Allocator());
+
     auto *classMethod = ParseClassMethodDefinition(memberName, memberModifiers, isDefault);
     ES2PANDA_ASSERT(classMethod != nullptr);
     classMethod->SetStart(startLoc);
@@ -653,10 +695,10 @@ ir::AstNode *ETSParser::ParseInnerRest(const ArenaVector<ir::AstNode *> &propert
         return ParseClassGetterSetterMethod(properties, modifiers, memberModifiers, isDefault);
     }
 
-    auto parseClassMethod = [&memberModifiers, &startLoc, isDefault, this](ir::Identifier *methodName) {
+    auto parseClassMethod = [&memberModifiers, isDefault, this](ir::Identifier *methodName) {
         auto *classMethod = ParseClassMethodDefinition(methodName, memberModifiers, isDefault);
         ES2PANDA_ASSERT(classMethod != nullptr);
-        classMethod->SetStart(startLoc);
+        classMethod->SetStart(methodName->Start());
         return classMethod;
     };
 
@@ -667,12 +709,30 @@ ir::AstNode *ETSParser::ParseInnerRest(const ArenaVector<ir::AstNode *> &propert
         }
     }
 
+    if (Lexer()->TryEatTokenFromKeywordType(lexer::TokenType::KEYW_OVERLOAD)) {
+        auto *classOverload = ParseClassOverloadDeclaration(memberModifiers);
+        classOverload->SetStart(startLoc);
+        return classOverload;
+    }
+
     auto *memberName = ExpectIdentifier(false, false, TypeAnnotationParsingOptions::NO_OPTS);  // don't report error
-    if (memberName == nullptr) {                                                               // log error here
+    if (memberName == nullptr) {
+        auto tokenType = Lexer()->GetToken().Type();
+        if (Lexer()->TryEatTokenType(lexer::TokenType::KEYW_NEW) ||
+            Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
+            LogError(diagnostic::CALL_SIG_IN_OBJECT,
+                     {tokenType == lexer::TokenType::KEYW_NEW ? "Constructor" : "Call"});
+            auto *ident = AllocNode<ir::Identifier>("dummy", Allocator());
+            parseClassMethod(ident);
+            return AllocBrokenStatement(Lexer()->GetToken().Loc());
+        }  // log error here
         LogUnexpectedToken(Lexer()->GetToken());
         const auto &rangeToken = Lexer()->GetToken().Loc();
         Lexer()->NextToken();
         return AllocBrokenStatement(rangeToken);
+    }
+    if (memberName->IsErrorPlaceHolder()) {
+        return AllocBrokenStatement(startLoc);
     }
 
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS ||
@@ -760,10 +820,6 @@ ir::TSTypeAliasDeclaration *ETSParser::ParseTypeAliasDeclaration()
     ES2PANDA_ASSERT(Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_TYPE);
 
     const auto start = Lexer()->Save();
-
-    auto newStatus = GetContext().Status();
-    newStatus &= ~ParserStatus::ALLOW_JS_DOC_START;
-    SavedParserContext savedContext(this, newStatus);
     lexer::SourcePosition typeStart = Lexer()->GetToken().Start();
     Lexer()->NextToken();  // eat type keyword
 
@@ -791,52 +847,23 @@ ir::TSTypeAliasDeclaration *ETSParser::ParseTypeAliasDeclaration()
 
     ExpectToken(lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
 
-    TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR;
+    if (Lexer()->TryEatTokenFromKeywordType(lexer::TokenType::KEYW_NEW)) {
+        LogError(diagnostic::CONSTRUCTOR_FUNC_TYPE_NOT_SUPPORTED, {}, typeStart);
+        typeAliasDecl->SetTsTypeAnnotation(AllocBrokenType(typeStart));
+    }
+
+    TypeAnnotationParsingOptions options =
+        TypeAnnotationParsingOptions::REPORT_ERROR | TypeAnnotationParsingOptions::TYPE_ALIAS_CONTEXT;
     ir::TypeNode *typeAnnotation = ParseTypeAnnotation(&options);
     if (typeAnnotation == nullptr) {
         return nullptr;
     }
-    typeAliasDecl->SetTsTypeAnnotation(typeAnnotation);
+    if (typeAliasDecl->TypeAnnotation() == nullptr) {
+        typeAliasDecl->SetTsTypeAnnotation(typeAnnotation);
+    }
     typeAnnotation->SetParent(typeAliasDecl);
     typeAliasDecl->SetRange({typeStart, Lexer()->GetToken().End()});
     return typeAliasDecl;
-}
-
-std::pair<bool, std::size_t> ETSParser::CheckDefaultParameters(const ir::ScriptFunction *const function)
-{
-    bool hasOptionalParameters = false;
-    bool hasRestParameter = false;
-    std::size_t requiredParametersNumber = 0U;
-
-    for (auto *const it : function->Params()) {
-        auto const *const param = it->AsETSParameterExpression();
-
-        if (param->IsRestParameter()) {
-            hasRestParameter = true;
-            continue;
-        }
-
-        if (hasRestParameter) {
-            LogError(diagnostic::REST_PARAM_LAST, {}, param->Start());
-        }
-
-        if (param->IsOptional()) {
-            hasOptionalParameters = true;
-            continue;
-        }
-
-        if (hasOptionalParameters) {
-            LogError(diagnostic::REQUIRED_PARAM_AFTER_DEFAULT, {}, param->Start());
-        }
-
-        ++requiredParametersNumber;
-    }
-
-    if (hasOptionalParameters && hasRestParameter) {
-        LogError(diagnostic::REST_AND_DEFAULT_SAME_TIME, {}, function->Start());
-    }
-
-    return std::make_pair(hasOptionalParameters, requiredParametersNumber);
 }
 
 std::string ETSParser::PrimitiveTypeToName(ir::PrimitiveType type) const
@@ -1024,7 +1051,8 @@ ir::TypeNode *ETSParser::ParseTypeReference(TypeAnnotationParsingOptions *option
 
         typeRefPart = AllocNode<ir::ETSTypeReferencePart>(typeName, typeParams, typeRefPart, Allocator());
         ES2PANDA_ASSERT(typeRefPart != nullptr);
-        typeRefPart->SetRange({partPos, Lexer()->GetToken().End()});
+        auto endPos = typeParams == nullptr ? typeName->End() : typeParams->End();
+        typeRefPart->SetRange({partPos, endPos});
 
         if (!Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_PERIOD)) {
             break;
@@ -1038,7 +1066,7 @@ ir::TypeNode *ETSParser::ParseTypeReference(TypeAnnotationParsingOptions *option
 
     auto *typeReference = AllocNode<ir::ETSTypeReference>(typeRefPart, Allocator());
     ES2PANDA_ASSERT(typeReference != nullptr);
-    typeReference->SetRange({startPos, Lexer()->GetToken().End()});
+    typeReference->SetRange({startPos, typeRefPart->End()});
     return typeReference;
 }
 
@@ -1068,7 +1096,7 @@ ir::TypeNode *ETSParser::ParseBaseTypeReference(TypeAnnotationParsingOptions *op
 
 ir::TypeNode *ETSParser::ParseLiteralIdent(TypeAnnotationParsingOptions *options)
 {
-    if (Lexer()->GetToken().IsDefinableTypeName()) {
+    if (Lexer()->GetToken().IsPredefinedType()) {
         return GetTypeAnnotationOfPrimitiveType(Lexer()->GetToken().KeywordType(), options);
     }
 
@@ -1106,17 +1134,52 @@ void ETSParser::ReportIfVarDeclaration(VariableParsingFlags flags)
     }
 }
 
+ir::Statement *ETSParser::CreateReExportDeclarationNode(ir::ETSImportDeclaration *reExportDeclaration,
+                                                        const lexer::SourcePosition &startLoc,
+                                                        const ir::ModifierFlags &modifiers)
+{
+    if (GetProgram()->AbsoluteName().Is(reExportDeclaration->ResolvedSource())) {
+        LogError(diagnostic::RE_EXPORTING_LOCAL_BINDINGS_IS_NOT_ALLOWED, {}, startLoc);
+        return AllocBrokenStatement(startLoc);
+    }
+    auto reExport = AllocNode<ir::ETSReExportDeclaration>(reExportDeclaration, std::vector<std::string>(),
+                                                          GetProgram()->AbsoluteName(), Allocator());
+    ES2PANDA_ASSERT(reExport != nullptr);
+    reExport->AddModifier(modifiers);
+    reExport->SetRange(reExportDeclaration->Range());
+    return reExport;
+}
+
+ir::Statement *ETSParser::ParseDefaultIfSingleExport(ir::ModifierFlags modifiers)
+{
+    auto tokenType = Lexer()->GetToken().Type();
+    if (tokenType != lexer::TokenType::PUNCTUATOR_LEFT_BRACE) {
+        return ParseSingleExport(modifiers);
+    }
+    auto savePos = Lexer()->Save();
+    Lexer()->NextToken();
+    auto isSelectiveExport = Lexer()->TryEatTokenType(lexer::TokenType::LITERAL_IDENT) &&
+                             (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COMMA ||
+                              Lexer()->GetToken().Type() == lexer::TokenType::KEYW_AS ||
+                              Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_RIGHT_BRACE);
+    Lexer()->Rewind(savePos);
+    return !isSelectiveExport ? ParseSingleExport(modifiers) : nullptr;
+}
+
 ir::Statement *ETSParser::ParseExport(lexer::SourcePosition startLoc, ir::ModifierFlags modifiers)
 {
     const size_t exportDefaultMaxSize = 1;
     if (!InAmbientContext() && (GetContext().Status() & ParserStatus::IN_NAMESPACE) != 0) {
         LogError(diagnostic::EXPORT_IN_NAMESPACE);
     }
-    [[maybe_unused]] auto tokenType = Lexer()->GetToken().Type();
     // export a constant variable anonymously, as export default new A()
-    if ((modifiers & ir::ModifierFlags::DEFAULT_EXPORT) != 0U && tokenType != lexer::TokenType::PUNCTUATOR_MULTIPLY &&
-        tokenType != lexer::TokenType::PUNCTUATOR_LEFT_BRACE && tokenType != lexer::TokenType::LITERAL_IDENT) {
-        return ParseSingleExport(modifiers);
+    if ((modifiers & ir::ModifierFlags::DEFAULT_EXPORT) != 0U &&
+        Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_MULTIPLY &&
+        Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
+        auto exportedExpression = ParseDefaultIfSingleExport(modifiers);
+        if (exportedExpression != nullptr) {
+            return exportedExpression;
+        }
     }
 
     ArenaVector<ir::AstNode *> specifiers(Allocator()->Adapter());
@@ -1132,8 +1195,10 @@ ir::Statement *ETSParser::ParseExport(lexer::SourcePosition startLoc, ir::Modifi
             specifiers = util::Helpers::ConvertVector<ir::AstNode>(specs.result);
         } else {
             ArenaVector<ir::ExportSpecifier *> exports(Allocator()->Adapter());
+            auto endLoc = startLoc;
             for (auto spec : specs.result) {
                 exports.emplace_back(AllocNode<ir::ExportSpecifier>(spec->Local(), spec->Imported()));
+                endLoc = endLoc.index < spec->End().index ? spec->End() : endLoc;
             }
 
             if (specs.resultExportDefault.size() > exportDefaultMaxSize) {
@@ -1141,12 +1206,14 @@ ir::Statement *ETSParser::ParseExport(lexer::SourcePosition startLoc, ir::Modifi
             }
             for (auto spec : specs.resultExportDefault) {
                 exports.emplace_back(spec);
+                endLoc = endLoc.index < spec->End().index ? spec->End() : endLoc;
             }
 
             auto result = AllocNode<ir::ExportNamedDeclaration>(Allocator(), static_cast<ir::StringLiteral *>(nullptr),
                                                                 std::move(exports));
             ES2PANDA_ASSERT(result != nullptr);
             result->AddModifier(modifiers);
+            result->SetRange({startLoc, endLoc});
             return result;
         }
     } else {
@@ -1157,21 +1224,12 @@ ir::Statement *ETSParser::ParseExport(lexer::SourcePosition startLoc, ir::Modifi
     }
     // re-export directive
     auto *reExportDeclaration = ParseImportPathBuildImport(std::move(specifiers), true, startLoc, ir::ImportKinds::ALL);
-    auto reExport = AllocNode<ir::ETSReExportDeclaration>(reExportDeclaration, std::vector<std::string>(),
-                                                          GetProgram()->AbsoluteName(), Allocator());
-    ES2PANDA_ASSERT(reExport != nullptr);
-    reExport->AddModifier(modifiers);
-    return reExport;
+    return CreateReExportDeclarationNode(reExportDeclaration, startLoc, modifiers);
 }
 
 ir::ETSPackageDeclaration *ETSParser::ParsePackageDeclaration()
 {
     auto startLoc = Lexer()->GetToken().Start();
-    auto savedPos = Lexer()->Save();
-    if (Lexer()->TryEatTokenType(lexer::TokenType::JS_DOC_START)) {
-        // Note: Not Support JS_DOC for Package declaration now, just go on;
-        ParseJsDocInfos();
-    }
 
     if (!Lexer()->TryEatTokenType(lexer::TokenType::KEYW_PACKAGE)) {
         // NOTE(vpukhov): the *unnamed* modules are to be removed entirely
@@ -1179,7 +1237,6 @@ ir::ETSPackageDeclaration *ETSParser::ParsePackageDeclaration()
         util::StringView moduleName =
             isUnnamed ? "" : importPathManager_->FormModuleName(GetProgram()->SourceFile(), startLoc);
         GetProgram()->SetPackageInfo(moduleName, util::ModuleKind::MODULE);
-        Lexer()->Rewind(savedPos);
         return nullptr;
     }
 
@@ -1233,6 +1290,10 @@ ir::ETSImportDeclaration *ETSParser::ParseImportPathBuildImport(ArenaVector<ir::
                                const_cast<parser::Program *>(GetContext().GetProgram()), importFlags);
     ES2PANDA_ASSERT(importDeclaration != nullptr);
     importDeclaration->SetRange({startLoc, importPathStringLiteral->End()});
+    if (Lexer()->GetToken().Ident().Is("assert")) {
+        LogError(diagnostic::ERROR_ARKTS_NO_IMPORT_ASSERTIONS);
+        return importDeclaration;
+    }
     ConsumeSemicolon(importDeclaration);
     return importDeclaration;
 }
@@ -1247,20 +1308,21 @@ ir::ETSImportDeclaration *ETSParser::BuildImportDeclaration(ir::ImportKinds impo
         std::move(specifiers), importKind);
 }
 
-lexer::LexerPosition ETSParser::HandleJsDocLikeComments()
+ArenaVector<ir::Statement *> ETSParser::ParseETSInitModuleStatements()
 {
-    auto savedPos = Lexer()->Save();
-    if (Lexer()->TryEatTokenType(lexer::TokenType::JS_DOC_START)) {
-        ParseJsDocInfos();
+    std::vector<std::string> userPaths;
+    ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
+    while (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_INIT_MODULE) {
+        statements.push_back(ParseInitModuleStatement(StatementParsingFlags::INIT_MODULE));
     }
-    return savedPos;
+    return statements;
 }
 
 ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseImportDeclarations()
 {
-    auto savedPos = HandleJsDocLikeComments();
     std::vector<std::string> userPaths;
     ArenaVector<ir::ETSImportDeclaration *> statements(Allocator()->Adapter());
+
     while (Lexer()->GetToken().Type() == lexer::TokenType::KEYW_IMPORT) {
         auto startLoc = Lexer()->GetToken().Start();
         Lexer()->NextToken();  // eat import
@@ -1272,9 +1334,6 @@ ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseImportDeclarations()
         ArenaVector<ir::AstNode *> defaultSpecifiers(Allocator()->Adapter());
 
         if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_MULTIPLY) {
-            if (importKind == ir::ImportKinds::TYPES) {
-                LogError(diagnostic::TYPE_IMPORT_MISSING_SELECTIVE_BINDING);
-            }
             ParseNameSpaceSpecifier(&specifiers);
         } else if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_BRACE) {
             auto specs = ParseNamedSpecifiers();
@@ -1300,11 +1359,8 @@ ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseImportDeclarations()
                 statements.push_back(importDeclDefault->AsETSImportDeclaration());
             }
         }
-
-        savedPos = HandleJsDocLikeComments();
     }
 
-    Lexer()->Rewind(savedPos);
     std::sort(statements.begin(), statements.end(), [](const auto *s1, const auto *s2) -> bool {
         return s1->Specifiers()[0]->IsImportNamespaceSpecifier() && !s2->Specifiers()[0]->IsImportNamespaceSpecifier();
     });
@@ -1341,6 +1397,10 @@ ir::ExportNamedDeclaration *ETSParser::ParseSingleExport(ir::ModifierFlags modif
         return ParseSingleExportForAnonymousConst(modifiers);
     }
 
+    if (token.KeywordType() == lexer::TokenType::KEYW_AS) {
+        LogError(diagnostic::ERROR_ARKTS_NO_UMD, {}, token.Start());
+        return nullptr;
+    }
     if (token.Type() != lexer::TokenType::LITERAL_IDENT) {
         LogError(diagnostic::EXPORT_NON_DECLARATION, {}, token.Start());
         return nullptr;
@@ -1354,8 +1414,10 @@ ir::ExportNamedDeclaration *ETSParser::ParseSingleExport(ir::ModifierFlags modif
     ArenaVector<ir::ExportSpecifier *> exports(Allocator()->Adapter());
 
     exports.emplace_back(AllocNode<ir::ExportSpecifier>(exported, ParseNamedExport(&token)));
+    exports.back()->SetRange(exported->Range());
     auto result = AllocNode<ir::ExportNamedDeclaration>(Allocator(), static_cast<ir::StringLiteral *>(nullptr),
                                                         std::move(exports));
+    result->SetRange(exported->Range());
     ES2PANDA_ASSERT(result != nullptr);
     result->AddModifier(modifiers);
     ConsumeSemicolon(result);
@@ -1432,7 +1494,8 @@ bool ETSParser::ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *re
     auto *imported = ExpectIdentifier();
 
     ir::Identifier *local = nullptr;
-    if (CheckModuleAsModifier() && Lexer()->TryEatTokenType(lexer::TokenType::KEYW_AS)) {
+    CheckModuleAsModifier();
+    if (Lexer()->TryEatTokenType(lexer::TokenType::KEYW_AS)) {
         if (Lexer()->TryEatTokenType(lexer::TokenType::KEYW_DEFAULT)) {
             auto *exportedAnonyConst = AllocNode<ir::ExportSpecifier>(imported, imported->Clone(Allocator(), nullptr));
             exportedAnonyConst->SetDefault();
@@ -1472,6 +1535,12 @@ SpecifiersInfo ETSParser::ParseNamedSpecifiers()
     ArenaVector<ir::ImportDefaultSpecifier *> resultDefault(Allocator()->Adapter());
     ArenaVector<ir::ExportSpecifier *> resultExportDefault(Allocator()->Adapter());
 
+    auto token = Lexer()->GetToken();
+    if (token.Ident() == (lexer::TokenToString(lexer::TokenType::KEYW_IMPORT)) &&
+        token.Type() == lexer::TokenType::PUNCTUATOR_RIGHT_BRACE) {
+        LogError(diagnostic::ERROR_ARKTS_NO_SIDE_EFFECT_IMPORT);
+    }
+
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::KEYWORD_TO_IDENT,
         [this, &result, &resultDefault, &resultExportDefault, &fileName]() {
@@ -1494,9 +1563,7 @@ void ETSParser::ParseNameSpaceSpecifier(ArenaVector<ir::AstNode *> *specifiers, 
     lexer::SourcePosition namespaceStart = Lexer()->GetToken().Start();
     Lexer()->NextToken();  // eat `*` character
 
-    if (!CheckModuleAsModifier()) {
-        LogError(diagnostic::UNEXPECTED_TOKEN);
-    }
+    CheckModuleAsModifier();
 
     // Note (oeotvos) As a temporary solution we allow the stdlib to use namespace import without an alias, but this
     // should be handled at some point.
@@ -1528,6 +1595,10 @@ void ETSParser::ParseNameSpaceSpecifier(ArenaVector<ir::AstNode *> *specifiers, 
 
 ir::AstNode *ETSParser::ParseImportDefaultSpecifier(ArenaVector<ir::AstNode *> *specifiers)
 {
+    if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_STRING) {
+        LogError(diagnostic::ERROR_ARKTS_NO_SIDE_EFFECT_IMPORT);
+        return nullptr;
+    }
     if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
         LogExpectedToken(lexer::TokenType::LITERAL_IDENT);
     }
@@ -1550,6 +1621,10 @@ ir::AstNode *ETSParser::ParseImportDefaultSpecifier(ArenaVector<ir::AstNode *> *
         }
     }
 
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
+        LogError(diagnostic::ERROR_ARKTS_NO_REQUIRE);
+        return nullptr;
+    }
     if (Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_FROM) {
         LogExpectedToken(lexer::TokenType::KEYW_FROM);
         Lexer()->NextToken();  // eat 'from'
@@ -1563,13 +1638,11 @@ ir::AstNode *ETSParser::ParseImportDefaultSpecifier(ArenaVector<ir::AstNode *> *
     return nullptr;
 }
 
-bool ETSParser::CheckModuleAsModifier()
+void ETSParser::CheckModuleAsModifier()
 {
     if ((Lexer()->GetToken().Flags() & lexer::TokenFlags::HAS_ESCAPE) != 0U) {
         LogError(diagnostic::ESCAPE_SEQUENCES_IN_AS);
     }
-
-    return true;
 }
 
 ir::AnnotatedExpression *ETSParser::GetAnnotatedExpressionFromParam()
@@ -1684,6 +1757,17 @@ bool ETSParser::IsFixedArrayTypeNode(ir::AstNode *node)
 
 ir::Expression *ETSParser::ParseFunctionParameter()
 {
+    switch (Lexer()->GetToken().Type()) {
+        case lexer::TokenType::KEYW_PRIVATE:
+        case lexer::TokenType::KEYW_PUBLIC:
+        case lexer::TokenType::KEYW_PROTECTED:
+            LogError(diagnostic::FIELD_IN_PARAM);
+            Lexer()->NextToken();
+            [[fallthrough]];
+        default:
+            break;
+    }
+
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
         return ParseFunctionParameterAnnotations();
     }
@@ -1754,6 +1838,9 @@ ir::AnnotatedExpression *ETSParser::ParseVariableDeclaratorKey([[maybe_unused]] 
         }
         Lexer()->NextToken();  // eat '?'
         init->AddModifier(ir::ModifierFlags::OPTIONAL);
+        if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COLON) {
+            LogError(diagnostic::OPTIONAL_VARIABLE);
+        }
     }
 
     if (auto const tokenType = Lexer()->GetToken().Type(); tokenType == lexer::TokenType::PUNCTUATOR_COLON) {
@@ -1897,8 +1984,9 @@ ir::Expression *ETSParser::ParseExpressionOrTypeAnnotation(lexer::TokenType type
                                                            [[maybe_unused]] ExpressionParseFlags flags)
 {
     if (type == lexer::TokenType::KEYW_INSTANCEOF) {
-        TypeAnnotationParsingOptions options =
-            TypeAnnotationParsingOptions::REPORT_ERROR | TypeAnnotationParsingOptions::ANNOTATION_NOT_ALLOW;
+        TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR |
+                                               TypeAnnotationParsingOptions::ANNOTATION_NOT_ALLOW |
+                                               TypeAnnotationParsingOptions::INSTANCEOF;
 
         if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_NULL) {
             auto *typeAnnotation = AllocNode<ir::NullLiteral>();
@@ -2014,15 +2102,19 @@ ir::AstNode *ETSParser::ParseAmbientSignature(const lexer::SourcePosition &start
     }
 
     // eat ":"
-    if (Lexer()->NextToken(); Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_NUMBER) {
+    if (Lexer()->NextToken(); Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_NUMBER &&
+                              Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_INT) {
         // ambient_indexer_3.ets
         LogError(diagnostic::INDEX_TYPE_NOT_NUMBER);
 
         Lexer()->GetToken().SetTokenType(lexer::TokenType::KEYW_NUMBER);
     }
 
+    TypeAnnotationParsingOptions typAnotationOptions = TypeAnnotationParsingOptions::NO_OPTS;
+    auto typeAnno = ParseTypeAnnotation(&typAnotationOptions);
+
     // eat indexType
-    if (Lexer()->NextToken(); Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET) {
+    if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET) {
         // ambient_indexer_7.ets
         LogError(diagnostic::EXPECTED_BRACKETS_IN_INDEX);
 
@@ -2033,26 +2125,24 @@ ir::AstNode *ETSParser::ParseAmbientSignature(const lexer::SourcePosition &start
     if (Lexer()->NextToken(); Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COLON) {
         // ambient_indexer_4.ets
         LogError(diagnostic::INDEX_MISSING_TYPE);
-
-        Lexer()->GetToken().SetTokenType(lexer::TokenType::PUNCTUATOR_COLON);
     }
 
-    // eat ":"
-    if (Lexer()->NextToken(); Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
-        // ambient_indexer_5.ets
+    if (!Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_COLON)) {
+        LogError(diagnostic::EXPECTED_PARAM_GOT_PARAM, {":", TokenToString(Lexer()->GetToken().Type())});
+    }
+
+    TypeAnnotationParsingOptions options =
+        TypeAnnotationParsingOptions::RETURN_TYPE | TypeAnnotationParsingOptions::REPORT_ERROR;
+    auto *returnType = ParseTypeAnnotation(&options);
+    if (returnType->IsBrokenTypeNode()) {
         LogError(diagnostic::INDEX_MISSING_IDENTIFIER);
-
-        Lexer()->GetToken().SetTokenType(lexer::TokenType::LITERAL_IDENT);
-        Lexer()->GetToken().SetTokenStr(ERROR_LITERAL);
+        return AllocBrokenStatement({startPos, Lexer()->GetToken().End()});
     }
-    auto const returnType = AllocNode<ir::ETSTypeReferencePart>(
-        AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator()), Allocator());
 
     auto dummyNode = AllocNode<ir::DummyNode>(compiler::Signatures::AMBIENT_INDEXER, indexName, returnType,
-                                              ir::DummyNodeFlag::INDEXER);
+                                              ir::DummyNodeFlag::INDEXER, typeAnno);
     ES2PANDA_ASSERT(dummyNode != nullptr);
     dummyNode->SetRange({startPos, Lexer()->GetToken().End()});
-    Lexer()->NextToken();  // eat return type
     return dummyNode;
 }
 
@@ -2081,13 +2171,12 @@ ir::TSTypeParameter *ETSParser::ParseTypeParameter([[maybe_unused]] TypeAnnotati
         }
     }
     auto saveLoc = Lexer()->GetToken().Start();
-    auto *paramIdent = ExpectIdentifier(false, false, *options);
+    auto *paramIdent = ExpectIdentifier(false, false, *options | TypeAnnotationParsingOptions::REPORT_ERROR);
 
     ir::TypeNode *constraint = nullptr;
     if (Lexer()->GetToken().Type() == lexer::TokenType::KEYW_EXTENDS) {
         Lexer()->NextToken();
-        TypeAnnotationParsingOptions newOptions =
-            TypeAnnotationParsingOptions::REPORT_ERROR | TypeAnnotationParsingOptions::IGNORE_FUNCTION_TYPE;
+        TypeAnnotationParsingOptions newOptions = TypeAnnotationParsingOptions::REPORT_ERROR;
         constraint = ParseTypeAnnotation(&newOptions);
     }
 
@@ -2139,6 +2228,11 @@ void ETSParser::CheckDeclare()
 
     Lexer()->NextToken();  // eat 'declare'
 
+    if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT && Lexer()->GetToken().Ident().Is("module")) {
+        LogError(diagnostic::ERROR_ARKTS_NO_AMBIENT_DECLS);
+        return;
+    }
+
     switch (Lexer()->GetToken().KeywordType()) {
         case lexer::TokenType::KEYW_LET:
         case lexer::TokenType::KEYW_CONST:
@@ -2163,19 +2257,97 @@ void ETSParser::CheckDeclare()
     }
 }
 
+void ETSParser::ValidateOverloadDeclarationModifiers(ir::ModifierFlags modifiers)
+{
+    ir::ModifierFlags allowModifiers = ir::ModifierFlags::STATIC | ir::ModifierFlags::ASYNC |
+                                       ir::ModifierFlags::ACCESS | ir::ModifierFlags::EXPORTED |
+                                       ir::ModifierFlags::DECLARE;
+    if ((modifiers & ~allowModifiers) != 0) {
+        LogError(diagnostic::OVERLOAD_MODIFIERS);
+    }
+}
+
+bool ETSParser::ParseOverloadListElement(ArenaVector<ir::Expression *> &overloads,
+                                         ir::OverloadDeclaration *overloadDecl)
+{
+    if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
+        LogExpectedToken(lexer::TokenType::LITERAL_IDENT);
+    }
+    ir::Expression *qualifiedName = AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator());
+    qualifiedName->SetRange(Lexer()->GetToken().Loc());
+    Lexer()->NextToken();
+    while (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_PERIOD)) {
+        if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
+            LogExpectedToken(lexer::TokenType::LITERAL_IDENT);
+            return false;
+        }
+        auto *identNode = AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator());
+        identNode->SetRange(Lexer()->GetToken().Loc());
+        auto start = qualifiedName->Start();
+        qualifiedName = AllocNode<ir::MemberExpression>(qualifiedName, identNode,
+                                                        ir::MemberExpressionKind::PROPERTY_ACCESS, false, false);
+        qualifiedName->SetRange({start, identNode->End()});
+        Lexer()->NextToken();
+    }
+
+    qualifiedName->SetParent(overloadDecl);
+    overloads.push_back(qualifiedName);
+    return true;
+}
+
+ir::OverloadDeclaration *ETSParser::ParseOverloadDeclaration(ir::ModifierFlags modifiers)
+{
+    ValidateOverloadDeclarationModifiers(modifiers);
+    Lexer()->TryEatTokenKeyword(lexer::TokenType::KEYW_OVERLOAD);
+    auto *overloadName = ExpectIdentifier(false, true, TypeAnnotationParsingOptions::REPORT_ERROR);
+    auto *overloadDef = AllocNode<ir::OverloadDeclaration>(overloadName->Clone(Allocator(), nullptr)->AsExpression(),
+                                                           modifiers, Allocator());
+    overloadDef->AddOverloadDeclFlag(ir::OverloadDeclFlags::FUNCTION);
+
+    auto startLoc = overloadName->Start();
+    if (!Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_LEFT_BRACE)) {
+        LogExpectedToken(lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
+    }
+    ArenaVector<ir::Expression *> overloads(Allocator()->Adapter());
+    lexer::SourcePosition endLoc;
+
+    ParseList(
+        lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::NONE,
+        [this, &overloads, overloadDef]() { return ParseOverloadListElement(overloads, overloadDef); }, &endLoc, true);
+    overloadDef->SetOverloadedList(std::move(overloads));
+    overloadDef->SetRange({startLoc, endLoc});
+    for (ir::Expression *overloadedName : overloadDef->OverloadedList()) {
+        std::function<bool(ir::Expression *)> checkQualifiedName = [&checkQualifiedName](ir::Expression *expr) -> bool {
+            if (expr->IsIdentifier()) {
+                return true;
+            }
+            if (expr->IsMemberExpression()) {
+                return expr->AsMemberExpression()->Property()->IsIdentifier() &&
+                       checkQualifiedName(expr->AsMemberExpression()->Object());
+            }
+            return false;
+        };
+        if (!checkQualifiedName(overloadedName)) {
+            LogError(diagnostic::FUNCTION_OVERLOADED_NAME_MUST_QUALIFIED_NAME, {}, overloadedName->Start());
+        }
+    }
+    return overloadDef;
+}
+
 ir::FunctionDeclaration *ETSParser::ParseFunctionDeclaration(bool canBeAnonymous, ir::ModifierFlags modifiers)
 {
     lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
 
     ES2PANDA_ASSERT(Lexer()->GetToken().Type() == lexer::TokenType::KEYW_FUNCTION);
     Lexer()->NextToken();
-    auto newStatus = ParserStatus::NEED_RETURN_TYPE | ParserStatus::ALLOW_SUPER | ParserStatus::ALLOW_JS_DOC_START;
+    auto newStatus = ParserStatus::NEED_RETURN_TYPE | ParserStatus::ALLOW_SUPER;
 
     if ((modifiers & ir::ModifierFlags::ASYNC) != 0) {
         newStatus |= ParserStatus::ASYNC_FUNCTION;
     }
 
     if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_MULTIPLY)) {
+        LogError(diagnostic::GENERATOR_FUNCTION);
         newStatus |= ParserStatus::GENERATOR_FUNCTION;
     }
 

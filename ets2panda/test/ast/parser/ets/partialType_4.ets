@@ -79,4 +79,9 @@ class A<T extends A<T>>{
     bar(initializers: Partial<T>): void {}
 }
 
-/* @@@ label Error TypeError: Type 'S' cannot be assigned to type 'T|undefined'  */
+/* @@? 39:142 Error TypeError: T in Partial<T> must be a class or an interface type. */
+/* @@? 49:55 Error TypeError: T in Partial<T> must be a class or an interface type. */
+/* @@? 51:51 Error TypeError: T in Partial<T> must be a class or an interface type. */
+/* @@? 53:86 Error TypeError: T in Partial<T> must be a class or an interface type. */
+/* @@? 75:55 Error TypeError: T in Partial<T> must be a class or an interface type. */
+/* @@? 79:30 Error TypeError: T in Partial<T> must be a class or an interface type. */
