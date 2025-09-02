@@ -113,7 +113,6 @@ set(ES2PANDA_LSP_SRC
   ./src/register_code_fix/add_local_variable.cpp
   ./src/register_code_fix/add_missing_new_operator.cpp
   ./src/register_code_fix/fix_class_doesnt_implement_inherited_abstract_member.cpp
-  ./src/register_code_fix/fix_expected_comma.cpp
   ./src/register_code_fix/fix_extends_interface_becomes_implements.cpp
   ./src/register_code_fix/fix_class_super_must_precede_this_access.cpp
   ./src/register_code_fix/fix_return_type_in_async_function.cpp
