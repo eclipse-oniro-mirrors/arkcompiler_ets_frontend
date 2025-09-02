@@ -114,8 +114,6 @@ enumConstExpression.ets
 local_enum03.ets
 overload-primitive-and-object.ets
 finallyTryAbruptedByReturn.ets
-Recursive_Parameter_2.ets
-Recursive_Parameter_3.ets
 
 # No-primitives #24986 [end]
 
@@ -125,8 +123,8 @@ first_match/namespace.ets
 first_match/namespace2.ets
 first_match/namespace3.ets
 
-# Issue #28214
-large_number_parse.ets
+#29458
+spreadExprInNewExpr.ets
 
 # Issue #28914
 non_null_number_as_index.ets
