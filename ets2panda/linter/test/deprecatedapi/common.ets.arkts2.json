@@ -183,66 +183,6 @@
             "suggest": "",
             "rule": "The ArkUI interface \"MouseEvent\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
-        },
-        {
-            "line": 66,
-            "column": 1,
-            "endLine": 66,
-            "endColumn": 7,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"px2lpx\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 1,
-            "endLine": 67,
-            "endColumn": 7,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"lpx2px\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 68,
-            "column": 1,
-            "endLine": 68,
-            "endColumn": 6,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"px2fp\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 69,
-            "column": 1,
-            "endLine": 69,
-            "endColumn": 6,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"fp2px\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 70,
-            "column": 1,
-            "endLine": 70,
-            "endColumn": 6,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"px2vp\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 71,
-            "column": 1,
-            "endLine": 71,
-            "endColumn": 6,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"vp2px\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
         }
     ]
 }

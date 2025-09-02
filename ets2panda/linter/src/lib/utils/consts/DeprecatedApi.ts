@@ -20,8 +20,8 @@ export const propertyAccessReplacements = new Map<string, string>([
   ['AlertDialog.show', 'showAlertDialog'],
   ['componentSnapshot.createFromBuilder', 'getComponentSnapshot().createFromBuilder'],
   ['componentSnapshot.get', 'getComponentSnapshot().get'],
-  ['MeasureText.measureTextSize', 'getMeasureText().measureTextSize'],
-  ['MeasureText.measureText', 'getMeasureText().measureText'],
+  ['MeasureText.measureTextSize', 'getMeasureUtils().measureTextSize'],
+  ['MeasureText.measureText', 'getMeasureUtils().measureText'],
   ['dragController.getDragPreview', 'getDragController().getDragPreview'],
   ['dragController.createDragAction', 'getDragController().createDragAction'],
   ['dragController.executeDrag', 'getDragController().executeDrag'],
@@ -51,7 +51,8 @@ export const propertyAccessReplacements = new Map<string, string>([
   ['router.replaceNamedRoute', 'getRouter().replaceNamedRoute'],
   ['font.registerFont', 'getFont().registerFont'],
   ['font.getSystemFontList', 'getFont().getSystemFontList'],
-  ['font.getFontByName', 'getFont().getFontByName']
+  ['font.getFontByName', 'getFont().getFontByName'],
+  ['ContextMenu.close', 'getContextMenuController().close']
 ]);
 
 export const identifierReplacements = new Map<string, string>([

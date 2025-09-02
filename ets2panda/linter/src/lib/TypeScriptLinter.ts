@@ -14489,9 +14489,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const problemStr = this.getFaultIdWithMatchedDeprecatedApi(name.text, deprecatedApiCheckMap, apiType);
     if (problemStr.length > 0) {
       const autofix = this.autofixer?.fixDeprecatedApiForCallExpression(node);
-      if (autofix) {
-        this.interfacesNeedToImport.add('getUIContext');
-      }
       const isSdkCommon = apiType === SDK_COMMON_TYPE;
       const faultID = TypeScriptLinter.getFinalSdkFaultIdByProblem(problemStr, apiType);
       if (!faultID) {
