@@ -1940,7 +1940,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    const extendedIdent = parent.heritageClauses.at(0);
+    const extendedIdent = parent.heritageClauses[0];
 
     if (!TsUtils.hasModifier(propDecl.modifiers, ts.SyntaxKind.ReadonlyKeyword)) {
       return;
@@ -1966,7 +1966,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return undefined;
     }
 
-    const extendedType = extended.types.at(0);
+    const extendedType = extended.types[0];
     if (!extendedType) {
       return undefined;
     }
