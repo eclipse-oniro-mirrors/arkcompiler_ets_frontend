@@ -22,12 +22,12 @@ interface A {
 
 /* @@? 17:16 Error SyntaxError: Interface member initialization is prohibited. */
 /* @@? 17:18 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:18 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:18 Error SyntaxError: Identifier expected, got 'string literal'. */
 /* @@? 18:12 Error TypeError: Cannot find type 'B'. */
 /* @@? 18:14 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:14 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 18:14 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 19:20 Error SyntaxError: Interface member initialization is prohibited. */
 /* @@? 19:22 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 19:22 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 19:22 Error SyntaxError: Identifier expected, got 'string literal'. */
 /* @@? 20:5 Error SyntaxError: Identifier expected. */
 /* @@? 21:1 Error SyntaxError: Unexpected token '}'. */

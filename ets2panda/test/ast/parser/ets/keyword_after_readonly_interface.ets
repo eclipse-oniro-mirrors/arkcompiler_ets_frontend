@@ -19,9 +19,9 @@ interface A {
 
 /* @@? 17:2 Error SyntaxError: Identifier expected. */
 /* @@? 17:11 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:11 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:11 Error SyntaxError: Identifier expected, got 'static'. */
 /* @@? 17:20 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 17:22 Error SyntaxError: Invalid Type. */
 /* @@? 17:22 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:22 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:22 Error SyntaxError: Identifier expected, got 'number literal'. */
 /* @@? 17:24 Error SyntaxError: Identifier expected. */

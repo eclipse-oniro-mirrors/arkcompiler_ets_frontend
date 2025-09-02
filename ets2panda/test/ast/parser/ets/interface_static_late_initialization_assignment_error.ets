@@ -17,4 +17,4 @@ interface A{
     static f!:string
 }
 
-/* @@? 17:5 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:5 Error SyntaxError: Identifier expected, got 'static'. */

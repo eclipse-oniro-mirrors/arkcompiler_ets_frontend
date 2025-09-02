@@ -42,10 +42,10 @@ function mdin() {    let a = new A();
 /* @@? 19:1 Error SyntaxError: Illegal start of INTERFACE expression. */
 /* @@? 20:5 Error SyntaxError: Identifier expected. */
 /* @@? 20:14 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 20:14 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 20:14 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 20:16 Error SyntaxError: Identifier expected. */
 /* @@? 20:16 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 20:16 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 20:16 Error SyntaxError: Identifier expected, got 'boolean'. */
 /* @@? 21:1 Error SyntaxError: Identifier expected. */
 /* @@? 22:1 Error TypeError: Unresolved reference inter */
 /* @@? 24:1 Error SyntaxError: Illegal start of CLASS expression. */

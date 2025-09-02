@@ -22,6 +22,6 @@ interface itf0{
 /* @@? 18:6 Error TypeError: Cannot find type 'Anno'. */
 /* @@? 18:11 Error SyntaxError: Invalid value for annotation field, expected a constant literal. */
 /* @@? 18:45 Error SyntaxError: Expected ')', got ','. */
-/* @@? 18:45 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 18:45 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 18:76 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 19:1 Error SyntaxError: Invalid Type. */

@@ -48,5 +48,5 @@ interface I{
 /* @@? 39:9 Error TypeError: Cannot find type 'a'. */
 /* @@? 39:11 Error SyntaxError: Interface member initialization is prohibited. */
 /* @@? 39:13 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 39:13 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 39:13 Error SyntaxError: Identifier expected, got 'identification literal'. */
 /* @@? 39:14 Error SyntaxError: Identifier expected. */

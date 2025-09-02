@@ -20,5 +20,5 @@ interface /* @@ label1 */type {
 /* @@@ label1 Error SyntaxError: Cannot be used as user-defined type. */
 /* @@@ label2 Error SyntaxError: Interface member initialization is prohibited. */
 /* @@@ label3 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:48 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@@ label3 Error SyntaxError: Identifier expected, got 'number literal'. */
 /* @@@ label4 Error SyntaxError: Identifier expected. */

@@ -21,9 +21,9 @@ interface"actual : " + actual.result[i]
 /* @@? 16:30 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 16:38 Error SyntaxError: Unexpected token, expected ']'. */
 /* @@? 16:38 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 16:38 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 16:38 Error SyntaxError: Identifier expected, got 'identification literal'. */
 /* @@? 16:39 Error SyntaxError: Identifier expected. */
 /* @@? 16:39 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 16:39 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 16:39 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 30:1 Error SyntaxError: Identifier expected. */
 /* @@? 30:1 Error SyntaxError: Unexpected token, expected '}'. */

@@ -23,14 +23,14 @@ function fn(i: I) {
     return new i("hello")
 }
 
-/* @@? 19:5 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 19:5 Error SyntaxError: Identifier expected, got 'new'. */
 /* @@? 19:5 Error SyntaxError: Constructor signatures are not supported in interfaces, use methods instead! */
 /* @@? 19:10 Error TypeError: Cannot find type 's'. */
 /* @@? 19:11 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 19:11 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 19:11 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 19:19 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 19:20 Error SyntaxError: Invalid Type. */
 /* @@? 19:20 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 19:20 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 19:20 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 20:1 Error SyntaxError: Invalid Type. */
 /* @@? 23:16 Error TypeError: Cannot find type 'i'. */

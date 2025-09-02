@@ -20,9 +20,9 @@ interface I {
 
 /* @@? 17:20 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 17:30 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:30 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:30 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 17:31 Error SyntaxError: Identifier expected. */
 /* @@? 17:31 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:31 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:31 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 17:41 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 18:5 Error SyntaxError: Invalid Type. */

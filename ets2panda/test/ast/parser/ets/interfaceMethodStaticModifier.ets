@@ -14,8 +14,7 @@
  */
 
 interface I {
-    /* @@ label */static foo/* @@ label1 */()
+    /* @@ label */static foo()
 }
 
-/* @@@ label Error SyntaxError: Unexpected token, expected 'private' or identifier.  */
-/* @@@ label1 Error SyntaxError: Private interface methods must have body.  */
+/* @@@ label Error SyntaxError: Identifier expected, got 'static'. */
