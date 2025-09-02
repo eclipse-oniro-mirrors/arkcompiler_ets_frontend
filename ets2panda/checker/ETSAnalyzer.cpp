@@ -2898,9 +2898,12 @@ checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::TypeofExpression *expr) c
         return expr->TsType();
     }
 
-    expr->Argument()->Check(checker);
-    expr->SetTsType(ComputeTypeOfType(checker, expr->Argument()->TsType()));
-    return expr->TsType();
+    auto argType = expr->Argument()->Check(checker);
+    if (argType->IsTypeError()) {
+        return expr->SetTsType(checker->GlobalTypeError());
+    }
+
+    return expr->SetTsType(ComputeTypeOfType(checker, argType));
 }
 
 checker::Type *ETSAnalyzer::Check(ir::UnaryExpression *expr) const
@@ -3899,6 +3902,38 @@ checker::Type *ETSAnalyzer::Check(ir::TSArrayType *node) const
     return node->TsType();
 }
 
+static bool CheckTSAsExpressionInvalidCast(ir::TSAsExpression *expr, checker::Type *sourceType,
+                                           checker::Type *targetType, ETSChecker *checker)
+{
+    if (sourceType->DefinitelyETSNullish() && !targetType->PossiblyETSNullish()) {
+        expr->SetTsType(checker->TypeError(expr, diagnostic::NULLISH_CAST_TO_NONNULLISH, expr->Start()));
+        return false;
+    }
+
+    if (expr->Expr()->IsLiteral() && sourceType->IsBuiltinNumeric() && targetType->IsETSTypeParameter()) {
+        expr->SetTsType(checker->TypeError(expr, diagnostic::INVALID_CAST,
+                                           {sourceType->ToString(), targetType->ToString()}, expr->Expr()->Start()));
+        return false;
+    }
+
+    if (expr->Expr()->IsLiteral() && sourceType->IsBuiltinNumeric() && targetType->IsETSUnionType()) {
+        bool allAreTypeParams = true;
+        for (auto *sub : targetType->AsETSUnionType()->ConstituentTypes()) {
+            if (!sub->IsETSTypeParameter()) {
+                allAreTypeParams = false;
+            }
+        }
+        if (allAreTypeParams) {
+            expr->SetTsType(checker->TypeError(expr, diagnostic::INVALID_CAST,
+                                               {sourceType->ToString(), targetType->ToString()},
+                                               expr->Expr()->Start()));
+            return false;
+        }
+    }
+
+    return true;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -3914,30 +3949,13 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
     expr->Expr()->SetPreferredType(targetType);
 
     auto const sourceType = expr->Expr()->Check(checker);
+    if (sourceType->IsTypeError() && checker->HasStatus(checker::CheckerStatus::IN_TYPE_INFER)) {
+        return expr->SetTsType(checker->GlobalTypeError());
+    }
     FORWARD_TYPE_ERROR(checker, sourceType, expr);
 
-    if (sourceType->DefinitelyETSNullish() && !targetType->PossiblyETSNullish()) {
-        return expr->SetTsType(checker->TypeError(expr, diagnostic::NULLISH_CAST_TO_NONNULLISH, expr->Start()));
-    }
-
-    if (expr->Expr()->IsLiteral() && sourceType->IsBuiltinNumeric() && targetType->IsETSTypeParameter()) {
-        checker->LogError(diagnostic::INVALID_CAST, {sourceType->ToString(), targetType->ToString()},
-                          expr->Expr()->Start());
-        return checker->InvalidateType(expr);
-    }
-
-    if (expr->Expr()->IsLiteral() && sourceType->IsBuiltinNumeric() && targetType->IsETSUnionType()) {
-        bool allAreTypeParams = true;
-        for (auto *sub : targetType->AsETSUnionType()->ConstituentTypes()) {
-            if (!sub->IsETSTypeParameter()) {
-                allAreTypeParams = false;
-            }
-        }
-        if (allAreTypeParams) {
-            checker->LogError(diagnostic::INVALID_CAST, {sourceType->ToString(), targetType->ToString()},
-                              expr->Expr()->Start());
-            return checker->InvalidateType(expr);
-        }
+    if (!CheckTSAsExpressionInvalidCast(expr, sourceType, targetType, checker)) {
+        return expr->TsType();
     }
 
     const checker::CastingContext ctx(
