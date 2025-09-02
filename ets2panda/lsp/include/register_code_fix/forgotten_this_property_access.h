@@ -31,6 +31,10 @@ public:
     std::vector<CodeFixAction> GetCodeActions(const CodeFixContext &context) override;
 
     CombinedCodeActions GetAllCodeActions(const CodeFixAllContext &codeFixAll) override;
+
+private:
+    void DoChanges(ChangeTracker &tracker, es2panda_Context *context, size_t pos);
+    std::vector<FileTextChanges> GetCodeActionsToFix(const CodeFixContext &context);
 };
 
 struct Info {
@@ -52,7 +56,6 @@ public:
 };
 
 Info GetInfoThisProp(es2panda_Context *context, size_t offset);
-void DoChanges(es2panda_Context *context, ChangeTracker tracker);
 
 }  // namespace ark::es2panda::lsp
 
