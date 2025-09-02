@@ -25,6 +25,7 @@
 #include "compiler/lowering/util.h"
 #include "util/es2pandaMacros.h"
 #include "generated/signatures.h"
+#include "util/helpers.h"
 
 namespace ark::es2panda::compiler {
 
@@ -251,8 +252,8 @@ static void HandleScriptFunctionHeader(UnboxContext *uctx, ir::ScriptFunction *f
     // Special case for primitive `valueOf` functions -- should still return boxed values (used in codegen)
     if (func->Parent()->Parent()->IsMethodDefinition() &&
         func->Parent()->Parent()->AsMethodDefinition()->Id()->Name() == "valueOf" &&
-        ContainingClass(func)->AsETSObjectType()->IsBoxedPrimitive() && sig->Params().size() == 1 &&
-        !sig->Params()[0]->TsType()->IsETSEnumType()) {
+        util::Helpers::GetContainingObjectType(func)->AsETSObjectType()->IsBoxedPrimitive() &&
+        sig->Params().size() == 1) {
         auto *boxed = func->Parent()->Parent()->Parent()->AsTyped()->TsType();
         auto *unboxed = MaybeRecursivelyUnboxType(uctx, boxed);
 
