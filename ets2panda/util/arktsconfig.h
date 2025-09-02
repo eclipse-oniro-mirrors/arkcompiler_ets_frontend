@@ -25,8 +25,8 @@
 
 #include "util/language.h"
 #include "util/diagnostic.h"
-#include "libpandabase/utils/json_builder.h"
-#include "libpandabase/utils/json_parser.h"
+#include "utils/json_builder.h"
+#include "utils/json_parser.h"
 
 // NOTE(ivagin): If ARKTSCONFIG_USE_FILESYSTEM is not defined part of ArkTsConfig functionality is disabled.
 //       Only build configuration which prevents us from usage of std::filesystem is "MOBILE" build

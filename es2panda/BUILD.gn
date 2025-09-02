@@ -14,7 +14,8 @@
 import("//arkcompiler/ets_frontend/es2panda/es2abc_config.gni")
 import("//arkcompiler/ets_frontend/ets_frontend_config.gni")
 
-if ((defined(ark_standalone_build) && ark_standalone_build) || (defined(is_arkui_x) && is_arkui_x)) {
+if ((defined(ark_standalone_build) && ark_standalone_build) ||
+    (defined(is_arkui_x) && is_arkui_x)) {
   import("//arkcompiler/runtime_core/ark_config.gni")
 } else {
   import("//arkcompiler/ets_frontend/ark_config.gni")
@@ -431,13 +432,16 @@ ohos_static_library("es2panda_lib") {
       "//third_party/icu/icu4c/source/common",
       "//third_party/icu/icu4c/source/i18n",
       "//third_party/icu/icu4c/source",
+      "$ark_root/abc2program",
       "$ark_root/assembler",
+      "$ark_root/libpandafile",
       "$ark_root/libpandabase",
       "$ark_root/libpandabase/mem",
     ]
   } else {
     external_deps += [
       "icu:static_icuuc",
+      "runtime_core:arkabc2program_public_headers",
       "runtime_core:arkassembler_public_headers",
       "runtime_core:arkbase_public_headers",
       "runtime_core:arkfile_public_headers",
@@ -530,13 +534,16 @@ ohos_executable("es2panda") {
   ]
   if (ark_standalone_build || (defined(is_arkui_x) && is_arkui_x)) {
     include_dirs += [
+      "$ark_root/abc2program",
       "$ark_root/assembler",
+      "$ark_root/libpandafile",
       "$ark_root/libpandabase",
       "$ark_root/libpandabase/mem",
     ]
   } else {
     external_deps += [
       "icu:static_icuuc",
+      "runtime_core:arkabc2program_public_headers",
       "runtime_core:arkassembler_public_headers",
       "runtime_core:arkbase_public_headers",
       "runtime_core:arkfile_public_headers",

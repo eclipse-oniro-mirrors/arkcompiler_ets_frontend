@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_PARSER_PROGRAM_ENTITY_NAME_VISITOR_H
 #define ES2PANDA_PARSER_PROGRAM_ENTITY_NAME_VISITOR_H
 
-#include "libpandabase/mem/arena_allocator.h"
+#include "mem/arena_allocator.h"
 #include "util/es2pandaMacros.h"
 #include "ir/visitor/IterateAstVisitor.h"
 #include "util/ustring.h"

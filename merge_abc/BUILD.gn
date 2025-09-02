@@ -13,7 +13,8 @@
 
 import("//arkcompiler/ets_frontend/ets_frontend_config.gni")
 
-if ((defined(ark_standalone_build) && ark_standalone_build) || (defined(is_arkui_x) && is_arkui_x)) {
+if ((defined(ark_standalone_build) && ark_standalone_build) ||
+    (defined(is_arkui_x) && is_arkui_x)) {
   import("//arkcompiler/runtime_core/ark_config.gni")
 } else {
   import("//arkcompiler/ets_frontend/ark_config.gni")
@@ -45,7 +46,6 @@ protobuf_snapshot_generator_sources = [
 
 config("panda_assembly_proto_public_config") {
   include_dirs = [
-    "$ark_root",
     "src",
     "$proto_out_dir",
     "../es2panda",
@@ -54,21 +54,17 @@ config("panda_assembly_proto_public_config") {
 }
 
 if (ark_standalone_build || is_arkui_x) {
-  assembly_proto_configs = [ 
+  assembly_proto_configs = [
     "$ark_root:ark_config",
     "$ark_root/assembler:arkassembler_public_config",
     "$ark_root/libpandafile:arkfile_public_config",
     "$ark_root/libpandabase:arkbase_public_config",
   ]
 } else {
-  assembly_proto_configs = [
-    "//arkcompiler/ets_frontend:ark_config"
-  ]
+  assembly_proto_configs = [ "//arkcompiler/ets_frontend:ark_config" ]
 }
 
-assembly_proto_configs += [
-  ":panda_assembly_proto_public_config",
-]
+assembly_proto_configs += [ ":panda_assembly_proto_public_config" ]
 
 if (defined(is_arkui_x) && is_arkui_x) {
   assembly_proto_configs += [ sdk_libc_secshared_config ]
@@ -189,15 +185,19 @@ ohos_source_set("assembly_proto_static") {
   }
   if (!ark_standalone_build && !is_arkui_x) {
     external_deps += [
+      "runtime_core:arkabc2program_public_headers",
       "runtime_core:arkassembler_public_headers",
       "runtime_core:arkbase_public_headers",
       "runtime_core:arkfile_public_headers",
+      "runtime_core:arkplatform_public_headers",
     ]
   } else {
     include_dirs += [
+      "$ark_root/abc2program",
       "$ark_root/assembler",
       "$ark_root/libpandabase",
       "$ark_root/libpandabase/mem",
+      "$ark_root/libpandafile",
     ]
   }
 
@@ -246,13 +246,14 @@ ohos_executable("merge_abc") {
   external_deps = []
 
   if (ark_standalone_build || is_arkui_x) {
-    configs = [ 
+    configs = [
       "$ark_root:ark_config",
       "$ark_root/assembler:arkassembler_public_config",
       "$ark_root/libpandafile:arkfile_public_config",
       "$ark_root/libpandabase:arkbase_public_config",
     ]
     include_dirs += [
+      "$ark_root/abc2program",
       "$ark_root/assembler",
       "$ark_root/libpandabase",
       "$ark_root/libpandabase/mem",
@@ -260,9 +261,11 @@ ohos_executable("merge_abc") {
   } else {
     configs = [ "//arkcompiler/ets_frontend:ark_config" ]
     external_deps += [
+      "runtime_core:arkabc2program_public_headers",
       "runtime_core:arkassembler_public_headers",
       "runtime_core:arkbase_public_headers",
       "runtime_core:arkfile_public_headers",
+      "runtime_core:arkplatform_public_headers",
     ]
   }
 

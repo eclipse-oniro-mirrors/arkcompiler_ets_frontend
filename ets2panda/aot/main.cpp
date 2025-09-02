@@ -24,7 +24,7 @@
 #include "util/generateBin.h"
 #include "util/options.h"
 #include "util/plugin.h"
-#include "libpandabase/os/stacktrace.h"
+#include "os/stacktrace.h"
 #include "generated/diagnostic.h"
 
 #include <iostream>
