@@ -19,6 +19,7 @@
 #include <atomic>
 #include <limits>
 #include <memory>
+#include <shared_mutex>
 #include <string>
 #include <unordered_map>
 
@@ -93,23 +94,36 @@ public:
 
     explicit DeclarationCache(Tag &&tag);
 
-    static DeclarationCache &Instance();
+    static void ActivateCache();
 
-    void ClearAll() noexcept;
+    [[nodiscard]] static bool IsCacheActivated() noexcept;
 
-    void RemoveDeclaration(std::string const &fileName) noexcept;
+    static void ClearAll() noexcept;
 
-    DeclarationType GetDeclaration(std::string const &fileName) const noexcept;
+    static void RemoveFromCache(std::string const &fileName) noexcept;
 
-    DeclarationType AddDeclaration(std::string fileName, DeclarationType decl);
+    [[nodiscard]] static DeclarationType GetFromCache(std::string const &fileName) noexcept;
+
+    static DeclarationType CacheIfPossible(std::string fileName, DeclarationType decl);
 
 private:
-    inline static std::unique_ptr<DeclarationCache> globalDeclarationCache_ = nullptr;
+    static std::shared_ptr<DeclarationCache> Instance() noexcept;
 
-    std::unordered_map<std::string, DeclarationType> declarations_ {};
+    void Clear() noexcept;
+    void Remove(std::string const &fileName) noexcept;
 
+    DeclarationType Get(std::string const &fileName) const noexcept;
+    DeclarationType Add(std::string fileName, DeclarationType decl);
+
+private:
+private:
+    inline static std::shared_mutex globalGuard_ {};
+    inline static std::shared_ptr<DeclarationCache> globalDeclarationCache_ = nullptr;
+
+private:
     //  Synchronization object to control access to cached data:
     mutable ReadWriteSpinMutex dataGuard_ {};
+    std::unordered_map<std::string, DeclarationType> declarations_ {};
 };
 
 }  // namespace ark::es2panda::parser

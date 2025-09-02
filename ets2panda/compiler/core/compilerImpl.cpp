@@ -128,9 +128,8 @@ void HandleGenerateDecl(const parser::Program &program, util::DiagnosticEngine &
     outFile << result;
     outFile.close();
 
-    // Add generated declaration to the cache
-    auto &declarationCache = parser::DeclarationCache::Instance();
-    declarationCache.AddDeclaration(outputPath, std::make_shared<std::string>(std::move(result)));
+    // Try to add generated declaration to the cache (if it is activated)
+    parser::DeclarationCache::CacheIfPossible(outputPath, std::make_shared<std::string>(std::move(result)));
 }
 
 static bool CheckOptionsAfterPhase(const util::Options &options, const parser::Program &program,
@@ -375,9 +374,13 @@ static bool ExecuteParsingAndCompiling(const CompilationUnit &unit, public_lib::
 {
     ES2PANDA_PERF_SCOPE("@phases");
     parser::Program *program = context->parserProgram;
-    if (unit.ext == ScriptExtension::ETS &&
-        context->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-        AddExternalPrograms(context, unit, program);
+    if (unit.ext == ScriptExtension::ETS) {
+        if (context->config->options->IsUseDeclarationCache()) {
+            parser::DeclarationCache::ActivateCache();
+        }
+        if (context->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
+            AddExternalPrograms(context, unit, program);
+        }
     }
 
     if (context->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE &&
