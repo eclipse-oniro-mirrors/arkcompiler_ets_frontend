@@ -646,7 +646,7 @@ if (PANDA_TARGET_WINDOWS)
     set(CMAKE_STATIC_LIBRARY_SUFFIX ".lib")
 endif()
 
-panda_add_library(es2panda-public ${PANDA_DEFAULT_LIB_TYPE} ${ES2PANDA_PUBLIC_SOURCES})
+panda_frontend_add_library(es2panda-public ${PANDA_DEFAULT_LIB_TYPE} ${ES2PANDA_PUBLIC_SOURCES})
 add_dependencies(es2panda-lib gen_api)
 add_dependencies(es2panda-public es2panda-lib)
 

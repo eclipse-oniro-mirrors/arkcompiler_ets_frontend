@@ -38,12 +38,11 @@ foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
     list(GET TEST_DATA_ELEM 0 TEST_NAME)
     list(GET TEST_DATA_ELEM 1 EXTENSION)
 
-    panda_add_executable(${TEST_NAME} ${TEST_NAME}.${EXTENSION} ${COMMON_SOURCE_FILES} OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    panda_frontend_add_executable(${TEST_NAME} ${TEST_NAME}.${EXTENSION} ${COMMON_SOURCE_FILES} OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     panda_add_sanitizers(TARGET ${TEST_NAME} SANITIZERS ${PANDA_SANITIZERS_LIST})
 
     panda_target_include_directories(${TEST_NAME}
         PRIVATE ${ES2PANDA_PATH}
-        PRIVATE ${PANDA_ROOT}/libpandafile
         PRIVATE ${PANDA_ROOT}/assembler
         PRIVATE ${OUTPUT_DIR}
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
@@ -51,7 +50,6 @@ foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
         PUBLIC ${CMAKE_SOURCE_DIR}/libpandabase
         PUBLIC ${CMAKE_SOURCE_DIR}/runtime
         PUBLIC ${CMAKE_BINARY_DIR}/libpandabase
-        PUBLIC ${CMAKE_BINARY_DIR}/libpandafile/include
         ${CMAKE_BINARY_DIR}
     )
     panda_target_link_libraries(${TEST_NAME} es2panda-public arkassembler arkbase arkfile)
