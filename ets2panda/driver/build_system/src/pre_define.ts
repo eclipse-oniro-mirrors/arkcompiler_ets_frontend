@@ -36,12 +36,12 @@ export enum LANGUAGE_VERSION {
 
 export const PANDA_SDK_PATH_FROM_SDK: string = './build-tools/ets2panda';
 export const SYSTEM_SDK_PATH_FROM_SDK: string = './';
-export const KIT_CONFIGS_PATH_FROM_SDK: string = '../ets1.1/build-tools/ets-loader/kit_configs';
+export const KIT_CONFIGS_PATH_FROM_SDK: string = '../dynamic/build-tools/ets-loader/kit_configs';
 
 export const DEFAULT_WOKER_NUMS: number = 6;
 
-export const ETS_1_1 = 'ets1.1';
-export const ETS_1_1_INTEROP = 'ets1.1interop';
+export const ETS_1_1 = 'dynamic';
+export const ETS_1_1_INTEROP = 'dynamic-interop';
 
 export const sdkConfigPrefix = 'ohos|system|kit|arkts';
 export const NATIVE_MODULE: Set<string> = new Set(

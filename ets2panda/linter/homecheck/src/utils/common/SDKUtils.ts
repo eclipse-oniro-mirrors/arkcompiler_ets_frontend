@@ -24,8 +24,8 @@ export class SdkUtils {
     static HmsSdkName = 'hmsSdk';
 
     static getEts2SdksWithSdkRelativePath(sdkMap: Map<String, Sdk>): Sdk[] | null {
-        const Ets1DirName = 'ets1.1';
-        const Ets2DirName = 'ets1.2';
+        const Ets1DirName = 'dynamic';
+        const Ets2DirName = 'static';
         const ets1OhosSdk = sdkMap.get(this.OhosSdkName);
         const ets1HmsSdk = sdkMap.get(this.HmsSdkName);
         let sdks: Sdk[] = [];

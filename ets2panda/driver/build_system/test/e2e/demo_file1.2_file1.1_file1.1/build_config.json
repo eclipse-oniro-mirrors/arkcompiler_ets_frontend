@@ -1,8 +1,8 @@
 {
 
     "plugins": {
-        "ArkUI": "${absolute_path_to_build_system}/test/mock_sdk/ets/ets1.2/build-tools/ui-plugins/lib/ui-plugins/index.js",
-        "ArkUI-Memo": "${absolute_path_to_build_system}/test/mock_sdk/ets/ets1.2/build-tools/ui-plugins/lib/memo-plugins/index.js"
+        "ArkUI": "${absolute_path_to_build_system}/test/mock_sdk/ets/static/build-tools/ui-plugins/lib/ui-plugins/index.js",
+        "ArkUI-Memo": "${absolute_path_to_build_system}/test/mock_sdk/ets/static/build-tools/ui-plugins/lib/memo-plugins/index.js"
     },
     "compileFiles": [
         "${absolute_path_to_build_system}/test/e2e/demo_file1.2_file1.1_file1.1/library/file1.ets"
