@@ -3218,6 +3218,32 @@ checker::Type *ETSAnalyzer::Check(ir::BlockStatement *st) const
     return ReturnTypeForStatement(st);
 }
 
+static void CheckJumpStatement(ir::AstNode *st, ETSChecker *checker)
+{
+    const ir::AstNode *target = nullptr;
+    ir::Identifier *ident = nullptr;
+    if (st->IsContinueStatement()) {
+        target = st->AsContinueStatement()->Target();
+        ident = st->AsContinueStatement()->Ident();
+    } else {
+        target = st->AsBreakStatement()->Target();
+        ident = st->AsBreakStatement()->Ident();
+    }
+
+    // CTE if target is outside the function
+    auto getEnclosingMethod = [](const ir::AstNode *node) {
+        const ir::AstNode *enclosingMethod = node->Parent();
+        while (enclosingMethod != nullptr && !enclosingMethod->IsMethodDefinition() &&
+               !enclosingMethod->IsArrowFunctionExpression()) {
+            enclosingMethod = enclosingMethod->Parent();
+        }
+        return enclosingMethod;
+    };
+    if (ident != nullptr && getEnclosingMethod(st) != getEnclosingMethod(target)) {
+        checker->LogError(diagnostic::CONTINUE_OR_BREAK_TARGET_OUTSIDE_FUNCTION, {}, st->Start());
+    }
+}
+
 checker::Type *ETSAnalyzer::Check(ir::BreakStatement *st) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -3230,6 +3256,8 @@ checker::Type *ETSAnalyzer::Check(ir::BreakStatement *st) const
     if (st->Target() == nullptr) {
         return checker->GlobalTypeError();
     }
+
+    CheckJumpStatement(st, checker);
 
     checker->Context().OnBreakStatement(st);
     return ReturnTypeForStatement(st);
@@ -3349,18 +3377,7 @@ checker::Type *ETSAnalyzer::Check(ir::ContinueStatement *st) const
         return checker->GlobalTypeError();
     }
 
-    // CTE if target is outside the function
-    auto getEnclosingMethod = [](const ir::AstNode *node) {
-        const ir::AstNode *enclosingMethod = node->Parent();
-        while (enclosingMethod != nullptr && !enclosingMethod->IsMethodDefinition() &&
-               !enclosingMethod->IsArrowFunctionExpression()) {
-            enclosingMethod = enclosingMethod->Parent();
-        }
-        return enclosingMethod;
-    };
-    if (getEnclosingMethod(st) != getEnclosingMethod(st->Target())) {
-        checker->LogError(diagnostic::CONTINUE_TARGET_OUTSIDE_FUNCTION, {}, st->Start());
-    }
+    CheckJumpStatement(st, checker);
 
     checker->AddStatus(CheckerStatus::MEET_CONTINUE);
     return ReturnTypeForStatement(st);
