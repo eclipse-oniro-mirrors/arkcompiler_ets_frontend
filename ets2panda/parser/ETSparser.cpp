@@ -14,13 +14,12 @@
  */
 
 #include "ETSparser.h"
+#include <string_view>
 #include "ETSNolintParser.h"
 #include "program/program.h"
+#include "program/DeclarationCache.h"
 #include "public/public.h"
-#include <utility>
 
-#include "util/es2pandaMacros.h"
-#include "parser/parserFlags.h"
 #include "parser/parserStatusContext.h"
 #include "util/helpers.h"
 #include "util/language.h"
@@ -364,19 +363,18 @@ static bool SearchImportedExternalSources(ETSParser *parser, const std::string_v
     return false;
 }
 
-bool ETSParser::TryMergeFromCache(size_t idx, ArenaVector<util::ImportPathManager::ParseInfo> &parseList)
+bool ETSParser::TryMergeFromCache(util::ImportPathManager::ImportMetadata const &importData)
 {
     if (Context()->globalContext == nullptr) {
         return false;
     }
 
-    auto &importData = parseList[idx].importData;
     auto src = importData.HasSpecifiedDeclPath() ? importData.declPath : importData.resolvedSource;
     const auto &absPath = std::string {util::Path {src, Allocator()}.GetAbsolutePath()};
     auto cacheExtProgs = Context()->globalContext->cachedExternalPrograms;
     if (cacheExtProgs.find(absPath) != cacheExtProgs.end() && cacheExtProgs[absPath] != nullptr) {
         if (globalProgram_->MergeExternalSource(cacheExtProgs[absPath])) {
-            importPathManager_->MarkAsParsed(parseList[idx].importData.resolvedSource);
+            importPathManager_->MarkAsParsed(importData.resolvedSource);
             return true;
         }
     }
@@ -384,24 +382,39 @@ bool ETSParser::TryMergeFromCache(size_t idx, ArenaVector<util::ImportPathManage
 }
 
 //  Extracted from `ETSParser::SearchForNotParsed` to reduce its size and complexity
-DeclarationType ETSParser::GetDeclaration(std::string &&fileToParse) const
+std::optional<std::string_view> ETSParser::GetDeclarationSource(std::string &&fileToParse) const
 {
-    static auto &declarationCache = DeclarationCache::Instance();
-
-    auto declaration = declarationCache.GetDeclaration(fileToParse);
-    if (declaration == DeclarationCache::ABSENT) {
+    auto const readFromFile = [this, &fileToParse]() -> std::optional<std::string> {
         if (std::ifstream inputStream {fileToParse}; !inputStream) {
             util::DiagnosticMessageParams diagParams = {std::move(fileToParse)};
             DiagnosticEngine().LogDiagnostic(diagnostic::OPEN_FAILED, diagParams);
+            return std::nullopt;
         } else {
             std::stringstream ss {};
             ss << inputStream.rdbuf();
-            declaration =
-                declarationCache.AddDeclaration(std::move(fileToParse), std::make_shared<std::string>(ss.str()));
+            return std::make_optional(ss.str());
         }
+    };
+
+    if (!DeclarationCache::IsCacheActivated()) {
+        auto externalSource = readFromFile();
+        if (!externalSource.has_value()) {
+            return std::nullopt;
+        }
+        return std::make_optional(Allocator()->New<util::UString>(*externalSource, Allocator())->View().Utf8());
     }
 
-    return declaration;
+    auto declaration = DeclarationCache::GetFromCache(fileToParse);
+    if (declaration == DeclarationCache::ABSENT) {
+        auto externalSource = readFromFile();
+        if (!externalSource.has_value()) {
+            return std::nullopt;
+        }
+        declaration = DeclarationCache::CacheIfPossible(std::move(fileToParse),
+                                                        std::make_shared<std::string>(std::move(*externalSource)));
+    }
+
+    return std::make_optional(std::string_view {*declaration});
 }
 
 std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,
@@ -421,7 +434,7 @@ std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPat
         notParsedElement->isParsed = true;
 
         const auto &data = notParsedElement->importData;
-        if (data.declPath.empty()) {
+        if (data.declPath.empty() || TryMergeFromCache(data)) {
             notParsedElement = findNotParsed();
             continue;
         }
@@ -437,8 +450,8 @@ std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPat
         if (data.IsExternalBinaryImport()) {
             ParseParseListElement(*notParsedElement, data.declText, directImportsFromMainSource, &programs);
         } else {
-            auto declaration = GetDeclaration(std::string {parseCandidate});
-            if (declaration == DeclarationCache::ABSENT) {
+            auto declaration = GetDeclarationSource(std::string {parseCandidate});
+            if (!declaration.has_value()) {
                 GetContext().SetLanguage(preservedLang);
                 notParsedElement = findNotParsed();
                 continue;

@@ -16,7 +16,6 @@
 #ifndef ES2PANDA_PARSER_CORE_ETS_PARSER_H
 #define ES2PANDA_PARSER_CORE_ETS_PARSER_H
 
-#include "program/DeclarationCache.h"
 #include "util/arktsconfig.h"
 #include "util/importPathManager.h"
 #include "innerSourceParser.h"
@@ -211,9 +210,9 @@ private:
     ArenaVector<ir::Statement *> ParseETSInitModuleStatements();
     ir::Statement *ParseImportDeclarationHelper(lexer::SourcePosition startLoc, ArenaVector<ir::AstNode *> &specifiers,
                                                 ir::ImportKinds importKind);
-    bool TryMergeFromCache(size_t idx, ArenaVector<util::ImportPathManager::ParseInfo> &parseList);
+    bool TryMergeFromCache(util::ImportPathManager::ImportMetadata const &importData);
 
-    DeclarationType GetDeclaration(std::string &&fileToParse) const;
+    std::optional<std::string_view> GetDeclarationSource(std::string &&fileToParse) const;
     std::vector<Program *> SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,
                                               ArenaVector<util::StringView> &directImportsFromMainSource);
     parser::Program *ParseSource(const SourceFile &sourceFile);

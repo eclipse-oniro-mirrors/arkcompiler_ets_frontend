@@ -380,10 +380,15 @@ options:
   default: false
   description: Dump es2panda performance metrics
 
-- name: simultaneous 
+- name: simultaneous
   type: bool
   default: false
   description: compile all the files to abc in once.
+
+- name: use-declaration-cache
+  type: bool
+  default: false
+  description: Activate and use common internal cache for generated declarations.
 
 #26986
 - name: ets-strings-concat
