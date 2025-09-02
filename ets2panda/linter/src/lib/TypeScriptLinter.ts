@@ -225,6 +225,7 @@ import { COMPONENT_DECORATOR, SELECT_IDENTIFIER, SELECT_OPTIONS, STRING_ERROR_LI
 import { ES_OBJECT } from './utils/consts/ESObject';
 import { cookBookMsg } from './CookBookMsg';
 import { getCommonApiInfoMap } from './utils/functions/CommonApiInfo';
+import { arkuiDecoratorSet } from './utils/consts/ArkuiDecorator';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
   supportedStdCallApiChecker: SupportedStdCallApiChecker;
@@ -15437,6 +15438,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2 || !TypeScriptLinter.builtApiInfo) {
       return;
     }
+
+    if (arkuiDecoratorSet.has(decorator.expression.getText())) {
+      return;
+    }
+
     const type = this.tsTypeChecker.getTypeAtLocation(decorator.expression);
     const aliasSymbol = type.aliasSymbol;
     const declaration = aliasSymbol?.declarations?.[0];
