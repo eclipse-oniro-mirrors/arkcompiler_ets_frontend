@@ -1919,8 +1919,7 @@ void ETSChecker::CheckCyclicConstructorCall(Signature *signature)
 ETSObjectType *ETSChecker::CheckExceptionOrErrorType(checker::Type *type, const lexer::SourcePosition pos)
 {
     ES2PANDA_ASSERT(type != nullptr);
-    if (!type->IsETSObjectType() || (!Relation()->IsAssignableTo(type, GlobalBuiltinExceptionType()) &&
-                                     !Relation()->IsAssignableTo(type, GlobalBuiltinErrorType()))) {
+    if (!type->IsETSObjectType() || !Relation()->IsAssignableTo(type, GlobalBuiltinErrorType())) {
         LogError(diagnostic::CATCH_OR_THROW_OF_INVALID_TYPE,
                  {compiler::Signatures::BUILTIN_EXCEPTION_CLASS, compiler::Signatures::BUILTIN_ERROR_CLASS}, pos);
         return GlobalETSObjectType();

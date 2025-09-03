@@ -144,7 +144,6 @@ public:
     ETSObjectType *GlobalBuiltinETSStringType() const;
     ETSObjectType *GlobalBuiltinETSBigIntType() const;
     ETSObjectType *GlobalBuiltinTypeType() const;
-    ETSObjectType *GlobalBuiltinExceptionType() const;
     ETSObjectType *GlobalBuiltinErrorType() const;
     ETSObjectType *GlobalStringBuilderBuiltinType() const;
     ETSObjectType *GlobalBuiltinPromiseType() const;

@@ -149,7 +149,6 @@ static constexpr std::string_view BUILTINS_TO_INIT[] = {
     compiler::Signatures::BUILTIN_OBJECT_CLASS,
     compiler::Signatures::BUILTIN_STRING_CLASS,
     compiler::Signatures::BUILTIN_BIGINT_CLASS,
-    compiler::Signatures::BUILTIN_EXCEPTION_CLASS,
     compiler::Signatures::BUILTIN_ERROR_CLASS,
     compiler::Signatures::BUILTIN_TYPE_CLASS,
     compiler::Signatures::BUILTIN_PROMISE_CLASS,
@@ -615,11 +614,6 @@ ETSObjectType *ETSChecker::GlobalBuiltinETSBigIntType() const
 ETSObjectType *ETSChecker::GlobalBuiltinTypeType() const
 {
     return AsETSObjectType(&GlobalTypesHolder::GlobalTypeBuiltinType);
-}
-
-ETSObjectType *ETSChecker::GlobalBuiltinExceptionType() const
-{
-    return AsETSObjectType(&GlobalTypesHolder::GlobalExceptionBuiltinType);
 }
 
 ETSObjectType *ETSChecker::GlobalBuiltinErrorType() const
