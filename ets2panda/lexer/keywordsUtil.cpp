@@ -231,7 +231,8 @@ void KeywordsUtil::ScanIdContinue()
 
         size_t cpSize {};
         auto cp = Iterator().PeekCp(&cpSize);
-        if (!IsIdentifierPart(cp)) {
+        if (!IsIdentifierPart(cp) &&
+            (cp != LEX_CHAR_PERCENT || (Flags() & NextTokenFlags::CHAR_PERCENT_ALLOWED) == 0)) {
             break;
         }
 
