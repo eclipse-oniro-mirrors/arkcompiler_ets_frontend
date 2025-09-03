@@ -28,9 +28,9 @@
 /merge_abc/ @gavin1012_hw
 /test/ @gavin1012_hw
 /test262/ @gavin1012_hw
-/test262/*.json                 @shirunova_viktoria @gavin1012_hw @zhuheng27
-/test262/*.py			@shirunova_viktoria @gavin1012_hw @zhuheng27
-/test262/ignored*.txt		@shirunova_viktoria @gavin1012_hw @kuchkovairina @zhuheng27
+/test262/*.json                 @shirunova_viktoria @huang-shengda2
+/test262/*.py			@shirunova_viktoria @huang-shengda2
+/test262/ignored*.txt		@shirunova_viktoria @kuchkovairina @huang-shengda2
 /test_ecma_bcopt/ @gavin1012_hw
 /ets2panda/checker/ @rtakacs ^akmaevaleksey @zelentsovdmitry ^csabaosztrogonac ^lirismankarina ^igelhaus ^Prof1983
 /ets2panda/checker/ETS*.* @zelentsovdmitry ^igelhaus ^Prof1983
@@ -62,7 +62,7 @@
 /ets2panda/varbinder/recordTable.* @torokg ^zelentsovdmitry ^igelhaus ^Prof1983
 /ets2panda/varbinder/scope.* @torokg ^zelentsovdmitry ^igelhaus ^Prof1983
 /ets2panda/varbinder/varbinder.* @torokg ^zelentsovdmitry ^igelhaus ^Prof1983
-/test/workload/ignored*.txt     @shirunova_viktoria @kuchkovairina @gavin1012_hw @zhuheng27
+/test/workload/ignored*.txt     @shirunova_viktoria @kuchkovairina @huang-shengda2
 /ets2panda/checker/ets/ @lirismankarina ^igelhaus ^Prof1983
 /ets2panda/checker/ets/*converter* @martinsajti ^pimenovdmitry ^igelhaus ^Prof1983
 /ets2panda/checker/ets/function.cpp @gogabr ^vpukhov ^igelhaus ^Prof1983
