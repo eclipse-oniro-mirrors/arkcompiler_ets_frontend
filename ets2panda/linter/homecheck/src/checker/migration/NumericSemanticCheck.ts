@@ -1014,9 +1014,11 @@ export class NumericSemanticCheck implements BaseChecker {
         const ets1Class = ets1SDK.getDeclaringArkClass();
         const ets1Namespace = ets1Class.getDeclaringArkNamespace();
         if (ets1Namespace === undefined) {
-            return ets2File.getClassWithName(ets1Class.getName())?.getMethodWithName(ets1SDK.getName()) ?? null;
+            const ets2Class = ets2File.getClassWithName(ets1Class.getName());
+            return ets2Class?.getMethodWithName(ets1SDK.getName()) ?? ets2Class?.getStaticMethodWithName(ets1SDK.getName()) ?? null;
         }
-        return ets2File.getNamespaceWithName(ets1Namespace.getName())?.getClassWithName(ets1Class.getName())?.getMethodWithName(ets1SDK.getName()) ?? null;
+        const ets2Class = ets2File.getNamespaceWithName(ets1Namespace.getName())?.getClassWithName(ets1Class.getName());
+        return ets2Class?.getMethodWithName(ets1SDK.getName()) ?? ets2Class?.getStaticMethodWithName(ets1SDK.getName()) ?? null;
     }
 
     // 判断类型是否为int，当前ArkAnalyzer对于int的表示应该是name为int的AliasType或UnclearReferenceType

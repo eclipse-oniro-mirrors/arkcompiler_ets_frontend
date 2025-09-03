@@ -13,26 +13,43 @@
  * limitations under the License.
  */
 
-import * from './ui_modules/common';
-
-@Entry
-@Component
-struct Index {
-  @State message: string = 'Hello World'
-
-  build() {
-    Row() {
-      Column() {
-        Text(this.message)
-          .fontSize(50)
-          .fontWeight(FontWeight.Bold)
-          .onClick(() => {
-            let context: Context = getContext(this) as Context;
-            console.info("CacheDir:" + context.cacheDir);
-          })
-      }
-      .width('100%')
-    }
-    .height('100%')
-  }
-}
+export const arkuiDecoratorSet: Set<string> = new Set([
+  'Styles',
+  'Extend',
+  'Entry',
+  'Preview',
+  'Component',
+  'Builder',
+  'LocalBuilder',
+  'BuilderParam',
+  'AnimatableExtend',
+  'Require',
+  'Reusable',
+  'State',
+  'Prop',
+  'Link',
+  'Provide',
+  'Consume',
+  'Observed',
+  'ObjectLink',
+  'LocalStorageProp',
+  'LocalStorageLink',
+  'StorageProp',
+  'StorageLink',
+  'Watch',
+  'Track',
+  'ObservedV2',
+  'Trace',
+  'ComponentV2',
+  'Local',
+  'Param',
+  'Once',
+  'Event',
+  'Provider',
+  'Consumer',
+  'Monitor',
+  'Computed',
+  'Type',
+  'ReusableV2',
+  'CustomDialog'
+]);
