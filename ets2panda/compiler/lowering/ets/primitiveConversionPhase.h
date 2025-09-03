@@ -13,28 +13,6 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:ets2panda/linter/src/lib/utils/functions/CookBookUtils.ts
-export function extractRuleTags(tags: string[]): Map<number, string> {
-  const resultMap = new Map<number, string>();
-
-  for (let i = 0; i < tags.length; i++) {
-    const tag = tags[i];
-
-    if (!tag?.trim()) {
-      continue;
-    }
-
-    const regex = /\(([^)]+)\)/;
-    const match = tag.match(regex);
-
-    if (match?.[1]?.trim()) {
-      resultMap.set(i, match[1]);
-    }
-  }
-
-  return resultMap;
-}
-========
 #ifndef ES2PANDA_COMPILER_LOWERING_PRIMITIVE_CONVERSION_PHASE_H
 #define ES2PANDA_COMPILER_LOWERING_PRIMITIVE_CONVERSION_PHASE_H
 
@@ -56,4 +34,3 @@ public:
 }  // namespace ark::es2panda::compiler
 
 #endif
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/compiler/lowering/ets/primitiveConversionPhase.h

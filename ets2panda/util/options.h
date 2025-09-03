@@ -16,8 +16,8 @@
 #ifndef ES2PANDA_UTIL_OPTIONS_H
 #define ES2PANDA_UTIL_OPTIONS_H
 
-#include "libpandabase/os/file.h"
-#include "libpandabase/utils/logger.h"
+#include "os/file.h"
+#include "utils/logger.h"
 #include "util/helpers.h"
 #include "utils/pandargs.h"
 #include "arktsconfig.h"

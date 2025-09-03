@@ -13,16 +13,7 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:ets2panda/test/ast/compiler/ets/union_access.ets
-class C{}
-class A{}
 
-function foo(x: A | C) {
-    x[x+1]
-}
-
-/* @@? 20:5 Error TypeError: Indexed access is not supported for such expression type. */
-========
 'use static'
 import { Entry } from '@kit.ArkUI';
 
@@ -34,4 +25,3 @@ struct Index {
   build() {
   }
 }
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/linter/test/main/interface_import_6.ets.migrate.ets

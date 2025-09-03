@@ -15,25 +15,6 @@
     ],
     "result": [
         {
-<<<<<<<< HEAD:ets2panda/linter/test/concurrent/no_support_isconcurrent2.ets.arkts2.json
-            "line": 15,
-            "column": 1,
-            "endLine": 15,
-            "endColumn": 43,
-            "problem": "LimitedStdLibNoImportConcurrency",
-            "suggest": "",
-            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 25,
-            "column": 25,
-            "endLine": 25,
-            "endColumn": 32,
-            "problem": "LimitedVoidType",
-            "suggest": "",
-            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
-========
             "line": 17,
             "column": 1,
             "endLine": 17,
@@ -62,7 +43,6 @@
             ],
             "suggest": "",
             "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/linter/test/main/interface_import_6.ets.autofix.json
             "severity": "ERROR"
         }
     ]

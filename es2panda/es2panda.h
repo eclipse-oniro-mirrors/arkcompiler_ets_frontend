@@ -21,7 +21,7 @@
 #include <util/patchFix.h>
 #include <util/programCache.h>
 #include <util/symbolTable.h>
-#include <abc2program/abc2program_compiler.h>
+#include <abc2program_compiler.h>
 
 #include <string>
 #include <unordered_map>

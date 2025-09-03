@@ -13,8 +13,4 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:ets2panda/test/ast/compiler/ets/import_export/eitest_export_A_1.ets
-export class A{}
-========
 let a = 10
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/test/ast/compiler/ets/init_module_tests/module_to_init.ets

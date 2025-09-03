@@ -17,10 +17,8 @@
 #define ES2PANDA_DECLGEN_ETS2TS_H
 
 #include "checker/ETSchecker.h"
-#include "compiler/lowering/phase.h"
-#include "libpandabase/os/file.h"
-#include "libpandabase/utils/arena_containers.h"
-#include "parser/program/program.h"
+#include "os/file.h"
+#include "utils/arena_containers.h"
 #include "util/options.h"
 #include "util/diagnosticEngine.h"
 #include "isolatedDeclgenChecker.h"

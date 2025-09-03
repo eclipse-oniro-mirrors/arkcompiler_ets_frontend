@@ -51,7 +51,7 @@
 #include "ir/ts/tsInterfaceDeclaration.h"
 #include "ir/ts/tsEnumDeclaration.h"
 
-#include "libpandabase/utils/utf.h"
+#include "utils/utf.h"
 
 namespace ark::es2panda::util {
 // Helpers

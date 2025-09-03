@@ -1,9 +1,5 @@
 /*
-<<<<<<<< HEAD:ets2panda/linter/src/lib/utils/functions/ProcessWrite.ts
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
-========
  * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/test/ast/compiler/ets/local_enum02.ets
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,23 +13,6 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:ets2panda/linter/src/lib/utils/functions/ProcessWrite.ts
-export async function processSyncOut(message: string): Promise<void> {
-  await new Promise((resolve) => {
-    process.stdout.write(message, () => {
-      resolve('success');
-    });
-  });
-}
-
-export async function processSyncErr(message: string): Promise<void> {
-  await new Promise((resolve) => {
-    process.stderr.write(message, () => {
-      resolve('success');
-    });
-  });
-}
-========
 enum Foo {Bar, Baz}
 
 function main() {
@@ -48,4 +27,3 @@ function main() {
 
 /* @@? 21:7 Error SyntaxError: Illegal start of ENUM expression.  */
 /* @@? 22:24 Warning Warning: Enum cast is deprecated. Cast support from 'Foo' to 'Int' will be removed. */
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/test/ast/compiler/ets/local_enum02.ets

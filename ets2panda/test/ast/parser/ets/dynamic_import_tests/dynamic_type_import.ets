@@ -13,21 +13,6 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:ets2panda/test/ast/compiler/ets/forof_bad_type.ets
-declare class A<T> {
-    a: A<T>
-    foo(f: (a: FixedArray<Tadad> | A<T>[]) => void):void
-    bar():A<T>
-}
-
-new A<number>().bar().a.foo((x) => {
-    for (let e of x) {
-        console.log(e)
-    }
-})
-
-/* @@? 18:27 Error TypeError: Cannot find type 'Tadad'. */
-========
 /*---
 flags: [dynamic-ast]
 ---*/
@@ -41,4 +26,3 @@ class A<T> {
 function foo(c: C) { }
 
 foo({ s: "" }) // should be ok
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/test/ast/parser/ets/dynamic_import_tests/dynamic_type_import.ets

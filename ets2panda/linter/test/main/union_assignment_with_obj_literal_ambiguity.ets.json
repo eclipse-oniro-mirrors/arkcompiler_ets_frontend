@@ -15,23 +15,14 @@
   ],
   "result": [
     {
-<<<<<<<< HEAD:ets2panda/linter/test/main/taskpool_deprecated_usages3.ets.json
-      "line": 17,
-      "column": 15,
-      "endLine": 17,
-      "endColumn": 46,
-========
       "line": 53,
       "column": 18,
       "endLine": 53,
       "endColumn": 21,
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/linter/test/main/union_assignment_with_obj_literal_ambiguity.ets.json
       "problem": "AnyType",
       "suggest": "",
       "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
       "severity": "ERROR"
-<<<<<<<< HEAD:ets2panda/linter/test/main/taskpool_deprecated_usages3.ets.json
-========
     },
     {
       "line": 53,
@@ -42,7 +33,6 @@
       "suggest": "",
       "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
       "severity": "ERROR"
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/linter/test/main/union_assignment_with_obj_literal_ambiguity.ets.json
     }
   ]
 }

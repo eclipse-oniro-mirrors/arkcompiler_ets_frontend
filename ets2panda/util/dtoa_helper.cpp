@@ -14,7 +14,7 @@
  */
 
 #include "dtoa_helper.h"
-#include "libpandabase/macros.h"
+#include "macros.h"
 #include "globals.h"
 
 // Almost copy of ets_runtime/ecmascript/base/dtoa_helper.cpp

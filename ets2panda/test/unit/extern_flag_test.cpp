@@ -17,7 +17,7 @@
 
 #include "assembler/assembly-program.h"
 #include "generated/signatures.h"
-#include "libpandabase/mem/mem.h"
+#include "mem/mem.h"
 #include "macros.h"
 #include "mem/pool_manager.h"
 #include "util/options.h"

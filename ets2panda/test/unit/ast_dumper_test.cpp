@@ -27,7 +27,7 @@
 #include "es2panda.h"
 #include "util/arktsconfig.h"
 #include "util/generateBin.h"
-#include "libpandabase/mem/mem.h"
+#include "mem/mem.h"
 #include "test/utils/panda_executable_path_getter.h"
 #include "test/utils/asm_test.h"
 

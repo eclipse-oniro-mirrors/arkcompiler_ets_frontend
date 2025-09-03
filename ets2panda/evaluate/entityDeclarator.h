@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,7 @@
 #include "checker/ETSchecker.h"
 #include "evaluate/proxyProgramsCache.h"
 #include "evaluate/helpers.h"
-#include "libpandabase/utils/arena_containers.h"
+#include "utils/arena_containers.h"
 
 namespace ark::es2panda::parser {
 class Program;

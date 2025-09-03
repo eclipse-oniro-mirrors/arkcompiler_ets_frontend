@@ -13,15 +13,6 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:ets2panda/test/runtime/ets/any_lambda.ets
-function foo(a: Any) {
-}
-
-function main() {
-    foo(() => {});
-    arktest.assertTrue(true);
-}
-========
 export class A{}
 
 interface I {
@@ -32,4 +23,3 @@ class B implements I {
  a = false
 }
 
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/test/runtime/ets/class_implements_interface_export.ets

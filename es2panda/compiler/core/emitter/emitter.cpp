@@ -15,7 +15,7 @@
 
 #include "emitter.h"
 
-#include <abc2program/common/abc_file_utils.h>
+#include <common/abc_file_utils.h>
 #include <compiler/base/literals.h>
 #include <compiler/core/compilerContext.h>
 #include <compiler/core/pandagen.h>

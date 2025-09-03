@@ -15,15 +15,6 @@
     ],
     "result": [
         {
-<<<<<<<< HEAD:ets2panda/linter/test/main/interface_import_4.ets.migrate.json
-            "line": 35,
-            "column": 28,
-            "endLine": 35,
-            "endColumn": 36,
-            "problem": "DynamicCtorCall",
-            "suggest": "",
-            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
-========
             "line": 26,
             "column": 3,
             "endLine": 29,
@@ -31,7 +22,6 @@
             "problem": "NoStaticOnClass",
             "suggest": "",
             "rule": "Class cannot have static codeblocks. (arkts-class-lazy-import)",
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/linter/test/main/arkts-no-super-call-in-static-context-positive.ets.arkts2.json
             "severity": "ERROR"
         }
     ]

@@ -15,62 +15,16 @@
     ],
     "result": [
         {
-<<<<<<<< HEAD:ets2panda/linter/test/interop/unary_operation_js_obj.ets.migrate.json
-            "line": 15,
-            "column": 5,
-            "endLine": 15,
-            "endColumn": 74,
-========
             "line": 24,
             "column": 5,
             "endLine": 24,
             "endColumn": 23,
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/linter/test/main/arkts-no-esobject-support.ets.json
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
         },
         {
-<<<<<<<< HEAD:ets2panda/linter/test/interop/unary_operation_js_obj.ets.migrate.json
-            "line": 16,
-            "column": 5,
-            "endLine": 16,
-            "endColumn": 50,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 1,
-            "endLine": 19,
-            "endColumn": 35,
-            "problem": "UnaryArithmNotNumber",
-            "suggest": "",
-            "rule": "Unary operators \"+\", \"-\" and \"~\" work only on numbers (arkts-no-polymorphic-unops)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 1,
-            "endLine": 20,
-            "endColumn": 35,
-            "problem": "UnaryArithmNotNumber",
-            "suggest": "",
-            "rule": "Unary operators \"+\", \"-\" and \"~\" work only on numbers (arkts-no-polymorphic-unops)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 1,
-            "endLine": 22,
-            "endColumn": 35,
-            "problem": "UnaryArithmNotNumber",
-            "suggest": "",
-            "rule": "Unary operators \"+\", \"-\" and \"~\" work only on numbers (arkts-no-polymorphic-unops)",
-========
             "line": 57,
             "column": 22,
             "endLine": 57,
@@ -98,7 +52,6 @@
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
->>>>>>>> origin/OpenHarmony_feature_Release_20250728:ets2panda/linter/test/main/arkts-no-esobject-support.ets.json
             "severity": "ERROR"
         }
     ]
