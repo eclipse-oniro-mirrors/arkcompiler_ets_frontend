@@ -479,6 +479,7 @@ parser::Program *ETSParser::ParseSource(const SourceFile &sourceFile)
     ES2PANDA_ASSERT(program != nullptr);
     auto esp = ExternalSourceParser(this, program);
     auto lexer = InitLexer(sourceFile);
+    program->SetRelativeFilePath(importPathManager_->FormRelativePath(program->SourceFile()));
 
     lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
     Lexer()->NextToken();
