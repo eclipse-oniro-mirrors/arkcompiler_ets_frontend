@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -80,7 +80,7 @@ static void StoreLocalExport(PandaGen *pg, const ir::AstNode *node, varbinder::V
     auto range = pg->Scope()->AsModuleScope()->LocalExports().equal_range(variable);
 
     for (auto it = range.first; it != range.second; ++it) {
-        if (it->second != "default") {
+        if (it->second != compiler::Signatures::DEFAULT) {
             pg->StoreModuleVar(node, it->second);
         }
     }

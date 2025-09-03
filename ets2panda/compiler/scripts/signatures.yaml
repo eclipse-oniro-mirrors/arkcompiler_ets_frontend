@@ -259,6 +259,8 @@ defines:
     ref: CONSTRUCTOR_NAME
   - name: 'delete'
     ref: DELETE
+  - name: 'default'
+    ref: DEFAULT
 
 packages:
   - name: 'std.core'

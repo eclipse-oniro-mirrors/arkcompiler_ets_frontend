@@ -321,7 +321,7 @@ static ir::AstNode *HandleDynamicObjectLiteralLowering(public_lib::Context *ctx,
         };
 
         const size_t genSymId = appendArgument(gensym->Clone(allocator, nullptr));
-        const size_t valueId = appendArgument(property->AsProperty()->Value()->Clone(allocator, nullptr));
+        const size_t valueId = appendArgument(property->AsProperty()->Value());
 
         ss << "@@I" << genSymId << ".setProperty('" << property->AsProperty()->Key()->DumpEtsSrc()
            << "', ESValue.wrap(@@E" << valueId << "));";

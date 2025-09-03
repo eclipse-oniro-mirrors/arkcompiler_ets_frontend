@@ -17,8 +17,8 @@
 flags: [dynamic-ast]
 ---*/
 
-import { ns } from "dynamic_import_tests/modules/module"
+import ns from "dynamic_import_tests/modules/module"
 
-()=>{
+() => {
     let a = new ns.A()
 }

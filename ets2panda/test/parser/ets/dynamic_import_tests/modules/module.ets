@@ -27,7 +27,7 @@ export declare class A {
     optional_foo(p?: double): string;
 }
 export declare interface I {
-    s:string
+    s: string
     f1(p: string): double;
     f2(p: double): string;
 }
@@ -37,29 +37,29 @@ export declare abstract class Animal {
 }
 
 export declare class C {
-    s:string
+    s: string
 }
 
 export declare type requiredC = Required<C>
 
-export declare class C1{}
+export declare class C1 { }
 
-export declare interface I1{}
+export declare interface I1 { }
 
-export declare class C2 extends C1 implements I1{}
+export declare class C2 extends C1 implements I1 { }
 export declare interface I2 extends I1 {
-    name:string;
-    age:number
+    name: string;
+    age: number
 }
 
-export declare namespace ns {
-    export class A{}
+export default declare namespace ns {
+    export class A { }
 }
 
 export declare class MyError extends Error {
     mycode: number
 }
 
-export declare interface OptionalInterface{
+export declare interface OptionalInterface {
     s?: string
 }

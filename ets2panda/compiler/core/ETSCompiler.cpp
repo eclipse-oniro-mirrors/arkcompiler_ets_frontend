@@ -707,7 +707,9 @@ void ETSCompiler::CompileAny(const ir::CallExpression *expr, const ir::Expressio
     etsg->StoreAccumulator(expr, objReg);
     auto ttctx = compiler::TargetTypeContext(etsg, expr->TsType());
     if (expr->Signature()->Function() != nullptr && expr->Signature()->Function()->IsStatic()) {
-        etsg->LoadPropertyByNameAny(memberExpr, objReg, memberExpr->Property()->AsIdentifier()->Name());
+        auto name = expr->Signature()->Function()->IsDefaultExported() ? compiler::Signatures::DEFAULT
+                                                                       : memberExpr->Property()->AsIdentifier()->Name();
+        etsg->LoadPropertyByNameAny(memberExpr, objReg, name);
         etsg->StoreAccumulator(expr, calleeReg);
         etsg->CallAny(callee->AsMemberExpression()->Object(), Span<ir::Expression const *const>(expr->Arguments()),
                       calleeReg);
@@ -910,7 +912,12 @@ bool ETSCompiler::CompileAny(compiler::ETSGen *etsg, const ir::MemberExpression 
     etsg->StoreAccumulator(expr, objReg);
 
     auto ttctx = compiler::TargetTypeContext(etsg, expr->TsType());
-    etsg->LoadPropertyByNameAny(expr, objReg, expr->Property()->AsIdentifier()->Name());
+    if (expr->Property()->Variable()->Declaration() != nullptr &&
+        expr->Property()->Variable()->Declaration()->Node()->IsDefaultExported()) {
+        etsg->LoadPropertyByNameAny(expr, objReg, compiler::Signatures::DEFAULT);
+    } else {
+        etsg->LoadPropertyByNameAny(expr, objReg, expr->Property()->AsIdentifier()->Name());
+    }
     etsg->EmitAnyCheckCast(expr, expr->TsType());
     return true;
 }
