@@ -16,7 +16,7 @@
 function main(): void {
   try {
     throw new NullPointerError();
-  } catch (e: Exception) {
+  } catch (e: Error) {
     //Do something.
   } catch (e) {
     //Do something.

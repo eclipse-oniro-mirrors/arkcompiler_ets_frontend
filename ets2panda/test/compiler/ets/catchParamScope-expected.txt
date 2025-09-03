@@ -456,7 +456,7 @@
                                           "loc": {
                                             "start": {
                                               "line": 22,
-                                              "column": 36,
+                                              "column": 32,
                                               "program": "catchParamScope.ets"
                                             },
                                             "end": {
@@ -475,7 +475,7 @@
                                               "type": "ETSTypeReferencePart",
                                               "name": {
                                                 "type": "Identifier",
-                                                "name": "Exception",
+                                                "name": "Error",
                                                 "loc": {
                                                   "start": {
                                                     "line": 22,
@@ -484,7 +484,7 @@
                                                   },
                                                   "end": {
                                                     "line": 22,
-                                                    "column": 34,
+                                                    "column": 30,
                                                     "program": "catchParamScope.ets"
                                                   }
                                                 }
@@ -497,7 +497,7 @@
                                                 },
                                                 "end": {
                                                   "line": 22,
-                                                  "column": 34,
+                                                  "column": 30,
                                                   "program": "catchParamScope.ets"
                                                 }
                                               }
@@ -510,7 +510,7 @@
                                               },
                                               "end": {
                                                 "line": 22,
-                                                "column": 34,
+                                                "column": 30,
                                                 "program": "catchParamScope.ets"
                                               }
                                             }

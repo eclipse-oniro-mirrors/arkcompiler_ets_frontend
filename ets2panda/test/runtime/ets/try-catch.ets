@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class TestException extends Exception {}
+class TestError extends Error {}
 
 let catchCode = 0;
 
@@ -43,10 +43,10 @@ function main(): void {
   arktest.assertEQ(catchCode, 2)
 
   try {
-    throw new TestException();
-  } catch(e: TestException) {
+    throw new TestError();
+  } catch(e: TestError) {
     catchCode = 3;
-  } catch (e: Exception) {
+  } catch (e: Error) {
     arktest.assertTrue(false)
   } catch (e) {
     arktest.assertTrue(false)
@@ -55,10 +55,10 @@ function main(): void {
   arktest.assertEQ(catchCode, 3)
 
   try {
-    throw new TestException();
-  } catch (e: Exception) {
+    throw new TestError();
+  } catch (e: Error) {
     catchCode = 4;
-  } catch (e: TestException) {
+  } catch (e: TestError) {
     arktest.assertTrue(false)
   } catch (e) {
     arktest.assertTrue(false)
