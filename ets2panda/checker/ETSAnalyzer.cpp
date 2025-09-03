@@ -3450,6 +3450,18 @@ checker::Type *ETSAnalyzer::Check(ir::ForOfStatement *const st) const
     return ReturnTypeForStatement(st);
 }
 
+static bool HasMissingInitOrType(ir::VariableDeclaration *varDecl, ETSChecker *checker)
+{
+    for (auto *decl : varDecl->Declarators()) {
+        if (decl->Id()->IsIdentifier() && !decl->Id()->AsIdentifier()->TypeAnnotation() && !decl->Init()) {
+            auto *ident = decl->Id()->AsIdentifier();
+            checker->LogError(diagnostic::MISSING_INIT_OR_TYPE, {}, ident->Start());
+            return true;
+        }
+    }
+    return false;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ForUpdateStatement *st) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -3460,6 +3472,12 @@ checker::Type *ETSAnalyzer::Check(ir::ForUpdateStatement *st) const
 
     if (st->Init() != nullptr) {
         st->Init()->Check(checker);
+        if (st->Init()->IsVariableDeclaration()) {
+            auto *varDecl = st->Init()->AsVariableDeclaration();
+            if (HasMissingInitOrType(varDecl, checker)) {
+                return checker->GlobalTypeError();
+            }
+        }
     }
 
     if (st->Test() != nullptr) {
