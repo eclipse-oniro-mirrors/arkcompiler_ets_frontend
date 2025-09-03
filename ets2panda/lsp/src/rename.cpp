@@ -13,15 +13,14 @@
  * limitations under the License.
  */
 
-#include "rename.h"
-#include "get_adjusted_location.h"
-#include "macros.h"
-#include "lexer/token/letters.h"
-#include "compiler/lowering/util.h"
-#include "public/public.h"
-#include "util/path.h"
 #include <string>
 #include <utility>
+#include "rename.h"
+#include "util/path.h"
+#include "public/public.h"
+#include "lexer/token/letters.h"
+#include "get_adjusted_location.h"
+#include "compiler/lowering/util.h"
 
 namespace ark::es2panda::lsp {
 constexpr size_t FIRST_CHAR_INDEX = 0;
@@ -31,18 +30,33 @@ constexpr size_t QUOTE_START_OFFSET = 1;
 
 RenameInfoType GetRenameInfo(es2panda_Context *context, size_t pos, const std::string &pandaLibPath)
 {
-    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
+    const std::string diagnosticMessage = "You cannot rename this element";
     SetPhaseManager(ctx->phaseManager);
-    auto checker = ctx->GetChecker()->AsETSChecker();
-    auto program = ctx->parserProgram;
-    auto node = GetAdjustedLocation(GetTouchingPropertyName(context, pos), true, ctx->allocator);
-    if (node.has_value() && NodeIsEligibleForRename(node.value())) {
-        auto renameInfo = GetRenameInfoForNode(node.value(), checker, program, pandaLibPath);
-        if (renameInfo.has_value()) {
-            return renameInfo.value();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *program = ctx->parserProgram;
+    ir::AstNode *token = GetTouchingPropertyName(context, pos);
+    if (token == nullptr) {
+        return GetRenameInfoError(diagnosticMessage);
+    }
+
+    ir::AstNode *declFromIdent = nullptr;
+    if (token->IsIdentifier()) {
+        declFromIdent = compiler::DeclarationFromIdentifier(token->AsIdentifier());
+    }
+
+    if (NodeIsEligibleForRename(token)) {
+        if (auto info = GetRenameInfoForNode(token, checker, program, pandaLibPath)) {
+            return *info;
         }
     }
-    const std::string diagnosticMessage = "You cannot rename this element";
+
+    if (declFromIdent != nullptr) {
+        if (auto info = GetRenameInfoForNode(declFromIdent, checker, program, pandaLibPath)) {
+            return *info;
+        }
+    }
+
     return GetRenameInfoError(diagnosticMessage);
 }
 
