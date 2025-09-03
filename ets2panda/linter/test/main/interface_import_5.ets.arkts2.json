@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 31,
+            "line": 30,
             "column": 36,
-            "endLine": 31,
+            "endLine": 30,
             "endColumn": 46,
             "problem": "NoDeprecatedApi",
             "suggest": "",
@@ -95,9 +95,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 31,
+            "line": 30,
             "column": 26,
-            "endLine": 31,
+            "endLine": 30,
             "endColumn": 33,
             "problem": "UIInterfaceImport",
             "suggest": "",
@@ -105,9 +105,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 31,
+            "line": 30,
             "column": 56,
-            "endLine": 31,
+            "endLine": 30,
             "endColumn": 63,
             "problem": "UIInterfaceImport",
             "suggest": "",

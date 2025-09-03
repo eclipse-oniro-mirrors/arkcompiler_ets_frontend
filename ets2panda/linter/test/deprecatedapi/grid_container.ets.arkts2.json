@@ -45,36 +45,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 20,
-            "endLine": 19,
-            "endColumn": 28,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"SizeType\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 31,
-            "endLine": 19,
-            "endColumn": 39,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"SizeType\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 20,
-            "endLine": 20,
-            "endColumn": 40,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"GridContainerOptions\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
             "line": 28,
             "column": 5,
             "endLine": 28,
@@ -82,16 +52,6 @@
             "problem": "UIInterfaceImport",
             "suggest": "",
             "rule": "The ArkUI interface \"Column\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 29,
-            "column": 7,
-            "endLine": 29,
-            "endColumn": 20,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"GridContainer\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         },
         {
@@ -122,16 +82,6 @@
             "problem": "UIInterfaceImport",
             "suggest": "",
             "rule": "The ArkUI interface \"TextAlign\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 7,
-            "endLine": 41,
-            "endColumn": 20,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"GridContainer\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         },
         {
@@ -195,16 +145,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 58,
-            "column": 29,
-            "endLine": 58,
-            "endColumn": 37,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"SizeType\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
             "line": 60,
             "column": 9,
             "endLine": 60,
@@ -212,16 +152,6 @@
             "problem": "UIInterfaceImport",
             "suggest": "",
             "rule": "The ArkUI interface \"Button\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 62,
-            "column": 29,
-            "endLine": 62,
-            "endColumn": 37,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"SizeType\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         }
     ]

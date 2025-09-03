@@ -10364,6 +10364,27 @@
       },
       "import_path": [],
       "is_global": true
+    },
+    {
+      "file_path": "api/@internal/component/ets/context_menu.d.ts",
+      "api_info": {
+        "line": 1,
+        "problem": "",
+        "api_name": "close",
+        "api_type": "MethodSignature",
+        "parent_api": [
+          {
+            "api_name": "ContextMenu",
+            "api_type": ""
+          }
+        ],
+        "code_kind": 173,
+        "api_optional": false,
+        "api_func_args": [],
+        "method_return_type": "any"
+      },
+      "import_path": [],
+      "is_global": true
     }
   ]
 }

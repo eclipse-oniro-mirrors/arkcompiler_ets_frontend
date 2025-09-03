@@ -45,16 +45,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 23,
-            "column": 7,
-            "endLine": 23,
-            "endColumn": 16,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"Navigator\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
             "line": 24,
             "column": 9,
             "endLine": 24,

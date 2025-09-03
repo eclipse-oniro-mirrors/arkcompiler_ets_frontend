@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+import { UIContext } from '@kit.ArkUI';
+
 import {
   Entry,
   Component,
@@ -22,7 +24,6 @@ import {
   Text,
   FontWeight,
   Context,
-  getUIContext,
 } from '@kit.ArkUI';
 
 import * from './ui_modules/common';
@@ -39,8 +40,7 @@ struct Index {
           .fontSize(50)
           .fontWeight(FontWeight.Bold)
           .onClick(() => {
-            // 建议使用this.getUIContext().getHostContext()
-            let context: Context = getUIContext().getHostContext(this) as Context;
+            let context: Context = UIContext.getFocusedUIContext()?.getHostContext() as Context;
             console.info("CacheDir:" + context.cacheDir);
           })
       }
