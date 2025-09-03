@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-#include "node_matchers.h"
 #include <cstddef>
 #include <string>
+#include "node_matchers.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
 #include "ir/ets/etsReExportDeclaration.h"
@@ -23,6 +23,38 @@
 #include "ir/statements/annotationUsage.h"
 
 namespace ark::es2panda::lsp {
+
+DEFINE_SIMPLE_HANDLER(HandleClassDefinition, ClassDefinition, Ident, ir::AstNodeType::CLASS_DEFINITION)
+DEFINE_SIMPLE_HANDLER(HandleClassProperty, ClassProperty, Id, ir::AstNodeType::CLASS_PROPERTY)
+DEFINE_SIMPLE_HANDLER(HandleProperty, Property, Key()->AsIdentifier, ir::AstNodeType::PROPERTY)
+DEFINE_SIMPLE_HANDLER(HandleTSInterfaceDeclaration, TSInterfaceDeclaration, Id,
+                      ir::AstNodeType::TS_INTERFACE_DECLARATION)
+DEFINE_SIMPLE_HANDLER(HandleTSTypeAliasDeclaration, TSTypeAliasDeclaration, Id,
+                      ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION)
+DEFINE_SIMPLE_HANDLER(HandleImportSpecifier, ImportSpecifier, Imported, ir::AstNodeType::IMPORT_SPECIFIER)
+DEFINE_SIMPLE_HANDLER(HandleImportDefaultSpecifier, ImportDefaultSpecifier, Local,
+                      ir::AstNodeType::IMPORT_DEFAULT_SPECIFIER)
+DEFINE_SIMPLE_HANDLER(HandleImportNamespaceSpecifier, ImportNamespaceSpecifier, Local,
+                      ir::AstNodeType::IMPORT_NAMESPACE_SPECIFIER)
+DEFINE_SIMPLE_HANDLER(HandleStructDeclaration, ETSStructDeclaration, Definition()->Ident,
+                      ir::AstNodeType::STRUCT_DECLARATION)
+DEFINE_SIMPLE_HANDLER(HandleClassDeclaration, ClassDeclaration, Definition()->Ident, ir::AstNodeType::CLASS_DECLARATION)
+DEFINE_SIMPLE_HANDLER(HanleScriptFunction, ScriptFunction, Id, ir::AstNodeType::SCRIPT_FUNCTION)
+DEFINE_SIMPLE_HANDLER(HandleFunctionDeclaration, FunctionDeclaration, Function()->Id,
+                      ir::AstNodeType::FUNCTION_DECLARATION)
+DEFINE_SIMPLE_HANDLER(HandleMethodDefinition, MethodDefinition, Function()->Id, ir::AstNodeType::METHOD_DEFINITION)
+DEFINE_SIMPLE_HANDLER(HanleTSEnumDeclaration, TSEnumDeclaration, Key, ir::AstNodeType::TS_ENUM_DECLARATION)
+DEFINE_SIMPLE_HANDLER(HandleVariableDeclaration, VariableDeclaration, Declarators()[0]->Id()->AsIdentifier,
+                      ir::AstNodeType::VARIABLE_DECLARATION)
+DEFINE_SIMPLE_HANDLER(HandleVariableDeclarator, VariableDeclarator, Id()->AsIdentifier,
+                      ir::AstNodeType::VARIABLE_DECLARATOR)
+DEFINE_SIMPLE_HANDLER(HandleTSClassImplements, TSClassImplements, Expr()->AsETSTypeReference()->Part()->GetIdent,
+                      ir::AstNodeType::TS_CLASS_IMPLEMENTS)
+DEFINE_SIMPLE_HANDLER(HandleAnnotationDeclaration, AnnotationDeclaration, GetBaseName,
+                      ir::AstNodeType::ANNOTATION_DECLARATION)
+DEFINE_SIMPLE_HANDLER(HandleAnnotationUsage, AnnotationUsage, GetBaseName, ir::AstNodeType::ANNOTATION_USAGE)
+DEFINE_SIMPLE_HANDLER(HandleAwitExpression, AwaitExpression, Argument()->AsIdentifier,
+                      ir::AstNodeType::AWAIT_EXPRESSION)
 
 bool MatchClassDefinition(ir::AstNode *childNode, const NodeInfo *info)
 {
@@ -499,6 +531,48 @@ ir::AstNode *ExtractIdentifierFromNode(ir::AstNode *node, const NodeInfo *info)
     return node;
 }
 
+void HandleIdentifier(ir::AstNode *node, std::vector<NodeInfo> &result)
+{
+    result.emplace_back(std::string(node->AsIdentifier()->Name()), ir::AstNodeType::IDENTIFIER);
+}
+
+void HandleMemberExpression(ir::AstNode *node, std::vector<NodeInfo> &result)
+{
+    if (auto ident = node->AsMemberExpression()->Property()) {
+        result.emplace_back(std::string(ident->ToString()), ir::AstNodeType::MEMBER_EXPRESSION);
+    }
+}
+
+void HandleSpeadeElement(ir::AstNode *node, std::vector<NodeInfo> &result)
+{
+    if (auto ident = node->AsSpreadElement()->Argument()) {
+        if (ident->IsIdentifier()) {
+            result.emplace_back(std::string(ident->AsIdentifier()->Name()), ir::AstNodeType::SPREAD_ELEMENT);
+        }
+        if (ident->IsMemberExpression()) {
+            auto propertyName = std::string(ident->AsMemberExpression()->Property()->AsIdentifier()->Name());
+            result.emplace_back(propertyName, ir::AstNodeType::SPREAD_ELEMENT);
+        }
+    }
+}
+
+void HandleTSEnumMember(ir::AstNode *node, std::vector<NodeInfo> &result)
+{
+    result.emplace_back(std::string(node->AsTSEnumMember()->Name()), ir::AstNodeType::TS_ENUM_MEMBER);
+}
+
+void HandleCallExpression(ir::AstNode *node, std::vector<NodeInfo> &result)
+{
+    if (node->AsCallExpression()->Callee()->IsMemberExpression()) {
+        result.emplace_back(node->AsCallExpression()->Callee()->AsMemberExpression()->Property()->ToString(),
+                            ir::AstNodeType::CALL_EXPRESSION);
+    }
+    if (node->AsCallExpression()->Callee()->IsIdentifier()) {
+        result.emplace_back(std::string(node->AsCallExpression()->Callee()->AsIdentifier()->Name()),
+                            ir::AstNodeType::CALL_EXPRESSION);
+    }
+}
+
 static std::unordered_map<ir::AstNodeType, NodeExtractor> GetClassAndIdentifierExtractors()
 {
     // clang-format off
@@ -724,5 +798,36 @@ const std::unordered_map<ir::AstNodeType, NodeMatcher> &GetNodeMatchers()
         {ir::AstNodeType::TS_NON_NULL_EXPRESSION, MatchTsNonNullExpression},
         {ir::AstNodeType::FUNCTION_DECLARATION, MatchFunctionDeclaration}};
     return NODE_MATCHERS;
+}
+
+const std::unordered_map<ir::AstNodeType, NodeInfoHandler> &GetNodeInfoHandlers()
+{
+    static const std::unordered_map<ir::AstNodeType, NodeInfoHandler> NODE_INFO_HANDLERS = {
+        {ir::AstNodeType::IDENTIFIER, HandleIdentifier},
+        {ir::AstNodeType::CLASS_DEFINITION, HandleClassDefinition},
+        {ir::AstNodeType::CLASS_PROPERTY, HandleClassProperty},
+        {ir::AstNodeType::PROPERTY, HandleProperty},
+        {ir::AstNodeType::VARIABLE_DECLARATION, HandleVariableDeclaration},
+        {ir::AstNodeType::VARIABLE_DECLARATOR, HandleVariableDeclarator},
+        {ir::AstNodeType::IMPORT_SPECIFIER, HandleImportSpecifier},
+        {ir::AstNodeType::IMPORT_DEFAULT_SPECIFIER, HandleImportDefaultSpecifier},
+        {ir::AstNodeType::IMPORT_NAMESPACE_SPECIFIER, HandleImportNamespaceSpecifier},
+        {ir::AstNodeType::TS_CLASS_IMPLEMENTS, HandleTSClassImplements},
+        {ir::AstNodeType::MEMBER_EXPRESSION, HandleMemberExpression},
+        {ir::AstNodeType::TS_INTERFACE_DECLARATION, HandleTSInterfaceDeclaration},
+        {ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION, HandleTSTypeAliasDeclaration},
+        {ir::AstNodeType::SPREAD_ELEMENT, HandleSpeadeElement},
+        {ir::AstNodeType::STRUCT_DECLARATION, HandleStructDeclaration},
+        {ir::AstNodeType::CLASS_DECLARATION, HandleClassDeclaration},
+        {ir::AstNodeType::SCRIPT_FUNCTION, HanleScriptFunction},
+        {ir::AstNodeType::FUNCTION_DECLARATION, HandleFunctionDeclaration},
+        {ir::AstNodeType::METHOD_DEFINITION, HandleMethodDefinition},
+        {ir::AstNodeType::TS_ENUM_DECLARATION, HanleTSEnumDeclaration},
+        {ir::AstNodeType::TS_ENUM_MEMBER, HandleTSEnumMember},
+        {ir::AstNodeType::CALL_EXPRESSION, HandleCallExpression},
+        {ir::AstNodeType::ANNOTATION_DECLARATION, HandleAnnotationDeclaration},
+        {ir::AstNodeType::AWAIT_EXPRESSION, HandleAwitExpression},
+        {ir::AstNodeType::ANNOTATION_USAGE, HandleAnnotationUsage}};
+    return NODE_INFO_HANDLERS;
 }
 }  // namespace ark::es2panda::lsp

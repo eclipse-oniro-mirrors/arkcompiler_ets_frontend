@@ -188,5 +188,320 @@
     "fileName": "getDefinitionAtPosition42.ets",
     "start": 966,
     "length": 12
+  },
+  "39": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 679,
+    "length": 3,
+    "nodeInfos": [
+      {
+        "name": "Foo",
+        "kind": 15
+      },
+      {
+        "name": "Foo",
+        "kind": 14
+      },
+      {
+        "name": "Foo",
+        "kind": 36
+      }
+    ]
+  },
+  "40": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 857,
+    "length": 8,
+    "nodeInfos": [
+      {
+        "name": "UserParm",
+        "kind": 133
+      },
+      {
+        "name": "UserParm",
+        "kind": 36
+      }
+    ]
+  },
+  "41": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 900,
+    "length": 2,
+    "nodeInfos": [
+      {
+        "name": "ID",
+        "kind": 129
+      },
+      {
+        "name": "ID",
+        "kind": 36
+      }
+    ]
+  },
+  "42": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 943,
+    "length": 5,
+    "nodeInfos": [
+      {
+        "name": "Color",
+        "kind": 89
+      },
+      {
+        "name": "Color",
+        "kind": 36
+      }
+    ]
+  },
+  "43": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 1099,
+    "length": 8,
+    "nodeInfos": [
+      {
+        "name": "Document",
+        "kind": 15
+      },
+      {
+        "name": "Document",
+        "kind": 14
+      },
+      {
+        "name": "Document",
+        "kind": 36
+      }
+    ]
+  },
+  "44": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 1241,
+    "length": 4,
+    "nodeInfos": [
+      {
+        "name": "move",
+        "kind": 166
+      },
+      {
+        "name": "move",
+        "kind": 60
+      },
+      {
+        "name": "move",
+        "kind": 36
+      }
+    ]
+  },
+  "45": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 1281,
+    "length": 9,
+    "nodeInfos": [
+      {
+        "name": "Direction",
+        "kind": 129
+      },
+      {
+        "name": "Direction",
+        "kind": 36
+      }
+    ]
+  },
+  "46": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 1648,
+    "length": 7,
+    "nodeInfos": [
+      {
+        "name": "Derived",
+        "kind": 15
+      },
+      {
+        "name": "Derived",
+        "kind": 14
+      },
+      {
+        "name": "Derived",
+        "kind": 36
+      }
+    ]
+  },
+  "47": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 1782,
+    "length": 11,
+    "nodeInfos": [
+      {
+        "name": "StaticClass",
+        "kind": 15
+      },
+      {
+        "name": "StaticClass",
+        "kind": 14
+      },
+      {
+        "name": "StaticClass",
+        "kind": 36
+      }
+    ]
+  },
+  "48": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 1991,
+    "length": 3,
+    "nodeInfos": [
+      {
+        "name": "obj",
+        "kind": 152
+      },
+      {
+        "name": "obj",
+        "kind": 153
+      },
+      {
+        "name": "obj",
+        "kind": 36
+      }
+    ]
+  },
+  "49": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 2393,
+    "length": 4,
+    "nodeInfos": [
+      {
+        "name": "user",
+        "kind": 152
+      },
+      {
+        "name": "user",
+        "kind": 153
+      },
+      {
+        "name": "user",
+        "kind": 36
+      }
+    ]
+  },
+  "50": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 2808,
+    "length": 8,
+    "nodeInfos": [
+      {
+        "name": "UserList",
+        "kind": 129
+      },
+      {
+        "name": "UserList",
+        "kind": 36
+      }
+    ]
+  },
+  "51": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 2856,
+    "length": 7,
+    "nodeInfos": [
+      {
+        "name": "numbers",
+        "kind": 152
+      },
+      {
+        "name": "numbers",
+        "kind": 153
+      },
+      {
+        "name": "numbers",
+        "kind": 36
+      }
+    ]
+  },
+  "52": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 707,
+    "length": 14,
+    "nodeInfos": [
+      {
+        "name": "Foo",
+        "kind": 15
+      },
+      {
+        "name": "Foo",
+        "kind": 14
+      },
+      {
+        "name": "staticProperty",
+        "kind": 47
+      },
+      {
+        "name": "staticProperty",
+        "kind": 36
+      }
+    ]
+  },
+  "53": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 955,
+    "length": 3,
+    "nodeInfos": [
+      {
+        "name": "Color",
+        "kind": 89
+      },
+      {
+        "name": "Red",
+        "kind": 90
+      },
+      {
+        "name": "Red",
+        "kind": 36
+      }
+    ]
+  },
+  "54": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 1552,
+    "length": 5,
+    "nodeInfos": [
+      {
+        "name": "Base",
+        "kind": 15
+      },
+      {
+        "name": "Base",
+        "kind": 14
+      },
+      {
+        "name": "prop1",
+        "kind": 47
+      },
+      {
+        "name": "prop1",
+        "kind": 36
+      }
+    ]
+  },
+  "55": {
+    "fileName": "getDefinitionAtPositionTest.d.ets",
+    "start": 1686,
+    "length": 5,
+    "nodeInfos": [
+      {
+        "name": "Derived",
+        "kind": 15
+      },
+      {
+        "name": "Derived",
+        "kind": 14
+      },
+      {
+        "name": "prop2",
+        "kind": 47
+      },
+      {
+        "name": "prop2",
+        "kind": 36
+      }
+    ]
   }
 }

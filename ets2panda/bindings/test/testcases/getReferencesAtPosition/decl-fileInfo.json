@@ -1,0 +1,9 @@
+{
+    "pkgName": "getReferencesAtPosition",
+    "files": {
+        "getReferencesAtPositionTest.ets": {
+            "declPath": "${absolute_path_to_build_system}/testcases/.idea/.deveco/getReferencesAtPosition/declgen/dynamic/getReferencesAtPositionTest.d.ets",
+            "ohmUrl": ""
+        }
+    }
+}

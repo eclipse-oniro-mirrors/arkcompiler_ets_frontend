@@ -21,9 +21,18 @@
 #include "ir/astNode.h"
 #include "api.h"
 
+#define DEFINE_SIMPLE_HANDLER(FunctionName, NodeType, NameAccessor, NodeTypeEnum) \
+    void FunctionName(ir::AstNode *node, std::vector<NodeInfo> &result)           \
+    {                                                                             \
+        if (auto ident = node->As##NodeType()->NameAccessor()) {                  \
+            result.emplace_back(std::string(ident->Name()), NodeTypeEnum);        \
+        }                                                                         \
+    }
+
 namespace ark::es2panda::lsp {
 using NodeMatcher = std::function<bool(ir::AstNode *, const NodeInfo *)>;
 using NodeExtractor = ir::AstNode *(*)(ir::AstNode *, const NodeInfo *);
+using NodeInfoHandler = std::function<void(ir::AstNode *, std::vector<NodeInfo> &)>;
 
 bool MatchClassDefinition(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchIdentifier(ir::AstNode *childNode, const NodeInfo *info);
@@ -61,15 +70,22 @@ bool MatchSwitchStatement(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchEtsParameterExpression(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchTsNonNullExpression(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchFunctionDeclaration(ir::AstNode *childNode, const NodeInfo *info);
+void HandleIdentifier(ir::AstNode *node, std::vector<NodeInfo> &result);
+void HandleMemberExpression(ir::AstNode *node, std::vector<NodeInfo> &result);
+void HandleSpeadeElement(ir::AstNode *node, std::vector<NodeInfo> &result);
+void HandleTSEnumMember(ir::AstNode *node, std::vector<NodeInfo> &result);
+void HandleCallExpression(ir::AstNode *node, std::vector<NodeInfo> &result);
 
 ir::AstNode *ExtractExportSpecifierIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractTSClassImplementsIdentifier(ir::AstNode *node, const NodeInfo *info);
-ir::AstNode *ExtractIdentifierFromNode(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractETSStringLiteralTypeIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractETSKeyofTypeIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractCallExpressionIdentifier(ir::AstNode *node, const NodeInfo *info);
+ir::AstNode *ExtractAwaitExpressionIdentifier(ir::AstNode *node, [[maybe_unused]] const NodeInfo *info);
+ir::AstNode *ExtractIdentifierFromNode(ir::AstNode *node, const NodeInfo *info);
 
 const std::unordered_map<ir::AstNodeType, NodeExtractor> &GetNodeExtractors();
 const std::unordered_map<ir::AstNodeType, NodeMatcher> &GetNodeMatchers();
+const std::unordered_map<ir::AstNodeType, NodeInfoHandler> &GetNodeInfoHandlers();
 }  // namespace ark::es2panda::lsp
 #endif  // NODE_MATCHERS_H

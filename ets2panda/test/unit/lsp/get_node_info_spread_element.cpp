@@ -24,7 +24,7 @@
 namespace {
 using ark::es2panda::lsp::Initializer;
 
-class LspGetNodeInfosTests : public LSPAPITests {
+class LspGetNodeInfoSpreadElementTests : public LSPAPITests {
 protected:
     static void SetUpTestSuite()
     {
@@ -40,16 +40,15 @@ protected:
     }
     static void GenerateContexts(Initializer &initializer)
     {
-        contexts_ = initializer.CreateContext("LspGetNodeInfosTests.ets", ES2PANDA_STATE_CHECKED, R"('use static'
-declare class Foo {
-    foo(): void;
-    bar() {}
-    enum Color {
-        Red,
-        Green,
-        Blue
-    };
-})");
+        contexts_ = initializer.CreateContext("GetNodeInfoSpreadElement.ets", ES2PANDA_STATE_PARSED, R"('use static'
+const numbers = [1, 2, 3];
+const moreNumbers = [0, ...numbers, 4, 5];
+const part1 = [1, 2];
+const part2 = [3, 4];
+const combined = [...part1, ...part2, 5];
+const original = [10, 20, 30];
+const copy = [...original];
+)");
     }
     // NOLINTBEGIN(fuchsia-statically-constructed-objects, cert-err58-cpp)
     static inline es2panda_Context *contexts_ = nullptr;
@@ -57,47 +56,31 @@ declare class Foo {
     // NOLINTEND(fuchsia-statically-constructed-objects, cert-err58-cpp)
 };
 
-TEST_F(LspGetNodeInfosTests, GetNodeInfosTests1)
+TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest1)
 {
     LSPAPI const *lspApi = GetImpl();
     auto result = lspApi->getNodeInfosByDefinitionData(nullptr, 0);
     ASSERT_TRUE(result.empty());
 }
 
-TEST_F(LspGetNodeInfosTests, GetNodeInfosTests2)
+TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest2)
 {
     LSPAPI const *lspApi = GetImpl();
-    const size_t errorOffset = 150;
+    const size_t errorOffset = 460;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, errorOffset);
     ASSERT_TRUE(result.empty());
 }
 
-TEST_F(LspGetNodeInfosTests, GetNodeInfosTests3)
+TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest3)
 {
     LSPAPI const *lspApi = GetImpl();
-    const size_t offset = 27;
+    const size_t offset = 69;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
-    const size_t expectedSize = 3;
-    std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
-    ASSERT_EQ(result.size(), expectedSize);
-    for (size_t i = 0; i < result.size(); i++) {
-        ASSERT_EQ(result[i].name, expectedResult[i].name);
-        ASSERT_EQ(result[i].kind, expectedResult[i].kind);
-    }
-}
-
-TEST_F(LspGetNodeInfosTests, GetMethodDefinitionInfo)
-{
-    LSPAPI const *lspApi = GetImpl();
-    const size_t offset = 54;
     const size_t expectedSize = 4;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
-    std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
-                                            {"bar", ark::es2panda::ir::AstNodeType::METHOD_DEFINITION},
-                                            {"bar", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"moreNumbers", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
+                                            {"moreNumbers", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
+                                            {"numbers", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT},
+                                            {"numbers", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -105,16 +88,16 @@ TEST_F(LspGetNodeInfosTests, GetMethodDefinitionInfo)
     }
 }
 
-TEST_F(LspGetNodeInfosTests, GetTsEnumDeclarationInfo)
+TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest4)
 {
     LSPAPI const *lspApi = GetImpl();
-    const size_t offset = 72;
+    const size_t offset = 152;
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
     const size_t expectedSize = 4;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
-    std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
-                                            {"Color", ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION},
-                                            {"Color", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
+                                            {"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
+                                            {"part1", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT},
+                                            {"part1", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -122,21 +105,38 @@ TEST_F(LspGetNodeInfosTests, GetTsEnumDeclarationInfo)
     }
 }
 
-TEST_F(LspGetNodeInfosTests, GetTsEnumMemberInfo)
+TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest5)
 {
     LSPAPI const *lspApi = GetImpl();
-    const size_t offset = 101;
-    const size_t expectedSize = 5;
+    const size_t offset = 162;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
-    std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
-                                            {"Color", ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION},
-                                            {"Green", ark::es2panda::ir::AstNodeType::TS_ENUM_MEMBER},
-                                            {"Green", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 4;
+    std::vector<NodeInfo> expectedResult = {{"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
+                                            {"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
+                                            {"part2", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT},
+                                            {"part2", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
         ASSERT_EQ(result[i].kind, expectedResult[i].kind);
     }
 }
+
+TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest6)
+{
+    LSPAPI const *lspApi = GetImpl();
+    const size_t offset = 223;
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    const size_t expectedSize = 4;
+    std::vector<NodeInfo> expectedResult = {{"copy", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
+                                            {"copy", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
+                                            {"original", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT},
+                                            {"original", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    ASSERT_EQ(result.size(), expectedSize);
+    for (size_t i = 0; i < result.size(); i++) {
+        ASSERT_EQ(result[i].name, expectedResult[i].name);
+        ASSERT_EQ(result[i].kind, expectedResult[i].kind);
+    }
+}
+
 }  // namespace

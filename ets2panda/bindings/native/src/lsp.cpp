@@ -1918,6 +1918,23 @@ KNativePointer impl_getDefinitionDataFromNode(KNativePointer context, KStringArr
 }
 TS_INTEROP_3(getDefinitionDataFromNode, KNativePointer, KNativePointer, KStringArray, KInt)
 
+KNativePointer impl_findRenameLocationsFromNode(KNativePointer context, KStringArray pointerArrayPtr, KInt arraySize)
+{
+    auto pointerArray = ParsePointerArray(arraySize, pointerArrayPtr);
+    auto nodeInfos = std::vector<NodeInfo *> {};
+    nodeInfos.reserve(arraySize);
+    for (std::size_t i = 0; i < static_cast<std::size_t>(arraySize); ++i) {
+        auto contextPtr = reinterpret_cast<NodeInfo *>(pointerArray[i]);
+        if (contextPtr != nullptr) {
+            nodeInfos.push_back(contextPtr);
+        }
+    }
+    auto ctx = reinterpret_cast<es2panda_Context *>(context);
+    LSPAPI const *impl = GetImpl();
+    return new ark::es2panda::lsp::RenameLocation(impl->findRenameLocationsFromNode(ctx, nodeInfos));
+}
+TS_INTEROP_3(findRenameLocationsFromNode, KNativePointer, KNativePointer, KStringArray, KInt)
+
 KInt impl_getSourceLocationLine(KNativePointer locationPtr)
 {
     auto *location = reinterpret_cast<std::pair<size_t, size_t> *>(locationPtr);

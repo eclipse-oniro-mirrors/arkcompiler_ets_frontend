@@ -19,7 +19,7 @@ import { throwError } from '../common/utils';
 import { isNullPtr } from '../common/Wrapper';
 import { global } from '../common/global';
 import { NativePtrDecoder } from '../common/Platform';
-import { AstNodeType, NodeInfo } from '../common/types';
+import { AstNodeType, NodeInfo, astNodeTypeMap } from '../common/types';
 
 enum HierarchyType {
   OTHERS,
@@ -188,15 +188,16 @@ export class LspDefinitionData extends LspNode {
 }
 
 export class LspReferenceData extends LspNode {
-  constructor(peer: KNativePointer) {
+  constructor(peer: KNativePointer, filePath?: string) {
     super(peer);
-    this.fileName = unpackString(global.es2panda._getReferenceFileName(peer));
+    this.fileName = filePath ? filePath : unpackString(global.es2panda._getReferenceFileName(peer));
     this.start = global.es2panda._getReferenceStart(peer);
     this.length = global.es2panda._getReferenceLength(peer);
   }
   readonly fileName: String;
   readonly start: KInt;
   readonly length: KInt;
+  nodeInfos?: NodeInfo[];
 }
 
 export class LspDeclInfo extends LspNode {
@@ -986,9 +987,9 @@ export class LspRenameInfoFailure extends LspNode {
 export type LspRenameInfoType = LspRenameInfoSuccess | LspRenameInfoFailure;
 
 export class LspRenameLocation extends LspNode {
-  constructor(peer: KNativePointer) {
+  constructor(peer: KNativePointer, filePath?: string) {
     super(peer);
-    this.fileName = unpackString(global.es2panda._getRenameLocationFileName(peer));
+    this.fileName = filePath ? filePath : unpackString(global.es2panda._getRenameLocationFileName(peer));
     this.start = global.es2panda._getRenameLocationStart(peer);
     this.end = global.es2panda._getRenameLocationEnd(peer);
     this.line = global.es2panda._getRenameLocationLine(peer);
@@ -1005,19 +1006,11 @@ export class LspRenameLocation extends LspNode {
   readonly line: number;
   readonly prefixText?: string;
   readonly suffixText?: string;
+  nodeInfos?: NodeInfo[];
 }
 
-export function toAstNodeType(str: string) {
-  switch (str) {
-    case 'Identifier': {
-      return AstNodeType.IDENTIFIER;
-    }
-    case 'ClassDefinition': {
-      return AstNodeType.CLASS_DEFINITION;
-    }
-    default:
-      return AstNodeType.UNKNOWN;
-  }
+export function toAstNodeType(str: string): AstNodeType {
+  return astNodeTypeMap.get(str) ?? AstNodeType.UNKNOWN;
 }
 
 export class LspNodeInfo extends LspNode {

@@ -486,3 +486,47 @@ ets2panda_add_gtest(lsp_api_get_node_ts_nonnull_expression CPP_SOURCES
 ets2panda_add_gtest(lsp_api_get_node_function_declaration_test CPP_SOURCES
     get_node_function_declaration_test.cpp
 )
+
+ets2panda_add_gtest(lsp_api_get_node_info_interface_test CPP_SOURCES
+    get_node_info_interface_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_info_typealias_declaration_test CPP_SOURCES
+    get_node_info_typealias_declaration.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_info_spread_element_test CPP_SOURCES
+    get_node_info_spread_element.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_info_sturct_decalaration_test CPP_SOURCES
+    get_node_info_sturct_decalaration_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_infos_annotation_declaration_test CPP_SOURCES
+    get_node_infos_annotation_declaration_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_infos_script_function_test CPP_SOURCES
+    get_node_infos_script_function_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_infos_expression_test CPP_SOURCES
+    get_node_infos_expression_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_info_await_expression_test CPP_SOURCES
+    get_node_info_await_expression_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_infos_annotation_usage_test CPP_SOURCES
+    get_node_infos_annotation_usage_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_info_class_property_import_test CPP_SOURCES
+    get_node_info_class_property_import_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_rename_locations_from_node_test CPP_SOURCES
+    get_rename_locations_from_node_test.cpp
+)

@@ -568,6 +568,8 @@ typedef struct LSPAPI {
     es2panda_AstNode *(*getClassDefinition)(es2panda_AstNode *astNode, const std::string &nodeName);
     es2panda_AstNode *(*getIdentifier)(es2panda_AstNode *astNode, const std::string &nodeName);
     DefinitionInfo (*getDefinitionDataFromNode)(es2panda_Context *context, const std::vector<NodeInfo *> &nodeInfos);
+    ark::es2panda::lsp::RenameLocation (*findRenameLocationsFromNode)(es2panda_Context *context,
+                                                                      const std::vector<NodeInfo *> &nodeInfos);
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
 // NOLINTEND
