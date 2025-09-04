@@ -26,4 +26,4 @@ function main(): void {
 /* @@@ label1 Error TypeError: Expected 3 arguments, got 1. */
 /* @@@ label1 Error TypeError: No matching call signature for with(Math) */
 /* @@@ label1 Error TypeError: Expected 3 arguments, got 1. */
-/* @@@ label2 Error TypeError: Class or interface 'Math' cannot be used as object */
+/* @@@ label2 Error TypeError: Class or interface or enum 'Math' cannot be used as object */

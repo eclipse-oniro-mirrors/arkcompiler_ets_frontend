@@ -272,9 +272,9 @@ semantic:
   id: 62
   message: "need to specify target type for class composite"
 
-- name: CLASS_OR_IFACE_AS_OBJ
+- name: CLASS_OR_IFACE_OR_ENUM_AS_OBJ
   id: 294
-  message: "Class or interface '{}' cannot be used as object"
+  message: "Class or interface or enum '{}' cannot be used as object"
 
 - name: COALESCE_NOT_REF
   id: 117
