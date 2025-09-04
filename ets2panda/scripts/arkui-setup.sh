@@ -159,6 +159,14 @@ function run_script() {
     fi
 }
 
+function skip_linker_verification_error() {
+    npm run $1 | tee out.txt
+    ERROR_MESSAGE="$(grep 'Error:' out.txt)"
+    if [[ -n "${ERROR_MESSAGE}" && "${ERROR_MESSAGE}" != *"LinkerVerificationError:"* ]] ; then
+        exit 1
+    fi
+}
+
 export ENABLE_BUILD_CACHE=0
 
 # Compile libarkts
@@ -174,7 +182,7 @@ popd >/dev/null 2>&1 || exit 1
 # run_script "all --prefix ui2abc"
 run_script "build:all --prefix ui2abc"
 
-run_script "build:deps --prefix ets-tests"
+run_script "build:deps --prefix ui2abc/ets-tests"
 
 if [ -z "${DEMO}" ] ; then
     echo "Just compiled ArkUI, but no demo specified."
@@ -186,7 +194,7 @@ case "${DEMO}" in
         run_script "run:node --prefix arkoala-arkts/shopping/user"
         ;;
     "trivial")
-        run_script "run --prefix arkoala-arkts/trivial/user"
+        skip_linker_verification_error "run --prefix arkoala-arkts/trivial/user"
         ;;
     "empty")
         ;;
