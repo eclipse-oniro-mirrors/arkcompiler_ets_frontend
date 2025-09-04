@@ -14,7 +14,6 @@
  */
 
 enum Color { Green , Red = 2, Blue }
-//let cons = new Console; 
 
 function main(): void {
 
