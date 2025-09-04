@@ -21,8 +21,6 @@ class C implements I<number> {
     start: number = 10
 }
 
-let x = new C()
-
 function foo(x: I<number>) {
     arktest.assertEQ(x.start, 10)
     x.start = 1234
@@ -30,5 +28,6 @@ function foo(x: I<number>) {
 }
 
 function main() {
+    let x = new C()
     foo(x)
 }
