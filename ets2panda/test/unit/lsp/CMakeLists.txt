@@ -233,10 +233,6 @@ ets2panda_add_gtest(lsp_api_test_find_rename_locations_2 CPP_SOURCES
     find_rename_locations_test_2.cpp
 )
 
-ets2panda_add_gtest(lsp_api_test_fix_expected_comma CPP_SOURCES
-    fix_expected_comma_test.cpp
-)
-
 ets2panda_add_gtest(lsp_api_test_change_tracker CPP_SOURCES
     change_tracker_test.cpp
 )

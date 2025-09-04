@@ -1202,7 +1202,6 @@ syntax:
 - name: UNEXPECTED_TOKEN
   id: 16
   message: "Unexpected token."
-  code_fix_ids: [FixExpectedToken]
 
 - name: UNEXPECTED_TOKEN_AS
   id: 95

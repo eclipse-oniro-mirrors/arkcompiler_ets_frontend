@@ -99,7 +99,6 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/register_code_fix/fix_class_doesnt_implement_inherited_abstract_member.cpp",
     "src/register_code_fix/fix_class_incorrectly_implements_interface.cpp",
     "src/register_code_fix/fix_class_super_must_precede_this_access.cpp",
-    "src/register_code_fix/fix_expected_comma.cpp",
     "src/register_code_fix/fix_extends_interface_becomes_implements.cpp",
     "src/register_code_fix/fix_import_non_exported_member.cpp",
     "src/register_code_fix/fix_missing_call_parantheses.cpp",
