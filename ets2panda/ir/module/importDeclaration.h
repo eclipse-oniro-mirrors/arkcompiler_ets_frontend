@@ -64,9 +64,22 @@ public:
         return GetHistoryNodeAs<ImportDeclaration>()->source_;
     }
 
+    void SetSource(StringLiteral *source);
+
     const ArenaVector<AstNode *> &Specifiers() const
     {
         return GetHistoryNodeAs<ImportDeclaration>()->specifiers_;
+    }
+
+    void SetSpecifiers(ArenaVector<AstNode *> &&specifiersList)
+    {
+        auto newNode = GetOrCreateHistoryNodeAs<ImportDeclaration>();
+        auto &specifiers = newNode->specifiers_;
+        specifiers = std::move(specifiersList);
+
+        for (auto *specifier : specifiers) {
+            specifier->SetParent(newNode);
+        }
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -93,7 +106,6 @@ public:
 
 private:
     friend class SizeOfNodeTest;
-    void SetSource(StringLiteral *source);
 
     StringLiteral *source_;
     ArenaVector<AstNode *> specifiers_;

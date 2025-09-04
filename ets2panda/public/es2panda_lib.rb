@@ -558,7 +558,30 @@ module Es2pandaLibApi
     end
 
     def self.type_to_idl(type)
-      @@replace_to_idl_types ||= {
+      @@e2p_c_types ||= {
+        'es2panda_AstNode' => 'ir.AstNode',
+        'es2panda_ArkTsConfig' => 'es2panda.ArkTsConfig',
+        'es2panda_SrcDumper' => 'ir.SrcDumper',
+        'es2panda_AstDumper' => 'ir.AstDumper',
+        'es2panda_FunctionSignature' => 'ir.FunctionSignature',
+        'es2panda_ValidationInfo' => 'ir.ValidationInfo',
+        'es2panda_Signature' => 'checker.Signature',
+        'es2panda_GlobalTypesHolder' => 'checker.GlobalTypesHolder',
+        'es2panda_Type' => 'checker.Type',
+        'es2panda_TypeRelation' => 'checker.TypeRelation',
+        'es2panda_CheckerContext' => 'checker.CheckerContext',
+        'es2panda_ResolveResult' => 'checker.ResolveResult',
+        'es2panda_Variable' => 'varbinder.Variable',
+        'es2panda_Scope' => 'varbinder.Scope',
+        'es2panda_RecordTable' => 'varbinder.RecordTable',
+        'es2panda_BoundContext' => 'varbinder.BoundContext',
+        'es2panda_ImportPathManager' => 'util.ImportPathManager',
+        'es2panda_Path' => 'util.Path',
+        'es2panda_Options' => 'util.Options',
+        'es2panda_Program' => 'parser.Program'
+      }
+
+      @@idl_primitive_types ||= {
         'bool' => 'boolean',
         'int' => 'i32',
         'size_t' => 'u32',
@@ -576,10 +599,11 @@ module Es2pandaLibApi
         'sequence<i8>' => 'String'
       }
 
-      c_type = type['namespace'] && type['namespace'] != 'std' ? "#{type['namespace']}.#{type['name']}" : type['name']
-      res_sequence_len = @@replace_to_idl_types.key?(c_type) ? (type['ptr_depth'] || 0) : ((type['ptr_depth'] || 1) - 1)
-      res = res_sequence_len.times.reduce(c_type) { |acc, _| "sequence<#{@@replace_to_idl_types[acc] || acc}>" }
-      @@replace_to_idl_types[res] || res
+      res = @@e2p_c_types[type['name']] || type['name']
+      res = "#{type['namespace']}.#{res}" if type['namespace'] && !res.include?(".") && type['namespace'] != 'std'
+      res_sequence_len = @@idl_primitive_types.key?(res) ? (type['ptr_depth'] || 0) : ((type['ptr_depth'] || 1) - 1)
+      res = res_sequence_len.times.reduce(res) { |acc, _| "sequence<#{@@idl_primitive_types[acc] || acc}>" }
+      @@idl_primitive_types[res] || res
     end
 
     attr_reader :is_change_type
@@ -698,16 +722,10 @@ module Es2pandaLibApi
     attr_accessor :ast_node_type_value
 
     def class_name
-      Es2pandaLibApi.classes&.each do |_namespace_name, namespace_classes|
-        if namespace_classes&.find { |_name, data| data == self }
-          return namespace_classes&.find { |_name, data| data == self }[0]
-        end
+      Es2pandaLibApi.classes&.each do |_namespace_name, classes|
+        return classes.find { |_, data| data == self }[0] if classes&.find { |_, data| data == self }
       end
-      if Es2pandaLibApi.structs.find { |_name, data| data == self }[0]
-        return Es2pandaLibApi.structs.find { |_name, data| data == self }[0]
-      end
-
-      raise 'Unknown class name'
+      Es2pandaLibApi.structs.find { |_, data| data == self }&.first || (raise 'Unknown class name')
     end
 
     def class_c_type
@@ -849,8 +867,8 @@ module Es2pandaLibApi
               Es2pandaLibApi.stat_add_class(1, class_name)
 
               Es2pandaLibApi.log('info', "Supported constructor for class '#{class_name}'\n")
-              res << { 'overload' => get_new_method_name(constructor_overload, '', ''),
-                      'idl_overload' => get_new_method_name(idl_constructor_overload, '', '', true),
+              res << { 'overload' => get_new_method_name(constructor_overload, '', '', class_name),
+                      'idl_overload' => get_new_method_name(idl_constructor_overload, '', '', class_name, true),
                       'args' => args, 'raw_decl' => constructor.raw_declaration }
             end
           else
@@ -968,9 +986,9 @@ module Es2pandaLibApi
       res
     end
 
-    def get_new_method_name(function_overload, name, const, skip_namespace_overload = false)
-      function_name = if check_for_same_class_name && !skip_namespace_overload then class_base_namespace.capitalize
-                      else '' end + name + (const != '' ? 'Const' : '')
+    def get_new_method_name(function_overload, name, const, return_type = '', skip_namespace_overload = false)
+      function_name = (check_for_same_class_name && !skip_namespace_overload ? class_base_namespace.capitalize : '') +
+                      name + (%w[Create Update].include?(name) ? return_type : '') + (const != '' ? 'Const' : '')
       overload_name = function_name
 
       if function_overload.include?(function_name)
@@ -1018,6 +1036,7 @@ module Es2pandaLibApi
             begin
               return_type = Type.new(add_base_namespace(replace_with_usings(method.return_type, usings)),
                                     class_base_namespace, 'return')
+              rt_name = method.return_type.name
               const = get_const_modifier(method)
               const_return = get_const_return_modifier(return_type)
 
@@ -1040,18 +1059,18 @@ module Es2pandaLibApi
             rescue StandardError => e
               stat_function_overload = Marshal.load(Marshal.dump(function_overload))
               error_catch_log('Method', method, e, class_name +
-              get_new_method_name(stat_function_overload, method.name, const))
+              get_new_method_name(stat_function_overload, method.name, const, method.return_type.name))
             else
               stat_function_overload = Marshal.load(Marshal.dump(function_overload))
               Es2pandaLibApi.stat_add_method(1, class_name, class_base_namespace, class_name +
-              get_new_method_name(stat_function_overload, method.name, const))
+              get_new_method_name(stat_function_overload, method.name, const, rt_name))
               Es2pandaLibApi.log('info', 'supported method: ', method.name, ' class: ', class_name, "\n")
 
               res << { 'name' => method.name, 'const' => const, 'return_arg_to_str' => return_type.return_args_to_str,
-                      'overload_name' => get_new_method_name(function_overload, method.name, const), 'args' => args,
-                      'idl_name' => get_new_method_name(idl_function_overload, method.name, const, true),
+                      'overload_name' => get_new_method_name(function_overload, method.name, const, rt_name),
+                      'idl_name' => get_new_method_name(idl_function_overload, method.name, const, rt_name, true),
                       'return_type' => return_type, 'return_expr' => return_expr, 'raw_decl' => method.raw_declaration,
-                      'const_return' => const_return, 'get_modifier' => method['additional_attributes'] }
+                      'const_return' => const_return, 'get_modifier' => method['additional_attributes'], 'args' => args }
             end
           else
             Es2pandaLibApi.log('info', "Banned method\n")
@@ -1451,7 +1470,8 @@ module Es2pandaLibApi
       return nil
     end
 
-    extends.gsub(/[<>]/, ' ').split.last.split('::').last
+    res = extends.gsub(/[<>]/, ' ').split.last.split('::').last(2).join('.')
+    res unless %w[T TypedBinder TypedParser].include?(res)
   end
 
   def template_extends(extends)
@@ -1536,14 +1556,14 @@ module Es2pandaLibApi
       @classes['ir'][class_definition.name] = class_data
     end
 
-    extract_classes_in_namespace(data, 'checker') { |class_name|
-        @ast_types.include?(class_name) || ast_type_additional_children.include?(class_name) ||
-          additional_classes_to_generate.include?(class_name)
-    }
-    extract_classes_in_namespace(data, 'varbinder') { |class_name|
+    extract_classes_in_namespace(data, 'checker') do |class_name|
+      @ast_types.include?(class_name) || ast_type_additional_children.include?(class_name) ||
+        additional_classes_to_generate.include?(class_name)
+    end
+    extract_classes_in_namespace(data, 'varbinder') do |class_name|
       scopes.include?(class_name) || declarations.include?(class_name) ||
         ast_variables.find { |x| x[1] == class_name } || additional_classes_to_generate.include?(class_name)
-    }
+    end
     extract_classes_in_namespace(data, 'parser') { |class_name| additional_classes_to_generate.include?(class_name) }
     extract_classes_in_namespace(data, 'util') { |class_name| additional_classes_to_generate.include?(class_name) }
     extract_classes_in_namespace(data, 'gen') { |class_name| additional_classes_to_generate.include?(class_name) }

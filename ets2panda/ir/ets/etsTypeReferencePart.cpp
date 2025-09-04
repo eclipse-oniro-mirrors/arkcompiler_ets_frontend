@@ -25,17 +25,32 @@ namespace ark::es2panda::ir {
 
 void ETSTypeReferencePart::SetName(Expression *name)
 {
-    this->GetOrCreateHistoryNodeAs<ETSTypeReferencePart>()->name_ = name;
+    auto newNode = this->GetOrCreateHistoryNodeAs<ETSTypeReferencePart>();
+    newNode->name_ = name;
+
+    if (name != nullptr) {
+        name->SetParent(newNode);
+    }
 }
 
 void ETSTypeReferencePart::SetTypeParams(TSTypeParameterInstantiation *typeParams)
 {
-    this->GetOrCreateHistoryNodeAs<ETSTypeReferencePart>()->typeParams_ = typeParams;
+    auto newNode = this->GetOrCreateHistoryNodeAs<ETSTypeReferencePart>();
+    newNode->typeParams_ = typeParams;
+
+    if (typeParams != nullptr) {
+        typeParams->SetParent(newNode);
+    }
 }
 
 void ETSTypeReferencePart::SetPrevious(ETSTypeReferencePart *prev)
 {
-    this->GetOrCreateHistoryNodeAs<ETSTypeReferencePart>()->prev_ = prev;
+    auto newNode = this->GetOrCreateHistoryNodeAs<ETSTypeReferencePart>();
+    newNode->prev_ = prev;
+
+    if (prev != nullptr) {
+        prev->SetParent(newNode);
+    }
 }
 
 void ETSTypeReferencePart::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)

@@ -48,6 +48,8 @@ public:
         return func_;
     }
 
+    void SetFunction(ScriptFunction *func);
+
     bool IsAnonymous() const
     {
         return exprName_ == nullptr;
@@ -57,6 +59,8 @@ public:
     {
         return exprName_;
     }
+
+    void SetId(ir::Identifier *id);
 
     [[nodiscard]] FunctionExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 

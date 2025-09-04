@@ -57,6 +57,12 @@ public:
         return body_;
     }
 
+    void SetBody(Statement *body)
+    {
+        body_ = body;
+        body->SetParent(this);
+    }
+
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
 
     void Iterate(const NodeTraverser &cb) const override;

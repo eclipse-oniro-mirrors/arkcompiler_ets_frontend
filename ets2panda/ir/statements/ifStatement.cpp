@@ -20,6 +20,12 @@
 #include "compiler/core/pandagen.h"
 
 namespace ark::es2panda::ir {
+void IfStatement::SetTest(Expression *test)
+{
+    test_ = test;
+    test->SetParent(this);
+}
+
 void IfStatement::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
     if (auto *transformedNode = cb(test_); test_ != transformedNode) {

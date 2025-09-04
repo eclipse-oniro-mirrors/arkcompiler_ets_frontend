@@ -31,6 +31,16 @@ void ETSFunctionType::SetParams(ArenaVector<Expression *> &&paramsList)
     }
 }
 
+void ETSFunctionType::SetTypeParams(TSTypeParameterDeclaration *typeParams)
+{
+    auto newNode = GetOrCreateHistoryNodeAs<ETSFunctionType>();
+    newNode->signature_.SetTypeParams(typeParams);
+
+    if (typeParams != nullptr) {
+        typeParams->SetParent(newNode);
+    }
+}
+
 void ETSFunctionType::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
     GetHistoryNodeAs<ETSFunctionType>()->signature_.TransformChildren(cb, transformationName);

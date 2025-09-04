@@ -70,6 +70,8 @@ public:
         return GetHistoryNodeAs<ETSFunctionType>()->signature_.TypeParams();
     }
 
+    void SetTypeParams(TSTypeParameterDeclaration *typeParams);
+
     const ArenaVector<ir::Expression *> &Params() const
     {
         return GetHistoryNodeAs<ETSFunctionType>()->signature_.Params();
@@ -85,6 +87,14 @@ public:
     TypeNode *ReturnType()
     {
         return GetHistoryNodeAs<ETSFunctionType>()->signature_.ReturnType();
+    }
+
+    void SetReturnType(TypeNode *returnType)
+    {
+        auto newNode = GetOrCreateHistoryNodeAs<ETSFunctionType>();
+        newNode->signature_.SetReturnType(returnType);
+
+        returnType->SetParent(newNode);
     }
 
     ir::TSInterfaceDeclaration *FunctionalInterface()

@@ -98,6 +98,11 @@ const ir::ScriptFunction *ClassStaticBlock::Function() const
     return Value()->AsFunctionExpression()->Function();
 }
 
+void ClassStaticBlock::SetFunction(ir::ScriptFunction *function)
+{
+    this->Value()->AsFunctionExpression()->SetFunction(function);
+}
+
 const util::StringView &ClassStaticBlock::Name() const
 {
     return Function()->Id()->Name();

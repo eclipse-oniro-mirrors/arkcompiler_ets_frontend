@@ -27,6 +27,14 @@ AnnotatedExpression::AnnotatedExpression(AnnotatedExpression const &other, Arena
     }
 }
 
+void AnnotatedExpression::SetTypeAnnotation(TypeNode *typeAnnotation)
+{
+    this->SetTsTypeAnnotation(typeAnnotation);
+    if (typeAnnotation != nullptr) {
+        typeAnnotation->SetParent(this);
+    }
+}
+
 bool Expression::IsBrokenExpression() const noexcept
 {
     return IsIdentifier() && AsIdentifier()->IsErrorPlaceHolder();

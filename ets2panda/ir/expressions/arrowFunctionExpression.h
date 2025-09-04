@@ -51,6 +51,8 @@ public:
         return func_;
     }
 
+    void SetFunction(ScriptFunction *func);
+
     void SetPreferredType(checker::Type *preferredType) noexcept
     {
         preferredType_ = preferredType;

@@ -68,6 +68,8 @@ public:
         return GetHistoryNodeAs<FunctionDeclaration>()->func_;
     }
 
+    void SetFunction(ScriptFunction *func);
+
     bool IsAnonymous() const
     {
         return GetHistoryNodeAs<FunctionDeclaration>()->isAnonymous_;
@@ -97,7 +99,6 @@ public:
 
 private:
     friend class SizeOfNodeTest;
-    void SetFunction(ScriptFunction *func);
 
     ScriptFunction *func_;
     bool isAnonymous_;

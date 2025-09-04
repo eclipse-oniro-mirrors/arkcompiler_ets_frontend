@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,6 +62,15 @@ public:
         return left_;
     }
 
+    void SetLeft(AstNode *left)
+    {
+        left_ = left;
+
+        if (left) {
+            left->SetParent(this);
+        }
+    }
+
     [[nodiscard]] Expression *Right() noexcept
     {
         return right_;
@@ -72,6 +81,15 @@ public:
         return right_;
     }
 
+    void SetRight(Expression *right)
+    {
+        right_ = right;
+
+        if (right) {
+            right->SetParent(this);
+        }
+    }
+
     [[nodiscard]] Statement *Body() noexcept
     {
         return body_;
@@ -80,6 +98,15 @@ public:
     [[nodiscard]] const Statement *Body() const noexcept
     {
         return body_;
+    }
+
+    void SetBody(Statement *body)
+    {
+        body_ = body;
+
+        if (body) {
+            body->SetParent(this);
+        }
     }
 
     [[nodiscard]] bool IsAwait() const noexcept

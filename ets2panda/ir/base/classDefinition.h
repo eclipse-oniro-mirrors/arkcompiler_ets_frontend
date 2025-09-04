@@ -386,6 +386,8 @@ public:
         return GetHistoryNodeAs<ClassDefinition>()->superTypeParams_;
     }
 
+    void SetSuperTypeParams(TSTypeParameterInstantiation *superTypeParams);
+
     // ekkoruse: dangerous count for cache here
     [[nodiscard]] static int LocalTypeCounter() noexcept
     {
@@ -524,6 +526,7 @@ public:
     void EmplaceImplements(TSClassImplements *implements);
     void ClearImplements();
     void SetValueImplements(TSClassImplements *implements, size_t index);
+    void SetImplements(ArenaVector<TSClassImplements *> &&implementsList);
     const ArenaVector<TSClassImplements *> &Implements();
     ArenaVector<TSClassImplements *> &ImplementsForUpdate();
 
@@ -554,7 +557,6 @@ protected:
 
 private:
     void SetSuperClass(Expression *superClass);
-    void SetSuperTypeParams(TSTypeParameterInstantiation *superTypeParams);
 
     [[nodiscard]] Expression *SuperClass()
     {

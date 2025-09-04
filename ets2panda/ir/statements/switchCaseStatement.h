@@ -58,6 +58,15 @@ public:
         return consequent_;
     }
 
+    void SetConsequent(ArenaVector<Statement *> &&consequentList) noexcept
+    {
+        consequent_ = std::move(consequentList);
+
+        for (auto &consequent : consequent_) {
+            consequent->SetParent(this);
+        }
+    }
+
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
 
     void Iterate(const NodeTraverser &cb) const override;

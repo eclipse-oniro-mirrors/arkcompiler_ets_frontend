@@ -21,6 +21,15 @@
 #include "checker/TSchecker.h"
 
 namespace ark::es2panda::ir {
+void ArrowFunctionExpression::SetFunction(ScriptFunction *func)
+{
+    this->func_ = func;
+
+    if (func != nullptr) {
+        func->SetParent(this);
+    }
+}
+
 void ArrowFunctionExpression::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
     if (auto *transformedNode = cb(func_); func_ != transformedNode) {
