@@ -1139,7 +1139,7 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
                 if (mexpr->Property()->Variable()->Declaration() != nullptr &&
                     mexpr->Property()->Variable()->Declaration()->Node() != nullptr &&
                     mexpr->Property()->Variable()->Declaration()->Node()->IsTyped() &&
-                    !mexpr->Object()->TsType()->IsETSAnyType()) {
+                    mexpr->Object()->TsType() != nullptr && !mexpr->Object()->TsType()->IsETSAnyType()) {
                     HandleDeclarationNode(uctx_, mexpr->Property()->Variable()->Declaration()->Node());
                     propType = mexpr->Property()->Variable()->Declaration()->Node()->AsTyped()->TsType();
                 } else if (mexpr->Property()->Variable()->TsType() != nullptr) {
@@ -1165,7 +1165,8 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
                        mexpr->Property()->AsIdentifier()->Name() == "length") {
                 mexpr->SetTsType(uctx_->checker->GlobalIntType());
             }
-            if (mexpr->Object()->TsType()->IsETSPrimitiveType() && !IsStaticMemberExpression(mexpr)) {
+            if (mexpr->Object()->TsType() != nullptr && mexpr->Object()->TsType()->IsETSPrimitiveType() &&
+                !IsStaticMemberExpression(mexpr)) {
                 // NOTE(gogabr): need to handle some elementary method calls as intrinsics
                 mexpr->SetObject(InsertBoxing(uctx_, mexpr->Object()));
             }
