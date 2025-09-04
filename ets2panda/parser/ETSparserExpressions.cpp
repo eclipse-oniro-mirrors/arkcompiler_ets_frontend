@@ -688,7 +688,7 @@ void ETSParser::ParseArgumentsNewExpression(ArenaVector<ir::Expression *> &argum
 
         ParseList(
             lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE,
-            [this, &arguments]() {
+            [this, &arguments](bool &) {
                 ir::Expression *argument =
                     Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD
                         ? ParseSpreadElement(ExpressionParseFlags::POTENTIALLY_IN_PATTERN)
@@ -700,7 +700,7 @@ void ETSParser::ParseArgumentsNewExpression(ArenaVector<ir::Expression *> &argum
                 arguments.push_back(argument);
                 return true;
             },
-            &endLoc, true);
+            &endLoc, ParseListOptions::ALLOW_TRAILING_SEP);
     }
 }
 

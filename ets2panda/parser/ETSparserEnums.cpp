@@ -246,7 +246,7 @@ lexer::SourcePosition ETSParser::ParseEnumMember(ArenaVector<ir::AstNode *> &mem
     ir::Expression *currentNumberExpr = AllocNode<ir::NumberLiteral>(lexer::Number(0));
 
     // Lambda to parse enum member (maybe with initializer)
-    auto const parseMember = [this, &members, &currentNumberExpr]() {
+    auto const parseMember = [this, &members, &currentNumberExpr](bool &) {
         auto *const ident = ExpectIdentifier(false, true);
 
         ir::Expression *ordinal;
@@ -285,7 +285,7 @@ lexer::SourcePosition ETSParser::ParseEnumMember(ArenaVector<ir::AstNode *> &mem
 
     lexer::SourcePosition enumEnd;
     ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::KEYWORD_TO_IDENT, parseMember, &enumEnd,
-              true);
+              ParseListOptions::ALLOW_TRAILING_SEP);
     return enumEnd;
 }
 

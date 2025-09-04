@@ -669,7 +669,7 @@ ir::TSEnumDeclaration *TypedParser::ParseEnumMembers(ir::Identifier *key, const 
     lexer::SourcePosition endLoc;
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::KEYWORD_TO_IDENT,
-        [this, &members]() {
+        [this, &members](bool &) {
             ir::Expression *memberKey = nullptr;
 
             if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT) {
@@ -700,7 +700,7 @@ ir::TSEnumDeclaration *TypedParser::ParseEnumMembers(ir::Identifier *key, const 
             members.push_back(member);
             return true;
         },
-        &endLoc, true);
+        &endLoc, ParseListOptions::ALLOW_TRAILING_SEP);
 
     auto *enumDeclaration =
         AllocNode<ir::TSEnumDeclaration>(Allocator(), key, std::move(members),
