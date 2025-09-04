@@ -3622,7 +3622,8 @@ bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::S
         ES2PANDA_ASSERT(funcReturnType != nullptr);
         if (!funcReturnType->MaybeBaseTypeOfGradualType()->IsETSVoidType() &&
             funcReturnType != checker->GlobalVoidType() &&
-            !funcReturnType->MaybeBaseTypeOfGradualType()->IsETSAsyncFuncReturnType()) {
+            !funcReturnType->MaybeBaseTypeOfGradualType()->IsETSAsyncFuncReturnType() &&
+            (containingFunc->Flags() & ir::ScriptFunctionFlags::RETURN_PROMISEVOID) == 0) {
             checker->LogError(diagnostic::RETURN_WITHOUT_VALUE, {}, st->Start());
             return false;
         }
