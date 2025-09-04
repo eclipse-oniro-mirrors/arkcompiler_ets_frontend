@@ -29,4 +29,4 @@ function main(): void {
     }
 }
 
-/* @@? 26:17 Error TypeError: Continue target can't be outside the function */
+/* @@? 26:17 Error TypeError: Continue or break target can't be outside the function */
