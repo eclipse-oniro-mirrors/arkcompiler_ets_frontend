@@ -244,6 +244,15 @@ export class NumericSemanticCheck implements BaseChecker {
                 logger.error(`Error checking array index in stmt: ${stmt.toString()}, method: ${target.getSignature().toString()}, error: ${e}`);
             }
         }
+
+        // 场景4：async方法检查返回值，与返回值相关的所有变量为number类型，同时替换之前对变量的修复为int/long的告警
+        if (target.containsModifier(ModifierType.ASYNC)) {
+            try {
+                this.checkAsyncReturnStmts(target.getReturnStmt());
+            } catch (e) {
+                logger.error(`Error checking async method return operands, method: ${target.getSignature().toString()}, error: ${e}`);
+            }
+        }
     }
 
     private checkSdkArgsInStmt(stmt: Stmt): void {
@@ -572,6 +581,54 @@ export class NumericSemanticCheck implements BaseChecker {
             if (fieldInfo.issueReason === IssueReason.OnlyUsedAsIntLong) {
                 // 如果能明确判断出field是int，则添加类型注解int，其他找不全的场景不变
                 this.addIssueReport(RuleCategory.ArrayIndex, NumberCategory.int, fieldInfo.issueReason, true, undefined, undefined, field);
+            }
+        });
+    }
+
+    private checkAsyncReturnStmts(stmts: Stmt[]): void {
+        const res = new Map<Local, IssueInfo>();
+        this.callDepth = 0;
+        for (const stmt of stmts) {
+            if (!(stmt instanceof ArkReturnStmt)) {
+                continue;
+            }
+            const returnOp = stmt.getOp();
+            if (!Utils.isNearlyNumberType(returnOp.getType())) {
+                continue;
+            }
+
+            if (returnOp instanceof NumberConstant && !this.isNumberConstantActuallyFloat(returnOp)) {
+                // 场景1：直接return整型字面量，需要将整型字面量改为浮点型字面量
+                this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, returnOp);
+            } else if (returnOp instanceof Local) {
+                // 场景2：检查return变量以及其生命周期内有关联的其他变量，全部需要定义为number
+                // 检查入口stmt为local的声明语句，便于查找当前是否已有该变量的issue生成
+                const declaringStmt = returnOp.getDeclaringStmt();
+                if (declaringStmt === null) {
+                    continue;
+                }
+                this.isLocalOnlyUsedAsIntLong(declaringStmt, returnOp, res, NumberCategory.number);
+            } else {
+                logger.error(
+                    `Need to handle new return op type, stmt: ${stmt.toString()}, method: ${stmt.getCfg().getDeclaringMethod().getSignature().toString()}`
+                );
+            }
+        }
+        res.forEach((issueInfo, local) => {
+            if (this.shouldIgnoreLocal(local)) {
+                return;
+            }
+            const declaringStmt = local.getDeclaringStmt();
+            if (declaringStmt === null) {
+                return;
+            }
+            // 无论local的判定结果是什么，均需要进行自动修复类型注解为int或者number
+            this.addIssueReport(RuleCategory.NumericLiteral, issueInfo.numberCategory, issueInfo.issueReason, true, declaringStmt, local);
+        });
+        this.classFieldRes.forEach((fieldInfo, field) => {
+            if (fieldInfo.issueReason === IssueReason.OnlyUsedAsIntLong || fieldInfo.issueReason === IssueReason.UsedWithOtherType) {
+                // 如果能明确判断出field是int或非int，则添加类型注解int或number，其他找不全的场景不变
+                this.addIssueReport(RuleCategory.NumericLiteral, fieldInfo.numberCategory, fieldInfo.issueReason, true, undefined, undefined, field);
             }
         });
     }
@@ -1098,6 +1155,7 @@ export class NumericSemanticCheck implements BaseChecker {
         }
         if (value instanceof StringConstant) {
             // 存在将‘100%’，‘auto’等赋值给numberType的情况，可能是ArkAnalyzer对左值的推导有错误，左值应该是联合类型
+            // TODO: arr[await foo()]语句ArkIR将index表示成‘await %2’,应该表示成ArkAwaitExpr，但都认为是number，仍旧是正确结果
             return IssueReason.UsedWithOtherType;
         }
         if (value instanceof Local) {
@@ -1172,7 +1230,10 @@ export class NumericSemanticCheck implements BaseChecker {
             }
             return IssueReason.OnlyUsedAsIntLong;
         }
-        // 在之前的语句检测中已查找过此local并生成相应的issue，直接根据issue的内容返回结果，如果issue中是int，检查的是long，则结果为long
+        // 在之前的语句检测中已查找过此local并生成相应的issue，直接根据issue的内容返回结果，
+        // 1. 如果issue中是int，检查的是long，则结果为long
+        // 2. 如果issue中是int，检查的是int，则结果为int
+        // 3. 如果issue中是int，检查的是number，则需要重新检查与此local相关的所有变量，全部为number
         const currentIssue = this.getLocalIssueFromIssueList(local, stmt);
         if (currentIssue && currentIssue.fix instanceof RuleFix) {
             const issueReason = this.getIssueReasonFromDefectInfo(currentIssue.defect);
@@ -1182,12 +1243,10 @@ export class NumericSemanticCheck implements BaseChecker {
                     hasChecked.set(local, { issueReason: issueReason, numberCategory: numberCategory });
                     return issueReason;
                 }
-                if (numberCategory === NumberCategory.long) {
+                if (numberCategory === NumberCategory.long || numberCategory === NumberCategory.int) {
                     hasChecked.set(local, { issueReason: issueReason, numberCategory: numberCategory });
-                } else {
-                    hasChecked.set(local, { issueReason: issueReason, numberCategory: issueCategory });
+                    return issueReason;
                 }
-                return issueReason;
             }
         }
 
@@ -1306,8 +1365,14 @@ export class NumericSemanticCheck implements BaseChecker {
             }
             return { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory };
         }
-        if (stmt instanceof ArkReturnStmt || stmt instanceof ArkIfStmt) {
-            // return语句，local作为返回值，不会影响其值的变化，不会导致int被重新赋值为number使用
+        if (stmt instanceof ArkReturnStmt) {
+            // return语句，local作为返回值，若为同步函数则不会影响其值的变化，不会导致int被重新赋值为number使用，若为异步函数则一定为number
+            if (stmt.getCfg().getDeclaringMethod().containsModifier(ModifierType.ASYNC)) {
+                return { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number };
+            }
+            return { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory };
+        }
+        if (stmt instanceof ArkIfStmt) {
             // 条件判断语句，local作为condition expr的op1或op2，进行二元条件判断，不会影响其值的变化，不会导致int被重新赋值为number使用
             return { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory };
         }
@@ -1514,17 +1579,8 @@ export class NumericSemanticCheck implements BaseChecker {
             return IssueReason.OnlyUsedAsIntLong;
         }
         if (expr instanceof ArkAwaitExpr) {
-            const promise = expr.getPromise();
-            if (promise instanceof Local) {
-                const declaringStmt = promise.getDeclaringStmt();
-                if (declaringStmt === null || !(declaringStmt instanceof ArkAssignStmt)) {
-                    logger.error('Missing or wrong declaringStmt for await promise');
-                    return IssueReason.CannotFindAll;
-                }
-                return this.checkValueOnlyUsedAsIntLong(declaringStmt, declaringStmt.getRightOp(), hasChecked, numberCategory);
-            }
-            logger.error(`Need to handle new type of promise: ${promise.getType().toString()}`);
-            return IssueReason.Other;
+            // async函数一定返回promise<number>类型，不对其进行Promise<int>的转换
+            return IssueReason.UsedWithOtherType;
         }
         if (expr instanceof ArkCastExpr) {
             return this.checkValueOnlyUsedAsIntLong(stmt, expr.getOp(), hasChecked, numberCategory);
@@ -1985,6 +2041,7 @@ export class NumericSemanticCheck implements BaseChecker {
         return this.issuesMap.get(mapKey) ?? null;
     }
 
+    // stmt should be the declaring stmt of this local
     private getLocalIssueFromIssueList(local: Local, stmt: Stmt): IssueReport | null {
         const filePath = stmt.getCfg().getDeclaringMethod().getDeclaringArkFile().getFilePath();
         const position = getLineAndColumn(stmt, local, true);
@@ -2333,7 +2390,7 @@ export class NumericSemanticCheck implements BaseChecker {
         return sourceFile;
     }
 
-  private generateRuleFixForLocalDefine(sourceFile: ts.SourceFile, warnInfo: WarnInfo, numberCategory: NumberCategory, isOptional?: boolean): RuleFix | null {
+    private generateRuleFixForLocalDefine(sourceFile: ts.SourceFile, warnInfo: WarnInfo, numberCategory: NumberCategory, isOptional?: boolean): RuleFix | null {
         // warnInfo中对于变量声明语句的位置信息只包括变量名，不包括变量声明时的类型注解位置
         // 此处先获取变量名后到行尾的字符串信息，判断是替换‘: number’ 或增加 ‘: int’
         const localRange = FixUtils.getRangeWithAst(sourceFile, {
@@ -2538,16 +2595,16 @@ export class NumericSemanticCheck implements BaseChecker {
         let isOptionalField: boolean | undefined;
 
         if (issueStmt instanceof ArkAssignStmt) {
-          const rightOp = issueStmt.getRightOp();
-          if (rightOp instanceof ArkInstanceFieldRef) {
-            const fieldSig = rightOp.getFieldSignature();
-            const declaringSig = fieldSig.getDeclaringSignature();
-            if (declaringSig instanceof ClassSignature) {
-              const baseClass = this.scene.getClass(declaringSig);
-              const baseField = baseClass?.getField(fieldSig);
-              isOptionalField = !!baseField?.getQuestionToken();
+            const rightOp = issueStmt.getRightOp();
+            if (rightOp instanceof AbstractFieldRef) {
+                const fieldSig = rightOp.getFieldSignature();
+                const declaringSig = fieldSig.getDeclaringSignature();
+                if (declaringSig instanceof ClassSignature) {
+                    const baseClass = this.scene.getClass(declaringSig);
+                    const baseField = baseClass?.getField(fieldSig);
+                    isOptionalField = !!baseField?.getQuestionToken();
+                }
             }
-          }
         }
         return this.generateRuleFixForLocalDefine(sourceFile, warnInfo, numberCategory, isOptionalField);
     }
