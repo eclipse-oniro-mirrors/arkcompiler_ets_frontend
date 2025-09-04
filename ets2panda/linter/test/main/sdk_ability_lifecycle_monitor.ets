@@ -48,6 +48,7 @@ class MyAbilityStage extends AbilityStage {
     }
     let applicationContext = this.context.getApplicationContext();
     let lifecycleId = applicationContext.on('abilityLifecycle', abilityLifecycleCallback); // report error normally
+    let lifecycleId2 = applicationContext.on('abilityLifecycle', new AbilityLifecycleCallback()); // report error normally
   }
 }
 

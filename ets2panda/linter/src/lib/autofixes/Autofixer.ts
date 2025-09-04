@@ -5336,9 +5336,10 @@ export class Autofixer {
       const methodName = identifierReplacements.get(identifierText);
       if (methodName) {
         const accessExpr = Autofixer.createUIContextAccess(methodName);
-        const newExpression = identifierText === GET_CONTEXT
-          ? ts.factory.createCallChain(accessExpr, undefined, undefined, [])
-          : accessExpr;
+        const newExpression =
+          identifierText === GET_CONTEXT ?
+            ts.factory.createCallChain(accessExpr, undefined, undefined, []) :
+            accessExpr;
         const start = identifierText === GET_CONTEXT ? callExpr.getStart() : callExpr.expression.getStart();
         const end = identifierText === GET_CONTEXT ? callExpr.getEnd() : callExpr.expression.getEnd();
         const newText = this.printer.printNode(ts.EmitHint.Unspecified, newExpression, callExpr.getSourceFile());
@@ -5360,7 +5361,10 @@ export class Autofixer {
         ts.factory.createPropertyAccessExpression(
           ts.factory.createIdentifier(UI_CONTEXT),
           ts.factory.createIdentifier(GET_FOCUSED_UI_CONTEXT)
-      ), undefined, []),
+        ),
+        undefined,
+        []
+      ),
       ts.factory.createToken(ts.SyntaxKind.QuestionDotToken),
       ts.factory.createIdentifier(methodName)
     );

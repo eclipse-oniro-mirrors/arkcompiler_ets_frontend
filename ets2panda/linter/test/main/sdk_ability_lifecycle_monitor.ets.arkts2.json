@@ -55,9 +55,29 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
+            "line": 51,
+            "column": 24,
+            "endLine": 51,
+            "endColumn": 97,
+            "problem": "SdkAbilityLifecycleMonitor",
+            "suggest": "",
+            "rule": "The UIAbility of 1.2 needs to be listened by the new StaticAbilityLifecycleCallback. The original AbilityLifecycleCallback can only listen to the UIAbility of 1.1 (sdk-ability-lifecycle-monitor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 70,
+            "endLine": 51,
+            "endColumn": 94,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
             "column": 7,
-            "endLine": 58,
+            "endLine": 59,
             "endColumn": 8,
             "problem": "ObjectLiteralProperty",
             "suggest": "",
@@ -65,9 +85,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
+            "line": 58,
             "column": 23,
-            "endLine": 57,
+            "endLine": 58,
             "endColumn": 30,
             "problem": "ParameterType",
             "suggest": "",
@@ -75,9 +95,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
+            "line": 58,
             "column": 23,
-            "endLine": 57,
+            "endLine": 58,
             "endColumn": 30,
             "problem": "AnyType",
             "suggest": "",
@@ -85,9 +105,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 85,
+            "line": 86,
             "column": 23,
-            "endLine": 85,
+            "endLine": 86,
             "endColumn": 90,
             "problem": "SdkAbilityLifecycleMonitor",
             "suggest": "",

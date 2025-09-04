@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
+            "line": 58,
             "column": 23,
-            "endLine": 57,
+            "endLine": 58,
             "endColumn": 30,
             "problem": "AnyType",
             "suggest": "",
