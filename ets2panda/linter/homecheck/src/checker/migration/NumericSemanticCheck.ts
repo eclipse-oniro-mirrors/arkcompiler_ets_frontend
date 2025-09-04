@@ -35,6 +35,7 @@ import {
     BooleanType,
     CallGraph,
     ClassSignature,
+    classSignatureCompare,
     ClassType,
     ClosureFieldRef,
     CONSTRUCTOR_NAME,
@@ -919,7 +920,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 const ets2ParamType = ets2Params[i].getType();
                 const ets1ParamType = ets1Params[i].getType();
                 if (
-                    ets2ParamType === ets1ParamType ||
+                    this.compareTypes(ets1ParamType, ets2ParamType) ||
                     (ets1ParamType instanceof NumberType && (this.isIntType(ets2ParamType) || this.isLongType(ets2ParamType)))
                 ) {
                     continue;
@@ -935,6 +936,18 @@ export class NumericSemanticCheck implements BaseChecker {
             }
         }
         return null;
+    }
+
+    private compareTypes(param1: Type, param2: Type): boolean {
+        if (param1 instanceof ClassType && param2 instanceof ClassType) {
+            const classSign1 = param1.getClassSignature();
+            const classSign2 = param2.getClassSignature();
+            if(SdkUtils.isClassFromSdk(classSign1) && SdkUtils.isClassFromSdk(classSign2)) {
+                return classSign1.getClassName() === classSign2.getClassName()
+            }
+            return classSignatureCompare(classSign1, classSign2)
+        }
+        return param1 === param2
     }
 
     private matchEts1NumberEts2IntLongMethodSig(ets2Sigs: MethodSignature[], ets1Sig: MethodSignature): MethodSignature | null {
