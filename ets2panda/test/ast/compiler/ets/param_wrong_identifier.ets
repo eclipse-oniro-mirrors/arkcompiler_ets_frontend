@@ -44,13 +44,13 @@ function main() {
 /* @@? 29:10 Error TypeError: Class name can't be the argument of function or method. */
 /* @@? 30:3 Error TypeError: No matching call signature for foo3(Int) */
 /* @@? 30:10 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 30:10 Error TypeError: Class or interface 'Int' cannot be used as object */
+/* @@? 30:10 Error TypeError: Class or interface or enum 'Int' cannot be used as object */
 /* @@? 31:3 Error TypeError: No matching call signature for foo4(String) */
 /* @@? 31:10 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 31:10 Error TypeError: Class or interface 'String' cannot be used as object */
+/* @@? 31:10 Error TypeError: Class or interface or enum 'String' cannot be used as object */
 /* @@? 32:3 Error TypeError: No matching call signature for foo5(Boolean) */
 /* @@? 32:10 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 32:10 Error TypeError: Class or interface 'Boolean' cannot be used as object */
+/* @@? 32:10 Error TypeError: Class or interface or enum 'Boolean' cannot be used as object */
 /* @@? 33:3 Error TypeError: No matching call signature for foo6(Double) */
 /* @@? 33:10 Error TypeError: Class name can't be the argument of function or method. */
 /* @@? 34:3 Error TypeError: No matching call signature for foo7(Double) */
