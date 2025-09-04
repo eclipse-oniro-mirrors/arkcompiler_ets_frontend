@@ -1114,7 +1114,7 @@ export class NumericSemanticCheck implements BaseChecker {
     }
 
     private isNumberConstantActuallyFloat(constant: NumberConstant): boolean {
-        const valueStr = constant.getValue();
+        const valueStr = constant.getValue().toLowerCase();
         if (valueStr.includes('.') && !valueStr.includes('e')) {
             // 数字字面量非科学计数的写法，并且有小数点，则一定是浮点数，1.0也认为是float
             return true;
@@ -1454,15 +1454,24 @@ export class NumericSemanticCheck implements BaseChecker {
             if (expr.getOperator() === NormalBinaryOperator.Division) {
                 const op1 = expr.getOp1();
                 const op2 = expr.getOp2();
+                let fixedEnumOp2Number = false;
                 if (op1 instanceof NumberConstant && !this.isNumberConstantActuallyFloat(op1)) {
                     this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op1);
                 } else if (op1 instanceof Local) {
                     hasChecked.set(op1, { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number });
+                    // 对于 enum.A / enum.B的场景，需要将第一个enum.A修复成enum.A.valueOf().toDouble()
+                    if (op1.getName().startsWith(TEMP_LOCAL_PREFIX) && op1.getType() instanceof EnumValueType) {
+                        this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op1);
+                        fixedEnumOp2Number = true;
+                    }
                 }
                 if (op2 instanceof NumberConstant && !this.isNumberConstantActuallyFloat(op2)) {
                     this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op2);
                 } else if (op2 instanceof Local) {
                     hasChecked.set(op2, { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number });
+                    if (!fixedEnumOp2Number && op2.getName().startsWith(TEMP_LOCAL_PREFIX) && op2.getType() instanceof EnumValueType) {
+                        this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op2);
+                    }
                 }
                 return IssueReason.UsedWithOtherType;
             }
@@ -2579,12 +2588,8 @@ export class NumericSemanticCheck implements BaseChecker {
             }
         }
 
-        if (value instanceof NumberConstant) {
-            // 对整型字面量进行自动修复，转成浮点字面量，例如1->1.0
-            if (this.isNumberConstantActuallyFloat(value)) {
-                // 无需修复
-                return null;
-            }
+        if ((value instanceof Local && value.getName().startsWith(TEMP_LOCAL_PREFIX) && value.getType() instanceof EnumValueType) ||
+            value instanceof NumberConstant) {
             if (warnInfo.endLine === undefined) {
                 // 按正常流程不应该存在此场景
                 logger.error('Missing end line info in warnInfo when generating auto fix info.');
@@ -2600,14 +2605,29 @@ export class NumericSemanticCheck implements BaseChecker {
                 logger.error('Failed to getting range info of issue file when generating auto fix info.');
                 return null;
             }
-
-            const valueStr = value.getValue();
-            const ruleFixText = NumericSemanticCheck.CreateFixTextForIntLiteral(valueStr);
             const ruleFix = new RuleFix();
             ruleFix.range = range;
-            ruleFix.text = ruleFixText;
+
+            if (value instanceof NumberConstant) {
+                // 场景1：对整型字面量进行自动修复，转成浮点字面量，例如1->1.0
+                if (this.isNumberConstantActuallyFloat(value)) {
+                    // 无需修复
+                    return null;
+                }
+                const valueStr = value.getValue();
+                ruleFix.text = NumericSemanticCheck.CreateFixTextForIntLiteral(valueStr);;
+            } else {
+                // 场景2：对enum.A这样的枚举类型进行自动修复成enum.A.valueOf().toDouble()
+                const valueStr = FixUtils.getSourceWithRange(sourceFile, range);
+                if (valueStr === null) {
+                    logger.error('Failed to getting enum source code with range info.');
+                    return null;
+                }
+                ruleFix.text = NumericSemanticCheck.CreateFixTextForEnumValue(valueStr);;
+            }
             return ruleFix;
         }
+
         // 非整型字面量
         // warnInfo中对于变量声明语句的位置信息只包括变量名，不包括变量声明时的类型注解位置，此处获取变量名后到行尾的字符串信息，替换‘: number’ 或增加 ‘: int’
         if (issueReason === IssueReason.OnlyUsedAsIntLong) {
@@ -2619,8 +2639,11 @@ export class NumericSemanticCheck implements BaseChecker {
         if (!NumericSemanticCheck.IsNotDecimalNumber(valueStr)) {
             return valueStr + '.0';
         }
-
         return valueStr + '.toDouble()';
+    }
+
+    private static CreateFixTextForEnumValue(valueStr: string): string {
+        return valueStr + '.valueOf().toDouble()';
     }
 
     private static IsNotDecimalNumber(value: string): boolean {
