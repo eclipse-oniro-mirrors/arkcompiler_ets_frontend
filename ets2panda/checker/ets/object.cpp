@@ -2290,6 +2290,11 @@ std::vector<ResolveResult *> ETSChecker::ValidateAccessor(ir::MemberExpression *
                                                           varbinder::Variable *const eAcc,
                                                           PropertySearchFlags searchFlag)
 {
+    if ((eAcc != nullptr && !eAcc->TsType()->IsETSFunctionType()) ||
+        (oAcc != nullptr && !oAcc->TsType()->IsETSFunctionType())) {
+        memberExpr->SetTsType(GlobalTypeError());
+        return {};
+    }
     auto *funcType = eAcc != nullptr ? eAcc->TsType()->AsETSFunctionType() : nullptr;
     auto *propType = oAcc != nullptr ? oAcc->TsType()->AsETSFunctionType() : nullptr;
     searchFlag = memberExpr->Parent()->IsUpdateExpression() ? searchFlag | PropertySearchFlags::IS_SETTER : searchFlag;
