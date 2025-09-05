@@ -221,7 +221,7 @@ public:
 
     bool IsGlobalETSObjectType() const noexcept
     {
-        return superType_ == nullptr;
+        return superType_ == nullptr && !IsGradual();
     }
 
     bool IsPropertyInherited(const varbinder::Variable *var);
@@ -237,10 +237,7 @@ public:
         return name_;
     }
 
-    util::StringView AssemblerName() const
-    {
-        return internalName_;
-    }
+    util::StringView AssemblerName() const;
 
     ETSObjectFlags ObjectFlags() const
     {
@@ -265,6 +262,11 @@ public:
     bool IsInterface() const
     {
         return HasObjectFlag(ETSObjectFlags::INTERFACE);
+    }
+
+    bool IsGradual() const
+    {
+        return HasObjectFlag(ETSObjectFlags::GRADUAL);
     }
 
     bool IsETSStringLiteralType() const
@@ -366,7 +368,6 @@ public:
     bool ReplaceArgumentInSignature(std::vector<Signature *> &signatures, Signature *sigToInsert,
                                     TypeRelation *relation) const;
     bool CheckIdenticalFlags(ETSObjectType *other) const;
-    ETSObjectType *CreateETSObjectType(ir::AstNode *declNode, ETSObjectFlags flags);
     void ToString(std::stringstream &ss, bool precise) const override;
     void Identical(TypeRelation *relation, Type *other) override;
     bool AssignmentSource(TypeRelation *relation, Type *target) override;

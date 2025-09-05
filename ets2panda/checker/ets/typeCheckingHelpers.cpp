@@ -17,7 +17,6 @@
 #include "checker/checkerContext.h"
 #include "checker/ets/wideningConverter.h"
 #include "checker/types/globalTypesHolder.h"
-#include "checker/types/gradualType.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "ir/base/catchClause.h"
@@ -93,10 +92,6 @@ bool ETSChecker::CheckNonNullish(ir::Expression const *expr)
 
 Type *ETSChecker::GetNonNullishType(Type *type)
 {
-    if (type->IsGradualType()) {
-        return CreateGradualType(GetNonNullishType(type->AsGradualType()->GetBaseType()),
-                                 type->AsGradualType()->Language());
-    }
     if (type->DefinitelyNotETSNullish()) {
         return type;
     }
@@ -215,8 +210,7 @@ std::pair<Type *, Type *> ETSChecker::RemoveNullishTypes(Type *type)
     ArenaVector<Type *> nullishTypes(ProgramAllocator()->Adapter());
     ArenaVector<Type *> notNullishTypes(ProgramAllocator()->Adapter());
 
-    for (auto *ctype : type->AsETSUnionType()->ConstituentTypes()) {
-        auto constituentType = ctype->MaybeBaseTypeOfGradualType();
+    for (auto *constituentType : type->AsETSUnionType()->ConstituentTypes()) {
         if (constituentType->IsETSUndefinedType() || constituentType->IsETSNullType()) {
             nullishTypes.push_back(constituentType);
         } else {
@@ -238,9 +232,6 @@ std::pair<Type *, Type *> ETSChecker::RemoveNullishTypes(Type *type)
 template <typename Pred, typename Trv>
 static bool MatchConstituentOrConstraint(const Type *type, Pred const &pred, Trv const &trv)
 {
-    if (type->IsGradualType()) {
-        return MatchConstituentOrConstraint(type->AsGradualType()->GetBaseType(), pred, trv);
-    }
     auto const traverse = [&pred, &trv](const Type *ttype) {
         return MatchConstituentOrConstraint<Pred, Trv>(ttype, pred, trv);
     };
@@ -391,7 +382,7 @@ bool Type::IsETSRelaxedAnyType() const
         TypeFlag::ETS_TYPE_PARAMETER | TypeFlag::WILDCARD | TypeFlag::ETS_NONNULLISH |
         TypeFlag::ETS_REQUIRED_TYPE_PARAMETER | TypeFlag::ETS_ANY | TypeFlag::ETS_NEVER | TypeFlag::ETS_UNION |
         TypeFlag::ETS_ARRAY | TypeFlag::FUNCTION | TypeFlag::ETS_PARTIAL_TYPE_PARAMETER | TypeFlag::ETS_TUPLE |
-        TypeFlag::ETS_ENUM | TypeFlag::ETS_READONLY | TypeFlag::GRADUAL_TYPE | TypeFlag::ETS_AWAITED;
+        TypeFlag::ETS_ENUM | TypeFlag::ETS_READONLY | TypeFlag::ETS_AWAITED;
 
     // Issues
     if (type->IsETSVoidType()) {  // NOTE(vpukhov): #19701 void refactoring
@@ -560,10 +551,10 @@ SavedCheckerContext ETSChecker::CreateSavedCheckerContext(varbinder::Variable *c
             auto *classDef = iter->AsClassDefinition();
             Type *containingClass {};
             if (classDef->TsType() == nullptr) {
-                containingClass = BuildBasicClassProperties(classDef)->MaybeBaseTypeOfGradualType();
+                containingClass = BuildBasicClassProperties(classDef);
                 ResolveDeclaredMembersOfObject(containingClass);
             } else {
-                containingClass = classDef->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType();
+                containingClass = classDef->TsType()->AsETSObjectType();
             }
             ES2PANDA_ASSERT(classDef->TsType());
             if (!containingClass->IsTypeError()) {

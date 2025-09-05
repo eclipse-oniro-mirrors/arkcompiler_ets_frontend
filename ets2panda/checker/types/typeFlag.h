@@ -72,7 +72,7 @@ enum class TypeFlag : uint64_t {
     GENERIC = 1ULL << 45ULL,             // ETS Generic
     ETS_INT_ENUM = 1ULL << 46ULL,        // ETS Enum
     ETS_STRING_ENUM = 1ULL << 47ULL,     // ETS string-type Enumeration
-    GRADUAL_TYPE = 1ULL << 48ULL,        // gradual type
+    /* Unused: 1ULL << 48ULL, */         // unused
     GETTER = 1ULL << 49ULL,              // ETS Getter
     SETTER = 1ULL << 50ULL,              // ETS Setter
     ETS_EXTENSION_FUNC_HELPER = 1ULL << 51ULL,    // ETS Extension Function Helper

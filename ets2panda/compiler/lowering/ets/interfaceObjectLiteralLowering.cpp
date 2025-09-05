@@ -36,13 +36,13 @@ std::string_view InterfaceObjectLiteralLowering::Name() const
 static inline bool IsInterfaceType(const checker::Type *type)
 {
     return type != nullptr && type->IsETSObjectType() &&
-           type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::INTERFACE) && !type->IsGradualType();
+           type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::INTERFACE);
 }
 
 static inline bool IsAbstractClassType(const checker::Type *type)
 {
     return type != nullptr && type->IsETSObjectType() &&
-           type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::ABSTRACT) && !type->IsGradualType();
+           type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::ABSTRACT);
 }
 
 static ir::AstNode *CreateAnonClassImplCtor(public_lib::Context *ctx, ArenaVector<ReadonlyFieldHolder> &readonlyFields)
@@ -238,7 +238,7 @@ static void GenerateAnonClassTypeFromInterface(public_lib::Context *ctx, ir::TSI
     auto *classDecl = checker->BuildClass(anonClassName.View(), classBodyBuilder);
     RefineSourceRanges(classDecl);
     auto *classDef = classDecl->Definition();
-    auto *classType = classDef->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType();
+    auto *classType = classDef->TsType()->AsETSObjectType();
     classDef->SetAnonymousModifier();
 
     classDecl->SetRange(ifaceNode->Range());
@@ -297,7 +297,7 @@ static void GenerateAnonClassTypeFromAbstractClass(public_lib::Context *ctx, ir:
     }
     RefineSourceRanges(classDecl);
     auto *classDef = classDecl->Definition();
-    if (classDef->TsType()->IsGradualType()) {
+    if (classDef->TsType()->AsETSObjectType()->IsGradual()) {
         return;
     }
     auto *classType = classDef->TsType()->AsETSObjectType();
@@ -391,7 +391,7 @@ static void HandleInterfaceLowering(public_lib::Context *ctx, ir::ObjectExpressi
 
 static bool CheckInterfaceShouldGenerateAnonClass(ir::TSInterfaceDeclaration *interfaceDecl)
 {
-    if (interfaceDecl->TsType() != nullptr && interfaceDecl->TsType()->IsGradualType()) {
+    if (interfaceDecl->TsType() != nullptr && interfaceDecl->TsType()->AsETSObjectType()->IsGradual()) {
         return false;
     }
     for (auto it : interfaceDecl->Body()->Body()) {
@@ -432,7 +432,8 @@ static void TransfromInterfaceDecl(public_lib::Context *ctx, parser::Program *pr
         if (ast->IsTSInterfaceDeclaration() && CheckInterfaceShouldGenerateAnonClass(ast->AsTSInterfaceDeclaration())) {
             GenerateAnonClassTypeFromInterface(ctx, ast->AsTSInterfaceDeclaration());
         } else if (ast->IsClassDefinition() && ast != program->GlobalClass() &&
-                   ast->AsClassDefinition()->IsAbstract() && !ast->AsClassDefinition()->TsType()->IsGradualType() &&
+                   ast->AsClassDefinition()->IsAbstract() &&
+                   !ast->AsClassDefinition()->TsType()->AsETSObjectType()->IsGradual() &&
                    CheckAbstractClassShouldGenerateAnonClass(ast->AsClassDefinition())) {
             GenerateAnonClassTypeFromAbstractClass(ctx, ast->AsClassDefinition());
         }
@@ -447,7 +448,7 @@ static void TransfromInterfaceLiteral(public_lib::Context *ctx, parser::Program 
         }
         auto objExpr = ast->AsObjectExpression();
         if ((IsInterfaceType(objExpr->TsType()) || IsAbstractClassType(objExpr->TsType())) &&
-            !objExpr->TsType()->AsETSObjectType()->GetDeclNode()->AsTyped()->TsType()->IsGradualType()) {
+            !objExpr->TsType()->AsETSObjectType()->IsGradual()) {
             HandleInterfaceLowering(ctx, ast->AsObjectExpression());
         }
     });

@@ -835,11 +835,6 @@ void ETSObjectType::Cast(TypeRelation *const relation, Type *const target)
         return;
     }
 
-    if (target->IsGradualType()) {
-        relation->Result(true);
-        return;
-    }
-
     if (CastNumericObject(relation, target)) {
         return;
     }
@@ -897,6 +892,10 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
     }
 
     auto const sourceObj = source->AsETSObjectType();
+    if (IsGradual() != sourceObj->IsGradual()) {
+        relation->Result(false);
+        return;
+    }
     // #23072 - superType_ of the current object is not intialized in recursive generics
     if (GetConstOriginalBaseType() == checker->GlobalETSObjectType()) {  // Fastpath, all objects are subtypes of Object
         relation->Result(true);
@@ -1255,37 +1254,6 @@ static util::StringView GetHashFromSubstitution(const Substitution *substitution
     return util::UString(ss.str(), allocator).View();
 }
 
-static std::pair<util::StringView, util::StringView> GetObjectTypeDeclNames(ir::AstNode *node)
-{
-    if (node->IsClassDefinition()) {
-        return {node->AsClassDefinition()->Ident()->Name(), node->AsClassDefinition()->InternalName()};
-    }
-    if (node->IsTSInterfaceDeclaration()) {
-        return {node->AsTSInterfaceDeclaration()->Id()->Name(), node->AsTSInterfaceDeclaration()->InternalName()};
-    }
-    return {node->AsAnnotationDeclaration()->GetBaseName()->Name(), node->AsAnnotationDeclaration()->InternalName()};
-}
-
-ETSObjectType *ETSObjectType::CreateETSObjectType(ir::AstNode *declNode, ETSObjectFlags flags)
-{
-    auto const [name, internalName] = GetObjectTypeDeclNames(declNode);
-
-    if (declNode->IsClassDefinition() && (declNode->AsClassDefinition()->IsEnumTransformed())) {
-        if (declNode->AsClassDefinition()->IsIntEnumTransformed()) {
-            return Allocator()->New<ETSIntEnumType>(Allocator(), name, internalName, declNode, GetRelation());
-        }
-        ES2PANDA_ASSERT(declNode->AsClassDefinition()->IsStringEnumTransformed());
-        return Allocator()->New<ETSStringEnumType>(Allocator(), name, internalName, declNode, GetRelation());
-    }
-    if (internalName == compiler::Signatures::BUILTIN_ARRAY) {
-        return Allocator()->New<ETSResizableArrayType>(Allocator(), name,
-                                                       std::make_tuple(declNode, flags, GetRelation()));
-    }
-
-    return Allocator()->New<ETSObjectType>(Allocator(), name, internalName,
-                                           std::make_tuple(declNode, flags, GetRelation()));
-}
-
 // #22951: remove isExtensionFunctionType flag
 ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitution *substitution, bool cache,
                                          bool isExtensionFunctionType)
@@ -1318,7 +1286,8 @@ ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitut
     }
     relation->IncreaseTypeRecursionCount(base);
 
-    auto *const copiedType = CreateETSObjectType(declNode_, flags_);
+    auto checker = relation->GetChecker()->AsETSChecker();
+    auto const copiedType = checker->CreateETSObjectType(declNode_, flags_, {{Allocator(), GetRelation()}});
     SetCopiedTypeProperties(relation, copiedType, std::move(newTypeArgs), base);
     if (isExtensionFunctionType) {
         copiedType->AddObjectFlag(checker::ETSObjectFlags::EXTENSION_FUNCTION);
@@ -1360,8 +1329,7 @@ ETSObjectType *ETSObjectType::SubstituteArguments(TypeRelation *relation, ArenaV
     ES2PANDA_ASSERT(typeArguments_.size() == arguments.size());
 
     for (size_t ix = 0; ix < typeArguments_.size(); ix++) {
-        substitution.emplace(typeArguments_[ix]->AsETSTypeParameter(),
-                             checker->MaybeBoxType(arguments[ix]->MaybeBaseTypeOfGradualType()));
+        substitution.emplace(typeArguments_[ix]->AsETSTypeParameter(), checker->MaybeBoxType(arguments[ix]));
     }
 
     return Substitute(relation, &substitution);
@@ -1529,20 +1497,28 @@ const ArenaVector<ETSObjectType *> &ETSObjectType::ReExports() const
     return reExports_;
 }
 
+util::StringView ETSObjectType::AssemblerName() const
+{
+    if (IsGradual()) {
+        return "std.core.Object";  // "{Ustd.core.Object,std.core.JSValue}"
+    }
+    return internalName_;
+}
+
 void ETSObjectType::ToAssemblerType([[maybe_unused]] std::stringstream &ss) const
 {
-    ss << internalName_;
+    ss << AssemblerName();
 }
 
 void ETSObjectType::ToDebugInfoType(std::stringstream &ss) const
 {
-    ss << NameToDescriptor(internalName_);
+    ss << NameToDescriptor(AssemblerName());
 }
 
 void ETSObjectType::ToDebugInfoSignatureType(std::stringstream &ss) const
 {
     ss << compiler::Signatures::GENERIC_BEGIN;
-    ss << internalName_;
+    ss << AssemblerName();
     ss << compiler::Signatures::GENERIC_END;
 }
 

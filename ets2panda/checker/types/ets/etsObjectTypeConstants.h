@@ -37,7 +37,7 @@ enum class ETSObjectFlags : std::uint64_t {
     STRING = 1U << 10U,
     INCOMPLETE_INSTANTIATION = 1U << 11U,
     INNER = 1U << 12U,
-    DYNAMIC = 1U << 13U,
+    GRADUAL = 1U << 13U,
     ASYNC_FUNC_RETURN_TYPE = 1U << 14U,
     CHECKED_INVOKE_LEGITIMACY = 1U << 15U,
     REQUIRED = 1U << 16U,

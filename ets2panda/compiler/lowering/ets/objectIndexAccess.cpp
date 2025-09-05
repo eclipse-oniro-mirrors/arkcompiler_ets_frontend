@@ -79,8 +79,7 @@ static ir::AstNode *ProcessIndexGetAccess(public_lib::Context *ctx, ir::MemberEx
 bool ObjectIndexLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
     const auto isGetSetExpression = [](const ir::MemberExpression *const memberExpr) {
-        return memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr &&
-               !memberExpr->Object()->TsType()->IsGradualType();
+        return memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr;
     };
 
     program->Ast()->TransformChildrenRecursively(
@@ -114,10 +113,9 @@ bool ObjectIndexLowering::PostconditionForModule([[maybe_unused]] public_lib::Co
                                                  const parser::Program *program)
 {
     return !program->Ast()->IsAnyChild([](const ir::AstNode *ast) {
-        if (ast->IsMemberExpression()) {
-            const auto *const memberExpr = ast->AsMemberExpression();
-            if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr &&
-                !memberExpr->Object()->TsType()->IsGradualType()) {
+        if (ast->IsMemberExpression() &&
+            ast->AsMemberExpression()->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) {
+            if (auto const *const objectType = ast->AsMemberExpression()->ObjType(); objectType != nullptr) {
                 return true;
             }
         }

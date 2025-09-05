@@ -46,7 +46,7 @@
 #include "checker/types/signature.h"
 #include "checker/ETSchecker.h"
 #include "checker/types/type.h"
-#include "checker/types/gradualType.h"
+#include "checker/types/ets/types.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "public/public.h"
 #include "util/nameMangler.h"
@@ -161,9 +161,6 @@ private:
 
 static pandasm::Type PandasmTypeWithRank(ETSEmitter *emitter, checker::Type const *type)
 {
-    if (type->IsGradualType()) {
-        return PandasmTypeWithRank(emitter, type->AsGradualType()->GetBaseType());
-    }
     if (type->IsETSTypeParameter()) {
         return PandasmTypeWithRank(emitter, type->AsETSTypeParameter()->GetConstraintType());
     }
@@ -639,10 +636,7 @@ void ETSEmitter::GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceD
 
     interfaceRecord.metadata->SetAttributeValue(Signatures::EXTENDS_ATTRIBUTE, Signatures::BUILTIN_OBJECT);
 
-    auto *baseType = interfaceDecl->TsType()->IsGradualType()
-                         ? interfaceDecl->TsType()->AsGradualType()->GetBaseType()->AsETSObjectType()
-                         : interfaceDecl->TsType()->AsETSObjectType();
-    for (auto *it : baseType->Interfaces()) {
+    for (auto *it : interfaceDecl->TsType()->AsETSObjectType()->Interfaces()) {
         auto *declNode = it->GetDeclNode();
         ES2PANDA_ASSERT(declNode->IsTSInterfaceDeclaration());
         interfaceRecord.metadata->SetAttributeValue(
@@ -719,7 +713,6 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
     uint32_t accessFlags = GetAccessFlags(classDef);
     classRecord.metadata->SetAccessFlags(accessFlags);
     classRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath()};
-
     for (const auto *prop : classDef->Body()) {
         if (prop->IsClassProperty()) {
             GenClassField(prop->AsClassProperty(), classRecord, external);
@@ -734,15 +727,13 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
         return;
     }
 
-    auto *baseType = classDef->TsType()->IsGradualType()
-                         ? classDef->TsType()->AsGradualType()->GetBaseType()->AsETSObjectType()
-                         : classDef->TsType()->AsETSObjectType();
-    if (baseType->SuperType() != nullptr) {
+    auto const type = classDef->TsType()->AsETSObjectType();
+    if (type->SuperType() != nullptr) {
         classRecord.metadata->SetAttributeValue(Signatures::EXTENDS_ATTRIBUTE,
-                                                AddDependence(ToAssemblerType(baseType->SuperType()->GetDeclNode())));
+                                                AddDependence(ToAssemblerType(type->SuperType()->GetDeclNode())));
     }
 
-    for (auto *it : baseType->Interfaces()) {
+    for (auto *it : type->Interfaces()) {
         classRecord.metadata->SetAttributeValue(
             Signatures::IMPLEMENTS_ATTRIBUTE,
             AddDependence(ToAssemblerType(it->GetDeclNode()->AsTSInterfaceDeclaration())));

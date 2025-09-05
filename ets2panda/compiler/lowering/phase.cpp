@@ -42,7 +42,6 @@
 #include "compiler/lowering/ets/expressionLambdaLowering.h"
 #include "compiler/lowering/ets/extensionAccessorLowering.h"
 #include "compiler/lowering/ets/genericBridgesLowering.h"
-#include "compiler/lowering/ets/gradualTypeNarrowing.h"
 #include "compiler/lowering/ets/insertOptionalParametersAnnotation.h"
 #include "compiler/lowering/ets/interfaceObjectLiteralLowering.h"
 #include "compiler/lowering/ets/interfacePropertyDeclarations.h"
@@ -164,7 +163,6 @@ std::vector<Phase *> GetETSPhaseList()
         new InterfaceObjectLiteralLowering,
         new ObjectLiteralLowering,
         new TypeFromLowering,
-        new GradualTypeNarrowing,
         new PrimitiveConversionPhase,
         new UnboxPhase,
         // pluginsAfterLowerings has to come at the very end, nothing should go after it

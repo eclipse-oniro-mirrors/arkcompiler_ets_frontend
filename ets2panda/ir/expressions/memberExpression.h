@@ -251,7 +251,6 @@ private:
     checker::Type *TraverseUnionMember(checker::ETSChecker *checker, checker::ETSUnionType *unionType);
 
     bool CheckArrayIndexValue(checker::ETSChecker *checker) const;
-    checker::Type *HandleComputedInGradualType(checker::ETSChecker *checker, checker::Type *baseType);
     checker::Type *CheckIndexAccessMethod(checker::ETSChecker *checker);
     checker::Type *ResolveReturnTypeFromSignature(checker::ETSChecker *checker, bool isSetter,
                                                   ArenaVector<ir::Expression *> &arguments,

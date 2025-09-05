@@ -300,42 +300,6 @@ static ir::AstNode *HandleObjectLiteralLowering(public_lib::Context *ctx, ir::Ob
     return loweringResult;
 }
 
-static ir::AstNode *HandleDynamicObjectLiteralLowering(public_lib::Context *ctx, ir::ObjectExpression *objExpr)
-{
-    auto parser = ctx->parser->AsETSParser();
-    auto checker = ctx->GetChecker()->AsETSChecker();
-    auto varBinder = checker->VarBinder()->AsETSBinder();
-    auto allocator = checker->ProgramAllocator();
-
-    std::stringstream ss;
-    ArenaVector<ir::Statement *> blockStatements(allocator->Adapter());
-    std::vector<ir::AstNode *> args;
-    auto gensym = Gensym(allocator);
-    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1:ESValue = ESValue.instantiateEmptyObject();",
-                                                               gensym->Clone(allocator, nullptr)));
-    size_t counter = 0;
-    for (auto property : objExpr->Properties()) {
-        auto appendArgument = [&](auto &&arg) {
-            args.push_back(std::forward<decltype(arg)>(arg));
-            return ++counter;
-        };
-
-        const size_t genSymId = appendArgument(gensym->Clone(allocator, nullptr));
-        const size_t valueId = appendArgument(property->AsProperty()->Value());
-
-        ss << "@@I" << genSymId << ".setProperty('" << property->AsProperty()->Key()->DumpEtsSrc()
-           << "', ESValue.wrap(@@E" << valueId << "));";
-    }
-    if (!objExpr->Properties().empty()) {
-        blockStatements.push_back(parser->CreateFormattedStatement(ss.str(), args));
-    }
-    blockStatements.push_back(parser->CreateFormattedStatement("@@I1.unwrap();", gensym->Clone(allocator, nullptr)));
-    auto *blockExpr = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));
-    blockExpr->SetParent(objExpr->Parent());
-    CheckLoweredNode(varBinder, checker, blockExpr);
-    return blockExpr;
-}
-
 bool ObjectLiteralLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
@@ -348,9 +312,7 @@ bool ObjectLiteralLowering::PerformForModule(public_lib::Context *ctx, parser::P
                     return ast;
                 }
                 if (exprType->IsETSObjectType()) {
-                    return exprType->AsETSObjectType()->GetDeclNode()->AsTyped()->TsType()->IsGradualType()
-                               ? HandleDynamicObjectLiteralLowering(ctx, ast->AsObjectExpression())
-                               : HandleObjectLiteralLowering(ctx, ast->AsObjectExpression());
+                    return HandleObjectLiteralLowering(ctx, ast->AsObjectExpression());
                 }
             }
             return ast;

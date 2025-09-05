@@ -21,7 +21,6 @@
 #include "checker/types/ets/etsTupleType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "checker/types/ets/etsAwaitedType.h"
-#include "checker/types/gradualType.h"
 #include "compiler/lowering/phase.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/classElement.h"
@@ -140,9 +139,6 @@ ETSObjectType *ETSChecker::GetSuperType(ETSObjectType *type)
     if (type == GlobalETSObjectType()) {
         return GlobalETSObjectType();
     }
-    if (type->SuperType() == nullptr) {
-        return nullptr;
-    }
     return type->SuperType();
 }
 
@@ -166,7 +162,7 @@ static bool CheckObjectTypeAndSuperType(ETSChecker *checker, ETSObjectType *type
 
     if (classDef->Super() == nullptr || !classDef->Super()->IsTypeNode()) {
         type->AddObjectFlag(ETSObjectFlags::RESOLVED_SUPER);
-        if (type != checker->GlobalETSObjectType()) {
+        if (type != checker->GlobalETSObjectType() && !type->IsGradual()) {
             type->SetSuperType(checker->GlobalETSObjectType());
         }
         return true;
@@ -195,7 +191,7 @@ bool ETSChecker::ComputeSuperType(ETSObjectType *type)
         return false;
     }
 
-    auto *superType = classDef->Super()->AsTypeNode()->GetType(this)->MaybeBaseTypeOfGradualType();
+    auto *superType = classDef->Super()->AsTypeNode()->GetType(this);
     if (superType == nullptr) {
         return true;
     }
@@ -205,7 +201,7 @@ bool ETSChecker::ComputeSuperType(ETSObjectType *type)
         return true;
     }
 
-    ETSObjectType *superObj = superType->MaybeBaseTypeOfGradualType()->AsETSObjectType();
+    ETSObjectType *superObj = superType->AsETSObjectType();
 
     // struct node has class definition, too
     if (superObj->GetDeclNode()->Parent()->IsETSStructDeclaration()) {
@@ -216,7 +212,7 @@ bool ETSChecker::ComputeSuperType(ETSObjectType *type)
         LogError(diagnostic::EXTENDING_FINAL, {}, classDef->Super()->Start());
         /* It still makes sense to treat superObj as the supertype in future checking */
     }
-    if (GetSuperType(superObj) == nullptr) {
+    if (GetSuperType(superObj) == nullptr && !superObj->IsGradual()) {
         superObj = GlobalETSObjectType();
     }
     type->SetSuperType(superObj);
@@ -228,7 +224,6 @@ void ETSChecker::ValidateImplementedInterface(ETSObjectType *type, Type *interfa
                                               std::unordered_set<Type *> *extendsSet, const lexer::SourcePosition &pos)
 {
     ES2PANDA_ASSERT(interface != nullptr);
-    interface = interface->MaybeBaseTypeOfGradualType();
     if (interface->IsETSObjectType() && interface->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::CLASS)) {
         LogError(diagnostic::INTERFACE_EXTENDS_CLASS, {}, pos);
         return;
@@ -476,12 +471,12 @@ void ETSChecker::CreateTypeForClassOrInterfaceTypeParameters(ETSObjectType *type
     type->AddObjectFlag(ETSObjectFlags::INCOMPLETE_INSTANTIATION);
 }
 
-Type *ETSChecker::MaybeGradualType(ir::AstNode *node, ETSObjectType *type)
+static bool IsInInteropDeclProgram(ir::AstNode *node)
 {
-    ES2PANDA_ASSERT(node->IsClassDefinition() || node->IsTSInterfaceDeclaration());
-    auto isDynamic = node->IsClassDefinition() ? node->AsClassDefinition()->Language().IsDynamic()
-                                               : node->AsTSInterfaceDeclaration()->Language().IsDynamic();
-    return isDynamic ? CreateGradualType(type) : type;
+    while (node->Parent() != nullptr) {
+        node = node->Parent();
+    }
+    return node->AsETSModule()->Program()->IsDeclForDynamicStaticInterop();
 }
 
 Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *interfaceDecl)
@@ -493,15 +488,15 @@ Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *inte
     }
 
     checker::ETSObjectType *interfaceType {};
-    checker::Type *type {};
     if (var->TsType() == nullptr) {
         interfaceType = CreateETSObjectTypeOrBuiltin(interfaceDecl, checker::ETSObjectFlags::INTERFACE);
         interfaceType->SetVariable(var);
-        type = MaybeGradualType(interfaceDecl, interfaceType);
-        var->SetTsType(type);
-    } else if (var->TsType()->MaybeBaseTypeOfGradualType()->IsETSObjectType()) {
-        interfaceType = var->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType();
-        type = MaybeGradualType(interfaceDecl, interfaceType);
+        var->SetTsType(interfaceType);
+        if (IsInInteropDeclProgram(interfaceDecl)) {
+            interfaceType->AddObjectFlag(checker::ETSObjectFlags::GRADUAL);
+        }
+    } else if (var->TsType()->IsETSObjectType()) {
+        interfaceType = var->TsType()->AsETSObjectType();
     } else {
         ES2PANDA_ASSERT(IsAnyError());
         return GlobalTypeError();
@@ -521,7 +516,9 @@ Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *inte
     }
 
     GetInterfaces(interfaceType);
-    interfaceType->SetSuperType(GlobalETSObjectType());
+    if (!interfaceType->IsGradual()) {
+        interfaceType->SetSuperType(GlobalETSObjectType());
+    }
     ctScope.TryCheckConstraints();
 
     // Skip this check if the builtins are not initialized.
@@ -531,35 +528,25 @@ Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *inte
         CheckInterfaceFunctions(interfaceType);
     }
 
-    return type;
+    return interfaceType;
 }
 
 void ETSChecker::CheckDynamicInheritanceAndImplement(ETSObjectType *const interfaceOrClassType)
 {
     auto getTypeString = [](ETSObjectType *type) { return type->IsInterface() ? "interface" : "class"; };
     auto extendsOrImplements = [](ETSObjectType *type) { return type->IsInterface() ? "extends" : "implements"; };
-    auto isFromDynamicDecl = [](ETSObjectType *type) {
-        auto declNode = type->GetDeclNode();
-        if (declNode->IsTSInterfaceDeclaration()) {
-            return declNode->AsTSInterfaceDeclaration()->Language().IsDynamic();
-        }
-        if (declNode->IsClassDefinition()) {
-            return declNode->AsClassDefinition()->Language().IsDynamic();
-        }
-        return false;
-    };
-    if (isFromDynamicDecl(interfaceOrClassType)) {
+    if (interfaceOrClassType->IsGradual()) {
         return;
     }
-    for (ETSObjectType *interType : interfaceOrClassType->Interfaces()) {
-        if (isFromDynamicDecl(interType)) {
+    for (ETSObjectType *itf : interfaceOrClassType->Interfaces()) {
+        if (itf->IsGradual()) {
             LogError(diagnostic::INTERFACE_OR_CLASS_CANNOT_IMPL_OR_EXTEND_DYNAMIC,
                      {getTypeString(interfaceOrClassType), interfaceOrClassType->Name(),
-                      extendsOrImplements(interfaceOrClassType), getTypeString(interType), interType->Name()},
+                      extendsOrImplements(interfaceOrClassType), getTypeString(itf), itf->Name()},
                      interfaceOrClassType->GetDeclNode()->Start());
         }
     }
-    if (interfaceOrClassType->SuperType() != nullptr && isFromDynamicDecl(interfaceOrClassType->SuperType())) {
+    if (interfaceOrClassType->SuperType() != nullptr && interfaceOrClassType->SuperType()->IsGradual()) {
         LogError(diagnostic::INTERFACE_OR_CLASS_CANNOT_IMPL_OR_EXTEND_DYNAMIC,
                  {getTypeString(interfaceOrClassType), interfaceOrClassType->Name(), "extends",
                   getTypeString(interfaceOrClassType->SuperType()), interfaceOrClassType->SuperType()->Name()},
@@ -580,24 +567,24 @@ Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
     }
 
     checker::ETSObjectType *classType {};
-    checker::Type *type {};
     if (var->TsType() == nullptr) {
         classType = CreateETSObjectTypeOrBuiltin(classDef, checker::ETSObjectFlags::CLASS);
-        type = MaybeGradualType(classDef, classType);
         classType->SetVariable(var);
-        var->SetTsType(type);
+        var->SetTsType(classType);
         if (classDef->IsAbstract()) {
             classType->AddObjectFlag(checker::ETSObjectFlags::ABSTRACT);
         }
-    } else if (var->TsType()->MaybeBaseTypeOfGradualType()->IsETSObjectType()) {
-        classType = var->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType();
-        type = MaybeGradualType(classDef, classType);
+        if (IsInInteropDeclProgram(classDef)) {
+            classType->AddObjectFlag(checker::ETSObjectFlags::GRADUAL);
+        }
+    } else if (var->TsType()->IsETSObjectType()) {
+        classType = var->TsType()->AsETSObjectType();
     } else {
         ES2PANDA_ASSERT(IsAnyError());
         return GlobalTypeError();
     }
 
-    classDef->SetTsType(type);
+    classDef->SetTsType(classType);
 
     ConstraintCheckScope ctScope(this);
     if (classDef->TypeParams() != nullptr) {
@@ -621,7 +608,7 @@ Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
         GetInterfaces(classType);
     }
     ctScope.TryCheckConstraints();
-    return type;
+    return classType;
 }
 
 ETSObjectType *ETSChecker::BuildAnonymousClassProperties(ir::ClassDefinition *classDef, ETSObjectType *superType)
@@ -736,10 +723,6 @@ static void ResolveDeclaredDeclsOfObject(ETSChecker *checker, const ETSObjectTyp
 
 void ETSChecker::ResolveDeclaredMembersOfObject(const Type *type)
 {
-    if (type->IsGradualType()) {
-        return ResolveDeclaredMembersOfObject(type->AsGradualType()->GetBaseType());
-    }
-
     if (!type->IsETSObjectType() || type->AsETSObjectType()->IsPropertiesInstantiated()) {
         return;
     }
@@ -1333,7 +1316,7 @@ void ETSChecker::CheckClassDefinition(ir::ClassDefinition *classDef)
         return;
     }
 
-    auto *classType = classDef->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType();
+    auto *classType = classDef->TsType()->AsETSObjectType();
     if (classType->SuperType() != nullptr) {
         classType->SuperType()->GetDeclNode()->Check(this);
     }
@@ -1673,7 +1656,7 @@ void ETSChecker::CheckInnerClassMembers(const ETSObjectType *classType)
 
 bool ETSChecker::ValidateArrayIndex(ir::Expression *const expr, bool relaxed)
 {
-    auto const expressionType = expr->Check(this)->MaybeBaseTypeOfGradualType();
+    auto const expressionType = expr->Check(this);
     if (expressionType->IsTypeError()) {
         return false;
     }
@@ -1935,9 +1918,6 @@ void ETSChecker::CheckCyclicConstructorCall(Signature *signature)
 
 ETSObjectType *ETSChecker::CheckExceptionOrErrorType(checker::Type *type, const lexer::SourcePosition pos)
 {
-    if (type->IsGradualType()) {
-        return CheckExceptionOrErrorType(type->AsGradualType()->GetBaseType(), pos);
-    }
     ES2PANDA_ASSERT(type != nullptr);
     if (!type->IsETSObjectType() || (!Relation()->IsAssignableTo(type, GlobalBuiltinExceptionType()) &&
                                      !Relation()->IsAssignableTo(type, GlobalBuiltinErrorType()))) {
@@ -2763,10 +2743,6 @@ Type *ETSChecker::GetApparentType(Type *type)
     };
 
     ES2PANDA_ASSERT(type != nullptr);
-    if (type->IsGradualType()) {
-        return cached(type->AsGradualType()->GetBaseType());
-    }
-
     if (type->IsETSTypeParameter()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         return cached(GetApparentType(type->AsETSTypeParameter()->GetConstraintType()));

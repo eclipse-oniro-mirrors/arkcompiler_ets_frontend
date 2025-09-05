@@ -110,8 +110,7 @@ static void CheckInstantiationConstraints(ETSChecker *checker, ArenaVector<Type 
 {
     auto relation = checker->Relation();
 
-    for (auto type : typeParams) {
-        type = type->MaybeBaseTypeOfGradualType();
+    for (auto const type : typeParams) {
         if (!type->IsETSTypeParameter()) {
             continue;
         }

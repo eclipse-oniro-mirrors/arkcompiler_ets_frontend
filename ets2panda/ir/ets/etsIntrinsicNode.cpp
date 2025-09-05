@@ -468,6 +468,38 @@ public:
     }
 };
 
+class ETSIntrinsicAnyCallNew final : public EtsIntrinsicInfo {
+public:
+    util::StringView Name() const override
+    {
+        return "anycallnew";
+    }
+
+    checker::Type *Check(checker::ETSChecker *checker, ETSIntrinsicNode *intrin) const override
+    {
+        CheckParams(checker, intrin);
+        if (intrin->Arguments().size() < 1U) {
+            return InvalidateIntrinsic(checker, intrin);
+        }
+        return intrin->SetTsType(checker->GlobalETSAnyType());
+    }
+
+    void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const override
+    {
+        auto const [callee] = Args<1U>(intrin);
+        auto args =
+            Span<ir::Expression const *const> {intrin->Arguments().data(), intrin->Arguments().size()}.SubSpan(1);
+
+        compiler::RegScope rs(etsg);
+        auto const calleeReg = etsg->AllocReg();
+
+        callee->Compile(etsg);
+        etsg->StoreAccumulator(intrin, calleeReg);
+
+        etsg->CallAnyNew(intrin, args, calleeReg);
+    }
+};
+
 class ETSIntrinsicAnyCallThis final : public EtsIntrinsicInfo {
 public:
     util::StringView Name() const override
@@ -522,12 +554,16 @@ public:
 
         compiler::RegScope rs(etsg);
         auto const objReg = etsg->AllocReg();
+        auto const typeReg = etsg->AllocReg();
 
         obj->Compile(etsg);
         etsg->StoreAccumulator(intrin, objReg);
 
         type->Compile(etsg);
-        etsg->EmitAnyIsinstance(intrin, objReg);
+        etsg->StoreAccumulator(intrin, typeReg);
+
+        etsg->LoadAccumulator(intrin, objReg);
+        etsg->EmitAnyIsinstance(intrin, typeReg);
     }
 };
 
@@ -550,6 +586,7 @@ EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::InitIntrinsicInfos()
     registerIntrin(std::make_unique<ETSIntrinsicAnyLdByName>());
     registerIntrin(std::make_unique<ETSIntrinsicAnyStByName>());
     registerIntrin(std::make_unique<ETSIntrinsicAnyCall>());
+    registerIntrin(std::make_unique<ETSIntrinsicAnyCallNew>());
     registerIntrin(std::make_unique<ETSIntrinsicAnyCallThis>());
     registerIntrin(std::make_unique<ETSIntrinsicAnyIsinstance>());
     return infos;

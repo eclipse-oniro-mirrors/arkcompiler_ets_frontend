@@ -160,27 +160,6 @@ TEST_F(DynamicCall, JoinDynCallMember)
     AssertNameEq(callName, {"c", "d"});
 }
 
-TEST_F(DynamicCall, JoinDynStaticCallMember)
-{
-    auto strExpr = "A.b.c.d.e()";
-    auto [program, obj, first] = ParseDynExpr(strExpr);
-
-    auto bObj = obj->AsMemberExpression()->Object()->AsMemberExpression()->Object();
-    ASSERT_EQ(bObj->AsMemberExpression()->Property()->AsIdentifier()->Name(), "c");
-    auto staticType =
-        Allocator()->New<checker::ETSObjectType>(Allocator(), "", "", nullptr, checker::ETSObjectFlags::NO_OPTS);
-    bObj->AsMemberExpression()->Object()->SetTsType(staticType);
-
-    auto [squeezedObj, name] = checker::DynamicCall::SqueezeExpr(Allocator(), obj->AsMemberExpression());
-    AssertNameEq(name, {"d", "e"});
-    ASSERT_EQ(squeezedObj, bObj);
-
-    auto varbinder = program->VarBinder()->AsETSBinder();
-    AddDynImport("A", varbinder, first->AsIdentifier());
-    auto [finalObj, callName] = checker::DynamicCall::ResolveCall(varbinder, obj);
-    AssertNameEq(callName, {"d", "e"});
-}
-
 TEST_F(DynamicCall, TsQualifiedName)
 {
     auto strExpr = "new A.b.c.d()";
