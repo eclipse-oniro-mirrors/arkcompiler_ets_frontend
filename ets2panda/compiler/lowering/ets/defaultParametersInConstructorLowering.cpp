@@ -247,6 +247,7 @@ static void ClearOptionalParameters(public_lib::Context *ctx, ir::ScriptFunction
                                                                                     allocator);
             ES2PANDA_ASSERT(param);
             param->SetParent(function);
+            param->SetOriginalNode(oldParam);
         }
         ES2PANDA_ASSERT(!param->AsETSParameterExpression()->IsOptional());
     }
