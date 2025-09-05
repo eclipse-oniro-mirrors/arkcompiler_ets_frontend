@@ -179,7 +179,6 @@ static void ClearHelper(parser::Program *prog)
 {
     prog->RemoveAstChecked();
     ResetGlobalClass(prog);
-    prog->ClearASTCheckedStatus();
     // #24256 Should be removed when code refactoring on checker is done and no ast node allocated in checker.
     auto &stmts = prog->Ast()->StatementsForUpdates();
     // clang-format off

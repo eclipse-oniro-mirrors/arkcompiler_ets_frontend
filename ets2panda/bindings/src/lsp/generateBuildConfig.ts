@@ -172,19 +172,6 @@ function addPluginPathConfigs(buildConfig: BuildConfig, module: ModuleDescriptor
   buildConfig.aceModuleJsonPath = module.aceModuleJsonPath;
 }
 
-function createMapEntryForPlugin(buildSdkPath: string, pluginName: string): string {
-  return path.join(buildSdkPath, 'build-tools', 'ui-plugins', 'lib', pluginName, 'index');
-}
-
-function createPluginMap(buildSdkPath: string): Record<string, string> {
-  let pluginMap: Record<string, string> = {};
-  const pluginList: string[] = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
-  for (const plugin of pluginList) {
-    pluginMap[plugin] = createMapEntryForPlugin(buildSdkPath, plugin);
-  }
-  return pluginMap;
-}
-
 export function generateBuildConfigs(
   pathConfig: PathConfig,
   modules?: ModuleDescriptor[]

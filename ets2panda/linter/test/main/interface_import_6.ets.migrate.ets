@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 'use static'
 import { Entry } from '@kit.ArkUI';
 

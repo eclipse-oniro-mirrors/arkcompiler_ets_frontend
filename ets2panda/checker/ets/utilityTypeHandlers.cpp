@@ -64,8 +64,10 @@ Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstan
         return baseType;
     }
 
-    if (!baseType->IsETSReferenceType()) {
-        LogError(diagnostic::UTIL_TYPE_OF_NONREFERENCE, {}, typeParams->Start());
+    if ((utilityType == compiler::Signatures::PARTIAL_TYPE_NAME ||
+         utilityType == compiler::Signatures::REQUIRED_TYPE_NAME) &&
+        !ValidBaseTypeOfRequiredAndPartial(baseType)) {
+        LogError(diagnostic::MUST_BE_CLASS_INTERFACE_TYPE, {utilityType}, typeParams->Start());
         return GlobalTypeError();
     }
 

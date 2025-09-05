@@ -99,7 +99,6 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/register_code_fix/remove_accidental_call_parentheses.cpp",
     "src/register_code_fix/ui_plugin_suggest.cpp",
     "src/rename.cpp",
-    "src/register_code_fix/ui_plugin_suggest.cpp",
     "src/script_element_kind.cpp",
     "src/services/services.cpp",
     "src/services/text_change/change_tracker.cpp",

@@ -59,8 +59,8 @@ namespace NoNumericSemantics {
     let h: number = arr[12. as int]
 
     enum E {
-        A = 1.0,
-        B = 2.0
+        A = 1,
+        B = 2
     }
 }
 

@@ -197,16 +197,6 @@
         },
         {
             "line": 34,
-            "column": 33,
-            "endLine": 34,
-            "endColumn": 34,
-            "problem": "DefaultArgsBehindRequiredArgs",
-            "suggest": "",
-            "rule": "Default parameters must be placed after mandatory parameters (arkts-default-args-behind-required-args)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
             "column": 26,
             "endLine": 34,
             "endColumn": 32,

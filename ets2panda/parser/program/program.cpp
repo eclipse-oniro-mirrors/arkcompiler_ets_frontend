@@ -80,13 +80,6 @@ bool Program::IsGenAbcForExternal() const
            genAbcForExternalSource_;
 }
 
-bool Program::IsGenAbcForExternal() const
-{
-    return VarBinder()->GetContext()->config->options->GetCompilationMode() ==
-               CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE &&
-           genAbcForExternalSource_;
-}
-
 std::string Program::Dump() const
 {
     ir::AstDumper dumper {ast_, SourceCode()};
@@ -181,11 +174,6 @@ void Program::SetFlag(ProgramFlags flag)
 bool Program::GetFlag(ProgramFlags flag) const
 {
     return (programFlags_ & flag) != 0U;
-}
-
-void Program::ClearASTCheckedStatus()
-{
-    programFlags_ &= ~ProgramFlags::AST_CHECKED;
 }
 
 void Program::SetASTChecked()
