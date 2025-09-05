@@ -35,6 +35,7 @@ struct DeclgenOptions {
     std::string outputDeclEts;
     std::string outputEts;
     std::string recordFile;
+    bool genAnnotations = true;
 };
 
 // Consume program after checker stage and generate out_path typescript file with declarations

@@ -31,6 +31,7 @@ set(ETS2TS_ISOLATED_TESTS
     "./ets2ts_isolated/test_ets2ts_isolated_interface.ets"
     "./ets2ts_isolated/test_ets2ts_isolated_function_with_optional_parameter.ets"
     "./ets2ts_isolated/test_ets2ts_infer_function_return_type_with_import_symbol.ets"
+    "./ets2ts_isolated/test_ets2ts_isolated_annotation.ets"
 )
 
 foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})

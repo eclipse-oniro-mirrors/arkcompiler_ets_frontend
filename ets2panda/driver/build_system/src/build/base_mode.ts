@@ -125,6 +125,7 @@ export abstract class BaseMode {
   public byteCodeHar: boolean;
   public es2pandaMode: number;
   public skipDeclCheck: boolean;
+  public genDeclAnnotations: boolean;
 
   constructor(buildConfig: BuildConfig) {
     this.buildConfig = buildConfig;
@@ -166,6 +167,7 @@ export abstract class BaseMode {
         : ES2PANDA_MODE.RUN
     );
     this.skipDeclCheck = buildConfig?.skipDeclCheck as boolean ?? true;
+    this.genDeclAnnotations = buildConfig?.genDeclAnnotations as boolean ?? true;
   }
 
   public declgen(fileInfo: CompileFileInfo): void {
@@ -227,7 +229,8 @@ export abstract class BaseMode {
         etsOutputPath,
         false,
         false,
-        staticRecordRelativePath
+        staticRecordRelativePath,
+        this.genDeclAnnotations
       ); // Generate 1.0 declaration files & 1.0 glue code
       this.logger.printInfo('declaration files generated');
     } catch (error) {

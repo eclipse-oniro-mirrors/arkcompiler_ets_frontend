@@ -98,6 +98,7 @@ process.on('message', async (message: {
     arktsGlobal.compilerContext = arkts.Context.createFromStringWithHistory(source);
     pluginDriver.getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
     const skipDeclCheck = buildConfig?.skipDeclCheck ?? true;
+    const genDeclAnnotations = buildConfig?.genDeclAnnotations ?? true;
 
     arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer, skipDeclCheck);
     let ast = arkts.EtsScript.fromContext();
@@ -114,7 +115,8 @@ process.on('message', async (message: {
       etsOutputPath,
       false,
       false,
-      staticRecordRelativePath
+      staticRecordRelativePath,
+      genDeclAnnotations
     );
 
     logger.printInfo(`[declgen] ${fileInfo.filePath} processed successfully`);
