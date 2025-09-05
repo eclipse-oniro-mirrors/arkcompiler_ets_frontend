@@ -35,7 +35,7 @@ import {
 } from '../ArkObfuscator';
 
 import { isDebug, isFileExist, sortAndDeduplicateStringArr, mergeSet, convertSetToArray } from './utils';
-import { nameCacheMap, yellow, unobfuscationNamesObj } from './CommonObject';
+import { nameCacheMap, yellow, red, unobfuscationNamesObj } from './CommonObject';
 import { clearHistoryUnobfuscatedMap, historyAllUnobfuscatedNamesMap, historyUnobfuscatedPropMap } from './Initializer';
 import { AtKeepCollections, LocalVariableCollections, UnobfuscationCollections } from '../utils/CommonCollections';
 import { INameObfuscationOption } from '../configs/INameObfuscationOption';
@@ -74,6 +74,11 @@ enum OptionType {
   KEEP_PARAMETER_NAMES,
 }
 export { OptionType as OptionTypeForTest };
+
+enum LoggerLevel {
+  WARN = 'warn',
+  ERROR = 'error'
+}
 
 type SystemApiContent = {
   ReservedPropertyNames?: string[];
@@ -1290,11 +1295,35 @@ export function printUnobfuscationReasons(configPath: string, defaultPath: strin
   }
 }
 
-
-export function generateConsumerObConfigFile(obfuscationOptions: SourceObConfig, printObfLogger: Function): void {
+//This function will be called by hvigor when build in release mode and obfuscation is off.
+export function generateConsumerObConfigFile(obfuscationOptions: SourceObConfig, printObfLogger: Function | Object): void {
   const projectConfig = { obfuscationOptions, compileHar: true };
-  const obConfig: ObConfigResolver = new ObConfigResolver(projectConfig, printObfLogger);
+  let obfLoggerPrinter = generateobfLoggerPrinter(printObfLogger);
+  const obConfig: ObConfigResolver = new ObConfigResolver(projectConfig, obfLoggerPrinter);
   obConfig.resolveObfuscationConfigs();
+}
+
+export function generateobfLoggerPrinter(obfLogger: any): Function {
+  if (typeof obfLogger === 'function') {
+    return obfLogger;
+  } else {
+    return (errorInfo: string, errorCodeInfo: HvigorErrorInfo | string,
+            level: string) => {
+      const isNewLogger: boolean = obfLogger.printError && obfLogger.printWarn;
+      switch (level) {
+        case LoggerLevel.ERROR:
+          isNewLogger ? obfLogger.printError(errorCodeInfo) :
+                        obfLogger.error(red, errorInfo);
+          return;
+        case LoggerLevel.WARN:
+          isNewLogger ? obfLogger.printWarn(errorCodeInfo) :
+                        obfLogger.warn(yellow, errorInfo);
+          return;
+        default:
+          return;
+      }
+    }
+  }
 }
 
 export function mangleFilePath(originalPath: string): string {
