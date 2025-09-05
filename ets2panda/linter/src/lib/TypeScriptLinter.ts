@@ -226,6 +226,7 @@ import { ES_OBJECT } from './utils/consts/ESObject';
 import { cookBookMsg } from './CookBookMsg';
 import { getCommonApiInfoMap } from './utils/functions/CommonApiInfo';
 import { arkuiDecoratorSet } from './utils/consts/ArkuiDecorator';
+import { ABILITY_LIFECYCLE, ABILITY_LIFECYCLE_CALLBACK } from './utils/consts/LifecycleMonitor';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
   supportedStdCallApiChecker: SupportedStdCallApiChecker;
@@ -10404,6 +10405,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!ts.isClassDeclaration(cls) || !cls.heritageClauses) {
       return false;
     }
+
     return cls.heritageClauses.some((h) => {
       return (
         h.token === ts.SyntaxKind.ExtendsKeyword &&
@@ -10419,16 +10421,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
    * and matches the lifecycle method (onDestroy vs onDisconnect).
    */
   private isSupportedAbilityBase(methodName: string, baseExprNode: ts.Expression): boolean {
-    const sym = this.tsTypeChecker.getSymbolAtLocation(baseExprNode);
+    const sym = this.getExtendedAsyncLifecycleClass(baseExprNode);
     if (!sym) {
       return false;
     }
 
     const baseName = sym.getName();
-    if (!ASYNC_LIFECYCLE_SDK_LIST.has(baseName)) {
-      return false;
-    }
-
     if (methodName === ON_DISCONNECT && baseName !== SERVICE_EXTENSION_ABILITY) {
       return false;
     }
@@ -10446,6 +10444,40 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const srcFile = decl.getSourceFile().fileName;
 
     return moduleName === ABILITY_KIT || srcFile.endsWith(`${baseName}.${EXTNAME_D_TS}`);
+  }
+
+  /*
+   * check if this extended class is among the classes we care about
+   * if not check if that extended class is extending a class in async lifecycle list
+   * if not again
+   */
+  private getExtendedAsyncLifecycleClass(extendedClass: ts.Expression): undefined | ts.Symbol {
+    if (!ts.isIdentifier(extendedClass)) {
+      return undefined;
+    }
+    const sym = this.tsTypeChecker.getSymbolAtLocation(extendedClass);
+    if (!sym) {
+      return undefined;
+    }
+
+    if (ASYNC_LIFECYCLE_SDK_LIST.has(sym.getName())) {
+      return sym;
+    }
+
+    const decls = sym.getDeclarations();
+    if (!decls) {
+      return undefined;
+    }
+
+    const decl = decls[0];
+    if (!ts.isClassDeclaration(decl) || !decl.heritageClauses) {
+      return undefined;
+    }
+
+    const extendedExpression = decl.heritageClauses[0];
+    const extendedType = extendedExpression.types[0];
+
+    return this.getExtendedAsyncLifecycleClass(extendedType.expression);
   }
 
   /**
@@ -10735,35 +10767,49 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    // Guard: exactly two arguments
-    const args = callExpr.arguments;
-    if (args.length !== 2) {
-      return;
-    }
+    const decl = this.getDeclarationOfLifecycleEventCallback(callExpr);
 
-    // Guard: first arg must be string literal "abilityLifecycle"
-    const eventArg = args[0];
-    if (!ts.isStringLiteral(eventArg) || eventArg.text !== 'abilityLifecycle') {
-      return;
-    }
-
-    // Guard: second arg must be a variable declared as AbilityLifecycleCallback
-    const cbArg = args[1];
-    if (!ts.isIdentifier(cbArg)) {
-      return;
-    }
-    const varSym = this.tsUtils.trueSymbolAtLocation(cbArg);
-    const decl = varSym?.declarations?.find(ts.isVariableDeclaration);
     if (
       !decl?.type ||
       !ts.isTypeReferenceNode(decl.type) ||
-      decl.type.typeName.getText() !== 'AbilityLifecycleCallback'
+      decl.type.typeName.getText() !== ABILITY_LIFECYCLE_CALLBACK
     ) {
       return;
     }
 
     // Report the legacy callback usage
     this.incrementCounters(callExpr, FaultID.SdkAbilityLifecycleMonitor);
+  }
+
+  private getDeclarationOfLifecycleEventCallback(callExpr: ts.CallExpression): undefined | ts.VariableDeclaration {
+    const args = callExpr.arguments;
+    if (args.length !== 2) {
+      return undefined;
+    }
+
+    // Guard: first arg must be string literal "abilityLifecycle"
+    const eventArg = args[0];
+    if (!ts.isStringLiteral(eventArg) || eventArg.text !== ABILITY_LIFECYCLE) {
+      return undefined;
+    }
+
+    // Guard: second arg must be a variable declared as AbilityLifecycleCallback
+    let cbArgIdent = args[1];
+    while (!ts.isIdentifier(cbArgIdent)) {
+      if (!ts.isNewExpression(cbArgIdent)) {
+        return undefined;
+      }
+      cbArgIdent = cbArgIdent.expression;
+    }
+
+    if (cbArgIdent.text === ABILITY_LIFECYCLE_CALLBACK) {
+      this.incrementCounters(callExpr, FaultID.SdkAbilityLifecycleMonitor);
+      return undefined;
+    }
+
+    const varSym = this.tsUtils.trueSymbolAtLocation(cbArgIdent);
+
+    return varSym?.declarations?.find(ts.isVariableDeclaration);
   }
 
   private isOnMethod(node: ts.CallExpression): boolean {
