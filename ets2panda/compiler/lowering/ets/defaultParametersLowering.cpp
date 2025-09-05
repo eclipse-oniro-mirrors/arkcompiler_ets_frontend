@@ -21,6 +21,10 @@ namespace ark::es2panda::compiler {
 static ir::Statement *TransformInitializer(ArenaAllocator *allocator, parser::ETSParser *parser,
                                            ir::ETSParameterExpression *param)
 {
+    //  NOTE (DZ): temporary solution until node history starts working properly
+    auto *oldParam = param->Clone(allocator, param);
+    param->SetOriginalNode(oldParam);
+
     auto const ident = param->Ident();
     auto const init = param->Initializer();
     auto const typeAnnotation = param->TypeAnnotation();
@@ -44,15 +48,14 @@ static void TransformDefaultParameters(public_lib::Context *ctx, ir::ScriptFunct
 {
     auto validateDefaultParamInDeclare = [ctx, function, &params]() {
         for (auto param : params) {
-            if (param->Initializer() == nullptr) {
-                continue;
-            }
+            ES2PANDA_ASSERT(param->Initializer() != nullptr);
             param->SetInitializer(nullptr);
             if ((function->Flags() & ir::ScriptFunctionFlags::EXTERNAL) != 0U) {
                 ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::DEFAULT_PARAM_IN_DECLARE, param->Start());
             }
         }
     };
+
     if (isInterfaceFunction) {
         for (const auto param : params) {
             TransformInitializer(ctx->allocator, ctx->parser->AsETSParser(), param);
@@ -72,8 +75,8 @@ static void TransformDefaultParameters(public_lib::Context *ctx, ir::ScriptFunct
 
     bodyStmt.insert(bodyStmt.begin(), params.size(), nullptr);
 
-    for (size_t dfltIdx = 0; dfltIdx < params.size(); ++dfltIdx) {
-        auto const param = params.at(dfltIdx);
+    for (std::size_t dfltIdx = 0U; dfltIdx < params.size(); ++dfltIdx) {
+        auto *const param = params[dfltIdx];
         auto stmt = TransformInitializer(allocator, parser, param);
         bodyStmt[dfltIdx] = stmt;
         // From a developer's perspective, this locational information is more intuitive.
@@ -101,7 +104,7 @@ static void TransformFunction(public_lib::Context *ctx, ir::ScriptFunction *func
             param->AsETSParameterExpression()->SetInitializer(nullptr);
             continue;
         }
-        defaultParams.push_back(param->AsETSParameterExpression());
+        defaultParams.emplace_back(param->AsETSParameterExpression());
     }
 
     if (defaultParams.empty()) {

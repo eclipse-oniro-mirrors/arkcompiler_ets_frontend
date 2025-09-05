@@ -224,20 +224,28 @@ void ETSParameterExpression::Dump(ir::SrcDumper *const dumper) const
     if (IsRestParameter()) {
         Spread()->Dump(dumper);
     } else {
-        auto const ident = Ident();
-        auto const initializer = Initializer();
-        if (ident != nullptr) {
-            ES2PANDA_ASSERT(ident_->IsAnnotatedExpression());
-            ident->Dump(dumper);
-            if (IsOptional() && initializer == nullptr) {
-                dumper->Add("?");
-            }
-            auto typeAnnotation = ident->AsAnnotatedExpression()->TypeAnnotation();
-            if (typeAnnotation != nullptr) {
-                dumper->Add(": ");
-                typeAnnotation->Dump(dumper);
-            }
+        //  NOTE (DZ): temporary solution until node history starts working properly
+        ETSParameterExpression const *node =
+            OriginalNode() == nullptr ? this : OriginalNode()->AsETSParameterExpression();
+
+        auto const ident = node->Ident();
+        ES2PANDA_ASSERT(ident != nullptr);
+        auto const initializer = node->Initializer();
+
+        ident->Dump(dumper);
+        if (node->IsOptional() && initializer == nullptr) {
+            dumper->Add("?");
         }
+
+        auto typeAnnotation = ident->AsAnnotatedExpression()->TypeAnnotation();
+        if (typeAnnotation != nullptr) {
+            if (typeAnnotation->OriginalNode() != nullptr) {
+                typeAnnotation = typeAnnotation->OriginalNode()->AsExpression()->AsTypeNode();
+            }
+            dumper->Add(": ");
+            typeAnnotation->Dump(dumper);
+        }
+
         if (initializer != nullptr) {
             dumper->Add(" = ");
             initializer->Dump(dumper);
