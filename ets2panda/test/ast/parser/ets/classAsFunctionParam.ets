@@ -23,6 +23,6 @@ function main(): void {
     alma(C);
 }
 
-/* @@? 23:10 Error TypeError: Class or interface 'C' cannot be used as object  */
+/* @@? 23:10 Error TypeError: Class or interface or enum 'C' cannot be used as object  */
 /* @@? 23:10 Error TypeError: Class name can't be the argument of function or method.  */
 /* @@? 23:5 Error TypeError: No matching call signature for alma(C)  */

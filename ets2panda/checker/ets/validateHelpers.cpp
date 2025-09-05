@@ -88,10 +88,10 @@ void ETSChecker::ValidateCallExpressionIdentifier(ir::Identifier *const ident, T
         }
     }
 
-    if (ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE) && callExpr->Callee() != ident &&
-        callExpr->Callee() != ident->Parent()) {
-        std::ignore =
-            TypeError(ident->Variable(), diagnostic::CLASS_OR_IFACE_AS_OBJ, {ident->ToString()}, ident->Start());
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE_OR_ENUM) &&
+        callExpr->Callee() != ident && callExpr->Callee() != ident->Parent()) {
+        std::ignore = TypeError(ident->Variable(), diagnostic::CLASS_OR_IFACE_OR_ENUM_AS_OBJ, {ident->ToString()},
+                                ident->Start());
     }
 
     if (callExpr->Callee() != ident && callExpr->Callee() != ident->Parent()) {
