@@ -171,8 +171,11 @@ static void CompileClassInitializer(PandaGen *pg, const ir::ScriptFunction *decl
 
     RegScope rs(pg);
     auto thisReg = pg->AllocReg();
+    pg->SetSourceLocationFlag(lexer::SourceLocationFlag::INVALID_SOURCE_LOCATION);
     pg->GetThis(decl);
     pg->StoreAccumulator(decl, thisReg);
+    pg->SetSourceLocationFlag(lexer::SourceLocationFlag::VALID_SOURCE_LOCATION);
+
     auto [level, slot] = pg->Scope()->Find(nullptr, true);
 
     if (!isStatic && classDef->HasInstancePrivateMethod()) {
@@ -219,12 +222,14 @@ static void CompileFunction(PandaGen *pg)
             RegScope rs(pg);
             auto thisReg = pg->AllocReg();
 
+            pg->SetSourceLocationFlag(lexer::SourceLocationFlag::INVALID_SOURCE_LOCATION);
             pg->GetThis(decl);
             pg->StoreAccumulator(decl, thisReg);
 
             auto [level, slot] = pg->Scope()->Find(classDef->InstanceInitializer()->Key());
             pg->LoadLexicalVar(decl, level, slot);
             pg->CallInit(decl, thisReg);
+            pg->SetSourceLocationFlag(lexer::SourceLocationFlag::VALID_SOURCE_LOCATION);
         }
     }
 
