@@ -1537,7 +1537,7 @@ static ir::AstNode *TransformTupleSpread(public_lib::Context *ctx, ir::CallExpre
         ArenaVector<ir::Expression *> tupleElements(allocator->Adapter());
         for (std::size_t idx = 0U; idx < arg->TsType()->AsETSTupleType()->GetTupleSize(); ++idx) {
             auto *ident = genSymIdent->Clone(allocator, nullptr);
-            auto *number = allocator->New<ir::NumberLiteral>(lexer::Number(idx));
+            auto *number = allocator->New<ir::NumberLiteral>(lexer::Number(static_cast<uint64_t>(idx)));
             auto *indexed = util::NodeAllocator::ForceSetParent<ir::MemberExpression>(
                 allocator, ident, number, ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
             tupleElements.push_back(indexed);
