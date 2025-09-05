@@ -2792,6 +2792,13 @@ ir::ClassProperty *ETSChecker::ClassPropToImplementationProp(ir::ClassProperty *
     fieldDecl->BindNode(classProp);
 
     auto fieldVar = scope->InstanceFieldScope()->AddDecl(ProgramAllocator(), fieldDecl, ScriptExtension::ETS);
+    if (fieldVar == nullptr) {
+        VarBinder()->ThrowRedeclaration(classProp->Id()->Start(), fieldDecl->Name(), fieldDecl->Type());
+        fieldVar =
+            scope->InstanceFieldScope()->FindLocal(fieldDecl->Name(), varbinder::ResolveBindingOptions::BINDINGS);
+    }
+    ES2PANDA_ASSERT(fieldVar != nullptr);
+
     fieldVar->AddFlag(varbinder::VariableFlags::PROPERTY);
     fieldVar->SetScope(scope->InstanceFieldScope());
 
