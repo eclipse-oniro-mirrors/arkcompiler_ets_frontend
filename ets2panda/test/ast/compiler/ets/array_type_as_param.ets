@@ -13,6 +13,14 @@
  * limitations under the License.
  */
 
-let a = number[][]
+function foo(a:number[]){
 
-/* @@? 16:9 Error SyntaxError: Unexpected token 'number'.  */
+}
+
+function main(){
+    foo(typeof number[])
+    foo(number[])
+}
+
+/* @@? 21:16 Error SyntaxError: Unexpected token 'number'. */
+/* @@? 22:9 Error SyntaxError: Unexpected token 'number'. */

@@ -22,6 +22,6 @@ func: readonly  (Y : object | long [] )  => [  ]
 /* @@? 17:20 Error SyntaxError: Unexpected token ':'. */
 /* @@? 17:22 Error SyntaxError: Unexpected token 'object'. */
 /* @@? 17:22 Error TypeError: Type name 'object' used in the wrong context */
-/* @@? 17:22 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 17:31 Error SyntaxError: Unexpected token 'long'. */
 /* @@? 17:39 Error SyntaxError: Unexpected token ')'. */
 /* @@? 17:42 Error SyntaxError: Unexpected token '=>'. */
