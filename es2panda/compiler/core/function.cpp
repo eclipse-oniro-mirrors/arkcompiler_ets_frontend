@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -171,8 +171,11 @@ static void CompileClassInitializer(PandaGen *pg, const ir::ScriptFunction *decl
 
     RegScope rs(pg);
     auto thisReg = pg->AllocReg();
+    pg->SetSourceLocationFlag(lexer::SourceLocationFlag::INVALID_SOURCE_LOCATION);
     pg->GetThis(decl);
     pg->StoreAccumulator(decl, thisReg);
+    pg->SetSourceLocationFlag(lexer::SourceLocationFlag::VALID_SOURCE_LOCATION);
+
     auto [level, slot] = pg->Scope()->Find(nullptr, true);
 
     if (!isStatic && classDef->HasInstancePrivateMethod()) {
@@ -219,12 +222,14 @@ static void CompileFunction(PandaGen *pg)
             RegScope rs(pg);
             auto thisReg = pg->AllocReg();
 
+            pg->SetSourceLocationFlag(lexer::SourceLocationFlag::INVALID_SOURCE_LOCATION);
             pg->GetThis(decl);
             pg->StoreAccumulator(decl, thisReg);
 
             auto [level, slot] = pg->Scope()->Find(classDef->InstanceInitializer()->Key());
             pg->LoadLexicalVar(decl, level, slot);
             pg->CallInit(decl, thisReg);
+            pg->SetSourceLocationFlag(lexer::SourceLocationFlag::VALID_SOURCE_LOCATION);
         }
     }
 

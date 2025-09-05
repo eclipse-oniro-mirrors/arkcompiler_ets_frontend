@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -335,7 +335,8 @@ private:
                                      std::pair<binder::FunctionScope *, binder::FunctionScope *> implicitScopes);
     ir::Identifier *GetKeyByFuncFlag(ir::ScriptFunctionFlags funcFlag);
     ir::MethodDefinition *CreateImplicitMethod(ir::Expression *superClass, bool hasSuperClass,
-                                               ir::ScriptFunctionFlags funcFlag, bool isDeclare = false);
+                                               ir::ScriptFunctionFlags funcFlag, bool isDeclare = false,
+                                               lexer::SourceRange range = lexer::SourceRange{});
     ir::MethodDefinition *CheckClassMethodOverload(ir::Statement *property, ir::MethodDefinition **ctor, bool isDeclare,
                                                    lexer::SourcePosition errorInfo, ir::MethodDefinition *lastOverload,
                                                    bool implExists, bool isAbstract = false);
