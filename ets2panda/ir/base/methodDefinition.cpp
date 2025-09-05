@@ -234,7 +234,13 @@ void MethodDefinition::DumpPrefix(ir::SrcDumper *dumper) const
         return;
     }
 
-    if (Parent() != nullptr && Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal()) {
+    //  special processing for overloads
+    auto const *parent = Parent();
+    if (parent != nullptr && parent->IsMethodDefinition()) {
+        parent = parent->Parent();
+    }
+
+    if (parent != nullptr && parent->IsClassDefinition() && !parent->AsClassDefinition()->IsLocal()) {
         if (IsPrivate()) {
             dumper->Add("private ");
         } else if (IsProtected()) {
@@ -287,6 +293,9 @@ bool MethodDefinition::FilterForDeclGen() const
 void MethodDefinition::Dump(ir::SrcDumper *dumper) const
 {
     if (dumper->IsDeclgen() && FilterForDeclGen()) {
+        for (auto method : Overloads()) {
+            method->Dump(dumper);
+        }
         return;
     }
 
