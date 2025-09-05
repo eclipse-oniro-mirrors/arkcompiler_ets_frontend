@@ -2411,21 +2411,26 @@ export class NumericSemanticCheck implements BaseChecker {
         // 场景1：对于类属性private a: number 或 private a: number = xxx, fullValueString为private开始到行尾的内容，需要替换为private a: int
         let match = fullValueString.match(/^([^=;]+:[^=;]+)([\s\S]*)$/);
         if (match !== null && match.length > 2) {
-            if (match[1].includes(numberCategory)) {
-                // 判断field是否已经有正确的类型注解
-                return null;
-            }
             ruleFix.range = [fullRange[0], fullRange[0] + match[1].length];
-            const originalText = FixUtils.getSourceWithRange(sourceFile, ruleFix.range);
-            if (!originalText) {
+            const localString = FixUtils.getSourceWithRange(sourceFile, ruleFix.range);
+            if (!localString) {
                 logger.error('Failed to getting text of the fix range info when generating auto fix info.');
                 return null;
             }
-            if (!originalText.includes(NumberCategory.number)) {
+            const parts = localString.split(':');
+            if (parts.length !== 2) {
+                logger.error('Failed to getting text of the fix range info when generating auto fix info.');
+                return null;
+            }
+            if (parts[1].includes(numberCategory)) {
+                // 判断field是否已经有正确的类型注解
+                return null;
+            }
+            if (!parts[1].includes(NumberCategory.number)) {
                 // 原码含有类型注解但是其类型中不含number，无法进行替换
                 return null;
             }
-            ruleFix.text = originalText.replace(NumberCategory.number, numberCategory);
+            ruleFix.text = `${parts[0].trimEnd()}: ${parts[1].trimStart().replace(NumberCategory.number, numberCategory)}`;
             return ruleFix;
         }
         // 场景2：对于private a = 123，originalText为private开始到行尾的内容，需要替换为private a: int = 123
