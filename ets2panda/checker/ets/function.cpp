@@ -233,7 +233,7 @@ static void ResetInferredTypeInArrowBody(ir::AstNode *body, ETSChecker *checker,
     std::function<void(ir::AstNode *)> doNode = [&](ir::AstNode *node) {
         if (node->IsIdentifier()) {
             auto *id = node->AsIdentifier();
-            if (!inferredVarSet.count(id->Variable())) {
+            if (inferredVarSet.count(id->Variable()) == 0U) {
                 return;
             }
 

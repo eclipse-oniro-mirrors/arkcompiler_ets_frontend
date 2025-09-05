@@ -102,6 +102,7 @@ static uint32_t TranslateModifierFlags(ir::ModifierFlags modifierFlags)
 namespace detail {
 
 // #29438
+// NOLINTNEXTLINE (fuchsia-statically-constructed-objects, cert-err58-cpp)
 static const std::set<std::string> AOT_WORKAROUND_BLACKLIST {
     "std.core.String", "std.core.String[]", "std.core.Object", "std.core.Object[]", "std.core.StringBuilder",
 };
@@ -148,6 +149,7 @@ public:
         }
         std::swap(toEmit_, diff);
     }
+    ~EmitterDependencies() = default;
 
 private:
     std::unordered_set<std::string> reachable_ {
@@ -265,9 +267,7 @@ ETSEmitter::ETSEmitter(const public_lib::Context *context)
 {
 }
 
-ETSEmitter::~ETSEmitter() {
-    // for PImpl
-};
+ETSEmitter::~ETSEmitter() = default;
 
 std::string const &ETSEmitter::AddDependence(std::string const &str)
 {
@@ -749,7 +749,7 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
     }
 
     if (!annotations.empty() && !classDef->IsLazyImportObjectClass()) {
-        classRecord.metadata->AddAnnotations(std::move(annotations));
+        classRecord.metadata->AddAnnotations(annotations);
     }
 
     Program()->AddToRecordTable(std::move(classRecord));
@@ -979,7 +979,8 @@ static pandasm::AnnotationElement ProcessETSEnumType(std::string &baseName, cons
         auto enumValue = static_cast<uint32_t>(initValue->AsNumberLiteral()->Number().GetInt());
         auto intEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::I32>(enumValue);
         return pandasm::AnnotationElement {baseName, std::make_unique<pandasm::ScalarValue>(intEnumValue)};
-    } else if (type->IsETSDoubleEnumType()) {
+    }
+    if (type->IsETSDoubleEnumType()) {
         auto enumValue = initValue->AsNumberLiteral()->Number().GetDouble();
         auto doubleEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::F64>(enumValue);
         return pandasm::AnnotationElement {baseName, std::make_unique<pandasm::ScalarValue>(doubleEnumValue)};

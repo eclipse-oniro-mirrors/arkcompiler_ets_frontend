@@ -74,7 +74,7 @@ protected:
 
 namespace detail {
 class EmitterDependencies;
-}
+}  // namespace detail
 
 class ETSEmitter : public Emitter {
 public:
@@ -92,7 +92,7 @@ public:
     std::string const &AddDependence(std::string const &str);
 
 private:
-    void EmitRecordTable(varbinder::RecordTable *recordTable, bool externalize, bool isTraverseExternalsPhase);
+    void EmitRecordTable(varbinder::RecordTable *table, bool programIsExternal, bool traverseExternals);
     void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType);
     void GenGlobalUnionRecord(util::StringView assemblerType);
     std::vector<pandasm::AnnotationData> GenAnnotations(const ir::ClassDefinition *classDef);

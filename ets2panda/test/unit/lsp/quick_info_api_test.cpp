@@ -17,6 +17,7 @@
 #include "lsp_api_test.h"
 #include "lsp/include/internal_api.h"
 #include <gtest/gtest.h>
+#include <memory>
 
 namespace {
 using ark::es2panda::lsp::Initializer;
@@ -470,10 +471,11 @@ TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionClass)
 
     auto context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     const ark::es2panda::ir::AstNode *ast = context->parserProgram->Ast();
-    const auto *structDefNode = ast->FindChild(
+    auto *structDefNode = ast->FindChild(
         [](const auto *node) { return node->IsClassDefinition() && node->Parent()->IsETSStructDeclaration(); });
-    initializer.ClassDefinitionSetFromStructModifier(ctx, (es2panda_AstNode *)structDefNode);
-    auto isFromStruct = initializer.ClassDefinitionIsFromStructConst(ctx, (es2panda_AstNode *)structDefNode);
+    initializer.ClassDefinitionSetFromStructModifier(ctx, reinterpret_cast<es2panda_AstNode *>(structDefNode));
+    auto isFromStruct =
+        initializer.ClassDefinitionIsFromStructConst(ctx, reinterpret_cast<es2panda_AstNode *>(structDefNode));
     ASSERT_EQ(isFromStruct, true);
     auto quickInfo3 = lspApi->getQuickInfoAtPosition("GetQuickInfoAtPositionClass.ets", ctx, offset1);
     AssertQuickInfo(expectedQuickInfo1, quickInfo3);

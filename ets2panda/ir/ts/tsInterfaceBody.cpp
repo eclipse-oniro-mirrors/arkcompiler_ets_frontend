@@ -24,8 +24,7 @@
 namespace ark::es2panda::ir {
 void TSInterfaceBody::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    for (size_t ix = 0; ix < body_.size(); ix++) {
-        auto *&it = body_[ix];
+    for (auto &it : body_) {
         if (auto *transformedNode = cb(it); it != transformedNode) {
             it->SetTransformedNode(transformationName, transformedNode);
             it = transformedNode;

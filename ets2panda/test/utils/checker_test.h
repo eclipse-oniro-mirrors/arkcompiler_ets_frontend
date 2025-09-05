@@ -53,9 +53,7 @@ public:
 
     ~CheckerTest() override
     {
-        if (publicContext_->phaseManager != nullptr) {
-            delete publicContext_->phaseManager;
-        }
+        delete publicContext_->phaseManager;
     }
 
     static void SetUpTestCase()

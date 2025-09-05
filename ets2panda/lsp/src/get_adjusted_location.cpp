@@ -275,10 +275,10 @@ std::optional<AstNode *> GetAdjustedLocationForFunction(AstNode *node, ArenaAllo
     if (fn == nullptr) {
         return std::nullopt;
     }
-
-    constexpr bool kSkipModifiers = false;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr bool K_SKIP_MODIFIERS = false;
     ArenaVector<AstNode *> dummy(allocator->Adapter());
-    AstNode *id = FindFirstIdentifier(fn, kSkipModifiers, dummy);
+    AstNode *id = FindFirstIdentifier(fn, K_SKIP_MODIFIERS, dummy);
     return (id != nullptr) ? std::optional<AstNode *> {id} : std::nullopt;
 }
 

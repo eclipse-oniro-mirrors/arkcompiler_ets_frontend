@@ -207,10 +207,7 @@ static bool IsNamespaceTransformed(const MethodDefinition *method)
         // handle overloads
         parent = parent->Parent();
     }
-    if (parent->IsClassDefinition() && parent->AsClassDefinition()->IsNamespaceTransformed()) {
-        return true;
-    }
-    return false;
+    return parent->IsClassDefinition() && parent->AsClassDefinition()->IsNamespaceTransformed();
 }
 
 void MethodDefinition::DumpPrefix(ir::SrcDumper *dumper) const

@@ -72,6 +72,8 @@ public:
         {
             *ambientDeclPtr_ = prev_;
         }
+        NO_COPY_SEMANTIC(AmbientContextGuard);
+        NO_MOVE_SEMANTIC(AmbientContextGuard);
 
     private:
         bool *ambientDeclPtr_;

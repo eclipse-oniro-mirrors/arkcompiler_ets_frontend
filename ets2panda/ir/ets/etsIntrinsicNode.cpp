@@ -55,7 +55,7 @@ class EtsIntrinsicInfo {
 public:
     static EtsIntrinsicInfo const *For(util::StringView id)
     {
-        if (auto it = infos_.find(id); it != infos_.end()) {
+        if (auto it = INFOS.find(id); it != INFOS.end()) {
             return it->second.get();
         }
         return nullptr;
@@ -84,6 +84,8 @@ public:
 
     EtsIntrinsicInfo() = default;
     virtual ~EtsIntrinsicInfo() = default;
+    NO_COPY_SEMANTIC(EtsIntrinsicInfo);
+    NO_MOVE_SEMANTIC(EtsIntrinsicInfo);
 
 protected:
     virtual void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const = 0;
@@ -116,7 +118,7 @@ private:
     using InfosMap = std::unordered_map<util::StringView, std::unique_ptr<EtsIntrinsicInfo>>;
 
     static InfosMap InitIntrinsicInfos();
-    static const InfosMap infos_;
+    static const InfosMap INFOS;
 };
 
 void ETSIntrinsicNode::Compile([[maybe_unused]] compiler::PandaGen *pg) const {}
@@ -290,7 +292,7 @@ public:
         return "anyldbyidx";
     }
 
-    virtual checker::Type *ExpectedTypeAt(checker::ETSChecker *checker, [[maybe_unused]] size_t idx) const override
+    checker::Type *ExpectedTypeAt(checker::ETSChecker *checker, [[maybe_unused]] size_t idx) const override
     {
         if (idx == 1U) {
             return checker->GlobalDoubleType();
@@ -332,7 +334,7 @@ public:
         return "anystbyidx";
     }
 
-    virtual checker::Type *ExpectedTypeAt(checker::ETSChecker *checker, [[maybe_unused]] size_t idx) const override
+    checker::Type *ExpectedTypeAt(checker::ETSChecker *checker, [[maybe_unused]] size_t idx) const override
     {
         if (idx == 1U) {
             return checker->GlobalDoubleType();
@@ -446,7 +448,7 @@ public:
     checker::Type *Check(checker::ETSChecker *checker, ETSIntrinsicNode *intrin) const override
     {
         CheckParams(checker, intrin);
-        if (intrin->Arguments().size() < 1U) {
+        if (intrin->Arguments().empty()) {
             return InvalidateIntrinsic(checker, intrin);
         }
         return intrin->SetTsType(checker->GlobalETSAnyType());
@@ -478,7 +480,7 @@ public:
     checker::Type *Check(checker::ETSChecker *checker, ETSIntrinsicNode *intrin) const override
     {
         CheckParams(checker, intrin);
-        if (intrin->Arguments().size() < 1U) {
+        if (intrin->Arguments().empty()) {
             return InvalidateIntrinsic(checker, intrin);
         }
         return intrin->SetTsType(checker->GlobalETSAnyType());
@@ -566,8 +568,8 @@ public:
         etsg->EmitAnyIsinstance(intrin, typeReg);
     }
 };
-
-const EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::infos_ = EtsIntrinsicInfo::InitIntrinsicInfos();
+// NOLINTNEXTLINE (cert-err58-cpp)
+const EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::INFOS = EtsIntrinsicInfo::InitIntrinsicInfos();
 
 EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::InitIntrinsicInfos()
 {

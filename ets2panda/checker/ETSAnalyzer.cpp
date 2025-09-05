@@ -3478,7 +3478,8 @@ checker::Type *ETSAnalyzer::Check(ir::ForOfStatement *const st) const
 static bool HasMissingInitOrType(ir::VariableDeclaration *varDecl, ETSChecker *checker)
 {
     for (auto *decl : varDecl->Declarators()) {
-        if (decl->Id()->IsIdentifier() && !decl->Id()->AsIdentifier()->TypeAnnotation() && !decl->Init()) {
+        if (decl->Id()->IsIdentifier() && (decl->Id()->AsIdentifier()->TypeAnnotation() == nullptr) &&
+            (decl->Init() == nullptr)) {
             auto *ident = decl->Id()->AsIdentifier();
             checker->LogError(diagnostic::MISSING_INIT_OR_TYPE, {}, ident->Start());
             return true;

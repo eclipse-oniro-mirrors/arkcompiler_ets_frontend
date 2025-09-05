@@ -199,7 +199,7 @@ static ir::AstNode *HandleVariableDeclarator(public_lib::Context *ctx, ir::Varia
     auto *scope = oldVar->GetScope();
     auto *type = oldVar->TsType();
     auto *boxedType = checker->GlobalBuiltinBoxType(type);
-    bool inForInit = declarator->Parent() && declarator->Parent()->Parent() &&
+    bool inForInit = (declarator->Parent() != nullptr) && (declarator->Parent()->Parent() != nullptr) &&
                      declarator->Parent()->Parent()->IsForUpdateStatement();
     if (inForInit && oldVar->HasFlag(varbinder::VariableFlags::PER_ITERATION)) {
         return declarator;

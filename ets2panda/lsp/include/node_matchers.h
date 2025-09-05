@@ -20,7 +20,7 @@
 #include <unordered_map>
 #include "ir/astNode.h"
 #include "api.h"
-
+// NOLINTNEXTLINE (cppcoreguidelines-macro-usage)
 #define DEFINE_SIMPLE_HANDLER(FunctionName, NodeType, NameAccessor, NodeTypeEnum) \
     void FunctionName(ir::AstNode *node, std::vector<NodeInfo> &result)           \
     {                                                                             \

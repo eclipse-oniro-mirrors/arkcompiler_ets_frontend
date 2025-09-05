@@ -21,8 +21,6 @@
 #include <gtest/gtest.h>
 
 namespace {
-using ark::es2panda::lsp::Initializer;
-
 class LspGetNodeTSTypeReferenceTests : public LSPAPITests {};
 
 TEST_F(LspGetNodeTSTypeReferenceTests, GetTSTypeReference_TEST1)

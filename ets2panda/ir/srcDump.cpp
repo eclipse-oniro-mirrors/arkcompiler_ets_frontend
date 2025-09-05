@@ -57,7 +57,7 @@ void SrcDumper::Endl([[maybe_unused]] size_t num)
 static bool OnlySpaces(const std::string &s)
 {
     for (char c : s) {
-        if (!std::isspace(c)) {
+        if (std::isspace(c) == 0) {
             return false;
         }
     }
