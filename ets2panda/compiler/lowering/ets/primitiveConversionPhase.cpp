@@ -69,13 +69,14 @@ static ir::Expression *ConvertCallIfNeeded(public_lib::Context *ctx, ir::CallExp
         return call;
     }
 
-    /* Now that we know that we deal with a conversion call, replace it with a static call,
-       except that when the call is `x.toX()`, we can just return `x`.
+    /* When the conversion call is `x.toX()` or `y.toX()`, replace it with `x` or a static call, but when the `x` is
+       charType we cannot just replace `x.toX()` with `x`, because when we call the builtin method `x.toUpperCase()` and
+       `x.toLowerCase()`, we need replace them with static call too.
     */
 
     auto *allocator = ctx->Allocator();
 
-    if (checker->Relation()->IsIdenticalTo(calleeObjType, call->TsType())) {
+    if (!calleeObjType->IsETSCharType() && checker->Relation()->IsIdenticalTo(calleeObjType, call->TsType())) {
         calleeObj->SetParent(call->Parent());
         return calleeObj;
     }
