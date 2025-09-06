@@ -17,6 +17,7 @@
 #define ES2PANDA_VARBINDER_VARBINDER_H
 
 #include "lexer/token/sourceLocation.h"
+#include "scope.h"
 #include "varbinder/scope.h"
 
 namespace ark::es2panda::parser {
@@ -176,6 +177,7 @@ public:
 
     template <typename T>
     friend class LexicalScope;
+    friend class TopScopeContext;
 
     [[nodiscard]] ArenaAllocator *Allocator() const noexcept
     {
@@ -430,5 +432,33 @@ std::tuple<T *, varbinder::Variable *> VarBinder::NewVarDecl(const lexer::Source
     ES2PANDA_ASSERT(var != nullptr);
     return {decl, var};
 }
+
+class TopScopeContext {
+public:
+    TopScopeContext(VarBinder *varbinder, GlobalScope *globalScope)
+        : varbinder_(varbinder),
+          prevTopscope_(varbinder->TopScope()),
+          prevScope_(varbinder->GetScope()),
+          prevVarScope_(varbinder->VarScope())
+    {
+        varbinder->topScope_ = globalScope;
+        varbinder->scope_ = globalScope;
+        varbinder->varScope_ = globalScope;
+    }
+
+    ~TopScopeContext()
+    {
+        varbinder_->topScope_ = prevTopscope_;
+        varbinder_->scope_ = prevScope_;
+        varbinder_->varScope_ = prevVarScope_;
+    }
+
+private:
+    VarBinder *varbinder_ {};
+    GlobalScope *prevTopscope_ {};
+    Scope *prevScope_ {};
+    VariableScope *prevVarScope_ {};
+};
+
 }  // namespace ark::es2panda::varbinder
 #endif
