@@ -77,7 +77,7 @@ public:
     void PushFront(Identifier *const overloadedExpression)
     {
         auto newNode = GetOrCreateHistoryNodeAs<OverloadDeclaration>();
-        newNode->overloadedList_.insert(overloadedList_.begin(), overloadedExpression);
+        newNode->overloadedList_.insert(newNode->overloadedList_.begin(), overloadedExpression);
     }
 
     void AddOverloadDeclFlag(OverloadDeclFlags overloadFlag)
