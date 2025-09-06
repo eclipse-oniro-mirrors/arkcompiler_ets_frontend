@@ -110,8 +110,15 @@ static ArenaSet<varbinder::Variable *> FindVariablesToBox(public_lib::Context *c
     auto modified = FindModified(ctx, func);
 
     auto varsToBox = ArenaSet<varbinder::Variable *>(allocator->Adapter());
-    std::set_intersection(captured.cbegin(), captured.cend(), modified.cbegin(), modified.cend(),
-                          std::inserter(varsToBox, varsToBox.begin()));
+    for (auto *v : captured) {
+        if (modified.find(v) == modified.end()) {
+            continue;
+        }
+        if (v->HasFlag(varbinder::VariableFlags::PER_ITERATION)) {
+            continue;  // binding pre iteration: not participate in outer boxing to avoid generating single reference
+        }
+        varsToBox.insert(v);
+    }
 
     return varsToBox;
 }
@@ -192,6 +199,11 @@ static ir::AstNode *HandleVariableDeclarator(public_lib::Context *ctx, ir::Varia
     auto *scope = oldVar->GetScope();
     auto *type = oldVar->TsType();
     auto *boxedType = checker->GlobalBuiltinBoxType(type);
+    bool inForInit = declarator->Parent() && declarator->Parent()->Parent() &&
+                     declarator->Parent()->Parent()->IsForUpdateStatement();
+    if (inForInit && oldVar->HasFlag(varbinder::VariableFlags::PER_ITERATION)) {
+        return declarator;
+    }
 
     auto initArgs = ArenaVector<ir::Expression *>(allocator->Adapter());
     if (declarator->Init() != nullptr) {
@@ -264,6 +276,9 @@ static bool OnLeftSideOfAssignment(ir::AstNode *ast)
 
 static ir::AstNode *HandleReference(public_lib::Context *ctx, ir::Identifier *id, varbinder::Variable *var)
 {
+    if (var->HasFlag(varbinder::VariableFlags::PER_ITERATION)) {
+        return id;
+    }
     auto *parser = ctx->parser->AsETSParser();
     auto *checker = ctx->GetChecker()->AsETSChecker();
 
