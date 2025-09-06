@@ -20,17 +20,17 @@ a - b
 a * b
 a / b
 a % b
-Math.pow(a, b)
+a ** b
 
 m.toNumber() + n.toNumber()
 m.toNumber() % n.toNumber()
-Math.pow(m.toNumber(), n.toNumber())
+m.toNumber() ** n.toNumber()
 
 let x = 1, y = 2;
 x + y;
 x - y;
 x % y;
-Math.pow(x, y);
+x ** y;
 
 interface GeneratedObjectLiteralInterface_1 {
     a: number;
@@ -42,6 +42,6 @@ let x2 = bar.a, y2 = bar.b;
 x2 + y2;
 x2 - y2;
 x2 % y2;
-Math.pow(x2, y2);
+x2 ** y2;
 
 foo.getProperty("a").toNumber() + foo.getProperty("b").toNumber();

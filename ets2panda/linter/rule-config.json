@@ -19,7 +19,6 @@
     "arkts-no-void-operator",
     "arkts-no-ts-overload",
     "arkts-limited-literal-types",
-    "arkts-no-exponent-op",
     "arkts-no-debugger",
     "arkts-no-arguments-obj",
     "arkts-no-tagged-templates",

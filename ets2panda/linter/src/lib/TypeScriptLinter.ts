@@ -542,9 +542,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     [ts.SyntaxKind.ReturnStatement, this.handleReturnStatement],
     [ts.SyntaxKind.Decorator, this.handleDecorator],
     [ts.SyntaxKind.ImportType, this.handleImportType],
-    [ts.SyntaxKind.AsteriskAsteriskToken, this.handleExponentOperation],
     [ts.SyntaxKind.VoidExpression, this.handleVoidExpression],
-    [ts.SyntaxKind.AsteriskAsteriskEqualsToken, this.handleExponentOperation],
     [ts.SyntaxKind.RegularExpressionLiteral, this.handleRegularExpressionLiteral],
     [ts.SyntaxKind.DebuggerStatement, this.handleDebuggerStatement],
     [ts.SyntaxKind.SwitchStatement, this.handleSwitchStatement],
@@ -8426,14 +8424,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     return false;
-  }
-
-  private handleExponentOperation(node: ts.Node): void {
-    if (!this.options.arkts2) {
-      return;
-    }
-    const autofix = this.autofixer?.fixExponent(node.parent);
-    this.incrementCounters(node, FaultID.ExponentOp, autofix);
   }
 
   private handleNonNullExpression(node: ts.Node): void {
