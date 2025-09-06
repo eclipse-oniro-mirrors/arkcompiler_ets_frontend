@@ -143,7 +143,10 @@ import {
   GLOBAL_CONNECT_FUNC_NAME,
   CONNECT_FUNC_NAME,
   serializationTypeFlags,
-  serializationTypeName
+  serializationTypeName,
+  COMPONENTV2_DECORATOR_NAME,
+  ENTRY_STORAGE,
+  ENTRY_USE_SHARED_STORAGE
 } from './utils/consts/ArkuiConstants';
 import { arkuiImportList } from './utils/consts/ArkuiImportList';
 import type { IdentifierAndArguments, ForbidenAPICheckResult } from './utils/consts/InteropAPI';
@@ -957,6 +960,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     this.handleStructDeclarationForLayout(node);
     this.handleInvalidIdentifier(node);
+    this.handleStructDeclForEntryAndComponentV2(node);
   }
 
   private handleParameter(node: ts.Node): void {
@@ -8568,6 +8572,20 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
+    const structDecl = node.parent;
+    if (!ts.isStructDeclaration(structDecl)) {
+      return;
+    }
+
+    const decorators = ts.getDecorators(structDecl);
+    const hasComponentV2 = decorators?.some((decorator) => {
+      return decorator.expression.getText() === COMPONENTV2_DECORATOR_NAME;
+    });
+
+    if (hasComponentV2) {
+      return;
+    }
+
     if (ts.isCallExpression(node.expression) && ts.isIdentifier(node.expression.expression)) {
       if (node.expression.expression.escapedText !== ENTRY_DECORATOR_NAME || node.expression.arguments.length !== 1) {
         return;
@@ -15687,5 +15705,59 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (staticContext) {
       this.incrementCounters(node, FaultID.SuperInStaticContext);
     }
+  }
+
+  private handleStructDeclForEntryAndComponentV2(node: ts.StructDeclaration): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+
+    const decorators = ts.getDecorators(node);
+    if (!decorators) {
+      return;
+    }
+
+    let entryDecorator: ts.Decorator | undefined;
+    const hasEntry = decorators.some((decorator) => {
+      if (TsUtils.getDecoratorName(decorator) === ENTRY_DECORATOR_NAME) {
+        entryDecorator = decorator;
+        return true;
+      }
+      return false;
+    });
+    const hasComponentV2 = decorators.some((decorator) => {
+      return TsUtils.getDecoratorName(decorator) === COMPONENTV2_DECORATOR_NAME;
+    });
+    
+    if (!hasEntry || !hasComponentV2 || !entryDecorator) {
+      return;
+    }
+
+    const entryDecoratorHasInvalidParams = TypeScriptLinter.checkEntryDecoratorHasInvalidParams(entryDecorator);
+    if (!entryDecoratorHasInvalidParams) {
+      return;
+    }
+
+    const autofix = this.autofixer?.fixEntryAndComponentV2(entryDecorator);
+    this.incrementCounters(entryDecorator, FaultID.EntryHasInvalidParams, autofix);
+  }
+
+  private static checkEntryDecoratorHasInvalidParams(entryDecorator: ts.Decorator): boolean {
+    const callExpr = entryDecorator.expression;
+    if (!ts.isCallExpression(callExpr)) {
+      return false;
+    }
+
+    const arg = callExpr.arguments?.[0];
+    if (!ts.isObjectLiteralExpression(arg)) {
+      return false;
+    }
+
+    const hasInvalidParams = arg.properties.some((property) => {
+      const name = property.name?.getText();
+      return name === ENTRY_STORAGE || name === ENTRY_USE_SHARED_STORAGE;
+    });
+
+    return hasInvalidParams;
   }
 }
