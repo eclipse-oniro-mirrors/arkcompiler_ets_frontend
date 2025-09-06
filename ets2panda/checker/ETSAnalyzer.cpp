@@ -3147,8 +3147,10 @@ checker::Type *ETSAnalyzer::Check(ir::ImportNamespaceSpecifier *st) const
         ES2PANDA_UNREACHABLE();
     }
 
-    auto topScopeCtx =
-        varbinder::TopScopeContext(checker->VarBinder(), importDecl->Parent()->AsETSModule()->Scope()->AsGlobalScope());
+    if (importDecl->Parent() != nullptr) {
+        auto topScopeCtx = varbinder::TopScopeContext(checker->VarBinder(),
+                                                      importDecl->Parent()->AsETSModule()->Scope()->AsGlobalScope());
+    }
 
     if (importDecl->IsPureDynamic()) {
         auto *type = checker->GetImportSpecifierObjectType(importDecl, st->Local()->AsIdentifier())->AsETSObjectType();
