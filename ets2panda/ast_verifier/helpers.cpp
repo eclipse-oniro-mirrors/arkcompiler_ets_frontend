@@ -259,7 +259,8 @@ bool ValidateVariableAccess(const varbinder::LocalVariable *propVar, const ir::M
 
     // NOTE: need to refactor: type of member expression object can be obtained via
     // me->ObjType() or me->Object()->TsType() and they may differ!!!!
-    if (auto objType = const_cast<ir::MemberExpression *>(ast)->Object()->TsType(); objType->IsETSUnionType()) {
+    if (auto objType = const_cast<ir::MemberExpression *>(ast)->Object()->TsType();
+        objType != nullptr && objType->IsETSUnionType()) {
         bool res = true;
         for (auto type : objType->AsETSUnionType()->ConstituentTypes()) {
             const_cast<ir::MemberExpression *>(ast)->SetObjectType(type->AsETSObjectType());
