@@ -55,16 +55,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 75,
-            "column": 1,
-            "endLine": 75,
-            "endColumn": 9,
-            "problem": "InteropDirectAccessToTSTypes",
-            "suggest": "",
-            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
-            "severity": "ERROR"
-        },
-        {
             "line": 78,
             "column": 7,
             "endLine": 78,
@@ -445,14 +435,14 @@
             "severity": "ERROR"
         },
         {
-          "line": 323,
-          "column": 5,
-          "endLine": 325,
-          "endColumn": 6,
-          "problem": "NoLocalClass",
-          "suggest": "",
-          "rule": "Creating local classes is not supported (arkts-no-local-class)",
-          "severity": "ERROR"
+            "line": 323,
+            "column": 5,
+            "endLine": 325,
+            "endColumn": 6,
+            "problem": "NoLocalClass",
+            "suggest": "",
+            "rule": "Creating local classes is not supported (arkts-no-local-class)",
+            "severity": "ERROR"
         },
         {
             "line": 357,
@@ -475,14 +465,14 @@
             "severity": "ERROR"
         },
         {
-          "line": 372,
-          "column": 5,
-          "endLine": 374,
-          "endColumn": 6,
-          "problem": "NoLocalClass",
-          "suggest": "",
-          "rule": "Creating local classes is not supported (arkts-no-local-class)",
-          "severity": "ERROR"
+            "line": 372,
+            "column": 5,
+            "endLine": 374,
+            "endColumn": 6,
+            "problem": "NoLocalClass",
+            "suggest": "",
+            "rule": "Creating local classes is not supported (arkts-no-local-class)",
+            "severity": "ERROR"
         },
         {
             "line": 184,

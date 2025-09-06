@@ -225,6 +225,7 @@ import { COMPONENT_DECORATOR, SELECT_IDENTIFIER, SELECT_OPTIONS, STRING_ERROR_LI
 import { ES_OBJECT } from './utils/consts/ESObject';
 import { cookBookMsg } from './CookBookMsg';
 import { getCommonApiInfoMap } from './utils/functions/CommonApiInfo';
+import { arkuiDecoratorSet } from './utils/consts/ArkuiDecorator';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
   supportedStdCallApiChecker: SupportedStdCallApiChecker;
@@ -1634,6 +1635,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private checkUsageOfTsTypes(baseType: ts.Type, node: ts.Node): void {
     const typeString = this.tsTypeChecker.typeToString(baseType);
+
+    const symbol = baseType.getSymbol();
+    if (symbol && !isStdLibrarySymbol(symbol)) {
+      return;
+    }
+
     if (
       TsUtils.isAnyType(baseType) ||
       TsUtils.isUnknownType(baseType) ||
@@ -1934,7 +1941,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    const extendedIdent = parent.heritageClauses.at(0);
+    const extendedIdent = parent.heritageClauses[0];
 
     if (!TsUtils.hasModifier(propDecl.modifiers, ts.SyntaxKind.ReadonlyKeyword)) {
       return;
@@ -1960,7 +1967,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return undefined;
     }
 
-    const extendedType = extended.types.at(0);
+    const extendedType = extended.types[0];
     if (!extendedType) {
       return undefined;
     }
@@ -8350,6 +8357,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const isArray = this.tsUtils.isArray(lhsType) && this.tsUtils.isArray(rhsType);
+    if (isArray && this.tsTypeChecker.typeToString(lhsType) === 'never[]') {
+      return;
+    }
     const isTuple =
       this.tsUtils.isOrDerivedFrom(lhsType, TsUtils.isTuple) && this.tsUtils.isOrDerivedFrom(rhsType, TsUtils.isTuple);
     if (!((isArray || isTuple) && lhsType !== rhsType)) {
@@ -12458,7 +12468,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
         return;
       }
-      if (actualTypeName !== expectedType) {
+      if (actualTypeName !== expectedType && expectedType !== 'any') {
         this.incrementCounters(arg, FaultID.NoTsLikeSmartType);
       }
     }
@@ -12692,6 +12702,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     methodReturnType: ts.Type
   ): void {
     const propName = propAccess.name.getText();
+    const decl = this.tsTypeChecker.getSymbolAtLocation(propAccess.name)?.declarations?.[0];
+    if (decl && ts.isPropertyDeclaration(decl) && decl.type) {
+      if (decl.type.kind === ts.SyntaxKind.BooleanKeyword && decl.questionToken === undefined) {
+        return;
+      } else if (!this.tsTypeChecker.getTypeAtLocation(decl.name).isUnion()) {
+        return;
+      }
+    }
     const propType = propsMap.get(propName);
 
     if (propType && this.isExactlySameType(propType, methodReturnType)) {
@@ -14386,7 +14404,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const deprecatedApiCheckMap = TypeScriptLinter.getDeprecatedApiCheckMapForCallExpression(decl, parName);
     this.reportDeprecatedApi(node, name, deprecatedApiCheckMap);
     this.checkCallExpressionForSdkApi(node, name, parName, !!isNeedGetResolvedSignature, deprecatedApiCheckMap);
-    this.checkSpecialApiForDeprecatedApi(node, name, decl);
+    this.checkSpecialApiForDeprecatedApi(node, name);
+    this.checkOnScrollApiForDeprecatedApi(name, decl);
   }
 
   private static getDeprecatedApiCheckMapForCallExpression(
@@ -14474,9 +14493,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const problemStr = this.getFaultIdWithMatchedDeprecatedApi(name.text, deprecatedApiCheckMap, apiType);
     if (problemStr.length > 0) {
       const autofix = this.autofixer?.fixDeprecatedApiForCallExpression(node);
-      if (autofix) {
-        this.interfacesNeedToImport.add('getUIContext');
-      }
       const isSdkCommon = apiType === SDK_COMMON_TYPE;
       const faultID = TypeScriptLinter.getFinalSdkFaultIdByProblem(problemStr, apiType);
       if (!faultID) {
@@ -14505,11 +14521,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return sdkFaultId;
   }
 
-  private checkSpecialApiForDeprecatedApi(
-    node: ts.CallExpression,
-    name: ts.Identifier,
-    decl: ts.Declaration | undefined
-  ): void {
+  private checkSpecialApiForDeprecatedApi(node: ts.CallExpression, name: ts.Identifier): void {
     if (('mask' === name.getText() || 'clip' === name.getText()) && node.arguments.length === 1) {
       const types = ['CircleAttribute', 'EllipseAttribute', ' PathAttribute', 'RectAttribute'];
       const arg = node.arguments[0];
@@ -14528,13 +14540,25 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
           }
 
           const autofix = this.autofixer?.fixSpecialDeprecatedApiForCallExpression(node, name);
-          this.incrementCounters(name, FaultID.NoDeprecatedApi, autofix);
+          this.incrementCounters(
+            name,
+            FaultID.NoDeprecatedApi,
+            autofix,
+            TypeScriptLinter.getErrorMsgForSdkCommonApi(name.getText(), FaultID.NoDeprecatedApi)
+          );
           return;
         }
-        this.incrementCounters(name, FaultID.NoDeprecatedApi);
-        return;
+        this.incrementCounters(
+          name,
+          FaultID.NoDeprecatedApi,
+          undefined,
+          TypeScriptLinter.getErrorMsgForSdkCommonApi(name.getText(), FaultID.NoDeprecatedApi)
+        );
       }
     }
+  }
+
+  private checkOnScrollApiForDeprecatedApi(name: ts.Identifier, decl: ts.Declaration | undefined): void {
     if (decl?.parent && ts.isClassDeclaration(decl.parent) && 'onScroll' === name.getText()) {
       let parentName = '';
       decl.parent.heritageClauses?.forEach((clause) => {
@@ -14545,7 +14569,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         });
       });
       if (parentName === 'ScrollableCommonMethod') {
-        this.incrementCounters(name, FaultID.NoDeprecatedApi);
+        this.incrementCounters(
+          name,
+          FaultID.NoDeprecatedApi,
+          undefined,
+          TypeScriptLinter.getErrorMsgForSdkCommonApi(name.getText(), FaultID.NoDeprecatedApi)
+        );
       }
     }
   }
@@ -15412,6 +15441,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2 || !TypeScriptLinter.builtApiInfo) {
       return;
     }
+
+    if (arkuiDecoratorSet.has(decorator.expression.getText())) {
+      return;
+    }
+
     const type = this.tsTypeChecker.getTypeAtLocation(decorator.expression);
     const aliasSymbol = type.aliasSymbol;
     const declaration = aliasSymbol?.declarations?.[0];

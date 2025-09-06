@@ -185,3 +185,7 @@ export const GLOBAL_CONNECT_FUNC_NAME = 'globalConnect';
 export const CONNECT_FUNC_NAME = 'connect';
 
 export const USE_STATIC_STATEMENT = 'use static';
+
+export const GET_CONTEXT = 'getContext';
+export const UI_CONTEXT = 'UIContext';
+export const GET_FOCUSED_UI_CONTEXT = 'getFocusedUIContext';

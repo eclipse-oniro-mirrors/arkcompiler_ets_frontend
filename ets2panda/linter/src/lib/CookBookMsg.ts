@@ -440,7 +440,8 @@ cookBookTag[410] = 'Numeric literal exceeds allowed range (arkts-no-large-numeri
 cookBookTag[411] = '"instanceof" operator can\'t be applied to function (arkts-no-instanceof-func)';
 cookBookTag[412] = 'No unfixed length tuple support (arkts-no-unfixed-len-tuple)';
 
-cookBookTag[413] = 'Subclass can\'t call members of super class in static context (arkts-no-super-call-in-static-context)';
+cookBookTag[413] =
+  'Subclass can\'t call members of super class in static context (arkts-no-super-call-in-static-context)';
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';
 }

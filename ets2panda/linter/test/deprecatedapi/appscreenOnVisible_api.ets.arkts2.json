@@ -23,16 +23,6 @@
             "suggest": "",
             "rule": "The ArkUI interface \"screenOnVisible\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
-        },
-        {
-            "line": 25,
-            "column": 24,
-            "endLine": 25,
-            "endColumn": 46,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"GridContainerAttribute\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
         }
     ]
 }

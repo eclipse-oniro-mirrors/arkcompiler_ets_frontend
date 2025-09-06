@@ -43,7 +43,10 @@ import {
   NEW_PROP_DECORATOR_SUFFIX,
   VIRTUAL_SCROLL_IDENTIFIER,
   DISABLE_VIRTUAL_SCROLL_IDENTIFIER,
-  USE_STATIC_STATEMENT
+  USE_STATIC_STATEMENT,
+  UI_CONTEXT,
+  GET_FOCUSED_UI_CONTEXT,
+  GET_CONTEXT
 } from '../utils/consts/ArkuiConstants';
 import { ES_VALUE } from '../utils/consts/ESObject';
 import type { IncrementDecrementNodeInfo } from '../utils/consts/InteropAPI';
@@ -5312,18 +5315,11 @@ export class Autofixer {
   }
 
   fixDeprecatedApiForCallExpression(callExpr: ts.CallExpression): Autofix[] | undefined {
-    const createUIContextAccess = (methodName: string): ts.Node => {
-      return ts.factory.createPropertyAccessExpression(
-        ts.factory.createCallExpression(ts.factory.createIdentifier('getUIContext'), undefined, []),
-        ts.factory.createIdentifier(methodName)
-      );
-    };
-
     if (ts.isPropertyAccessExpression(callExpr.expression)) {
       const fullName = `${callExpr.expression.expression.getText()}.${callExpr.expression.name.getText()}`;
       const methodName = propertyAccessReplacements.get(fullName);
       if (methodName) {
-        const newExpression = createUIContextAccess(methodName);
+        const newExpression = Autofixer.createUIContextAccess(methodName);
         const newText = this.printer.printNode(ts.EmitHint.Unspecified, newExpression, callExpr.getSourceFile());
         return [
           {
@@ -5338,21 +5334,36 @@ export class Autofixer {
     if (ts.isIdentifier(callExpr.expression)) {
       const identifierText = callExpr.expression.getText();
       const methodName = identifierReplacements.get(identifierText);
-
       if (methodName) {
-        const newExpression = createUIContextAccess(methodName);
+        const accessExpr = Autofixer.createUIContextAccess(methodName);
+        const newExpression = identifierText === GET_CONTEXT
+          ? ts.factory.createCallChain(accessExpr, undefined, undefined, [])
+          : accessExpr;
+        const start = identifierText === GET_CONTEXT ? callExpr.getStart() : callExpr.expression.getStart();
+        const end = identifierText === GET_CONTEXT ? callExpr.getEnd() : callExpr.expression.getEnd();
         const newText = this.printer.printNode(ts.EmitHint.Unspecified, newExpression, callExpr.getSourceFile());
         return [
           {
-            start: callExpr.expression.getStart(),
-            end: callExpr.expression.getEnd(),
+            start: start,
+            end: end,
             replacementText: newText
           }
         ];
       }
     }
-
     return undefined;
+  }
+
+  private static createUIContextAccess(methodName: string): ts.PropertyAccessExpression {
+    return ts.factory.createPropertyAccessChain(
+      ts.factory.createCallExpression(
+        ts.factory.createPropertyAccessExpression(
+          ts.factory.createIdentifier(UI_CONTEXT),
+          ts.factory.createIdentifier(GET_FOCUSED_UI_CONTEXT)
+      ), undefined, []),
+      ts.factory.createToken(ts.SyntaxKind.QuestionDotToken),
+      ts.factory.createIdentifier(methodName)
+    );
   }
 
   fixSpecialDeprecatedApiForCallExpression(callExpr: ts.CallExpression, name: ts.Identifier): Autofix[] | undefined {
