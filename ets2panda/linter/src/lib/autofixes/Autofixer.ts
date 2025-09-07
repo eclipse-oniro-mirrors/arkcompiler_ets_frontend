@@ -47,7 +47,10 @@ import {
   USE_STATIC_STATEMENT,
   UI_CONTEXT,
   GET_FOCUSED_UI_CONTEXT,
-  GET_CONTEXT
+  GET_CONTEXT,
+  GET_SHARED,
+  GET_SHARED_CAPITALIZED,
+  COMMON_TS_ETS_API_D_TS
 } from '../utils/consts/ArkuiConstants';
 import { ES_VALUE } from '../utils/consts/ESObject';
 import type { IncrementDecrementNodeInfo } from '../utils/consts/InteropAPI';
@@ -2962,95 +2965,149 @@ export class Autofixer {
     return [{ start: funcDecl.getStart(), end: funcDecl.getEnd(), replacementText: text }];
   }
 
-  fixEntryDecorator(entryDecorator: ts.Decorator): Autofix[] | undefined {
+  fixEntryDecorator(entryDecorator: ts.Decorator, arg: ts.Expression): Autofix[] | undefined {
     if (!ts.isCallExpression(entryDecorator.expression)) {
       return undefined;
     }
 
-    const args = entryDecorator.expression.arguments;
-    if (args.length !== 1) {
+    if (ts.isObjectLiteralExpression(arg)) {
+      return this.fixLiteralForEntry(entryDecorator, arg);
+    }
+    return this.fixObjectForEntry(entryDecorator, arg);
+  }
+
+  fixLiteralForEntry(decorator: ts.Decorator, objectLiteral: ts.ObjectLiteralExpression): Autofix[] | undefined {
+    const hasDeprecatedGetShared = objectLiteral.properties.some((property) => {
+      return ts.isPropertyAssignment(property) && this.checkIsDeprecatedGetShared(property.initializer);
+    });
+    if (hasDeprecatedGetShared) {
+      const properties = objectLiteral.properties.filter((property) => {
+        return (
+          ts.isPropertyAssignment(property) &&
+          property.name.getText() !== ENTRY_USE_SHARED_STORAGE &&
+          property.name.getText() !== ENTRY_STORAGE
+        );
+      });
+      return this.fixDeprecatedGetSharedForEntry(properties, decorator);
+    }
+
+    let storageExpr: ts.Expression | undefined;
+    const newProperties = objectLiteral.properties.map((property) => {
+      if (ts.isPropertyAssignment(property) && property.name.getText() === ENTRY_STORAGE) {
+        storageExpr = property.initializer;
+        return ts.factory.createPropertyAssignment(
+          property.name,
+          ts.factory.createStringLiteral(GET_LOCAL_STORAGE_FUNC_NAME)
+        );
+      }
+      return property;
+    });
+
+    if (!storageExpr) {
       return undefined;
     }
 
-    const arg = args[0];
-    let getLocalStorageStmt: ts.VariableStatement | undefined;
-
-    if (ts.isIdentifier(arg) || ts.isNewExpression(arg) || ts.isCallExpression(arg)) {
-      getLocalStorageStmt = Autofixer.createGetLocalStorageLambdaStatement(arg);
-    } else if (ts.isObjectLiteralExpression(arg)) {
-      getLocalStorageStmt = Autofixer.processEntryAnnotationObjectLiteralExpression(arg);
-    }
-
-    if (getLocalStorageStmt !== undefined) {
-      let text = this.printer.printNode(ts.EmitHint.Unspecified, getLocalStorageStmt, entryDecorator.getSourceFile());
-      const fixedEntryDecorator = Autofixer.createFixedEntryDecorator();
-      const fixedEntryDecoratorText = this.printer.printNode(
-        ts.EmitHint.Unspecified,
-        fixedEntryDecorator,
-        entryDecorator.getSourceFile()
-      );
-      text = text + this.getNewLine() + fixedEntryDecoratorText;
-      return [{ start: entryDecorator.getStart(), end: entryDecorator.getEnd(), replacementText: text }];
-    }
-    return undefined;
-  }
-
-  private static createFixedEntryDecorator(): ts.Decorator {
-    const storageProperty = ts.factory.createPropertyAssignment(
-      ts.factory.createIdentifier(ENTRY_STORAGE),
-      ts.factory.createStringLiteral(GET_LOCAL_STORAGE_FUNC_NAME)
+    const getLocalStorageStmt = Autofixer.createLocalStorageStmt(storageExpr);
+    const newEntryDecorator = ts.factory.createDecorator(
+      ts.factory.createCallExpression(ts.factory.createIdentifier(ENTRY_DECORATOR_NAME), undefined, [
+        ts.factory.createObjectLiteralExpression(newProperties, false)
+      ])
     );
-    const objectLiteralExpr = ts.factory.createObjectLiteralExpression([storageProperty], false);
-    const callExpr = ts.factory.createCallExpression(ts.factory.createIdentifier(ENTRY_DECORATOR_NAME), undefined, [
-      objectLiteralExpr
-    ]);
-    return ts.factory.createDecorator(callExpr);
+
+    const stmtText = this.printer.printNode(ts.EmitHint.Unspecified, getLocalStorageStmt, decorator.getSourceFile());
+    const decoratorText = this.printer.printNode(ts.EmitHint.Unspecified, newEntryDecorator, decorator.getSourceFile());
+    const text = stmtText + this.getNewLine() + decoratorText;
+    return [{ start: decorator.getStart(), end: decorator.getEnd(), replacementText: text }];
   }
 
-  private static processEntryAnnotationObjectLiteralExpression(
-    expression: ts.ObjectLiteralExpression
-  ): ts.VariableStatement | undefined {
-    const objectProperties = expression.properties;
-    if (objectProperties.length !== 1) {
-      return undefined;
+  fixObjectForEntry(decorator: ts.Decorator, storageExpr: ts.Expression): Autofix[] {
+    if (this.checkIsDeprecatedGetShared(storageExpr)) {
+      return this.fixDeprecatedGetSharedForEntry([], decorator);
     }
-    const objectProperty = objectProperties[0];
-    if (!ts.isPropertyAssignment(objectProperty)) {
-      return undefined;
-    }
-    if (ts.isIdentifier(objectProperty.name)) {
-      if (objectProperty.name.escapedText !== ENTRY_STORAGE) {
-        return undefined;
-      }
-      const properityInitializer = objectProperty.initializer;
-      if (
-        ts.isIdentifier(properityInitializer) ||
-        ts.isNewExpression(properityInitializer) ||
-        ts.isCallExpression(properityInitializer) ||
-        ts.isPropertyAccessExpression(properityInitializer)
-      ) {
-        return Autofixer.createGetLocalStorageLambdaStatement(properityInitializer);
-      }
-    }
-    return undefined;
+
+    const getLocalStorageStmt = Autofixer.createLocalStorageStmt(storageExpr);
+    const newEntryDecorator = ts.factory.createDecorator(
+      ts.factory.createCallExpression(ts.factory.createIdentifier(ENTRY_DECORATOR_NAME), undefined, [
+        ts.factory.createObjectLiteralExpression(
+          [
+            ts.factory.createPropertyAssignment(
+              ts.factory.createIdentifier(ENTRY_STORAGE),
+              ts.factory.createStringLiteral(GET_LOCAL_STORAGE_FUNC_NAME)
+            )
+          ],
+          false
+        )
+      ])
+    );
+    const stmtText = this.printer.printNode(ts.EmitHint.Unspecified, getLocalStorageStmt, decorator.getSourceFile());
+    const decoratorText = this.printer.printNode(ts.EmitHint.Unspecified, newEntryDecorator, decorator.getSourceFile());
+    const text = stmtText + this.getNewLine() + decoratorText;
+    return [{ start: decorator.getStart(), end: decorator.getEnd(), replacementText: text }];
   }
 
-  private static createGetLocalStorageLambdaStatement(expression: ts.Expression): ts.VariableStatement {
-    const variable = ts.factory.createVariableDeclaration(
-      ts.factory.createIdentifier(GET_LOCAL_STORAGE_FUNC_NAME),
+  fixDeprecatedGetSharedForEntry(properties: ts.ObjectLiteralElementLike[], decorator: ts.Decorator): Autofix[] {
+    const newProperties = properties.filter((property) => {
+      return ts.isPropertyAssignment(property);
+    });
+    const newEntryDecorator = ts.factory.createDecorator(
+      ts.factory.createCallExpression(ts.factory.createIdentifier(ENTRY_DECORATOR_NAME), undefined, [
+        ts.factory.createObjectLiteralExpression(
+          [
+            ts.factory.createPropertyAssignment(
+              ts.factory.createIdentifier(ENTRY_USE_SHARED_STORAGE),
+              ts.factory.createTrue()
+            ),
+            ...newProperties
+          ],
+          false
+        )
+      ])
+    );
+    const text = this.printer.printNode(ts.EmitHint.Unspecified, newEntryDecorator, decorator.getSourceFile());
+    return [{ start: decorator.getStart(), end: decorator.getEnd(), replacementText: text }];
+  }
+
+  private checkIsDeprecatedGetShared(expr: ts.Expression): boolean {
+    if (!ts.isCallExpression(expr) || !ts.isPropertyAccessExpression(expr.expression)) {
+      return false;
+    }
+
+    if (expr.expression.name.getText() !== GET_SHARED && expr.expression.name.getText() !== GET_SHARED_CAPITALIZED) {
+      return false;
+    }
+
+    const symbol = this.typeChecker.getSymbolAtLocation(expr.expression.name);
+    const decl = TsUtils.getDeclaration(symbol);
+    if (!decl) {
+      return false;
+    }
+
+    const fileName = path.basename(decl.getSourceFile().fileName);
+    return fileName === COMMON_TS_ETS_API_D_TS;
+  }
+
+  private static createLocalStorageStmt(storageExpr: ts.Expression): ts.VariableStatement {
+    return ts.factory.createVariableStatement(
       undefined,
-      undefined,
-      ts.factory.createArrowFunction(
-        undefined,
-        undefined,
-        [],
-        ts.factory.createTypeReferenceNode(ts.factory.createIdentifier(LOCAL_STORAGE_TYPE_NAME), undefined),
-        ts.factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-        expression
+      ts.factory.createVariableDeclarationList(
+        [
+          ts.factory.createVariableDeclaration(
+            ts.factory.createIdentifier(GET_LOCAL_STORAGE_FUNC_NAME),
+            undefined,
+            undefined,
+            ts.factory.createArrowFunction(
+              undefined,
+              undefined,
+              [],
+              ts.factory.createTypeReferenceNode(ts.factory.createIdentifier(LOCAL_STORAGE_TYPE_NAME), undefined),
+              ts.factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+              storageExpr
+            )
+          )
+        ],
+        ts.NodeFlags.Const
       )
     );
-    const declarationList = ts.factory.createVariableDeclarationList([variable], ts.NodeFlags.Const);
-    return ts.factory.createVariableStatement(undefined, declarationList);
   }
 
   fixProvideDecorator(provideDecorator: ts.Decorator): Autofix[] | undefined {
@@ -5478,7 +5535,7 @@ export class Autofixer {
     ];
   }
 
-  fixEntryAndComponentV2(entryDecorator: ts.Decorator): Autofix[] | undefined {
+  fixEntryDecoratorHasInvalidParams(entryDecorator: ts.Decorator): Autofix[] | undefined {
     const callExpr = entryDecorator.expression;
     if (!ts.isCallExpression(callExpr)) {
       return undefined;
@@ -5494,8 +5551,21 @@ export class Autofixer {
       return name !== ENTRY_STORAGE && name !== ENTRY_USE_SHARED_STORAGE;
     });
 
-    const newArg = ts.factory.createObjectLiteralExpression(newProperties, false);
-    const text = this.printer.printNode(ts.EmitHint.Unspecified, newArg, entryDecorator.getSourceFile());
-    return [{ start: arg.getStart(), end: arg.getEnd(), replacementText: text }];
+    const newDecorator =
+      newProperties.length === 0 ?
+        ts.factory.createDecorator(ts.factory.createIdentifier(ENTRY_DECORATOR_NAME)) :
+        ts.factory.createDecorator(
+          ts.factory.createCallExpression(ts.factory.createIdentifier(ENTRY_DECORATOR_NAME), undefined, [
+            ts.factory.createObjectLiteralExpression(newProperties, false)
+          ])
+        );
+    const text = this.printer.printNode(ts.EmitHint.Unspecified, newDecorator, entryDecorator.getSourceFile());
+    return [{ start: entryDecorator.getStart(), end: entryDecorator.getEnd(), replacementText: text }];
+  }
+
+  fixEntryDecoratorHasInvaildLocalStorage(entryDecorator: ts.Decorator): Autofix[] {
+    const newDecorator = ts.factory.createDecorator(ts.factory.createIdentifier(ENTRY_DECORATOR_NAME));
+    const text = this.printer.printNode(ts.EmitHint.Unspecified, newDecorator, entryDecorator.getSourceFile());
+    return [{ start: entryDecorator.getStart(), end: entryDecorator.getEnd(), replacementText: text }];
   }
 }

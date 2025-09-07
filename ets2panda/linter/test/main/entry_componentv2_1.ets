@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-@Entry({ storage: new LocalStorage() })
+@Entry(new LocalStorage())
 @ComponentV2
 struct MyPage1 {
   build() {
@@ -21,7 +21,7 @@ struct MyPage1 {
   }
 }
 
-@Entry({ useSharedStorage: true })
+@Entry({ storage: new LocalStorage() })
 @ComponentV2
 struct MyPage2 {
   build() {
@@ -29,9 +29,17 @@ struct MyPage2 {
   }
 }
 
-@Entry({ storage: new LocalStorage(), useSharedStorage: true })
+@Entry({ useSharedStorage: true })
 @ComponentV2
 struct MyPage3 {
+  build() {
+    Text("Hello World")
+  }
+}
+
+@Entry({ storage: new LocalStorage(), useSharedStorage: true })
+@ComponentV2
+struct MyPage4 {
   build() {
     Text("Hello World")
   }

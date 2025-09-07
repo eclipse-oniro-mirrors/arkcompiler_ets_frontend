@@ -19,9 +19,9 @@
             "column": 1,
             "endLine": 16,
             "endColumn": 60,
-            "problem": "EntryHasInvalidParams",
+            "problem": "EntryHasInvalidParamsWithV2",
             "suggest": "",
-            "rule": "The \"@ComponentV2\" decorator cannot be used together with the \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters (arkui-entry-invalid-params)",
+            "rule": "The \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters cannot be used together with the \"@ComponentV2\" decorator (arkui-entry-invalid-params)",
             "severity": "ERROR"
         },
         {
@@ -39,9 +39,9 @@
             "column": 1,
             "endLine": 24,
             "endColumn": 55,
-            "problem": "EntryHasInvalidParams",
+            "problem": "EntryHasInvalidParamsWithV2",
             "suggest": "",
-            "rule": "The \"@ComponentV2\" decorator cannot be used together with the \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters (arkui-entry-invalid-params)",
+            "rule": "The \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters cannot be used together with the \"@ComponentV2\" decorator (arkui-entry-invalid-params)",
             "severity": "ERROR"
         },
         {
@@ -49,9 +49,9 @@
             "column": 1,
             "endLine": 32,
             "endColumn": 84,
-            "problem": "EntryHasInvalidParams",
+            "problem": "EntryHasInvalidParamsWithV2",
             "suggest": "",
-            "rule": "The \"@ComponentV2\" decorator cannot be used together with the \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters (arkui-entry-invalid-params)",
+            "rule": "The \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters cannot be used together with the \"@ComponentV2\" decorator (arkui-entry-invalid-params)",
             "severity": "ERROR"
         },
         {
