@@ -32,7 +32,7 @@ defines:
     ref: SET_INDEX_METHOD
   - name: $_iterator
     ref: ITERATOR_METHOD
-  - name: Iterator 
+  - name: Iterator
     ref: ITERATOR_CLASS
   - name: 'ambient_indexer'
     ref: AMBIENT_INDEXER
@@ -402,7 +402,7 @@ builtins:
     package: PKG_ESCOMPAT
     ref: BUILTIN_ERROR_OPTIONS
   - name: BigInt
-    package: PKG_ESCOMPAT
+    package: PKG_STD_CORE
     ref: BUILTIN_BIGINT
   - name: Array
     package: PKG_ESCOMPAT
