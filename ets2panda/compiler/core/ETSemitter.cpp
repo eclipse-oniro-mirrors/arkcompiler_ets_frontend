@@ -105,7 +105,7 @@ namespace detail {
 // NOLINTNEXTLINE (fuchsia-statically-constructed-objects, cert-err58-cpp)
 static const std::set<std::string> AOT_WORKAROUND_BLACKLIST {
     "std.core.String",   "std.core.String[]",      "std.core.Object",
-    "std.core.Object[]", "std.core.StringBuilder", "std.core.StringBuilder.<get>stringLength:i32;",
+    "std.core.Object[]", "std.core.StringBuilder", "std.core.StringBuilder.%%get-stringLength:i32;",
 };
 
 class EmitterDependencies final {

@@ -108,12 +108,12 @@ static bool IsAccessor(const std::string &calleeInternalName)
         return false;
     }
     auto methodBeginPos = pos + 1;
-    // case 1. getter: "xxx.<get>PropName:PropType;"  name start with '<get>'
+    // case 1. getter: "xxx.%%get-PropName:PropType;"  name start with '%%get-'
     auto checkGetterPos = calleeInternalName.find(Signatures::GETTER_METHOD_BEGIN, methodBeginPos);
     if (checkGetterPos == methodBeginPos) {
         return true;
     }
-    // case 2. setter: "xxx.<set>PropName:PropType;void;"  name start with '<set>'
+    // case 2. setter: "xxx.%%set-PropName:PropType;void;"  name start with '%%set-'
     auto checkSetterPos = calleeInternalName.find(Signatures::SETTER_METHOD_BEGIN, methodBeginPos);
     if (checkSetterPos == methodBeginPos) {
         return true;

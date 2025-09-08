@@ -32,5 +32,5 @@ function main(): void {
 }
 
 /* @@? 16:1 Error Semantic error ESE0215: Cannot inherit from interface A because method x is inherited with a different declaration type */
-/* @@? 23:12 Error Semantic error ESE0136: Method x(<property>x: Boolean): void in B not overriding any method */
+/* @@? 23:12 Error Semantic error ESE0136: Method x(%%property-x: Boolean): void in B not overriding any method */
 /* @@? 25:15 Error Semantic error ESE0002: Type 'Boolean' has no call signatures. */

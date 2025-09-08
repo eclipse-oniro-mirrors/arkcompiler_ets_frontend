@@ -131,8 +131,8 @@ std::optional<std::string> GenObjectType(const checker::ETSObjectType *objectTyp
 
         return std::nullopt;
     }
-    if (size_t partialPos = typeStr.find("$partial"); partialPos != std::string::npos) {
-        return "Partial<" + typeStr.substr(0, partialPos) + ">";
+    if (size_t partialPos = typeStr.find("%%partial-"); partialPos != std::string::npos) {
+        return "Partial<" + typeStr.substr(partialPos) + ">";
     }
     return typeStr;
 }
