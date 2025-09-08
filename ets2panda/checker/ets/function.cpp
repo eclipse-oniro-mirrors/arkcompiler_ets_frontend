@@ -1003,6 +1003,18 @@ void ETSChecker::ThrowSignatureMismatch(ArenaVector<Signature *> const &signatur
     LogError(diagnostic::NO_MATCHING_SIG_2, {signatureKind}, pos);
 }
 
+static void RemoveEnumTypeFlagIfNeed(ark::es2panda::checker::Signature *signature,
+                                     const ArenaVector<ir::Expression *> &arguments)
+{
+    if (signature == nullptr) {
+        return;
+    }
+    for (size_t index = 0; index < arguments.size(); ++index) {
+        auto &argument = arguments[index];
+        argument->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+    }
+}
+
 Signature *ETSChecker::ValidateSignatures(ArenaVector<Signature *> &signatures,
                                           const ir::TSTypeParameterInstantiation *typeArguments,
                                           const ArenaVector<ir::Expression *> &arguments,
@@ -1020,6 +1032,7 @@ Signature *ETSChecker::ValidateSignatures(ArenaVector<Signature *> &signatures,
             !(sig->Function()->IsConstructor() || sig->Function()->Id()->Name().Is("then") ||
               sig->Function()->Id()->Name().Is("catch")) ||
             !sig->Owner()->Name().Is("Promise")) {
+            RemoveEnumTypeFlagIfNeed(sig, arguments);
             // May need to re-check the arguments now that we know the particular signature to call.
             ValidateSignature({sig, nullptr, TypeRelationFlag::WIDENING | TypeRelationFlag::NO_SUBSTITUTION_NEEDED},
                               arguments, pos, FindTypeInferenceArguments(arguments), true);
