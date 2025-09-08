@@ -108,6 +108,14 @@ public:
         Run(ins, VALID_VREGS);
     }
 
+    template <typename T, int32_t VALID_VREGS = std::numeric_limits<int32_t>::max(), typename... Args>
+    void EmitDevirtual(const ir::AstNode *const node, Args &&...args)
+    {
+        auto *const ins = Alloc<T>(node, std::forward<Args>(args)...);
+        Run(ins, VALID_VREGS);
+        ins->SetDevirtual();
+    }
+
 private:
     void Run(IRNode *ins, int32_t spillMax);
 };
@@ -124,6 +132,14 @@ public:
     {
         auto *const ins = Alloc<T>(node, std::forward<Args>(args)...);
         Run(ins, rangeStart, argCount);
+    }
+
+    template <typename T, typename... Args>
+    void EmitDevirtual(const ir::AstNode *const node, const VReg rangeStart, const std::size_t argCount, Args &&...args)
+    {
+        auto *const ins = Alloc<T>(node, std::forward<Args>(args)...);
+        Run(ins, rangeStart, argCount);
+        ins->SetDevirtual();
     }
 
 private:
