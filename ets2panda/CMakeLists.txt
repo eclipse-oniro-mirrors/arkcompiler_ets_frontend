@@ -66,7 +66,6 @@ if(PANDA_WITH_ETS)
       "      \"@ohos.util.Deque\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.Deque.ets\"],\n"
       "      \"@ohos.util.HashMap\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.HashMap.ets\"],\n"
       "      \"@ohos.util.HashSet\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.HashSet.ets\"],\n"
-      "      \"@ohos.util.json\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.json.ets\"],\n"
       "      \"@ohos.util.LightWeightMap\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.LightWeightMap.ets\"],\n"
       "      \"@ohos.util.LightWeightSet\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.LightWeightSet.ets\"],\n"
       "      \"@ohos.util.LinkedList\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.LinkedList.ets\"],\n"
