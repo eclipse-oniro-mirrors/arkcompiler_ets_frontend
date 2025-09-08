@@ -126,6 +126,7 @@ set(ES2PANDA_LSP_SRC
 )
 
 panda_frontend_add_library(${LSP_LIB} SHARED ${ES2PANDA_LSP_SRC})
+add_dependencies(${LSP_LIB} es2panda_code_fix_register_gen)
 add_dependencies(frontend_bins ${LSP_LIB})
 
 panda_target_include_directories(${LSP_LIB}

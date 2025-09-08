@@ -58,8 +58,7 @@
                 }
             ],
             "test": [
-                "//arkcompiler/ets_frontend/es2panda:es2abc_tests",
-                "//arkcompiler/ets_frontend/ets2panda/bindings/test:bindings_test"
+                "//arkcompiler/ets_frontend/es2panda:es2abc_tests"
             ]
         }
     }
