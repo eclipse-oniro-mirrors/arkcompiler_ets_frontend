@@ -113,8 +113,6 @@ void ClassProperty::DumpModifiers(ir::SrcDumper *dumper) const
             dumper->Add("private ");
         } else if (IsProtected()) {
             dumper->Add("protected ");
-        } else if (IsInternal()) {
-            dumper->Add("internal ");
         } else {
             dumper->Add("public ");
         }
@@ -208,9 +206,6 @@ bool ClassProperty::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 
 void ClassProperty::Dump(ir::SrcDumper *dumper) const
 {
-    if (dumper->IsDeclgen() && IsInternal()) {
-        return;
-    }
     if (RegisterUnexportedForDeclGen(dumper)) {
         return;
     }

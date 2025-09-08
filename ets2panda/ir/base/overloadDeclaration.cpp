@@ -74,8 +74,6 @@ void OverloadDeclaration::DumpModifier(ir::SrcDumper *dumper) const
             dumper->Add("private ");
         } else if (IsProtected()) {
             dumper->Add("protected ");
-        } else if (IsInternal()) {
-            dumper->Add("internal ");
         } else {
             dumper->Add("public ");
         }
