@@ -112,6 +112,13 @@ interface CreateClassPropertyForObjectLiteralParams {
   ctorInitProps: ts.PropertyAssignment[];
 }
 
+interface ConstructorBodyFixInfo {
+  pos: number;
+  needLeadingNewLine: boolean;
+  needTrailingNewLine: boolean;
+  indentLastLine: boolean;
+}
+
 export interface Autofix {
   replacementText: string;
   start: number;
@@ -1592,75 +1599,35 @@ export class Autofixer {
     ctorDecl: ts.ConstructorDeclaration,
     paramTypes: ts.TypeNode[] | undefined
   ): Autofix[] | undefined {
-    if (paramTypes === undefined) {
+    if (paramTypes === undefined || !ctorDecl.body) {
       return undefined;
     }
 
     const fieldInitStmts: ts.Statement[] = [];
     const newFieldPos = ctorDecl.getStart();
     const autofixes: Autofix[] = [{ start: newFieldPos, end: newFieldPos, replacementText: '' }];
+    const indentStartPos = this.sourceFile.getLineAndCharacterOfPosition(ctorDecl.getStart()).character;
 
     for (let i = 0; i < ctorDecl.parameters.length; i++) {
-      this.fixCtorParameterPropertiesProcessParam(ctorDecl.parameters[i], paramTypes[i], fieldInitStmts, autofixes);
-    }
-
-    // Note: Bodyless ctors can't have parameter properties.
-    if (ctorDecl.body) {
-      const beforeFieldStmts: ts.Statement[] = [];
-      const afterFieldStmts: ts.Statement[] = [];
-      const hasSuperExpressionStatement: boolean = this.hasSuperExpression(
-        ctorDecl.body,
-        beforeFieldStmts,
-        afterFieldStmts
+      this.fixCtorParameterPropertiesProcessParam(
+        ctorDecl.parameters[i],
+        paramTypes[i],
+        fieldInitStmts,
+        autofixes,
+        indentStartPos
       );
-      let finalStmts: ts.Statement[] = [];
-      if (hasSuperExpressionStatement) {
-        finalStmts = beforeFieldStmts.concat(fieldInitStmts).concat(afterFieldStmts);
-      } else {
-        finalStmts = fieldInitStmts.concat(ctorDecl.body.statements);
-      }
-      const newBody = ts.factory.createBlock(finalStmts, true);
-      const newBodyText = this.printer.printNode(ts.EmitHint.Unspecified, newBody, ctorDecl.getSourceFile());
-      autofixes.push({ start: ctorDecl.body.getStart(), end: ctorDecl.body.getEnd(), replacementText: newBodyText });
     }
+    autofixes.push(this.fixCtorParameterPropertiesProcessBody(ctorDecl.body, fieldInitStmts, indentStartPos));
 
     return autofixes;
-  }
-
-  private hasSuperExpression(
-    body: ts.Block,
-    beforeFieldStmts: ts.Statement[],
-    afterFieldStmts: ts.Statement[]
-  ): boolean {
-    void this;
-    let hasSuperExpressionStatement = false;
-    ts.forEachChild(body, (node) => {
-      if (this.isSuperCallStmt(node as ts.Statement)) {
-        hasSuperExpressionStatement = true;
-        beforeFieldStmts.push(node as ts.Statement);
-      } else if (hasSuperExpressionStatement) {
-        afterFieldStmts.push(node as ts.Statement);
-      } else {
-        beforeFieldStmts.push(node as ts.Statement);
-      }
-    });
-    return hasSuperExpressionStatement;
-  }
-
-  private isSuperCallStmt(node: ts.Statement): boolean {
-    void this;
-    if (ts.isExpressionStatement(node) && ts.isCallExpression(node.expression)) {
-      const expr = node.expression.expression;
-      return expr.kind === ts.SyntaxKind.SuperKeyword;
-    }
-    return false;
   }
 
   private fixCtorParameterPropertiesProcessParam(
     param: ts.ParameterDeclaration,
     paramType: ts.TypeNode,
     fieldInitStmts: ts.Statement[],
-    autofixes: Autofix[]
+    autofixes: Autofix[],
+    indentStartPos: number
   ): void {
     // Parameter property can not be a destructuring parameter.
     if (!ts.isIdentifier(param.name)) {
@@ -1673,7 +1640,6 @@ export class Autofixer {
       const paramModifiers = modifiers?.filter((x) => {
         return x.kind !== ts.SyntaxKind.OverrideKeyword;
       });
-
       const newFieldNode = ts.factory.createPropertyDeclaration(
         paramModifiers,
         propIdent,
@@ -1683,7 +1649,7 @@ export class Autofixer {
       );
       const newFieldText =
         this.printer.printNode(ts.EmitHint.Unspecified, newFieldNode, param.getSourceFile()) + this.getNewLine();
-      autofixes[0].replacementText += newFieldText;
+      autofixes[0].replacementText += this.adjustIndentation(newFieldText, indentStartPos);
 
       const newParamDecl = ts.factory.createParameterDeclaration(
         undefined,
@@ -1705,6 +1671,74 @@ export class Autofixer {
         )
       );
     }
+  }
+
+  private fixCtorParameterPropertiesProcessBody(
+    ctorBody: ts.Block,
+    fieldInitStmts: ts.Statement[],
+    indentStartPos: number
+  ): Autofix {
+    let newStmtListText = this.printer.printList(
+      ts.ListFormat.MultiLine | ts.ListFormat.NoTrailingNewLine,
+      ts.factory.createNodeArray(fieldInitStmts),
+      ctorBody.getSourceFile()
+    );
+
+    const ctorBodyFixInfo = this.getParamPropertiesCtorBodyFixInfo(ctorBody);
+
+    if (ctorBodyFixInfo.needLeadingNewLine) {
+      newStmtListText = this.getNewLine() + newStmtListText;
+    }
+    if (ctorBodyFixInfo.needTrailingNewLine) {
+      newStmtListText += this.getNewLine();
+    }
+    newStmtListText = this.adjustIndentation(newStmtListText, indentStartPos, ctorBodyFixInfo.indentLastLine);
+    return { start: ctorBodyFixInfo.pos, end: ctorBodyFixInfo.pos, replacementText: newStmtListText };
+  }
+
+  getParamPropertiesCtorBodyFixInfo(ctorBody: ts.Block): ConstructorBodyFixInfo {
+    let pos: number;
+    let needLeadingNewLine = false;
+    let needTrailingNewLine = false;
+    let indentLastLine = false;
+    const statements = ctorBody.statements;
+    if (statements.length > 0) {
+      const superCallStmt = statements.find(TsUtils.isSuperCallStmt);
+      if (superCallStmt) {
+        // If there's a 'super()' call, then new statements are inserted after it.
+        const superCallIndex = statements.indexOf(superCallStmt);
+        if (superCallIndex === statements.length - 1) {
+          const superCallEndPosition = superCallStmt.getEnd();
+          pos = TsUtils.getTrailingCommentRangesEnd(this.sourceFile, superCallEndPosition) ?? superCallEndPosition;
+          needLeadingNewLine = true;
+        } else {
+          pos = statements[superCallIndex + 1].getStart();
+          needTrailingNewLine = true;
+        }
+      } else {
+        // If there's no 'super()' call, new statements are inserted at the beginning of ctor body.
+        needTrailingNewLine = true;
+        pos = statements[0].getStart();
+      }
+      indentLastLine = true;
+    } else {
+      // Ctor body is empty, insert new statements after inner comments if any.
+      needLeadingNewLine = true;
+      const bracesOnSameLine =
+        this.sourceFile.getLineAndCharacterOfPosition(ctorBody.getStart()).line ===
+        this.sourceFile.getLineAndCharacterOfPosition(ctorBody.getEnd()).line;
+
+      if (bracesOnSameLine) {
+        pos = ctorBody.getEnd() - 1; /* The position of closing brace */
+        needTrailingNewLine = true;
+      } else {
+        const leadingRangesPos = ctorBody.getStart() + 1; /* End position of opening brace */
+        pos = TsUtils.getLeadingCommentRangesEnd(this.sourceFile, leadingRangesPos) ?? leadingRangesPos;
+        indentLastLine = true;
+      }
+    }
+
+    return { pos, needLeadingNewLine, needTrailingNewLine, indentLastLine };
   }
 
   fixPrivateIdentifier(node: ts.PrivateIdentifier): Autofix[] | undefined {
@@ -3861,7 +3895,7 @@ export class Autofixer {
     return autofix;
   }
 
-  private adjustIndentation(text: string, startPos: number): string {
+  private adjustIndentation(text: string, startPos: number, indentLastLine = false): string {
     const lines = text.split(this.getNewLine());
     if (lines.length <= 1) {
       return text;
@@ -3879,7 +3913,7 @@ export class Autofixer {
       return line;
     });
 
-    const lastLine = ' '.repeat(startPos) + lines[lines.length - 1];
+    const lastLine = ' '.repeat(indentLastLine ? indentBase : startPos) + lines[lines.length - 1];
     return [firstLine, ...middleLines, lastLine].join(this.getNewLine());
   }
 
