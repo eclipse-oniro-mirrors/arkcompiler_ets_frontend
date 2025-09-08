@@ -120,8 +120,7 @@
     "arkui-buildernode-no-nestingbuildersupported",
     "arkui-persistent-prop-serialization",
     "arkui-persistent-props-serialization",
-    "arkui-persistencev2-connect-serialization",
-    "arkui-entry-invalid-params"
+    "arkui-persistencev2-connect-serialization"
   ],
   "builtin": [
     "arkts-builtin-thisArgs",

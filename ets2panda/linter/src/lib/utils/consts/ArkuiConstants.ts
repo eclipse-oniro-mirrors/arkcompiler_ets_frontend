@@ -160,12 +160,9 @@ export const serializationTypeName: Set<string> = new Set([
 export const customLayoutFunctionName: Set<string> = new Set(['onMeasureSize', 'onPlaceChildren']);
 
 export const ENTRY_DECORATOR_NAME = 'Entry';
-export const ENTRY_STORAGE = 'storage';
-export const ENTRY_USE_SHARED_STORAGE = 'useSharedStorage';
+export const ENTRY_STORAGE_PROPERITY = 'storage';
 export const LOCAL_STORAGE_TYPE_NAME = 'LocalStorage';
 export const GET_LOCAL_STORAGE_FUNC_NAME = '__get_local_storage__';
-
-export const COMPONENTV2_DECORATOR_NAME = 'ComponentV2';
 
 export const PROVIDE_DECORATOR_NAME = 'Provide';
 export const PROVIDE_ALIAS_PROPERTY_NAME = 'alias';

@@ -296,7 +296,6 @@ faultsAttrs[FaultID.PromiseVoidNeedResolveArg] = new FaultAttributes(382);
 faultsAttrs[FaultID.PersistentPropNeedImplementMethod] = new FaultAttributes(391);
 faultsAttrs[FaultID.PersistentPropsNeedImplementMethod] = new FaultAttributes(392);
 faultsAttrs[FaultID.PersistenceV2ConnectNeedAddParam] = new FaultAttributes(393);
-faultsAttrs[FaultID.EntryHasInvalidParams] = new FaultAttributes(394);
 faultsAttrs[FaultID.NoDeprecatedApi] = new FaultAttributes(399);
 faultsAttrs[FaultID.SdkCommonApiDeprecated] = new FaultAttributes(400);
 faultsAttrs[FaultID.SdkCommonApiWhiteList] = new FaultAttributes(401);

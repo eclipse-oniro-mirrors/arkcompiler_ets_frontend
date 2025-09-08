@@ -300,7 +300,6 @@ export enum FaultID {
   InstanceOfFunction,
   unfixedTuple,
   SuperInStaticContext,
-  EntryHasInvalidParams,
   // this should always be last enum
   LAST_ID
 }
