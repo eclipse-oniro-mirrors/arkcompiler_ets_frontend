@@ -715,7 +715,7 @@ endif()
 
 panda_target_link_libraries(es2panda-lib
   PUBLIC arkbase hmicuuc.z
-  PRIVATE arkassembler arkdisassembler arkfile abc2program
+  PRIVATE arkassembler arkdisassembler arkfile
 )
 
 if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.1) OR

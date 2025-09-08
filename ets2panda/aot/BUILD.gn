@@ -76,7 +76,6 @@ ohos_executable("ets2panda") {
     "runtime_core:libarktsbytecodeopt_package",
     "runtime_core:libarktscompiler_package",
     "runtime_core:libarktsfile_package",
-    "runtime_core:libarktsabc2program_package",
     sdk_libc_secshared_dep,
   ]
 
