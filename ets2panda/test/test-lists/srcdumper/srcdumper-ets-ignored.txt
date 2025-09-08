@@ -56,6 +56,7 @@ runtime/ets/fuzz/too_many_left_square_brackets.ets
 runtime/ets/fuzz/too_many_new_expr.ets
 runtime/ets/fuzz/too_many_token.ets
 runtime/ets/fuzz/repeated_del.ets
+runtime/ets/fuzz/too_many_expression.ets
 ast/compiler/ets/DeclareIndexerTest.ets
 ast/parser/ets/import_tests/import_class_with_static_field/import_class_with_static_field.ets
 
