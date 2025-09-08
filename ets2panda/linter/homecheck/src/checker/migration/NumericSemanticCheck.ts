@@ -999,7 +999,7 @@ export class NumericSemanticCheck implements BaseChecker {
         if (param1 instanceof ClassType && param2 instanceof ClassType) {
             const classSign1 = param1.getClassSignature();
             const classSign2 = param2.getClassSignature();
-            if(SdkUtils.isClassFromSdk(classSign1) && SdkUtils.isClassFromSdk(classSign2)) {
+            if (SdkUtils.isClassFromSdk(classSign1) && SdkUtils.isClassFromSdk(classSign2)) {
                 return classSign1.getClassName() === classSign2.getClassName()
             }
             return classSignatureCompare(classSign1, classSign2)
@@ -1542,6 +1542,7 @@ export class NumericSemanticCheck implements BaseChecker {
                         this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op1);
                         fixedEnumOp2Number = true;
                     }
+                    this.checkDivisionWithLocal(op1);
                 }
                 if (op2 instanceof NumberConstant && !this.isNumberConstantActuallyFloat(op2)) {
                     this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op2);
@@ -1621,6 +1622,57 @@ export class NumericSemanticCheck implements BaseChecker {
         // 剩余的expr的类型不应该出现在这里，如果出现了表示有场景未考虑到，打印日志记录，进行补充
         logger.error(`Need to handle new type of expr: ${expr.toString()}`);
         return IssueReason.Other;
+    }
+
+    private isArkAssignStmt(stmt: Stmt): boolean {
+        return stmt instanceof ArkAssignStmt;
+    }
+
+    private isArkNormalBinopExpr(value: Value): boolean {
+        return value instanceof ArkNormalBinopExpr;
+    }
+
+    private checkDivisionWithLocal(local: Local): void {
+        if (!local.getName().startsWith(TEMP_LOCAL_PREFIX)) {
+            return;
+        }
+        const decl = local.getDeclaringStmt();
+        if (decl === null) {
+            return;
+        }
+
+        if (!this.isArkAssignStmt(decl)) {
+            return;
+        }
+        const assignStmt = decl as ArkAssignStmt;
+
+        const rightSide = assignStmt.getRightOp();
+        if (!this.isArkNormalBinopExpr(rightSide)) {
+            return;
+        }
+
+        const binaryOperation = rightSide as ArkNormalBinopExpr;
+        const operator = binaryOperation.getOperator();
+        switch (operator) {
+            case NormalBinaryOperator.Division:
+            case NormalBinaryOperator.Addition:
+            case NormalBinaryOperator.Multiplication:
+            case NormalBinaryOperator.Exponentiation:
+            case NormalBinaryOperator.Subtraction: {
+                const lhs = binaryOperation.getOp1();
+                if (lhs instanceof Local) {
+                    this.checkDivisionWithLocal(lhs);
+                }
+                if (lhs instanceof NumberConstant) {
+                    this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, decl, lhs);
+                    return;
+                }
+                break;
+            }
+            default: {
+                break;
+            }
+        }
     }
 
     private isAbstractRefOnlyUsedAsIntLong(stmt: Stmt, ref: AbstractRef, hasChecked: Map<Local, IssueInfo>, numberCategory: NumberCategory): IssueReason {
