@@ -387,9 +387,20 @@ public:
         Ra().Emit<CallShort, 1>(node, AssemblerSignatureReference(name), arg0, dummyReg_);
     }
 
+    void CallExactDevirtual(const ir::AstNode *const node, const util::StringView name, const VReg arg0)
+    {
+        Ra().EmitDevirtual<CallShort, 1>(node, AssemblerSignatureReference(name), arg0, dummyReg_);
+    }
+
     void CallExact(const ir::AstNode *const node, const util::StringView name, const VReg arg0, const VReg arg1)
     {
         Ra().Emit<CallShort>(node, AssemblerSignatureReference(name), arg0, arg1);
+    }
+
+    void CallExactDevirtual(const ir::AstNode *const node, const util::StringView name, const VReg arg0,
+                            const VReg arg1)
+    {
+        Ra().EmitDevirtual<CallShort>(node, AssemblerSignatureReference(name), arg0, arg1);
     }
 
     void CallExact(const ir::AstNode *const node, const util::StringView name, const VReg arg0, const VReg arg1,
@@ -415,7 +426,7 @@ public:
         ES2PANDA_ASSERT(!signature->HasSignatureFlag(checker::SignatureFlags::STATIC));
         ES2PANDA_ASSERT(!signature->Owner()->GetDeclNode()->IsFinal() || signature->IsFinal());
         if (IsDevirtualizedSignature(signature)) {
-            CallArgStart<CallShort, Call, CallRange>(node, signature, athis, arguments);
+            CallArgStartDevirtual<CallShort, Call, CallRange>(node, signature, athis, arguments);
         } else {
             CallArgStart<CallVirtShort, CallVirt, CallVirtRange>(node, signature, athis, arguments);
         }
@@ -424,7 +435,7 @@ public:
     void CallVirtual(const ir::AstNode *const node, const checker::Signature *signature, const VReg athis)
     {
         if (IsDevirtualizedSignature(signature)) {
-            CallExact(node, signature->InternalName(), athis);
+            CallExactDevirtual(node, signature->InternalName(), athis);
         } else {
             CallVirtual(node, signature->InternalName(), athis);
         }
@@ -434,7 +445,7 @@ public:
                      const VReg arg0)
     {
         if (IsDevirtualizedSignature(signature)) {
-            CallExact(node, signature->InternalName(), athis, arg0);
+            CallExactDevirtual(node, signature->InternalName(), athis, arg0);
         } else {
             CallVirtual(node, signature->InternalName(), athis, arg0);
         }
@@ -678,6 +689,46 @@ private:
                 }
 
                 Rra().Emit<Range>(node, argStart, arguments.size() + 1, name, argStart);
+                break;
+            }
+        }
+    }
+
+    template <typename Short, typename General, typename Range>
+    void CallArgStartDevirtual(const ir::AstNode *const node, const checker::Signature *signature, const VReg argStart,
+                               const ArenaVector<ir::Expression *> &arguments)
+    {
+        RegScope rs(this);
+        const auto name = AssemblerReference(signature);
+        switch (arguments.size()) {
+            case 0U: {
+                Ra().EmitDevirtual<Short, 1>(node, name, argStart, dummyReg_);
+                break;
+            }
+            case 1U: {
+                COMPILE_ARG(0);
+                Ra().EmitDevirtual<Short>(node, name, argStart, arg0);
+                break;
+            }
+            case 2U: {
+                COMPILE_ARG(0);
+                COMPILE_ARG(1);
+                Ra().EmitDevirtual<General, 3U>(node, name, argStart, arg0, arg1, dummyReg_);
+                break;
+            }
+            case 3U: {
+                COMPILE_ARG(0);
+                COMPILE_ARG(1);
+                COMPILE_ARG(2);
+                Ra().EmitDevirtual<General>(node, name, argStart, arg0, arg1, arg2);
+                break;
+            }
+            default: {
+                for (size_t idx = 0; idx < arguments.size(); idx++) {
+                    COMPILE_ARG(idx);
+                }
+
+                Rra().EmitDevirtual<Range>(node, argStart, arguments.size() + 1, name, argStart);
                 break;
             }
         }
