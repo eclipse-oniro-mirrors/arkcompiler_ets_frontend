@@ -32,3 +32,4 @@ Multiline_string_escape_char.ets
 run_ok_without_semicolon.ets
 async_lambda_return_type_test.ets
 fuzz/repeated_del.ets
+fuzz/class_body_interface.ets
