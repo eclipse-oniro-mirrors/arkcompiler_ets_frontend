@@ -101,3 +101,51 @@ class G1 {
 class G2 {
   constructor(public a?: number, public b?: number) {}
 }
+
+// empty body, braces on same line
+class H1 {
+  constructor(
+    readonly x: number,
+    readonly y: number,
+  ) {}
+}
+
+// empty body with comment, braces on same line
+class H2 {
+  constructor(
+    readonly x: number,
+    readonly y: number,
+  ) { /* Comment */ }
+}
+
+// empty body, braces on different lines
+class H3 {
+  constructor(
+    readonly x: number,
+    readonly y: number,
+  ) {
+  }
+}
+
+// empty body with comments on multiple lines
+class H4 {
+  constructor(
+    readonly x: number,
+    readonly y: number,
+  ) {
+    // comment 1
+    // comment 2
+  }
+}
+
+// body with statements and comments
+class H5 {
+  constructor(
+    readonly x: number,
+    readonly y: number,
+  ) {
+    // comment at the beginning
+    console.log('hello');
+    // comment at the end
+  }
+}

@@ -123,6 +123,16 @@
             "suggest": "",
             "rule": "Type \"void\" has no instances.(sdk-limited-void-type)",
             "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 9,
+            "endLine": 74,
+            "endColumn": 18,
+            "problem": "SdkAbilityAsynchronousLifecycle",
+            "suggest": "",
+            "rule": "1.2 Void cannot be combined. OnDestroy/onDisconnect (The return type of the method is now void | Promise) needs to be split into two interfaces. (sdk-ability-asynchronous-lifecycle)",
+            "severity": "ERROR"
         }
     ]
 }
