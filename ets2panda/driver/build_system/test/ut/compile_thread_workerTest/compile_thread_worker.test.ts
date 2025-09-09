@@ -217,6 +217,6 @@ describe('compile_thread_worker', () => {
         }).toThrow('exit');
         spy.mockRestore();
     });
-   
+
 });
  */

@@ -23,8 +23,8 @@ import {
 } from '../logger';
 import { ErrorCode } from '../error_code';
 import {
-  DYNAMIC_PREFIX,
-  KIT_CONFIGS_PATH_FROM_SDK,
+    DYNAMIC_PREFIX,
+    KIT_CONFIGS_PATH_FROM_SDK,
 } from '../pre_define';
 
 export class KitImportTransformer {
@@ -73,11 +73,11 @@ export class KitImportTransformer {
         if (!symbolsJson) {
             return;
         }
-    
+
         const groupedSymbols = this.groupImportSpecifiersBySource(importNode, symbolsJson, kitName);
         this.generateSplitImportDeclarations(groupedSymbols);
     }
-    
+
     private loadKitSymbolsJson(kitName: string): unknown | null {
         let jsonFileName: string = this.getOriginalNameByAlias(kitName);
         if (jsonFileName === '') {
@@ -88,7 +88,7 @@ export class KitImportTransformer {
             return null;
         }
         const configPath = path.resolve(this.buildSdkPath, KIT_CONFIGS_PATH_FROM_SDK, `${jsonFileName}.json`);
-    
+
         if (!fs.existsSync(configPath)) {
             this.logger.printError(LogDataFactory.newInstance(
                 ErrorCode.BUILDSYSTEM_PLUGIN_ALIAS_CONFIG_PARSING_FAIL,
@@ -97,7 +97,7 @@ export class KitImportTransformer {
             ));
             return null;
         }
-    
+
         try {
             return JSON.parse(fs.readFileSync(configPath, 'utf-8'));
         } catch (error) {
@@ -112,31 +112,31 @@ export class KitImportTransformer {
 
     private groupImportSpecifiersBySource(importNode: ArkTS['ETSImportDeclaration'], symbolsJson: unknown, kitName: string): Map<string, string[]> {
         const grouped = new Map<string, string[]>();
-    
+
         for (const specifier of importNode.specifiers) {
             if (!this.arkts.isImportSpecifier(specifier)) {
                 continue;
             }
-    
+
             const symbolName = specifier.imported?.name;
             if (!symbolName) {
                 continue;
             }
-    
+
             const typedSymbols = (symbolsJson as { symbols: Record<string, { source: string }> });
             const symbolEntry = typedSymbols.symbols?.[symbolName];
             if (!symbolEntry?.source) {
                 this.logger.printWarn(`Symbol '${symbolName}' not found in ${kitName}.json`);
                 continue;
             }
-    
+
             const sourcePath = DYNAMIC_PREFIX + symbolEntry.source.replace(/\.d\.ts$/, '');
             if (!grouped.has(sourcePath)) {
                 grouped.set(sourcePath, []);
             }
             grouped.get(sourcePath)!.push(symbolName);
         }
-    
+
         return grouped;
     }
 
@@ -148,7 +148,7 @@ export class KitImportTransformer {
                     this.arkts.factory.createIdentifier(name)
                 )
             );
-    
+
             const importDecl = this.arkts.factory.createImportDeclaration(
                 this.arkts.factory.createStringLiteral(source),
                 specifiers,
@@ -162,11 +162,11 @@ export class KitImportTransformer {
 
     private getDynamicAliasNames(): Set<string> {
         const dynamicAliasNames = new Set<string>();
-    
+
         if (Object.keys(this.sdkAliasConfig).length === 0) {
             return dynamicAliasNames;
         }
-    
+
         for (const innerMap of Object.values(this.sdkAliasConfig)) {
             for (const [aliasName, aliasConfig] of Object.entries(innerMap)) {
                 if (!aliasConfig.originalAPIName.startsWith('@kit')) {

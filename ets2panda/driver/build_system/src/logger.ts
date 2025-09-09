@@ -15,205 +15,205 @@
 
 import { BuildConfig } from './types';
 import {
-  ErrorCode,
-  SubsystemCode
+    ErrorCode,
+    SubsystemCode
 } from './error_code';
 
 export class Logger {
-  private static instance: Logger | undefined;
-  private loggerMap: { [key in SubsystemCode]?: ILogger };
-  private hasErrorOccurred: boolean = false;
+    private static instance: Logger | undefined;
+    private loggerMap: { [key in SubsystemCode]?: ILogger };
+    private hasErrorOccurred: boolean = false;
 
-  private constructor(projectConfig: BuildConfig) {
-    if (typeof projectConfig.getHvigorConsoleLogger !== 'function') {
-      projectConfig.getHvigorConsoleLogger = getConsoleLogger;
+    private constructor(projectConfig: BuildConfig) {
+        if (typeof projectConfig.getHvigorConsoleLogger !== 'function') {
+            projectConfig.getHvigorConsoleLogger = getConsoleLogger;
+        }
+        let getHvigorConsoleLogger = projectConfig.getHvigorConsoleLogger as Function;
+        this.loggerMap = {};
+        this.loggerMap[SubsystemCode.BUILDSYSTEM] = getHvigorConsoleLogger(SubsystemCode.BUILDSYSTEM);
+        this.loggerMap[SubsystemCode.ES2PANDA] = getHvigorConsoleLogger(SubsystemCode.ES2PANDA);
     }
-    let getHvigorConsoleLogger = projectConfig.getHvigorConsoleLogger as Function;
-    this.loggerMap = {};
-    this.loggerMap[SubsystemCode.BUILDSYSTEM] = getHvigorConsoleLogger(SubsystemCode.BUILDSYSTEM);
-    this.loggerMap[SubsystemCode.ES2PANDA] = getHvigorConsoleLogger(SubsystemCode.ES2PANDA);
-  }
 
-  public static getInstance(projectConfig?: BuildConfig): Logger {
-    if (!Logger.instance) {
-      if (!projectConfig) {
-        throw new Error('projectConfig is required for the first instantiation.');
-      }
-      Logger.instance = new Logger(projectConfig);
+    public static getInstance(projectConfig?: BuildConfig): Logger {
+        if (!Logger.instance) {
+            if (!projectConfig) {
+                throw new Error('projectConfig is required for the first instantiation.');
+            }
+            Logger.instance = new Logger(projectConfig);
+        }
+        return Logger.instance;
     }
-    return Logger.instance;
-  }
 
-  public static destroyInstance(): void {
-    Logger.instance = undefined;
-  }
-
-  public printInfo(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
-    const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
-    logger.printInfo(message);
-  }
-
-  public printWarn(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
-    const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
-    logger.printWarn(message);
-  }
-
-  public printDebug(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
-    const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
-    logger.printDebug(message);
-  }
-
-  public printError(error: LogData): void {
-    this.hasErrorOccurred = true;
-    const logger: ILogger = this.getLoggerFromErrorCode(error.code);
-    logger.printError(error);
-  }
-
-  public printErrorAndExit(error: LogData): void {
-    this.hasErrorOccurred = true;
-    const logger: ILogger = this.getLoggerFromErrorCode(error.code);
-    logger.printErrorAndExit(error);
-  }
-
-  private isValidErrorCode(errorCode: ErrorCode): boolean {
-    return /^\d{8}$/.test(errorCode);
-  }
-
-  private getLoggerFromErrorCode(errorCode: ErrorCode): ILogger {
-    if (!this.isValidErrorCode(errorCode)) {
-      throw new Error('Invalid errorCode.');
+    public static destroyInstance(): void {
+        Logger.instance = undefined;
     }
-    const subsystemCode = errorCode.slice(0, 3) as SubsystemCode;
-    const logger = this.getLoggerFromSubsystemCode(subsystemCode);
-    return logger;
-  }
 
-  private getLoggerFromSubsystemCode(subsystemCode: SubsystemCode): ILogger {
-    if (!this.loggerMap[subsystemCode]) {
-      throw new Error('Invalid subsystemCode.');
+    public printInfo(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
+        const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
+        logger.printInfo(message);
     }
-    return this.loggerMap[subsystemCode];
-  }
 
-  public hasErrors(): boolean {
-    return this.hasErrorOccurred;
-  }
+    public printWarn(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
+        const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
+        logger.printWarn(message);
+    }
 
-  public resetErrorFlag(): void {
-    this.hasErrorOccurred = false;
-  }
+    public printDebug(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
+        const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
+        logger.printDebug(message);
+    }
+
+    public printError(error: LogData): void {
+        this.hasErrorOccurred = true;
+        const logger: ILogger = this.getLoggerFromErrorCode(error.code);
+        logger.printError(error);
+    }
+
+    public printErrorAndExit(error: LogData): void {
+        this.hasErrorOccurred = true;
+        const logger: ILogger = this.getLoggerFromErrorCode(error.code);
+        logger.printErrorAndExit(error);
+    }
+
+    private isValidErrorCode(errorCode: ErrorCode): boolean {
+        return /^\d{8}$/.test(errorCode);
+    }
+
+    private getLoggerFromErrorCode(errorCode: ErrorCode): ILogger {
+        if (!this.isValidErrorCode(errorCode)) {
+            throw new Error('Invalid errorCode.');
+        }
+        const subsystemCode = errorCode.slice(0, 3) as SubsystemCode;
+        const logger = this.getLoggerFromSubsystemCode(subsystemCode);
+        return logger;
+    }
+
+    private getLoggerFromSubsystemCode(subsystemCode: SubsystemCode): ILogger {
+        if (!this.loggerMap[subsystemCode]) {
+            throw new Error('Invalid subsystemCode.');
+        }
+        return this.loggerMap[subsystemCode];
+    }
+
+    public hasErrors(): boolean {
+        return this.hasErrorOccurred;
+    }
+
+    public resetErrorFlag(): void {
+        this.hasErrorOccurred = false;
+    }
 }
 
 interface ILogger {
-  printInfo(message: string): void;
-  printWarn(message: string): void;
-  printDebug(message: string): void;
-  printError(error: LogData): void;
-  printErrorAndExit(error: LogData): void;
+    printInfo(message: string): void;
+    printWarn(message: string): void;
+    printDebug(message: string): void;
+    printError(error: LogData): void;
+    printErrorAndExit(error: LogData): void;
 }
 
 export class LogDataFactory {
 
-  static newInstance(
-    code: ErrorCode,
-    description: string,
-    cause: string = '',
-    position: string = '',
-    solutions: string[] = [],
-    moreInfo?: Object
-  ): LogData {
-    const data: LogData = new LogData(code, description, cause, position, solutions, moreInfo);
-    return data;
-  }
+    static newInstance(
+        code: ErrorCode,
+        description: string,
+        cause: string = '',
+        position: string = '',
+        solutions: string[] = [],
+        moreInfo?: Object
+    ): LogData {
+        const data: LogData = new LogData(code, description, cause, position, solutions, moreInfo);
+        return data;
+    }
 }
 
 export class LogData {
 
-  code: ErrorCode;
-  description: string;
-  cause: string;
-  position: string;
-  solutions: string[];
-  moreInfo?: Object;
+    code: ErrorCode;
+    description: string;
+    cause: string;
+    position: string;
+    solutions: string[];
+    moreInfo?: Object;
 
-  constructor(
-    code: ErrorCode,
-    description: string,
-    cause: string = '',
-    position: string = '',
-    solutions: string[],
-    moreInfo?: Object
-  ) {
-    this.code = code;
-    this.description = description;
-    this.cause = cause;
-    this.position = position;
-    this.solutions = solutions;
-    if (moreInfo) {
-      this.moreInfo = moreInfo;
-    }
-  }
-
-  toString(): string {
-    let errorString = `ERROR Code: ${this.code} ${this.description}\n`;
-
-    if (this.cause || this.position) {
-      errorString += `Error Message: ${this.cause}`;
-      if (this.position) {
-        errorString += ` ${this.position}`;
-      }
-      errorString += '\n\n';
+    constructor(
+        code: ErrorCode,
+        description: string,
+        cause: string = '',
+        position: string = '',
+        solutions: string[],
+        moreInfo?: Object
+    ) {
+        this.code = code;
+        this.description = description;
+        this.cause = cause;
+        this.position = position;
+        this.solutions = solutions;
+        if (moreInfo) {
+            this.moreInfo = moreInfo;
+        }
     }
 
-    if (this.solutions.length > 0 && this.solutions[0] !== '') {
-      errorString += `* Try the following: \n${this.solutions.map(str => `  > ${str}`).join('\n')}\n`;
-    }
+    toString(): string {
+        let errorString = `ERROR Code: ${this.code} ${this.description}\n`;
 
-    if (this.moreInfo) {
-      errorString += `\nMore Info:\n`;
-      for (const [key, value] of Object.entries(this.moreInfo)) {
-        errorString += `  - ${key.toUpperCase()}: ${value}\n`;
-      }
-    }
+        if (this.cause || this.position) {
+            errorString += `Error Message: ${this.cause}`;
+            if (this.position) {
+                errorString += ` ${this.position}`;
+            }
+            errorString += '\n\n';
+        }
 
-    return errorString;
-  }
+        if (this.solutions.length > 0 && this.solutions[0] !== '') {
+            errorString += `* Try the following: \n${this.solutions.map(str => `  > ${str}`).join('\n')}\n`;
+        }
+
+        if (this.moreInfo) {
+            errorString += `\nMore Info:\n`;
+            for (const [key, value] of Object.entries(this.moreInfo)) {
+                errorString += `  - ${key.toUpperCase()}: ${value}\n`;
+            }
+        }
+
+        return errorString;
+    }
 }
 
 class ConsoleLogger {
-  private static instances: { [key: string]: ConsoleLogger } = {};
+    private static instances: { [key: string]: ConsoleLogger } = {};
 
-  private constructor() {}
+    private constructor() { }
 
-  public printInfo(message: string): void {
-    console.info(message);
-  }
-
-  public printWarn(message: string): void {
-    console.warn(message);
-  }
-
-  public printDebug(message: string): void {
-    console.debug(message);
-  }
-
-  public printError(error: LogData): void {
-    console.error(error.toString());
-  }
-
-  public printErrorAndExit(error: LogData): void {
-    console.error(error.toString());
-    process.exit(1);
-  }
-
-  public static createLogger(subsystemCode: string): ConsoleLogger {
-    if (!ConsoleLogger.instances[subsystemCode]) {
-      ConsoleLogger.instances[subsystemCode] = new ConsoleLogger();
+    public printInfo(message: string): void {
+        console.info(message);
     }
-    return ConsoleLogger.instances[subsystemCode];
-  }
+
+    public printWarn(message: string): void {
+        console.warn(message);
+    }
+
+    public printDebug(message: string): void {
+        console.debug(message);
+    }
+
+    public printError(error: LogData): void {
+        console.error(error.toString());
+    }
+
+    public printErrorAndExit(error: LogData): void {
+        console.error(error.toString());
+        process.exit(1);
+    }
+
+    public static createLogger(subsystemCode: string): ConsoleLogger {
+        if (!ConsoleLogger.instances[subsystemCode]) {
+            ConsoleLogger.instances[subsystemCode] = new ConsoleLogger();
+        }
+        return ConsoleLogger.instances[subsystemCode];
+    }
 }
 
 function getConsoleLogger(subsystemCode: string): ConsoleLogger {
-  return ConsoleLogger.createLogger(subsystemCode);
+    return ConsoleLogger.createLogger(subsystemCode);
 }

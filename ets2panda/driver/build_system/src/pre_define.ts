@@ -30,9 +30,9 @@ export const ABC_SUFFIX: string = '.abc';
 export const DECL_FILE_MAP_NAME: string = 'decl_file_map.json';
 
 export enum LANGUAGE_VERSION {
-  ARKTS_1_2 = '1.2',
-  ARKTS_1_1 = '1.1',
-  ARKTS_HYBRID = 'hybrid',
+    ARKTS_1_2 = '1.2',
+    ARKTS_1_1 = '1.1',
+    ARKTS_HYBRID = 'hybrid',
 };
 
 export const PANDA_SDK_PATH_FROM_SDK: string = './build-tools/ets2panda';
@@ -46,7 +46,7 @@ export const ETS_1_1_INTEROP = 'dynamic-interop';
 
 export const sdkConfigPrefix = 'ohos|system|kit|arkts';
 export const NATIVE_MODULE: Set<string> = new Set(
-  ['system.app', 'ohos.app', 'system.router', 'system.curves', 'ohos.curves', 'system.matrix4', 'ohos.matrix4']);
+    ['system.app', 'ohos.app', 'system.router', 'system.curves', 'ohos.curves', 'system.matrix4', 'ohos.matrix4']);
 
 export const ARKTS_MODULE_NAME: string = 'arkts';
 

@@ -20,60 +20,60 @@ import { CompilePayload } from "../types";
 import { Task, WorkerInfo } from "./TaskManager";
 
 export function handleCompileWorkerExit(
-  workerInfo: WorkerInfo,
-  code: number | null,
-  signal: NodeJS.Signals | null,
-  runningTasks: Map<string, Task<CompilePayload>>
+    workerInfo: WorkerInfo,
+    code: number | null,
+    signal: NodeJS.Signals | null,
+    runningTasks: Map<string, Task<CompilePayload>>
 ): void {
-  if (!code || code === 0) {
-    return
-  }
-  const taskId = workerInfo.currentTaskId;
-  const payload = runningTasks.get(taskId!)?.payload;
-  if (!payload) {
-    return;
-  }
-  const es2pandPath = getEs2pandaPath(payload.buildConfig);
-  const cmd = [
-    es2pandPath,
-    '--arktsconfig', payload.fileInfo.arktsConfigFile,
-    '--output', payload.fileInfo.abcFilePath,
-    payload.fileInfo.filePath
-  ];
+    if (!code || code === 0) {
+        return
+    }
+    const taskId = workerInfo.currentTaskId;
+    const payload = runningTasks.get(taskId!)?.payload;
+    if (!payload) {
+        return;
+    }
+    const es2pandPath = getEs2pandaPath(payload.buildConfig);
+    const cmd = [
+        es2pandPath,
+        '--arktsconfig', payload.fileInfo.arktsConfigFile,
+        '--output', payload.fileInfo.abcFilePath,
+        payload.fileInfo.filePath
+    ];
 
-  const logData: LogData = LogDataFactory.newInstance(
-    ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
-    `Compile file ${payload.fileInfo.filePath} crashed (exit code ${code})`,
-    '',
-    '',
-    [`Please try to run command locally : ${cmd.join(' ')}`]
-  );
+    const logData: LogData = LogDataFactory.newInstance(
+        ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
+        `Compile file ${payload.fileInfo.filePath} crashed (exit code ${code})`,
+        "",
+        "",
+        [`Please try to run command locally : ${cmd.join(' ')}`]
+    );
 
-  Logger.getInstance().printErrorAndExit(logData);
+    Logger.getInstance().printErrorAndExit(logData);
 }
 
 export function handleDeclgenWorkerExit(
-  workerInfo: WorkerInfo,
-  code: number | null,
-  signal: NodeJS.Signals | null,
-  runningTasks: Map<string, Task<CompilePayload>>
+    workerInfo: WorkerInfo,
+    code: number | null,
+    signal: NodeJS.Signals | null,
+    runningTasks: Map<string, Task<CompilePayload>>
 ): void {
 
-  if (code && code !== 0) {
-    let logExitCodeData: LogData = LogDataFactory.newInstance(
-      ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
-      `Declgen crashed (exit code ${code})`,
-      'This error is likely caused internally from compiler.',
-    );
-    Logger.getInstance().printError(logExitCodeData);
-    return;
-  }
-  if (signal && signal !== 'SIGTERM') {
-    let logSignalData: LogData = LogDataFactory.newInstance(
-      ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
-      `Declgen crashed (exit signal ${signal})`,
-      'This error is likely caused internally from compiler.',
-    );
-    Logger.getInstance().printError(logSignalData);
-  }
+    if (code && code !== 0) {
+        let logExitCodeData: LogData = LogDataFactory.newInstance(
+            ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
+            `Declgen crashed (exit code ${code})`,
+            "This error is likely caused internally from compiler.",
+        );
+        Logger.getInstance().printError(logExitCodeData);
+        return;
+    }
+    if (signal && signal !== "SIGTERM") {
+        let logSignalData: LogData = LogDataFactory.newInstance(
+            ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
+            `Declgen crashed (exit signal ${signal})`,
+            "This error is likely caused internally from compiler.",
+        );
+        Logger.getInstance().printError(logSignalData);
+    }
 }
