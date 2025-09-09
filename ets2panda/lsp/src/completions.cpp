@@ -79,9 +79,6 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node)
                                CompletionEntryKind::INTERFACE, std::string(sort_text::GLOBALS_OR_KEYWORDS));
     }
     if (node->IsMethodDefinition()) {
-        if (node->AsMethodDefinition()->Key() == nullptr && !node->AsMethodDefinition()->Key()->IsIdentifier()) {
-            return CompletionEntry();
-        }
         return CompletionEntry(std::string(node->AsMethodDefinition()->Key()->AsIdentifier()->Name()),
                                CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS));
     }
