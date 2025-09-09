@@ -55,10 +55,17 @@ ArenaVector<ir::Statement *> ArrayLiteralLowering::GenerateDefaultCallToConstruc
         newStmts.emplace_back(lengthSymbol->Clone(Allocator(), nullptr));
         newStmts.emplace_back(indexSymbol->Clone(Allocator(), nullptr));
         newStmts.emplace_back(indexSymbol->Clone(Allocator(), nullptr));
-        ss << "@@I8[@@I9] = new @@T10() }";
+
+        if (checker_->HasParameterlessConstructor(eleType)) {
+            ss << "@@I8[@@I9] = new @@T10();";
+        } else {
+            ss << "let restArgs = new Array<Any>(0);";
+            ss << "@@I8[@@I9] = new @@T10(restArgs);";
+        }
         newStmts.emplace_back(arraySymbol->Clone(Allocator(), nullptr));
         newStmts.emplace_back(indexSymbol->Clone(Allocator(), nullptr));
         newStmts.emplace_back(typeNode->Clone(Allocator(), nullptr));
+        ss << "}";
     } else {
         ArenaVector<ir::Statement *> emptyStatement(Allocator()->Adapter());
         return emptyStatement;
