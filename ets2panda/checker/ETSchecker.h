@@ -309,6 +309,7 @@ public:
     [[nodiscard]] Type const *GetApparentType(Type const *type) const;
     ETSObjectType *GetClosestCommonAncestor(ETSObjectType *source, ETSObjectType *target);
     bool HasETSFunctionType(ir::TypeNode *typeAnnotation);
+    Type *GetConstantBuiltinType(Type *type);
 
     void VariableTypeFromInitializer(varbinder::Variable *variable, Type *annotationType, Type *initType);
 
@@ -980,6 +981,7 @@ public:
         }
         dynamicLambdaSignatureCache_.clear();
         functionalInterfaceCache_.clear();
+        constantBuiltinTypesCache_.clear();
         apparentTypes_.clear();
         for (auto &dynamicCallNamesMap : dynamicCallNames_) {
             dynamicCallNamesMap.clear();
@@ -1136,6 +1138,7 @@ private:
     std::array<DynamicCallIntrinsicsMap, 2U> dynamicIntrinsics_;
     std::array<DynamicClassIntrinsicsMap, 2U> dynamicClasses_;
     DynamicLambdaObjectSignatureMap dynamicLambdaSignatureCache_;
+    std::unordered_map<Type *, Type *> constantBuiltinTypesCache_;
     FunctionalInterfaceMap functionalInterfaceCache_;
     TypeMapping apparentTypes_;
     std::array<DynamicCallNamesMap, 2U> dynamicCallNames_;

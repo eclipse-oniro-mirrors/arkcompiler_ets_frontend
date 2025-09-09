@@ -2788,6 +2788,23 @@ Type const *ETSChecker::GetApparentType(Type const *type) const
     return const_cast<Type const *>(const_cast<ETSChecker *>(this)->GetApparentType(const_cast<Type *>(type)));
 }
 
+Type *ETSChecker::GetConstantBuiltinType(Type *type)
+{
+    ES2PANDA_ASSERT(type->IsETSObjectType() && type->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::UNBOXABLE_TYPE));
+
+    auto &cache = constantBuiltinTypesCache_;
+    if (auto it = cache.find(type); it != cache.end()) {
+        auto res = it->second;
+        ES2PANDA_ASSERT(res->IsConstantType());
+        return res;
+    }
+
+    auto cloned = type->Clone(this);
+    cloned->AddTypeFlag(TypeFlag::CONSTANT);
+    cache.insert({type, cloned});
+    return cloned;
+}
+
 ETSObjectType *ETSChecker::GetClosestCommonAncestor(ETSObjectType *source, ETSObjectType *target)
 {
     if (source->AsETSObjectType()->GetDeclNode() == target->AsETSObjectType()->GetDeclNode()) {

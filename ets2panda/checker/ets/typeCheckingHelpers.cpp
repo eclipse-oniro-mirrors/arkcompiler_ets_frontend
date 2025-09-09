@@ -444,7 +444,7 @@ Type *ETSChecker::GetNonConstantType(Type *type)
 
     if (!type->IsETSPrimitiveType()) {
         if (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) {
-            type->RemoveTypeFlag(TypeFlag::CONSTANT);
+            return MaybeBoxType(MaybeUnboxType(type));
         }
         return type;
     }
