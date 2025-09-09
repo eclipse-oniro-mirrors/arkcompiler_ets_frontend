@@ -3015,9 +3015,7 @@ checker::Type *ETSAnalyzer::Check(ir::BooleanLiteral *expr) const
 {
     ETSChecker *checker = GetETSChecker();
     if (expr->TsType() == nullptr) {
-        auto type = checker->GlobalETSBooleanBuiltinType()->Clone(GetChecker());
-        type->AddTypeFlag(TypeFlag::CONSTANT);
-        expr->SetTsType(type);
+        expr->SetTsType(checker->GetConstantBuiltinType(checker->GlobalETSBooleanBuiltinType()));
     }
     return expr->TsType();
 }
@@ -3026,9 +3024,7 @@ checker::Type *ETSAnalyzer::Check(ir::CharLiteral *expr) const
 {
     ETSChecker *checker = GetETSChecker();
     if (expr->TsType() == nullptr) {
-        auto type = checker->GlobalCharBuiltinType()->Clone(GetChecker());
-        type->AddTypeFlag(TypeFlag::CONSTANT);
-        expr->SetTsType(type);
+        expr->SetTsType(checker->GetConstantBuiltinType(checker->GlobalCharBuiltinType()));
     }
     return expr->TsType();
 }
@@ -3091,25 +3087,24 @@ checker::Type *ETSAnalyzer::Check(ir::NumberLiteral *expr) const
             GetAppropriatePreferredType(expr->PreferredType(), [&](Type *tp) { return checker->CheckIfNumeric(tp); });
         preferredType != nullptr && !expr->IsFolded() &&
         CheckIfLiteralValueIsAppropriate(checker, preferredType, expr)) {
-        type = preferredType->Clone(checker);
+        type = preferredType;
     } else if (expr->Number().IsDouble()) {
-        type = checker->GlobalDoubleBuiltinType()->Clone(checker);
+        type = checker->GlobalDoubleBuiltinType();
     } else if (expr->Number().IsFloat()) {
-        type = checker->GlobalFloatBuiltinType()->Clone(checker);
+        type = checker->GlobalFloatBuiltinType();
     } else if (expr->Number().IsLong()) {
-        type = checker->GlobalLongBuiltinType()->Clone(checker);
+        type = checker->GlobalLongBuiltinType();
     } else if (expr->Number().IsInt()) {
-        type = checker->GlobalIntBuiltinType()->Clone(checker);
+        type = checker->GlobalIntBuiltinType();
     } else if (expr->Number().IsShort()) {
-        type = checker->GlobalShortBuiltinType()->Clone(checker);
+        type = checker->GlobalShortBuiltinType();
     } else if (expr->Number().IsByte()) {
-        type = checker->GlobalByteBuiltinType()->Clone(checker);
+        type = checker->GlobalByteBuiltinType();
     } else {
         return checker->GlobalTypeError();
     }
 
-    type->AddTypeFlag(TypeFlag::CONSTANT);
-    return expr->SetTsType(type);
+    return expr->SetTsType(checker->GetConstantBuiltinType(type));
 }
 
 checker::Type *ETSAnalyzer::Check(ir::StringLiteral *expr) const

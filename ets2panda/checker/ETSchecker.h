@@ -297,6 +297,7 @@ public:
     [[nodiscard]] Type const *GetApparentType(Type const *type) const;
     ETSObjectType *GetClosestCommonAncestor(ETSObjectType *source, ETSObjectType *target);
     bool HasETSFunctionType(ir::TypeNode *typeAnnotation);
+    Type *GetConstantBuiltinType(Type *type);
 
     void VariableTypeFromInitializer(varbinder::Variable *variable, Type *annotationType, Type *initType);
 
@@ -967,6 +968,7 @@ public:
         unionAssemblerTypes_.clear();
         GetCachedComputedAbstracts()->clear();
         functionalInterfaceCache_.clear();
+        constantBuiltinTypesCache_.clear();
         apparentTypes_.clear();
         elementStack_.clear();
         overloadSigContainer_.clear();
@@ -1096,6 +1098,7 @@ private:
     GlobalArraySignatureMap globalArraySignatures_;
     ArenaSet<util::StringView> unionAssemblerTypes_;
     ComputedAbstracts *cachedComputedAbstracts_ {nullptr};
+    std::unordered_map<Type *, Type *> constantBuiltinTypesCache_;
     FunctionalInterfaceMap functionalInterfaceCache_;
     TypeMapping apparentTypes_;
     std::recursive_mutex mtx_;
