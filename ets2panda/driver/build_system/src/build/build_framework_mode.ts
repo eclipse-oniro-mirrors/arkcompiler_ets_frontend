@@ -22,61 +22,61 @@ import path from 'path';
 import { ErrorCode } from '../error_code';
 
 export class BuildFrameworkMode extends BaseMode {
-  frameworkMode: boolean;
-  useEmptyPackage: boolean;
+    frameworkMode: boolean;
+    useEmptyPackage: boolean;
 
-  constructor(buildConfig: BuildConfig) {
-    super(buildConfig);
-    this.mergedAbcFile = buildConfig.loaderOutPath as string;
-    this.frameworkMode = buildConfig.frameworkMode ?? false;
-    this.useEmptyPackage = buildConfig.useEmptyPackage ?? false;
-  }
+    constructor(buildConfig: BuildConfig) {
+        super(buildConfig);
+        this.mergedAbcFile = buildConfig.loaderOutPath as string;
+        this.frameworkMode = buildConfig.frameworkMode ?? false;
+        this.useEmptyPackage = buildConfig.useEmptyPackage ?? false;
+    }
 
-  public async run(): Promise<void> {
-    super.run();
-  }
+    public async run(): Promise<void> {
+        super.run();
+    }
 
-  protected generateModuleInfos(): void {
-    this.collectModuleInfos();
-    this.generateArkTSConfigForModules();
-    this.collectCompileFiles();
-  }
+    protected generateModuleInfos(): void {
+        this.collectModuleInfos();
+        this.generateArkTSConfigForModules();
+        this.collectCompileFiles();
+    }
 
-  protected collectCompileFiles(): void {
-    this.entryFiles.forEach((file: string) => {
-      for (const [packageName, moduleInfo] of this.moduleInfos) {
-        if (!file.startsWith(moduleInfo.moduleRootPath)) {
-          continue;
-        }
-        let filePathFromModuleRoot: string = path.relative(moduleInfo.moduleRootPath, file);
-        let filePathInCache: string = path.join(this.cacheDir, moduleInfo.packageName, filePathFromModuleRoot);
-        let abcFilePath: string = path.resolve(changeFileExtension(filePathInCache, ABC_SUFFIX));
-        this.abcFiles.add(abcFilePath);
-        let fileInfo: CompileFileInfo = {
-          filePath: file,
-          dependentFiles: [],
-          abcFilePath: abcFilePath,
-          arktsConfigFile: moduleInfo.arktsConfigFile,
-          packageName: moduleInfo.packageName
-        };
-        moduleInfo.compileFileInfos.push(fileInfo);
-        this.compileFiles.set(file, fileInfo);
-        return;
-      }
-      const logData: LogData = LogDataFactory.newInstance(
-        ErrorCode.BUILDSYSTEM_FILE_NOT_BELONG_TO_ANY_MODULE_FAIL,
-        'File does not belong to any module in moduleInfos.',
-        '',
-        file
-      );
-      this.logger.printError(logData);
-    });
-  }
+    protected collectCompileFiles(): void {
+        this.entryFiles.forEach((file: string) => {
+            for (const [packageName, moduleInfo] of this.moduleInfos) {
+                if (!file.startsWith(moduleInfo.moduleRootPath)) {
+                    continue;
+                }
+                let filePathFromModuleRoot: string = path.relative(moduleInfo.moduleRootPath, file);
+                let filePathInCache: string = path.join(this.cacheDir, moduleInfo.packageName, filePathFromModuleRoot);
+                let abcFilePath: string = path.resolve(changeFileExtension(filePathInCache, ABC_SUFFIX));
+                this.abcFiles.add(abcFilePath);
+                let fileInfo: CompileFileInfo = {
+                    filePath: file,
+                    dependentFiles: [],
+                    abcFilePath: abcFilePath,
+                    arktsConfigFile: moduleInfo.arktsConfigFile,
+                    packageName: moduleInfo.packageName
+                };
+                moduleInfo.compileFileInfos.push(fileInfo);
+                this.compileFiles.set(file, fileInfo);
+                return;
+            }
+            const logData: LogData = LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_FILE_NOT_BELONG_TO_ANY_MODULE_FAIL,
+                'File does not belong to any module in moduleInfos.',
+                '',
+                file
+            );
+            this.logger.printError(logData);
+        });
+    }
 
-  protected getMainModuleInfo(): ModuleInfo {
-    let moduleInfo = super.getMainModuleInfo();
-    moduleInfo.frameworkMode = this.frameworkMode;
-    moduleInfo.useEmptyPackage = this.useEmptyPackage;
-    return moduleInfo;
-  }
+    protected getMainModuleInfo(): ModuleInfo {
+        let moduleInfo = super.getMainModuleInfo();
+        moduleInfo.frameworkMode = this.frameworkMode;
+        moduleInfo.useEmptyPackage = this.useEmptyPackage;
+        return moduleInfo;
+    }
 }

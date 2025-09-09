@@ -26,42 +26,42 @@ import { BuildFrameworkMode } from './build/build_framework_mode';
 import { cleanKoalaModule } from './init/init_koala_modules';
 
 export async function build(projectConfig: BuildConfig): Promise<void> {
-  let logger: Logger = Logger.getInstance(projectConfig);
-  let buildConfig: BuildConfig = processBuildConfig(projectConfig);
+    let logger: Logger = Logger.getInstance(projectConfig);
+    let buildConfig: BuildConfig = processBuildConfig(projectConfig);
 
-  buildConfig.entryFiles = buildConfig.compileFiles;
-  if (projectConfig.frameworkMode === true) {
-    let buildframeworkMode: BuildFrameworkMode = new BuildFrameworkMode(buildConfig);
-    await buildframeworkMode.run();
-    if (logger.hasErrors()) {
-      clean();
-      process.exit(1);
+    buildConfig.entryFiles = buildConfig.compileFiles;
+    if (projectConfig.frameworkMode === true) {
+        let buildframeworkMode: BuildFrameworkMode = new BuildFrameworkMode(buildConfig);
+        await buildframeworkMode.run();
+        if (logger.hasErrors()) {
+            clean();
+            process.exit(1);
+        }
+    } else if (projectConfig.enableDeclgenEts2Ts === true) {
+        let buildMode: BuildMode = new BuildMode(buildConfig);
+        await buildMode.generateDeclaration();
+    } else if (projectConfig.buildType === BUILD_TYPE.BUILD) {
+        let buildMode: BuildMode = new BuildMode(buildConfig);
+        await buildMode.run();
     }
-  } else if (projectConfig.enableDeclgenEts2Ts === true) {
-    let buildMode: BuildMode = new BuildMode(buildConfig);
-    await buildMode.generateDeclaration();
-  } else if (projectConfig.buildType === BUILD_TYPE.BUILD) {
-    let buildMode: BuildMode = new BuildMode(buildConfig);
-    await buildMode.run();
-  }
 
-  clean();
+    clean();
 }
 
 function clean(): void {
-  Logger.destroyInstance();
-  ArkTSConfigGenerator.destroyInstance();
-  PluginDriver.destroyInstance();
-  cleanKoalaModule();
+    Logger.destroyInstance();
+    ArkTSConfigGenerator.destroyInstance();
+    PluginDriver.destroyInstance();
+    cleanKoalaModule();
 }
 
 function main(): void {
-  const buildConfigPath: string = path.resolve(process.argv[2]);
-  const projectConfig: BuildConfig = JSON.parse(fs.readFileSync(buildConfigPath, 'utf-8'));
+    const buildConfigPath: string = path.resolve(process.argv[2]);
+    const projectConfig: BuildConfig = JSON.parse(fs.readFileSync(buildConfigPath, 'utf-8'));
 
-  build(projectConfig);
+    build(projectConfig);
 }
 
 if (require.main === module) {
-  main();
+    main();
 }

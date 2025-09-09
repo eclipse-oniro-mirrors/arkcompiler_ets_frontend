@@ -29,9 +29,9 @@ export const TS_SUFFIX: string = '.ts';
 export const ABC_SUFFIX: string = '.abc';
 
 export enum LANGUAGE_VERSION {
-  ARKTS_1_2 = '1.2',
-  ARKTS_1_1 = '1.1',
-  ARKTS_HYBRID = 'hybrid',
+    ARKTS_1_2 = '1.2',
+    ARKTS_1_1 = '1.1',
+    ARKTS_HYBRID = 'hybrid',
 };
 
 export const PANDA_SDK_PATH_FROM_SDK: string = './build-tools/ets2panda';
@@ -45,16 +45,16 @@ export const ETS_1_1_INTEROP = 'ets1.1interop';
 
 export const sdkConfigPrefix = 'ohos|system|kit|arkts';
 export const NATIVE_MODULE: Set<string> = new Set(
-  ['system.app', 'ohos.app', 'system.router', 'system.curves', 'ohos.curves', 'system.matrix4', 'ohos.matrix4']);
+    ['system.app', 'ohos.app', 'system.router', 'system.curves', 'ohos.curves', 'system.matrix4', 'ohos.matrix4']);
 
 export const ARKTS_MODULE_NAME: string = 'arkts';
 
 export const KITS: string = 'kits';
 export const API: string = 'api';
-export const ARKTS:string = 'arkts';
-export const COMPONENT:string = 'component';
+export const ARKTS: string = 'arkts';
+export const COMPONENT: string = 'component';
 
-export const DYNAMIC_PREFIX:string = 'dynamic/';
+export const DYNAMIC_PREFIX: string = 'dynamic/';
 
 export const STATIC_RECORD_FILE_CONTENT: string = `// generated for static Record
 export type Record<K extends keyof any, T> = {

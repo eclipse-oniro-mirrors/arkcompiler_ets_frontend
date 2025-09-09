@@ -41,8 +41,11 @@ jest.mock('../../../src/logger', () => {
     } as any;
     return {
         Logger: mLogger,
-        LogDataFactory: { newInstance: jest.fn(() => ({
-            code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {} })) }
+        LogDataFactory: {
+            newInstance: jest.fn(() => ({
+                code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {}
+            }))
+        }
     };
 });
 jest.mock('../../../src/pre_define', () => ({
@@ -90,9 +93,9 @@ beforeEach(() => {
 
 // create a test to avoid throw error
 describe('mockSDK', () => {
-  it('should load correctly', () => {
-    
-  });
+    it('should load correctly', () => {
+
+    });
 });
 
 /* compile_thread_worker is'not used in the project now, so we comment out the test cases.
@@ -214,6 +217,6 @@ describe('compile_thread_worker', () => {
         }).toThrow('exit');
         spy.mockRestore();
     });
-   
+
 });
  */

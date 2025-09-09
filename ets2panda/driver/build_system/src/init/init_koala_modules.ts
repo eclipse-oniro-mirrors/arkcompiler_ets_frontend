@@ -22,43 +22,43 @@ import path from "path"
 let koalaModule: any;
 
 export function initKoalaModules(buildConfig: BuildConfig) {
-  if (!koalaModule) {
-    const koalaWrapperPath =
-      process.env.KOALA_WRAPPER_PATH ??
-      path.resolve(buildConfig.buildSdkPath, KOALA_WRAPPER_PATH_FROM_SDK);
+    if (!koalaModule) {
+        const koalaWrapperPath =
+            process.env.KOALA_WRAPPER_PATH ??
+            path.resolve(buildConfig.buildSdkPath, KOALA_WRAPPER_PATH_FROM_SDK);
 
-    koalaModule = require(koalaWrapperPath);
-    koalaModule.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
-  }
+        koalaModule = require(koalaWrapperPath);
+        koalaModule.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+    }
 
-  Object.assign(buildConfig, {
-    arkts: koalaModule.arkts,
-    arktsGlobal: koalaModule.arktsGlobal,
-  });
+    Object.assign(buildConfig, {
+        arkts: koalaModule.arkts,
+        arktsGlobal: koalaModule.arktsGlobal,
+    });
 
-  return koalaModule;
+    return koalaModule;
 }
 
 
 export function initKoalaPlugins(projectConfig: BuildConfig): void {
-  const uiPluginPath = path.resolve(projectConfig.buildSdkPath, UI_PLUGIN_PATH_FROM_SDK);
-  const memoPluginPath = path.resolve(projectConfig.buildSdkPath, MEMO_PLUGIN_PATH_FROM_SDK);
+    const uiPluginPath = path.resolve(projectConfig.buildSdkPath, UI_PLUGIN_PATH_FROM_SDK);
+    const memoPluginPath = path.resolve(projectConfig.buildSdkPath, MEMO_PLUGIN_PATH_FROM_SDK);
 
     // TODO: need change in hvigor
     if (process.env.USE_KOALA_UI_PLUGIN) {
-      projectConfig.plugins['ArkUI'] = uiPluginPath
+        projectConfig.plugins['ArkUI'] = uiPluginPath
     }
 
     if (process.env.USE_KOALA_MEMO_PLUGIN) {
-      projectConfig.plugins['ArkUI-Memo'] = memoPluginPath
+        projectConfig.plugins['ArkUI-Memo'] = memoPluginPath
     }
 }
 
 export function cleanKoalaModule() {
-  koalaModule = null;
+    koalaModule = null;
 }
 
 // for ut
 export function getKoalaModule() {
-  return koalaModule;
+    return koalaModule;
 }

@@ -20,53 +20,53 @@ import { ErrorCode } from '../../src/error_code';
 import { Logger } from '../../src/logger';
 
 describe('safeRealpath', () => {
-  const tempDir = path.join(__dirname, 'tmp');
-  const realDir = path.join(tempDir, 'real');
-  const linkDir = path.join(tempDir, 'link');
-  const nonExistent = path.join(tempDir, 'does-not-exist');
+    const tempDir = path.join(__dirname, 'tmp');
+    const realDir = path.join(tempDir, 'real');
+    const linkDir = path.join(tempDir, 'link');
+    const nonExistent = path.join(tempDir, 'does-not-exist');
 
-  const mockLogger = {
-    printError: jest.fn()
-  } as unknown as Logger;
+    const mockLogger = {
+        printError: jest.fn()
+    } as unknown as Logger;
 
-  beforeAll(() => {
-    fs.mkdirSync(tempDir, { recursive: true });
-    fs.mkdirSync(realDir, { recursive: true });
+    beforeAll(() => {
+        fs.mkdirSync(tempDir, { recursive: true });
+        fs.mkdirSync(realDir, { recursive: true });
 
-    if (!fs.existsSync(linkDir)) {
-      fs.symlinkSync(realDir, linkDir, 'dir');
-    }
-  });
+        if (!fs.existsSync(linkDir)) {
+            fs.symlinkSync(realDir, linkDir, 'dir');
+        }
+    });
 
-  afterAll(() => {
-    fs.rmSync(tempDir, { recursive: true, force: true });
-  });
+    afterAll(() => {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+    });
 
-  test('returns real path for existing non-symlink', () => {
-    const result = safeRealpath(realDir, mockLogger);
-    expect(result).toBe(fs.realpathSync(realDir));
-  });
+    test('returns real path for existing non-symlink', () => {
+        const result = safeRealpath(realDir, mockLogger);
+        expect(result).toBe(fs.realpathSync(realDir));
+    });
 
-  test('returns resolved path for symlink', () => {
-    const result = safeRealpath(linkDir, mockLogger);
-    expect(result).toBe(fs.realpathSync(linkDir));
-    expect(result).toBe(realDir);
-  });
+    test('returns resolved path for symlink', () => {
+        const result = safeRealpath(linkDir, mockLogger);
+        expect(result).toBe(fs.realpathSync(linkDir));
+        expect(result).toBe(realDir);
+    });
 
-  test('throws error for non-existent path', () => {
-    try {
-      safeRealpath(nonExistent, mockLogger);
-    } catch (e: any) {
-      expect(e.code).toBe(ErrorCode.BUILDSYSTEM_PATH_RESOLVE_FAIL);
-    }
-  });
-  
-  test('throws error for empty path string', () => {
-    try {
-      safeRealpath('', mockLogger);
-    } catch (e: any) {
-      expect(e.code).toBe(ErrorCode.BUILDSYSTEM_PATH_RESOLVE_FAIL);
-    }
-  });
-  
+    test('throws error for non-existent path', () => {
+        try {
+            safeRealpath(nonExistent, mockLogger);
+        } catch (e: any) {
+            expect(e.code).toBe(ErrorCode.BUILDSYSTEM_PATH_RESOLVE_FAIL);
+        }
+    });
+
+    test('throws error for empty path string', () => {
+        try {
+            safeRealpath('', mockLogger);
+        } catch (e: any) {
+            expect(e.code).toBe(ErrorCode.BUILDSYSTEM_PATH_RESOLVE_FAIL);
+        }
+    });
+
 });
