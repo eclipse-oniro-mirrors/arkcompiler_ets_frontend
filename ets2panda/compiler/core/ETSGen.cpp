@@ -146,14 +146,14 @@ void ETSGen::ApplyConversionAndStoreAccumulator(const ir::AstNode *const node, c
     StoreAccumulator(node, vreg);
 }
 
-VReg ETSGen::StoreException(const ir::AstNode *node)
+VReg ETSGen::StoreError(const ir::AstNode *node)
 {
-    VReg exception = AllocReg();
-    Ra().Emit<StaObj>(node, exception);
+    VReg error = AllocReg();
+    Ra().Emit<StaObj>(node, error);
 
-    SetAccumulatorType(Checker()->GlobalBuiltinExceptionType());
-    SetVRegType(exception, GetAccumulatorType());
-    return exception;
+    SetAccumulatorType(Checker()->GlobalBuiltinErrorType());
+    SetVRegType(error, GetAccumulatorType());
+    return error;
 }
 
 void ETSGen::StoreAccumulator(const ir::AstNode *const node, const VReg vreg)

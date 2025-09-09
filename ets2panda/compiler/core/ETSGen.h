@@ -50,7 +50,7 @@ public:
     [[nodiscard]] const checker::Type *GetAccumulatorType() const;
     void CompileAndCheck(const ir::Expression *expr);
 
-    [[nodiscard]] VReg StoreException(const ir::AstNode *node);
+    [[nodiscard]] VReg StoreError(const ir::AstNode *node);
     void ApplyConversionAndStoreAccumulator(const ir::AstNode *node, VReg vreg, const checker::Type *targetType);
     void StoreAccumulator(const ir::AstNode *node, VReg vreg);
     void LoadAccumulator(const ir::AstNode *node, VReg vreg);
