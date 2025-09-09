@@ -167,6 +167,38 @@ void MethodDefinition::Dump(ir::AstDumper *dumper) const
                  {"overloads", Overloads()}});
 }
 
+void MethodDefinition::DumpAccessorPrefix(ir::SrcDumper *dumper) const
+{
+    //  special processing for overloads
+    auto const *parent = Parent();
+    if (parent != nullptr && parent->IsMethodDefinition()) {
+        parent = parent->Parent();
+    }
+
+    if (parent == nullptr) {
+        return;
+    }
+
+    if (parent->IsClassDefinition() && !parent->AsClassDefinition()->IsLocal()) {
+        if (IsPrivate()) {
+            dumper->Add("private ");
+        } else if (IsProtected()) {
+            dumper->Add("protected ");
+        } else {
+            dumper->Add("public ");
+        }
+        return;
+    }
+
+    if (dumper->IsDeclgen() && parent->IsTSInterfaceBody()) {
+        if (Value() != nullptr && Value()->IsFunctionExpression() &&
+            Value()->AsFunctionExpression()->Function() != nullptr &&
+            Value()->AsFunctionExpression()->Function()->HasBody()) {
+            dumper->Add("default ");
+        }
+    }
+}
+
 void MethodDefinition::DumpModifierPrefix(ir::SrcDumper *dumper) const
 {
     if (compiler::HasGlobalClassParent(this)) {
@@ -234,15 +266,8 @@ void MethodDefinition::DumpPrefix(ir::SrcDumper *dumper) const
         return;
     }
 
-    if (Parent() != nullptr && Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal()) {
-        if (IsPrivate()) {
-            dumper->Add("private ");
-        } else if (IsProtected()) {
-            dumper->Add("protected ");
-        } else {
-            dumper->Add("public ");
-        }
-    }
+    DumpAccessorPrefix(dumper);
+
     DumpModifierPrefix(dumper);
 }
 
