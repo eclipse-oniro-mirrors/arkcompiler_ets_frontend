@@ -120,6 +120,16 @@ public:
         return VReg(idx_ + other.idx_);
     }
 
+    [[nodiscard]] constexpr VReg operator-(const Index idx) const noexcept
+    {
+        return VReg(idx_ - idx);
+    }
+
+    [[nodiscard]] constexpr VReg operator-(const VReg other) const noexcept
+    {
+        return VReg(idx_ - other.idx_);
+    }
+
     static constexpr auto REG_START = std::numeric_limits<std::uint16_t>::max();
     static constexpr auto REG_MAX = REG_START + 1U;
     static constexpr auto PARAM_START = REG_MAX;
