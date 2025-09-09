@@ -65,7 +65,6 @@ public:
 
     [[nodiscard]] ObjectExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
-    [[nodiscard]] ValidationInfo ValidateExpression();
     [[nodiscard]] bool ConvertibleToObjectPattern();
     void SetDeclaration();
     void SetOptional(bool optional);

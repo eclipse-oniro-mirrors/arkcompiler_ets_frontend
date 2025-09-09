@@ -213,6 +213,10 @@ syntax:
   id: 82
   message: "Duplicate group name."
 
+- name: DUPLICATE_PROTO_FIELDS
+  id: 119997
+  message: "Duplicate __proto__ fields are not allowed in object literals"
+
 - name: ENUM_INVALID_INIT
   id: 36
   message: "Invalid enum initialization value"
@@ -746,6 +750,10 @@ syntax:
   id: 130
   message: "Invalid right-hand side in 'instanceof' expression."
 
+- name: INVALID_SHORTHAND_PROPERTY_INITIALIZER
+  id: 18822
+  message: "Invalid shorthand property initializer."
+
 - name: INVALID_TYPE
   id: 138
   message: "Invalid Type."
@@ -1190,6 +1198,10 @@ syntax:
 - name: UNEXPECTED_PRIVATE
   id: 47
   message: "Unexpected private identifier."
+
+- name: UNEXPECTED_QUESTIONMARK
+  id: 172384
+  message: "Unexpected token '?'."
 
 - name: UNEXPECTED_STRICT_MODE_RESERVED_KEYWORD
   id: 264
