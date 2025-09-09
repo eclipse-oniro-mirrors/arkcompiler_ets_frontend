@@ -298,4 +298,7 @@ faultDesc[FaultID.BuiltinDisableApi] = 'Disable Api';
 faultDesc[FaultID.BuiltinIteratorResultValue] = 'IteratorResult.value is not supported';
 faultDesc[FaultID.OptionalTupleType] = 'No optional tuple type';
 faultDesc[FaultID.LargeNumericLiteral] = 'Numeric literal exceeds allowed range';
+faultDesc[FaultID.InstanceOfFunction] = 'instanceof with function type';
 faultDesc[FaultID.unfixedTuple] = 'No unfixed tuple';
+faultDesc[FaultID.EntryHasInvalidParams] = 'Entry has invalid parameters';
+faultDesc[FaultID.SuperInStaticContext] = '"super" in static context';

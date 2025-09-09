@@ -3951,4 +3951,22 @@ export class TsUtils {
       }) !== -1
     );
   }
+
+  static getLeadingCommentRangesEnd(srcFile: ts.SourceFile, pos: number): number | undefined {
+    const leadingCommentRanges = ts.getLeadingCommentRanges(srcFile.text, pos);
+    return leadingCommentRanges ? leadingCommentRanges[leadingCommentRanges.length - 1].end : undefined;
+  }
+
+  static getTrailingCommentRangesEnd(srcFile: ts.SourceFile, pos: number): number | undefined {
+    const trailingCommentRanges = ts.getTrailingCommentRanges(srcFile.text, pos);
+    return trailingCommentRanges ? trailingCommentRanges[trailingCommentRanges.length - 1].end : undefined;
+  }
+
+  static isSuperCallStmt(node: ts.Statement): boolean {
+    if (ts.isExpressionStatement(node) && ts.isCallExpression(node.expression)) {
+      const expr = node.expression.expression;
+      return expr.kind === ts.SyntaxKind.SuperKeyword;
+    }
+    return false;
+  }
 }

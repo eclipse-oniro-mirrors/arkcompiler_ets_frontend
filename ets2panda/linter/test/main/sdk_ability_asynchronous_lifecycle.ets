@@ -69,3 +69,10 @@ export default class MyUIAbility6 extends UIAbility {
     return sleep1(1000);
   }
 }
+
+export default class MyUIAbility7 extends MyUIAbility1 {
+  async onDestroy(): Promise<void> { // use UIAbility onDestroy, should report error
+    hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onDestroy');
+    return sleep(1000);
+  }
+}

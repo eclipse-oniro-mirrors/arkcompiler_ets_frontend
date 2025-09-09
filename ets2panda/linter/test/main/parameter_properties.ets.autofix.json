@@ -24,7 +24,7 @@
                 {
                     "start": 622,
                     "end": 622,
-                    "replacementText": "public readonly x: number;\nprotected y: number;\nprivate z: number;\n",
+                    "replacementText": "public readonly x: number;\n  protected y: number;\n  private z: number;\n  ",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
@@ -58,9 +58,9 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 717,
-                    "end": 719,
-                    "replacementText": "{\n    this.x = x;\n    this.y = y;\n    this.z = z;\n}",
+                    "start": 718,
+                    "end": 718,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;\n    this.z = z;\n  ",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
@@ -81,7 +81,7 @@
                 {
                     "start": 622,
                     "end": 622,
-                    "replacementText": "public readonly x: number;\nprotected y: number;\nprivate z: number;\n",
+                    "replacementText": "public readonly x: number;\n  protected y: number;\n  private z: number;\n  ",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
@@ -115,9 +115,9 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 717,
-                    "end": 719,
-                    "replacementText": "{\n    this.x = x;\n    this.y = y;\n    this.z = z;\n}",
+                    "start": 718,
+                    "end": 718,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;\n    this.z = z;\n  ",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
@@ -138,7 +138,7 @@
                 {
                     "start": 622,
                     "end": 622,
-                    "replacementText": "public readonly x: number;\nprotected y: number;\nprivate z: number;\n",
+                    "replacementText": "public readonly x: number;\n  protected y: number;\n  private z: number;\n  ",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
@@ -172,9 +172,9 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 717,
-                    "end": 719,
-                    "replacementText": "{\n    this.x = x;\n    this.y = y;\n    this.z = z;\n}",
+                    "start": 718,
+                    "end": 718,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;\n    this.z = z;\n  ",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
@@ -205,7 +205,7 @@
                 {
                     "start": 870,
                     "end": 870,
-                    "replacementText": "public w: string;\nprivate readonly r: number[];\n",
+                    "replacementText": "public w: string;\n  private readonly r: number[];\n  ",
                     "line": 34,
                     "column": 60,
                     "endLine": 34,
@@ -230,9 +230,9 @@
                     "endColumn": 67
                 },
                 {
-                    "start": 969,
-                    "end": 1021,
-                    "replacementText": "{\n    this.w = w;\n    this.r = r;\n    console.log(q, this.w, e, this.r, this.f);\n}",
+                    "start": 975,
+                    "end": 975,
+                    "replacementText": "this.w = w;\n    this.r = r;\n    ",
                     "line": 34,
                     "column": 60,
                     "endLine": 34,
@@ -253,7 +253,7 @@
                 {
                     "start": 870,
                     "end": 870,
-                    "replacementText": "public w: string;\nprivate readonly r: number[];\n",
+                    "replacementText": "public w: string;\n  private readonly r: number[];\n  ",
                     "line": 34,
                     "column": 60,
                     "endLine": 34,
@@ -278,9 +278,9 @@
                     "endColumn": 67
                 },
                 {
-                    "start": 969,
-                    "end": 1021,
-                    "replacementText": "{\n    this.w = w;\n    this.r = r;\n    console.log(q, this.w, e, this.r, this.f);\n}",
+                    "start": 975,
+                    "end": 975,
+                    "replacementText": "this.w = w;\n    this.r = r;\n    ",
                     "line": 34,
                     "column": 60,
                     "endLine": 34,
@@ -371,7 +371,7 @@
                 {
                     "start": 1275,
                     "end": 1275,
-                    "replacementText": "readonly a: number;\n",
+                    "replacementText": "readonly a: number;\n  ",
                     "line": 54,
                     "column": 15,
                     "endLine": 54,
@@ -387,9 +387,9 @@
                     "endColumn": 33
                 },
                 {
-                    "start": 1307,
-                    "end": 1309,
-                    "replacementText": "{\n    this.a = a;\n}",
+                    "start": 1308,
+                    "end": 1308,
+                    "replacementText": "\n    this.a = a;\n  ",
                     "line": 54,
                     "column": 15,
                     "endLine": 54,
@@ -410,7 +410,7 @@
                 {
                     "start": 1335,
                     "end": 1335,
-                    "replacementText": "readonly aa: number;\nb: number;\npublic c: number;\n",
+                    "replacementText": "readonly aa: number;\n  b: number;\n  public c: number;\n  ",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
@@ -444,9 +444,9 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1430,
-                    "end": 1450,
-                    "replacementText": "{\n    super(aa);\n    this.aa = aa;\n    this.b = b;\n    this.c = c;\n}",
+                    "start": 1446,
+                    "end": 1446,
+                    "replacementText": "\n    this.aa = aa;\n    this.b = b;\n    this.c = c;",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
@@ -467,7 +467,7 @@
                 {
                     "start": 1335,
                     "end": 1335,
-                    "replacementText": "readonly aa: number;\nb: number;\npublic c: number;\n",
+                    "replacementText": "readonly aa: number;\n  b: number;\n  public c: number;\n  ",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
@@ -501,9 +501,9 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1430,
-                    "end": 1450,
-                    "replacementText": "{\n    super(aa);\n    this.aa = aa;\n    this.b = b;\n    this.c = c;\n}",
+                    "start": 1446,
+                    "end": 1446,
+                    "replacementText": "\n    this.aa = aa;\n    this.b = b;\n    this.c = c;",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
@@ -524,7 +524,7 @@
                 {
                     "start": 1335,
                     "end": 1335,
-                    "replacementText": "readonly aa: number;\nb: number;\npublic c: number;\n",
+                    "replacementText": "readonly aa: number;\n  b: number;\n  public c: number;\n  ",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
@@ -558,9 +558,9 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1430,
-                    "end": 1450,
-                    "replacementText": "{\n    super(aa);\n    this.aa = aa;\n    this.b = b;\n    this.c = c;\n}",
+                    "start": 1446,
+                    "end": 1446,
+                    "replacementText": "\n    this.aa = aa;\n    this.b = b;\n    this.c = c;",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
@@ -581,7 +581,7 @@
                 {
                     "start": 1477,
                     "end": 1477,
-                    "replacementText": "readonly aa: number;\n",
+                    "replacementText": "readonly aa: number;\n  ",
                     "line": 68,
                     "column": 15,
                     "endLine": 68,
@@ -597,9 +597,9 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 1510,
-                    "end": 1594,
-                    "replacementText": "{\n    let f2: number = 1;\n    console.log('before super() call');\n    super(aa);\n    this.aa = aa;\n}",
+                    "start": 1590,
+                    "end": 1590,
+                    "replacementText": "\n    this.aa = aa;",
                     "line": 68,
                     "column": 15,
                     "endLine": 68,
@@ -620,7 +620,7 @@
                 {
                     "start": 1621,
                     "end": 1621,
-                    "replacementText": "readonly aa: number;\n",
+                    "replacementText": "readonly aa: number;\n  ",
                     "line": 76,
                     "column": 15,
                     "endLine": 76,
@@ -636,9 +636,9 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 1654,
-                    "end": 1737,
-                    "replacementText": "{\n    super(aa);\n    this.aa = aa;\n    let f3: number = 1;\n    console.log('after super() call');\n}",
+                    "start": 1675,
+                    "end": 1675,
+                    "replacementText": "this.aa = aa;\n    ",
                     "line": 76,
                     "column": 15,
                     "endLine": 76,
@@ -659,7 +659,7 @@
                 {
                     "start": 1764,
                     "end": 1764,
-                    "replacementText": "readonly aa: number;\n",
+                    "replacementText": "readonly aa: number;\n  ",
                     "line": 84,
                     "column": 15,
                     "endLine": 84,
@@ -675,9 +675,9 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 1797,
-                    "end": 1944,
-                    "replacementText": "{\n    let f4: number = 1;\n    console.log('before super() call');\n    super(aa);\n    this.aa = aa;\n    console.log('after super() call');\n    let f5: number = 1;\n}",
+                    "start": 1882,
+                    "end": 1882,
+                    "replacementText": "this.aa = aa;\n    ",
                     "line": 84,
                     "column": 15,
                     "endLine": 84,
@@ -698,7 +698,7 @@
                 {
                     "start": 2003,
                     "end": 2003,
-                    "replacementText": "public a?: number;\npublic b: number;\n",
+                    "replacementText": "public a?: number;\n  public b: number;\n  ",
                     "line": 98,
                     "column": 34,
                     "endLine": 98,
@@ -723,9 +723,9 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2052,
-                    "end": 2054,
-                    "replacementText": "{\n    this.a = a;\n    this.b = b;\n}",
+                    "start": 2053,
+                    "end": 2053,
+                    "replacementText": "\n    this.a = a;\n    this.b = b;\n  ",
                     "line": 98,
                     "column": 34,
                     "endLine": 98,
@@ -746,7 +746,7 @@
                 {
                     "start": 2003,
                     "end": 2003,
-                    "replacementText": "public a?: number;\npublic b: number;\n",
+                    "replacementText": "public a?: number;\n  public b: number;\n  ",
                     "line": 98,
                     "column": 34,
                     "endLine": 98,
@@ -771,9 +771,9 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2052,
-                    "end": 2054,
-                    "replacementText": "{\n    this.a = a;\n    this.b = b;\n}",
+                    "start": 2053,
+                    "end": 2053,
+                    "replacementText": "\n    this.a = a;\n    this.b = b;\n  ",
                     "line": 98,
                     "column": 34,
                     "endLine": 98,
@@ -794,7 +794,7 @@
                 {
                     "start": 2071,
                     "end": 2071,
-                    "replacementText": "public a?: number;\npublic b?: number;\n",
+                    "replacementText": "public a?: number;\n  public b?: number;\n  ",
                     "line": 102,
                     "column": 34,
                     "endLine": 102,
@@ -819,9 +819,9 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2121,
-                    "end": 2123,
-                    "replacementText": "{\n    this.a = a;\n    this.b = b;\n}",
+                    "start": 2122,
+                    "end": 2122,
+                    "replacementText": "\n    this.a = a;\n    this.b = b;\n  ",
                     "line": 102,
                     "column": 34,
                     "endLine": 102,
@@ -842,7 +842,7 @@
                 {
                     "start": 2071,
                     "end": 2071,
-                    "replacementText": "public a?: number;\npublic b?: number;\n",
+                    "replacementText": "public a?: number;\n  public b?: number;\n  ",
                     "line": 102,
                     "column": 34,
                     "endLine": 102,
@@ -867,13 +867,493 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2121,
-                    "end": 2123,
-                    "replacementText": "{\n    this.a = a;\n    this.b = b;\n}",
+                    "start": 2122,
+                    "end": 2122,
+                    "replacementText": "\n    this.a = a;\n    this.b = b;\n  ",
                     "line": 102,
                     "column": 34,
                     "endLine": 102,
                     "endColumn": 40
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 108,
+            "column": 5,
+            "endLine": 108,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2175,
+                    "end": 2175,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 109,
+                    "column": 5,
+                    "endLine": 109,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2192,
+                    "end": 2210,
+                    "replacementText": "x: number",
+                    "line": 109,
+                    "column": 5,
+                    "endLine": 109,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2216,
+                    "end": 2234,
+                    "replacementText": "y: number",
+                    "line": 109,
+                    "column": 5,
+                    "endLine": 109,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2241,
+                    "end": 2241,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;\n  ",
+                    "line": 109,
+                    "column": 5,
+                    "endLine": 109,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 109,
+            "column": 5,
+            "endLine": 109,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2175,
+                    "end": 2175,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 109,
+                    "column": 5,
+                    "endLine": 109,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2192,
+                    "end": 2210,
+                    "replacementText": "x: number",
+                    "line": 109,
+                    "column": 5,
+                    "endLine": 109,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2216,
+                    "end": 2234,
+                    "replacementText": "y: number",
+                    "line": 109,
+                    "column": 5,
+                    "endLine": 109,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2241,
+                    "end": 2241,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;\n  ",
+                    "line": 109,
+                    "column": 5,
+                    "endLine": 109,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 116,
+            "column": 5,
+            "endLine": 116,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2307,
+                    "end": 2307,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 117,
+                    "column": 5,
+                    "endLine": 117,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2324,
+                    "end": 2342,
+                    "replacementText": "x: number",
+                    "line": 117,
+                    "column": 5,
+                    "endLine": 117,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2348,
+                    "end": 2366,
+                    "replacementText": "y: number",
+                    "line": 117,
+                    "column": 5,
+                    "endLine": 117,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2388,
+                    "end": 2388,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;\n  ",
+                    "line": 117,
+                    "column": 5,
+                    "endLine": 117,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 117,
+            "column": 5,
+            "endLine": 117,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2307,
+                    "end": 2307,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 117,
+                    "column": 5,
+                    "endLine": 117,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2324,
+                    "end": 2342,
+                    "replacementText": "x: number",
+                    "line": 117,
+                    "column": 5,
+                    "endLine": 117,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2348,
+                    "end": 2366,
+                    "replacementText": "y: number",
+                    "line": 117,
+                    "column": 5,
+                    "endLine": 117,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2388,
+                    "end": 2388,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;\n  ",
+                    "line": 117,
+                    "column": 5,
+                    "endLine": 117,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 124,
+            "column": 5,
+            "endLine": 124,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2447,
+                    "end": 2447,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 125,
+                    "column": 5,
+                    "endLine": 125,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2464,
+                    "end": 2482,
+                    "replacementText": "x: number",
+                    "line": 125,
+                    "column": 5,
+                    "endLine": 125,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2488,
+                    "end": 2506,
+                    "replacementText": "y: number",
+                    "line": 125,
+                    "column": 5,
+                    "endLine": 125,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2513,
+                    "end": 2513,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;",
+                    "line": 125,
+                    "column": 5,
+                    "endLine": 125,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 125,
+            "column": 5,
+            "endLine": 125,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2447,
+                    "end": 2447,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 125,
+                    "column": 5,
+                    "endLine": 125,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2464,
+                    "end": 2482,
+                    "replacementText": "x: number",
+                    "line": 125,
+                    "column": 5,
+                    "endLine": 125,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2488,
+                    "end": 2506,
+                    "replacementText": "y: number",
+                    "line": 125,
+                    "column": 5,
+                    "endLine": 125,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2513,
+                    "end": 2513,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;",
+                    "line": 125,
+                    "column": 5,
+                    "endLine": 125,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 133,
+            "column": 5,
+            "endLine": 133,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2580,
+                    "end": 2580,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 134,
+                    "column": 5,
+                    "endLine": 134,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2597,
+                    "end": 2615,
+                    "replacementText": "x: number",
+                    "line": 134,
+                    "column": 5,
+                    "endLine": 134,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2621,
+                    "end": 2639,
+                    "replacementText": "y: number",
+                    "line": 134,
+                    "column": 5,
+                    "endLine": 134,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2680,
+                    "end": 2680,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;",
+                    "line": 134,
+                    "column": 5,
+                    "endLine": 134,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 134,
+            "column": 5,
+            "endLine": 134,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2580,
+                    "end": 2580,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 134,
+                    "column": 5,
+                    "endLine": 134,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2597,
+                    "end": 2615,
+                    "replacementText": "x: number",
+                    "line": 134,
+                    "column": 5,
+                    "endLine": 134,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2621,
+                    "end": 2639,
+                    "replacementText": "y: number",
+                    "line": 134,
+                    "column": 5,
+                    "endLine": 134,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2680,
+                    "end": 2680,
+                    "replacementText": "\n    this.x = x;\n    this.y = y;",
+                    "line": 134,
+                    "column": 5,
+                    "endLine": 134,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 144,
+            "column": 5,
+            "endLine": 144,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2738,
+                    "end": 2738,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 145,
+                    "column": 5,
+                    "endLine": 145,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2755,
+                    "end": 2773,
+                    "replacementText": "x: number",
+                    "line": 145,
+                    "column": 5,
+                    "endLine": 145,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2779,
+                    "end": 2797,
+                    "replacementText": "y: number",
+                    "line": 145,
+                    "column": 5,
+                    "endLine": 145,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2841,
+                    "end": 2841,
+                    "replacementText": "this.x = x;\n    this.y = y;\n    ",
+                    "line": 145,
+                    "column": 5,
+                    "endLine": 145,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 145,
+            "column": 5,
+            "endLine": 145,
+            "endColumn": 23,
+            "problem": "ParameterProperties",
+            "autofix": [
+                {
+                    "start": 2738,
+                    "end": 2738,
+                    "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
+                    "line": 145,
+                    "column": 5,
+                    "endLine": 145,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2755,
+                    "end": 2773,
+                    "replacementText": "x: number",
+                    "line": 145,
+                    "column": 5,
+                    "endLine": 145,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2779,
+                    "end": 2797,
+                    "replacementText": "y: number",
+                    "line": 145,
+                    "column": 5,
+                    "endLine": 145,
+                    "endColumn": 23
+                },
+                {
+                    "start": 2841,
+                    "end": 2841,
+                    "replacementText": "this.x = x;\n    this.y = y;\n    ",
+                    "line": 145,
+                    "column": 5,
+                    "endLine": 145,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
