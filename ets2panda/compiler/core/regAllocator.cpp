@@ -214,35 +214,35 @@ void RangeRegAllocator::Run(IRNode *const ins, VReg rangeStart, const std::size_
 {
     ES2PANDA_ASSERT(Spiller().Restored());
     ES2PANDA_ASSERT(ins != nullptr);
-    const auto rangeEnd = rangeStart + argCount;
 
+    const VReg winBegin = rangeStart;
+    const VReg winEndExclusive = rangeStart - argCount;
     std::array<VReg *, IRNode::MAX_REG_OPERAND> regs {};
     const auto regCnt = ins->Registers(&regs);
-    const auto registers = Span<VReg *>(regs.data(), regs.data() + regCnt);
-    if (RegIndicesValid(ins, registers).first) {
+
+    const auto operands = Span<VReg *>(regs.data(), regs.data() + regCnt);
+    if (RegIndicesValid(ins, operands).first) {
         PushBack(ins);
         return;
     }
 
     const auto rs = Spiller().Start(GetCodeGen());
+    const auto opRbegin = operands.rbegin();
+    const auto opRend = operands.rend();  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
-    auto regIter = registers.begin();
-    const auto regIterEnd = regIter + registers.size() - 1;  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-
-    while (regIter != regIterEnd) {
-        auto *const reg = *regIter;
-
-        *reg = Spill(ins, *reg);
-        regIter++;  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    for (auto it = opRbegin + 1; it != opRend; ++it) {
+        VReg *const vr = *it;
+        *vr = Spill(ins, *vr);
     }
 
-    auto *const regStartReg = *regIter;
-    auto reg = rangeStart++;
-    *regStartReg = Spill(ins, reg);
+    VReg *const startOperand = *opRbegin;
+    VReg cur = winBegin;
+    *startOperand = Spill(ins, cur);
+    --cur;
 
-    while (rangeStart != rangeEnd) {
-        reg = rangeStart++;
-        Spill(ins, reg);
+    while (cur != winEndExclusive) {
+        Spill(ins, cur);
+        --cur;
     }
 
     PushBack(ins);
