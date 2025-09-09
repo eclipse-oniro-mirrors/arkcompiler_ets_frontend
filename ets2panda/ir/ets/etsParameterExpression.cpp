@@ -224,9 +224,11 @@ void ETSParameterExpression::Dump(ir::SrcDumper *const dumper) const
     if (IsRestParameter()) {
         Spread()->Dump(dumper);
     } else {
+        ETSParameterExpression const *node = this;
         //  NOTE (DZ): temporary solution until node history starts working properly
-        ETSParameterExpression const *node =
-            OriginalNode() == nullptr ? this : OriginalNode()->AsETSParameterExpression();
+        if (dumper->IsDeclgen() && OriginalNode() != nullptr) {
+            node = OriginalNode()->AsETSParameterExpression();
+        }
 
         auto const ident = node->Ident();
         ES2PANDA_ASSERT(ident != nullptr);
@@ -239,7 +241,7 @@ void ETSParameterExpression::Dump(ir::SrcDumper *const dumper) const
 
         auto typeAnnotation = ident->AsAnnotatedExpression()->TypeAnnotation();
         if (typeAnnotation != nullptr) {
-            if (typeAnnotation->OriginalNode() != nullptr) {
+            if (dumper->IsDeclgen() && typeAnnotation->OriginalNode() != nullptr) {
                 typeAnnotation = typeAnnotation->OriginalNode()->AsExpression()->AsTypeNode();
             }
             dumper->Add(": ");

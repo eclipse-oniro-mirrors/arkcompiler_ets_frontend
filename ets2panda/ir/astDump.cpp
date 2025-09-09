@@ -125,7 +125,7 @@ void AstDumper::SerializeString(const char *str)
 
 void AstDumper::SerializeString(const util::StringView &str)
 {
-    ss_ << "\"" << util::Helpers::CreateEscapedString(std::string(str)) << "\"";
+    ss_ << "\"" << util::Helpers::CreateEscapedString(str.Utf8()) << "\"";
 }
 
 void AstDumper::SerializeNumber(size_t number)

@@ -34,7 +34,7 @@ void StringLiteral::Dump(ir::AstDumper *dumper) const
 
 void StringLiteral::Dump(ir::SrcDumper *dumper) const
 {
-    dumper->Add("\"" + util::Helpers::CreateEscapedString(std::string(str_)) + "\"");
+    dumper->Add("\"" + util::Helpers::CreateEscapedString(str_.Utf8()) + "\"");
 }
 
 void StringLiteral::Compile(compiler::PandaGen *pg) const

@@ -100,6 +100,12 @@ void ClassProperty::DumpModifiers(ir::SrcDumper *dumper) const
     ES2PANDA_ASSERT(key_);
 
     if (compiler::HasGlobalClassParent(this)) {
+        if (IsExported()) {
+            dumper->Add("export ");
+        }
+        if (dumper->IsDeclgen()) {
+            dumper->Add("declare ");
+        }
         if (key_->Parent()->IsConst()) {
             dumper->Add("const ");
         } else {
