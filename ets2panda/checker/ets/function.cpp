@@ -419,8 +419,9 @@ bool ETSChecker::CheckOptionalLambdaFunction(ir::Expression *argument, Signature
 static bool IsInvalidArgumentAsIdentifier(varbinder::Scope *scope, const ir::Identifier *identifier)
 {
     auto result = scope->Find(identifier->Name());
-    return result.variable != nullptr && (result.variable->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE |
-                                                                   varbinder::VariableFlags::TYPE_ALIAS));
+    return result.variable != nullptr &&
+           (result.variable->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE_OR_ENUM |
+                                     varbinder::VariableFlags::TYPE_ALIAS));
 }
 
 static void ClearPreferredTypeForArray(checker::ETSChecker *checker, ir::Expression *argument, Type *paramType,
