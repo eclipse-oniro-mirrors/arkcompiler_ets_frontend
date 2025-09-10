@@ -68,11 +68,11 @@ template("es2abc_gen_abc") {
       deps += es2abc_build_deps
     } else {
       if (host_toolchain == toolchain_mac) {
-        external_deps = ["ets_frontend:es2panda($toolchain_mac)"]
+        external_deps = [ "ets_frontend:es2panda($toolchain_mac)" ]
       } else if (host_toolchain == toolchain_win) {
-        external_deps = ["ets_frontend:es2panda(${host_toolchain})"]
+        external_deps = [ "ets_frontend:es2panda(${host_toolchain})" ]
       } else {
-        external_deps = ["ets_frontend:es2panda($toolchain_linux)"]
+        external_deps = [ "ets_frontend:es2panda($toolchain_linux)" ]
       }
     }
 
@@ -138,11 +138,11 @@ template("es2abc_gen_newest_abc") {
     if (host_toolchain == toolchain_mac) {
       deps += es2abc_build_deps
     } else if (host_toolchain == toolchain_win) {
-      external_deps = ["ets_frontend:es2panda(${host_toolchain})"]
+      external_deps = [ "ets_frontend:es2panda(${host_toolchain})" ]
     } else if (ark_standalone_build) {
       deps += es2abc_build_deps
     } else {
-      external_deps = ["ets_frontend:es2panda($toolchain_linux)"]
+      external_deps = [ "ets_frontend:es2panda($toolchain_linux)" ]
     }
 
     args = [

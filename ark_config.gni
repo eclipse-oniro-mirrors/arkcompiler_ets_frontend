@@ -15,16 +15,16 @@ import("ark_root.gni")
 
 if (is_standard_system) {
   default_enabled_plugins = []
-    platform_libs = []
-    platform_ldflags = [ "-static-libstdc++" ]
-    platform_include_dirs = []
-    use_pbqp = false
+  platform_libs = []
+  platform_ldflags = [ "-static-libstdc++" ]
+  platform_include_dirs = []
+  use_pbqp = false
 } else {
-    default_enabled_plugins = []
-    platform_libs = []
-    platform_ldflags = []
-    platform_include_dirs = []
-    use_pbqp = false
+  default_enabled_plugins = []
+  platform_libs = []
+  platform_ldflags = []
+  platform_include_dirs = []
+  use_pbqp = false
 }
 
 enabled_plugins = default_enabled_plugins

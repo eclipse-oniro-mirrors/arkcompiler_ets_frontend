@@ -52,9 +52,7 @@ ohos_executable("ets2panda") {
     ]
   }
 
-  configs += [
-    "$ark_es2panda_root:libes2panda_public_config"
-  ]
+  configs += [ "$ark_es2panda_root:libes2panda_public_config" ]
 
   deps = [
     "$ark_es2panda_root:libes2panda_frontend_static",
@@ -70,12 +68,12 @@ ohos_executable("ets2panda") {
   }
 
   external_deps = [
+    "runtime_core:libarktsabc2program_package",
     "runtime_core:libarktsassembler_package",
     "runtime_core:libarktsbase_package",
     "runtime_core:libarktsbytecodeopt_package",
     "runtime_core:libarktscompiler_package",
     "runtime_core:libarktsfile_package",
-    "runtime_core:libarktsabc2program_package",
     sdk_libc_secshared_dep,
   ]
 
@@ -83,11 +81,11 @@ ohos_executable("ets2panda") {
     external_deps += [
       "runtime_core:assembler_headers",
       "runtime_core:bytecode_optimizer_headers",
+      "runtime_core:compiler_headers",
       "runtime_core:libpandabase_headers",
       "runtime_core:libpandafile_headers",
       "runtime_core:runtime_gen_headers",
       "runtime_core:runtime_headers",
-      "runtime_core:compiler_headers",
       "runtime_core:verification_headers",
     ]
   }

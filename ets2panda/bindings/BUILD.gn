@@ -64,8 +64,8 @@ shared_library("ts_bindings") {
 
   if (ark_standalone_build) {
     deps += [
-      "$ark_root/bytecode_optimizer:libarktsbytecodeopt_frontend_static",
       "$ark_root/abc2program:arkts_abc2program_static",
+      "$ark_root/bytecode_optimizer:libarktsbytecodeopt_frontend_static",
       "$ark_third_party_root/bounds_checking_function:libsec_shared",
     ]
     include_dirs += [ "//third_party/node/src" ]
@@ -357,6 +357,7 @@ action("build_bindings") {
     "src/common/InteropTypes.ts",
     "src/common/Platform.ts",
     "src/common/Wrapper.ts",
+    "src/common/arkTSConfigGenerator.ts",
     "src/common/arrays.ts",
     "src/common/driver_helper.ts",
     "src/common/global.ts",
@@ -369,7 +370,6 @@ action("build_bindings") {
     "src/common/types.ts",
     "src/common/ui_plugins_driver.ts",
     "src/common/utils.ts",
-    "src/common/arkTSConfigGenerator.ts",
     "src/generated/Es2pandaEnums.ts",
     "src/generated/Es2pandaNativeModule.ts",
     "src/index.ts",
