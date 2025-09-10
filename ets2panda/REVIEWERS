@@ -28,17 +28,17 @@
 /merge_abc/ @gavin1012_hw
 /test/ @gavin1012_hw
 /test262/ @gavin1012_hw
-/test262/*.json                 @shirunova_viktoria @gavin1012_hw @zhuheng27
-/test262/*.py			@shirunova_viktoria @gavin1012_hw @zhuheng27
-/test262/ignored*.txt		@shirunova_viktoria @gavin1012_hw @kuchkovairina @zhuheng27
+/test262/*.json                 @shirunova_viktoria @huang-shengda2
+/test262/*.py			@shirunova_viktoria @huang-shengda2
+/test262/ignored*.txt		@shirunova_viktoria @kuchkovairina @huang-shengda2
 /test_ecma_bcopt/ @gavin1012_hw
 /ets2panda/checker/ @rtakacs ^akmaevaleksey @zelentsovdmitry ^csabaosztrogonac ^lirismankarina ^igelhaus ^Prof1983
 /ets2panda/checker/ETS*.* @zelentsovdmitry ^igelhaus ^Prof1983
 /ets2panda/checker/ETSAnalyzer.cpp ^akmaevaleksey @martinsajti @Ekkoruse ^igelhaus ^Prof1983
 /ets2panda/checker/ETSAnalyzerHelpers.* @lirismankarina ^igelhaus ^Prof1983
 /ets2panda/compiler/ @xuxjeeee @gogabr ^csabaosztrogonac ^igelhaus ^Prof1983 ^zelentsovdmitry
-/ets2panda/declgen_ets2ts/ @dreamdoomwalker ^trubachevilya ^ivagin ^igelhaus ^Prof1983
-/ets2panda/driver/ @trubachevilya @dreamdoomwalker ^igelhaus ^Prof1983
+/ets2panda/declgen_ets2ts/ @dreamdoomwalker ^trubachevilya ^ivagin ^igelhaus ^Prof1983 ^luobohua2025 @chenmudan
+/ets2panda/driver/ @trubachevilya @dreamdoomwalker ^igelhaus ^Prof1983 ^luobohua2025 @chenmudan
 /ets2panda/ir/ @ziziziiziziz ^gavin1012_hw @csabaosztrogonac ^igelhaus ^Prof1983
 /ets2panda/linter/              @rosinskiyigor @eokolnov1 @yyytiancai ^utkugursel
 /ets2panda/parser/ @robertsipka @shimenkovmikhail ^igelhaus ^csabaosztrogonac ^Prof1983 ^chernykhsergey ^zelentsovdmitry
@@ -62,7 +62,7 @@
 /ets2panda/varbinder/recordTable.* @torokg ^zelentsovdmitry ^igelhaus ^Prof1983
 /ets2panda/varbinder/scope.* @torokg ^zelentsovdmitry ^igelhaus ^Prof1983
 /ets2panda/varbinder/varbinder.* @torokg ^zelentsovdmitry ^igelhaus ^Prof1983
-/test/workload/ignored*.txt     @shirunova_viktoria @kuchkovairina @gavin1012_hw @zhuheng27
+/test/workload/ignored*.txt     @shirunova_viktoria @kuchkovairina @huang-shengda2
 /ets2panda/checker/ets/ @lirismankarina ^igelhaus ^Prof1983
 /ets2panda/checker/ets/*converter* @martinsajti ^pimenovdmitry ^igelhaus ^Prof1983
 /ets2panda/checker/ets/function.cpp @gogabr ^vpukhov ^igelhaus ^Prof1983
@@ -83,7 +83,7 @@
 /ets2panda/ir/statements/ @dkofanov @Ekkoruse ^akmaevaleksey ^igelhaus ^Prof1983
 /ets2panda/ir/statements/annotation* @lirismankarina @xuxjeeee ^igelhaus ^Prof1983
 /ets2panda/test/test-lists/astchecker @chernykhsergey ^igelhaus ^Prof1983
-/ets2panda/test/test-lists/declgenets2ts @dreamdoomwalker ^igelhaus ^Prof1983
+/ets2panda/test/test-lists/declgenets2ts @dreamdoomwalker ^igelhaus ^Prof1983 ^luobohua2025 @chenmudan
 /ets2panda/test/test-lists/parser @chernykhsergey ^igelhaus ^Prof1983
 /ets2panda/test/unit/arktsconfig-parser @trubachevilya @dreamdoomwalker ^igelhaus ^Prof1983
 /ets2panda/test/unit/lsp @dreamdoomwalker @Ascnbio ^igelhaus ^Prof1983

@@ -13,6 +13,3 @@ deltablue
 
 #18740
 splay
-
-#18863
-json-parse-inspector
