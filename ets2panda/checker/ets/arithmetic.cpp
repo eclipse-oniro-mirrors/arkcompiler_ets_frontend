@@ -810,12 +810,11 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorInstanceOf(lexer::Sour
 }
 
 template <typename T>
-static void ConvertNumberLiteralTo(ir::NumberLiteral *lit, Type *toType)
+static void ConvertNumberLiteralTo(ETSChecker *checker, ir::NumberLiteral *lit, Type *toType)
 {
     auto &number = lit->Number();
     number.SetValue(number.GetValueAndCastTo<T>());
-    toType->AddTypeFlag(TypeFlag::CONSTANT);
-    lit->SetTsType(toType);
+    lit->SetTsType(checker->GetConstantBuiltinType(toType));
 }
 
 template <typename From, typename To>
@@ -836,11 +835,11 @@ static void ConvertIntegerNumberLiteral(ETSChecker *checker, ir::NumberLiteral *
                                         ETSObjectType *toType)
 {
     if (toType->HasObjectFlag(ETSObjectFlags::BUILTIN_LONG)) {
-        ConvertNumberLiteralTo<int64_t>(lit, checker->GlobalLongBuiltinType()->Clone(checker));
+        ConvertNumberLiteralTo<int64_t>(checker, lit, checker->GlobalLongBuiltinType());
     } else if (toType->HasObjectFlag(ETSObjectFlags::BUILTIN_INT)) {
         if (!fromType->HasObjectFlag(ETSObjectFlags::BUILTIN_LONG) ||
             CheckNumberLiteralValue<int64_t, int32_t>(checker, lit)) {
-            ConvertNumberLiteralTo<int32_t>(lit, checker->GlobalIntBuiltinType()->Clone(checker));
+            ConvertNumberLiteralTo<int32_t>(checker, lit, checker->GlobalIntBuiltinType());
         }
     } else if (toType->HasObjectFlag(ETSObjectFlags::BUILTIN_SHORT)) {
         if (fromType->HasObjectFlag(ETSObjectFlags::BUILTIN_LONG) &&
@@ -851,7 +850,7 @@ static void ConvertIntegerNumberLiteral(ETSChecker *checker, ir::NumberLiteral *
             !CheckNumberLiteralValue<int32_t, int16_t>(checker, lit)) {
             return;
         }
-        ConvertNumberLiteralTo<int16_t>(lit, checker->GlobalShortBuiltinType()->Clone(checker));
+        ConvertNumberLiteralTo<int16_t>(checker, lit, checker->GlobalShortBuiltinType());
     } else if (toType->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE)) {
         if (fromType->HasObjectFlag(ETSObjectFlags::BUILTIN_LONG) &&
             !CheckNumberLiteralValue<int64_t, int8_t>(checker, lit)) {
@@ -865,7 +864,7 @@ static void ConvertIntegerNumberLiteral(ETSChecker *checker, ir::NumberLiteral *
             !CheckNumberLiteralValue<int16_t, int8_t>(checker, lit)) {
             return;
         }
-        ConvertNumberLiteralTo<int8_t>(lit, checker->GlobalByteBuiltinType()->Clone(checker));
+        ConvertNumberLiteralTo<int8_t>(checker, lit, checker->GlobalByteBuiltinType());
     }
 }
 
@@ -876,14 +875,14 @@ static void ConvertNumberLiteral(ETSChecker *checker, ir::NumberLiteral *lit, ET
     if (auto *fromType = lit->TsType()->AsETSObjectType(); !checker->Relation()->IsIdenticalTo(fromType, toType)) {
         switch (static_cast<ETSObjectFlags>(toType->ObjectFlags() & ETSObjectFlags::BUILTIN_NUMERIC)) {
             case ETSObjectFlags::BUILTIN_DOUBLE:
-                ConvertNumberLiteralTo<double>(lit, checker->GlobalDoubleBuiltinType()->Clone(checker));
+                ConvertNumberLiteralTo<double>(checker, lit, checker->GlobalDoubleBuiltinType());
                 break;
 
             case ETSObjectFlags::BUILTIN_FLOAT:
                 if (fromType->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
                     checker->LogError(diagnostic::INVALID_ASSIGNMNENT, {fromType, toType}, lit->Start());
                 } else {
-                    ConvertNumberLiteralTo<float>(lit, checker->GlobalFloatBuiltinType()->Clone(checker));
+                    ConvertNumberLiteralTo<float>(checker, lit, checker->GlobalFloatBuiltinType());
                 }
                 break;
 
