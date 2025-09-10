@@ -84,12 +84,20 @@
                 {
                     "start": 617,
                     "end": 628,
-                    "replacementText": "private p: number;"
+                    "replacementText": "private p: number;",
+                    "line": 44,
+                    "column": 22,
+                    "endLine": 44,
+                    "endColumn": 24
                 },
                 {
                     "start": 1121,
                     "end": 1123,
-                    "replacementText": "p"
+                    "replacementText": "p",
+                    "line": 44,
+                    "column": 22,
+                    "endLine": 44,
+                    "endColumn": 24
                 }
             ],
             "suggest": "",
@@ -116,12 +124,20 @@
                 {
                     "start": 677,
                     "end": 689,
-                    "replacementText": "private q?: string;"
+                    "replacementText": "private q?: string;",
+                    "line": 44,
+                    "column": 43,
+                    "endLine": 44,
+                    "endColumn": 45
                 },
                 {
                     "start": 1142,
                     "end": 1144,
-                    "replacementText": "q"
+                    "replacementText": "q",
+                    "line": 44,
+                    "column": 43,
+                    "endLine": 44,
+                    "endColumn": 45
                 }
             ],
             "suggest": "",
@@ -148,12 +164,20 @@
                 {
                     "start": 692,
                     "end": 704,
-                    "replacementText": "private e!: string;"
+                    "replacementText": "private e!: string;",
+                    "line": 44,
+                    "column": 53,
+                    "endLine": 44,
+                    "endColumn": 55
                 },
                 {
                     "start": 1152,
                     "end": 1154,
-                    "replacementText": "e"
+                    "replacementText": "e",
+                    "line": 44,
+                    "column": 53,
+                    "endLine": 44,
+                    "endColumn": 55
                 }
             ],
             "suggest": "",
@@ -170,12 +194,20 @@
                 {
                     "start": 707,
                     "end": 721,
-                    "replacementText": "private static s = 0;"
+                    "replacementText": "private static s = 0;",
+                    "line": 44,
+                    "column": 60,
+                    "endLine": 44,
+                    "endColumn": 62
                 },
                 {
                     "start": 1159,
                     "end": 1161,
-                    "replacementText": "s"
+                    "replacementText": "s",
+                    "line": 44,
+                    "column": 60,
+                    "endLine": 44,
+                    "endColumn": 62
                 }
             ],
             "suggest": "",
@@ -192,12 +224,20 @@
                 {
                     "start": 724,
                     "end": 741,
-                    "replacementText": "private readonly r = 20;"
+                    "replacementText": "private readonly r = 20;",
+                    "line": 44,
+                    "column": 70,
+                    "endLine": 44,
+                    "endColumn": 72
                 },
                 {
                     "start": 1169,
                     "end": 1171,
-                    "replacementText": "r"
+                    "replacementText": "r",
+                    "line": 44,
+                    "column": 70,
+                    "endLine": 44,
+                    "endColumn": 72
                 }
             ],
             "suggest": "",
@@ -214,12 +254,20 @@
                 {
                     "start": 744,
                     "end": 768,
-                    "replacementText": "private static readonly sr = 0;"
+                    "replacementText": "private static readonly sr = 0;",
+                    "line": 44,
+                    "column": 77,
+                    "endLine": 44,
+                    "endColumn": 80
                 },
                 {
                     "start": 1176,
                     "end": 1179,
-                    "replacementText": "sr"
+                    "replacementText": "sr",
+                    "line": 44,
+                    "column": 77,
+                    "endLine": 44,
+                    "endColumn": 80
                 }
             ],
             "suggest": "",
@@ -236,12 +284,20 @@
                 {
                     "start": 771,
                     "end": 801,
-                    "replacementText": "private static readonly srq?: string;"
+                    "replacementText": "private static readonly srq?: string;",
+                    "line": 44,
+                    "column": 85,
+                    "endLine": 44,
+                    "endColumn": 89
                 },
                 {
                     "start": 1184,
                     "end": 1188,
-                    "replacementText": "srq"
+                    "replacementText": "srq",
+                    "line": 44,
+                    "column": 85,
+                    "endLine": 44,
+                    "endColumn": 89
                 }
             ],
             "suggest": "",
@@ -258,12 +314,20 @@
                 {
                     "start": 805,
                     "end": 827,
-                    "replacementText": "private m(x: number): void { }"
+                    "replacementText": "private m(x: number): void { }",
+                    "line": 45,
+                    "column": 10,
+                    "endLine": 45,
+                    "endColumn": 12
                 },
                 {
                     "start": 1224,
                     "end": 1226,
-                    "replacementText": "m"
+                    "replacementText": "m",
+                    "line": 45,
+                    "column": 10,
+                    "endLine": 45,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -300,12 +364,20 @@
                 {
                     "start": 955,
                     "end": 987,
-                    "replacementText": "private get g1(): number { return 10; }"
+                    "replacementText": "private get g1(): number { return 10; }",
+                    "line": 48,
+                    "column": 18,
+                    "endLine": 48,
+                    "endColumn": 21
                 },
                 {
                     "start": 1315,
                     "end": 1318,
-                    "replacementText": "g1"
+                    "replacementText": "g1",
+                    "line": 48,
+                    "column": 18,
+                    "endLine": 48,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -322,12 +394,20 @@
                 {
                     "start": 990,
                     "end": 1012,
-                    "replacementText": "private set s1(x: number) { }"
+                    "replacementText": "private set s1(x: number) { }",
+                    "line": 49,
+                    "column": 10,
+                    "endLine": 49,
+                    "endColumn": 13
                 },
                 {
                     "start": 1329,
                     "end": 1332,
-                    "replacementText": "s1"
+                    "replacementText": "s1",
+                    "line": 49,
+                    "column": 10,
+                    "endLine": 49,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -344,12 +424,20 @@
                 {
                     "start": 1016,
                     "end": 1055,
-                    "replacementText": "private static get g2(): number { return 10; }"
+                    "replacementText": "private static get g2(): number { return 10; }",
+                    "line": 50,
+                    "column": 15,
+                    "endLine": 50,
+                    "endColumn": 18
                 },
                 {
                     "start": 1352,
                     "end": 1355,
-                    "replacementText": "g2"
+                    "replacementText": "g2",
+                    "line": 50,
+                    "column": 15,
+                    "endLine": 50,
+                    "endColumn": 18
                 }
             ],
             "suggest": "",
@@ -366,12 +454,20 @@
                 {
                     "start": 1058,
                     "end": 1087,
-                    "replacementText": "private static set s2(x: number) { }"
+                    "replacementText": "private static set s2(x: number) { }",
+                    "line": 51,
+                    "column": 7,
+                    "endLine": 51,
+                    "endColumn": 10
                 },
                 {
                     "start": 1363,
                     "end": 1366,
-                    "replacementText": "s2"
+                    "replacementText": "s2",
+                    "line": 51,
+                    "column": 7,
+                    "endLine": 51,
+                    "endColumn": 10
                 }
             ],
             "suggest": "",
@@ -388,12 +484,20 @@
                 {
                     "start": 617,
                     "end": 628,
-                    "replacementText": "private p: number;"
+                    "replacementText": "private p: number;",
+                    "line": 44,
+                    "column": 22,
+                    "endLine": 44,
+                    "endColumn": 24
                 },
                 {
                     "start": 1121,
                     "end": 1123,
-                    "replacementText": "p"
+                    "replacementText": "p",
+                    "line": 44,
+                    "column": 22,
+                    "endLine": 44,
+                    "endColumn": 24
                 }
             ],
             "suggest": "",
@@ -420,12 +524,20 @@
                 {
                     "start": 677,
                     "end": 689,
-                    "replacementText": "private q?: string;"
+                    "replacementText": "private q?: string;",
+                    "line": 44,
+                    "column": 43,
+                    "endLine": 44,
+                    "endColumn": 45
                 },
                 {
                     "start": 1142,
                     "end": 1144,
-                    "replacementText": "q"
+                    "replacementText": "q",
+                    "line": 44,
+                    "column": 43,
+                    "endLine": 44,
+                    "endColumn": 45
                 }
             ],
             "suggest": "",
@@ -442,12 +554,20 @@
                 {
                     "start": 692,
                     "end": 704,
-                    "replacementText": "private e!: string;"
+                    "replacementText": "private e!: string;",
+                    "line": 44,
+                    "column": 53,
+                    "endLine": 44,
+                    "endColumn": 55
                 },
                 {
                     "start": 1152,
                     "end": 1154,
-                    "replacementText": "e"
+                    "replacementText": "e",
+                    "line": 44,
+                    "column": 53,
+                    "endLine": 44,
+                    "endColumn": 55
                 }
             ],
             "suggest": "",
@@ -464,12 +584,20 @@
                 {
                     "start": 707,
                     "end": 721,
-                    "replacementText": "private static s = 0;"
+                    "replacementText": "private static s = 0;",
+                    "line": 44,
+                    "column": 60,
+                    "endLine": 44,
+                    "endColumn": 62
                 },
                 {
                     "start": 1159,
                     "end": 1161,
-                    "replacementText": "s"
+                    "replacementText": "s",
+                    "line": 44,
+                    "column": 60,
+                    "endLine": 44,
+                    "endColumn": 62
                 }
             ],
             "suggest": "",
@@ -486,12 +614,20 @@
                 {
                     "start": 724,
                     "end": 741,
-                    "replacementText": "private readonly r = 20;"
+                    "replacementText": "private readonly r = 20;",
+                    "line": 44,
+                    "column": 70,
+                    "endLine": 44,
+                    "endColumn": 72
                 },
                 {
                     "start": 1169,
                     "end": 1171,
-                    "replacementText": "r"
+                    "replacementText": "r",
+                    "line": 44,
+                    "column": 70,
+                    "endLine": 44,
+                    "endColumn": 72
                 }
             ],
             "suggest": "",
@@ -508,12 +644,20 @@
                 {
                     "start": 744,
                     "end": 768,
-                    "replacementText": "private static readonly sr = 0;"
+                    "replacementText": "private static readonly sr = 0;",
+                    "line": 44,
+                    "column": 77,
+                    "endLine": 44,
+                    "endColumn": 80
                 },
                 {
                     "start": 1176,
                     "end": 1179,
-                    "replacementText": "sr"
+                    "replacementText": "sr",
+                    "line": 44,
+                    "column": 77,
+                    "endLine": 44,
+                    "endColumn": 80
                 }
             ],
             "suggest": "",
@@ -530,12 +674,20 @@
                 {
                     "start": 771,
                     "end": 801,
-                    "replacementText": "private static readonly srq?: string;"
+                    "replacementText": "private static readonly srq?: string;",
+                    "line": 44,
+                    "column": 85,
+                    "endLine": 44,
+                    "endColumn": 89
                 },
                 {
                     "start": 1184,
                     "end": 1188,
-                    "replacementText": "srq"
+                    "replacementText": "srq",
+                    "line": 44,
+                    "column": 85,
+                    "endLine": 44,
+                    "endColumn": 89
                 }
             ],
             "suggest": "",
@@ -552,12 +704,20 @@
                 {
                     "start": 805,
                     "end": 827,
-                    "replacementText": "private m(x: number): void { }"
+                    "replacementText": "private m(x: number): void { }",
+                    "line": 45,
+                    "column": 10,
+                    "endLine": 45,
+                    "endColumn": 12
                 },
                 {
                     "start": 1224,
                     "end": 1226,
-                    "replacementText": "m"
+                    "replacementText": "m",
+                    "line": 45,
+                    "column": 10,
+                    "endLine": 45,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -594,12 +754,20 @@
                 {
                     "start": 955,
                     "end": 987,
-                    "replacementText": "private get g1(): number { return 10; }"
+                    "replacementText": "private get g1(): number { return 10; }",
+                    "line": 48,
+                    "column": 18,
+                    "endLine": 48,
+                    "endColumn": 21
                 },
                 {
                     "start": 1315,
                     "end": 1318,
-                    "replacementText": "g1"
+                    "replacementText": "g1",
+                    "line": 48,
+                    "column": 18,
+                    "endLine": 48,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -616,12 +784,20 @@
                 {
                     "start": 990,
                     "end": 1012,
-                    "replacementText": "private set s1(x: number) { }"
+                    "replacementText": "private set s1(x: number) { }",
+                    "line": 49,
+                    "column": 10,
+                    "endLine": 49,
+                    "endColumn": 13
                 },
                 {
                     "start": 1329,
                     "end": 1332,
-                    "replacementText": "s1"
+                    "replacementText": "s1",
+                    "line": 49,
+                    "column": 10,
+                    "endLine": 49,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -638,12 +814,20 @@
                 {
                     "start": 1016,
                     "end": 1055,
-                    "replacementText": "private static get g2(): number { return 10; }"
+                    "replacementText": "private static get g2(): number { return 10; }",
+                    "line": 50,
+                    "column": 15,
+                    "endLine": 50,
+                    "endColumn": 18
                 },
                 {
                     "start": 1352,
                     "end": 1355,
-                    "replacementText": "g2"
+                    "replacementText": "g2",
+                    "line": 50,
+                    "column": 15,
+                    "endLine": 50,
+                    "endColumn": 18
                 }
             ],
             "suggest": "",
@@ -660,12 +844,20 @@
                 {
                     "start": 1058,
                     "end": 1087,
-                    "replacementText": "private static set s2(x: number) { }"
+                    "replacementText": "private static set s2(x: number) { }",
+                    "line": 51,
+                    "column": 7,
+                    "endLine": 51,
+                    "endColumn": 10
                 },
                 {
                     "start": 1363,
                     "end": 1366,
-                    "replacementText": "s2"
+                    "replacementText": "s2",
+                    "line": 51,
+                    "column": 7,
+                    "endLine": 51,
+                    "endColumn": 10
                 }
             ],
             "suggest": "",
@@ -680,8 +872,7 @@
             "problem": "DeclWithDuplicateName",
             "suggest": "",
             "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
-            "severity": "ERROR",
-            "exclusive": "RT"
+            "severity": "ERROR"
         },
         {
             "line": 59,
@@ -691,8 +882,7 @@
             "problem": "DeclWithDuplicateName",
             "suggest": "",
             "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
-            "severity": "ERROR",
-            "exclusive": "RT"
+            "severity": "ERROR"
         },
         {
             "line": 56,
@@ -704,12 +894,20 @@
                 {
                     "start": 1401,
                     "end": 1412,
-                    "replacementText": "private a: string;"
+                    "replacementText": "private a: string;",
+                    "line": 64,
+                    "column": 32,
+                    "endLine": 64,
+                    "endColumn": 34
                 },
                 {
                     "start": 1572,
                     "end": 1574,
-                    "replacementText": "a"
+                    "replacementText": "a",
+                    "line": 64,
+                    "column": 32,
+                    "endLine": 64,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -746,12 +944,20 @@
                 {
                     "start": 1494,
                     "end": 1526,
-                    "replacementText": "private bar(): string { return 'baz'; }"
+                    "replacementText": "private bar(): string { return 'baz'; }",
+                    "line": 66,
+                    "column": 18,
+                    "endLine": 66,
+                    "endColumn": 22
                 },
                 {
                     "start": 1655,
                     "end": 1659,
-                    "replacementText": "bar"
+                    "replacementText": "bar",
+                    "line": 66,
+                    "column": 18,
+                    "endLine": 66,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -778,12 +984,20 @@
                 {
                     "start": 1401,
                     "end": 1412,
-                    "replacementText": "private a: string;"
+                    "replacementText": "private a: string;",
+                    "line": 64,
+                    "column": 32,
+                    "endLine": 64,
+                    "endColumn": 34
                 },
                 {
                     "start": 1572,
                     "end": 1574,
-                    "replacementText": "a"
+                    "replacementText": "a",
+                    "line": 64,
+                    "column": 32,
+                    "endLine": 64,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -810,12 +1024,20 @@
                 {
                     "start": 1494,
                     "end": 1526,
-                    "replacementText": "private bar(): string { return 'baz'; }"
+                    "replacementText": "private bar(): string { return 'baz'; }",
+                    "line": 66,
+                    "column": 18,
+                    "endLine": 66,
+                    "endColumn": 22
                 },
                 {
                     "start": 1655,
                     "end": 1659,
-                    "replacementText": "bar"
+                    "replacementText": "bar",
+                    "line": 66,
+                    "column": 18,
+                    "endLine": 66,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -830,8 +1052,7 @@
             "problem": "DeclWithDuplicateName",
             "suggest": "",
             "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
-            "severity": "ERROR",
-            "exclusive": "RT"
+            "severity": "ERROR"
         },
         {
             "line": 71,
@@ -843,7 +1064,11 @@
                 {
                     "start": 1682,
                     "end": 1693,
-                    "replacementText": "private a: number;"
+                    "replacementText": "private a: number;",
+                    "line": 71,
+                    "column": 3,
+                    "endLine": 71,
+                    "endColumn": 5
                 }
             ],
             "suggest": "",
@@ -870,17 +1095,29 @@
                 {
                     "start": 1726,
                     "end": 1726,
-                    "replacementText": "public b: number;\n"
+                    "replacementText": "public b: number;\n  ",
+                    "line": 74,
+                    "column": 15,
+                    "endLine": 74,
+                    "endColumn": 21
                 },
                 {
                     "start": 1738,
                     "end": 1754,
-                    "replacementText": "b: number"
+                    "replacementText": "b: number",
+                    "line": 74,
+                    "column": 15,
+                    "endLine": 74,
+                    "endColumn": 21
                 },
                 {
-                    "start": 1756,
-                    "end": 1758,
-                    "replacementText": "{\n    this.b = b;\n}"
+                    "start": 1757,
+                    "end": 1757,
+                    "replacementText": "\n    this.b = b;\n  ",
+                    "line": 74,
+                    "column": 15,
+                    "endLine": 74,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",

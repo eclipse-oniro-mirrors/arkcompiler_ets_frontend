@@ -24,27 +24,47 @@
                 {
                     "start": 624,
                     "end": 624,
-                    "replacementText": "protected ssn: string;\nprivate firstName: string;\nprivate lastName: string;\n"
+                    "replacementText": "protected ssn: string;\n    private firstName: string;\n    private lastName: string;\n    ",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
                     "start": 645,
                     "end": 666,
-                    "replacementText": "ssn: string"
+                    "replacementText": "ssn: string",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
                     "start": 676,
                     "end": 701,
-                    "replacementText": "firstName: string"
+                    "replacementText": "firstName: string",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
                     "start": 711,
                     "end": 735,
-                    "replacementText": "lastName: string"
+                    "replacementText": "lastName: string",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
-                    "start": 742,
-                    "end": 840,
-                    "replacementText": "{\n    this.ssn = ssn;\n    this.firstName = firstName;\n    this.lastName = lastName;\n    this.ssn = ssn;\n    this.firstName = firstName;\n    this.lastName = lastName;\n}"
+                    "start": 752,
+                    "end": 752,
+                    "replacementText": "this.ssn = ssn;\n      this.firstName = firstName;\n      this.lastName = lastName;\n      ",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -61,27 +81,47 @@
                 {
                     "start": 624,
                     "end": 624,
-                    "replacementText": "protected ssn: string;\nprivate firstName: string;\nprivate lastName: string;\n"
+                    "replacementText": "protected ssn: string;\n    private firstName: string;\n    private lastName: string;\n    ",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
                     "start": 645,
                     "end": 666,
-                    "replacementText": "ssn: string"
+                    "replacementText": "ssn: string",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
                     "start": 676,
                     "end": 701,
-                    "replacementText": "firstName: string"
+                    "replacementText": "firstName: string",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
                     "start": 711,
                     "end": 735,
-                    "replacementText": "lastName: string"
+                    "replacementText": "lastName: string",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
-                    "start": 742,
-                    "end": 840,
-                    "replacementText": "{\n    this.ssn = ssn;\n    this.firstName = firstName;\n    this.lastName = lastName;\n    this.ssn = ssn;\n    this.firstName = firstName;\n    this.lastName = lastName;\n}"
+                    "start": 752,
+                    "end": 752,
+                    "replacementText": "this.ssn = ssn;\n      this.firstName = firstName;\n      this.lastName = lastName;\n      ",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -98,60 +138,52 @@
                 {
                     "start": 624,
                     "end": 624,
-                    "replacementText": "protected ssn: string;\nprivate firstName: string;\nprivate lastName: string;\n"
+                    "replacementText": "protected ssn: string;\n    private firstName: string;\n    private lastName: string;\n    ",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
                     "start": 645,
                     "end": 666,
-                    "replacementText": "ssn: string"
+                    "replacementText": "ssn: string",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
                     "start": 676,
                     "end": 701,
-                    "replacementText": "firstName: string"
+                    "replacementText": "firstName: string",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
                     "start": 711,
                     "end": 735,
-                    "replacementText": "lastName: string"
+                    "replacementText": "lastName: string",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 },
                 {
-                    "start": 742,
-                    "end": 840,
-                    "replacementText": "{\n    this.ssn = ssn;\n    this.firstName = firstName;\n    this.lastName = lastName;\n    this.ssn = ssn;\n    this.firstName = firstName;\n    this.lastName = lastName;\n}"
+                    "start": 752,
+                    "end": 752,
+                    "replacementText": "this.ssn = ssn;\n      this.firstName = firstName;\n      this.lastName = lastName;\n      ",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
             "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
             "severity": "ERROR"
-        },
-        {
-            "line": 49,
-            "column": 17,
-            "endLine": 49,
-            "endColumn": 30,
-            "problem": "ParameterProperties",
-            "autofix": [
-                {
-                    "start": 1301,
-                    "end": 1301,
-                    "replacementText": "readonly a: A;\n"
-                },
-                {
-                    "start": 1313,
-                    "end": 1326,
-                    "replacementText": "a: A"
-                },
-                {
-                    "start": 1328,
-                    "end": 1353,
-                    "replacementText": "{\n    this.a = a;\n    this.a = a;\n}"
-                }
-            ],
-            "suggest": "",
-            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
-            "severity": "ERROR",
-            "exclusive": "SDK"
         }
     ]
 }

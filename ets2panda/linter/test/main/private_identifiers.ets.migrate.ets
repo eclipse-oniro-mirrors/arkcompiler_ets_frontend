@@ -72,7 +72,7 @@ class E {
   #b: string; // not fixable
 
   public b: number;
-constructor(b: number) {
+  constructor(b: number) {
     this.b = b;
-}
+  }
 }

@@ -13,26 +13,9 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": [
-        {
-            "line": 22,
-            "column": 23,
-            "endLine": 22,
-            "endColumn": 30,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 58,
-            "column": 23,
-            "endLine": 58,
-            "endColumn": 30,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        }
-    ]
+    "mode": {
+      "arkts2": "",
+      "autofix": "--arkts-2",
+      "migrate": "--arkts-2"
+    }
 }
