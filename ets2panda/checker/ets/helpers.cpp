@@ -3229,13 +3229,14 @@ bool ETSChecker::TryTransformingToStaticInvoke(ir::Identifier *const ident, cons
 }
 
 void ETSChecker::ImportNamespaceObjectTypeAddReExportType(ir::ETSImportDeclaration *importDecl,
-                                                          checker::ETSObjectType *lastObjectType, ir::Identifier *ident)
+                                                          checker::ETSObjectType *lastObjectType, ir::Identifier *ident,
+                                                          std::unordered_set<parser::Program *> *moduleStackCache)
 {
     for (auto item : VarBinder()->AsETSBinder()->ReExportImports()) {
         if (importDecl->ResolvedSource() != item->GetProgramPath().Mutf8()) {
             continue;
         }
-        auto *reExportType = GetImportSpecifierObjectType(item->GetETSImportDeclarations(), ident);
+        auto *reExportType = GetImportSpecifierObjectType(item->GetETSImportDeclarations(), ident, moduleStackCache);
         if (reExportType->IsTypeError()) {
             continue;
         }
@@ -3250,12 +3251,23 @@ void ETSChecker::ImportNamespaceObjectTypeAddReExportType(ir::ETSImportDeclarati
     }
 }
 
-Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importDecl, ir::Identifier *ident)
+Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importDecl, ir::Identifier *ident,
+                                               std::unordered_set<parser::Program *> *moduleStackCache)
 {
     auto importPath = importDecl->IsPureDynamic() ? importDecl->DeclPath() : importDecl->ResolvedSource();
     parser::Program *program =
         SelectEntryOrExternalProgram(static_cast<varbinder::ETSBinder *>(VarBinder()), importPath);
     if (program == nullptr) {
+        return GlobalTypeError();
+    }
+    std::unordered_set<parser::Program *> localCache;
+    if (moduleStackCache == nullptr) {
+        moduleStackCache = &localCache;
+    }
+    RecursionPreserver<parser::Program> guard(*moduleStackCache, program);
+
+    if (*guard) {
+        LogError(diagnostic::CYCLIC_EXPORT, ident->Start());
         return GlobalTypeError();
     }
 
@@ -3276,7 +3288,7 @@ Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importD
     ES2PANDA_ASSERT(rootVar != nullptr);
     rootVar->SetTsType(moduleObjectType);
 
-    ImportNamespaceObjectTypeAddReExportType(importDecl, moduleObjectType, ident);
+    ImportNamespaceObjectTypeAddReExportType(importDecl, moduleObjectType, ident, moduleStackCache);
     SetPropertiesForModuleObject(moduleObjectType, importPath,
                                  importDecl->Specifiers()[0]->IsImportNamespaceSpecifier() ? nullptr : importDecl);
     SetrModuleObjectTsType(ident, moduleObjectType);

@@ -333,6 +333,10 @@ semantic:
   id: 380
   message: "Class's super type is itself"
 
+- name: CYCLIC_EXPORT
+  id: 67633
+  message: "Cyclic export detected re-exports"
+
 - name: CYCLIC_INHERITANCE
   id: 310
   message: "Cyclic inheritance involving {}."
