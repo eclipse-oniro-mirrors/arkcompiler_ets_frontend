@@ -44,3 +44,4 @@ typeAlias_2.ets
 Multiline_string.ets
 Multiline_string_escape_char.ets
 async_lambda_return_type_test.ets
+fuzz/class_body_interface.ets
