@@ -710,11 +710,8 @@ Type *ETSChecker::GuaranteedTypeForUncheckedPropertyAccess(varbinder::Variable *
         case ir::AstNodeType::METHOD_DEFINITION:
         case ir::AstNodeType::CLASS_DEFINITION:
             return GetTypeOfVariable(prop);
-        case ir::AstNodeType::OVERLOAD_DECLARATION:
-        case ir::AstNodeType::TS_ENUM_DECLARATION:
-            return nullptr;
         default:
-            ES2PANDA_UNREACHABLE();
+            return nullptr;
     }
 }
 
