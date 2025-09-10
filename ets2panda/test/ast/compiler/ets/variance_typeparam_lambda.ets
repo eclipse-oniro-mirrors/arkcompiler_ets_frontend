@@ -37,20 +37,20 @@ class A<in T1,out T2,T3>{
     paramsFunc2(a:(a:T2)=>T1){}
     paramsFunc3(a:(a:T3)=>T3){}
     paramsFunc4(a:(a:(a:T1)=>T2)=>T1){}
-    paramsFunc5(a:(a:/* @@ label11*/(a:T1)=>T1)=>T1){}   //CTE
-    paramsFunc6(a:(a:(a:/* @@ label12*/T2)=>T2)=>T1){}   //CTE
+    paramsFunc5(a:/* @@ label11*/(a:(a:T1)=>T1)=>T1){}   //CTE
+    paramsFunc6(a:/* @@ label12*/(a:(a:T2)=>T2)=>T1){}   //CTE
     paramsFunc7(a:(a:(a:(a:T2)=>T1)=>T2)=>T1){}
 }
 
 /* @@@ label1 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
-/* @@@ label2 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
+/* @@@ label1 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
 /* @@@ label3 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label4 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
+/* @@@ label3 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
 /* @@@ label5 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'out' position.  */
-/* @@@ label6 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */
+/* @@@ label5 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */
 /* @@@ label7 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'out' position.  */
-/* @@@ label8 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */
+/* @@@ label7 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */
 /* @@@ label9 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */
-/* @@@ label10 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'out' position.  */
+/* @@@ label9 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'out' position.  */
 /* @@@ label11 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'out' position.  */
 /* @@@ label12 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */

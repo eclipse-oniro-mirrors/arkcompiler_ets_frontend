@@ -703,7 +703,8 @@ ETSFunctionType *ETSObjectType::GetFunctionalInterfaceInvokeType() const
 
     std::string invokeName = checker->FunctionalInterfaceInvokeName(foundArity, hasRest);
     auto *invoke = GetProperty(util::StringView(invokeName),
-                               PropertySearchFlags::SEARCH_INSTANCE_METHOD | PropertySearchFlags::SEARCH_IN_INTERFACES);
+                               PropertySearchFlags::SEARCH_INSTANCE_METHOD | PropertySearchFlags::SEARCH_IN_INTERFACES |
+                                   PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION);
     ES2PANDA_ASSERT(invoke != nullptr && invoke->TsType() != nullptr && invoke->TsType()->IsETSFunctionType());
     return invoke->TsType()->AsETSFunctionType();
 }

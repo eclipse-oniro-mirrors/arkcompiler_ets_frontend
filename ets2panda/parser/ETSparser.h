@@ -160,6 +160,8 @@ private:
     ArenaVector<ir::AstNode *> &ParseAstNodesArrayFormatPlaceholder() override;
     ArenaVector<ir::Statement *> &ParseStatementsArrayFormatPlaceholder() override;
     ArenaVector<ir::Expression *> &ParseExpressionsArrayFormatPlaceholder() override;
+    [[nodiscard]] std::unique_ptr<lexer::Lexer> InitFormattedLexer(std::string_view formattedName,
+                                                                   std::string_view sourceCode);
     ir::Statement *CreateStatement(std::string_view sourceCode);
     ir::MethodDefinition *CreateConstructorDefinition(ir::ModifierFlags modifiers, std::string_view sourceCode);
     ir::Statement *CreateClassDeclaration(std::string_view sourceCode, bool allowStatic = false);

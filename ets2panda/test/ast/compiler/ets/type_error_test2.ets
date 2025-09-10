@@ -18,7 +18,7 @@ let f:(c:string, ...abe])=>void = (c:be ...abe])=>{}
 /* @@? 16:18 Error SyntaxError: Rest parameter should be either array or tuple type. */
 /* @@? 16:24 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
 /* @@? 16:24 Error SyntaxError: Rest parameter must be the last formal parameter. */
-/* @@? 16:35 Error TypeError: Type '(c: *ERROR_TYPE*) => void' cannot be assigned to type '(c: String, ...abe: *ERROR_TYPE*) => void' */
+/* @@? 16:35 Error TypeError: Type '(p1: *ERROR_TYPE*) => void' cannot be assigned to type '(p1: String, ...p2: *ERROR_TYPE*) => void' */
 /* @@? 16:38 Error TypeError: Cannot find type 'be'. */
 /* @@? 16:41 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 16:41 Error SyntaxError: Expected '=>', got '...'. */

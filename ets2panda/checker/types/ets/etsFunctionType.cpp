@@ -415,8 +415,10 @@ void ETSFunctionType::CheckVarianceRecursively(TypeRelation *relation, VarianceF
                                                relation->TransferVariant(varianceFlag, VarianceFlag::COVARIANT));
         }
         for (auto *typeParam : sig->Params()) {
-            relation->SetNode(
-                typeParam->Declaration()->AsParameterDecl()->Node()->AsETSParameterExpression()->TypeAnnotation());
+            if (sig->HasFunction()) {
+                relation->SetNode(
+                    typeParam->Declaration()->AsParameterDecl()->Node()->AsETSParameterExpression()->TypeAnnotation());
+            }
             relation->CheckVarianceRecursively(typeParam->TsType(),
                                                relation->TransferVariant(varianceFlag, VarianceFlag::CONTRAVARIANT));
         }

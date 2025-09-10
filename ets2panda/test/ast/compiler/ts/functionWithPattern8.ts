@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,4 +20,4 @@ function foo([a = 2, { b: [c = 6, d] = [true, [5n, "foo"]], t = { a: 3, b: { a: 
 
 /* @@ label */foo + 5;
 
-/* @@@ label Error TypeError: operator + cannot be applied to types ([a, { b: [c, d], t }]: [number, { b?: [boolean, (bigint | string)[]]; t?: { a: number; b: { a: number; b: bigint; }; }; }], { r: [[r, z]] }: { r?: [[number, string]]; }) => void and number  */
+/* @@@ label Error TypeError: operator + cannot be applied to types (p1: [number, { b?: [boolean, (bigint | string)[]]; t?: { a: number; b: { a: number; b: bigint; }; }; }], p2: { r?: [[number, string]]; }) => void and number  */

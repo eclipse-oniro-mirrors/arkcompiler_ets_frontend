@@ -22,4 +22,4 @@ function main(): void {
 }
 
 /* @@@ label Error SyntaxError: Default value is allowed only for optional parameters.  */
-/* @@? 21:24 Error TypeError: Type '(x: String) => Int' is not compatible with type '(x: String|undefined) => Int' at index 2 */
+/* @@? 21:24 Error TypeError: Type '(p1: String) => Int' is not compatible with type '(p1: String|undefined) => Int' at index 2 */

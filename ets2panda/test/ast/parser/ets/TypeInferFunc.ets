@@ -25,4 +25,4 @@ function main(): void {
     foo(bar);
 }
 
-/* @@@ label Error TypeError: (...numbers: double[]) => void is not compatible with type T */
+/* @@@ label Error TypeError: (...p1: double[]) => void is not compatible with type T */
