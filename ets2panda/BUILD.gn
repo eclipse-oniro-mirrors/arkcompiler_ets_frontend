@@ -1297,7 +1297,10 @@ ohos_source_set("libes2panda_public_frontend_static") {
   ]
 
   if (ark_standalone_build || ark_static_standalone_build) {
-    deps += [ "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package" ]
+    deps += [
+      "$ark_root/assembler:libarktsassembler",
+      "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package",
+    ]
   } else {
     external_deps += [
       "runtime_core:assembler_headers",

@@ -17,4 +17,4 @@ namespace X {
     this.toString()
 }
 
-/* @@? 17:5 Error TypeError: Cannot reference 'this' in this context.  */
+/* @@? 17:5 Error TypeError: 'this' cannot be referenced from a static context */
