@@ -8037,7 +8037,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return Boolean(
         t.flags & ts.TypeFlags.StringLike ||
           typeText === 'String' ||
-          typeText === 'number' ||
+          typeText.toLowerCase() === 'number' ||
           t.flags & ts.TypeFlags.NumberLike && (/^\d+$/).test(typeText) ||
           isLiteralInitialized && !hasExplicitTypeAnnotation ||
           t.flags & ts.TypeFlags.EnumLike
