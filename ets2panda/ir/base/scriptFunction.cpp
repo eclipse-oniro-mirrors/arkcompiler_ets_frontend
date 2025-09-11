@@ -365,6 +365,10 @@ void ScriptFunction::DumpBody(ir::SrcDumper *dumper) const
             dumper->Endl();
         }
         dumper->Add("}");
+    } else if (body_->IsObjectExpression()) {
+        dumper->Add(" (");
+        body_->Dump(dumper);
+        dumper->Add(")");
     } else {
         dumper->Add(" ");
         body_->Dump(dumper);
