@@ -1407,8 +1407,8 @@ ir::AstNode *ConstantExpressionLowering::Fold(ir::AstNode *constantNode)
             auto binop = node->AsBinaryExpression();
             if (IsSupportedLiteral(binop->Left()) && IsSupportedLiteral(binop->Right())) {
                 ERROR_SANITY_CHECK(context_->diagnosticEngine,
-                    binop->OperatorType() != lexer::TokenType::PUNCTUATOR_NULLISH_COALESCING,
-                    return node);
+                                   binop->OperatorType() != lexer::TokenType::PUNCTUATOR_NULLISH_COALESCING,
+                                   return node);
                 return FoldBinaryExpression(binop, context_);
             }
         }
