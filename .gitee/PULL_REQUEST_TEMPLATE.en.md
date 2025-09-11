@@ -76,6 +76,12 @@ ninja all tests
 - [ ] Affected — Changes impact API/bytecode version but do not need to be synced to other branches
 - [ ] Not affected — Changes do not involve API/bytecode version
 
+4. Compatibility Testing for Lexical Environment Changes
+**Note: If the PR involves modifications to the lexical environment, verify whether it is compatible with hot reload scenarios.**
+- [ ] Involved, affects hot reload scenarios, requires impact assessment
+- [ ] Involved, does not affect hot reload scenarios
+- [ ] Not involved
+
 #### Performance Testing (e.g., new syntax checking scenarios)
 - [ ] Passed
 - [ ] Not applicable, no need to verify
