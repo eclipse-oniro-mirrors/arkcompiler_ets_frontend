@@ -20,5 +20,6 @@ function foo<T>(a:T){}
 
 let array:Array</* @@ label */MyAnno> = new Array</* @@ label1 */MyAnno>()
 
-/* @@@ label Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label1 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 21:31 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 21:45 Error TypeError: Invalid type reference. */
+/* @@? 21:66 Error TypeError: Annotations cannot be used as a type. */

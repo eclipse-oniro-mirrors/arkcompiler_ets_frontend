@@ -30,6 +30,7 @@ class Proxy {
 /* @@? 17:25 Error TypeError: Cannot find type 'T'. */
 /* @@? 19:22 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 21:28 Error TypeError: Cannot find type 'MethodCreate'. */
+/* @@? 21:28 Error TypeError: Invalid type reference. */
 /* @@? 22:13 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 22:32 Error TypeError: Cannot find type 'AbortController'. */
 /* @@? 24:61 Error SyntaxError: Identifier expected, got ')'. */

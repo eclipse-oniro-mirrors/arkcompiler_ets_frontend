@@ -20,4 +20,5 @@ function main():void{
 }
 
 
-/* @@@ label Error TypeError: 'bar1' type does not exist.  */
+/* @@? 19:17 Error TypeError: Invalid type reference. */
+/* @@? 19:35 Error TypeError: 'bar1' type does not exist. */

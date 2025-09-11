@@ -23,6 +23,7 @@ let a: int = "I am a number, I promise...";
 /* @@? package_module_with_syntax_error.ets:18:2 Error SyntaxError: Invalid package toplevel statement */
 
 /* @@? package_with_both_errors.ets:21:16 Error TypeError: Cannot find type 'good'. */
+/* @@? package_with_both_errors.ets:21:16 Error TypeError: Invalid type reference. */
 /* @@? package_with_both_errors.ets:21:21 Error SyntaxError: Unexpected token 'Day'. */
 /* @@? package_with_both_errors.ets:21:21 Error TypeError: No static $_invoke method and static $_instantiate method in Day. Day() is not allowed. */
 /* @@? package_with_both_errors.ets:21:21 Error TypeError: Type 'Day' has no call signatures. */

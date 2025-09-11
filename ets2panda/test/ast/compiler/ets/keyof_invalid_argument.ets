@@ -28,6 +28,7 @@ type NestedKey<T, K extends keyof T> = T[K] extends object ? keyof T[K] : never;
 /* @@? 16:45 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
 /* @@? 18:33 Error TypeError: Cannot find type 'Observable'. */
 /* @@? 18:33 Error TypeError: The super type of 'ObservableImpl' class is not extensible. */
+/* @@? 20:9 Error TypeError: Invalid type reference. */
 /* @@? 20:24 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 20:27 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 20:31 Error SyntaxError: Field type annotation expected. */
@@ -42,8 +43,8 @@ type NestedKey<T, K extends keyof T> = T[K] extends object ? keyof T[K] : never;
 /* @@? 20:51 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
 /* @@? 20:51 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 20:51 Error SyntaxError: Unexpected token '&'. */
-/* @@? 20:54 Error SyntaxError: Unexpected token ')'. */
 /* @@? 20:54 Error SyntaxError: Field type annotation expected. */
+/* @@? 20:54 Error SyntaxError: Unexpected token ')'. */
 /* @@? 20:56 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 20:57 Error SyntaxError: Unexpected token ']'. */
 /* @@? 24:36 Error TypeError: The `keyof` keyword can only be used for class or interface type. */

@@ -18,6 +18,7 @@
 #include <cstdint>
 
 #include "checker/ETSchecker.h"
+#include "checker/types/typeError.h"
 #include "compiler/lowering/util.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
@@ -1405,6 +1406,9 @@ ir::AstNode *ConstantExpressionLowering::Fold(ir::AstNode *constantNode)
         if (node->IsBinaryExpression()) {
             auto binop = node->AsBinaryExpression();
             if (IsSupportedLiteral(binop->Left()) && IsSupportedLiteral(binop->Right())) {
+                ERROR_SANITY_CHECK(context_->diagnosticEngine,
+                    binop->OperatorType() != lexer::TokenType::PUNCTUATOR_NULLISH_COALESCING,
+                    return node);
                 return FoldBinaryExpression(binop, context_);
             }
         }

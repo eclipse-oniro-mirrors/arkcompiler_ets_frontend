@@ -34,3 +34,4 @@ function fn(i: I) {
 /* @@? 19:20 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 20:1 Error SyntaxError: Invalid Type. */
 /* @@? 23:16 Error TypeError: Cannot find type 'i'. */
+/* @@? 23:16 Error TypeError: Invalid type reference. */

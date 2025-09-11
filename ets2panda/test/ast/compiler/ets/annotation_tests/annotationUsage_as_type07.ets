@@ -23,7 +23,8 @@ class A{
 let tuple:[int, string, /* @@ label1 */MyAnno] = [1, "1", new /* @@ label2 */MyAnno()]
 let union:int|string|/* @@ label3 */MyAnno = 1
 
-/* @@@ label1 Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label3 Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label2 Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label Error TypeError: Annotations cannot be used as a type.  */
+/* @@? 20:21 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 23:40 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 23:78 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 23:78 Error TypeError: Invalid type reference. */
+/* @@? 24:37 Error TypeError: Annotations cannot be used as a type. */

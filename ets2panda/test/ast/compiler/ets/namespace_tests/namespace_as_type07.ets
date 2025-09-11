@@ -23,7 +23,8 @@ class A{
 let tuple:[int, string, MySpace] = [1, "1", new MySpace()]
 let union:int|string|MySpace = 1
 
-/* @@? 23:25 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
-/* @@? 24:22 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
-/* @@? 23:49 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
-/* @@? 20:7 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
+/* @@? 20:7 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 23:25 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 23:49 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 23:49 Error TypeError: Invalid type reference. */
+/* @@? 24:22 Error TypeError: Namespace 'MySpace' cannot be used as a type. */

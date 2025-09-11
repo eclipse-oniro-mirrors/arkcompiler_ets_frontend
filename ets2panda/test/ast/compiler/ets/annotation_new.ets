@@ -20,4 +20,4 @@ namespace NS {
 
 new NS.Inter()
 
-/* @@? 21:1 Error SyntaxError: Property or signature expected.  */
+/* @@? 21:5 Error TypeError: Invalid type reference. */

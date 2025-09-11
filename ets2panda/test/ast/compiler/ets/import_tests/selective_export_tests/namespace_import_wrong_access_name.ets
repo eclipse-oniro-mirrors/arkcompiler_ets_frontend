@@ -17,4 +17,5 @@ import * as all from "./selective_export"
 
 let test_var = new all.TestClass();
 
-/* @@? 18:24 Error TypeError: 'TestClass' type does not exist.  */
+/* @@? 18:20 Error TypeError: Invalid type reference. */
+/* @@? 18:24 Error TypeError: 'TestClass' type does not exist. */

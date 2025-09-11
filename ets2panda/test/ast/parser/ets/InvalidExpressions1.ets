@@ -36,6 +36,7 @@ function f(x: int): void {
 a?.[1+2);
 
 let a = [1, 2, 3);
+/* @@? 1:1 Error TypeError: Invalid type reference. */
 /* @@? 16:16 Error SyntaxError: Unexpected token ','. */
 /* @@? 16:18 Error SyntaxError: Unexpected token, expected ',' or ']'. */
 /* @@? 16:18 Error SyntaxError: Unexpected token '2'. */
@@ -65,9 +66,11 @@ let a = [1, 2, 3);
 /* @@? 28:5 Error TypeError: Variable 'a' has already been declared. */
 /* @@? 28:20 Error SyntaxError: Expected '}', got ')'. */
 /* @@? 30:5 Error TypeError: Variable 'a' has already been declared. */
-/* @@? 30:13 Error SyntaxError: Unexpected token 'import'. */
 /* @@? 30:13 Error SyntaxError: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
+/* @@? 30:13 Error SyntaxError: Unexpected token 'import'. */
 /* @@? 30:13 Error SyntaxError: Invalid Type. */
+/* @@? 30:13 Error SyntaxError: Unexpected token 'import'. */
+/* @@? 30:13 Error TypeError: Invalid type reference. */
 /* @@? 32:10 Error TypeError: Variable 'f' has already been declared. */
 /* @@? 33:5 Error TypeError: Call to 'super' must be first statement in constructor */
 /* @@? 33:5 Error TypeError: Expected 0 arguments, got 1. */

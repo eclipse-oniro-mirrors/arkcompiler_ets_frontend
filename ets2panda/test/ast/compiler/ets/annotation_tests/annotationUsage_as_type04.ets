@@ -20,5 +20,6 @@ function foo<T>(a:T){}
 
 foo</* @@ label */MyAnno>(new /* @@ label1 */MyAnno())
 
-/* @@@ label Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label1 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 21:19 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 21:46 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 21:46 Error TypeError: Invalid type reference. */

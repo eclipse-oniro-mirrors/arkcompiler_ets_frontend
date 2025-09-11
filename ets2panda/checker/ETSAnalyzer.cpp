@@ -574,7 +574,10 @@ static checker::Type *CheckInstantiatedNewType(ETSChecker *checker, ir::ETSNewCl
 {
     checker::Type *res = expr->GetTypeRef()->Check(checker);
     auto calleeType = res->MaybeBaseTypeOfGradualType();
-    FORWARD_TYPE_ERROR(checker, calleeType, expr->GetTypeRef());
+    if (calleeType->IsTypeError()) {
+        checker->LogError(diagnostic::INVALID_TYPE_REF, {}, expr->GetTypeRef()->Start());
+        return calleeType;
+    }
 
     if (calleeType->IsETSUnionType()) {
         return checker->TypeError(expr->GetTypeRef(), diagnostic::UNION_NONCONSTRUCTIBLE, expr->Start());

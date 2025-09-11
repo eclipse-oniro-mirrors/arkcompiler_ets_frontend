@@ -40,5 +40,7 @@ function doSomethingUseful() {
 }
 
 
-/* @@@ label Error TypeError: Type 'Boxx<T>' is generic but type argument were not provided.  */
-/* @@@ label1 Error TypeError: Type 'Boxx<T>' is generic but type argument were not provided.  */
+/* @@? 36:34 Error TypeError: Type 'Boxx<T>' is generic but type argument were not provided. */
+/* @@? 36:34 Error TypeError: Invalid type reference. */
+/* @@? 38:35 Error TypeError: Type 'Boxx<T>' is generic but type argument were not provided. */
+/* @@? 38:35 Error TypeError: Invalid type reference. */
