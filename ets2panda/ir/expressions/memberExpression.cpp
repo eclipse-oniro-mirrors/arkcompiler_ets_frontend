@@ -226,6 +226,13 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
             }
         }
 
+        if (memberType->IsETSMethodType() && memberType->IsETSMethodType()) {
+            if (!Parent()->IsCallExpression()) {
+                checker->LogError(diagnostic::UNION_MEMBER_METHOD_REFERENCE, {}, Start());
+                return;
+            }
+        }
+
         if (!commonPropType->IsETSMethodType() && !memberType->IsETSMethodType()) {
             if (!checker->IsTypeIdenticalTo(commonPropType, memberType)) {
                 checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
@@ -257,7 +264,6 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
             if (memberType != nullptr && memberType->IsTypeError()) {
                 return checker->GlobalTypeError();
             }
-
             addPropType(memberType);
         } else {
             checker->LogError(diagnostic::UNION_MEMBER_ILLEGAL_TYPE, {unionType}, Start());
