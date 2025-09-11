@@ -1,10 +1,20 @@
 ## 数值类型和bigint类型的比较
 
-**规则：**`arkts-numeric-bigint-compare`
+**规则：** `arkts-numeric-bigint-compare`
 
-**级别：error**
+**规则解释：**
 
- 当前暂不支持数值类型和bigint类型的比较，迁移工具将提示开发者修改源码，不提供自动修复能力。
+ArkTS1.2暂不支持数值类型和bigint类型的比较。
+
+**变更原因：**
+
+语言层面暂不支持。
+
+**适配建议：**
+
+开发者需将值转换为BigInt类型再进行比较。
+
+**示例：**
 
 **ArkTS1.1**
 

@@ -1,47 +1,37 @@
-## 函数类型
+## 函数类型转换及兼容原则
 
-**规则：**`arkts-incompatible-function-types`
+**规则：** `arkts-incompatible-function-types`
 
-**级别：error**
+**规则解释：**
 
-TypeScript允许对函数类型的变量进行更宽松的赋值，而在ArkTS1.2中，将对函数类型的赋值进行更严格的检查。函数类型转换时，参数遵循逆变(Contravariance)规则，返回类型遵循协变(Covariance)规则。
+当函数类型返回void时，ArkTS1.1可返回任意类型，而ArkTS1.2只能返回void类型。
+
+**变更原因：**
+ 
+对于函数类型转换，ArkTS1.1和ArkTS1.2都遵循参数逆变和返回类型协变的规则。有关逆变和协变的详细解释，请参见[逆变和协变](#逆变和协变)。
+
+而当函数类型返回void时，由于ArkTS1.1与ArkTS1.2中void类型的变化，ArkTS1.2仅支持返回void类型。详细情况请参考[void类型只能用在返回类型的场景](#void类型只能用在返回类型的场景)。
+
+**适配建议：**
+
+当函数类型返回void时，实现代码也要返回void。
+
+**示例：**
 
 **ArkTS1.1**
 
 ```typescript
-type FuncType = (p: string) => void;
-let f1: FuncType =
-    (p: string): number => {
-        return 0
-    }
-let f2: FuncType = (p: any): void => {};
-
-class Animal {}
-class Dog extends Animal {}
-type FuncType = () => Animal;
-let f: FuncType = (): Dog => new Dog(); // 在 TypeScript 允许，但在 ArkTS 可能不允许
-
-type FuncType2 = (dog: Dog) => void;
-let f: FuncType2 = (animal: Animal) => {}; // 违反规则
+type F = () => void;
+// 可返回任意类型
+let f: F = (): number => {
+  return 0;
+}
 ```
 
 **ArkTS1.2**
 
 ```typescript
-type FuncType = (p: string) => void
-let f1: FuncType =
-  	(p: string) => {
-        ((p: string): number => {
-            return 0
-        })(p) 
-    }
-let f2: FuncType = (p: string): void => {};
-
-class Animal {}
-class Dog extends Animal {}
-type FuncType = () => Animal;
-let f: FuncType = (): Animal => new Animal();// 返回 `Animal`
-
-type FuncType2 = (dog: Dog) => void;
-let f: FuncType = (dog: Dog) => {}; // 参数类型严格匹配
+type F = () => void;
+// 改为相同的返回类型
+let f1: F = (): void => {};
 ```

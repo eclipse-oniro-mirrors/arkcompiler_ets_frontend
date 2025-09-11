@@ -1,8 +1,6 @@
 ## 内存默认共享，不提供SharedArrayBuffer
 
-**规则：** arkts-no-need-stdlib-sharedArrayBuffer
-
-**级别：** error
+**规则：** `arkts-no-need-stdlib-sharedArrayBuffer`
 
 新增对象天然共享特性，ArrayBuffer默认共享，不需要SharedArrayBuffer。
 

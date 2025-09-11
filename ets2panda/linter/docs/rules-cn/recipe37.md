@@ -1,10 +1,20 @@
-## 不支持正则表达式
+## 不支持正则表达式字面量
 
-**规则：**`arkts-no-regexp-literals`
+**规则：** `arkts-no-regexp-literals`
 
-**级别：error**
+**规则解释：**
 
 ArkTS1.2不支持正则表达式字面量。
+
+**变更原因：**
+ 
+ArkTS1.2是静态类型语言，不支持正则表达式字面量，使用严格的类型来定义正则。
+
+**适配建议：**
+
+使用RegExp类代替正则表达式字面量。
+
+**示例：**
 
 **ArkTS1.1**
 
@@ -24,7 +34,7 @@ let items = "apple,banana, cherry".split(/\s*,\s*/); // 违反规则
 **ArkTS1.2**
 
 ```typescript
-let regex: RegExp =  new RegExp('bc*d');
+let regex: RegExp = new RegExp('bc*d');
 let regex = new RegExp('\\d{2,4}-\\w+', 'g'); // 使用 `RegExp` 类
 function matchPattern(str: string) {
   let regex = new RegExp('hello\\s+world', 'i'); // 使用 `RegExp`

@@ -1,8 +1,8 @@
 ### ArkTS1.2对js数据进行比较
 
-**规则：** arkts-interop-js2s-compare-js-data
+**规则：** `arkts-interop-js2s-compare-js-data`
 
-**级别：** error
+ArkTS1.2对js数据进行比较时，使用ESValue接口转换为数字后再操作。
 
 **ArkTS1.1**
 ```typescript

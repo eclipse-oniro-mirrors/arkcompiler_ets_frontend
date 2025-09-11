@@ -1,8 +1,8 @@
 ### ArkTS1.2Reflect内置方法作用在ArkTS1.1对象
 
-**规则：** arkts-interop-d2s-static-reflect-on-dynamic-instance
+**规则：** `arkts-interop-d2s-static-reflect-on-dynamic-instance`
 
-**级别：** error
+Reflect接口参数类型为静态Object。ArkTS1.1对象在ArkTS1.2中不是静态Object实例，因此参数类型不匹配。
 
 **ArkTS1.1**
 ```typescript
