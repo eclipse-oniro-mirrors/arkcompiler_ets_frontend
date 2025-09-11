@@ -1,0 +1,543 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 18,
+            "column": 1,
+            "endLine": 18,
+            "endColumn": 33,
+            "problem": "EntryAnnotation",
+            "autofix": [
+                {
+                    "start": 669,
+                    "end": 701,
+                    "replacementText": "@Entry({ useSharedStorage: true })",
+                    "line": 18,
+                    "column": 1,
+                    "endLine": 18,
+                    "endColumn": 33
+                }
+            ],
+            "suggest": "",
+            "rule": "The \"@Entry\" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 21,
+            "endLine": 18,
+            "endColumn": 30,
+            "problem": "NoDeprecatedApi",
+            "autofix": [
+                {
+                    "start": 676,
+                    "end": 698,
+                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "line": 18,
+                    "column": 21,
+                    "endLine": 18,
+                    "endColumn": 30
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"getShared\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 1,
+            "endLine": 26,
+            "endColumn": 46,
+            "problem": "EntryAnnotation",
+            "autofix": [
+                {
+                    "start": 773,
+                    "end": 818,
+                    "replacementText": "@Entry({ useSharedStorage: true })",
+                    "line": 26,
+                    "column": 1,
+                    "endLine": 26,
+                    "endColumn": 46
+                }
+            ],
+            "suggest": "",
+            "rule": "The \"@Entry\" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 32,
+            "endLine": 26,
+            "endColumn": 41,
+            "problem": "NoDeprecatedApi",
+            "autofix": [
+                {
+                    "start": 791,
+                    "end": 813,
+                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "line": 26,
+                    "column": 32,
+                    "endLine": 26,
+                    "endColumn": 41
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"getShared\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 1,
+            "endLine": 34,
+            "endColumn": 70,
+            "problem": "EntryAnnotation",
+            "autofix": [
+                {
+                    "start": 890,
+                    "end": 959,
+                    "replacementText": "@Entry({ useSharedStorage: true })",
+                    "line": 34,
+                    "column": 1,
+                    "endLine": 34,
+                    "endColumn": 70
+                }
+            ],
+            "suggest": "",
+            "rule": "The \"@Entry\" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 32,
+            "endLine": 34,
+            "endColumn": 41,
+            "problem": "NoDeprecatedApi",
+            "autofix": [
+                {
+                    "start": 908,
+                    "end": 930,
+                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "line": 34,
+                    "column": 32,
+                    "endLine": 34,
+                    "endColumn": 41
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"getShared\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 1,
+            "endLine": 42,
+            "endColumn": 61,
+            "problem": "EntryAnnotation",
+            "autofix": [
+                {
+                    "start": 1031,
+                    "end": 1091,
+                    "replacementText": "@Entry({ useSharedStorage: true, routeName: '' })",
+                    "line": 42,
+                    "column": 1,
+                    "endLine": 42,
+                    "endColumn": 61
+                }
+            ],
+            "suggest": "",
+            "rule": "The \"@Entry\" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 32,
+            "endLine": 42,
+            "endColumn": 41,
+            "problem": "NoDeprecatedApi",
+            "autofix": [
+                {
+                    "start": 1049,
+                    "end": 1071,
+                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "line": 42,
+                    "column": 32,
+                    "endLine": 42,
+                    "endColumn": 41
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"getShared\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 1,
+            "endLine": 50,
+            "endColumn": 85,
+            "problem": "EntryAnnotation",
+            "autofix": [
+                {
+                    "start": 1163,
+                    "end": 1247,
+                    "replacementText": "@Entry({ useSharedStorage: true, routeName: '' })",
+                    "line": 50,
+                    "column": 1,
+                    "endLine": 50,
+                    "endColumn": 85
+                }
+            ],
+            "suggest": "",
+            "rule": "The \"@Entry\" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 32,
+            "endLine": 50,
+            "endColumn": 41,
+            "problem": "NoDeprecatedApi",
+            "autofix": [
+                {
+                    "start": 1181,
+                    "end": 1203,
+                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "line": 50,
+                    "column": 32,
+                    "endLine": 50,
+                    "endColumn": 41
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"getShared\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 2,
+            "endLine": 18,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 2,
+            "endLine": 19,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 5,
+            "endLine": 22,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 2,
+            "endLine": 26,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 2,
+            "endLine": 27,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 5,
+            "endLine": 30,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 2,
+            "endLine": 34,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 2,
+            "endLine": 35,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 5,
+            "endLine": 38,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 2,
+            "endLine": 42,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 2,
+            "endLine": 43,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 5,
+            "endLine": 46,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 2,
+            "endLine": 50,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 2,
+            "endLine": 51,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 5,
+            "endLine": 54,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 54,
+                    "column": 5,
+                    "endLine": 54,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        }
+    ]
+}
