@@ -752,9 +752,11 @@ public:
     void GenerateGetterSetterPropertyAndMethod(ir::ClassProperty *originalProp, ETSObjectType *classType);
     void SetupGetterSetterFlags(ir::ClassProperty *originalProp, ETSObjectType *classType, ir::MethodDefinition *getter,
                                 ir::MethodDefinition *setter, const bool inExternal);
-    Type *GetImportSpecifierObjectType(ir::ETSImportDeclaration *importDecl, ir::Identifier *ident);
+    Type *GetImportSpecifierObjectType(ir::ETSImportDeclaration *importDecl, ir::Identifier *ident,
+                                       std::unordered_set<parser::Program *> *moduleStackCache = nullptr);
     void ImportNamespaceObjectTypeAddReExportType(ir::ETSImportDeclaration *importDecl,
-                                                  checker::ETSObjectType *lastObjectType, ir::Identifier *ident);
+                                                  checker::ETSObjectType *lastObjectType, ir::Identifier *ident,
+                                                  std::unordered_set<parser::Program *> *moduleStackCache = nullptr);
     bool CheckValidEqualReferenceType(checker::Type *const leftType, checker::Type *const rightType);
     bool CheckVoidAnnotation(const ir::ETSPrimitiveType *typeAnnotation);
     void ETSObjectTypeDeclNode(ETSChecker *checker, ETSObjectType *const objectType);
