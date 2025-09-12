@@ -676,7 +676,7 @@ static std::string GetEscapedCharacter(const unsigned char c)
     return escapedStr.str();
 }
 
-std::string Helpers::CreateEscapedString(const std::string &str)
+std::string Helpers::CreateEscapedString(std::string_view const str)
 {
     std::string escapedStr;
     for (const unsigned char c : str) {

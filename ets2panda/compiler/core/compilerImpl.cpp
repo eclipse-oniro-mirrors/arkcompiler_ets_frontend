@@ -110,12 +110,18 @@ static bool CheckOptionsBeforePhase(const util::Options &options, const parser::
 void HandleGenerateDecl(const parser::Program &program, util::DiagnosticEngine &diagnosticEngine,
                         const std::string &outputPath)
 {
+    //  Don't generate declarations for source code with errors!
+    if (diagnosticEngine.IsAnyError()) {
+        return;
+    }
+
     std::ofstream outFile(outputPath);
     if (!outFile.is_open()) {
         diagnosticEngine.LogFatalError(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {outputPath},
                                        lexer::SourcePosition());
         return;
     }
+
     std::string result = program.Ast()->DumpDecl();
     result = "'use static'\n" + result;
 
