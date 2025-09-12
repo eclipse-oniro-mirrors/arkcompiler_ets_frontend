@@ -11,11 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# NOTE(@srokashevich, #29152): enable with asan after fix
-if (PANDA_ENABLE_ADDRESS_SANITIZER)
-    return()
-endif()
-
 ets2panda_add_gtest(ast_builder_test
     CPP_SOURCES ast_builder_test.cpp
 )
