@@ -29,4 +29,4 @@ let a:A = {
 console.log(a.foo())
 
 /* @@@ label Error TypeError: The extension function 'foo' has the same name with public method in class A */
-/* @@@ label1 Error TypeError: Type '(p1: A) => String' is not compatible with type '() => String' at property 'foo' */
+/* @@@ label1 Error TypeError: Type '((p1: A) => String)' is not compatible with type '(() => String)' at property 'foo' */

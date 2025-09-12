@@ -27,7 +27,27 @@ static bool ProgramFileNameLessThan(const parser::Program *a, const parser::Prog
 
 void ImportExportDecls::ParseDefaultSources()
 {
-    auto imports = parser_->ParseDefaultSources(DEFAULT_IMPORT_SOURCE_FILE, defaultImportSource_);
+    std::string importStdlibFile;
+    for (const auto &path : util::Helpers::StdLib()) {
+        if (path == "std/math/consts") {
+            // NOTE(dkofanov): for some reason, 'consts.ets' is imported manually in stdlib sources.
+            // Without this 'if', definitions from this file are emitted to each file, polluting global namespace.
+            // The 'math.ets' has the same problem, but due to it has tests which use, for instance, a global
+            // 'abs()' function, it is not skipped for now.
+            continue;
+        }
+        importStdlibFile += "import * from \"" + path + "\";";
+    }
+    auto imports = parser_->ParseDefaultSources(DEFAULT_IMPORT_SOURCE_FILE, importStdlibFile);
+    if (UNLIKELY(ctx_->config->options->IsGenStdlib())) {
+        for (const auto *import : imports) {
+            if (import->ImportMetadata().HasSpecifiedDeclPath()) {
+                auto resolved = import->ResolvedSource();
+                ctx_->diagnosticEngine->LogDiagnostic(diagnostic::GEN_STDLIB_DECLS,
+                                                      util::DiagnosticMessageParams {resolved}, import->Start());
+            }
+        }
+    }
     varbinder_->SetDefaultImports(std::move(imports));
 }
 

@@ -25,4 +25,4 @@ class Observable {
 
 }
 
-/* @@@ label Error TypeError: Type 'Observable|undefined' cannot be assigned to type '() => Observable|undefined'  */
+/* @@@ label Error TypeError: Type 'Observable|undefined' cannot be assigned to type '(() => Observable|undefined)' */

@@ -34,8 +34,7 @@ class A {
 }
 )";
 
-static std::string expected = R"(public prop: ((p1: () => void) => void)|((p1: () => void) => Promise<void>);
-)";
+static std::string expected = "public prop: CallType;\n";
 
 static es2panda_AstNode *prop = nullptr;
 static void FindClassElement(es2panda_AstNode *ast, void *context)

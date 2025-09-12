@@ -20,6 +20,7 @@
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/pandagen.h"
 #include "compiler/lowering/util.h"
+#include "public/public.h"
 
 namespace ark::es2panda::ir {
 
@@ -106,7 +107,7 @@ void ClassProperty::DumpModifiers(ir::SrcDumper *dumper) const
         if (dumper->IsDeclgen()) {
             dumper->Add("declare ");
         }
-        if (key_->Parent()->IsConst()) {
+        if (IsConst()) {
             dumper->Add("const ");
         } else {
             dumper->Add("let ");
@@ -163,27 +164,20 @@ void ClassProperty::DumpPrefix(ir::SrcDumper *dumper) const
 
 void ClassProperty::DumpCheckerTypeForDeclGen(ir::SrcDumper *dumper) const
 {
-    if (!dumper->IsDeclgen()) {
-        return;
-    }
+    ES2PANDA_ASSERT(dumper->IsDeclgen());
 
     if (TsType() == nullptr) {
         return;
     }
 
-    auto typeStr = TsType()->ToString();
     dumper->Add(": ");
-    dumper->Add(typeStr);
-
-    dumper->PushTask([dumper, typeStr] { dumper->DumpNode(typeStr); });
+    dumper->GetDeclgen()->Dump(dumper, TsType());
 }
 
 bool ClassProperty::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(key_);
-    if (!dumper->IsDeclgen()) {
-        return false;
-    }
+    ES2PANDA_ASSERT(dumper->IsDeclgen());
 
     auto name = key_->AsIdentifier()->Name().Mutf8();
     if (name.rfind('#', 0) == 0) {
@@ -198,7 +192,7 @@ bool ClassProperty::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
         return false;
     }
 
-    if (dumper->IsIndirectDepPhase()) {
+    if (dumper->GetDeclgen()->IsPostDumpIndirectDepsPhase()) {
         return false;
     }
 
@@ -206,13 +200,19 @@ bool ClassProperty::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
         return false;
     }
 
-    dumper->AddNode(name, this);
+    dumper->GetDeclgen()->AddNode(name, this);
     return true;
 }
 
 void ClassProperty::Dump(ir::SrcDumper *dumper) const
 {
-    if (RegisterUnexportedForDeclGen(dumper)) {
+    bool isNamespaceTransformed =
+        Parent()->IsClassDefinition() && Parent()->AsClassDefinition()->IsNamespaceTransformed();
+    // For declgen dump only if explicitly marked as export or it is public property of class (not namespace or module)
+    if (dumper->IsDeclgen() && !(IsExported() || IsDefaultExported() || (!isNamespaceTransformed && IsPublic()))) {
+        return;
+    }
+    if (dumper->IsDeclgen() && RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
     DumpPrefix(dumper);
@@ -229,12 +229,12 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
         dumper->Add("!");
     }
 
-    if (typeAnnotation_ != nullptr && !dumper->IsDeclgen()) {
+    if (typeAnnotation_ != nullptr) {
         dumper->Add(": ");
         TypeAnnotation()->Dump(dumper);
+    } else if (dumper->IsDeclgen()) {
+        DumpCheckerTypeForDeclGen(dumper);
     }
-
-    DumpCheckerTypeForDeclGen(dumper);
 
     if (value_ != nullptr) {
         if (!dumper->IsDeclgen() || Parent()->IsAnnotationDeclaration()) {

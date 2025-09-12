@@ -42,10 +42,10 @@ Each file have companion: for `test.ets` companion is `test-max.txt`. This file 
 # Local reproduction
 ```bash
 # static mode
-python3 <ets_frontend>/ets2panda/test/benchmarks/runner/runner.py --mode=static --es2panda=<build>/bin/es2panda --work-dir=<build>/e2p_benchmarks --test-dir=<ets_frontend>/ets2panda/test/benchmarks
+python3 <ets_frontend>/ets2panda/test/benchmarks/runner/runner.py --mode=static --es2panda=<build>/bin/es2panda --work-dir=<build>/e2p_benchmarks --test-dir=<static_core>/tools/es2panda/test/benchmarks
 
 # dynamic mode
-python3 <ets_frontend>/ets2panda/test/benchmarks/runner/runner.py --mode=dynamic --es2panda=<build>/bin/es2panda --work-dir=<build>/e2p_benchmarks --test-dir=<ets_frontend>/ets2panda/test/benchmarks --es2panda-pre-merge=<pre_merge_build>/bin/es2panda
+python3 <ets_frontend>/ets2panda/test/benchmarks/runner/runner.py --mode=dynamic --es2panda=<build>/bin/es2panda --work-dir=<build>/e2p_benchmarks --test-dir=<static_core>/tools/es2panda/test/benchmarks --es2panda-pre-merge=<pre_merge_build>/bin/es2panda
 ```
 See `--help` if needed.
 

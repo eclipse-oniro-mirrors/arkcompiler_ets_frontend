@@ -20,4 +20,4 @@ function main()
     a = /* @@ label */b
 }
 
-/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type '() => Int'  */
+/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type '(() => Int)' */

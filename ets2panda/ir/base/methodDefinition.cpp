@@ -167,67 +167,34 @@ void MethodDefinition::Dump(ir::AstDumper *dumper) const
                  {"overloads", Overloads()}});
 }
 
-void MethodDefinition::DumpAccessorPrefix(ir::SrcDumper *dumper) const
+static void DumpModifierPrefix(const ir::MethodDefinition *m, ir::SrcDumper *dumper)
 {
-    //  special processing for overloads
-    auto const *parent = Parent();
-    if (parent != nullptr && parent->IsMethodDefinition()) {
-        parent = parent->Parent();
-    }
-
-    if (parent == nullptr) {
-        return;
-    }
-
-    if (parent->IsClassDefinition() && !parent->AsClassDefinition()->IsLocal()) {
-        if (IsPrivate()) {
-            dumper->Add("private ");
-        } else if (IsProtected()) {
-            dumper->Add("protected ");
-        } else {
-            dumper->Add("public ");
-        }
-        return;
-    }
-
-    if (dumper->IsDeclgen() && parent->IsTSInterfaceBody()) {
-        if (Value() != nullptr && Value()->IsFunctionExpression() &&
-            Value()->AsFunctionExpression()->Function() != nullptr &&
-            Value()->AsFunctionExpression()->Function()->HasBody()) {
-            dumper->Add("default ");
-        }
-    }
-}
-
-void MethodDefinition::DumpModifierPrefix(ir::SrcDumper *dumper) const
-{
-    if (compiler::HasGlobalClassParent(this)) {
-        return;
-    }
-    if (IsStatic()) {
+    ES2PANDA_ASSERT(!compiler::HasGlobalClassParent(m));
+    if (m->IsStatic()) {
         dumper->Add("static ");
     }
 
-    if (IsAbstract() && !(Parent()->IsTSInterfaceBody() ||
-                          (BaseOverloadMethod() != nullptr && BaseOverloadMethod()->Parent()->IsTSInterfaceBody()))) {
+    if (m->IsAbstract() &&
+        !(m->Parent()->IsTSInterfaceBody() ||
+          (m->BaseOverloadMethod() != nullptr && m->BaseOverloadMethod()->Parent()->IsTSInterfaceBody()))) {
         dumper->Add("abstract ");
     }
-    if (IsFinal()) {
+    if (m->IsFinal()) {
         dumper->Add("final ");
     }
-    if (IsNative()) {
+    if (m->IsNative()) {
         dumper->Add("native ");
     }
-    if (IsAsync() && !dumper->IsDeclgen()) {
+    if (m->IsAsync() && !dumper->IsDeclgen()) {
         dumper->Add("async ");
     }
-    if (IsOverride()) {
+    if (m->IsOverride()) {
         dumper->Add("override ");
     }
 
-    if (IsGetter()) {
+    if (m->IsGetter()) {
         dumper->Add("get ");
-    } else if (IsSetter()) {
+    } else if (m->IsSetter()) {
         dumper->Add("set ");
     }
 }
@@ -242,36 +209,71 @@ static bool IsNamespaceTransformed(const MethodDefinition *method)
     return parent->IsClassDefinition() && parent->AsClassDefinition()->IsNamespaceTransformed();
 }
 
-void MethodDefinition::DumpPrefix(ir::SrcDumper *dumper) const
+static void DumpAccessorPrefix(const ir::MethodDefinition *m, ir::SrcDumper *dumper)
 {
-    bool global = compiler::HasGlobalClassParent(this);
-    if (global || IsNamespaceTransformed(this)) {
-        if (IsExported()) {
+    //  special processing for overloads
+    auto const *parent = m->Parent();
+    if (parent != nullptr && parent->IsMethodDefinition()) {
+        parent = parent->Parent();
+    }
+
+    if (parent == nullptr) {
+        return;
+    }
+
+    if (parent->IsClassDefinition() && !parent->AsClassDefinition()->IsLocal()) {
+        if (m->IsPrivate()) {
+            dumper->Add("private ");
+        } else if (m->IsProtected()) {
+            dumper->Add("protected ");
+        } else if (!dumper->IsDeclgen()) {
+            dumper->Add("public ");
+        }
+        return;
+    }
+
+    if (dumper->IsDeclgen() && parent->IsTSInterfaceBody()) {
+        if (m->Value() != nullptr && m->Value()->IsFunctionExpression() &&
+            m->Value()->AsFunctionExpression()->Function() != nullptr &&
+            m->Value()->AsFunctionExpression()->Function()->HasBody()) {
+            dumper->Add("default ");
+        }
+    }
+}
+
+static void DumpPrefix(const ir::MethodDefinition *m, ir::SrcDumper *dumper)
+{
+    bool global = compiler::HasGlobalClassParent(m);
+    if (global || IsNamespaceTransformed(m)) {
+        if (m->IsExported()) {
             dumper->Add("export ");
         }
-        if (IsDefaultExported()) {
+        if (m->IsDefaultExported()) {
             dumper->Add("export default ");
         }
         if (dumper->IsDeclgen()) {
             if (global) {
                 dumper->Add("declare ");
             } else {
-                dumper->TryDeclareAmbientContext();
+                dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
             }
         }
         dumper->Add("function ");
         return;
     }
 
-    DumpAccessorPrefix(dumper);
-
-    DumpModifierPrefix(dumper);
+    DumpAccessorPrefix(m, dumper);
+    DumpModifierPrefix(m, dumper);
 }
 
 bool MethodDefinition::FilterForDeclGen() const
 {
     if (key_ == nullptr) {
         return false;
+    }
+
+    if (Function()->IsSynthetic()) {
+        return true;
     }
 
     if (compiler::HasGlobalClassParent(this) && !key_->Parent()->IsExported() && !key_->Parent()->IsDefaultExported()) {
@@ -293,32 +295,18 @@ bool MethodDefinition::FilterForDeclGen() const
         return true;
     }
 
-    if (name == compiler::Signatures::GET_INDEX_METHOD || name == compiler::Signatures::SET_INDEX_METHOD) {
-        return true;
-    }
-
-    if (IsPrivate()) {
-        return true;
-    }
-
     return false;
 }
 
-void MethodDefinition::Dump(ir::SrcDumper *dumper) const
+static void DumpSingleOverload(const ir::MethodDefinition *m, ir::SrcDumper *dumper)
 {
-    if (dumper->IsDeclgen() && FilterForDeclGen()) {
-        for (auto method : Overloads()) {
-            method->Dump(dumper);
-        }
+    if (compiler::HasGlobalClassParent(m) && m->Id() != nullptr &&
+        m->Id()->Name().Is(compiler::Signatures::INIT_METHOD)) {
+        m->Function()->Body()->Dump(dumper);
         return;
     }
 
-    if (compiler::HasGlobalClassParent(this) && Id() != nullptr && Id()->Name().Is(compiler::Signatures::INIT_METHOD)) {
-        Function()->Body()->Dump(dumper);
-        return;
-    }
-
-    auto value = Value();
+    auto value = m->Value();
     if (value->AsFunctionExpression()->Function()->HasAnnotations()) {
         for (auto *anno : value->AsFunctionExpression()->Function()->Annotations()) {
             // NOTE(zhelyapov): workaround, see #26031
@@ -328,20 +316,31 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
         }
     }
 
-    DumpPrefix(dumper);
+    DumpPrefix(m, dumper);
 
-    if (IsConstructor() &&
-        !(Key()->IsIdentifier() && Key()->AsIdentifier()->Name().Is(compiler::Signatures::CONSTRUCTOR_NAME))) {
+    if (m->IsConstructor() &&
+        !(m->Key()->IsIdentifier() && m->Key()->AsIdentifier()->Name().Is(compiler::Signatures::CONSTRUCTOR_NAME))) {
         dumper->Add(std::string(compiler::Signatures::CONSTRUCTOR_NAME) + " ");
     }
 
-    auto key = Key();
+    auto key = m->Key();
     if (key != nullptr) {
         key->Dump(dumper);
     }
 
     if (value != nullptr) {
         value->Dump(dumper);
+    }
+}
+
+void MethodDefinition::Dump(ir::SrcDumper *dumper) const
+{
+    if (dumper->IsDeclgen() && FilterForDeclGen()) {
+        return;
+    }
+
+    if (!dumper->IsDeclgen() || !IsPrivate()) {
+        DumpSingleOverload(this, dumper);
     }
 
     for (auto method : Overloads()) {

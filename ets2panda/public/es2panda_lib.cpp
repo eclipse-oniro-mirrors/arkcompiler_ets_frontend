@@ -1320,7 +1320,7 @@ __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const 
             }
 
             if (prog->FileName().Mutf8() == outputStem) {
-                compiler::HandleGenerateDecl(*prog, *ctxImpl->diagnosticEngine, outputPath);
+                compiler::HandleGenerateDecl(*prog, ctxImpl, outputPath);
                 return !ctxImpl->diagnosticEngine->IsAnyError();
             }
         }
@@ -1345,7 +1345,7 @@ extern "C" __attribute__((unused)) int GenerateStaticDeclarationsFromContext(es2
     }
 
     // Single file mode
-    compiler::HandleGenerateDecl(*ctxImpl->parserProgram, *ctxImpl->diagnosticEngine, outputPath);
+    compiler::HandleGenerateDecl(*ctxImpl->parserProgram, ctxImpl, outputPath);
     return ctxImpl->diagnosticEngine->IsAnyError() ? 1 : 0;
 }
 

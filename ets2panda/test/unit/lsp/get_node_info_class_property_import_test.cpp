@@ -133,7 +133,7 @@ TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTes
 TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTest6)
 {
     Initializer initializer = Initializer();
-    const std::string sourceCode = R"(export { PI } from "std/math";)";
+    const std::string sourceCode = R"(export { PI } from "std/math/consts";)";
     es2panda_Context *contexts =
         initializer.CreateContext("GetNodeInfoClassPropertyImport6.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
     LSPAPI const *lspApi = GetImpl();
@@ -154,7 +154,7 @@ TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTes
 TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTest7)
 {
     Initializer initializer = Initializer();
-    const std::string sourceCode = R"(import PI from "std/math";)";
+    const std::string sourceCode = R"(import PI from "std/math/consts";)";
     es2panda_Context *contexts =
         initializer.CreateContext("GetNodeInfoClassPropertyImport7.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
     LSPAPI const *lspApi = GetImpl();

@@ -31,7 +31,7 @@ TEST_F(LSPAICTests, GetAutoImportCompletionEntryUnresolved1)
     Initializer initializer = Initializer();
 
     const char *fileName = "file.ets";
-    const char *fileSource = "import { PI } from \"std/math\"";
+    const char *fileSource = "import { BusinessError } from \"@ohos.base\"";
     auto ctx = initializer.CreateContext(fileName, ES2PANDA_STATE_CHECKED, fileSource);
     auto ast = GetAstFromContext<ark::es2panda::ir::AstNode>(ctx);
     auto targetImportSpecifier =

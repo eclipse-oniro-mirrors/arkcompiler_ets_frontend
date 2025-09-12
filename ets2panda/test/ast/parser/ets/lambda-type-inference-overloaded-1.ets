@@ -34,6 +34,6 @@ function main(): void {
     });
 }
 
-/* @@@ label Error TypeError: Function foo with this assembly signature already declared.  */
+/* @@@ label Error TypeError: Function foo with this assembly signature already declared. */
 /* @@@ label1 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Boolean' */
-/* @@? 28:9 Error TypeError: Type '(p1: Double, p2: String) => Boolean' is not compatible with type '(p1: Int, p2: String) => Boolean' at index 1  */
+/* @@? 28:9 Error TypeError: Type '((p1: Double, p2: String) => Boolean)' is not compatible with type '((p1: Int, p2: String) => Boolean)' at index 1 */

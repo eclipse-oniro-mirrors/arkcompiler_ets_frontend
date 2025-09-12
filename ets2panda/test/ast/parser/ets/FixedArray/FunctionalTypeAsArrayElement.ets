@@ -19,4 +19,4 @@ function main(){
     ]
 }
 
-/* @@? 17:48 Error TypeError: Type 'Array<() => Int>' cannot be assigned to type '() => FixedArray<Int>' */
+/* @@@ label Error TypeError: Type 'Array<(() => Int)>' cannot be assigned to type '(() => FixedArray<Int>)' */

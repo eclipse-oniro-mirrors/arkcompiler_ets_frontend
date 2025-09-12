@@ -28,7 +28,7 @@ protected:
     static void SetUpTestSuite()
     {
         initializer_ = new Initializer();
-        sourceCode_ = R"(import { PI } from "std/math";
+        sourceCode_ = R"(import { PI } from "std/math/consts";
 import * as All from "std/math";
 import CommonEventManager from '@ohos.commonEventManager';
 export function add(a: number, b: number): number {

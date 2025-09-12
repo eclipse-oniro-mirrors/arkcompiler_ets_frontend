@@ -105,7 +105,7 @@ int main(int argc, char **argv)
     std::cout << "LOAD SUCCESS" << std::endl;
 
     const char **args = const_cast<const char **>(&(argv[1]));
-    auto src = std::string("import { PI } from \"std/math\"\n\nconsole.log(PI);");
+    auto src = std::string("import { PI } from \"std/math/consts\"\n\nconsole.log(PI);");
     auto config = impl->CreateConfig(argc - 1, args);
     auto context = impl->CreateContextFromString(config, src.c_str(), argv[argc - 1]);
     if (context == nullptr) {

@@ -15,8 +15,10 @@
 
 #include "declGenPhase.h"
 
+#include <fstream>
 #include "checker/ETSchecker.h"
 #include "compiler/lowering/util.h"
+#include "ir/ets/etsPackageDeclaration.h"
 
 namespace ark::es2panda::compiler {
 
@@ -33,7 +35,7 @@ bool DeclGenPhase::PerformForModule(public_lib::Context *ctx, parser::Program *p
     auto *allocator = ctx->Allocator();
 
     // Arena cause we want declaration be life until codegen happens
-    auto *declaration = allocator->New<ArenaString>(program->Ast()->DumpDecl(), allocator->Adapter());
+    auto *declaration = allocator->New<ArenaString>(program->Ast()->DumpDecl(ctx), allocator->Adapter());
     ES2PANDA_ASSERT(declaration != nullptr);
 
     auto *const annoUsageIdent = checker->AllocNode<ir::Identifier>(MODULE_DECLARATION_NAME, checker->Allocator());

@@ -24,6 +24,10 @@
 #include "lexer/token/sourceLocation.h"
 #include "util/es2pandaMacros.h"
 
+namespace ark::es2panda::public_lib {
+struct Context;
+}  // namespace ark::es2panda::public_lib
+
 namespace ark::es2panda::compiler {
 class PandaGen;
 class ETSGen;
@@ -115,6 +119,7 @@ class AstNodeHistory;
 class AstDumper;
 class Expression;
 class SrcDumper;
+class Declgen;
 class Statement;
 class ClassElement;
 template <typename T>
@@ -668,7 +673,7 @@ public:
 
     std::string DumpJSON() const;
     std::string DumpEtsSrc() const;
-    std::string DumpDecl() const;
+    std::string DumpDecl(public_lib::Context *context) const;
 
     virtual void Dump(ir::AstDumper *dumper) const = 0;
     virtual void Dump(ir::SrcDumper *dumper) const = 0;

@@ -130,7 +130,10 @@ void Identifier::Dump(ir::SrcDumper *dumper) const
         dumper->Add("?");
     }
 
-    dumper->PushTask([dumper, name = std::string(name_)] { dumper->DumpNode(name); });
+    if (dumper->IsDeclgen()) {
+        dumper->GetDeclgen()->PushTask(
+            [dumper, name = std::string(name_)] { dumper->GetDeclgen()->DumpNode(dumper, name); });
+    }
 }
 
 void Identifier::Compile(compiler::PandaGen *pg) const

@@ -105,13 +105,14 @@ void AnnotationDeclaration::Dump(ir::AstDumper *dumper) const
 
 void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    auto guard = dumper->BuildAmbientContextGuard();
     DumpAnnotations(dumper);
     ES2PANDA_ASSERT(Expr() != nullptr);
     if (IsExported()) {
         dumper->Add("export ");
     }
-    if (IsDeclare() || dumper->IsDeclgen()) {
-        dumper->Add("declare ");
+    if (dumper->IsDeclgen()) {
+        dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
     }
     dumper->Add("@interface ");
     Expr()->Dump(dumper);

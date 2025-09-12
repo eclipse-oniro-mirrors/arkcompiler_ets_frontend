@@ -34,5 +34,5 @@ let props: DummyArray<A> = new DummyArray<A>()
 )
 
 /* @@@ label1 Error TypeError: No matching call signature for push(...) */
-/* @@@ label2 Error TypeError: No matching construct signature for A("eaw1", () => void) */
+/* @@@ label2 Error TypeError: No matching construct signature for A("eaw1", (() => void)) */
 /* @@@ label3 Error TypeError: Type 'Int' cannot be assigned to type 'String' */

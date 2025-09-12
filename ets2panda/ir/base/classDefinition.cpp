@@ -334,7 +334,7 @@ void ClassDefinition::DumpGlobalClass(ir::SrcDumper *dumper) const
         }
     }
 
-    if (classStaticBlock == nullptr) {
+    if (classStaticBlock == nullptr || dumper->IsDeclgen()) {
         return;
     }
 
@@ -382,7 +382,7 @@ void ClassDefinition::DumpPrefix(ir::SrcDumper *dumper) const
     }
 
     if (dumper->IsDeclgen()) {
-        dumper->TryDeclareAmbientContext();
+        dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
     } else if (IsDeclare()) {
         dumper->Add("declare ");
     }
@@ -406,11 +406,9 @@ void ClassDefinition::DumpPrefix(ir::SrcDumper *dumper) const
 
 bool ClassDefinition::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 {
-    if (!dumper->IsDeclgen()) {
-        return false;
-    }
+    ES2PANDA_ASSERT(dumper->IsDeclgen());
 
-    if (dumper->IsIndirectDepPhase()) {
+    if (dumper->GetDeclgen()->IsPostDumpIndirectDepsPhase()) {
         return false;
     }
 
@@ -419,7 +417,7 @@ bool ClassDefinition::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
     }
 
     const auto className = ident_->Name().Mutf8();
-    dumper->AddNode(className, this);
+    dumper->GetDeclgen()->AddNode(className, this);
     return true;
 }
 
@@ -439,7 +437,7 @@ void ClassDefinition::Dump(ir::SrcDumper *dumper) const
 
     ES2PANDA_ASSERT(ident_ != nullptr);
 
-    if (RegisterUnexportedForDeclGen(dumper)) {
+    if (dumper->IsDeclgen() && !IsNamespaceTransformed() && RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
 

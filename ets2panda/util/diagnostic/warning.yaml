@@ -53,6 +53,10 @@ warning:
   id: 22
   message: "Function {} with this assembly signature already declared."
 
+- name: GEN_STDLIB_DECLS
+  id: 2002
+  message: "A 'stdlib' source '{}' is resolved to a '.d.ets' file in '--gen-stdlib' mode. Please use '--arktsconfig=<panda_src>/plugins/ets/stdlib/stdconfig.json'"
+
 - name: GETTER_LOOP
   id: 23
   message: "Reading the value of the property inside its getter may lead to an endless loop."
