@@ -26,3 +26,5 @@ interface I {
 /* @@? 17:31 Error SyntaxError: Identifier expected, got 'end of stream'. */
 /* @@? 17:41 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 18:5 Error SyntaxError: Invalid Type. */
+/* @@? 18:5 Error SyntaxError: Identifier expected, got 'return'. */
+/* @@? 18:11 Error SyntaxError: Identifier expected. */
