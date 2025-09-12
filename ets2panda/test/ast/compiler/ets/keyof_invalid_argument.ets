@@ -57,7 +57,6 @@ type NestedKey<T, K extends keyof T> = T[K] extends object ? keyof T[K] : never;
 /* @@? 24:68 Error SyntaxError: Unexpected token. */
 /* @@? 24:68 Error TypeError: Unresolved reference T */
 /* @@? 24:68 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 24:70 Error SyntaxError: Unexpected token, expected ']'. */
 /* @@? 24:73 Error SyntaxError: Unexpected token ':'. */
 /* @@? 24:75 Error SyntaxError: Class cannot be used as object. */
 /* @@? 24:75 Error SyntaxError: Unexpected token 'never'. */
