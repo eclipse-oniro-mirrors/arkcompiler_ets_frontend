@@ -25,10 +25,11 @@ namespace ark::es2panda::compiler::test {
 
 namespace {
 
-using namespace ::test::utils::literals;
+using namespace ::test::utils::literals;  // NOLINT
 // In case of an error, the test will display the actual initialization list,
 // which you need to copy and paste to update the variable value.
-static pandasm::Program::LiteralArrayTableT const EXPECTED_LITERAL_ARRAY = {
+// NOLINTNEXTLINE (cert-err58-cpp)
+pandasm::Program::LiteralArrayTableT const EXPECTED_LITERAL_ARRAY = {
     {"ETSGLOBAL%%annotation-ClassAuthor-color-8",
      LA({{0x0_LT, 2_U8}, {0x2_LT, 0_U32}, {0x0_LT, 2_U8}, {0x2_LT, 1_U32}})},
     {"ETSGLOBAL%%annotation-ClassAuthor-mutiArray-12",

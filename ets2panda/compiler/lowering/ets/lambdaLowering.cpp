@@ -386,13 +386,14 @@ static ir::MethodDefinition *CheckCalleeMethodCtx(public_lib::Context *ctx, Lamb
                                                   ir::ScriptFunction *func, ir::MethodDefinition *method)
 {
     auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
-    auto bctx = info->calleeClass
+    auto bctx = info->calleeClass != nullptr
                     ? varbinder::BoundContext {varBinder->GetRecordTable(), info->calleeClass->Definition(), true}
                     : varbinder::BoundContext {varBinder->GetRecordTable(), info->calleeInterface, true};
     varBinder->ResolveReferencesForScopeWithContext(func, func->Scope());
-    auto *objType = info->calleeClass ? info->calleeClass->Definition()->TsType()->AsETSObjectType()
-                                      : info->calleeInterface->TsType()->AsETSObjectType();
-    auto checkerStatus = info->calleeClass ? checker::CheckerStatus::IN_CLASS : checker::CheckerStatus::IN_INTERFACE;
+    auto *objType = info->calleeClass != nullptr ? info->calleeClass->Definition()->TsType()->AsETSObjectType()
+                                                 : info->calleeInterface->TsType()->AsETSObjectType();
+    auto checkerStatus =
+        info->calleeClass != nullptr ? checker::CheckerStatus::IN_CLASS : checker::CheckerStatus::IN_INTERFACE;
     auto checkerCtx = checker::SavedCheckerContext(ctx->GetChecker(), checkerStatus, objType);
     method->Check(ctx->GetChecker()->AsETSChecker());
     return method;
@@ -405,12 +406,12 @@ static ir::MethodDefinition *SetUpCalleeMethod(public_lib::Context *ctx, LambdaI
     auto *allocator = ctx->allocator;
     auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
 
-    auto *objType = info->calleeClass ? info->calleeClass->Definition()->TsType()->AsETSObjectType()
-                                      : info->calleeInterface->TsType()->AsETSObjectType();
+    auto *objType = info->calleeClass != nullptr ? info->calleeClass->Definition()->TsType()->AsETSObjectType()
+                                                 : info->calleeInterface->TsType()->AsETSObjectType();
     auto *funcScope = func->Scope();
     auto *paramScope = funcScope->ParamScope();
-    auto isStatic = ((info->callReceiver != nullptr || info->calleeInterface) ? ir::ModifierFlags::NONE
-                                                                              : ir::ModifierFlags::STATIC);
+    auto isStatic = ((info->callReceiver != nullptr || info->calleeInterface != nullptr) ? ir::ModifierFlags::NONE
+                                                                                         : ir::ModifierFlags::STATIC);
     auto modifierFlags = ir::ModifierFlags::PUBLIC | isStatic | cmInfo->auxModifierFlags;
 
     auto *calleeNameId = allocator->New<ir::Identifier>(cmInfo->calleeName, allocator);
@@ -421,7 +422,7 @@ static ir::MethodDefinition *SetUpCalleeMethod(public_lib::Context *ctx, LambdaI
     auto *funcExpr = util::NodeAllocator::ForceSetParent<ir::FunctionExpression>(allocator, func);
     auto *method = util::NodeAllocator::ForceSetParent<ir::MethodDefinition>(
         allocator, ir::MethodDefinitionKind::METHOD, calleeNameClone, funcExpr, modifierFlags, allocator, false);
-    if (info->calleeClass) {
+    if (info->calleeClass != nullptr) {
         info->calleeClass->Definition()->EmplaceBody(method);
         method->SetParent(info->calleeClass->Definition());
     } else {
@@ -455,8 +456,8 @@ static ir::MethodDefinition *CreateCalleeMethod(public_lib::Context *ctx, ir::Ar
     auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
     auto *checker = ctx->GetChecker()->AsETSChecker();
 
-    auto *classScope = info->calleeClass ? info->calleeClass->Definition()->Scope()->AsClassScope()
-                                         : info->calleeInterface->Scope()->AsClassScope();
+    auto *classScope = info->calleeClass != nullptr ? info->calleeClass->Definition()->Scope()->AsClassScope()
+                                                    : info->calleeInterface->Scope()->AsClassScope();
 
     auto *oldTypeParams = (info->enclosingFunction != nullptr) ? info->enclosingFunction->TypeParams() : nullptr;
     auto enclosingScope =
@@ -477,7 +478,6 @@ static ir::MethodDefinition *CreateCalleeMethod(public_lib::Context *ctx, ir::Ar
     auto *returnType = cmInfo->forcedReturnType != nullptr ? cmInfo->forcedReturnType : alternative;
     auto returnTypeAnnotation = allocator->New<ir::OpaqueTypeNode>(returnType, allocator);
 
-    auto funcFlags = ir::ScriptFunctionFlags::METHOD | cmInfo->auxFunctionFlags;
     auto modifierFlags = cmInfo->auxModifierFlags | ir::ModifierFlags::PUBLIC |
                          (info->callReceiver != nullptr ? ir::ModifierFlags::NONE : ir::ModifierFlags::STATIC);
 
@@ -486,11 +486,12 @@ static ir::MethodDefinition *CreateCalleeMethod(public_lib::Context *ctx, ir::Ar
         ISS {cmInfo->body,
              ir::FunctionSignature(newTypeParams, std::move(params), returnTypeAnnotation,
                                    lambda->Function()->HasReceiver()),
-             funcFlags, modifierFlags});
+             ir::ScriptFunctionFlags::METHOD | cmInfo->auxFunctionFlags, modifierFlags});
     auto *funcScope = cmInfo->body == nullptr ? allocator->New<varbinder::FunctionScope>(allocator, paramScope)
                                               : cmInfo->body->Scope()->AsFunctionScope();
     ES2PANDA_ASSERT(funcScope);
-    auto *tsType = info->calleeClass ? info->calleeClass->Definition()->TsType() : info->calleeInterface->TsType();
+    auto *tsType =
+        info->calleeClass != nullptr ? info->calleeClass->Definition()->TsType() : info->calleeInterface->TsType();
     funcScope->BindName(tsType->AsETSObjectType()->AssemblerName());
     func->SetScope(funcScope);
     ProcessCalleeMethodBody(cmInfo->body, checker, paramScope, &substitution, varMap);
@@ -760,6 +761,7 @@ static ir::Expression *SetRestIdentOfCallArguments(public_lib::Context *ctx, Lam
     auto restType = lciInfo->lambdaSignature->RestVar()->TsType();
     if (restType->IsETSTupleType()) {
         ArenaVector<ir::Expression *> tupleElements(allocator->Adapter());
+        // NOLINTNEXTLINE (bugprone-too-small-loop-variable)
         for (std::uint16_t i = 0; i < restType->AsETSTupleType()->GetTupleSize(); ++i) {
             auto ident = allocator->New<ir::Identifier>(lciInfo->restParameterIdentifier, allocator);
             auto number = allocator->New<ir::NumberLiteral>(lexer::Number(i));

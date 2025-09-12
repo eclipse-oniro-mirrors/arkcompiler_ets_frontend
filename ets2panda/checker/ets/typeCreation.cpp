@@ -414,7 +414,8 @@ ETSObjectType *ETSChecker::CreateETSObjectType(
     if (declNode->IsClassDefinition() && (declNode->AsClassDefinition()->IsEnumTransformed())) {
         if (declNode->AsClassDefinition()->IsIntEnumTransformed()) {
             return allocator->New<ETSIntEnumType>(allocator, name, internalName, declNode, relation);
-        } else if (declNode->AsClassDefinition()->IsDoubleEnumTransformed()) {
+        }
+        if (declNode->AsClassDefinition()->IsDoubleEnumTransformed()) {
             return ProgramAllocator()->New<ETSDoubleEnumType>(ProgramAllocator(), name, internalName, declNode,
                                                               Relation());
         }

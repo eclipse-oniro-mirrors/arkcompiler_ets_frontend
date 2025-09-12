@@ -149,8 +149,8 @@ std::string_view ImportPathManager::TryImportFromDeclarationCache(std::string_vi
     }
     const std::string etsSuffix = ".ets";
     const std::string dEtsSuffix = ".d.ets";
-    const auto &rootDir = ArkTSConfig().get()->RootDir();
-    const auto &cacheDir = ArkTSConfig().get()->CacheDir();
+    const auto &rootDir = ArkTSConfig()->RootDir();
+    const auto &cacheDir = ArkTSConfig()->CacheDir();
     if (cacheDir.empty() || rootDir.empty()) {
         return resolvedImportPath;
     }
@@ -540,7 +540,7 @@ util::StringView ImportPathManager::FormModuleNameSolelyByAbsolutePath(const uti
 }
 
 // should be implemented with a stable name -> path mapping list
-static std::optional<std::string> TryFormModuleName(std::string filePath, std::string_view unitName,
+static std::optional<std::string> TryFormModuleName(const std::string &filePath, std::string_view unitName,
                                                     std::string_view unitPath, std::string_view cachePath)
 {
     if (cachePath.empty() && filePath.rfind(unitPath, 0) != 0) {

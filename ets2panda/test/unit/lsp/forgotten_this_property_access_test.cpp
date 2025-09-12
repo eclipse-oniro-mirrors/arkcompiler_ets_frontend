@@ -126,9 +126,9 @@ console.log(name + " is " + age);
     auto ctxInternal = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     const auto &diagnostics =
         ctxInternal->diagnosticEngine->GetDiagnosticStorage(ark::es2panda::util::DiagnosticType::SEMANTIC);
-
-    constexpr size_t expectedDiagnosticCount = 2;
-    ASSERT_GE(diagnostics.size(), expectedDiagnosticCount);
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t EXPECTED_DIAGNOSTIC_COUNT = 2;
+    ASSERT_GE(diagnostics.size(), EXPECTED_DIAGNOSTIC_COUNT);
 
     std::string expectedFileName = "ForgottenThisPropertyAccess_Multiple.ets";
     const size_t start1 = LineColToPos(ctx, 5, 13);

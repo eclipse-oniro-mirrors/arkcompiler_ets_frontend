@@ -49,12 +49,12 @@ public:
     NO_MOVE_SEMANTIC(UniqueSpinMutex);
 
     //  Standard library 'Lockable' requirements implementation
-    void lock();      // CC-OFF(G.NAM.03-CPP) project code style
-    void unlock();    // CC-OFF(G.NAM.03-CPP) project code style
-    bool try_lock();  // CC-OFF(G.NAM.03-CPP) project code style
+    void lock();      // CC-OFF(G.NAM.03-CPP) project code style // NOLINT(readability-identifier-naming)
+    void unlock();    // CC-OFF(G.NAM.03-CPP) project code style // NOLINT(readability-identifier-naming)
+    bool try_lock();  // CC-OFF(G.NAM.03-CPP) project code style // NOLINT(readability-identifier-naming)
 
 protected:
-    std::atomic_int64_t spin_ {LOCK_OFF};
+    std::atomic_int64_t spin_ {LOCK_OFF};  // NOLINT(misc-non-private-member-variables-in-classes)
 };
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -73,9 +73,9 @@ public:
     NO_MOVE_SEMANTIC(ReadWriteSpinMutex);
 
     //  Standard library 'SharedLockable' requirements implementation
-    void lock_shared();      // CC-OFF(G.NAM.03-CPP) project code style
-    void unlock_shared();    // CC-OFF(G.NAM.03-CPP) project code style
-    bool try_lock_shared();  // CC-OFF(G.NAM.03-CPP) project code style
+    void lock_shared();      // CC-OFF(G.NAM.03-CPP) project code style // NOLINT(readability-identifier-naming)
+    void unlock_shared();    // CC-OFF(G.NAM.03-CPP) project code style // NOLINT(readability-identifier-naming)
+    bool try_lock_shared();  // CC-OFF(G.NAM.03-CPP) project code style // NOLINT(readability-identifier-naming)
 };
 
 using DeclarationType = std::shared_ptr<std::string>;
@@ -84,7 +84,7 @@ class DeclarationCache final {
     struct Tag {};
 
 public:
-    inline static DeclarationType const ABSENT {};
+    inline static DeclarationType const ABSENT {};  // NOLINT(fuchsia-statically-constructed-objects)
 
     DeclarationCache() = delete;
     ~DeclarationCache();
@@ -118,6 +118,7 @@ private:
 private:
 private:
     inline static std::shared_mutex globalGuard_ {};
+    // NOLINTNEXTLINE(fuchsia-statically-constructed-objects)
     inline static std::shared_ptr<DeclarationCache> globalDeclarationCache_ = nullptr;
 
 private:

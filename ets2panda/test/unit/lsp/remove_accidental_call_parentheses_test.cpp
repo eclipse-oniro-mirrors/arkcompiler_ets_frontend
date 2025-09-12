@@ -28,7 +28,7 @@ const size_t IGNORE_MALFORMED_CALL_IDX = 42;
 const size_t SKIP_VALID_METHOD_CALL_IDX = 77;
 using ark::es2panda::lsp::codefixes::REMOVE_ACCIDENTAL_CALL_PARENTHESES;
 constexpr auto ERROR_CODES = REMOVE_ACCIDENTAL_CALL_PARENTHESES.GetSupportedCodeNumbers();
-class FixRemoveCallParens_AtPos_Tests : public LSPAPITests {
+class FixRemoveCallParensAtPosTests : public LSPAPITests {
 public:
     class NullCancellationToken : public ark::es2panda::lsp::HostCancellationToken {
     public:
@@ -45,7 +45,7 @@ public:
     }
 };
 
-TEST_F(FixRemoveCallParens_AtPos_Tests, RemovesParenthesesFromGetterCall)
+TEST_F(FixRemoveCallParensAtPosTests, RemovesParenthesesFromGetterCall)
 {
     ark::es2panda::lsp::Initializer initializer;
     const std::string sourceCode = R"(
@@ -72,7 +72,7 @@ const name = user.name();
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(FixRemoveCallParens_AtPos_Tests, IgnoreMalformedCallExpressions)
+TEST_F(FixRemoveCallParensAtPosTests, IgnoreMalformedCallExpressions)
 {
     ark::es2panda::lsp::Initializer initializer;
     const std::string sourceCode = R"(
@@ -91,7 +91,7 @@ const z = obj.value(;
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(FixRemoveCallParens_AtPos_Tests, RemoveParensFromNonFunctionPropertyCall)
+TEST_F(FixRemoveCallParensAtPosTests, RemoveParensFromNonFunctionPropertyCall)
 {
     ark::es2panda::lsp::Initializer initializer;
     const std::string sourceCode = R"(
@@ -121,7 +121,7 @@ const z = obj.value()
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(FixRemoveCallParens_AtPos_Tests, SkipsValidMethodCall)
+TEST_F(FixRemoveCallParensAtPosTests, SkipsValidMethodCall)
 {
     ark::es2panda::lsp::Initializer initializer;
     const std::string sourceCode = R"(

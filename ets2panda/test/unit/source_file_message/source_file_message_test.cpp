@@ -38,7 +38,7 @@ TEST_F(SourceFileMsgTest, source_file_msg_test)
     )";
 
     auto program = GetCurrentProgram(text);
-    const auto &recordTable = program.get()->recordTable;
+    const auto &recordTable = program->recordTable;
     auto sourceFile = recordTable.find("ETSGLOBAL");
     ASSERT_EQ(sourceFile->second.sourceFile, "dummy.ets");
 }

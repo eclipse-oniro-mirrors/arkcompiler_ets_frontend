@@ -73,7 +73,7 @@ TEST_F(LspGetAwaitExpressionTests, GetAnyAwaitExpression)
 
     auto res = lspApi->getDefinitionDataFromNode(contexts_, nodeInfoPtrs);
     std::string extractedText(sourceCode_.substr(res.start, res.length));
-    ASSERT_NE(extractedText.find("p"), std::string::npos);
+    ASSERT_NE(extractedText.find('p'), std::string::npos);
 }
 
 TEST_F(LspGetAwaitExpressionTests, GetAwaitExpressionByAnotherParameterName)

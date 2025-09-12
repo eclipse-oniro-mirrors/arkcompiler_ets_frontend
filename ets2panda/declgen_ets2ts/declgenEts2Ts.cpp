@@ -2502,9 +2502,11 @@ bool TSDeclGen::IsImport(const ir::AstNode *specifier)
 {
     if (specifier->IsImportNamespaceSpecifier()) {
         return IsImport(specifier->AsImportNamespaceSpecifier()->Local());
-    } else if (specifier->IsImportDefaultSpecifier()) {
+    }
+    if (specifier->IsImportDefaultSpecifier()) {
         return IsImport(specifier->AsImportDefaultSpecifier()->Local());
-    } else if (specifier->IsImportSpecifier()) {
+    }
+    if (specifier->IsImportSpecifier()) {
         return IsImport(specifier->AsImportSpecifier()->Local());
     }
     return false;
@@ -2582,11 +2584,14 @@ bool TSDeclGen::IsDependency(const ir::AstNode *decl)
 
     if (decl->IsTSTypeAliasDeclaration()) {
         return IsDependency(decl->AsTSTypeAliasDeclaration()->TypeAnnotation()->TsType());
-    } else if (decl->IsClassDeclaration()) {
+    }
+    if (decl->IsClassDeclaration()) {
         return IsDependency(decl->AsClassDeclaration()->Definition()->TsType());
-    } else if (decl->IsClassDefinition()) {
+    }
+    if (decl->IsClassDefinition()) {
         return IsDependency(decl->AsClassDefinition()->TsType());
-    } else if (decl->IsTSInterfaceDeclaration()) {
+    }
+    if (decl->IsTSInterfaceDeclaration()) {
         return IsDependency(decl->AsTSInterfaceDeclaration()->TsType());
     }
 
@@ -2606,7 +2611,8 @@ bool TSDeclGen::IsDependency(const checker::Type *tsType)
             return false;
         }
         return IsDependency(typeName);
-    } else if (tsType->IsETSUnionType()) {
+    }
+    if (tsType->IsETSUnionType()) {
         const auto unionType = tsType->AsETSUnionType();
         bool isDependency = false;
         GenSeparated(

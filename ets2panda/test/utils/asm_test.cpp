@@ -18,8 +18,6 @@
 #include <ios>
 #include <string>
 
-#include <gmock/gmock.h>
-
 #include "asm_test.h"
 #include "assembly-field.h"
 #include "assembly-literals.h"
@@ -35,7 +33,7 @@ namespace ark::pandasm {
 namespace {
 
 template <class... Ts>
-struct LiteralOverloaded : Ts... {
+struct LiteralOverloaded : Ts... {  // NOLINT (fuchsia-multiple-inheritance)
     using Ts::operator()...;
 };
 

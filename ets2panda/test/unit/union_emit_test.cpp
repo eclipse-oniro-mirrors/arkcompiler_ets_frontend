@@ -23,7 +23,6 @@
 #include "assembly-function.h"
 #include "assembly-program.h"
 
-#include "gmock/gmock.h"
 #include "test/utils/asm_test.h"
 
 namespace ark::pandasm {

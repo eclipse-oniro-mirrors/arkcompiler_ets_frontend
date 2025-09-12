@@ -334,7 +334,7 @@ TEST_F(RestParameterTest, abstract_function_with_rest_parameter_1)
 TEST_F(RestParameterTest, external_function_with_rest_parameter_0)
 {
     SetCurrentProgram("");
-    using namespace ::testing;
+    using ::testing::Contains, ::testing::Key, ::testing::Eq;
     EXPECT_THAT(program_->functionInstanceTable,
                 Contains(Key(Eq("std.core.Object[].<ctor>:std.core.Object[];i32;void;"))));
 }

@@ -60,16 +60,16 @@ void ETSBinder::LookupTypeArgumentReferences(ir::ETSTypeReference *typeRef)
 
 bool ETSBinder::IsSpecialName(const util::StringView &name)
 {
-    constexpr std::array specialKeywords = {compiler::Signatures::ANY_TYPE_NAME, compiler::Signatures::ANY,
-                                            compiler::Signatures::UNDEFINED, compiler::Signatures::NULL_LITERAL};
+    constexpr std::array SPECIAL_KEYWORDS = {compiler::Signatures::ANY_TYPE_NAME, compiler::Signatures::ANY,
+                                             compiler::Signatures::UNDEFINED, compiler::Signatures::NULL_LITERAL};
 
-    constexpr std::array utilityTypes = {
+    constexpr std::array UTILITY_TYPES = {
         compiler::Signatures::READONLY_TYPE_NAME, compiler::Signatures::PARTIAL_TYPE_NAME,
         compiler::Signatures::REQUIRED_TYPE_NAME, compiler::Signatures::FIXED_ARRAY_TYPE_NAME,
         compiler::Signatures::AWAITED_TYPE_NAME};
 
-    return std::find(specialKeywords.begin(), specialKeywords.end(), name.Utf8()) != specialKeywords.end() ||
-           std::find(utilityTypes.begin(), utilityTypes.end(), name.Utf8()) != utilityTypes.end();
+    return std::find(SPECIAL_KEYWORDS.begin(), SPECIAL_KEYWORDS.end(), name.Utf8()) != SPECIAL_KEYWORDS.end() ||
+           std::find(UTILITY_TYPES.begin(), UTILITY_TYPES.end(), name.Utf8()) != UTILITY_TYPES.end();
 }
 
 static bool IsAnyOrUnknown(ETSBinder *binder, const util::StringView &name, const lexer::SourcePosition &pos)
