@@ -568,7 +568,7 @@ public:
     static bool HasSameAssemblySignature(Signature const *const sig1, Signature const *const sig2) noexcept;
     static bool HasSameAssemblySignatures(ETSFunctionType const *const func1,
                                           ETSFunctionType const *const func2) noexcept;
-
+    static bool HasParameterlessConstructor(checker::Type *type);
     Signature *AdjustForTypeParameters(Signature *source, Signature *target);
     void ReportOverrideError(Signature *signature, Signature *overriddenSignature, const OverrideErrorCode &errorCode);
     void CheckOverride(Signature *signature);

@@ -784,6 +784,22 @@ void ETSChecker::InsertExtensionSetterToMap(util::StringView name, ETSObjectType
     GetGlobalTypesHolder()->InsertExtensionSetterToMap(name, type, sig);
 }
 
+bool ETSChecker::HasParameterlessConstructor(checker::Type *type)
+{
+    if (!type->IsETSObjectType()) {
+        return false;
+    }
+
+    auto *objType = type->AsETSObjectType();
+    for (auto *ctorSig : objType->ConstructSignatures()) {
+        if (ctorSig != nullptr && ctorSig->Params().empty() && !ctorSig->HasRestParameter()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void ETSChecker::InsertExtensionGetterToMap(util::StringView name, ETSObjectType *type, Signature *sig)
 {
     GetGlobalTypesHolder()->InsertExtensionGetterToMap(name, type, sig);
