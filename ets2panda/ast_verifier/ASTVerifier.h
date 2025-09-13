@@ -50,7 +50,7 @@
 #include "parser/program/program.h"
 #include "util/ustring.h"
 #include "util/options.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/variable.h"
 #include "public/public.h"
 

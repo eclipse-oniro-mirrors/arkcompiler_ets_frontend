@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_UTIL_PERF_METRICS_H
 #define ES2PANDA_UTIL_PERF_METRICS_H
 
-#include "libpandabase/macros.h"
+#include "libarkbase/macros.h"
 
 namespace ark::es2panda::util {
 

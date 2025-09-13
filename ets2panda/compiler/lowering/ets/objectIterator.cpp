@@ -32,7 +32,7 @@
 #include "objectIterator.h"
 
 #include "generated/signatures.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "parser/ETSparser.h"
 #include "compiler/lowering/util.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"

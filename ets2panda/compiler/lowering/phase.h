@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_COMPILER_LOWERING_PHASE_H
 #define ES2PANDA_COMPILER_LOWERING_PHASE_H
 
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "parser/program/program.h"
 #include "public/public.h"
 #include "phase_id.h"

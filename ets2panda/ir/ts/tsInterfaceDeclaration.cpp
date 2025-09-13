@@ -16,7 +16,7 @@
 #include "tsInterfaceDeclaration.h"
 
 #include "util/es2pandaMacros.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/declaration.h"
 #include "varbinder/variable.h"
 #include "checker/TSchecker.h"

@@ -20,7 +20,7 @@
 #include "public/es2panda_lib.h"
 
 #include "assembler/assembly-program.h"
-#include "libpandabase/mem/arena_allocator.h"
+#include "libarkbase/mem/arena_allocator.h"
 
 #include "compiler/core/compileQueue.h"
 #include "parser/ETSparser.h"

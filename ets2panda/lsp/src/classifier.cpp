@@ -23,11 +23,11 @@
 #include "internal_api.h"
 #include "ir/astNode.h"
 #include "lexer/lexer.h"
-#include "macros.h"
-#include "mem/arena_allocator.h"
+#include "libarkbase/macros.h"
+#include "libarkbase/mem/arena_allocator.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/declaration.h"
 
 namespace ark::es2panda::lsp {

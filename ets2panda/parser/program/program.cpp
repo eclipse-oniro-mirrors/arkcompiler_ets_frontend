@@ -14,7 +14,7 @@
  */
 
 #include "program.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "public/public.h"
 
 #include "compiler/core/CFG.h"

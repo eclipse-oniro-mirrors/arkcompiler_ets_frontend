@@ -16,7 +16,7 @@
 #include <cstdlib>
 #include <windows.h>
 #include "node_api.h"
-#include <macros.h>
+#include <libarkbase/macros.h>
 
 #define NAPI_CDECL __cdecl
 

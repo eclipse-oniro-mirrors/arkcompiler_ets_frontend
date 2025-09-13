@@ -17,7 +17,7 @@
 #include <optional>
 #include <string>
 #include <vector>
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::lsp {
 

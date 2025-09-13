@@ -48,9 +48,7 @@ foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
         PRIVATE ${OUTPUT_DIR}
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-        PUBLIC ${CMAKE_SOURCE_DIR}/libpandabase
         PUBLIC ${CMAKE_SOURCE_DIR}/runtime
-        PUBLIC ${CMAKE_BINARY_DIR}/libpandabase
         ${CMAKE_BINARY_DIR}
     )
     panda_target_link_libraries(${TEST_NAME} es2panda-public arkassembler arkbase arkfile)

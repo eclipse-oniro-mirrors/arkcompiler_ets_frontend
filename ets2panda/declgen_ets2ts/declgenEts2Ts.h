@@ -18,8 +18,8 @@
 
 #include "checker/ETSchecker.h"
 #include "compiler/lowering/phase.h"
-#include "libpandabase/os/file.h"
-#include "libpandabase/utils/arena_containers.h"
+#include "libarkbase/os/file.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "parser/program/program.h"
 #include "util/options.h"
 #include "util/diagnosticEngine.h"

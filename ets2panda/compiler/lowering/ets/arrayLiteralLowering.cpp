@@ -24,7 +24,7 @@
 #include "lexer/token/number.h"
 #include "util/es2pandaMacros.h"
 #include "checker/ETSchecker.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::compiler {
 

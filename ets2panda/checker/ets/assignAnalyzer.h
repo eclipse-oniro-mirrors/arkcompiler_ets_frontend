@@ -19,7 +19,7 @@
 #include "checker/ETSchecker.h"
 #include "checker/ets/baseAnalyzer.h"
 
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 class AstNode;

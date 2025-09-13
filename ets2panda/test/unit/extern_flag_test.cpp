@@ -23,7 +23,7 @@
 #include "assembler/assembly-program.h"
 #include "assembly-function.h"
 #include "assembly-record.h"
-#include "mem/pool_manager.h"
+#include "libarkbase/mem/pool_manager.h"
 #include "util/diagnosticEngine.h"
 #include "util/options.h"
 
