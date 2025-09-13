@@ -18,7 +18,9 @@ let pthen = byteP.then<Object>((value ? Object): Object => {
     return value
 
 });
-await byteP;
+async function foo() {
+    await byteP;
+}
 
 /* @@? 16:30 Error TypeError: Unresolved reference byteFunc */
 /* @@? 17:41 Error SyntaxError: Parameter declaration should have an explicit type annotation. */

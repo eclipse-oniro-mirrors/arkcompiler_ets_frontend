@@ -41,6 +41,7 @@ runtime/ets/type_param_in_union.ets
 runtime/ets/StringFasta.ets
 runtime/ets/struct-identifier.ets
 runtime/ets/struct-init2.ets
+runtime/ets/fuzz/invalid_rest_param_await.ets
 runtime/ets/fuzz/empty_variable.ets
 runtime/ets/fuzz/signature_info_param.ets
 runtime/ets/fuzz/too_many_minus.ets
