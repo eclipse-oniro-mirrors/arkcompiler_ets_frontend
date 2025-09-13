@@ -12,10 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-enum Colorset {Red, Green,Blue};
-const result = JSON.stringify(Colorset);
-console.log("Hello",result);
 
-/* @@? 15:1 Error TypeError: Indexed access is not supported for such expression type.  */
-/* @@? 16:16 Error TypeError: No matching call signature for stringify(Colorset)  */
-/* @@? 16:31 Error TypeError: Enum 'Colorset' cannot be used as object  */
+import * as named from './namespace_export1.ets'
+import * as production from './namespace_export2.ets'
+
+arktest.assertEQ( /* @@ label1 */production, null, 'default specified via identifier');
+arktest.assertEQ( /* @@ label2 */named, null, 'default specified via identifier');
+
+/* @@@ label1 Error TypeError: Namespace 'production' cannot be used as object */
+/* @@@ label2 Error TypeError: Namespace 'named' cannot be used as object */

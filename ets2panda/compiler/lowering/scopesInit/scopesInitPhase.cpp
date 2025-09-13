@@ -17,6 +17,7 @@
 #include "compiler/lowering/scopesInit/savedBindingsCtx.h"
 #include "compiler/lowering/util.h"
 #include "varbinder/tsBinding.h"
+#include "varbinder/variableFlags.h"
 
 namespace ark::es2panda::compiler {
 
@@ -976,6 +977,7 @@ void InitScopesPhaseETS::VisitImportNamespaceSpecifier(ir::ImportNamespaceSpecif
     auto var =
         VarBinder()->GetScope()->FindLocal(importSpec->Local()->Name(), varbinder::ResolveBindingOptions::BINDINGS);
     importSpec->Local()->SetVariable(var);
+    var->AddFlag(varbinder::VariableFlags::NAMESPACE);
     Iterate(importSpec);
 }
 

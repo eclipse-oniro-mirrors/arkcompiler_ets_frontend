@@ -260,6 +260,10 @@ semantic:
   id: 308
   message: "Circular dependency detected for identifier: {}"
 
+- name: CLASS_AS_OBJ
+  id: 132307
+  message: "Class '{}' cannot be used as object"
+
 - name: CLASS_COMPOSITE_INVALID_KEY
   id: 73
   message: "key in class composite should be either identifier or string literal"
@@ -387,6 +391,10 @@ semantic:
 - name: DYMANIC_INIT_WITH_OBJEXPR
   id: 382
   message: "Dymanic Type {} cannot be initialize with an object expression"
+
+- name: ENUM_AS_OBJ
+  id: 154289
+  message: "Enum '{}' cannot be used as object"
 
 - name: ENUM_INVALID_DISCRIMINANT
   id: 162
@@ -636,6 +644,10 @@ semantic:
   id: 296
   message: "Using the 'instance of' operator with non-object type '{}'"
 
+- name: INTERFACE_AS_OBJ
+  id: 165326
+  message: "Interface '{}' cannot be used as object"
+
 - name: INTERFACE_EXTENDS_CLASS
   id: 378
   message: "Interfaces cannot extend classes, only other interfaces."
@@ -874,6 +886,10 @@ semantic:
 - name: MUST_BE_CLASS_INTERFACE_TYPE
   id: 124644
   message: "T in {}<T> must be a class or an interface type."
+
+- name: NAMESPACE_AS_OBJ
+  id: 43831
+  message: "Namespace '{}' cannot be used as object"
 
 - name: NAMESPACE_AS_TYPE
   id: 158

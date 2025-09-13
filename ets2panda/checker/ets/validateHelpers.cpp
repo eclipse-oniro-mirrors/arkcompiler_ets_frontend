@@ -88,10 +88,24 @@ void ETSChecker::ValidateCallExpressionIdentifier(ir::Identifier *const ident, T
         }
     }
 
-    if (ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE_OR_ENUM) &&
-        callExpr->Callee() != ident && callExpr->Callee() != ident->Parent()) {
-        std::ignore = TypeError(ident->Variable(), diagnostic::CLASS_OR_IFACE_OR_ENUM_AS_OBJ, {ident->ToString()},
-                                ident->Start());
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS) && callExpr->Callee() != ident &&
+        callExpr->Callee() != ident->Parent()) {
+        std::ignore = TypeError(ident->Variable(), diagnostic::CLASS_AS_OBJ, {ident->ToString()}, ident->Start());
+    }
+
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::INTERFACE) && callExpr->Callee() != ident &&
+        callExpr->Callee() != ident->Parent()) {
+        std::ignore = TypeError(ident->Variable(), diagnostic::INTERFACE_AS_OBJ, {ident->ToString()}, ident->Start());
+    }
+
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::ENUM_LITERAL) && callExpr->Callee() != ident &&
+        callExpr->Callee() != ident->Parent()) {
+        std::ignore = TypeError(ident->Variable(), diagnostic::ENUM_AS_OBJ, {ident->ToString()}, ident->Start());
+    }
+
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::NAMESPACE) && callExpr->Callee() != ident &&
+        callExpr->Callee() != ident->Parent()) {
+        std::ignore = TypeError(ident->Variable(), diagnostic::NAMESPACE_AS_OBJ, {ident->ToString()}, ident->Start());
     }
 
     if (callExpr->Callee() != ident && callExpr->Callee() != ident->Parent()) {
