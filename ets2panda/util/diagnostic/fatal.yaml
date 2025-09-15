@@ -61,6 +61,10 @@ fatal:
   id: 7
   message: "--module is not supported for this extension."
 
+- name: NO_CACHE_DIRECTORY
+  id: 27
+  message: "No cache directory in arktsconfig."
+
 - name: NO_INPUT
   id: 3
   message: "No files to compile"

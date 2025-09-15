@@ -79,6 +79,10 @@ public:
     static constexpr auto DUMMY_PATH = "dummy_path";  // CC-OFF(G.NAM.03-CPP) project code style
     static constexpr std::string_view ANNOTATION_MODULE_DECLARATION =
         "Lstd/annotations/ModuleDeclaration;";  // CC-OFF(G.NAM.03-CPP) project code style
+    static constexpr std::string_view etsSuffix = ".ets";
+    static constexpr std::string_view dEtsSuffix = ".d.ets";
+    static constexpr std::string_view abcSuffix = ".abc";
+    static constexpr std::string_view etsstdlibAbcSuffix = "etsstdlib.abc";
     struct ImportMetadata {
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
         ImportFlags importFlags {};
@@ -187,6 +191,10 @@ private:
     std::string TryMatchDependencies(std::string_view fixedPath) const;
     std::string TryResolvePath(std::string_view fixedPath) const;
     StringView GetRealPath(StringView path) const;
+    bool DeclarationIsInCache(ImportMetadata &importData);
+    void ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata &importData,
+                                                   const std::string_view &externalModuleImportData);
+    void ProcessExternalLibraryImportSimple(ImportMetadata &importData);
     void ProcessExternalLibraryImport(ImportMetadata &importData);
     std::string_view TryImportFromDeclarationCache(std::string_view resolvedImportPath) const;
 
