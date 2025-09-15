@@ -1798,6 +1798,15 @@ SignatureInfo *ETSChecker::ComposeSignatureInfo(ir::TSTypeParameterDeclaration *
             }
             signatureInfo->restVar = SetupSignatureParameter(param, restParamType);
             ES2PANDA_ASSERT(signatureInfo->restVar != nullptr);
+
+            // NOTE(muhammet): Have to add optional arguments again so it doesn't break the assertion for rest tuples
+            size_t nOpt = std::count_if(signatureInfo->params.begin(), signatureInfo->params.end(),
+                                        [](varbinder::LocalVariable *var) {
+                                            return var->Declaration()->Node()->AsETSParameterExpression()->IsOptional();
+                                        });
+            if (signatureInfo->restVar->TsType()->IsETSTupleType()) {
+                signatureInfo->minArgCount += nOpt;
+            }
         }
     }
 
