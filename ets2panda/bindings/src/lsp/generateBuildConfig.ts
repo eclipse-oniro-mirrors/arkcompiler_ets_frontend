@@ -145,8 +145,8 @@ function getModuleDependencies(modulePath: string, visited = new Set<string>()):
     try {
       const packageData = parseJson5(packageFilePath);
       return Object.entries(packageData.dependencies || {})
-        .map(([_, depPath]) => (depPath as string).replace('file:', ''))
-        .map((depPath) => path.resolve(modulePath, depPath));
+        .filter(([_, depPath]) => depPath.startsWith('file:'))
+        .map(([_, depPath]) => path.resolve(modulePath, depPath.replace('file:', '')));
     } catch (error) {
       console.error(`Error parsing ${packageFilePath}:`, error);
       return [];
