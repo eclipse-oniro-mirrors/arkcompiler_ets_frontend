@@ -251,6 +251,14 @@ defines:
     ref: CLASS_INITIALIZE_METHOD
   - name: 'constructor'
     ref: CONSTRUCTOR_NAME
+  - name: 'delete'
+    ref: DELETE
+  - name: 'default'
+    ref: DEFAULT
+  - name: 'ESValue'
+    ref: ESVALUE
+  - name: 'load'
+    ref: LOAD
 
 packages:
   - name: 'std.core'

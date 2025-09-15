@@ -13,8 +13,5 @@
  * limitations under the License.
  */
 
-initModule)
-
-/* @@? 16:11 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 21:1 Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@? 21:1 Error SyntaxError: Unexpected token, expected ')'. */
+let b = 1
+initModule('./module_to_init.ets')
