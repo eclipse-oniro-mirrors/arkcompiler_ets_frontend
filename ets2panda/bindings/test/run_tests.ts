@@ -527,7 +527,7 @@ if (require.main === module) {
 
   const testDir = path.resolve(process.argv[2]);
   const pathConfig: PathConfig = {
-    buildSdkPath: path.join(testDir, 'ets', 'ets1.2'),
+    buildSdkPath: path.join(testDir, 'ets', 'static'),
     projectPath: path.join(testDir, 'testcases'),
     declgenOutDir: path.join(testDir, 'testcases', '.idea', '.deveco')
   };

@@ -183,7 +183,7 @@ function initInteropSDKInfo(buildConfig: BuildConfig): void {
 
   const basePaths = buildConfig.interopApiPaths?.length
     ? buildConfig.interopApiPaths
-    : [path.resolve(buildConfig.buildSdkPath as string, '../ets1.1/build-tools/interop')];
+    : [path.resolve(buildConfig.buildSdkPath as string, '../dynamic/build-tools/interop')];
 
   for (const basePath of basePaths) {
     /**

@@ -36,7 +36,7 @@ if ($RestoreMode -eq 1) {
     }
 }
 else {
-    $sourceDir = "$ScriptDir\ets\ets1.2\build-tools\ets2panda"
+    $sourceDir = "$ScriptDir\ets\static\build-tools\ets2panda"
     $destinationDir = "$ScriptDir\..\ets2panda"
     
     # Check if source directory exists
