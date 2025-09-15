@@ -228,16 +228,16 @@ static void DumpPerfMetricRecord(std::stringstream &ss, PerfMetricRecord const *
     auto const &stats = rec->GetStats();
     // NOLINTBEGIN(readability-magic-numbers)
     ss << ":" << std::left << std::setw(50U) << rec->GetName() << ": ";
+    metric("time", 10U) << PrettyTimeNs(stats.GetTimeNanoseconds());
+    auto memValue = ark::helpers::MemoryConverter(stats.GetMemorySize());
+    metric("mem", 10U) << (std::to_string(static_cast<size_t>(memValue.GetDoubleValue())) +
+                           std::string(memValue.GetLiteral()));
     if (rec->GetMaxNesting() > 1) {
         metric("nesting", 6U) << rec->GetMaxNesting();
     }
     if (rec->GetInvokationsCount() > 1) {
         metric("count", 8U) << rec->GetInvokationsCount();
     }
-    metric("time", 10U) << PrettyTimeNs(stats.GetTimeNanoseconds());
-    auto memValue = ark::helpers::MemoryConverter(stats.GetMemorySize());
-    metric("mem", 10U) << (std::to_string(static_cast<size_t>(memValue.GetDoubleValue())) +
-                           std::string(memValue.GetLiteral()));
     // NOLINTEND(readability-magic-numbers)
 }
 
