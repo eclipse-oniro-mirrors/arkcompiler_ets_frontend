@@ -26,10 +26,17 @@
 
 namespace ark::es2panda::checker {
 
+void ETSObjectType::Iterate(const PropertyTraverser &cb) const
+{
+    ForEachAllOwnProperties(cb);
+    ForEachAllNonOwnProperties(cb);
+}
+
 void ETSObjectType::AddInterface(ETSObjectType *interfaceType)
 {
-    if (std::find(interfaces_.begin(), interfaces_.end(), interfaceType) == interfaces_.end()) {
-        interfaces_.push_back(interfaceType);
+    EnsureInterfacesInitialized();
+    if (std::find(interfaces_->begin(), interfaces_->end(), interfaceType) == interfaces_->end()) {
+        interfaces_->push_back(interfaceType);
         CacheSupertypeTransitive(interfaceType);
     }
 }
@@ -45,11 +52,13 @@ void ETSObjectType::SetSuperType(ETSObjectType *super)
 
 void ETSObjectType::CacheSupertypeTransitive(ETSObjectType *type)
 {
+    EnsureTransitiveSupertypesInitialized();
     auto const insertType = [this](ETSObjectType *t) {
-        return transitiveSupertypes_.insert(t->GetOriginalBaseType()).second;
+        return transitiveSupertypes_->insert(t->GetOriginalBaseType()).second;
     };
     if (insertType(type)) {
-        for (auto &t : type->transitiveSupertypes_) {
+        type->EnsureTransitiveSupertypesInitialized();
+        for (auto &t : *type->transitiveSupertypes_) {
             insertType(t);
         }
     }
@@ -111,7 +120,8 @@ varbinder::LocalVariable *ETSObjectType::GetProperty(util::StringView name, Prop
 
     if (((flags & PropertySearchFlags::SEARCH_INSTANCE) != 0 || (flags & PropertySearchFlags::SEARCH_STATIC) == 0) &&
         (flags & PropertySearchFlags::SEARCH_IN_INTERFACES) != 0) {
-        for (auto *interface : interfaces_) {
+        EnsureInterfacesInitialized();
+        for (auto *interface : *interfaces_) {
             if (auto res = interface->GetProperty(name, flags); res != nullptr) {
                 return res;
             }
@@ -420,6 +430,32 @@ varbinder::LocalVariable *ETSObjectType::CollectSignaturesForSyntheticType(std::
     return nullptr;
 }
 
+void ETSObjectType::ForEachAllOwnProperties(const PropertyTraverser &cb) const
+{
+    EnsurePropertiesInstantiated();
+    for (size_t i = 0; i < static_cast<size_t>(PropertyType::COUNT); ++i) {
+        if (properties_[i] != nullptr) {
+            PropertyMap &map = *properties_[i];
+            for (const auto &[_, prop] : map) {
+                (void)_;
+                cb(prop);
+            }
+        }
+    }
+}
+
+void ETSObjectType::ForEachAllNonOwnProperties(const PropertyTraverser &cb) const
+{
+    if (superType_ != nullptr) {
+        superType_->Iterate(cb);
+    }
+
+    EnsureInterfacesInitialized();
+    for (const auto *interface : *interfaces_) {
+        interface->Iterate(cb);
+    }
+}
+
 std::vector<varbinder::LocalVariable *> ETSObjectType::GetAllProperties() const
 {
     std::vector<varbinder::LocalVariable *> allProperties;
@@ -512,6 +548,40 @@ std::vector<varbinder::LocalVariable *> ETSObjectType::Fields() const
     }
 
     return fields;
+}
+
+std::vector<const varbinder::LocalVariable *> ETSObjectType::ForeignProperties() const
+{
+    std::vector<const varbinder::LocalVariable *> foreignProps;
+
+    // spec 9.3: all names in static and, separately, non-static class declaration scopes must be unique.
+    std::unordered_set<util::StringView> ownInstanceProps;
+    std::unordered_set<util::StringView> ownStaticProps;
+
+    EnsurePropertiesInstantiated();
+    ownInstanceProps.reserve(static_cast<size_t>(PropertyType::COUNT));
+    ownStaticProps.reserve(static_cast<size_t>(PropertyType::COUNT));
+
+    ForEachAllOwnProperties([&](const varbinder::LocalVariable *prop) {
+        if (prop->HasFlag(varbinder::VariableFlags::STATIC)) {
+            ownStaticProps.insert(prop->Name());
+        } else {
+            ownInstanceProps.insert(prop->Name());
+        }
+    });
+    ForEachAllNonOwnProperties([&](const varbinder::LocalVariable *var) {
+        if (var->HasFlag(varbinder::VariableFlags::STATIC)) {
+            if (ownStaticProps.find(var->Name()) == ownStaticProps.end()) {
+                foreignProps.push_back(var);
+            }
+        } else {
+            if (ownInstanceProps.find(var->Name()) == ownInstanceProps.end()) {
+                foreignProps.push_back(var);
+            }
+        }
+    });
+
+    return foreignProps;
 }
 
 void ETSObjectType::ToString(std::stringstream &ss, bool precise) const
@@ -923,7 +993,8 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
 void ETSObjectType::IsSubtypeOf(TypeRelation *relation, Type *target)
 {
     if (target->IsETSObjectType()) {
-        auto &transitives = transitiveSupertypes_;
+        EnsureTransitiveSupertypesInitialized();
+        auto &transitives = *transitiveSupertypes_;
         if (transitives.find(target->AsETSObjectType()->GetOriginalBaseType()) == transitives.end()) {
             relation->Result(false);
             return;
@@ -1079,7 +1150,8 @@ Type *ETSObjectType::Instantiate(ArenaAllocator *const allocator, TypeRelation *
     copiedType->SetVariable(variable_);
     copiedType->SetSuperType(superType_);
 
-    for (auto *const it : interfaces_) {
+    EnsureInterfacesInitialized();
+    for (auto *const it : *interfaces_) {
         copiedType->AddInterface(it);
     }
 
@@ -1302,7 +1374,8 @@ ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitut
     if (superType_ != nullptr) {
         copiedType->SetSuperType(superType_->Substitute(relation, substitution)->AsETSObjectType());
     }
-    for (auto *itf : interfaces_) {
+    EnsureInterfacesInitialized();
+    for (auto *itf : *interfaces_) {
         auto *newItf = itf->Substitute(relation, substitution)->AsETSObjectType();
         copiedType->AddInterface(newItf);
     }
@@ -1360,6 +1433,18 @@ void ETSObjectType::CheckAndInstantiateProperties() const
     InstantiateProperties();
 }
 
+template <typename MapFn>
+void ETSObjectType::CopyPropertyGroup(PropertyType type, MapFn &&mapFn, const Substitution &subst) const
+{
+    auto &srcMap = (baseType_->*mapFn)();
+    for (auto const &[_, prop] : srcMap) {
+        (void)_;
+        auto *copied = CopyPropertyWithTypeArguments(prop, relation_, &subst);
+        EnsurePropertyMapInitialized(type);
+        properties_[static_cast<size_t>(type)]->emplace(prop->Name(), copied);
+    }
+}
+
 void ETSObjectType::InstantiateProperties() const
 {
     ES2PANDA_ASSERT(relation_ != nullptr);
@@ -1382,41 +1467,12 @@ void ETSObjectType::InstantiateProperties() const
         constructSignatures_.push_back(newSig);
     }
 
-    for (auto const &[_, prop] : baseType_->InstanceFields()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::INSTANCE_FIELD)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->StaticFields()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::STATIC_FIELD)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->InstanceMethods()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::INSTANCE_METHOD)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->StaticMethods()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::STATIC_METHOD)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->InstanceDecls()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::INSTANCE_DECL)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->StaticDecls()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::STATIC_DECL)].emplace(prop->Name(), copiedProp);
-    }
+    CopyPropertyGroup(PropertyType::INSTANCE_FIELD, &ETSObjectType::InstanceFields, subst);
+    CopyPropertyGroup(PropertyType::STATIC_FIELD, &ETSObjectType::StaticFields, subst);
+    CopyPropertyGroup(PropertyType::INSTANCE_METHOD, &ETSObjectType::InstanceMethods, subst);
+    CopyPropertyGroup(PropertyType::STATIC_METHOD, &ETSObjectType::StaticMethods, subst);
+    CopyPropertyGroup(PropertyType::INSTANCE_DECL, &ETSObjectType::InstanceDecls, subst);
+    CopyPropertyGroup(PropertyType::STATIC_DECL, &ETSObjectType::StaticDecls, subst);
 }
 
 std::string ETSObjectType::NameToDescriptor(util::StringView name)
@@ -1468,20 +1524,23 @@ std::uint32_t ETSObjectType::GetPrecedence(checker::ETSChecker *checker, ETSObje
 }
 void ETSObjectType::AddReExports(ETSObjectType *reExport)
 {
-    if (std::find(reExports_.begin(), reExports_.end(), reExport) == reExports_.end()) {
-        reExports_.push_back(reExport);
+    EnsureReExportsInitialized();
+    if (std::find(reExports_->begin(), reExports_->end(), reExport) == reExports_->end()) {
+        reExports_->push_back(reExport);
     }
 }
 
 void ETSObjectType::AddReExportAlias(util::StringView const &value, util::StringView const &key)
 {
-    reExportAlias_.insert({key, value});
+    EnsureReExportAliasInitialized();
+    reExportAlias_->insert({key, value});
 }
 
 util::StringView ETSObjectType::GetReExportAliasValue(util::StringView const &key) const
 {
-    auto ret = reExportAlias_.find(key);
-    if (reExportAlias_.end() == ret) {
+    EnsureReExportAliasInitialized();
+    auto ret = reExportAlias_->find(key);
+    if (reExportAlias_->end() == ret) {
         return key;
     }
     return ret->second;
@@ -1489,13 +1548,15 @@ util::StringView ETSObjectType::GetReExportAliasValue(util::StringView const &ke
 
 bool ETSObjectType::IsReExportHaveAliasValue(util::StringView const &key) const
 {
-    return std::any_of(reExportAlias_.begin(), reExportAlias_.end(),
+    EnsureReExportAliasInitialized();
+    return std::any_of(reExportAlias_->begin(), reExportAlias_->end(),
                        [&](const auto &val) { return val.second == key; });
 }
 
 const ArenaVector<ETSObjectType *> &ETSObjectType::ReExports() const
 {
-    return reExports_;
+    EnsureReExportsInitialized();
+    return *reExports_;
 }
 
 util::StringView ETSObjectType::AssemblerName() const
