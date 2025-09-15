@@ -93,6 +93,42 @@ checker::Type *ETSAnalyzer::Check(ir::ClassDefinition *node) const
     return node->TsType();
 }
 
+static void CheckOverride(ir::ClassProperty *st, ETSChecker *checker)
+{
+    auto *parent = st->Parent();
+    if (parent == nullptr || !parent->IsClassDefinition()) {
+        return;
+    }
+
+    ir::ClassDefinition *classDef = parent->AsClassDefinition();
+    util::StringView subClassName = classDef->Ident()->Name();
+    if (classDef->Super() == nullptr) {
+        if (st->IsOverride()) {
+            checker->LogError(diagnostic::OVERRIDE_NOT_EXTENDS, {subClassName}, st->Start());
+        }
+        return;
+    }
+
+    util::StringView superName = classDef->Super()->AsETSTypeReference()->Part()->GetIdent()->Name();
+    while (classDef->Super() != nullptr) {
+        auto *superType = classDef->Super()->TsType();
+        if (superType == nullptr || !superType->IsETSObjectType()) {
+            break;
+        }
+
+        auto searchFlags =
+            st->IsStatic() ? PropertySearchFlags::SEARCH_STATIC_FIELD : PropertySearchFlags::SEARCH_INSTANCE_FIELD;
+        auto *propVar = superType->AsETSObjectType()->GetProperty(st->Id()->Name(), searchFlags);
+        classDef = superType->AsETSObjectType()->GetDeclNode()->AsClassDefinition();
+        if (propVar != nullptr) {
+            return;
+        }
+    }
+    if (st->IsOverride()) {
+        checker->LogError(diagnostic::OVERRIDE_NOT_IN_BASE, {superName}, st->Start());
+    }
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ClassProperty *st) const
 {
     if (st->TsType() != nullptr) {
@@ -141,6 +177,7 @@ checker::Type *ETSAnalyzer::Check(ir::ClassProperty *st) const
     if (st->IsDefinite() && st->TsType()->PossiblyETSNullish()) {
         checker->LogError(diagnostic::LATE_INITIALIZATION_FIELD_HAS_INVALID_TYPE, st->TypeAnnotation()->Start());
     }
+    CheckOverride(st, checker);
 
     return propertyType;
 }
