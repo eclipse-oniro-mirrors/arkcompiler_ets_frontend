@@ -261,6 +261,10 @@ defines:
     ref: DELETE
   - name: 'default'
     ref: DEFAULT
+  - name: 'ESValue'
+    ref: ESVALUE
+  - name: 'load'
+    ref: LOAD
 
 packages:
   - name: 'std.core'

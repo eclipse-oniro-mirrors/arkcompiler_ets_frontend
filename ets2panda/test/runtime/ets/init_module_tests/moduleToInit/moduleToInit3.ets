@@ -12,7 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*---
+  tags: [compile-only]
+---*/
 
-initModule()
-
-/* @@? 16:1 Error SyntaxError: initModule() only accept string literal as argument. */
+console.log('Init Module Success3')

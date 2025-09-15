@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
-initModule()
-
-/* @@? 16:1 Error SyntaxError: initModule() only accept string literal as argument. */
+class A {
+}
+ 
+initModule('./module_to_init.ets')

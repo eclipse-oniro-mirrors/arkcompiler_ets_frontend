@@ -176,9 +176,6 @@ ir::ETSModule *ETSParser::ParseETSGlobalScript(lexer::SourcePosition startLoc, A
     auto imports = ParseImportDeclarations();
     statements.insert(statements.end(), imports.begin(), imports.end());
 
-    auto initModules = ParseETSInitModuleStatements();
-    statements.insert(statements.end(), initModules.begin(), initModules.end());
-
     auto topLevelStatements = ParseTopLevelDeclaration();
     statements.insert(statements.end(), topLevelStatements.begin(), topLevelStatements.end());
 
@@ -1350,16 +1347,6 @@ ir::ETSImportDeclaration *ETSParser::BuildImportDeclaration(ir::ImportKinds impo
     return AllocNode<ir::ETSImportDeclaration>(
         pathToResolve, importPathManager_->GatherImportMetadata(program, importFlag, pathToResolve),
         std::move(specifiers), importKind);
-}
-
-ArenaVector<ir::Statement *> ETSParser::ParseETSInitModuleStatements()
-{
-    std::vector<std::string> userPaths;
-    ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
-    while (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_INIT_MODULE) {
-        statements.push_back(ParseInitModuleStatement(StatementParsingFlags::INIT_MODULE));
-    }
-    return statements;
 }
 
 ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseImportDeclarations()

@@ -13,6 +13,6 @@
  * limitations under the License.
  */
 
-/* @@ label */initModule(1)
+/* @@ label */initmodule('./module_to_init.ets')
 
-/* @@@ label Error SyntaxError: initModule() only accept string literal as argument.  */
+/* @@@ label Error TypeError: Unresolved reference initmodule  */

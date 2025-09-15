@@ -42,6 +42,7 @@
 #include "compiler/lowering/ets/expressionLambdaLowering.h"
 #include "compiler/lowering/ets/extensionAccessorLowering.h"
 #include "compiler/lowering/ets/genericBridgesLowering.h"
+#include "compiler/lowering/ets/initModuleLowering.h"
 #include "compiler/lowering/ets/insertOptionalParametersAnnotation.h"
 #include "compiler/lowering/ets/interfaceObjectLiteralLowering.h"
 #include "compiler/lowering/ets/interfacePropertyDeclarations.h"
@@ -106,6 +107,7 @@ std::vector<Phase *> GetETSPhaseList()
         new PackageImplicitImport,
         new ExportAnonymousConstPhase,
         new TopLevelStatements,
+        new InitModuleLowering,
         new ResizableArrayConvert,
         new ExpressionLambdaConstructionPhase,
         new InsertOptionalParametersAnnotation,

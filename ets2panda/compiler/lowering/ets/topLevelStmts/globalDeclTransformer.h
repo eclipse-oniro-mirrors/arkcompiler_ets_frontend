@@ -83,7 +83,6 @@ public:
     void VisitFunctionDeclaration(ir::FunctionDeclaration *funcDecl) override;
     void VisitVariableDeclaration(ir::VariableDeclaration *varDecl) override;
     void VisitClassStaticBlock(ir::ClassStaticBlock *classStaticBlock) override;
-    void VisitExpressionStatement(ir::ExpressionStatement *exprStmt) override;
     void HandleNode(ir::AstNode *node) override;
     bool CheckValidInitializer(ir::AstNode const *initializer) const;
 

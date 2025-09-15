@@ -14,9 +14,7 @@
  */
 
 #include "compiler/lowering/ets/topLevelStmts/importExportDecls.h"
-#include "compiler/lowering/util.h"
 #include "generated/diagnostic.h"
-#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::compiler {
 
@@ -51,24 +49,6 @@ void ImportExportDecls::ParseDefaultSources()
     varbinder_->SetDefaultImports(std::move(imports));
 }
 
-void ImportExportDecls::HandleInitModuleCallExpression(ir::CallExpression *callExpr, parser::Program *program,
-                                                       GlobalClassHandler::ModuleDependencies &moduleDependencies)
-{
-    if (!callExpr->Callee()->IsIdentifier() ||
-        callExpr->Callee()->AsIdentifier()->Name() != compiler::Signatures::INIT_MODULE_METHOD) {
-        return;
-    }
-
-    auto metaData = parser_->GetImportPathManager()->GatherImportMetadata(
-        program, util::ImportFlags::NONE, callExpr->Arguments().front()->AsStringLiteral());
-
-    bool isSimultaneous = ctx_->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE;
-    auto sources = isSimultaneous ? ctx_->parserProgram->ExternalSources() : program->DirectExternalSources();
-    if (auto dependentProg = SearchExternalProgramInImport(sources, metaData); dependentProg != nullptr) {
-        GlobalClassHandler::InsertModuleDependencies(&moduleDependencies, dependentProg);
-    }
-}
-
 void ImportExportDecls::ProcessProgramStatements(parser::Program *program,
                                                  const ArenaVector<ir::Statement *> &statements,
                                                  GlobalClassHandler::ModuleDependencies &moduleDependencies)
@@ -87,10 +67,6 @@ void ImportExportDecls::ProcessProgramStatements(parser::Program *program,
         if (stmt->IsTSTypeAliasDeclaration() && (stmt->IsExported() || stmt->IsDefaultExported())) {
             PopulateAliasMap(stmt->AsTSTypeAliasDeclaration(), program->SourceFilePath());
         }
-        if (stmt->IsExpressionStatement() && stmt->AsExpressionStatement()->GetExpression()->IsCallExpression()) {
-            HandleInitModuleCallExpression(stmt->AsExpressionStatement()->GetExpression()->AsCallExpression(), program,
-                                           moduleDependencies);
-        }
     }
 }
 
@@ -98,9 +74,7 @@ GlobalClassHandler::ModuleDependencies ImportExportDecls::HandleGlobalStmts(Aren
 {
     VerifySingleExportDefault(programs);
     VerifyTypeExports(programs);
-    GlobalClassHandler::ModuleDependencies moduleDependencies(
-        ArenaVector<parser::Program *>(programs.front()->Allocator()->Adapter()),
-        ArenaUnorderedSet<parser::Program *>(programs.front()->Allocator()->Adapter()));
+    GlobalClassHandler::ModuleDependencies moduleDependencies {programs.front()->Allocator()->Adapter()};
     if (!programs.empty()) {
         std::sort(programs.begin(), programs.end(), ProgramFileNameLessThan);
     }

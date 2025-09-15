@@ -207,7 +207,6 @@ private:
     ir::ExportNamedDeclaration *ParseSingleExport(ir::ModifierFlags modifiers);
     ir::ExportNamedDeclaration *ParseSingleExportForAnonymousConst(ir::ModifierFlags modifiers);
     ArenaVector<ir::ETSImportDeclaration *> ParseImportDeclarations();
-    ArenaVector<ir::Statement *> ParseETSInitModuleStatements();
     ir::Statement *ParseImportDeclarationHelper(lexer::SourcePosition startLoc, ArenaVector<ir::AstNode *> &specifiers,
                                                 ir::ImportKinds importKind);
     bool TryMergeFromCache(util::ImportPathManager::ImportMetadata const &importData);
@@ -312,7 +311,7 @@ private:
     ir::Statement *ParseExportDeclaration(StatementParsingFlags flags) override;
     ir::AnnotatedExpression *ParseVariableDeclaratorKey(VariableParsingFlags flags) override;
     ir::Statement *ParseAnnotationsInStatement(StatementParsingFlags flags) override;
-    ir::Statement *ParseInitModuleStatement(StatementParsingFlags flags) override;
+    ir::Statement *ParseInitModuleStatement() override;
     ir::VariableDeclarator *ParseVariableDeclarator(ir::Expression *init, lexer::SourcePosition startLoc,
                                                     VariableParsingFlags flags) override;
     ir::VariableDeclarator *ParseVariableDeclaratorInitializer(ir::Expression *init, VariableParsingFlags flags,

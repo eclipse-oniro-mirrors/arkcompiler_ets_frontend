@@ -13,6 +13,24 @@
  * limitations under the License.
  */
 
-initModule()
+#ifndef ES2PANDA_COMPILER_LOWERING_INIT_MODULE_LOWERING_LOWERING_H
+#define ES2PANDA_COMPILER_LOWERING_INIT_MODULE_LOWERING_LOWERING_H
 
-/* @@? 16:1 Error SyntaxError: initModule() only accept string literal as argument. */
+#include "compiler/lowering/phase.h"
+#include "parser/program/program.h"
+
+namespace ark::es2panda::compiler {
+
+class InitModuleLowering : public PhaseForBodies {
+public:
+    std::string_view Name() const override
+    {
+        return "InitModuleLowering";
+    }
+
+    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+};
+
+}  // namespace ark::es2panda::compiler
+
+#endif
