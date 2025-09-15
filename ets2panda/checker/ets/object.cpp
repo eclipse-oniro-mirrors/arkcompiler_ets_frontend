@@ -1916,13 +1916,34 @@ void ETSChecker::CheckCyclicConstructorCall(Signature *signature)
     }
 }
 
+bool ETSChecker::IsExceptionOrErrorType(checker::Type *type)
+{
+    if (type->IsETSObjectType()) {
+        return Relation()->IsAssignableTo(type, GlobalBuiltinErrorType());
+    }
+
+    if (type->IsETSUnionType()) {
+        auto *unionType = type->AsETSUnionType();
+        return unionType->AllOfConstituentTypes([this](Type *constituent) {
+            return constituent->IsETSObjectType() && Relation()->IsAssignableTo(constituent, GlobalBuiltinErrorType());
+        });
+    }
+
+    return false;
+}
+
 ETSObjectType *ETSChecker::CheckExceptionOrErrorType(checker::Type *type, const lexer::SourcePosition pos)
 {
     ES2PANDA_ASSERT(type != nullptr);
-    if (!type->IsETSObjectType() || !Relation()->IsAssignableTo(type, GlobalBuiltinErrorType())) {
+
+    if (!IsExceptionOrErrorType(type)) {
         LogError(diagnostic::CATCH_OR_THROW_OF_INVALID_TYPE,
                  {compiler::Signatures::BUILTIN_EXCEPTION_CLASS, compiler::Signatures::BUILTIN_ERROR_CLASS}, pos);
-        return GlobalETSObjectType();
+        return GlobalBuiltinErrorType();
+    }
+
+    if (type->IsETSUnionType()) {
+        return GlobalBuiltinErrorType();
     }
 
     return type->AsETSObjectType();
