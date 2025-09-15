@@ -175,26 +175,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 43,
-            "column": 5,
-            "endLine": 43,
-            "endColumn": 11,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 44,
-            "column": 1,
-            "endLine": 44,
-            "endColumn": 7,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 48,
             "column": 23,
             "endLine": 48,
