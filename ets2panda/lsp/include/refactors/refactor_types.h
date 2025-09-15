@@ -80,12 +80,15 @@ constexpr std::string_view CONVERT_EXPORT_REFACTOR_NAME = "Convert export";
 constexpr std::string_view CONVERT_IMPORT_REFACTOR_NAME = "Convert import";
 constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_NAME = "Convert to template string";
 constexpr std::string_view CONVERT_CHAIN_REFACTOR_NAME = "Convert to optional chain expression";
+constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_NAME = "Convert to Class";
 }  // namespace refactor_name
 
 namespace refactor_description {
 constexpr std::string_view CONVERT_FUNCTION_REFACTOR_DESC = "Convert arrow function or function expression";
 constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_DESC = "Convert to template string";
 constexpr std::string_view CONVERT_CHAIN_REFACTOR_DESC = "Convert to optional chain expression";
+constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_DESC =
+    "Convert a standalone function, arrow function, or function expression into a class declaration";
 }  // namespace refactor_description
 
 class Refactor {

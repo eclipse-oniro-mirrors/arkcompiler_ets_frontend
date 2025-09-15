@@ -526,3 +526,7 @@ ets2panda_add_gtest(lsp_api_get_node_info_class_property_import_test CPP_SOURCES
 ets2panda_add_gtest(lsp_api_get_rename_locations_from_node_test CPP_SOURCES
     get_rename_locations_from_node_test.cpp
 )
+
+ets2panda_add_gtest(lsp_api_test_convert_function_to_class CPP_SOURCES
+    convert_function_to_class_test.cpp
+)

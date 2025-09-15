@@ -241,6 +241,7 @@ public:
                        std::vector<const ir::Statement *> &statements);
     void RfindNearestKeyWordTextRange(const es2panda_Context *context, const size_t pos,
                                       const std::string_view &keywordStr, TextRange &range);
+    static ir::AstNode *ToEditBoundary(ir::AstNode *node);
 };
 
 }  // namespace ark::es2panda::lsp
