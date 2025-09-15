@@ -1,8 +1,8 @@
 ### ArkTS1.2调用js方法和传参
 
-**规则：** arkts-interop-js2s-call-js-method
+**规则：** `arkts-interop-js2s-call-js-method`
 
-**级别：** error
+ArkTS1.2使用ESValue接口调用js方法和传参。
 
 **ArkTS1.1**
 ```typescript

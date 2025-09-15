@@ -1,8 +1,6 @@
 ## 移除taskpool setTransferList接口
 
-**规则：** arkts-limited-stdlib-no-setTransferList
-
-**级别：** error
+**规则：** `arkts-limited-stdlib-no-setTransferList`
 
 内存默认共享，不需要提供setTransferList来跨线程传递ArrayBuffer对象。
 
@@ -55,6 +53,12 @@ let view: Uint8Array = new Uint8Array(buffer);
 let buffer1: ArrayBuffer = new ArrayBuffer(16);
 let view1: Uint8Array = new Uint8Array(buffer1);
 
+console.info('testTransfer view byteLength: ' + view.byteLength);
+console.info('testTransfer view1 byteLength: ' + view1.byteLength);
+// 执行结果为：
+// testTransfer view byteLength: 8
+// testTransfer view1 byteLength: 16
+
 let task: taskpool.Task = new taskpool.Task(testTransfer, view, view1);
 taskpool.execute(task).then((res: Any):void => {
   console.info('test result: ' + res);
@@ -65,4 +69,13 @@ taskpool.execute(task).then((res: Any):void => {
 // 执行结果为：
 // testTransfer arg1 byteLength: 8
 // testTransfer arg2 byteLength: 16
+// test result: 100
+
+// 如果需要保持原有传递语义，需要手动拷贝并清理原数组
+let task2: taskpool.Task = new taskpool.Task(testTransfer, Uint8Array.from(view), Uint8Array.from(view1));
+taskpool.execute(task2).then((res: Any) => {
+  console.info('test result: ' + res);
+})
+view = new Uint8Array(0);
+view1 = new Uint8Array(0);
 ```

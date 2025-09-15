@@ -1,27 +1,36 @@
-## new Number/Boolean/String不再是"object"类型
+## 通过new创建的Number/Boolean/String对象不再是object类型
 
-**规则：**`arkts-primitive-type-normalization`
+**规则：** `arkts-primitive-type-normalization`
 
-**级别：error**
+**规则解释：**
 
-1. 在ArkTS1.2中primitive type和boxed type是相同的类型，这样可以提高语言一致性和性能。
-   比较Number/Boolean/String时比较的是值而不是对象。
+在ArkTS1.2中，在比较Number/Boolean/String对象时会自动拆箱，比较的是它们的值而不是对象。
 
-2. 在ArkTS1.1上，boxed类型通过new创建。在获取其类型、比较boxed类型对象时会产生意外行为，这是因为对象比较时是通过引用进行比较，而不是值。通常直接使用primitive 
-   type性能更高效，内存占用更少（相比之下对象会占用更多内存）。
+而在ArkTS1.1中，比较的是对象而不是值。
+
+**变更原因：**
+
+在ArkTS1.2中，基本类型和其对应的包装类型在语言层面是相同的类型，这提高了语言的一致性和性能。
+
+**适配建议：**
+
+请注意，用new创建的Number/Boolean/String对象在操作时可能会表现出与ArkTS1.1不同的行为。
+
+**示例：**
 
 **ArkTS1.1**
 
 ```typescript
-typeof new Number(1) // 结果: "object"
-new Number(1) == new Number(1);  //结果: false
-if (new Boolean(false)) {} // 在if语句中new Boolean(false)为true
+typeof new Number(1) // 结果："object"
+new Number(1) == new Number(1);  // 结果：false
+// 这里if语句判断的是Boolean对象是否为空，而不是拆箱后的结果，所以结果为true
+if (new Boolean(false)) {}  // 结果：true
 ```
 
 **ArkTS1.2**
 
 ```typescript
-typeof new Number(1)// 结果: "number"
-new Number(1) == new Number(1);  //结果: true
-if (new Boolean(false)) {}      // 在if语句中new Boolean(false)为false
+typeof new Number(1)// 结果："number"
+new Number(1) == new Number(1);  // 结果：true
+if (new Boolean(false)) {}      // 结果：false
 ```

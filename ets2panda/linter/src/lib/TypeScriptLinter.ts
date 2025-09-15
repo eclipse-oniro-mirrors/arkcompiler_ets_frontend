@@ -7756,7 +7756,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private handleDecorator(node: ts.Node): void {
     this.handleExtendDecorator(node);
-    this.handleEntryDecorator(node);
+    this.handleEntryDecorator(node as ts.Decorator);
     this.handleProvideDecorator(node);
     this.handleLocalBuilderDecorator(node);
 
@@ -8037,7 +8037,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return Boolean(
         t.flags & ts.TypeFlags.StringLike ||
           typeText === 'String' ||
-          typeText === 'number' ||
+          typeText.toLowerCase() === 'number' ||
           t.flags & ts.TypeFlags.NumberLike && (/^\d+$/).test(typeText) ||
           isLiteralInitialized && !hasExplicitTypeAnnotation ||
           t.flags & ts.TypeFlags.EnumLike
@@ -8563,12 +8563,17 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
   }
 
-  private handleEntryDecorator(node: ts.Node): void {
+  private handleEntryDecorator(node: ts.Decorator): void {
     if (!this.options.arkts2) {
       return;
     }
 
-    if (!ts.isDecorator(node)) {
+    const decoratorName = TsUtils.getDecoratorName(node);
+    if (decoratorName !== ENTRY_DECORATOR_NAME) {
+      return;
+    }
+
+    if (!ts.isCallExpression(node.expression)) {
       return;
     }
 
@@ -8586,27 +8591,25 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    if (ts.isCallExpression(node.expression) && ts.isIdentifier(node.expression.expression)) {
-      if (node.expression.expression.escapedText !== ENTRY_DECORATOR_NAME || node.expression.arguments.length !== 1) {
+    const arg = node.expression.arguments?.[0];
+    if (!arg) {
+      return;
+    }
+
+    if (ts.isObjectLiteralExpression(arg)) {
+      const hasStorage = arg.properties.some((property) => {
+        return (
+          ts.isPropertyAssignment(property) &&
+          property.name.getText() === ENTRY_STORAGE &&
+          !ts.isStringLiteral(property.initializer)
+        );
+      });
+      if (!hasStorage) {
         return;
       }
-      const arg = node.expression.arguments[0];
-      if (ts.isObjectLiteralExpression(arg)) {
-        const properties = arg.properties;
-        if (properties.length !== 1) {
-          return;
-        }
-        if (!ts.isPropertyAssignment(properties[0])) {
-          return;
-        }
-        const property = properties[0];
-        if (ts.isStringLiteral(property.initializer)) {
-          return;
-        }
-      }
-      const autofix = this.autofixer?.fixEntryDecorator(node);
-      this.incrementCounters(node, FaultID.EntryAnnotation, autofix);
     }
+    const autofix = this.autofixer?.fixEntryDecorator(node, arg);
+    this.incrementCounters(node, FaultID.EntryAnnotation, autofix);
   }
 
   private handleStructPropertyDecl(propDecl: ts.PropertyDeclaration): void {
@@ -15718,28 +15721,29 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     let entryDecorator: ts.Decorator | undefined;
-    const hasEntry = decorators.some((decorator) => {
+    let hasEntry: boolean = false;
+    let hasComponentV2: boolean = false;
+    decorators.forEach((decorator) => {
       if (TsUtils.getDecoratorName(decorator) === ENTRY_DECORATOR_NAME) {
         entryDecorator = decorator;
-        return true;
+        hasEntry = true;
       }
-      return false;
+      if (TsUtils.getDecoratorName(decorator) === COMPONENTV2_DECORATOR_NAME) {
+        hasComponentV2 = true;
+      }
     });
-    const hasComponentV2 = decorators.some((decorator) => {
-      return TsUtils.getDecoratorName(decorator) === COMPONENTV2_DECORATOR_NAME;
-    });
-    
+
     if (!hasEntry || !hasComponentV2 || !entryDecorator) {
       return;
     }
 
-    const entryDecoratorHasInvalidParams = TypeScriptLinter.checkEntryDecoratorHasInvalidParams(entryDecorator);
-    if (!entryDecoratorHasInvalidParams) {
-      return;
+    if (TypeScriptLinter.checkEntryDecoratorHasInvalidParams(entryDecorator)) {
+      const autofix = this.autofixer?.fixEntryDecoratorHasInvalidParams(entryDecorator);
+      this.incrementCounters(entryDecorator, FaultID.EntryHasInvalidParamsWithV2, autofix);
+    } else if (TypeScriptLinter.checkEntryDecoratorHasInvaildLocalStorage(entryDecorator)) {
+      const autofix = this.autofixer?.fixEntryDecoratorHasInvaildLocalStorage(entryDecorator);
+      this.incrementCounters(entryDecorator, FaultID.EntryHasInvalidLocalStorageWithV2, autofix);
     }
-
-    const autofix = this.autofixer?.fixEntryAndComponentV2(entryDecorator);
-    this.incrementCounters(entryDecorator, FaultID.EntryHasInvalidParams, autofix);
   }
 
   private static checkEntryDecoratorHasInvalidParams(entryDecorator: ts.Decorator): boolean {
@@ -15749,7 +15753,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const arg = callExpr.arguments?.[0];
-    if (!ts.isObjectLiteralExpression(arg)) {
+    if (!arg || !ts.isObjectLiteralExpression(arg)) {
       return false;
     }
 
@@ -15759,5 +15763,15 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     });
 
     return hasInvalidParams;
+  }
+
+  private static checkEntryDecoratorHasInvaildLocalStorage(entryDecorator: ts.Decorator): boolean {
+    const callExpr = entryDecorator.expression;
+    if (!ts.isCallExpression(callExpr)) {
+      return false;
+    }
+
+    const arg = callExpr.arguments?.[0];
+    return arg && !ts.isObjectLiteralExpression(arg);
   }
 }

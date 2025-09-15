@@ -1,6 +1,6 @@
 ### ArkTS1.2访问TS独有类型的实体
 
-**规则：** arkts-interop-ts2s-static-access-ts-type
+**规则：** `arkts-interop-ts2s-static-access-ts-type`
 
 TS独有类型包括如下类型：
 - any
@@ -37,7 +37,7 @@ TS独有类型包括如下类型：
 - Capitalize<StringType>
 - Uncapitalize<StringType>
 
-**级别：** error
+ArkTS1.2使用ESValue接口进行交互，不支持以上类型。
 
 **ArkTS1.1**
 ```typescript
