@@ -85,6 +85,26 @@
             "severity": "ERROR"
         },
         {
+            "line": 26,
+            "column": 3,
+            "endLine": 26,
+            "endColumn": 10,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"buttons\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 7,
+            "endLine": 28,
+            "endColumn": 11,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"text\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
             "line": 29,
             "column": 7,
             "endLine": 29,
@@ -105,6 +125,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 35,
+            "column": 3,
+            "endLine": 35,
+            "endColumn": 8,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"title\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
             "line": 36,
             "column": 3,
             "endLine": 36,
@@ -115,6 +145,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 38,
+            "column": 7,
+            "endLine": 38,
+            "endColumn": 11,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"text\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
             "line": 39,
             "column": 7,
             "endLine": 39,
@@ -122,6 +162,16 @@
             "problem": "NoDeprecatedApi",
             "suggest": "",
             "rule": "The ArkUI interface \"color\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 7,
+            "endLine": 42,
+            "endColumn": 11,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"text\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
@@ -185,6 +235,26 @@
             "severity": "ERROR"
         },
         {
+            "line": 57,
+            "column": 3,
+            "endLine": 57,
+            "endColumn": 10,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"buttons\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 7,
+            "endLine": 59,
+            "endColumn": 11,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"text\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
             "line": 60,
             "column": 7,
             "endLine": 60,
@@ -192,6 +262,16 @@
             "problem": "NoDeprecatedApi",
             "suggest": "",
             "rule": "The ArkUI interface \"color\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 7,
+            "endLine": 63,
+            "endColumn": 11,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"text\" is deprecated (arkui-deprecated-interface)",
             "severity": "ERROR"
         },
         {
