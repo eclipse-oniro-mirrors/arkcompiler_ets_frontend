@@ -40,13 +40,9 @@ Number::Number(util::StringView str, NumberFlags flags) noexcept : str_(str), fl
         }
     } else {
         if (hasFloatSuffix) {
-            if (!hasPointOrExp) {
-                flags_ |= NumberFlags::ERROR;
-            } else {
-                // NOTE(dkofanov): floats should be parsed via 'strtof', however there are problems with subnormal
-                // values.
-                num_ = Lexer::StrToNumeric<double, float>(&std::strtod, s.data(), res);
-            }
+            // NOTE(dkofanov): floats should be parsed via 'strtof', however there are problems with subnormal
+            // values.
+            num_ = Lexer::StrToNumeric<double, float>(&std::strtod, s.data(), res);
         } else {
             num_ = Lexer::StrToNumeric(&std::strtod, s.data(), res);
         }
