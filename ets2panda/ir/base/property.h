@@ -72,6 +72,18 @@ public:
         return value_;
     }
 
+    void SetValue(Expression *value) noexcept
+    {
+        if (Value() == value) {
+            return;
+        }
+
+        if (value != nullptr) {
+            value->SetParent(this);
+        }
+        this->value_ = value;
+    }
+
     [[nodiscard]] PropertyKind Kind() const noexcept
     {
         return kind_;
