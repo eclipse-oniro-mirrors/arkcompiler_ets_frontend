@@ -27,7 +27,6 @@ import {
     LANGUAGE_VERSION,
     LINKER_INPUT_FILE,
     MERGED_ABC_FILE,
-    MERGED_CYCLE_FILE,
     STATIC_RECORD_FILE,
     STATIC_RECORD_FILE_CONTENT,
     TS_SUFFIX,
@@ -38,7 +37,6 @@ import {
     changeFileExtension,
     createFileIfNotExists,
     ensurePathExists,
-    getFileHash,
     isMac,
     isMixCompileProject,
     checkDependencyModuleInfoCorrectness,
@@ -50,7 +48,6 @@ import {
 } from '../plugins/plugins_driver';
 import {
     Logger,
-    LogData,
     LogDataFactory
 } from '../logger';
 import { DependencyAnalyzer } from '../dependency_analyzer';
@@ -58,14 +55,12 @@ import { ErrorCode, DriverError } from '../util/error';
 import {
     BuildConfig,
     BUILD_MODE,
-    OHOS_MODULE_TYPE,
     CompileFileInfo,
     DependencyModuleConfig,
-    KPointer,
     ModuleInfo,
-    ES2PANDA_MODE,
     ProcessCompileTask,
     CompileJobInfo,
+    CompileJobType,
     JobInfo,
     DeclFileInfo
 } from '../types';
@@ -102,10 +97,8 @@ export abstract class BaseMode {
     public logger: Logger;
     public depAnalyzer: DependencyAnalyzer;
     public abcFiles: Set<string>;
-    public hashCacheFile: string;
-    public filesHashCache: Record<string, string>;
-    public jobs: Record<string, JobInfo>;
-    public jobQueue: JobInfo[];
+    public jobs: Record<string, CompileJobInfo>;
+    public jobQueue: CompileJobInfo[];
     public completedJobQueue: CompileJobInfo[];
     // NOTE: should be Ets2panda Wrapper Module
     // NOTE: to be refactored
@@ -121,8 +114,6 @@ export abstract class BaseMode {
         this.logger = Logger.getInstance();
         this.depAnalyzer = new DependencyAnalyzer(this.buildConfig);
         this.abcFiles = new Set<string>();
-        this.hashCacheFile = path.join(this.cacheDir, 'hash_cache.json');
-        this.filesHashCache = this.loadHashCache();
         this.jobs = {};
         this.jobQueue = [];
         this.completedJobQueue = [];
@@ -300,6 +291,10 @@ export abstract class BaseMode {
         return this.buildConfig.es2pandaMode
     }
 
+    public get es2pandaDepGraphDotDump() {
+        return this.buildConfig.es2pandaDepGraphDotDump
+    }
+
     public get entryFile() {
         return this.buildConfig.entryFile;
     }
@@ -368,8 +363,10 @@ export abstract class BaseMode {
         this.logger.printDebug("compile START")
         this.logger.printDebug(`job ${JSON.stringify(job, null, 1)}`)
 
-        let { inputFilePath, outputFilePath }: CompileFileInfo = job.compileFileInfo;
-        ensurePathExists(inputFilePath);
+        const { inputFilePath, outputFilePath }: CompileFileInfo = job.compileFileInfo;
+        const outputDeclFilePath = changeFileExtension(outputFilePath, DECL_ETS_SUFFIX)
+        ensurePathExists(outputDeclFilePath);
+
         const source = fs.readFileSync(inputFilePath, 'utf-8');
 
         const ets2pandaCmd: string[] = formEts2pandaCmd(job, this.isDebug)
@@ -405,13 +402,12 @@ export abstract class BaseMode {
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
             this.logger.printInfo('es2panda proceedToState checked');
 
-            if (!job.isAbcJob) {
-                ensurePathExists(outputFilePath);
-
+            if (job.type & CompileJobType.DECL) {
                 // Generate 1.2 declaration files(a temporary solution while binary import not pushed)
-                arkts.generateStaticDeclarationsFromContext(outputFilePath);
+                arkts.generateStaticDeclarationsFromContext(outputDeclFilePath);
                 this.logger.printDebug("compile FINISH [DECL]")
-            } else {
+            }
+            if (job.type & CompileJobType.ABC) {
                 ast = arkts.EtsScript.fromContext();
                 PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
                 PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
@@ -442,7 +438,9 @@ export abstract class BaseMode {
 
     public async run(): Promise<void> {
         this.jobs = this.depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
-        fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs), 'utf-8')
+        if (this.es2pandaDepGraphDotDump) {
+            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs), 'utf-8')
+        }
 
         this.initCompileQueues();
 
@@ -458,10 +456,12 @@ export abstract class BaseMode {
             }
             this.dispatchNextJob(job)
         }
-        this.mergeAbcFiles()
+        if (this.completedJobQueue.length > 0) {
+            this.mergeAbcFiles();
+        }
     }
 
-    public compileSimultaneous(job: CompileJobInfo, genDecls: boolean = true): void {
+    public compileSimultaneous(job: CompileJobInfo): void {
         let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
         compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_PARSE);
 
@@ -507,7 +507,7 @@ export abstract class BaseMode {
 
             // NOTE: workaround to build arkoala arkui
             // NOTE: to be refactored
-            if (genDecls) {
+            if (job.type & CompileJobType.DECL) {
                 for (const file of job.fileList) {
                     const module = this.fileToModule.get(file)!
                     const declEtsOutputPath: string = changeFileExtension(
@@ -523,15 +523,17 @@ export abstract class BaseMode {
                 }
             }
 
-            ast = arkts.EtsScript.fromContext();
-            PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-            this.logger.printInfo('plugin checked finished');
-            compileSingleData.record(RECORDE_COMPILE_NODE.BIN_GENERATE, RECORDE_COMPILE_NODE.PLUGIN_CHECK);
+            if (job.type & CompileJobType.ABC) {
+                ast = arkts.EtsScript.fromContext();
+                PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
+                PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
+                this.logger.printInfo('plugin checked finished');
+                compileSingleData.record(RECORDE_COMPILE_NODE.BIN_GENERATE, RECORDE_COMPILE_NODE.PLUGIN_CHECK);
 
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda bin generated');
-            compileSingleData.record(RECORDE_COMPILE_NODE.CFG_DESTROY, RECORDE_COMPILE_NODE.BIN_GENERATE);
+                arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
+                this.logger.printInfo('es2panda bin generated');
+                compileSingleData.record(RECORDE_COMPILE_NODE.CFG_DESTROY, RECORDE_COMPILE_NODE.BIN_GENERATE);
+            }
         } catch (error) {
             if (error instanceof Error) {
                 throw new DriverError(
@@ -755,37 +757,6 @@ export abstract class BaseMode {
         };
     }
 
-    private loadHashCache(): Record<string, string> {
-        try {
-            if (!fs.existsSync(this.hashCacheFile)) {
-                return {};
-            }
-
-            const cacheContent: string = fs.readFileSync(this.hashCacheFile, 'utf-8');
-            const cacheData: Record<string, string> = JSON.parse(cacheContent);
-            const filteredCache: Record<string, string> = Object.fromEntries(
-                Object.entries(cacheData).filter(([file]) => this.entryFiles.has(file))
-            );
-            return filteredCache;
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_LOAD_HASH_CACHE_FAIL,
-                        'Failed to load hash cache.',
-                        error.message
-                    )
-                );
-            }
-            return {};
-        }
-    }
-
-    private saveHashCache(): void {
-        ensurePathExists(this.hashCacheFile);
-        fs.writeFileSync(this.hashCacheFile, JSON.stringify(this.filesHashCache, null, 2));
-    }
-
     protected processEntryFiles(): void {
         this.entryFiles.forEach((file: string) => {
             for (const [_, moduleInfo] of this.moduleInfos) {
@@ -793,7 +764,6 @@ export abstract class BaseMode {
                 if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
                     continue;
                 }
-                this.filesHashCache[file] = getFileHash(file);
                 this.fileToModule.set(path.resolve(file), moduleInfo);
                 return;
             }
@@ -819,9 +789,7 @@ export abstract class BaseMode {
         this.generateArkTSConfigForModules();
         compileSingleData.record(RECORDE_MODULE_NODE.CLT_FILES, RECORDE_MODULE_NODE.GEN_CONFIG);
         this.processEntryFiles();
-        compileSingleData.record(RECORDE_MODULE_NODE.SAVE_CACHE, RECORDE_MODULE_NODE.CLT_FILES);
-        this.saveHashCache();
-        compileSingleData.record(RECORDE_MODULE_NODE.END, RECORDE_MODULE_NODE.SAVE_CACHE);
+        compileSingleData.record(RECORDE_MODULE_NODE.END, RECORDE_MODULE_NODE.CLT_FILES);
         compileSingleData.writeSumSingle(path.resolve());
     }
 
@@ -873,7 +841,6 @@ export abstract class BaseMode {
         // Ets2panda will build it simultaneous
         this.compileSimultaneous({
             id: outputFile,
-            isAbcJob: true,
             fileList: [...this.entryFiles],
             jobDependencies: [],
             jobDependants: [],
@@ -881,8 +848,9 @@ export abstract class BaseMode {
                 inputFilePath: entryFile,
                 outputFilePath: outputFile,
                 arktsConfigFile: arktsConfigFile
-            }
-        }, false);
+            },
+            type: CompileJobType.ABC
+        });
         compileSingleData.record(RECORDE_RUN_NODE.END, RECORDE_RUN_NODE.COMPILE_FILES);
         compileSingleData.writeSumSingle(path.resolve());
     }
@@ -897,7 +865,7 @@ export abstract class BaseMode {
         )
     }
 
-    private addJobToQueue(job: JobInfo): void {
+    private addJobToQueue(job: CompileJobInfo): void {
         if (this.jobQueue.some((queuedJob: JobInfo) => queuedJob.id === job.id)) {
             this.logger.printWarn(`Detected job duplication: job.id == ${job.id}`)
             return;
@@ -908,7 +876,7 @@ export abstract class BaseMode {
     }
 
     private initCompileQueues(): void {
-        Object.values(this.jobs).forEach((job: JobInfo) => {
+        Object.values(this.jobs).forEach((job: CompileJobInfo) => {
             if (job.jobDependencies.length === 0) {
                 this.addJobToQueue(job);
             }
@@ -919,7 +887,7 @@ export abstract class BaseMode {
         let completedJobId = completedJob.id;
         this.logger.printDebug(`Removed Job ${completedJobId} from the queue`)
         completedJob.jobDependants.forEach((dependantJobId: string) => {
-            const depJob: JobInfo = this.jobs[dependantJobId];
+            const depJob: CompileJobInfo = this.jobs[dependantJobId];
             const depIndex = depJob.jobDependencies.indexOf(completedJobId);
             if (depIndex !== -1) {
                 depJob.jobDependencies.splice(depIndex, 1);
@@ -937,52 +905,13 @@ export abstract class BaseMode {
         return (this.jobQueue.length > 0);
     }
 
-    private prepareCompileJob(job: JobInfo) {
-        const isCycle: boolean = job.fileList.length > 1
-        const inputFile: string = job.fileList[0]!
-        const module: ModuleInfo = this.fileToModule.get(inputFile)!
-        const arktsConfigFile: string = module.arktsConfigFile
-        let outputFile: string
-
-        if (isCycle) {
-            outputFile = path.resolve(this.cacheDir, "cycles", job.id, MERGED_CYCLE_FILE)
-        } else {
-            if (job.isAbcJob) {
-                outputFile = path.resolve(this.cacheDir, module.packageName,
-                    changeFileExtension(
-                        path.relative(module.moduleRootPath, inputFile),
-                        ABC_SUFFIX
-                    )
-                )
-            } else {
-                outputFile = path.resolve(this.cacheDir, module.packageName,
-                    changeFileExtension(
-                        path.relative(module.moduleRootPath, inputFile),
-                        DECL_ETS_SUFFIX
-                    )
-                )
-            }
-        }
-        ensurePathExists(outputFile);
-        let res: CompileJobInfo = {
-            ...job,
-            compileFileInfo: {
-                inputFilePath: inputFile,
-                outputFilePath: outputFile,
-                arktsConfigFile: arktsConfigFile
-            }
-        }
-        return res;
-    }
-
     private consumeJob(): CompileJobInfo | null {
         if (this.jobQueue.length == 0) {
             this.logger.printDebug("Job queue is empty!")
             return null;
         }
 
-        let job: JobInfo = this.jobQueue.shift()!
-        return this.prepareCompileJob(job)
+        return this.jobQueue.shift()!
     }
 
     public async runConcurrent(): Promise<void> {
@@ -1004,9 +933,7 @@ export abstract class BaseMode {
 
         while (this.haveQueuedJobs()) {
             let job: CompileJobInfo = this.consumeJob()!
-            if (!job.isAbcJob) {
-                this.declgen(job)
-            }
+            this.declgen(job)
             this.dispatchNextJob(job)
         }
         this.completedJobQueue.forEach((jobInfo: CompileJobInfo) => {
@@ -1046,14 +973,7 @@ export abstract class BaseMode {
             );
             createFileIfNotExists(staticRecordPath, STATIC_RECORD_FILE_CONTENT);
 
-            let ets2pandaCmd = [
-                '_',
-                '--extension',
-                'ets',
-                '--arktsconfig',
-                jobInfo.compileFileInfo.arktsConfigFile,
-                inputFilePath
-            ];
+            let ets2pandaCmd = formEts2pandaCmd(jobInfo)
             this.logger.printDebug(`ets2panda cmd: ${ets2pandaCmd.join(' ')}`)
 
             arktsGlobal.filePath = inputFilePath;
@@ -1160,21 +1080,6 @@ export abstract class BaseMode {
         } finally {
             await taskManager.shutdown();
         }
-    }
-
-    private isFileChanged(etsFilePath: string, abcFilePath: string): boolean {
-        if (fs.existsSync(abcFilePath)) {
-            const etsFileLastModified: number = fs.statSync(etsFilePath).mtimeMs;
-            const abcFileLastModified: number = fs.statSync(abcFilePath).mtimeMs;
-            if (etsFileLastModified < abcFileLastModified) {
-                const currentHash = getFileHash(etsFilePath);
-                const cachedHash = this.filesHashCache[etsFilePath];
-                if (cachedHash && cachedHash === currentHash) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     private assignTaskToIdleWorker(workerInfo: WorkerInfo, processingJobs: Set<string>, serializableConfig: Object, globalContextPtr: KPointer): void {

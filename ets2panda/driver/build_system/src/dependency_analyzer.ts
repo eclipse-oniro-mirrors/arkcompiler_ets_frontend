@@ -20,23 +20,29 @@ import * as child_process from 'child_process';
 
 import {
     ARKTSCONFIG_JSON_FILE,
-    DECL_ETS_SUFFIX,
-    ABC_SUFFIX,
     DEP_ANALYZER_DIR,
     DEP_ANALYZER_INPUT_FILE,
     DEP_ANALYZER_OUTPUT_FILE,
+    DECL_ETS_SUFFIX,
+    ABC_SUFFIX,
+    MERGED_CYCLE_FILE,
+    FILE_HASH_CACHE
 } from './pre_define';
 
 import {
     changeFileExtension,
+    shouldBeCompiled,
+    updateFileHash,
     ensureDirExists,
+    ensurePathExists,
     isMac
 } from './util/utils';
 
 import {
     BuildConfig,
     ModuleInfo,
-    JobInfo
+    CompileJobInfo,
+    CompileJobType
 } from './types'
 
 import {
@@ -63,15 +69,60 @@ export interface DependencyFileMap {
 
 export class DependencyAnalyzer {
 
-    readonly logger: Logger;
-    readonly binPath: string;
-    readonly outputDir: string;
+    private readonly logger: Logger;
+    private readonly binPath: string;
+    private readonly outputDir: string;
+    private readonly cacheDir: string;
+    private readonly hashCacheFile: string;
+    private entryFiles: Set<string>;
+    private filesHashCache: Record<string, string>;
 
     constructor(buildConfig: BuildConfig) {
         this.logger = Logger.getInstance();
+
+        this.entryFiles = new Set<string>(buildConfig.compileFiles);
+
+        this.cacheDir = buildConfig.cachePath;
         this.outputDir = path.join(buildConfig.cachePath, DEP_ANALYZER_DIR);
         ensureDirExists(this.outputDir);
         this.binPath = buildConfig.dependencyAnalyzerPath!;
+
+        this.hashCacheFile = path.resolve(buildConfig.cachePath, FILE_HASH_CACHE);
+        this.filesHashCache = this.loadHashCache();
+
+    }
+
+    private loadHashCache(): Record<string, string> {
+        try {
+            if (!fs.existsSync(this.hashCacheFile)) {
+                this.logger.printDebug(`no hash cache file: ${this.hashCacheFile}`)
+                return {};
+            }
+
+            const cacheContent: string = fs.readFileSync(this.hashCacheFile, 'utf-8');
+            this.logger.printDebug(`cacheContent: ${cacheContent}`)
+            const cacheData: Record<string, string> = JSON.parse(cacheContent);
+            const filteredCache: Record<string, string> = Object.fromEntries(
+                Object.entries(cacheData).filter(([file]) => this.entryFiles.has(file))
+            );
+            return filteredCache;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new DriverError(
+                    LogDataFactory.newInstance(
+                        ErrorCode.BUILDSYSTEM_LOAD_HASH_CACHE_FAIL,
+                        'Failed to load hash cache.',
+                        error.message
+                    )
+                );
+            }
+            throw error;
+        }
+    }
+
+    private saveHashCache(): void {
+        ensurePathExists(this.hashCacheFile);
+        fs.writeFileSync(this.hashCacheFile, JSON.stringify(this.filesHashCache, null, 2));
     }
 
     private generateMergedArktsConfig(modules: Array<ModuleInfo>, outputPath: string): void {
@@ -113,9 +164,7 @@ export class DependencyAnalyzer {
             dependencies: {}
         }
 
-        // Filter files from external api
-        // We do not consider them in dependency analysis
-        // Filter files from arkTs 1.1 and arkTs hybrid
+        // Filter files by entryFiles
         Object.entries(dependencyMap.dependencies).forEach(([file, dependencies]: [string, string[]]) => {
             if (!entryFiles.has(file)) {
                 return
@@ -144,7 +193,6 @@ export class DependencyAnalyzer {
         const inputFile: string = path.join(this.outputDir, DEP_ANALYZER_INPUT_FILE);
         const outputFile: string = path.join(this.outputDir, DEP_ANALYZER_OUTPUT_FILE);
         const arktsConfigPath: string = path.join(this.outputDir, ARKTSCONFIG_JSON_FILE);
-
 
         let depAnalyzerInputFileContent: string = Array.from(entryFiles).join(os.EOL);
         fs.writeFileSync(inputFile, depAnalyzerInputFileContent);
@@ -178,8 +226,13 @@ export class DependencyAnalyzer {
             }
         }
         const fullDependencyMap: DependencyFileMap = JSON.parse(fs.readFileSync(outputFile, 'utf-8'));
-        this.logger.printDebug(`fill dependency map: ${JSON.stringify(fullDependencyMap, null, 1)}`)
+        Object.keys(fullDependencyMap.dependants).forEach((file: string) => {
+            if (!(file in fullDependencyMap.dependencies)) {
+                fullDependencyMap.dependencies[file] = [];
+            }
+        });
 
+        this.logger.printDebug(`fill dependency map: ${JSON.stringify(fullDependencyMap, null, 1)}`)
         return this.filterDependencyMap(fullDependencyMap, entryFiles);
     }
 
@@ -277,11 +330,12 @@ export class DependencyAnalyzer {
     }
 
     private createCycleJob(
-        jobs: Record<string, JobInfo>,
+        jobs: Record<string, CompileJobInfo>,
         cycle: Set<string>,
         cycleId: string,
         dependencyMap: DependencyFileMap,
-        fileToCycle: Map<string, string>
+        fileToCycle: Map<string, string>,
+        fileToModule: Map<string, ModuleInfo>
     ) {
         const cycleFileList = Array.from(cycle)
         const cycleDependencies = cycleFileList.map(
@@ -292,31 +346,111 @@ export class DependencyAnalyzer {
             (file: string) => this.collectJobDependants(file, dependencyMap, fileToCycle)
         ).reduce((acc: Set<string>, curr: Set<string>) => new Set([...acc, ...curr]))
 
+        const inputFile = cycleFileList[0];
+        const outputFile = path.resolve(this.cacheDir, "cycles", cycleId, MERGED_CYCLE_FILE);
+        ensurePathExists(outputFile);
+        const module: ModuleInfo = fileToModule.get(inputFile)!
+        const arktsConfigFile = module.arktsConfigFile
+
         jobs[cycleId] = {
             id: cycleId,
             fileList: cycleFileList,
-            isAbcJob: true,
             jobDependencies: Array.from(cycleDependencies),
-            jobDependants: Array.from(cycleDependants)
+            jobDependants: Array.from(cycleDependants),
+            compileFileInfo: {
+                inputFilePath: inputFile,
+                outputFilePath: outputFile,
+                arktsConfigFile: arktsConfigFile
+            },
+            type: CompileJobType.DECL_ABC
         }
         this.logger.printDebug(`Created job for cycle: ${JSON.stringify(jobs[cycleId], null, 1)}`)
+    }
+
+    private filterCollectedJobs(jobs: Record<string, CompileJobInfo>): Record<string, CompileJobInfo> {
+        let filteredJobs: Record<string, CompileJobInfo> = {}
+
+        const addJobRecursively = (jobId: string) => {
+            const job: CompileJobInfo = jobs[jobId];
+            filteredJobs[jobId] = job;
+            for (const dependant of job.jobDependants) {
+                addJobRecursively(dependant);
+            }
+        }
+
+        const skipJob = (jobId: string) => {
+            const job: CompileJobInfo = jobs[jobId];
+            job.jobDependants.forEach((dependantId: string) => {
+                let dependant = jobs[dependantId]
+                dependant.jobDependencies = dependant.jobDependencies.filter((dependency: string) => dependency != jobId)
+            })
+        }
+
+        for (const [jobId, jobInfo] of Object.entries(jobs)) {
+
+            if (filteredJobs[jobId]) {
+                // Already added this job
+                continue;
+            }
+
+            if (jobInfo.fileList.length > 1) {
+                let shouldCompile: boolean = false;
+                for (const file of jobInfo.fileList) {
+                    shouldCompile = updateFileHash(file, this.filesHashCache) || shouldCompile
+                }
+
+                if (!shouldCompile) {
+                    this.logger.printDebug(`Skipping cycle ${jobId} compilation`)
+
+                    skipJob(jobId);
+                    continue;
+                }
+
+                // For now compile do not generate decl files for cycles
+                jobInfo.type &= CompileJobType.ABC;
+            } else {
+                const inputFilePath = jobInfo.compileFileInfo.inputFilePath;
+                const outputFilePath = jobInfo.compileFileInfo.outputFilePath;
+                const outputDeclFilePath = changeFileExtension(outputFilePath, DECL_ETS_SUFFIX)
+                ensurePathExists(outputDeclFilePath);
+
+                const hashChanged: boolean = updateFileHash(inputFilePath, this.filesHashCache)
+                const compileAbc: boolean = hashChanged || shouldBeCompiled(inputFilePath, outputFilePath)
+                const genDecl: boolean = hashChanged || shouldBeCompiled(inputFilePath, outputDeclFilePath)
+
+                if (!compileAbc && !genDecl) {
+                    this.logger.printDebug(`Skipping file ${inputFilePath} compilation`)
+
+                    skipJob(jobId);
+                    continue;
+                }
+
+                jobInfo.type &= CompileJobType.NONE;
+
+                if (genDecl) {
+                    jobInfo.type |= CompileJobType.DECL;
+                }
+
+                if (compileAbc) {
+                    jobInfo.type |= CompileJobType.ABC;
+                }
+            }
+
+            addJobRecursively(jobId);
+        }
+
+        return filteredJobs;
     }
 
     public collectJobs(
         entryFiles: Set<string>,
         fileToModule: Map<string, ModuleInfo>,
         moduleInfos: Map<string, ModuleInfo>
-    ): Record<string, JobInfo> {
-        let jobs: Record<string, JobInfo> = {};
+    ): Record<string, CompileJobInfo> {
+        let jobs: Record<string, CompileJobInfo> = {};
 
         const dependencyMap: DependencyFileMap =
             this.generateDependencyMap(entryFiles, Array.from(moduleInfos.values()));
-
-        Object.keys(dependencyMap.dependants).forEach((file: string) => {
-            if (!(file in dependencyMap.dependencies)) {
-                dependencyMap.dependencies[file] = [];
-            }
-        });
 
         const stronglyConnectedComponents: Map<string, Set<string>> = this.findStronglyConnectedComponents(dependencyMap);
         const fileToCycleMap: Map<string, string> = new Map<string, string>();
@@ -331,9 +465,9 @@ export class DependencyAnalyzer {
         this.logger.printDebug(`Found stronglyConnectedComponents: ${JSON.stringify([...stronglyConnectedComponents], null, 1)}`)
         this.logger.printDebug(`fileToCycleMap: ${JSON.stringify([...fileToCycleMap], null, 1)}`)
 
-        // Second iterate to create jobs for compiling cycles
+        // Second iterate to create jobs to compile cycles
         stronglyConnectedComponents.forEach((component: Set<string>, componentId: string) => {
-            this.createCycleJob(jobs, component, componentId, dependencyMap, fileToCycleMap)
+            this.createCycleJob(jobs, component, componentId, dependencyMap, fileToCycleMap, fileToModule)
         });
 
         entryFiles.forEach((file: string) => {
@@ -345,29 +479,37 @@ export class DependencyAnalyzer {
                 return;
             }
 
-            const declJobId: string = this.getDeclJobId(file)
-            const abcJobId: string = this.getAbcJobId(file)
+            const jobId: string = this.getJobId(file)
 
-            jobs[declJobId] = {
-                id: declJobId,
+            const module: ModuleInfo = fileToModule.get(file)!
+            const outputFile = path.resolve(this.cacheDir, module.packageName,
+                changeFileExtension(
+                    path.relative(module.moduleRootPath, file),
+                    ABC_SUFFIX
+                )
+            )
+            ensurePathExists(outputFile);
+            const arktsConfigFile: string = module.arktsConfigFile
+
+            jobs[jobId] = {
+                id: jobId,
                 fileList: [file],
-                isAbcJob: false,
                 jobDependencies: [...jobDependencies],
-                jobDependants: [...jobDependants, abcJobId]
-            };
-            this.logger.printDebug(`Created Decl job: ${JSON.stringify(jobs[declJobId], null, 1)}`)
-
-            jobs[abcJobId] = {
-                id: abcJobId,
-                isAbcJob: true,
-                fileList: [file],
-                jobDependencies: [declJobId],
-                jobDependants: []
+                jobDependants: [...jobDependants],
+                compileFileInfo: {
+                    inputFilePath: file,
+                    outputFilePath: outputFile,
+                    arktsConfigFile: arktsConfigFile
+                },
+                type: CompileJobType.DECL_ABC
             }
-            this.logger.printDebug(`Created Abc job: ${JSON.stringify(jobs[abcJobId], null, 1)}`)
+            this.logger.printDebug(`Created Abc job: ${JSON.stringify(jobs[jobId], null, 1)}`)
         });
 
+        jobs = this.filterCollectedJobs(jobs);
+        this.saveHashCache();
         this.logger.printDebug(`Collected jobs: ${JSON.stringify(jobs, null, 1)}`)
+
         return jobs;
     }
 
@@ -381,7 +523,7 @@ export class DependencyAnalyzer {
         let dependencySet: Set<string> = new Set<string>();
         fileDependencies.forEach((dependency) => {
             if (!fileToCycleMap.has(dependency)) {
-                dependencySet.add(this.getDeclJobId(dependency));
+                dependencySet.add(this.getJobId(dependency));
                 return;
             }
             const dependencyCycle: string = fileToCycleMap.get(dependency)!
@@ -407,7 +549,7 @@ export class DependencyAnalyzer {
 
         fileDependants.forEach((dependant) => {
             if (!fileToCycleMap.has(dependant)) {
-                dependantSet.add(this.getDeclJobId(dependant));
+                dependantSet.add(this.getJobId(dependant));
                 return;
             }
             const dependantCycle: string = fileToCycleMap.get(dependant)!
@@ -423,11 +565,7 @@ export class DependencyAnalyzer {
         return dependantSet;
     }
 
-    private getAbcJobId(file: string): string {
-        return changeFileExtension(file, ABC_SUFFIX);
-    }
-
-    private getDeclJobId(file: string): string {
-        return changeFileExtension(file, DECL_ETS_SUFFIX);
+    private getJobId(file: string): string {
+        return computeHash(file);
     }
 }

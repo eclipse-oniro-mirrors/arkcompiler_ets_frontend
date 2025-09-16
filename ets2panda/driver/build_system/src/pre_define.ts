@@ -22,6 +22,7 @@ export const DEP_ANALYZER_OUTPUT_FILE: string = 'dependency.json';
 export const DEP_ANALYZER_DIR: string = 'dep_analyzer';
 export const PROJECT_BUILD_CONFIG_FILE: string = 'projectionConfig.json';
 export const STATIC_RECORD_FILE: string = 'static.Record.d.ts';
+export const FILE_HASH_CACHE: string = 'hash_cache.json';
 
 export const DECL_ETS_SUFFIX: string = '.d.ets';
 export const DECL_TS_SUFFIX: string = '.d.ts';
