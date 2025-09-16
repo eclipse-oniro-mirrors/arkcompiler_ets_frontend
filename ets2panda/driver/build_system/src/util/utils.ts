@@ -36,7 +36,7 @@ import {
     BuildConfig,
     DependencyModuleConfig,
     CompileJobInfo,
-    CompileFileInfo
+    FileInfo
 } from '../types';
 
 const WINDOWS: string = 'Windows_NT';
@@ -233,18 +233,17 @@ export function getFileHash(filePath: string): string {
 }
 
 export function formEts2pandaCmd(
-    jobInfo: CompileJobInfo,
+    fileInfo: FileInfo,
     isDebug: boolean = false,
     simultaneous: boolean = false
 ): string[] {
-    let { inputFilePath, outputFilePath, arktsConfigFile }: CompileFileInfo = jobInfo.compileFileInfo;
 
     const ets2pandaCmd: string[] = [
         '_',
         '--extension',
         'ets',
         '--arktsconfig',
-        arktsConfigFile
+        fileInfo.arktsConfig
     ]
 
     if (simultaneous) {
@@ -252,14 +251,14 @@ export function formEts2pandaCmd(
     }
 
     ets2pandaCmd.push('--output')
-    ets2pandaCmd.push(outputFilePath)
+    ets2pandaCmd.push(fileInfo.output)
 
     if (isDebug) {
         ets2pandaCmd.push('--debug-info');
         ets2pandaCmd.push('--opt-level=0');
     }
 
-    ets2pandaCmd.push(inputFilePath)
+    ets2pandaCmd.push(fileInfo.input)
     return ets2pandaCmd
 }
 

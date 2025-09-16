@@ -48,25 +48,25 @@ function compileAbc(jobInfo: CompileJobInfo, globalContextPtr: KPointer, buildCo
 
     let errorStatus = false;
     try {
-        let fileInfo = jobInfo.compileFileInfo;
-        ensurePathExists(fileInfo.inputFilePath);
+        let fileInfo = jobInfo.fileInfo;
+        ensurePathExists(fileInfo.input);
 
         const ets2pandaCmd = [
             '_', '--extension', 'ets',
-            '--arktsconfig', fileInfo.arktsConfigFile,
-            '--output', fileInfo.inputFilePath,
+            '--arktsconfig', fileInfo.arktsConfig,
+            '--output', fileInfo.input,
         ];
 
         if (isDebug) {
             ets2pandaCmd.push('--debug-info');
             ets2pandaCmd.push('--opt-level=0');
         }
-        ets2pandaCmd.push(fileInfo.inputFilePath);
+        ets2pandaCmd.push(fileInfo.input);
 
         let arkConfig = arkts.Config.create(ets2pandaCmd).peer;
         arktsGlobal.config = arkConfig;
 
-        let context = arkts.Context.createCacheContextFromFile(arkConfig, fileInfo.inputFilePath, globalContextPtr, false).peer;
+        let context = arkts.Context.createCacheContextFromFile(arkConfig, fileInfo.input, globalContextPtr, false).peer;
 
         PluginDriver.getInstance().getPluginContext().setContextPtr(context);
 
@@ -87,7 +87,7 @@ function compileAbc(jobInfo: CompileJobInfo, globalContextPtr: KPointer, buildCo
         arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, context);
 
         {
-            let filePathFromModuleRoot: string = path.relative(buildConfig.moduleRootPath, fileInfo.inputFilePath);
+            let filePathFromModuleRoot: string = path.relative(buildConfig.moduleRootPath, fileInfo.input);
             let declEtsOutputPath: string = changeFileExtension(
                 path.join(buildConfig.declgenV2OutPath as string, filePathFromModuleRoot),
                 DECL_ETS_SUFFIX
@@ -128,19 +128,19 @@ function compileDeclaration(jobInfo: CompileJobInfo, globalContextPtr: KPointer,
 
     let errorStatus = false;
     try {
-        let fileInfo = jobInfo.compileFileInfo;
-        const ets2pandaCmd = ['-', '--extension', 'ets', '--arktsconfig', fileInfo.arktsConfigFile];
+        let fileInfo = jobInfo.fileInfo;
+        const ets2pandaCmd = ['-', '--extension', 'ets', '--arktsconfig', fileInfo.arktsConfig];
 
         if (isDebug) {
             ets2pandaCmd.push('--debug-info');
             ets2pandaCmd.push('--opt-level=0');
         }
-        ets2pandaCmd.push(fileInfo.inputFilePath);
+        ets2pandaCmd.push(fileInfo.input);
 
         let arkConfig = arkts.Config.create(ets2pandaCmd).peer;
         arktsGlobal.config = arkConfig;
 
-        let context = arkts.Context.createCacheContextFromFile(arkConfig, fileInfo.inputFilePath, globalContextPtr, true).peer;
+        let context = arkts.Context.createCacheContextFromFile(arkConfig, fileInfo.input, globalContextPtr, true).peer;
 
         PluginDriver.getInstance().getPluginContext().setContextPtr(context);
 

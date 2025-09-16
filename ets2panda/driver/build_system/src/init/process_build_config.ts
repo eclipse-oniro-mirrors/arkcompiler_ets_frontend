@@ -21,7 +21,6 @@ import {
     isMac,
     isWindows,
 } from '../util/utils';
-import { PluginDriver } from '../plugins/plugins_driver';
 import {
     API,
     ARKTS,
@@ -57,7 +56,6 @@ export function initBuildConfig(projectConfig: BuildConfig): BuildConfig {
     checkCacheProjectConfig(buildConfig);
     initPlatformSpecificConfig(buildConfig);
     initBuildEnv(buildConfig);
-    PluginDriver.getInstance().initPlugins(buildConfig);
     initAliasConfig(buildConfig);
     initInteropSDKInfo(buildConfig);
     return buildConfig;

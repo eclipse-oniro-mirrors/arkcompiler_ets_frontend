@@ -13,95 +13,26 @@
  * limitations under the License.
  */
 
-import {
-    BUILD_MODE,
-    WorkerMessageType,
-    ProcessCompileTask,
-} from '../types';
+
+import { WorkerMessageType, ProcessDeclgenV1Task } from '../types';
 import { LogDataFactory, LogData, Logger, getConsoleLogger } from '../logger';
 import { ErrorCode, DriverError } from '../util/error';
 import { Ets2panda } from '../util/ets2panda';
 
-
 const logger = Logger.getInstance(getConsoleLogger)
 
-function compileSimultaneous(task: ProcessCompileTask): void {
-
+function declgen(task: ProcessDeclgenV1Task) {
     const ets2panda = Ets2panda.getInstance(task.buildConfig);
 
-    const declGeneratedCb = (): void => {
+    try {
+        ets2panda.initalize();
+        ets2panda.declgenV1(task, task.buildConfig.skipDeclCheck ?? true, task.buildConfig.genDeclAnnotations ?? true);
         process.send!({
             type: WorkerMessageType.DECL_GENERATED,
             data: {
                 taskId: task.id,
             }
         });
-    }
-    // For now no decl files are generated for cycles
-    declGeneratedCb();
-
-    const abcCompiledCb = (): void => {
-        process.send!({
-            type: WorkerMessageType.ABC_COMPILED,
-            data: {
-                taskId: task.id,
-            }
-        });
-    }
-
-    try {
-        ets2panda.initalize();
-        ets2panda.compileSimultaneous(
-            task,
-            task.buildConfig.buildMode == BUILD_MODE.DEBUG,
-            declGeneratedCb,
-            abcCompiledCb
-        )
-
-    } catch (error) {
-        if (error instanceof DriverError) {
-            process.send!({
-                type: WorkerMessageType.ERROR_OCCURED,
-                data: {
-                    taskId: task.id,
-                    error: error.logData
-                }
-            });
-        }
-    } finally {
-        ets2panda.finalize();
-    }
-}
-
-function compile(task: ProcessCompileTask) {
-    const ets2panda = Ets2panda.getInstance(task.buildConfig);
-
-    const declGeneratedCb = (): void => {
-        process.send!({
-            type: WorkerMessageType.DECL_GENERATED,
-            data: {
-                taskId: task.id,
-            }
-        });
-    }
-
-    const abcCompiledCb = (): void => {
-        process.send!({
-            type: WorkerMessageType.ABC_COMPILED,
-            data: {
-                taskId: task.id,
-            }
-        });
-    }
-
-    try {
-        ets2panda.initalize();
-        ets2panda.compile(
-            task,
-            task.buildConfig.buildMode == BUILD_MODE.DEBUG,
-            declGeneratedCb,
-            abcCompiledCb)
-
     } catch (error) {
         if (error instanceof DriverError) {
             process.send!({
@@ -121,7 +52,7 @@ process.on("message", (message: {
     type: WorkerMessageType,
     data: {
         taskId: string,
-        payload: ProcessCompileTask
+        payload: ProcessDeclgenV1Task
     }
 }) => {
     const { type, data } = message;
@@ -130,11 +61,7 @@ process.on("message", (message: {
     try {
         switch (type) {
             case WorkerMessageType.ASSIGN_TASK:
-                if (data.payload.fileList.length > 1) {
-                    compileSimultaneous(data.payload);
-                } else {
-                    compile(data.payload);
-                }
+                    declgen(data.payload);
                 break;
             default:
                 break;

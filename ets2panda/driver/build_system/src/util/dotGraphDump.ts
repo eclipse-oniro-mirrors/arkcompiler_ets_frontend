@@ -15,23 +15,26 @@
 
 
 import * as dot from 'ts-graphviz';
-import { JobInfo } from '../types';
+import * as path from 'path';
+import { JobInfo, ModuleInfo } from '../types';
 
-
-function formLabelForNode(job: JobInfo): string {
-    let res: string = `{ <target> ${job.id}`
+function formLabelForNode(job: JobInfo, fileToModule: Map<string, ModuleInfo>): string {
+    let res: string = `{ id: ${job.id.slice(0, 5)}`
     for (const file of job.fileList) {
-        res += ` | ${file}`
+        const module = fileToModule.get(file)!
+        res += ` | ${path.join(module.packageName, path.relative(module.moduleRootPath, file))}`
     }
     res += '}'
     return res;
 }
 
-function createNodes(graph: dot.Digraph, jobs: Record<string, JobInfo>) {
+function createNodes(graph: dot.Digraph, jobs: Record<string, JobInfo>, fileToModule: Map<string, ModuleInfo>) {
     for (const [jobId, jobInfo] of Object.entries(jobs)) {
         const node = new dot.Node(jobId, {
             [dot.attribute.shape]: 'record',
-            [dot.attribute.label]: formLabelForNode(jobInfo),
+            [dot.attribute.label]: formLabelForNode(jobInfo, fileToModule),
+            [dot.attribute.style]: 'filled',
+            [dot.attribute.fillcolor]: jobInfo.fileList.length > 1 ? 'lightcoral' : undefined
         })
         node
         graph.addNode(node)
@@ -43,16 +46,16 @@ function connectNodes(graph: dot.Digraph, jobs: Record<string, JobInfo>) {
         const node = graph.getNode(job)!
         for (const dependant of jobInfo.jobDependants) {
             const dependantNode = graph.getNode(dependant)!
-            const edge = new dot.Edge([node.port('target'), dependantNode.port('target')], {})
+            const edge = new dot.Edge([dependantNode, node], {})
             graph.addEdge(edge)
         }
     }
 }
 
-export function dotGraphDump(jobs: Record<string, JobInfo>): string {
-    const G = new dot.Digraph({ rankdir : 'BT' })
+export function dotGraphDump(jobs: Record<string, JobInfo>, fileToModule: Map<string, ModuleInfo>): string {
+    const G = new dot.Digraph({ rankdir : 'TB' })
 
-    createNodes(G, jobs);
+    createNodes(G, jobs, fileToModule);
     connectNodes(G, jobs);
 
     return dot.toDot(G);

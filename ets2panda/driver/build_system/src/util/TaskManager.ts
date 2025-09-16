@@ -13,20 +13,18 @@
  * limitations under the License.
  */
 
-import * as Process from 'child_process';
+import { ChildProcess, fork } from 'child_process'
 import * as os from 'os';
 
 import { DEFAULT_WORKER_NUMS } from '../pre_define';
-import { Logger, LogData } from '../logger';
-import { Worker as JSThreadWorker } from 'worker_threads';
-import { CompileJobInfo } from '../types';
-import { DriverError } from './error'
+import { Logger, LogDataFactory, LogData } from '../logger';
+import { Worker as Thread } from 'worker_threads';
+import { WorkerMessageType, JobInfo } from '../types';
+import { ErrorCode } from './error'
 
 export interface Task<PayloadT> {
     id: string;
     payload: PayloadT;
-    resolve: (result: true) => void;
-    reject: (error: Object) => void;
     timeoutTimer?: NodeJS.Timeout;
 }
 
@@ -34,22 +32,22 @@ export interface WorkerInfo {
     worker: DriverWorker;
     id: number;
     currentTaskId?: string;
-    isIdle: boolean;
-    isKilled: boolean;
+    resolve?: () => void;
 }
 
 type OnWorkerExitCallback<PayloadT> = (
     workerInfo: WorkerInfo,
+    task: Task<PayloadT>,
     code: number | null,
-    signal: NodeJS.Signals | null,
-    runningTasks: Map<string, Task<PayloadT>>
+    signal: NodeJS.Signals | null
 ) => void;
 
 interface WorkerMessage {
-    job: CompileJobInfo;
-    success: boolean;
-    shouldKill: boolean;
-    error?: LogData;
+    type: WorkerMessageType,
+    data: {
+        taskId: string;
+        error?: LogData;
+    },
 }
 
 interface DriverWorker {
@@ -58,16 +56,18 @@ interface DriverWorker {
     stop(...args: any): number;
     getId(): number;
     getWorkerPath(): string;
-    createNewInstance(workerPath: string, ...args: any): DriverWorker;
+    spawnNewInstance(): DriverWorker;
 }
 
 export class DriverThread implements DriverWorker {
-    private thread: JSThreadWorker;
+    private thread: Thread;
     private path: string;
+    private args: any;
 
     constructor(workerPath: string, ...args: any) {
         this.path = workerPath;
-        this.thread = new JSThreadWorker(workerPath, ...args);
+        this.args = args;
+        this.thread = new Thread(workerPath, ...args);
     }
     on(msg: string, listener: (...args: any) => void): DriverThread {
         this.thread.on(msg, listener);
@@ -90,18 +90,21 @@ export class DriverThread implements DriverWorker {
     getWorkerPath(): string {
         return this.path
     }
-    createNewInstance(workerPath: string, ...args: any): DriverThread {
-        return new DriverThread(workerPath, ...args)
+    spawnNewInstance(): DriverThread {
+        return new DriverThread(this.path, ...this.args)
     }
 }
 
+
 export class DriverProcess implements DriverWorker {
-    private process: Process.ChildProcess;
+    private process: ChildProcess;
     private path: string;
+    private args: any;
 
     constructor(workerPath: string, ...args: any) {
         this.path = workerPath
-        this.process = Process.fork(workerPath, ...args);
+        this.args = args;
+        this.process = fork(workerPath, ...args);
     }
     on(msg: string, listener: (...args: any) => void): DriverProcess {
         this.process.on(msg, listener);
@@ -120,81 +123,152 @@ export class DriverProcess implements DriverWorker {
     getWorkerPath(): string {
         return this.path
     }
-    createNewInstance(workerPath: string, ...args: any): DriverProcess {
-        return new DriverProcess(workerPath, ...args)
+    spawnNewInstance(): DriverProcess {
+        return new DriverProcess(this.path, ...this.args)
     }
 }
 
-class WorkerFactory {
-    static spawnWorker<WorkerT extends DriverWorker>(type: { new(...args: any): WorkerT; }, ...args: any): WorkerT {
-        return new type(...args);
+interface WorkerFactory {
+    spawnWorker(): DriverWorker;
+}
+
+export class DriverProcessFactory implements WorkerFactory {
+    private path: string;
+    private args: any[];
+
+    constructor(path: string, ...args: any) {
+        this.path = path;
+        this.args = args;
+    }
+
+    spawnWorker(): DriverProcess {
+        return new DriverProcess(this.path, ...this.args)
     }
 }
 
-export class TaskManager<PayloadT> {
+export class TaskManager<PayloadT extends JobInfo> {
     private workers: WorkerInfo[] = [];
     private idleWorkers: WorkerInfo[] = [];
+    private tasks: Record<string, Task<PayloadT>> = {};
     private taskQueue: Task<PayloadT>[] = [];
+    private completedTasks: Task<PayloadT>[] = [];
     private runningTasks = new Map<string, Task<PayloadT>>();
     private maxWorkers = DEFAULT_WORKER_NUMS;
     private onWorkerExit: OnWorkerExitCallback<PayloadT>;
     private taskTimeoutMs: number;
+    private logger: Logger;
+    private declgen: boolean;
 
-    constructor(onWorkerExit: OnWorkerExitCallback<PayloadT>,
+    constructor(onWorkerExit: OnWorkerExitCallback<PayloadT>, declgen: boolean = false,
         maxWorkers?: number, taskTimeoutMs: number = 180000) {
-        const cpuCount = Math.max(os.cpus().length - 1, 1);
+
+        this.logger = Logger.getInstance();
+        this.declgen = declgen
 
         this.onWorkerExit = onWorkerExit;
         this.taskTimeoutMs = taskTimeoutMs;
 
+        this.maxWorkers = os.availableParallelism();
         if (maxWorkers) {
-            this.maxWorkers = Math.min(maxWorkers, cpuCount);
+            this.maxWorkers = Math.min(maxWorkers, this.maxWorkers);
         }
+
+        this.logger.printInfo(`Available workers: ${this.maxWorkers}`)
     }
 
-    private handleWorkerMessage(workerInfo: WorkerInfo, message: WorkerMessage): void {
-        const { job, success } = message;
-        if (!success) {
-            this.logErrorMessage(message);
+    private dispatchNextOrShutdownWorkers() {
+        if (this.taskQueue.length == 0 && this.idleWorkers.length == this.maxWorkers) {
+            this.logger.printInfo("All tasks were completed");
+            this.shutdownWorkers();
+            return;
         }
-        this.settleTask(job.id, success);
-        workerInfo.currentTaskId = undefined;
-        this.idleWorkers.push(workerInfo);
         this.dispatchNext();
     }
 
-    private handleWorkerExit(workerInfo: WorkerInfo, code: number | null, signal: NodeJS.Signals | null): void {
-        const taskId: string | undefined = workerInfo.currentTaskId;
-        if (taskId) {
-            const success = code === 0 && !signal;
-            const reason = this.getWorkerExitReason(code, signal);
-            this.settleTask(taskId, success, reason);
-        }
-
-        this.handleSignals(workerInfo, signal);
-
-        if (this.onWorkerExit) {
-            this.onWorkerExit(workerInfo, code, signal, this.runningTasks);
+    private handleWorkerMessage(workerInfo: WorkerInfo, message: WorkerMessage) {
+        this.logger.printDebug(`WorkerMessage: ${JSON.stringify(message, null, 1)}`)
+        switch (message.type) {
+            case WorkerMessageType.ERROR_OCCURED:
+                this.logErrorMessage(message);
+                // Restore from the error, drop the current task
+                this.settleTask(message.data.taskId);
+                workerInfo.currentTaskId = undefined;
+                this.idleWorkers.push(workerInfo);
+                this.dispatchNextOrShutdownWorkers();
+                break;
+            case WorkerMessageType.DECL_GENERATED:
+                // Decl file was generated, now dependants can be compiled
+                this.settleTask(message.data.taskId);
+                if (this.declgen) {
+                    // In case of declgen the worker now is idle and can take next task
+                    workerInfo.currentTaskId = undefined;
+                    this.idleWorkers.push(workerInfo);
+                    // Or if no tasks are left and other workers are idle then shutdown all workers
+                    this.dispatchNextOrShutdownWorkers();
+                } else {
+                    this.dispatchNext();
+                }
+                break;
+            case WorkerMessageType.ABC_COMPILED:
+                // Abc file was compiled, now worker is idle and can take next task
+                // Or if no tasks are left and other workers are idle then shutdown all workers
+                workerInfo.currentTaskId = undefined;
+                this.idleWorkers.push(workerInfo);
+                this.dispatchNextOrShutdownWorkers();
+                break;
+            default:
+                break;
         }
     }
 
-    public startWorkers<WorkerT extends DriverWorker>(type: { new(...args: any): WorkerT; }, ...args: any): void {
-        for (let i = 0; i < this.maxWorkers; i++) {
-            const worker: WorkerT = WorkerFactory.spawnWorker<WorkerT>(type, ...args);
+    private handleWorkerError(error: Error) {
+        this.logger.printDebug('handleWorkerError')
 
-            const workerInfo: WorkerInfo = { worker, id: worker.getId(), isKilled: false, isIdle: true };
+        const logData = LogDataFactory.newInstance(
+            ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
+            error.message
+        )
+        this.logger.printError(logData)
+    }
+
+    private handleWorkerExit(workerInfo: WorkerInfo, code: number | null, signal: NodeJS.Signals | null) {
+        this.logger.printDebug('handleWorkerExit')
+        this.handleSignals(workerInfo, signal);
+
+        const taskId: string | undefined = workerInfo.currentTaskId;
+        if (taskId) {
+            this.settleTask(taskId);
+            const task = this.runningTasks.get(taskId)!;
+            this.onWorkerExit(workerInfo, task, code, signal);
+        }
+    }
+
+    public startWorkers(workerFactory: WorkerFactory): void {
+        for (let i = 0; i < this.maxWorkers; i++) {
+            const worker: DriverWorker = workerFactory.spawnWorker();
+
+            this.logger.printDebug(`Spawned worker with id ${worker.getId()}`)
+
+            const workerInfo: WorkerInfo = { worker, id: worker.getId(), currentTaskId: '' };
 
             worker.on('message', (message: WorkerMessage) => {
+                this.logger.printDebug(`Got ${message.type} message from worker ${workerInfo.id}`)
                 this.handleWorkerMessage(workerInfo, message);
             });
 
-            worker.on('exit', (code: number, signal) => {
+            worker.on('exit', (code: number | null, signal: NodeJS.Signals | null) => {
                 this.handleWorkerExit(workerInfo, code, signal);
             });
 
-            worker.on('error', (error: DriverError) => {
-                this.shutdownWorkers();
-                Logger.getInstance().printErrorAndExit(error.logData);
+            if (worker instanceof DriverProcess) {
+                worker.on('uncaughtException', (error: Error) => {
+                    this.handleWorkerError(error);
+                    this.reconfigureWorker(workerInfo);
+                });
+            }
+            worker.on('error', (error: Error) => {
+                this.handleWorkerError(error);
+                this.reconfigureWorker(workerInfo);
             });
 
             this.workers.push(workerInfo);
@@ -202,6 +276,26 @@ export class TaskManager<PayloadT> {
         }
     }
 
+    public initTaskQueue() {
+        Object.values(this.tasks).forEach((task: Task<PayloadT>) => {
+            if (task.payload.jobDependencies.length === 0) {
+                this.taskQueue.push(task);
+            }
+        });
+    }
+
+    public async finish() {
+        this.dispatchNextOrShutdownWorkers();
+
+        await Promise.all(this.workers.map((workerInfo: WorkerInfo) => {
+            return new Promise<void>((resolve) => {
+                workerInfo.resolve = resolve
+            })
+        }));
+
+        this.logger.printInfo("All workers were shutdown")
+        this.logger.printDebug("TaskManager.compile exit")
+    }
 
     private dispatchNext(): void {
         while (this.taskQueue.length > 0 && this.idleWorkers.length > 0) {
@@ -212,44 +306,84 @@ export class TaskManager<PayloadT> {
             workerInfo.currentTaskId = task.id;
 
             task.timeoutTimer = setTimeout(() => {
-                this.taskQueue.push(task);
-                workerInfo.currentTaskId = undefined;
-                workerInfo.worker.stop();
-                this.reconfigureWorker(workerInfo);
-                this.dispatchNext();
+                this.logger.printWarn(`Worker with id ${workerInfo.id} exceeded timeout. Stopping it...`)
+                this.logger.printWarn(`Dropping task ${task.id}`)
+                const logData = LogDataFactory.newInstance(
+                    this.declgen ?
+                        ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER :
+                        ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
+                    `Task ${task.id} is not completed. Dropping it.`,
+                    `Worker ${workerInfo.id} exceeded timeout of ${this.taskTimeoutMs} ms`,
+                )
+                this.logger.printError(logData)
+                this.reconfigureWorker(workerInfo)
+                this.dispatchNextOrShutdownWorkers();
             }, this.taskTimeoutMs);
 
-            workerInfo.worker.send('ASSIGN_TASK', { id: task.id, payload: task.payload });
+            this.logger.printDebug(`Dispatch task with id ${task.id} to worker ${workerInfo.id}`)
+            workerInfo.worker.send(
+                WorkerMessageType.ASSIGN_TASK,
+                {
+                    taskId: task.id,
+                    payload: task.payload
+                }
+            );
         }
     }
 
-    private settleTask(taskId: string, success: boolean, error?: string): void {
-        const task = this.runningTasks.get(taskId);
+    private settleTask(completedTaskId: string) {
+        const task = this.runningTasks.get(completedTaskId);
         if (!task) {
+            this.logger.printInfo(`Task [${completedTaskId}] has already been removed`)
             return;
         }
         if (task.timeoutTimer) {
             clearTimeout(task.timeoutTimer);
             task.timeoutTimer = undefined;
         }
-        if (success) {
-            task.resolve(true);
-        }
-        else {
-            task.reject(error ?? new Error(error));
-        }
-        this.runningTasks.delete(taskId);
+        this.runningTasks.delete(completedTaskId);
+
+        this.logger.printDebug(`Removed task [${completedTaskId}] from the queue`)
+
+        task.payload.jobDependants.forEach((dependantJobId: string) => {
+            const depTask: Task<PayloadT> = this.tasks[dependantJobId];
+            const depIndex = depTask.payload.jobDependencies.indexOf(completedTaskId);
+            if (depIndex !== -1) {
+                depTask.payload.jobDependencies.splice(depIndex, 1);
+                if (depTask.payload.jobDependencies.length === 0) {
+                    this.taskQueue.push(depTask);
+                } else {
+                    this.logger.printDebug(`Job ${depTask.id} still have dependencies ${JSON.stringify(depTask.payload.jobDependencies, null, 1)}`)
+                }
+            }
+        });
+        this.logger.printDebug(`Task [${completedTaskId}] is completed`)
+        this.completedTasks.push(task)
     }
 
-    private handleSignals(workerInfo: WorkerInfo, signal: NodeJS.Signals | null): void {
-        if (!signal) {
-            return;
-        }
+    private handleSignals(workerInfo: WorkerInfo, signal: NodeJS.Signals | null) {
         switch (signal) {
-            case 'SIGTERM':
+            case "SIGSEGV":
+                {
+                    // For now just report an error
+                    const logData = LogDataFactory.newInstance(
+                        ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
+                        `Faile to process ${workerInfo.currentTaskId}`,
+                        `Worker ${workerInfo.id} caught SIGSEGV signal`
+                    )
+                    this.logger.printError(logData)
+                }
                 break;
-            case 'SIGSEGV':
-                this.reconfigureWorker(workerInfo);
+            case "SIGKILL":
+                {
+                    // For now just report an error
+                    const logData = LogDataFactory.newInstance(
+                        ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
+                        `Faile to process ${workerInfo.currentTaskId}`,
+                        `Worker ${workerInfo.id} killed by signal ${signal}`
+                    )
+                    this.logger.printError(logData)
+                }
                 break;
             default:
                 break;
@@ -258,25 +392,39 @@ export class TaskManager<PayloadT> {
 
     private reconfigureWorker(workerInfo: WorkerInfo): void {
         const worker = workerInfo.worker
-        worker.createNewInstance(worker.getWorkerPath(), {
-            stdio: ['inherit', 'inherit', 'inherit', 'ipc']
-        });
+        this.settleTask(workerInfo.currentTaskId!)
         workerInfo.currentTaskId = undefined;
-        workerInfo.worker = worker;
-        worker.on('message', (message: WorkerMessage) => {
+        worker.stop();
+
+        const newWorker = worker.spawnNewInstance();
+        workerInfo.worker = newWorker;
+        workerInfo.id = newWorker.getId();
+
+        this.logger.printDebug(`Spawned new worker with id ${newWorker.getId()}`);
+
+        newWorker.on('message', (message: WorkerMessage) => {
+            this.logger.printDebug(`Got ${message.type} message from worker ${workerInfo.id}`)
             this.handleWorkerMessage(workerInfo, message);
         });
-        worker.on('exit', (code, signal) => {
+        newWorker.on('exit', (code: number | null, signal: NodeJS.Signals | null) => {
             this.handleWorkerExit(workerInfo, code, signal);
         });
+        newWorker.on('error', (error: Error) => {
+            this.handleWorkerError(error);
+            this.reconfigureWorker(workerInfo);
+        });
+
+        this.logger.printDebug(`Worker with id ${newWorker.getId()} is now idle`);
         this.idleWorkers.push(workerInfo);
     }
 
     private logErrorMessage(message: WorkerMessage): void {
-        const err = message.error;
+        const err: LogData | undefined = message.data.error;
         if (!err) {
             return;
         }
+
+        // Just to make LogData methods available
         const logData = new LogData(
             err.code,
             err.description,
@@ -285,41 +433,24 @@ export class TaskManager<PayloadT> {
             err.solutions,
             err.moreInfo
         );
-        if (message.shouldKill) {
-            this.shutdownWorkers();
-            Logger.getInstance().printErrorAndExit(logData);
-        } else {
-            Logger.getInstance().printError(logData);
-        }
+
+        this.logger.printError(logData);
     }
 
-    private getWorkerExitReason(code: number | null, signal: NodeJS.Signals | null):
-        string | undefined {
-        if (signal && signal !== 'SIGKILL') {
-            return `Worker killed by signal ${signal}`;
-        }
-        return code !== 0 ? `Worker exited with code ${code}` : undefined;
-    }
-
-    public submitJob(id: string, payload: PayloadT): Promise<true> {
-        return new Promise<true>((resolve, reject) => {
-            const task: Task<PayloadT> = {
-                id,
-                payload,
-                resolve,
-                reject,
-            };
-            this.taskQueue.push(task);
-            this.dispatchNext();
-        });
+    public submitTask(id: string, payload: PayloadT): void {
+        const task: Task<PayloadT> = {
+            id,
+            payload,
+        };
+        this.tasks[id] = task;
     }
 
     public async shutdownWorkers(): Promise<void> {
-        await Promise.all(this.workers.map((workerInfo) =>
-            new Promise<void>((res) => {
-                workerInfo.isKilled = true;
+        this.logger.printDebug("Shutdown workers...")
+        await Promise.allSettled(this.workers.map((workerInfo) =>
+            new Promise<void>(() => {
                 workerInfo.worker.stop();
-                res();
+                workerInfo.resolve?.();
             })
         ));
         this.workers = [];
