@@ -368,31 +368,27 @@ private:
         if constexpr (std::is_integral_v<OperandType>) {
             PerformArithmeticIntegral<OperatorType>(expr, lhs, rhs, res);
             return;
-        } else if constexpr (std::is_floating_point_v<OperandType>) {
-            if constexpr (std::is_same_v<OperatorType, std::divides<>>) {
-                if ((rhs == 0) && (lhs == 0)) {
-                    *res = std::numeric_limits<OperandType>::quiet_NaN();
-                } else if ((rhs == 0) && (lhs > 0)) {
-                    *res = std::numeric_limits<OperandType>::infinity();
-                } else if ((rhs == 0) && (lhs < 0)) {
-                    *res = -std::numeric_limits<OperandType>::infinity();
-                } else {
-                    *res = OperatorType {}(lhs, rhs);
-                }
-            } else if constexpr (std::is_same_v<OperatorType, std::modulus<>>) {
-                if (rhs == 0) {
-                    LogError(diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
-                    *res = std::numeric_limits<OperandType>::quiet_NaN();
-                } else {
-                    *res = std::fmod(lhs, rhs);
-                }
+        }
+
+        ES2PANDA_ASSERT(std::is_floating_point_v<OperandType>);
+
+        if constexpr (std::is_same_v<OperatorType, std::divides<>>) {
+            if (rhs == 0) {
+                *res = lhs == 0 ? std::numeric_limits<OperandType>::quiet_NaN()
+                                : std::copysign(std::numeric_limits<OperandType>::infinity(), lhs / rhs);
             } else {
                 *res = OperatorType {}(lhs, rhs);
             }
-
-            return;
+        } else if constexpr (std::is_same_v<OperatorType, std::modulus<>>) {
+            if (rhs == 0) {
+                LogError(diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
+                *res = std::numeric_limits<OperandType>::quiet_NaN();
+            } else {
+                *res = std::fmod(lhs, rhs);
+            }
+        } else {
+            *res = OperatorType {}(lhs, rhs);
         }
-        ES2PANDA_UNREACHABLE();
     }
 
     template <typename TargetType>
