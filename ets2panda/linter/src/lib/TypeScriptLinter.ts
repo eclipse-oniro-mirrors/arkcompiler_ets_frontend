@@ -5608,6 +5608,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (callSignatures.length === 0 || BUILTIN_DISABLE_CALLSIGNATURE.includes(node.getText())) {
       return;
     }
+
     const isSameApi = callSignatures.some((callSignature) => {
       const callSignatureDecl = callSignature.getDeclaration();
       if (!ts.isCallSignatureDeclaration(callSignatureDecl)) {
@@ -14262,32 +14263,50 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const parentName = type.symbol ?
       this.tsTypeChecker.getFullyQualifiedName(type.symbol) :
       newExpr.expression.getText();
-    if (constructorDeclaration) {
-      const deprecatedApiCheckMap = TypeScriptLinter.updateDeprecatedApiCheckMap(
-        parentName,
-        constructorDeclaration.parameters as ts.NodeArray<ts.ParameterDeclaration>,
-        SDK_COMMON_VOID,
-        path.basename(constructorDeclaration.getSourceFile().fileName + '')
-      );
-      this.processApiNodeDeprecatedApi(
-        SDK_COMMON_CONSTRUCTOR,
-        newExpr.expression,
-        deprecatedApiCheckMap,
-        undefined,
-        SDK_COMMON_TYPE
-      );
-      if (BUILTIN_CALLSIGNATURE_NEWCTOR.includes(newExpr.expression.getText())) {
-        this.handleNewExpressionForBuiltNewCtor(newExpr.expression, deprecatedApiCheckMap);
-      } else {
-        this.processApiNodeDeprecatedApi(
-          BUILTIN_CONSTRUCTOR_API_NAME,
-          newExpr.expression,
-          deprecatedApiCheckMap,
-          undefined,
-          BUILTIN_TYPE
-        );
-      }
+    if (!constructorDeclaration) {
+      return;
     }
+
+    const deprecatedApiCheckMap = TypeScriptLinter.updateDeprecatedApiCheckMap(
+      parentName,
+      constructorDeclaration.parameters as ts.NodeArray<ts.ParameterDeclaration>,
+      SDK_COMMON_VOID,
+      path.basename(constructorDeclaration.getSourceFile().fileName + '')
+    );
+
+    this.processApiNodeDeprecatedApi(
+      SDK_COMMON_CONSTRUCTOR,
+      newExpr.expression,
+      deprecatedApiCheckMap,
+      undefined,
+      SDK_COMMON_TYPE
+    );
+
+    if (BUILTIN_CALLSIGNATURE_NEWCTOR.includes(newExpr.expression.getText())) {
+      this.handleNewExpressionForBuiltNewCtor(newExpr.expression, deprecatedApiCheckMap);
+      return;
+    }
+
+    if (this.skipProccesingDeprecatedApi(newExpr.expression)) {
+      return;
+    }
+
+    this.processApiNodeDeprecatedApi(
+      BUILTIN_CONSTRUCTOR_API_NAME,
+      newExpr.expression,
+      deprecatedApiCheckMap,
+      undefined,
+      BUILTIN_TYPE
+    );
+  }
+
+  private skipProccesingDeprecatedApi(expr: ts.Expression): boolean {
+    void this;
+    if (!ts.isIdentifier(expr)) {
+      return false;
+    }
+    const ident = expr;
+    return BUILTIN_DISABLE_CALLSIGNATURE.includes(ident.text);
   }
 
   private handleNewExpressionForBuiltNewCtor(

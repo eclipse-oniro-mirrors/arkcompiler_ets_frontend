@@ -76,7 +76,6 @@ export const BUILTIN_CALLSIGNATURE_NEWCTOR = [
   'Date',
   'Error',
   'Number',
-  'String',
   'WeakMap',
   'Object'
 ];
