@@ -51,6 +51,7 @@ export interface BuildBaseConfig {
     hasMainModule: boolean;
     isBuildConfigModified?: boolean;
     recordType?: RECORD_TYPE;
+    es2pandaDepGraphDotDump?: boolean;
 }
 
 export interface ArkTSGlobal {
@@ -327,12 +328,19 @@ export interface ProcessCompileTask extends CompileTask {
 
 export interface JobInfo {
     id: string;
-    isAbcJob: boolean;
     fileList: string[];
     jobDependencies: string[];
     jobDependants: string[];
 }
 
+export enum CompileJobType {
+    NONE        = 0x00,
+    DECL        = 0x01,
+    ABC         = 0x10,
+    DECL_ABC    = 0x11
+}
+
 export interface CompileJobInfo extends JobInfo {
-    compileFileInfo: CompileFileInfo
+    compileFileInfo: CompileFileInfo,
+    type: CompileJobType
 }
