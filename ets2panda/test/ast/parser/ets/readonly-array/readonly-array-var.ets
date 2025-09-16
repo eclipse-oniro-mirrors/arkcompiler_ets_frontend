@@ -21,7 +21,6 @@ arr./* @@ sort */sort();
 arr./* @@ shift */shift();
 arr./* @@ pop */pop();
 arr./* @@ push */push(2, 3);
-arr./* @@ pushECMA */pushECMA(4, 5);
 arr./* @@ splice */splice(0,1,2,3);
 arr./* @@ unshift */unshift(-1);
 arr./* @@ copyWithin */copyWithin(0,0,0);
@@ -36,7 +35,6 @@ arr./* @@ with */with(0, 5);
 /* @@@ shift Error TypeError: Property 'shift' does not exist on type 'ReadonlyArray' */
 /* @@@ pop Error TypeError: Property 'pop' does not exist on type 'ReadonlyArray' */
 /* @@@ push Error TypeError: Property 'push' does not exist on type 'ReadonlyArray' */
-/* @@@ pushECMA Error TypeError: Property 'pushECMA' does not exist on type 'ReadonlyArray' */
 /* @@@ splice Error TypeError: Property 'splice' does not exist on type 'ReadonlyArray' */
 /* @@@ unshift Error TypeError: Property 'unshift' does not exist on type 'ReadonlyArray' */
 /* @@@ copyWithin Error TypeError: Property 'copyWithin' does not exist on type 'ReadonlyArray' */
