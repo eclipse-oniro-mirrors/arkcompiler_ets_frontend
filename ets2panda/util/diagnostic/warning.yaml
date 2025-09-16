@@ -109,6 +109,10 @@ warning:
   id: 6
   message: "Replace the lambda function with a regular function."
 
+- name: REWRITE_OUTPUT_IN_CLI
+  id: 77069
+  message: "Output presented in config, used from cli args"
+
 - name: SETTER_LOOP
   id: 24
   message: "Assigning new value to the property inside its setter may lead to an endless loop."
