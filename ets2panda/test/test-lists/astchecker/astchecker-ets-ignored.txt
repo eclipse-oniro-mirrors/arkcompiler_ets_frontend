@@ -182,3 +182,6 @@ ast/parser/ts/test_decorator5.ts
 ast/parser/ts/InvalidStatements.ts
 
 ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.ets
+
+#30971
+ast/compiler/ets/nagative_trailingLambda_abort.ets
