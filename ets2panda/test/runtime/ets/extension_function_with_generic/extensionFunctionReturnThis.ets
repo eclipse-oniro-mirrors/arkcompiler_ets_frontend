@@ -23,8 +23,8 @@ function foo<T>(this: B<T>, d: T): this {
 
 function main() {
     let b = new B<Int>();
-    assertEQ(b.foo(1).data, 1)
-    assertEQ(foo(b, 2).data, 2)
-    assertEQ(b.foo<Int>(3).data, 3)
-    assertEQ(foo<Int>(b, 4).data, 4)
+    arktest.assertEQ(b.foo(1).data, 1)
+    arktest.assertEQ(foo(b, 2).data, 2)
+    arktest.assertEQ(b.foo<Int>(3).data, 3)
+    arktest.assertEQ(foo<Int>(b, 4).data, 4)
 }

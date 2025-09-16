@@ -25,5 +25,5 @@ enum Color {
 }
 
 
-/* @@? 20:14 Error SyntaxError: Division by zero are not allowed in Enum or Annotation. */
-/* @@? 24:11 Error SyntaxError: Division by zero are not allowed in Enum or Annotation. */
+/* @@? 20:14 Error SyntaxError: Division by zero is not allowed. */
+/* @@? 24:11 Error SyntaxError: Division by zero is not allowed. */

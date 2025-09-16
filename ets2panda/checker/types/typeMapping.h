@@ -71,6 +71,7 @@
     _(TypeFlag::ETS_TUPLE, ETSTupleType)                               \
     _(TypeFlag::ETS_PARTIAL_TYPE_PARAMETER, ETSPartialTypeParameter)   \
     _(TypeFlag::TYPE_ERROR, TypeError)                                 \
+    _(TypeFlag::GRADUAL_TYPE, GradualType)                             \
     _(TypeFlag::ETS_TYPE_ALIAS, ETSTypeAliasType)
 
 #define OBJECT_TYPE_MAPPING(_)                                \

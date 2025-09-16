@@ -91,11 +91,12 @@ static EnumCastType NeedHandleEnumCasting(ir::TSAsExpression *node)
 {
     auto type = node->TsType();
     EnumCastType castType = EnumCastType::NONE;
+    if (type == nullptr) {
+        return castType;
+    }
     if (type->IsETSStringType()) {
         castType = EnumCastType::CAST_TO_STRING;
-    } else if (type->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC) ||
-               (type->IsETSObjectType() &&
-                type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_NUMERIC))) {
+    } else if (type->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC) || type->IsBuiltinNumeric()) {
         castType = EnumCastType::CAST_TO_INT;
     } else if (type->IsETSEnumType()) {
         castType = type->IsETSIntEnumType() ? EnumCastType::CAST_TO_INT_ENUM : EnumCastType::CAST_TO_STRING_ENUM;
@@ -150,7 +151,7 @@ static ir::CallExpression *CreateCallInstanceEnumExpression(public_lib::Context 
 
     auto *calleeClass = FindEnclosingClass(expr);
 
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *varBinder = checker->VarBinder()->AsETSBinder();
 
     auto *nearestScope = NearestScope(parent);
@@ -323,15 +324,34 @@ ir::AstNode *EnumPostCheckLoweringPhase::GenerateEnumCasting(ir::TSAsExpression 
     return node;
 }
 
+static auto *InlineValueOf(ir::MemberExpression *enumMemberRef, ArenaAllocator *allocator)
+{
+    auto key = enumMemberRef->Property()->AsIdentifier()->Name().Utf8();
+    auto enumType = enumMemberRef->TsType()->AsETSEnumType();
+    auto ord = enumType->GetOrdinalFromMemberName(key);
+    auto origLiteral = enumType->GetValueLiteralFromOrdinal(ord);
+    auto literal = origLiteral->Clone(allocator, enumMemberRef->Parent())->AsExpression();
+    literal->SetTsType(origLiteral->TsType());
+    return literal;
+}
+
 ir::AstNode *EnumPostCheckLoweringPhase::GenerateValueOfCall(ir::AstNode *const node)
 {
-    node->Parent()->AddAstNodeFlags(ir::AstNodeFlags::RECHECK);
+    node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
     if (!node->IsExpression()) {
-        node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
         return node;
     }
+    // NOTE: temporary workaround
+    // Need to find out why ETSParameterExpression has GENERATE_VALUE_OF flag
+    // Need to be refactored after complete rework on overload resolution
+    if (node->IsETSParameterExpression()) {
+        return node;
+    }
+    node->Parent()->AddAstNodeFlags(ir::AstNodeFlags::RECHECK);
+    if (node->AsExpression()->TsType()->AsETSEnumType()->NodeIsEnumLiteral(node->AsExpression())) {
+        return InlineValueOf(node->AsMemberExpression(), context_->Allocator());
+    }
     auto *callExpr = CreateCallInstanceEnumExpression(context_, node, checker::ETSEnumType::VALUE_OF_METHOD_NAME);
-    node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
     return callExpr;
 }
 
@@ -362,6 +382,27 @@ ir::SwitchStatement *EnumPostCheckLoweringPhase::GenerateGetOrdinalCallForSwitch
     return node;
 }
 
+static void RecheckNode(ir::AstNode *node, checker::ETSChecker *checker)
+{
+    // No parent class means that this node is not in the inheritance of the class
+    auto *parentClass = util::Helpers::FindAncestorGivenByType(node, ir::AstNodeType::CLASS_DEFINITION);
+    if (parentClass == nullptr) {
+        return;
+    }
+    if (node->IsExpression()) {
+        node->AsExpression()->SetTsType(nullptr);  // force recheck
+    }
+    checker::SavedCheckerContext savedContext(checker, checker->Context().Status(),
+                                              parentClass->AsClassDefinition()->TsType()->AsETSObjectType());
+    node->RemoveAstNodeFlags(ir::AstNodeFlags::RECHECK);
+    node->Check(checker);
+
+    if (node->IsExpression() && node->AsExpression()->TsType() != nullptr &&
+        !node->AsExpression()->TsType()->IsETSIntEnumType()) {
+        node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+    }
+}
+
 bool EnumPostCheckLoweringPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
     if (program->Extension() != ScriptExtension::ETS) {
@@ -370,27 +411,14 @@ bool EnumPostCheckLoweringPhase::PerformForModule(public_lib::Context *ctx, pars
 
     context_ = ctx;
     parser_ = ctx->parser->AsETSParser();
-    checker_ = ctx->checker->AsETSChecker();
+    checker_ = ctx->GetChecker()->AsETSChecker();
     varbinder_ = ctx->parserProgram->VarBinder()->AsETSBinder();
 
     program->Ast()->TransformChildrenRecursivelyPostorder(
         // clang-format off
         [this](ir::AstNode *const node) -> ir::AstNode* {
             if (node->HasAstNodeFlags(ir::AstNodeFlags::RECHECK)) {
-                if (node->IsExpression()) {
-                    node->AsExpression()->SetTsType(nullptr);  // force recheck
-                }
-                if (checker_->Context().ContainingClass() == nullptr) {
-                    auto *parentClass = util::Helpers::FindAncestorGivenByType(node, ir::AstNodeType::CLASS_DEFINITION);
-                    checker_->Context().SetContainingClass(
-                        parentClass->AsClassDefinition()->TsType()->AsETSObjectType());
-                }
-                node->RemoveAstNodeFlags(ir::AstNodeFlags::RECHECK);
-                node->Check(checker_);
-                if (node->IsExpression() && node->AsExpression()->TsType() != nullptr &&
-                    !node->AsExpression()->TsType()->IsETSIntEnumType()) {
-                    node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
-                }
+                RecheckNode(node, checker_);
             }
             if (node->HasAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF)) {
                 return GenerateValueOfCall(node);
@@ -402,7 +430,8 @@ bool EnumPostCheckLoweringPhase::PerformForModule(public_lib::Context *ctx, pars
                 }
                 return GenerateEnumCasting(node->AsTSAsExpression(), castFlag);
             }
-            if (node->IsSwitchStatement() && node->AsSwitchStatement()->Discriminant()->TsType()->IsETSEnumType()) {
+            if (node->IsSwitchStatement() && (node->AsSwitchStatement()->Discriminant()->TsType() != nullptr) &&
+                node->AsSwitchStatement()->Discriminant()->TsType()->IsETSEnumType()) {
                 return GenerateGetOrdinalCallForSwitch(node->AsSwitchStatement());
             }
             return node;

@@ -24,6 +24,20 @@ set(ES2PANDA_API
     ${CMAKE_CURRENT_SOURCE_DIR}/ignoredAllowed.yaml
 )
 
+set(CHECK_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/out)
+set(GENERATED_STAMP ${CHECK_OUTPUT_DIR}/build_consistency_check.stamp)
+
+find_package(Python3 REQUIRED)
+add_custom_command(
+    OUTPUT ${GENERATED_STAMP}
+    COMMAND ${Python3_EXECUTABLE} 
+           ./../scripts/check_build_system_consistency.py
+           "${CMAKE_CURRENT_SOURCE_DIR}/.."
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CHECK_OUTPUT_DIR}
+    COMMAND ${CMAKE_COMMAND} -E touch ${GENERATED_STAMP}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/varbinder/variableFlags.h
     ${GENERATED_DIR}/options.h
@@ -59,7 +73,6 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/checker/types/ts/nonPrimitiveType.h
     ${ES2PANDA_ROOT}/ir/ts/tsTypeParameterInstantiation.h
     ${ES2PANDA_ROOT}/ir/module/importDeclaration.h
-    ${ES2PANDA_ROOT}/checker/types/ets/etsDynamicType.h
     ${ES2PANDA_ROOT}/ir/statements/doWhileStatement.h
     ${ES2PANDA_ROOT}/ir/expressions/literals/bigIntLiteral.h
     ${ES2PANDA_ROOT}/ir/expressions/assignmentExpression.h
@@ -147,7 +160,6 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/ir/ts/tsParenthesizedType.h
     ${ES2PANDA_ROOT}/ir/ts/tsModuleDeclaration.h
     ${ES2PANDA_ROOT}/ir/ets/etsPackageDeclaration.h
-    ${ES2PANDA_ROOT}/checker/types/ets/etsDynamicFunctionType.h
     ${ES2PANDA_ROOT}/ir/expressions/literals/regExpLiteral.h
     ${ES2PANDA_ROOT}/ir/ets/etsNewArrayInstanceExpression.h
     ${ES2PANDA_ROOT}/checker/types/ets/etsVoidType.h
@@ -188,6 +200,7 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/checker/types/ets/etsTupleType.h
     ${ES2PANDA_ROOT}/checker/types/signature.h
     ${ES2PANDA_ROOT}/ir/ets/etsPrimitiveType.h
+    ${ES2PANDA_ROOT}/ir/ets/etsIntrinsicNode.h
     ${ES2PANDA_ROOT}/ir/as/namedType.h
     ${ES2PANDA_ROOT}/ir/statements/throwStatement.h
     ${ES2PANDA_ROOT}/ir/statements/forOfStatement.h
@@ -237,6 +250,7 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/ir/ts/tsImportEqualsDeclaration.h
     ${ES2PANDA_ROOT}/ir/validationInfo.h
     ${ES2PANDA_ROOT}/ir/base/methodDefinition.h
+    ${ES2PANDA_ROOT}/ir/base/overloadDeclaration.h
     ${ES2PANDA_ROOT}/ir/ts/tsIntersectionType.h
     ${ES2PANDA_ROOT}/checker/types/ts/nullType.h
     ${ES2PANDA_ROOT}/checker/types/ts/unknownType.h
@@ -267,7 +281,6 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/ir/statements/annotationDeclaration.h
     ${ES2PANDA_ROOT}/ir/statements/annotationUsage.h
     ${ES2PANDA_ROOT}/ir/annotationAllowed.h
-    ${ES2PANDA_ROOT}/ir/jsDocAllowed.h
     ${ES2PANDA_ROOT}/ir/base/scriptFunctionSignature.h
     ${ES2PANDA_ROOT}/ir/expressions/yieldExpression.h
     ${ES2PANDA_ROOT}/ir/ets/etsNewMultiDimArrayInstanceExpression.h
@@ -303,7 +316,6 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/varbinder/variableFlags.yaml
     ${LIBGEN_DIR}/gen/headers/ir/typed.yaml
     ${LIBGEN_DIR}/gen/headers/ir/annotationAllowed.yaml
-    ${LIBGEN_DIR}/gen/headers/ir/jsDocAllowed.yaml
     ${LIBGEN_DIR}/gen/headers/es2panda.yaml
     ${LIBGEN_DIR}/gen/headers/ir/statements/labelledStatement.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ts/unknownType.yaml
@@ -323,7 +335,6 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/ir/expressions/objectExpression.yaml
     ${LIBGEN_DIR}/gen/headers/ir/module/importSpecifier.yaml
     ${LIBGEN_DIR}/gen/headers/ir/expressions/conditionalExpression.yaml
-    ${LIBGEN_DIR}/gen/headers/checker/types/ets/etsDynamicFunctionType.yaml
     ${LIBGEN_DIR}/gen/headers/ir/expressions/callExpression.yaml
     ${LIBGEN_DIR}/gen/headers/ir/expressions/literals/bigIntLiteral.yaml
     ${LIBGEN_DIR}/gen/headers/ir/base/classElement.yaml
@@ -428,6 +439,7 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/checker/types/ets/intType.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ts/objectLiteralType.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/typeFlag.yaml
+    ${LIBGEN_DIR}/gen/headers/ir/ets/etsIntrinsicNode.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ets/etsPackageDeclaration.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ets/etsImportDeclaration.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ets/etsStructDeclaration.yaml
@@ -447,7 +459,6 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/ir/expressions/blockExpression.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsTypeLiteral.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsTypeParameter.yaml
-    ${LIBGEN_DIR}/gen/headers/checker/types/ets/etsDynamicType.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ets/charType.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsBooleanKeyword.yaml
     ${LIBGEN_DIR}/gen/headers/ir/base/spreadElement.yaml
@@ -487,6 +498,7 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/ir/expressions/directEvalExpression.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsTypeParameterDeclaration.yaml
     ${LIBGEN_DIR}/gen/headers/ir/base/methodDefinition.yaml
+    ${LIBGEN_DIR}/gen/headers/ir/base/overloadDeclaration.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsNullKeyword.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsInterfaceHeritage.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ts/enumLiteralType.yaml
@@ -615,7 +627,7 @@ add_custom_command(
     OUTPUT ${ES2PANDA_API_GENERATED}
     COMMAND python3 -B ${CMAKE_CURRENT_SOURCE_DIR}/headers_parser/main.py
         --es2panda-root "${ES2PANDA_ROOT}" --lib-gen-dir "${LIBGEN_DIR}" --headers ${HEADERS_TO_BE_PARSED}
-    DEPENDS ${HEADERS_TO_BE_PARSED} ${HEADERS_PARSER_SOURCES}
+    DEPENDS ${HEADERS_TO_BE_PARSED} ${HEADERS_PARSER_SOURCES} ${GENERATED_STAMP}
 )
 
 add_custom_target(gen_yamls DEPENDS es2panda_options_gen es2panda_keywords ${ES2PANDA_API_GENERATED} ${HEADERS_PARSER_SOURCES})
@@ -624,11 +636,15 @@ add_custom_target(gen_yamls DEPENDS es2panda_options_gen es2panda_keywords ${ES2
 set(ES2PANDA_PUBLIC_SOURCES
     ${LIB_NAME}.cpp
     ../declgen_ets2ts/declgenEts2Ts.cpp
+    ../declgen_ets2ts/isolatedDeclgenChecker.cpp
     ../util/generateBin.cpp
     ../util/options.cpp
     ../util/plugin.cpp
 )
 
+if (PANDA_TARGET_WINDOWS)
+    set(CMAKE_STATIC_LIBRARY_SUFFIX ".lib")
+endif()
 
 panda_frontend_add_library(es2panda-public ${PANDA_DEFAULT_LIB_TYPE} ${ES2PANDA_PUBLIC_SOURCES})
 add_dependencies(es2panda-lib gen_api)

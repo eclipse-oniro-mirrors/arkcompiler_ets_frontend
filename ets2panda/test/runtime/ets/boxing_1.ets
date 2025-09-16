@@ -26,13 +26,13 @@ class A {
 }
 
 function main(): void {
-  assertEQ(global_Int_.toInt(), 2_000_000)
-  assertEQ((global_Object_Int_ as Int).toInt(), 2_000_001)
-  assertEQ(const_global_Int_.toInt(), 2_000_002)
-  assertEQ((const_global_Object_Int_ as Int).toInt(), 2_000_003)
+  arktest.assertEQ(global_Int_.toInt(), 2_000_000)
+  arktest.assertEQ((global_Object_Int_ as Int).toInt(), 2_000_001)
+  arktest.assertEQ(const_global_Int_.toInt(), 2_000_002)
+  arktest.assertEQ((const_global_Object_Int_ as Int).toInt(), 2_000_003)
 
-  assertEQ(A.Int_.toInt(), 2_000_004)
-  assertEQ((A.Object_Int_ as Int).toInt(), 2_000_005)
-  assertEQ(A.readonly_Int_.toInt(), 2_000_006)
-  assertEQ((A.readonly_Object_Int_ as Int).toInt(), 2_000_007)
+  arktest.assertEQ(A.Int_.toInt(), 2_000_004)
+  arktest.assertEQ((A.Object_Int_ as Int).toInt(), 2_000_005)
+  arktest.assertEQ(A.readonly_Int_.toInt(), 2_000_006)
+  arktest.assertEQ((A.readonly_Object_Int_ as Int).toInt(), 2_000_007)
 }

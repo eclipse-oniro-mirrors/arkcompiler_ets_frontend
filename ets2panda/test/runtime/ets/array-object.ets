@@ -33,15 +33,15 @@ function main(): void {
 
   obj.$_hashCode();
 
-  assertEQ(arr1, arr1)
-  assertEQ(arr1, object_array)
-  assertEQ(arr1, obj)
-  assertNE(arr1, arr2)
+  arktest.assertEQ(arr1, arr1)
+  arktest.assertEQ(arr1, object_array)
+  arktest.assertEQ(arr1, obj)
+  arktest.assertNE(arr1, arr2)
 
 // Cannot cast type 'int[]' to 'Object[]'
 //  let object_array2: Object[] = arr2 as Object[];
-//  assertEQ(obj.equals(arr2 as Object), false)
+//  arktest.assertEQ(obj.equals(arr2 as Object), false)
 
-  assertEQ(arr2, arr2)
-  assertNE(arr2, new int[5])
+  arktest.assertEQ(arr2, arr2)
+  arktest.assertNE(arr2, new int[5])
 }

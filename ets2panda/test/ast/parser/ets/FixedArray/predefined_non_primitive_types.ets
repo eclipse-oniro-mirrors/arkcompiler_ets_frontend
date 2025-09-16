@@ -36,5 +36,6 @@ let s: String = "abc";
 let a: FixedArray<int> = new int[5];
 
 /* @@@ label Error TypeError: Variable 'non_prim_b' has already been declared.  */
+/* @@? 23:25 Error TypeError: Type 'Double' cannot be assigned to type 'Float' */
 /* @@? 27:31 Error TypeError: Cannot find type 'Bool'. */
-/* @@? 27:38 Error TypeError: Type 'boolean' cannot be assigned to type 'Byte' */
+/* @@? 27:38 Error TypeError: Type 'Boolean' cannot be assigned to type 'Byte' */

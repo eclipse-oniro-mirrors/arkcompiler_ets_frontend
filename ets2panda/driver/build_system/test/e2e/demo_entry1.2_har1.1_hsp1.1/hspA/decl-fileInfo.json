@@ -1,0 +1,13 @@
+{
+  "packageName": "hspA",
+  "files": {
+    "index": {
+      "declPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.1/hspA/index.d.ets",
+      "ohmUrl": "@normalized:N&undefined&com.example.demo_entry1.2_har1.1_hsp1.1&hspA/index&"
+    },
+    "Calc": {
+      "declPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.1/hspA/Calc.d.ets",
+      "ohmUrl": "@normalized:N&undefined&com.example.demo_entry1.2_har1.1_hsp1.1&hspA/Calc&"
+    }
+  }
+}

@@ -12,6 +12,7 @@
 # limitations under the License.
 
 declgen_ets2ts_warning:
+
 - name: EMPTY_TYPE_NAME
   id: 1
   message: Object type name is empty.
@@ -19,3 +20,5 @@ declgen_ets2ts_warning:
 - name: UNTYPED_METHOD
   id: 2
   message: Untyped method encountered {}.
+graveyard: []
+# See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

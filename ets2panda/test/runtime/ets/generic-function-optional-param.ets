@@ -21,5 +21,5 @@ export function context<T extends A>(k:int, str?:string) {
 }
 
 function main() {
-    assertEQ(context<B>(2), 2)
+    arktest.assertEQ(context<B>(2), 2)
 }

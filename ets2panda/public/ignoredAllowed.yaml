@@ -96,7 +96,6 @@ ignored_list:
     - name: optional
       namespace: std
     - name: WrapperDesc
-    - name: Language
     - name: ScopedDebugInfoPlugin
     - name: Args
       namespace: parser
@@ -251,4 +250,3 @@ allowed_list:
   - StringView
   - TypeNode
   - ArkTsConfig
-  - JsDocInfo

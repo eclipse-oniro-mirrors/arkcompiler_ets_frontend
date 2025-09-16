@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 
+enum IntegerEnum {a = 5, b = 6, c = 7}
+
 function main():void {
-    enum IntegerEnum {a = 5, b = 6, c = 7}
     let ie: IntegerEnum = IntegerEnum.b
     let n: number = ie // n will get the value of 6
-    assertEQ(n, 6)
+    arktest.assertEQ(n, 6)
 }

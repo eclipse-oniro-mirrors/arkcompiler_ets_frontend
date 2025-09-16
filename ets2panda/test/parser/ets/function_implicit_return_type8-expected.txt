@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "function_implicit_return_type8.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "function_implicit_return_type8.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "fun",
               "decorators": [],
               "loc": {
@@ -1099,7 +993,7 @@
                                   },
                                   "end": {
                                     "line": 38,
-                                    "column": 27,
+                                    "column": 26,
                                     "program": "function_implicit_return_type8.ets"
                                   }
                                 }
@@ -1112,7 +1006,7 @@
                                 },
                                 "end": {
                                   "line": 38,
-                                  "column": 27,
+                                  "column": 26,
                                   "program": "function_implicit_return_type8.ets"
                                 }
                               }
@@ -1286,7 +1180,7 @@
                             "loc": {
                               "start": {
                                 "line": 39,
-                                "column": 15,
+                                "column": 24,
                                 "program": "function_implicit_return_type8.ets"
                               },
                               "end": {
@@ -1451,7 +1345,7 @@
                             "loc": {
                               "start": {
                                 "line": 40,
-                                "column": 15,
+                                "column": 24,
                                 "program": "function_implicit_return_type8.ets"
                               },
                               "end": {
@@ -1616,7 +1510,7 @@
                             "loc": {
                               "start": {
                                 "line": 41,
-                                "column": 15,
+                                "column": 24,
                                 "program": "function_implicit_return_type8.ets"
                               },
                               "end": {

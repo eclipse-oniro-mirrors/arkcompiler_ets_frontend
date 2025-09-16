@@ -20,25 +20,28 @@
 
 #include "find_rename_locations.h"
 #include "find_references.h"
+#include "public/public.h"
 
 namespace ark::es2panda::lsp {
 
 std::set<RenameLocation> FindRenameLocations(CancellationToken *tkn,
-                                             const std::vector<ark::es2panda::SourceFile> &files,
-                                             const ark::es2panda::SourceFile &file, size_t position)
+                                             const std::vector<es2panda_Context *> &fileContexts,
+                                             es2panda_Context *context, size_t position)
 {
-    auto references = FindReferences(tkn, files, file, position);
+    auto references = FindReferences(tkn, fileContexts, context, position);
     std::set<RenameLocation> res;
 
     for (auto ref : references) {
-        auto srcIt = std::find_if(files.begin(), files.end(), [&ref](const SourceFile &currentFile) {
-            return currentFile.filePath == ref.filePath;
+        auto fileIt = std::find_if(fileContexts.begin(), fileContexts.end(), [&ref](es2panda_Context *fileContext) {
+            auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(fileContext);
+            return ctx->sourceFile->filePath == ref.filePath;
         });
-        if (srcIt == files.end()) {
+        if (fileIt == fileContexts.end()) {
             std::cout << "Error: Could not find " << ref.filePath << " in list!\n";
             continue;
         }
-        std::string source = std::string {srcIt->source};
+        auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(*fileIt);
+        std::string source = std::string {ctx->sourceFile->source};
         // Get prefix and suffix texts
         std::string prefix;
         {
@@ -65,11 +68,11 @@ std::set<RenameLocation> FindRenameLocations(CancellationToken *tkn,
     return res;
 }
 
-std::set<RenameLocation> FindRenameLocations(const std::vector<ark::es2panda::SourceFile> &files,
-                                             const ark::es2panda::SourceFile &file, size_t position)
+std::set<RenameLocation> FindRenameLocations(const std::vector<es2panda_Context *> &fileContexts,
+                                             es2panda_Context *context, size_t position)
 {
     time_t tmp = 0;
     CancellationToken cancellationToken {tmp, nullptr};
-    return FindRenameLocations(&cancellationToken, files, file, position);
+    return FindRenameLocations(&cancellationToken, fileContexts, context, position);
 }
 }  // namespace ark::es2panda::lsp

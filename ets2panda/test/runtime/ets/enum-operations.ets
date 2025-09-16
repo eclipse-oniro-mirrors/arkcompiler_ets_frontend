@@ -21,7 +21,7 @@ function test() : Color
 }
 
 let c: Color = Color.Green
-assertEQ(c.toString(), "10") // prints: 10
-assertEQ(Color[c], "Green") // prints: Green                    
-assertEQ(Color[test()], "Green") // prints: Green                    
+arktest.assertEQ(c.toString(), "10") // prints: 10
+arktest.assertEQ(Color[c], "Green") // prints: Green                    
+arktest.assertEQ(Color[test()], "Green") // prints: Green                    
     

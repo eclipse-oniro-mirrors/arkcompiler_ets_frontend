@@ -35,24 +35,24 @@ function main(): void {
         b_mem: new B()
     }
 	
-    assertEQ(readonly_a.num_mem, 1)
-    assertEQ(readonly_a.str_mem, "readonly_a")
-    assertEQ(readonly_a.b_mem.fld, 6)
+    arktest.assertEQ(readonly_a.num_mem, 1)
+    arktest.assertEQ(readonly_a.str_mem, "readonly_a")
+    arktest.assertEQ(readonly_a.b_mem.fld, 6)
 	
     let readonly_d: Readonly<D> = {
         c_num_mem: 2,
         d_num_mem: 3
     }
-    assertEQ(readonly_d.c_num_mem, 2)
-    assertEQ(readonly_d.d_num_mem, 3)
+    arktest.assertEQ(readonly_d.c_num_mem, 2)
+    arktest.assertEQ(readonly_d.d_num_mem, 3)
 	
     let readonly_a2: readonly_A = {
 	num_mem: 4,
         str_mem: "readonly_a2",
         b_mem: new B()
     }
-    assertEQ(readonly_a2.num_mem, 4)
-    assertEQ(readonly_a2.str_mem, "readonly_a2")
-    assertEQ(readonly_a2.b_mem.fld, 6)
+    arktest.assertEQ(readonly_a2.num_mem, 4)
+    arktest.assertEQ(readonly_a2.str_mem, "readonly_a2")
+    arktest.assertEQ(readonly_a2.b_mem.fld, 6)
 	
 }

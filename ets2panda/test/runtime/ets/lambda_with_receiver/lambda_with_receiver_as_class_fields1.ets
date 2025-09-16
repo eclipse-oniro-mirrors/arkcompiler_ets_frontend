@@ -23,6 +23,6 @@ class A {
 
 function main() {
     let a: A = new A()
-    assertEQ(a.f(a), "instance A")
-    assertEQ(A.f(a), "static A")
+    arktest.assertEQ(a.f(a), "instance A")
+    arktest.assertEQ(A.f(a), "static A")
 }

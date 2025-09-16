@@ -55,24 +55,24 @@ function main(): void {
   let b: B = new BB();
   let c: C = new CC();
 
-  assertEQ(b.str, "A")
-  assertEQ(b.get_str(), "A")
-  assertEQ(b.get_super_str(), "A")
-  assertEQ(c.str, "C")
-  assertEQ(c.get_str(), "C")
-  assertEQ(c.get_super_str(), "A")
+  arktest.assertEQ(b.str, "A")
+  arktest.assertEQ(b.get_str(), "A")
+  arktest.assertEQ(b.get_super_str(), "A")
+  arktest.assertEQ(c.str, "C")
+  arktest.assertEQ(c.get_str(), "C")
+  arktest.assertEQ(c.get_super_str(), "A")
 
-  assertEQ((b as B).str, "A")
-  assertEQ((b as A).str, "A")
-  assertEQ((b as B).get_str(), "A")
-  assertEQ((b as B).get_super_str(), "A")
+  arktest.assertEQ((b as B).str, "A")
+  arktest.assertEQ((b as A).str, "A")
+  arktest.assertEQ((b as B).get_str(), "A")
+  arktest.assertEQ((b as B).get_super_str(), "A")
 
-  assertEQ((c as C).str, "C")
-  assertEQ((c as B).str, "A")
-  assertEQ((c as A).str, "A")
+  arktest.assertEQ((c as C).str, "C")
+  arktest.assertEQ((c as B).str, "A")
+  arktest.assertEQ((c as A).str, "A")
 
-  assertEQ((c as C).get_str(), "C")
-  assertEQ((c as C).get_super_str(), "A")
-  assertEQ((c as B).get_str(), "C")
-  assertEQ((c as B).get_super_str(), "A")
+  arktest.assertEQ((c as C).get_str(), "C")
+  arktest.assertEQ((c as C).get_super_str(), "A")
+  arktest.assertEQ((c as B).get_str(), "C")
+  arktest.assertEQ((c as B).get_super_str(), "A")
 }

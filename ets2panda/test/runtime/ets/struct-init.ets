@@ -34,20 +34,20 @@ function main(): void {
     // x.member_cls;
 
     let y : cls = new cls(null, 2);
-    assertEQ(y.member_cls, null)
-    assertEQ(y.member_int, 2)
+    arktest.assertEQ(y.member_cls, null)
+    arktest.assertEQ(y.member_int, 2)
 
     // TODO: catch NullPointerError if exception handling is implemented
     // y = null;
     // y.member_cls;
 
     let z : cls = new cls(y, 4);
-    assertNE(z.member_cls, null)
-    assertEQ(z.member_int, 4)
+    arktest.assertNE(z.member_cls, null)
+    arktest.assertEQ(z.member_int, 4)
 
     let u : cls2 = new cls2();
-    assertEQ(u.member_cls, null)
-    assertEQ(u.member_int, 0)
+    arktest.assertEQ(u.member_cls, null)
+    arktest.assertEQ(u.member_int, 0)
 
     return;
 }

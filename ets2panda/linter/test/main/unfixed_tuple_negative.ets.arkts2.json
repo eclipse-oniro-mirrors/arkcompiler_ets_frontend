@@ -1,0 +1,88 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 16,
+            "column": 19,
+            "endLine": 16,
+            "endColumn": 31,
+            "problem": "unfixedTuple",
+            "suggest": "",
+            "rule": "No unfixed length tuple support (arkts-no-unfixed-len-tuple)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 24,
+            "endLine": 18,
+            "endColumn": 36,
+            "problem": "unfixedTuple",
+            "suggest": "",
+            "rule": "No unfixed length tuple support (arkts-no-unfixed-len-tuple)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 32,
+            "endLine": 20,
+            "endColumn": 43,
+            "problem": "unfixedTuple",
+            "suggest": "",
+            "rule": "No unfixed length tuple support (arkts-no-unfixed-len-tuple)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 16,
+            "endLine": 22,
+            "endColumn": 27,
+            "problem": "unfixedTuple",
+            "suggest": "",
+            "rule": "No unfixed length tuple support (arkts-no-unfixed-len-tuple)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 16,
+            "endLine": 24,
+            "endColumn": 28,
+            "problem": "unfixedTuple",
+            "suggest": "",
+            "rule": "No unfixed length tuple support (arkts-no-unfixed-len-tuple)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 29,
+            "endLine": 26,
+            "endColumn": 51,
+            "problem": "unfixedTuple",
+            "suggest": "",
+            "rule": "No unfixed length tuple support (arkts-no-unfixed-len-tuple)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 34,
+            "endLine": 28,
+            "endColumn": 45,
+            "problem": "unfixedTuple",
+            "suggest": "",
+            "rule": "No unfixed length tuple support (arkts-no-unfixed-len-tuple)",
+            "severity": "ERROR"
+        }
+    ]
+}

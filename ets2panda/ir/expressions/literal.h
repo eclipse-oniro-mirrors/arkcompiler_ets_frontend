@@ -32,8 +32,21 @@ public:
         return true;
     }
 
+    [[nodiscard]] bool IsFolded() const noexcept
+    {
+        return folded_;
+    }
+
+    void SetFolded(bool folded = true) noexcept
+    {
+        folded_ = folded;
+    }
+
 protected:
     explicit Literal(AstNodeType const type) : Expression(type) {}
+
+private:
+    bool folded_ = false;
 };
 }  // namespace ark::es2panda::ir
 

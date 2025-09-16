@@ -34,7 +34,7 @@ int = 10
 /* @@? 20:1 Error SyntaxError: Unexpected token, expected an identifier. */
 /* @@? 20:1 Error TypeError: Unresolved reference nt */
 /* @@? 20:10 Error SyntaxError: Unexpected token 'A'. */
-/* @@? 20:10 Error TypeError: Class name 'A' used in the wrong context */
+/* @@? 20:10 Error SyntaxError: Class cannot be used as object. */
 /* @@? 20:12 Error SyntaxError: Unexpected token '{'. */
 /* @@? 22:11 Error SyntaxError: Unexpected token 'Nu'. */
 /* @@? 23:1 Error SyntaxError: Unexpected token, expected an identifier. */
@@ -48,7 +48,7 @@ int = 10
 /* @@? 24:21 Error SyntaxError: Label must be followed by a loop statement. */
 /* @@? 24:21 Error TypeError: Unresolved reference s */
 /* @@? 24:23 Error SyntaxError: Unexpected token 'A'. */
-/* @@? 24:23 Error TypeError: Class name 'A' used in the wrong context */
+/* @@? 24:23 Error SyntaxError: Class cannot be used as object. */
 /* @@? 24:25 Error SyntaxError: Unexpected token '{'. */
 /* @@? 25:1 Error SyntaxError: Unexpected token 'int'. */
 /* @@? 26:1 Error SyntaxError: Unexpected token ')'. */

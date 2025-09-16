@@ -21,14 +21,17 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+
 #include "../user_preferences.h"
 #include "../cancellation_token.h"
 #include "../types.h"
 #include "../api.h"
 #include "es2panda.h"
+#include "generated/code_fix_register.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
 #include "../get_class_property_info.h"
+#include "lsp/include/services/text_change/text_change_context.h"
 
 namespace ark::es2panda::lsp {
 
@@ -72,10 +75,34 @@ struct CodeFixAllContext : CodeFixContextBase {
     std::string fixId = {};
 };
 
-struct DiagnosticWithLocation : Diagnostic {
-    SourceFile file;
-    size_t start = 0;
-    size_t length = 0;
+class DiagnosticWithLocation : Diagnostic {
+public:
+    DiagnosticWithLocation(Diagnostic &&base, const SourceFile &file, const size_t start = 0, const size_t length = 0)
+        : Diagnostic(std::move(base)), file_(file), start_(start), length_(length)
+    {
+    }
+
+    using Diagnostic::Diagnostic;
+
+    SourceFile GetFile() const
+    {
+        return file_;
+    }
+
+    size_t GetStart() const
+    {
+        return start_;
+    }
+
+    size_t Getlength() const
+    {
+        return length_;
+    }
+
+private:
+    SourceFile file_;
+    size_t start_ = 0;
+    size_t length_ = 0;
 };
 
 struct CodeFixContext : CodeFixContextBase {
@@ -101,6 +128,7 @@ public:
     {
         errorCodes_ = codes;
     }
+
     void SetFixIds(const std::vector<std::string> &ids)
     {
         fixIds_ = ids;

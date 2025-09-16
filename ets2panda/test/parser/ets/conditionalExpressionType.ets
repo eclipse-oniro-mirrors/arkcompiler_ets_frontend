@@ -48,7 +48,7 @@ function unboxingCases(): void{
 
 function dominantNumericCases(): void{
     let a : double = 2.0;
-    let b : float = 2.0;
+    let b : float = 2.0f;
     let c : long = 2;
     let d : int = 2;
     let e : Short = 2;

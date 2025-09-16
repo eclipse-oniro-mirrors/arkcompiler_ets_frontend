@@ -193,7 +193,6 @@ switch (num1) {
     console.log('Other number');
 }
 
-1.0
 let num111 = 1.0;
 switch (num111) {
   case 1.0:
@@ -230,7 +229,7 @@ switch (isnum1) {
   default:
     console.log('F');
 }
-// 整型 5.2fail
+
 type sw1 = number
 
 function FunSw4(): sw1 {
@@ -245,7 +244,6 @@ switch (FunSw4()) {
     console.log('F');
 }
 
-// 浮点 5.2fail
 type sw2 = number | string
 
 function FunSw5(): sw2 {
@@ -299,7 +297,6 @@ switch (FunSw2()) {
     console.log('F');
 }
 
-// 正无穷
 let number4 = Infinity;
 switch (number4) {
   case Infinity:
@@ -309,7 +306,6 @@ switch (number4) {
     console.log("Default case");
 }
 
-// 负无穷
 let number5 = -Infinity;
 switch (number5) {
   case -Infinity:
@@ -319,7 +315,6 @@ switch (number5) {
     console.log("Default case");
 }
 
-// NaN
 let number6 = NaN;
 switch (number6) {
   case NaN:
@@ -338,7 +333,6 @@ switch (num111) {
     console.log('Other number');
 }
 
-// let声明整型，case浮点
 let number33: number = 1;
 switch (number33) {
   case 1.1:
@@ -354,7 +348,6 @@ switch (number33) {
     console.log("Default case");
 }
 
-// const声明，整型number，有类型
 const num11: number = 2;
 switch (num11) {
   case 1: {
@@ -367,7 +360,6 @@ switch (num11) {
   }
 }
 
-// let声明，整型number，有类型
 let num00: number = 2;
 switch (num00) {
   case 1: {
@@ -380,7 +372,6 @@ switch (num00) {
   }
 }
 
-
 enum Direction1 {
   North,
   South,
@@ -390,7 +381,7 @@ enum Direction1 {
 function funSE() : string | Direction1 {
   return 'aaa'
 }
-switch (funSE()) {  // 误报
+switch (funSE()) { 
   case 'aaa':
     console.log('aaa');
     break;
@@ -401,14 +392,20 @@ switch (funSE()) {  // 误报
     console.log('F');
 }
 
-
 enum H {
   RED,
   BLUE
 }
-function foo11(e: H) { // 误报
+function foo11(e: H) {
   switch (e) {
     case H.RED:
+  }
+}
+
+function foo(index: number) {
+  switch (index) {
+    case 0:
+      break;
   }
 }
 

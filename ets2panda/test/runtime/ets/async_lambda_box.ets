@@ -27,9 +27,9 @@ function callAsyncLambda(): void {
         is_call_async_lambda = true;
     }
 
-    assertEQ(is_call_async_lambda, false)
+    arktest.assertEQ(is_call_async_lambda, false)
     await async_lambda();
-    assertEQ(is_call_async_lambda, true)
+    arktest.assertEQ(is_call_async_lambda, true)
 }
 
 function main(): void {

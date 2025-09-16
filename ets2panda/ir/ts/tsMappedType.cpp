@@ -37,12 +37,8 @@ void TSMappedType::TransformChildren(const NodeTransformer &cb, std::string_view
             typeAnnotation_ = static_cast<TypeNode *>(transformedNode);
         }
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSMappedType::Iterate(const NodeTraverser &cb) const
@@ -100,5 +96,38 @@ checker::Type *TSMappedType::GetType([[maybe_unused]] checker::TSChecker *checke
 checker::VerifiedType TSMappedType::Check([[maybe_unused]] checker::ETSChecker *checker)
 {
     return {this, checker->GetAnalyzer()->Check(this)};
+}
+
+TSMappedType *TSMappedType::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    auto *clonedTypeParameter = typeParameter_->Clone(allocator, nullptr)->AsTSTypeParameter();
+    auto *clonedTypeAnnotation =
+        typeAnnotation_ != nullptr ? typeAnnotation_->Clone(allocator, nullptr)->AsTypeNode() : nullptr;
+
+    auto *clone =
+        allocator->New<TSMappedType>(clonedTypeParameter, clonedTypeAnnotation, readonly_, optional_, allocator);
+
+    // Set parent relationships
+    clonedTypeParameter->SetParent(clone);
+    if (clonedTypeAnnotation != nullptr) {
+        clonedTypeAnnotation->SetParent(clone);
+    }
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    // Clone annotations if any
+    if (!Annotations().empty()) {
+        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
+        for (auto *annotationUsage : Annotations()) {
+            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
+        }
+        clone->SetAnnotations(std::move(annotationUsages));
+    }
+
+    return clone;
 }
 }  // namespace ark::es2panda::ir

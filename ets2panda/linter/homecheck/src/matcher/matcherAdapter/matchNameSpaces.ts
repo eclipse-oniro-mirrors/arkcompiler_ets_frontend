@@ -15,6 +15,10 @@
 
 import { ArkFile } from 'arkanalyzer';
 import { NamespaceMatcher, isMatchedFile, isMatchedNamespace } from '../Matchers';
+import Logger, { LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
+import { ArkNamespace } from 'arkanalyzer/lib';
+
+const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'matchNameSpaces');
 
 export function matchNameSpaces(arkFiles: ArkFile[], matcher: NamespaceMatcher, callback: Function): void {
     for (let arkFile of arkFiles) {
@@ -22,9 +26,17 @@ export function matchNameSpaces(arkFiles: ArkFile[], matcher: NamespaceMatcher, 
             continue;
         }
         for (const ns of arkFile.getAllNamespacesUnderThisFile()) {
-            if (isMatchedNamespace(ns, [matcher])) {
-                callback(ns);
-            }
+            matchNamespace(ns, matcher, callback);
+        }
+    }
+}
+
+function matchNamespace(ns: ArkNamespace, matcher: NamespaceMatcher, callback: Function): void {
+    if (isMatchedNamespace(ns, [matcher])) {
+        try {
+            callback(ns);
+        } catch (error) {
+            logger.error('Error in namespace callback: ', error);
         }
     }
 }

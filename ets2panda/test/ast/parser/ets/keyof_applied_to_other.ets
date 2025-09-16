@@ -22,20 +22,19 @@ class A{
 function foo(){}
 
 function main():void{
-    type UnionA = A|string|undefined
-    type keyofUnion = keyof /* @@ label1 */unionA/* @@ label2 */;
+    /* @@ label1 */type UnionA = A|string|undefined
+    /* @@ label2 */type keyofUnion = keyof unionA;
 
-    type keyofNever = keyof never/* @@ label3 */;
+    /* @@ label3 */type keyofNever = keyof never;
 
-    type keyofFunction = keyof /* @@ label4 */foo/* @@ label5 */;
+    /* @@ label4 */type keyofFunction = keyof foo;
 
-    type keyofVoid = keyof /* @@ label6 */void/* @@ label7 */;
+   /* @@ label5 */ type keyofVoid = keyof void;
 }
 
-/* @@@ label1 Error TypeError: Cannot find type 'unionA'.  */
-/* @@@ label2 Error TypeError: The `keyof` keyword can only be used for class or interface type.  */
-/* @@@ label3 Error TypeError: The `keyof` keyword can only be used for class or interface type.  */
-/* @@@ label4 Error TypeError: Cannot find type 'foo'.  */
-/* @@@ label5 Error TypeError: The `keyof` keyword can only be used for class or interface type.  */
-/* @@@ label6 Error TypeError: 'void' used as type annotation.  */
-/* @@@ label7 Error TypeError: The `keyof` keyword can only be used for class or interface type.  */
+/* @@@ label1 Error SyntaxError: Illegal start of Type Alias expression.  */
+/* @@@ label2 Error SyntaxError: Illegal start of Type Alias expression.  */
+/* @@@ label3 Error SyntaxError: Illegal start of Type Alias expression.  */
+/* @@@ label4 Error SyntaxError: Illegal start of Type Alias expression.  */
+/* @@@ label5 Error SyntaxError: Illegal start of Type Alias expression.  */
+

@@ -18,7 +18,7 @@ type A = A[]
 function main(): int {
   let a: A = [] as A;
   
-  assertNE(a, null)
+  arktest.assertNE(a, null)
 
   return 0;
 }

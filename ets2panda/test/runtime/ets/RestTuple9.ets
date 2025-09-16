@@ -20,5 +20,5 @@ function foo(...j: TPL): number {
 }
 
 function main() {
-  assertTrue(foo(...[10, 20]) == 30)
+  arktest.assertTrue(foo(...[10, 20]) == 30)
 }

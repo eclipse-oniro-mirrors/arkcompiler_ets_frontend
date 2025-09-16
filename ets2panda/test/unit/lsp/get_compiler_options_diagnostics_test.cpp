@@ -61,8 +61,7 @@ public:
         ark::es2panda::util::DiagnosticEngine *diagnosticEngine =
             reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->diagnosticEngine;
         auto config = ark::es2panda::ArkTsConfig {filePaths[1], *diagnosticEngine};
-        std::unordered_set<std::string> parsedConfigPath;
-        config.Parse(parsedConfigPath);
+        config.Parse();
         ark::es2panda::lsp::GetOptionDiagnostics(ctx, diagnostics);
         initializer.DestroyContext(ctx);
 
@@ -279,10 +278,10 @@ function A(a:number, b:number) {
         "paths": {
             "std": ["./path1"]
         },
-        "dynamicPaths": {
+        "dependencies": {
             "dynamic_import_tests": {
                 "language": "invalid_lang",
-                "hasDecl": true
+                "path": "path.d.ets"
             }
         }
     }
@@ -317,10 +316,10 @@ function A(a:number, b:number) {
         "paths": {
             "std": ["./path1"]
         },
-        "dynamicPaths": {
+        "dependencies": {
             "dynamic_import_tests": {
                 "language": "ts",
-                "hasDecl": true
+                "path": "path.d.ets"
             }
         }
     }

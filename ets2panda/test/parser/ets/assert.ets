@@ -15,9 +15,9 @@
 
 class test_assert  {
     test(x : int): void {
-        assertLT(10, x);
-        assertNE(x, 2);
-        assertTrue(x > 10 || x < 3 , "inside interval!");
-        assertTrue((x < 10 && x > 2) , "outside interval!");
+        arktest.assertLT(10, x);
+        arktest.assertNE(x, 2);
+        arktest.assertTrue(x > 10 || x < 3 , "inside interval!");
+        arktest.assertTrue((x < 10 && x > 2) , "outside interval!");
     }
 }

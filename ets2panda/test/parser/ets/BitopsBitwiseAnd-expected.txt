@@ -646,9 +646,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 5,
+                                "program": "BitopsBitwiseAnd.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 12,
+                                "program": "BitopsBitwiseAnd.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 13,
+                                "program": "BitopsBitwiseAnd.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 21,
+                                "program": "BitopsBitwiseAnd.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 26,
@@ -657,7 +691,7 @@
                             },
                             "end": {
                               "line": 26,
-                              "column": 13,
+                              "column": 21,
                               "program": "BitopsBitwiseAnd.ets"
                             }
                           }
@@ -670,63 +704,28 @@
                             "loc": {
                               "start": {
                                 "line": 26,
-                                "column": 14,
+                                "column": 22,
                                 "program": "BitopsBitwiseAnd.ets"
                               },
                               "end": {
                                 "line": 26,
-                                "column": 29,
+                                "column": 37,
                                 "program": "BitopsBitwiseAnd.ets"
                               }
                             }
                           },
                           {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "BitopsBitwiseAnd",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 26,
-                                  "column": 31,
-                                  "program": "BitopsBitwiseAnd.ets"
-                                },
-                                "end": {
-                                  "line": 26,
-                                  "column": 47,
-                                  "program": "BitopsBitwiseAnd.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "expected",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 26,
-                                  "column": 48,
-                                  "program": "BitopsBitwiseAnd.ets"
-                                },
-                                "end": {
-                                  "line": 26,
-                                  "column": 56,
-                                  "program": "BitopsBitwiseAnd.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
+                            "type": "NumberLiteral",
+                            "value": 0,
                             "loc": {
                               "start": {
                                 "line": 26,
-                                "column": 31,
+                                "column": 39,
                                 "program": "BitopsBitwiseAnd.ets"
                               },
                               "end": {
                                 "line": 26,
-                                "column": 56,
+                                "column": 64,
                                 "program": "BitopsBitwiseAnd.ets"
                               }
                             }
@@ -737,12 +736,12 @@
                             "loc": {
                               "start": {
                                 "line": 26,
-                                "column": 59,
+                                "column": 67,
                                 "program": "BitopsBitwiseAnd.ets"
                               },
                               "end": {
                                 "line": 26,
-                                "column": 77,
+                                "column": 85,
                                 "program": "BitopsBitwiseAnd.ets"
                               }
                             }
@@ -757,7 +756,7 @@
                           },
                           "end": {
                             "line": 26,
-                            "column": 78,
+                            "column": 86,
                             "program": "BitopsBitwiseAnd.ets"
                           }
                         }
@@ -770,7 +769,7 @@
                         },
                         "end": {
                           "line": 26,
-                          "column": 79,
+                          "column": 87,
                           "program": "BitopsBitwiseAnd.ets"
                         }
                       }
@@ -820,7 +819,7 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 3,
+                "column": 10,
                 "program": "BitopsBitwiseAnd.ets"
               },
               "end": {
@@ -989,112 +988,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "BitopsBitwiseAnd.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "BitopsBitwiseAnd.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -1211,7 +1104,7 @@
                                   },
                                   "end": {
                                     "line": 31,
-                                    "column": 32,
+                                    "column": 31,
                                     "program": "BitopsBitwiseAnd.ets"
                                   }
                                 }
@@ -1224,7 +1117,7 @@
                                 },
                                 "end": {
                                   "line": 31,
-                                  "column": 32,
+                                  "column": 31,
                                   "program": "BitopsBitwiseAnd.ets"
                                 }
                               }

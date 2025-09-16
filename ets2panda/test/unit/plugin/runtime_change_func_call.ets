@@ -22,5 +22,5 @@ function goo() {
 }
 
 function main() {
-    assertTrue(foo());
+    arktest.assertTrue(foo());
 }

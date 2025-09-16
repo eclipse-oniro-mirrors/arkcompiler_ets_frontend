@@ -14,3 +14,18 @@ json-stringify-inspector
 
 #27014
 pdfjs
+
+##18485
+raytrace
+
+##18483
+typescript-compiler
+
+#24342
+stanford-crypto-pbkdf2
+
+#26559
+mandreel
+
+#26559
+crypto

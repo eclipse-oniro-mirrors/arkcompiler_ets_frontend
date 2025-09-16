@@ -19,6 +19,6 @@ type A<K,T> = string | B<A<K,T>>
 
 function cmp(a: A<Int,Char>, b: string) { return a == b }
 function main() {
-    assertTrue(cmp("test", "test"))
+    arktest.assertTrue(cmp("test", "test"))
 }
 

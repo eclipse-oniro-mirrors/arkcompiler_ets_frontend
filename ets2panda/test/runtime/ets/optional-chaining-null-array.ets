@@ -22,5 +22,5 @@ function main(): void {
     let b = a?.[1];
     let d: String = "foo";
     let c: String = b ?? d;
-    assertEQ(c, "foo")
+    arktest.assertEQ(c, "foo")
 }

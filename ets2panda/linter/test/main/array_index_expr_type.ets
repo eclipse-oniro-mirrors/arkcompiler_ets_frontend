@@ -87,3 +87,17 @@ arr[d] = 1;
 let test = 1;
 arr[1 as number];
 arr[test as number];
+
+@Component
+struct Test {
+  @Link testIndex: number;
+
+  async cateMode(testIndex: number) {
+    emitter.on(innerEvent, (eventData) => {
+      if (this.testIndex == 0) {
+        let array = [1,2,3];
+        array[this.testIndex];
+      }
+    })
+  }
+}

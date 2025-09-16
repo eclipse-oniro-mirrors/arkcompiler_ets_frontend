@@ -18,7 +18,6 @@
 
 #include "ir/statement.h"
 #include "ir/typed.h"
-#include "ir/jsDocAllowed.h"
 #include "ir/statements/annotationUsage.h"
 
 namespace ark::es2panda::varbinder {
@@ -29,62 +28,57 @@ namespace ark::es2panda::ir {
 class Identifier;
 class TSTypeParameterDeclaration;
 
-class TSTypeAliasDeclaration : public JsDocAllowed<AnnotatedStatement> {
+class TSTypeAliasDeclaration : public AnnotatedStatement {
 public:
     explicit TSTypeAliasDeclaration(ArenaAllocator *allocator, Identifier *id, TSTypeParameterDeclaration *typeParams,
                                     TypeNode *typeAnnotation)
-        : JsDocAllowed<AnnotatedStatement>(AstNodeType::TS_TYPE_ALIAS_DECLARATION, typeAnnotation, allocator),
+        : AnnotatedStatement(AstNodeType::TS_TYPE_ALIAS_DECLARATION, typeAnnotation),
           decorators_(allocator->Adapter()),
           annotations_(allocator->Adapter()),
           id_(id),
           typeParams_(typeParams),
           typeParamTypes_(allocator->Adapter())
     {
+        InitHistory();
     }
 
     explicit TSTypeAliasDeclaration(ArenaAllocator *allocator, Identifier *id)
-        : JsDocAllowed<AnnotatedStatement>(allocator, AstNodeType::TS_TYPE_ALIAS_DECLARATION),
+        : AnnotatedStatement(AstNodeType::TS_TYPE_ALIAS_DECLARATION),
           decorators_(allocator->Adapter()),
           annotations_(allocator->Adapter()),
           id_(id),
           typeParams_(nullptr),
           typeParamTypes_(allocator->Adapter())
     {
+        InitHistory();
     }
 
     Identifier *Id()
     {
-        return id_;
+        return GetHistoryNodeAs<TSTypeAliasDeclaration>()->id_;
     }
 
     const Identifier *Id() const
     {
-        return id_;
+        return GetHistoryNodeAs<TSTypeAliasDeclaration>()->id_;
     }
 
     TSTypeParameterDeclaration *TypeParams() const
     {
-        return typeParams_;
+        return GetHistoryNodeAs<TSTypeAliasDeclaration>()->typeParams_;
     }
 
     const ArenaVector<Decorator *> &Decorators() const
     {
-        return decorators_;
+        return GetHistoryNodeAs<TSTypeAliasDeclaration>()->decorators_;
     }
 
-    const ArenaVector<Decorator *> *DecoratorsPtr() const override
-    {
-        return &Decorators();
-    }
-
-    void SetTypeParameters(ir::TSTypeParameterDeclaration *typeParams)
-    {
-        typeParams_ = typeParams;
-    }
+    void SetTypeParameters(ir::TSTypeParameterDeclaration *typeParams);
 
     void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
     {
-        decorators_ = std::move(decorators);
+        auto newNode = reinterpret_cast<TSTypeAliasDeclaration *>(this->GetOrCreateHistoryNode());
+        newNode->decorators_ = std::move(decorators);
     }
 
     bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
@@ -94,28 +88,25 @@ public:
 
     void SetTypeParameterTypes(ArenaVector<checker::Type *> &&typeParamTypes)
     {
-        typeParamTypes_ = std::move(typeParamTypes);
+        auto newNode = reinterpret_cast<TSTypeAliasDeclaration *>(GetOrCreateHistoryNode());
+        newNode->typeParamTypes_ = std::move(typeParamTypes);
     }
 
     ArenaVector<checker::Type *> const &TypeParameterTypes() const
     {
-        return typeParamTypes_;
-    }
-
-    [[nodiscard]] ArenaVector<ir::AnnotationUsage *> &Annotations() noexcept
-    {
-        return annotations_;
+        return GetHistoryNodeAs<TSTypeAliasDeclaration>()->typeParamTypes_;
     }
 
     [[nodiscard]] const ArenaVector<ir::AnnotationUsage *> &Annotations() const noexcept
     {
-        return annotations_;
+        return GetHistoryNodeAs<TSTypeAliasDeclaration>()->annotations_;
     }
 
     void SetAnnotations(ArenaVector<ir::AnnotationUsage *> &&annotations)
     {
-        annotations_ = std::move(annotations);
-        for (AnnotationUsage *anno : annotations_) {
+        auto newNode = reinterpret_cast<TSTypeAliasDeclaration *>(GetOrCreateHistoryNode());
+        newNode->annotations_ = std::move(annotations);
+        for (AnnotationUsage *anno : newNode->annotations_) {
             anno->SetParent(this);
         }
     }
@@ -137,15 +128,32 @@ public:
     void CleanUp() override
     {
         AstNode::CleanUp();
-        typeParamTypes_.clear();
+        ClearTypeParamterTypes();
     }
 
     TSTypeAliasDeclaration *Construct(ArenaAllocator *allocator) override;
     void CopyTo(AstNode *other) const override;
 
+    void EmplaceAnnotations(AnnotationUsage *annotations);
+    void ClearAnnotations();
+    void SetValueAnnotations(AnnotationUsage *annotations, size_t index);
+    [[nodiscard]] ArenaVector<AnnotationUsage *> &AnnotationsForUpdate();
+
+    void EmplaceTypeParamterTypes(checker::Type *typeParamTypes);
+    void ClearTypeParamterTypes();
+    void SetValueTypeParamterTypes(checker::Type *typeParamTypes, size_t index);
+    [[nodiscard]] ArenaVector<checker::Type *> &TypeParamterTypesForUpdate();
+
+    void EmplaceDecorators(Decorator *decorators);
+    void ClearDecorators();
+    void SetValueDecorators(Decorator *decorators, size_t index);
+    [[nodiscard]] ArenaVector<Decorator *> &DecoratorsForUpdate();
+
 private:
     bool RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const;
     friend class SizeOfNodeTest;
+
+    void SetId(Identifier *id);
     ArenaVector<Decorator *> decorators_;
     ArenaVector<AnnotationUsage *> annotations_;
     Identifier *id_;

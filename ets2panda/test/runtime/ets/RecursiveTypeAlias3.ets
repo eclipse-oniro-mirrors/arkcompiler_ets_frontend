@@ -20,10 +20,10 @@ function main(): int {
 
   a = [a, [a, [a, [a] as A] as A] as A] as A;
   
-  assertEQ((a as A[])[0], "test")
-  assertEQ(((a as A[])[1] as A[])[0], "test")
-  assertEQ(((((a as A[])[1] as A[])[1]) as A[])[0], "test")
-  assertEQ((((((a as A[])[1] as A[])[1]) as A[])[1] as A[])[0], "test")
+  arktest.assertEQ((a as A[])[0], "test")
+  arktest.assertEQ(((a as A[])[1] as A[])[0], "test")
+  arktest.assertEQ(((((a as A[])[1] as A[])[1]) as A[])[0], "test")
+  arktest.assertEQ((((((a as A[])[1] as A[])[1]) as A[])[1] as A[])[0], "test")
   
   return 0;
 }

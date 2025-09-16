@@ -15,48 +15,6 @@
     ],
     "result": [
         {
-            "line": 18,
-            "column": 26,
-            "endLine": 18,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 662,
-                    "end": 663,
-                    "replacementText": "0.0",
-                    "line": 18,
-                    "column": 26,
-                    "endLine": 18,
-                    "endColumn": 27
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 23,
-            "endLine": 19,
-            "endColumn": 24,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 686,
-                    "end": 687,
-                    "replacementText": "0.0",
-                    "line": 19,
-                    "column": 23,
-                    "endLine": 19,
-                    "endColumn": 24
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 24,
             "column": 9,
             "endLine": 24,

@@ -109,12 +109,12 @@ TEST_F(LSPAPITests, CreateDiagnosticForNode1)
     std::vector<DiagnosticRelatedInformation> relatedInfoList {};
 
     Diagnostic diagnostic(range_, tags, relatedInfoList, DiagnosticSeverity::Error, errorCode, message, {}, {}, data);
-    FileDiagnostic result = ark::es2panda::lsp::CreateDiagnosticForNode(astNode, diagnostic);
+    FileDiagnostic result = ark::es2panda::lsp::CreateDiagnosticForNode(astNode, diagnostic, ctx);
 
-    int const startLine = 0;
-    int const endLine = 0;
-    int const startChar = 0;
-    int const endChar = 18;
+    int const startLine = 1;
+    int const endLine = 1;
+    int const startChar = 1;
+    int const endChar = 19;
     ASSERT_EQ(result.diagnostic.message_, "Diagnostic");
     ASSERT_EQ(result.diagnostic.range_.start.line_, startLine);
     ASSERT_EQ(result.diagnostic.range_.end.line_, endLine);
@@ -139,12 +139,12 @@ TEST_F(LSPAPITests, CreateDiagnosticForNode2)
     std::vector<DiagnosticRelatedInformation> relatedInfoList {};
 
     Diagnostic diagnostic(range_, tags, relatedInfoList, DiagnosticSeverity::Error, errorCode, message, {}, {}, data);
-    FileDiagnostic result = ark::es2panda::lsp::CreateDiagnosticForNode(astNode, diagnostic, args);
+    FileDiagnostic result = ark::es2panda::lsp::CreateDiagnosticForNode(astNode, diagnostic, ctx, args);
 
-    int const startLine = 0;
-    int const endLine = 0;
-    int const startChar = 0;
-    int const endChar = 18;
+    int const startLine = 1;
+    int const endLine = 1;
+    int const startChar = 1;
+    int const endChar = 19;
     ASSERT_EQ(result.diagnostic.message_, "Diagnostic Error1, for the Error2, and Error3");
     ASSERT_EQ(result.diagnostic.range_.start.line_, startLine);
     ASSERT_EQ(result.diagnostic.range_.end.line_, endLine);
@@ -171,13 +171,13 @@ TEST_F(LSPAPITests, CreateDiagnosticForNode3)
     std::vector<DiagnosticRelatedInformation> relatedInfoList {};
 
     Diagnostic diagnostic(range_, tags, relatedInfoList, DiagnosticSeverity::Error, errorCode, message, {}, {}, data);
-    FileDiagnostic result =
-        ark::es2panda::lsp::CreateDiagnosticForNode(reinterpret_cast<es2panda_AstNode *>(astNode), diagnostic, args);
+    FileDiagnostic result = ark::es2panda::lsp::CreateDiagnosticForNode(reinterpret_cast<es2panda_AstNode *>(astNode),
+                                                                        diagnostic, ctx, args);
 
-    int const startLine = 0;
-    int const endLine = 2;
-    int const startChar = 12;
-    int const endChar = 33;
+    int const startLine = 1;
+    int const endLine = 3;
+    int const startChar = 13;
+    int const endChar = 2;
     ASSERT_EQ(result.diagnostic.message_, "Diagnostic Error1, for the Error2, and Error3");
     ASSERT_EQ(result.diagnostic.range_.start.line_, startLine);
     ASSERT_EQ(result.diagnostic.range_.end.line_, endLine);

@@ -38,13 +38,13 @@ function main(): void {
     it += ": in for";
 
     if (i == 0) {
-      assertEQ(it, "one,  in for");
+      arktest.assertEQ(it, "one,  in for");
     } else if (i == 1) {
-      assertEQ(it, "two,  in for");
+      arktest.assertEQ(it, "two,  in for");
     } else if (i == 2) {
-      assertEQ(it, "three,  in for");
+      arktest.assertEQ(it, "three,  in for");
     } else {
-      assertTrue(false);
+      arktest.assertTrue(false);
     }
 
     ++i;

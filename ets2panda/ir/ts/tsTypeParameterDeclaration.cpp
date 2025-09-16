@@ -23,33 +23,45 @@
 #include "ir/ts/tsTypeParameter.h"
 
 namespace ark::es2panda::ir {
+
+void TSTypeParameterDeclaration::SetScope(varbinder::LocalScope *source)
+{
+    this->GetOrCreateHistoryNodeAs<TSTypeParameterDeclaration>()->scope_ = source;
+}
+
+void TSTypeParameterDeclaration::SetRequiredParams(size_t source)
+{
+    this->GetOrCreateHistoryNodeAs<TSTypeParameterDeclaration>()->requiredParams_ = source;
+}
+
 void TSTypeParameterDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    for (auto *&it : VectorIterationGuard(params_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsTSTypeParameter();
+    auto const params = Params();
+    for (size_t ix = 0; ix < params.size(); ix++) {
+        if (auto *transformedNode = cb(params[ix]); params[ix] != transformedNode) {
+            params[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueParams(transformedNode->AsTSTypeParameter(), ix);
         }
     }
 }
 
 void TSTypeParameterDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(params_)) {
+    for (auto *it : VectorIterationGuard(Params())) {
         cb(it);
     }
 }
 
 void TSTypeParameterDeclaration::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", "TSTypeParameterDeclaration"}, {"params", params_}});
+    dumper->Add({{"type", "TSTypeParameterDeclaration"}, {"params", Params()}});
 }
 
 void TSTypeParameterDeclaration::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto param : params_) {
+    for (auto param : Params()) {
         param->Dump(dumper);
-        if (param != params_.back()) {
+        if (param != Params().back()) {
             dumper->Add(", ");
         }
     }

@@ -32,17 +32,17 @@ let foo = (this: A): this => {
 let rotate = (this: A): this => { return this }
 
 function main() {
-    assertEQ(new B().foo().data_, 2)
-    assertEQ(foo(new B()).data_, 2)
-    assertEQ(new B().foo().foo().data_, 3)
-    assertEQ(foo(new B()).foo().data_, 3)
+    arktest.assertEQ(new B().foo().data_, 2)
+    arktest.assertEQ(foo(new B()).data_, 2)
+    arktest.assertEQ(new B().foo().foo().data_, 3)
+    arktest.assertEQ(foo(new B()).foo().data_, 3)
     let b = new B();
-    assertEQ(b.foo().data_, 2)
-    assertEQ(foo(b).data_, 3)
-    assertEQ(b.foo().foo().data_, 5)
-    assertEQ(foo(b.foo()).foo().data_, 8)
+    arktest.assertEQ(b.foo().data_, 2)
+    arktest.assertEQ(foo(b).data_, 3)
+    arktest.assertEQ(b.foo().foo().data_, 5)
+    arktest.assertEQ(foo(b.foo()).foo().data_, 8)
 
     b = new B().setX(3).rotate().setY(33);
-    assertEQ(b.x, 3)
-    assertEQ(b.y, 33)
+    arktest.assertEQ(b.x, 3)
+    arktest.assertEQ(b.y, 33)
 }

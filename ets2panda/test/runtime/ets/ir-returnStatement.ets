@@ -20,6 +20,6 @@ function get_value(v: short): long {
 
 function main(): void {
   let v: short = 5;
-  assertEQ(v, get_value(v))
+  arktest.assertEQ(v, get_value(v))
   return;
 }

@@ -28,19 +28,19 @@ function main() {
     let v2 : double | string = 2;             // boxed Double|String
 
     let v3 : Alias1Union<double, double> = new Int(3);  // primitive double
-    assertEQ(v3, 3)                           
+    arktest.assertEQ(v3, 3)                           
     let v4 : Alias1Union<double, string> = 4;          // boxed Double|String
-    assertEQ(v4, 4)
+    arktest.assertEQ(v4, 4)
 
     let v5 : Alias2Union<double, string> = new C<double>(5);  // C<Double>|String
     let v6 : C<double> = v5 as C<double>;
-    assertEQ(v6.v, 5)
+    arktest.assertEQ(v6.v, 5)
 
     let v7 : Alias3Union<double, string> = [new C<double>(6)];   // C<Double>[]|String
     let v9 : C<double>[] = v7 as C<double>[];
-    assertEQ(v9[0].v, 6)
+    arktest.assertEQ(v9[0].v, 6)
 
     let v10 : Alias4Union<double, string> = (p : double) : double => { return p; };  // (p: Double)=>Double |String
     let v11 : (p : double) => double = v10 as (p : double) => double;
-    assertEQ(v11(7), 7)
+    arktest.assertEQ(v11(7), 7)
 }

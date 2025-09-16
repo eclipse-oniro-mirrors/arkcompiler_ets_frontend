@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
-class typeof{
+class /* @@ label */typeof {
   a : string = "15";
 }
+
+/* @@@ label Error SyntaxError: Hard keyword 'typeof' cannot be used as identifier */
+/* @@@ label Error SyntaxError: Identifier expected, got 'typeof'. */

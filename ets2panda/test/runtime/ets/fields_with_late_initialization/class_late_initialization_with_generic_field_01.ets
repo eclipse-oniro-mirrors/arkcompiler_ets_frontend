@@ -22,6 +22,6 @@ function main(): void {
     const gen = new Generic<string>();
     console.log(gen.genericField);
   } catch (e) {
-    assertTrue(e instanceof ClassCastError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

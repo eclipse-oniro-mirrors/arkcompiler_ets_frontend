@@ -129,7 +129,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 41,
+                                    "column": 39,
                                     "program": "async_function.ets"
                                   }
                                 }
@@ -142,7 +142,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 41,
+                                  "column": 39,
                                   "program": "async_function.ets"
                                 }
                               }
@@ -198,7 +198,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 49,
+                        "column": 47,
                         "program": "async_function.ets"
                       }
                     }
@@ -211,7 +211,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 49,
+                      "column": 47,
                       "program": "async_function.ets"
                     }
                   }
@@ -295,7 +295,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 18,
                 "program": "async_function.ets"
               },
               "end": {
@@ -516,12 +516,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "async_function.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "async_function.ets"
                     }
                   }
                 },
@@ -529,12 +529,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "async_function.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "async_function.ets"
                   }
                 }
               },
@@ -542,393 +542,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "async_function.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "async_function.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "async_function.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "lambda",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 5,
-                              "program": "async_function.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 11,
-                              "program": "async_function.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ArrowFunctionExpression",
-                          "function": {
-                            "type": "ScriptFunction",
-                            "id": null,
-                            "generator": false,
-                            "async": true,
-                            "expression": false,
-                            "params": [],
-                            "returnType": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Promise",
-                                  "decorators": [],
-                                  "loc": {
-                                    "start": {
-                                      "line": 22,
-                                      "column": 54,
-                                      "program": "async_function.ets"
-                                    },
-                                    "end": {
-                                      "line": 22,
-                                      "column": 61,
-                                      "program": "async_function.ets"
-                                    }
-                                  }
-                                },
-                                "typeParams": {
-                                  "type": "TSTypeParameterInstantiation",
-                                  "params": [
-                                    {
-                                      "type": "ETSUnionType",
-                                      "types": [
-                                        {
-                                          "type": "ETSTypeReference",
-                                          "part": {
-                                            "type": "ETSTypeReferencePart",
-                                            "name": {
-                                              "type": "Identifier",
-                                              "name": "Object",
-                                              "decorators": [],
-                                              "loc": {
-                                                "start": {
-                                                  "line": 22,
-                                                  "column": 62,
-                                                  "program": "async_function.ets"
-                                                },
-                                                "end": {
-                                                  "line": 22,
-                                                  "column": 68,
-                                                  "program": "async_function.ets"
-                                                }
-                                              }
-                                            },
-                                            "loc": {
-                                              "start": {
-                                                "line": 22,
-                                                "column": 62,
-                                                "program": "async_function.ets"
-                                              },
-                                              "end": {
-                                                "line": 22,
-                                                "column": 70,
-                                                "program": "async_function.ets"
-                                              }
-                                            }
-                                          },
-                                          "loc": {
-                                            "start": {
-                                              "line": 22,
-                                              "column": 62,
-                                              "program": "async_function.ets"
-                                            },
-                                            "end": {
-                                              "line": 22,
-                                              "column": 70,
-                                              "program": "async_function.ets"
-                                            }
-                                          }
-                                        },
-                                        {
-                                          "type": "ETSNullType",
-                                          "loc": {
-                                            "start": {
-                                              "line": 22,
-                                              "column": 71,
-                                              "program": "async_function.ets"
-                                            },
-                                            "end": {
-                                              "line": 22,
-                                              "column": 75,
-                                              "program": "async_function.ets"
-                                            }
-                                          }
-                                        }
-                                      ],
-                                      "loc": {
-                                        "start": {
-                                          "line": 22,
-                                          "column": 62,
-                                          "program": "async_function.ets"
-                                        },
-                                        "end": {
-                                          "line": 22,
-                                          "column": 75,
-                                          "program": "async_function.ets"
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "loc": {
-                                    "start": {
-                                      "line": 22,
-                                      "column": 61,
-                                      "program": "async_function.ets"
-                                    },
-                                    "end": {
-                                      "line": 22,
-                                      "column": 76,
-                                      "program": "async_function.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 22,
-                                    "column": 54,
-                                    "program": "async_function.ets"
-                                  },
-                                  "end": {
-                                    "line": 22,
-                                    "column": 79,
-                                    "program": "async_function.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 54,
-                                  "program": "async_function.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 79,
-                                  "program": "async_function.ets"
-                                }
-                              }
-                            },
-                            "body": {
-                              "type": "BlockStatement",
-                              "statements": [
-                                {
-                                  "type": "ReturnStatement",
-                                  "argument": {
-                                    "type": "NullLiteral",
-                                    "value": null,
-                                    "loc": {
-                                      "start": {
-                                        "line": 22,
-                                        "column": 89,
-                                        "program": "async_function.ets"
-                                      },
-                                      "end": {
-                                        "line": 22,
-                                        "column": 93,
-                                        "program": "async_function.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 22,
-                                      "column": 82,
-                                      "program": "async_function.ets"
-                                    },
-                                    "end": {
-                                      "line": 22,
-                                      "column": 94,
-                                      "program": "async_function.ets"
-                                    }
-                                  }
-                                }
-                              ],
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 80,
-                                  "program": "async_function.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 96,
-                                  "program": "async_function.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 22,
-                                "column": 50,
-                                "program": "async_function.ets"
-                              },
-                              "end": {
-                                "line": 22,
-                                "column": 96,
-                                "program": "async_function.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 50,
-                              "program": "async_function.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 96,
-                              "program": "async_function.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 22,
-                            "column": 5,
-                            "program": "async_function.ets"
-                          },
-                          "end": {
-                            "line": 22,
-                            "column": 96,
-                            "program": "async_function.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 22,
-                          "column": 5,
-                          "program": "async_function.ets"
-                        },
-                        "end": {
-                          "line": 22,
-                          "column": 96,
-                          "program": "async_function.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "async_function.ets"
                 }
               }
             },
@@ -1052,7 +671,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 39,
+                                    "column": 37,
                                     "program": "async_function.ets"
                                   }
                                 }
@@ -1065,7 +684,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 39,
+                                  "column": 37,
                                   "program": "async_function.ets"
                                 }
                               }
@@ -1121,7 +740,7 @@
                       },
                       "end": {
                         "line": 20,
-                        "column": 47,
+                        "column": 45,
                         "program": "async_function.ets"
                       }
                     }
@@ -1134,7 +753,7 @@
                     },
                     "end": {
                       "line": 20,
-                      "column": 47,
+                      "column": 45,
                       "program": "async_function.ets"
                     }
                   }
@@ -1312,7 +931,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 35,
+                                  "column": 33,
                                   "program": "async_function.ets"
                                 }
                               }
@@ -1325,7 +944,7 @@
                               },
                               "end": {
                                 "line": 22,
-                                "column": 35,
+                                "column": 33,
                                 "program": "async_function.ets"
                               }
                             }
@@ -1381,7 +1000,7 @@
                     },
                     "end": {
                       "line": 22,
-                      "column": 43,
+                      "column": 41,
                       "program": "async_function.ets"
                     }
                   }
@@ -1394,7 +1013,7 @@
                   },
                   "end": {
                     "line": 22,
-                    "column": 43,
+                    "column": 41,
                     "program": "async_function.ets"
                   }
                 }
@@ -1407,7 +1026,7 @@
                 },
                 "end": {
                   "line": 22,
-                  "column": 43,
+                  "column": 41,
                   "program": "async_function.ets"
                 }
               }
@@ -1422,7 +1041,7 @@
               },
               "end": {
                 "line": 22,
-                "column": 96,
+                "column": 50,
                 "program": "async_function.ets"
               }
             }

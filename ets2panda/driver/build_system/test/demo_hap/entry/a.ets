@@ -13,7 +13,22 @@
  * limitations under the License.
  */
 
+
+import {str, strd} from './c'
+import {strA} from 'harA'
+import {strB} from 'harB'
+
 function main() {
   let a: string = "hello world"
   console.log(a)
+
+  console.log(strd);
+
+  console.log(strA);
+  console.log(strB);
+
+  console.log("end hello world a.ets")
 }
+
+let stra = "hello world from a"
+export {stra}

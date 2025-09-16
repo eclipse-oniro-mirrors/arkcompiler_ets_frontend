@@ -829,3 +829,6 @@
     }
   }
 }
+TypeError: Switch case type 'int' is not comparable to discriminant type 'byte' [switch2.ets:21:8]
+TypeError: Switch case type 'int' is not comparable to discriminant type 'byte' [switch2.ets:22:8]
+TypeError: Switch case type 'int' is not comparable to discriminant type 'byte' [switch2.ets:25:8]

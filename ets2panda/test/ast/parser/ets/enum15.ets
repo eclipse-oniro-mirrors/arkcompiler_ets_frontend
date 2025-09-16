@@ -23,3 +23,4 @@ enum InvalidInitTypeEnum {
 /* @@? 18:11 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
 /* @@? 19:7 Error SyntaxError: Only constant expression is expected in the field */
 /* @@? 19:7 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+

@@ -23,13 +23,13 @@ let foo = (this: A): this => {
 }
 
 function main() {
-    assertEQ((new A().foo()).data_, 2)
-    assertEQ((foo(new A())).data_, 2)
-    assertEQ((new A().foo().foo()).data_, 3)
-    assertEQ((foo(new A().foo()).data_), 3)
+    arktest.assertEQ((new A().foo()).data_, 2)
+    arktest.assertEQ((foo(new A())).data_, 2)
+    arktest.assertEQ((new A().foo().foo()).data_, 3)
+    arktest.assertEQ((foo(new A().foo()).data_), 3)
     let a = new A();
-    assertEQ(a.foo().data_, 2)
-    assertEQ(foo(a).data_, 3)
-    assertEQ(a.foo().foo().data_, 5)
-    assertEQ(foo(a.foo().foo()).data_, 8)
+    arktest.assertEQ(a.foo().data_, 2)
+    arktest.assertEQ(foo(a).data_, 3)
+    arktest.assertEQ(a.foo().foo().data_, 5)
+    arktest.assertEQ(foo(a.foo().foo()).data_, 8)
 }

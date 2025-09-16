@@ -13,16 +13,36 @@
  * limitations under the License.
  */
 
-#include "inlay_hints.h"
 #include <cstddef>
 #include <string>
 #include <vector>
-#include "public/public.h"
-#include "internal_api.h"
 #include "cancellation_token.h"
+#include "compiler/lowering/util.h"
+#include "inlay_hints.h"
+#include "public/public.h"
 #include "utils/arena_containers.h"
 
 namespace ark::es2panda::lsp {
+
+/**
+ * this function tries to find the first child node that includes the given span.
+ * It can be used to avoid double processing of the same node, like in the following case in global scope:
+ *      1)   let a = map.get("a");
+ * In this case, the call expression node will be included both in the init method and in the global class property.
+ */
+ir::AstNode *TryGetIncludingNode(const ir::AstNode *ast, const TextSpan *span)
+{
+    if (ast == nullptr || span == nullptr) {
+        return nullptr;
+    }
+    auto expectedStart = span->start;
+    auto expectedEnd = expectedStart + span->length;
+    auto checkFunc = [&expectedStart, &expectedEnd](ir::AstNode *node) {
+        return expectedStart <= node->Range().end.index && node->Range().start.index <= expectedEnd;
+    };
+    auto *found = ast->FindChild(checkFunc);
+    return found;
+}
 
 int GetFullWidth(const ir::AstNode *node)
 {
@@ -77,7 +97,7 @@ bool TextSpanIntersectsWith(const TextSpan span, const int position, const int n
 
 bool IsExpressionWithTypeArguments(const ir::AstNode *node)
 {
-    return node->Type() == ir::AstNodeType::CALL_EXPRESSION;
+    return node->Type() == ir::AstNodeType::CALL_EXPRESSION || node->Type() == ir::AstNodeType::NEW_EXPRESSION;
 }
 
 void GetVariableDeclarationTypeForHints(const ir::AstNode *decl, InlayHintList *result)
@@ -105,21 +125,23 @@ void GetVariableDeclarationTypeForHints(const ir::AstNode *decl, InlayHintList *
         return false;
     });
 }
-void AddParamIfTypeRef(const ir::AstNode *childNode, const ArenaVector<ir::Expression *> &args, InlayHintList *result)
+
+void AddParamIfTypeRef(const ir::MethodDefinition *decl, const ArenaVector<ir::Expression *> &args,
+                       InlayHintList *result)
 {
     int paramIndex = 0;
-    childNode->FindChild([&paramIndex, args, &result](ark::es2panda::ir::AstNode *node) {
-        if (node->IsETSParameterExpression()) {
-            auto part = node->AsETSParameterExpression()->Name().Utf8();
-            std::string s1 {part.data(), part.size()};
-            AddParameterHints(std::string(s1), args.at(paramIndex)->Start().index, false, result);
+    auto params = decl->Function()->Params();
+    for (const auto &param : params) {
+        if (param->IsETSParameterExpression()) {
+            auto part = param->AsETSParameterExpression()->Name().Utf8();
+            std::string text {part.data(), part.size()};
+            AddParameterHints(text, args.at(paramIndex)->Start().index, false, result);
             paramIndex++;
         }
-        return false;
-    });
+    }
 }
 
-void GetCallExpTypeForHints(const ir::AstNode *expr, const ir::AstNode *parent, InlayHintList *result)
+void GetCallExpTypeForHints(const ir::AstNode *expr, [[maybe_unused]] const ir::AstNode *parent, InlayHintList *result)
 {
     const ir::Expression *callee;
     if (expr->IsCallExpression()) {
@@ -129,7 +151,7 @@ void GetCallExpTypeForHints(const ir::AstNode *expr, const ir::AstNode *parent, 
     } else {
         return;
     }
-    if (!callee->IsIdentifier()) {
+    if (!(callee->IsIdentifier() || callee->IsMemberExpression())) {
         return;
     }
     const auto args =
@@ -138,13 +160,12 @@ void GetCallExpTypeForHints(const ir::AstNode *expr, const ir::AstNode *parent, 
         return;
     }
 
-    parent->FindChild([args, callee, &result](ark::es2panda::ir::AstNode *childNode) {
-        if (childNode->IsMethodDefinition() &&
-            childNode->AsMethodDefinition()->Function()->Id()->ToString() == callee->AsIdentifier()->Name().Utf8()) {
-            AddParamIfTypeRef(childNode, args, result);
-        }
-        return false;
-    });
+    auto *decl = callee->IsIdentifier()
+                     ? compiler::DeclarationFromIdentifier(callee->AsIdentifier())
+                     : compiler::DeclarationFromIdentifier(callee->AsMemberExpression()->Property()->AsIdentifier());
+    if (decl != nullptr && decl->IsMethodDefinition()) {
+        AddParamIfTypeRef(decl->AsMethodDefinition(), args, result);
+    }
 }
 
 bool ShouldShowParameterNameHints(const UserPreferences &preferences)
@@ -398,7 +419,9 @@ InlayHintList ProvideInlayHintsImpl(es2panda_Context *context, const TextSpan *s
         return {};
     }
     InlayHintProcessingContext processingContext = {span, parent, cancellationToken, preferences};
-    parent->FindChild([&processingContext, &result](ir::AstNode *childNode) {
+    const auto *searchNode = TryGetIncludingNode(parent, span);
+    searchNode = searchNode == nullptr ? parent : searchNode;
+    searchNode->FindChild([&processingContext, &result](ir::AstNode *childNode) {
         Visitor(childNode, processingContext, &result);
         return false;
     });

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 class ReadonlyData<T> {
-    readonly /* @@ label */value: T;
+    readonly value: T;
     constructor(value: T) {
         this.value = value;
     }
@@ -21,7 +21,7 @@ class ReadonlyData<T> {
 
 function main(): void {
     let myData = new ReadonlyData<string>("import data");
-    myData.value = "new data";
+    /* @@ label */myData.value = "new data";
 }
 
 /* @@@ label Error TypeError: Cannot assign to a readonly variable value  */

@@ -30,12 +30,12 @@ function bar<T>(a: T): T {
 }
 
 function foo<T, U, K>(a: A<A<K, U, T>, String, K>): void {
-    assertEQ((typeof a.a), "object")
-    assertEQ((typeof a.b), "string")
-    assertEQ((typeof a.c), "boolean")
-    assertEQ((typeof a.a.a), "boolean")
-    assertEQ((typeof a.a.b), "string")
-    assertEQ((typeof a.a.c), "number")
+    arktest.assertEQ((typeof a.a), "object")
+    arktest.assertEQ((typeof a.b), "string")
+    arktest.assertEQ((typeof a.c), "boolean")
+    arktest.assertEQ((typeof a.a.a), "boolean")
+    arktest.assertEQ((typeof a.a.b), "string")
+    arktest.assertEQ((typeof a.a.c), "number")
 }
 
 function main(): void {

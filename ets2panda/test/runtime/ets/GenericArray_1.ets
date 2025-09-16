@@ -14,7 +14,7 @@
  */
 
 function createMap<K, V>(keys: FixedArray<K>, values: FixedArray<V>): Map<K, V> {
-  assertEQ(keys.length, values.length)
+  arktest.assertEQ(keys.length, values.length)
   let map = new Map<K, V>();
   for (let i = 0; i < keys.length; i++) {
     map.set(keys[i], values[i]);
@@ -24,4 +24,4 @@ function createMap<K, V>(keys: FixedArray<K>, values: FixedArray<V>): Map<K, V> 
 }
 
 let map = createMap<number, string>([10, 20], ["hello", "world"]);
-assertEQ(map.get(10), "hello")
+arktest.assertEQ(map.get(10), "hello")

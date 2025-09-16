@@ -35,7 +35,7 @@ import { MyCard } from './'
 
 @Component
 struct MyComponent1 {
-  @State value: number = 0.0
+  @State value: number = 0
 
   build() {
     Row() {
@@ -61,7 +61,7 @@ struct Test {
 
 @Component
 struct MyComponent2 {
-  @State value: number = 0.0;
+  @State value: number = 0;
   build() {
     Row() {
       Slider({
@@ -73,7 +73,7 @@ struct MyComponent2 {
 
 @Component
 struct MyComponent3 {
-  @State value: number = 0.0;
+  @State value: number = 0;
   build() {
     Row() {
       Slider({
@@ -85,7 +85,7 @@ struct MyComponent3 {
 
 @Component
 struct MyComponent4 {
-  @State value: number = 0.0;
+  @State value: number = 0;
   build() {
     Row() {
       Slider({
@@ -98,7 +98,7 @@ struct MyComponent4 {
 @Entry
 @ComponentV2
 struct Index {
-  @Local value: number = 0.0;
+  @Local value: number = 0;
   @Local str: string = '';
 
   build() {
@@ -109,13 +109,13 @@ struct Index {
       })
       Star({
         value: this.value,
-        $value: value => {
+        $value: (value: number) => {
             this.value = value;
         }
       })
       MyCard({
         str: this.str,
-        $str: value => {
+        $str: (value: string) => {
             this.str = value;
         }
       })
@@ -126,14 +126,14 @@ struct Index {
 
 @ComponentV2
 struct Star {
-  @Param value: number = 0.0;
+  @Param value: number = 0;
   @Event $value: (val: number) => void = (val: number) => {};
 
   build() {
     Column() {
       Text(`${this.value}`)
       Button(`change value `).onClick(() => {
-        this.$value(10.0);
+        this.$value(10);
       })
     }
   }

@@ -13,8 +13,12 @@
  * limitations under the License.
  */
 
-import {a, b} from "./interop_equality_judgment_js"
+import {a, b, c, d} from "./interop_equality_judgment_js"
 a == b
 a != b
 a === b
 a !== b
+c.num1 == d.num1
+c.num1 != d.num2
+c.num1 === d.num1
+c.num1 !== d.num2

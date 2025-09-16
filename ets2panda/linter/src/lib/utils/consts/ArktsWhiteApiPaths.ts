@@ -14,3 +14,4 @@
  */
 
 export const ARKTS_WHITE_API_PATH_TEXTSTYLE = 'component/styled_string.d.ts';
+export const COMMON_UNION_MEMBER_ACCESS_WHITELIST = new Set(['ArrayBufferLike', 'IteratorResult']);

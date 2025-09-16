@@ -31,10 +31,8 @@ public:
           statements_(std::move(statementList)),
           trailingBlocks_(allocator->Adapter())
     {
+        InitHistory();
     }
-
-    // NOTE (somas): this friend relationship can be removed once there are getters for private fields
-    friend class checker::ETSAnalyzer;
 
     [[nodiscard]] bool IsScopeBearer() const noexcept override
     {
@@ -43,55 +41,91 @@ public:
 
     [[nodiscard]] varbinder::Scope *Scope() const noexcept override
     {
-        return scope_;
+        return AstNode::GetHistoryNodeAs<BlockStatement>()->scope_;
     }
 
     void SetScope(varbinder::Scope *scope) noexcept
     {
-        scope_ = scope;
+        if (Scope() != scope) {
+            AstNode::GetOrCreateHistoryNodeAs<BlockStatement>()->scope_ = scope;
+        }
     }
 
     void ClearScope() noexcept override
     {
-        scope_ = nullptr;
+        SetScope(nullptr);
+    }
+
+    ArenaVector<Statement *> &StatementsForUpdates()
+    {
+        return AstNode::GetOrCreateHistoryNodeAs<BlockStatement>()->statements_;
+    }
+
+    const ArenaVector<Statement *> &Statements()
+    {
+        return AstNode::GetHistoryNodeAs<BlockStatement>()->statements_;
     }
 
     const ArenaVector<Statement *> &Statements() const
     {
-        return statements_;
-    }
-
-    ArenaVector<Statement *> &Statements()
-    {
-        return statements_;
+        return AstNode::GetHistoryNodeAs<BlockStatement>()->statements_;
     }
 
     void SetStatements(ArenaVector<Statement *> &&statementList)
     {
-        statements_ = std::move(statementList);
+        auto &statements = AstNode::GetOrCreateHistoryNodeAs<BlockStatement>()->statements_;
+        statements = std::move(statementList);
 
-        for (auto *statement : statements_) {
+        for (auto *statement : Statements()) {
             statement->SetParent(this);
         }
     }
 
-    void AddStatement(Statement *stmt)
+    void AddStatements(const ArenaVector<Statement *> &statementList)
     {
-        stmt->SetParent(this);
-        statements_.emplace_back(stmt);
+        auto &statements = AstNode::GetOrCreateHistoryNodeAs<BlockStatement>()->statements_;
+
+        for (auto statement : statementList) {
+            statement->SetParent(this);
+            statements.emplace_back(statement);
+        }
     }
 
-    void AddStatements(ArenaVector<Statement *> &stmts)
+    void ClearStatements()
     {
-        for (auto *stmt : stmts) {
-            stmt->SetParent(this);
-        }
-        statements_.insert(statements_.end(), stmts.begin(), stmts.end());
+        auto &statements = AstNode::GetOrCreateHistoryNodeAs<BlockStatement>()->statements_;
+        statements.clear();
+    }
+
+    void AddStatement(Statement *statement)
+    {
+        statement->SetParent(this);
+        auto &statements = AstNode::GetOrCreateHistoryNodeAs<BlockStatement>()->statements_;
+        statements.emplace_back(statement);
+    }
+
+    void AddStatement(std::size_t idx, Statement *statement)
+    {
+        statement->SetParent(this);
+        auto &statements = AstNode::GetOrCreateHistoryNodeAs<BlockStatement>()->statements_;
+        statements.emplace(std::next(statements.begin() + idx), statement);
     }
 
     void AddTrailingBlock(AstNode *stmt, BlockStatement *trailingBlock)
     {
-        trailingBlocks_.emplace(stmt, trailingBlock);
+        AstNode::GetOrCreateHistoryNodeAs<BlockStatement>()->trailingBlocks_.emplace(stmt, trailingBlock);
+    }
+
+    BlockStatement *SearchStatementInTrailingBlock(Statement *item)
+    {
+        auto &trailingBlock = AstNode::GetHistoryNodeAs<BlockStatement>()->trailingBlocks_;
+        auto nowNode = item->GetHistoryNode();
+        for (auto &it : trailingBlock) {
+            if (it.first->GetHistoryNode() == nowNode) {
+                return it.second;
+            }
+        }
+        return nullptr;
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;

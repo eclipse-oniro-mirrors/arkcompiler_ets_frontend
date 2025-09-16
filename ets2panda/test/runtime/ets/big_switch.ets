@@ -1220,5 +1220,5 @@ function main() {
         default:
           break;
       }
-      assertTrue(res)
+      arktest.assertTrue(res)
 }

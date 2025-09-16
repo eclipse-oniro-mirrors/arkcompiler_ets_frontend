@@ -89,6 +89,7 @@ TaggedTemplateExpression *TaggedTemplateExpression::Clone(ArenaAllocator *const 
     auto *const quasi = quasi_ != nullptr ? quasi_->Clone(allocator, nullptr) : nullptr;
     auto *const typeParams = typeParams_ != nullptr ? typeParams_->Clone(allocator, nullptr) : nullptr;
     auto *const clone = allocator->New<TaggedTemplateExpression>(tag, quasi, typeParams);
+    ES2PANDA_ASSERT(clone != nullptr);
 
     if (tag != nullptr) {
         tag->SetParent(clone);

@@ -350,17 +350,17 @@ class C {
   
   public f(): int {
     let ll = 2;
-    let lam = new LambdaObject-C$lambda$invoke$0(this, ll);
+    let lam = new %%lambda-lambda_invoke-0(this, ll);
     return lam.invoke0();
   }
   
-  public lambda$invoke$0(ll: int): int {
+  public lambda_invoke-0(ll: int): int {
     return (this.p + ll);
   }
   
 }
 
-final class LambdaObject-C$lambda$invoke$0 implements Function0<Int> {
+final class %%lambda-lambda_invoke-0 implements Function0<Int> {
   public $this: C;
   
   public ll: int;
@@ -371,11 +371,11 @@ final class LambdaObject-C$lambda$invoke$0 implements Function0<Int> {
   }
   
   public invoke0(): Object|null|undefined {
-    return this.$this.lambda$invoke$0(this.ll) as Object|null|undefined;
+    return this.$this.lambda_invoke-0(this.ll) as Object|null|undefined;
   }
   
   public $_invoke(): int {
-    return this.$this.lambda$invoke$0(this.ll);
+    return this.$this.lambda_invoke-0(this.ll);
   }
 }
 ```
@@ -650,6 +650,11 @@ becomes
 ```
 s.compareTo("test") > 0
 ```
+
+- `AnnotationCopyLowering` and `AnnotationCopyPostLowering` handle copying of annotation properties. These phases ensure that annotation properties are properly copied and processed during the lowering phase. The phases work together to:
+  1. Copy annotation properties from annotation declarations to their usages
+  2. Process and validate annotation properties
+  3. Ensure proper handling of annotation metadata in the generated code
 
 - `PartialExportClassGen` generates declarations for `Partial<C>` where `C` is exported
 ```

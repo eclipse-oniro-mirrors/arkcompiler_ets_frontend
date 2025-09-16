@@ -21,3 +21,5 @@ function main(): void {
     let b = s ?? a;
     b.toString();
 }
+
+/* @@? 22:19 Error TypeError: Type String|Int[] is illegal in union member expression. */

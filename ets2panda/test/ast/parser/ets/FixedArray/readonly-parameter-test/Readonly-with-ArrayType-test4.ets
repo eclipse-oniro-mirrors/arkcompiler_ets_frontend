@@ -18,4 +18,4 @@ function foo (x: Readonly<FixedArray<int>>) {
     let x1 : FixedArray<int>
     x1 = /* @@ label */x
 }
-/* @@? 19:24 Error TypeError: Type 'readonly FixedArray<int>' cannot be assigned to type 'FixedArray<int>' */
+/* @@? 19:24 Error TypeError: Type 'readonly FixedArray<Int>' cannot be assigned to type 'FixedArray<Int>' */

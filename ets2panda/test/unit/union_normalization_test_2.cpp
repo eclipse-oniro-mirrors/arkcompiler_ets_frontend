@@ -203,7 +203,7 @@ TEST_F(UnionNormalizationTest, UnionStringLiterals1)
 
     // Test normalization: number | "abc" | string | "xy" ==> number | string
     ArenaVector<checker::Type *> unionConstituents3(checker->Allocator()->Adapter());
-    unionConstituents3.emplace_back(checker->GlobalDoubleType());
+    unionConstituents3.emplace_back(checker->GlobalDoubleBuiltinType());
     unionConstituents3.emplace_back(checker->CreateETSStringLiteralType("abc"));
     unionConstituents3.emplace_back(checker->GlobalBuiltinETSStringType());
     unionConstituents3.emplace_back(checker->CreateETSStringLiteralType("xy"));
@@ -279,7 +279,7 @@ TEST_F(UnionNormalizationTest, UnionStringLiterals2)
     unionConstituents3.emplace_back(checker->CreateETSStringLiteralType("bc2"));
     unionConstituents3.emplace_back(checker->CreateETSStringLiteralType("cd3"));
     unionConstituents3.emplace_back(checker->GlobalBuiltinETSStringType());
-    unionConstituents3.emplace_back(checker->GlobalIntType());
+    unionConstituents3.emplace_back(checker->GlobalIntBuiltinType());
 
     // Create union type, which will be normalized inside creation function
     auto *const normalizedType3 = checker->CreateETSUnionType(std::move(unionConstituents3));

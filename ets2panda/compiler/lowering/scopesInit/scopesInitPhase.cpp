@@ -238,6 +238,15 @@ void ScopesInitPhase::VisitVariableDeclarator(ir::VariableDeclarator *varDecl)
     auto init = varDecl->Id();
     std::vector<ir::Identifier *> bindings = util::Helpers::CollectBindingNames(VarBinder(), init);
     for (auto *binding : bindings) {
+        auto name = binding->Name();
+        if (binding->Variable() == nullptr && !name.Is(ERROR_LITERAL) && VarBinder()->IsETSBinder()) {
+            auto var = VarBinder()->GetScope()->FindLocal(name, varbinder::ResolveBindingOptions::ALL_VARIABLES);
+            if (var != nullptr) {
+                VarBinder()->ThrowRedeclaration(binding->Start(), name, var->Declaration()->Type());
+                continue;
+            }
+        }
+
         auto [decl, var] = AddOrGetVarDecl(varDecl->Flag(), binding);
         BindVarDecl(binding, init, decl, var);
     }
@@ -414,7 +423,19 @@ void ScopesInitPhase::IterateNoTParams(ir::ClassDefinition *classDef)
     CallNode(classDef->Annotations());
     CallNode(classDef->Implements());
     CallNode(classDef->Ctor());
-    CallNode(classDef->Body());
+
+    for (auto property : classDef->Body()) {
+        if (property->IsOverloadDeclaration()) {
+            continue;
+        }
+        CallNode(property);
+    }
+
+    for (auto property : classDef->Body()) {
+        if (property->IsOverloadDeclaration()) {
+            CallNode(property);
+        }
+    }
 }
 
 void ScopesInitPhase::LogDiagnostic(const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params,
@@ -486,7 +507,7 @@ std::tuple<varbinder::Decl *, varbinder::Variable *> ScopesInitPhase::AddOrGetVa
         name = compiler::GenName(Allocator()).View();
     } else if (VarBinder()->IsETSBinder()) {
         if (auto var = scope->FindLocal(name, varbinder::ResolveBindingOptions::ALL_VARIABLES); var != nullptr) {
-            VarBinder()->ThrowRedeclaration(id->Start(), name, var->Declaration()->Type());
+            ES2PANDA_ASSERT(ctx_->diagnosticEngine->IsAnyError());
             return {var->Declaration(), var};
         }
     }
@@ -844,6 +865,9 @@ void InitScopesPhaseETS::HandleProgram(parser::Program *program)
         (void)_;
         auto savedTopScope(program->VarBinder()->TopScope());
         auto mainProg = progList.front();
+        if (mainProg->IsASTLowered()) {
+            continue;
+        }
         mainProg->VarBinder()->InitTopScope();
         AddGlobalToBinder(mainProg);
         BindScopeNode(mainProg->VarBinder()->GetScope(), mainProg->Ast());
@@ -941,12 +965,6 @@ void InitScopesPhaseETS::VisitImportNamespaceSpecifier(ir::ImportNamespaceSpecif
 
 void InitScopesPhaseETS::VisitImportSpecifier(ir::ImportSpecifier *importSpec)
 {
-    if (importSpec->Parent()->IsETSImportDeclaration() &&
-        importSpec->Parent()->AsETSImportDeclaration()->IsPureDynamic()) {
-        auto [decl, var] = VarBinder()->NewVarDecl<varbinder::LetDecl>(importSpec->Local()->Start(),
-                                                                       importSpec->Local()->Name(), importSpec);
-        var->AddFlag(varbinder::VariableFlags::INITIALIZED);
-    }
     Iterate(importSpec);
 }
 
@@ -969,6 +987,7 @@ void InitScopesPhaseETS::DeclareClassMethod(ir::MethodDefinition *method)
     }
 
     const auto methodName = method->Id();
+    ES2PANDA_ASSERT(methodName != nullptr);
     auto *const clsScope = VarBinder()->GetScope()->AsClassScope();
     auto options =
         method->IsStatic()
@@ -1009,8 +1028,9 @@ void InitScopesPhaseETS::MaybeAddOverload(ir::MethodDefinition *method, ir::Iden
             methodName->SetVariable(var);
         }
         for (auto *overload : method->Overloads()) {
-            ES2PANDA_ASSERT((overload->Function()->Flags() & ir::ScriptFunctionFlags::OVERLOAD) ||
-                            (overload->Function()->Flags() & ir::ScriptFunctionFlags::EXTERNAL_OVERLOAD));
+            ES2PANDA_ASSERT(overload->Id() != nullptr &&
+                            ((overload->Function()->Flags() & ir::ScriptFunctionFlags::OVERLOAD) ||
+                             (overload->Function()->Flags() & ir::ScriptFunctionFlags::EXTERNAL_OVERLOAD)));
             overload->Id()->SetVariable(var);
             overload->SetParent(var->Declaration()->Node());
         }
@@ -1031,6 +1051,90 @@ void InitScopesPhaseETS::MaybeAddOverload(ir::MethodDefinition *method, ir::Iden
         }
         method->ClearOverloads();
     }
+}
+
+void InitScopesPhaseETS::VisitOverloadDeclaration(ir::OverloadDeclaration *overload)
+{
+    auto *const clsScope = VarBinder()->GetScope()->AsClassScope();
+    const auto overloadName = overload->Id();
+    auto options =
+        (overload->IsStatic() || overload->IsConstructorOverloadDeclaration())
+            ? varbinder::ResolveBindingOptions::STATIC_VARIABLES | varbinder::ResolveBindingOptions::STATIC_DECLARATION
+            : varbinder::ResolveBindingOptions::VARIABLES | varbinder::ResolveBindingOptions::DECLARATION;
+
+    auto variable = clsScope->FindLocal(overloadName->Name(), options);
+    if (variable != nullptr) {
+        VarBinder()->ThrowRedeclaration(overloadName->Start(), overloadName->Name(), variable->Declaration()->Type());
+    }
+
+    Iterate(overload);
+    DeclareClassOverload(overload);
+}
+
+varbinder::LocalScope *InitScopesPhaseETS::OverloadTargetScope(ir::OverloadDeclaration *overloaddecl,
+                                                               varbinder::ClassScope *clsScope)
+{
+    varbinder::LocalScope *targetScope {};
+    if (overloaddecl->IsConstructorOverloadDeclaration()) {
+        targetScope = clsScope->StaticDeclScope();
+
+        auto *found = clsScope->StaticMethodScope()->FindLocal(Signatures::CONSTRUCTOR_NAME,
+                                                               varbinder::ResolveBindingOptions::BINDINGS);
+        if (found == nullptr ||
+            (!overloaddecl->OverloadedList().empty() && overloaddecl->OverloadedList().front()->IsIdentifier() &&
+             overloaddecl->OverloadedList().front()->AsIdentifier()->Name().Is(Signatures::CONSTRUCTOR_NAME))) {
+            return targetScope;
+        }
+        ir::Identifier *anonyConstructor = Allocator()->New<ir::Identifier>(Signatures::CONSTRUCTOR_NAME, Allocator());
+        overloaddecl->PushFront(anonyConstructor);
+        anonyConstructor->SetParent(overloaddecl);
+    } else {
+        targetScope = overloaddecl->IsStatic() ? clsScope->StaticDeclScope() : clsScope->InstanceDeclScope();
+    }
+
+    return targetScope;
+}
+
+void InitScopesPhaseETS::DeclareClassOverload(ir::OverloadDeclaration *overloaddecl)
+{
+    ES2PANDA_ASSERT(VarBinder()->GetScope()->IsClassScope());
+
+    const auto overloadName = overloaddecl->Id();
+    auto *const clsScope = VarBinder()->GetScope()->AsClassScope();
+
+    varbinder::LocalScope *targetScope = OverloadTargetScope(overloaddecl, clsScope);
+    varbinder::LocalScope *serachMethodScope =
+        (overloaddecl->IsStatic() || overloaddecl->IsConstructorOverloadDeclaration())
+            ? clsScope->StaticMethodScope()
+            : clsScope->InstanceMethodScope();
+
+    for (auto *methodName : overloaddecl->OverloadedList()) {
+        if (!methodName->IsIdentifier()) {
+            continue;
+        }
+
+        auto *found = serachMethodScope->FindLocal(methodName->AsIdentifier()->Name(),
+                                                   varbinder::ResolveBindingOptions::BINDINGS);
+        if (found == nullptr) {
+            continue;
+        }
+        if (!found->Declaration()->Node()->IsMethodDefinition()) {
+            VarBinder()->ThrowError(methodName->Start(), diagnostic::OVERLOADED_NAME_MUST_FUNCTION);
+            continue;
+        }
+
+        methodName->SetVariable(found);
+    }
+
+    auto classCtx = varbinder::LexicalScope<varbinder::LocalScope>::Enter(VarBinder(), targetScope);
+    auto var = std::get<1>(VarBinder()->NewVarDecl<varbinder::FunctionDecl>(overloadName->Start(), Allocator(),
+                                                                            overloadName->Name(), overloaddecl));
+    var->SetScope(clsScope);
+    if (targetScope->HasFlag(varbinder::ScopeFlags::STATIC)) {
+        var->AddFlag(varbinder::VariableFlags::STATIC);
+    }
+    var->AddFlag(varbinder::VariableFlags::OVERLOAD);
+    overloadName->SetVariable(var);
 }
 
 void InitScopesPhaseETS::VisitETSReExportDeclaration(ir::ETSReExportDeclaration *reExport)
@@ -1079,7 +1183,7 @@ void InitScopesPhaseETS::VisitTSEnumMember(ir::TSEnumMember *enumMember)
     if (var = VarBinder()->GetScope()->FindLocal(name, varbinder::ResolveBindingOptions::STATIC_VARIABLES);
         var == nullptr) {
         varbinder::Decl *decl = nullptr;
-        std::tie(decl, var) = VarBinder()->NewVarDecl<varbinder::LetDecl>(ident->Start(), name);
+        std::tie(decl, var) = VarBinder()->NewVarDecl<varbinder::ReadonlyDecl>(ident->Start(), name);
         var->SetScope(VarBinder()->GetScope());
         var->AddFlag(varbinder::VariableFlags::STATIC);
         decl->BindNode(enumMember);
@@ -1100,6 +1204,7 @@ void InitScopesPhaseETS::VisitMethodDefinition(ir::MethodDefinition *method)
 
     auto *curScope = VarBinder()->GetScope();
     const auto methodName = method->Id();
+    ES2PANDA_ASSERT(methodName != nullptr);
     auto res =
         curScope->Find(methodName->Name(), method->IsStatic() ? varbinder::ResolveBindingOptions::ALL_STATIC
                                                               : varbinder::ResolveBindingOptions::ALL_NON_STATIC);
@@ -1148,8 +1253,7 @@ void InitScopesPhaseETS::VisitTSTypeParameter(ir::TSTypeParameter *typeParam)
     var->SetScope(VarBinder()->GetScope());
     var->AddFlag(varbinder::VariableFlags::TYPE_PARAMETER);
     decl->BindNode(typeParam);
-    CallNode(typeParam->Annotations());
-    CallNode(typeParam->DefaultType());
+    Iterate(typeParam);
 }
 
 void InitScopesPhaseETS::VisitTSInterfaceDeclaration(ir::TSInterfaceDeclaration *interfaceDecl)
@@ -1258,14 +1362,27 @@ void InitScopesPhaseETS::VisitClassDefinition(ir::ClassDefinition *classDef)
     auto classCtx = LexicalScopeCreateOrEnter<varbinder::ClassScope>(VarBinder(), classDef);
 
     IterateNoTParams(classDef);
-    FilterOverloads(classDef->Body());
+
+    // Will generate new node when compiling decl, so when compiling main file, will not generate new history in decl.
+    FilterOverloads(classDef->BodyForUpdate());
     auto *classScope = classCtx.GetScope();
     BindScopeNode(classScope, classDef);
 }
 
 void InitScopesPhaseETS::VisitTSInterfaceBody(ir::TSInterfaceBody *interfBody)
 {
-    Iterate(interfBody);
+    for (auto property : interfBody->Body()) {
+        if (property->IsOverloadDeclaration()) {
+            continue;
+        }
+        CallNode(property);
+    }
+
+    for (auto property : interfBody->Body()) {
+        if (property->IsOverloadDeclaration()) {
+            CallNode(property);
+        }
+    }
     FilterInterfaceOverloads(interfBody->Body());
 }
 
@@ -1385,7 +1502,7 @@ void InitScopesPhaseETS::ParseGlobalClass(ir::ClassDefinition *global)
         CallNode(decl);
     }
     CallNode(global->Annotations());
-    FilterOverloads(global->Body());
+    FilterOverloads(global->BodyForUpdate());
 }
 
 void InitScopesPhaseETS::AddGlobalDeclaration(ir::AstNode *node)

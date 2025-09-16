@@ -34,7 +34,9 @@ es2panda_AstNode *Transform(es2panda_AstNode *ast)
         auto *id = g_impl->CreateIdentifier2(g_ctx, const_cast<char *>("yyy"),
                                              g_impl->CreateETSPrimitiveType(g_ctx, PRIMITIVE_TYPE_INT));
         auto param = g_impl->CreateETSParameterExpression(g_ctx, id, false);
+        g_impl->AstNodeSetParent(g_ctx, g_impl->IdentifierTypeAnnotationConst(g_ctx, id), id);
         g_impl->AstNodeSetParent(g_ctx, id, param);
+        g_impl->AstNodeSetParent(g_ctx, param, g_impl->AstNodeParent(g_ctx, ast));
         g_isFound = true;
         return param;
     }

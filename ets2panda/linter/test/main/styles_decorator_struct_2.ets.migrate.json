@@ -15,16 +15,6 @@
     ],
     "result": [
         {
-            "line": 103,
-            "column": 24,
-            "endLine": 103,
-            "endColumn": 37,
-            "problem": "LimitedVoidTypeFromSdk",
-            "suggest": "",
-            "rule": "Type \"void\" has no instances.(sdk-limited-void-type)",
-            "severity": "ERROR"
-        },
-        {
             "line": 107,
             "column": 26,
             "endLine": 115,

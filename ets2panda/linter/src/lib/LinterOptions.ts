@@ -47,7 +47,7 @@ export interface LinterOptions {
   projectFolderList?: string[];
   checkTsAndJs?: boolean;
   inputFiles?: string[];
-  onlySyntax?: boolean;
   ruleConfigTags?: Set<number>;
   autofixCheck?: boolean;
+  autofixRuleConfigTags?: Set<number>;
 }

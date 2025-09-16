@@ -35,13 +35,7 @@ void CharLiteral::Dump(ir::AstDumper *dumper) const
 
 void CharLiteral::Dump(ir::SrcDumper *dumper) const
 {
-    std::string utf8Str = util::Helpers::UTF16toUTF8(char_);
-    if (UNLIKELY(utf8Str.empty())) {
-        dumper->Add(std::to_string(char_));
-        return;
-    }
-
-    dumper->Add("c\'" + util::Helpers::CreateEscapedString(utf8Str) + "\'");
+    dumper->Add("c\'" + ToString() + "\'");
 }
 
 void CharLiteral::Compile([[maybe_unused]] compiler::PandaGen *pg) const
@@ -73,13 +67,17 @@ CharLiteral *CharLiteral::Clone(ArenaAllocator *const allocator, AstNode *const 
     }
 
     clone->SetRange(Range());
+    clone->SetFolded(IsFolded());
     return clone;
 }
 
 std::string CharLiteral::ToString() const
 {
-    std::string charStr;
-    util::StringView::Mutf8Encode(&charStr, char_);
-    return charStr;
+    std::string utf8Str = util::Helpers::UTF16toUTF8(char_);
+    if (UNLIKELY(utf8Str.empty())) {
+        return std::to_string(char_);
+    }
+    return util::Helpers::CreateEscapedString(utf8Str);
 }
+
 }  // namespace ark::es2panda::ir

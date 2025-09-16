@@ -23,16 +23,6 @@
             "suggest": "",
             "rule": "The \"@Entry\" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)",
             "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 34,
-            "endLine": 19,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
         }
     ]
 }

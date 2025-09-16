@@ -71,7 +71,7 @@ export class MathCordic  {
         this.n = 25000;
         let total : double = MathCordic.cordic(this.n);
 
-        assertEQ(total, MathCordic.expected,  "Incorrect result")
+        arktest.assertEQ(total, MathCordic.expected,  "Incorrect result")
     }
 }
 

@@ -24,4 +24,4 @@ export class InImport {
 // used to give wrong output:
 // TypeError: Type '"InImport"' cannot be assigned to type 'int' [export_and_import_class.ets:21:1]
 
-/* @@@ label Error TypeError: Type '"InImport"' cannot be assigned to type 'int' */
+/* @@@ label Error TypeError: Type '"InImport"' cannot be assigned to type 'Int' */

@@ -24,3 +24,5 @@ function main(): void {
 }
 
 /* @@@ label Error TypeError: Enum name 'Color' used in the wrong context  */
+/* @@? 21:22 Warning Warning: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. */
+/* @@? 22:13 Warning Warning: Enum cast is deprecated. Cast support from 'Int' to 'Color' will be removed. */

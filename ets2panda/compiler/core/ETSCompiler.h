@@ -35,10 +35,9 @@ public:
 
 private:
     void GetDynamicNameParts(const ir::CallExpression *expr, ArenaVector<util::StringView> &parts) const;
-    void CompileDynamic(const ir::CallExpression *expr, compiler::VReg &calleeReg) const;
-    void CompileCastUnboxable(const ir::TSAsExpression *expr) const;
-    void CompileCastPrimitives(const ir::TSAsExpression *expr) const;
-    void CompileCast(const ir::TSAsExpression *expr) const;
+    void CompileAny(const ir::CallExpression *expr, const ir::Expression *callee, compiler::VReg &calleeReg) const;
+    void CompileCastPrimitives(const ir::Expression *expr, checker::Type const *targetType) const;
+    void CompileCast(const ir::TSAsExpression *expr, checker::Type const *targetType) const;
     void EmitCall(const ir::CallExpression *expr, compiler::VReg &calleeReg, checker::Signature *signature) const;
     bool HandleArrayTypeLengthProperty(const ir::MemberExpression *expr, ETSGen *etsg) const;
     bool HandleStaticProperties(const ir::MemberExpression *expr, ETSGen *etsg) const;
@@ -46,6 +45,7 @@ private:
     void CompileTupleCreation(const ir::ArrayExpression *tupleInitializer) const;
 
     static bool CompileComputed(compiler::ETSGen *etsg, const ir::MemberExpression *expr);
+    bool CompileAny(compiler::ETSGen *etsg, const ir::MemberExpression *expr) const;
 
     ETSGen *GetETSGen() const;
 };

@@ -40,47 +40,47 @@ class A {
 
 function foo(this: A, f: (this:B) => this) {
     this.d.setX(1).f().setY(2);
-    assertEQ(this.d.X, 1);
-    assertEQ(this.d.Y, 2);
+    arktest.assertEQ(this.d.X, 1);
+    arktest.assertEQ(this.d.Y, 2);
 }
 
 function foo2(this: A, f: (this:B) => this) {
     f(this.d.setX(1)).setY(2);
-    assertEQ(this.d.X, 1);
-    assertEQ(this.d.Y, 2);
+    arktest.assertEQ(this.d.X, 1);
+    arktest.assertEQ(this.d.Y, 2);
 }
 
 function goo(n:number, f: (this:B) => this) {
     let d = new D();
     d.setX(1).f().setY(2);
-    assertEQ(d.data, n);
-    assertEQ(d.X, 1);
-    assertEQ(d.Y, 2);
+    arktest.assertEQ(d.data, n);
+    arktest.assertEQ(d.X, 1);
+    arktest.assertEQ(d.Y, 2);
 }
 
 function goo2(n:number, f: (this:B) => this) {
     let d = new D();
     f(d.setX(1)).setY(2);
-    assertEQ(d.data, n);
-    assertEQ(d.X, 1);
-    assertEQ(d.Y, 2);
+    arktest.assertEQ(d.data, n);
+    arktest.assertEQ(d.X, 1);
+    arktest.assertEQ(d.Y, 2);
 }
 
 let a = new A();
 // function with receiver test;
 a.foo() { this.data = 666; return this; } 
-assertEQ(a.d.data, 666);
-assertEQ(a.data, 0);
+arktest.assertEQ(a.d.data, 666);
+arktest.assertEQ(a.data, 0);
 foo(a) { this.data = 66; return this; }
-assertEQ(a.d.data, 66);
-assertEQ(a.data, 0);
+arktest.assertEQ(a.d.data, 66);
+arktest.assertEQ(a.data, 0);
 
 a.foo2() { this.data = 66; return this; } 
-assertEQ(a.d.data, 66);
-assertEQ(a.data, 0);
+arktest.assertEQ(a.d.data, 66);
+arktest.assertEQ(a.data, 0);
 foo2(a) { this.data = 666; return this; }
-assertEQ(a.d.data, 666);
-assertEQ(a.data, 0);
+arktest.assertEQ(a.d.data, 666);
+arktest.assertEQ(a.data, 0);
 
 // normal function test;
 let n: number = 66;

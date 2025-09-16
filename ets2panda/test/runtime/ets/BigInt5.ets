@@ -14,79 +14,79 @@
  */
 
 function test_unary_minus(): void {
-    assertEQ(new BigInt(10).negate(), (-10n))
-    assertEQ(new BigInt(1000).negate(), (-1000n))
-    assertEQ(new BigInt(-1).negate(), (1n))
-    assertEQ(new BigInt(-10).negate(), (10n))
-    assertEQ(new BigInt(-100).negate(), (100n))
-    assertEQ(new BigInt(0).negate(), (0n))
+    arktest.assertEQ(new BigInt(10).negate(), (-10n))
+    arktest.assertEQ(new BigInt(1000).negate(), (-1000n))
+    arktest.assertEQ(new BigInt(-1).negate(), (1n))
+    arktest.assertEQ(new BigInt(-10).negate(), (10n))
+    arktest.assertEQ(new BigInt(-100).negate(), (100n))
+    arktest.assertEQ(new BigInt(0).negate(), (0n))
 }
 
 function test_unary(): void {
     let n = -128n
-    assertEQ(n, -128n)
+    arktest.assertEQ(n, -128n)
 
     let a = 123n;
-    assertEQ(a, 123n)
-    assertEQ(a.toString(), "123")
+    arktest.assertEQ(a, 123n)
+    arktest.assertEQ(a.toString(), "123")
 
     a = -123n;
-    assertEQ(a, -123n)
-    assertEQ(a.toString(), "-123")
+    arktest.assertEQ(a, -123n)
+    arktest.assertEQ(a.toString(), "-123")
 
     a = 123n
-    assertEQ(a, 123n)
-    assertEQ(a.toString(), "123")
+    arktest.assertEQ(a, 123n)
+    arktest.assertEQ(a.toString(), "123")
 
     a = -a;
-    assertEQ(a, -123n)
-    assertEQ(a.toString(), "-123")
+    arktest.assertEQ(a, -123n)
+    arktest.assertEQ(a.toString(), "-123")
 
     a = -a;
-    assertEQ(a, 123n)
-    assertEQ(a.toString(), "123")
+    arktest.assertEQ(a, 123n)
+    arktest.assertEQ(a.toString(), "123")
 
     let e: bigint;
-    assertEQ(a, 123n)
-    assertEQ(a.toString(), "123")
+    arktest.assertEQ(a, 123n)
+    arktest.assertEQ(a.toString(), "123")
     e = -a;
 
     // Check that original value does not change
-    assertEQ(a, 123n)
-    assertEQ(a.toString(), "123")
-    assertEQ(e, -123n)
-    assertEQ(e.toString(), "-123")
+    arktest.assertEQ(a, 123n)
+    arktest.assertEQ(a.toString(), "123")
+    arktest.assertEQ(e, -123n)
+    arktest.assertEQ(e.toString(), "-123")
     e = a;
-    assertEQ(e, 123n)
-    assertEQ(e.toString(), "123")
+    arktest.assertEQ(e, 123n)
+    arktest.assertEQ(e.toString(), "123")
 
     let b = -123n;
-    assertEQ(b, -123n)
-    assertEQ(b.toString(), "-123")
+    arktest.assertEQ(b, -123n)
+    arktest.assertEQ(b.toString(), "-123")
 
     let c = -(123n);
-    assertEQ(c, -123n)
-    assertEQ(c.toString(), "-123")
+    arktest.assertEQ(c, -123n)
+    arktest.assertEQ(c.toString(), "-123")
 
     // Double unary minus
     let d = -(-123n);
-    assertEQ(d, 123n)
-    assertEQ(d.toString(), "123")
+    arktest.assertEQ(d, 123n)
+    arktest.assertEQ(d.toString(), "123")
 
     // Triple unary minux
     let f = -(-(-123n));
-    assertEQ(f, -123n)
-    assertEQ(f.toString(), "-123")
+    arktest.assertEQ(f, -123n)
+    arktest.assertEQ(f.toString(), "-123")
 
     a = new BigInt(321);
-    assertEQ(a.toString(), "321")
-    assertEQ(a, 321n)
+    arktest.assertEQ(a.toString(), "321")
+    arktest.assertEQ(a, 321n)
 
     b = -a;
-    assertEQ(a.toString(), "321")
-    assertEQ(a, 321n)
-    assertEQ(b, -321n)
-    assertEQ(b.toString(), "-321")
+    arktest.assertEQ(a.toString(), "321")
+    arktest.assertEQ(a, 321n)
+    arktest.assertEQ(b, -321n)
+    arktest.assertEQ(b.toString(), "-321")
 }
 
 function main() : void {

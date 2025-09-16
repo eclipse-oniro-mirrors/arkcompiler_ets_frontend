@@ -19,19 +19,15 @@ enum Color {
     Red = b + "a" + 1 + 1,
     Blue = a + "Blue" + 3.123414515123516135135,
     Yelllow = "a" + 123401841039413413413431.123124,
-    Green = undefined + "12" + null + c'a' + (12 + 3) + 123,
 }
 
 function main() {
     let redString : string = b + "a" + 1 + 1;
-    assertEQ(Color.Red.toString(), redString)
+    arktest.assertEQ(Color.Red.toString(), redString)
     
     let blueString = a + "Blue" + 3.123414515123516135135;
-    assertEQ(Color.Blue.toString(), blueString)
+    arktest.assertEQ(Color.Blue.toString(), blueString)
 
     let yellowString = "a" + 123401841039413413413431.123124;
-    assertEQ(Color.Yelllow.toString(), yellowString)
-
-    let greenString = undefined + "12" + null + c'a' + (12 + 3) + 123
-    assertEQ(Color.Green.toString(), greenString)
+    arktest.assertEQ(Color.Yelllow.toString(), yellowString)
 }

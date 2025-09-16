@@ -1,0 +1,58 @@
+{
+  "copyright": [
+    "Copyright (c) 2025 Huawei Device Co., Ltd.",
+    "Licensed under the Apache License, Version 2.0 (the 'License');",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an 'AS IS' BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+  "result": [
+        {
+            "line": 57,
+            "column": 3,
+            "endLine": 57,
+            "endColumn": 12,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'parentKey' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'parentKey' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 3,
+            "endLine": 58,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'typeKey' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'typeKey' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 3,
+            "endLine": 59,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'nameKey' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'nameKey' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 3,
+            "endLine": 60,
+            "endColumn": 14,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'elementsKey' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'elementsKey' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        }
+    ]
+}

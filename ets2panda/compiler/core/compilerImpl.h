@@ -26,7 +26,7 @@ namespace ark::es2panda::compiler {
 class CompileQueue;
 
 void HandleGenerateDecl(const parser::Program &program, util::DiagnosticEngine &diagnosticEngine,
-                        const std::string &outputPath, bool isIsolatedDeclgen);
+                        const std::string &outputPath);
 
 class CompilationUnit {
 public:

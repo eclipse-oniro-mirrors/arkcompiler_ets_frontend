@@ -61,7 +61,7 @@ export class LintTest {
     // Get actual test results.
     const fileProblems = actualLinterResult.problemsInfos.get(path.normalize(this.cmdOptions.inputFiles[0]));
     if (fileProblems === undefined) {
-      return true;
+      return false;
     }
     const actualResult = transformProblemInfos(fileProblems, this.testModeProps.mode);
 

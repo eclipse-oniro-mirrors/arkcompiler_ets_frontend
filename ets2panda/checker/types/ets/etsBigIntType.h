@@ -21,14 +21,14 @@
 namespace ark::es2panda::checker {
 class ETSBigIntType : public ETSObjectType {
 public:
-    explicit ETSBigIntType(ArenaAllocator *allocator, [[maybe_unused]] ETSObjectType *super)
+    explicit ETSBigIntType(ThreadSafeArenaAllocator *allocator, [[maybe_unused]] ETSObjectType *super)
         : ETSObjectType(allocator, "", compiler::Signatures::BUILTIN_BIGINT, nullptr,
                         ETSObjectFlags::CLASS | ETSObjectFlags::BUILTIN_BIGINT | ETSObjectFlags::RESOLVED_SUPER)
     {
         SetSuperType(super);
     }
 
-    explicit ETSBigIntType(ArenaAllocator *allocator, ETSObjectType *super, TypeRelation *relation,
+    explicit ETSBigIntType(ThreadSafeArenaAllocator *allocator, ETSObjectType *super, TypeRelation *relation,
                            util::StringView value)
         : ETSObjectType(
               allocator, "", compiler::Signatures::BUILTIN_BIGINT,

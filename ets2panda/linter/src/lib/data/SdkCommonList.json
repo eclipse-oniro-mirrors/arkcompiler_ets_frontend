@@ -1,0 +1,6450 @@
+{
+  "api_list": [
+    {
+      "file_path": "api/@ohos.util.ArrayList.d.ts",
+      "api_info": {
+        "line": 858,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "ArrayList",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.ArrayList",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.ArrayList.d.ts",
+      "api_info": {
+        "line": 858,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, arrlist?: ArrayList<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ArrayList",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.ArrayList",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.ArrayList.d.ts",
+      "api_info": {
+        "line": 858,
+        "problem": "WhiteList",
+        "api_name": "replaceAllElements",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, arrlist?: ArrayList<T>) => T",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ArrayList",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.ArrayList",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.ArrayList.d.ts",
+      "api_info": {
+        "line": 858,
+        "problem": "BehaviorChange",
+        "api_name": "sort",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "comparator",
+            "type": "(firstValue: T, secondValue: T) => number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ArrayList",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.ArrayList",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@arkts.collections.d.ts",
+      "api_info": {
+        "line": 12151,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "BitVector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<number>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@arkts.collections",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Deque.d.ts",
+      "api_info": {
+        "line": 375,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Deque",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Deque",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Deque.d.ts",
+      "api_info": {
+        "line": 375,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, deque?: Deque<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Deque",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Deque",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.HashMap.d.ts",
+      "api_info": {
+        "line": 551,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "HashMap",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[K, V]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.HashMap",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.HashMap.d.ts",
+      "api_info": {
+        "line": 551,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value?: V, key?: K, map?: HashMap<K, V>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "HashMap",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.HashMap",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.HashSet.d.ts",
+      "api_info": {
+        "line": 551,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "HashSet",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.HashSet",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.HashSet.d.ts",
+      "api_info": {
+        "line": 551,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value?: T, key?: T, set?: HashSet<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "HashSet",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.HashSet",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.LightWeightMap.d.ts",
+      "api_info": {
+        "line": 760,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LightWeightMap",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[K, V]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.LightWeightMap",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.LightWeightMap.d.ts",
+      "api_info": {
+        "line": 760,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value?: V, key?: K, map?: LightWeightMap<K, V>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LightWeightMap",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.LightWeightMap",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.LightWeightSet.d.ts",
+      "api_info": {
+        "line": 512,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LightWeightSet",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.LightWeightSet",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.LightWeightSet.d.ts",
+      "api_info": {
+        "line": 512,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value?: T, key?: T, set?: LightWeightSet<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LightWeightSet",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.LightWeightSet",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.LinkedList.d.ts",
+      "api_info": {
+        "line": 512,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LinkedList",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.LinkedList",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.LinkedList.d.ts",
+      "api_info": {
+        "line": 512,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, LinkedList?: LinkedList<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LinkedList",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.LinkedList",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.LinkedList.d.ts",
+      "api_info": {
+        "line": 512,
+        "problem": "BehaviorChange",
+        "api_name": "removeFirstFound",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LinkedList",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.LinkedList",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.LinkedList.d.ts",
+      "api_info": {
+        "line": 512,
+        "problem": "BehaviorChange",
+        "api_name": "removeLastFound",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LinkedList",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.LinkedList",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.List.d.ts",
+      "api_info": {
+        "line": 848,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "List",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.List",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.List.d.ts",
+      "api_info": {
+        "line": 848,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, List?: List<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "List",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.List",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.List.d.ts",
+      "api_info": {
+        "line": 848,
+        "problem": "WhiteList",
+        "api_name": "replaceAllElements",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, list?: List<T>) => T",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "List",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.List",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.PlainArray.d.ts",
+      "api_info": {
+        "line": 848,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "PlainArray",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[number, T]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.PlainArray",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.PlainArray.d.ts",
+      "api_info": {
+        "line": 848,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, PlainArray?: PlainArray<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "PlainArray",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.PlainArray",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Queue.d.ts",
+      "api_info": {
+        "line": 266,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Queue",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Queue",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Queue.d.ts",
+      "api_info": {
+        "line": 266,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, Queue?: Queue<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Queue",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Queue",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Queue.d.ts",
+      "api_info": {
+        "line": 266,
+        "problem": "WhiteList",
+        "api_name": "add",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Queue",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Queue",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Stack.d.ts",
+      "api_info": {
+        "line": 266,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Stack",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Stack",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Stack.d.ts",
+      "api_info": {
+        "line": 266,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, stack?: Stack<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Stack",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Stack",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.TreeMap.d.ts",
+      "api_info": {
+        "line": 760,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "TreeMap",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[K, V]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.TreeMap",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.TreeMap.d.ts",
+      "api_info": {
+        "line": 760,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value?: V, key?: K, map?: TreeMap<K, V>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "TreeMap",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.TreeMap",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.TreeMap.d.ts",
+      "api_info": {
+        "line": 760,
+        "problem": "BehaviorChange",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "comparator",
+            "type": "(firstValue: K, secondValue: K) => boolean",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "TreeMap",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.util.TreeMap",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.TreeSet.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "TreeSet",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.TreeSet",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.TreeSet.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value?: T, key?: T, set?: TreeSet<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "TreeSet",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.TreeSet",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.TreeSet.d.ts",
+      "api_info": {
+        "line": 89,
+        "problem": "BehaviorChange",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "comparator",
+            "type": "(firstValue: T, secondValue: T) => boolean",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "TreeSet",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.util.TreeSet",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[string, string]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getAll",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "name",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string[]",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "append",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "name",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "delete",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "name",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "entries",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[string, string]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: string, key: string, searchParams: URLSearchParams) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "get",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "name",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string | null",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "get",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "name",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string[]",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "has",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "name",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "set",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "name",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "keys",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<string>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "values",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<string>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "toString",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "sort",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "init",
+            "type": "string[][] | Record<string, string> | string | URLSearchParams",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: string, key: string, searchParams: URLParams) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLSearchParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[K, V]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "put",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "key",
+            "type": "K",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "value",
+            "type": "V",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "V",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "capacity",
+            "type": "number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "updateCapacity",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "newCapacity",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "getCapacity",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "getCreateCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "getMissCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "getRemovalCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "getMatchCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "getPutCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getPutCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "length",
+        "api_type": "PropertyDeclaration",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "LRUCache",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "number",
+        "code_kind": 171
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.json.d.ts",
+      "api_info": {
+        "line": 59,
+        "problem": "WhiteList",
+        "api_name": "parse",
+        "api_type": "FunctionDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "text",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "reviver",
+            "type": "Transformer",
+            "is_optional": true,
+            "has_default": false
+          },
+          {
+            "name": "options",
+            "type": "ParseOptions",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "json",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Object | null",
+        "code_kind": 263
+      },
+      "import_path": [
+        "@ohos.util.json"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.json.d.ts",
+      "api_info": {
+        "line": 42,
+        "problem": "WhiteList",
+        "api_name": "Transformer",
+        "api_type": "TypeAliasDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "this",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "key",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "value",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "json",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Object | undefined | null",
+        "code_kind": 268
+      },
+      "import_path": [
+        "@ohos.util.json"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.json.d.ts",
+      "api_info": {
+        "line": 59,
+        "problem": "WhiteList",
+        "api_name": "remove",
+        "api_type": "FunctionDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "obj",
+            "type": "object",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "property",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "json",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 263
+      },
+      "import_path": [
+        "@ohos.util.json"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 3585,
+        "problem": "WhiteList",
+        "api_name": "isArgumentsObject",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "types",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 3585,
+        "problem": "WhiteList",
+        "api_name": "isGeneratorFunction",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "types",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 3585,
+        "problem": "WhiteList",
+        "api_name": "isGeneratorFunction",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "types",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 3585,
+        "problem": "WhiteList",
+        "api_name": "isGeneratorObject",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "types",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 3585,
+        "problem": "WhiteList",
+        "api_name": "isModuleNamespaceObject",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "types",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 3585,
+        "problem": "WhiteList",
+        "api_name": "isProxy",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "types",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 3585,
+        "problem": "WhiteList",
+        "api_name": "isSymbolObject",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "types",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 4701,
+        "problem": "WhiteList",
+        "api_name": "addAfter",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "targetClass",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "methodName",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "isStatic",
+            "type": "boolean",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "after",
+            "type": "Function",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Aspect",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 4667,
+        "problem": "WhiteList",
+        "api_name": "addBefore",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "targetClass",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "methodName",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "isStatic",
+            "type": "boolean",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "before",
+            "type": "Function",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Aspect",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 4773,
+        "problem": "WhiteList",
+        "api_name": "replace",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "targetClass",
+            "type": "Object",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "methodName",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "isStatic",
+            "type": "boolean",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "instead",
+            "type": "Function",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Aspect",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 992,
+        "problem": "BehaviorChange",
+        "api_name": "href",
+        "api_type": "PropertyDeclaration",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "URL",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 171
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 992,
+        "problem": "BehaviorChange",
+        "api_name": "href",
+        "api_type": "PropertyDeclaration",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "URL",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 171
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 992,
+        "problem": "BehaviorChange",
+        "api_name": "origin",
+        "api_type": "PropertyDeclaration",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "URL",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 171
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 992,
+        "problem": "BehaviorChange",
+        "api_name": "pathname",
+        "api_type": "PropertyDeclaration",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "URL",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 171
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 1143,
+        "problem": "BehaviorChange",
+        "api_name": "search",
+        "api_type": "PropertyDeclaration",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "URL",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 171
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 1143,
+        "problem": "WhiteList",
+        "api_name": "searchParams",
+        "api_type": "PropertyDeclaration",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "URL",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "URLSearchParams",
+        "code_kind": 171
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.url.d.ts",
+      "api_info": {
+        "line": 283,
+        "problem": "BehaviorChange",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "init",
+            "type": "string[][] | Record<string, string> | string | URLParams",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "URLParams",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "url",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.url",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 1139,
+        "problem": "WhiteList",
+        "api_name": "stringify",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "any",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "replacer",
+            "type": "(this: any, key: string, value: any) => any",
+            "is_optional": true,
+            "has_default": false
+          },
+          {
+            "name": "space",
+            "type": "string | number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "JSON",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "lib.es5.d.ts",
+      "api_info": {
+        "line": 1139,
+        "problem": "WhiteList",
+        "api_name": "stringify",
+        "api_type": "MethodSignature",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "any",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "replacer",
+            "type": "(number | string)[] | null",
+            "is_optional": true,
+            "has_default": false
+          },
+          {
+            "name": "space",
+            "type": "string | number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "JSON",
+            "api_type": "InterfaceDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 173
+      },
+      "import_path": [],
+      "is_global": true
+    },
+    {
+      "file_path": "api/@ohos.buffer.d.ts",
+      "api_info": {
+        "line": 3388,
+        "problem": "BehaviorChange",
+        "api_name": "slice",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "start",
+            "type": "number",
+            "is_optional": true,
+            "has_default": false
+          },
+          {
+            "name": "end",
+            "type": "number",
+            "is_optional": true,
+            "has_default": false
+          },
+          {
+            "name": "type",
+            "type": "string",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Blob",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "buffer",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Blob",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.buffer",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.buffer.d.ts",
+      "api_info": {
+        "line": 3388,
+        "problem": "BehaviorChange",
+        "api_name": "readInt8",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "offset",
+            "type": "number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Buffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "buffer",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.buffer",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.buffer.d.ts",
+      "api_info": {
+        "line": 3388,
+        "problem": "BehaviorChange",
+        "api_name": "readInt16BE",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "offset",
+            "type": "number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Buffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "buffer",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.buffer",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.buffer.d.ts",
+      "api_info": {
+        "line": 3388,
+        "problem": "BehaviorChange",
+        "api_name": "readInt16LE",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "offset",
+            "type": "number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Buffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "buffer",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.buffer",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.buffer.d.ts",
+      "api_info": {
+        "line": 3388,
+        "problem": "BehaviorChange",
+        "api_name": "readInt32BE",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "offset",
+            "type": "number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Buffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "buffer",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.buffer",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.buffer.d.ts",
+      "api_info": {
+        "line": 3388,
+        "problem": "BehaviorChange",
+        "api_name": "readInt32LE",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "offset",
+            "type": "number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Buffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "buffer",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.buffer",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.buffer.d.ts",
+      "api_info": {
+        "line": 3388,
+        "problem": "BehaviorChange",
+        "api_name": "readIntBE",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "offset",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "byteLength",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Buffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "buffer",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.buffer",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.buffer.d.ts",
+      "api_info": {
+        "line": 3388,
+        "problem": "BehaviorChange",
+        "api_name": "readIntLE",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "offset",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "byteLength",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Buffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "buffer",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.buffer",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getErrorString",
+        "api_type": "FunctionDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "errno",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "printf",
+        "api_type": "FunctionDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "format",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "...args",
+            "type": "Object[]",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "promiseWrapper",
+        "api_type": "FunctionDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "original",
+            "type": "(err: Object, value: Object) => void",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Object",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Base64",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Base64",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "decode",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "src",
+            "type": "Uint8Array | string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Base64",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Promise<Uint8Array>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "decodeSync",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "src",
+            "type": "Uint8Array | string",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Base64",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Uint8Array",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "encode",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "src",
+            "type": "Uint8Array",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Base64",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Promise<Uint8Array>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "encodeSync",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "src",
+            "type": "Uint8Array",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Base64",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Uint8Array",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "encodeToString",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "src",
+            "type": "Uint8Array",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Base64",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Promise<string>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "encodeToStringSync",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "src",
+            "type": "Uint8Array",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Base64",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "BehaviorChange",
+        "api_name": "encodeToStringSync",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "src",
+            "type": "Uint8Array",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "options",
+            "type": "Type",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Base64Helper",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "stream",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "DecodeWithStreamOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[K, V]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[K, V]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "afterRemoval",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "isEvict",
+            "type": "boolean",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "key",
+            "type": "K",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "value",
+            "type": "V",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "newValue",
+            "type": "V",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "clear",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "capacity",
+            "type": "number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "contains",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "key",
+            "type": "K",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "createDefault",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "key",
+            "type": "K",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "V",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "entries",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<[K, V]>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "get",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "key",
+            "type": "K",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "V | undefined",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getCapacity",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getCreateCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getMatchCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getMissCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getPutCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getPutCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getRemovalCount",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "isEmpty",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "keys",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "K[]",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "put",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "key",
+            "type": "K",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "value",
+            "type": "V",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "V",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "remove",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "key",
+            "type": "K",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "V | undefined",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "toString",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "updateCapacity",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "newCapacity",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "values",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "V[]",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "length",
+        "api_type": "PropertyDeclaration",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "LruBuffer",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "number",
+        "code_kind": 171
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "clamp",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "ScopeType",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "ScopeType",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "lowerObj",
+            "type": "ScopeType",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "upperObj",
+            "type": "ScopeType",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "contains",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "range",
+            "type": "Scope",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "contains",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "range",
+            "type": "ScopeType",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "expand",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "lowerObj",
+            "type": "ScopeType",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "upperObj",
+            "type": "ScopeType",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Scope",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "expand",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "value",
+            "type": "ScopeType",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Scope",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "expand",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "range",
+            "type": "Scope",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Scope",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getLower",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "ScopeType",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "getUpper",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "ScopeType",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "intersect",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "lowerObj",
+            "type": "ScopeType",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "upperObj",
+            "type": "ScopeType",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Scope",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "intersect",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "range",
+            "type": "Scope",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Scope",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "toString",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Scope",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "encoding",
+            "type": "string",
+            "is_optional": true,
+            "has_default": false
+          },
+          {
+            "name": "options",
+            "type": "{ fatal?: boolean; ignoreBOM?: boolean; }",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "TextDecoder",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "decode",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "input",
+            "type": "Uint8Array",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "options",
+            "type": "{ stream?: false; }",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "TextDecoder",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "decodeWithStream",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "input",
+            "type": "Uint8Array",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "options",
+            "type": "DecodeWithStreamOptions",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "TextDecoder",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "encode",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "input",
+            "type": "string",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "TextEncoder",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Uint8Array",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.d.ts",
+      "api_info": {
+        "line": 615,
+        "problem": "WhiteList",
+        "api_name": "encodeInto",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "input",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "dest",
+            "type": "Uint8Array",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "TextEncoder",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "util",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "{ read: number; written: number; }",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "[Symbol.iterator]",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "IterableIterator<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "add",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "clear",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "clone",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "Vector<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "constructor",
+        "api_type": "ConstructorDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 176
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "convertToArray",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "Array<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "copyToArray",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "array",
+            "type": "Array<T>",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "forEach",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, vector?: Vector<T>) => void",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "get",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "index",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "T",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "getCapacity",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "getFirstElement",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "T",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "getIndexFrom",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "index",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "getIndexOf",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "getIndexOf",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "T",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "getLastIndexFrom",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "index",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "getLastIndexOf",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "number",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "has",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "has",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "newCapacity",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "insert",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "index",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "isEmpty",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "remove",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "boolean",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "removeByIndex",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "index",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "T",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "removeByRange",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "fromIndex",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "toIndex",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "replaceAllElements",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "callbackFn",
+            "type": "(value: T, index?: number, vector?: Vector<T>) => T",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "thisArg",
+            "type": "Object",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "set",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "index",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "element",
+            "type": "T",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "T",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "setLength",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "newSize",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "sort",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "comparator",
+            "type": "(firstValue: T, secondValue: T) => number",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "subVector",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "fromIndex",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "toIndex",
+            "type": "number",
+            "is_optional": false,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "Vector<T>",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "toString",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "string",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "trimToCurrentLength",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [],
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "method_return_type": "void",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.util.Vector.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "length",
+        "api_type": "PropertyDeclaration",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "Vector",
+            "api_type": "ClassDeclaration"
+          }
+        ],
+        "api_property_type": "number",
+        "code_kind": 171
+      },
+      "import_path": [
+        "@ohos.util.Vector",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "convert",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "xml",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "options",
+            "type": "ConvertOptions",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ConvertXML",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Object",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "fastConvertToJSObject",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "xml",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "options",
+            "type": "ConvertOptions",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ConvertXML",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Object",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "convertToJSObject",
+        "api_type": "MethodDeclaration",
+        "api_optional": false,
+        "api_func_args": [
+          {
+            "name": "xml",
+            "type": "string",
+            "is_optional": false,
+            "has_default": false
+          },
+          {
+            "name": "options",
+            "type": "ConvertOptions",
+            "is_optional": true,
+            "has_default": false
+          }
+        ],
+        "parent_api": [
+          {
+            "api_name": "ConvertXML",
+            "api_type": "ClassDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "method_return_type": "Object",
+        "code_kind": 174
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "trim",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "boolean",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "ignoreDeclaration",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "boolean",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "ignoreInstruction",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "boolean",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "ignoreAttributes",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "boolean",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "ignoreComment",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "boolean",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "ignoreCDATA",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "boolean",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "ignoreDoctype",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "boolean",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "ignoreText",
+        "api_type": "PropertySignature",
+        "api_optional": true,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "boolean",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "declarationKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "instructionKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "attributesKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "textKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "cdataKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "doctypeKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "commentKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "parentKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "typeKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "nameKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    },
+    {
+      "file_path": "api/@ohos.convertxml.d.ts",
+      "api_info": {
+        "line": 349,
+        "problem": "WhiteList",
+        "api_name": "elementsKey",
+        "api_type": "PropertySignature",
+        "api_optional": false,
+        "parent_api": [
+          {
+            "api_name": "ConvertOptions",
+            "api_type": "InterfaceDeclaration"
+          },
+          {
+            "api_name": "xml",
+            "api_type": "ModuleDeclaration"
+          }
+        ],
+        "api_property_type": "string",
+        "code_kind": 170
+      },
+      "import_path": [
+        "@ohos.convertxml",
+        "@kit.ArkTS"
+      ],
+      "is_global": false
+    }
+  ]
+}

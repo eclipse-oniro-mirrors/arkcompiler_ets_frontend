@@ -31,11 +31,11 @@ const mycolor: string = "#ffff00"
 function cardStyle1(instance: CommonMethod): void {
     instance.backgroundColor(mycolor);
     instance.borderColor(Color.Red);
-    instance.borderRadius(8.0);
-    instance.padding(8.0);
+    instance.borderRadius(8);
+    instance.padding(8);
     instance.backgroundImagePosition({
-        x: 0.0,
-        y: 0.0
+        x: 0,
+        y: 0
     });
 }
 

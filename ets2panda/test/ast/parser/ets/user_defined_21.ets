@@ -17,5 +17,4 @@ class /* @@ label */bigint{
   a : string = "15";
 }
 
-/* @@@ label Error SyntaxError: Cannot be used as user-defined type.  */
-/* @@? 1:3 Error TypeError: Variable 'bigint' is already defined with different type. */
+/* @@@ label Error SyntaxError: bigint is a predefined type, cannot be used as an identifier */

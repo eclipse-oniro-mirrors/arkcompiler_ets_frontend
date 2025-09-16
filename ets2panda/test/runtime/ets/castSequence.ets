@@ -17,18 +17,18 @@ function main(): void {
   let a_int : int = 2147;
   let b_Num : Number = Int.toDouble(a_int);
 
-  assertTrue(b_Num instanceof Number && b_Num.unboxed() == 2147.0)
+  arktest.assertTrue(b_Num instanceof Number && b_Num.unboxed() == 2147.0)
 
   let a_Short : Short = 215;
   let b_double : double = Short.toDouble(a_Short);
 
-  assertTrue(a_Short instanceof Short)
-  assertEQ(b_double, 215.0)
+  arktest.assertTrue(a_Short instanceof Short)
+  arktest.assertEQ(b_double, 215.0)
 
   let a_char : char = 128 as char;
   let b_Char = a_char as Char;
 
-  assertEQ(b_Char.unboxed(), 128 as char)
+  arktest.assertEQ(b_Char.unboxed(), 128 as char)
 
   return;
 }

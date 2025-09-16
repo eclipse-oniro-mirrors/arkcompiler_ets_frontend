@@ -186,5 +186,35 @@
       "kind": 2,
       "data": null
     }
+  ],
+  "15": [
+    {
+      "name": "isEmpty",
+      "sortText": "17",
+      "insertText": "",
+      "kind": 2,
+      "data": null
+    },
+    {
+      "name": "peek",
+      "sortText": "17",
+      "insertText": "",
+      "kind": 2,
+      "data": null
+    },
+    {
+      "name": "pop",
+      "sortText": "17",
+      "insertText": "",
+      "kind": 2,
+      "data": null
+    },
+    {
+      "name": "push",
+      "sortText": "17",
+      "insertText": "",
+      "kind": 2,
+      "data": null
+    }
   ]
 }

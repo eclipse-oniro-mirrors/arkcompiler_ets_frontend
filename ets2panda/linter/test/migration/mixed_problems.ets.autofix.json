@@ -24,12 +24,20 @@
                 {
                     "replacementText": "GeneratedDestructObj_1",
                     "start": 663,
-                    "end": 671
+                    "end": 671,
+                    "line": 17,
+                    "column": 5,
+                    "endLine": 17,
+                    "endColumn": 30
                 },
                 {
                     "replacementText": "\nlet a = GeneratedDestructObj_1.a;\nlet b = GeneratedDestructObj_1.b;\n",
                     "start": 689,
-                    "end": 689
+                    "end": 689,
+                    "line": 17,
+                    "column": 5,
+                    "endLine": 17,
+                    "endColumn": 30
                 }
             ],
             "suggest": "",
@@ -56,12 +64,20 @@
                 {
                     "replacementText": "GeneratedDestructObj_2",
                     "start": 764,
-                    "end": 774
+                    "end": 774,
+                    "line": 20,
+                    "column": 5,
+                    "endLine": 26,
+                    "endColumn": 2
                 },
                 {
                     "replacementText": "\nlet a2 = GeneratedDestructObj_2.a2;\nlet b2 = GeneratedDestructObj_2.b2;\n",
                     "start": 869,
-                    "end": 869
+                    "end": 869,
+                    "line": 20,
+                    "column": 5,
+                    "endLine": 26,
+                    "endColumn": 2
                 }
             ],
             "suggest": "",
@@ -98,12 +114,20 @@
                 {
                     "start": 760,
                     "end": 760,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    c2: number;\n    d2: string;\n}\n"
+                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    c2: number;\n    d2: string;\n}\n",
+                    "line": 25,
+                    "column": 10,
+                    "endLine": 25,
+                    "endColumn": 11
                 },
                 {
                     "start": 840,
                     "end": 866,
-                    "replacementText": "GeneratedTypeLiteralInterface_1"
+                    "replacementText": "GeneratedTypeLiteralInterface_1",
+                    "line": 25,
+                    "column": 10,
+                    "endLine": 25,
+                    "endColumn": 11
                 }
             ],
             "suggest": "",
@@ -130,12 +154,20 @@
                 {
                     "start": 913,
                     "end": 913,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    a: number;\n    b: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 29,
+                    "column": 20,
+                    "endLine": 29,
+                    "endColumn": 21
                 },
                 {
                     "start": 932,
                     "end": 946,
-                    "replacementText": "({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_1)"
+                    "replacementText": "({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_1)",
+                    "line": 29,
+                    "column": 20,
+                    "endLine": 29,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -152,7 +184,11 @@
                 {
                     "start": 1043,
                     "end": 1238,
-                    "replacementText": "let fun = function () {\n    var o = {\n        'a': 1,\n        'b': 2\n    };\n    var o2 = {\n        'c': 3,\n        'd': 4,\n        5: {\n            x1: 10,\n            x2: 20\n        }\n    };\n}"
+                    "replacementText": "let fun = function () {\n    var o = {\n        'a': 1,\n        'b': 2\n    };\n    var o2 = {\n        'c': 3,\n        'd': 4,\n        5: {\n            x1: 10,\n            x2: 20\n        }\n    };\n}",
+                    "line": 32,
+                    "column": 1,
+                    "endLine": 32,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -169,7 +205,11 @@
                 {
                     "start": 1053,
                     "end": 1238,
-                    "replacementText": "() => {\n    var o = {\n        'a': 1,\n        'b': 2\n    };\n    var o2 = {\n        'c': 3,\n        'd': 4,\n        5: {\n            x1: 10,\n            x2: 20\n        }\n    };\n}"
+                    "replacementText": "() => {\n    var o = {\n        'a': 1,\n        'b': 2\n    };\n    var o2 = {\n        'c': 3,\n        'd': 4,\n        5: {\n            x1: 10,\n            x2: 20\n        }\n    };\n}",
+                    "line": 32,
+                    "column": 11,
+                    "endLine": 46,
+                    "endColumn": 2
                 }
             ],
             "suggest": "",
@@ -186,7 +226,11 @@
                 {
                     "start": 1071,
                     "end": 1117,
-                    "replacementText": "let o = {\n    'a': 1,\n    'b': 2\n}"
+                    "replacementText": "let o = {\n    'a': 1,\n    'b': 2\n}",
+                    "line": 33,
+                    "column": 5,
+                    "endLine": 33,
+                    "endColumn": 8
                 }
             ],
             "suggest": "",
@@ -204,6 +248,26 @@
             "severity": "ERROR"
         },
         {
+            "line": 34,
+            "column": 9,
+            "endLine": 34,
+            "endColumn": 12,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 9,
+            "endLine": 35,
+            "endColumn": 12,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
             "line": 38,
             "column": 5,
             "endLine": 38,
@@ -213,7 +277,11 @@
                 {
                     "start": 1124,
                     "end": 1235,
-                    "replacementText": "let o2 = {\n    'c': 3,\n    'd': 4,\n    5: {\n        x1: 10,\n        x2: 20\n    }\n}"
+                    "replacementText": "let o2 = {\n    'c': 3,\n    'd': 4,\n    5: {\n        x1: 10,\n        x2: 20\n    }\n}",
+                    "line": 38,
+                    "column": 5,
+                    "endLine": 38,
+                    "endColumn": 8
                 }
             ],
             "suggest": "",
@@ -228,6 +296,26 @@
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 9,
+            "endLine": 39,
+            "endColumn": 12,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 9,
+            "endLine": 40,
+            "endColumn": 12,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
             "severity": "ERROR"
         },
         {
@@ -250,12 +338,20 @@
                 {
                     "start": 1043,
                     "end": 1043,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    x1: number;\n    x2: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    x1: number;\n    x2: number;\n}\n",
+                    "line": 41,
+                    "column": 12,
+                    "endLine": 41,
+                    "endColumn": 13
                 },
                 {
                     "start": 1178,
                     "end": 1228,
-                    "replacementText": "({ x1: 10,\n    x2: 20 } as GeneratedObjectLiteralInterface_2)"
+                    "replacementText": "({ x1: 10,\n    x2: 20 } as GeneratedObjectLiteralInterface_2)",
+                    "line": 41,
+                    "column": 12,
+                    "endLine": 41,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -282,7 +378,11 @@
                 {
                     "start": 1299,
                     "end": 1311,
-                    "replacementText": "private a!: number;"
+                    "replacementText": "private a!: number;",
+                    "line": 50,
+                    "column": 5,
+                    "endLine": 50,
+                    "endColumn": 7
                 }
             ],
             "suggest": "",

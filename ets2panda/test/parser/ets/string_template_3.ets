@@ -17,5 +17,5 @@ function main() {
 	const v = `(slash at curly braces) $\{true || false\}`
 	console.log(v)
 	const expected = `(slash at curly braces) ${true || false}`
-	assertEQ(v, expected);
+	arktest.assertEQ(v, expected);
 }

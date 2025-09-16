@@ -32,7 +32,7 @@ function boo(a: A, s: string): string {
 
 function main(): void {
     let a = new A();
-    assertEQ(a.foo("call"), "call accessor with receiver in extension function")
-    assertEQ(foo(a, "call"), "call accessor with receiver in extension function")
-    assertEQ(boo(a, "call"), "call accessor with receiver in normal function")
+    arktest.assertEQ(a.foo("call"), "call accessor with receiver in extension function")
+    arktest.assertEQ(foo(a, "call"), "call accessor with receiver in extension function")
+    arktest.assertEQ(boo(a, "call"), "call accessor with receiver in normal function")
 }

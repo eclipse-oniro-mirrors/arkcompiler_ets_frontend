@@ -24,7 +24,7 @@ function main() {
     let s1 = temp.on("hello1", () => { });
     let s2 = temp.on("hello2", (args?: Array<Object>) => { });
     let s3 = temp.on("hello3", (args?: Array<Object>): Int => { return 1; });
-    assertEQ(s1, "hello1");
-    assertEQ(s2, "hello2");
-    assertEQ(s3, "hello3");
+    arktest.assertEQ(s1, "hello1");
+    arktest.assertEQ(s2, "hello2");
+    arktest.assertEQ(s3, "hello3");
 }

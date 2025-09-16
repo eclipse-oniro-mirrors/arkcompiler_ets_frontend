@@ -15,12 +15,12 @@
 
 function erase<T>(v: T): Any { return v }
 
-assertTrue(erase((() => {
+arktest.assertTrue(erase((() => {
     let r: boolean | undefined;
     return r;
 })()) === undefined)
 
-assertTrue(erase((() => {
+arktest.assertTrue(erase((() => {
     let r: boolean | null | undefined;
     return r;
 })()) === undefined)

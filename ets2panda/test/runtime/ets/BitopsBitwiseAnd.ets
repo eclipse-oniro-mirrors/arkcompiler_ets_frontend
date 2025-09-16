@@ -23,7 +23,7 @@ export class BitopsBitwiseAnd {
       bitwiseAndValue = bitwiseAndValue & i;
     }
 
-    assertEQ(bitwiseAndValue, BitopsBitwiseAnd.expected,  "Incorrect result")
+    arktest.assertEQ(bitwiseAndValue, BitopsBitwiseAnd.expected,  "Incorrect result")
   }
 }
 

@@ -29,12 +29,8 @@ void TSTypeQuery::TransformChildren(const NodeTransformer &cb, std::string_view 
         exprName_->SetTransformedNode(transformationName, transformedNode);
         exprName_ = transformedNode->AsExpression();
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSTypeQuery::Iterate(const NodeTraverser &cb) const

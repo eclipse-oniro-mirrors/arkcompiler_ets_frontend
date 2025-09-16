@@ -22,3 +22,4 @@ export const EXTNAME_MJS: string = '.mjs';
 export const EXTNAME_CJS: string = '.cjs';
 export const EXTNAME_D_TS: string = '.d.ts';
 export const EXTNAME_D_ETS: string = '.d.ets';
+export const EXTNAME_JSON: string = '.json';

@@ -46,4 +46,5 @@ class C{
 }
 
 /* @@? 29:4 Error SyntaxError: Missing type annotation for property 'b'. */
-/* @@? 42:11 Error SyntaxError: Only constant expression is expected in the field */
+/* @@? 42:11 Error TypeError: Invalid value for annotation field, expected a constant literal. */
+/* @@? 44:16 Error TypeError: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */

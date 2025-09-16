@@ -27,6 +27,6 @@ class A {
   }
 
   method2(): long {
-    return this.a as long;
+    return this.a.toLong();
   }
 }

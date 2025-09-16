@@ -19,6 +19,6 @@ type BaseColor = Color;
 function main(): void {
     let a: Color = Color.Red;  // OK
     let v: int = BaseColor.Red;
-    assertEQ(v, 0);
+    arktest.assertEQ(v, 0);
 }
 

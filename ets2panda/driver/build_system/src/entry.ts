@@ -18,17 +18,18 @@ import * as path from 'path';
 
 import { processBuildConfig } from './init/process_build_config';
 import { BuildMode } from './build/build_mode';
-import { BUILD_TYPE_BUILD } from './pre_define';
 import { Logger } from './logger';
 import { ArkTSConfigGenerator } from './build/generate_arktsconfig';
 import { PluginDriver } from './plugins/plugins_driver';
-import { BuildConfig } from './types';
+import { BuildConfig, BUILD_TYPE } from './types';
 import { BuildFrameworkMode } from './build/build_framework_mode';
+import { cleanKoalaModule } from './init/init_koala_modules';
 
 export async function build(projectConfig: BuildConfig): Promise<void> {
   let logger: Logger = Logger.getInstance(projectConfig);
   let buildConfig: BuildConfig = processBuildConfig(projectConfig);
 
+  buildConfig.entryFiles = buildConfig.compileFiles;
   if (projectConfig.frameworkMode === true) {
     let buildframeworkMode: BuildFrameworkMode = new BuildFrameworkMode(buildConfig);
     await buildframeworkMode.run();
@@ -39,7 +40,7 @@ export async function build(projectConfig: BuildConfig): Promise<void> {
   } else if (projectConfig.enableDeclgenEts2Ts === true) {
     let buildMode: BuildMode = new BuildMode(buildConfig);
     await buildMode.generateDeclaration();
-  } else if (projectConfig.buildType === BUILD_TYPE_BUILD) {
+  } else if (projectConfig.buildType === BUILD_TYPE.BUILD) {
     let buildMode: BuildMode = new BuildMode(buildConfig);
     await buildMode.run();
   }
@@ -51,11 +52,10 @@ function clean(): void {
   Logger.destroyInstance();
   ArkTSConfigGenerator.destroyInstance();
   PluginDriver.destroyInstance();
+  cleanKoalaModule();
 }
 
 function main(): void {
-  console.log(process.argv);
-
   const buildConfigPath: string = path.resolve(process.argv[2]);
   const projectConfig: BuildConfig = JSON.parse(fs.readFileSync(buildConfigPath, 'utf-8'));
 

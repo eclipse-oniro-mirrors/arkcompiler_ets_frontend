@@ -19,6 +19,7 @@
 #include "macros.h"
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <vector>
 
 namespace ark::es2panda::parser {
@@ -51,6 +52,12 @@ public:
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 
     const parser::Program *Program() const;
+    void SetProgram(const parser::Program *program);
+
+    bool operator!=(const SourcePosition &other) const
+    {
+        return index != other.index || line != other.line || program_ != other.program_;
+    }
 
 private:
     const parser::Program *program_ {};
@@ -68,6 +75,74 @@ public:
     SourcePosition start {};
     SourcePosition end {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)
+
+    bool operator!=(const SourceRange &other) const
+    {
+        return start != other.start || end != other.end;
+    }
+
+    void SetProgram(const parser::Program *program);
+};
+
+class CompressedSourceRange {
+public:
+    explicit CompressedSourceRange() = default;
+    DEFAULT_COPY_SEMANTIC(CompressedSourceRange);
+    DEFAULT_MOVE_SEMANTIC(CompressedSourceRange);
+    ~CompressedSourceRange() = default;
+
+    void SetStart(SourcePosition const &s)
+    {
+        startLine_ = Limit<uint32_t>(s.line);
+        startIndex_ = Limit<uint32_t>(s.index);
+        program_ = s.Program();
+    }
+
+    void SetEnd(SourcePosition const &e)
+    {
+        endLine_ = Limit<uint32_t>(e.line);
+        endIndex_ = Limit<uint32_t>(e.index);
+        program_ = e.Program();
+    }
+
+    SourcePosition GetStart() const
+    {
+        return SourcePosition(startIndex_, startLine_, program_);
+    }
+
+    SourcePosition GetEnd() const
+    {
+        return SourcePosition(endIndex_, endLine_, program_);
+    }
+
+    void SetRange(SourceRange const &r)
+    {
+        SetStart(r.start);
+        SetEnd(r.end);
+    }
+
+    void SetProgram(const parser::Program *program)
+    {
+        program_ = program;
+    }
+
+    SourceRange GetRange() const
+    {
+        return SourceRange(GetStart(), GetEnd());
+    }
+
+private:
+    template <typename T>
+    static T Limit(uint64_t val)
+    {
+        return val > std::numeric_limits<T>::max() ? std::numeric_limits<T>::max() : val;
+    }
+
+    parser::Program const *program_ {};
+    uint32_t startLine_ {};
+    uint32_t endLine_ {};
+    uint32_t startIndex_ {};
+    uint32_t endIndex_ {};
 };
 
 class SourceLocation {

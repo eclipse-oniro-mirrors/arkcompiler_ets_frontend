@@ -18,11 +18,11 @@ function main(): void {
     const binLongMax = 0b0111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111;
     const hexLongMax = 0x7FFFFFFFFFFFFFFF;
     const octLongMax = 0o777777777777777777777;
-    assertEQ(decLongMax - binLongMax + hexLongMax - octLongMax, 0,  "Incorrect long max result")
+    arktest.assertEQ(decLongMax - binLongMax + hexLongMax - octLongMax, 0,  "Incorrect long max result")
 
     const decLongMin = ~decLongMax;
     const binLongMin = ~binLongMax;
     const hexLongMin = ~hexLongMax;
     const octLongMin = ~octLongMax;
-    assertEQ(decLongMin - binLongMin + hexLongMin - octLongMin, 0,  "Incorrect long min result")
+    arktest.assertEQ(decLongMin - binLongMin + hexLongMin - octLongMin, 0,  "Incorrect long min result")
 }

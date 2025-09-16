@@ -144,7 +144,7 @@ void SpreadElement::Dump(ir::SrcDumper *dumper) const
     dumper->Add("...");
     argument_->Dump(dumper);
     auto type = TypeAnnotation();
-    if (type != nullptr) {
+    if (type != nullptr && type->IsValidInCurrentPhase()) {
         dumper->Add(": ");
         type->Dump(dumper);
     }

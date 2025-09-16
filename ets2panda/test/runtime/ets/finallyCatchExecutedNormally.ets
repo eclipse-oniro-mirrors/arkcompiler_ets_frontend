@@ -20,9 +20,9 @@ function main() : void {
     } catch (e) {
         a = 2;
     } finally {
-        assertEQ(a, 2)
+        arktest.assertEQ(a, 2)
         a = 3;
     } 
 
-    assertEQ(a, 3)
+    arktest.assertEQ(a, 3)
 }

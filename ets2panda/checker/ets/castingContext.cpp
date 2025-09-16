@@ -26,9 +26,8 @@ CastingContext::CastingContext(TypeRelation *relation, const diagnostic::Diagnos
     const SavedTypeRelationFlagsContext savedTypeRelationFlags(relation, flags_);
     relation->SetNode(data.node);
 
-    const bool isLegalBoxedPrimitiveConversion = relation->IsLegalBoxedPrimitiveConversion(data.target, data.source);
     relation->Result(false);
-    if (!relation->IsSupertypeOf(data.target, data.source) && !isLegalBoxedPrimitiveConversion) {
+    if (!relation->IsSupertypeOf(data.target, data.source)) {
         relation->IsCastableTo(data.source, data.target);
         // #22954 string comparison
         if (!relation->IsTrue() && data.source->ToString() == data.target->ToString()) {
@@ -37,13 +36,6 @@ CastingContext::CastingContext(TypeRelation *relation, const diagnostic::Diagnos
         if (!relation->IsTrue() && (flags_ & TypeRelationFlag::NO_THROW) == 0) {
             relation->RaiseError(diagKind, list, data.pos);
         }
-    }
-
-    if (isLegalBoxedPrimitiveConversion && !relation->IsTrue()) {
-        auto *const checker = relation->GetChecker()->AsETSChecker();
-        Type *sourceUnboxedType = checker->MaybeUnboxType(data.source);
-        relation->GetNode()->AddBoxingUnboxingFlags(checker->GetUnboxingFlag(sourceUnboxedType));
-        relation->GetNode()->AddBoxingUnboxingFlags(checker->GetBoxingFlag(data.target));
     }
 
     uncheckedCast_ = relation->UncheckedCast();

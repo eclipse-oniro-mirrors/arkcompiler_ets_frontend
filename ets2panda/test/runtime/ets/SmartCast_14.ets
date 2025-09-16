@@ -44,7 +44,7 @@ class A<T> {
 }
 
 let a = new A<Error | number>();
-assertEQ(a.A(Error()), "Error");
-assertEQ(a.A(undefined), "undefined");
-assertEQ(a.A(1), "Generic");
-assertEQ(a.A([1, 2, 3]), "number[]")
+arktest.assertEQ(a.A(Error()), "Error");
+arktest.assertEQ(a.A(undefined), "undefined");
+arktest.assertEQ(a.A(1), "Generic");
+arktest.assertEQ(a.A([1, 2, 3]), "number[]")

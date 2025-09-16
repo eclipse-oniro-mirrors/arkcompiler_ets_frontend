@@ -148,14 +148,34 @@ ir::Statement *ETSParser::ParsePotentialConstEnum(VariableParsingFlags flags)
     return ParseEnumDeclaration(false);
 }
 
-// NOLINTBEGIN(cert-err58-cpp)
-// NOLINTEND(cert-err58-cpp)
-
 ir::TSEnumDeclaration *ETSParser::ParseEnumMembers(ir::Identifier *const key, const lexer::SourcePosition &enumStart,
                                                    const bool isConst, const bool isStatic)
 {
-    if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_BRACE) {
+    if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_BRACE &&
+        Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COLON) {
         LogExpectedToken(lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
+    }
+    ir::TypeNode *typeAnnotation = nullptr;
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COLON) {
+        Lexer()->NextToken();  // eat ':'
+        TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR;
+        typeAnnotation = ParseTypeAnnotation(&options);
+
+        // According to a comment on ETSparser.cpp:1598, compiler can't process ": string" correctly.
+        // ParseTypeAnnotation reads ": string" as literal so it's not supported here for now.
+        auto startPos = Lexer()->GetToken().Start();
+        if (!typeAnnotation->IsETSPrimitiveType()) {
+            LogError(diagnostic::UNSUPPORTED_ENUM_TYPE, {}, startPos);
+            typeAnnotation = nullptr;
+        } else {
+            ir::PrimitiveType primitiveType = typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType();
+            if (primitiveType != ir::PrimitiveType::INT && primitiveType != ir::PrimitiveType::LONG &&
+                primitiveType != ir::PrimitiveType::DOUBLE) {
+                // Issue: #26024 Numeric support for enum
+                LogError(diagnostic::UNSUPPORTED_ENUM_TYPE, {}, startPos);
+                typeAnnotation = nullptr;
+            }
+        }
     }
 
     Lexer()->NextToken(lexer::NextTokenFlags::KEYWORD_TO_IDENT);  // eat '{'
@@ -164,10 +184,22 @@ ir::TSEnumDeclaration *ETSParser::ParseEnumMembers(ir::Identifier *const key, co
 
     lexer::SourcePosition enumEnd = ParseEnumMember(members);
 
-    auto *const enumDeclaration = AllocNode<ir::TSEnumDeclaration>(
-        Allocator(), key, std::move(members),
-        ir::TSEnumDeclaration::ConstructorFlags {isConst, isStatic, InAmbientContext()});
+    ir::TSEnumDeclaration *enumDeclaration;
+
+    if (typeAnnotation == nullptr) {
+        enumDeclaration = AllocNode<ir::TSEnumDeclaration>(
+            Allocator(), key, std::move(members),
+            ir::TSEnumDeclaration::ConstructorFlags {isConst, isStatic, InAmbientContext()},
+            GetContext().GetLanguage());
+    } else {
+        enumDeclaration = AllocNode<ir::TSEnumDeclaration>(
+            Allocator(), key, std::move(members),
+            ir::TSEnumDeclaration::ConstructorFlags {isConst, isStatic, InAmbientContext()}, typeAnnotation,
+            GetContext().GetLanguage());
+    }
+
     ES2PANDA_ASSERT(enumDeclaration != nullptr);
+
     if (InAmbientContext()) {
         enumDeclaration->AddModifier(ir::ModifierFlags::DECLARE);
     }
@@ -215,7 +247,6 @@ lexer::SourcePosition ETSParser::ParseEnumMember(ArenaVector<ir::AstNode *> &mem
 
     // Lambda to parse enum member (maybe with initializer)
     auto const parseMember = [this, &members, &currentNumberExpr]() {
-        HandleJsDocLikeComments();
         auto *const ident = ExpectIdentifier(false, true);
 
         ir::Expression *ordinal;

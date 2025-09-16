@@ -25,12 +25,12 @@ let testLongValue: Long = 9223372036854775807;
 function byte_test(): boolean {
     let Byte_: Byte = new Byte(42 as byte); // ?
 
-    let byte_short  = Byte_ as Short; // ?
-    let byte_int    = Byte_ as Int; // ?
-    let byte_long   = Byte_ as Long; // ok
-    let byte_float  = Byte_ as Float; // ok
-    let byte_double = Byte_ as Double; // ok
-    let byte_char   = Byte_ as Char; // ok
+    let byte_short  = Byte.toShort(Byte_); // ?
+    let byte_int    = Byte.toInt(Byte_); // ?
+    let byte_long   = Byte.toLong(Byte_); // ok
+    let byte_float  = Byte.toFloat(Byte_); // ok
+    let byte_double = Byte.toDouble(Byte_); // ok
+    let byte_char   = Byte.toChar(Byte_); // ok
 
     // true test Type speciefic operations
     {
@@ -57,13 +57,13 @@ function short_test(): boolean {
     let Short_: Short = new Short(42 as short);
 
 
-    let short_byte   = Short_ as Byte;
-    let short_short  = Short_ as Short;
-    let short_char   = Short_ as Char;
-    let short_int    = Short_ as Int;
-    let short_long   = Short_ as Long;
-    let short_float  = Short_ as Float;
-    let short_double = Short_ as Double;
+    let short_byte   = Short.toByte(Short_);
+    let short_short  = Short.toShort(Short_);
+    let short_char   = Short.toChar(Short_);
+    let short_int    = Short.toInt(Short_);
+    let short_long   = Short.toLong(Short_);
+    let short_float  = Short.toFloat(Short_);
+    let short_double = Short.toDouble(Short_);
 
 
     // true test Type speciefic operations
@@ -90,13 +90,13 @@ function short_test(): boolean {
 function char_test(): boolean {
     let Char_: Char = new Char(42 as char);
 
-    let char_byte   = Char_ as Byte;
-    let char_short  = Char_ as Short;
-    let char_char   = Char_ as Char;
-    let char_int    = Char_ as Int;
-    let char_long   = Char_ as Long;
-    let char_float  = Char_ as Float;
-    let char_double = Char_ as Double;
+    let char_byte   = Char.toByte(Char_);
+    let char_short  = Char.toShort(Char_);
+    let char_char   = Char.toChar(Char_);
+    let char_int    = Char.toInt(Char_);
+    let char_long   = Char.toLong(Char_);
+    let char_float  = Char.toFloat(Char_);
+    let char_double = Char.toDouble(Char_);
 
     // true test Type speciefic operations
     {
@@ -123,13 +123,13 @@ function int_test(): boolean {
     let Int_: Int = new Int(42 as int);
 
 
-    let int_byte    = Int_ as Byte;
-    let int_short   = Int_ as Short;
-    let int_char    = Int_ as Char;
-    let int_int     = Int_ as Int;
-    let int_long    = Int_ as Long;
-    let int_float   = Int_ as Float;
-    let int_double  = Int_ as Double;
+    let int_byte    = Int.toByte(Int_);
+    let int_short   = Int.toShort(Int_);
+    let int_char    = Int.toChar(Int_);
+    let int_int     = Int.toInt(Int_);
+    let int_long    = Int.toLong(Int_);
+    let int_float   = Int.toFloat(Int_);
+    let int_double  = Int.toDouble(Int_);
 
     // true test Type speciefic operations
     {
@@ -155,13 +155,13 @@ function int_test(): boolean {
 function long_test(): boolean {
     let Long_: Long = new Long(42 as long);
 
-    let long_byte   = Long_ as Byte;
-    let long_short  = Long_ as Short;
-    let long_char   = Long_ as Char;
-    let long_int    = Long_ as Int;
-    let long_long   = Long_ as Long;
-    let long_float  = Long_ as Float;
-    let long_double = Long_ as Double;
+    let long_byte   = Long.toByte(Long_);
+    let long_short  = Long.toShort(Long_);
+    let long_char   = Long.toChar(Long_);
+    let long_int    = Long.toInt(Long_);
+    let long_long   = Long.toLong(Long_);
+    let long_float  = Long.toFloat(Long_);
+    let long_double = Long.toDouble(Long_);
 
     // true test Type speciefic operations
     {
@@ -187,19 +187,15 @@ function long_test(): boolean {
 function float_test(): boolean {
     let Float_: Float = new Float(42 as float);
 
-    let float_byte   = Float_ as Byte;
-    let float_short  = Float_ as Short;
-    let float_char   = Float_ as Char;
-    let float_int    = Float_ as Int;
-    let float_long   = Float_ as Long;
-    let float_float  = Float_ as Float;
-    let float_double = Float_ as Double;
+    let float_byte   = Float.toByte(Float_);
+    let float_short  = Float.toShort(Float_);
+    let float_int    = Float.toInt(Float_);
+    let float_long   = Float.toLong(Float_);
+    let float_float  = Float.toFloat(Float_);
+    let float_double = Float.toDouble(Float_);
     // true test Type speciefic operations
     {
         if (float_double.toExponential() != testDouble.toExponential()) {
-            return false;
-        }
-        if (float_char != testChar || float_char.isBinDigit() != testChar.isBinDigit()) {
             return false;
         }
         if (float_float != testFloat || float_float.isNaN() != testFloat.isNaN()) { // better to find another way of checking
@@ -218,19 +214,15 @@ function float_test(): boolean {
 function double_test(): boolean {
     let Double_: Double = new Double(42 as double);
 
-    let double_byte   = Double_ as Byte;
-    let double_short  = Double_ as Short;
-    let double_char   = Double_ as Char;
-    let double_int    = Double_ as Int;
-    let double_long   = Double_ as Long;
-    let double_float  = Double_ as Float;
-    let double_double = Double_ as Double;
+    let double_byte   = Double.toByte(Double_);
+    let double_short  = Double.toShort(Double_);
+    let double_int    = Double.toInt(Double_);
+    let double_long   = Double.toLong(Double_);
+    let double_float  = Double.toFloat(Double_);
+    let double_double = Double.toDouble(Double_);
     // true test Type speciefic operations
     {
         if (double_double.toExponential() != testDouble.toExponential()) {
-            return false;
-        }
-        if (double_char != testChar || double_char.isBinDigit() != testChar.isBinDigit()) {
             return false;
         }
         if (double_float != testFloat || double_float.isNaN() != testFloat.isNaN()) { // better to find another way of checking

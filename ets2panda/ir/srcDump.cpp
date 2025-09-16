@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,9 +31,7 @@ SrcDumper::SrcDumper(const ir::AstNode *node)
     node->Dump(this);
 }
 
-SrcDumper::SrcDumper(const ir::AstNode *node, bool isDeclgen, bool isIsolatedDeclgen)
-    : isDeclgen_(isDeclgen), isIsolatedDeclgen_(isIsolatedDeclgen)
-
+SrcDumper::SrcDumper(const ir::AstNode *node, bool isDeclgen) : isDeclgen_(isDeclgen)
 {
     node->Dump(this);
 }
@@ -64,6 +62,16 @@ void SrcDumper::Endl(size_t num)
 void SrcDumper::Add(const std::string &str)
 {
     ss_ << str;
+}
+
+void SrcDumper::Add(int8_t i)
+{
+    ss_ << static_cast<int32_t>(i);
+}
+
+void SrcDumper::Add(int16_t i)
+{
+    ss_ << i;
 }
 
 void SrcDumper::Add(int32_t i)

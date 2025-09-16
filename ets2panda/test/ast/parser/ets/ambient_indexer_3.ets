@@ -14,11 +14,19 @@
  */
 
 declare class A {
-    [index : /* @@ label */string] : string
+    [index : string] : string
 }
 
 function main() {
     let a : A = new A();
 }
 
-/* @@@ label Error SyntaxError: Index type must be number in index signature.  */
+/* @@? 17:14 Error SyntaxError: Index type must be number in index signature. */
+/* @@? 17:14 Error SyntaxError: ] expected in index signature. */
+/* @@? 17:20 Error SyntaxError: An index signature must have a type annotation. */
+/* @@? 17:20 Error SyntaxError: Expected ':', got ']'. */
+/* @@? 17:20 Error SyntaxError: Invalid Type. */
+/* @@? 17:20 Error SyntaxError: Return type of index signature from exported class or interface need to be identifier. */
+/* @@? 17:20 Error SyntaxError: Unexpected token ']'. */
+/* @@? 17:22 Error SyntaxError: Unexpected token ':'. */
+/* @@? 17:24 Error SyntaxError: string is a predefined type, cannot be used as an identifier */

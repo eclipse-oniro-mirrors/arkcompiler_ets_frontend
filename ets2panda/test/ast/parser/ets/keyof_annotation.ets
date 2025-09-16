@@ -41,10 +41,9 @@ function main():void{
     let y6:keyof B = /* @@ label6 */100;
 }
 
-/* @@@ label1 Error TypeError: Type '"other field"' cannot be assigned to type '"method1"|"field1"|"field2"'  */
-/* @@@ label2 Error TypeError: Type '"other method"' cannot be assigned to type '"method1"|"field1"|"field2"'  */
-/* @@@ label3 Error TypeError: Type 'int' cannot be assigned to type '"method1"|"field1"|"field2"'  */
-/* @@@ label4 Error TypeError: Type '"other field"' cannot be assigned to type '"bmethod1"|"bfield1"|"bfield2"|"method1"|"field1"|"field2"'  */
-/* @@@ label5 Error TypeError: Type '"other method"' cannot be assigned to type '"bmethod1"|"bfield1"|"bfield2"|"method1"|"field1"|"field2"'  */
-/* @@@ label6 Error TypeError: Type 'int' cannot be assigned to type '"bmethod1"|"bfield1"|"bfield2"|"method1"|"field1"|"field2"'  */
-
+/* @@@ label1 Error TypeError: Type '"other field"' cannot be assigned to type '"method1"|"field1"|"field2"' */
+/* @@@ label2 Error TypeError: Type '"other method"' cannot be assigned to type '"method1"|"field1"|"field2"' */
+/* @@@ label3 Error TypeError: Type 'Int' cannot be assigned to type '"method1"|"field1"|"field2"' */
+/* @@@ label4 Error TypeError: Type '"other field"' cannot be assigned to type '"bmethod1"|"bfield1"|"bfield2"|"method1"|"field1"|"field2"' */
+/* @@@ label5 Error TypeError: Type '"other method"' cannot be assigned to type '"bmethod1"|"bfield1"|"bfield2"|"method1"|"field1"|"field2"' */
+/* @@@ label6 Error TypeError: Type 'Int' cannot be assigned to type '"bmethod1"|"bfield1"|"bfield2"|"method1"|"field1"|"field2"' */

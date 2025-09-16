@@ -82,6 +82,7 @@ ChainExpression *ChainExpression::Clone(ArenaAllocator *const allocator, AstNode
 {
     auto *const expression = expression_ != nullptr ? expression_->Clone(allocator, nullptr)->AsExpression() : nullptr;
     auto *const clone = allocator->New<ChainExpression>(expression);
+    ES2PANDA_ASSERT(clone != nullptr);
 
     if (expression != nullptr) {
         expression->SetParent(clone);

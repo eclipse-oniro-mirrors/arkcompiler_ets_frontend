@@ -23,6 +23,6 @@ function main(): void {
     handlerMap[2] = 1
 }
 
-/* @@? 23:5 Error TypeError: No matching indexing signature for $_set(int, int) */
+/* @@? 23:5 Error TypeError: No matching indexing signature for $_set(Int, Int) */
 /* @@? 23:16 Error TypeError: Cannot find index access method with the required signature. */
-/* @@? 23:21 Error TypeError: Type 'int' is not compatible with type '(param: Double) => String' at index 2 */
+/* @@? 23:21 Error TypeError: Type 'Int' is not compatible with type '(param: Double) => String' at index 2 */

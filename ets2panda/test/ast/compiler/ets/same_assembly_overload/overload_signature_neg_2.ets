@@ -15,7 +15,7 @@
 
 //Not support non-declare function has same assembly code
 export class A<T> {}
-export declare function foo(a:A<number>):void 
+export declare function foo(a:A<number>):void
 export function foo(a:A<string>):number {}
 
-/* @@? 19:8 Error TypeError: Function foo with this assembly signature already declared. */
+/* @@? 19:8 Error TypeError: Method declaration `foo` must all ambient or non-ambient */

@@ -31,7 +31,7 @@ function test_numerics() {
 
     for (const e1 of arr1) {
         for (const e2 of arr2) {
-            assertTrue(eq(e1, e2))
+            arktest.assertTrue(eq(e1, e2))
         }
     }
 }
@@ -40,33 +40,33 @@ function test_numerics() {
 // NOTE(vpukhov): char == int overlow?
 function test_numeric_precision() {
     const maxsafe = Double.toLong(Double.MAX_SAFE_INTEGER)
-    assertTrue(!eq(maxsafe * 4 + 1, maxsafe * 4))
-    assertTrue(eq(maxsafe * 4 + 1, Long.toDouble(maxsafe * 4)))
+    arktest.assertTrue(!eq(maxsafe * 4 + 1, maxsafe * 4))
+    arktest.assertTrue(eq(maxsafe * 4 + 1, Long.toDouble(maxsafe * 4)))
 }
 
 function main() {
-    assertTrue(eq(null, null));
-    assertTrue(eq(null, undefined));
-    assertTrue(eq(undefined, null));
-    assertTrue(eq(undefined, undefined));
-    assertTrue(eq("abc", ((a: string, b: string): string => { return a + b })("a", "bc")));
-    assertTrue(eq(123n, ((a: bigint, b: bigint): bigint => { return a + b })(120n, 3n)));
-    assertTrue(eq(true, true));
-    assertTrue(eq(box<int>(123), box<int>(123)));
-    assertTrue(eq('a', 'a'));
+    arktest.assertTrue(eq(null, null));
+    arktest.assertTrue(eq(null, undefined));
+    arktest.assertTrue(eq(undefined, null));
+    arktest.assertTrue(eq(undefined, undefined));
+    arktest.assertTrue(eq("abc", ((a: string, b: string): string => { return a + b })("a", "bc")));
+    arktest.assertTrue(eq(123n, ((a: bigint, b: bigint): bigint => { return a + b })(120n, 3n)));
+    arktest.assertTrue(eq(true, true));
+    arktest.assertTrue(eq(box<int>(123), box<int>(123)));
+    arktest.assertTrue(eq('a', 'a'));
 
-    assertTrue(!eq(null, false))
-    assertTrue(!eq(undefined, false))
-    assertTrue(!eq(null, 0))
-    assertTrue(!eq(true, false))
-    assertTrue(!eq("", 0))
-    assertTrue(!eq("", false))
-    assertTrue(!eq("abc", "cde"))
-    assertTrue(!eq("1", 1))
-    assertTrue(!eq(123n, 124n))
-    assertTrue(!eq(-123n, 123n))
-    assertTrue(!eq('a', 'b'))
-    assertTrue(!eq(box<int>(1), box<int>(2)))
+    arktest.assertTrue(!eq(null, false))
+    arktest.assertTrue(!eq(undefined, false))
+    arktest.assertTrue(!eq(null, 0))
+    arktest.assertTrue(!eq(true, false))
+    arktest.assertTrue(!eq("", 0))
+    arktest.assertTrue(!eq("", false))
+    arktest.assertTrue(!eq("abc", "cde"))
+    arktest.assertTrue(!eq("1", 1))
+    arktest.assertTrue(!eq(123n, 124n))
+    arktest.assertTrue(!eq(-123n, 123n))
+    arktest.assertTrue(!eq('a', 'b'))
+    arktest.assertTrue(!eq(box<int>(1), box<int>(2)))
 
     test_numerics();
     test_numeric_precision();

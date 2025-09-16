@@ -16,7 +16,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as ts from 'typescript';
-import { processSyncErr } from '../lib/utils/functions/ProcessWrite';
 import * as qEd from './autofixes/QuasiEditor';
 import type { BaseTypeScriptLinter } from './BaseTypeScriptLinter';
 import type { CommandLineOptions } from './CommandLineOptions';
@@ -26,6 +25,15 @@ import type { LinterOptions } from './LinterOptions';
 import type { LintRunResult } from './LintRunResult';
 import { Logger } from './Logger';
 import type { ProblemInfo } from './ProblemInfo';
+import type { CmdProgressInfo } from './progress/CmdProgressInfo';
+import {
+  FixedLineProgressBar,
+  postProcessCmdProgressBar,
+  preProcessCmdProgressBar,
+  processCmdProgressBar
+} from './progress/FixedLineProgressBar';
+import type { MigrationInfo } from './progress/MigrationInfo';
+import type { ProgressBarInfo } from './progress/ProgressBarInfo';
 import { ProjectStatistics } from './statistics/ProjectStatistics';
 import { generateMigrationStatisicsReport } from './statistics/scan/ProblemStatisticsCommonFunction';
 import type { TimeRecorder } from './statistics/scan/TimeRecorder';
@@ -44,6 +52,9 @@ import { USE_STATIC } from './utils/consts/InteropAPI';
 import { LibraryTypeCallDiagnosticChecker } from './utils/functions/LibraryTypeCallDiagnosticChecker';
 import { mergeArrayMaps } from './utils/functions/MergeArrayMaps';
 import { clearPathHelperCache, pathContainsDirectory } from './utils/functions/PathHelper';
+import { processSyncErr } from './utils/functions/ProcessWrite';
+import type { LinterInputInfo } from './LinterInputInfo';
+import { collectCommonApiInfo } from './utils/functions/CommonApiInfo';
 
 function prepareInputFilesList(cmdOptions: CommandLineOptions): string[] {
   let inputFiles = cmdOptions.inputFiles.map((x) => {
@@ -93,7 +104,7 @@ export function lint(
     lintResult;
 }
 
-function lintImpl(config: LinterConfig): LintRunResult {
+function lintImpl(config: LinterConfig, migrationInfo?: MigrationInfo): LintRunResult {
   const { cmdOptions, tscCompiledProgram } = config;
   const tsProgram = tscCompiledProgram.getProgram();
   const options = cmdOptions.linterOptions;
@@ -110,11 +121,12 @@ function lintImpl(config: LinterConfig): LintRunResult {
     if (srcFile) {
       srcFiles.push(srcFile);
     }
+    collectCommonApiInfo(tsProgram);
   }
 
   const tscStrictDiagnostics = getTscDiagnostics(tscCompiledProgram, srcFiles);
   LibraryTypeCallDiagnosticChecker.instance.rebuildTscDiagnostics(tscStrictDiagnostics);
-  const lintResult = lintFiles(tsProgram, srcFiles, options, tscStrictDiagnostics);
+  const lintResult = lintFiles(tsProgram, srcFiles, options, tscStrictDiagnostics, migrationInfo);
   LibraryTypeCallDiagnosticChecker.instance.clear();
 
   if (!options.ideInteractive) {
@@ -129,34 +141,91 @@ function lintFiles(
   tsProgram: ts.Program,
   srcFiles: ts.SourceFile[],
   options: LinterOptions,
-  tscStrictDiagnostics: Map<string, ts.Diagnostic[]>
+  tscStrictDiagnostics: Map<string, ts.Diagnostic[]>,
+  migrationInfo?: MigrationInfo
 ): LintRunResult {
-  const projectStats: ProjectStatistics = new ProjectStatistics();
-  const problemsInfos: Map<string, ProblemInfo[]> = new Map();
-
   TypeScriptLinter.initGlobals();
   InteropTypescriptLinter.initGlobals();
-  let fileCount: number = 0;
+  const cmdProgressBar = new FixedLineProgressBar();
+  const cmdProgressInfo: CmdProgressInfo = {
+    cmdProgressBar: cmdProgressBar,
+    migrationInfo: migrationInfo,
+    srcFiles: srcFiles,
+    options: options
+  };
 
+  if (options.ideInteractive) {
+    process.stderr.write('\n');
+    preProcessCmdProgressBar(cmdProgressInfo);
+  }
+  const linterInputInfo: LinterInputInfo = {
+    tsProgram: tsProgram,
+    srcFiles: srcFiles,
+    options: options,
+    tscStrictDiagnostics: tscStrictDiagnostics,
+    migrationInfo: migrationInfo,
+    cmdProgressInfo: cmdProgressInfo
+  };
+
+  const lintResult = executeLinter(linterInputInfo);
+  if (options.ideInteractive) {
+    postProcessCmdProgressBar(cmdProgressInfo);
+  }
+  return lintResult;
+}
+
+function executeLinter(linterInputInfo: LinterInputInfo): LintRunResult {
+  const { tsProgram, srcFiles, options, tscStrictDiagnostics, migrationInfo, cmdProgressInfo } = linterInputInfo;
+  const projectStats: ProjectStatistics = new ProjectStatistics();
+  const problemsInfos: Map<string, ProblemInfo[]> = new Map();
+  let fileCount: number = 0;
   for (const srcFile of srcFiles) {
     const linter: BaseTypeScriptLinter = !options.interopCheckMode ?
       new TypeScriptLinter(tsProgram.getTypeChecker(), options, srcFile, tscStrictDiagnostics) :
       new InteropTypescriptLinter(tsProgram.getTypeChecker(), tsProgram.getCompilerOptions(), options, srcFile);
+
     linter.lint();
     const problems = linter.problemsInfos;
     problemsInfos.set(path.normalize(srcFile.fileName), [...problems]);
     projectStats.fileStats.push(linter.fileStats);
-    fileCount = fileCount + 1;
+    fileCount += 1;
     if (options.ideInteractive) {
-      processSyncErr(`{"content":"${srcFile.fileName}","messageType":1,"indicator":${fileCount / srcFiles.length}}\n`);
+      processCmdProgressBar(cmdProgressInfo, fileCount);
+      processIdeProgressBar(
+        { migrationInfo: migrationInfo, currentSrcFile: srcFile, srcFiles: srcFiles, options: options },
+        fileCount
+      );
     }
   }
-
   return {
     hasErrors: projectStats.hasError(),
-    problemsInfos,
-    projectStats
+    problemsInfos: problemsInfos,
+    projectStats: projectStats
   };
+}
+
+export function processIdeProgressBar(progressBarInfo: ProgressBarInfo, fileCount: number): void {
+  const { currentSrcFile, srcFiles, options } = progressBarInfo;
+
+  const isMigrationStep = options.migratorMode && progressBarInfo.migrationInfo;
+  const phasePrefix = isMigrationStep ? 'Migration Phase' : 'Scan Phase';
+
+  const migrationPhase = isMigrationStep ?
+    ` ${progressBarInfo.migrationInfo!.currentPass + 1} / ${progressBarInfo.migrationInfo!.maxPasses}` :
+    '';
+
+  const progressRatio = fileCount / srcFiles.length;
+  const displayContent = `currentFile: ${currentSrcFile.fileName}, ${phasePrefix}${migrationPhase}`;
+  process.stderr.write('\x1B[1F\x1B[0G');
+  process.stderr.write('\x1B[2K');
+  processSyncErr(
+    JSON.stringify({
+      content: displayContent,
+      messageType: 1,
+      indicator: progressRatio
+    }) + '\n'
+  );
+  process.stderr.write('\x1B[1E');
 }
 
 function migrate(
@@ -172,7 +241,8 @@ function migrate(
   let lintResult: LintRunResult = initialLintResult;
   const problemsInfosBeforeMigrate = lintResult.problemsInfos;
 
-  for (let pass = 0; pass < (cmdOptions.linterOptions.migrationMaxPass ?? qEd.DEFAULT_MAX_AUTOFIX_PASSES); pass++) {
+  const migrationMaxPass = cmdOptions.linterOptions.migrationMaxPass ?? qEd.DEFAULT_MAX_AUTOFIX_PASSES;
+  for (let pass = 0; pass < migrationMaxPass; pass++) {
     const appliedFix = fix(linterConfig, lintResult, updatedSourceTexts, hcResults);
     hcResults = undefined;
 
@@ -183,18 +253,11 @@ function migrate(
 
     // Re-compile and re-lint project after applying the fixes.
     linterConfig = compileLintOptions(cmdOptions, getMigrationCreateProgramCallback(updatedSourceTexts));
-    lintResult = lintImpl(linterConfig);
+    lintResult = lintImpl(linterConfig, { currentPass: pass, maxPasses: migrationMaxPass });
   }
 
   // Write new text for updated source files.
-  updatedSourceTexts.forEach((newText, fileName) => {
-    if (!cmdOptions.linterOptions.noMigrationBackupFile) {
-      qEd.QuasiEditor.backupSrcFile(fileName);
-    }
-    const filePathMap = cmdOptions.linterOptions.migrationFilePathMap;
-    const writeFileName = filePathMap?.get(fileName) ?? fileName;
-    fs.writeFileSync(writeFileName, newText);
-  });
+  updateSourceFiles(updatedSourceTexts, cmdOptions);
 
   timeRecorder.endMigration();
   generateMigrationStatisicsReport(lintResult, timeRecorder, cmdOptions.outputFilePath);
@@ -204,6 +267,38 @@ function migrate(
   }
 
   return lintResult;
+}
+
+function filterLinterProblemsWithAutofixConfig(
+  cmdOptions: CommandLineOptions,
+  problemsInfos: Map<string, ProblemInfo[]>
+): Map<string, ProblemInfo[]> {
+  const autofixRuleConfigTags = cmdOptions.linterOptions.autofixRuleConfigTags;
+  if (!cmdOptions.linterOptions.ideInteractive || !autofixRuleConfigTags) {
+    return problemsInfos;
+  }
+
+  const needToBeFixedProblemsInfos = new Map<string, ProblemInfo[]>();
+  for (const [filePath, problems] of problemsInfos) {
+    const needToFix: ProblemInfo[] = problems.filter((problem) => {
+      return autofixRuleConfigTags.has(problem.ruleTag);
+    });
+    if (needToFix.length > 0) {
+      needToBeFixedProblemsInfos.set(filePath, needToFix);
+    }
+  }
+  return needToBeFixedProblemsInfos;
+}
+
+function updateSourceFiles(updatedSourceTexts: Map<string, string>, cmdOptions: CommandLineOptions): void {
+  updatedSourceTexts.forEach((newText, fileName) => {
+    if (!cmdOptions.linterOptions.noMigrationBackupFile) {
+      qEd.QuasiEditor.backupSrcFile(fileName);
+    }
+    const filePathMap = cmdOptions.linterOptions.migrationFilePathMap;
+    const writeFileName = filePathMap?.get(fileName) ?? fileName;
+    fs.writeFileSync(writeFileName, newText);
+  });
 }
 
 function hasUseStaticDirective(srcFile: ts.SourceFile): boolean {
@@ -228,7 +323,10 @@ function fix(
   let appliedFix = false;
   // Apply homecheck fixes first to avoid them being skipped due to conflict with linter autofixes
   let mergedProblems: Map<string, ProblemInfo[]> = hcResults ?? new Map();
-  mergedProblems = mergeArrayMaps(mergedProblems, lintResult.problemsInfos);
+  mergedProblems = mergeArrayMaps(
+    mergedProblems,
+    filterLinterProblemsWithAutofixConfig(linterConfig.cmdOptions, lintResult.problemsInfos)
+  );
   mergedProblems.forEach((problemInfos, fileName) => {
     const srcFile = program.getSourceFile(fileName);
     if (!srcFile) {

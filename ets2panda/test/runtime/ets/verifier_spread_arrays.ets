@@ -29,5 +29,5 @@
      // spread of arrays, flatten array
      let a1: number[][] = [[1.0, 2.0], [3.0, 4.0]]
      let a2: number[][] = [[5.0, 6.0], []]
-     assertEQ(sum(...[...foo(...a1), ...foo(...a2)]), 21.0)
+     arktest.assertEQ(sum(...[...foo(...a1), ...foo(...a2)]), 21.0)
  }

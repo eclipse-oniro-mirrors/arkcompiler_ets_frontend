@@ -17,7 +17,7 @@ function sum(...numbers: [number, number, number]): number {
     return numbers[0] + numbers[1] + numbers[2]
 }
 
-/* @@ label1 */sum(/* @@ label2 */10, 20, "one")
+/* @@ label1 */sum(10, 20, /* @@ label2 */"one")
 
-/* @@@ label1 Error TypeError: No matching call signature for sum(int, int, "one") */
-/* @@@ label2 Error TypeError: Type 'int' is not compatible with type 'double' at index 1 */
+/* @@@ label1 Error TypeError: No matching call signature for sum(Double, Double, "one") */
+/* @@@ label2 Error TypeError: Type '"one"' is not compatible with type 'Double' at index 3 */

@@ -47,33 +47,33 @@ function main(): void {
     } catch (e: ClassCastError) {
         test = true;
     }
-    assertEQ(test, true)
+    arktest.assertEQ(test, true)
 
     test = false;
-    assertEQ(test, false)
+    arktest.assertEQ(test, false)
 
     try {
         let numbers: int = john!.residence.numberOfRooms;
     } catch (e: NullPointerError) {
         test = true;
     }
-    assertEQ(test, true)
+    arktest.assertEQ(test, true)
 
     test = false;
-    assertEQ(test, false)
+    arktest.assertEQ(test, false)
     try {
         let numbers: int = foo() + bar() + john!.residence.numberOfRooms;
     } catch (e: NullPointerError) {
         test = true;
     }
-    assertEQ(test, true)
-    assertEQ(a, 2) // foo and bar were evaluated
+    arktest.assertEQ(test, true)
+    arktest.assertEQ(a, 2) // foo and bar were evaluated
 
     john = new Person();
 
     let numbers: int = john.residence.numberOfRooms;
-    assertEQ(numbers, 1)
+    arktest.assertEQ(numbers, 1)
 
     numbers = foo() + bar() + john.residence.numberOfRooms;
-    assertEQ(numbers, 4)
+    arktest.assertEQ(numbers, 4)
 }

@@ -13,18 +13,7 @@
  * limitations under the License.
  */
 
-import {
-    ArkAssignStmt,
-    ArkMethod,
-    CallGraph,
-    CallGraphBuilder,
-    Local,
-    LOG_MODULE_TYPE,
-    Logger,
-    Scene,
-    Stmt,
-    Value,
-} from 'arkanalyzer/lib';
+import { ArkAssignStmt, ArkMethod, CallGraph, CallGraphBuilder, Local, LOG_MODULE_TYPE, Logger, Scene, Stmt, Value } from 'arkanalyzer/lib';
 import { WarnInfo } from '../../utils/common/Utils';
 import { Language } from 'arkanalyzer/lib/core/model/ArkFile';
 import { DVFG, DVFGNode } from 'arkanalyzer/lib/VFG/DVFG';
@@ -120,6 +109,7 @@ export const CALLBACK_METHOD_NAME: string[] = [
     'onMouse', // 鼠标事件，当鼠标按键点击或在组件上移动时触发
     'onAreaChange', // 组件区域变化事件，组件尺寸、位置变化时触发
     'onVisibleAreaChange', // 组件可见区域变化事件，组件在屏幕中的显示区域面积变化时触发
+    'onChange',
 ];
 
 export function getLanguageStr(language: Language): string {
@@ -143,15 +133,20 @@ export function getLanguageStr(language: Language): string {
     return targetLan;
 }
 
-export function getLineAndColumn(stmt: Stmt, operand: Value): WarnInfo {
+export function getLineAndColumn(stmt: Stmt, operand: Value, exactEndInfo: boolean = false): WarnInfo {
     const arkFile = stmt.getCfg().getDeclaringMethod().getDeclaringArkFile();
     const originPosition = stmt.getOperandOriginalPosition(operand);
     if (arkFile && originPosition) {
         const originPath = arkFile.getFilePath();
         const line = originPosition.getFirstLine();
         const startCol = originPosition.getFirstCol();
-        const endCol = startCol;
-        return { line, startCol, endCol, filePath: originPath };
+        if (exactEndInfo) {
+            const endLine = originPosition.getLastLine();
+            const endCol = originPosition.getLastCol();
+            return { line, startCol, endLine: endLine, endCol: endCol, filePath: originPath };
+        } else {
+            return { line, startCol, endCol: startCol, filePath: originPath };
+        }
     } else {
         logger.debug('ArkFile or operand position is null.');
     }
@@ -176,4 +171,24 @@ export function getGlobalsDefineInDefaultMethod(defaultMethod: ArkMethod): Map<s
         globalVarMap.set(name, [...(globalVarMap.get(name) ?? []), stmt]);
     }
     return globalVarMap;
+}
+
+export function getGlobalLocalsInDefaultMethod(defaultMethod: ArkMethod): Map<string, Local> {
+    const globals: Map<string, Local> = new Map<string, Local>();
+    const stmts = defaultMethod.getBody()?.getCfg().getStmts() ?? [];
+    for (const stmt of stmts) {
+        if (!(stmt instanceof ArkAssignStmt)) {
+            continue;
+        }
+        const leftOp = stmt.getLeftOp();
+        if (!(leftOp instanceof Local)) {
+            continue;
+        }
+        const name = leftOp.getName();
+        if (name.startsWith('%') || name === 'this') {
+            continue;
+        }
+        globals.set(leftOp.getName(), leftOp);
+    }
+    return globals;
 }

@@ -35,19 +35,19 @@ class A implements I {
 
 function main(): void {
   let a = new A();
-  assertEQ(a.self().x, 42)
-  assertEQ(a.fn(), "")
-  assertEQ(a.fn2().length, 1)
-  assertEQ(a.fn3()[0], 0)
-  assertEQ(a.fn4()[0][0], 0)
-  assertEQ(a.fn5()[0], "")
+  arktest.assertEQ(a.self().x, 42)
+  arktest.assertEQ(a.fn(), "")
+  arktest.assertEQ(a.fn2().length, 1)
+  arktest.assertEQ(a.fn3()[0], 0)
+  arktest.assertEQ(a.fn4()[0][0], 0)
+  arktest.assertEQ(a.fn5()[0], "")
 
   // let i: I = a;
-  // assertTrue(i.self() instanceof A)
-  // assertEQ((i.fn() as String), "")
-  // assertEQ((i.fn2() as FixedArray<Object>)[0], new Object()
-  // assertEQ((i.fn3() as FixedArray<int>)[0], 0)
-  // assertEQ((i.fn4() as FixedArray<String>)[0], "")
+  // arktest.assertTrue(i.self() instanceof A)
+  // arktest.assertEQ((i.fn() as String), "")
+  // arktest.assertEQ((i.fn2() as FixedArray<Object>)[0], new Object()
+  // arktest.assertEQ((i.fn3() as FixedArray<int>)[0], 0)
+  // arktest.assertEQ((i.fn4() as FixedArray<String>)[0], "")
 }
 
 

@@ -13,36 +13,56 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": [
-        {
-            "line": 20,
-            "column": 1,
-            "endLine": 20,
-            "endColumn": 12,
-            "problem": "LimitedStdLibNoDoncurrentDecorator",
-            "suggest": "",
-            "rule": "Usage of standard library is restricted(arkts-limited-stdlib-no-concurrent-decorator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 23,
-            "column": 32,
-            "endLine": 23,
-            "endColumn": 44,
-            "problem": "IsConcurrentDeprecated",
-            "suggest": "",
-            "rule": "isConcurrent is not supported (arkts-limited-stdlib-no-support-isConcurrent)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 25,
-            "column": 27,
-            "endLine": 25,
-            "endColumn": 39,
-            "problem": "IsConcurrentDeprecated",
-            "suggest": "",
-            "rule": "isConcurrent is not supported (arkts-limited-stdlib-no-support-isConcurrent)",
-            "severity": "ERROR"
-        }
-    ]
+  "result": [
+    {
+      "line": 16,
+      "column": 10,
+      "endLine": 16,
+      "endColumn": 18,
+      "problem": "LimitedStdLibNoImportConcurrency",
+      "suggest": "",
+      "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 17,
+      "column": 10,
+      "endLine": 17,
+      "endColumn": 24,
+      "problem": "LimitedStdLibNoImportConcurrency",
+      "suggest": "",
+      "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 20,
+      "column": 1,
+      "endLine": 20,
+      "endColumn": 12,
+      "problem": "LimitedStdLibNoDoncurrentDecorator",
+      "suggest": "",
+      "rule": "Usage of standard library is restricted(arkts-limited-stdlib-no-concurrent-decorator)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 23,
+      "column": 32,
+      "endLine": 23,
+      "endColumn": 44,
+      "problem": "IsConcurrentDeprecated",
+      "suggest": "",
+      "rule": "isConcurrent is not supported (arkts-limited-stdlib-no-support-isConcurrent)",
+      "severity": "ERROR"
+    },
+    {
+      "line": 25,
+      "column": 27,
+      "endLine": 25,
+      "endColumn": 39,
+      "problem": "IsConcurrentDeprecated",
+      "suggest": "",
+      "rule": "isConcurrent is not supported (arkts-limited-stdlib-no-support-isConcurrent)",
+      "severity": "ERROR"
+    }
+  ]
 }

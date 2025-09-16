@@ -35,9 +35,9 @@ function main() {
     let b: int = f()
     {}
 
-    // Case 3: transform trailing lambda for assert statement
-    assertEQ(1, f(){});
-    assertEQ(1, f(()=>{}));
+    // Case 3: transform trailing lambda for arktest.assert statement
+    arktest.assertEQ(1, f(){});
+    arktest.assertEQ(1, f(()=>{}));
     {
     }
 }

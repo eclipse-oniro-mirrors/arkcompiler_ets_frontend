@@ -18,5 +18,5 @@ let h: string = `${Math.floor(os / 60)}`;
 let m = `${os % 60}`;
 h.length === 1 ? (h = `0${h}`) : 1;
 m.length === 1 ? (m = `0${m}`) : 1;
-assertEQ(h, '07');
-assertEQ(m, '30');
+arktest.assertEQ(h, '07');
+arktest.assertEQ(m, '30');

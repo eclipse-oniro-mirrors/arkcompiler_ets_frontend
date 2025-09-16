@@ -24,6 +24,6 @@ class Derive extends Base {
 function main(): void {
   let bc = new Base();
   let dc = new Derive();
-  assertEQ(42, bc.num)
-  assertEQ(111, dc.num)
+  arktest.assertEQ(42, bc.num)
+  arktest.assertEQ(111, dc.num)
 }

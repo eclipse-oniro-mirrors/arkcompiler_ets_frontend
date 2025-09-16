@@ -33,6 +33,6 @@ class bar implements foo {
 
 function main() {
     let b = new bar();
-    assertEQ(b.a, Color.A)
-    assertEQ(b.aa, A.aa)
+    arktest.assertEQ(b.a, Color.A)
+    arktest.assertEQ(b.aa, A.aa)
 }

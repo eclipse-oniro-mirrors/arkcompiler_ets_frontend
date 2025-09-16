@@ -22,7 +22,7 @@ function main(): int {
   a = [a] as A;
   a = [a] as A;
   
-  assertEQ((((a as FixedArray<A>)[0] as FixedArray<A>)[0] as FixedArray<A>)[0], "test")
+  arktest.assertEQ((((a as FixedArray<A>)[0] as FixedArray<A>)[0] as FixedArray<A>)[0], "test")
 
   return 0;
 }

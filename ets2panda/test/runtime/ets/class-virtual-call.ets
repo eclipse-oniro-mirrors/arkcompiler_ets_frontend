@@ -27,11 +27,11 @@ class B extends A {
 
 function main() : void {
     let x : A = new A();
-    assertEQ(x.foo(), 1)
+    arktest.assertEQ(x.foo(), 1)
 
     let y : B = new B();
-    assertEQ(y.foo(), 2)
+    arktest.assertEQ(y.foo(), 2)
 
     let z : A = new B();
-    assertEQ(z.foo(), 2)
+    arktest.assertEQ(z.foo(), 2)
 }

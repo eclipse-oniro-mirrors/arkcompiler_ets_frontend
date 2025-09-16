@@ -21,6 +21,7 @@
 #include "compiler/core/ETSfunction.h"
 #include "compiler/core/targetTypeContext.h"
 #include "checker/ETSchecker.h"
+#include "ir/expressions/identifier.h"
 #include "util/helpers.h"
 #include <variant>
 
@@ -54,7 +55,6 @@ public:
     [[nodiscard]] checker::Type const *TypeForVar(varbinder::Variable const *var) const noexcept override;
 
     void LoadVar(const ir::Identifier *node, varbinder::Variable const *var);
-    void LoadDynamicModuleVariable(const ir::AstNode *node, varbinder::Variable const *var);
     void LoadDynamicNamespaceVariable(const ir::AstNode *node, varbinder::Variable const *var);
     void StoreVar(const ir::Identifier *node, const varbinder::ConstScopeFindResult &result);
 
@@ -69,13 +69,15 @@ public:
                        const util::StringView &name);
     void LoadProperty(const ir::AstNode *node, const checker::Type *propType, VReg objReg,
                       const util::StringView &fullName);
-    void StorePropertyDynamic(const ir::AstNode *node, const checker::Type *propType, VReg objReg,
-                              const util::StringView &propName);
-    void LoadPropertyDynamic(const ir::AstNode *node, const checker::Type *propType, VReg objReg,
-                             std::variant<util::StringView, const ark::es2panda::ir::Expression *> property);
 
-    void StoreElementDynamic(const ir::AstNode *node, VReg objectReg, VReg index);
-    void LoadElementDynamic(const ir::AstNode *node, VReg objectReg);
+    void StoreByIndexAny(const ir::MemberExpression *node, VReg objectReg, VReg index);
+    void LoadByIndexAny(const ir::MemberExpression *node, VReg objectReg);
+
+    void StoreByValueAny(const ir::MemberExpression *node, VReg objectReg, VReg value);
+    void LoadByValueAny(const ir::MemberExpression *node, VReg objectReg);
+
+    void StorePropertyByNameAny(const ir::AstNode *const node, const VReg objReg, const util::StringView &fullName);
+    void LoadPropertyByNameAny(const ir::AstNode *const node, const VReg objReg, const util::StringView &fullName);
 
     void StorePropertyByName(const ir::AstNode *node, VReg objReg,
                              checker::ETSChecker::NamedAccessMeta const &fieldMeta);
@@ -92,9 +94,19 @@ public:
     void ReturnAcc(const ir::AstNode *node);
 
     void BranchIfIsInstance(const ir::AstNode *node, VReg srcReg, const checker::Type *target, Label *ifTrue);
+    void BranchIfIsInstanceUnion(const ir::AstNode *node, VReg srcReg, const checker::Type *target, Label *ifTrue);
     void IsInstance(const ir::AstNode *node, VReg srcReg, checker::Type const *target);
-    void IsInstanceDynamic(const ir::BinaryExpression *node, VReg srcReg, VReg tgtReg);
-    void EmitFailedTypeCastException(const ir::AstNode *node, VReg src, checker::Type const *target);
+    void EmitFailedTypeCastException(const ir::AstNode *node, const VReg src, checker::Type const *target,
+                                     bool isUndef = false);
+
+    void EmitNullcheck([[maybe_unused]] const ir::AstNode *node)
+    {
+#ifdef PANDA_WITH_ETS
+        Sa().Emit<EtsNullcheck>(node);
+#else
+        ES2PANDA_UNREACHABLE();
+#endif  // PANDA_WITH_ETS
+    }
 
     void BinaryLogic(const ir::AstNode *node, lexer::TokenType op, VReg lhs);
     void BinaryArithmLogic(const ir::AstNode *node, lexer::TokenType op, VReg lhs);
@@ -211,10 +223,6 @@ public:
 
     void LoadAccumulatorChar(const ir::AstNode *node, char16_t value);
 
-    void LoadAccumulatorDynamicModule(const ir::AstNode *node, const ir::ETSImportDeclaration *import);
-
-    void ApplyBoxingConversion(const ir::AstNode *node);
-    void ApplyUnboxingConversion(const ir::AstNode *node);
     void ApplyConversion(const ir::AstNode *node)
     {
         if (targetType_ != nullptr) {
@@ -224,9 +232,6 @@ public:
     void ApplyConversionCast(const ir::AstNode *node, const checker::Type *targetType);
     void ApplyConversion(const ir::AstNode *node, const checker::Type *targetType);
     void ApplyCast(const ir::AstNode *node, const checker::Type *targetType);
-    void ApplyCastToBoxingFlags(const ir::AstNode *node, const ir::BoxingUnboxingFlags targetType);
-    void EmitBoxingConversion(ir::BoxingUnboxingFlags boxingFlag, const ir::AstNode *node);
-    void EmitBoxingConversion(const ir::AstNode *node);
     void SwapBinaryOpArgs(const ir::AstNode *node, VReg lhs);
     VReg MoveAccToReg(const ir::AstNode *node);
 
@@ -255,7 +260,7 @@ public:
     }
 
     void LoadStringLength(const ir::AstNode *node);
-    void LoadStringChar(const ir::AstNode *node, VReg stringObj, VReg charIndex);
+    void LoadStringChar(const ir::AstNode *node, VReg stringObj, VReg charIndex, bool needBox = false);
 
     void FloatIsNaN(const ir::AstNode *node);
     void DoubleIsNaN(const ir::AstNode *node);
@@ -271,21 +276,20 @@ public:
     void CastToFloat(const ir::AstNode *node);
     void CastToLong(const ir::AstNode *node);
     void CastToInt(const ir::AstNode *node);
-    void CastToString(const ir::AstNode *node);
-    void CastToDynamic(const ir::AstNode *node, const checker::ETSDynamicType *type);
-    void CastDynamicTo(const ir::AstNode *node, enum checker::TypeFlag typeFlag);
     void CastToReftype(const ir::AstNode *node, const checker::Type *targetType, bool unchecked);
-    void CastDynamicToObject(const ir::AstNode *node, const checker::Type *targetType);
 
     void InternalIsInstance(const ir::AstNode *node, const checker::Type *target);
     void InternalCheckCast(const ir::AstNode *node, const checker::Type *target);
+    void EmitAnyCheckCast(const ir::AstNode *node, const checker::Type *target);
     void CheckedReferenceNarrowing(const ir::AstNode *node, const checker::Type *target);
     void GuardUncheckedType(const ir::AstNode *node, const checker::Type *unchecked, const checker::Type *target);
 
     // Call, Construct
     void NewArray(const ir::AstNode *node, VReg arr, VReg dim, const checker::Type *arrType);
     void NewObject(const ir::AstNode *node, util::StringView name, VReg athis);
-    void BuildString(const ir::Expression *node);
+    void BuildString(const ir::BinaryExpression *node, VReg lhs);
+    void ConcatStrings(const ir::BinaryExpression *node, VReg lhs);
+    void ToString(const ir::Expression *node, VReg arg);
     void CallBigIntUnaryOperator(const ir::Expression *node, VReg arg, util::StringView signature);
     void CallBigIntBinaryOperator(const ir::Expression *node, VReg lhs, VReg rhs, util::StringView signature);
     void CallBigIntBinaryComparison(const ir::Expression *node, VReg lhs, VReg rhs, util::StringView signature);
@@ -319,6 +323,11 @@ public:
 #else
         ES2PANDA_UNREACHABLE();
 #endif  // PANDA_WITH_ETS
+    }
+
+    void EmitAnyIsInstance(const ir::AstNode *node, VReg objReg)
+    {
+        Sa().Emit<AnyIsinstance>(node, objReg);
     }
 
     void CallExact(const ir::AstNode *node, checker::Signature *signature,
@@ -424,6 +433,22 @@ public:
         CallDynamicImpl<CallShort, Call, CallRange>(data, param3, signature, arguments);
     }
 
+    void CallAnyNew(const ir::AstNode *const node, const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    {
+        CallAnyImpl<AnyCallNew0, AnyCallNewShort, AnyCallNewRange>(node, arguments, athis);
+    }
+
+    void CallAnyThis(const ir::AstNode *const node, const ir::Identifier *ident,
+                     const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    {
+        CallAnyImpl<AnyCallThis0, AnyCallThisShort, AnyCallThisRange>(node, ident, arguments, athis);
+    }
+
+    void CallAny(const ir::AstNode *const node, const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    {
+        CallAnyImpl<AnyCall0, AnyCallShort, AnyCallRange>(node, arguments, athis);
+    }
+
     // until a lowering for implicit super is available
     void CallRangeFillUndefined(const ir::AstNode *const node, checker::Signature *const signature, const VReg thisReg);
 
@@ -441,6 +466,11 @@ public:
         }
     }
 
+    void EmitLdaType(const ir::AstNode *node, util::StringView sv)
+    {
+        Sa().Emit<LdaType>(node, sv);
+    }
+
     ~ETSGen() override = default;
     NO_COPY_SEMANTIC(ETSGen);
     NO_MOVE_SEMANTIC(ETSGen);
@@ -448,26 +478,28 @@ public:
 private:
     const VReg dummyReg_ = VReg::RegStart();
 
-    void EmitUnboxedCall(const ir::AstNode *node, std::string_view signatureFlag, const checker::Type *targetType,
-                         const checker::Type *boxedType);
-
     void LoadConstantObject(const ir::Expression *node, const checker::Type *type);
+    void CreateStringBuilder(const ir::Expression *node);
     void StringBuilderAppend(const ir::AstNode *node, VReg builder);
     void AppendString(const ir::Expression *binExpr, VReg builder);
     void StringBuilder(const ir::Expression *left, const ir::Expression *right, VReg builder);
+    void AppendTemplateString(const ir::TemplateLiteral *node);
+    void ConcatTemplateString(const ir::TemplateLiteral *node);
     util::StringView FormClassPropReference(varbinder::Variable const *var);
     void UnaryMinus(const ir::AstNode *node);
     void UnaryTilde(const ir::AstNode *node);
 
     util::StringView ToAssemblerType(const es2panda::checker::Type *type) const;
-    void TestIsInstanceConstituent(const ir::AstNode *node, std::tuple<Label *, Label *> label,
-                                   checker::Type const *target, bool acceptNull);
+    void TestIsInstanceType(const ir::AstNode *const node, std::tuple<Label *, Label *> label,
+                            checker::Type const *target, const VReg srcReg, bool acceptNull);
     void CheckedReferenceNarrowingObject(const ir::AstNode *node, const checker::Type *target);
 
     template <bool IS_SRTICT = false>
     void HandleDefinitelyNullishEquality(const ir::AstNode *node, VReg lhs, VReg rhs, Label *ifFalse);
     template <bool IS_SRTICT = false>
     void HandlePossiblyNullishEquality(const ir::AstNode *node, VReg lhs, VReg rhs, Label *ifFalse, Label *ifTrue);
+
+    bool IsNullUnsafeObjectType(checker::Type const *type) const;
 
     void EmitIsNull([[maybe_unused]] const ir::AstNode *node)
     {
@@ -533,8 +565,6 @@ private:
 
     template <bool IS_SRTICT = false>
     void RefEqualityLoose(const ir::AstNode *node, VReg lhs, VReg rhs, Label *ifFalse);
-    template <bool IS_SRTICT = false>
-    void RefEqualityLooseDynamic(const ir::AstNode *node, VReg lhs, VReg rhs, Label *ifFalse);
 
     template <typename Compare, typename Cond>
     void BinaryNumberComparison(const ir::AstNode *node, VReg lhs, Label *ifFalse)
@@ -571,7 +601,7 @@ private:
     template <typename IntOp, typename LongOp>
     void BinaryBitwiseArithmetic(const ir::AstNode *node, VReg lhs);
 
-// NOLINTBEGIN(cppcoreguidelines-macro-usage, readability-container-size-empty)
+// NOLINTBEGIN(cppcoreguidelines-macro-usage, readability-container-size-empty, modernize-loop-convert)
 #define COMPILE_ARG(idx)                                                                                       \
     ES2PANDA_ASSERT((idx) < arguments.size());                                                                 \
     ES2PANDA_ASSERT((idx) < signature->Params().size() || signature->RestVar() != nullptr);                    \
@@ -750,7 +780,72 @@ private:
     }
 
 #undef COMPILE_ARG
-    // NOLINTEND(cppcoreguidelines-macro-usage, readability-container-size-empty)
+
+#define COMPILE_ANY_ARG(idx)                                   \
+    ES2PANDA_ASSERT((idx) < arguments.size());                 \
+    auto *param##idx = arguments[idx];                         \
+    auto *paramType##idx = param##idx->TsType();               \
+    auto ttctx##idx = TargetTypeContext(this, paramType##idx); \
+    arguments[idx]->Compile(this);                             \
+    VReg arg##idx = AllocReg();                                \
+    ApplyConversion(arguments[idx], nullptr);                  \
+    ApplyConversionAndStoreAccumulator(arguments[idx], arg##idx, paramType##idx)
+
+    template <typename Zero, typename Short, typename Range>
+    void CallAnyImpl(const ir::AstNode *node, const ir::Identifier *ident,
+                     const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    {
+        ES2PANDA_ASSERT(ident != nullptr);
+        RegScope rs(this);
+
+        switch (arguments.size()) {
+            case 0U: {
+                Ra().Emit<Zero>(node, ident->Name(), athis);
+                break;
+            }
+            case 1U: {
+                COMPILE_ANY_ARG(0);
+                Ra().Emit<Short>(node, ident->Name(), athis, arg0);
+                break;
+            }
+            default: {
+                VReg argStart = NextReg();
+                for (size_t idx = 0; idx < arguments.size(); idx++) {
+                    COMPILE_ANY_ARG(idx);
+                }
+
+                Rra().Emit<Range>(node, argStart, arguments.size(), ident->Name(), athis, argStart, arguments.size());
+            }
+        }
+    }
+
+    template <typename Zero, typename Short, typename Range>
+    void CallAnyImpl(const ir::AstNode *node, const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    {
+        RegScope rs(this);
+
+        switch (arguments.size()) {
+            case 0U: {
+                Ra().Emit<Zero>(node, athis);
+                break;
+            }
+            case 1U: {
+                COMPILE_ANY_ARG(0);
+                Ra().Emit<Short>(node, athis, arg0);
+                break;
+            }
+            default: {
+                VReg argStart = NextReg();
+                for (size_t idx = 0; idx < arguments.size(); idx++) {
+                    COMPILE_ANY_ARG(idx);
+                }
+
+                Rra().Emit<Range>(node, argStart, arguments.size(), athis, argStart, arguments.size());
+            }
+        }
+    }
+#undef COMPILE_ANY_ARG
+    // NOLINTEND(cppcoreguidelines-macro-usage, readability-container-size-empty, modernize-loop-convert)
 
     void ToBinaryResult(const ir::AstNode *node, Label *ifFalse);
 
@@ -759,9 +854,6 @@ private:
     template <typename T>
     void SetAccumulatorTargetType(const ir::AstNode *node, checker::TypeFlag typeKind, T number);
     void InitializeContainingClass();
-
-    util::StringView FormDynamicModulePropReference(const varbinder::Variable *var);
-    util::StringView FormDynamicModulePropReference(const ir::ETSImportDeclaration *import);
 
     friend class TargetTypeContext;
 

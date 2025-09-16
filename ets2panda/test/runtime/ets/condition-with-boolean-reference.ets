@@ -20,14 +20,14 @@ function main() : void {
   let a: String = "foo";
   let b: String = "bar";
   let c: String = cond ? a : b;
-  assertEQ(c, "foo")
+  arktest.assertEQ(c, "foo")
 
-  // Check assertTrue(statement)
-  assertTrue(cond)
+  // Check arktest.assertTrue(statement)
+  arktest.assertTrue(cond)
 
   // Check if statement
   if (cond) {
-    assertEQ(c, "foo")
+    arktest.assertEQ(c, "foo")
   }
 
   // Check for statement
@@ -36,17 +36,17 @@ function main() : void {
     i += 3;
     break;
   }
-  assertEQ(i, 3)
+  arktest.assertEQ(i, 3)
 
   // Check while statement
   let while_cond = true
   while (while_cond) {
     while_cond = !cond;
   }
-  assertEQ(while_cond, false)
+  arktest.assertEQ(while_cond, false)
 
   // Check do-while statement
   do {
-    assertEQ(while_cond, false)
+    arktest.assertEQ(while_cond, false)
   } while (while_cond);
 }

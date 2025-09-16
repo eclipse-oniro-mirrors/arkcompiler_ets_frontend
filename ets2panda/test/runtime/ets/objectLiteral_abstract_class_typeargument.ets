@@ -20,6 +20,6 @@ abstract class C<T,R>{
 
 function main(){
     let x:C<Int,string> = {field1:100,field2:"some str"}
-    assertEQ(x.field1, 100)
-    assertEQ(x.field2, "some str")
+    arktest.assertEQ(x.field1, 100)
+    arktest.assertEQ(x.field2, "some str")
 }

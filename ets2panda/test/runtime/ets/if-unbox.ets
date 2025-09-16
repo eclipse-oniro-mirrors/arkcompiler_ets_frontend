@@ -25,6 +25,6 @@ function cond2(): int {
 }
 
 function main(): void {
-  assertEQ(cond1(), 1)
-  assertEQ(cond2(), 1)
+  arktest.assertEQ(cond1(), 1)
+  arktest.assertEQ(cond2(), 1)
 }

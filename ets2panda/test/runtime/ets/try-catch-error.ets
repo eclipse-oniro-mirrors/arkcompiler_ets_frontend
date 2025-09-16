@@ -23,38 +23,38 @@ function main(): void {
   } catch (p: DivideByZeroError) {
     catchCode = 1;
   } catch (p: Error) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
 
-  assertEQ(catchCode, 1)
+  arktest.assertEQ(catchCode, 1)
 
   try {
     throw new DivideByZeroError();
   } catch (p: Error) {
     catchCode = 2;
   } catch (p: DivideByZeroError) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
 
-  assertEQ(catchCode, 2)
+  arktest.assertEQ(catchCode, 2)
 
   try {
     throw new TestError();
   } catch (p: TestError) {
     catchCode = 3;
   } catch (p: Error) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
 
-  assertEQ(catchCode, 3)
+  arktest.assertEQ(catchCode, 3)
 
   try {
     throw new TestError();
   } catch (p: Error) {
     catchCode = 4;
   } catch (p: TestError) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
 
-  assertEQ(catchCode, 4)
+  arktest.assertEQ(catchCode, 4)
 }

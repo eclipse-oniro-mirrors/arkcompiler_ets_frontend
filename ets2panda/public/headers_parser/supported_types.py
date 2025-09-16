@@ -64,6 +64,7 @@ ast_nodes_supported = [
     "MemberExpression",
     "MetaProperty",
     "MethodDefinition",
+    "OverloadDeclaration",
     "NamedType",
     "NewExpression",
     "NullLiteral",
@@ -187,7 +188,6 @@ all_types_supported = [
     "void",
     # enums
     "AstNodeFlags",
-    "BoxingUnboxingFlags",
     "ModifierFlags",
     "ScriptFunctionFlags",
     "TSOperatorType",

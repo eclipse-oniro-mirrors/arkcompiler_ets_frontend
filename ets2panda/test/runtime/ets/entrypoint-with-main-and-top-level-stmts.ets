@@ -16,7 +16,7 @@
 let a : int = 0;
 
 function main() : void {
-    assertEQ(a, b)
+    arktest.assertEQ(a, b)
 }
 
 let b : int = 0;

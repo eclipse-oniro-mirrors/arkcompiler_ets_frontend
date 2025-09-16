@@ -19,5 +19,5 @@ interface A{
 
 function main(){
  let instance:A = {field:true}
- assertTrue(instance.field)
+ arktest.assertTrue(instance.field)
 }

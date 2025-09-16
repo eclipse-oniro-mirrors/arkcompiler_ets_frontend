@@ -19,5 +19,5 @@ let weight = 1;
 let output = new Array<number>(1, 2, 3, 4);
 let buffer = new Array<number>(5, 6, 7, 8);
 output[line++] += buffer[pixelOffset];
-assertEQ(line, 1);
-assertEQ(output[0], 6);
+arktest.assertEQ(line, 1);
+arktest.assertEQ(output[0], 6);

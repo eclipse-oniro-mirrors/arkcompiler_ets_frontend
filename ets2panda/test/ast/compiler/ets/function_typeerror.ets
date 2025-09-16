@@ -32,7 +32,7 @@ function main(): void {
     let resultA = a.methodOne(a);
     let resultB = b.methodOne(b);
 
-    assertEQ(resultA, resultB);
+    arktest.assertEQ(resultA, resultB);
 }
 
 /* @@? 17:14 Error TypeError: Only abstract or native methods can't have body. */
@@ -46,8 +46,8 @@ function main(): void {
 /* @@? 17:41 Error SyntaxError: Field type annotation expected. */
 /* @@? 17:41 Error SyntaxError: Unexpected token ')'. */
 /* @@? 17:42 Error SyntaxError: Unexpected token ':'. */
+/* @@? 17:48 Error SyntaxError: Field type annotation expected. */
 /* @@? 17:49 Error SyntaxError: Unexpected token '{'. */
-/* @@? 17:49 Error SyntaxError: Field type annotation expected. */
 /* @@? 18:9 Error SyntaxError: Unexpected token 'return'. */
 /* @@? 18:17 Error SyntaxError: Field type annotation expected. */
 /* @@? 20:1 Error SyntaxError: Unexpected token '}'. */

@@ -34,14 +34,14 @@ function foo3(param: number | string | int[]): number | string | int[]{
 }
 
 function main(){
-    assertEQ(foo1(1), 1)
-    assertEQ(foo1("123"), "123")
-    assertEQ(foo2(1), 1)
-    assertEQ(foo2("123"), "123")
-    assertEQ(foo3(1), 1)
-    assertEQ(foo3("123"), "123")
+    arktest.assertEQ(foo1(1), 1)
+    arktest.assertEQ(foo1("123"), "123")
+    arktest.assertEQ(foo2(1), 1)
+    arktest.assertEQ(foo2("123"), "123")
+    arktest.assertEQ(foo3(1), 1)
+    arktest.assertEQ(foo3("123"), "123")
     let a = foo3([1, 2, 3]) as int[]
-    assertEQ(a[0], 1)
-    assertEQ(a[1], 2)
-    assertEQ(a[2], 3)
+    arktest.assertEQ(a[0], 1)
+    arktest.assertEQ(a[1], 2)
+    arktest.assertEQ(a[2], 3)
 }

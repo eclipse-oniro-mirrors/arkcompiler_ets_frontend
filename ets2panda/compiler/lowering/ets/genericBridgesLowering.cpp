@@ -62,7 +62,7 @@ std::string GenericBridgesPhase::CreateMethodDefinitionString(ir::ClassDefinitio
     }
 
     typeNodes.emplace_back(context_->AllocNode<ir::OpaqueTypeNode>(
-        const_cast<checker::Type *>(derivedFunction->Signature()->ReturnType()), context_->Allocator()));
+        const_cast<checker::Type *>(baseSignature->ReturnType()), context_->Allocator()));
     str1 += "): @@T" + std::to_string(typeNodes.size()) + ' ';
 
     typeNodes.emplace_back(context_->AllocNode<ir::OpaqueTypeNode>(
@@ -76,13 +76,15 @@ std::string GenericBridgesPhase::CreateMethodDefinitionString(ir::ClassDefinitio
 void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const classDefinition,
                                            ir::MethodDefinition *const methodDefinition,
                                            checker::Signature const *baseSignature,
-                                           ir::ScriptFunction const *const derivedFunction) const
+                                           ir::ScriptFunction *const derivedFunction) const
 {
     auto *parser = context_->parser->AsETSParser();
     std::vector<ir::AstNode *> typeNodes {};
+    ES2PANDA_ASSERT(baseSignature);
     typeNodes.reserve(2U * baseSignature->Params().size() + 2U);
 
     auto const sourceCode = CreateMethodDefinitionString(classDefinition, baseSignature, derivedFunction, typeNodes);
+
     auto *const bridgeMethodDefinition = parser->CreateFormattedClassMethodDefinition(sourceCode, typeNodes);
     ES2PANDA_ASSERT(bridgeMethodDefinition != nullptr);
     auto *const bridgeMethod = bridgeMethodDefinition->AsMethodDefinition();
@@ -92,7 +94,7 @@ void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const clas
     bridgeMethod->AddAstNodeFlags(methodDefinition->GetAstNodeFlags());
     bridgeMethod->SetParent(const_cast<ir::ClassDefinition *>(classDefinition));
 
-    auto *varBinder = context_->checker->VarBinder()->AsETSBinder();
+    auto *varBinder = context_->GetChecker()->VarBinder()->AsETSBinder();
     auto *scope = NearestScope(methodDefinition);
     auto scopeGuard = varbinder::LexicalScope<varbinder::Scope>::Enter(varBinder, scope);
     InitScopesPhaseETS::RunExternalNode(bridgeMethod, varBinder);
@@ -101,7 +103,7 @@ void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const clas
                                       true};
     varBinder->AsETSBinder()->ResolveReferencesForScopeWithContext(bridgeMethod, scope);
 
-    auto *checker = context_->checker->AsETSChecker();
+    auto *checker = context_->GetChecker()->AsETSChecker();
     auto const checkerCtx =
         checker::SavedCheckerContext(checker,
                                      checker::CheckerStatus::IN_CLASS | checker::CheckerStatus::IGNORE_VISIBILITY |
@@ -115,13 +117,17 @@ void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const clas
     auto *methodType = methodDefinition->Id()->Variable()->TsType()->AsETSFunctionType();
 
     checker->BuildFunctionSignature(bridgeMethod->Function());
+    bridgeMethod->Function()->Signature()->AddSignatureFlag(checker::SignatureFlags::BRIDGE);
+
     auto *const bridgeMethodType = checker->BuildMethodType(bridgeMethod->Function());
-    checker->CheckIdenticalOverloads(methodType, bridgeMethodType, bridgeMethod);
+    checker->CheckIdenticalOverloads(methodType, bridgeMethodType, bridgeMethod, false,
+                                     checker::TypeRelationFlag::NONE);
     bridgeMethod->SetTsType(bridgeMethodType);
     methodType->AddCallSignature(bridgeMethod->Function()->Signature());
     methodDefinition->Id()->Variable()->SetTsType(methodType);
 
-    bridgeMethod->Check(checker);
+    bridgeMethod->Function()->Body()->Check(
+        checker);  // avoid checking overriding, this may fail if only return type is different.
 }
 
 void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const classDefinition,
@@ -129,7 +135,7 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
                                                 ir::MethodDefinition *const derivedMethod,
                                                 Substitutions const &substitutions) const
 {
-    auto *const checker = context_->checker->AsETSChecker();
+    auto *const checker = context_->GetChecker()->AsETSChecker();
     auto *const relation = checker->Relation();
 
     auto const overrides = [checker, relation, classDefinition](checker::Signature const *source,
@@ -145,22 +151,26 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
     //  We are not interested in functions that either don't have type parameters at all
     //  or have type parameters that are not modified in the derived class
     ES2PANDA_ASSERT(baseFunction);
-    auto const *baseSignature1 = baseFunction->Signature()->Substitute(relation, substitutions.baseConstraints);
-    if (baseSignature1 == baseFunction->Signature()) {
+    auto const *baseSignature1 = baseFunction->Signature()->Substitute(relation, &substitutions.baseConstraints);
+    if (baseSignature1 == baseFunction->Signature() &&
+        !baseSignature1->HasSignatureFlag(checker::SignatureFlags::DEFAULT)) {
         return;
     }
 
-    auto *baseSignature2 = baseFunction->Signature()->Substitute(relation, substitutions.derivedSubstitutions);
-    if (baseSignature2 == baseFunction->Signature()) {
+    auto *baseSignature2 = baseFunction->Signature()->Substitute(relation, &substitutions.derivedSubstitutions);
+    if (baseSignature2 == baseFunction->Signature() &&
+        !baseSignature2->HasSignatureFlag(checker::SignatureFlags::DEFAULT)) {
         return;
     }
-    baseSignature2 = baseSignature2->Substitute(relation, substitutions.derivedConstraints);
+    baseSignature2 = baseSignature2->Substitute(relation, &substitutions.derivedConstraints);
 
-    ir::ScriptFunction const *derivedFunction = nullptr;
+    ir::ScriptFunction *derivedFunction = nullptr;
     checker::ETSFunctionType const *methodType = derivedMethod->Id()->Variable()->TsType()->AsETSFunctionType();
     for (auto *signature : methodType->CallSignatures()) {
-        signature = signature->Substitute(relation, substitutions.derivedConstraints);
-        if (overrides(baseSignature1, signature) || checker->HasSameAssemblySignature(baseSignature1, signature)) {
+        signature = signature->Substitute(relation, &substitutions.derivedConstraints);
+        // A special case is when the overriding function's return type is going to be unboxed.
+        if ((overrides(baseSignature1, signature) || checker->HasSameAssemblySignature(baseSignature1, signature)) &&
+            baseSignature1->ReturnType()->IsETSUnboxableObject() == signature->ReturnType()->IsETSUnboxableObject()) {
             //  NOTE: we already have custom-implemented method with the required bridge signature.
             //  Probably sometimes we will issue warning notification here...
             return;
@@ -170,8 +180,8 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
             // This derived overload already handles the base union signature.
             return;
         }
-
-        if (derivedFunction == nullptr && overrides(signature, baseSignature2)) {
+        if ((derivedFunction == nullptr && overrides(signature, baseSignature2)) ||
+            (baseSignature1 == baseSignature2 && baseSignature1->HasSignatureFlag(checker::SignatureFlags::DEFAULT))) {
             //  NOTE: we don't care the possible case of mapping several derived function to the same bridge
             //  signature. Probably sometimes we will process it correctly or issue warning notification here...
             derivedFunction = signature->Function();
@@ -194,21 +204,53 @@ void GenericBridgesPhase::MaybeAddGenericBridges(ir::ClassDefinition const *cons
     }
 }
 
+static ir::MethodDefinition *FindBridgeCandidate(ir::ClassDefinition const *const classDefinition,
+                                                 ir::MethodDefinition *baseMethod)
+{
+    auto const &classBody = classDefinition->Body();
+
+    // Skip `static`, `final` and special methods...
+    if (baseMethod->Kind() != ir::MethodDefinitionKind::METHOD || baseMethod->IsStatic() || baseMethod->IsFinal() ||
+        baseMethod->Id()->Name().Utf8().find("lambda_invoke-") != std::string_view::npos) {
+        return nullptr;
+    }
+
+    // Check if the derived class has any possible overrides of this method
+    auto isOverridePred = [&name = baseMethod->Id()->Name()](ir::AstNode const *node) -> bool {
+        return node->IsMethodDefinition() && !node->IsStatic() && node->AsMethodDefinition()->Id()->Name() == name;
+    };
+    auto it = std::find_if(classBody.cbegin(), classBody.end(), isOverridePred);
+    return it == classBody.cend() ? nullptr : (*it)->AsMethodDefinition();
+}
+
+static bool HasBridgeCandidates(ir::ClassDefinition const *const classDefinition,
+                                ArenaVector<ir::AstNode *> const &items)
+{
+    for (auto *item : items) {
+        if (item->IsMethodDefinition()) {
+            auto method = item->AsMethodDefinition();
+            auto derivedMethod = FindBridgeCandidate(classDefinition, method);
+            if (derivedMethod != nullptr) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void GenericBridgesPhase::CreateGenericBridges(ir::ClassDefinition const *const classDefinition,
                                                Substitutions &substitutions,
                                                ArenaVector<ir::AstNode *> const &items) const
 {
-    auto const &classBody = classDefinition->Body();
-
     //  Collect type parameters defaults/constraints in the derived class
-    auto *checker = context_->checker->AsETSChecker();
-    substitutions.derivedConstraints = checker->NewSubstitution();
+    auto *checker = context_->GetChecker()->AsETSChecker();
+    substitutions.derivedConstraints = checker::Substitution {};
 
     auto const *const classType = classDefinition->TsType()->AsETSObjectType();
     auto const &typeParameters = classType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
     for (auto *const parameter : typeParameters) {
         auto *const typeParameter = parameter->AsETSTypeParameter();
-        checker->EmplaceSubstituted(substitutions.derivedConstraints, typeParameter,
+        checker->EmplaceSubstituted(&substitutions.derivedConstraints, typeParameter,
                                     typeParameter->GetConstraintType());
     }
 
@@ -216,36 +258,23 @@ void GenericBridgesPhase::CreateGenericBridges(ir::ClassDefinition const *const 
         if (item->IsMethodDefinition()) {
             // Skip `static`, `final` and special methods...
             auto *const method = item->AsMethodDefinition();
-            ES2PANDA_ASSERT(method->Id());
-            if (method->Kind() != ir::MethodDefinitionKind::METHOD || method->IsStatic() || method->IsFinal() ||
-                method->Id()->Name().Utf8().find("lambda$invoke$") != std::string_view::npos) {
-                continue;
-            }
-
-            // Check if the derived class has any possible overrides of this method
-            auto isOverridePred = [&name = method->Id()->Name()](ir::AstNode const *node) -> bool {
-                return node->IsMethodDefinition() && !node->IsStatic() &&
-                       node->AsMethodDefinition()->Id()->Name() == name;
-            };
-            auto it = std::find_if(classBody.cbegin(), classBody.end(), isOverridePred);
-            if (it != classBody.cend()) {
-                MaybeAddGenericBridges(classDefinition, method, (*it)->AsMethodDefinition(), substitutions);
+            auto derivedMethod = FindBridgeCandidate(classDefinition, method);
+            if (derivedMethod != nullptr) {
+                MaybeAddGenericBridges(classDefinition, method, derivedMethod, substitutions);
             }
         }
     }
 }
 
 GenericBridgesPhase::Substitutions GenericBridgesPhase::GetSubstitutions(
-    checker::ETSObjectType const *const objectType, ArenaVector<checker::Type *> const &typeParameters) const noexcept
+    checker::ETSObjectType const *const objectType, ArenaVector<checker::Type *> const &typeParameters) const
 {
     auto const &typeArguments = objectType->TypeArguments();
     auto const parameterNumber = typeParameters.size();
     ES2PANDA_ASSERT(parameterNumber == typeArguments.size());
 
-    auto *checker = context_->checker->AsETSChecker();
+    auto *checker = context_->GetChecker()->AsETSChecker();
     Substitutions substitutions {};
-    substitutions.derivedSubstitutions = checker->NewSubstitution();
-    substitutions.baseConstraints = checker->NewSubstitution();
 
     //  We need to check if the class derived from base generic class (or implementing generic interface)
     //  has either explicit class type substitutions or type parameters with narrowing constraints.
@@ -255,11 +284,11 @@ GenericBridgesPhase::Substitutions GenericBridgesPhase::GetSubstitutions(
 
         //  Collect type parameters defaults/constraints in the base class
         //  and type argument substitutions in the derived class
-        checker->EmplaceSubstituted(substitutions.derivedSubstitutions, typeParameter, typeArgument);
+        checker->EmplaceSubstituted(&substitutions.derivedSubstitutions, typeParameter, typeArgument);
         if (auto *const defaultType = typeParameter->GetDefaultType(); defaultType != nullptr) {
-            checker->EmplaceSubstituted(substitutions.baseConstraints, typeParameter, defaultType);
+            checker->EmplaceSubstituted(&substitutions.baseConstraints, typeParameter, defaultType);
         } else {
-            checker->EmplaceSubstituted(substitutions.baseConstraints, typeParameter,
+            checker->EmplaceSubstituted(&substitutions.baseConstraints, typeParameter,
                                         typeParameter->GetConstraintType());
         }
     }
@@ -271,13 +300,12 @@ void GenericBridgesPhase::ProcessInterfaces(ir::ClassDefinition *const classDefi
                                             ArenaVector<checker::ETSObjectType *> const &interfaces) const
 {
     for (auto const *interfaceType : interfaces) {
-        if (auto const &typeParameters = interfaceType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
-            !typeParameters.empty()) {
-            if (Substitutions substitutions = GetSubstitutions(interfaceType, typeParameters);
-                // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
-                (substitutions.derivedSubstitutions != nullptr) && !substitutions.derivedSubstitutions->empty()) {
+        auto const &typeParameters = interfaceType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
+        if (!typeParameters.empty()) {
+            auto const &interfaceBody = interfaceType->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
+            if (HasBridgeCandidates(classDefinition, interfaceBody)) {
+                Substitutions substitutions = GetSubstitutions(interfaceType, typeParameters);
                 ES2PANDA_ASSERT(interfaceType->GetDeclNode()->IsTSInterfaceDeclaration());
-                auto const &interfaceBody = interfaceType->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
                 CreateGenericBridges(classDefinition, substitutions, interfaceBody);
             }
         }
@@ -306,13 +334,20 @@ ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefini
     //  Check if the class derived from base generic class has either explicit class type substitutions
     //  or type parameters with narrowing constraints.
     if (Substitutions substitutions = GetSubstitutions(superType, typeParameters);
-        (substitutions.derivedSubstitutions != nullptr) &&
         // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
-        !substitutions.derivedSubstitutions->empty()) {
+        !substitutions.derivedSubstitutions.empty()) {
         // If it has, then probably the generic bridges should be created.
         auto const &superClassBody =
             classDefinition->Super()->TsType()->AsETSObjectType()->GetDeclNode()->AsClassDefinition()->Body();
         CreateGenericBridges(classDefinition, substitutions, superClassBody);
+        ArenaVector<checker::ETSObjectType *> interfaces =
+            classDefinition->Super()->TsType()->AsETSObjectType()->Interfaces();
+        if (!interfaces.empty()) {
+            for (checker::ETSObjectType *interface : interfaces) {
+                auto &interfaceBody = interface->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
+                CreateGenericBridges(classDefinition, substitutions, interfaceBody);
+            }
+        }
     }
 
     return classDefinition;

@@ -24,7 +24,7 @@ function foo() {
     void = [([...asyncGenerator])]
 }
 
-/* @@? 16:1 Error TypeError: Unresolved reference a */
-/* @@? 20:1 Error TypeError: Unresolved reference c */
+/* @@? 21:9 Error TypeError: Unresolved reference a */
+/* @@? 21:17 Error TypeError: Unresolved reference c */
 /* @@? 24:5 Error SyntaxError: Unexpected token 'void'. */
 /* @@? 24:18 Error TypeError: Unresolved reference asyncGenerator */

@@ -20,5 +20,5 @@ let x: FUNC[] = [
 ]
 
 function main() {
-    assertEQ(x.length, 2)
+    arktest.assertEQ(x.length, 2)
 }

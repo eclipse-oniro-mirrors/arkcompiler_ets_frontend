@@ -20,17 +20,6 @@
             "endLine": 19,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 666,
-                    "end": 683,
-                    "replacementText": "a: undefined = ((): undefined => { func1(); return undefined; })()",
-                    "line": 19,
-                    "column": 8,
-                    "endLine": 19,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -51,17 +40,6 @@
             "endLine": 22,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 749,
-                    "end": 766,
-                    "replacementText": "b: undefined = ((): undefined => { func2(); return undefined; })()",
-                    "line": 22,
-                    "column": 8,
-                    "endLine": 22,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -82,17 +60,6 @@
             "endLine": 27,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 835,
-                    "end": 864,
-                    "replacementText": "c: undefined = ((): undefined => { new Demo().method(); return undefined; })()",
-                    "line": 27,
-                    "column": 8,
-                    "endLine": 27,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -113,17 +80,6 @@
             "endLine": 29,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 931,
-                    "end": 966,
-                    "replacementText": "d: undefined = ((): undefined => { (function (): void { })(); return undefined; })()",
-                    "line": 29,
-                    "column": 8,
-                    "endLine": 29,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -146,8 +102,8 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 942,
-                    "end": 963,
+                    "start": 1040,
+                    "end": 1061,
                     "replacementText": "(): void => { }",
                     "line": 29,
                     "column": 16,
@@ -165,17 +121,6 @@
             "endLine": 32,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 1054,
-                    "end": 1081,
-                    "replacementText": "e: undefined = ((): undefined => { await asyncFunc(); return undefined; })()",
-                    "line": 32,
-                    "column": 8,
-                    "endLine": 32,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -186,17 +131,6 @@
             "endLine": 35,
             "endColumn": 14,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 1157,
-                    "end": 1171,
-                    "replacementText": "f: undefined = ((): undefined => { fn(); return undefined; })()",
-                    "line": 35,
-                    "column": 10,
-                    "endLine": 35,
-                    "endColumn": 14
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -217,17 +151,16 @@
             "endLine": 39,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 1235,
-                    "end": 1260,
-                    "replacementText": "g: undefined = ((): undefined => { func3() as void; return undefined; })()",
-                    "line": 39,
-                    "column": 8,
-                    "endLine": 39,
-                    "endColumn": 12
-                }
-            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 26,
+            "endLine": 39,
+            "endColumn": 30,
+            "problem": "LimitedVoidType",
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -243,66 +176,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 41,
-            "column": 29,
-            "endLine": 41,
-            "endColumn": 33,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1322,
-                    "end": 1326,
-                    "replacementText": "1000.0",
-                    "line": 41,
-                    "column": 29,
-                    "endLine": 41,
-                    "endColumn": 33
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 42,
             "column": 8,
             "endLine": 42,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 1333,
-                    "end": 1370,
-                    "replacementText": "h: undefined = ((): undefined => { setTimeout(() => { }, 1000); return undefined; })()",
-                    "line": 42,
-                    "column": 8,
-                    "endLine": 42,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 42,
-            "column": 37,
-            "endLine": 42,
-            "endColumn": 41,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1365,
-                    "end": 1369,
-                    "replacementText": "1000.0",
-                    "line": 42,
-                    "column": 37,
-                    "endLine": 42,
-                    "endColumn": 41
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -311,17 +191,6 @@
             "endLine": 45,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 1451,
-                    "end": 1473,
-                    "replacementText": "i: undefined = ((): undefined => { funcArr[0](); return undefined; })()",
-                    "line": 45,
-                    "column": 8,
-                    "endLine": 45,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -362,17 +231,6 @@
             "endLine": 50,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 1551,
-                    "end": 1573,
-                    "replacementText": "j: undefined = ((): undefined => { obj.action(); return undefined; })()",
-                    "line": 50,
-                    "column": 8,
-                    "endLine": 50,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -393,17 +251,6 @@
             "endLine": 54,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 1647,
-                    "end": 1664,
-                    "replacementText": "k: undefined = ((): undefined => { func4(); return undefined; })()",
-                    "line": 54,
-                    "column": 8,
-                    "endLine": 54,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -424,17 +271,6 @@
             "endLine": 57,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 1740,
-                    "end": 1764,
-                    "replacementText": "l: undefined = ((): undefined => { exportedFunc(); return undefined; })()",
-                    "line": 57,
-                    "column": 8,
-                    "endLine": 57,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -455,17 +291,6 @@
             "endLine": 60,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 1838,
-                    "end": 1861,
-                    "replacementText": "m: undefined = ((): undefined => { genericFunc(); return undefined; })()",
-                    "line": 60,
-                    "column": 8,
-                    "endLine": 60,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -526,17 +351,6 @@
             "endLine": 65,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 2024,
-                    "end": 2048,
-                    "replacementText": "n: undefined = ((): undefined => { overloadFunc(); return undefined; })()",
-                    "line": 65,
-                    "column": 8,
-                    "endLine": 65,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -557,17 +371,6 @@
             "endLine": 69,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 2147,
-                    "end": 2168,
-                    "replacementText": "o: undefined = ((): undefined => { aliasFunc(); return undefined; })()",
-                    "line": 69,
-                    "column": 8,
-                    "endLine": 69,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -588,17 +391,6 @@
             "endLine": 77,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 2300,
-                    "end": 2329,
-                    "replacementText": "p: undefined = ((): undefined => { new Printer().run(); return undefined; })()",
-                    "line": 77,
-                    "column": 8,
-                    "endLine": 77,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -619,17 +411,6 @@
             "endLine": 80,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 2414,
-                    "end": 2435,
-                    "replacementText": "q: undefined = ((): undefined => { withParam(); return undefined; })()",
-                    "line": 80,
-                    "column": 8,
-                    "endLine": 80,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -650,17 +431,6 @@
             "endLine": 83,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 2513,
-                    "end": 2535,
-                    "replacementText": "r: undefined = ((): undefined => { sum(1, 2, 3); return undefined; })()",
-                    "line": 83,
-                    "column": 8,
-                    "endLine": 83,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -673,69 +443,6 @@
             "problem": "LimitedVoidType",
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 83,
-            "column": 19,
-            "endLine": 83,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 2527,
-                    "end": 2528,
-                    "replacementText": "1.0",
-                    "line": 83,
-                    "column": 19,
-                    "endLine": 83,
-                    "endColumn": 20
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 83,
-            "column": 22,
-            "endLine": 83,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 2530,
-                    "end": 2531,
-                    "replacementText": "2.0",
-                    "line": 83,
-                    "column": 22,
-                    "endLine": 83,
-                    "endColumn": 23
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 83,
-            "column": 25,
-            "endLine": 83,
-            "endColumn": 26,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 2533,
-                    "end": 2534,
-                    "replacementText": "3.0",
-                    "line": 83,
-                    "column": 25,
-                    "endLine": 83,
-                    "endColumn": 26
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -754,17 +461,6 @@
             "endLine": 86,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 2613,
-                    "end": 2644,
-                    "replacementText": "s: undefined = ((): undefined => { withThis.call(window); return undefined; })()",
-                    "line": 86,
-                    "column": 8,
-                    "endLine": 86,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -805,17 +501,6 @@
             "endLine": 91,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 2734,
-                    "end": 2766,
-                    "replacementText": "u: undefined = ((): undefined => { genFunc().next().value; return undefined; })()",
-                    "line": 91,
-                    "column": 8,
-                    "endLine": 91,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -825,9 +510,9 @@
             "column": 15,
             "endLine": 91,
             "endColumn": 37,
-            "problem": "AvoidUnionTypes",
+            "problem": "BuiltinIteratorResultValue",
             "suggest": "",
-            "rule": "Avoid using union types (arkts-common-union-member-access)",
+            "rule": "The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)",
             "severity": "ERROR"
         },
         {
@@ -836,17 +521,6 @@
             "endLine": 94,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 2842,
-                    "end": 2861,
-                    "replacementText": "w: undefined = ((): undefined => { curry()(); return undefined; })()",
-                    "line": 94,
-                    "column": 8,
-                    "endLine": 94,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -877,17 +551,6 @@
             "endLine": 100,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 2966,
-                    "end": 3002,
-                    "replacementText": "x: undefined = ((): undefined => { new Chain().first().last(); return undefined; })()",
-                    "line": 100,
-                    "column": 8,
-                    "endLine": 100,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -911,8 +574,8 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructArray_1",
-                    "start": 3050,
-                    "end": 3056,
+                    "start": 3148,
+                    "end": 3154,
                     "line": 102,
                     "column": 7,
                     "endLine": 102,
@@ -920,8 +583,8 @@
                 },
                 {
                     "replacementText": "\nconst func = GeneratedDestructArray_1[0];\n",
-                    "start": 3077,
-                    "end": 3077,
+                    "start": 3175,
+                    "end": 3175,
                     "line": 102,
                     "column": 7,
                     "endLine": 102,
@@ -938,17 +601,6 @@
             "endLine": 103,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 3082,
-                    "end": 3098,
-                    "replacementText": "y: undefined = ((): undefined => { func(); return undefined; })()",
-                    "line": 103,
-                    "column": 8,
-                    "endLine": 103,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -971,8 +623,8 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 3128,
-                    "end": 3159,
+                    "start": 3226,
+                    "end": 3257,
                     "replacementText": "interface Wrapper<T> {\n    value: T;\n}",
                     "line": 105,
                     "column": 19,
@@ -1000,17 +652,6 @@
             "endLine": 107,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 3223,
-                    "end": 3248,
-                    "replacementText": "z: undefined = ((): undefined => { wrapped.value(); return undefined; })()",
-                    "line": 107,
-                    "column": 8,
-                    "endLine": 107,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1041,17 +682,6 @@
             "endLine": 111,
             "endColumn": 13,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 3398,
-                    "end": 3419,
-                    "replacementText": "aa: undefined = ((): undefined => { condFunc(); return undefined; })()",
-                    "line": 111,
-                    "column": 9,
-                    "endLine": 111,
-                    "endColumn": 13
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1102,17 +732,6 @@
             "endLine": 118,
             "endColumn": 13,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 3560,
-                    "end": 3578,
-                    "replacementText": "ab: undefined = ((): undefined => { mixed(); return undefined; })()",
-                    "line": 118,
-                    "column": 9,
-                    "endLine": 118,
-                    "endColumn": 13
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1143,17 +762,6 @@
             "endLine": 123,
             "endColumn": 13,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 3667,
-                    "end": 3689,
-                    "replacementText": "ac: undefined = ((): undefined => { recursive(); return undefined; })()",
-                    "line": 123,
-                    "column": 9,
-                    "endLine": 123,
-                    "endColumn": 13
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1176,8 +784,8 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 3757,
-                    "end": 3783,
+                    "start": 3855,
+                    "end": 3881,
                     "replacementText": "(target: any) => { }",
                     "line": 126,
                     "column": 10,
@@ -1215,17 +823,6 @@
             "endLine": 130,
             "endColumn": 13,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 3824,
-                    "end": 3857,
-                    "replacementText": "ad: undefined = ((): undefined => { decorator()(Decorated); return undefined; })()",
-                    "line": 130,
-                    "column": 9,
-                    "endLine": 130,
-                    "endColumn": 13
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1276,17 +873,6 @@
             "endLine": 138,
             "endColumn": 13,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 3981,
-                    "end": 3989,
-                    "replacementText": "a2: undefined = undefined",
-                    "line": 138,
-                    "column": 9,
-                    "endLine": 138,
-                    "endColumn": 13
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1347,17 +933,6 @@
             "endLine": 146,
             "endColumn": 13,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 4199,
-                    "end": 4214,
-                    "replacementText": "a4: undefined = ((): undefined => { f1(); return undefined; })()",
-                    "line": 146,
-                    "column": 9,
-                    "endLine": 146,
-                    "endColumn": 13
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1378,17 +953,6 @@
             "endLine": 148,
             "endColumn": 20,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 4271,
-                    "end": 4278,
-                    "replacementText": "a: undefined",
-                    "line": 148,
-                    "column": 16,
-                    "endLine": 148,
-                    "endColumn": 20
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1409,17 +973,6 @@
             "endLine": 153,
             "endColumn": 10,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 4382,
-                    "end": 4390,
-                    "replacementText": "f: undefined = undefined;",
-                    "line": 153,
-                    "column": 6,
-                    "endLine": 153,
-                    "endColumn": 10
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1430,17 +983,6 @@
             "endLine": 155,
             "endColumn": 12,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 4438,
-                    "end": 4445,
-                    "replacementText": "p: undefined",
-                    "line": 155,
-                    "column": 8,
-                    "endLine": 155,
-                    "endColumn": 12
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1451,17 +993,6 @@
             "endLine": 157,
             "endColumn": 22,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 4508,
-                    "end": 4515,
-                    "replacementText": "a: undefined",
-                    "line": 157,
-                    "column": 18,
-                    "endLine": 157,
-                    "endColumn": 22
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1474,8 +1005,8 @@
             "problem": "LimitedVoidType",
             "autofix": [
                 {
-                    "start": 4599,
-                    "end": 4619,
+                    "start": 4697,
+                    "end": 4717,
                     "replacementText": "undefined | Promise<void>",
                     "line": 162,
                     "column": 16,
@@ -1483,9 +1014,9 @@
                     "endColumn": 36
                 },
                 {
-                    "start": 4622,
-                    "end": 4622,
-                    "replacementText": "\nreturn undefined;\n",
+                    "start": 4720,
+                    "end": 4720,
+                    "replacementText": "\n  return undefined;\n",
                     "line": 162,
                     "column": 16,
                     "endLine": 162,
@@ -1514,8 +1045,8 @@
             "problem": "LimitedVoidType",
             "autofix": [
                 {
-                    "start": 4686,
-                    "end": 4699,
+                    "start": 4784,
+                    "end": 4797,
                     "replacementText": "undefined | number",
                     "line": 165,
                     "column": 8,
@@ -1523,9 +1054,9 @@
                     "endColumn": 21
                 },
                 {
-                    "start": 4702,
-                    "end": 4702,
-                    "replacementText": "\nreturn undefined;\n",
+                    "start": 4800,
+                    "end": 4800,
+                    "replacementText": "\n    return undefined;\n  ",
                     "line": 165,
                     "column": 8,
                     "endLine": 165,
@@ -1654,9 +1185,18 @@
             "problem": "LimitedVoidType",
             "autofix": [
                 {
-                    "start": 5432,
-                    "end": 5445,
+                    "start": 5530,
+                    "end": 5543,
                     "replacementText": "string | undefined",
+                    "line": 211,
+                    "column": 29,
+                    "endLine": 211,
+                    "endColumn": 42
+                },
+                {
+                    "start": 5586,
+                    "end": 5586,
+                    "replacementText": "\n  return undefined;",
                     "line": 211,
                     "column": 29,
                     "endLine": 211,
@@ -1678,27 +1218,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 212,
-            "column": 12,
-            "endLine": 212,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 5459,
-                    "end": 5460,
-                    "replacementText": "0.0",
-                    "line": 212,
-                    "column": 12,
-                    "endLine": 212,
-                    "endColumn": 13
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 217,
             "column": 30,
             "endLine": 217,
@@ -1706,8 +1225,8 @@
             "problem": "LimitedVoidType",
             "autofix": [
                 {
-                    "start": 5521,
-                    "end": 5534,
+                    "start": 5619,
+                    "end": 5632,
                     "replacementText": "string | undefined",
                     "line": 217,
                     "column": 30,
@@ -1715,8 +1234,8 @@
                     "endColumn": 43
                 },
                 {
-                    "start": 5556,
-                    "end": 5563,
+                    "start": 5654,
+                    "end": 5661,
                     "replacementText": "return undefined;",
                     "line": 217,
                     "column": 30,
@@ -1739,27 +1258,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 218,
-            "column": 11,
-            "endLine": 218,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 5547,
-                    "end": 5548,
-                    "replacementText": "0.0",
-                    "line": 218,
-                    "column": 11,
-                    "endLine": 218,
-                    "endColumn": 12
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 224,
             "column": 5,
             "endLine": 224,
@@ -1775,17 +1273,6 @@
             "endLine": 224,
             "endColumn": 13,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 5621,
-                    "end": 5637,
-                    "replacementText": "ss: undefined = ((): undefined => { foo(); return undefined; })()",
-                    "line": 224,
-                    "column": 9,
-                    "endLine": 224,
-                    "endColumn": 13
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1806,17 +1293,6 @@
             "endLine": 225,
             "endColumn": 21,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 5642,
-                    "end": 5666,
-                    "replacementText": "t: undefined | number = ((): undefined | number => { foo(); return undefined; })()",
-                    "line": 225,
-                    "column": 8,
-                    "endLine": 225,
-                    "endColumn": 21
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1847,17 +1323,6 @@
             "endLine": 226,
             "endColumn": 22,
             "problem": "LimitedVoidType",
-            "autofix": [
-                {
-                    "start": 5671,
-                    "end": 5692,
-                    "replacementText": "t2: undefined | number = ((): undefined | number => { 1; return undefined; })()",
-                    "line": 226,
-                    "column": 9,
-                    "endLine": 226,
-                    "endColumn": 22
-                }
-            ],
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
@@ -1873,27 +1338,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 226,
-            "column": 25,
-            "endLine": 226,
-            "endColumn": 26,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 5691,
-                    "end": 5692,
-                    "replacementText": "1.0",
-                    "line": 226,
-                    "column": 25,
-                    "endLine": 226,
-                    "endColumn": 26
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 228,
             "column": 31,
             "endLine": 228,
@@ -1901,8 +1345,8 @@
             "problem": "LimitedVoidType",
             "autofix": [
                 {
-                    "start": 5725,
-                    "end": 5738,
+                    "start": 5823,
+                    "end": 5836,
                     "replacementText": "string | undefined",
                     "line": 228,
                     "column": 31,
@@ -1910,8 +1354,8 @@
                     "endColumn": 44
                 },
                 {
-                    "start": 5764,
-                    "end": 5771,
+                    "start": 5862,
+                    "end": 5869,
                     "replacementText": "return undefined;",
                     "line": 228,
                     "column": 31,
@@ -1919,9 +1363,18 @@
                     "endColumn": 44
                 },
                 {
-                    "start": 5842,
-                    "end": 5849,
+                    "start": 5940,
+                    "end": 5947,
                     "replacementText": "return undefined;",
+                    "line": 228,
+                    "column": 31,
+                    "endLine": 228,
+                    "endColumn": 44
+                },
+                {
+                    "start": 5951,
+                    "end": 5951,
+                    "replacementText": "\n  return undefined;",
                     "line": 228,
                     "column": 31,
                     "endLine": 228,
@@ -1943,48 +1396,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 229,
-            "column": 14,
-            "endLine": 229,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 5754,
-                    "end": 5756,
-                    "replacementText": "12.0",
-                    "line": 229,
-                    "column": 14,
-                    "endLine": 229,
-                    "endColumn": 16
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 231,
-            "column": 21,
-            "endLine": 231,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 5792,
-                    "end": 5794,
-                    "replacementText": "18.0",
-                    "line": 231,
-                    "column": 21,
-                    "endLine": 231,
-                    "endColumn": 23
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 238,
             "column": 38,
             "endLine": 238,
@@ -1992,8 +1403,8 @@
             "problem": "LimitedVoidType",
             "autofix": [
                 {
-                    "start": 5894,
-                    "end": 5907,
+                    "start": 5992,
+                    "end": 6005,
                     "replacementText": "string | undefined",
                     "line": 238,
                     "column": 38,
@@ -2001,8 +1412,8 @@
                     "endColumn": 51
                 },
                 {
-                    "start": 5989,
-                    "end": 5996,
+                    "start": 6087,
+                    "end": 6094,
                     "replacementText": "return undefined;",
                     "line": 238,
                     "column": 38,
@@ -2032,8 +1443,8 @@
             "problem": "LimitedVoidType",
             "autofix": [
                 {
-                    "start": 6021,
-                    "end": 6034,
+                    "start": 6119,
+                    "end": 6132,
                     "replacementText": "string | undefined",
                     "line": 246,
                     "column": 22,
@@ -2041,9 +1452,9 @@
                     "endColumn": 35
                 },
                 {
-                    "start": 6062,
-                    "end": 6062,
-                    "replacementText": "\nreturn undefined;\n",
+                    "start": 6159,
+                    "end": 6159,
+                    "replacementText": "\n  return undefined;",
                     "line": 246,
                     "column": 22,
                     "endLine": 246,
@@ -2072,9 +1483,18 @@
             "problem": "LimitedVoidType",
             "autofix": [
                 {
-                    "start": 6099,
-                    "end": 6112,
+                    "start": 6197,
+                    "end": 6210,
                     "replacementText": "string | undefined",
+                    "line": 250,
+                    "column": 35,
+                    "endLine": 250,
+                    "endColumn": 48
+                },
+                {
+                    "start": 6289,
+                    "end": 6289,
+                    "replacementText": "\n  return undefined;",
                     "line": 250,
                     "column": 35,
                     "endLine": 250,
@@ -2096,58 +1516,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 251,
-            "column": 11,
-            "endLine": 251,
-            "endColumn": 15,
-            "problem": "SwitchExpression",
-            "suggest": "",
-            "rule": "The switch expression type must be of type char, byte, short, int, long, string or enum (arkts-switch-expr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 252,
-            "column": 10,
-            "endLine": 252,
-            "endColumn": 11,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 6142,
-                    "end": 6143,
-                    "replacementText": "1.0",
-                    "line": 252,
-                    "column": 10,
-                    "endLine": 252,
-                    "endColumn": 11
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 253,
-            "column": 10,
-            "endLine": 253,
-            "endColumn": 11,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 6167,
-                    "end": 6168,
-                    "replacementText": "2.0",
-                    "line": 253,
-                    "column": 10,
-                    "endLine": 253,
-                    "endColumn": 11
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 257,
             "column": 22,
             "endLine": 257,
@@ -2155,9 +1523,18 @@
             "problem": "LimitedVoidType",
             "autofix": [
                 {
-                    "start": 6216,
-                    "end": 6229,
+                    "start": 6314,
+                    "end": 6327,
                     "replacementText": "string | undefined",
+                    "line": 257,
+                    "column": 22,
+                    "endLine": 257,
+                    "endColumn": 35
+                },
+                {
+                    "start": 6401,
+                    "end": 6401,
+                    "replacementText": "\n  return undefined;",
                     "line": 257,
                     "column": 22,
                     "endLine": 257,
@@ -2173,6 +1550,572 @@
             "column": 31,
             "endLine": 257,
             "endColumn": 35,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 267,
+            "column": 8,
+            "endLine": 267,
+            "endColumn": 22,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 267,
+            "column": 18,
+            "endLine": 267,
+            "endColumn": 22,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 269,
+            "column": 20,
+            "endLine": 269,
+            "endColumn": 34,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 6468,
+                    "end": 6482,
+                    "replacementText": "boolean | undefined",
+                    "line": 269,
+                    "column": 20,
+                    "endLine": 269,
+                    "endColumn": 34
+                },
+                {
+                    "start": 6529,
+                    "end": 6536,
+                    "replacementText": "return undefined;",
+                    "line": 269,
+                    "column": 20,
+                    "endLine": 269,
+                    "endColumn": 34
+                },
+                {
+                    "start": 6566,
+                    "end": 6573,
+                    "replacementText": "return undefined;",
+                    "line": 269,
+                    "column": 20,
+                    "endLine": 269,
+                    "endColumn": 34
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 269,
+            "column": 30,
+            "endLine": 269,
+            "endColumn": 34,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 278,
+            "column": 21,
+            "endLine": 278,
+            "endColumn": 35,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 6599,
+                    "end": 6613,
+                    "replacementText": "undefined | boolean",
+                    "line": 278,
+                    "column": 21,
+                    "endLine": 278,
+                    "endColumn": 35
+                },
+                {
+                    "start": 6702,
+                    "end": 6709,
+                    "replacementText": "return undefined;",
+                    "line": 278,
+                    "column": 21,
+                    "endLine": 278,
+                    "endColumn": 35
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 278,
+            "column": 21,
+            "endLine": 278,
+            "endColumn": 25,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 287,
+            "column": 21,
+            "endLine": 287,
+            "endColumn": 35,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 6735,
+                    "end": 6749,
+                    "replacementText": "undefined | boolean",
+                    "line": 287,
+                    "column": 21,
+                    "endLine": 287,
+                    "endColumn": 35
+                },
+                {
+                    "start": 6796,
+                    "end": 6803,
+                    "replacementText": "return undefined;",
+                    "line": 287,
+                    "column": 21,
+                    "endLine": 287,
+                    "endColumn": 35
+                },
+                {
+                    "start": 6809,
+                    "end": 6809,
+                    "replacementText": "\n    return undefined;",
+                    "line": 287,
+                    "column": 21,
+                    "endLine": 287,
+                    "endColumn": 35
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 287,
+            "column": 21,
+            "endLine": 287,
+            "endColumn": 25,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 294,
+            "column": 21,
+            "endLine": 294,
+            "endColumn": 35,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 6835,
+                    "end": 6849,
+                    "replacementText": "undefined | boolean",
+                    "line": 294,
+                    "column": 21,
+                    "endLine": 294,
+                    "endColumn": 35
+                },
+                {
+                    "start": 6896,
+                    "end": 6903,
+                    "replacementText": "return undefined;",
+                    "line": 294,
+                    "column": 21,
+                    "endLine": 294,
+                    "endColumn": 35
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 294,
+            "column": 21,
+            "endLine": 294,
+            "endColumn": 25,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 302,
+            "column": 12,
+            "endLine": 302,
+            "endColumn": 26,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 6944,
+                    "end": 6958,
+                    "replacementText": "undefined | boolean",
+                    "line": 302,
+                    "column": 12,
+                    "endLine": 302,
+                    "endColumn": 26
+                },
+                {
+                    "start": 6982,
+                    "end": 6982,
+                    "replacementText": "\n    return undefined;\n  ",
+                    "line": 302,
+                    "column": 12,
+                    "endLine": 302,
+                    "endColumn": 26
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 302,
+            "column": 12,
+            "endLine": 302,
+            "endColumn": 16,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 307,
+            "column": 27,
+            "endLine": 307,
+            "endColumn": 41,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 7013,
+                    "end": 7027,
+                    "replacementText": "boolean | undefined",
+                    "line": 307,
+                    "column": 27,
+                    "endLine": 307,
+                    "endColumn": 41
+                },
+                {
+                    "start": 7068,
+                    "end": 7075,
+                    "replacementText": "return undefined;",
+                    "line": 307,
+                    "column": 27,
+                    "endLine": 307,
+                    "endColumn": 41
+                },
+                {
+                    "start": 7099,
+                    "end": 7106,
+                    "replacementText": "return undefined;",
+                    "line": 307,
+                    "column": 27,
+                    "endLine": 307,
+                    "endColumn": 41
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 307,
+            "column": 37,
+            "endLine": 307,
+            "endColumn": 41,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 316,
+            "column": 28,
+            "endLine": 316,
+            "endColumn": 42,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 7137,
+                    "end": 7151,
+                    "replacementText": "undefined | boolean",
+                    "line": 316,
+                    "column": 28,
+                    "endLine": 316,
+                    "endColumn": 42
+                },
+                {
+                    "start": 7228,
+                    "end": 7235,
+                    "replacementText": "return undefined;",
+                    "line": 316,
+                    "column": 28,
+                    "endLine": 316,
+                    "endColumn": 42
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 316,
+            "column": 28,
+            "endLine": 316,
+            "endColumn": 32,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 325,
+            "column": 28,
+            "endLine": 325,
+            "endColumn": 42,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 7266,
+                    "end": 7280,
+                    "replacementText": "undefined | boolean",
+                    "line": 325,
+                    "column": 28,
+                    "endLine": 325,
+                    "endColumn": 42
+                },
+                {
+                    "start": 7321,
+                    "end": 7328,
+                    "replacementText": "return undefined;",
+                    "line": 325,
+                    "column": 28,
+                    "endLine": 325,
+                    "endColumn": 42
+                },
+                {
+                    "start": 7332,
+                    "end": 7332,
+                    "replacementText": "\n  return undefined;",
+                    "line": 325,
+                    "column": 28,
+                    "endLine": 325,
+                    "endColumn": 42
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 325,
+            "column": 28,
+            "endLine": 325,
+            "endColumn": 32,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 332,
+            "column": 28,
+            "endLine": 332,
+            "endColumn": 42,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 7363,
+                    "end": 7377,
+                    "replacementText": "undefined | boolean",
+                    "line": 332,
+                    "column": 28,
+                    "endLine": 332,
+                    "endColumn": 42
+                },
+                {
+                    "start": 7418,
+                    "end": 7425,
+                    "replacementText": "return undefined;",
+                    "line": 332,
+                    "column": 28,
+                    "endLine": 332,
+                    "endColumn": 42
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 332,
+            "column": 28,
+            "endLine": 332,
+            "endColumn": 32,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 340,
+            "column": 28,
+            "endLine": 340,
+            "endColumn": 42,
+            "problem": "LimitedVoidType",
+            "autofix": [
+                {
+                    "start": 7476,
+                    "end": 7490,
+                    "replacementText": "undefined | boolean",
+                    "line": 340,
+                    "column": 28,
+                    "endLine": 340,
+                    "endColumn": 42
+                },
+                {
+                    "start": 7510,
+                    "end": 7510,
+                    "replacementText": "\n  return undefined;\n",
+                    "line": 340,
+                    "column": 28,
+                    "endLine": 340,
+                    "endColumn": 42
+                }
+            ],
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 340,
+            "column": 28,
+            "endLine": 340,
+            "endColumn": 32,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 346,
+            "column": 9,
+            "endLine": 346,
+            "endColumn": 13,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 353,
+            "column": 35,
+            "endLine": 353,
+            "endColumn": 39,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 354,
+            "column": 36,
+            "endLine": 354,
+            "endColumn": 40,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 355,
+            "column": 36,
+            "endLine": 355,
+            "endColumn": 40,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 358,
+            "column": 23,
+            "endLine": 358,
+            "endColumn": 27,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 361,
+            "column": 39,
+            "endLine": 361,
+            "endColumn": 43,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 362,
+            "column": 50,
+            "endLine": 362,
+            "endColumn": 54,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 363,
+            "column": 38,
+            "endLine": 363,
+            "endColumn": 42,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 363,
+            "column": 23,
+            "endLine": 363,
+            "endColumn": 34,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 364,
+            "column": 29,
+            "endLine": 364,
+            "endColumn": 33,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 365,
+            "column": 28,
+            "endLine": 365,
+            "endColumn": 32,
             "problem": "LimitedVoidType",
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",

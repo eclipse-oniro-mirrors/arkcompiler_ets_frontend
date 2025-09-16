@@ -35,7 +35,7 @@ void CheckForImportDeclaration(es2panda_AstNode *node, void *arg)
         return;
     }
     size_t n = 0;
-    auto specifiers = impl->ImportDeclarationSpecifiers(context, node, &n);
+    auto specifiers = impl->ImportDeclarationSpecifiersConst(context, node, &n);
     for (size_t i = 0; i < n; i++) {
         if (!impl->IsImportSpecifier(specifiers[i])) {
             std::cout << impl->IsImportSpecifier(specifiers[i]) << std::endl;

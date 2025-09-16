@@ -25,6 +25,11 @@ enum class ImportKinds { ALL, TYPES };
 
 class ImportDeclaration : public Statement {
 public:
+    void EmplaceSpecifiers(AstNode *source);
+    void ClearSpecifiers();
+    void SetValueSpecifiers(AstNode *source, size_t index);
+    [[nodiscard]] ArenaVector<AstNode *> &SpecifiersForUpdate();
+
     explicit ImportDeclaration(StringLiteral *source, ArenaVector<AstNode *> &&specifiers,
                                const ImportKinds importKinds = ImportKinds::ALL)
         : Statement(AstNodeType::IMPORT_DECLARATION),
@@ -32,26 +37,36 @@ public:
           specifiers_(std::move(specifiers)),
           importKinds_(importKinds)
     {
+        InitHistory();
+    }
+
+    explicit ImportDeclaration(StringLiteral *source, ArenaVector<AstNode *> &&specifiers,
+                               const ImportKinds importKinds, AstNodeHistory *history)
+        : Statement(AstNodeType::IMPORT_DECLARATION),
+          source_(source),
+          specifiers_(std::move(specifiers)),
+          importKinds_(importKinds)
+    {
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     const StringLiteral *Source() const
     {
-        return source_;
+        return GetHistoryNodeAs<ImportDeclaration>()->source_;
     }
 
     StringLiteral *Source()
     {
-        return source_;
+        return GetHistoryNodeAs<ImportDeclaration>()->source_;
     }
 
     const ArenaVector<AstNode *> &Specifiers() const
     {
-        return specifiers_;
-    }
-
-    ArenaVector<AstNode *> &Specifiers()
-    {
-        return specifiers_;
+        return GetHistoryNodeAs<ImportDeclaration>()->specifiers_;
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -70,7 +85,7 @@ public:
 
     bool IsTypeKind() const
     {
-        return importKinds_ == ImportKinds::TYPES;
+        return GetHistoryNodeAs<ImportDeclaration>()->importKinds_ == ImportKinds::TYPES;
     }
 
     ImportDeclaration *Construct(ArenaAllocator *allocator) override;
@@ -78,6 +93,8 @@ public:
 
 private:
     friend class SizeOfNodeTest;
+    void SetSource(StringLiteral *source);
+
     StringLiteral *source_;
     ArenaVector<AstNode *> specifiers_;
     ImportKinds importKinds_;

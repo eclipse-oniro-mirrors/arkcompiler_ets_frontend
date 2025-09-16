@@ -13,11 +13,12 @@
  * limitations under the License.
  */
 
-let GeneratedImportVar_1 = ESValue.load('./interop_equality_judgment_js');
-let a = GeneratedImportVar_1.getProperty('a');
-let b = GeneratedImportVar_1.getProperty('b');
-
+import {a, b, c, d} from "./interop_equality_judgment_js"
 a.areEqual(b)
 !a.areEqual(b)
 a.areStrictlyEqual(b)
 !a.areStrictlyEqual(b)
+c.getProperty("num1").areEqual(d.getProperty("num1"))
+!c.getProperty("num1").areEqual(d.getProperty("num2"))
+c.getProperty("num1").areStrictlyEqual(d.getProperty("num1"))
+!c.getProperty("num1").areStrictlyEqual(d.getProperty("num2"))

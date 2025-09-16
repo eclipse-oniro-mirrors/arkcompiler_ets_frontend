@@ -21,6 +21,6 @@ function getBundleInfo(callback: AsyncCallback<number>): void {
 }
 
 getBundleInfo((err, data) => {
-    assertEQ(err, 666);
-    assertEQ(data, 66)
+    arktest.assertEQ(err, 666);
+    arktest.assertEQ(data, 66)
 });

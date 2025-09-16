@@ -28,21 +28,21 @@ class C {
 
 function foo(x: B|C) {
     if (x instanceof B) {
-        assertEQ(x.num, 42, "Error! num field must be 42");
+        arktest.assertEQ(x.num, 42, "Error! num field must be 42");
     } else if (x instanceof C) {
-        assertEQ(x.num, 43, "Error! num field must be 43");
+        arktest.assertEQ(x.num, 43, "Error! num field must be 43");
     } else {
-        assertTrue(false, "Error! x must be instanceof B|C");
+        arktest.assertTrue(false, "Error! x must be instanceof B|C");
     }
 }
 
 function bar(x: A<B|C>) {
     if (x.union0 instanceof B) {
-        assertEQ(x.union0.num, 42, "Error! x.union0.num field must be 42");
+        arktest.assertEQ(x.union0.num, 42, "Error! x.union0.num field must be 42");
     } else if (x.union0 instanceof C) {
-        assertEQ(x.union0.num, 43, "Error! x.union0.num field must be 43");
+        arktest.assertEQ(x.union0.num, 43, "Error! x.union0.num field must be 43");
     } else {
-        assertTrue(false, "Error! x.union0 must be instanceof B|C");
+        arktest.assertTrue(false, "Error! x.union0 must be instanceof B|C");
     }
 }
 

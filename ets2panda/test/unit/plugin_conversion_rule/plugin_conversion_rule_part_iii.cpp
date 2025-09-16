@@ -22,7 +22,7 @@ TEST_F(PluginConversionRuleUnitTest, ParserProgramPtrInputParameter)
 {
     std::string targetCAPI {R"(
     /* explicit ETSModule(ArenaAllocator *allocator, ArenaVector<Statement *> &&statementList, Identifier *ident,
-                       ModuleFlag flag, parser::Program *program) */
+                       ModuleFlag flag, Language lang, parser::Program *program) */
     extern "C" es2panda_AstNode *CreateETSModule([[maybe_unused]] es2panda_Context *context,
     [[maybe_unused]] es2panda_AstNode **statementList, size_t statementListLen,
     [[maybe_unused]] es2panda_AstNode *ident, [[maybe_unused]] Es2pandaModuleFlag flag,
@@ -39,11 +39,12 @@ TEST_F(PluginConversionRuleUnitTest, ParserProgramPtrInputParameter)
         }
         auto *identE2p = reinterpret_cast<ir::Identifier *>(ident);
         auto flagE2p = E2pToIrModuleFlag(flag);
+        ark::es2panda::Language langE2p {Language::Id::ETS};
         auto *programE2p =  reinterpret_cast<parser::Program *>(program);
         auto *ctx = reinterpret_cast<Context *>(context);
         auto *ctxAllocator = ctx->allocator;
         auto *astNode = (ctxAllocator->New<ir::ETSModule>(allocatorE2p, std::move(statementListArenaVector),
-            identE2p, flagE2p, programE2p));
+            identE2p, flagE2p, langE2p, programE2p));
         astNode->AddAstNodeFlags(ir::AstNodeFlags::NOCLEANUP);
         return reinterpret_cast<es2panda_AstNode *>(astNode);
     })"};
@@ -200,38 +201,6 @@ TEST_F(PluginConversionRuleUnitTest, SourcePositionInputParameter)
     {
         auto &startE2p = *reinterpret_cast<lexer::SourcePosition *>(start);
         ((reinterpret_cast< ir::AstNode *>(classInstance))->SetStart(startE2p));
-    })"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
-// apiName: AstNodeStartConst
-TEST_F(PluginConversionRuleUnitTest, SourcePositionPtrReturnValue)
-{
-    std::string targetCAPI {R"(
-    extern "C" const es2panda_SourcePosition *AstNodeStartConst([[maybe_unused]] es2panda_Context *context,
-    es2panda_AstNode *classInstance/*return_args:*/)
-    {
-        auto apiRes = reinterpret_cast<const es2panda_SourcePosition *>(reinterpret_cast<Context *>(context)->
-        allocator->New<lexer::SourcePosition>(((reinterpret_cast<const ir::AstNode *>(classInstance))->Start())));
-    	return apiRes;
-    })"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
-// apiName: AstNodeRangeConst
-TEST_F(PluginConversionRuleUnitTest, SourceRangePtrInputParameter)
-{
-    std::string targetCAPI {R"(
-    extern "C" const es2panda_SourceRange *AstNodeRangeConst([[maybe_unused]] es2panda_Context *context,
-    es2panda_AstNode *classInstance/*return_args:*/)
-    {
-        auto apiRes = reinterpret_cast<const es2panda_SourceRange *>(reinterpret_cast<Context *>(context)->allocator->
-                   New<lexer::SourceRange>(((reinterpret_cast<const ir::AstNode *>(classInstance))->Range())));
-    	return apiRes;
     })"};
 
     std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);

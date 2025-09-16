@@ -16,9 +16,9 @@
     "result": [
         {
             "line": 15,
-            "column": 1,
+            "column": 8,
             "endLine": 15,
-            "endColumn": 39,
+            "endColumn": 16,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
             "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",

@@ -16,6 +16,7 @@
 #ifndef ES2PANDA_UTIL_IMPORT_PATH_MANAGER_H
 #define ES2PANDA_UTIL_IMPORT_PATH_MANAGER_H
 
+#include "language.h"
 #if defined PANDA_TARGET_MOBILE
 #define USE_UNIX_SYSCALL
 #endif
@@ -37,6 +38,8 @@ enum class ImportFlags {
     NONE = 0U,
     DEFAULT_IMPORT = 1U << 1U,
     IMPLICIT_PACKAGE_IMPORT = 1U << 2U,
+    EXTERNAL_BINARY_IMPORT = 1U << 3U,  // means .abc file in "path" in "dependencies"
+    EXTERNAL_SOURCE_IMPORT = 1U << 4U   // means .d.ets file in "path" in "dependencies"
 };
 
 }  // namespace ark::es2panda::util
@@ -68,6 +71,7 @@ struct ModuleInfo {
     // 'Program::MaybeTransformToDeclarationModule'.
     bool isDeclForDynamicStaticInterop {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)
+    Language lang = Language(Language::Id::ETS);
 };
 
 class ImportPathManager {
@@ -79,7 +83,8 @@ public:
         Language::Id lang {Language::Id::COUNT};
         std::string_view resolvedSource {};
         std::string_view declPath {};
-        std::string_view ohmUrl {};
+        std::string ohmUrl {};
+        std::string declText {};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
 
         bool HasSpecifiedDeclPath() const
@@ -90,6 +95,16 @@ public:
         bool IsImplicitPackageImported() const
         {
             return (importFlags & ImportFlags::IMPLICIT_PACKAGE_IMPORT) != 0;
+        }
+
+        bool IsExternalBinaryImport() const
+        {
+            return (importFlags & ImportFlags::EXTERNAL_BINARY_IMPORT) != 0;
+        }
+
+        bool IsExternalSourceImport() const
+        {
+            return (importFlags & ImportFlags::EXTERNAL_SOURCE_IMPORT) != 0;
         }
 
         bool IsValid() const;
@@ -130,12 +145,17 @@ public:
         return parseList_;
     }
 
+    void ClearParseList()
+    {
+        parseList_.clear();
+    }
+
     util::StringView FormModuleName(const util::Path &path, const lexer::SourcePosition &srcPos);
     ImportMetadata GatherImportMetadata(parser::Program *program, ImportFlags importFlags,
                                         ir::StringLiteral *importPath);
     void AddImplicitPackageImportToParseList(StringView packageDir, const lexer::SourcePosition &srcPos);
 
-    // API version for resolving paths. Kept only for API compatibility. Doesn't support 'dynamicPath'.
+    // API version for resolving paths. Kept only for API compatibility. Doesn't support 'dependencies'.
     util::StringView ResolvePathAPI(StringView curModulePath, ir::StringLiteral *importPath) const;
 
     void MarkAsParsed(StringView path);
@@ -144,8 +164,6 @@ public:
     {
         return arktsConfig_;
     }
-
-    void AddToParseList(const ImportMetadata importMetadata);
 
 private:
     util::StringView FormModuleNameSolelyByAbsolutePath(const util::Path &path);
@@ -157,16 +175,19 @@ private:
         // `resolvedPath` is a realpath - if static path was resolved.
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
         std::string_view resolvedPath;
-        bool resolvedIsDynamic {false};
+        bool resolvedIsExternalModule {false};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
     };
     ResolvedPathRes ResolvePath(std::string_view curModulePath, ir::StringLiteral *importPath) const;
     ResolvedPathRes ResolveAbsolutePath(const ir::StringLiteral &importPathNode) const;
     std::string_view DirOrDirWithIndexFile(StringView dir) const;
     ResolvedPathRes AppendExtensionOrIndexFileIfOmitted(StringView basePath) const;
-    std::string TryMatchDynamicPath(std::string_view fixedPath) const;
+    std::string TryMatchDependencies(std::string_view fixedPath) const;
     StringView GetRealPath(StringView path) const;
+    void ProcessExternalModuleImport(ImportMetadata &importData);
 
+public:
+    void AddToParseList(const ImportMetadata &importMetadata);
 #ifdef USE_UNIX_SYSCALL
     void UnixWalkThroughDirectoryAndAddToParseList(ImportMetadata importMetadata);
 #endif
@@ -180,7 +201,7 @@ private:
     parser::Program *globalProgram_;
     util::DiagnosticEngine &diagnosticEngine_;
     std::string_view pathDelimiter_ {ark::os::file::File::GetPathDelim()};
-    mutable const lexer::SourcePosition *srcPos_ {};
+    mutable lexer::SourcePosition srcPos_ {};
     bool isDynamic_ = false;
 };
 

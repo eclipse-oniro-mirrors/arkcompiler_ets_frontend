@@ -13,32 +13,33 @@
  * limitations under the License.
  */
 
-class A{
-  field1:number = 10;
-  foo(){}
+class A {
+  field1: number = 10;
+  foo() { }
 }
 
-class B extends A{
-  bfield1:number = 10;
-  bfoo(){}
+class B extends A {
+  bfield1: number = 10;
+  bfoo() { }
 }
 
-function getProperty<K extends (A|number|(keyof B))>(key: K){}
+function getProperty<K extends (A | number | (keyof B))>(key: K) { }
 
-function main():void{
-  let a:A = new A();
-  let b:B = new B();
+type keyofA = keyof A;
+type keyofB = keyof B;
+type keyofUnion = keyofA | keyofB | number | A | B;
 
-  type keyofA = keyof A;
-  type keyofB = keyof B;
-  type keyofUnion = keyofA|keyofB|number|A|B;
-  let x1:keyofUnion = "field1";
-  let x2:keyofUnion = "foo";
-  let x3:keyofUnion = "field1";
-  let x4:keyofUnion = "foo";
-  let x5:keyofUnion = 100;
-  let x6:keyofUnion = a;
-  let x7:keyofUnion = b;
+function main(): void {
+  let a: A = new A();
+  let b: B = new B();
+
+  let x1: keyofUnion = "field1";
+  let x2: keyofUnion = "foo";
+  let x3: keyofUnion = "field1";
+  let x4: keyofUnion = "foo";
+  let x5: keyofUnion = 100;
+  let x6: keyofUnion = a;
+  let x7: keyofUnion = b;
 
   getProperty<keyofB>("field1")
   getProperty<keyofB>("bfoo")

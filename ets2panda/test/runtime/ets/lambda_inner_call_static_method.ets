@@ -15,7 +15,7 @@
 
 function foo(callback: () => string) { }
 
-const bar = (): string => {
+const bar: () => string = (): string => {
     return A.fob();
 }
 
@@ -29,5 +29,5 @@ class A {
 
 function main() {
     let s = bar();
-    assertEQ(s, "hello");
+    arktest.assertEQ(s, "hello");
 }

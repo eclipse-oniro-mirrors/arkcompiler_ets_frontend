@@ -162,6 +162,17 @@ public:
             ES2PANDA_UNREACHABLE();
         }
 
+        static std::string_view GetNullBuiltin(Language lang)
+        {
+            ES2PANDA_ASSERT(IsSupported(lang));
+% Signatures::DYNAMIC.each do |lang, data|
+            if (lang.GetId() == Language::Id::<%= lang.upcase %>) {
+                return <%= data.builtins.get_null %>;
+            }
+% end
+            ES2PANDA_UNREACHABLE();
+        }
+
 % def generate(attr, pref)
 %   builtins = Hash.new()
 %   Signatures::DYNAMIC.each do |lang, data|

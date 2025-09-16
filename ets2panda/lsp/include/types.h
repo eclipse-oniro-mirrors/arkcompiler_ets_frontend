@@ -19,8 +19,6 @@
 #include <cstddef>
 #include <string>
 #include <vector>
-#include "formatting/formatting.h"
-#include "user_preferences.h"
 
 // NOLINTBEGIN
 
@@ -220,16 +218,6 @@ public:
         parameters_.clear();
         documentation_.clear();
     }
-};
-
-struct LanguageServiceHost {
-    std::string name = "lsp";
-};
-
-struct TextChangesContext {
-    LanguageServiceHost host = {};
-    ark::es2panda::lsp::FormatContext formatContext;
-    ark::es2panda::lsp::UserPreferences preferences;
 };
 
 struct SignatureHelpItems {

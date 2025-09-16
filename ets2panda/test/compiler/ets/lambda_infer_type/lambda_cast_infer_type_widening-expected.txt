@@ -205,7 +205,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 20,
+                "column": 18,
                 "program": "lambda_cast_infer_type_widening.ets"
               }
             }
@@ -218,7 +218,7 @@
             },
             "end": {
               "line": 20,
-              "column": 20,
+              "column": 18,
               "program": "lambda_cast_infer_type_widening.ets"
             }
           }
@@ -344,7 +344,7 @@
                                             },
                                             "end": {
                                               "line": 22,
-                                              "column": 24,
+                                              "column": 23,
                                               "program": "lambda_cast_infer_type_widening.ets"
                                             }
                                           }
@@ -357,7 +357,7 @@
                                           },
                                           "end": {
                                             "line": 22,
-                                            "column": 24,
+                                            "column": 23,
                                             "program": "lambda_cast_infer_type_widening.ets"
                                           }
                                         }
@@ -371,7 +371,7 @@
                                         },
                                         "end": {
                                           "line": 22,
-                                          "column": 24,
+                                          "column": 23,
                                           "program": "lambda_cast_infer_type_widening.ets"
                                         }
                                       }
@@ -384,7 +384,7 @@
                                       },
                                       "end": {
                                         "line": 22,
-                                        "column": 24,
+                                        "column": 23,
                                         "program": "lambda_cast_infer_type_widening.ets"
                                       }
                                     }
@@ -426,7 +426,7 @@
                                               },
                                               "end": {
                                                 "line": 22,
-                                                "column": 44,
+                                                "column": 42,
                                                 "program": "lambda_cast_infer_type_widening.ets"
                                               }
                                             }
@@ -439,7 +439,7 @@
                                             },
                                             "end": {
                                               "line": 22,
-                                              "column": 44,
+                                              "column": 42,
                                               "program": "lambda_cast_infer_type_widening.ets"
                                             }
                                           }
@@ -548,7 +548,7 @@
                                           },
                                           "end": {
                                             "line": 22,
-                                            "column": 55,
+                                            "column": 54,
                                             "program": "lambda_cast_infer_type_widening.ets"
                                           }
                                         }
@@ -561,7 +561,7 @@
                                         },
                                         "end": {
                                           "line": 22,
-                                          "column": 55,
+                                          "column": 54,
                                           "program": "lambda_cast_infer_type_widening.ets"
                                         }
                                       }
@@ -575,7 +575,7 @@
                                       },
                                       "end": {
                                         "line": 22,
-                                        "column": 55,
+                                        "column": 54,
                                         "program": "lambda_cast_infer_type_widening.ets"
                                       }
                                     }
@@ -588,7 +588,7 @@
                                     },
                                     "end": {
                                       "line": 22,
-                                      "column": 55,
+                                      "column": 54,
                                       "program": "lambda_cast_infer_type_widening.ets"
                                     }
                                   }
@@ -622,8 +622,8 @@
                                       "program": "lambda_cast_infer_type_widening.ets"
                                     },
                                     "end": {
-                                      "line": 23,
-                                      "column": 12,
+                                      "line": 22,
+                                      "column": 60,
                                       "program": "lambda_cast_infer_type_widening.ets"
                                     }
                                   }
@@ -635,8 +635,8 @@
                                     "program": "lambda_cast_infer_type_widening.ets"
                                   },
                                   "end": {
-                                    "line": 23,
-                                    "column": 12,
+                                    "line": 22,
+                                    "column": 60,
                                     "program": "lambda_cast_infer_type_widening.ets"
                                   }
                                 }
@@ -648,8 +648,8 @@
                                   "program": "lambda_cast_infer_type_widening.ets"
                                 },
                                 "end": {
-                                  "line": 23,
-                                  "column": 12,
+                                  "line": 22,
+                                  "column": 60,
                                   "program": "lambda_cast_infer_type_widening.ets"
                                 }
                               }
@@ -662,7 +662,7 @@
                               },
                               "end": {
                                 "line": 22,
-                                "column": 44,
+                                "column": 60,
                                 "program": "lambda_cast_infer_type_widening.ets"
                               }
                             }
@@ -675,7 +675,7 @@
                             },
                             "end": {
                               "line": 22,
-                              "column": 44,
+                              "column": 60,
                               "program": "lambda_cast_infer_type_widening.ets"
                             }
                           }
@@ -690,7 +690,7 @@
                         },
                         "end": {
                           "line": 22,
-                          "column": 44,
+                          "column": 60,
                           "program": "lambda_cast_infer_type_widening.ets"
                         }
                       }
@@ -740,7 +740,7 @@
                                           },
                                           "end": {
                                             "line": 23,
-                                            "column": 31,
+                                            "column": 30,
                                             "program": "lambda_cast_infer_type_widening.ets"
                                           }
                                         }
@@ -753,7 +753,7 @@
                                         },
                                         "end": {
                                           "line": 23,
-                                          "column": 31,
+                                          "column": 30,
                                           "program": "lambda_cast_infer_type_widening.ets"
                                         }
                                       }
@@ -767,7 +767,7 @@
                                       },
                                       "end": {
                                         "line": 23,
-                                        "column": 31,
+                                        "column": 30,
                                         "program": "lambda_cast_infer_type_widening.ets"
                                       }
                                     }
@@ -780,7 +780,7 @@
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 31,
+                                      "column": 30,
                                       "program": "lambda_cast_infer_type_widening.ets"
                                     }
                                   }
@@ -815,7 +815,7 @@
                                     },
                                     "end": {
                                       "line": 23,
-                                      "column": 38,
+                                      "column": 36,
                                       "program": "lambda_cast_infer_type_widening.ets"
                                     }
                                   }
@@ -828,7 +828,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 38,
+                                    "column": 36,
                                     "program": "lambda_cast_infer_type_widening.ets"
                                   }
                                 }
@@ -841,7 +841,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 38,
+                                  "column": 36,
                                   "program": "lambda_cast_infer_type_widening.ets"
                                 }
                               }
@@ -1171,12 +1171,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "lambda_cast_infer_type_widening.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "lambda_cast_infer_type_widening.ets"
                     }
                   }
                 },
@@ -1184,12 +1184,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "lambda_cast_infer_type_widening.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "lambda_cast_infer_type_widening.ets"
                   }
                 }
               },
@@ -1197,118 +1197,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "lambda_cast_infer_type_widening.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "lambda_cast_infer_type_widening.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "lambda_cast_infer_type_widening.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "lambda_cast_infer_type_widening.ets"
                 }
               }
             },

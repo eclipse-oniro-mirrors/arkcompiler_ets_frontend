@@ -69,14 +69,23 @@ export class ObjectLiteralCheck implements BaseChecker {
         for (let arkFile of scene.getFiles()) {
             const topLevelVarMap: Map<string, Stmt[]> = new Map();
             this.collectImportedVar(topLevelVarMap, arkFile, scene);
-            this.collectTopLevelVar(topLevelVarMap, arkFile, scene);
+            this.collectTopLevelVar(topLevelVarMap, arkFile.getDefaultClass(), scene);
 
-            const handleClass = (cls: ArkClass): void => {
-                cls.getMethods().forEach(m => this.processArkMethod(m, topLevelVarMap, scene));
+            const handleClass = (cls: ArkClass, localTopLevelVar: Map<string, Stmt[]> | undefined = undefined): void => {
+                if (!localTopLevelVar) {
+                    cls.getMethods().forEach(m => this.processArkMethod(m, topLevelVarMap, scene));
+                } else {
+                    topLevelVarMap.forEach((v, k) => localTopLevelVar.set(k, v));
+                    cls.getMethods().forEach(m => this.processArkMethod(m, localTopLevelVar, scene));
+                }
             };
 
             arkFile.getClasses().forEach(cls => handleClass(cls));
-            arkFile.getAllNamespacesUnderThisFile().forEach(n => n.getClasses().forEach(cls => handleClass(cls)));
+            arkFile.getAllNamespacesUnderThisFile().forEach(n => {
+                const localTopLevelVar: Map<string, Stmt[]> = new Map();
+                this.collectTopLevelVar(localTopLevelVar, n.getDefaultClass(), scene);
+                n.getClasses().forEach(cls => handleClass(cls, localTopLevelVar));
+            });
         }
     };
 
@@ -106,7 +115,7 @@ export class ObjectLiteralCheck implements BaseChecker {
         }
     }
 
-    private collectImportedVar(importVarMap: Map<string, Stmt[]>, file: ArkFile, scene: Scene) {
+    private collectImportedVar(importVarMap: Map<string, Stmt[]>, file: ArkFile, scene: Scene): void {
         file.getImportInfos().forEach(importInfo => {
             const exportInfo = importInfo.getLazyExportInfo();
             if (exportInfo === null) {
@@ -125,8 +134,8 @@ export class ObjectLiteralCheck implements BaseChecker {
         });
     }
 
-    private collectTopLevelVar(topLevelVarMap: Map<string, Stmt[]>, file: ArkFile, scene: Scene) {
-        const defaultMethod = file.getDefaultClass().getDefaultArkMethod();
+    private collectTopLevelVar(topLevelVarMap: Map<string, Stmt[]>, defaultClass: ArkClass, scene: Scene): void {
+        const defaultMethod = defaultClass.getDefaultArkMethod();
         if (!defaultMethod) {
             return;
         }
@@ -136,11 +145,16 @@ export class ObjectLiteralCheck implements BaseChecker {
             if (!(stmt instanceof ArkAssignStmt)) {
                 continue;
             }
+            let name = undefined;
             const leftOp = stmt.getLeftOp();
-            if (!(leftOp instanceof Local)) {
+            if (leftOp instanceof Local) {
+                name = leftOp.getName();
+            } else if (leftOp instanceof ArkInstanceFieldRef && leftOp.getBase() instanceof Local) {
+                name = `${leftOp.getBase().getName()}.${leftOp.getFieldSignature().getFieldName()}`;
+            }
+            if (!name) {
                 continue;
             }
-            const name = leftOp.getName();
             if (name.startsWith('%') || name === 'this') {
                 continue;
             }
@@ -174,23 +188,20 @@ export class ObjectLiteralCheck implements BaseChecker {
                 res.push(currentStmt);
                 continue;
             }
+            const gvName = this.checkIfIsTopLevelVar(currentStmt);
+            if (gvName) {
+                const globalDefs = topLevelVarMap.get(gvName);
+                globalDefs?.forEach(d => {
+                    worklist.push(DVFGHelper.getOrNewDVFGNode(d, scene));
+                });
+            }
             const isClsField = this.isClassField(currentStmt, scene);
             if (isClsField) {
                 isClsField.forEach(d => worklist.push(DVFGHelper.getOrNewDVFGNode(d, scene)));
-                continue;
             }
             const isArrayField = this.isArrayField(currentStmt, topLevelVarMap);
             if (isArrayField) {
                 isArrayField.forEach(d => worklist.push(DVFGHelper.getOrNewDVFGNode(d, scene)));
-                continue;
-            }
-            const gv = this.checkIfIsTopLevelVar(currentStmt);
-            if (gv) {
-                const globalDefs = topLevelVarMap.get(gv.getName());
-                globalDefs?.forEach(d => {
-                    worklist.push(DVFGHelper.getOrNewDVFGNode(d, scene));
-                });
-                continue;
             }
             const callsite = this.cg.getCallSiteByStmt(currentStmt);
             callsite.forEach(cs => {
@@ -215,20 +226,23 @@ export class ObjectLiteralCheck implements BaseChecker {
         }
     }
 
-    private checkIfIsTopLevelVar(stmt: Stmt): Local | undefined {
+    private checkIfIsTopLevelVar(stmt: Stmt): string | undefined {
         if (!(stmt instanceof ArkAssignStmt)) {
             return undefined;
         }
         const rightOp = stmt.getRightOp();
         if (rightOp instanceof Local && !rightOp.getDeclaringStmt()) {
-            return rightOp;
+            return rightOp.getName();
+        }
+        if (rightOp instanceof ArkInstanceFieldRef && rightOp.getBase() instanceof Local) {
+            return `${rightOp.getBase().getName()}.${rightOp.getFieldSignature().getFieldName()}`;
         }
         if (!(rightOp instanceof ArkInstanceOfExpr)) {
             return undefined;
         }
         const obj = rightOp.getOp();
         if (obj instanceof Local && !obj.getDeclaringStmt()) {
-            return obj;
+            return obj.getName();
         }
         return undefined;
     }
@@ -264,9 +278,6 @@ export class ObjectLiteralCheck implements BaseChecker {
         }
         const clsField = stmt.getRightOp();
         if (!(clsField instanceof AbstractFieldRef)) {
-            return undefined;
-        }
-        if (clsField instanceof ArkInstanceFieldRef && clsField.getBase().getName() !== 'this') {
             return undefined;
         }
         const fieldSig = clsField.getFieldSignature();
@@ -360,7 +371,10 @@ export class ObjectLiteralCheck implements BaseChecker {
         const problem = 'ObjectLiteral';
         let desc = `${this.metaData.description} (${this.rule.ruleId.replace('@migration/', '')})`;
         if (!checkAll) {
-            desc = `Can not check when function call chain depth exceeds ${CALL_DEPTH_LIMIT}, please check it manually (${this.rule.ruleId.replace('@migration/', '')})`;
+            desc = `Can not check when function call chain depth exceeds ${CALL_DEPTH_LIMIT}, please check it manually (${this.rule.ruleId.replace(
+                '@migration/',
+                ''
+            )})`;
         }
         let defects = new Defects(
             warnInfo.line,

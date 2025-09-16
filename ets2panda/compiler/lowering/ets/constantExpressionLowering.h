@@ -22,7 +22,9 @@ namespace ark::es2panda::compiler {
 
 enum class TypeRank {
     // Keep this order
+    INT8,
     CHAR,
+    INT16,
     INT32,
     INT64,
     FLOAT,
@@ -39,76 +41,13 @@ public:
     bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
 
 private:
-    void LogError(const diagnostic::DiagnosticKind &diagnostic, const util::DiagnosticMessageParams &diagnosticParams,
-                  const lexer::SourcePosition &pos) const;
+    ir::AstNode *MaybeUnfold(ir::AstNode *node);
+    ir::AstNode *MaybeUnfoldIdentifier(ir::Identifier *node);
+    ir::AstNode *MaybeUnfoldMemberExpression(ir::MemberExpression *node);
+    ir::AstNode *UnfoldResolvedReference(ir::AstNode *resolved, ir::AstNode *node);
 
+    ir::AstNode *Fold(ir::AstNode *constantNode);
     ir::AstNode *FoldTernaryConstant(ir::ConditionalExpression *cond);
-
-    template <typename InputType>
-    bool PerformRelationOperator(InputType left, InputType right, lexer::TokenType opType);
-
-    bool HandleRelationOperator(ir::Literal *left, ir::Literal *right, lexer::TokenType opType);
-
-    bool HandleBitwiseLogicalOperator(ir::Literal *left, ir::Literal *right, lexer::TokenType opType);
-
-    ir::AstNode *HandleLogicalOperator(ir::BinaryExpression *expr, lexer::TokenType opType);
-
-    ir::AstNode *FoldBinaryBooleanConstant(ir::BinaryExpression *expr);
-
-    template <typename IntegerType>
-    IntegerType PerformBitwiseArithmetic(IntegerType left, IntegerType right, lexer::TokenType operationType);
-
-    template <typename TargetType>
-    lexer::Number HandleBitwiseOperator(TargetType leftNum, TargetType rightNum, lexer::TokenType operationType,
-                                        TypeRank targetRank);
-
-    template <typename TargetType>
-    TargetType HandleArithmeticOperation(TargetType leftNum, TargetType rightNum, ir::BinaryExpression *expr);
-
-    template <typename InputType>
-    ir::AstNode *FoldBinaryNumericConstantHelper(ir::BinaryExpression *expr, TypeRank targetRank);
-
-    ir::AstNode *FoldBinaryNumericConstant(ir::BinaryExpression *expr);
-
-    ir::AstNode *FoldBinaryStringConstant(ir::BinaryExpression *expr);
-
-    ir::AstNode *FoldBinaryConstant(ir::BinaryExpression *expr);
-
-    template <typename InputType>
-    lexer::Number HandleBitwiseNegate(InputType value, TypeRank rank);
-
-    template <typename InputType>
-    ir::AstNode *FoldUnaryNumericConstantHelper(ir::UnaryExpression *unary, ir::Literal *node, TypeRank rank);
-
-    ir::AstNode *FoldUnaryNumericConstant(ir::UnaryExpression *unary);
-
-    ir::AstNode *FoldUnaryBooleanConstant(ir::UnaryExpression *unary);
-
-    ir::AstNode *FoldUnaryConstant(ir::UnaryExpression *unary);
-
-    ir::AstNode *TryFoldTSAsExpressionForString(ir::TSAsExpression *expr);
-
-    ir::AstNode *FoldTSAsExpressionToChar(ir::TSAsExpression *expr);
-
-    ir::AstNode *FoldTSAsExpressionToBoolean(ir::TSAsExpression *expr);
-
-    ir::AstNode *FoldTSAsExpression(ir::TSAsExpression *expr);
-
-    ir::AstNode *FoldMultilineString(ir::TemplateLiteral *expr);
-
-    ir::AstNode *FoldConstant(ir::AstNode *constantNode);
-
-    varbinder::Variable *FindIdentifier(ir::Identifier *ident);
-
-    ir::AstNode *UnfoldConstIdentifier(ir::AstNode *node, ir::AstNode *originNode);
-
-    ir::AstNode *UnFoldEnumMemberExpression(ir::AstNode *constantNode);
-
-    ir::AstNode *FindNameInEnumMember(ArenaVector<ir::AstNode *> *members, util::StringView targetName);
-
-    ir::AstNode *FindAndReplaceEnumMember(ir::AstNode *expr, ir::AstNode *constantNode);
-
-    ir::AstNode *UnfoldConstIdentifiers(ir::AstNode *constantNode);
 
     void IsInitByConstant(ir::AstNode *node);
     void TryFoldInitializerOfPackage(ir::ClassDefinition *globalClass);
@@ -116,6 +55,8 @@ private:
     public_lib::Context *context_ {nullptr};
     parser::Program *program_ {nullptr};
     varbinder::ETSBinder *varbinder_ {nullptr};
+    bool isSelfDependence_ = {false};
+    std::unordered_set<const ir::AstNode *> unfoldingSet_;
 };
 
 }  // namespace ark::es2panda::compiler

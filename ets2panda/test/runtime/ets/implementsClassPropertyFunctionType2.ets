@@ -31,6 +31,6 @@ function main(): void {
     let x2 = b.foo2
     b.foo1()
     x1()
-    assertEQ(b.foo2(), 2)
+    arktest.assertEQ(b.foo2(), 2)
     x2()
 }

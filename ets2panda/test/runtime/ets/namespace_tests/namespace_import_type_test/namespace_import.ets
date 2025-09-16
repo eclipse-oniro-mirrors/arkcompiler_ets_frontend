@@ -15,11 +15,11 @@
 
 import NS from './namespace_export'
 function foo<T extends NS.valueTypeOutside>(data: T){
-    assertEQ(data, 666)
+    arktest.assertEQ(data, 666)
 }
 
 function foo2<T extends NS.NS1.valueTypeInside>(data: T){
-    assertEQ(data, "hello");
+    arktest.assertEQ(data, "hello");
 }
 
 foo(666)

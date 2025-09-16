@@ -17,7 +17,7 @@ class A{}
 
 function no_param(fn: A | () => void) {
     if (fn instanceof A){
-        assertTrue(false, "false")
+        arktest.assertTrue(false, "false")
     } else {
         fn()
     }
@@ -27,6 +27,6 @@ let a: int = 5
 
 function main(): void{
     no_param() {
-        assertEQ(a, 5)
+        arktest.assertEQ(a, 5)
     }
 }

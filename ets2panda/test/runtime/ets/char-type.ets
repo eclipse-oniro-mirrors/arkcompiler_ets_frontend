@@ -18,35 +18,35 @@ function main(): void {
   let c5 : char = c'\u0005';
   let c7 : char = c'\u0007';
 
-  assertEQ(c'\u0002' + c'\u0005', c'\u0007')
-  assertEQ(c2 + c5, c7)
+  arktest.assertEQ(c'\u0002' + c'\u0005', c'\u0007')
+  arktest.assertEQ(c2 + c5, c7)
 
-  assertEQ(c'\u0007' - c'\u0005', c'\u0002')
-  assertEQ(c7 - c5, c2)
+  arktest.assertEQ(c'\u0007' - c'\u0005', c'\u0002')
+  arktest.assertEQ(c7 - c5, c2)
 
-  assertTrue(c'\u0002' < c'\u0005')
-  assertTrue(c2 < c5)
+  arktest.assertTrue(c'\u0002' < c'\u0005')
+  arktest.assertTrue(c2 < c5)
 
   // u0002 -> 00000002 , -00000002 == FFFFFFFE == -2;
-  assertEQ(-c'\u0002', -2)
-  assertEQ(-c2, -2)
+  arktest.assertEQ(-c'\u0002', -2)
+  arktest.assertEQ(-c2, -2)
 
   // u0002 -> 00000002 , ~00000002 == FFFFFFFD == -3;
-  assertEQ(~c'\u0002', -3)
-  assertEQ(~c2, -3)
+  arktest.assertEQ(~c'\u0002', -3)
+  arktest.assertEQ(~c2, -3)
 
-  assertEQ(c'\u0005' / c'\u0002', 2)
-  assertEQ(c5 / c2, 2)
+  arktest.assertEQ(c'\u0005' / c'\u0002', 2)
+  arktest.assertEQ(c5 / c2, 2)
 
-  assertEQ(c'\u0005' % c'\u0002', 1)
-  assertEQ(c5 % c2, 1)
+  arktest.assertEQ(c'\u0005' % c'\u0002', 1)
+  arktest.assertEQ(c5 % c2, 1)
 
-  assertEQ(c'\u0005' << c'\u0002', 20)
-  assertEQ(c5 << c2, 20)
+  arktest.assertEQ(c'\u0005' << c'\u0002', 20)
+  arktest.assertEQ(c5 << c2, 20)
 
   let arr : char[] = new char[1];
   arr[0] = c2;
-  assertTrue(c2 == arr[0] && arr[0] == c2)
+  arktest.assertTrue(c2 == arr[0] && arr[0] == c2)
 
   return;
 }

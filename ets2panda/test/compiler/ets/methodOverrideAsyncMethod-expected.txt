@@ -198,7 +198,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 57,
+                        "column": 55,
                         "program": "methodOverrideAsyncMethod.ets"
                       }
                     }
@@ -211,7 +211,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 57,
+                      "column": 55,
                       "program": "methodOverrideAsyncMethod.ets"
                     }
                   }
@@ -734,7 +734,7 @@
                       },
                       "end": {
                         "line": 25,
-                        "column": 63,
+                        "column": 61,
                         "program": "methodOverrideAsyncMethod.ets"
                       }
                     }
@@ -747,7 +747,7 @@
                     },
                     "end": {
                       "line": 25,
-                      "column": 63,
+                      "column": 61,
                       "program": "methodOverrideAsyncMethod.ets"
                     }
                   }
@@ -1086,7 +1086,7 @@
             "loc": {
               "start": {
                 "line": 25,
-                "column": 3,
+                "column": 9,
                 "program": "methodOverrideAsyncMethod.ets"
               },
               "end": {
@@ -1307,12 +1307,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "methodOverrideAsyncMethod.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "methodOverrideAsyncMethod.ets"
                     }
                   }
                 },
@@ -1320,12 +1320,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "methodOverrideAsyncMethod.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "methodOverrideAsyncMethod.ets"
                   }
                 }
               },
@@ -1333,118 +1333,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "methodOverrideAsyncMethod.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "methodOverrideAsyncMethod.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "methodOverrideAsyncMethod.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "methodOverrideAsyncMethod.ets"
                 }
               }
             },

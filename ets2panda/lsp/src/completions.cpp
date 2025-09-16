@@ -684,19 +684,19 @@ CompletionEntry InitEntry(const ir::AstNode *decl)
     } else if (IsConstVar(decl)) {
         kind = CompletionEntryKind::CONSTANT;
     } else if (IsGlobalVar(decl)) {
-        auto globalDefiniton = decl->Parent()->AsClassDefinition();
-        auto initMethod = globalDefiniton->FindChild([](ir::AstNode *child) {
-            return child->IsMethodDefinition() &&
-                   child->AsMethodDefinition()->Key()->AsIdentifier()->Name() == compiler::Signatures::INIT_METHOD;
+        auto globalDefinition = decl->Parent()->AsClassDefinition();
+        auto cctor = globalDefinition->FindChild([&globalDefinition](ir::AstNode *child) {
+            return child->IsClassStaticBlock() && child->Parent()->IsClassDefinition() &&
+                   child->Parent()->AsClassDefinition() == globalDefinition;
         });
-        if (initMethod == nullptr) {
+        if (cctor == nullptr) {
             return CompletionEntry(name, CompletionEntryKind::CONSTANT, std::string(sortText));
         }
-        auto found = initMethod->FindChild([&name](ir::AstNode *child) {
+        auto found = cctor->FindChild([&name](ir::AstNode *child) {
             return child->IsAssignmentExpression() && child->AsAssignmentExpression()->Left()->IsIdentifier() &&
                    child->AsAssignmentExpression()->Left()->AsIdentifier()->ToString() == name;
         });
-        if (found != nullptr) {
+        if (found != nullptr && !decl->AsClassProperty()->IsConst()) {
             // let variable in global definition need to be assigned in _$init$_ method
             kind = CompletionEntryKind::VARIABLE;
         } else {

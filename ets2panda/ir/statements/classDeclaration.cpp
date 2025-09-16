@@ -24,14 +24,46 @@
 
 namespace ark::es2panda::ir {
 
+void ClassDeclaration::SetDefinition(ClassDefinition *def)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDeclaration>()->def_ = def;
+}
+
 ClassDeclaration *ClassDeclaration::Construct(ArenaAllocator *allocator)
 {
     return allocator->New<ClassDeclaration>(nullptr, allocator);
 }
 
+void ClassDeclaration::EmplaceDecorators(Decorator *decorators)
+{
+    this->GetOrCreateHistoryNodeAs<ClassDeclaration>()->decorators_.emplace_back(decorators);
+}
+
+void ClassDeclaration::ClearDecorators()
+{
+    this->GetOrCreateHistoryNodeAs<ClassDeclaration>()->decorators_.clear();
+}
+
+void ClassDeclaration::SetValueDecorators(Decorator *decorators, size_t index)
+{
+    auto &arenaVector = this->GetOrCreateHistoryNodeAs<ClassDeclaration>()->decorators_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = decorators;
+}
+
+[[nodiscard]] const ArenaVector<Decorator *> &ClassDeclaration::Decorators()
+{
+    return this->GetHistoryNodeAs<ClassDeclaration>()->decorators_;
+}
+
+[[nodiscard]] ArenaVector<Decorator *> &ClassDeclaration::DecoratorsForUpdate()
+{
+    return this->GetOrCreateHistoryNodeAs<ClassDeclaration>()->decorators_;
+}
+
 void ClassDeclaration::CopyTo(AstNode *other) const
 {
-    auto otherImpl = other->AsClassDeclaration();
+    auto otherImpl = reinterpret_cast<ClassDeclaration *>(other);
 
     otherImpl->def_ = def_;
     otherImpl->decorators_ = decorators_;
@@ -41,40 +73,45 @@ void ClassDeclaration::CopyTo(AstNode *other) const
 
 void ClassDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
+    auto const &decorators = Decorators();
+    for (size_t ix = 0; ix < decorators.size(); ix++) {
+        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
+            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueDecorators(transformedNode->AsDecorator(), ix);
         }
     }
 
-    if (auto *transformedNode = cb(def_); def_ != transformedNode) {
-        def_->SetTransformedNode(transformationName, transformedNode);
-        def_ = transformedNode->AsClassDefinition();
+    auto const def = Definition();
+    if (auto *transformedNode = cb(def); def != transformedNode) {
+        def->SetTransformedNode(transformationName, transformedNode);
+        SetDefinition(transformedNode->AsClassDefinition());
     }
 }
 
 void ClassDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(decorators_)) {
+    for (auto *it : VectorIterationGuard(Decorators())) {
         cb(it);
     }
 
-    cb(def_);
+    auto def = GetHistoryNodeAs<ClassDeclaration>()->def_;
+    cb(def);
 }
 
 void ClassDeclaration::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", "ClassDeclaration"}, {"definition", def_}, {"decorators", AstDumper::Optional(decorators_)}});
+    dumper->Add({{"type", "ClassDeclaration"},
+                 {"definition", Definition()},
+                 {"decorators", AstDumper::Optional(Decorators())}});
 }
 
 void ClassDeclaration::Dump(ir::SrcDumper *dumper) const
 {
-    if (def_ != nullptr) {
-        def_->Dump(dumper);
+    if (Definition() != nullptr) {
+        Definition()->Dump(dumper);
     }
     // NOTE(nsizov): support decorators when supported in ArkTS
-    ES2PANDA_ASSERT(decorators_.empty());
+    ES2PANDA_ASSERT(Decorators().empty());
 }
 
 void ClassDeclaration::Compile(compiler::PandaGen *pg) const

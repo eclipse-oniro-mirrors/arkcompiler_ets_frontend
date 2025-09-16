@@ -23,10 +23,10 @@ function foo(exec?: () => void): void {
 function bar() {
     foo() {
         a += 1;
-        assertEQ(a, 1)
+        arktest.assertEQ(a, 1)
         foo() {
             a += 1;
-            assertEQ(a, 2)
+            arktest.assertEQ(a, 2)
             foo();
         }
     }
@@ -35,5 +35,5 @@ function bar() {
 export function main() {
     a = 0
     bar();
-    assertEQ(a, 5)
+    arktest.assertEQ(a, 5)
 }

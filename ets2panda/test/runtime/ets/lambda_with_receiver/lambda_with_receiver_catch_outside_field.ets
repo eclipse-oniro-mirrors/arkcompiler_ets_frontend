@@ -22,17 +22,17 @@ class C{
 function process1(con: (this:C)=>void){
     let c = new C();
     c.con();
-    assertEQ(c.out, 1);
-    assertEQ(c.in, 2);
-    assertEQ(c.data, 3);
+    arktest.assertEQ(c.out, 1);
+    arktest.assertEQ(c.in, 2);
+    arktest.assertEQ(c.data, 3);
 }
 
 function process2(con: (this:C)=>void){
     let c = new C();
     c.con();
-    assertEQ(c.out, 1);
-    assertEQ(c.in, 2);
-    assertEQ(c.data, 3);
+    arktest.assertEQ(c.out, 1);
+    arktest.assertEQ(c.in, 2);
+    arktest.assertEQ(c.data, 3);
 }
 
 let field_out:number = 1;

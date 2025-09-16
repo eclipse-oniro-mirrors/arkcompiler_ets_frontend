@@ -75,6 +75,7 @@ UnaryExpression *UnaryExpression::Clone(ArenaAllocator *const allocator, AstNode
 {
     auto *const argument = argument_ != nullptr ? argument_->Clone(allocator, nullptr)->AsExpression() : nullptr;
     auto *const clone = allocator->New<UnaryExpression>(argument, operator_);
+    ES2PANDA_ASSERT(clone != nullptr);
 
     if (argument != nullptr) {
         argument->SetParent(clone);

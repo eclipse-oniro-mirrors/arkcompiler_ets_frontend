@@ -48,18 +48,18 @@ function fooOr2(x: String|null, y: String|null): string {
 }
 
 function main(): void {
-  assertEQ(fooAnd("Test", "string"), "Test string")
-  assertEQ(fooAnd("Test", null), "Test")
-  assertEQ(fooAnd(null, "string"), "string")
-  assertEQ(fooAnd(null, null), "null")
+  arktest.assertEQ(fooAnd("Test", "string"), "Test string")
+  arktest.assertEQ(fooAnd("Test", null), "Test")
+  arktest.assertEQ(fooAnd(null, "string"), "string")
+  arktest.assertEQ(fooAnd(null, null), "null")
 
-  assertEQ(fooOr1("Test", "string"), "case 1")
-  assertEQ(fooOr1("Test", null), "case 1")
-  assertEQ(fooOr1(null, "string"), "case 1")
-  assertEQ(fooOr1(null, null), "null")
+  arktest.assertEQ(fooOr1("Test", "string"), "case 1")
+  arktest.assertEQ(fooOr1("Test", null), "case 1")
+  arktest.assertEQ(fooOr1(null, "string"), "case 1")
+  arktest.assertEQ(fooOr1(null, null), "null")
 
-  assertEQ(fooOr2("Test", "string"), "Test string")
-  assertEQ(fooOr2("Test", null), "case 1")
-  assertEQ(fooOr2(null, "string"), "case 1")
-  assertEQ(fooOr2(null, null), "case 1")
+  arktest.assertEQ(fooOr2("Test", "string"), "Test string")
+  arktest.assertEQ(fooOr2("Test", null), "case 1")
+  arktest.assertEQ(fooOr2(null, "string"), "case 1")
+  arktest.assertEQ(fooOr2(null, null), "case 1")
 }

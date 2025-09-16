@@ -57,3 +57,6 @@ test262/data/other_tests/built-ins/Date/prototype/setSeconds/this-value-invalid-
 #21819
 test262/data/other_tests/built-ins/parseFloat/S15.1.2.3_A6.js
 test262/data/other_tests/built-ins/parseInt/S15.1.2.2_A8.js
+
+#25907
+test262/data/other_tests/language/expressions/class/elements/syntax/valid/grammar-privatename-classelementname-initializer-alt.js

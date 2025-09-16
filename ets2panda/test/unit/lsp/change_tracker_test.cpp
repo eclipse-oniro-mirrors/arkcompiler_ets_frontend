@@ -245,7 +245,8 @@ let obj = {
     auto *ast = context->parserProgram->Ast();
     ASSERT_NE(ast, nullptr);
     auto *propertyNode = ast->FindChild([](const ark::es2panda::ir::AstNode *node) {
-        return node->IsProperty() && node->AsProperty()->Key()->AsIdentifier()->Name() == "foo";
+        return node->IsProperty() && node->AsProperty()->Key()->AsIdentifier()->Name() == "foo" &&
+               node->Parent()->IsObjectExpression() && node->Parent()->Parent()->IsAssignmentExpression();
     });
     ASSERT_NE(propertyNode, nullptr);
     ark::es2panda::ir::AstNode *newProperty = propertyNode->Clone(context->allocator, nullptr);
@@ -258,7 +259,7 @@ let obj = {
     const auto &changes = tracker.GetChangeList();
     const size_t c1 = 1;
     const auto bar = "bar";
-    const auto newLine = ",\n";
+    const auto newLine = "";
     ASSERT_EQ(changes.size(), c1);
     const auto &change = changes[0];
     const auto *replace = std::get_if<ark::es2panda::lsp::ReplaceWithSingleNode>(&change);
@@ -280,13 +281,17 @@ TEST_F(LspClassChangeTracker, ReplaceConstructorBody_BasicTest)
     ASSERT_NE(ast, nullptr);
     ark::es2panda::ir::AstNode *ctrNode;
     ast->FindChild([&ctrNode](ark::es2panda::ir::AstNode *node) {
-        if (node->IsFunctionExpression() && node->AsFunctionExpression()->Function()->Id()->Name() == "constructor") {
-            ctrNode = node;
+        if (node->IsMethodDefinition() &&
+            node->AsMethodDefinition()->Kind() == ark::es2panda::ir::MethodDefinitionKind::CONSTRUCTOR) {
+            ctrNode = node->AsMethodDefinition()->Function()->Body()->AsBlockStatement();
         }
         return false;
     });
     ASSERT_NE(ctrNode, nullptr);
     std::vector<ark::es2panda::ir::Statement *> dummyStatements;
+    for (auto stmt : ctrNode->AsBlockStatement()->Statements()) {
+        dummyStatements.push_back(stmt);
+    }
     ark::es2panda::lsp::ChangeTracker tracker = GetTracker();
     tracker.ReplaceConstructorBody(ctx, ctrNode, dummyStatements);
     const auto &changes = tracker.GetChangeList();
@@ -296,7 +301,6 @@ TEST_F(LspClassChangeTracker, ReplaceConstructorBody_BasicTest)
     const auto *replace = std::get_if<ark::es2panda::lsp::ReplaceWithSingleNode>(&change);
     ASSERT_NE(replace, nullptr);
     EXPECT_EQ(replace->kind, ark::es2panda::lsp::ChangeKind::REPLACEWITHSINGLENODE);
-    EXPECT_EQ(replace->node, nullptr);
     initializer.DestroyContext(ctx);
 }
 

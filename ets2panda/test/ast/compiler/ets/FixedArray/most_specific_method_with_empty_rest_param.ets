@@ -17,7 +17,7 @@ class C {
     public met(...p: FixedArray<number>): string {
          return "nR"
     }
-    public met(...p: FixedArray<Number>): string {
+    public met(...p: FixedArray<int>): string {
         return "NR"
     }
 }

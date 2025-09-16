@@ -681,24 +681,17 @@ class MyObj3 {
 
 }
 interface goodPerson extends IPerson {
-    like: MyObj2,
-    like1: MyObj3
- }
+  like: MyObj2,
+  like1: MyObj3
+}
 
- let lily:goodPerson = {
-    like: new MyObj1(),
-    name: 'Alice',
-    age: 30,
-    sayHello:()=> {
-       return new MyObj2()
-    }
- }
-
- async function foo1(): Promise<boolean>{
-
-  return new Promise<boolean>(()=>{
-
-  });
+let lily: goodPerson = {
+  like: new MyObj1(),
+  name: 'Alice',
+  age: 30,
+  sayHello:()=> {
+      return new MyObj2()
+  }
 }
 
 function foo2(rule:Record<string,string|Object>){

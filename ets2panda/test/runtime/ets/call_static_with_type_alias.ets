@@ -32,11 +32,11 @@ type TC2 = C2;
 type TTC2 = TC2;
 
 function main(): void {
-    assertEQ(C1.test(20), 21)
-    assertEQ(TC1.test(20), 21)
-    assertEQ(TTC1.test(20), 21)
+    arktest.assertEQ(C1.test(20), 21)
+    arktest.assertEQ(TC1.test(20), 21)
+    arktest.assertEQ(TTC1.test(20), 21)
 
-    assertEQ(C2.test(20), 22)
-    assertEQ(TC2.test(20), 22)
-    assertEQ(TTC2.test(20), 22)
+    arktest.assertEQ(C2.test(20), 22)
+    arktest.assertEQ(TC2.test(20), 22)
+    arktest.assertEQ(TTC2.test(20), 22)
 }

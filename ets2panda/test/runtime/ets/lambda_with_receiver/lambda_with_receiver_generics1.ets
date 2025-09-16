@@ -26,15 +26,15 @@ type FBS = (this: B<string>, x: string) => string;
 let f1: FB<string> = (this: B<string>, x: string): string => {return this.value + x;};
 let f2: FBS = (this: B<string>, x: string): string => {return this.value + x;};
 let b = new B<string>("Hello!");
-assertEQ(b.f1("world"), "Hello!world")
-assertEQ(f1(b, "world"), "Hello!world")
-assertEQ(b.f2("world"), "Hello!world")
-assertEQ(f2(b, "world"), "Hello!world")
+arktest.assertEQ(b.f1("world"), "Hello!world")
+arktest.assertEQ(f1(b, "world"), "Hello!world")
+arktest.assertEQ(b.f2("world"), "Hello!world")
+arktest.assertEQ(f2(b, "world"), "Hello!world")
 
 f1 = f2;
-assertEQ(b.f1("world"), "Hello!world")
-assertEQ(f1(b, "world"), "Hello!world")
+arktest.assertEQ(b.f1("world"), "Hello!world")
+arktest.assertEQ(f1(b, "world"), "Hello!world")
 
 f2 = f1;
-assertEQ(b.f2("world"), "Hello!world")
-assertEQ(f2(b, "world"), "Hello!world")
+arktest.assertEQ(b.f2("world"), "Hello!world")
+arktest.assertEQ(f2(b, "world"), "Hello!world")

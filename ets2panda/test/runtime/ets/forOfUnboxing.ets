@@ -17,5 +17,5 @@ function main(): void {
     let res = ""
     let arr: Long[] = [new Long(10 as long), new Long(12 as long), new Long(33 as long)]
     for (let i: long of arr) res += i
-    assertEQ(res, "101233")
+    arktest.assertEQ(res, "101233")
 }

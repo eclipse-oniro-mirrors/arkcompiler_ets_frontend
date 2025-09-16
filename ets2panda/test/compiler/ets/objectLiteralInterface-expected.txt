@@ -44,8 +44,8 @@
           "program": "objectLiteralInterface.ets"
         },
         "end": {
-          "line": 18,
-          "column": 4,
+          "line": 16,
+          "column": 15,
           "program": "objectLiteralInterface.ets"
         }
       }
@@ -129,12 +129,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "objectLiteralInterface.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "objectLiteralInterface.ets"
                     }
                   }
                 },
@@ -142,12 +142,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "objectLiteralInterface.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "objectLiteralInterface.ets"
                   }
                 }
               },
@@ -155,183 +155,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "objectLiteralInterface.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "objectLiteralInterface.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "objectLiteralInterface.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "c",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 18,
-                              "column": 5,
-                              "program": "objectLiteralInterface.ets"
-                            },
-                            "end": {
-                              "line": 18,
-                              "column": 6,
-                              "program": "objectLiteralInterface.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ObjectExpression",
-                          "properties": [],
-                          "loc": {
-                            "start": {
-                              "line": 18,
-                              "column": 12,
-                              "program": "objectLiteralInterface.ets"
-                            },
-                            "end": {
-                              "line": 18,
-                              "column": 14,
-                              "program": "objectLiteralInterface.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 18,
-                            "column": 5,
-                            "program": "objectLiteralInterface.ets"
-                          },
-                          "end": {
-                            "line": 18,
-                            "column": 14,
-                            "program": "objectLiteralInterface.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 18,
-                          "column": 5,
-                          "program": "objectLiteralInterface.ets"
-                        },
-                        "end": {
-                          "line": 18,
-                          "column": 14,
-                          "program": "objectLiteralInterface.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "objectLiteralInterface.ets"
                 }
               }
             },
@@ -404,7 +233,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 11,
+                    "column": 9,
                     "program": "objectLiteralInterface.ets"
                   }
                 }
@@ -417,7 +246,7 @@
                 },
                 "end": {
                   "line": 18,
-                  "column": 11,
+                  "column": 9,
                   "program": "objectLiteralInterface.ets"
                 }
               }
@@ -432,7 +261,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 14,
+                "column": 12,
                 "program": "objectLiteralInterface.ets"
               }
             }

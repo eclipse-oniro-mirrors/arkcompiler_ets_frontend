@@ -60,6 +60,7 @@ void InterfacePropertyDeclarationsPhase::TransformOptionalFieldTypeAnnotation(pu
         types.push_back(ctx->AllocNode<ir::ETSUndefinedType>(ctx->Allocator()));
         auto *const unionType = ctx->AllocNode<ir::ETSUnionType>(std::move(types), ctx->Allocator());
         field->SetTypeAnnotation(unionType);
+        unionType->SetParent(field);
     }
     field->ClearModifier(ir::ModifierFlags::OPTIONAL);
 
@@ -77,6 +78,7 @@ ir::FunctionSignature InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
 
     if (isSetter) {
         auto paramIdent = field->Key()->AsIdentifier()->Clone(ctx->Allocator(), nullptr);
+        ES2PANDA_ASSERT(paramIdent != nullptr);
         paramIdent->SetTsTypeAnnotation(field->TypeAnnotation()->Clone(ctx->Allocator(), nullptr));
         paramIdent->TypeAnnotation()->SetParent(paramIdent);
 
@@ -123,7 +125,8 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
         ctx->Allocator(), ir::ScriptFunction::ScriptFunctionData {
                               nullptr, std::move(signature),  // CC-OFF(G.FMT.02) project code style
                               // CC-OFFNXT(G.FMT.02) project code style
-                              isSetter ? ir::ScriptFunctionFlags::SETTER : ir::ScriptFunctionFlags::GETTER, flags});
+                              isSetter ? ir::ScriptFunctionFlags::SETTER : ir::ScriptFunctionFlags::GETTER, flags,
+                              classScope->Node()->AsTSInterfaceDeclaration()->Language()});
 
     func->SetRange(field->Range());
     func->SetScope(functionScope);
@@ -154,7 +157,9 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     if (!field->Annotations().empty()) {
         ArenaVector<ir::AnnotationUsage *> functionAnnotations(ctx->Allocator()->Adapter());
         for (auto *annotationUsage : field->Annotations()) {
-            functionAnnotations.push_back(annotationUsage->Clone(ctx->Allocator(), method)->AsAnnotationUsage());
+            auto annoClone = annotationUsage->Clone(ctx->Allocator(), method)->AsAnnotationUsage();
+            InitScopesPhaseETS::RunExternalNode(annoClone, varbinder);
+            functionAnnotations.push_back(annoClone);
         }
         method->Function()->SetAnnotations(std::move(functionAnnotations));
     }
@@ -322,8 +327,11 @@ bool InterfacePropertyDeclarationsPhase::PerformForModule(public_lib::Context *c
         return ast;
     };
 
-    program->Ast()->TransformChildrenRecursively(handleInterfacePropertyDecl, Name());
-    program->Ast()->TransformChildrenRecursively(handleClassPropertyDecl, Name());
+    program->Ast()->TransformChildrenRecursively(
+        [handleClassPropertyDecl, handleInterfacePropertyDecl](ir::AstNode *const ast) {
+            return handleClassPropertyDecl(handleInterfacePropertyDecl(ast));
+        },
+        Name());
 
     return true;
 }

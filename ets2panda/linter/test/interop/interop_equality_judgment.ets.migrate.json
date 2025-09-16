@@ -16,32 +16,52 @@
     "result": [
         {
             "line": 16,
-            "column": 5,
+            "column": 1,
             "endLine": 16,
-            "endColumn": 74,
-            "problem": "AnyType",
+            "endColumn": 58,
+            "problem": "InterOpImportJs",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
         },
         {
             "line": 17,
-            "column": 5,
+            "column": 12,
             "endLine": 17,
-            "endColumn": 46,
-            "problem": "AnyType",
+            "endColumn": 13,
+            "problem": "InteropJsObjectExpandStaticInstance",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "Direct usage of interop JS functions is not supported (arkts-interop-js2s-js-expand-static-instance)",
             "severity": "ERROR"
         },
         {
             "line": 18,
-            "column": 5,
+            "column": 13,
             "endLine": 18,
-            "endColumn": 46,
-            "problem": "AnyType",
+            "endColumn": 14,
+            "problem": "InteropJsObjectExpandStaticInstance",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "Direct usage of interop JS functions is not supported (arkts-interop-js2s-js-expand-static-instance)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 20,
+            "endLine": 19,
+            "endColumn": 21,
+            "problem": "InteropJsObjectExpandStaticInstance",
+            "suggest": "",
+            "rule": "Direct usage of interop JS functions is not supported (arkts-interop-js2s-js-expand-static-instance)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 21,
+            "endLine": 20,
+            "endColumn": 22,
+            "problem": "InteropJsObjectExpandStaticInstance",
+            "suggest": "",
+            "rule": "Direct usage of interop JS functions is not supported (arkts-interop-js2s-js-expand-static-instance)",
             "severity": "ERROR"
         }
     ]

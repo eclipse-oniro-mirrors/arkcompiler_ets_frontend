@@ -124,8 +124,6 @@ export class ModifyStateVarCheck implements BaseChecker {
         if (leftOp instanceof ArkInstanceFieldRef) {
             // this.n = 1 or this.obj.n = 1
             return stateVars.has(leftOp.getFieldSignature()) || aliases.has(leftOp.getBase());
-        } else if (leftOp instanceof Local) {
-            return aliases.has(leftOp);
         }
         return false;
     }

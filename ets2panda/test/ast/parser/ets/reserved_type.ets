@@ -40,6 +40,9 @@ function main() {
 /* @@? 29:13 Error SyntaxError: 'Required' is reserved and cannot be used as a variable/type name */
 /* @@? 30:13 Error SyntaxError: 'Readonly' is reserved and cannot be used as a variable/type name */
 /* @@? 31:13 Error SyntaxError: 'Partial' is reserved and cannot be used as a variable/type name */
+/* @@? 32:17 Error TypeError: Invalid type reference. */
 /* @@? 32:26 Error SyntaxError: 'Required' is reserved and cannot be used as a variable/type name */
+/* @@? 33:17 Error TypeError: Invalid type reference. */
 /* @@? 33:26 Error SyntaxError: 'Readonly' is reserved and cannot be used as a variable/type name */
+/* @@? 34:17 Error TypeError: Invalid type reference. */
 /* @@? 34:25 Error SyntaxError: 'Partial' is reserved and cannot be used as a variable/type name */

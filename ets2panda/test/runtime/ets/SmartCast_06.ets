@@ -52,11 +52,11 @@ function foo(x: int): string
 
 
 function main(): void {
-  assertEQ(foo(0), "case 0")
-  assertEQ(foo(1), "case 1")
-  assertEQ(foo(2), "case 2")
-  assertEQ(foo(3), "case 3")
-  assertEQ(foo(4), "case 4")
-  assertEQ(foo(5), "case 5")
-  assertEQ(foo(7), "default")
+  arktest.assertEQ(foo(0), "case 0")
+  arktest.assertEQ(foo(1), "case 1")
+  arktest.assertEQ(foo(2), "case 2")
+  arktest.assertEQ(foo(3), "case 3")
+  arktest.assertEQ(foo(4), "case 4")
+  arktest.assertEQ(foo(5), "case 5")
+  arktest.assertEQ(foo(7), "default")
 }

@@ -22,5 +22,5 @@ function main(): int {
 function test():string {
     /* @@ label1 */return;
 }
-/* @@@ label Error TypeError: Type 'String' is not compatible with the enclosing method's return type 'int'  */
-/* @@@ label1 Error TypeError: Missing return value.  */
+/* @@@ label Error TypeError: Type 'String' is not compatible with the enclosing method's return type 'Int' */
+/* @@@ label1 Error TypeError: Missing return value. */

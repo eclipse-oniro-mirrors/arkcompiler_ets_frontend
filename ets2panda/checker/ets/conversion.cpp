@@ -16,7 +16,6 @@
 #include "conversion.h"
 
 #include "checker/ets/boxingConverter.h"
-#include "checker/ets/narrowingConverter.h"
 #include "checker/ets/unboxingConverter.h"
 #include "checker/ets/wideningConverter.h"
 #include "checker/types/ets/etsTupleType.h"
@@ -33,23 +32,6 @@ void WideningPrimitive(TypeRelation *const relation, Type *const source, Type *c
     ES2PANDA_ASSERT(source->IsETSPrimitiveType() && target->IsETSPrimitiveType());
 
     WideningConverter(relation->GetChecker()->AsETSChecker(), relation, target, source);
-}
-
-void NarrowingPrimitive(TypeRelation *const relation, Type *const source, Type *const target)
-{
-    ES2PANDA_ASSERT(source->IsETSPrimitiveType() && target->IsETSPrimitiveType());
-
-    NarrowingConverter(relation->GetChecker()->AsETSChecker(), relation, target, source);
-}
-
-void WideningNarrowingPrimitive(TypeRelation *const relation, ByteType *const source, CharType *const target)
-{
-    auto *const tempInt = relation->GetChecker()->AsETSChecker()->GetGlobalTypesHolder()->GlobalIntType();
-    WideningPrimitive(relation, source, tempInt);
-    if (!relation->IsTrue()) {
-        return;
-    }
-    NarrowingPrimitive(relation, tempInt, target);
 }
 
 void WideningReference(TypeRelation *const relation, ETSObjectType *const source, ETSObjectType *const target)
@@ -253,13 +235,6 @@ void NarrowingReference(TypeRelation *const relation, ETSObjectType *const sourc
     NarrowingReferenceImpl(relation, source, target);
 }
 
-static inline void RollbackBoxingIfFailed(TypeRelation *const relation)
-{
-    if (!relation->IsTrue()) {
-        relation->GetNode()->SetBoxingUnboxingFlags(ir::BoxingUnboxingFlags::NONE);
-    }
-}
-
 ETSObjectType *Boxing(TypeRelation *const relation, Type *const source)
 {
     auto *const etsChecker = relation->GetChecker()->AsETSChecker();
@@ -268,7 +243,6 @@ ETSObjectType *Boxing(TypeRelation *const relation, Type *const source)
         return nullptr;
     }
     auto *const boxedType = boxed.Result()->AsETSObjectType();
-    relation->GetNode()->AddBoxingUnboxingFlags(etsChecker->GetBoxingFlag(boxedType));
     return boxedType;
 }
 
@@ -280,7 +254,6 @@ Type *Unboxing(TypeRelation *const relation, ETSObjectType *const source)
         return nullptr;
     }
     auto *const unboxedType = unboxed.Result();
-    relation->GetNode()->AddBoxingUnboxingFlags(etsChecker->GetUnboxingFlag(unboxedType));
     return unboxedType;
 }
 
@@ -292,27 +265,6 @@ void UnboxingWideningPrimitive(TypeRelation *const relation, ETSObjectType *cons
     }
     ES2PANDA_ASSERT(unboxedSource != nullptr);
     WideningPrimitive(relation, target, unboxedSource);
-    RollbackBoxingIfFailed(relation);
-}
-
-void UnboxingNarrowingPrimitive(TypeRelation *const relation, ETSObjectType *const source, Type *const target)
-{
-    auto *const unboxedSource = Unboxing(relation, source);
-    if (!relation->IsTrue()) {
-        return;
-    }
-    ES2PANDA_ASSERT(unboxedSource != nullptr);
-    NarrowingPrimitive(relation, target, unboxedSource);
-}
-
-void UnboxingWideningNarrowingPrimitive(TypeRelation *const relation, ETSObjectType *const source, Type *const target)
-{
-    auto *const unboxedSource = Unboxing(relation, source);
-    if (!relation->IsTrue()) {
-        return;
-    }
-    ES2PANDA_ASSERT(unboxedSource != nullptr);
-    WideningNarrowingPrimitive(relation, unboxedSource->AsByteType(), target->AsCharType());
 }
 
 void NarrowingReferenceUnboxing(TypeRelation *const relation, ETSObjectType *const source, Type *const target)
@@ -337,7 +289,6 @@ void BoxingWideningReference(TypeRelation *const relation, Type *const source, E
     }
     ES2PANDA_ASSERT(boxedSource != nullptr);
     WideningReference(relation, boxedSource, target);
-    RollbackBoxingIfFailed(relation);
 }
 
 void String(TypeRelation *const relation, Type *const source)

@@ -16,5 +16,5 @@
 function main() {
    let $$a = "aaaddd"
    let b = $$a
-   assertEQ(b, "aaaddd")
+   arktest.assertEQ(b, "aaaddd")
 }

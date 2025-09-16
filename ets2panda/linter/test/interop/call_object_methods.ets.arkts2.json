@@ -33,16 +33,6 @@
             "suggest": "",
             "rule": "Calling methods of JS Object directly in interop is not allowed (arkts-interop-js2s-call-js-method)",
             "severity": "ERROR"
-        },
-        {
-            "line": 17,
-            "column": 9,
-            "endLine": 17,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
         }
     ]
 }

@@ -17,5 +17,5 @@ enum Color { Red }
 enum Color2 { Red }
 
 function main(): void {
-    assertEQ(Color.Red, Color2.Red)
+    arktest.assertEQ(Color.Red, Color2.Red)
 }

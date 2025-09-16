@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import {AAA} from './method_inheritance_ts'
 abstract class Y {
     abstract getDataByName(name: string | number, albumUri: string): Promise<void>;
 }
@@ -250,5 +250,125 @@ class Base6 {
 class Derived6 extends Base6 {
   public foo(): Dog {      // no error
     console.log("Derived:")
+  }
+}
+
+abstract class Parent{
+  abstract foo();
+
+}
+abstract class Parent1{
+  abstract foo(): Promise<void>;
+
+}
+
+abstract class Child extends Parent{
+  async foo(){  //error
+
+  }
+}
+class Child1 extends Parent{
+  async foo(){  //error
+
+  }
+}
+
+class Child11 extends Parent{
+  async foo():Promise<void>{  //error
+
+  }
+}
+class Child12 extends Parent{
+  async foo():Promise<string>{  //error
+    return '';
+  }
+}
+abstract class Child13 extends Parent{
+  async foo():Promise<string>{  //error
+    return '';
+  }
+}
+abstract class Child14 extends Parent{
+  async foo():Promise<void>{  //error
+
+  }
+}
+
+abstract class Child2 extends Parent{
+  foo(): void {  //error
+
+  }
+}
+abstract class Child3 extends Parent{
+  foo(): boolean {
+    return false;
+  }
+}
+
+class Child17 extends Parent{
+  foo(){  //error???
+  }
+}
+abstract class Child18 extends Parent{
+  foo(){  //error???
+  }
+}
+
+class Child19 extends Parent{
+  foo(){  //error
+    let aa :Promise<void>;
+    return aa;
+  }
+}
+abstract class Child20 extends Parent{
+  foo(){  //error
+    let aa :Promise<void>;
+    return aa;
+  }
+}
+abstract class Child21 extends Parent{
+  foo(){  //error
+    let aa :Promise<string>;
+    return aa;
+  }
+}
+abstract class Child5 extends Parent1{
+  async foo(): Promise<string>{  //error
+    return '';
+  }
+}
+
+abstract class Child4 extends Parent1{
+  async foo() {
+
+  }
+}
+
+class CCC {}
+class BBB extends AAA {
+  test(): CCC {
+    return new CCC();
+  }
+}
+
+class BBB2 extends AAA {
+  test(): void { //error
+    return ;
+  }
+}
+
+class BBB3 extends AAA {
+  test() { //error
+  }
+}
+
+
+abstract class Test1 {
+  abstract test(params: Map<String, Object>): void;
+}
+
+class Test2 extends Test1 {
+  test(params: Map<string, Object>): void { // no Error
+
   }
 }

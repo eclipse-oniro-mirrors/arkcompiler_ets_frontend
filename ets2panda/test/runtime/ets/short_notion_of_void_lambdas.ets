@@ -19,7 +19,7 @@ function outer(func:()=>void):void{
 function inner(flag:boolean){
     if(flag)
         return
-    assertTrue(!flag)
+    arktest.assertTrue(!flag)
 }
 
 outer(()=>inner(true))

@@ -32,20 +32,20 @@ function main() {
     let arr: Double[] = [1.1, 2.2, 3.3, 4.4]
     let arr_return = arr.foo()
     let arr_return2 = foo(arr_return);
-    assertEQ(arr.length, arr_return.length)
-    assertEQ(arr.length, arr_return2.length)
+    arktest.assertEQ(arr.length, arr_return.length)
+    arktest.assertEQ(arr.length, arr_return2.length)
     for (let idx = 0; idx < arr.length; ++idx) {
-        assertEQ(arr[idx], arr_return[idx])
-        assertEQ(arr[idx], arr_return2[idx])
+        arktest.assertEQ(arr[idx], arr_return[idx])
+        arktest.assertEQ(arr[idx], arr_return2[idx])
     }
 
     let fruits: Fruit[] = [new Fruit(1), new Fruit(2), new Fruit(3)]
     let fruits_return = fruits.fooFruit();
     let fruits_return2 = fooFruit(fruits_return);
-    assertEQ(fruits.length, fruits_return.length)
-    assertEQ(fruits.length, fruits_return2.length)
+    arktest.assertEQ(fruits.length, fruits_return.length)
+    arktest.assertEQ(fruits.length, fruits_return2.length)
     for (let idx = 0; idx < fruits.length; ++idx) {
-        assertEQ(fruits[idx], fruits_return[idx])
-        assertEQ(fruits[idx], fruits_return2[idx])
+        arktest.assertEQ(fruits[idx], fruits_return[idx])
+        arktest.assertEQ(fruits[idx], fruits_return2[idx])
     }
 }

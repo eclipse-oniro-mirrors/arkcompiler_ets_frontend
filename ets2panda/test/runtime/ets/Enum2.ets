@@ -30,7 +30,7 @@ class ColorEnumDelegate {
       if (ColorEnumDelegate.names_[i] == name) { return ColorEnumDelegate.values_[i]; }
     }
 
-    assertTrue(false, "No enum constant Color")
+    arktest.assertTrue(false, "No enum constant Color")
     return Color.Red;
   }
 
@@ -39,21 +39,21 @@ class ColorEnumDelegate {
       return ColorEnumDelegate.values_[ordinal];
     }
 
-    assertTrue(false, "No enum constant Color")
+    arktest.assertTrue(false, "No enum constant Color")
     return Color.Red;
   }
 }
 
 function main(): void {
   let red: Color = Color.Red;
-  assertEQ(ColorEnumDelegate.toString(red), "Red")
+  arktest.assertEQ(ColorEnumDelegate.toString(red), "Red")
 
-  assertEQ(ColorEnumDelegate.ordinal(red), 0)
-  assertEQ(ColorEnumDelegate.ordinal(Color.Green), 1)
+  arktest.assertEQ(ColorEnumDelegate.ordinal(red), 0)
+  arktest.assertEQ(ColorEnumDelegate.ordinal(Color.Green), 1)
 
-  assertEQ(ColorEnumDelegate.valueOf(2), Color.Blue)
-  assertEQ(ColorEnumDelegate.valueOf(ColorEnumDelegate.ordinal(Color.Red)), red)
+  arktest.assertEQ(ColorEnumDelegate.valueOf(2), Color.Blue)
+  arktest.assertEQ(ColorEnumDelegate.valueOf(ColorEnumDelegate.ordinal(Color.Red)), red)
 
-  assertEQ(ColorEnumDelegate.valueOf("Green"), Color.Green)
-  assertEQ(ColorEnumDelegate.valueOf(ColorEnumDelegate.toString(Color.Blue)), Color.Blue)
+  arktest.assertEQ(ColorEnumDelegate.valueOf("Green"), Color.Green)
+  arktest.assertEQ(ColorEnumDelegate.valueOf(ColorEnumDelegate.toString(Color.Blue)), Color.Blue)
 }

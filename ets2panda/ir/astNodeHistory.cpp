@@ -18,12 +18,12 @@
 
 namespace ark::es2panda::ir {
 
-AstNodeHistory::AstNodeHistory(AstNode *node, int32_t phaseId, ArenaAllocator *allocator) : list_ {allocator}
+AstNodeHistory::AstNodeHistory(AstNode *node, compiler::PhaseId phaseId, ArenaAllocator *allocator) : list_ {allocator}
 {
     Set(node, phaseId);
 }
 
-AstNode *AstNodeHistory::FindBackwardEquals(int32_t phaseId)
+AstNode *AstNodeHistory::FindBackwardEquals(compiler::PhaseId phaseId)
 {
     auto item = item_;
 
@@ -37,7 +37,7 @@ AstNode *AstNodeHistory::FindBackwardEquals(int32_t phaseId)
     return nullptr;
 }
 
-AstNode *AstNodeHistory::FindForwardEquals(int32_t phaseId)
+AstNode *AstNodeHistory::FindForwardEquals(compiler::PhaseId phaseId)
 {
     auto item = item_;
 
@@ -53,8 +53,9 @@ AstNode *AstNodeHistory::FindForwardEquals(int32_t phaseId)
 
 // Find node state precisely at phase with a given ID
 // (e.g. find the node history record with `phaseId` equal to a given value)
-AstNode *AstNodeHistory::At(int32_t phaseId)
+AstNode *AstNodeHistory::At(compiler::PhaseId phaseId)
 {
+    std::lock_guard<std::mutex> lock(itemMutex_);
     if (LIKELY(item_->data.phaseId == phaseId)) {
         // Start searching with last accessed item
         // In most cases last accessed item is the one we are looking for
@@ -70,8 +71,9 @@ AstNode *AstNodeHistory::At(int32_t phaseId)
 
 // Find node state at phase with a given ID
 // (e.g. find last node history record with `phaseId` less or equal to a given value)
-AstNode *AstNodeHistory::Get(int32_t phaseId)
+AstNode *AstNodeHistory::Get(compiler::PhaseId phaseId)
 {
+    std::lock_guard<std::mutex> lock(itemMutex_);
     auto found = FindLessOrEquals(phaseId);
     if (LIKELY(found != nullptr)) {
         item_ = found;
@@ -82,8 +84,9 @@ AstNode *AstNodeHistory::Get(int32_t phaseId)
 }
 
 // Find node state at phase with a given ID and set its new value, insert new history record if not found
-void AstNodeHistory::Set(AstNode *node, int32_t phaseId)
+void AstNodeHistory::Set(AstNode *node, compiler::PhaseId phaseId)
 {
+    std::lock_guard<std::mutex> lock(itemMutex_);
     HistoryRecord record {node, phaseId};
     if (LIKELY(list_.Empty() || list_.Tail()->data.phaseId < phaseId)) {
         item_ = list_.Append(record);
@@ -105,7 +108,7 @@ void AstNodeHistory::Set(AstNode *node, int32_t phaseId)
 
 // Find node state at phase with a given ID
 // (e.g. find last node history record with `phaseId` less or equal to a given value)
-AstNodeHistory::HistoryList::Item *AstNodeHistory::FindLessOrEquals(int32_t phaseId)
+AstNodeHistory::HistoryList::Item *AstNodeHistory::FindLessOrEquals(compiler::PhaseId phaseId)
 {
     // Start searching with last accessed item
     auto item = item_;
@@ -134,6 +137,10 @@ AstNodeHistory::HistoryList::Item *AstNodeHistory::FindLessOrEquals(int32_t phas
             item = item->next;
         }
         if (item->data.phaseId <= phaseId) {
+            return item;
+        }
+        if (item->data.phaseId > phaseId && item->prev != nullptr) {
+            item = item->prev;
             return item;
         }
     }

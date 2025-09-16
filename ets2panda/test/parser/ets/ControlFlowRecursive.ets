@@ -50,7 +50,7 @@ export class ControlFlowRecursive {
       result += ControlFlowRecursive.tak(3 * j + 3, 2 * j + 2, j + 1);
     }
 
-    assertEQ(result, ControlFlowRecursive.expected,  "Incorrect result");
+    arktest.assertEQ(result, ControlFlowRecursive.expected,  "Incorrect result");
   }
 }
 

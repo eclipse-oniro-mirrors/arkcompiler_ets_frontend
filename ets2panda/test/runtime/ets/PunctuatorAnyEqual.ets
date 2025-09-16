@@ -19,171 +19,171 @@ function main(): int
   let a_long : long = 1234;
 
   a_int += a_long;
-  assertEQ(a_int, 1244)
+  arktest.assertEQ(a_int, 1244)
 
   a_int = 10 as int;
   a_long = 1234 as long;
   a_int -= a_long;
-  assertEQ(a_int, -1224)
+  arktest.assertEQ(a_int, -1224)
 
   a_int = 10 as int;
   a_long = 1234 as long;
   a_int *= a_long;
-  assertEQ(a_int, 12340)
+  arktest.assertEQ(a_int, 12340)
 
   a_int = 2000 as int;
   a_long = 1234 as long;
   a_int /= a_long;
-  assertEQ(a_int, 1)
+  arktest.assertEQ(a_int, 1)
 
   a_int = 2000 as int;
   a_long = 1234 as long;
   a_int %= a_long;
-  assertEQ(a_int, 766)
+  arktest.assertEQ(a_int, 766)
 
   a_int = 2 as int;
   a_long = 1 as long;
   a_int ^= a_long;
-  assertEQ(a_int, 3)
+  arktest.assertEQ(a_int, 3)
 
   a_int = 2 as int;
   a_long = 1 as long;
   a_int |= a_long;
-  assertEQ(a_int, 3)
+  arktest.assertEQ(a_int, 3)
 
   a_int = 2 as int;
   a_long = 1 as long;
   a_int &= a_long;
-  assertEQ(a_int, 0)
+  arktest.assertEQ(a_int, 0)
 
   a_int = 512 as int;
   a_long = 1 as long;
   a_int <<= a_long;
-  assertEQ(a_int, 1024)
+  arktest.assertEQ(a_int, 1024)
 
   a_int = 512 as int;
   a_long = 1 as long;
   a_int >>= a_long;
-  assertEQ(a_int, 256)
+  arktest.assertEQ(a_int, 256)
 
   a_int = 512 as int;
   a_long = 1 as long;
   a_int >>>= a_long;
-  assertEQ(a_int, 256)
+  arktest.assertEQ(a_int, 256)
 
   //----------------------
 
   a_int = 10 as int;
   a_long = 20000000000 as long;
   a_int += a_long;
-  assertEQ(a_int, -1474836470)
+  arktest.assertEQ(a_int, -1474836470)
 
   a_int = 10 as int;
   a_long = 20000000000 as long;
   a_int -= a_long;
-  assertEQ(a_int, 1474836490)
+  arktest.assertEQ(a_int, 1474836490)
 
   a_int = 10 as int;
   a_long = 20000000000 as long;
   a_int *= a_long;
-  assertEQ(a_int, -1863462912)
+  arktest.assertEQ(a_int, -1863462912)
 
   a_int = 2000 as int;
   a_long = 20000000000 as long;
   a_int /= a_long;
-  assertEQ(a_int, 0)
+  arktest.assertEQ(a_int, 0)
 
   a_int = 2000 as int;
   a_long = 20000000000 as long;
   a_int %= a_long;
-  assertEQ(a_int, 2000)
+  arktest.assertEQ(a_int, 2000)
 
   a_int = 2 as int;
   a_long = 20000000000 as long;
   a_int ^= a_long;
-  assertEQ(a_int, -1474836478)
+  arktest.assertEQ(a_int, -1474836478)
 
   a_int = 2 as int;
   a_long = 20000000000 as long;
   a_int |= a_long;
-  assertEQ(a_int, -1474836478)
+  arktest.assertEQ(a_int, -1474836478)
 
   a_int = 2 as int;
   a_long = 20000000000 as long;
   a_int &= a_long;
-  assertEQ(a_int, 0)
+  arktest.assertEQ(a_int, 0)
 
   a_int = 512 as int;
   a_long = 20000000000 as long;
   a_int <<= a_long;
-  assertEQ(a_int, 512)
+  arktest.assertEQ(a_int, 512)
 
   a_int = 512 as int;
   a_long = 20000000000 as long;
   a_int >>= a_long;
-  assertEQ(a_int, 512)
+  arktest.assertEQ(a_int, 512)
 
   a_int = 512 as int;
   a_long = 20000000000 as long;
   a_int >>>= a_long;
-  assertEQ(a_int, 512)
+  arktest.assertEQ(a_int, 512)
 
   //----------------------
 
   let a_Int = 10 as Int;
   let a_Long = 20000000000 as Long;
   a_Long += a_Int;
-  assertEQ(a_Long, 20000000010)
+  arktest.assertEQ(a_Long, 20000000010)
 
   a_Int = 10 as Int;
   a_Long = 20000000000 as Long;
   a_Long -= a_Int;
-  assertEQ(a_Long, 19999999990)
+  arktest.assertEQ(a_Long, 19999999990)
 
   a_Int = 10 as Int;
   a_Long = 20000000000 as Long;
   a_Long *= a_Int;
-  assertEQ(a_Long, 200000000000)
+  arktest.assertEQ(a_Long, 200000000000)
 
   a_Int = 2000 as Int;
   a_Long = 20000000000 as Long;
   a_Long /= a_Int;
-  assertEQ(a_Long, 10000000)
+  arktest.assertEQ(a_Long, 10000000)
 
   a_Int = 2000 as Int;
   a_Long = 20000000000 as Long;
   a_Long %= a_Int;
-  assertEQ(a_Long, 0)
+  arktest.assertEQ(a_Long, 0)
 
   a_Int = 2 as Int;
   a_Long = 20000000000 as Long;
   a_Long ^= a_Int;
-  assertEQ(a_Long, 20000000002)
+  arktest.assertEQ(a_Long, 20000000002)
 
   a_Int = 2 as Int;
   a_Long = 20000000000 as Long;
   a_Long |= a_Int;
-  assertEQ(a_Long, 20000000002)
+  arktest.assertEQ(a_Long, 20000000002)
 
   a_Int = 2 as Int;
   a_Long = 20000000000 as Long;
   a_Long &= a_Int;
-  assertEQ(a_Long, 0)
+  arktest.assertEQ(a_Long, 0)
 
   a_Int = 512 as Int;
   a_Long = 20000000000 as Long;
   a_Long <<= a_Int;
-  assertEQ(a_Long, 20000000000)
+  arktest.assertEQ(a_Long, 20000000000)
 
   a_Int = 512 as Int;
   a_Long = 20000000000 as Long;
   a_Long >>= a_Int;
-  assertEQ(a_Long, 20000000000)
+  arktest.assertEQ(a_Long, 20000000000)
 
   a_Int = 512 as Int;
   a_Long = 20000000000 as Long;
   a_Long >>>= a_Int;
-  assertEQ(a_Long, 20000000000)
+  arktest.assertEQ(a_Long, 20000000000)
 
   return 0;
 }

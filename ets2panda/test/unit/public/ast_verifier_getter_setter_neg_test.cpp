@@ -29,7 +29,7 @@ namespace {
 TEST_F(ASTVerifierTest, ValidateGetterReturnTypeAnnotation)
 {
     DiagnosticEngine de {};
-    ETSChecker checker {de};
+    ETSChecker checker {Allocator(), de};
 
     char const *text =
         R"(
@@ -87,7 +87,7 @@ TEST_F(ASTVerifierTest, ValidateGetterHasReturnStatement)
             auto *const method = child->AsMethodDefinition();
             if (method->IsGetter() && method->Value()->IsFunctionExpression()) {
                 auto *const function = method->Value()->AsFunctionExpression()->Function();
-                auto &returns = function->ReturnStatements();
+                auto &returns = function->ReturnStatementsForUpdate();
                 returns.clear();
             }
         }
@@ -104,7 +104,7 @@ TEST_F(ASTVerifierTest, ValidateGetterHasReturnStatement)
 TEST_F(ASTVerifierTest, ValidateGetterVoidReturnStatement)
 {
     DiagnosticEngine de {};
-    ETSChecker checker {de};
+    ETSChecker checker {Allocator(), de};
 
     char const *text =
         R"(
@@ -142,7 +142,7 @@ TEST_F(ASTVerifierTest, ValidateGetterVoidReturnStatement)
 TEST_F(ASTVerifierTest, ValidateGetterArguments)
 {
     DiagnosticEngine de {};
-    ETSChecker checker {de};
+    ETSChecker checker {Allocator(), de};
 
     char const *text =
         R"(
@@ -166,7 +166,7 @@ TEST_F(ASTVerifierTest, ValidateGetterArguments)
             auto *const method = child->AsMethodDefinition();
             if (method->IsGetter() && method->Value()->IsFunctionExpression()) {
                 auto *const function = method->Value()->AsFunctionExpression()->Function();
-                auto &params = function->Params();
+                auto &params = function->ParamsForUpdate();
                 ASSERT_EQ(params.size(), 0);
                 params.push_back(param);
             }
@@ -184,7 +184,7 @@ TEST_F(ASTVerifierTest, ValidateGetterArguments)
 TEST_F(ASTVerifierTest, ValidateSetterReturnType)
 {
     DiagnosticEngine de {};
-    ETSChecker checker {de};
+    ETSChecker checker {Allocator(), de};
 
     char const *text =
         R"(
@@ -225,7 +225,7 @@ TEST_F(ASTVerifierTest, ValidateSetterReturnType)
 TEST_F(ASTVerifierTest, ValidateSetterArguments)
 {
     DiagnosticEngine de {};
-    ETSChecker checker {de};
+    ETSChecker checker {Allocator(), de};
 
     char const *text =
         R"(
@@ -245,7 +245,7 @@ TEST_F(ASTVerifierTest, ValidateSetterArguments)
             auto *const method = child->AsMethodDefinition();
             if (method->IsSetter() && method->Value()->IsFunctionExpression()) {
                 auto *const function = method->Value()->AsFunctionExpression()->Function();
-                auto &params = function->Params();
+                auto &params = function->ParamsForUpdate();
                 ASSERT_EQ(params.size(), 1);
                 params.clear();
             }

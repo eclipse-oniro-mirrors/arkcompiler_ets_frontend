@@ -42,42 +42,39 @@ public:
           expr_(expr),
           properties_(allocator->Adapter())
     {
+        InitHistory();
     }
     explicit AnnotationDeclaration(Expression *expr, ArenaVector<AstNode *> &&properties, ArenaAllocator *allocator)
         : AnnotationAllowed<Statement>(AstNodeType::ANNOTATION_DECLARATION, allocator),
           expr_(expr),
           properties_(std::move(properties))
     {
+        InitHistory();
     }
 
     const util::StringView &InternalName() const
     {
-        return internalName_;
+        return GetHistoryNodeAs<AnnotationDeclaration>()->internalName_;
     }
 
-    void SetInternalName(util::StringView internalName)
-    {
-        internalName_ = internalName;
-    }
+    void SetInternalName(util::StringView internalName);
 
     [[nodiscard]] const Expression *Expr() const noexcept
     {
-        return expr_;
+        return GetHistoryNodeAs<AnnotationDeclaration>()->expr_;
     }
 
     [[nodiscard]] Expression *Expr() noexcept
     {
-        return expr_;
+        return GetHistoryNodeAs<AnnotationDeclaration>()->expr_;
     }
 
-    [[nodiscard]] ArenaVector<AstNode *> &Properties() noexcept
-    {
-        return properties_;
-    }
+    [[nodiscard]] const ArenaVector<AstNode *> &Properties();
+    [[nodiscard]] ArenaVector<AstNode *> &PropertiesForUpdate();
 
     [[nodiscard]] const ArenaVector<AstNode *> &Properties() const noexcept
     {
-        return properties_;
+        return GetHistoryNodeAs<AnnotationDeclaration>()->properties_;
     }
 
     [[nodiscard]] const ArenaVector<AstNode *> *PropertiesPtr() const
@@ -87,37 +84,38 @@ public:
 
     void AddProperties(ArenaVector<AstNode *> &&properties)
     {
-        properties_ = std::move(properties);
+        auto newNode = reinterpret_cast<AnnotationDeclaration *>(this->GetOrCreateHistoryNode());
+        newNode->properties_ = std::move(properties);
     }
 
     [[nodiscard]] bool IsSourceRetention() const noexcept
     {
-        return (policy_ & RetentionPolicy::SOURCE) != 0;
+        return (Policy() & RetentionPolicy::SOURCE) != 0;
     }
 
     [[nodiscard]] bool IsBytecodeRetention() const noexcept
     {
-        return (policy_ & RetentionPolicy::BYTECODE) != 0;
+        return (Policy() & RetentionPolicy::BYTECODE) != 0;
     }
 
     [[nodiscard]] bool IsRuntimeRetention() const noexcept
     {
-        return (policy_ & RetentionPolicy::RUNTIME) != 0;
+        return (Policy() & RetentionPolicy::RUNTIME) != 0;
     }
 
     void SetSourceRetention() noexcept
     {
-        policy_ = RetentionPolicy::SOURCE;
+        GetOrCreateHistoryNodeAs<AnnotationDeclaration>()->policy_ = RetentionPolicy::SOURCE;
     }
 
     void SetBytecodeRetention() noexcept
     {
-        policy_ = RetentionPolicy::BYTECODE;
+        GetOrCreateHistoryNodeAs<AnnotationDeclaration>()->policy_ = RetentionPolicy::BYTECODE;
     }
 
     void SetRuntimeRetention() noexcept
     {
-        policy_ = RetentionPolicy::RUNTIME;
+        GetOrCreateHistoryNodeAs<AnnotationDeclaration>()->policy_ = RetentionPolicy::RUNTIME;
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -141,28 +139,38 @@ public:
 
     [[nodiscard]] varbinder::LocalScope *Scope() const noexcept override
     {
-        return scope_;
+        return GetHistoryNodeAs<AnnotationDeclaration>()->scope_;
     }
 
     void SetScope(varbinder::LocalScope *scope)
     {
         ES2PANDA_ASSERT(scope_ == nullptr);
-        scope_ = scope;
+        GetOrCreateHistoryNodeAs<AnnotationDeclaration>()->scope_ = scope;
     }
 
     void ClearScope() noexcept override
     {
-        scope_ = nullptr;
+        GetOrCreateHistoryNodeAs<AnnotationDeclaration>()->scope_ = nullptr;
     }
 
     Identifier *GetBaseName() const;
 
-protected:
-    AstNode *Construct(ArenaAllocator *allocator) override;
+    void EmplaceProperties(AstNode *properties);
+    void ClearProperties();
+    void SetValueProperties(AstNode *properties, size_t index);
+
+    AnnotationDeclaration *Construct(ArenaAllocator *allocator) override;
     void CopyTo(AstNode *other) const override;
 
 private:
     friend class SizeOfNodeTest;
+    RetentionPolicy Policy() const
+    {
+        return GetHistoryNodeAs<AnnotationDeclaration>()->policy_;
+    }
+
+    void SetExpr(Expression *expr);
+
     util::StringView internalName_ {};
     varbinder::LocalScope *scope_ {};
     Expression *expr_;

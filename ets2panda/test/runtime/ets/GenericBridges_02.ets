@@ -144,32 +144,32 @@ class E<U extends Integral> extends C<U, string> {
 }
 
 function foo1(c: C<Int, string>) {
-  assertEQ(c.f1(0), 7)
-  assertEQ(c.f2(c).f1(0), 7)
-  assertEQ(c.f5(""), "C.f5")
-  assertEQ(c.f6(c, c), "C.f6")
+  arktest.assertEQ(c.f1(0), 7)
+  arktest.assertEQ(c.f2(c).f1(0), 7)
+  arktest.assertEQ(c.f5(""), "C.f5")
+  arktest.assertEQ(c.f6(c, c), "C.f6")
 }
 
 function foo2(c: C<Long, string>) {
- assertEQ(c.f1(0), 8)
- assertEQ(c.f2(c).f1(0), 8)
- assertEQ(c.f5(""), "C.f5")
- assertEQ(c.f7(3, c), "E.f7")
+ arktest.assertEQ(c.f1(0), 8)
+ arktest.assertEQ(c.f2(c).f1(0), 8)
+ arktest.assertEQ(c.f5(""), "C.f5")
+ arktest.assertEQ(c.f7(3, c), "E.f7")
 }
 
 function ttt(c: C<string, string>): void {
-  assertEQ(c.f1("ah"), "D.f1")
-  assertEQ(c.f2(c).f1("ah"), "D.f1")
-  assertEQ((c.f2(c as B<string>) as C<string, string>).f1("ah"), "D.f1")
-  assertEQ(c.f3("ah"), "D.f3")
-  assertEQ(c.f4(c), "D.f4")
-  assertEQ(c.f5("ah"), "D.f5")
-  assertEQ(c.f6(c, c), "C.f6")
-  assertEQ((c as D<string>).f6(), "D.f6")
-  assertEQ(c.f7("ah", c), "D.f7")
-  assertEQ(c.f8(""), "D.f8")
-  assertEQ(c.f9("", ""), "C.f9")
-  assertEQ((c as D<string>).f9("", 0), "D.f9-2")
+  arktest.assertEQ(c.f1("ah"), "D.f1")
+  arktest.assertEQ(c.f2(c).f1("ah"), "D.f1")
+  arktest.assertEQ((c.f2(c as B<string>) as C<string, string>).f1("ah"), "D.f1")
+  arktest.assertEQ(c.f3("ah"), "D.f3")
+  arktest.assertEQ(c.f4(c), "D.f4")
+  arktest.assertEQ(c.f5("ah"), "D.f5")
+  arktest.assertEQ(c.f6(c, c), "C.f6")
+  arktest.assertEQ((c as D<string>).f6(), "D.f6")
+  arktest.assertEQ(c.f7("ah", c), "D.f7")
+  arktest.assertEQ(c.f8(""), "D.f8")
+  arktest.assertEQ(c.f9("", ""), "C.f9")
+  arktest.assertEQ((c as D<string>).f9("", 0), "D.f9-2")
 }
 
 function main() {

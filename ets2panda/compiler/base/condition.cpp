@@ -15,6 +15,7 @@
 
 #include "condition.h"
 
+#include "checker/ETSAnalyzerHelpers.h"
 #include "compiler/core/pandagen.h"
 #include "compiler/core/ETSGen.h"
 #include "ir/expressions/assignmentExpression.h"

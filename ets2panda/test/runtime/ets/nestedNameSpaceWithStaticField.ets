@@ -34,8 +34,8 @@ namespace C {
 }
 
 C.a[0].arr2[2] *= B.X.c1.arr2[1]
-assertTrue(C.a[0].arr2[2] == 6)
+arktest.assertTrue(C.a[0].arr2[2] == 6)
 C.a[0].arr2[2] += A.C1.arr1[1]
-assertTrue(C.a[0].arr2[2] == 8)
+arktest.assertTrue(C.a[0].arr2[2] == 8)
 A.C1.arr1[1] -= B.X.C2.a + 5
-assertTrue(A.C1.arr1[1] == -8)
+arktest.assertTrue(A.C1.arr1[1] == -8)

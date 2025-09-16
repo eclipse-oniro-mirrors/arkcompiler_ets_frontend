@@ -25,4 +25,4 @@ class B {
     }
 }
 
-/* @@@ label Error TypeError: Method foo(a: int): int in B not overriding any method  */
+/* @@@ label Error TypeError: Method foo(a: Int): Int in B not overriding any method  */

@@ -19,7 +19,7 @@ function main(): void {
    
    a = new Number[A.length + 2.][4.00][A.length + 3.0000];
    
-   assertEQ(a.length, 2)
-   assertEQ(a[1].length, 4)
-   assertEQ(a[0][3].length, 3)
+   arktest.assertEQ(a.length, 2)
+   arktest.assertEQ(a[1].length, 4)
+   arktest.assertEQ(a[0][3].length, 3)
 }

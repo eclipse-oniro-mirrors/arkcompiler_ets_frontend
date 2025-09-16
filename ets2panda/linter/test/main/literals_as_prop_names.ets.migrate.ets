@@ -35,7 +35,7 @@ class LiteralAsPropertyName {
 const litAsPropName: LiteralAsPropertyName = {
   one: "1",
   __2: 'two',
-  Two: 2.0,
+  Two: 2,
 };
 
 console.log(litAsPropName.one);
@@ -51,7 +51,7 @@ class LiteralAsPropertyName_fix {
 const litAsPropName_fix: LiteralAsPropertyName_fix = {
   one: "1111111111",
   _2: 'two',
-  Two: 2.0,
+  Two: 2,
 };
 
 console.log("Fixed listAsPropName:");
@@ -59,7 +59,7 @@ console.log(litAsPropName_fix.one);
 console.log(litAsPropName_fix._2);
 console.log(litAsPropName_fix.Two);
 
-let x = {"name": 20.0, 2: 30.0}
+let x = {"name": 20, 2: 30}
 
 console.log(x["name"]);
 console.log(x[2]);
@@ -73,7 +73,7 @@ interface GeneratedObjectLiteralInterface_1 {
     name: number;
     _2: number;
 }
-let x_fix: GeneratedObjectLiteralInterface_1 = {name: 20.0, _2: 20.0};
+let x_fix: GeneratedObjectLiteralInterface_1 = {name: 20, _2: 20};
 
 console.log("Fixed x object literal:");
 console.log(x_fix.name);
@@ -87,10 +87,10 @@ interface litAsPropNameIface {
 const int: litAsPropNameIface = {
   one: '12321',
   ___2: 'weqwewq',
-  __2: 123.0
+  __2: 123
 };
 
-const imp: ExportLitAsPropName = { 1: 234.0 };
+const imp: ExportLitAsPropName = { 1: 234 };
 
 LiteralAsPropertyNameEnum['One']
 
@@ -98,27 +98,27 @@ LiteralAsPropertyNameEnum.PrivateTwo;
 
 {
   const enum Direction {
-   __empty = 1.0,
+   __empty = 1,
   }
 }
 
 const enum Direction16 {
-  ___x5c = 1.0,
-  __x5c = 1.0,
+  ___x5c = 1,
+  __x5c = 1,
 }
 
 const enum Direction17 {
-  ___x5c = 1.0,
-  __x5c = 1.0,
+  ___x5c = 1,
+  __x5c = 1,
 }
-let case17: number = Direction17.___x5c
-let case172: number = Direction17.__x5c
+let case17 = Direction17.___x5c
+let case172 = Direction17.__x5c
 
 const enum Direction11 {
-__x21x21 = 1.0,
+__x21x21 = 1,
 }
 const enum Direction23 {
-aaa = 1.0,
+aaa = 1,
 }
 // ArkUI
 @Component
@@ -131,29 +131,54 @@ build() {
 
 
 class A{
- public age:number = 1.0; 
+ public age:number = 1; 
 }
 
-let a:A = { age: 30.0}  
+let a:A = { "age": 30}  
 
 
 class B {
-  public age: number = 1.0 // error in arkts2
+  public age: number = 1 // error in arkts2
 }
 
 let obj11: Record<string, number> = {
-  ['value']: 1.0, // Error in arkts 2.0
-  'value2': 1.0 // ok
+  ['value']: 1, // Error in arkts 2.0
+  'value2': 1 // ok
 }
 
 class CompPropClass {
-  ['CompProp'] = 1.0; // Error in arkts 2.0
-  [2.0] = 'CompProp2'; // Error in arkts 2.0
-  [LiteralAsPropertyNameEnum.One] = 3.0; // Error in arkts 2.0
+  ['CompProp'] = 1; // Error in arkts 2.0
+  [2] = 'CompProp2'; // Error in arkts 2.0
+  [LiteralAsPropertyNameEnum.One] = 3; // Error in arkts 2.0
 }
 
 let compPropObj = {
-  ['CompProp']: 1.0, // Error in arkts 2.0
-  [2.0]: 'CompProp2', // Error in arkts 2.0
-  [LiteralAsPropertyNameEnum.One]: 3.0 // Error in arkts 2.0
+  ['CompProp']: 1, // Error in arkts 2.0
+  [2]: 'CompProp2', // Error in arkts 2.0
+  [LiteralAsPropertyNameEnum.One]: 3 // Error in arkts 2.0
 };
+
+enum TEST {
+  A,
+  B,
+  C,
+}
+enum TEST2 {
+  A,
+  B,
+  C,
+}
+
+let de3 = TEST2[TEST.A] //error
+let de4 = TEST2[TEST.A| TEST.B] //error
+let de5 = TEST[TEST.C] //ok
+
+export enum DeviceTypes12 {
+  PHONE = 'phone',
+  TABLET = 'tablet',
+  __2IN1 = '2in1',
+}
+
+export class A{
+  public static a= DeviceTypes12.__2IN1
+}

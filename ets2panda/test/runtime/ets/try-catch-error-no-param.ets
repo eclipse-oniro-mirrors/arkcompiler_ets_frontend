@@ -24,7 +24,7 @@ function main(): void {
         catchCode = 1;
     }
 
-    assertEQ(catchCode, 1)
+    arktest.assertEQ(catchCode, 1)
 
     try {
         throw new Error();
@@ -32,5 +32,5 @@ function main(): void {
         catchCode = 2;
     }
 
-    assertEQ(catchCode, 2)
+    arktest.assertEQ(catchCode, 2)
 }

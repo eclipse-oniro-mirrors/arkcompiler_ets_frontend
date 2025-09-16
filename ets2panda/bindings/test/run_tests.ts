@@ -15,16 +15,15 @@
 
 import path from 'path';
 import fs from 'fs';
-import {
-  Lsp,
-  LspDefinitionData,
-  LspCompletionInfo,
-  LspDiagsNode,
-  ModuleDescriptor,
-  generateArkTsConfigByModules
-} from '../src/index';
-import { testCases } from './cases';
-import { LspCompletionEntry } from '../src/lspNode';
+import { Lsp, LspDefinitionData, LspCompletionInfo, LspDiagsNode, ModuleDescriptor, PathConfig } from '../src/index';
+import { TestCases, basicCases, singleModuleCases } from './cases';
+import { LspCompletionEntry } from '../src/lsp/lspNode';
+import { diff } from 'jest-diff';
+
+interface NormalizeOptions {
+  fieldsToDelete?: string[]; // try to delete these fields in the expected result, just focus on the important fields
+  normalizeFileName?: boolean;
+}
 
 interface ComparisonOptions {
   subMatch?: boolean;
@@ -38,8 +37,8 @@ interface ComparisonOutcome {
 
 let updateMode = false;
 
-function getModules(projectRoot: string): ModuleDescriptor[] {
-  return Object.keys(testCases).map((name) => {
+function getModules(projectRoot: string, cases: TestCases): ModuleDescriptor[] {
+  return Object.keys(cases).map((name) => {
     const modulePath = path.join(projectRoot, name);
     return {
       arktsversion: '1.2',
@@ -57,6 +56,16 @@ function getExpectedResult(filePath: string): any {
   } catch (err) {
     console.error(`Failed to read expected result from ${filePath}: ${err}`);
     return null;
+  }
+}
+
+// CC-OFFNXT(no_explicit_any) project code style
+function getFilesByDir(dirPath: string): string[] {
+  try {
+    return fs.readdirSync(dirPath).filter((file) => fs.statSync(path.join(dirPath, file)).isFile());
+  } catch (err) {
+    console.error(`Failed to load files from ${dirPath}: ${err}`);
+    return [];
   }
 }
 
@@ -111,19 +120,27 @@ function sortActualResult(testName: string, res: any): any {
 }
 
 // CC-OFFNXT(no_explicit_any) project code style
-function normalizeData(obj: any): any {
+function normalizeData(obj: any, options: NormalizeOptions = {}): any {
+  const { fieldsToDelete = [], normalizeFileName = true } = options;
   if (Array.isArray(obj)) {
-    return obj.map(normalizeData);
+    return obj.map((item) => normalizeData(item, options));
   } else if (obj && typeof obj === 'object') {
     const newObj = { ...obj };
+    // always remove 'peer' field
     if ('peer' in newObj) {
-      delete newObj.peer; // do not compare peer
+      delete newObj.peer;
     }
-    if (newObj.fileName) {
+    // remove specified fields
+    fieldsToDelete.forEach((field) => {
+      if (field in newObj) {
+        delete newObj[field];
+      }
+    });
+    if (normalizeFileName && newObj.fileName) {
       newObj.fileName = path.basename(newObj.fileName);
     }
     for (const key of Object.keys(newObj)) {
-      newObj[key] = normalizeData(newObj[key]);
+      newObj[key] = normalizeData(newObj[key], options);
     }
     return newObj;
   }
@@ -166,7 +183,7 @@ function performComparison(
   expected: unknown,
   options: ComparisonOptions = {}
 ): ComparisonOutcome {
-  const { subMatch = false } = options;
+  const { subMatch: subMatch = false } = options;
   if (subMatch) {
     if (isSubObject(normalizedActual, expected)) {
       return { passed: true };
@@ -206,12 +223,14 @@ function compareResultsHelper(
   }
 
   console.log(`[${testName}] ❌ Failed`);
-  console.log(`Expected: ${comparison.expectedJSON}`);
-  console.log(`Actual:   ${comparison.actualJSON}`);
+  const diffResult = diff(comparison.expectedJSON, comparison.actualJSON);
+  if (diffResult) {
+    console.log(diffResult);
+  }
   return false;
 }
 
-function compareGetCompletionResult(testName: string, actual: unknown, expected: unknown): boolean {
+function compareGetCompletionResult(testName: string, actual: unknown, expected: unknown): [boolean, unknown] {
   const completionResult = actual as LspCompletionInfo;
   const actualEntries = completionResult.entries as LspCompletionEntry[];
   const expectedEntries = expected as {
@@ -222,9 +241,26 @@ function compareGetCompletionResult(testName: string, actual: unknown, expected:
     data: null;
   }[];
 
-  return compareResultsHelper(testName, normalizeData(actualEntries), expectedEntries, {
-    subMatch: true
-  } as ComparisonOptions);
+  const actualData = normalizeData(actualEntries);
+  return [
+    compareResultsHelper(testName, actualData, expectedEntries, {
+      subMatch: true
+    } as ComparisonOptions),
+    actualData
+  ];
+}
+
+function compareDeclFileResult(testName: string, declgenOutDir: string, expected: unknown): [boolean, unknown] {
+  let fileList: string[] = getFilesByDir(declgenOutDir);
+  const actualEntries = fileList.filter((file) => file.endsWith('.d.ets'));
+  const expectedEntries = expected as string[];
+  const actualData = normalizeData(actualEntries);
+  return [
+    compareResultsHelper(testName, actualData, expectedEntries, {
+      subMatch: true
+    } as ComparisonOptions),
+    actualData
+  ];
 }
 
 function findTextDefinitionPosition(sourceCode: string): number {
@@ -256,58 +292,84 @@ function findTaskDefinitionPosition(sourceCode: string): number {
   throw new Error('Could not find Task definition in source code');
 }
 
-function compareGetDefinitionResult(testName: string, actual: any, expected: Record<string, string | number>): boolean {
+function compareGetDefinitionResult(
+  testName: string,
+  actual: unknown,
+  expected: Record<string, string | number>
+): [boolean, unknown] {
+  let expectedResult = expected;
+  const actualDef = actual as LspDefinitionData;
+  const fileName = actualDef.fileName as string;
+  const fileContent = fs.readFileSync(fileName, 'utf8');
   // This is the definition info for the UI component.
   // File in the SDK might changed, so the offset needs to be checked dynamically.
   if (expected['fileName'] === 'text.d.ets') {
-    const actualDef = actual as LspDefinitionData;
-    const fileName = actualDef.fileName as string;
-    const fileContent = fs.readFileSync(fileName, 'utf8');
     const expectedStart = findTextDefinitionPosition(fileContent);
-    const expectedResult = {
+    expectedResult = {
       ...expected,
       start: expectedStart
     };
-    return compareResultsHelper(testName, normalizeData(actual), expectedResult);
   }
   // This is the definition info for the class in std library.
   // File in the SDK might changed, so the offset needs to be checked dynamically.
   if (expected['fileName'] === 'taskpool.ets') {
-    const actualDef = actual as LspDefinitionData;
-    const fileName = actualDef.fileName as string;
-    const fileContent = fs.readFileSync(fileName, 'utf8');
     const expectedStart = findTaskDefinitionPosition(fileContent);
-    const expectedResult = {
+    expectedResult = {
       ...expected,
       start: expectedStart
     };
-    return compareResultsHelper(testName, normalizeData(actual), expectedResult);
   }
-  return compareResultsHelper(testName, normalizeData(actual), expected);
+  const actualData = normalizeData(actual);
+  return [compareResultsHelper(testName, actualData, expectedResult), actualData];
 }
 
-// CC-OFFNXT(no_explicit_any) project code style
-function compareResults(testName: string, index: string, actual: unknown, expected: unknown): boolean {
-  const name = `${testName}:${index}`;
+function compareResults(
+  caseName: string,
+  actual: unknown,
+  expected: unknown,
+  declgenOutDir: string = ''
+): [boolean, unknown] {
+  const testName = caseName.substring(0, caseName.indexOf(':'));
   if (testName === 'getDefinitionAtPosition') {
-    return compareGetDefinitionResult(name, actual, expected as Record<string, string | number>);
+    return compareGetDefinitionResult(caseName, actual, expected as Record<string, string | number>);
   }
   if (testName === 'getCompletionAtPosition') {
-    return compareGetCompletionResult(name, actual, expected);
+    return compareGetCompletionResult(caseName, actual, expected);
+  }
+  if (testName === 'generateDeclFile' || testName === 'modifyDeclFile') {
+    const declOutPath = path.join(declgenOutDir, 'dynamic', 'dep', 'declgenV1');
+    return compareDeclFileResult(caseName, declOutPath, expected);
+  }
+  if (
+    testName === 'getSemanticDiagnostics' ||
+    testName === 'getSyntacticDiagnostics' ||
+    testName === 'getSuggestionDiagnostics'
+  ) {
+    const normalizeOption: NormalizeOptions = {
+      fieldsToDelete: ['source']
+    };
+    const actualData = normalizeData(actual, normalizeOption);
+    return [compareResultsHelper(caseName, actualData, expected), actualData];
+  }
+  if (testName === 'findRenameLocations') {
+    const normalizeOption: NormalizeOptions = {
+      fieldsToDelete: ['prefixText', 'suffixText']
+    };
+    const actualData = normalizeData(actual, normalizeOption);
+    return [compareResultsHelper(caseName, actualData, expected), actualData];
   }
 
-  return compareResultsHelper(name, normalizeData(actual), expected);
+  const actualData = normalizeData(actual);
+  return [compareResultsHelper(caseName, actualData, expected), actualData];
 }
 
-function runTests(testDir: string, lsp: Lsp) {
+function runTests(lsp: Lsp, cases: TestCases, failedList: string[]): string[] {
   console.log('Running tests...');
-  if (!testCases) {
-    console.error('Failed to load test cases');
-    return;
+  if (!cases) {
+    return [];
   }
 
-  let failedList: string[] = [];
-  for (const [testName, testConfig] of Object.entries(testCases)) {
+  for (const [testName, testConfig] of Object.entries(cases)) {
     const { expectedFilePath, ...testCaseVariants } = testConfig;
     const expectedResult = getExpectedResult(expectedFilePath);
     if (expectedResult === null) {
@@ -322,12 +384,13 @@ function runTests(testDir: string, lsp: Lsp) {
 
     for (const [index, params] of Object.entries(testCaseVariants)) {
       let pass = false;
+      let actualData = undefined;
       let actualResult = null;
       try {
         // CC-OFFNXT(no_explicit_any) project code style
         actualResult = (lsp as any)[testName](...params);
         actualResult = sortActualResult(testName, actualResult);
-        pass = compareResults(testName, index, actualResult, expectedResult[index]);
+        [pass, actualData] = compareResults(`${testName}:${index}`, actualResult, expectedResult[index]);
       } catch (error) {
         console.error(`[${testName}:${index}] ❌ Error: ${error}`);
       }
@@ -336,7 +399,7 @@ function runTests(testDir: string, lsp: Lsp) {
       }
       if (!pass && updateMode) {
         console.log(`Updating expected result for ${testName}:${index}`);
-        expectedResult[index] = normalizeData(actualResult);
+        expectedResult[index] = actualData;
       }
     }
     if (updateMode) {
@@ -345,13 +408,134 @@ function runTests(testDir: string, lsp: Lsp) {
     console.log(`Finished test: ${testName}`);
     console.log('-----------------------------------');
   }
+  return failedList;
+}
+
+function runSingleTests(testDir: string, failedList: string[]): string[] {
+  console.log('Running single tests...');
+  if (!singleModuleCases) {
+    return [];
+  }
+  const testSrcPath = path.join(testDir, 'testcases');
+  for (const [testName, testConfig] of Object.entries(singleModuleCases)) {
+    const testBuildPath = path.join(testSrcPath, '.idea', '.deveco', testName);
+    let pathConfig: PathConfig = {
+      buildSdkPath: path.join(testDir, 'ets', 'ets1.2'),
+      projectPath: testBuildPath,
+      declgenOutDir: testBuildPath
+    };
+    const moduleList: ModuleDescriptor[] = [
+      {
+        arktsversion: '1.1',
+        name: 'entry',
+        moduleType: 'har',
+        srcPath: path.join(testSrcPath, testName, 'entry')
+      },
+      {
+        arktsversion: '1.2',
+        name: 'dep',
+        moduleType: 'har',
+        srcPath: path.join(testSrcPath, testName, 'dep')
+      }
+    ] as ModuleDescriptor[];
+    const lsp = new Lsp(pathConfig, undefined, moduleList);
+    const { expectedFilePath, ...testCaseVariants } = testConfig;
+    const expectedResult = getExpectedResult(expectedFilePath);
+    if (expectedResult === null) {
+      console.error(`[${testName}] Skipped (expected result not found)`);
+      continue;
+    }
+    // CC-OFFNXT(no_explicit_any) project code style
+    if (typeof (lsp as any)[testName] !== 'function') {
+      console.error(`[${testName}] ❌ Error: Method "${testName}" not found on Lsp object`);
+      continue;
+    }
+
+    for (const [index, params] of Object.entries(testCaseVariants)) {
+      let pass = false;
+      let actualData = undefined;
+      let actualResult = null;
+      try {
+        // CC-OFFNXT(no_explicit_any) project code style
+        actualResult = (lsp as any)[testName](...params);
+        actualResult = sortActualResult(testName, actualResult);
+        [pass, actualData] = compareResults(
+          `${testName}:${index}`,
+          actualResult,
+          expectedResult[index],
+          pathConfig.declgenOutDir
+        );
+      } catch (error) {
+        console.error(`[${testName}:${index}] ❌ Error: ${error}`);
+      }
+      if (!pass) {
+        failedList.push(`${testName}:${index}`);
+      }
+      if (!pass && updateMode) {
+        console.log(`Updating expected result for ${testName}:${index}`);
+        expectedResult[index] = actualData;
+      }
+    }
+    if (updateMode) {
+      fs.writeFileSync(expectedFilePath, JSON.stringify(expectedResult, null, 2));
+    }
+    console.log(`Finished test: ${testName}`);
+    console.log('-----------------------------------');
+  }
+  return failedList;
+}
+
+function run(testDir: string, pathConfig: PathConfig): void {
+  let failedList: string[] = [];
+
+  const basicModules = getModules(pathConfig.projectPath, basicCases);
+  const basicLsp = new Lsp(pathConfig, undefined, basicModules);
+  failedList = runTests(basicLsp, basicCases, failedList);
+
+  failedList = runSingleTests(testDir, failedList);
+
   console.log('Tests completed.');
   if (failedList.length > 0) {
     console.log('❌ Failed tests:');
-    failedList.forEach((failedCase) => {
+    failedList.forEach((failedCase: string) => {
       console.log(`- ${failedCase}`);
     });
+
+    console.error('Tests failed without AST cache');
+    process.exit(1);
   }
+  console.log('Finished test without ast cache');
+}
+
+async function runWithAstCache(testDir: string, pathConfig: PathConfig): Promise<void> {
+  let failedList: string[] = [];
+  // for generate ast cache
+  const entry_module = [
+    {
+      arktsversion: '1.2',
+      name: 'entry',
+      moduleType: 'har',
+      srcPath: path.join(pathConfig.projectPath, 'entry')
+    }
+  ];
+
+  const basicModules = getModules(pathConfig.projectPath, basicCases);
+  const basicLsp = new Lsp(pathConfig, undefined, entry_module);
+  await basicLsp.initAstCache();
+  basicLsp.update(basicModules);
+  failedList = runTests(basicLsp, basicCases, failedList);
+
+  console.log('Tests completed.');
+  if (failedList.length > 0) {
+    console.log('❌ Failed tests:');
+    failedList.forEach((failedCase: string) => {
+      console.log(`- ${failedCase}`);
+    });
+
+    console.error('Tests failed with AST cache');
+    process.exit(1);
+  }
+  console.log('Finished test with ast cache');
 }
 
 if (require.main === module) {
@@ -363,14 +547,17 @@ if (require.main === module) {
   if (process.argv[3] && process.argv[3] === '--update') {
     updateMode = true;
   }
+
   const testDir = path.resolve(process.argv[2]);
-  const buildSdkPath = path.join(testDir, 'ets', 'ets1.2');
-  const projectRoot = path.join(testDir, 'testcases');
-  const modules = getModules(projectRoot);
+  const pathConfig: PathConfig = {
+    buildSdkPath: path.join(testDir, 'ets', 'ets1.2'),
+    projectPath: path.join(testDir, 'testcases'),
+    declgenOutDir: ''
+  };
 
-  generateArkTsConfigByModules(buildSdkPath, projectRoot, modules);
-  const lsp = new Lsp(projectRoot);
-
-  process.env.BINDINGS_PATH = path.join(buildSdkPath, 'build-tools', 'bindings');
-  runTests(testDir, lsp);
+  process.env.BINDINGS_PATH = path.join(pathConfig.buildSdkPath, 'build-tools', 'bindings');
+  process.env.PANDA_LIB_PATH = path.join(pathConfig.buildSdkPath, 'build-tools', 'ets2panda', 'lib');
+  process.env.PANDA_BIN_PATH = path.join(pathConfig.buildSdkPath, 'build-tools', 'ets2panda', 'bin');
+  run(testDir, pathConfig);
+  runWithAstCache(testDir, pathConfig).then(() => {});
 }

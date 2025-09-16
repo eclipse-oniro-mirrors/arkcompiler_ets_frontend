@@ -79,12 +79,12 @@ function main(): void {
   let a = true ? new GenB<C> : new GenB<F>;
   let test_a : GenB<B> = a;
 
-  assertEQ((foo(a), foo(new GenB<B>))
+  arktest.assertEQ((foo(a), foo(new GenB<B>))
 
   let b = true ? new GenD<F, C> : new GenC<F, C>;
   let test_b : GenB<in B> = b;
 
-  assertEQ((foo(b), 0)
+  arktest.assertEQ((foo(b), 0)
   // foo(b) would call signature 'foo(p: GenB<in B>)',
   // but it's not declared (erased signature would
   // clash with other foo(p: GenB<*>) signatures),
@@ -93,15 +93,15 @@ function main(): void {
   let c = true ? new GenC<F, C> : new GenC<C, F>;
   let test_c : GenC<B, B> = c;
 
-  assertEQ((foo(c), foo(new GenC<B, B>))
+  arktest.assertEQ((foo(c), foo(new GenC<B, B>))
 
   let d = true ? new GenA<D> : new GenB<A>;
   let test_d : GenA<B> = d;
 
-  assertEQ((foo(d), foo(new GenA<B>))
+  arktest.assertEQ((foo(d), foo(new GenA<B>))
 
   let f = true ? new GenB<C> : new GenB<C>;
   let test_f : GenB<C> = f;
 
-  assertEQ((foo(f), foo(new GenB<C>))
+  arktest.assertEQ((foo(f), foo(new GenB<C>))
 }

@@ -16,8 +16,10 @@
 #ifndef FORMATTING_H
 #define FORMATTING_H
 
+#include <vector>
 #include "formatting_settings.h"
 #include "rules_map.h"
+#include "lsp/include/types.h"
 
 namespace ark::es2panda::lsp {
 
@@ -44,6 +46,7 @@ private:
 };
 
 FormatContext GetFormatContext(FormatCodeSettings &options);
+std::vector<TextChange> FormatDocument(es2panda_Context *context, FormatContext formatContext);
 
 }  // namespace ark::es2panda::lsp
 

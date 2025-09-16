@@ -131,4 +131,79 @@ KNativePointer impl_DestroyContext(KNativePointer contextPtr)
 }
 TS_INTEROP_1(DestroyContext, KNativePointer, KNativePointer)
 
+void impl_MemInitialize(KStringPtr &pandaLibPath)
+{
+    g_pandaLibPath = GetStringView(pandaLibPath);
+    GetPublicImpl()->MemInitialize();
+}
+TS_INTEROP_V1(MemInitialize, KStringPtr)
+
+void impl_MemFinalize()
+{
+    GetPublicImpl()->MemFinalize();
+}
+TS_INTEROP_V0(MemFinalize)
+
+KNativePointer impl_CreateGlobalContext(KNativePointer configPtr, KStringArray externalFileListPtr, KInt fileNum)
+{
+    auto config = reinterpret_cast<es2panda_Config *>(configPtr);
+
+    const std::size_t headerLen = 4;
+    if (fileNum <= 0) {
+        return nullptr;
+    }
+    const char **externalFileList = new const char *[fileNum];
+    std::size_t position = headerLen;
+    std::size_t strLen;
+    for (std::size_t i = 0; i < static_cast<std::size_t>(fileNum); ++i) {
+        strLen = UnpackUInt(externalFileListPtr + position);
+        position += headerLen;
+        externalFileList[i] =
+            strdup(std::string(reinterpret_cast<const char *>(externalFileListPtr + position), strLen).c_str());
+        position += strLen;
+    }
+
+    return GetPublicImpl()->CreateGlobalContext(config, externalFileList, fileNum, true);
+}
+TS_INTEROP_3(CreateGlobalContext, KNativePointer, KNativePointer, KStringArray, KInt)
+
+void impl_DestroyGlobalContext(KNativePointer globalContextPtr)
+{
+    auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContextPtr);
+    GetPublicImpl()->DestroyGlobalContext(context);
+}
+TS_INTEROP_V1(DestroyGlobalContext, KNativePointer)
+
+KNativePointer impl_CreateCacheContextFromString(KNativePointer configPtr, KStringPtr &sourcePtr,
+                                                 KStringPtr &filenamePtr, KNativePointer globalContext,
+                                                 KBoolean isExternal)
+{
+    auto config = reinterpret_cast<es2panda_Config *>(configPtr);
+    auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContext);
+    return GetPublicImpl()->CreateCacheContextFromString(config, sourcePtr.data(), filenamePtr.data(), context,
+                                                         isExternal);
+}
+TS_INTEROP_5(CreateCacheContextFromString, KNativePointer, KNativePointer, KStringPtr, KStringPtr, KNativePointer,
+             KBoolean)
+
+void impl_RemoveFileCache(KNativePointer globalContextPtr, KStringPtr &filenamePtr)
+{
+    auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContextPtr);
+    return GetPublicImpl()->RemoveFileCache(context, filenamePtr.data());
+}
+TS_INTEROP_V2(RemoveFileCache, KNativePointer, KStringPtr)
+
+void impl_AddFileCache(KNativePointer globalContextPtr, KStringPtr &filenamePtr)
+{
+    auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContextPtr);
+    return GetPublicImpl()->AddFileCache(context, filenamePtr.data());
+}
+TS_INTEROP_V2(AddFileCache, KNativePointer, KStringPtr)
+
+void impl_InvalidateFileCache(KNativePointer globalContextPtr, KStringPtr &filenamePtr)
+{
+    auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContextPtr);
+    return GetPublicImpl()->InvalidateFileCache(context, filenamePtr.data());
+}
+TS_INTEROP_V2(InvalidateFileCache, KNativePointer, KStringPtr)
 // NOLINTEND

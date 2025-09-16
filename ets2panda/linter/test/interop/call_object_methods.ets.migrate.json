@@ -16,22 +16,12 @@
     "result": [
         {
             "line": 15,
-            "column": 5,
+            "column": 1,
             "endLine": 15,
-            "endColumn": 68,
-            "problem": "AnyType",
+            "endColumn": 47,
+            "problem": "InterOpImportJs",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 16,
-            "column": 5,
-            "endLine": 16,
-            "endColumn": 50,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
         }
     ]

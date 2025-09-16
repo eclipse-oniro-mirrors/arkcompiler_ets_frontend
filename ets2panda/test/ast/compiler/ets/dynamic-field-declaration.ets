@@ -20,4 +20,4 @@ class Point {
 let p: Point = {x: 1, y: 2}
 console.log(p["x"])
 
-/* @@? 21:13 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 21:13 Error TypeError: Object type doesn't have proper index access method. */

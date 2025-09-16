@@ -17,14 +17,14 @@ const enum Comparison { LessThan = -1, EqualTo = 0, GreaterThan = 1 };
 
 function main() : void {
     let c1 = Comparison.LessThan;
-    assertEQ(c1, Comparison.LessThan)
-    assertEQ(c1.valueOf(), -1)
+    arktest.assertEQ(c1, Comparison.LessThan)
+    arktest.assertEQ(c1.valueOf(), -1)
 
     let c2 = Comparison.EqualTo;
-    assertEQ(c2, Comparison.EqualTo)
-    assertEQ(c2.valueOf(), 0)
+    arktest.assertEQ(c2, Comparison.EqualTo)
+    arktest.assertEQ(c2.valueOf(), 0)
 
     let c3 = Comparison.GreaterThan;
-    assertEQ(c3, Comparison.GreaterThan)
-    assertEQ(c3.valueOf(), 1)
+    arktest.assertEQ(c3, Comparison.GreaterThan)
+    arktest.assertEQ(c3.valueOf(), 1)
 }

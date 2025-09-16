@@ -92,7 +92,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 31,
+                                  "column": 30,
                                   "program": "generic_function.ets"
                                 }
                               }
@@ -105,7 +105,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 31,
+                                "column": 30,
                                 "program": "generic_function.ets"
                               }
                             }
@@ -185,7 +185,7 @@
                 "loc": {
                   "start": {
                     "line": 17,
-                    "column": 16,
+                    "column": 3,
                     "program": "generic_function.ets"
                   },
                   "end": {
@@ -198,7 +198,7 @@
               "loc": {
                 "start": {
                   "line": 17,
-                  "column": 16,
+                  "column": 3,
                   "program": "generic_function.ets"
                 },
                 "end": {
@@ -262,8 +262,8 @@
           "program": "generic_function.ets"
         },
         "end": {
-          "line": 20,
-          "column": 9,
+          "line": 18,
+          "column": 2,
           "program": "generic_function.ets"
         }
       }
@@ -347,12 +347,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "generic_function.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "generic_function.ets"
                     }
                   }
                 },
@@ -360,12 +360,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "generic_function.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "generic_function.ets"
                   }
                 }
               },
@@ -373,118 +373,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "generic_function.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "generic_function.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "generic_function.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "generic_function.ets"
                 }
               }
             },
@@ -589,7 +483,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 46,
+                                  "column": 45,
                                   "program": "generic_function.ets"
                                 }
                               }
@@ -602,7 +496,7 @@
                               },
                               "end": {
                                 "line": 20,
-                                "column": 46,
+                                "column": 45,
                                 "program": "generic_function.ets"
                               }
                             }
@@ -700,7 +594,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 57,
+                                  "column": 56,
                                   "program": "generic_function.ets"
                                 }
                               }
@@ -713,7 +607,7 @@
                               },
                               "end": {
                                 "line": 20,
-                                "column": 57,
+                                "column": 56,
                                 "program": "generic_function.ets"
                               }
                             }
@@ -841,7 +735,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 40,
+                              "column": 39,
                               "program": "generic_function.ets"
                             }
                           }
@@ -854,7 +748,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 40,
+                            "column": 39,
                             "program": "generic_function.ets"
                           }
                         }

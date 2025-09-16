@@ -21,6 +21,9 @@
 namespace ark::es2panda::lsp {
 std::optional<TextChange> ProcessIdentifier(ir::Identifier *identifier, checker::ETSChecker *checker,
                                             parser::Program *program);
+std::string GetReturnTypeStr(const checker::Type *checkerType, checker::ETSChecker *checker);
+const checker::Signature *GetFuncSignature(const checker::ETSFunctionType *etsFunctionType,
+                                           const ir::MethodDefinition *methodDef);
 }  // namespace ark::es2panda::lsp
 
 #endif

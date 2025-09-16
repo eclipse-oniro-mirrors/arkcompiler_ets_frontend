@@ -31,11 +31,6 @@
 #include "util/es2pandaMacros.h"
 #include "public/public.h"
 
-#include <string>
-#include <string_view>
-#include <tuple>
-#include <utility>
-
 namespace ark::es2panda::compiler {
 using LiteralPair = std::pair<pandasm::LiteralArray::Literal, pandasm::LiteralArray::Literal>;
 
@@ -188,13 +183,12 @@ static size_t GetIRNodeWholeLength(const IRNode *node)
 
 static std::string WholeLine(const lexer::SourceRange &range)
 {
-    // NOTE(rsipka, #24105): The program shouldn't be nullptr
     auto program = range.start.Program();
-    if (program == nullptr || program->SourceCode().Empty()) {
+    ES2PANDA_ASSERT(program != nullptr);
+    auto source = program->SourceCode();
+    if (source.Empty()) {
         return {};
     }
-
-    auto source = program->SourceCode();
 
     ES2PANDA_ASSERT(range.end.index <= source.Length());
     ES2PANDA_ASSERT(range.end.index >= range.start.index);
@@ -215,17 +209,17 @@ void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, pandasm::Ins *p
     }
 
     auto nodeRange = astNode->Range();
-    pandaIns->insDebug.lineNumber = nodeRange.start.line + 1;
+    pandaIns->insDebug.SetLineNumber(nodeRange.start.line + 1U);
 
     if (cg_->IsDebug()) {
         size_t insLen = GetIRNodeWholeLength(ins);
         if (insLen != 0) {
-            pandaIns->insDebug.boundLeft = offset_;
-            pandaIns->insDebug.boundRight = offset_ + insLen;
+            pandaIns->insDebug.SetBoundLeft(offset_);
+            pandaIns->insDebug.SetBoundRight(offset_ + insLen);
         }
 
         offset_ += insLen;
-        pandaIns->insDebug.wholeLine = WholeLine(nodeRange);
+        pandaIns->insDebug.SetWholeLine(WholeLine(nodeRange));
     }
 }
 
@@ -413,7 +407,10 @@ static void UpdateLiteralBufferId([[maybe_unused]] ark::pandasm::Ins *ins, [[may
 #ifdef PANDA_WITH_ECMASCRIPT
     switch (ins->opcode) {
         case pandasm::Opcode::ECMA_DEFINECLASSWITHBUFFER: {
-            ins->imms.back() = std::get<int64_t>(ins->imms.back()) + offset;
+            if (auto pos = ins->ImmSize(); pos > 0U) {
+                --pos;
+                ins->SetImm(pos, std::get<int64_t>(ins->GetImm(pos)) + offset);
+            }
             break;
         }
         case pandasm::Opcode::ECMA_CREATEARRAYWITHBUFFER:
@@ -421,9 +418,12 @@ static void UpdateLiteralBufferId([[maybe_unused]] ark::pandasm::Ins *ins, [[may
         case pandasm::Opcode::ECMA_CREATEOBJECTHAVINGMETHOD:
         case pandasm::Opcode::ECMA_DEFINECLASSPRIVATEFIELDS: {
             constexpr int BASE10 = 10;
-            uint32_t storedOffset = strtoul(ins->ids.back().data(), nullptr, BASE10);
-            storedOffset += offset;
-            ins->ids.back() = std::to_string(storedOffset);
+            if (auto pos = ins->IDSize(); pos > 0U) {
+                --pos;
+                auto storedOffset = std::strtoul(ins->GetID(pos).data(), nullptr, BASE10);
+                storedOffset += offset;
+                ins->SetID(pos, std::to_string(storedOffset));
+            }
             break;
         }
         default: {
@@ -484,7 +484,7 @@ static std::string DumpAsmFunction(std::string name, const pandasm::Function &fu
     ss << ") {" << std::endl;
 
     for (const auto &ins : func.ins) {
-        ss << (ins.setLabel ? "" : "\t") << ins.ToString("", true, func.GetTotalRegs()) << std::endl;
+        ss << (ins.HasLabel() ? "" : "\t") << ins.ToString("", true, func.GetTotalRegs()) << std::endl;
     }
 
     ss << "}" << std::endl << std::endl;

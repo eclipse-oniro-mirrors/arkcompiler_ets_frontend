@@ -23,7 +23,7 @@ void AnnotationUsage::TransformChildren(const NodeTransformer &cb, std::string_v
 {
     if (auto *transformedNode = cb(expr_); expr_ != transformedNode) {
         expr_->SetTransformedNode(transformationName, transformedNode);
-        expr_ = transformedNode->AsIdentifier();
+        expr_ = transformedNode->AsExpression();
     }
 
     for (auto *&it : VectorIterationGuard(properties_)) {
@@ -89,7 +89,7 @@ AnnotationUsage *AnnotationUsage::Clone(ArenaAllocator *const allocator, AstNode
         clone->AddProperty(property->Clone(allocator, clone));
     }
 
-    clone->SetRange(range_);
+    clone->SetRange(range_.GetRange());
     clone->SetScope(propertiesScope_);
 
     return clone;
@@ -120,12 +120,6 @@ Identifier *AnnotationUsage::GetBaseName() const
     if (expr_->IsIdentifier()) {
         return expr_->AsIdentifier();
     }
-    auto *part = expr_->AsETSTypeReference()->Part();
-    if (part->Name()->IsIdentifier()) {
-        ES2PANDA_ASSERT(part->Name()->AsIdentifier()->Name().Is(ERROR_LITERAL));
-        return part->Name()->AsIdentifier();
-    }
-
-    return part->Name()->AsTSQualifiedName()->Right();
+    return expr_->AsETSTypeReference()->Part()->GetIdent();
 }
 }  // namespace ark::es2panda::ir

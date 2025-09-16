@@ -22,9 +22,9 @@ let global = 0
 
 let l1 = () : void => { global += 1 }
 foo(l1)
-assertEQ(global, 1)
+arktest.assertEQ(global, 1)
 foo(() : void => { global += 2 })
-assertEQ(global, 3)
+arktest.assertEQ(global, 3)
 
 function main() {
 }

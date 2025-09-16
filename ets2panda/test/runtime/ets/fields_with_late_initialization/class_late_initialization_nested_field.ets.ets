@@ -23,6 +23,6 @@ function main() {
     node.next = new Node();
     node.next.next; // RTE
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

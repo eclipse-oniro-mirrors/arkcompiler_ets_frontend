@@ -28,10 +28,10 @@ namespace A{
 }
 
 function main(){
-    assertEQ(A.a, 1)
-    assertEQ(A.b, 2)
-    assertEQ(A.c, 3)
-    assertEQ(A.foo1(), "foo1")
-    assertEQ(A.foo2(), "foo2")
-    assertEQ(A.foo3(), "foo3")
+    arktest.assertEQ(A.a, 1)
+    arktest.assertEQ(A.b, 2)
+    arktest.assertEQ(A.c, 3)
+    arktest.assertEQ(A.foo1(), "foo1")
+    arktest.assertEQ(A.foo2(), "foo2")
+    arktest.assertEQ(A.foo3(), "foo3")
 }

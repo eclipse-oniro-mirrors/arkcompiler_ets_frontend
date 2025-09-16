@@ -17,7 +17,9 @@ native/
 dist/**
 dist-test/**
 node_modules/**
-**.json
+test/ets/**
+tsconfig.json
+**.json5
 **.js
 **.md
 **.ets

@@ -32,6 +32,7 @@ size_t CFG::BasicBlock::AddNode(ir::AstNode *node)
 
 std::pair<size_t, size_t> CFG::BasicBlock::AddSuccessor(BasicBlock *successor)
 {
+    ES2PANDA_ASSERT(successor != nullptr);
     succs_.push_back(successor);
     ES2PANDA_ASSERT(successor != nullptr);
     successor->preds_.push_back(this);

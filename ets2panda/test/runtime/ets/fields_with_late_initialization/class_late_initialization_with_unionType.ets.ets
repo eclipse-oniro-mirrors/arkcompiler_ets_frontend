@@ -24,6 +24,6 @@ function main() {
     ud.value = 10;
     console.log(ud.value.toString());
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

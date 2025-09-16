@@ -19,4 +19,4 @@ let callbackc = (arrElem: JSValue) => {
 
 /* @@? 17:5 Error SyntaxError: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
 /* @@? 18:1 Error SyntaxError: Unexpected token, expected string literal. */
-/* @@? 23:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 22:70 Error SyntaxError: Expected '}', got 'end of stream'. */

@@ -15,26 +15,6 @@
     ],
     "result": [
         {
-            "line": 15,
-            "column": 5,
-            "endLine": 15,
-            "endColumn": 9,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 15,
-            "column": 8,
-            "endLine": 15,
-            "endColumn": 9,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 16,
             "column": 3,
             "endLine": 16,
@@ -42,16 +22,6 @@
             "problem": "UnsupportOperator",
             "suggest": "",
             "rule": "Operator is not support (arkts-unsupport-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 16,
-            "column": 6,
-            "endLine": 16,
-            "endColumn": 7,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -65,16 +35,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 17,
-            "column": 6,
-            "endLine": 17,
-            "endColumn": 7,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 18,
             "column": 3,
             "endLine": 18,
@@ -82,16 +42,6 @@
             "problem": "UnsupportOperator",
             "suggest": "",
             "rule": "Operator is not support (arkts-unsupport-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 18,
-            "column": 6,
-            "endLine": 18,
-            "endColumn": 7,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -102,16 +52,6 @@
             "problem": "UnsupportOperator",
             "suggest": "",
             "rule": "Operator is not support (arkts-unsupport-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 15,
-            "endLine": 19,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -125,16 +65,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 20,
-            "column": 36,
-            "endLine": 20,
-            "endColumn": 38,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 23,
             "column": 14,
             "endLine": 23,
@@ -142,26 +72,6 @@
             "problem": "UnsupportOperator",
             "suggest": "",
             "rule": "Operator is not support (arkts-unsupport-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 23,
-            "column": 20,
-            "endLine": 23,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 25,
-            "column": 14,
-            "endLine": 25,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -175,16 +85,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 26,
-            "column": 16,
-            "endLine": 26,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 29,
             "column": 7,
             "endLine": 29,
@@ -195,26 +95,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 29,
-            "column": 11,
-            "endLine": 29,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 31,
-            "column": 9,
-            "endLine": 31,
-            "endColumn": 10,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 32,
             "column": 7,
             "endLine": 32,
@@ -222,16 +102,6 @@
             "problem": "UnsupportOperator",
             "suggest": "",
             "rule": "Operator is not support (arkts-unsupport-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 32,
-            "column": 11,
-            "endLine": 32,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -245,26 +115,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 33,
-            "column": 24,
-            "endLine": 33,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
-            "column": 1,
-            "endLine": 36,
-            "endColumn": 2,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 35,
             "column": 17,
             "endLine": 35,
@@ -272,16 +122,6 @@
             "problem": "UnsupportOperator",
             "suggest": "",
             "rule": "Operator is not support (arkts-unsupport-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 35,
-            "column": 21,
-            "endLine": 35,
-            "endColumn": 22,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

@@ -80,7 +80,7 @@ CombinedCodeActions AddMissingDeclareProperty::GetAllCodeActions(const CodeFixAl
 
     const auto changes = provider.CodeFixAll(codeFixAll, GetErrorCodes(),
                                              [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
-                                                 MakeChange(tracker, codeFixAll.context, diag.start, fixedNodes);
+                                                 MakeChange(tracker, codeFixAll.context, diag.GetStart(), fixedNodes);
                                              });
 
     CombinedCodeActions combinedCodeActions;

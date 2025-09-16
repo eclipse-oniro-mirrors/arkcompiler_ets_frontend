@@ -12,9 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-let GeneratedImportVar_1 = ESValue.load('./unary_operation_js_obj_js.js');
-let foo = GeneratedImportVar_1.getProperty('foo');
-
+import {foo} from "./unary_operation_js_obj_js.js"
 
 +foo.getProperty("num").toNumber();
 -foo.getProperty("num").toNumber();

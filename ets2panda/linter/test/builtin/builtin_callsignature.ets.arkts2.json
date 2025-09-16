@@ -35,63 +35,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 17,
-            "column": 23,
-            "endLine": 17,
-            "endColumn": 24,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 17,
-            "column": 26,
-            "endLine": 17,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 17,
-            "column": 29,
-            "endLine": 17,
-            "endColumn": 30,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 20,
-            "column": 24,
+            "column": 10,
             "endLine": 20,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
+            "endColumn": 15,
+            "problem": "BuiltinNoCtorFunc",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 27,
-            "endLine": 20,
-            "endColumn": 28,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 30,
-            "endLine": 20,
-            "endColumn": 31,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -115,26 +65,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 24,
-            "column": 15,
-            "endLine": 24,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 27,
-            "column": 17,
-            "endLine": 27,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 30,
             "column": 33,
             "endLine": 30,
@@ -155,16 +85,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 31,
-            "column": 13,
-            "endLine": 31,
-            "endColumn": 14,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 33,
             "column": 15,
             "endLine": 33,
@@ -172,16 +92,6 @@
             "problem": "BuiltinNoCtorFunc",
             "suggest": "",
             "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 33,
-            "column": 25,
-            "endLine": 33,
-            "endColumn": 26,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -212,16 +122,6 @@
             "problem": "BuiltinNoCtorFunc",
             "suggest": "",
             "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 36,
-            "column": 25,
-            "endLine": 36,
-            "endColumn": 26,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

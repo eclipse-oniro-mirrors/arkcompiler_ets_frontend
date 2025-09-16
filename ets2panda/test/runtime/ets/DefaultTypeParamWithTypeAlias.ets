@@ -20,8 +20,8 @@ class A {
 
     constructor() {
         this.a = (data: string, data2: int) => {
-            assertEQ(data, "Hello");
-            assertEQ(data2, 1);
+            arktest.assertEQ(data, "Hello");
+            arktest.assertEQ(data2, 1);
         };
     }
 
@@ -31,8 +31,8 @@ function main() {
     let a = new A();
     a.a("Hello", 1);
     a.a = (data: string, data2: int) => {
-        assertEQ(data, "World");
-        assertEQ(data2, 2);
+        arktest.assertEQ(data, "World");
+        arktest.assertEQ(data2, 2);
     };
     a.a("World", 2);
 }

@@ -18,13 +18,13 @@ function main() : int {
         try {
             throw new Exception();
         } catch (e:Error) {
-          assertTrue(false)
+          arktest.assertTrue(false)
         } finally {
             throw new Error();
         }
     } catch (e:Error) {
     } catch (e) {
-      assertTrue(false)
+      arktest.assertTrue(false)
     }
     return 0;
 }

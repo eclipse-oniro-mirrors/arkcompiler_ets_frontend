@@ -14,91 +14,96 @@
  */
 
 #include "formatting/formatting_context.h"
-#include "brace_matching.h"
-#include "public/public.h"
+#include "ir/astNode.h"
+#include "ir/statements/blockStatement.h"
 
 namespace ark::es2panda::lsp {
 
-FormattingContext::FormattingContext(FormattingRequestKind requestKind, FormatCodeSettings &formatSettings)
+FormattingContext::FormattingContext(const std::string &sourceText) : sourceText_(sourceText) {}
+
+void FormattingContext::SetCurrentToken(const lexer::Token &token)
 {
-    formatCodeSettings_ = formatSettings;
-    formattingRequestKind_ = requestKind;
+    currentToken_ = token;
+    currentTokenSpan_ = token.Loc();
 }
 
-void FormattingContext::UpdateContext(es2panda_Context *context, RangeWithKind &currentToken, RangeWithKind &nextToken)
+void FormattingContext::SetPreviousToken(const lexer::Token &token)
 {
-    currentTokenSpan_ = currentToken;
-    nextTokenSpan_ = nextToken;
-
-    if (context == nullptr) {
-        return;
-    }
-
-    auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    if (ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
-        return;
-    }
-
-    contextNode_ = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
-
-    auto current = GetTouchingToken(context, currentTokenSpan_.start.index, false);
-    if (current == nullptr) {
-        return;
-    }
-    currentTokenParent_ = current->Parent();
-
-    nextTokenParent_ = GetTouchingToken(context, nextToken.start.index, false)->Parent();
-
-    contextNodeAllOnSameLine_ = NodeIsOnOneLine(contextNode_);
-    nextNodeAllOnSameLine_ = NodeIsOnOneLine(nextTokenParent_);
-    tokensAreOnSameLine_ = currentTokenSpan_.start.ToLocation().line == nextTokenSpan_.start.ToLocation().line;
-    contextNodeBlockIsOnOneLine_ = BlockIsOnOneLine(contextNode_);
-    nextNodeBlockIsOnOneLine_ = BlockIsOnOneLine(nextTokenParent_);
+    prevToken_ = token;
 }
 
-bool FormattingContext::ContextNodeAllOnSameLine() const
+void FormattingContext::SetNextToken(const lexer::Token &token)
 {
-    return contextNodeAllOnSameLine_;
+    nextToken_ = token;
 }
 
-bool FormattingContext::NextNodeAllOnSameLine() const
+void FormattingContext::SetCurrentTokenParent(ir::AstNode *node)
 {
-    return nextNodeAllOnSameLine_;
+    currentTokenParent_ = node;
 }
 
-bool FormattingContext::TokensAreOnSameLine() const
+void FormattingContext::SetNextTokenParent(ir::AstNode *node)
 {
-    return tokensAreOnSameLine_;
+    nextTokenParent_ = node;
+}
+
+const lexer::Token &FormattingContext::GetCurrentToken() const
+{
+    return currentToken_;
+}
+
+const lexer::Token &FormattingContext::GetPreviousToken() const
+{
+    return prevToken_;
+}
+
+const lexer::Token &FormattingContext::GetNextToken() const
+{
+    return nextToken_;
+}
+
+ir::AstNode *FormattingContext::GetCurrentTokenParent() const
+{
+    return currentTokenParent_;
+}
+
+ir::AstNode *FormattingContext::GetNextTokenParent() const
+{
+    return nextTokenParent_;
+}
+
+const std::string &FormattingContext::GetSourceText() const
+{
+    return sourceText_;
+}
+
+const lexer::SourceRange &FormattingContext::GetCurrentTokenSpan() const
+{
+    return currentTokenSpan_;
 }
 
 bool FormattingContext::ContextNodeBlockIsOnOneLine() const
 {
-    return contextNodeBlockIsOnOneLine_;
-}
-
-bool FormattingContext::NextNodeBlockIsOnOneLine() const
-{
-    return nextNodeBlockIsOnOneLine_;
-}
-
-bool FormattingContext::NodeIsOnOneLine(ir::AstNode *node) const
-{
-    if (node == nullptr) {
-        return false;
+    if (currentTokenParent_ == nullptr) {
+        return true;
     }
+    return BlockIsOnOneLine(currentTokenParent_);
+}
 
-    return node->Start().line == node->End().line;
+bool FormattingContext::TokensAreOnSameLine() const
+{
+    return prevToken_.Loc().end.line == currentToken_.Loc().start.line;
 }
 
 bool FormattingContext::BlockIsOnOneLine(ir::AstNode *node) const
 {
-    if (node == nullptr) {
-        return false;
+    if (node->IsBlockStatement()) {
+        auto block = node->AsBlockStatement();
+        if (!block->Statements().empty()) {
+            return block->Start().line == block->Statements().back()->End().line;
+        }
     }
-
-    auto nodeChild = node->FindChild([](ir::AstNode *astnode) { return CheckNodeKindForBraceMatching(astnode); });
-
-    return NodeIsOnOneLine(nodeChild);
+    return node->Start().line == node->End().line;
 }
 
 }  // namespace ark::es2panda::lsp

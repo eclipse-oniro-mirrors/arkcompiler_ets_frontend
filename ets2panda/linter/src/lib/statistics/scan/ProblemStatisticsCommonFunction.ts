@@ -16,6 +16,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { LintRunResult } from '../../LintRunResult';
+import { Logger } from '../../Logger';
 import type { ProblemInfo } from '../../ProblemInfo';
 import * as mk from '../../utils/consts/MapKeyConst';
 import { countFiles } from './CountFile';
@@ -26,6 +27,7 @@ import type { RuleDetailedErrorInfo } from './RuleDetailedErrorInfo';
 import type { StatisticsReportInPutInfo } from './StatisticsReportInPutInfo';
 import type { TimeRecorder } from './TimeRecorder';
 import { WorkLoadInfo } from './WorkLoadInfo';
+import { getAllLinterRules } from '../../utils/functions/ConfiguredRulesProcess';
 
 export function getProblemStatisticsInfo(
   problemNumbers: ProblemNumbersInfo,
@@ -84,14 +86,18 @@ export function accumulateRuleNumbers(
   ruleToNumbersMap: Map<string, number>,
   ruleToAutoFixedNumbersMap: Map<string, number>
 ): void {
+  const regex = /.*\(([^)]+)\)[^(]*$/;
   problems.forEach((problem) => {
     if (problem.rule !== undefined) {
-      if (problem.autofix) {
-        const currentNumber = ruleToAutoFixedNumbersMap.get(problem.rule) || 0;
-        ruleToAutoFixedNumbersMap.set(problem.rule, currentNumber + 1);
+      const match = problem.rule.match(regex);
+      if (match?.[1]?.trim()) {
+        if (problem.autofix) {
+          const currentNumber = ruleToAutoFixedNumbersMap.get(match[1]) || 0;
+          ruleToAutoFixedNumbersMap.set(match[1], currentNumber + 1);
+        }
+        const currentNumber = ruleToNumbersMap.get(match[1]) || 0;
+        ruleToNumbersMap.set(match[1], currentNumber + 1);
       }
-      const currentNumber = ruleToNumbersMap.get(problem.rule) || 0;
-      ruleToNumbersMap.set(problem.rule, currentNumber + 1);
     }
   });
 }
@@ -105,7 +111,7 @@ export async function generateReportFile(reportName: string, reportData, reportP
     await fs.promises.mkdir(path.dirname(reportFilePath), { recursive: true });
     await fs.promises.writeFile(reportFilePath, JSON.stringify(reportData, null, 2));
   } catch (error) {
-    console.error('Error generating report file:', error);
+    Logger.error(`Error generating report file:${error}`);
   }
 }
 
@@ -118,7 +124,7 @@ export function generateReportFileSync(reportName: string, reportData: any, repo
     fs.mkdirSync(path.dirname(reportFilePath), { recursive: true });
     fs.writeFileSync(reportFilePath, JSON.stringify(reportData, null, 2));
   } catch (error) {
-    console.error('Error generating report file:', error);
+    Logger.error(`Error generating report file:${error}`);
   }
 }
 
@@ -143,19 +149,39 @@ export async function generateScanProbelemStatisticsReport(
     needToManualFixproblemNumbers: statisticsReportInPutInfo.totalProblemNumbers - canBeAutoFixedproblemNumbers
   };
   const projectFolderList = statisticsReportInPutInfo.cmdOptions.linterOptions.projectFolderList!;
-  const WorkLoadInfo = await getWorkLoadInfo(projectFolderList);
+  const workLoadInfo = await getWorkLoadInfo(projectFolderList);
+  workLoadInfo.calculateFixRate(problemNumbers);
   const statisticsReportData = getProblemStatisticsInfo(
     problemNumbers,
-    statisticsReportInPutInfo.ruleToNumbersMap,
+    getProcessedRuleToNumbersMap(statisticsReportInPutInfo.ruleToNumbersMap, statisticsReportInPutInfo.allLinterRules),
     statisticsReportInPutInfo.ruleToAutoFixedNumbersMap,
     statisticsReportInPutInfo.timeRecorder,
-    WorkLoadInfo
+    workLoadInfo
   );
   await generateReportFile(
     statisticsReportInPutInfo.statisticsReportName,
     statisticsReportData,
     statisticsReportInPutInfo.cmdOptions.outputFilePath
   );
+}
+
+function getProcessedRuleToNumbersMap(
+  ruleToNumbersMap: Map<string, number>,
+  allLinterRules: string[]
+): Map<string, number> {
+  const processedRuleToNumbersMap: Map<string, number> = new Map();
+  const homecheckRuleToNumbersMap: Map<string, number> = ruleToNumbersMap;
+  allLinterRules.forEach((ruleName) => {
+    const ruleNumber = ruleToNumbersMap.get(ruleName) || 0;
+    homecheckRuleToNumbersMap.delete(ruleName);
+    processedRuleToNumbersMap.set(ruleName, ruleNumber);
+  });
+
+  homecheckRuleToNumbersMap.forEach((number, ruleName) => {
+    processedRuleToNumbersMap.set(ruleName, number);
+  });
+
+  return processedRuleToNumbersMap;
 }
 
 export function generateMigrationStatisicsReport(
@@ -190,7 +216,7 @@ export function generateMigrationStatisicsReport(
 
   const statisticsReportData = getProblemStatisticsInfo(
     problemNumbers,
-    ruleToNumbersMap,
+    getProcessedRuleToNumbersMap(ruleToNumbersMap, getAllLinterRules()),
     ruleToAutoFixedNumbersMap,
     timeRecorder
   );

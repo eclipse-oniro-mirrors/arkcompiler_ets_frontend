@@ -27,7 +27,7 @@ namespace {
 TEST_F(ASTVerifierTest, ValidateCorrectGetterSetter)
 {
     DiagnosticEngine de {};
-    ETSChecker checker {de};
+    ETSChecker checker {Allocator(), de};
 
     char const *text =
         R"(
@@ -52,7 +52,7 @@ TEST_F(ASTVerifierTest, ValidateCorrectGetterSetter)
 TEST_F(ASTVerifierTest, ValidateAbstractGettersSetters)
 {
     DiagnosticEngine de {};
-    ETSChecker checker {de};
+    ETSChecker checker {Allocator(), de};
 
     char const *text =
         R"(
@@ -72,7 +72,7 @@ TEST_F(ASTVerifierTest, ValidateAbstractGettersSetters)
 TEST_F(ASTVerifierTest, ValidateAmbientGettersSetters)
 {
     DiagnosticEngine de {};
-    ETSChecker checker {de};
+    ETSChecker checker {Allocator(), de};
 
     char const *text =
         R"(

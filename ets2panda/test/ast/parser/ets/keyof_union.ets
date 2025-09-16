@@ -24,18 +24,18 @@ function getProperty<K extends ((keyof A)|number|A)>(key: K){}
 function main():void{
   let a:A = new A();
 
-  type keyofA = keyof A;
-  type keyofUnion = keyofA|number|A;
-  let x1:keyofUnion = /* @@ label1 */"foo2";
-  let x2:keyofUnion = /* @@ label2 */"other field";
+  /* @@ label1 */type keyofA = keyof A;
+  /* @@ label2 */type keyofUnion = keyofA|number|A;
+  let x1:/* @@ label3 */keyofUnion = "foo2";
+  let x2:/* @@ label4 */keyofUnion = "other field";
 
-  /* @@ label3 */getProperty<keyofA>(/* @@ label4 */"foo2")
-  /* @@ label5 */getProperty<keyofA>(/* @@ label6 */"other field")
+  getProperty</* @@ label5 */keyofA>("foo2")
+  getProperty</* @@ label6 */keyofA>("other field")
 }
 
-/* @@@ label1 Error TypeError: Type '"foo2"' cannot be assigned to type 'Double|A|"foo"|"field1"'  */
-/* @@@ label2 Error TypeError: Type '"other field"' cannot be assigned to type 'Double|A|"foo"|"field1"'  */
-/* @@@ label3 Error TypeError: No matching call signature for getProperty("foo2")  */
-/* @@@ label4 Error TypeError: Type '"foo2"' is not compatible with type '"foo"|"field1"' at index 1  */
-/* @@@ label5 Error TypeError: No matching call signature for getProperty("other field")  */
-/* @@@ label6 Error TypeError: Type '"other field"' is not compatible with type '"foo"|"field1"' at index 1  */
+/* @@@ label1 Error SyntaxError: Illegal start of Type Alias expression. */
+/* @@@ label2 Error SyntaxError: Illegal start of Type Alias expression. */
+/* @@@ label3 Error TypeError: Cannot find type 'keyofUnion'. */
+/* @@@ label4 Error TypeError: Cannot find type 'keyofUnion'. */
+/* @@@ label5 Error TypeError: Cannot find type 'keyofA'. */
+/* @@@ label6 Error TypeError: Cannot find type 'keyofA'. */

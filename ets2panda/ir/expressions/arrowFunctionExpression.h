@@ -18,7 +18,6 @@
 
 #include "ir/expression.h"
 #include "ir/annotationAllowed.h"
-#include "ir/jsDocAllowed.h"
 
 namespace ark::es2panda::compiler {
 class ETSCompiler;
@@ -27,7 +26,7 @@ class ETSCompiler;
 namespace ark::es2panda::ir {
 class ScriptFunction;
 
-class ArrowFunctionExpression : public JsDocAllowed<AnnotationAllowed<Expression>> {
+class ArrowFunctionExpression : public AnnotationAllowed<Expression> {
 public:
     ArrowFunctionExpression() = delete;
     ~ArrowFunctionExpression() override = default;
@@ -36,7 +35,7 @@ public:
     NO_MOVE_SEMANTIC(ArrowFunctionExpression);
 
     explicit ArrowFunctionExpression(ScriptFunction *const func, ArenaAllocator *const allocator)
-        : JsDocAllowed<AnnotationAllowed<Expression>>(AstNodeType::ARROW_FUNCTION_EXPRESSION, allocator), func_(func)
+        : AnnotationAllowed<Expression>(AstNodeType::ARROW_FUNCTION_EXPRESSION, allocator), func_(func)
     {
     }
 

@@ -14,10 +14,10 @@
  */
 
 function main(): void {
-    for (const i : int = 0 /* @@ label1 */i < 10; i++) {
+    for (const i : int = 0 /* @@ label1 */i < 10; /* @@ label */i++) {
         console.log("a")
     }
 }
 
-/* @@? 17:16 Error TypeError: Cannot assign to a constant variable i */
+/* @@@ label Error TypeError: Cannot assign to a constant variable i */
 /* @@@ label1 Error SyntaxError: Expected ';', got 'identification literal'. */

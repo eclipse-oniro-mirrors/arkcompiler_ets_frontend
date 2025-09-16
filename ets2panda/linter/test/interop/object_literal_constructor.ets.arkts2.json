@@ -25,16 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 24,
-            "endLine": 19,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 23,
             "column": 22,
             "endLine": 23,
@@ -145,16 +135,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 71,
-            "column": 6,
-            "endLine": 71,
-            "endColumn": 8,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 78,
             "column": 5,
             "endLine": 78,
@@ -172,26 +152,6 @@
             "problem": "InteropObjectLiteralClass",
             "suggest": "",
             "rule": "Object literal cannot be directly assigned to class with a constructor. (arkts-interop-d2s-object-literal-no-args-constructor)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 78,
-            "column": 21,
-            "endLine": 78,
-            "endColumn": 22,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 79,
-            "column": 20,
-            "endLine": 79,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

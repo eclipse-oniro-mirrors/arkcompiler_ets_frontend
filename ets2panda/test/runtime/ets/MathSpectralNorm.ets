@@ -84,7 +84,7 @@ export class MathSpectralNorm {
       total += MathSpectralNorm.spectralnorm(i);
     }
 
-    assertEQ(total, MathSpectralNorm.expected,  "Incorrect result")
+    arktest.assertEQ(total, MathSpectralNorm.expected,  "Incorrect result")
   }
 }
 

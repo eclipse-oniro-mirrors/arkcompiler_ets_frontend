@@ -32,6 +32,7 @@ public:
     checker::Type *Check(checker::TSChecker *checker) override;
     checker::Type *GetType([[maybe_unused]] checker::TSChecker *checker) override;
     checker::VerifiedType Check(checker::ETSChecker *checker) override;
+    TSBooleanKeyword *Clone(ArenaAllocator *allocator, AstNode *parent) override;
     void Accept(ASTVisitorT *v) override
     {
         v->Accept(this);

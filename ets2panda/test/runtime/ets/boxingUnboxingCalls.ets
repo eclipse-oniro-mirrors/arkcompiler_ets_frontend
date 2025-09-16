@@ -33,14 +33,14 @@ function main(): void {
     let a: int = 1;
     let b: Int = 2;
     let c: Int = intParam(a);
-    assertEQ(c, 0)
+    arktest.assertEQ(c, 0)
     let f: Int = intParam(b);
-    assertEQ(f, 0)
+    arktest.assertEQ(f, 0)
     let g: int = objParam(a);
-    assertEQ(g, 2)
+    arktest.assertEQ(g, 2)
     let h: int = objParam(b);
-    assertEQ(h, 2)
+    arktest.assertEQ(h, 2)
     let i: Object = b;
     let j: int = retInt(retRefInt(5));
-    assertEQ(j, 5)
+    arktest.assertEQ(j, 5)
 }

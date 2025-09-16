@@ -16,7 +16,7 @@
 function foo<T>(...args:Array<T>){
     let a = 1;
     for(let e of args){
-        assertEQ(a++, e);
+        arktest.assertEQ(a++, e);
     }
 }
 

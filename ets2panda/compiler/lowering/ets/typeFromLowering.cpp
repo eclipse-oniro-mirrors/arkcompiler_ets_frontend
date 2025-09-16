@@ -116,7 +116,7 @@ std::string HandleTypeParameter(ir::Expression *param, checker::ETSChecker *chec
 ir::Expression *ReplaceTypeFrom(public_lib::Context *ctx, ir::CallExpression *ast)
 {
     auto parser = ctx->parser->AsETSParser();
-    auto checker = ctx->checker->AsETSChecker();
+    auto checker = ctx->GetChecker()->AsETSChecker();
     auto *typeParams = ast->AsCallExpression()->TypeParams();
 
     ES2PANDA_ASSERT(typeParams != nullptr && typeParams->Params().size() == 1);

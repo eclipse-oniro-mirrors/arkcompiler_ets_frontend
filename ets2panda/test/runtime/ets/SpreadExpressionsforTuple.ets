@@ -17,17 +17,17 @@
 function main() {
     let x1: [int, string] = [1, "a"]
     let y1: [int, string] = [...x1]
-    assertTrue(y1[0] == 1 && y1[1] == "a")
+    arktest.assertTrue(y1[0] == 1 && y1[1] == "a")
 
     let x2: [int, boolean] = [2, true]
     let y2: [string, int, boolean, int, boolean, string] = ["a", ...x2, ...x2, "b"]
-    assertTrue(y2[0] == "a" && y2[1] == 2 && y2[2] == true)
-    assertTrue(y2[3] == 2 && y2[4] == true && y2[5] == "b")
+    arktest.assertTrue(y2[0] == "a" && y2[1] == 2 && y2[2] == true)
+    arktest.assertTrue(y2[3] == 2 && y2[4] == true && y2[5] == "b")
 
     let x3: [int, boolean] = [10, false]
     let x4: [string] = ["e"]
     let x5: [string, boolean] = ["f", true]
     let y3: [int, boolean, string, string, int, string, boolean] = [...x3, "g", ...x4, 20, ...x5]
-    assertTrue(y3[0] == 10 && y3[1] == false && y3[2] == "g")
-    assertTrue(y3[3] == "e" && y3[4] == 20 && y3[5] == "f" && y3[6] == true)
+    arktest.assertTrue(y3[0] == 10 && y3[1] == false && y3[2] == "g")
+    arktest.assertTrue(y3[3] == "e" && y3[4] == 20 && y3[5] == "f" && y3[6] == true)
 }

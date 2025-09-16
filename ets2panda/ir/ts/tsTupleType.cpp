@@ -35,12 +35,8 @@ void TSTupleType::TransformChildren(const NodeTransformer &cb, std::string_view 
             it = static_cast<TypeNode *>(transformedNode);
         }
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSTupleType::Iterate(const NodeTraverser &cb) const
@@ -118,7 +114,6 @@ checker::Type *TSTupleType::GetType(checker::TSChecker *checker)
         auto *memberVar =
             varbinder::Scope::CreateVar(checker->Allocator(), memberIndex, varbinder::VariableFlags::PROPERTY, it);
         ES2PANDA_ASSERT(memberVar != nullptr);
-
         checker::ElementFlags memberFlag;
         if (it->IsTSNamedTupleMember()) {
             auto *namedMember = it->AsTSNamedTupleMember();
@@ -168,5 +163,37 @@ checker::Type *TSTupleType::Check(checker::TSChecker *checker)
 checker::VerifiedType TSTupleType::Check([[maybe_unused]] checker::ETSChecker *checker)
 {
     return {this, checker->GetAnalyzer()->Check(this)};
+}
+
+TSTupleType *TSTupleType::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    ArenaVector<TypeNode *> clonedElementTypes(allocator->Adapter());
+    for (auto *elementType : elementTypes_) {
+        clonedElementTypes.push_back(elementType->Clone(allocator, nullptr)->AsTypeNode());
+    }
+
+    auto *clone = allocator->New<TSTupleType>(std::move(clonedElementTypes), allocator);
+
+    // Set parent relationships for cloned element types
+    for (auto *elementType : clone->elementTypes_) {
+        elementType->SetParent(clone);
+    }
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    // Clone annotations if any
+    if (!Annotations().empty()) {
+        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
+        for (auto *annotationUsage : Annotations()) {
+            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
+        }
+        clone->SetAnnotations(std::move(annotationUsages));
+    }
+
+    return clone;
 }
 }  // namespace ark::es2panda::ir

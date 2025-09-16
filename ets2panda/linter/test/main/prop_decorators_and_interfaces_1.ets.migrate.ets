@@ -28,7 +28,7 @@ import {
 
 class User {
   name: string = ""
-  age: number = 0.0
+  age: number = 0
 }
 
 @Entry
@@ -44,8 +44,8 @@ struct FatherComponent {
 
 @Component
 struct ChildComponent {
-  @StoragePropRef user2: User = new User()
-  @LocalStoragePropRef user3: User = new User()
+  @StoragePropRef("user2") user2: User = new User()
+  @LocalStoragePropRef("user3") user3: User = new User()
 
   build() {
   }

@@ -150,7 +150,7 @@ private:
     NodeId GetNodeId(const ir::AstNode *node) const;
     util::StringView GetVariableType(const ir::AstNode *node) const;
     util::StringView GetVariableName(const ir::AstNode *node) const;
-    const lexer::SourcePosition &GetVariablePosition(const ir::AstNode *node) const;
+    lexer::SourcePosition GetVariablePosition(const ir::AstNode *node) const;
     const ir::AstNode *GetDeclaringNode(const ir::AstNode *node);
     varbinder::Variable *GetBoundVariable(const ir::AstNode *node);
     bool VariableHasDefaultValue(const ir::AstNode *node);

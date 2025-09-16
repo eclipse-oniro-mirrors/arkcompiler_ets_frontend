@@ -36,4 +36,89 @@ class E extends A { // NO ERROR constructor is called
   }
 }
 
-class F extends B {} // NO ERROR
+class Base {
+    constructor(a?: string) {}
+    constructor(a: string, b:string, c?:string) {}
+}
+
+class Foo extends Base {
+    constructor() {
+        super()
+    }
+}
+
+class Bar extends Base {
+    constructor() {
+        super("foo")
+    }
+}
+
+class FooTheSecond extends Base {
+    constructor() {
+        super("Foo", "Bar", "Baz")
+    }
+}
+
+class FaultyBar extends Base {
+    constructor() {
+        super(12) // should error
+    }
+}
+
+
+class FaultyFooTheSecond extends Base {
+    constructor() {
+        super("foo", "bar", false) // should error
+    }
+}
+
+class EpicFoo extends Error {
+    constructor() {
+        super()
+    }
+}
+
+class EpicBar extends Error {
+    constructor() {
+        super("foo")
+    }
+}
+
+export enum EEE {
+  E1,
+  E2,
+}
+
+export class A {
+  protected _e:EEE
+  constructor(e: EEE) {
+    this._e = e;
+  }
+}
+
+class B extends A {
+  constructor() {
+    super(EEE.E1)
+  }
+}
+
+class A2 {
+  constructor() {
+    console.log("Parent constructor")
+  }
+}
+
+class C2 extends A2 {
+  // ok 不用报
+}
+
+class A3 {}
+
+class C3 extends A3 {
+  constructor() {
+    super()
+  }
+}
+
+class C4 extends A3 {
+}

@@ -1,0 +1,22 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/demo_har1_2/index.ets",
+        "${absolute_path_to_build_system}/test/e2e/demo_har1_2/Calc.ets"
+    ],
+    "packageName": "demo_har1_2",
+    "moduleType": "har",
+    "buildType": "build",
+    "buildMode": "Debug",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_har1_2/",
+    "sourceRoots": [
+        "./"
+    ],
+    "loaderOutPath": "./dist/out/",
+    "cachePath": "./dist/cache",
+    "enableDeclgenEts2Ts": true,
+    "declgenV1OutPath": "./dist/declgen/decl_ets",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "dependentModuleList": [],
+    "hasMainModule": true
+}

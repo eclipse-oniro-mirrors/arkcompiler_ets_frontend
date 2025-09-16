@@ -19,6 +19,7 @@
 #include "ir/astNode.h"
 #include "ir/statement.h"
 #include "ir/statements/annotationUsage.h"
+#include "util/es2pandaMacros.h"
 
 namespace ark::es2panda::ir {
 
@@ -31,22 +32,75 @@ public:
     NO_COPY_OPERATOR(AnnotationAllowed);
     NO_MOVE_SEMANTIC(AnnotationAllowed);
 
-    [[nodiscard]] ArenaVector<ir::AnnotationUsage *> &Annotations() noexcept
+    void EmplaceAnnotations(AnnotationUsage *source)
     {
-        return annotations_;
+        auto newNode = reinterpret_cast<AnnotationAllowed<T> *>(this->GetOrCreateHistoryNode());
+        newNode->annotations_.emplace_back(source);
+    }
+
+    void ClearAnnotations()
+    {
+        auto newNode = reinterpret_cast<AnnotationAllowed<T> *>(this->GetOrCreateHistoryNode());
+        newNode->annotations_.clear();
+    }
+
+    void SetValueAnnotations(AnnotationUsage *source, size_t index)
+    {
+        auto newNode = reinterpret_cast<AnnotationAllowed<T> *>(this->GetOrCreateHistoryNode());
+        auto &arenaVector = newNode->annotations_;
+        ES2PANDA_ASSERT(arenaVector.size() > index);
+        arenaVector[index] = source;
+    };
+
+    void TransformAnnotations(const NodeTransformer &cb, std::string_view const transformationName)
+    {
+        auto &annotations = Annotations();
+        for (size_t ix = 0; ix < annotations.size(); ix++) {
+            if (auto *transformedNode = cb(annotations[ix]); annotations[ix] != transformedNode) {
+                annotations[ix]->SetTransformedNode(transformationName, transformedNode);
+                SetValueAnnotations(transformedNode->AsAnnotationUsage(), ix);
+            }
+        }
+    }
+
+    ArenaVector<ir::AnnotationUsage *> &AnnotationsForUpdate()
+    {
+        return AstNode::GetOrCreateHistoryNodeAs<AnnotationAllowed<T>>()->annotations_;
+    }
+
+    const ArenaVector<ir::AnnotationUsage *> &Annotations()
+    {
+        return AstNode::GetHistoryNodeAs<AnnotationAllowed<T>>()->annotations_;
     }
 
     [[nodiscard]] const ArenaVector<ir::AnnotationUsage *> &Annotations() const noexcept
     {
-        return annotations_;
+        return AstNode::GetHistoryNodeAs<AnnotationAllowed<T>>()->annotations_;
     }
 
-    void SetAnnotations(ArenaVector<ir::AnnotationUsage *> &&annotations)
+    void SetAnnotations(const ArenaVector<ir::AnnotationUsage *> &&annotationList)
     {
-        annotations_ = std::move(annotations);
-        for (ir::AnnotationUsage *anno : annotations_) {
-            anno->SetParent(this);
+        auto &annotations = AstNode::GetOrCreateHistoryNodeAs<AnnotationAllowed<T>>()->annotations_;
+        annotations = ArenaVector<AnnotationUsage *> {annotationList};
+
+        for (auto annotation : Annotations()) {
+            annotation->SetParent(this);
         }
+    }
+
+    void SetAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotationList)
+    {
+        auto &annotations = AstNode::GetOrCreateHistoryNodeAs<AnnotationAllowed<T>>()->annotations_;
+        annotations = annotationList;
+
+        for (auto annotation : Annotations()) {
+            annotation->SetParent(this);
+        }
+    }
+
+    void AddAnnotations(AnnotationUsage *annotations)
+    {
+        AstNode::GetOrCreateHistoryNodeAs<AnnotationAllowed<T>>()->annotations_.emplace_back(annotations);
     }
 
 protected:
@@ -80,11 +134,6 @@ protected:
     explicit AnnotationAllowed(ArenaAllocator *const allocator, ArenaVector<Statement *> &&statementList)
         : T(allocator, std::move(statementList)), annotations_(allocator->Adapter())
     {
-    }
-
-    void AddAnnotations(AnnotationUsage *const annotations)
-    {
-        annotations_.emplace_back(annotations);
     }
 
     AnnotationAllowed(AnnotationAllowed const &other)

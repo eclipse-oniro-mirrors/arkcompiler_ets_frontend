@@ -16,6 +16,7 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_TYPES_TYPE_RELATION_H
 #define ES2PANDA_COMPILER_CHECKER_TYPES_TYPE_RELATION_H
 
+#include <mutex>
 #include "lexer/token/sourceLocation.h"
 #include "generated/tokenType.h"
 #include "util/ustring.h"
@@ -36,7 +37,6 @@ using ENUMBITOPS_OPERATORS;
 
 enum class TypeRelationFlag : uint32_t {
     NONE = 0U,
-    NARROWING = 1U << 0U,
     WIDENING = 1U << 1U,
     BOXING = 1U << 2U,
     UNBOXING = 1U << 3U,
@@ -62,15 +62,18 @@ enum class TypeRelationFlag : uint32_t {
     NO_THROW_GENERIC_TYPEALIAS = 1U << 24U,
     OVERRIDING_CONTEXT = 1U << 25U,
     IGNORE_REST_PARAM = 1U << 26U,
+    STRING_TO_CHAR = 1U << 27U,
+    OVERLOADING_CONTEXT = 1U << 28U,
+    NO_SUBSTITUTION_NEEDED = 1U << 29U,
 
     ASSIGNMENT_CONTEXT = WIDENING | BOXING | UNBOXING,
-    BRIDGE_CHECK = OVERRIDING_CONTEXT | IGNORE_TYPE_PARAMETERS | NO_RETURN_TYPE_CHECK,
-    CASTING_CONTEXT = NARROWING | WIDENING | BOXING | UNBOXING | UNCHECKED_CAST,
+    BRIDGE_CHECK = OVERRIDING_CONTEXT | IGNORE_TYPE_PARAMETERS,
+    CASTING_CONTEXT = WIDENING | BOXING | UNBOXING | UNCHECKED_CAST,
 };
 
-enum class RelationResult { TRUE, FALSE, UNKNOWN, MAYBE, CACHE_MISS, ERROR };
+enum class RelationResult : uint8_t { TRUE, FALSE, UNKNOWN, MAYBE, CACHE_MISS, ERROR };
 
-enum class RelationType { COMPARABLE, ASSIGNABLE, IDENTICAL, UNCHECKED_CASTABLE, SUPERTYPE };
+enum class RelationType : uint8_t { COMPARABLE, ASSIGNABLE, IDENTICAL, UNCHECKED_CASTABLE, SUPERTYPE };
 
 enum class VarianceFlag { COVARIANT, CONTRAVARIANT, INVARIANT };
 
@@ -82,40 +85,45 @@ struct enumbitops::IsAllowedType<ark::es2panda::checker::TypeRelationFlag> : std
 
 namespace ark::es2panda::checker {
 
-class RelationKey {
-public:
-    uint64_t sourceId;
-    uint64_t targetId;
-};
-
-class RelationKeyHasher {
-public:
-    size_t operator()(const RelationKey &key) const noexcept
-    {
-        return static_cast<size_t>(key.sourceId ^ key.targetId);
-    }
-};
-
-class RelationKeyComparator {
-public:
-    bool operator()(const RelationKey &lhs, const RelationKey &rhs) const
-    {
-        return lhs.sourceId == rhs.sourceId && lhs.targetId == rhs.targetId;
-    }
-};
-
-class RelationEntry {
-public:
-    RelationResult result;
-    RelationType type;
-};
-
-using RelationMap = std::unordered_map<RelationKey, RelationEntry, RelationKeyHasher, RelationKeyComparator>;
-
 class RelationHolder {
 public:
-    RelationMap cached;
-    RelationType type {};
+    using RelationKey = uint64_t;
+
+    class RelationEntry {
+    public:
+        RelationResult result;
+        RelationType type;
+    };
+
+    explicit RelationHolder(ThreadSafeArenaAllocator *allocator) : cached_(allocator->Adapter()) {}
+
+    static RelationKey MakeKey(uint32_t sourceId, uint32_t targetId)
+    {
+        constexpr size_t U32_NR_BITS = 32;  // CC-OFF(G.NAM.03-CPP) project code style
+        return (static_cast<uint64_t>(sourceId) << U32_NR_BITS) | targetId;
+    }
+
+    const RelationEntry *Find(RelationKey key) const
+    {
+        auto it = cached_.find(key);
+        if (it == cached_.cend()) {
+            return nullptr;
+        }
+        return &it->second;
+    }
+
+    void Insert(RelationKey key, RelationEntry entry)
+    {
+        cached_.insert({key, entry});
+    }
+
+    void Clear()
+    {
+        cached_.clear();
+    }
+
+private:
+    ArenaUnorderedMap<RelationKey, RelationEntry> cached_;
 };
 
 class TypeRelation {
@@ -133,11 +141,6 @@ public:
     bool IsError() const
     {
         return result_ == RelationResult::ERROR;
-    }
-
-    bool ApplyNarrowing() const
-    {
-        return (flags_ & TypeRelationFlag::NARROWING) != 0;
     }
 
     bool ApplyWidening() const
@@ -245,6 +248,7 @@ public:
 
     void IncreaseTypeRecursionCount(Type *const type)
     {
+        std::lock_guard<std::mutex> lock(mtx_);
         if (const auto foundType = instantiationRecursionMap_.find(type);
             foundType != instantiationRecursionMap_.end()) {
             foundType->second += 1;
@@ -261,12 +265,14 @@ public:
         // possible to reference the correct types of it's members and methods. 2 is possibly enough, because if we
         // chain expressions, every one of them will be rechecked separately, thus allowing another 2 recursion.
         constexpr auto MAX_RECURSIVE_TYPE_INST = 2;
+        std::lock_guard<std::mutex> lock(mtx_);
         const auto foundType = instantiationRecursionMap_.find(type);
         return foundType == instantiationRecursionMap_.end() ? true : (foundType->second < MAX_RECURSIVE_TYPE_INST);
     }
 
     void DecreaseTypeRecursionCount(Type *const type)
     {
+        std::lock_guard<std::mutex> lock(mtx_);
         const auto foundType = instantiationRecursionMap_.find(type);
         if (foundType == instantiationRecursionMap_.end()) {
             return;
@@ -306,7 +312,6 @@ public:
     void RaiseError(const diagnostic::DiagnosticKind &kind, const lexer::SourcePosition &loc) const;
     void RaiseError(const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &list,
                     const lexer::SourcePosition &loc) const;
-    void LogError(const util::DiagnosticMessageParams &list, const lexer::SourcePosition &loc) const;
 
     bool Result(bool res)
     {
@@ -342,6 +347,7 @@ private:
     RelationResult CacheLookup(const Type *source, const Type *target, const RelationHolder &holder,
                                RelationType type) const;
 
+    std::mutex mtx_;
     Checker *checker_;
     RelationResult result_ {};
     TypeRelationFlag flags_ {};

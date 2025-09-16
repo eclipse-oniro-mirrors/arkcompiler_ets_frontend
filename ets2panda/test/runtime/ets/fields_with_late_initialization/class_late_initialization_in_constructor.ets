@@ -27,6 +27,6 @@ function main() {
     const obj = new A(false);
     console.log(obj.value);
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

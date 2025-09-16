@@ -17,15 +17,15 @@ function main(){
      let arrayA  = Type.from<Array<string>>();
      let arrayB  = Type.from<Array<string>>();
      let arrayC  = Type.from<string[]>();
-     assertTrue(arrayA.toString() == arrayB.toString())
-     assertTrue(arrayA.toString() == arrayC.toString())
+     arktest.assertTrue(arrayA.toString() == arrayB.toString())
+     arktest.assertTrue(arrayA.toString() == arrayC.toString())
 
      let mapA  = Type.from<Map<string,string>>();
      let mapB  = Type.from<Map<string,string>>();
-     assertTrue(mapA.toString() == mapB.toString())
+     arktest.assertTrue(mapA.toString() == mapB.toString())
 
      let recordA  = Type.from<Record<string,string>>();
      let recordB  = Type.from<Record<string,string>>();
-     assertTrue(recordA.toString() == recordB.toString())
+     arktest.assertTrue(recordA.toString() == recordB.toString())
 
 }

@@ -44,12 +44,8 @@ void TSImportType::TransformChildren(const NodeTransformer &cb, std::string_view
             qualifier_ = transformedNode->AsExpression();
         }
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSImportType::Iterate(const NodeTraverser &cb) const

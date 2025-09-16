@@ -96,7 +96,7 @@ TEST_F(LspKeywordCompletionTests, GetKeywordCompletionsStartWithRe)
     std::string input = "re";
     ark::es2panda::lsp::Request result = ark::es2panda::lsp::KeywordCompletionData(input);
 
-    std::vector<std::string> expected = {"readonly", "rethrows", "return", "require"};
+    std::vector<std::string> expected = {"readonly", "return", "require"};
 
     std::vector<std::string> actual;
     for (const auto &entry : result.keywordCompletions) {
@@ -110,7 +110,7 @@ TEST_F(LspKeywordCompletionTests, GetKeywordCompletionsStartWithRet)
     std::string input = "ret";
     ark::es2panda::lsp::Request result = ark::es2panda::lsp::KeywordCompletionData(input);
 
-    std::vector<std::string> expected = {"rethrows", "return"};
+    std::vector<std::string> expected = {"return"};
 
     std::vector<std::string> actual;
     for (const auto &entry : result.keywordCompletions) {
@@ -153,7 +153,7 @@ TEST_F(LspKeywordCompletionTests, GetKeywordCompletionsSensitiveStartWithT)
 {
     std::string input = "T";
     ark::es2panda::lsp::Request result = ark::es2panda::lsp::KeywordCompletionData(input);
-    std::vector<std::string> expected = {"target", "this", "throw", "throws", "true", "try", "type", "typeof"};
+    std::vector<std::string> expected = {"target", "this", "throw", "true", "try", "type", "typeof"};
 
     std::vector<std::string> actual;
     for (const auto &entry : result.keywordCompletions) {

@@ -14,9 +14,9 @@
  */
 
 function foo(a: [byte, int, long]) {
-    assertEQ(a[0], 3)
-    assertEQ(a[1], 42)
-    assertEQ(a[2], -9223372036854775808)
+    arktest.assertEQ(a[0], 3)
+    arktest.assertEQ(a[1], 42)
+    arktest.assertEQ(a[2], -9223372036854775808)
 }
 
 function main() {

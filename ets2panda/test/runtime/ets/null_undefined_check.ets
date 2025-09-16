@@ -51,12 +51,12 @@ function main(): void {
   let f: string|undefined|null = "";
   let g: string|undefined|null = "Hello World!";
 
-  assertEQ( foo(a), 1 );
-  assertEQ( foo(a!), 1 );
-  assertEQ( fooB(b), 2 );
-  assertEQ( fooC(c), 3 );
-  assertEQ( fooD(d!), 4 );
-  assertEQ( fooE(e!), 5 );
-  assertEQ( fooF(f!), 6 );
-  assertEQ( fooG(g!), 7 );
+  arktest.assertEQ( foo(a), 1 );
+  arktest.assertEQ( foo(a!), 1 );
+  arktest.assertEQ( fooB(b), 2 );
+  arktest.assertEQ( fooC(c), 3 );
+  arktest.assertEQ( fooD(d!), 4 );
+  arktest.assertEQ( fooE(e!), 5 );
+  arktest.assertEQ( fooF(f!), 6 );
+  arktest.assertEQ( fooG(g!), 7 );
 }

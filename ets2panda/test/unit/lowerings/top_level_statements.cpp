@@ -154,4 +154,29 @@ TEST_F(LoweringTest, TestTopLevelStmtsExportedEnum)
     }
 }
 
+TEST_F(LoweringTest, TestTrailingLambdaSourceRange)
+{
+    char const *text = R"(
+        function foo(ff: ()=>void) {}
+        function testfoo() {}
+        foo() {
+            testfoo()
+        }
+    )";
+
+    CONTEXT(ES2PANDA_STATE_ASM_GENERATED, text)
+    {
+        const auto *const ast = GetAst();
+        constexpr uint32_t EXPECTED_STARTLINE = 4;
+        constexpr uint32_t EXPECTED_ENDLINE = 4;
+        auto *callExpr = ast->FindChild([](ir::AstNode *child) {
+            return child->IsCallExpression() && child->AsCallExpression()->Callee()->IsIdentifier() &&
+                   child->AsCallExpression()->Callee()->AsIdentifier()->Name().Is("testfoo");
+        });
+        ASSERT(callExpr != nullptr);
+        ASSERT_EQ(callExpr->Start().line, EXPECTED_STARTLINE);
+        ASSERT_EQ(callExpr->End().line, EXPECTED_ENDLINE);
+    }
+}
+
 }  // namespace ark::es2panda

@@ -25,6 +25,6 @@ class B extends A {}
 function main() {
     let b = new B();
     b.x = 123;
-    assertEQ(b.xstate, 123)
-    assertEQ(b.x, 123)
+    arktest.assertEQ(b.xstate, 123)
+    arktest.assertEQ(b.x, 123)
 }

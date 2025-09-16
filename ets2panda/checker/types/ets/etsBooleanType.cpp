@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,14 +26,9 @@ void ETSBooleanType::Identical(TypeRelation *relation, Type *other)
     }
 }
 
-void ETSBooleanType::AssignmentTarget([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *source)
-{
-    if (relation->ApplyUnboxing() && !relation->IsTrue()) {
-        relation->GetChecker()->AsETSChecker()->MaybeAddUnboxingFlagInRelation(relation, source, this);
-    }
-}
+void ETSBooleanType::AssignmentTarget([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *source) {}
 
-bool ETSBooleanType::AssignmentSource([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *target)
+bool ETSBooleanType::AssignmentSource(TypeRelation *relation, Type *target)
 {
     if (relation->ApplyBoxing() && target->IsETSObjectType()) {
         relation->GetChecker()->AsETSChecker()->CheckBoxedSourceTypeAssignable(relation, this, target);

@@ -20,17 +20,17 @@ interface I {
 
 function main(){
     let partial1:Partial<I> = {i:1234,j:"abcd"};
-    assertEQ(partial1.i, 1234)
-    assertEQ(partial1.j, "abcd")
-    assertTrue(!(partial1 instanceof I))
+    arktest.assertEQ(partial1.i, 1234)
+    arktest.assertEQ(partial1.j, "abcd")
+    arktest.assertTrue(!(partial1 instanceof I))
 
     let partial2:Partial<I> = {i:1234};
-    assertEQ(partial2.i, 1234)
-    assertEQ(partial2.j, undefined)
-    assertTrue(!(partial2 instanceof I))
+    arktest.assertEQ(partial2.i, 1234)
+    arktest.assertEQ(partial2.j, undefined)
+    arktest.assertTrue(!(partial2 instanceof I))
 
     let partial3:Partial<I> = {};
-    assertEQ(partial3.i, undefined)
-    assertEQ(partial3.j, undefined)
-    assertTrue(!(partial3 instanceof I))
+    arktest.assertEQ(partial3.i, undefined)
+    arktest.assertEQ(partial3.j, undefined)
+    arktest.assertTrue(!(partial3 instanceof I))
 }

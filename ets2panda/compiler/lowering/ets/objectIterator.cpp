@@ -54,7 +54,7 @@ void ObjectIteratorLowering::TransferForOfLoopBody(ir::Statement *const forBody,
                                                    ir::BlockStatement *const whileBody) const noexcept
 {
     ES2PANDA_ASSERT(forBody != nullptr && whileBody != nullptr);
-    auto &whileStatements = whileBody->Statements();
+    auto &whileStatements = whileBody->StatementsForUpdates();
 
     //  Currently while loop body consists of 2 statements: 'x = it.value!' and 'it = ci.next()'
     //  We need to insert the body of original for-of-loop between them, change their parent and
@@ -129,7 +129,7 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(public_lib::Context
     //  class has required accessible iterator method and all the types and scopes are properly resolved.
     auto *const allocator = ctx->Allocator();
 
-    auto *const varbinder = ctx->checker->VarBinder()->AsETSBinder();
+    auto *const varbinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
     ES2PANDA_ASSERT(varbinder != nullptr);
     auto statementScope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, NearestScope(forOfStatement));
 
@@ -159,6 +159,7 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(public_lib::Context
         loopVariableIdent = declaration->Declarators().at(0U)->Id()->AsIdentifier()->Clone(allocator, nullptr);
     } else if (left->IsIdentifier()) {
         loopVariableIdent = Gensym(allocator);
+        ES2PANDA_ASSERT(loopVariableIdent != nullptr);
         loopVariableIdent->SetName(left->AsIdentifier()->Name());
     } else {
         ES2PANDA_UNREACHABLE();
@@ -167,7 +168,7 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(public_lib::Context
 
     // Parse ArkTS code string and create corresponding AST nodes
     auto *const parser = ctx->parser->AsETSParser();
-    ES2PANDA_ASSERT(parser != nullptr);
+    ES2PANDA_ASSERT(parser != nullptr && nextIdent != nullptr && iterIdent != nullptr);
 
     auto *const loweringResult = parser->CreateFormattedStatement(
         whileStatement, iterIdent, forOfStatement->Right(), nextIdent, iterIdent->Clone(allocator, nullptr),
@@ -180,7 +181,7 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(public_lib::Context
     auto whileBody = loweredWhile->Body()->AsBlockStatement();
     TransferForOfLoopBody(forOfStatement->Body(), whileBody);
 
-    auto *const checker = ctx->checker->AsETSChecker();
+    auto *const checker = ctx->GetChecker()->AsETSChecker();
     ES2PANDA_ASSERT(checker != nullptr);
     CheckLoweredNode(varbinder, checker, loweringResult);
 

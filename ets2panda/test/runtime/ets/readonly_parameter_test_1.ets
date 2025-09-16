@@ -14,7 +14,7 @@
  */
 
 
-function foo1 (tuple: Readonly<[number, string, boolean]>, arr: Readonly<int[]>) {
+function foo1 (tuple: Readonly<[number, string, boolean]>, arr: ReadonlyArray<int>) {
     foo2(tuple, arr)
     let x: readonly [number, string, boolean] = tuple
     let y: readonly int[] = arr
@@ -23,10 +23,10 @@ function foo1 (tuple: Readonly<[number, string, boolean]>, arr: Readonly<int[]>)
 function foo2 (tuple: readonly [number, string, boolean], arr: readonly int[]) {
     foo3(tuple, arr)
     let x: Readonly<[number, string, boolean]> = tuple
-    let y: Readonly<int[]> = arr
+    let y: ReadonlyArray<int> = arr
 }
 
-function foo3 (tuple: Readonly<[number, string, boolean]>, arr: Readonly<int[]>) {
+function foo3 (tuple: Readonly<[number, string, boolean]>, arr: ReadonlyArray<int>) {
     let x: readonly [number, string, boolean] = tuple
     let y: readonly int[] = arr
 }
@@ -36,7 +36,7 @@ function main() : void {
     foo2([1, "ab", true], [1, 2])
 
     let tuple1: Readonly<[int, boolean]> = [1, true] 
-    let arr1: Readonly<int[]> = []
+    let arr1: ReadonlyArray<int> = []
     let tuple2: readonly [int, boolean] = tuple1
     let arr2: readonly int[] = arr1
 

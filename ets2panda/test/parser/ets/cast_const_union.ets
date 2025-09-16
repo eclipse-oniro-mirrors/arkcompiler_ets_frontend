@@ -17,5 +17,5 @@ let s : Double = new Double(-1.1E-20)
 
 function main() {
     const c : Float | Double | Number = s
-    assertEQ(c as Double, -1.1E-20);
+    arktest.assertEQ(c as Double, -1.1E-20);
 }

@@ -25,6 +25,6 @@ final class T extends P {
     }
 }
 
-/* @@? 22:23 Error TypeError: Cannot inherit with 'final' modifier.  */
-/* @@? 23:24 Error TypeError: foo(): int in T cannot override foo(): int in P because overridden method is final.  */
-/* @@? 23:24 Error TypeError: Method foo(): int in T not overriding any method  */
+/* @@? 22:23 Error TypeError: Cannot inherit with 'final' modifier. */
+/* @@? 23:24 Error TypeError: foo(): Int in T cannot override foo(): Int in P because overridden method is final. */
+/* @@? 23:24 Error TypeError: Method foo(): Int in T not overriding any method */

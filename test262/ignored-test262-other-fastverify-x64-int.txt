@@ -11,3 +11,6 @@ test262/data/other_tests/built-ins/RegExp/property-escapes/generated/Script_-_Ta
 
 #27743
 test262/data/other_tests/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Khitan_Small_Script.js
+# Known failures list for test262-other-fastverify-x64-int
+#26589
+test262/data/other_tests/language/expressions/class/elements/regular-definitions-rs-privatename-identifier-initializer-alt.js

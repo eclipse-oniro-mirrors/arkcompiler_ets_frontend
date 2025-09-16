@@ -28,12 +28,8 @@ void TSLiteralType::TransformChildren(const NodeTransformer &cb, std::string_vie
         literal_->SetTransformedNode(transformationName, transformedNode);
         literal_ = transformedNode->AsExpression();
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSLiteralType::Iterate(const NodeTraverser &cb) const
@@ -86,5 +82,38 @@ checker::Type *TSLiteralType::GetType([[maybe_unused]] checker::TSChecker *check
 checker::VerifiedType TSLiteralType::Check([[maybe_unused]] checker::ETSChecker *checker)
 {
     return {this, checker->GetAnalyzer()->Check(this)};
+}
+
+TSLiteralType *TSLiteralType::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    // Clone the literal expression
+    Expression *clonedLiteral = nullptr;
+    if (literal_ != nullptr) {
+        clonedLiteral = literal_->Clone(allocator, nullptr)->AsExpression();
+    }
+
+    auto *clone = allocator->New<TSLiteralType>(clonedLiteral, allocator);
+
+    // Set parent for cloned literal
+    if (clonedLiteral != nullptr) {
+        clonedLiteral->SetParent(clone);
+    }
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    // Clone annotations if any
+    if (!Annotations().empty()) {
+        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
+        for (auto *annotationUsage : Annotations()) {
+            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
+        }
+        clone->SetAnnotations(std::move(annotationUsages));
+    }
+
+    return clone;
 }
 }  // namespace ark::es2panda::ir

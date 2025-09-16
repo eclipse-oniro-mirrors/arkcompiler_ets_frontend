@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 'use static'
 export declare function add(x: number, y: number): double;
 
 export declare function greet(name: string, age?: number): String;

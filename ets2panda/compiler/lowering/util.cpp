@@ -19,6 +19,8 @@
 #include "ir/expressions/identifier.h"
 #include "checker/checker.h"
 #include "checker/ETSAnalyzer.h"
+#include "checker/types/gradualType.h"
+#include "parser/JsdocHelper.h"
 
 namespace ark::es2panda::compiler {
 
@@ -52,7 +54,13 @@ ir::Identifier *Gensym(ArenaAllocator *const allocator)
 util::UString GenName(ArenaAllocator *const allocator)
 {
     static std::size_t gensymCounter = 0U;
-    return util::UString {std::string(GENSYM_CORE) + std::to_string(++gensymCounter), allocator};
+    static std::mutex gensymCounterMutex {};
+    std::size_t individualGensym = 0;
+    {
+        std::lock_guard lock(gensymCounterMutex);
+        individualGensym = ++gensymCounter;
+    }
+    return util::UString {std::string(GENSYM_CORE) + std::to_string(individualGensym), allocator};
 }
 
 void SetSourceRangesRecursively(ir::AstNode *node, const lexer::SourceRange &range)
@@ -70,7 +78,7 @@ ir::AstNode *RefineSourceRanges(ir::AstNode *node)
     };
 
     auto const refine = [isDummyLoc](ir::AstNode *ast) {
-        if (isDummyLoc(ast->Range(), ast) && ast->Parent() != nullptr) {
+        if (ast->Parent() != nullptr && isDummyLoc(ast->Range(), ast)) {
             ast->SetRange(ast->Parent()->Range());
         }
     };
@@ -84,6 +92,9 @@ ir::AstNode *RefineSourceRanges(ir::AstNode *node)
 void ClearTypesVariablesAndScopes(ir::AstNode *node) noexcept
 {
     std::function<void(ir::AstNode *)> doNode = [&](ir::AstNode *nn) {
+        if (nn->IsOpaqueTypeNode()) {
+            return;
+        }
         if (nn->IsScopeBearer()) {
             nn->ClearScope();
         }
@@ -166,10 +177,10 @@ static bool IsGeneratedDynamicClass(ir::AstNode const *ast)
 
 static void ClearHelper(parser::Program *prog)
 {
+    prog->RemoveAstChecked();
     ResetGlobalClass(prog);
-    prog->ClearASTCheckedStatus();
     // #24256 Should be removed when code refactoring on checker is done and no ast node allocated in checker.
-    auto &stmts = prog->Ast()->Statements();
+    auto &stmts = prog->Ast()->StatementsForUpdates();
     // clang-format off
     stmts.erase(std::remove_if(stmts.begin(), stmts.end(),
         [](ir::AstNode *ast) -> bool {
@@ -218,31 +229,56 @@ varbinder::Scope *Rebind(PhaseManager *phaseManager, varbinder::ETSBinder *varBi
     return scope;
 }
 
+void HandleExternalProgram(varbinder::ETSBinder *newVarbinder, parser::Program *program)
+{
+    for (auto [_, program_list] : program->ExternalSources()) {
+        for (auto prog : program_list) {
+            if (!prog->IsASTLowered()) {
+                ClearHelper(prog);
+                prog->PushVarBinder(newVarbinder);
+            }
+        }
+    }
+}
+
 // Rerun varbinder and checker on the node.
 void Recheck(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, checker::ETSChecker *checker,
              ir::AstNode *node)
 {
     RefineSourceRanges(node);
     if (node->IsProgram()) {
+        auto ctx = varBinder->GetContext();
+        phaseManager->SetCurrentPhaseId(0);
         auto program = node->AsETSModule()->Program();
-        if (program->IsPackage()) {
-            return;
-        }
 
-        for (auto [_, program_list] : program->ExternalSources()) {
-            for (auto prog : program_list) {
-                ClearHelper(prog);
-            }
-        }
+        auto newVarbinder = ctx->allocator->New<varbinder::ETSBinder>(ctx->allocator);
+        newVarbinder->SetProgram(program);
+        newVarbinder->SetContext(ctx);
+        program->PushVarBinder(newVarbinder);
+        varBinder->CopyTo(newVarbinder);
+        HandleExternalProgram(newVarbinder, program);
 
         ClearHelper(program);
 
-        varBinder->CleanUp();
-        varBinder->GetContext()->checker->CleanUp();
+        auto newChecker =
+            ctx->allocator->New<checker::ETSChecker>(ctx->allocator, *ctx->diagnosticEngine, ctx->allocator);
+        auto analyzer = ctx->allocator->New<checker::ETSAnalyzer>(newChecker);
+
+        ctx->PushAnalyzer(analyzer);
+        newChecker->SetAnalyzer(analyzer);
+        newChecker->Initialize(newVarbinder);
+        ctx->PushChecker(newChecker);
+        for (auto [_, program_list] : program->ExternalSources()) {
+            if (auto prog = program_list.front(); prog->IsASTLowered()) {
+                newChecker->SetGlobalTypesHolder(prog->Checker()->GetGlobalTypesHolder());
+                break;
+            }
+        }
 
         for (auto *phase : phaseManager->RecheckPhases()) {
-            phase->Apply(varBinder->GetContext(), program);
+            phase->Apply(ctx, program);
         }
+        phaseManager->SetCurrentPhaseIdToAfterCheck();
         return;
     }
 
@@ -261,6 +297,32 @@ void Recheck(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, checke
     node->Check(checker);
 }
 
+// NOTE: used to get the declaration name in Plugin API and LSP
+std::optional<std::string> GetNameOfDeclaration(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return std::nullopt;
+    }
+    switch (node->Type()) {
+        case ir::AstNodeType::IDENTIFIER:
+            return std::string(node->AsIdentifier()->Name().Utf8());
+        case ir::AstNodeType::METHOD_DEFINITION:
+            return std::string(node->AsMethodDefinition()->Id()->Name().Utf8());
+        case ir::AstNodeType::FUNCTION_DECLARATION:
+            return std::string(node->AsFunctionDeclaration()->Function()->Id()->Name().Utf8());
+        case ir::AstNodeType::FUNCTION_EXPRESSION:
+            return std::string(node->AsFunctionExpression()->Function()->Id()->Name().Utf8());
+        case ir::AstNodeType::CLASS_DEFINITION:
+            return std::string(node->AsClassDefinition()->Ident()->Name().Utf8());
+        case ir::AstNodeType::CLASS_PROPERTY:
+            return std::string(node->AsClassProperty()->Id()->Name().Utf8());
+        case ir::AstNodeType::TS_INTERFACE_DECLARATION:
+            return std::string(node->AsTSInterfaceDeclaration()->Id()->Name().Utf8());
+        default:
+            return std::nullopt;
+    }
+}
+
 // NOTE: used to get the declaration from identifier in Plugin API and LSP
 ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node)
 {
@@ -277,6 +339,29 @@ ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node)
         return nullptr;
     }
     return decl->Node();
+}
+
+// NOTE: used to get the license string from the input root node.
+util::StringView GetLicenseFromRootNode(const ir::AstNode *node)
+{
+    std::unique_ptr<parser::JsdocHelper> jsdocGetter = std::make_unique<parser::JsdocHelper>(node);
+    return jsdocGetter->GetLicenseStringFromStart();
+}
+
+// NOTE: used to get the jsdoc string from the input node.
+util::StringView JsdocStringFromDeclaration(const ir::AstNode *node)
+{
+    std::unique_ptr<parser::JsdocHelper> jsdocGetter = std::make_unique<parser::JsdocHelper>(node);
+    return jsdocGetter->GetJsdocBackward();
+}
+
+// Note: run varbinder on the new node generated in lowering phases (without ClearTypesVariablesAndScopes)
+void BindLoweredNode(varbinder::ETSBinder *varBinder, ir::AstNode *node)
+{
+    RefineSourceRanges(node);
+    InitScopesPhaseETS::RunExternalNode(node, varBinder);
+    auto *scope = NearestScope(node);
+    varBinder->ResolveReferencesForScopeWithContext(node, scope);
 }
 
 // Note: run varbinder and checker on the new node generated in lowering phases (without ClearTypesVariablesAndScopes)
@@ -301,11 +386,32 @@ void CheckLoweredNode(varbinder::ETSBinder *varBinder, checker::ETSChecker *chec
     if ((checker->Context().Status() & checker::CheckerStatus::IN_EXTENSION_ACCESSOR_CHECK) != 0) {
         newStatus |= checker::CheckerStatus::IN_EXTENSION_ACCESSOR_CHECK;
     }
-    auto checkerCtx = checker::SavedCheckerContext(
-        checker, newStatus, containingClass != nullptr ? containingClass->TsType()->AsETSObjectType() : nullptr);
+
+    auto classType = containingClass == nullptr ? nullptr
+                     : containingClass->TsType()->IsGradualType()
+                         ? containingClass->TsType()->AsGradualType()->GetBaseType()->AsETSObjectType()
+                         : containingClass->TsType()->AsETSObjectType();
+    auto checkerCtx = checker::SavedCheckerContext(checker, newStatus, classType);
     auto scopeCtx = checker::ScopeContext(checker, scope);
 
     node->Check(checker);
+}
+
+parser::Program *SearchExternalProgramInImport(const parser::Program::DirectExternalSource &extSource,
+                                               const util::ImportPathManager::ImportMetadata &importMetadata)
+{
+    parser::Program *extProg = nullptr;
+    const auto importPath = importMetadata.resolvedSource;
+    // Search Correct external program by comparing importPath and absolutePath
+    for (auto &[_, progs] : extSource) {
+        auto it = std::find_if(progs.begin(), progs.end(),
+                               [&](const auto *prog) { return prog->AbsoluteName() == importPath; });
+        if (it != progs.end()) {
+            extProg = *it;
+            break;
+        }
+    }
+    return extProg;
 }
 
 bool IsAnonymousClassType(const checker::Type *type)

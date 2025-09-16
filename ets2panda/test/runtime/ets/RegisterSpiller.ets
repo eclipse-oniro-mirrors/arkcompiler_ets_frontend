@@ -15,16 +15,16 @@
 
 function main(): void {
     let str: String = "hello\nworld\n";
-    assertEQ(str.charAt(2), c'l')
-    assertEQ(str.length, 12)
-    assertEQ(str.charAt(Double.toInt(str.length) - 1), c'\n')
+    arktest.assertEQ(str.charAt(2), c'l')
+    arktest.assertEQ(str.length, 12)
+    arktest.assertEQ(str.charAt(Double.toInt(str.length) - 1), c'\n')
 
     let a: String = "abc";
     let b: String = "ace";
     let c: String = "abc";
-    assertTrue(!a.equals(b))
-    assertTrue(a.equals(c))
-    assertTrue(!b.equals(c))
+    arktest.assertTrue(!a.equals(b))
+    arktest.assertTrue(a.equals(c))
+    arktest.assertTrue(!b.equals(c))
 
     let n2: int = 41;
     let n3: long = 42;
@@ -32,13 +32,13 @@ function main(): void {
     let n5: double = 44.44;
     let n6: double = random();
     let n7: double = random() + 42;
-    assertTrue(n6 >= 0.0 && n6 <= 1.0)
-    assertTrue(n7 >= 42.0 && n7 <= 43.0)
+    arktest.assertTrue(n6 >= 0.0 && n6 <= 1.0)
+    arktest.assertTrue(n7 >= 42.0 && n7 <= 43.0)
 
     let s1: String = "This ";
     let s2: String = "is ";
     let s3: String = "another ";
     let s4: String = "string";
     let s5: String = "This is another string";
-    assertTrue((s1 + s2 + s3 + s4).equals(s5))
+    arktest.assertTrue((s1 + s2 + s3 + s4).equals(s5))
 }

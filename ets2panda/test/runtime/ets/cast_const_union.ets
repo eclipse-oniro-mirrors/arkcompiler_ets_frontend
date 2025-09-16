@@ -17,23 +17,23 @@ function main() {
     let s : Double = new Double(-1.1E-20)
 
     const a : Float | Double | Number = s
-    assertEQ(a as Double, -1.1E-20  )
+    arktest.assertEQ(a as Double, -1.1E-20  )
 
     const b : Float | Double | Number = s
-    assertEQ(b, -1.1E-20)
+    arktest.assertEQ(b, -1.1E-20)
 
     const c : Double = s
-    assertEQ(c as Double, -1.1E-20)
+    arktest.assertEQ(c as Double, -1.1E-20)
 
     const d : double | int = -1.1E-20
-    assertEQ(d as double, -1.1E-20)
+    arktest.assertEQ(d as double, -1.1E-20)
     
     let e : Float | Double | Number = s
-    assertEQ(e as Double, -1.1E-20)
+    arktest.assertEQ(e as Double, -1.1E-20)
 
     let f : double | int = -1.1E-20
-    assertEQ(f as double, -1.1E-20)
+    arktest.assertEQ(f as double, -1.1E-20)
 
     const g : String | Double = "Hi"
-    assertEQ(g as String, "Hi")
+    arktest.assertEQ(g as String, "Hi")
 }

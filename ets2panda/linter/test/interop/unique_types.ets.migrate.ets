@@ -18,6 +18,7 @@ import {
  unknown_var,
  symbol_var,
  function_var,
+ enum_var,
  A,
  B,
  TestHelper,
@@ -71,6 +72,7 @@ typeof symbol_var === 'object';
 function_var.unsafeCall() === true;
 A.instance;
 let obj: B = { name: "hello" };
+enum_var.a === 0;
 
 export function test_ts_non_standard_exception(testCaseRet: Array) {
   let test_helper = new TestHelper("TEST_TS_NON_STANDARD_EXCEPTION");
@@ -79,7 +81,7 @@ export function test_ts_non_standard_exception(testCaseRet: Array) {
     try {
       throw_number(); // arkts-interop-ts2s-ts-exception
     } catch (e) {
-      return e as number === 123.0;
+      return e as number === 123;
     }
     return false;
   }, "e as number === 123");
@@ -135,7 +137,7 @@ export function test_ts_non_standard_exception(testCaseRet: Array) {
       throwErrorSubClass(); // arkts-interop-ts2s-ts-exception
     } catch (e) {
       let errObj = e as SubError;
-      return errObj.extraField === 123.0 && errObj.foo() === 456.0;
+      return errObj.extraField === 123 && errObj.foo() === 456;
     }
     return false;
   }, "errObj.extraField === 123 && errObj.foo() === 456");
@@ -321,7 +323,7 @@ export function test_ts_object_method(testCaseRet: Array) {
     interface Iface {
       a:number
     }
-    let a1:Iface = {a:1.0}
+    let a1:Iface = {a:1}
     ts_object_method(a1)
     ts_object_method_getOwnPropertyDescriptor(a1)
     ts_object_method_getOwnPropertyDescriptors(a1)
@@ -370,7 +372,7 @@ export function test_ts_reflect_method(testCaseRet: Array) {
     interface Iface {
       a:number
     }
-    let a1:Iface = {a:1.0}
+    let a1:Iface = {a:1}
     ts_reflect_method(a1)
     ts_reflect_method_apply(a1)
     ts_reflect_method_defineProperty(a1)

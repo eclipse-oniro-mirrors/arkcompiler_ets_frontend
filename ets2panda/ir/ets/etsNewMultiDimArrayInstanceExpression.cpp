@@ -87,7 +87,15 @@ void ETSNewMultiDimArrayInstanceExpression::ClearPreferredType()
 {
     SetPreferredType(nullptr);
     SetTsType(nullptr);
-    TypeReference()->SetBoxingUnboxingFlags(BoxingUnboxingFlags::NONE);
+}
+
+void ETSNewMultiDimArrayInstanceExpression::CleanCheckInformation()
+{
+    SetPreferredType(nullptr);
+    SetTsType(nullptr);
+    for (auto *dim : dimensions_) {
+        dim->CleanCheckInformation();
+    }
 }
 
 ETSNewMultiDimArrayInstanceExpression::ETSNewMultiDimArrayInstanceExpression(
@@ -120,7 +128,7 @@ void ETSNewMultiDimArrayInstanceExpression::SetPreferredTypeBasedOnFuncParam(che
                                                                              checker::TypeRelationFlag flags)
 {
     // NOTE (mmartin): This needs a complete solution
-    if (preferredType_ != nullptr) {
+    if (PreferredType() != nullptr) {
         return;
     }
     if (!param->IsETSArrayType()) {

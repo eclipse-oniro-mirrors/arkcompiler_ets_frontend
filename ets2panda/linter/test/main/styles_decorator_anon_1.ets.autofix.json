@@ -36,69 +36,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 30,
-            "column": 22,
-            "endLine": 30,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 842,
-                    "end": 843,
-                    "replacementText": "8.0",
-                    "line": 30,
-                    "column": 22,
-                    "endLine": 30,
-                    "endColumn": 23
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 35,
-            "column": 14,
-            "endLine": 35,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 956,
-                    "end": 957,
-                    "replacementText": "0.0",
-                    "line": 35,
-                    "column": 14,
-                    "endLine": 35,
-                    "endColumn": 15
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 36,
-            "column": 14,
-            "endLine": 36,
-            "endColumn": 15,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 972,
-                    "end": 973,
-                    "replacementText": "0.0",
-                    "line": 36,
-                    "column": 14,
-                    "endLine": 36,
-                    "endColumn": 15
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 16,
             "column": 2,
             "endLine": 16,

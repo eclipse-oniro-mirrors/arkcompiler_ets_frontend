@@ -19,4 +19,4 @@ function main() : void {
 
 /* @@@ label Error TypeError: Expected 0 arguments, got 2. */
 /* @@@ label Error TypeError: Expected 1 arguments, got 2. */
-/* @@@ label Error TypeError: No matching construct signature for std.core.Float(int, "3")  */
+/* @@@ label Error TypeError: No matching construct signature for std.core.Float(Int, "3")  */

@@ -23,25 +23,25 @@ function main() : void{
           try {
             break loop;
           } catch (e) {
-            assertTrue(false)
+            arktest.assertTrue(false)
           } finally {
             b++;
           }
         }
       } catch (e) {
-        assertTrue(false)
+        arktest.assertTrue(false)
       } finally {
         a++;
       }
     }
   } catch(e) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } finally {
     a++;
     b++;
   }
-  assertEQ(b, 2)
-  assertEQ(a, 2)
+  arktest.assertEQ(b, 2)
+  arktest.assertEQ(a, 2)
 
   a = 0;
   b = 0;
@@ -52,23 +52,23 @@ function main() : void{
           try {
             break;
           } catch (e) {
-            assertTrue(false)
+            arktest.assertTrue(false)
           } finally {
             b++;
           }
         }
       } catch (e) {
-        assertTrue(false)
+        arktest.assertTrue(false)
       } finally {
         a++;
       }
     }
   } catch(e) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } finally {
     a++;
     b++;
   }
-  assertEQ(b, 11)
-  assertEQ(a, 11)
+  arktest.assertEQ(b, 11)
+  arktest.assertEQ(a, 11)
 }

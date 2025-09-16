@@ -22,6 +22,86 @@ using ark::es2panda::lsp::Initializer;
 
 class LspQuickInfoTests : public LSPAPITests {};
 
+TEST_F(LspQuickInfoTests, StdLibMapGet)
+{
+    std::vector<std::string> files = {"quick_info_map_get.ets"};
+    std::vector<std::string> texts = {R"(let map = new Map<string, number>();
+map.set("a", 1);
+let a = map.get("a");
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 68;
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getQuickInfoAtPosition(filePaths[0].c_str(), ctx, offset);
+    auto displayParts = res.GetDisplayParts();
+    auto expectedDisplayParts = std::vector<SymbolDisplayPart> {
+        SymbolDisplayPart {"Map", "className"},
+        SymbolDisplayPart {".", "punctuation"},
+        SymbolDisplayPart {"get", "functionName"},
+        SymbolDisplayPart {"(", "punctuation"},
+        SymbolDisplayPart {"key", "functionParameter"},
+        SymbolDisplayPart {":", "punctuation"},
+        SymbolDisplayPart {" ", "space"},
+        SymbolDisplayPart {"K", "typeParameter"},
+        SymbolDisplayPart {")", "punctuation"},
+        SymbolDisplayPart {":", "punctuation"},
+        SymbolDisplayPart {" ", "space"},
+        SymbolDisplayPart {"V", "returnType"},
+        SymbolDisplayPart {"|", "punctuation"},
+        SymbolDisplayPart {" ", "space"},
+        SymbolDisplayPart {"undefined", "returnType"},
+    };
+    ASSERT_EQ(displayParts, expectedDisplayParts);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspQuickInfoTests, StdLibMapSet)
+{
+    std::vector<std::string> files = {"quick_info_map_set.ets"};
+    std::vector<std::string> texts = {R"(let map = new Map<string, number>();
+map.set("a", 1);
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 43;
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getQuickInfoAtPosition(filePaths[0].c_str(), ctx, offset);
+    auto displayParts = res.GetDisplayParts();
+    auto expectedDisplayParts = std::vector<SymbolDisplayPart> {
+        SymbolDisplayPart {"Map", "className"},
+        SymbolDisplayPart {".", "punctuation"},
+        SymbolDisplayPart {"set", "functionName"},
+        SymbolDisplayPart {"(", "punctuation"},
+        SymbolDisplayPart {"key", "functionParameter"},
+        SymbolDisplayPart {":", "punctuation"},
+        SymbolDisplayPart {" ", "space"},
+        SymbolDisplayPart {"K", "typeParameter"},
+        SymbolDisplayPart {",", "punctuation"},
+        SymbolDisplayPart {" ", "space"},
+        SymbolDisplayPart {"val", "functionParameter"},
+        SymbolDisplayPart {":", "punctuation"},
+        SymbolDisplayPart {" ", "space"},
+        SymbolDisplayPart {"V", "typeParameter"},
+        SymbolDisplayPart {")", "punctuation"},
+        SymbolDisplayPart {":", "punctuation"},
+        SymbolDisplayPart {" ", "space"},
+        SymbolDisplayPart {"this", "returnType"},
+    };
+    ASSERT_EQ(displayParts, expectedDisplayParts);
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LspQuickInfoTests, CreateDisplayForEnum)
 {
     Initializer initializer = Initializer();
@@ -93,7 +173,7 @@ TEST_F(LspQuickInfoTests, CreateDisplayForUnionTypeAlias)
     expected.emplace_back(" ", "space");
     expected.emplace_back("=", "operator");
     expected.emplace_back(" ", "space");
-    expected.emplace_back("string|number", "typeName");
+    expected.emplace_back("string | number", "typeName");
     ASSERT_EQ(expected, display);
     initializer.DestroyContext(ctx);
 }
@@ -209,6 +289,7 @@ TEST_F(LspQuickInfoTests, CreateDisplayForMethodDefinition)
                                                       "function func(a: number): string { return 'function1'; }");
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
     auto context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(context->GetChecker());
     auto ast = reinterpret_cast<ark::es2panda::ir::AstNode *>(context->parserProgram->Ast());
     auto checkFunc = [](ark::es2panda::ir::AstNode *node) {
         return node->Type() == ark::es2panda::ir::AstNodeType::METHOD_DEFINITION &&
@@ -216,7 +297,7 @@ TEST_F(LspQuickInfoTests, CreateDisplayForMethodDefinition)
                node->AsMethodDefinition()->Id()->Name() != "_$init$_";
     };
     auto found = ast->FindChild(checkFunc);
-    std::vector<SymbolDisplayPart> display = ark::es2panda::lsp::CreateDisplayForMethodDefinition(found, "");
+    std::vector<SymbolDisplayPart> display = ark::es2panda::lsp::CreateDisplayForMethodDefinition(found, "", checker);
     std::vector<SymbolDisplayPart> expected;
 
     // Expected parts for the method definition
@@ -279,7 +360,7 @@ TEST_F(LspQuickInfoTests, CreateDisplayForClassProperty1)
 {
     Initializer initializer = Initializer();
     es2panda_Context *ctx =
-        initializer.CreateContext("class-property-test.ets", ES2PANDA_STATE_CHECKED,
+        initializer.CreateContext("class-property-test2.ets", ES2PANDA_STATE_CHECKED,
                                   "class MyClass {\n  public myProp: number = 0;\n}\n let obj = new MyClass();");
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
     auto context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
@@ -289,10 +370,9 @@ TEST_F(LspQuickInfoTests, CreateDisplayForClassProperty1)
                node->AsClassProperty()->Key()->AsIdentifier()->Name() != "ETSGLOBAL";
     };
     auto found = ast->FindChild(checkFunc);
-    std::vector<SymbolDisplayPart> display = ark::es2panda::lsp::CreateDisplayForClassProperty(found, "const");
+    std::vector<SymbolDisplayPart> display = ark::es2panda::lsp::CreateDisplayForClassProperty(found);
     std::vector<SymbolDisplayPart> expected;
-
-    expected.emplace_back("const", "keyword");
+    expected.emplace_back("let", "keyword");
     expected.emplace_back(" ", "space");
     expected.emplace_back("obj", "property");
     expected.emplace_back(":", "punctuation");
@@ -316,7 +396,7 @@ TEST_F(LspQuickInfoTests, CreateDisplayForClassProperty2)
                node->AsClassProperty()->Key()->AsIdentifier()->Name() != "ETSGLOBAL";
     };
     auto found = ast->FindChild(checkFunc);
-    std::vector<SymbolDisplayPart> display = ark::es2panda::lsp::CreateDisplayForClassProperty(found, "const");
+    std::vector<SymbolDisplayPart> display = ark::es2panda::lsp::CreateDisplayForClassProperty(found);
     std::vector<SymbolDisplayPart> expected;
 
     expected.emplace_back("MyClass", "className");

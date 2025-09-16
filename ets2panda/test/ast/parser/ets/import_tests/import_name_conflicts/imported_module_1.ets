@@ -33,4 +33,3 @@ export function foo_1_1param(a : int) : int {
 }
 
 export default function foo_1_default() : void {}
-

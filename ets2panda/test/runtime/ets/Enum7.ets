@@ -18,5 +18,5 @@ enum Color {
 }
   
 function main() {
-    assertEQ(Color.Red.toString(), 'Line 1\nLine 2\n')
+    arktest.assertEQ(Color.Red.toString(), 'Line 1\nLine 2\n')
 }

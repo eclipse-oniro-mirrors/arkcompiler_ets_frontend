@@ -13,19 +13,9 @@
  * limitations under the License.
  */
  
-
-
-let GeneratedImportVar_3 = ESValue.load('./interop_import_js_js');
-let wiki = GeneratedImportVar_3.getProperty('Wiki');
-let GeneratedImportVar_2 = ESValue.load('./interop_import_js_js');
-let Doge = GeneratedImportVar_2.getProperty('Dog');
-let GeneratedImportVar_1 = ESValue.load('./interop_import_js_js');
-let myAaa = GeneratedImportVar_1.getProperty('aaa');
-let ClassA = GeneratedImportVar_1.getProperty('ClassA');
-let Dog = GeneratedImportVar_1.getProperty('Dog');
-let Person = GeneratedImportVar_1.getProperty('Person');
-let Wiki = GeneratedImportVar_1.getProperty('Wiki');
-
+import myAaa,{ClassA,Dog,Person,Wiki} from "./interop_import_js_js";
+import { Dog as Doge } from './interop_import_js_js';
+import { Wiki as wiki } from './interop_import_js_js';
 
 myAaa.invoke().typeOf(); //error
 let fun = myAaa.invoke();
@@ -49,12 +39,12 @@ function getPersonInfo(){
   typeof person.getName();
   typeof name2;
   typeof name;
-  typeof person.setAge(111.0);
+  typeof person.setAge(111);
   typeof person;
   Person.instantiate().typeOf(); //error
 }
 
-const  age = typeof person.setAge(111.0);
+const  age = typeof person.setAge(111);
 let person2 = typeof person
 class Object {
   code: string = "www"
@@ -79,4 +69,4 @@ class Object {
 myAaa.typeOf(); //error
 Person.instantiate().getProperty('name').typeOf()  //error
 Person.instantiate().invokeMethod("getName").typeOf() //error
-Person.instantiate().invokeMethod("setAge", ESValue.wrap(22.0)).typeOf() //error
+Person.instantiate().invokeMethod("setAge", ESValue.wrap(22)).typeOf() //error

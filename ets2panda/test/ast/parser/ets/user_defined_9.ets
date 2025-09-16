@@ -17,6 +17,4 @@ class /* @@ label */string{
   a : string = "15";
 }
 
-/* @@@ label Error SyntaxError: Cannot be used as user-defined type.  */
-/* @@? 1:3 Error TypeError: Variable 'string' is already defined with different type. */
-/* @@? 17:16 Error TypeError: Type '"15"' cannot be assigned to type 'string' */
+/* @@@ label Error SyntaxError: string is a predefined type, cannot be used as an identifier  */

@@ -25,6 +25,6 @@ class A{
 function main(){
     let res1:string = await new A().getData()
     let res2:string = A.getData("I'm a static method with name 'getData'")
-    assertEQ(res1, "I'm a instance method with name 'getData'")
-    assertEQ(res2, "I'm a static method with name 'getData'")
+    arktest.assertEQ(res1, "I'm a instance method with name 'getData'")
+    arktest.assertEQ(res2, "I'm a static method with name 'getData'")
 }

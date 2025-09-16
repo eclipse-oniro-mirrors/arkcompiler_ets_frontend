@@ -28,23 +28,23 @@ function main() {
     
     
 
-    assertEQ(dst, "undefined")
-    assertEQ(dst_s, "undefined")
-    assertEQ(a_dst, "A_undefined")
-    assertEQ(dst_a, "undefinedA_")
-    assertEQ(n_dst, "nullA_undefined")
-    assertEQ(udef + s, "undefined_str_")
-    assertEQ(s + udef, "_str_undefined")
-    assertEQ(a + n, "A_null")
-    assertEQ(a + s, "A__str_")
-    assertEQ(a + s + udef, "A__str_undefined")
-    assertEQ(a + udef + a, "A_undefinedA_")
-    assertEQ(udef + s + n, "undefined_str_null")
+    arktest.assertEQ(dst, "undefined")
+    arktest.assertEQ(dst_s, "undefined")
+    arktest.assertEQ(a_dst, "A_undefined")
+    arktest.assertEQ(dst_a, "undefinedA_")
+    arktest.assertEQ(n_dst, "nullA_undefined")
+    arktest.assertEQ(udef + s, "undefined_str_")
+    arktest.assertEQ(s + udef, "_str_undefined")
+    arktest.assertEQ(a + n, "A_null")
+    arktest.assertEQ(a + s, "A__str_")
+    arktest.assertEQ(a + s + udef, "A__str_undefined")
+    arktest.assertEQ(a + udef + a, "A_undefinedA_")
+    arktest.assertEQ(udef + s + n, "undefined_str_null")
 
     let p1 = 1
     let p2 = 2
     let p3 = "*"
 
     let res = p1+p2+p3;
-    assertEQ(res, "3*")
+    arktest.assertEQ(res, "3*")
 }

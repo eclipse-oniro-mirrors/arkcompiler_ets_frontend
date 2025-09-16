@@ -18,5 +18,6 @@ function foo() {
 }
 
 /* @@? 17:9 Error TypeError: Cannot find type 'CC'. */
+/* @@? 17:9 Error TypeError: Invalid type reference. */
 /* @@? 18:1 Error SyntaxError: Identifier expected. */
 /* @@? 18:1 Error TypeError: Invalid type reference. */

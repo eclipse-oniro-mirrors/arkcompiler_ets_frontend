@@ -20,4 +20,4 @@ function sum(...numbers: [number, number, number]): number {
 /* @@ label */sum(10, 20, 30, 40)
 
 /* @@@ label Error TypeError: Expected 3 arguments, got 4. */
-/* @@@ label Error TypeError: No matching call signature for sum(int, int, int, int) */
+/* @@@ label Error TypeError: No matching call signature for sum(Int, Int, Int, Int) */

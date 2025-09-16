@@ -22,8 +22,6 @@
 
 namespace ark::es2panda::debuginfo {
 
-using Value = std::variant<std::string, size_t, int32_t>;
-
 class DebugInfoDumper {
 public:
     explicit DebugInfoDumper(const pandasm::Program *prog);
@@ -36,14 +34,18 @@ public:
 private:
     template <typename T>
     void WrapArray(const char *name, const std::vector<T> &array, bool comma = true);
+    void WrapRegArray(ark::pandasm::Ins const &ins, bool comma = true);
+    void WrapIDArray(ark::pandasm::Ins const &ins, bool comma = true);
+    void WrapImmArray(ark::pandasm::Ins const &ins, bool comma = true);
     void WriteIns(const pandasm::Ins &ins);
     void WriteMetaData(const std::vector<pandasm::AnnotationData> &metaData);
-    void WriteProperty(const char *key, const Value &value, bool comma = true);
+    template <typename T>
+    void WriteProperty(const char *key, T &&value, bool comma = true);
     void WritePosInfo(const pandasm::debuginfo::Ins &posInfo);
     void WriteVariableInfo(const pandasm::debuginfo::LocalVariable &localVariableDebug);
     void Indent();
     void DumpFunctions(const std::map<std::string, pandasm::Function> &table);
-    void DumpFuncBody(std::string name, const pandasm::Function &func);
+    void DumpFuncBody(std::string const &name, const pandasm::Function &func);
 
     const pandasm::Program *prog_;
     std::stringstream ss_;

@@ -31,24 +31,24 @@ function getStringArr() {
 function main() {
     let a = new A()
     let arr1:Int[] = [...a.foo(), ...foo()]
-    assertEQ(arr1.length, 3)
-    assertEQ(arr1[0], 7)
-    assertEQ(arr1[1], 1)
-    assertEQ(arr1[2], 2)
+    arktest.assertEQ(arr1.length, 3)
+    arktest.assertEQ(arr1[0], 7)
+    arktest.assertEQ(arr1[1], 1)
+    arktest.assertEQ(arr1[2], 2)
 
     let arr2 = [...getStringArr()]
-    assertEQ(arr2.length, 1)
-    assertEQ(arr2[0], "A")
+    arktest.assertEQ(arr2.length, 1)
+    arktest.assertEQ(arr2[0], "A")
 
     let getArr = (): string[] => {
         return ["a", "b"]
     }
     let arr3 : string[] = [...arr2, ...getArr(), "B"]
-    assertEQ(arr3.length, 4)
-    assertEQ(arr3[0], "A")
-    assertEQ(arr3[1], "a")
-    assertEQ(arr3[2], "b")
-    assertEQ(arr3[3], "B")
+    arktest.assertEQ(arr3.length, 4)
+    arktest.assertEQ(arr3[0], "A")
+    arktest.assertEQ(arr3[1], "a")
+    arktest.assertEQ(arr3[2], "b")
+    arktest.assertEQ(arr3[3], "B")
 
 }
 

@@ -39,7 +39,7 @@ function foo2(arr: Object[]): void {
 function bar(): void {
 	let arr: short[] = [1,2,3,4]
     let fn: (v: short) => void = (v: short): void => {
-        arr[0] = (v + 1) as short;
+        arr[0] = (v + 1).toShort();
     }
     for (let arr = 0; arr < 4; ++arr) { }
     arr = [3];
@@ -50,7 +50,7 @@ function bar(): void {
 function main() {
     let arr: short[] = [1,2,3,4]
     let fn: (v: short) => void = (v: short): void => {
-        arr[0] = (v + 1) as short;
+        arr[0] = (v + 1).toShort();
     }
     for (let i = 0; i < 4; ++i) { }
 }

@@ -50,12 +50,12 @@ function main() {
 
   let v3 = new V(2);
 
-  assertEQ(v1.compareTo(v3), -1);
-  assertEQ(v3.compareTo(v1 as V), 1);
+  arktest.assertEQ(v1.compareTo(v3), -1);
+  arktest.assertEQ(v3.compareTo(v1 as V), 1);
 
-  assertEQ(v1.compare(v3), 3);
-  assertEQ(v3.compare(v1 as V), 0);
+  arktest.assertEQ(v1.compare(v3), 3);
+  arktest.assertEQ(v3.compare(v1 as V), 0);
 
-  assertEQ(v2.compareFrom(v3), 1);
-  assertEQ(v3.compareFrom(v2 as V), -1);
+  arktest.assertEQ(v2.compareFrom(v3), 1);
+  arktest.assertEQ(v3.compareFrom(v2 as V), -1);
 }

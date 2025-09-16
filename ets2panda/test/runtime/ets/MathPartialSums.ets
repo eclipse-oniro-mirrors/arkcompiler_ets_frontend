@@ -75,8 +75,8 @@ export class MathPartialSums {
       sum += MathPartialSums.partial(j);
     }
 
-    assertEQ(sum, MathPartialSums.expected,  "Incorrect result")
-    assertTrue(MathPartialSums.g_flag == 1 || MathPartialSums.g_flag == 2,  "Incorrect g_flag")
+    arktest.assertEQ(sum, MathPartialSums.expected,  "Incorrect result")
+    arktest.assertTrue(MathPartialSums.g_flag == 1 || MathPartialSums.g_flag == 2,  "Incorrect g_flag")
   }
 }
 

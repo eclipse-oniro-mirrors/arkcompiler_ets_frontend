@@ -68,12 +68,12 @@ interface ComputedPropertyT {
 
 class LiteralAsPropertyName {
   __2: string;
-  'Two': number;
+  Two: number;
 }
 
 const litAsPropName: LiteralAsPropertyName = {
   __2: 'two',
-  'Two': 2,
+  Two: 2,
 };
 
 interface Dictionary {

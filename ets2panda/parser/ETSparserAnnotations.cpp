@@ -19,6 +19,7 @@
 #include "ir/ets/etsTuple.h"
 #include "ir/ets/etsUnionType.h"
 #include "ir/statements/annotationDeclaration.h"
+#include "ir/brokenTypeNode.h"
 
 namespace ark::es2panda::parser {
 
@@ -61,6 +62,7 @@ ir::Expression *ETSParser::ParseAnnotationName()
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD) {
         Lexer()->Rewind(save);
         expr = ExpectIdentifier();
+        ES2PANDA_ASSERT(expr != nullptr);
         ident = expr->AsIdentifier();
     } else {
         Lexer()->Rewind(save);
@@ -200,6 +202,8 @@ ir::AstNode *ETSParser::ParseAnnotationProperty(ir::Identifier *fieldName, ir::M
     if (typeAnnotation == nullptr && (memberModifiers & ir::ModifierFlags::ANNOTATION_DECLARATION) != 0 &&
         !fieldName->IsErrorPlaceHolder()) {
         LogError(diagnostic::MISSING_TYPE_ANNOTATION, {fieldName->Name().Mutf8()}, Lexer()->GetToken().Start());
+        typeAnnotation = AllocNode<ir::BrokenTypeNode>(Allocator());
+        typeAnnotation->SetRange({endLoc, endLoc});
     }
 
     if (typeAnnotation != nullptr) {
@@ -372,17 +376,14 @@ void ETSParser::ApplyAnnotationsToSpecificNodeType(ir::AstNode *node, ArenaVecto
     }
 }
 
-static lexer::SourcePosition GetExpressionEndLoc(ir::Expression *expr)
+static lexer::SourcePosition GetAnnotationExpressionEndLoc(ir::Expression *expr)
 {
     ES2PANDA_ASSERT(expr != nullptr);
     if (expr->IsIdentifier()) {
         return expr->AsIdentifier()->End();
     }
-    auto *part = expr->AsETSTypeReference()->Part();
-    if (part->Name()->IsBrokenExpression()) {
-        return part->Name()->AsIdentifier()->End();
-    }
-    return part->Name()->AsTSQualifiedName()->Right()->End();
+
+    return expr->AsETSTypeReference()->Part()->GetIdent()->End();
 }
 
 ir::AnnotationUsage *ETSParser::ParseAnnotationUsage()
@@ -394,7 +395,7 @@ ir::AnnotationUsage *ETSParser::ParseAnnotationUsage()
     ArenaVector<ir::AstNode *> properties(Allocator()->Adapter());
 
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS &&
-        !IsArrowFunctionExpressionStart() && IsAnnotationUsageStart(GetExpressionEndLoc(expr))) {
+        !IsArrowFunctionExpressionStart() && IsAnnotationUsageStart(GetAnnotationExpressionEndLoc(expr))) {
         Lexer()->NextToken();  // eat '('
         if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_BRACE) {
             properties = ParseAnnotationProperties(flags);
@@ -430,7 +431,7 @@ ir::AnnotationUsage *ETSParser::ParseAnnotationUsage()
     auto *annotationUsage = AllocNode<ir::AnnotationUsage>(expr, std::move(properties));
     ES2PANDA_ASSERT(annotationUsage != nullptr);
     annotationUsage->AddModifier(flags);
-    annotationUsage->SetRange({startLoc, GetExpressionEndLoc(expr)});
+    annotationUsage->SetRange({startLoc, GetAnnotationExpressionEndLoc(expr)});
 
     return annotationUsage;
 }

@@ -23,7 +23,6 @@ namespace ark::es2panda::checker {
 
 bool TSChecker::StartChecker([[maybe_unused]] varbinder::VarBinder *varbinder, const util::Options &options)
 {
-    Initialize(varbinder);
     varbinder->IdentifierAnalysis();
 
     if (options.IsDumpAst()) {

@@ -15,66 +15,6 @@
     ],
     "result": [
         {
-            "line": 17,
-            "column": 7,
-            "endLine": 17,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 17,
-            "column": 13,
-            "endLine": 17,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 7,
-            "endLine": 19,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 14,
-            "endLine": 19,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 19,
-            "endLine": 19,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 21,
-            "column": 1,
-            "endLine": 23,
-            "endColumn": 2,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 29,
             "column": 8,
             "endLine": 29,
@@ -85,43 +25,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 26,
-            "column": 8,
-            "endLine": 26,
-            "endColumn": 9,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 29,
-            "column": 8,
-            "endLine": 29,
-            "endColumn": 9,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 35,
-            "column": 15,
-            "endLine": 35,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 44,
             "column": 9,
             "endLine": 44,
             "endColumn": 12,
             "problem": "SwitchExpression",
             "suggest": "",
-            "rule": "The switch expression type must be of type char, byte, short, int, long, string or enum (arkts-switch-expr)",
+            "rule": "The switch expression type must be of type number, string or enum (arkts-switch-expr)",
             "severity": "ERROR"
         },
         {
@@ -142,16 +52,6 @@
             "problem": "CaseExpression",
             "suggest": "",
             "rule": "No two case constant expressions have identical values.(arkts-case-expr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 65,
-            "column": 7,
-            "endLine": 65,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

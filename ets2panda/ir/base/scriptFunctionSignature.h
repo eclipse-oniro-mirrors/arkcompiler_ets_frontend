@@ -24,6 +24,7 @@ namespace ark::es2panda::ir {
 class TSTypeParameterDeclaration;
 class TypeNode;
 class ScriptFunction;
+class ETSFunctionType;
 
 class FunctionSignature {
 public:
@@ -93,6 +94,7 @@ private:
     bool hasReceiver_;
 
     friend class ScriptFunction;
+    friend class ETSFunctionType;
     void CopyFrom(const FunctionSignature &other)
     {
         typeParams_ = other.typeParams_;

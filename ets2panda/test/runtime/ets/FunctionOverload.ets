@@ -32,11 +32,11 @@ class Overload {
 }
 
 function main(): void {
-    assertEQ(Overload.func(), "zero")
-    assertEQ(Overload.func(1), "one")
-    assertEQ(Overload.func(1, 2), "two")
-    assertEQ(Overload.func(1, 2, 3), "variadic")
+    arktest.assertEQ(Overload.func(), "zero")
+    arktest.assertEQ(Overload.func(1), "one")
+    arktest.assertEQ(Overload.func(1, 2), "two")
+    arktest.assertEQ(Overload.func(1, 2, 3), "variadic")
 
     let arr: number[] = [1, 2];
-    assertEQ(Overload.func(...arr), "variadic")
+    arktest.assertEQ(Overload.func(...arr), "variadic")
 }

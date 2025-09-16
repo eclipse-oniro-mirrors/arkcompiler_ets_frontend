@@ -17,14 +17,14 @@ abstract class C{
     field1:number = 10;
     field2:string = "abc";
     method1() {
-        assertEQ(this.field1, 100)
-        assertEQ(this.field2, "some str")
+        arktest.assertEQ(this.field1, 100)
+        arktest.assertEQ(this.field2, "some str")
     }
 }
 
 function main(){
     let x:C = {field1:100,field2:"some str"}
-    assertEQ(x.field1, 100)
-    assertEQ(x.field2, "some str")
+    arktest.assertEQ(x.field1, 100)
+    arktest.assertEQ(x.field2, "some str")
     x.method1();
 }

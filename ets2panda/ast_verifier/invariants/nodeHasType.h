@@ -49,7 +49,8 @@ public:
         if (type == nullptr) {
             return {CheckDecision::CORRECT, CheckAction::CONTINUE};
         }
-        if (!numberLoweringOccurred_ && type->IsETSPrimitiveType()) {
+        // NOTE(dkofanov): Broken extension functions.
+        if (!numberLoweringOccurred_ && !type->IsETSExtensionFuncHelperType() && type->IsETSPrimitiveType()) {
             AddCheckMessage("PRIMITIVE_BEFORE_LOWERING", *ast);
             return {CheckDecision::INCORRECT, CheckAction::CONTINUE};
         }

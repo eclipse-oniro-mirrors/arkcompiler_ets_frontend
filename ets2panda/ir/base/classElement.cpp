@@ -20,22 +20,70 @@
 
 namespace ark::es2panda::ir {
 
+void ClassElement::SetOrigEnumMember(TSEnumMember *enumMember)
+{
+    this->GetOrCreateHistoryNodeAs<ClassElement>()->enumMember_ = enumMember;
+}
+
+void ClassElement::SetKey(Expression *key)
+{
+    this->GetOrCreateHistoryNodeAs<ClassElement>()->key_ = key;
+}
+
+void ClassElement::EmplaceDecorators(Decorator *decorators)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
+    newNode->decorators_.emplace_back(decorators);
+}
+
+void ClassElement::ClearDecorators()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
+    newNode->decorators_.clear();
+}
+
+void ClassElement::SetValueDecorators(Decorator *decorators, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
+    auto &arenaVector = newNode->decorators_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = decorators;
+}
+
+[[nodiscard]] const ArenaVector<Decorator *> &ClassElement::Decorators()
+{
+    auto newNode = this->GetHistoryNodeAs<ClassElement>();
+    return newNode->decorators_;
+}
+
+[[nodiscard]] ArenaVector<Decorator *> &ClassElement::DecoratorsForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
+    return newNode->decorators_;
+}
+
 void ClassElement::SetValue(Expression *value) noexcept
 {
+    if (Value() == value) {
+        return;
+    }
+
     if (value != nullptr) {
         value->SetParent(this);
     }
-    value_ = value;
+    this->GetOrCreateHistoryNodeAs<ClassElement>()->value_ = value;
 }
 
 Identifier *ClassElement::Id() noexcept
 {
-    return key_ != nullptr && key_->IsIdentifier() ? key_->AsIdentifier() : nullptr;
+    auto const key = GetHistoryNode()->AsClassElement()->key_;
+    return key != nullptr && key->IsIdentifier() ? key->AsIdentifier() : nullptr;
 }
 
 const Identifier *ClassElement::Id() const noexcept
 {
-    return key_ != nullptr && key_->IsIdentifier() ? key_->AsIdentifier() : nullptr;
+    auto const key = GetHistoryNode()->AsClassElement()->key_;
+    return key != nullptr && key->IsIdentifier() ? key->AsIdentifier() : nullptr;
 }
 
 bool ClassElement::IsPrivateElement() const noexcept
@@ -44,7 +92,8 @@ bool ClassElement::IsPrivateElement() const noexcept
         return false;
     }
 
-    return key_->IsIdentifier() && key_->AsIdentifier()->IsPrivateIdent();
+    auto const key = GetHistoryNode()->AsClassElement()->key_;
+    return key->IsIdentifier() && key->AsIdentifier()->IsPrivateIdent();
 }
 
 void ClassElement::CopyTo(AstNode *other) const

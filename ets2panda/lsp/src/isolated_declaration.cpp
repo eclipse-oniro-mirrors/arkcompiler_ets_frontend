@@ -49,7 +49,8 @@ std::optional<std::string> GenUnionType(const checker::ETSUnionType *unionType, 
                                         const char splitChar);
 
 template <class UnionType>
-std::vector<UnionType *> FilterUnionTypes(const ArenaVector<UnionType *> &originTypes, checker::ETSChecker *checker)
+std::vector<UnionType *> FilterUnionTypes(const ArenaVector<UnionType *> &originTypes,
+                                          [[maybe_unused]] checker::ETSChecker *checker)
 {
     if (originTypes.empty()) {
         return {};
@@ -213,7 +214,7 @@ std::optional<std::string> HandleETSSpecificTypes(const checker::Type *checkerTy
             return checkerType->ToString();
 
         case checker::TypeFlag::ETS_OBJECT:
-        case checker::TypeFlag::ETS_DYNAMIC_TYPE:
+        case checker::TypeFlag::GRADUAL_TYPE:
             return HandleObjectType(checkerType, checker);
 
         case checker::TypeFlag::ETS_ARRAY:

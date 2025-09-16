@@ -13,27 +13,10 @@
  * limitations under the License.
  */
  
-
-
-
-
-
-
-let GeneratedImportVar_7 = ESValue.load('./interop_import_js_js');
-let Wiki = GeneratedImportVar_7.getProperty('Wiki');
-let Doge = GeneratedImportVar_7.getProperty('Dog');
-let GeneratedImportVar_6 = ESValue.load('./interop_import_js_js');
-let GeneratedImportVar_5 = ESValue.load('./interop_import_js_js');
-let myAaa = GeneratedImportVar_5.getProperty('aaa');
-let ClassA = GeneratedImportVar_5.getProperty('ClassA');
-let Dog = GeneratedImportVar_5.getProperty('Dog');
-let GeneratedImportVar_4 = ESValue.load('./interop_import_js_js');
-let myAaa = GeneratedImportVar_4.getProperty('aaa');
-let GeneratedImportVar_3 = ESValue.load('./jsfiles/preview_import_js');
-let CPreview = GeneratedImportVar_3.getProperty('CPreview');
-let bar = GeneratedImportVar_3.getProperty('bar');
-let foo = GeneratedImportVar_3.getProperty('foo');
-let GeneratedImportVar_2 = ESValue.load('../main/js_lib');
-let fjs = GeneratedImportVar_2.getProperty('fjs');
-let GeneratedImportVar_1 = ESValue.load('../main/js_lib');
-let Cjs = GeneratedImportVar_1.getProperty('Cjs');
+import { Cjs } from '../main/js_lib';
+import { fjs } from '../main/js_lib';
+import { CPreview,bar,foo } from "./jsfiles/preview_import_js";
+import myAaa from "./interop_import_js_js";
+import myAaa,{ClassA,Dog} from "./interop_import_js_js";
+import * as tjs from "./interop_import_js_js";
+import { Wiki, Dog as Doge } from './interop_import_js_js'

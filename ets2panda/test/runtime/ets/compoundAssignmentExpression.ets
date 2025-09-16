@@ -22,9 +22,9 @@ function main() {
     res[3 % (res.length as int)] |= Double.toInt(s[1 % 2].length);
     res[2 % (res.length as int) + s.length] *= Double.toInt(s[1 % 2].length);
 
-    assertEQ(res[0], -2);
-    assertEQ(res[1], 1);
-    assertEQ(res[2], 0);
-    assertEQ(res[3], 2);
-    assertEQ(res[4], 0);
+    arktest.assertEQ(res[0], -2);
+    arktest.assertEQ(res[1], 1);
+    arktest.assertEQ(res[2], 0);
+    arktest.assertEQ(res[3], 2);
+    arktest.assertEQ(res[4], 0);
 }

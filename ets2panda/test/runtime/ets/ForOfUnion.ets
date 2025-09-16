@@ -22,7 +22,7 @@ function check1() {
         }
     }
 
-    assertEQ(str, "abc")
+    arktest.assertEQ(str, "abc")
 }
 
 function check2() {
@@ -35,7 +35,7 @@ function check2() {
         }
     }
 
-    assertEQ(sum, 3)
+    arktest.assertEQ(sum, 3)
 }
 
 function fooStr() : string|Int[] {
@@ -50,7 +50,7 @@ function check3() {
         target = character;
     }
 
-    assertTrue(target instanceof Char)
+    arktest.assertTrue(target instanceof Char)
 }
 
 function fooInt() : string|Int[] {
@@ -65,7 +65,7 @@ function check4() {
         target = val;
     }
 
-    assertTrue((target instanceof Int) && (target == 2))
+    arktest.assertTrue((target instanceof Int) && (target == 2))
 }
 
 function main() {

@@ -21,4 +21,4 @@ declare namespace MySpace{
 }
 
 /* @@? 18:20 Error TypeError: Native, Abstract and Declare methods cannot have body.  */
-/* @@? 19:12 Error TypeError: Native and Declare methods should have explicit return type.  */
+/* @@? 19:9 Error TypeError: Native and Declare methods should have explicit return type.  */

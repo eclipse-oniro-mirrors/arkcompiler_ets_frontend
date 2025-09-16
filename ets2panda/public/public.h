@@ -24,8 +24,7 @@
 
 #include "compiler/core/compileQueue.h"
 #include "parser/ETSparser.h"
-#include "checker/checker.h"
-#include "checker/IsolatedDeclgenChecker.h"
+#include "checker/ETSchecker.h"
 #include "compiler/core/emitter.h"
 
 namespace ark::es2panda::util {
@@ -34,6 +33,8 @@ class Options;
 
 namespace ark::es2panda::compiler {
 class PhaseManager;
+void SetPhaseManager(PhaseManager *phaseManager);
+PhaseManager *GetPhaseManager();
 }  // namespace ark::es2panda::compiler
 
 namespace ark::es2panda::public_lib {
@@ -59,7 +60,7 @@ using ComputedAbstracts =
 
 class TransitionMemory {
 public:
-    explicit TransitionMemory(ArenaAllocator *allocator)
+    explicit TransitionMemory(ThreadSafeArenaAllocator *allocator)
         : permanentAllocator_(allocator), compiledPrograms_(allocator->Adapter())
     {
         compiledPrograms_ = {};
@@ -70,7 +71,7 @@ public:
 
     ~TransitionMemory() = default;
 
-    ArenaAllocator *PermanentAllocator() const
+    ThreadSafeArenaAllocator *PermanentAllocator() const
     {
         return permanentAllocator_.get();
     }
@@ -136,11 +137,18 @@ public:
     }
 
 private:
-    std::unique_ptr<ArenaAllocator> permanentAllocator_;
+    std::unique_ptr<ThreadSafeArenaAllocator> permanentAllocator_;
     ArenaVector<parser::Program *> compiledPrograms_;
     varbinder::VarBinder *varbinder_ {nullptr};
     checker::GlobalTypesHolder *globalTypes_ {nullptr};
     ComputedAbstracts *cachedComputedAbstracts_ {nullptr};
+};
+
+struct GlobalContext {
+    std::unordered_map<std::string, ArenaAllocator *> externalProgramAllocators;
+    std::unordered_map<std::string, ExternalSource *> cachedExternalPrograms;
+    ThreadSafeArenaAllocator *stdLibAllocator = nullptr;
+    ExternalSource *stdLibAstCache = nullptr;
 };
 
 struct Context {
@@ -160,41 +168,49 @@ struct Context {
         return util::NodeAllocator::ForceSetParent<T>(Allocator(), std::forward<Args>(args)...);
     }
 
-    void MarkGenAbcForExternal(std::unordered_set<std::string> &genAbcList, public_lib::ExternalSource &extSources)
+    checker::Checker *GetChecker() const;
+
+    void PushChecker(checker::Checker *checker)
     {
-        size_t genCount = 0;
-        std::unordered_set<std::string> genAbcListAbsolute;
-
-        for (auto &path : genAbcList) {
-            genAbcListAbsolute.insert(os::GetAbsolutePath(path));
-        }
-        for (auto &[_, extPrograms] : extSources) {
-            (void)_;
-            bool setFlag = false;
-            for (auto *prog : extPrograms) {
-                if (auto it = genAbcListAbsolute.find(prog->AbsoluteName().Mutf8()); it != genAbcListAbsolute.end()) {
-                    ++genCount;
-                    setFlag = true;
-                }
-            }
-            if (!setFlag) {
-                continue;
-            }
-            for (auto *prog : extPrograms) {
-                prog->SetGenAbcForExternalSources();
-            }
-        }
-
-        if (genCount != genAbcListAbsolute.size()) {
-            diagnosticEngine->LogFatalError(diagnostic::SIMULTANEOUSLY_MARK_FAILED.Message());
-        }
+        parserProgram->PushChecker(checker);
+        checkers_.push_back(checker);
     }
 
+    // NOTE(zhelyapov): It's calling side responsibility to release resources
+    void ClearCheckers()
+    {
+        checkers_.clear();
+    }
+
+    checker::SemanticAnalyzer *GetAnalyzer() const;
+
+    void PushAnalyzer(checker::SemanticAnalyzer *analyzer)
+    {
+        return analyzers_.push_back(analyzer);
+    }
+
+    // NOTE(zhelyapov): It's calling side responsibility to release resources
+    void ClearAnalyzers()
+    {
+        analyzers_.clear();
+    }
+
+    util::StringView GetDupProgramOriginalPath(util::StringView oldPath)
+    {
+        if (auto it = dupPrograms.find(oldPath); it != dupPrograms.end()) {
+            return it->second->AbsoluteName();
+        }
+        return oldPath;
+    }
+
+    void MarkGenAbcForExternal(std::unordered_set<std::string> &genAbcList, public_lib::ExternalSource &extSources);
+
     ConfigImpl *config = nullptr;
+    GlobalContext *globalContext = nullptr;
     std::string sourceFileName;
     std::string input;
     SourceFile const *sourceFile = nullptr;
-    ArenaAllocator *allocator = nullptr;
+    ThreadSafeArenaAllocator *allocator = nullptr;
     compiler::CompileQueue *queue = nullptr;
     std::vector<util::Plugin> const *plugins = nullptr;
     std::vector<compiler::LiteralBuffer> contextLiterals;
@@ -203,10 +219,6 @@ struct Context {
 
     parser::Program *parserProgram = nullptr;
     parser::ParserImpl *parser = nullptr;
-    checker::Checker *checker = nullptr;
-    checker::IsolatedDeclgenChecker *isolatedDeclgenChecker = nullptr;
-
-    checker::SemanticAnalyzer *analyzer = nullptr;
     compiler::Emitter *emitter = nullptr;
     pandasm::Program *program = nullptr;
     util::DiagnosticEngine *diagnosticEngine = nullptr;
@@ -218,10 +230,17 @@ struct Context {
     CompilingState compilingState {CompilingState::NONE_COMPILING};
     ExternalSources externalSources;
     TransitionMemory *transitionMemory {nullptr};
+    bool isExternal = false;
+    bool compiledByCapi = false;
     std::vector<std::string> sourceFileNames;
     std::map<util::StringView, parser::Program *> dupPrograms {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)
+
+private:
+    std::vector<checker::Checker *> checkers_;
+    std::vector<checker::SemanticAnalyzer *> analyzers_;
 };
+
 }  // namespace ark::es2panda::public_lib
 
 #endif

@@ -28,13 +28,13 @@ function foo(form?: String) {
 class A{}
 
 function main(): void {
-    assertEQ(foo(), 41,  "Error! foo() must be equal 41")
-    assertEQ(foo("xyz"), 42,  "Error! foo(\"xyz\") must be equal 42")
-    assertEQ(foo("NFD"), 0,  "Error! foo(\"NFD\") must be equal 0")
+    arktest.assertEQ(foo(), 41,  "Error! foo() must be equal 41")
+    arktest.assertEQ(foo("xyz"), 42,  "Error! foo(\"xyz\") must be equal 42")
+    arktest.assertEQ(foo("NFD"), 0,  "Error! foo(\"NFD\") must be equal 0")
     let x = foo() == 41 ? new A() : undefined;
-    assertTrue(x instanceof A)
+    arktest.assertTrue(x instanceof A)
     let y = foo("wxyz") == 42 ? "TRUE" : new A();
-    assertTrue(y instanceof A)
+    arktest.assertTrue(y instanceof A)
     y = "JK";
-    assertEQ(y, "JK")
+    arktest.assertEQ(y, "JK")
 }

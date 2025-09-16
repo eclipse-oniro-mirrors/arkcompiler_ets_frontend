@@ -64,7 +64,7 @@ class A {
 }
 let a = new A();
 a.foo();
-assertEQ(a.x, 2);
+arktest.assertEQ(a.x, 2);
 )";
 
 static es2panda_Impl *impl = nullptr;
@@ -81,8 +81,8 @@ static es2panda_AstNode *CreateMemberExpression()
 {
     es2panda_AstNode *thisExpr = CreateThisExpression();
     es2panda_AstNode *memberName = CreateIdentifierFromString(context, "x");
-    es2panda_AstNode *memberExpr =
-        impl->CreateMemberExpression(context, thisExpr, memberName, MEMBER_EXPRESSION_KIND_NONE, false, false);
+    es2panda_AstNode *memberExpr = impl->CreateMemberExpression(context, thisExpr, memberName,
+                                                                MEMBER_EXPRESSION_KIND_PROPERTY_ACCESS, false, false);
     impl->AstNodeSetParent(context, thisExpr, memberExpr);
     impl->AstNodeSetParent(context, memberName, memberExpr);
     return memberExpr;

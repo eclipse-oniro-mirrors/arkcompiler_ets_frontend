@@ -20,8 +20,8 @@
 #include "compiler/base/literals.h"
 
 namespace ark::pandasm {
-struct Ins;
-struct Function;
+class Ins;
+class Function;
 }  // namespace ark::pandasm
 
 namespace ark::es2panda::compiler {

@@ -27,12 +27,7 @@ namespace ark::es2panda::ir {
 void TSFunctionType::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
     signature_.TransformChildren(cb, transformationName);
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSFunctionType::Iterate(const NodeTraverser &cb) const
@@ -88,5 +83,43 @@ checker::VerifiedType TSFunctionType::Check([[maybe_unused]] checker::ETSChecker
 checker::Type *TSFunctionType::GetType([[maybe_unused]] checker::ETSChecker *checker)
 {
     return nullptr;
+}
+
+TSFunctionType *TSFunctionType::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    // Clone the function signature
+    FunctionSignature clonedSignature = signature_.Clone(allocator);
+
+    auto *clone = allocator->New<TSFunctionType>(std::move(clonedSignature), allocator);
+
+    // Set parent relationships for cloned signature components
+    if (clone->signature_.TypeParams() != nullptr) {
+        clone->signature_.TypeParams()->SetParent(clone);
+    }
+    for (auto *param : clone->signature_.Params()) {
+        param->SetParent(clone);
+    }
+    if (clone->signature_.ReturnType() != nullptr) {
+        clone->signature_.ReturnType()->SetParent(clone);
+    }
+
+    clone->SetNullable(nullable_);
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    // Clone annotations if any
+    if (!Annotations().empty()) {
+        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
+        for (auto *annotationUsage : Annotations()) {
+            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
+        }
+        clone->SetAnnotations(std::move(annotationUsages));
+    }
+
+    return clone;
 }
 }  // namespace ark::es2panda::ir

@@ -54,4 +54,4 @@ class ExpectExtend {
   }
 }
 
-assertEQ(true, true);
+arktest.assertEQ(true, true);

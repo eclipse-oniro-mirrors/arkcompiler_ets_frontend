@@ -19,4 +19,4 @@ class TestClass {}
 export {foo}
 export type {TestClass as foo}
 
-/* @@? 20:14 Error TypeError: Ambiguous export 'foo' */
+/* @@? 20:14 Error SyntaxError: Cannot export two different names with the same export alias name 'foo'. */

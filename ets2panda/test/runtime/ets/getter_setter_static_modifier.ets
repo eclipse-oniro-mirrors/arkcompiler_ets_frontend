@@ -66,14 +66,14 @@ function main(): void {
     const leg = Creature.legs;
     const brain = Creature.brain;
 
-    assertEQ(leg, 0)
-    assertEQ(brain, 3)
+    arktest.assertEQ(leg, 0)
+    arktest.assertEQ(brain, 3)
 
     const jump = Carry.Jump;
     const move = Carry.Move;
 
-    assertEQ(jump, 100)
-    assertEQ(move, 10)
+    arktest.assertEQ(jump, 100)
+    arktest.assertEQ(move, 10)
 
     Glass.Size = 150;
     Glass.Transparent = 500;
@@ -81,8 +81,8 @@ function main(): void {
     const size = Glass.Size;
     const transparent = Glass.Transparent;
 
-    assertEQ(size, 150)
-    assertEQ(Glass.Size, 150)
-    assertEQ(transparent, 500)
-    assertEQ(Glass.Transparent, 500)
+    arktest.assertEQ(size, 150)
+    arktest.assertEQ(Glass.Size, 150)
+    arktest.assertEQ(transparent, 500)
+    arktest.assertEQ(Glass.Transparent, 500)
 }

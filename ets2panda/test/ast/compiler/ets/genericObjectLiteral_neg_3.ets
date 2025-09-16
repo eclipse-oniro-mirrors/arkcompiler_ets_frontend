@@ -22,5 +22,5 @@ function main(): void {
   let b : Person/* @@ label */<string, number> ={name: "John", age:/* @@ label1 */"25"}
 }
 
-/* @@@ label Error TypeError: Type Double is not assignable to constraint type String  */
+/* @@@ label Error TypeError: Type argument 'Double' should be a subtype of 'String'-constraint */
 /* @@@ label1 Error TypeError: Type '"25"' is not compatible with type 'Double' at property 'age'  */

@@ -23,7 +23,7 @@ Class MyClass {
   }
 }
 
-let arr: Array<number> = new Array<number>(1, 2, 3);
+let arr: Array<number> = new Array<number>(1, 2, 3); //BuiltinNewCtor
 let a = new MyClass(2);
 let b = new MyClass(3);
 arr.filter(a.compare, a);

@@ -150,7 +150,7 @@ bool ScopedDebugInfoPlugin::InsertReturnStatement()
     // which will also modify method signature's return type.
 
     auto *evalMethodStatements = context_.methodStatements;
-    auto &statementsList = evalMethodStatements->Statements();
+    auto &statementsList = evalMethodStatements->StatementsForUpdates();
     // Omit the emplaced `DebuggerAPI.setLocal<>` calls and find the original last statement.
     auto lastStatementIter = std::find(statementsList.rbegin(), statementsList.rend(), lastStatement);
     ES2PANDA_ASSERT(lastStatementIter != statementsList.rend());
@@ -196,7 +196,7 @@ void ScopedDebugInfoPlugin::AddPrologueEpilogue(ir::BlockStatement *block)
     }
 
     // Prepend prologue.
-    auto &statements = block->Statements();
+    auto &statements = block->StatementsForUpdates();
     for (auto *stmt : iter->second.first) {
         statements.insert(statements.begin(), stmt);
     }
@@ -409,8 +409,9 @@ parser::Program *ScopedDebugInfoPlugin::CreateEmptyProgram(std::string_view sour
     program->SetSource({sourceFilePath, "", globalProgram_->SourceFileFolder().Utf8(), true, false});
     program->SetPackageInfo(moduleName, util::ModuleKind::MODULE);
     auto *emptyIdent = allocator->New<ir::Identifier>("", allocator);
+    auto lang = program->IsDeclForDynamicStaticInterop() ? Language(Language::Id::JS) : Language(Language::Id::ETS);
     auto *etsModule = allocator->New<ir::ETSModule>(allocator, ArenaVector<ir::Statement *>(allocator->Adapter()),
-                                                    emptyIdent, ir::ModuleFlag::ETSSCRIPT, program);
+                                                    emptyIdent, ir::ModuleFlag::ETSSCRIPT, lang, program);
     program->SetAst(etsModule);
 
     helpers::AddExternalProgram(globalProgram_, program, moduleName);

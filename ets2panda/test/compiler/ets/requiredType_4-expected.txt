@@ -97,7 +97,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 17,
+                        "column": 16,
                         "program": "requiredType_4.ets"
                       }
                     }
@@ -110,7 +110,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 17,
+                      "column": 16,
                       "program": "requiredType_4.ets"
                     }
                   }
@@ -318,112 +318,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "requiredType_4.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "requiredType_4.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "foo",
               "decorators": [],
               "loc": {
@@ -503,7 +397,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 25,
+                              "column": 24,
                               "program": "requiredType_4.ets"
                             }
                           }
@@ -516,7 +410,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 25,
+                            "column": 24,
                             "program": "requiredType_4.ets"
                           }
                         }
@@ -530,7 +424,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 25,
+                          "column": 24,
                           "program": "requiredType_4.ets"
                         }
                       }
@@ -543,7 +437,7 @@
                       },
                       "end": {
                         "line": 20,
-                        "column": 25,
+                        "column": 24,
                         "program": "requiredType_4.ets"
                       }
                     }
@@ -749,7 +643,7 @@
                                           },
                                           "end": {
                                             "line": 23,
-                                            "column": 27,
+                                            "column": 26,
                                             "program": "requiredType_4.ets"
                                           }
                                         }
@@ -762,7 +656,7 @@
                                         },
                                         "end": {
                                           "line": 23,
-                                          "column": 27,
+                                          "column": 26,
                                           "program": "requiredType_4.ets"
                                         }
                                       }
@@ -789,7 +683,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 29,
+                                    "column": 27,
                                     "program": "requiredType_4.ets"
                                   }
                                 }
@@ -802,7 +696,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 29,
+                                  "column": 27,
                                   "program": "requiredType_4.ets"
                                 }
                               }

@@ -21,6 +21,6 @@ class A {
 
 class B extends A {
   fn(): float {
-    return 1.0;
+    return Double.toFloat(1.0);
   }
 }

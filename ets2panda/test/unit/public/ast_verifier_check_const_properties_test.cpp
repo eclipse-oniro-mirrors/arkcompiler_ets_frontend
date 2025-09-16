@@ -26,7 +26,7 @@ namespace {
 TEST_F(ASTVerifierTest, CheckConstProperties)
 {
     ark::es2panda::util::DiagnosticEngine de {};
-    ark::es2panda::checker::ETSChecker checker {de};
+    ark::es2panda::checker::ETSChecker checker {Allocator(), de};
 
     char const *text = R"(
         class Test

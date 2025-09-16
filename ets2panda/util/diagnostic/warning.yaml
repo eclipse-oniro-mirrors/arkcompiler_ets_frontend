@@ -12,17 +12,14 @@
 # limitations under the License.
 
 warning:
-- name: SUGGEST_FINAL_MODIFIER_FOR_CLASS
-  id: 1
-  message: "Suggest 'final' modifier for class."
 
-- name: SUGGEST_FINAL_MODIFIER_FOR_METHOD
-  id: 2
-  message: "Suggest 'final' modifier for method."
+- name: ANNOTATION_UNUSED_GENERIC_ALIAS_WARN
+  id: 9
+  message: "Type alias generic parameter '{}' is not used in type annotation"
 
-- name: PROHIBIT_TOP_LEVEL_STATEMENTS
-  id: 3
-  message: "Prohibit top-level statements."
+- name: ASSIGN_TO_READONLY
+  id: 16
+  message: "Cannot assign to '{}' because it is a read-only property."
 
 - name: BOOST_EQUALITY_STATEMENT
   id: 4
@@ -32,65 +29,21 @@ warning:
   id: 73
   message: "Duplicated export aliases for '{}'."
 
-- name: REPLACE_ASYNC_FUNCTION_WITH_COROUTINE
-  id: 5
-  message: "Replace asynchronous function with coroutine."
-
-- name: REPLACE_LAMBDA_FUNCTION_WITH_REGULAR_FUNCTION
-  id: 6
-  message: "Replace the lambda function with a regular function."
-
-- name: IMPLICIT_BOXING_TO
-  id: 7
-  message: "Implicit Boxing to {}{}."
-
-- name : IMPLICIT_UNBOXING_TO
-  id: 8
-  message: "Implicit Unboxing to {}{}."
-
-- name : ANNOTATION_UNUSED_GENERIC_ALIAS_WARN
-  id: 9
-  message: "Type alias generic parameter '{}' is not used in type annotation"
-
-- name: DYNAMIC_PATHS_ABSOLUTE
-  id: 10
-  message: "Don't use absolute path '{}' as key in 'dynamicPaths'"
-
-- name: NO_OHMURL
-  id: 11
-  message: "'ohmUrl' for module '{}' wasn't specified"
-
 - name: DUPLICATE_SIGS
   id: 12
   message: "Detect duplicate signatures, use '{}{}' to replace"
 
+- name: ENUM_DEPRECATED_CAST
+  id: 30
+  message: "Enum cast is deprecated. Cast support from '{}' to '{}' will be removed."
+
+- name: EXTENSION_MISMATCH
+  id: 25
+  message: "Not matching extensions! Sourcefile: {}, Manual(used): {}"
+
 - name: EXTENSION_NONPUBLIC_COLLISION
   id: 13
   message: "The extension function '{}' has the same name with non-public method in class {}"
-
-- name: NULLISH_OPERAND
-  id: 14
-  message: "Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'."
-
-- name: INSTANCEOF_ERASED
-  id: 15
-  message: "Type parameter is erased from type '{}' when used in instanceof expression."
-
-- name: ASSIGN_TO_READONLY
-  id: 16
-  message: "Cannot assign to '{}' because it is a read-only property."
-
-- name: MAYBE_REASSIGNED
-  id: 17
-  message: "{} '{}' might already have been assigned."
-
-- name: PROP_MAYBE_UNINITIALIZED
-  id: 18
-  message: "Property '{}' might not have been initialized."
-
-- name: MAYBE_FALLTHROUGH
-  id: 20
-  message: "Possible fall-through into case"
 
 - name: FINALLY_CANT_COMPLETE
   id: 21
@@ -104,14 +57,70 @@ warning:
   id: 23
   message: "Reading the value of the property inside its getter may lead to an endless loop."
 
+- name: IMPLICIT_BOXING_TO
+  id: 7
+  message: "Implicit Boxing to {}{}."
+
+- name: IMPLICIT_UNBOXING_TO
+  id: 8
+  message: "Implicit Unboxing to {}{}."
+
+- name: IMPROPER_NUMERIC_CAST
+  id: 29
+  message: "'As' expression for cast is deprecated for numeric types. Use explicit conversion function {}.to{}(...) instead."
+
+- name: INSTANCEOF_ERASED
+  id: 15
+  message: "Type parameter is erased from type '{}' when used in instanceof expression."
+
+- name: MAYBE_FALLTHROUGH
+  id: 20
+  message: "Possible fall-through into case"
+
+- name: MAYBE_REASSIGNED
+  id: 17
+  message: "{} '{}' might already have been assigned."
+
+- name: NO_OHMURL
+  id: 11
+  message: "'ohmUrl' for module '{}' wasn't specified"
+
+- name: NULLISH_OPERAND
+  id: 14
+  message: "Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'."
+
+- name: PROHIBIT_TOP_LEVEL_STATEMENTS
+  id: 3
+  message: "Prohibit top-level statements."
+
+- name: REPLACE_ASYNC_FUNCTION_WITH_COROUTINE
+  id: 5
+  message: "Replace asynchronous function with coroutine."
+
+- name: REPLACE_LAMBDA_FUNCTION_WITH_REGULAR_FUNCTION
+  id: 6
+  message: "Replace the lambda function with a regular function."
+
 - name: SETTER_LOOP
   id: 24
   message: "Assigning new value to the property inside its setter may lead to an endless loop."
 
-- name: EXTENSION_MISMATCH
-  id: 25
-  message: "Not matching extensions! Sourcefile: {}, Manual(used): {}"
+- name: SUGGEST_FINAL_MODIFIER_FOR_CLASS
+  id: 1
+  message: "Suggest 'final' modifier for class."
+
+- name: SUGGEST_FINAL_MODIFIER_FOR_METHOD
+  id: 2
+  message: "Suggest 'final' modifier for method."
 
 - name: UNREACHABLE_STMT
   id: 26
   message: "Unreachable statement."
+
+graveyard:
+- 10
+- 18
+- 19
+- 27
+- 28
+# See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

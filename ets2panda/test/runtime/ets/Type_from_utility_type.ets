@@ -23,27 +23,27 @@
    let partialA  = Type.from<Partial<A>>();
    let partialB  = Type.from<Partial<B>>();
    let partialC  = Type.from<Partial<A>>();
-   assertTrue(partialA.toString() != partialB.toString());
-   assertTrue(partialA.toString() == partialC.toString());
+   arktest.assertTrue(partialA.toString() != partialB.toString());
+   arktest.assertTrue(partialA.toString() == partialC.toString());
 
    let requiredA  = Type.from<Required<A>>();
    let requiredB  = Type.from<Required<B>>();
    let requiredC  = Type.from<Required<A>>();
-   assertTrue(requiredA.toString() != requiredB.toString());
-   assertTrue(requiredA.toString() == requiredC.toString());
+   arktest.assertTrue(requiredA.toString() != requiredB.toString());
+   arktest.assertTrue(requiredA.toString() == requiredC.toString());
 
   let readonlyA  = Type.from<Readonly<A>>();
   let readonlyB  = Type.from<Readonly<B>>();
   let readonlyC  = Type.from<Readonly<A>>();
-  assertTrue(readonlyA.toString() != readonlyB.toString());
-  assertTrue(readonlyA.toString() == readonlyC.toString());
+  arktest.assertTrue(readonlyA.toString() != readonlyB.toString());
+  arktest.assertTrue(readonlyA.toString() == readonlyC.toString());
 
   let recordA  = Type.from<Record<string,string>>();
   let recordB  = Type.from<Record<string,string>>();
-  assertTrue(recordA.toString() == recordB.toString());
+  arktest.assertTrue(recordA.toString() == recordB.toString());
 
   let partialarrayA  = Type.from<Partial<Array<string>>>();
   let partialarrayB  = Type.from<Partial<Array<int>>>();
-  assertTrue(partialarrayA.toString() == partialarrayB.toString());
+  arktest.assertTrue(partialarrayA.toString() == partialarrayB.toString());
 
  }

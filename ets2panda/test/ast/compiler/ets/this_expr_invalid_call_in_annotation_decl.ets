@@ -20,4 +20,3 @@
 }
 
 /* @@? 17:28 Error SyntaxError: Invalid value for annotation field, expected a constant literal.  */
-/* @@? 17:28 Error TypeError: Invalid value for annotation field, expected a constant literal.  */

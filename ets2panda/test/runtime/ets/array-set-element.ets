@@ -17,5 +17,5 @@
     let x: Array<number> = new Array<number>(10);
     let i: number = 3;
     x[0] = i;
-    assertEQ(x[0], 3)
+    arktest.assertEQ(x[0], 3)
 }

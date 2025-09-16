@@ -51,7 +51,7 @@ enum class OperandKind {
 
 enum class OperandType {
     REF,  // ref
-    B32,  // u1 u2 i8 u8 i16 u16 i32 u32 b32 f32
+    B32,  // u1 u2 u4 i8 u8 i16 u16 i32 u32 b32 f32
     B64,  // i64, f64, b64
     ANY,  // any
     NONE

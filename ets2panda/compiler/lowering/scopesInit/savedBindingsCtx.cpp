@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 - 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,7 +55,7 @@ void ExportDeclarationContext::BindExportDecl(ir::AstNode *exportDecl)
                                                               util::StringView(DEFAULT_EXPORT),
                                                               rhs->AsFunctionDeclaration()->Function());
             } else {
-                VarBinder()->AddDecl<varbinder::ConstDecl>(rhs->Start(), util::StringView(DEFAULT_EXPORT));
+                VarBinder()->AddDecl<varbinder::ConstDecl>(rhs->Start(), util::StringView(DEFAULT_EXPORT), rhs);
             }
         }
     }

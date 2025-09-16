@@ -109,9 +109,10 @@ CombinedCodeActions FixNaNEquality::GetAllCodeActions(const CodeFixAllContext &c
     const auto changes = provider.CodeFixAll(
         codeFixAll, GetErrorCodes(), [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
             Initializer initializer = Initializer();
-            auto ctx =
-                initializer.CreateContext(diag.file.source.data(), ES2PANDA_STATE_CHECKED, diag.file.source.data());
-            MakeChangeForNaNEquality(tracker, ctx, diag.start, const_cast<std::vector<ir::AstNode *> &>(fixedNodes));
+            auto ctx = initializer.CreateContext(diag.GetFile().source.data(), ES2PANDA_STATE_CHECKED,
+                                                 diag.GetFile().source.data());
+            MakeChangeForNaNEquality(tracker, ctx, diag.GetStart(),
+                                     const_cast<std::vector<ir::AstNode *> &>(fixedNodes));
             initializer.DestroyContext(ctx);
         });
 

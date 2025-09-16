@@ -19,7 +19,4 @@ import * as Src from "./annotation_export"
 Src.MyAnno
 class /* @@ label */A/* @@ label1 */{}
 
-/* @@? 19:1 Error TypeError: Class literal is not yet supported. */
-/* @@? 20:21 Error SyntaxError: Unexpected token 'A'. */
-/* @@? 20:21 Error TypeError: Unresolved reference A */
-/* @@? 20:37 Error SyntaxError: Unexpected token '{'. */
+/* @@? 19:5 Error TypeError: Property 'MyAnno' does not exist on type 'annotation_export' */

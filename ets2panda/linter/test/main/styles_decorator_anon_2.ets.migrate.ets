@@ -29,13 +29,13 @@ struct TestStateStyle {
     .stateStyles({
       normal: (instance: CommonMethod): void => {
         instance.backgroundColor("#00ffff");
-        instance.borderWidth(8.0);
+        instance.borderWidth(8);
       },
       pressed: (instance: CommonMethod): void => {
         instance.backgroundColor(Color.Red);
         instance.backgroundImagePosition({
-          x: 0.0,
-          y: 0.0
+          x: 0,
+          y: 0
         });
         instance.backgroundColor("#ffff00");
       }

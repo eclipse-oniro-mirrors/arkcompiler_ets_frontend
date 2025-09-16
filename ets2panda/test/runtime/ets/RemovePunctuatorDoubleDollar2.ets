@@ -26,9 +26,9 @@
  function main(){
     let $$m = new A();
     let b = $$m.$$a$aa$$;
-    assertEQ(b, true)
+    arktest.assertEQ(b, true)
     let c = $$m.$$b$bb$$;
-    assertEQ(c, 1)
+    arktest.assertEQ(c, 1)
     let d = $$m.$$c$cc$$;
-    assertEQ(d, "apple")
+    arktest.assertEQ(d, "apple")
  }

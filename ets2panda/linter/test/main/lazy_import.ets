@@ -17,3 +17,21 @@ import lazy { m } from 'module'
 
 import lazy { a, b } from 'module1'
 import { c } from 'module2'
+
+import lazy {worker} from '@kit.ArkTS';   // (arkts-no-lazy-import)
+
+import lazy {harTest} from "har1" // (arkts-no-lazy-import)
+
+import lazy {add} from "hsp1" // (arkts-no-lazy-import)
+
+/* test */ import lazy {WorkerEventListener} from '@kit.ArkTS'; // (arkts-no-lazy-import)
+
+import /* test */ lazy {WorkerEventTarget} from '@kit.ArkTS'; // (arkts-no-lazy-import)
+
+/* test */ import /* test */  lazy  /* test */ {WorkerOptions} /* test */  from '@kit.ArkTS'; // (arkts-no-lazy-import)
+
+import lazy {worker as wk} from '@kit.ArkTS'; // (arkts-no-lazy-import)
+
+/* test */ import /* test */
+lazy      // (arkts-no-lazy-import)
+/* test */ {worker as ttt} /* test */  from '@kit.ArkTS';

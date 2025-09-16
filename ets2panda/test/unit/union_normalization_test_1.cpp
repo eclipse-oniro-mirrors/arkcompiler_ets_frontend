@@ -47,7 +47,7 @@ TEST_F(UnionNormalizationTest, UnionWithObject)
     ASSERT(checker);
 
     ArenaVector<checker::Type *> unionConstituents(checker->Allocator()->Adapter());
-    unionConstituents.emplace_back(checker->GlobalIntType());
+    unionConstituents.emplace_back(checker->GlobalIntBuiltinType());
     unionConstituents.emplace_back(checker->GetGlobalTypesHolder()->GlobalETSObjectType());
     unionConstituents.emplace_back(checker->GetGlobalTypesHolder()->GlobalETSStringBuiltinType());
 
@@ -73,10 +73,10 @@ TEST_F(UnionNormalizationTest, UnionWithIdenticalTypes1)
     ASSERT(checker);
 
     ArenaVector<checker::Type *> unionConstituents(checker->Allocator()->Adapter());
-    unionConstituents.emplace_back(checker->GlobalDoubleType());
+    unionConstituents.emplace_back(checker->GlobalDoubleBuiltinType());
     unionConstituents.emplace_back(baseType);
     unionConstituents.emplace_back(checker->GlobalBuiltinETSStringType());
-    unionConstituents.emplace_back(checker->GlobalDoubleType());
+    unionConstituents.emplace_back(checker->GlobalDoubleBuiltinType());
 
     // Create union type, which will be normalized inside creation function
     auto *const normalizedType = checker->CreateETSUnionType(std::move(unionConstituents));

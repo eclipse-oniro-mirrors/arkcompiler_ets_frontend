@@ -22,7 +22,7 @@ switch (q) {
     break;
   }
   case 2: {
-    assertTrue(false)
+    arktest.assertTrue(false)
     break;
   }
 }
@@ -30,8 +30,8 @@ switch (q) {
 class TestException extends Exception {
 }
 
-assertEQ(q, 3)
-assertEQ(s, "abc")
+arktest.assertEQ(q, 3)
+arktest.assertEQ(s, "abc")
 
 try {
   s += "cba";
@@ -41,26 +41,19 @@ try {
 catch (e: TestException) {
 }
 catch (e) {
-  assertTrue(false)
+  arktest.assertTrue(false)
 }
 
-assertEQ(q, 8)
-assertEQ(s, "abccba")
+arktest.assertEQ(q, 8)
+arktest.assertEQ(s, "abccba")
 
 function main(): void {
   ETSGLOBAL.q = 1;
   let q: int;  // function main scope, top-level q is shadowed
   q = q + 30;
-  assertEQ(q, 30)
-  assertEQ(ETSGLOBAL.q, 1)
+  arktest.assertEQ(q, 30)
+  arktest.assertEQ(ETSGLOBAL.q, 1)
 
-  assertEQ(s, "abccba")
   s = "def";
-  assertEQ(s, "def")
-
-  _$init$_();
-   
-  assertEQ(s, "abccba")
-  assertEQ(q, 30)
-  assertEQ(ETSGLOBAL.q, 8)
+  arktest.assertEQ(s, "def")
 }

@@ -30,7 +30,7 @@ std::string GetFullRecordName(const panda_file::File &pf, const panda_file::File
     std::string name = utf::Mutf8AsCString(pf.GetStringData(classId).data);
 
     auto type = pandasm::Type::FromDescriptor(name);
-    type = pandasm::Type(type.GetComponentName(), type.GetRank());
+    type = pandasm::Type(type.GetNameWithoutRank(), type.GetRank());
 
     return type.GetPandasmName();
 }

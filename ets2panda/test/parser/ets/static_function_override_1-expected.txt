@@ -135,7 +135,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 5,
+                "column": 12,
                 "program": "static_function_override_1.ets"
               },
               "end": {
@@ -326,7 +326,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 30,
+                "column": 28,
                 "program": "static_function_override_1.ets"
               }
             }
@@ -339,7 +339,7 @@
             },
             "end": {
               "line": 20,
-              "column": 30,
+              "column": 28,
               "program": "static_function_override_1.ets"
             }
           }
@@ -457,7 +457,7 @@
             "loc": {
               "start": {
                 "line": 21,
-                "column": 5,
+                "column": 12,
                 "program": "static_function_override_1.ets"
               },
               "end": {
@@ -678,12 +678,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "static_function_override_1.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "static_function_override_1.ets"
                     }
                   }
                 },
@@ -691,12 +691,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "static_function_override_1.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "static_function_override_1.ets"
                   }
                 }
               },
@@ -704,118 +704,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "static_function_override_1.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "static_function_override_1.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "static_function_override_1.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "static_function_override_1.ets"
                 }
               }
             },

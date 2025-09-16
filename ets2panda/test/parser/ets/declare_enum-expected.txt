@@ -2650,14 +2650,14 @@
       },
       "loc": {
         "start": {
-          "line": 1,
-          "column": 1,
-          "program": null
+          "line": 16,
+          "column": 9,
+          "program": "declare_enum.ets"
         },
         "end": {
-          "line": 1,
-          "column": 1,
-          "program": null
+          "line": 19,
+          "column": 2,
+          "program": "declare_enum.ets"
         }
       }
     },

@@ -17,4 +17,4 @@ type B = Object | null;
 function foo(...b : B[]) { return 1; }
 function foo(str: String) { return 2; }
 
-assertEQ(foo(new String()), 2)
+arktest.assertEQ(foo(new String()), 2)

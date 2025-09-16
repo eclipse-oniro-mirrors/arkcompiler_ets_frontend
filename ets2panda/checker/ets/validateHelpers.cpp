@@ -51,24 +51,57 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
     }
 }
 
+bool ETSChecker::IsStaticInvoke(ir::MemberExpression *const expr)
+{
+    ir::Identifier *ident = nullptr;
+    if (expr->Object()->IsIdentifier()) {
+        ident = expr->Object()->AsIdentifier();
+    } else if (expr->Object()->IsMemberExpression()) {
+        auto object = expr->Object();
+
+        while (object->IsMemberExpression()) {
+            object = object->AsMemberExpression()->Object();
+        }
+        if (object->IsIdentifier()) {
+            ident = object->AsIdentifier();
+        }
+    }
+
+    return (ident != nullptr &&
+            (ident->Variable()->Declaration()->IsClassDecl() || ident->Variable()->Declaration()->IsImportDecl()));
+}
+
 void ETSChecker::ValidateCallExpressionIdentifier(ir::Identifier *const ident, Type *const type)
 {
-    if (ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE) &&
-        ident->Parent()->AsCallExpression()->Callee() != ident) {
+    ir::CallExpression *callExpr = nullptr;
+    if (ident->Parent()->IsMemberExpression() && IsStaticInvoke(ident->Parent()->AsMemberExpression())) {
+        callExpr = ident->Parent()->Parent()->AsCallExpression();
+    } else if (ident->Parent()->IsCallExpression()) {
+        callExpr = ident->Parent()->AsCallExpression();
+    } else {
+        return;
+    }
+
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE) && callExpr->Callee() != ident &&
+        callExpr->Callee() != ident->Parent()) {
         std::ignore =
             TypeError(ident->Variable(), diagnostic::CLASS_OR_IFACE_AS_OBJ, {ident->ToString()}, ident->Start());
     }
 
-    if (ident->Parent()->AsCallExpression()->Callee() != ident) {
+    if (callExpr->Callee() != ident && callExpr->Callee() != ident->Parent()) {
         return;
     }
 
     ES2PANDA_ASSERT(ident->Variable() != nullptr);
     if (ident->Variable()->Declaration()->Node() != nullptr &&
+        ident->Variable()->Declaration()->Node()->IsOverloadDeclaration()) {
+        return;
+    }
+    if (ident->Variable()->Declaration()->Node() != nullptr &&
         ident->Variable()->Declaration()->Node()->IsImportNamespaceSpecifier()) {
         std::ignore = TypeError(ident->Variable(), diagnostic::NAMESPACE_CALL, {ident->ToString()}, ident->Start());
     }
-    if (type->IsETSFunctionType() || type->IsETSDynamicType()) {
+    if (type->IsETSFunctionType()) {
         return;
     }
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
@@ -129,7 +162,8 @@ bool ETSChecker::ValidateBinaryExpressionIdentifier(ir::Identifier *const ident,
     const auto *const binaryExpr = ident->Parent()->AsBinaryExpression();
     bool isFinished = false;
 
-    if (binaryExpr->OperatorType() == lexer::TokenType::KEYW_INSTANCEOF && binaryExpr->Left() == ident) {
+    bool isInstanceOfKeyword = binaryExpr->OperatorType() == lexer::TokenType::KEYW_INSTANCEOF;
+    if (isInstanceOfKeyword && binaryExpr->Left() == ident) {
         if (!IsReferenceType(type)) {
             std::ignore =
                 TypeError(ident->Variable(), diagnostic::INSTANCEOF_NONOBJECT, {ident->Name()}, ident->Start());
@@ -145,6 +179,10 @@ bool ETSChecker::ValidateBinaryExpressionIdentifier(ir::Identifier *const ident,
         }
         isFinished = true;
     }
+    if (isInstanceOfKeyword && ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE |
+                                                          varbinder::VariableFlags::TYPE_ALIAS)) {
+        LogError(diagnostic::WRONG_LEFT_OF_INSTANCEOF, {}, ident->Start());
+    }
     return isFinished;
 }
 
@@ -158,7 +196,9 @@ void ETSChecker::ValidateResolvedIdentifier(ir::Identifier *const ident)
     auto *smartType = Context().GetSmartCast(resolved);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *const resolvedType = GetApparentType(smartType != nullptr ? smartType : GetTypeOfVariable(resolved));
-
+    bool isValidResolved =
+        resolved != nullptr && !resolved->Declaration()->PossibleTDZ() &&
+        !(resolvedType->IsETSFunctionType() && !resolved->Declaration()->Node()->IsTSTypeAliasDeclaration());
     switch (ident->Parent()->Type()) {
         case ir::AstNodeType::CALL_EXPRESSION:
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
@@ -174,7 +214,7 @@ void ETSChecker::ValidateResolvedIdentifier(ir::Identifier *const ident)
             if (ValidateBinaryExpressionIdentifier(ident, resolvedType)) {
                 return;
             }
-            if (resolved != nullptr && !resolved->Declaration()->PossibleTDZ() && !resolvedType->IsETSFunctionType()) {
+            if (isValidResolved) {
                 WrongContextErrorClassifyByType(ident);
             }
             break;
@@ -188,28 +228,13 @@ void ETSChecker::ValidateResolvedIdentifier(ir::Identifier *const ident)
             ValidateAssignmentIdentifier(ident, resolvedType);
             break;
         default:
-            if (resolved != nullptr && !resolved->Declaration()->PossibleTDZ() && !resolvedType->IsETSFunctionType()) {
+            if (isValidResolved) {
                 WrongContextErrorClassifyByType(ident);
             }
     }
 }
 
-bool ETSChecker::ValidateAnnotationPropertyType(checker::Type *type)
-{
-    if (type == nullptr || type->IsTypeError()) {
-        ES2PANDA_ASSERT(IsAnyError());
-        return false;
-    }
-
-    if (type->IsETSArrayType() || type->IsETSResizableArrayType()) {
-        return ValidateAnnotationPropertyType(MaybeUnboxType(GetElementTypeOfArray(type)));
-    }
-
-    return type->HasTypeFlag(TypeFlag::ETS_NUMERIC | TypeFlag::ETS_ENUM | TypeFlag::ETS_BOOLEAN) ||
-           type->IsETSStringType();
-}
-
-void ETSChecker::ValidateUnaryOperatorOperand(varbinder::Variable *variable)
+void ETSChecker::ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir::Expression *expr)
 {
     if (IsVariableGetterSetter(variable)) {
         return;
@@ -227,7 +252,7 @@ void ETSChecker::ValidateUnaryOperatorOperand(varbinder::Variable *variable)
         }
         if (!HasStatus(CheckerStatus::IN_CONSTRUCTOR | CheckerStatus::IN_STATIC_BLOCK)) {
             std::ignore = TypeError(variable, diagnostic::FIELD_ASSIGN_TYPE_MISMATCH, {fieldType, variable->Name()},
-                                    variable->Declaration()->Node()->Start());
+                                    expr->Start());
         }
 
         if (variable->HasFlag(varbinder::VariableFlags::INIT_IN_STATIC_BLOCK)) {

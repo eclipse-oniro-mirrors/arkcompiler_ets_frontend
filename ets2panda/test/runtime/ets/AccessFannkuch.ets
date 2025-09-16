@@ -83,7 +83,7 @@ export class AccessFannkuch {
 
     public run(): void {
        let ret = this.fannkuch(this.n);
-        assertEQ(ret, AccessFannkuch.expected,  "Invalid result")
+        arktest.assertEQ(ret, AccessFannkuch.expected,  "Invalid result")
     }
 }
 

@@ -34,6 +34,6 @@ class Button implements IButton {
 function main() {
   let b = new Button().setTitle("🍆");
 
-  assertTrue(b instanceof Button)
-  assertEQ(b.getTitle(), "🍆")
+  arktest.assertTrue(b instanceof Button)
+  arktest.assertEQ(b.getTitle(), "🍆")
 }

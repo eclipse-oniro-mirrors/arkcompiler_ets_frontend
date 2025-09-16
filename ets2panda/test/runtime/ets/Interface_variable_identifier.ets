@@ -22,9 +22,9 @@ function main(){
     let o:A = {
         _a:"aaaaaa"
     }
-    assertEQ(o._a, "aaaaaa")
-    assertEQ(o.a, undefined)
+    arktest.assertEQ(o._a, "aaaaaa")
+    arktest.assertEQ(o.a, undefined)
 
     o.a = "bbbbb"
-    assertEQ(o.a, "bbbbb")
+    arktest.assertEQ(o.a, "bbbbb")
 }

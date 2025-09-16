@@ -35,13 +35,13 @@ function foo2(value: number, opt: string | undefined = undefined) {
     return "" + value + opt;
 }
 function testfoo() {
-    assertEQ(foo1(12 as number), "12undefined") // inference blocked
-    assertEQ(foo1(12, "s"), "12s")
-    assertEQ(foo1(12, undefined), "12undefined")
+    arktest.assertEQ(foo1(12 as number), "12undefined") // inference blocked
+    arktest.assertEQ(foo1(12, "s"), "12s")
+    arktest.assertEQ(foo1(12, undefined), "12undefined")
 
-    assertEQ(foo2(12 as number), "12undefined") // inference blocked
-    assertEQ(foo2(12, "s"), "12s")
-    assertEQ(foo2(12, undefined), "12undefined")
+    arktest.assertEQ(foo2(12 as number), "12undefined") // inference blocked
+    arktest.assertEQ(foo2(12, "s"), "12s")
+    arktest.assertEQ(foo2(12, undefined), "12undefined")
 }
 
 class DNode<T> {
@@ -115,14 +115,14 @@ function main() {
     testfoo();
     try {
         new DTree<string | number>().up();
-        assertTrue(false)
+        arktest.assertTrue(false)
     } catch (e: NullPointerError) { }
     testb();
     try {
         testf(123);
-        assertTrue(false)
+        arktest.assertTrue(false)
     } catch (e: NullPointerError) { }
-    assertTrue((testcond() instanceof Int) && (testcond() == 1))
+    arktest.assertTrue((testcond() instanceof Int) && (testcond() == 1))
 
     foo(123);
     foo(undefined);

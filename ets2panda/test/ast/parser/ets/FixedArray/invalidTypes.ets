@@ -45,7 +45,6 @@ let var6: [a0: , a1: ];
 /* @@? 24:23 Error SyntaxError: Unexpected token '>'. */
 /* @@? 24:26 Error SyntaxError: Unexpected token 'number'. */
 /* @@? 24:26 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 24:26 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 24:33 Error SyntaxError: Unexpected token ','. */
 /* @@? 24:35 Error SyntaxError: Unexpected token 'FixedArray'. */
 /* @@? 24:35 Error TypeError: Unresolved reference FixedArray */
@@ -59,7 +58,6 @@ let var6: [a0: , a1: ];
 /* @@? 26:23 Error SyntaxError: Unexpected token, expected ',' or ']'. */
 /* @@? 26:23 Error SyntaxError: Unexpected token '>'. */
 /* @@? 26:26 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 26:26 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 26:26 Error TypeError: Type name 'number' used in the wrong context */
 /* @@? 26:33 Error SyntaxError: Unexpected token ','. */
 /* @@? 26:35 Error SyntaxError: Unexpected token 'string'. */
@@ -68,14 +66,13 @@ let var6: [a0: , a1: ];
 /* @@? 28:18 Error SyntaxError: Unexpected token, expected ',' or ']'. */
 /* @@? 28:18 Error SyntaxError: Unexpected token '?'. */
 /* @@? 28:19 Error SyntaxError: Unexpected token ']'. */
-/* @@? 30:18 Error SyntaxError: Unexpected token ':'. */
 /* @@? 30:18 Error SyntaxError: Unexpected token, expected ',' or ']'. */
 /* @@? 30:18 Error SyntaxError: Unexpected token ':'. */
 /* @@? 30:20 Error SyntaxError: Unexpected token '...'. */
 /* @@? 30:23 Error SyntaxError: Unexpected token 'int'. */
 /* @@? 30:26 Error SyntaxError: Unexpected token ']'. */
-/* @@? 32:19 Error SyntaxError: Unexpected token, expected ',' or ']'. */
 /* @@? 32:19 Error SyntaxError: Unexpected token 'number'. */
+/* @@? 32:19 Error SyntaxError: Unexpected token, expected ',' or ']'. */
 /* @@? 32:19 Error TypeError: Type name 'number' used in the wrong context */
 /* @@? 32:25 Error SyntaxError: Unexpected token ']'. */
 /* @@? 35:21 Error SyntaxError: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
@@ -84,5 +81,5 @@ let var6: [a0: , a1: ];
 /* @@? 38:14 Error SyntaxError: Unexpected token, expected ',' or ']'. */
 /* @@? 38:16 Error SyntaxError: Unexpected token ','. */
 /* @@? 38:18 Error SyntaxError: Unexpected token 'a1'. */
-/* @@? 38:22 Error SyntaxError: Unexpected token ']'. */
 /* @@? 38:22 Error SyntaxError: Label must be followed by a loop statement. */
+/* @@? 38:22 Error SyntaxError: Unexpected token ']'. */

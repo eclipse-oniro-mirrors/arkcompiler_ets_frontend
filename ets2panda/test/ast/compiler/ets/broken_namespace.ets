@@ -27,6 +27,6 @@ if(entry != undefined){
     }
 }
 
+/* @@? 17:8 Error TypeError: Unresolved reference entry */
 /* @@? 18:9 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */
-/* @@? 24:4 Error TypeError: Unresolved reference entry */
 /* @@? 25:5 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */

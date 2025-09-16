@@ -46,13 +46,13 @@ class Cl<T> implements It<T> {
 
 function main(): void {
 
-  assertEQ(Cl.resolve(undefined).print(), "value is undefined")
-  assertEQ(Cl.resolve("test").print(), "string: 'test'")
-  assertEQ(Cl.resolve(5.5).print(), "number = 5.5")
-  assertEQ(Cl.resolve(new Int(8)).print(), "number = 8")
+  arktest.assertEQ(Cl.resolve(undefined).print(), "value is undefined")
+  arktest.assertEQ(Cl.resolve("test").print(), "string: 'test'")
+  arktest.assertEQ(Cl.resolve(5.5).print(), "number = 5.5")
+  arktest.assertEQ(Cl.resolve(new Int(8)).print(), "number = 8")
 
-  assertEQ(Cl.resolve(new Cl<null>(null)).print(), "value is null")
-  assertEQ(Cl.resolve(new Cl<string>("TEST")).print(), "string: 'TEST'")
-  assertEQ(Cl.resolve(new Cl<number>(7.7)).print(), "number = 7.7")
-  assertEQ(Cl.resolve(new Cl<Int>(new Int(-8))).print(), "number = -8")
+  arktest.assertEQ(Cl.resolve(new Cl<null>(null)).print(), "value is null")
+  arktest.assertEQ(Cl.resolve(new Cl<string>("TEST")).print(), "string: 'TEST'")
+  arktest.assertEQ(Cl.resolve(new Cl<number>(7.7)).print(), "number = 7.7")
+  arktest.assertEQ(Cl.resolve(new Cl<Int>(new Int(-8))).print(), "number = -8")
 }

@@ -15,7 +15,7 @@
 
 let isPrime: FixedArray<int> = new int[[]][[]
 
-/* @@? 16:32 Error TypeError: Type 'FixedArray<FixedArray<int>>' cannot be assigned to type 'FixedArray<int>' */
+/* @@? 16:32 Error TypeError: Type 'FixedArray<FixedArray<Int>>' cannot be assigned to type 'FixedArray<Int>' */
 /* @@? 16:40 Error TypeError: Can't resolve array type */
 /* @@? 16:44 Error TypeError: Can't resolve array type */
 /* @@? 22:1 Error SyntaxError: Expected ']', got 'end of stream'. */

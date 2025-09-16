@@ -99,29 +99,9 @@ public:
         optional_ = optional;
     }
 
-    void SetPreferredType(checker::Type *preferredType) noexcept
-    {
-        preferredType_ = preferredType;
-    }
-
-    [[nodiscard]] checker::Type *GetPreferredType() noexcept
-    {
-        return preferredType_;
-    }
-
-    [[nodiscard]] checker::Type const *GetPreferredType() const noexcept
-    {
-        return preferredType_;
-    }
-
     [[nodiscard]] const ArenaVector<Decorator *> &Decorators() const noexcept
     {
         return decorators_;
-    }
-
-    const ArenaVector<Decorator *> *DecoratorsPtr() const override
-    {
-        return &Decorators();
     }
 
     void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
@@ -137,10 +117,11 @@ public:
     void CleanUp() override
     {
         AstNode::CleanUp();
-        preferredType_ = nullptr;
+        SetPreferredType(nullptr);
     }
 
     void ClearPreferredType();
+    void CleanCheckInformation() override;
 
     [[nodiscard]] ArrayExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
@@ -170,7 +151,6 @@ public:
 private:
     ArenaVector<Decorator *> decorators_;
     ArenaVector<Expression *> elements_;
-    checker::Type *preferredType_ {};
     bool isDeclaration_ {};
     bool trailingComma_ {};
     bool optional_ {};

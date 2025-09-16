@@ -25,8 +25,8 @@ class B   {
 function main(): void {
 
   let b = new B();
-  assertEQ(b.c, 33)
-  assertEQ(b.d, -11)
+  arktest.assertEQ(b.c, 33)
+  arktest.assertEQ(b.d, -11)
 
   let x: int[] = [1, 2, 3];
 
@@ -38,6 +38,6 @@ function main(): void {
   }
 
   for (let i: int = 0; i < 3; ++i) {
-    assertEQ(x[i], (i + 1) * 2)
+    arktest.assertEQ(x[i], (i + 1) * 2)
   }
 }

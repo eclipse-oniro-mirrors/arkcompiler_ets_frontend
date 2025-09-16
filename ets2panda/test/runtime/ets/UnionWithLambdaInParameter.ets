@@ -14,7 +14,7 @@
  */
 
 function foo(bar: (() => int) | undefined) {
-  assertTrue(bar?.() == 2024 || bar == undefined)
+  arktest.assertTrue(bar?.() == 2024 || bar == undefined)
 }
 
 function main(): void {

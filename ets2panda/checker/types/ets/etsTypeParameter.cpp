@@ -148,7 +148,7 @@ Type *ETSTypeParameter::Substitute([[maybe_unused]] TypeRelation *relation, cons
     }
 
     if (auto repl = substitution->find(type->AsETSTypeParameter()); repl != substitution->end()) {
-        // 22955: The result is sometimes primitve. Can be reproduced for type aliases
+        ES2PANDA_ASSERT(repl->second->IsETSReferenceType());
         return repl->second;
     }
     return this;
@@ -164,7 +164,7 @@ void ETSTypeParameter::ToDebugInfoType(std::stringstream &ss) const
     GetConstraintType()->ToDebugInfoType(ss);
 }
 
-ETSTypeParameter *ETSTypeParameter::GetOriginal() const noexcept
+ETSTypeParameter *ETSTypeParameter::GetOriginal() const
 {
     return GetDeclNode()->Name()->Variable()->TsType()->AsETSTypeParameter();
 }

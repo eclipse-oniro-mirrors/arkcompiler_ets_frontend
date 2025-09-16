@@ -16,5 +16,5 @@
 function main(): void {
   let str = "constant string literal"; // init with a const string literal without "String" annotation -> str shouldn't be const
   str = "new string value";
-  assertEQ(str + "123", "new string value123")
+  arktest.assertEQ(str + "123", "new string value123")
 }

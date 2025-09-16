@@ -210,3 +210,9 @@ test262/data/test_es2021/intl402/Collator/prototype/compare/non-normative-basic.
 
 #27822
 test262/data/test_es2021/language/statements/for-await-of/async-func-dstr-let-async-ary-ptrn-elision-exhausted.js
+
+#27389
+test262/data/test_es2021/built-ins/Array/prototype/reduce/call-with-boolean.js
+
+#27389
+test262/data/test_es2021/built-ins/GeneratorPrototype/return/try-catch-following-catch.js

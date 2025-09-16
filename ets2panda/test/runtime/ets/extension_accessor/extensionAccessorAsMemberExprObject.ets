@@ -35,7 +35,7 @@ set idx(this: A, a: Int) {
 
 function main() {
     let b = new B();
-    assertEQ(b.getA.idx, 1)
+    arktest.assertEQ(b.getA.idx, 1)
     b.getA.idx = 2;
-    assertEQ(b.getA.idx_, 2)
+    arktest.assertEQ(b.getA.idx_, 2)
 }

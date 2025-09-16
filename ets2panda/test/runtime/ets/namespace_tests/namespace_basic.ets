@@ -34,10 +34,10 @@ function main() {
     BasicNamespace.counter = 0;
 
     // Test access to namespace members
-    assertEQ(BasicNamespace.greet(), "Hello, BasicNamespace!",  "Namespace function failed")
-    assertEQ(BasicNamespace.counter, 0,  "Initial counter value is incorrect")
+    arktest.assertEQ(BasicNamespace.greet(), "Hello, BasicNamespace!",  "Namespace function failed")
+    arktest.assertEQ(BasicNamespace.counter, 0,  "Initial counter value is incorrect")
 
     // Test function usage and variable updates
     BasicNamespace.incrementCounter();
-    assertEQ(BasicNamespace.counter, 1,  "Counter increment failed")
+    arktest.assertEQ(BasicNamespace.counter, 1,  "Counter increment failed")
 }

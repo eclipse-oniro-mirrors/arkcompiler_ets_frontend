@@ -23,6 +23,7 @@ if ((defined(ark_standalone_build) && ark_standalone_build) ||
 ohos_executable("declgen_ets2ts") {
   sources = [
     "declgenEts2Ts.cpp",
+    "isolatedDeclgenChecker.cpp",
     "main.cpp",
   ]
 

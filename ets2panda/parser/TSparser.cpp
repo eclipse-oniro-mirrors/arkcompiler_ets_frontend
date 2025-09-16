@@ -754,7 +754,7 @@ ir::TSTypeParameter *TSParser::ParseMappedTypeParameter()
     lexer::SourcePosition endLoc = constraint->End();
 
     auto *typeParameter = AllocNode<ir::TSTypeParameter>(paramName, constraint, nullptr, Allocator());
-
+    ES2PANDA_ASSERT(typeParameter != nullptr);
     typeParameter->SetRange({startLoc, endLoc});
 
     return typeParameter;

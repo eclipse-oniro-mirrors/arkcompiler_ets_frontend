@@ -21,36 +21,77 @@
 #include "ir/srcDump.h"
 
 namespace ark::es2panda::ir {
+
+void AnnotationDeclaration::SetInternalName(util::StringView internalName)
+{
+    this->GetOrCreateHistoryNodeAs<AnnotationDeclaration>()->internalName_ = internalName;
+}
+
+void AnnotationDeclaration::SetExpr(Expression *expr)
+{
+    this->GetOrCreateHistoryNodeAs<AnnotationDeclaration>()->expr_ = expr;
+}
+
+void AnnotationDeclaration::EmplaceProperties(AstNode *properties)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<AnnotationDeclaration>();
+    newNode->properties_.emplace_back(properties);
+}
+
+void AnnotationDeclaration::ClearProperties()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<AnnotationDeclaration>();
+    newNode->properties_.clear();
+}
+
+void AnnotationDeclaration::SetValueProperties(AstNode *properties, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<AnnotationDeclaration>();
+    auto &arenaVector = newNode->properties_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = properties;
+}
+
+[[nodiscard]] const ArenaVector<AstNode *> &AnnotationDeclaration::Properties()
+{
+    auto newNode = this->GetHistoryNodeAs<AnnotationDeclaration>();
+    return newNode->properties_;
+}
+
+[[nodiscard]] ArenaVector<AstNode *> &AnnotationDeclaration::PropertiesForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<AnnotationDeclaration>();
+    return newNode->properties_;
+}
+
 void AnnotationDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
-    for (auto *&it : VectorIterationGuard(properties_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode;
+    auto const &properties = Properties();
+    for (size_t ix = 0; ix < properties.size(); ix++) {
+        if (auto *transformedNode = cb(properties[ix]); properties[ix] != transformedNode) {
+            properties[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueProperties(transformedNode->AsTSClassImplements(), ix);
         }
     }
 
-    if (expr_ != nullptr) {
-        if (auto *transformedNode = cb(expr_); expr_ != transformedNode) {
-            expr_->SetTransformedNode(transformationName, transformedNode);
-            expr_ = transformedNode->AsIdentifier();
+    auto const expr = Expr();
+    if (expr != nullptr) {
+        if (auto *transformedNode = cb(expr); expr != transformedNode) {
+            expr->SetTransformedNode(transformationName, transformedNode);
+            SetExpr(transformedNode->AsIdentifier());
         }
     }
 
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 void AnnotationDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    if (expr_ != nullptr) {
-        cb(expr_);
+    auto const expr = GetHistoryNodeAs<AnnotationDeclaration>()->expr_;
+    if (expr != nullptr) {
+        cb(expr);
     }
 
-    for (auto *it : VectorIterationGuard(properties_)) {
+    for (auto *it : VectorIterationGuard(Properties())) {
         cb(it);
     }
 
@@ -61,24 +102,25 @@ void AnnotationDeclaration::Iterate(const NodeTraverser &cb) const
 
 void AnnotationDeclaration::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"Expr", expr_}, {"properties", properties_}, {"annotations", AstDumper::Optional(Annotations())}});
+    dumper->Add({{"Expr", Expr()}, {"properties", Properties()}, {"annotations", AstDumper::Optional(Annotations())}});
 }
 void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
 {  // re-understand
     for (auto *anno : Annotations()) {
         anno->Dump(dumper);
     }
-    ES2PANDA_ASSERT(expr_ != nullptr);
+    ES2PANDA_ASSERT(Expr() != nullptr);
     dumper->Add("@interface ");
-    expr_->Dump(dumper);
+    Expr()->Dump(dumper);
     dumper->Add(" {");
 
-    if (!properties_.empty()) {
+    auto const properties = Properties();
+    if (!properties.empty()) {
         dumper->IncrIndent();
         dumper->Endl();
-        for (auto elem : properties_) {
+        for (auto elem : properties) {
             elem->Dump(dumper);
-            if (elem == properties_.back()) {
+            if (elem == properties.back()) {
                 dumper->DecrIndent();
             }
         }
@@ -108,20 +150,12 @@ checker::VerifiedType AnnotationDeclaration::Check(checker::ETSChecker *checker)
 
 Identifier *AnnotationDeclaration::GetBaseName() const
 {
-    if (expr_->IsIdentifier()) {
-        return expr_->AsIdentifier();
+    if (Expr()->IsIdentifier()) {
+        return GetHistoryNodeAs<AnnotationDeclaration>()->expr_->AsIdentifier();
     }
-    auto *part = Expr()->AsETSTypeReference()->Part();
-    if (part->Name()->IsIdentifier()) {
-        return part->Name()->AsIdentifier();
-    }
-    if (part->Name()->IsTSQualifiedName()) {
-        return part->Name()->AsTSQualifiedName()->Right();
-    }
-    return nullptr;
+    return expr_->AsETSTypeReference()->Part()->GetIdent();
 }
-
-AstNode *AnnotationDeclaration::Construct(ArenaAllocator *allocator)
+AnnotationDeclaration *AnnotationDeclaration::Construct(ArenaAllocator *allocator)
 {
     return allocator->New<AnnotationDeclaration>(nullptr, allocator);
 }

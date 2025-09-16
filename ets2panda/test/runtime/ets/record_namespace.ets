@@ -43,30 +43,30 @@ namespace Image{
 
 function main(){
     let PixelMapBaseRecord:Record<string,Image.PixelMapBase> = {"a":{field:1},"b":{field:2}}
-    assertEQ(PixelMapBaseRecord["a"]!.field,1)
-    assertEQ(PixelMapBaseRecord["b"]!.field,2)
+    arktest.assertEQ(PixelMapBaseRecord["a"]!.field,1)
+    arktest.assertEQ(PixelMapBaseRecord["b"]!.field,2)
     PixelMapBaseRecord["a"] = {field:3};
-    assertEQ(PixelMapBaseRecord["a"]!.field,3)
-    assertEQ(PixelMapBaseRecord["b"]!.field,2)
+    arktest.assertEQ(PixelMapBaseRecord["a"]!.field,3)
+    arktest.assertEQ(PixelMapBaseRecord["b"]!.field,2)
 
     let PixelMapRecord:Record<string,Image.PixelMap> = {"a":new Image.PixelMap(1),"b":new Image.PixelMap(2)}
-    assertEQ(PixelMapRecord["a"]!.field,1)
-    assertEQ(PixelMapRecord["b"]!.field,2)
+    arktest.assertEQ(PixelMapRecord["a"]!.field,1)
+    arktest.assertEQ(PixelMapRecord["b"]!.field,2)
     PixelMapRecord["a"] = new Image.PixelMap(3);
-    assertEQ(PixelMapRecord["a"]!.field,3)
-    assertEQ(PixelMapRecord["b"]!.field,2)
+    arktest.assertEQ(PixelMapRecord["a"]!.field,3)
+    arktest.assertEQ(PixelMapRecord["b"]!.field,2)
 
     let AccessTypeRecord:Record<string,Image.AccessType> = {"a":Image.AccessType.READ,"b":Image.AccessType.WRITE}
-    assertEQ(AccessTypeRecord["a"]!,Image.AccessType.READ)
-    assertEQ(AccessTypeRecord["b"]!,Image.AccessType.WRITE)
+    arktest.assertEQ(AccessTypeRecord["a"]!,Image.AccessType.READ)
+    arktest.assertEQ(AccessTypeRecord["b"]!,Image.AccessType.WRITE)
     AccessTypeRecord["a"] = Image.AccessType.READWRITE;
-    assertEQ(AccessTypeRecord["a"]!,Image.AccessType.READWRITE)
-    assertEQ(AccessTypeRecord["b"]!,Image.AccessType.WRITE)
+    arktest.assertEQ(AccessTypeRecord["a"]!,Image.AccessType.READWRITE)
+    arktest.assertEQ(AccessTypeRecord["b"]!,Image.AccessType.WRITE)
 
     let PhotoAssetRecord:Record<string,Image.PhotoAsset.PhotoAssetClass> = {"a":new Image.PhotoAsset.PhotoAssetClass(1),"b":new Image.PhotoAsset.PhotoAssetClass(2)}
-    assertEQ(PhotoAssetRecord["a"]!.field,1)
-    assertEQ(PhotoAssetRecord["b"]!.field,2)
+    arktest.assertEQ(PhotoAssetRecord["a"]!.field,1)
+    arktest.assertEQ(PhotoAssetRecord["b"]!.field,2)
     PhotoAssetRecord["a"] = new Image.PhotoAsset.PhotoAssetClass(3);
-    assertEQ(PhotoAssetRecord["a"]!.field,3)
-    assertEQ(PhotoAssetRecord["b"]!.field,2)
+    arktest.assertEQ(PhotoAssetRecord["a"]!.field,3)
+    arktest.assertEQ(PhotoAssetRecord["b"]!.field,2)
 }

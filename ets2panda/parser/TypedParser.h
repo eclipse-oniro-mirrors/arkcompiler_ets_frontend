@@ -107,6 +107,7 @@ protected:
     {
         return false;
     }
+    virtual ir::Statement *ParseTypeAliasStatement();
     virtual ir::TSTypeAliasDeclaration *ParseTypeAliasDeclaration()
     {
         return nullptr;

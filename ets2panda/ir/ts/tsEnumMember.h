@@ -17,7 +17,6 @@
 #define ES2PANDA_IR_TS_ENUM_MEMBER_H
 
 #include "ir/statement.h"
-#include "ir/jsDocAllowed.h"
 
 namespace ark::es2panda::ir {
 class Expression;

@@ -18,17 +18,17 @@ function test_u(v: Object | undefined) { return v ? true : false }
 function test_nu(v: Object | null | undefined) { return v ? true : false }
 
 function main() {
-    assertTrue(test_n({} as Object))
-    assertTrue(test_u({} as Object))
-    assertTrue(test_nu({} as Object))
+    arktest.assertTrue(test_n({} as Object))
+    arktest.assertTrue(test_u({} as Object))
+    arktest.assertTrue(test_nu({} as Object))
 
-    assertTrue(!null)
-    if (null) { assertTrue(false)}
-    assertTrue(!test_n(null))
-    assertTrue(!test_nu(null))
+    arktest.assertTrue(!null)
+    if (null) { arktest.assertTrue(false)}
+    arktest.assertTrue(!test_n(null))
+    arktest.assertTrue(!test_nu(null))
 
-    assertTrue(!undefined)
-    if (undefined) { assertTrue(false) }
-    assertTrue(!test_u(undefined))
-    assertTrue(!test_nu(undefined))
+    arktest.assertTrue(!undefined)
+    if (undefined) { arktest.assertTrue(false) }
+    arktest.assertTrue(!test_u(undefined))
+    arktest.assertTrue(!test_nu(undefined))
 }

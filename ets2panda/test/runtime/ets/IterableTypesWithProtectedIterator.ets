@@ -45,13 +45,13 @@ function main(): int {
     let b = new B;
     let idx = 0;
     for(let it of b) {
-        assertEQ(it, b.data[idx])
+        arktest.assertEQ(it, b.data[idx])
         ++idx;
     }
     
     idx = 0;
     for(let it of new B) {
-        assertEQ(it, b.data[idx])
+        arktest.assertEQ(it, b.data[idx])
         ++idx;
     }
 

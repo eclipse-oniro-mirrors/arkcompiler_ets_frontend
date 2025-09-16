@@ -21,10 +21,10 @@ function main() {
                 throw a as Error
             })
     } catch (e: Error) {
-        assertEQ(e.message, "Dynamic import is not supported")
+        arktest.assertEQ(e.message, "Dynamic import is not supported")
         return
     }
-    assertTrue(!"nothing was thrown")
+    arktest.assertTrue(!"nothing was thrown")
 }
 
 /* @@? 18:15 Error SyntaxError: Unexpected token 'import'. */

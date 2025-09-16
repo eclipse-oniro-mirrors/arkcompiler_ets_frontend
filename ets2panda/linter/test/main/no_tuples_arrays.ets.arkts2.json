@@ -15,36 +15,6 @@
     ],
     "result": [
         {
-            "line": 17,
-            "column": 18,
-            "endLine": 17,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 18,
-            "column": 41,
-            "endLine": 18,
-            "endColumn": 42,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 10,
-            "endLine": 20,
-            "endColumn": 11,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 22,
             "column": 5,
             "endLine": 22,
@@ -65,26 +35,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 29,
-            "column": 30,
-            "endLine": 29,
-            "endColumn": 31,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 29,
-            "column": 34,
-            "endLine": 29,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 30,
             "column": 16,
             "endLine": 30,
@@ -95,16 +45,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 33,
-            "column": 23,
-            "endLine": 33,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 39,
             "column": 13,
             "endLine": 39,
@@ -112,26 +52,6 @@
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 63,
-            "column": 43,
-            "endLine": 63,
-            "endColumn": 44,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 64,
-            "column": 44,
-            "endLine": 64,
-            "endColumn": 45,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -256,62 +176,12 @@
         },
         {
             "line": 85,
-            "column": 38,
-            "endLine": 85,
-            "endColumn": 39,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 85,
             "column": 44,
             "endLine": 85,
             "endColumn": 45,
             "problem": "UnknownType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 85,
-            "column": 65,
-            "endLine": 85,
-            "endColumn": 66,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 85,
-            "column": 71,
-            "endLine": 85,
-            "endColumn": 72,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 85,
-            "column": 91,
-            "endLine": 85,
-            "endColumn": 92,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 85,
-            "column": 97,
-            "endLine": 85,
-            "endColumn": 98,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -325,56 +195,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 87,
-            "column": 34,
-            "endLine": 87,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 87,
-            "column": 37,
-            "endLine": 87,
-            "endColumn": 38,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 87,
-            "column": 40,
-            "endLine": 87,
-            "endColumn": 41,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 87,
-            "column": 43,
-            "endLine": 87,
-            "endColumn": 44,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 87,
-            "column": 46,
-            "endLine": 87,
-            "endColumn": 47,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 88,
             "column": 17,
             "endLine": 88,
@@ -382,36 +202,6 @@
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 88,
-            "column": 54,
-            "endLine": 88,
-            "endColumn": 55,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 88,
-            "column": 60,
-            "endLine": 88,
-            "endColumn": 61,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 88,
-            "column": 79,
-            "endLine": 88,
-            "endColumn": 80,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -442,6 +232,26 @@
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 102,
+            "column": 27,
+            "endLine": 102,
+            "endColumn": 36,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 102,
+            "column": 27,
+            "endLine": 102,
+            "endColumn": 36,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
             "severity": "ERROR"
         },
         {
@@ -502,26 +312,6 @@
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 112,
-            "column": 22,
-            "endLine": 112,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 112,
-            "column": 24,
-            "endLine": 112,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -605,26 +395,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 124,
-            "column": 40,
-            "endLine": 124,
-            "endColumn": 41,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 124,
-            "column": 43,
-            "endLine": 124,
-            "endColumn": 44,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 125,
             "column": 1,
             "endLine": 125,
@@ -635,26 +405,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 125,
-            "column": 45,
-            "endLine": 125,
-            "endColumn": 46,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 125,
-            "column": 48,
-            "endLine": 125,
-            "endColumn": 49,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 126,
             "column": 1,
             "endLine": 126,
@@ -662,6 +412,16 @@
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 126,
+            "column": 33,
+            "endLine": 126,
+            "endColumn": 40,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
             "severity": "ERROR"
         },
         {
@@ -676,12 +436,32 @@
         },
         {
             "line": 128,
+            "column": 12,
+            "endLine": 128,
+            "endColumn": 16,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 128,
             "column": 1,
             "endLine": 128,
             "endColumn": 16,
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 129,
+            "column": 12,
+            "endLine": 129,
+            "endColumn": 19,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
             "severity": "ERROR"
         },
         {

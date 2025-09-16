@@ -69,11 +69,10 @@ enum class TypeFlag : uint64_t {
     ETS_ARRAY = 1ULL << 41ULL,           // ETS array type
     WILDCARD = 1ULL << 42ULL,            // new A<?>()
     ETS_TYPE_PARAMETER = 1ULL << 43ULL,  // ETS type parameter
-    ETS_TYPE_REFERENCE = 1ULL << 44ULL,  // ETS type reference
     GENERIC = 1ULL << 45ULL,             // ETS Generic
     ETS_INT_ENUM = 1ULL << 46ULL,        // ETS Enum
     ETS_STRING_ENUM = 1ULL << 47ULL,     // ETS string-type Enumeration
-    ETS_DYNAMIC_FLAG = 1ULL << 48ULL,    // ETS Dynamic flag
+    GRADUAL_TYPE = 1ULL << 48ULL,        // gradual type
     GETTER = 1ULL << 49ULL,              // ETS Getter
     SETTER = 1ULL << 50ULL,              // ETS Setter
     ETS_EXTENSION_FUNC_HELPER = 1ULL << 51ULL,    // ETS Extension Function Helper
@@ -90,8 +89,6 @@ enum class TypeFlag : uint64_t {
     ETS_ANY = 1ULL << 22ULL,                      // ETS any, the value was *stolen* from the CONDITIONAL type kind
     ETS_NEVER = 1ULL << 62ULL,                    // ETS never
     ETS_METHOD = 1ULL << 63ULL,                   // ETS method (or function in module) (possibly overloaded)
-    ETS_DYNAMIC_TYPE = ETS_OBJECT | ETS_DYNAMIC_FLAG,
-    ETS_DYNAMIC_FUNCTION_TYPE = FUNCTION | ETS_DYNAMIC_FLAG,
     ETS_INTEGRAL_NUMERIC = BYTE | SHORT | INT | LONG,
     ETS_FLOATING_POINT = FLOAT | DOUBLE,
     ETS_NUMERIC = ETS_INTEGRAL_NUMERIC | ETS_FLOATING_POINT,

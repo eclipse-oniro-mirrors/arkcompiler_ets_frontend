@@ -14,7 +14,6 @@
  */
 
 #include "assignAnalyzer.h"
-#include <cstddef>
 
 #include "ir/base/classDefinition.h"
 #include "ir/base/classProperty.h"
@@ -58,6 +57,7 @@
 #include "varbinder/scope.h"
 #include "varbinder/declaration.h"
 #include "checker/ETSchecker.h"
+#include "checker/types/gradualType.h"
 #include "ir/base/catchClause.h"
 #include "parser/program/program.h"
 #include "checker/types/ts/objectType.h"
@@ -1219,7 +1219,7 @@ util::StringView AssignAnalyzer::GetVariableName(const ir::AstNode *node) const
     }
 }
 
-const lexer::SourcePosition &AssignAnalyzer::GetVariablePosition(const ir::AstNode *node) const
+lexer::SourcePosition AssignAnalyzer::GetVariablePosition(const ir::AstNode *node) const
 {
     switch (node->Type()) {
         case ir::AstNodeType::CLASS_PROPERTY:
@@ -1360,8 +1360,11 @@ static bool IsDefaultValueType(const Type *type, bool isNonReadonlyField)
     if (type == nullptr) {
         return false;
     }
-    return (type->IsETSPrimitiveType() || type->IsETSNeverType() || type->IsETSUndefinedType() ||
-            type->IsETSNullType() ||
+    if (type->IsGradualType()) {
+        return IsDefaultValueType(type->AsGradualType()->GetBaseType(), isNonReadonlyField);
+    }
+    return (type->IsETSPrimitiveType() || (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) ||
+            type->IsETSNeverType() || type->IsETSUndefinedType() || type->IsETSNullType() ||
             (type->PossiblyETSUndefined() && (!type->HasTypeFlag(checker::TypeFlag::GENERIC) ||
                                               (isNonReadonlyField && !CHECK_GENERIC_NON_READONLY_PROPERTIES))));
 }
@@ -1403,7 +1406,7 @@ void AssignAnalyzer::LetInit(const ir::AstNode *node)
         // check reassignment of readonly properties
         util::StringView type = GetVariableType(declNode);
         util::StringView name = GetVariableName(declNode);
-        const lexer::SourcePosition &pos = GetVariablePosition(node);
+        const lexer::SourcePosition pos = GetVariablePosition(node);
 
         auto uninit = [this](NodeId a) {
             uninits_.Excl(a);
@@ -1451,11 +1454,15 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
         }
 
         if (declNode->Parent() != classDef_) {
-            // property of an other class
+            // property of another class
             return;
         }
 
         if (node->IsDefinite()) {
+            return;
+        }
+
+        if (declNode->AsClassProperty()->IsImmediateInit()) {
             return;
         }
     }
@@ -1468,7 +1475,7 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
 
             util::StringView type = GetVariableType(declNode);
             util::StringView name = GetVariableName(declNode);
-            const lexer::SourcePosition &pos = GetVariablePosition(node);
+            const lexer::SourcePosition pos = GetVariablePosition(node);
 
             std::stringstream ss;
             if (node->IsClassProperty()) {

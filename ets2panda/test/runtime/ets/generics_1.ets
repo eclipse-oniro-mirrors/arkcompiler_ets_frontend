@@ -37,5 +37,5 @@ function main(): void {
     let d = new A<Z>;
     d.init(B<Z>.class);
     d.b.init(Z.class);
-    assertEQ(d.b.a.c, 12)
+    arktest.assertEQ(d.b.a.c, 12)
 }

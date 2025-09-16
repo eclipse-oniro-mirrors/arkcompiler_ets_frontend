@@ -1,0 +1,298 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 16,
+            "column": 19,
+            "endLine": 16,
+            "endColumn": 27,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 17,
+            "column": 16,
+            "endLine": 17,
+            "endColumn": 24,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 8,
+            "endLine": 20,
+            "endColumn": 16,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 19,
+            "endLine": 22,
+            "endColumn": 27,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 5,
+            "endLine": 24,
+            "endColumn": 23,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 15,
+            "endLine": 24,
+            "endColumn": 23,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 15,
+            "endLine": 26,
+            "endColumn": 23,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 6,
+            "endLine": 29,
+            "endColumn": 14,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 6,
+            "endLine": 33,
+            "endColumn": 14,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 14,
+            "endLine": 37,
+            "endColumn": 22,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 18,
+            "endLine": 38,
+            "endColumn": 26,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 17,
+            "endLine": 43,
+            "endColumn": 25,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 14,
+            "endLine": 47,
+            "endColumn": 22,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 31,
+            "endLine": 47,
+            "endColumn": 39,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 10,
+            "endLine": 50,
+            "endColumn": 18,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 31,
+            "endLine": 50,
+            "endColumn": 39,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 19,
+            "endLine": 52,
+            "endColumn": 27,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 41,
+            "endLine": 52,
+            "endColumn": 49,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 27,
+            "endLine": 54,
+            "endColumn": 35,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 33,
+            "endLine": 55,
+            "endColumn": 41,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 22,
+            "endLine": 57,
+            "endColumn": 47,
+            "problem": "IntersectionType",
+            "suggest": "",
+            "rule": "Use inheritance instead of intersection types (arkts-no-intersection-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 22,
+            "endLine": 57,
+            "endColumn": 23,
+            "problem": "ObjectTypeLiteral",
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 39,
+            "endLine": 57,
+            "endColumn": 47,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 9,
+            "endLine": 63,
+            "endColumn": 17,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 5,
+            "endLine": 65,
+            "endColumn": 33,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 25,
+            "endLine": 65,
+            "endColumn": 33,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 23,
+            "endLine": 69,
+            "endColumn": 31,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 72,
+            "column": 10,
+            "endLine": 72,
+            "endColumn": 18,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        }
+    ]
+}

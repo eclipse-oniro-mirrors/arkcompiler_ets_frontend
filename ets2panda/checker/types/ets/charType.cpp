@@ -16,7 +16,7 @@
 #include "charType.h"
 
 #include "checker/ets/conversion.h"
-#include "checker/ets/narrowingWideningConverter.h"
+#include "checker/ets/wideningConverter.h"
 
 namespace ark::es2panda::checker {
 void CharType::Identical(TypeRelation *relation, Type *other)
@@ -28,10 +28,7 @@ void CharType::Identical(TypeRelation *relation, Type *other)
 
 void CharType::AssignmentTarget(TypeRelation *relation, [[maybe_unused]] Type *source)
 {
-    if (relation->ApplyUnboxing()) {
-        relation->GetChecker()->AsETSChecker()->MaybeAddUnboxingFlagInRelation(relation, source, this);
-    }
-    NarrowingWideningConverter(relation->GetChecker()->AsETSChecker(), relation, this, source);
+    WideningConverter(relation->GetChecker()->AsETSChecker(), relation, this, source);
 }
 
 bool CharType::AssignmentSource([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *target)
@@ -57,38 +54,9 @@ void CharType::Cast(TypeRelation *const relation, Type *const target)
         return;
     }
 
-    if (target->HasTypeFlag(TypeFlag::BYTE | TypeFlag::SHORT)) {
-        conversion::NarrowingPrimitive(relation, this, target);
-        return;
-    }
-
-    if (target->HasTypeFlag(TypeFlag::INT | TypeFlag::LONG | TypeFlag::FLOAT | TypeFlag::DOUBLE)) {
-        conversion::WideningPrimitive(relation, this, target);
-        return;
-    }
-
-    if (target->HasTypeFlag(TypeFlag::ETS_OBJECT)) {
-        if (target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_CHAR)) {
-            conversion::Boxing(relation, this);
-            return;
-        }
-
-        if (target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_TYPE)) {
-            auto unboxedTarget = relation->GetChecker()->AsETSChecker()->MaybeUnboxInRelation(target);
-            if (unboxedTarget == nullptr) {
-                conversion::Forbidden(relation);
-                return;
-            }
-            Cast(relation, unboxedTarget);
-            if (relation->IsTrue()) {
-                conversion::Boxing(relation, unboxedTarget);
-                return;
-            }
-            conversion::Forbidden(relation);
-            return;
-        }
-
-        conversion::BoxingWideningReference(relation, this, target->AsETSObjectType());
+    if (target->HasTypeFlag(TypeFlag::ETS_OBJECT) &&
+        target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_CHAR)) {
+        conversion::Boxing(relation, this);
         return;
     }
 

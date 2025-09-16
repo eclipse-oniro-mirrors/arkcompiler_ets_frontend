@@ -15,8 +15,7 @@
 
 //declare function has body
 export class A<T> {}
-export declare function foo(a:A<number>):void 
+export declare function foo(a:A<number>):void
 export declare function foo(a:A<string>):number {}
 
-/* @@? 18:8 Warning Warning: Function foo with this assembly signature already declared.  */
 /* @@? 19:49 Error TypeError: Native, Abstract and Declare methods cannot have body.  */

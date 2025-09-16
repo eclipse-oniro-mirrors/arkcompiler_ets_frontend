@@ -25,12 +25,7 @@ namespace ark::es2panda::ir {
 void TSBooleanKeyword::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
                                          [[maybe_unused]] std::string_view const transformationName)
 {
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSBooleanKeyword::Iterate([[maybe_unused]] const NodeTraverser &cb) const
@@ -76,5 +71,27 @@ checker::Type *TSBooleanKeyword::GetType([[maybe_unused]] checker::TSChecker *ch
 checker::VerifiedType TSBooleanKeyword::Check(checker::ETSChecker *checker)
 {
     return {this, checker->GetAnalyzer()->Check(this)};
+}
+
+TSBooleanKeyword *TSBooleanKeyword::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    auto *clone = allocator->New<TSBooleanKeyword>(allocator);
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    // Clone annotations if any
+    if (!Annotations().empty()) {
+        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
+        for (auto *annotationUsage : Annotations()) {
+            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
+        }
+        clone->SetAnnotations(std::move(annotationUsages));
+    }
+
+    return clone;
 }
 }  // namespace ark::es2panda::ir

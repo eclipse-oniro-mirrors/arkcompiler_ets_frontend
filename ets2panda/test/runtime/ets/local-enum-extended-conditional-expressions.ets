@@ -13,35 +13,34 @@
  * limitations under the License.
  */
 
+enum Color { Red, Green, Blue = 0}
 
 function main(): void {
+    arktest.assertTrue(Color.Red ? false : true)
+    arktest.assertTrue(Color.Green ? true : false)
+    arktest.assertTrue(!Color.Green ? false : true)
+    arktest.assertTrue(Color.Blue ? false : true)
 
-    enum Color { Red, Green, Blue = 0}
-    assertTrue(Color.Red ? false : true)
-    assertTrue(Color.Green ? true : false)
-    assertTrue(!Color.Green ? false : true)
-    assertTrue(Color.Blue ? false : true)
-
-    while (Color.Red) { assertTrue(false)}
+    while (Color.Red) { arktest.assertTrue(false)}
     while (Color.Green) { break; }
-    while (Color.Blue) { assertTrue(false)}
+    while (Color.Blue) { arktest.assertTrue(false)}
 
     let i = 0;
-    do {i++; if (i==2) break; } while (Color.Red); assertEQ(i, 1)
+    do {i++; if (i==2) break; } while (Color.Red); arktest.assertEQ(i, 1)
     i = 0;
-    do {i++; if (i==2) break; } while (Color.Green); assertEQ(i, 2)
+    do {i++; if (i==2) break; } while (Color.Green); arktest.assertEQ(i, 2)
     i = 0;
-    do {i++; if (i==2) break; } while (Color.Blue); assertEQ(i, 1)
+    do {i++; if (i==2) break; } while (Color.Blue); arktest.assertEQ(i, 1)
 
     let stop = false;
-    for (let i = 0; Color.Red; ++i) { stop = true; break; } assertEQ(stop, false)
+    for (let i = 0; Color.Red; ++i) { stop = true; break; } arktest.assertEQ(stop, false)
     stop = false;
-    for (let i = 0; Color.Green; ++i) { stop = true; break; } assertEQ(stop, true)
+    for (let i = 0; Color.Green; ++i) { stop = true; break; } arktest.assertEQ(stop, true)
     stop = false;
-    for (let i = 0; Color.Blue; ++i) { stop = true; break; } assertEQ(stop, false)
+    for (let i = 0; Color.Blue; ++i) { stop = true; break; } arktest.assertEQ(stop, false)
 
-    if (Color.Red) assertTrue(false)
-    if (Color.Green) assertTrue(true)
-    if (Color.Blue) assertTrue(false)
+    if (Color.Red) arktest.assertTrue(false)
+    if (Color.Green) arktest.assertTrue(true)
+    if (Color.Blue) arktest.assertTrue(false)
 
 }

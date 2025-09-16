@@ -33,9 +33,9 @@ class C extends A {
 }
 
 function foo<T, K>(a: T, b: T | K, c: T | K): void {
-    assertTrue(a instanceof B)
-    assertTrue(b instanceof A)
-    assertTrue(c instanceof C)
+    arktest.assertTrue(a instanceof B)
+    arktest.assertTrue(b instanceof A)
+    arktest.assertTrue(c instanceof C)
 }
 
 function main(): void {

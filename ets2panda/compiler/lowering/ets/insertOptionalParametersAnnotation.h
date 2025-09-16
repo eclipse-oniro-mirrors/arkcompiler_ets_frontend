@@ -22,10 +22,9 @@ namespace ark::es2panda::compiler {
 
 class InsertOptionalParametersAnnotation : public PhaseForDeclarations {
 public:
-    static constexpr std::string_view NAME = "InsertOptionalParametersAnnotation";
     std::string_view Name() const override
     {
-        return NAME;
+        return "InsertOptionalParametersAnnotation";
     }
 
     bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;

@@ -52,7 +52,7 @@ export function foo(n: number) {
     Initializer initializer = Initializer();
     auto context = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
     auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->checker);
+    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->GetChecker());
     auto ast = ctx->parserProgram->Ast();
     auto id = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
         return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "foo";
@@ -91,7 +91,7 @@ export function foo(n: number) {
     Initializer initializer = Initializer();
     auto context = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
     auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->checker);
+    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->GetChecker());
     auto ast = ctx->parserProgram->Ast();
     auto id = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
         return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "foo";
@@ -131,7 +131,7 @@ export const foo = () => {
     Initializer initializer = Initializer();
     auto context = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
     auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->checker);
+    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->GetChecker());
     auto ast = ctx->parserProgram->Ast();
     auto id = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
         return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "foo";
@@ -172,7 +172,7 @@ export class A {
     Initializer initializer = Initializer();
     auto context = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
     auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->checker);
+    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->GetChecker());
     auto ast = ctx->parserProgram->Ast();
     auto id = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
         return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "foo";
@@ -213,7 +213,7 @@ export class A {
     Initializer initializer = Initializer();
     auto context = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
     auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->checker);
+    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->GetChecker());
     auto ast = ctx->parserProgram->Ast();
     auto id = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
         return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "foo";

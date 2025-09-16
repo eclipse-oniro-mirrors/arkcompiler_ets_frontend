@@ -26,7 +26,7 @@ ObjectExpression::ObjectExpression([[maybe_unused]] Tag const tag, ObjectExpress
       decorators_(allocator->Adapter()),
       properties_(allocator->Adapter())
 {
-    preferredType_ = other.preferredType_;
+    SetPreferredType(other.PreferredType());
     isDeclaration_ = other.isDeclaration_;
     trailingComma_ = other.trailingComma_;
     optional_ = other.optional_;
@@ -407,5 +407,12 @@ void ObjectExpression::Compile(compiler::ETSGen *etsg) const
 checker::VerifiedType ObjectExpression::Check(checker::ETSChecker *checker)
 {
     return {this, checker->GetAnalyzer()->Check(this)};
+}
+
+void ObjectExpression::CleanCheckInformation()
+{
+    SetPreferredType(nullptr);
+    SetTsType(nullptr);
+    this->Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
 }
 }  // namespace ark::es2panda::ir

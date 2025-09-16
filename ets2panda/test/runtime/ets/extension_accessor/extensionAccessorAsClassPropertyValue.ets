@@ -28,6 +28,6 @@ class B {
 }
 
 function main() {
-    assertEQ(new B().data_, 1)
-    assertEQ(new B().data_2, 1)
+    arktest.assertEQ(new B().data_, 1)
+    arktest.assertEQ(new B().data_2, 1)
 }

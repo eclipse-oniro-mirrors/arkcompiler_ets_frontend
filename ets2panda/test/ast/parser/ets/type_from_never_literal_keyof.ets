@@ -19,6 +19,5 @@
    let keyOfType = Type.from<keyofType>();
  }
 
-  /* @@? 16:20 Error TypeError: Unable to resolve type. */
-  /* @@? 17:22 Error TypeError: Acquiring types for string literal types is not supported. */
-  /* @@? 19:20 Error TypeError: Unable to resolve type. */
+  /* @@? 18:4 Error SyntaxError: Illegal start of Type Alias expression. */
+  /* @@? 19:30 Error TypeError: Cannot find type 'keyofType'. */

@@ -56,9 +56,11 @@ let non_prim_c: Char = c'b';
 // see 3.1.5 Void type
 function v(): void {}
 
-/* @@@ label Error TypeError: Variable 'prim_b' has already been declared.  */
+/* @@? 35:21 Error TypeError: Type 'Double' cannot be assigned to type 'Float' */
+/* @@? 36:25 Error TypeError: Type 'Double' cannot be assigned to type 'Float' */
+/* @@@ label Error TypeError: Variable 'prim_b' has already been declared. */
 /* @@? 45:27 Error TypeError: Cannot find type 'bool'. */
-/* @@? 45:34 Error TypeError: Type 'boolean' cannot be assigned to type 'byte' */
+/* @@? 45:34 Error TypeError: Type 'Boolean' cannot be assigned to type 'Byte' */
 /* @@? 46:5 Error TypeError: Variable 'non_prim_b' has already been declared. */
 /* @@? 46:17 Error TypeError: Cannot find type 'Bool'. */
-/* @@? 46:24 Error TypeError: Type 'boolean' cannot be assigned to type 'Byte' */
+/* @@? 46:24 Error TypeError: Type 'Boolean' cannot be assigned to type 'Byte' */

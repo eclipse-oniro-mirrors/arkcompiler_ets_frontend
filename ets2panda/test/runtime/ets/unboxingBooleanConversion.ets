@@ -26,9 +26,9 @@ function main(): void {
     let a2: Boolean = true
 
     let b: Boolean = a || a2;
-    assertEQ(b, true)
+    arktest.assertEQ(b, true)
 
     let c: Boolean = returnRefBool(a || returnRefBool(returnRefBool(a)));
-    assertEQ(c, false)
+    arktest.assertEQ(c, false)
 
 }

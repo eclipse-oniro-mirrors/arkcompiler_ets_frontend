@@ -24,6 +24,6 @@ function foo(inputBytes: number, size: number, byteOffset: number): string {
 }
 
 function main() {
-  assertTrue(foo(1, 1, 3) === "bar")
+  arktest.assertTrue(foo(1, 1, 3) === "bar")
 }
 

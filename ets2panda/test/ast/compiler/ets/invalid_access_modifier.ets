@@ -20,11 +20,8 @@ class A{
 /* @@? 17:13 Error SyntaxError: Invalid character. */
 /* @@? 17:13 Error SyntaxError: Access modifier must precede field and method modifiers. */
 /* @@? 17:14 Error SyntaxError: Invalid character. */
-/* @@? 17:14 Error SyntaxError: Keyword must not contain escaped characters. */
 /* @@? 17:14 Error SyntaxError: Access modifier must precede field and method modifiers. */
 /* @@? 17:15 Error SyntaxError: Invalid character. */
-/* @@? 17:15 Error SyntaxError: Keyword must not contain escaped characters. */
 /* @@? 17:15 Error SyntaxError: Access modifier must precede field and method modifiers. */
 /* @@? 17:16 Error SyntaxError: Invalid character. */
-/* @@? 17:16 Error SyntaxError: Keyword must not contain escaped characters. */
 /* @@? 17:16 Error SyntaxError: Access modifier must precede field and method modifiers. */

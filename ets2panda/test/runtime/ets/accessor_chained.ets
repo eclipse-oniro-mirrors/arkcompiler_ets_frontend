@@ -27,6 +27,6 @@ class B {
 function main(): void {
     let b = new B();
     b.y.x = 123;
-    assertEQ(A.xstate, 123)
-    assertEQ(b.y.x, 123)
+    arktest.assertEQ(A.xstate, 123)
+    arktest.assertEQ(b.y.x, 123)
 }

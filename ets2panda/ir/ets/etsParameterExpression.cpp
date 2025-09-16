@@ -22,8 +22,29 @@
 
 namespace ark::es2panda::ir {
 
+void ETSParameterExpression::SetRequiredParams(size_t extraValue)
+{
+    this->GetOrCreateHistoryNodeAs<ETSParameterExpression>()->extraValue_ = extraValue;
+}
+
+void ETSParameterExpression::SetLexerSaved(util::StringView savedLexer)
+{
+    this->GetOrCreateHistoryNodeAs<ETSParameterExpression>()->savedLexer_ = savedLexer;
+}
+
+void ETSParameterExpression::SetSpread(SpreadElement *spread)
+{
+    this->GetOrCreateHistoryNodeAs<ETSParameterExpression>()->spread_ = spread;
+}
+
 ETSParameterExpression::ETSParameterExpression(AnnotatedExpression *const identOrSpread, bool isOptional,
                                                ArenaAllocator *const allocator)
+    : ETSParameterExpression(identOrSpread, isOptional, allocator, nullptr)
+{
+}
+
+ETSParameterExpression::ETSParameterExpression(AnnotatedExpression *const identOrSpread, bool isOptional,
+                                               ArenaAllocator *const allocator, AstNodeHistory *history)
     : AnnotationAllowed<Expression>(AstNodeType::ETS_PARAMETER_EXPRESSION, allocator)
 {
     SetOptional(isOptional);
@@ -43,125 +64,140 @@ ETSParameterExpression::ETSParameterExpression(AnnotatedExpression *const identO
     } else {
         ES2PANDA_UNREACHABLE();
     }
+
+    if (history != nullptr) {
+        history_ = history;
+    } else {
+        InitHistory();
+    }
 }
 
 ETSParameterExpression::ETSParameterExpression(AnnotatedExpression *const identOrSpread, ir::Expression *initializer,
                                                ArenaAllocator *const allocator)
+    : ETSParameterExpression(identOrSpread, initializer, allocator, nullptr)
+{
+}
+
+ETSParameterExpression::ETSParameterExpression(AnnotatedExpression *const identOrSpread, ir::Expression *initializer,
+                                               ArenaAllocator *const allocator, AstNodeHistory *history)
     : ETSParameterExpression(identOrSpread, true, allocator)
 {
     SetInitializer(initializer);
+
+    if (history != nullptr) {
+        history_ = history;
+    } else {
+        InitHistory();
+    }
 }
 
 const util::StringView &ETSParameterExpression::Name() const noexcept
 {
-    return ident_->Name();
+    return Ident()->Name();
 }
 
 const Identifier *ETSParameterExpression::Ident() const noexcept
 {
-    return ident_;
+    return GetHistoryNodeAs<ETSParameterExpression>()->ident_;
 }
 
 Identifier *ETSParameterExpression::Ident() noexcept
 {
-    return ident_;
+    return GetHistoryNodeAs<ETSParameterExpression>()->ident_;
 }
 
 const SpreadElement *ETSParameterExpression::RestParameter() const noexcept
 {
-    return spread_;
+    return GetHistoryNodeAs<ETSParameterExpression>()->spread_;
 }
 
 SpreadElement *ETSParameterExpression::RestParameter() noexcept
 {
-    return spread_;
+    return GetHistoryNodeAs<ETSParameterExpression>()->spread_;
 }
 
 const Expression *ETSParameterExpression::Initializer() const noexcept
 {
-    return initializer_;
+    return GetHistoryNodeAs<ETSParameterExpression>()->initializer_;
 }
 
 Expression *ETSParameterExpression::Initializer() noexcept
 {
-    return initializer_;
+    return GetHistoryNodeAs<ETSParameterExpression>()->initializer_;
 }
 
 varbinder::Variable *ETSParameterExpression::Variable() const noexcept
 {
-    return ident_->Variable();
+    return Ident()->Variable();
 }
 
 TypeNode const *ETSParameterExpression::TypeAnnotation() const noexcept
 {
-    return !IsRestParameter() ? ident_->TypeAnnotation() : spread_->TypeAnnotation();
+    return !IsRestParameter() ? Ident()->TypeAnnotation() : Spread()->TypeAnnotation();
 }
 
 TypeNode *ETSParameterExpression::TypeAnnotation() noexcept
 {
-    return !IsRestParameter() ? ident_->TypeAnnotation() : spread_->TypeAnnotation();
+    return !IsRestParameter() ? Ident()->TypeAnnotation() : Spread()->TypeAnnotation();
 }
 
 void ETSParameterExpression::SetTypeAnnotation(TypeNode *typeNode) noexcept
 {
-    !IsRestParameter() ? ident_->SetTsTypeAnnotation(typeNode) : spread_->SetTsTypeAnnotation(typeNode);
+    !IsRestParameter() ? Ident()->SetTsTypeAnnotation(typeNode) : Spread()->SetTsTypeAnnotation(typeNode);
 }
 
 void ETSParameterExpression::SetVariable(varbinder::Variable *const variable) noexcept
 {
-    ident_->SetVariable(variable);
-}
-
-void ETSParameterExpression::SetLexerSaved(util::StringView s) noexcept
-{
-    savedLexer_ = s;
+    Ident()->SetVariable(variable);
 }
 
 util::StringView ETSParameterExpression::LexerSaved() const noexcept
 {
-    return savedLexer_;
+    return GetHistoryNodeAs<ETSParameterExpression>()->savedLexer_;
 }
 
 void ETSParameterExpression::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
+    auto const spread = Spread();
+    auto const ident = Ident();
+    auto newNode = GetOrCreateHistoryNodeAs<ETSParameterExpression>();
     if (IsRestParameter()) {
-        if (auto *transformedNode = cb(spread_); spread_ != transformedNode) {
-            spread_->SetTransformedNode(transformationName, transformedNode);
-            spread_ = transformedNode->AsRestElement();
+        if (auto *transformedNode = cb(spread); spread != transformedNode) {
+            spread->SetTransformedNode(transformationName, transformedNode);
+            SetSpread(transformedNode->AsRestElement());
         }
-        ident_ = spread_->Argument()->AsIdentifier();
+        newNode->ident_ = Spread()->Argument()->AsIdentifier();
     } else {
-        if (auto *transformedNode = cb(ident_); ident_ != transformedNode) {
-            ident_->SetTransformedNode(transformationName, transformedNode);
-            ident_ = transformedNode->AsIdentifier();
+        if (auto *transformedNode = cb(ident); ident != transformedNode) {
+            ident->SetTransformedNode(transformationName, transformedNode);
+            SetIdent(transformedNode->AsIdentifier());
         }
     }
 
-    if (initializer_ != nullptr) {
-        if (auto *transformedNode = cb(initializer_); initializer_ != transformedNode) {
-            initializer_->SetTransformedNode(transformationName, transformedNode);
-            initializer_ = transformedNode->AsExpression();
+    auto const initializer = Initializer();
+    if (initializer != nullptr) {
+        if (auto *transformedNode = cb(initializer); initializer != transformedNode) {
+            initializer->SetTransformedNode(transformationName, transformedNode);
+            SetInitializer(transformedNode->AsExpression());
         }
     }
 
-    for (auto *&it : Annotations()) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void ETSParameterExpression::Iterate(const NodeTraverser &cb) const
 {
     if (IsRestParameter()) {
-        cb(spread_);
+        auto const spread = GetHistoryNode()->AsETSParameterExpression()->spread_;
+        cb(spread);
     } else {
-        cb(ident_);
+        auto const ident = GetHistoryNode()->AsETSParameterExpression()->ident_;
+        cb(ident);
     }
 
-    if (initializer_ != nullptr) {
-        cb(initializer_);
+    auto const initializer = GetHistoryNode()->AsETSParameterExpression()->initializer_;
+    if (initializer != nullptr) {
+        cb(initializer);
     }
 
     for (auto *it : Annotations()) {
@@ -173,12 +209,12 @@ void ETSParameterExpression::Dump(ir::AstDumper *const dumper) const
 {
     if (!IsRestParameter()) {
         dumper->Add({{"type", "ETSParameterExpression"},
-                     {"name", ident_},
-                     {"initializer", AstDumper::Optional(initializer_)},
+                     {"name", Ident()},
+                     {"initializer", AstDumper::Optional(Initializer())},
                      {"annotations", AstDumper::Optional(Annotations())}});
     } else {
         dumper->Add({{"type", "ETSParameterExpression"},
-                     {"rest parameter", spread_},
+                     {"rest parameter", Spread()},
                      {"annotations", AstDumper::Optional(Annotations())}});
     }
 }
@@ -190,23 +226,25 @@ void ETSParameterExpression::Dump(ir::SrcDumper *const dumper) const
     }
 
     if (IsRestParameter()) {
-        spread_->Dump(dumper);
+        Spread()->Dump(dumper);
     } else {
-        if (ident_ != nullptr) {
+        auto const ident = Ident();
+        auto const initializer = Initializer();
+        if (ident != nullptr) {
             ES2PANDA_ASSERT(ident_->IsAnnotatedExpression());
-            ident_->Dump(dumper);
-            if (isOptional_ && initializer_ == nullptr) {
+            ident->Dump(dumper);
+            if (IsOptional() && initializer == nullptr) {
                 dumper->Add("?");
             }
-            auto typeAnnotation = ident_->AsAnnotatedExpression()->TypeAnnotation();
+            auto typeAnnotation = ident->AsAnnotatedExpression()->TypeAnnotation();
             if (typeAnnotation != nullptr) {
                 dumper->Add(": ");
                 typeAnnotation->Dump(dumper);
             }
         }
-        if (initializer_ != nullptr) {
+        if (initializer != nullptr) {
             dumper->Add(" = ");
-            initializer_->Dump(dumper);
+            initializer->Dump(dumper);
         }
     }
 }
@@ -234,21 +272,23 @@ checker::VerifiedType ETSParameterExpression::Check(checker::ETSChecker *const c
 ETSParameterExpression *ETSParameterExpression::Clone(ArenaAllocator *const allocator, AstNode *const parent)
 {
     AnnotatedExpression *identOrSpread = nullptr;
-    if (spread_ != nullptr) {
-        auto spreadClone = spread_->Clone(allocator, nullptr);
+    if (Spread() != nullptr) {
+        auto spreadClone = Spread()->Clone(allocator, nullptr);
         ES2PANDA_ASSERT(spreadClone != nullptr);
         identOrSpread = spreadClone->AsAnnotatedExpression();
     } else {
-        auto identClone = ident_->Clone(allocator, nullptr);
+        auto identClone = Ident()->Clone(allocator, nullptr);
         ES2PANDA_ASSERT(identClone != nullptr);
         identOrSpread = identClone->AsAnnotatedExpression();
     }
     auto *const initializer =
-        initializer_ != nullptr ? initializer_->Clone(allocator, nullptr)->AsExpression() : nullptr;
+        Initializer() != nullptr ? Initializer()->Clone(allocator, nullptr)->AsExpression() : nullptr;
 
-    auto *const clone = initializer_ != nullptr
+    auto *const clone = Initializer() != nullptr
                             ? allocator->New<ETSParameterExpression>(identOrSpread, initializer, allocator)
-                            : allocator->New<ETSParameterExpression>(identOrSpread, isOptional_, allocator);
+                            : allocator->New<ETSParameterExpression>(identOrSpread, IsOptional(), allocator);
+    ES2PANDA_ASSERT(identOrSpread != nullptr);
+    // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
     identOrSpread->SetParent(clone);
 
     if (initializer != nullptr) {
@@ -260,12 +300,12 @@ ETSParameterExpression *ETSParameterExpression::Clone(ArenaAllocator *const allo
         clone->SetParent(parent);
     }
 
-    clone->SetRequiredParams(extraValue_);
+    clone->SetRequiredParams(GetRequiredParams());
 
     if (!Annotations().empty()) {
         ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
         for (auto *annotationUsage : Annotations()) {
-            auto *const annotationClone = annotationUsage->Clone(allocator, clone);
+            auto *const annotationClone = annotationUsage->Clone(allocator, nullptr);
             ES2PANDA_ASSERT(annotationClone != nullptr);
             annotationUsages.push_back(annotationClone->AsAnnotationUsage());
         }

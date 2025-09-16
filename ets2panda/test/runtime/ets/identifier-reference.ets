@@ -40,11 +40,11 @@ final class B extends A {
 function main(): void {
     classVal = 1.1;
     A.classVal = 42;
-    assertEQ(A.classVal, 42)
+    arktest.assertEQ(A.classVal, 42)
     const b = new B();
-    assertEQ(A.classVal, 43)
-    assertEQ(classVal, 1.1)
-    assertEQ(b.getInstanceVar(), 69)
-    assertEQ(classVal, 2.1)
-    assertEQ(A.classVal, 44)
+    arktest.assertEQ(A.classVal, 43)
+    arktest.assertEQ(classVal, 1.1)
+    arktest.assertEQ(b.getInstanceVar(), 69)
+    arktest.assertEQ(classVal, 2.1)
+    arktest.assertEQ(A.classVal, 44)
 }

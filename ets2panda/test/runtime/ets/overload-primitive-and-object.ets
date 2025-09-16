@@ -29,7 +29,7 @@ function boo(x: number, y: Number) {
 function main(): void {
     let n: Number = new Number();
     foo(1, n);
-    assertEQ(res, 21);
+    arktest.assertEQ(res, 21);
     boo(6 as Number, 8);
-    assertEQ(res, 34);
+    arktest.assertEQ(res, 34);
 }

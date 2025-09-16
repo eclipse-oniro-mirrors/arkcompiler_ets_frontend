@@ -24,7 +24,7 @@ class SubType extends SupperType{
         this.list.forEach( (id:string):void => 
         {
             let a = super.foo()
-            assertEQ(a, 1)
+            arktest.assertEQ(a, 1)
         })
     }
 }

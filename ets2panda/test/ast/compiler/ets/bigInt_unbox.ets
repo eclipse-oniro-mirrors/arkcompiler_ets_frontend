@@ -17,7 +17,6 @@ function checker(id_main: int) {
   return (id_main != id_current) ? 0 : 1n's{
 }
 
-/* @@? 17:10 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 17:22 Error TypeError: Unresolved reference id_current */
 /* @@? 17:42 Error SyntaxError: Newline is not allowed in strings */
 /* @@? 17:42 Error SyntaxError: Unexpected token 's{'. */

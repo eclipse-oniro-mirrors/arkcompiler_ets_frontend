@@ -18,4 +18,4 @@ namespace MySpace {
 
 let a = /* @@ label */MySpace
 
-/* @@@ label Error TypeError: Namespace name 'MySpace' used in the wrong context */
+/* @@@ label Error SyntaxError: Namespace cannot be used as object. */

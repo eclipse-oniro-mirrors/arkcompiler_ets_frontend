@@ -32,63 +32,63 @@ function main(): void {
     A.bfield_ = true;
     // left side
     new A().field += 10;
-    assertEQ(new A().field, 40)
+    arktest.assertEQ(new A().field, 40)
 
     new A().field -= 200;
-    assertEQ(new A().field, -160)
+    arktest.assertEQ(new A().field, -160)
 
     new A().field += 260;
     new A().field *= 10;
-    assertEQ(new A().field, 1000)
+    arktest.assertEQ(new A().field, 1000)
 
     new A().field /= 100;
-    assertEQ(new A().field, 10)
+    arktest.assertEQ(new A().field, 10)
 
     new A().field = 16;
     new A().field >>= 2
-    assertEQ(new A().field, 4)
+    arktest.assertEQ(new A().field, 4)
 
     new A().field = 16;
     new A().field >>>= 1
-    assertEQ(new A().field, 8)
+    arktest.assertEQ(new A().field, 8)
 
     new A().field = 8;
     new A().field <<= 1
-    assertEQ(new A().field, 16)
+    arktest.assertEQ(new A().field, 16)
 
     new A().field = 5;
     new A().field %= 2
-    assertEQ(new A().field, 1)
+    arktest.assertEQ(new A().field, 1)
 
     new A().field = 15;
     new A().field &= 7
-    assertEQ(new A().field, 7)
+    arktest.assertEQ(new A().field, 7)
 
     new A().field = 15;
     new A().field |= 7
-    assertEQ(new A().field, 15)
+    arktest.assertEQ(new A().field, 15)
 
     new A().field = 15;
     new A().field ^= 7
-    assertEQ(new A().field, 8)
+    arktest.assertEQ(new A().field, 8)
 
     // left and right side
     new A().field = 100;
     new A().field += new A().field;
-    assertEQ(new A().field, 200)
+    arktest.assertEQ(new A().field, 200)
 
     new A().field -= new A().field;
-    assertEQ(new A().field, 0)
+    arktest.assertEQ(new A().field, 0)
 
     new A().field += 100;
     new A().field *= new A().field;
-    assertEQ(new A().field, 10000)
+    arktest.assertEQ(new A().field, 10000)
 
     new A().field /= new A().field;
-    assertEQ(new A().field, 1)
+    arktest.assertEQ(new A().field, 1)
 
     new A().field |= new A().field
-    assertEQ(new A().field, 1)
+    arktest.assertEQ(new A().field, 1)
 
     // right side
 
@@ -96,42 +96,42 @@ function main(): void {
     new A().field = 2;
 
     value += new A().field;
-    assertEQ(value, 102)
+    arktest.assertEQ(value, 102)
 
     value -= new A().field;
-    assertEQ(value, 100)
+    arktest.assertEQ(value, 100)
 
     value *= new A().field;
-    assertEQ(value, 200)
+    arktest.assertEQ(value, 200)
 
     value /= new A().field;
-    assertEQ(value, 100)
+    arktest.assertEQ(value, 100)
 
     value = 16;
     value >>= new A().field
-    assertEQ(value, 4)
+    arktest.assertEQ(value, 4)
 
     value = 16;
     value >>>= new A().field
-    assertEQ(value, 4)
+    arktest.assertEQ(value, 4)
 
     value = 8;
     value <<= new A().field
-    assertEQ(value, 32)
+    arktest.assertEQ(value, 32)
 
     value = 5;
     value %= new A().field
-    assertEQ(value, 1)
+    arktest.assertEQ(value, 1)
 
     value = 15;
     value &= new A().field
-    assertEQ(value, 2)
+    arktest.assertEQ(value, 2)
 
     value = 15;
     value |= new A().field
-    assertEQ(value, 15)
+    arktest.assertEQ(value, 15)
 
     value = 15;
     value ^= new A().field
-    assertEQ(value, 13)
+    arktest.assertEQ(value, 13)
 }

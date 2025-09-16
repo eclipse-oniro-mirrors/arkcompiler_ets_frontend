@@ -31,11 +31,11 @@ function test(fn: Func1 | Func2 | number | string) {
     if (fn instanceof Func1) {
         fn()
     } else if (fn instanceof Func2) {
-        assertEQ(fn(2,"func2"), 2)
+        arktest.assertEQ(fn(2,"func2"), 2)
     } else if (fn instanceof Number) {
-        assertEQ(fn, 3)
+        arktest.assertEQ(fn, 3)
     } else if (fn instanceof String) {
-        assertEQ(fn, "4")
+        arktest.assertEQ(fn, "4")
     }
 }
 

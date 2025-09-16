@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-export {foo} from "./export"
-export /* @@ label */{foo} from "./export_2"
+export /* @@ label */{foo} from "./export"
+export {foo} from "./export_2"
 
 /* @@@ label Error TypeError: Ambiguous export 'foo' */

@@ -1,0 +1,73 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import prompt from './sdk/api/@ohos.prompt'
+
+prompt.showToast({
+  message: 'www',
+  duration: 2000,
+  bottom: 20,
+});
+
+prompt.showDialog({
+  title: 'Title Info',
+  message: 'Message Info',
+  buttons: [
+    {
+      text: 'button1',
+      color: '#000000'
+    },
+  ],
+})
+
+prompt.showActionMenu({
+  title: 'Title Info',
+  buttons: [
+    {
+      text: 'item1',
+      color: '#666666'
+    },
+    {
+      text: 'item2',
+      color: '#000000'
+    },
+  ]
+}, (err, data) => {
+  if (err) {
+    console.info('showActionMenu err: ' + err);
+    return;
+  }
+  console.info('showActionMenu success callback, click button: ' + data.index);
+})
+
+prompt.showDialog({
+  title: 'showDialog Title Info',
+  message: 'Message Info',
+  buttons: [
+    {
+      text: 'button1',
+      color: '#000000'
+    },
+    {
+      text: 'button2',
+      color: '#000000'
+    }
+  ]
+}, (err, data) => {
+  if (err) {
+    console.info('showDialog err: ' + err);
+    return;
+  }
+  console.info('showDialog success callback, click button: ' + data.index);
+});

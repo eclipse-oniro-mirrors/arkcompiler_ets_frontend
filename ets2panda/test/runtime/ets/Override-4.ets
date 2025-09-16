@@ -33,7 +33,7 @@ class C extends A {
 }
 
 function main() {
-    assertEQ(new B().foo(new Y()), "B.foo(X)")
-    assertEQ(new B().foo(new Double()), "B.foo(Floating)")
-    assertEQ(new C().foo2(new Y()), "C.foo2(Y)")
+    arktest.assertEQ(new B().foo(new Y()), "B.foo(X)")
+    arktest.assertEQ(new B().foo(new Double()), "B.foo(Floating)")
+    arktest.assertEQ(new C().foo2(new Y()), "C.foo2(Y)")
 }

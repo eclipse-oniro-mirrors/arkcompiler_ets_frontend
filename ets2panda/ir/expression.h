@@ -33,24 +33,26 @@ public:
 
     [[nodiscard]] bool IsGrouped() const noexcept
     {
-        return grouped_;
+        return AstNode::GetHistoryNodeAs<Expression>()->HasAstNodeFlags(AstNodeFlags::IS_GROUPED);
     }
 
     void SetGrouped() noexcept
     {
-        grouped_ = true;
+        if (!IsGrouped()) {
+            AstNode::GetOrCreateHistoryNodeAs<Expression>()->SetAstNodeFlags(AstNodeFlags::IS_GROUPED);
+        }
     }
 
     [[nodiscard]] const Literal *AsLiteral() const
     {
         ES2PANDA_ASSERT(IsLiteral());
-        return reinterpret_cast<const Literal *>(this);
+        return reinterpret_cast<const Literal *>(GetHistoryNodeAs<Expression>());
     }
 
     [[nodiscard]] Literal *AsLiteral()
     {
         ES2PANDA_ASSERT(IsLiteral());
-        return reinterpret_cast<Literal *>(this);
+        return reinterpret_cast<Literal *>(GetHistoryNodeAs<Expression>());
     }
 
     [[nodiscard]] virtual bool IsLiteral() const noexcept
@@ -76,25 +78,25 @@ public:
     [[nodiscard]] TypeNode *AsTypeNode()
     {
         ES2PANDA_ASSERT(IsTypeNode());
-        return reinterpret_cast<TypeNode *>(this);
+        return reinterpret_cast<TypeNode *>(GetHistoryNodeAs<Expression>());
     }
 
     [[nodiscard]] const TypeNode *AsTypeNode() const
     {
         ES2PANDA_ASSERT(IsTypeNode());
-        return reinterpret_cast<const TypeNode *>(this);
+        return reinterpret_cast<const TypeNode *>(GetHistoryNodeAs<Expression>());
     }
 
     [[nodiscard]] AnnotatedExpression *AsAnnotatedExpression()
     {
         ES2PANDA_ASSERT(IsAnnotatedExpression());
-        return reinterpret_cast<AnnotatedExpression *>(this);
+        return reinterpret_cast<AnnotatedExpression *>(GetHistoryNodeAs<Expression>());
     }
 
     [[nodiscard]] const AnnotatedExpression *AsAnnotatedExpression() const
     {
         ES2PANDA_ASSERT(IsAnnotatedExpression());
-        return reinterpret_cast<const AnnotatedExpression *>(this);
+        return reinterpret_cast<const AnnotatedExpression *>(GetHistoryNodeAs<Expression>());
     }
 
     bool IsBrokenExpression() const noexcept;
@@ -107,14 +109,10 @@ protected:
     explicit Expression(AstNodeType const type) : TypedAstNode(type) {}
     explicit Expression(AstNodeType const type, ModifierFlags const flags) : TypedAstNode(type, flags) {}
 
-    Expression(Expression const &other) : TypedAstNode(static_cast<TypedAstNode const &>(other))
-    {
-        grouped_ = other.grouped_;
-    }
+    Expression(Expression const &other) : TypedAstNode(static_cast<TypedAstNode const &>(other)) {}
 
 private:
     friend class SizeOfNodeTest;
-    bool grouped_ {};
 };
 
 class AnnotatedExpression : public Annotated<Expression> {
@@ -150,12 +148,12 @@ public:
 
     [[nodiscard]] bool IsOptional() const noexcept
     {
-        return optional_;
+        return GetHistoryNodeAs<MaybeOptionalExpression>()->optional_;
     }
 
     void ClearOptional() noexcept
     {
-        optional_ = false;
+        GetOrCreateHistoryNodeAs<MaybeOptionalExpression>()->optional_ = false;
     }
 
 protected:

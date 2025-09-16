@@ -28,6 +28,6 @@ class B implements I {
 function main(): void {
   let instance: I = new B();
 
-  assertEQ( instance.text, "text" )
+  arktest.assertEQ( instance.text, "text" )
 }
 

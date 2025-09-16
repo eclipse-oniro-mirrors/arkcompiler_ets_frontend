@@ -18,24 +18,24 @@ function main():void{
     while(([false,true])[x1]){
         break;
     }
-    assertTrue(([false,true])[x1])
+    arktest.assertTrue(([false,true])[x1])
 
     let x2:Int = 1;
     let i = 4;
     while(([false,true])[x2] && i > 0){
         --i;
     }
-    assertTrue(([false,true])[x2])
+    arktest.assertTrue(([false,true])[x2])
 
     let x3 = [false,true]
     while(x3[1]){
         break;
     }
-    assertTrue(x3[1])
+    arktest.assertTrue(x3[1])
 
     let x4 = [true,false]
     while(!x4[1]){
         break;
     }
-    assertTrue(!x4[1])
+    arktest.assertTrue(!x4[1])
 }

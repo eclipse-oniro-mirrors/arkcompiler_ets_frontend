@@ -21,7 +21,7 @@ function foo(arg: number|undefined) {
 
 function main(): void {
     let a = foo(1);
-    assertEQ(a, 2.0)
+    arktest.assertEQ(a, 2.0)
 }
 
 class Test {

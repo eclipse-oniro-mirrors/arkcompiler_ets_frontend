@@ -34,11 +34,11 @@ set x(this: B, v: string) {
 function main() {
     let b = new B();
     b.x = "call";
-    assertEQ(b.x, "BcallB")
-    assertEQ(b.xstate, "Bcall")
+    arktest.assertEQ(b.x, "BcallB")
+    arktest.assertEQ(b.xstate, "Bcall")
 
     let a = new A();
     a.x = "call";
-    assertEQ(a.x, "AcallA")
-    assertEQ(a.xstate, "Acall")
+    arktest.assertEQ(a.x, "AcallA")
+    arktest.assertEQ(a.xstate, "Acall")
 }

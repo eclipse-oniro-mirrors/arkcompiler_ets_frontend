@@ -14,12 +14,12 @@
  */
 
 #include "lsp/include/services/text_change/change_tracker.h"
+#include "get_adjusted_location.h"
 #include <cstddef>
 #include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
-#include "get_adjusted_location.h"
 
 namespace ark::es2panda::lsp {
 
@@ -60,6 +60,21 @@ size_t ChangeTracker::GetStartPositionOfLine(size_t line, const es2panda_Context
     }
     return 0;
 }
+
+void ChangeTracker::RfindNearestKeyWordTextRange(const es2panda_Context *context, const size_t pos,
+                                                 const std::string_view &keywordStr, TextRange &range)
+{
+    auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(const_cast<es2panda_Context *>(context));
+    const std::string_view &sourceCode = ctx->parserProgram->SourceCode().Utf8();
+    auto start = sourceCode.rfind(keywordStr, pos);
+    if (start == std::string_view::npos) {
+        return;
+    }
+
+    range.pos = start;
+    range.end = start + keywordStr.length();
+}
+
 bool ChangeTracker::RangeContainsPosition(TextRange r, size_t pos)
 {
     return r.pos <= pos && pos <= r.end;
@@ -99,11 +114,11 @@ void ChangeTracker::InsertAtTopOfFile(es2panda_Context *context,
     const auto sourceFileAst = GetAstFromContext(context);
     const size_t pos = GetInsertionPositionAtSourceFileTop(sourceFileAst);
 
-    std::string prefix = (pos == 0) ? "" : "\n";
+    std::string prefix = (pos == 0) ? "" : newLineCharacter_;
     char currentChar = pos < sourceFile->source.size() ? sourceFile->source.at(pos) : '\0';
-    std::string suffix = (IsLineBreak(currentChar) ? "" : "\n");
+    std::string suffix = (IsLineBreak(currentChar) ? "" : newLineCharacter_);
     if (blankLineBetween) {
-        suffix += "\n";
+        suffix += newLineCharacter_;
     }
     if (std::holds_alternative<std::vector<ir::AstNode *>>(insert)) {
         ReplaceWithMultipleNodesOptions options;
@@ -124,7 +139,7 @@ InsertNodeOptions ChangeTracker::GetOptionsForInsertNodeBefore(const ir::AstNode
 {
     InsertNodeOptions options;
     if (before->IsStatement() || before->IsClassProperty()) {
-        options.suffix = blankLineBetween ? "\n\n" : "\n";
+        options.suffix = blankLineBetween ? newLineCharacter_ + newLineCharacter_ : newLineCharacter_;
     } else if (before->IsVariableDeclaration()) {
         options.suffix = ", ";
     } else if (before->IsTSTypeParameterDeclaration()) {
@@ -132,9 +147,9 @@ InsertNodeOptions ChangeTracker::GetOptionsForInsertNodeBefore(const ir::AstNode
     } else if ((before->IsStringLiteral() && before->Parent()->IsImportDeclaration()) || before->IsNamedType()) {
         options.suffix = ", ";
     } else if (before->IsImportSpecifier()) {
-        options.suffix = "," + std::string(blankLineBetween ? "\n" : " ");
+        options.suffix = "," + std::string(blankLineBetween ? newLineCharacter_ : " ");
     }
-    return options;  // We haven't handled this kind of node yet -- add it
+    return options;
 }
 
 std::vector<ir::AstNode *> ChangeTracker::GetMembersOrProperties(const ir::AstNode *node)
@@ -159,23 +174,13 @@ std::vector<ir::AstNode *> ChangeTracker::GetMembersOrProperties(const ir::AstNo
 
 InsertNodeOptions ChangeTracker::GetInsertNodeAtStartInsertOptions(const ir::AstNode *node)
 {
-    // Rules:
-    // - Always insert leading newline.
-    // - For object literals:
-    //   - Add a trailing comma if there are existing members in the node, or the source file is not a JSON file
-    //     (because trailing commas are generally illegal in a JSON file).
-    //   - Add a leading comma if the source file is not a JSON file, there are existing insertions,
-    //     and the node is empty (because we didn't add a trailing comma per the previous rule).
-    // - Only insert a trailing newline if body is single-line and there are no other insertions for the node.
-    //   NOTE: This is handled in `finishClassesWithNodesInsertedAtStart`.
-
     const auto members = GetMembersOrProperties(node);
     const auto isEmpty = members.empty();
     const auto isFirstInsertion = classesWithNodesInsertedAtStart_.at(0).node == node;
     const auto insertTrailingComma = node->IsObjectExpression();
     const auto insertLeadingComma = node->IsObjectExpression() && isEmpty && !isFirstInsertion;
     InsertNodeOptions options;
-    options.prefix = (insertLeadingComma ? "," : "") + std::string("\n");
+    options.prefix = (insertLeadingComma ? "," : "") + newLineCharacter_;
     options.suffix = insertTrailingComma ? "," : (node->IsTSInterfaceDeclaration() && isEmpty ? ";" : "");
     options.delta = 0;
     return {options};
@@ -219,8 +224,7 @@ size_t ChangeTracker::InsertNodeAfterWorker(es2panda_Context *context, ir::AstNo
         const auto sourceFile = astContext->sourceFile;
         if (sourceFile->source.at(after->End().index - 1) != ':') {
             InsertNodeOptions options;
-            ReplaceRange(context, CreateRange(after->End().index), nullptr,
-                         options);  // newNode should get from factory.createToken(':')
+            ReplaceRange(context, CreateRange(after->End().index), newNode, options);
         }
     }
 
@@ -237,8 +241,8 @@ InsertNodeOptions ChangeTracker::GetInsertNodeAfterOptionsWorker(const ir::AstNo
         case ark::es2panda::ir::AstNodeType::CLASS_DECLARATION:
         case ark::es2panda::ir::AstNodeType::STRUCT_DECLARATION:
         case ark::es2panda::ir::AstNodeType::TS_MODULE_DECLARATION:
-            options.prefix = "\n";
-            options.suffix = "\n";
+            options.prefix = newLineCharacter_;
+            options.suffix = newLineCharacter_;
             return options;
         case ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION:
         case ark::es2panda::ir::AstNodeType::STRING_LITERAL:
@@ -246,7 +250,7 @@ InsertNodeOptions ChangeTracker::GetInsertNodeAfterOptionsWorker(const ir::AstNo
             options.prefix = ", ";
             return options;
         case ark::es2panda::ir::AstNodeType::PROPERTY:
-            options.suffix = "," + std::string("\n");
+            options.suffix = "," + newLineCharacter_;
             return options;
         case ark::es2panda::ir::AstNodeType::EXPORT_SPECIFIER:
             options.prefix = ", ";
@@ -255,7 +259,7 @@ InsertNodeOptions ChangeTracker::GetInsertNodeAfterOptionsWorker(const ir::AstNo
             return options;
         default:
             // Else we haven't handled this kind of node yet -- add it
-            options.suffix = "\n";
+            options.suffix = newLineCharacter_;
             return options;
     }
 }
@@ -266,7 +270,7 @@ struct StartandEndOfNode {
 
 StartandEndOfNode GetClassOrObjectBraceEnds(ir::AstNode *node)
 {
-    const auto open = node->Start().index;
+    const auto open = node->FindChild([](ir::AstNode *) { return true; })->Start().index;
     const auto close = node->End().index;
     return StartandEndOfNode {open, close};
 }
@@ -278,23 +282,14 @@ void ChangeTracker::FinishClassesWithNodesInsertedAtStart()
         const auto isEmpty = GetMembersOrProperties(mapElem.second.node).empty();
         const auto isSingleLine = mapElem.second.node->Start().line == mapElem.second.node->End().line;
         if (isEmpty && isSingleLine) {
-            // For `class C { }` remove the whitespace inside the braces.
             DeleteRange(mapElem.second.sourceFile, CreateRange(braceEnds.start, braceEnds.end - 1));
         }
         if (isSingleLine) {
-            InsertText(mapElem.second.sourceFile, braceEnds.end - 1, "\n");
+            InsertText(mapElem.second.sourceFile, braceEnds.end - 1, newLineCharacter_);
         }
     }
 }
 
-void ChangeTracker::FinishDeleteDeclarations()
-{
-    // its about delete declarations
-    // will develop next version
-    // its about delete declarations
-}
-/* createTextrangeFromSpan did not developed. it will develop next version.it should be gotten from utılıtıes
- * createTextTangeFromSpan method. pls check it from ts side*/
 void ChangeTracker::PushRaw(const SourceFile *sourceFile, const FileTextChanges &change)
 {
     for (const auto &c : change.textChanges) {
@@ -434,7 +429,7 @@ TextRange ChangeTracker::CreateRange(size_t pos, size_t end)
 
 void ChangeTracker::ReplacePropertyAssignment(es2panda_Context *context, ir::AstNode *oldNode, ir::AstNode *newNode)
 {
-    const auto suffix = NextCommaToken(context, oldNode) != nullptr ? "" : ("," + std::string("\n"));
+    const auto suffix = NextCommaToken(context, oldNode) != nullptr ? "" : ("," + newLineCharacter_);
     InsertNodeOptions insertOptions;
     insertOptions.suffix = suffix;
     ChangeNodeOptions options = {g_useNonAdjustedPositions, insertOptions};
@@ -444,10 +439,24 @@ void ChangeTracker::ReplacePropertyAssignment(es2panda_Context *context, ir::Ast
 void ChangeTracker::ReplaceConstructorBody(es2panda_Context *context, ir::AstNode *ctr,
                                            const std::vector<ir::Statement *> &statements)
 {
-    if (statements.empty()) {
+    if (!statements.empty()) {
         ChangeNodeOptions options = {};
-        ReplaceNode(context, ctr, nullptr,
-                    options);  // newNode should get from factory.createBlock(statements, / *multiLine* ̇/ true)
+
+        const auto impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+        const auto newNode = impl->CreateBlockStatement(context, nullptr, 0);
+        // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        auto **stmts =
+            static_cast<es2panda_AstNode **>(impl->AllocMemory(context, statements.size(), sizeof(es2panda_AstNode *)));
+        if (stmts == nullptr) {
+            return;
+        }
+        for (size_t i = 0; i < statements.size(); ++i) {
+            stmts[i] = reinterpret_cast<es2panda_AstNode *>(statements[i]);
+        }
+        impl->BlockStatementSetStatements(context, newNode, stmts, statements.size());
+        // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+
+        ReplaceNode(context, ctr, reinterpret_cast<ir::AstNode *>(newNode), options);
     }
 }
 
@@ -486,8 +495,7 @@ void ChangeTracker::InsertNodeBefore(es2panda_Context *context, ir::AstNode *bef
 void ChangeTracker::InsertModifierAt(es2panda_Context *context, const size_t pos, const ir::AstNode *modifier,
                                      InsertNodeOptions &options)
 {
-    (void)modifier;
-    InsertNodeAt(context, pos, nullptr, options);  // newNode should get from factory.createToken(modifier)
+    InsertNodeAt(context, pos, modifier, options);
 }
 
 void ChangeTracker::InsertModifierBefore(es2panda_Context *context, const ir::AstNode *modifier, ir::AstNode *before)
@@ -600,8 +608,8 @@ void ChangeTracker::InsertNodeAtConstructorEnd(es2panda_Context *context, ir::As
 void ChangeTracker::InsertNodeAtEndOfScope(es2panda_Context *context, ir::AstNode *scope, ir::AstNode *newNode)
 {
     InsertNodeOptions options;
-    options.prefix = "\n";
-    options.suffix = "\n";
+    options.prefix = newLineCharacter_;
+    options.suffix = newLineCharacter_;
     InsertNodeAt(context, scope->End().index, newNode, options);
 }
 
@@ -699,15 +707,14 @@ void ChangeTracker::InsertNodeInListAfterMultiLine(bool multilineList, es2panda_
 {
     if (multilineList) {
         InsertNodeOptions insertOptions;
-        ReplaceRange(context, CreateRange(end), nullptr,
-                     insertOptions);  // newNode should get from factory.createToken(separator)
+        ReplaceRange(context, CreateRange(end), newNode, insertOptions);
         const int indentation = 4;
         size_t insertPos = 4;
         while (insertPos != end && IsLineBreak(sourceFile->source.at(insertPos - 1))) {
             insertPos--;
         }
         insertOptions.indentation = indentation;
-        insertOptions.prefix = "\n";
+        insertOptions.prefix = newLineCharacter_;
         ReplaceRange(context, CreateRange(insertPos), newNode, insertOptions);
     } else {
         InsertNodeOptions insertOptions;
@@ -748,20 +755,9 @@ void ChangeTracker::InsertNodeInListAfter(es2panda_Context *context, ir::AstNode
             InsertNodesAt(context, startPos, containingList, options);
         } else {
             bool multilineList = false;
-            char separator;
-            if (containingList.size() == 1) {
-                separator = ',';
-            } else {
-                const auto tokenBeforeInsertPosition =
-                    FindPrecedingToken(after->Start().index, after, initializer.Allocator());
-                separator = ',';
-                const auto afterMinusOneStartLinePosition =
-                    GetStartPositionOfLine(containingList.at(index - 1)->Start().line, context);
+            if (containingList.size() > 1) {
                 multilineList = containingList[index - 1]->Start().line != containingList[index]->Start().line;
-                (void)tokenBeforeInsertPosition;       // Use tokenBeforeInsertPosition if needed
-                (void)afterMinusOneStartLinePosition;  // Use afterMinusOneStartLinePosition if needed
             }
-            (void)separator;  // Use separator if needed
             InsertNodeInListAfterMultiLine(multilineList, context, sourceFile, end, newNode);
         }
     }
@@ -779,34 +775,27 @@ void ChangeTracker::InsertImportSpecifierAtIndex(es2panda_Context *context, ir::
     }
 }
 
-std::vector<FileTextChanges> GetTextChangesFromChanges(
-    Change &changes, std::string &newLineCharacter,
-    FormattingContext &formattingContext)  // ValidateNonFormattedText should add
+std::vector<FileTextChanges> ChangeTracker::GetTextChangesFromChanges(std::vector<Change> &changes)
 {
-    // will develop with changestoText
-    // Its about finishing changes processes
-    (void)changes;
-    (void)newLineCharacter;
-    (void)formattingContext;
-
-    return {};
-}
-std::vector<FileTextChanges> ChangeTracker::GetTextChangesFromChanges(std::vector<Change> &changes,
-                                                                      std::string &newLineCharacter,
-                                                                      const FormatCodeSettings &formatCodeSettings)
-{
-    (void)newLineCharacter;
-    (void)formatCodeSettings;
-
     std::unordered_map<std::string, FileTextChanges> fileChangesMap;
+    auto addChange = [&](const SourceFile *sourceFile, TextRange range, const std::string &newText) {
+        const std::string filePath = std::string(sourceFile->filePath);
+        TextChange c = {{range.pos, range.end - range.pos}, newText};
+
+        auto &fileChange = fileChangesMap[filePath];
+        if (fileChange.fileName.empty()) {
+            fileChange.fileName = filePath;
+        }
+        fileChange.textChanges.push_back(c);
+    };
+
     for (const auto &change : changes) {
-        if (const auto *textChange = std::get_if<ark::es2panda::lsp::ChangeText>(&change)) {
-            TextChange c = {{textChange->range.pos, textChange->range.end - textChange->range.pos}, textChange->text};
-            const std::string &filePath = std::string(textChange->sourceFile->filePath);
-            if (fileChangesMap.find(filePath) == fileChangesMap.end()) {
-                fileChangesMap[filePath].fileName = filePath;
-            }
-            fileChangesMap[filePath].textChanges.push_back(c);
+        if (const auto *textChange = std::get_if<ChangeText>(&change)) {
+            addChange(textChange->sourceFile, textChange->range, textChange->text);
+        } else if (const auto *remove = std::get_if<RemoveNode>(&change)) {
+            addChange(remove->sourceFile, remove->range, "");
+        } else if (const auto *replace = std::get_if<ReplaceWithSingleNode>(&change)) {
+            addChange(replace->sourceFile, replace->range, replace->node->DumpEtsSrc());
         }
     }
 
@@ -828,11 +817,8 @@ std::vector<FileTextChanges> ChangeTracker::GetTextChangesFromChanges(std::vecto
  */
 std::vector<FileTextChanges> ChangeTracker::GetChanges()  // should add ValidateNonFormattedText
 {
-    FinishDeleteDeclarations();
     FinishClassesWithNodesInsertedAtStart();
-    auto textChangesList =
-        GetTextChangesFromChanges(changes_, newLineCharacter_, formatContext_.GetFormatCodeSettings());
-
+    auto textChangesList = GetTextChangesFromChanges(changes_);
     return textChangesList;
 }
 

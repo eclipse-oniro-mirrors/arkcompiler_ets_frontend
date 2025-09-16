@@ -14,3 +14,7 @@
  */
 
 export const STRING_ERROR_LITERAL = 'Error';
+export const CONCAT_ARRAY = 'ConcatArray';
+export const SELECT_IDENTIFIER = 'Select';
+export const SELECT_OPTIONS = ['Array<SelectOption>', 'SelectOption[]'];
+export const COMPONENT_DECORATOR = '@Component';

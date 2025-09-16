@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { KBoolean, KInt, KNativePointer } from '../InteropTypes';
+import { KBoolean, KInt, KNativePointer } from '../common/InteropTypes';
 
 export class Es2pandaNativeModule {
   _CreateMemberExpression(

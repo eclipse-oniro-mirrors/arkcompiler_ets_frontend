@@ -16,5 +16,8 @@
 let arr = new Array<Number/* @@ label */;
 
 /* @@? 16:15 Error TypeError: Type 'Array<T>' is generic but type argument were not provided. */
+/* @@? 16:15 Error TypeError: Invalid type reference. */
+/* @@? 16:15 Error TypeError: Type 'Array<T>' is generic but type argument were not provided. */
+/* @@? 16:15 Error TypeError: Invalid type reference. */
 /* @@? 16:41 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 21:1 Error SyntaxError: Unexpected token 'end of stream'. */
+/* @@? 24:1 Error SyntaxError: Unexpected token 'end of stream'. */

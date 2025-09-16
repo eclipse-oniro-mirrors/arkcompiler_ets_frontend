@@ -22,6 +22,6 @@ class A<T> {
 function main(): void {
   let o_double = new A<number>(10)
   const o_int = new A<int>(10)
-  assertEQ(o_double[11], 10)
-  assertEQ(10, o_int[11])
+  arktest.assertEQ(o_double[11], 10)
+  arktest.assertEQ(10, o_int[11])
 }

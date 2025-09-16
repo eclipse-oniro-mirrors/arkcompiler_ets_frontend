@@ -13,4 +13,9 @@
  * limitations under the License.
  */
 
+// import {foo} from './b';
+
+// foo();
+
 export let strd: string = "hello world from d!";
+export let strArr: string[] = ['1', '2'];

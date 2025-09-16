@@ -21,12 +21,7 @@ namespace ark::es2panda::ir {
 void ETSStringLiteralType::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
                                              [[maybe_unused]] std::string_view const transformationName)
 {
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void ETSStringLiteralType::Iterate([[maybe_unused]] const NodeTraverser &cb) const

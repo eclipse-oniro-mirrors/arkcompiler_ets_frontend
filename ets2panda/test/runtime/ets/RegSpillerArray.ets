@@ -32,42 +32,42 @@ function main(): void {
     const test4Expected : boolean[] = [true, false];
     const test5Expected : boolean[] = [false, true, false];
 
-    assertEQ(failures, 0)
+    arktest.assertEQ(failures, 0)
 
-    assertEQ(test1First[0], true)
-    assertEQ(test1Second[0], true)
+    arktest.assertEQ(test1First[0], true)
+    arktest.assertEQ(test1Second[0], true)
 
-    assertEQ(test2First[0], true)
-    assertEQ(test2First[1], true)
-    assertEQ(test2Second[0], false)
-    assertEQ(test2Second[1], false)
+    arktest.assertEQ(test2First[0], true)
+    arktest.assertEQ(test2First[1], true)
+    arktest.assertEQ(test2Second[0], false)
+    arktest.assertEQ(test2Second[1], false)
 
-    assertEQ(test3First.length, 0)
-    assertEQ(test3Second.length, 0)
+    arktest.assertEQ(test3First.length, 0)
+    arktest.assertEQ(test3Second.length, 0)
 
-    assertEQ(test4First[0], true)
-    assertEQ(test4First[1], false)
-    assertEQ(test4Second.length, 0)
+    arktest.assertEQ(test4First[0], true)
+    arktest.assertEQ(test4First[1], false)
+    arktest.assertEQ(test4Second.length, 0)
 
-    assertEQ(test5First.length, 0)
-    assertEQ(test5Second[0], false)
-    assertEQ(test5Second[1], true)
-    assertEQ(test5Second[2], false)
+    arktest.assertEQ(test5First.length, 0)
+    arktest.assertEQ(test5Second[0], false)
+    arktest.assertEQ(test5Second[1], true)
+    arktest.assertEQ(test5Second[2], false)
 
-    assertEQ(test1Expected[0], true)
-    assertEQ(test1Expected[1], true)
+    arktest.assertEQ(test1Expected[0], true)
+    arktest.assertEQ(test1Expected[1], true)
 
-    assertEQ(test2Expected[0], true)
-    assertEQ(test2Expected[1], true)
-    assertEQ(test2Expected[2], false)
-    assertEQ(test2Expected[3], false)
+    arktest.assertEQ(test2Expected[0], true)
+    arktest.assertEQ(test2Expected[1], true)
+    arktest.assertEQ(test2Expected[2], false)
+    arktest.assertEQ(test2Expected[3], false)
 
-    assertEQ(test3Expected.length, 0)
+    arktest.assertEQ(test3Expected.length, 0)
 
-    assertEQ(test4Expected[0], true)
-    assertEQ(test4Expected[1], false)
+    arktest.assertEQ(test4Expected[0], true)
+    arktest.assertEQ(test4Expected[1], false)
 
-    assertEQ(test5Expected[0], false)
-    assertEQ(test5Expected[1], true)
-    assertEQ(test5Expected[2], false)
+    arktest.assertEQ(test5Expected[0], false)
+    arktest.assertEQ(test5Expected[1], true)
+    arktest.assertEQ(test5Expected[2], false)
 }

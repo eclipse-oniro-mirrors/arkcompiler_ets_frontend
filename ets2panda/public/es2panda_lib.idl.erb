@@ -19,6 +19,7 @@ typedef (String or f64 or boolean) es2panda_variantDoubleCharArrayBool;
 
 [Entity=Class] interface es2panda_Config {};
 [Entity=Class] interface es2panda_Context {};
+[Entity=Class] interface es2panda_GlobalContext {};
 [Entity=Class] interface es2panda_Program {};
 [Entity=Class] interface es2panda_ExternalSource {};
 [Entity=Class] interface es2panda_ArkTsConfig {};
@@ -130,15 +131,18 @@ interface es2panda_SuggestionInfo {
     attribute sequence<String> args;
     attribute u32 argc;
     attribute String substitutionCode;
+    attribute String title;
+    attribute es2panda_SourceRange range;
 };
 
 interface es2panda_DiagnosticInfo {
     attribute es2panda_DiagnosticKind kind;
     attribute sequence<String> args;
     attribute u32 argc;
+    attribute es2panda_SourcePosition pos;
 };
 
-dictionary es2panda_PluginDiagnosticType {
+dictionary es2panda_PluginDiagnosticType { 
     i32 ES2PANDA_PLUGIN_WARNING = 0;
     i32 ES2PANDA_PLUGIN_ERROR = 1;
     i32 ES2PANDA_PLUGIN_SUGGESTION = 2;
@@ -172,10 +176,15 @@ interface es2panda_Impl {
     es2panda_Options ConfigGetOptions(es2panda_Config config);
 
     es2panda_Context CreateContextFromFile(es2panda_Config config, String source_file_name);
+    es2panda_Context CreateCacheContextFromFile(es2panda_Config config, String source_file_name, es2panda_GlobalContext globalContext, boolean isExternal);
     es2panda_Context CreateContextFromString(es2panda_Config config, String source, String file_name);
+    es2panda_Context CreateContextFromStringWithHistory(es2panda_Config config, String source, String file_name);
+    es2panda_Context CreateCacheContextFromString(es2panda_Config config, String source, String file_name, es2panda_GlobalContext globalContext, boolean isExternal);
     es2panda_Context CreateContextGenerateAbcForExternalSourceFiles(es2panda_Config config, i32 fileNamesCount, sequence<String> fileNames);
     es2panda_Context ProceedToState(es2panda_Context context, es2panda_ContextState state);  // context is consumed
     void DestroyContext(es2panda_Context context);
+    es2panda_GlobalContext CreateGlobalContext(es2panda_Config config, sequence<String> externalFileList, u32 fileNum, boolean LspUsage);
+    void DestroyGlobalContext(es2panda_GlobalContext globalContext);
 
     es2panda_ContextState ContextState(es2panda_Context context);
     String ContextErrorMessage(es2panda_Context context);
@@ -196,11 +205,12 @@ interface es2panda_Impl {
     es2panda_SourcePosition SourceRangeStart(es2panda_Context context, es2panda_SourceRange range);
     es2panda_SourcePosition SourceRangeEnd(es2panda_Context context, es2panda_SourceRange range);
     es2panda_DiagnosticInfo CreateDiagnosticInfo(es2panda_Context context, es2panda_DiagnosticKind kind,
-                                        sequence<String> args, u32 argc);
-    es2panda_SuggestionInfo CreateDiagnosticInfo(es2panda_Context context, es2panda_DiagnosticKind kind,
-                                        sequence<String> args, u32 argc, String substitutionCode);
+                                        sequence<String> args, u32 argc, es2panda_SourcePosition position);
+    es2panda_SuggestionInfo CreateSuggestionInfo(es2panda_Context context, es2panda_DiagnosticKind kind,
+                                        sequence<String> args, u32 argc, String substitutionCode,
+                                        String message, es2panda_SourceRange range);
     void LogDiagnosticWithSuggestion(es2panda_Context context, es2panda_DiagnosticInfo diagnosticInfo,
-                                        es2panda_SuggestionInfo suggestionInfo, es2panda_SourceRange range);
+                                        es2panda_SuggestionInfo suggestionInfo);
     void LogTypeError(es2panda_Context context, String errorMsg, es2panda_SourcePosition pos);
     void LogWarning(es2panda_Context context, String warnMsg, es2panda_SourcePosition pos);
     void LogSyntaxError(es2panda_Context context, String errorMsg, es2panda_SourcePosition pos);
@@ -211,6 +221,9 @@ interface es2panda_Impl {
     Es2pandaEnum Es2pandaEnumFromString(es2panda_Context ctx, String str);
     String Es2pandaEnumToString(es2panda_Context ctx, Es2pandaEnum id);
     ir.AstNode DeclarationFromIdentifier(es2panda_Context ctx, ir.Identifier node);
+    boolean IsImportTypeKind(es2panda_Context ctx, ir.AstNode node);
+    String JsdocStringFromDeclaration(es2panda_Context ctx, ir.AstNode node);
+    String GetLicenseFromRootNode(es2panda_Context ctx, ir.AstNode node);
     ir.AstNode FirstDeclarationByNameFromNode(es2panda_Context ctx, ir.AstNode node, String name);
     ir.AstNode FirstDeclarationByNameFromProgram(es2panda_Context ctx, es2panda_Program program, String name);
     sequence<ir.AstNode> AllDeclarationsByNameFromNode(es2panda_Context ctx, ir.AstNode node, String name);
@@ -218,6 +231,9 @@ interface es2panda_Impl {
     void InsertETSImportDeclarationAndParse(es2panda_Context context, es2panda_Program program,
                                             ETSImportDeclaration node);
     i32 GenerateStaticDeclarationsFromContext(es2panda_Context context, String outputPath);
+    void InvalidateFileCache(es2panda_GlobalContext globalContext, String fileName);
+    void RemoveFileCache(es2panda_GlobalContext globalContext, String fileName);
+    void AddFileCache(es2panda_GlobalContext globalContext, String fileName);
 
 % Es2pandaLibApi::ast_nodes&.each do |ast_node|
 %   if ast_node != 'AstNode' && ast_node != 'TypeNode'

@@ -45,9 +45,9 @@ TEST_F(ASTVerifierTest, TestUnions)
         function assert_ccexc(f: () => void) {
             try {
                 f();
-                assertTrue(false, "exception expected");
+                arktest.assertTrue(false, "exception expected");
             } catch (e) {
-                assertTrue(e instanceof ClassCastError);
+                arktest.assertTrue(e instanceof ClassCastError);
             }
         }
 

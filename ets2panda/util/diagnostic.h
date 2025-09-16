@@ -50,9 +50,9 @@ enum DiagnosticType {
     PLUGIN_WARNING,
     DECLGEN_ETS2TS_ERROR,
     DECLGEN_ETS2TS_WARNING,
+    ISOLATED_DECLGEN,
     ARKTS_CONFIG_ERROR,
     SUGGESTION,
-    ISOLATED_DECLGEN,
     COUNT,
     INVALID = COUNT
 };
@@ -74,6 +74,7 @@ public:
     virtual ~DiagnosticBase() = default;
 
     virtual DiagnosticType Type() const = 0;
+    virtual uint32_t GetId() const = 0;
     virtual std::string Message() const = 0;
 
     bool operator<(const DiagnosticBase &rhs) const;
@@ -166,6 +167,11 @@ public:
         return message_;
     }
 
+    uint32_t GetId() const override
+    {
+        return 0;
+    }
+
 private:
     DiagnosticType type_ {DiagnosticType::INVALID};
     std::string message_ {};
@@ -174,7 +180,7 @@ private:
 class Suggestion : public DiagnosticBase {
 public:
     explicit Suggestion(const diagnostic::DiagnosticKind *kind, std::vector<std::string> &params,
-                        const char *substitutionCode, const lexer::SourceRange *range);
+                        const char *substitutionCode, const char *title, const lexer::SourceRange *range);
 
     const lexer::SourceRange *SourceRange() const
     {
@@ -186,6 +192,11 @@ public:
         return substitutionCode_;
     }
 
+    std::string Title() const
+    {
+        return title_;
+    }
+
     std::string Message() const override
     {
         return message_;
@@ -193,9 +204,12 @@ public:
 
     DiagnosticType Type() const override;
 
+    uint32_t GetId() const override;
+
 private:
     const diagnostic::DiagnosticKind *kind_;
     const std::string substitutionCode_;
+    const std::string title_;
     const std::string message_;
     const lexer::SourceRange *range_;
 };
@@ -218,6 +232,7 @@ public:
     ~Diagnostic() override = default;
 
     DiagnosticType Type() const override;
+    uint32_t GetId() const override;
     std::string Message() const override;
 
     bool HasSuggestions() const

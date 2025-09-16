@@ -21,20 +21,21 @@ interface Preferences {
     delenager.Preferences.Core yncCallback): void;
 }
 
+/* @@? 16:9 Error TypeError: Cyclic inheritance involving D. */
 /* @@? 17:5 Error TypeError: Only abstract or native methods can't have body. */
 /* @@? 17:9 Error TypeError: Cannot find type 'W'. */
-/* @@? 17:23 Error TypeError: 'f9' type does not exist. */
 /* @@? 17:23 Error TypeError: 'f9' type does not exist. */
 /* @@? 17:25 Error SyntaxError: Unexpected token '-'. */
 /* @@? 17:26 Error SyntaxError: Unexpected token '2'. */
 /* @@? 17:27 Error SyntaxError: Newline is not allowed in strings */
 /* @@? 17:27 Error SyntaxError: Unexpected token ';'. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected ','. */
+/* @@? 19:1 Error TypeError: Cyclic inheritance involving Preferences. */
+/* @@? 20:24 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 20:24 Error SyntaxError: Identifier expected. */
 /* @@? 20:24 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 20:24 Error SyntaxError: Unexpected token, expected ','. */
 /* @@? 20:24 Error SyntaxError: Identifier expected. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 20:24 Error SyntaxError: Unexpected token, expected ','. */
 /* @@? 20:24 Error SyntaxError: Identifier expected. */
 /* @@? 20:24 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 20:24 Error SyntaxError: Unexpected token, expected ','. */
@@ -42,5 +43,4 @@ interface Preferences {
 /* @@? 20:24 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 20:24 Error SyntaxError: Unexpected token, expected ','. */
 /* @@? 20:24 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 20:24 Error TypeError: 'Core' type does not exist. */
 /* @@? 20:24 Error TypeError: 'Core' type does not exist. */

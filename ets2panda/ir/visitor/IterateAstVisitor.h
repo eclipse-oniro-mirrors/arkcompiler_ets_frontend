@@ -20,6 +20,7 @@
 #include "ir/brokenTypeNode.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "ir/expressions/blockExpression.h"
+#include "ir/ets/etsIntrinsicNode.h"
 #include "ir/ets/etsUnionType.h"
 #include "ir/ets/etsStringLiteralType.h"
 #include "ir/ets/etsTuple.h"

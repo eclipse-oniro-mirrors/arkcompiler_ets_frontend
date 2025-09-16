@@ -16,8 +16,8 @@
 export class type_cast {
     private i1: int = 34;
     private d: double = 3.7;
-    private i2: int = this.d as int;
+    private i2: int = this.d.toInt();
     protected c: char = c'c';
-    protected b: byte = this.c as byte;
-    f: float = this.d as float;
+    protected b: byte = this.c.toByte();
+    f: float = this.d.toFloat();
 }

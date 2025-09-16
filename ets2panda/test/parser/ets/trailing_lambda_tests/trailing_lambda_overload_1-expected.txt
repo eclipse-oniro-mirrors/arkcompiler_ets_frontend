@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "trailing_lambda_overload_1.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "trailing_lambda_overload_1.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "foo",
               "decorators": [],
               "loc": {
@@ -221,7 +115,7 @@
                                     },
                                     "end": {
                                       "line": 16,
-                                      "column": 29,
+                                      "column": 28,
                                       "program": "trailing_lambda_overload_1.ets"
                                     }
                                   }
@@ -234,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 16,
-                                    "column": 29,
+                                    "column": 28,
                                     "program": "trailing_lambda_overload_1.ets"
                                   }
                                 }
@@ -248,7 +142,7 @@
                                 },
                                 "end": {
                                   "line": 16,
-                                  "column": 29,
+                                  "column": 28,
                                   "program": "trailing_lambda_overload_1.ets"
                                 }
                               }
@@ -261,7 +155,7 @@
                               },
                               "end": {
                                 "line": 16,
-                                "column": 29,
+                                "column": 28,
                                 "program": "trailing_lambda_overload_1.ets"
                               }
                             }
@@ -844,8 +738,8 @@
                             "program": "trailing_lambda_overload_1.ets"
                           },
                           "end": {
-                            "line": 25,
-                            "column": 22,
+                            "line": 28,
+                            "column": 6,
                             "program": "trailing_lambda_overload_1.ets"
                           }
                         }
@@ -857,8 +751,8 @@
                           "program": "trailing_lambda_overload_1.ets"
                         },
                         "end": {
-                          "line": 25,
-                          "column": 22,
+                          "line": 28,
+                          "column": 6,
                           "program": "trailing_lambda_overload_1.ets"
                         }
                       }

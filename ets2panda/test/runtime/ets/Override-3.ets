@@ -33,10 +33,10 @@ function main(){
     let c = new C<string>();
     let d = new D<string>();
  
-    assertEQ(b.foo(5), a.foo(5))
-    assertNE(b.foo(6), a.foo(5))
-    assertNE(b.foo(5), a.foo(6))
-    assertEQ(c.foo("x"), d.foo("x"))
-    assertNE(c.foo("x"), d.foo("y"))
-    assertNE(c.foo("y"), d.foo("x"))
+    arktest.assertEQ(b.foo(5), a.foo(5))
+    arktest.assertNE(b.foo(6), a.foo(5))
+    arktest.assertNE(b.foo(5), a.foo(6))
+    arktest.assertEQ(c.foo("x"), d.foo("x"))
+    arktest.assertNE(c.foo("x"), d.foo("y"))
+    arktest.assertNE(c.foo("y"), d.foo("x"))
 }

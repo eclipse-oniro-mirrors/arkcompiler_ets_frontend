@@ -14,7 +14,7 @@
  */
 
 class P<T> {
-    constructor(callback: (resolve: (value: T) => void) => void throws) {
+    constructor(callback: (resolve: (value: T) => void) => void) {
     }
 
     private ref: Object = new Object();

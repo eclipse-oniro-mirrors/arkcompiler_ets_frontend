@@ -32,15 +32,15 @@ std::string_view StringConstructorLowering::Name() const
 // NOLINTBEGIN(modernize-avoid-c-arrays)
 static constexpr char const FORMAT_CHECK_NULL_EXPRESSION[] =
     "let @@I1 = (@@E2);"
-    "(@@I3 === null ? \"null\" : @@I4 as String)";
+    "(@@I3 === null ? \"null\" : (@@I4 as Object).toString())";
 
 static constexpr char const FORMAT_CHECK_UNDEFINED_EXPRESSION[] =
     "let @@I1 = (@@E2);"
-    "(@@I3 === undefined ? \"undefined\" : @@I4 as String)";
+    "(@@I3 === undefined ? \"undefined\" : (@@I4 as Object).toString())";
 
 static constexpr char const FORMAT_CHECK_NULLISH_EXPRESSION[] =
     "let @@I1 = (@@E2);"
-    "(@@I3 instanceof null ? \"null\" : (@@I4 instanceof undefined ? \"undefined\" : @@I5 as String))";
+    "(@@I3 instanceof null ? \"null\" : (@@I4 instanceof undefined ? \"undefined\" : (@@I5 as Object).toString()))";
 
 static constexpr char const FORMAT_TO_STRING_EXPRESSION[] = "((@@E1 as Object).toString())";
 // NOLINTEND(modernize-avoid-c-arrays)
@@ -48,7 +48,7 @@ static constexpr char const FORMAT_TO_STRING_EXPRESSION[] = "((@@E1 as Object).t
 ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
                                          ir::ETSNewClassInstanceExpression *newClassInstExpr)
 {
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *parser = ctx->parser->AsETSParser();
 
     // Skip missing signatures

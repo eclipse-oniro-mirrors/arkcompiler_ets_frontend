@@ -476,3 +476,4 @@
     }
   }
 }
+TypeError: Switch case type 'int' is not comparable to discriminant type 'char' [switch_char_compare_num.ets:21:14]

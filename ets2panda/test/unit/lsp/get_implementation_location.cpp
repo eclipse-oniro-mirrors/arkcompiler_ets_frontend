@@ -126,10 +126,10 @@ TEST_F(LspGILAPTests, GILAPIsAsTypeNode_Test)
     es2panda_Context *ctx = initializer.CreateContext("dummy-node.ets", ES2PANDA_STATE_CHECKED, code);
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
 
-    size_t const offset = 159;
+    size_t const offset = 175;
     auto result = ark::es2panda::lsp::GetTouchingToken(ctx, offset, false);
     ASSERT_NE(result, nullptr);
-    ASSERT_TRUE(ark::es2panda::lsp::IsAsTypeNode(result));
+    ASSERT_TRUE(result->IsTSAsExpression());
 
     initializer.DestroyContext(ctx);
 }

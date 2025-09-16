@@ -21,6 +21,8 @@
 #include "lsp/include/find_rename_locations.h"
 #include <gtest/gtest.h>
 
+using ark::es2panda::lsp::Initializer;
+
 // NOLINTBEGIN
 std::vector<std::string> fileNames = {"findRenameLocsOne.ets", "findRenameLocsTwo.ets"};
 std::vector<std::string> fileContents = {
@@ -126,7 +128,7 @@ public:
             std::string prefix {source.begin() + lineStartPos, source.begin() + pos};
             std::string suffix {source.begin() + pos + word.length(), source.begin() + lineEndPos};
             ark::es2panda::lsp::RenameLocation loc {filePath, pos, pos + word.length(), line, prefix, suffix};
-            printf("{R\"(%s)\", %ld, %ld, %ld, R\"(%s)\", R\"(%s)\"},\n", loc.filePath.c_str(), loc.start, loc.end,
+            printf("{R\"(%s)\", %ld, %ld, %ld, R\"(%s)\", R\"(%s)\"},\n", loc.fileName.c_str(), loc.start, loc.end,
                    loc.line, loc.prefixText.c_str(), loc.suffixText.c_str());
             data.insert(loc);
         }
@@ -189,80 +191,103 @@ TEST_F(LspFindRenameLocationsTests, FindRenameLocationsClassName)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
-    std::vector<ark::es2panda::SourceFile> sourceFiles;
-    for (size_t i = 0; i < filePaths.size(); ++i) {
-        sourceFiles.emplace_back(ark::es2panda::SourceFile {filePaths[i], fileContents[i]});
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto fileContexts = std::vector<es2panda_Context *>();
+    for (const auto &filePath : filePaths) {
+        auto fileContext = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED);
+        fileContexts.push_back(fileContext);
     }
-    ASSERT_TRUE(sourceFiles.size() == fileNames.size());
-
     // Search for rename locations
     ark::es2panda::lsp::CancellationToken cancellationToken {123, nullptr};
-    auto res = ark::es2panda::lsp::FindRenameLocations(&cancellationToken, sourceFiles, sourceFiles[1], 30);
+    auto res = ark::es2panda::lsp::FindRenameLocations(&cancellationToken, fileContexts, context, 30);
     ASSERT_EQ(res.size(), expected_Foo.size());
     for (auto renameLoc : res) {
         auto found = expected_Foo.find(renameLoc);
         ASSERT_TRUE(found != expected_Foo.end());
     }
+    for (size_t i = 0; i < fileContexts.size(); ++i) {
+        initializer.DestroyContext(fileContexts[i]);
+    }
+    initializer.DestroyContext(context);
 }
 
 TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
-    std::vector<ark::es2panda::SourceFile> sourceFiles;
-    for (size_t i = 0; i < filePaths.size(); ++i) {
-        sourceFiles.emplace_back(ark::es2panda::SourceFile {filePaths[i], fileContents[i]});
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto fileContexts = std::vector<es2panda_Context *>();
+    for (const auto &filePath : filePaths) {
+        auto fileContext = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED);
+        fileContexts.push_back(fileContext);
     }
-    ASSERT_TRUE(sourceFiles.size() == fileNames.size());
 
     // Search for rename locations
     ark::es2panda::lsp::CancellationToken cancellationToken {123, nullptr};
-    auto res = ark::es2panda::lsp::FindRenameLocations(&cancellationToken, sourceFiles, sourceFiles[0], 25);
+    auto res = ark::es2panda::lsp::FindRenameLocations(&cancellationToken, fileContexts, context, 25);
     ASSERT_EQ(res.size(), expected_abc.size());
     for (auto renameLoc : res) {
         auto found = expected_abc.find(renameLoc);
         ASSERT_TRUE(found != expected_abc.end());
     }
+    for (size_t i = 0; i < fileContexts.size(); ++i) {
+        initializer.DestroyContext(fileContexts[i]);
+    }
+    initializer.DestroyContext(context);
 }
 
 TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName2)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
-    std::vector<ark::es2panda::SourceFile> sourceFiles;
-    for (size_t i = 0; i < filePaths.size(); ++i) {
-        sourceFiles.emplace_back(ark::es2panda::SourceFile {filePaths[i], fileContents[i]});
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto fileContexts = std::vector<es2panda_Context *>();
+    for (const auto &filePath : filePaths) {
+        auto fileContext = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED);
+        fileContexts.push_back(fileContext);
     }
-    ASSERT_TRUE(sourceFiles.size() == fileNames.size());
 
     // Search for rename locations
     ark::es2panda::lsp::CancellationToken cancellationToken {123, nullptr};
-    auto res = ark::es2panda::lsp::FindRenameLocations(&cancellationToken, sourceFiles, sourceFiles[0], 83);
+    auto res = ark::es2panda::lsp::FindRenameLocations(&cancellationToken, fileContexts, context, 83);
     ASSERT_EQ(res.size(), expected_dummy.size());
     for (auto renameLoc : res) {
         auto found = expected_dummy.find(renameLoc);
         ASSERT_TRUE(found != expected_dummy.end());
     }
+    for (size_t i = 0; i < fileContexts.size(); ++i) {
+        initializer.DestroyContext(fileContexts[i]);
+    }
+    initializer.DestroyContext(context);
 }
 
 TEST_F(LspFindRenameLocationsTests, FindRenameLocationsClassMemberName)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
-    std::vector<ark::es2panda::SourceFile> sourceFiles;
-    for (size_t i = 0; i < filePaths.size(); ++i) {
-        sourceFiles.emplace_back(ark::es2panda::SourceFile {filePaths[i], fileContents[i]});
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto fileContexts = std::vector<es2panda_Context *>();
+    for (const auto &filePath : filePaths) {
+        auto fileContext = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED);
+        fileContexts.push_back(fileContext);
     }
-    ASSERT_TRUE(sourceFiles.size() == fileNames.size());
 
     // Search for rename locations
     ark::es2panda::lsp::CancellationToken cancellationToken {123, nullptr};
-    auto res = ark::es2panda::lsp::FindRenameLocations(&cancellationToken, sourceFiles, sourceFiles[0], 158);
+    auto res = ark::es2panda::lsp::FindRenameLocations(&cancellationToken, fileContexts, context, 158);
     ASSERT_EQ(res.size(), expected_name.size());
     for (auto renameLoc : res) {
         auto found = expected_name.find(renameLoc);
         ASSERT_TRUE(found != expected_name.end());
     }
+    for (size_t i = 0; i < fileContexts.size(); ++i) {
+        initializer.DestroyContext(fileContexts[i]);
+    }
+    initializer.DestroyContext(context);
 }
 
 // NOLINTEND

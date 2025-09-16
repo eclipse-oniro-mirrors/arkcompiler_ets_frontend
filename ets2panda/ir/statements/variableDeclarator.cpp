@@ -90,7 +90,7 @@ VariableDeclarator *VariableDeclarator::Clone(ArenaAllocator *const allocator, A
         clone->SetParent(parent);
     }
 
-    clone->SetRange(range_);
+    clone->SetRange(range_.GetRange());
     return clone;
 }
 

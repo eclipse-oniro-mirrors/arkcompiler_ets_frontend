@@ -42,20 +42,20 @@ function main() : void {
     index = 0;
 
     let a = new A();
-    assertTrue(results[0] == 1 && results[1] == 0 && results[2] == 0 && index == 1)
+    arktest.assertTrue(results[0] == 1 && results[1] == 0 && results[2] == 0 && index == 1)
 
     results = [0,0,0,0];
     index = 0;
     let b = new B();
-    assertTrue(results[0] == 1 && results[1] == 2 && results[2] == 0 && index == 2)
+    arktest.assertTrue(results[0] == 1 && results[1] == 2 && results[2] == 0 && index == 2)
 
     results = [0,0,0,0];
     index = 0;
     let c = new C();
-    assertTrue(results[0] == 1 && results[1] == 2 && results[2] == 3 && index == 3)
+    arktest.assertTrue(results[0] == 1 && results[1] == 2 && results[2] == 3 && index == 3)
 
     results = [0,0,0,0];
     index = 0;
     let d = new D();
-    assertTrue(results[0] == 1 && results[1] == 2 && results[2] == 3 && index == 3)
+    arktest.assertTrue(results[0] == 1 && results[1] == 2 && results[2] == 3 && index == 3)
 }

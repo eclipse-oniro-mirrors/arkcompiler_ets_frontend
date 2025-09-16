@@ -17,10 +17,30 @@
 import { foo, util, taskpool as tpp } from '@ohos.taskpool';
 import { anyClass } from '@kit.ArkTS'; //legal
 import foo2, { fooClass } from '@ohos.taskpool'; //legal
-import taskpool, { ArkTSUtils as Atu, roo } from '@kit.ArkTS';
+import defaultImport, { ArkTSUtils as Atu, roo } from '@kit.ArkTS';
 import koo, { ArkTSUtils as Ark, process as pr } from '@kit.ArkTS';
-import doo, { ArkTSUtils as Ats, too } from '@kit.ArkTS';
-import fooke from '@ohos.process'; //legal
-import { process as ps } from '@ohos.process';
+import doo, { fooModule as fooAs, too } from '@kit.ArkTS';
+import bbbb, { taskpool as tsk, process as prs } from '@kit.ArkTS';
+import fooke from '@ohos.process';
+import { process as ps, collections as clt } from '@kit.ArkTS';
 import process from '@ohos.process';
-import ArkTSUtils, { taskpool as tsk, process as prs } from '@kit.ArkTS';
+import aaa from '@ohos.taskpool'
+import aaaa from '@arkts.collections';
+import utils from './oh_modules/@arkts.utils'
+import { ArkTSUtils } from './oh_modules/@kit.ArkTS';
+
+aaa.getTaskPoolInfo()
+
+function concurrency () {
+    const aaa = 123;
+    console.log(aaa);
+}
+
+ps.isIsolatedProcess();
+tsk.cancel();
+aaaa.Set()
+clt.Set()
+fooAs.getFoo();
+
+let lock1: utils.locks.AsyncLock = utils.locks.AsyncLock.request('lock1');
+let lock2 = new ArkTSUtils.locks.AsyncLock();

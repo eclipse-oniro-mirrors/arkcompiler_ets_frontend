@@ -40,14 +40,11 @@ type T15 = Required<int>
 /* @@? 22:18 Error TypeError: Invalid number of type parameters for Partial type, should be 1. */
 /* @@? 24:18 Error TypeError: Invalid number of type parameters for Partial type, should be 1. */
 /* @@? 25:18 Error TypeError: Invalid number of type parameters for Partial type, should be 1. */
-/* @@? 26:18 Error TypeError: Only reference types can be converted to utility types. */
 
 /* @@? 28:19 Error TypeError: Invalid number of type parameters for Readonly type, should be 1. */
 /* @@? 30:19 Error TypeError: Invalid number of type parameters for Readonly type, should be 1. */
 /* @@? 31:19 Error TypeError: Invalid number of type parameters for Readonly type, should be 1. */
-/* @@? 32:20 Error TypeError: Only reference types can be converted to utility types. */
 
 /* @@? 34:20 Error TypeError: Invalid number of type parameters for Required type, should be 1. */
 /* @@? 36:20 Error TypeError: Invalid number of type parameters for Required type, should be 1. */
 /* @@? 37:20 Error TypeError: Invalid number of type parameters for Required type, should be 1. */
-/* @@? 38:20 Error TypeError: Only reference types can be converted to utility types. */

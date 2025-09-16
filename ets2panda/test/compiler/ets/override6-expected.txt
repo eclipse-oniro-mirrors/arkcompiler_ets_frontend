@@ -73,7 +73,7 @@
                 "loc": {
                   "start": {
                     "line": 17,
-                    "column": 5,
+                    "column": 3,
                     "program": "override6.ets"
                   },
                   "end": {
@@ -86,7 +86,7 @@
               "loc": {
                 "start": {
                   "line": 17,
-                  "column": 5,
+                  "column": 3,
                   "program": "override6.ets"
                 },
                 "end": {
@@ -150,8 +150,8 @@
           "program": "override6.ets"
         },
         "end": {
-          "line": 20,
-          "column": 10,
+          "line": 18,
+          "column": 2,
           "program": "override6.ets"
         }
       }
@@ -223,7 +223,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 24,
+                  "column": 22,
                   "program": "override6.ets"
                 }
               }
@@ -236,7 +236,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 24,
+                "column": 22,
                 "program": "override6.ets"
               }
             }
@@ -249,7 +249,7 @@
             },
             "end": {
               "line": 20,
-              "column": 24,
+              "column": 22,
               "program": "override6.ets"
             }
           }
@@ -262,8 +262,8 @@
           "program": "override6.ets"
         },
         "end": {
-          "line": 22,
-          "column": 6,
+          "line": 20,
+          "column": 25,
           "program": "override6.ets"
         }
       }
@@ -321,7 +321,7 @@
                   },
                   "end": {
                     "line": 22,
-                    "column": 23,
+                    "column": 21,
                     "program": "override6.ets"
                   }
                 }
@@ -334,7 +334,7 @@
                 },
                 "end": {
                   "line": 22,
-                  "column": 23,
+                  "column": 21,
                   "program": "override6.ets"
                 }
               }
@@ -497,7 +497,7 @@
             "loc": {
               "start": {
                 "line": 23,
-                "column": 3,
+                "column": 19,
                 "program": "override6.ets"
               },
               "end": {
@@ -718,12 +718,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "override6.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "override6.ets"
                     }
                   }
                 },
@@ -731,12 +731,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "override6.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "override6.ets"
                   }
                 }
               },
@@ -744,118 +744,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "override6.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "override6.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "override6.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "override6.ets"
                 }
               }
             },

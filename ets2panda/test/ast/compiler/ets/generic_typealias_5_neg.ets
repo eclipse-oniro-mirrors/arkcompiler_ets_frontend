@@ -22,4 +22,4 @@ function main(): void {
     let a: A/* @@ label */<B>;
 }
 
-/* @@@ label Error TypeError: Type B is not assignable to constraint type Comparable<B>  */
+/* @@@ label Error TypeError: Type argument 'B' should be a subtype of 'Comparable<B>'-constraint */

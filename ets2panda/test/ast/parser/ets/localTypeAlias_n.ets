@@ -14,9 +14,10 @@
  */
 
 function main(): void {
-    type a = Double;
+    /* @@ label1 */type a = Double;
 }
 
-let outA : /* @@ label */a;
+let outA : /* @@ label2 */a;
 
-/* @@@ label Error TypeError: Cannot find type 'a'.  */
+/* @@@ label1 Error SyntaxError: Illegal start of Type Alias expression. */
+/* @@@ label2 Error TypeError: Cannot find type 'a'. */

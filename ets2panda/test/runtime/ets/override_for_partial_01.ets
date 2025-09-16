@@ -27,20 +27,20 @@ class B77 extends A77<B77> {
 }
 
 function bar<T>(x: A77<T>, y: Partial<A77<T>>): void {
-   assertEQ(x.foo(undefined), "undefined")
-   assertEQ(x.foo(y), "Partial<B77>")
+   arktest.assertEQ(x.foo(undefined), "undefined")
+   arktest.assertEQ(x.foo(y), "Partial<B77>")
 }
 
 function main() : void {
    let x: A77<B77>  = new B77();
    let y: Partial<B77> = {};
 
-   assertEQ(x.foo(undefined), "undefined")
-   assertEQ(x.foo(y), "Partial<B77>")
+   arktest.assertEQ(x.foo(undefined), "undefined")
+   arktest.assertEQ(x.foo(y), "Partial<B77>")
 
    bar<B77>(x, y);
 
    let z = new B77();
-   assertEQ(z.foo(undefined), "undefined")
-   assertEQ(z.foo(y), "Partial<B77>")
+   arktest.assertEQ(z.foo(undefined), "undefined")
+   arktest.assertEQ(z.foo(y), "Partial<B77>")
 }

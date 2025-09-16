@@ -34,50 +34,139 @@
 #include "util/language.h"
 
 namespace ark::es2panda::ir {
+
+void TSInterfaceDeclaration::SetInternalName(util::StringView internalName)
+{
+    this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>()->internalName_ = internalName;
+}
+
+void TSInterfaceDeclaration::SetAnonClass(ClassDeclaration *anonClass)
+{
+    this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>()->anonClass_ = anonClass;
+}
+
+void TSInterfaceDeclaration::SetId(Identifier *id)
+{
+    this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>()->id_ = id;
+}
+
+void TSInterfaceDeclaration::SetTypeParams(TSTypeParameterDeclaration *typeParams)
+{
+    this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>()->typeParams_ = typeParams;
+}
+
+void TSInterfaceDeclaration::SetBody(TSInterfaceBody *body)
+{
+    this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>()->body_ = body;
+}
+
+void TSInterfaceDeclaration::EmplaceExtends(TSInterfaceHeritage *extends)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    newNode->extends_.emplace_back(extends);
+}
+
+void TSInterfaceDeclaration::ClearExtends()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    newNode->extends_.clear();
+}
+
+void TSInterfaceDeclaration::SetValueExtends(TSInterfaceHeritage *extends, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    auto &arenaVector = newNode->extends_;
+    arenaVector[index] = extends;
+}
+
+[[nodiscard]] const ArenaVector<TSInterfaceHeritage *> &TSInterfaceDeclaration::Extends()
+{
+    auto newNode = this->GetHistoryNodeAs<TSInterfaceDeclaration>();
+    return newNode->extends_;
+}
+
+[[nodiscard]] ArenaVector<TSInterfaceHeritage *> &TSInterfaceDeclaration::ExtendsForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    return newNode->extends_;
+}
+
+void TSInterfaceDeclaration::EmplaceDecorators(Decorator *decorators)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    newNode->decorators_.emplace_back(decorators);
+}
+
+void TSInterfaceDeclaration::ClearDecorators()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    newNode->decorators_.clear();
+}
+
+void TSInterfaceDeclaration::SetValueDecorators(Decorator *decorators, size_t index)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    auto &arenaVector = newNode->decorators_;
+    ES2PANDA_ASSERT(arenaVector.size() > index);
+    arenaVector[index] = decorators;
+}
+
+[[nodiscard]] const ArenaVector<Decorator *> &TSInterfaceDeclaration::Decorators()
+{
+    auto newNode = this->GetHistoryNodeAs<TSInterfaceDeclaration>();
+    return newNode->decorators_;
+}
+
+[[nodiscard]] ArenaVector<Decorator *> &TSInterfaceDeclaration::DecoratorsForUpdate()
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    return newNode->decorators_;
+}
+
 void TSInterfaceDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
+    auto const &decorators = Decorators();
+    for (size_t ix = 0; ix < decorators.size(); ix++) {
+        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
+            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueDecorators(transformedNode->AsDecorator(), ix);
         }
     }
 
-    for (auto *&it : Annotations()) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
+    TransformAnnotations(cb, transformationName);
+
+    auto const id = Id();
+    if (auto *transformedNode = cb(id); id != transformedNode) {
+        id->SetTransformedNode(transformationName, transformedNode);
+        SetId(transformedNode->AsIdentifier());
+    }
+
+    auto const typeParams = TypeParams();
+    if (typeParams != nullptr) {
+        if (auto *transformedNode = cb(typeParams); typeParams != transformedNode) {
+            typeParams->SetTransformedNode(transformationName, transformedNode);
+            SetTypeParams(transformedNode->AsTSTypeParameterDeclaration());
         }
     }
 
-    if (auto *transformedNode = cb(id_); id_ != transformedNode) {
-        id_->SetTransformedNode(transformationName, transformedNode);
-        id_ = transformedNode->AsIdentifier();
-    }
-
-    if (typeParams_ != nullptr) {
-        if (auto *transformedNode = cb(typeParams_); typeParams_ != transformedNode) {
-            typeParams_->SetTransformedNode(transformationName, transformedNode);
-            typeParams_ = transformedNode->AsTSTypeParameterDeclaration();
+    auto const &extends = Extends();
+    for (size_t ix = 0; ix < extends.size(); ix++) {
+        if (auto *transformedNode = cb(extends[ix]); extends[ix] != transformedNode) {
+            extends[ix]->SetTransformedNode(transformationName, transformedNode);
+            SetValueExtends(transformedNode->AsTSInterfaceHeritage(), ix);
         }
     }
 
-    for (auto *&it : VectorIterationGuard(extends_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsTSInterfaceHeritage();
-        }
-    }
-
-    if (auto *transformedNode = cb(body_); body_ != transformedNode) {
-        body_->SetTransformedNode(transformationName, transformedNode);
-        body_ = transformedNode->AsTSInterfaceBody();
+    auto const &body = Body();
+    if (auto *transformedNode = cb(body); body != transformedNode) {
+        body->SetTransformedNode(transformationName, transformedNode);
+        SetBody(transformedNode->AsTSInterfaceBody());
     }
 }
 
 void TSInterfaceDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(decorators_)) {
+    for (auto *it : VectorIterationGuard(Decorators())) {
         cb(it);
     }
 
@@ -85,28 +174,31 @@ void TSInterfaceDeclaration::Iterate(const NodeTraverser &cb) const
         cb(it);
     }
 
-    cb(id_);
+    auto const id = GetHistoryNode()->AsTSInterfaceDeclaration()->id_;
+    cb(id);
 
-    if (typeParams_ != nullptr) {
-        cb(typeParams_);
+    auto const typeParams = GetHistoryNode()->AsTSInterfaceDeclaration()->typeParams_;
+    if (typeParams != nullptr) {
+        cb(typeParams);
     }
 
-    for (auto *it : VectorIterationGuard(extends_)) {
+    for (auto *it : VectorIterationGuard(Extends())) {
         cb(it);
     }
 
-    cb(body_);
+    auto const body = GetHistoryNode()->AsTSInterfaceDeclaration()->body_;
+    cb(body);
 }
 
 void TSInterfaceDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", "TSInterfaceDeclaration"},
-                 {"decorators", AstDumper::Optional(decorators_)},
+                 {"decorators", AstDumper::Optional(Decorators())},
                  {"annotations", AstDumper::Optional(Annotations())},
-                 {"body", body_},
-                 {"id", id_},
-                 {"extends", extends_},
-                 {"typeParameters", AstDumper::Optional(typeParams_)}});
+                 {"body", Body()},
+                 {"id", Id()},
+                 {"extends", Extends()},
+                 {"typeParameters", AstDumper::Optional(TypeParams())}});
 }
 
 bool TSInterfaceDeclaration::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
@@ -149,28 +241,32 @@ void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Add("declare ");
     }
     dumper->Add("interface ");
-    id_->Dump(dumper);
+    Id()->Dump(dumper);
 
-    if (typeParams_ != nullptr) {
+    auto const typeParams = TypeParams();
+    if (typeParams != nullptr) {
         dumper->Add("<");
-        typeParams_->Dump(dumper);
+        typeParams->Dump(dumper);
         dumper->Add(">");
     }
-    if (!extends_.empty()) {
+
+    auto const extends = Extends();
+    if (!extends.empty()) {
         dumper->Add(" extends ");
-        for (auto ext : extends_) {
+        for (auto ext : extends) {
             ext->Dump(dumper);
-            if (ext != extends_.back()) {
+            if (ext != extends.back()) {
                 dumper->Add(", ");
             }
         }
     }
 
+    auto body = Body();
     dumper->Add(" {");
-    if (body_ != nullptr) {
+    if (body != nullptr) {
         dumper->IncrIndent();
         dumper->Endl();
-        body_->Dump(dumper);
+        body->Dump(dumper);
         dumper->DecrIndent();
         dumper->Endl();
     }
@@ -221,7 +317,7 @@ void TSInterfaceDeclaration::CopyTo(AstNode *other) const
     otherImpl->lang_ = lang_;
     otherImpl->anonClass_ = anonClass_;
 
-    JsDocAllowed<AnnotationAllowed<TypedStatement>>::CopyTo(other);
+    AnnotationAllowed<TypedStatement>::CopyTo(other);
 }
 
 }  // namespace ark::es2panda::ir

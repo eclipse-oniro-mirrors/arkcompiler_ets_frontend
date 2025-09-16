@@ -31,7 +31,7 @@ import {
 import { ClassCategory } from 'arkanalyzer/lib/core/model/ArkClass';
 import Logger, { LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
 import { BaseChecker, BaseMetaData } from '../BaseChecker';
-import { Rule, Defects, ClassMatcher, MatcherTypes, MatcherCallback } from '../../Index';
+import { ClassMatcher, Defects, MatcherCallback, MatcherTypes, Rule } from '../../Index';
 import { IssueReport } from '../../model/Defects';
 import { RuleFix } from '../../model/Fix';
 import { FixUtils } from '../../utils/common/FixUtils';
@@ -85,8 +85,6 @@ export class ObservedDecoratorCheck implements BaseChecker {
             }
             // usedClasses用于记录field的初始化中涉及的所有class
             let usedClasses: Set<ArkClass> = new Set();
-            // issueClasses用于记录usedClasses以及他们的所有父类
-            let issueClasses: Set<ArkClass> = new Set();
             // ArkAnalyzer此处有问题，若field的类型注解为unclear type，会用右边的替换左边的。
             const fieldType = field.getType();
             // 此处仅对field为class类型进行检查，包含class和interface，非class类型不在本规则检查范围之内
@@ -94,10 +92,20 @@ export class ObservedDecoratorCheck implements BaseChecker {
                 continue;
             }
             const initializers = field.getInitializer();
+
+            // field无初始化的场景，对field的类型进行检查
+            if (initializers.length === 0) {
+                const fieldTypeClass = scene.getClass(fieldType.getClassSignature());
+                if (fieldTypeClass === null || fieldTypeClass.getCategory() !== ClassCategory.CLASS) {
+                    continue;
+                }
+                usedClasses.add(fieldTypeClass);
+                this.handleAllUsedClasses(field, usedClasses);
+                continue;
+            }
+
             let canFindAllTargets = true;
-
             let locals: Set<Local> = new Set();
-
             // field的初始化语句的最后一句，一定是将右边的value赋值给field，此处仍然判断一次，排除其他场景或者初始化语句为空的场景
             const lastStmt = initializers[initializers.length - 1];
             if (!(lastStmt instanceof ArkAssignStmt)) {
@@ -128,31 +136,14 @@ export class ObservedDecoratorCheck implements BaseChecker {
                     // 此处需要区分field = new cls()和field = {}两种场景，查找完毕需继续遍历stmts以解析条件表达式造成的多赋值场景
                     canFindAllTargets = canFindAllTargets && this.handleNewExpr(scene, fieldType, rightOp, usedClasses, projectName);
                 } else if (rightOp instanceof AbstractInvokeExpr) {
-                    canFindAllTargets =
-                        canFindAllTargets && this.handleInvokeExpr(scene, fieldType, rightOp, usedClasses, projectName);
+                    canFindAllTargets = canFindAllTargets && this.handleInvokeExpr(scene, fieldType, rightOp, usedClasses, projectName);
                 } else {
                     // 对应场景为使用条件表达式cond ? 123 : 456赋值时
                     continue;
                 }
             }
 
-            for (const cls of usedClasses) {
-                issueClasses.add(cls);
-                this.getAllSuperClasses(
-                    cls,
-                    superCls => superCls.getCategory() === ClassCategory.CLASS && issueClasses.add(superCls)
-                );
-            }
-
-            for (const target of issueClasses) {
-                if (target.hasDecorator('Observed')) {
-                    continue;
-                }
-                const pos = this.getClassPos(target);
-                const description = this.generateIssueDescription(field, target);
-                const ruleFix = this.generateRuleFix(pos, target) ?? undefined;
-                this.addIssueReport(pos, description, ruleFix);
-            }
+            this.handleAllUsedClasses(field, usedClasses);
 
             if (!canFindAllTargets) {
                 const pos = this.getFieldPos(field);
@@ -162,6 +153,25 @@ export class ObservedDecoratorCheck implements BaseChecker {
         }
     };
 
+    private handleAllUsedClasses(field: ArkField, usedClasses: Set<ArkClass>): void {
+        // issueClasses用于记录usedClasses以及他们的所有父类
+        let issueClasses: Set<ArkClass> = new Set();
+        for (const cls of usedClasses) {
+            issueClasses.add(cls);
+            this.getAllSuperClasses(cls, superCls => superCls.getCategory() === ClassCategory.CLASS && issueClasses.add(superCls));
+        }
+
+        for (const target of issueClasses) {
+            if (target.hasDecorator('Observed')) {
+                continue;
+            }
+            const pos = this.getClassPos(target);
+            const description = this.generateIssueDescription(field, target);
+            const ruleFix = this.generateRuleFix(pos, target) ?? undefined;
+            this.addIssueReport(pos, description, ruleFix);
+        }
+    }
+
     // 此处需要区分field = new cls()和field = {}两种场景
     // 对于field = new cls()场景，需要查找此右边class的所有父class
     // 对于field = {}场景，需要查找左边field类型为class时的所有父class
@@ -170,6 +180,7 @@ export class ObservedDecoratorCheck implements BaseChecker {
         if (target === null) {
             return false;
         }
+
         // class为非本项目的内容时，表示调用到三方库、SDK等内容，不再继续进行查找
         if (target.getDeclaringArkFile().getProjectName() !== projectName) {
             return true;
@@ -210,13 +221,7 @@ export class ObservedDecoratorCheck implements BaseChecker {
     // 此处需要区分返回值为class和object literal两种场景
     // 对于返回值为class的场景，需要查找此class的所有父class
     // 对于存在返回值为object literal的场景，需要查找左边field类型为class时的所有父class
-    private handleInvokeExpr(
-        scene: Scene,
-        fieldType: Type,
-        invokeExpr: AbstractInvokeExpr,
-        targets: Set<ArkClass>,
-        projectName: string
-    ): boolean {
+    private handleInvokeExpr(scene: Scene, fieldType: Type, invokeExpr: AbstractInvokeExpr, targets: Set<ArkClass>, projectName: string): boolean {
         let canFindAllTargets = true;
         const callMethod = scene.getMethod(invokeExpr.getMethodSignature());
         if (callMethod === null) {
@@ -278,11 +283,7 @@ export class ObservedDecoratorCheck implements BaseChecker {
         }
     }
 
-    private generateIssueDescription(
-        field: ArkField,
-        issueClass: ArkClass | null,
-        canFindAllTargets: boolean = true
-    ): string {
+    private generateIssueDescription(field: ArkField, issueClass: ArkClass | null, canFindAllTargets: boolean = true): string {
         if (issueClass === null || !canFindAllTargets) {
             return `can not find all classes, please check this field manually (arkui-data-observation)`;
         }

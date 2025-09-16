@@ -19,9 +19,9 @@ function main(): void {
       return x--;
     };
     let r = g();
-    assertEQ(x, 54)
+    arktest.assertEQ(x, 54)
     return r;
   }
 
-  assertEQ(f(55), 55)
+  arktest.assertEQ(f(55), 55)
 }

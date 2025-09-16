@@ -13,16 +13,17 @@
  * limitations under the License.
  */
 
-interface"actual  : " + actual.result[i]
+interface"actual : " + actual.result[i]
 
+/* @@? 16:10 Error SyntaxError: Number, string or computed value property name 'actual : ' is not allowed, use classes to access data by property names that are identifiers */
 /* @@? 16:10 Error SyntaxError: Identifier expected, got 'string literal'. */
-/* @@? 16:23 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 16:31 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 16:39 Error SyntaxError: Unexpected token, expected ']'. */
+/* @@? 16:22 Error SyntaxError: Unexpected token, expected '{'. */
+/* @@? 16:30 Error SyntaxError: Interface fields must have type annotation. */
+/* @@? 16:38 Error SyntaxError: Unexpected token, expected ']'. */
+/* @@? 16:38 Error SyntaxError: Unexpected token, expected ','. */
+/* @@? 16:38 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 16:39 Error SyntaxError: Identifier expected. */
 /* @@? 16:39 Error SyntaxError: Unexpected token, expected ','. */
 /* @@? 16:39 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 16:40 Error SyntaxError: Identifier expected. */
-/* @@? 16:40 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 16:40 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 28:67 Error SyntaxError: Identifier expected. */
-/* @@? 28:67 Error SyntaxError: Unexpected token, expected '}'. */
+/* @@? 30:1 Error SyntaxError: Identifier expected. */
+/* @@? 30:1 Error SyntaxError: Unexpected token, expected '}'. */

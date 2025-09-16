@@ -38,11 +38,6 @@ public:
         element_ = element;
     }
 
-    std::tuple<bool, bool> ResolveConditionExpr() const override
-    {
-        return {false, false};
-    }
-
     void ToString(std::stringstream &ss, bool precise) const override;
 
     void ToAssemblerType(std::stringstream &ss) const override;

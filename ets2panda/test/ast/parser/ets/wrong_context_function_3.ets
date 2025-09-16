@@ -23,4 +23,3 @@ function main()
 }
 
 /* @@? 22:5 Error TypeError: Function name 'a' used in the wrong context  */
-/* @@? 22:5 Error TypeError: Bad operand type, the type of the operand must be numeric type.  */

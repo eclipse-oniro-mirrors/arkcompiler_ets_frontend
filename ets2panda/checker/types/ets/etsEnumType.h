@@ -19,16 +19,24 @@
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsObjectTypeConstants.h"
 #include "checker/types/typeFlag.h"
+#include "ir/base/classProperty.h"
+#include "ir/expressions/arrayExpression.h"
+#include "ir/expressions/literals/stringLiteral.h"
+#include "ir/expressions/memberExpression.h"
 
 namespace ark::es2panda::checker {
 
 class ETSEnumType : public ETSObjectType {
 public:
-    explicit ETSEnumType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
-                         ir::AstNode *declNode, TypeRelation *relation)
+    // CC-OFFNXT(G.FUN.01-CPP) solid logic
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
+    explicit ETSEnumType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView internalName,
+                         ir::AstNode *declNode, TypeRelation *relation, ETSObjectFlags const flag)
         : ETSObjectType(allocator, name, internalName,
-                        std::make_tuple(declNode, ETSObjectFlags::CLASS | ETSObjectFlags::ENUM_OBJECT, relation))
+                        std::make_tuple(declNode, ETSObjectFlags::CLASS | flag, relation)),
+          memberNameToOrdinal_(allocator->Adapter())
     {
+        InitElementsShortcuts(declNode->AsClassDefinition());
     }
 
     NO_COPY_SEMANTIC(ETSEnumType);
@@ -37,21 +45,86 @@ public:
     ETSEnumType() = delete;
     ~ETSEnumType() override = default;
 
-    static constexpr std::string_view const TO_STRING_METHOD_NAME {"toString"};
-    static constexpr std::string_view const VALUE_OF_METHOD_NAME {"valueOf"};
-    static constexpr std::string_view const GET_NAME_METHOD_NAME {"getName"};
-    static constexpr std::string_view const GET_VALUE_OF_METHOD_NAME {"getValueOf"};
-    static constexpr std::string_view const FROM_VALUE_METHOD_NAME {"fromValue"};
-    static constexpr std::string_view const VALUES_METHOD_NAME {"values"};
-    static constexpr std::string_view const GET_ORDINAL_METHOD_NAME {"getOrdinal"};
-    static constexpr std::string_view const DOLLAR_GET_METHOD_NAME {"$_get"};
+    static constexpr std::string_view TO_STRING_METHOD_NAME {"toString"};
+    static constexpr std::string_view VALUE_OF_METHOD_NAME {"valueOf"};
+    static constexpr std::string_view GET_NAME_METHOD_NAME {"getName"};
+    static constexpr std::string_view GET_VALUE_OF_METHOD_NAME {"getValueOf"};
+    static constexpr std::string_view FROM_VALUE_METHOD_NAME {"fromValue"};
+    static constexpr std::string_view VALUES_METHOD_NAME {"values"};
+    static constexpr std::string_view GET_ORDINAL_METHOD_NAME {"getOrdinal"};
+    static constexpr std::string_view DOLLAR_GET_METHOD_NAME {"$_get"};
+
+    static constexpr std::string_view STRING_VALUES_ARRAY_NAME {"#StringValuesArray"};
+    static constexpr std::string_view VALUES_ARRAY_NAME {"#ValuesArray"};
+    static constexpr std::string_view NAMES_ARRAY_NAME {"#NamesArray"};
+
+    auto *Underlying()
+    {
+        ES2PANDA_ASSERT(membersValues_->TsType() != nullptr);
+        return membersValues_->TsType()->AsETSArrayType()->ElementType();
+    }
+
+    auto GetOrdinalFromMemberName(std::string_view name) const
+    {
+        return memberNameToOrdinal_.at(name);
+    }
+
+    auto GetValueLiteralFromOrdinal(size_t ord) const
+    {
+        ES2PANDA_ASSERT(ord < membersValues_->Elements().size());
+        return membersValues_->Elements()[ord];
+    }
+
+    bool NodeIsEnumLiteral(ir::Expression *node) const
+    {
+        ES2PANDA_ASSERT(node->TsType() == this);
+        if (!node->IsMemberExpression()) {
+            return false;
+        }
+
+        auto mobj = node->AsMemberExpression()->Object();
+        if (mobj->TsType() == this) {
+            // No need to search properties since enum-literals are the only enum-type properties
+            // NOTE(dkofanov): For some reason, 'enumLowering' changes 'CLASS' to 'ENUM_LITERAL', instead of 'ENUM'.
+            ES2PANDA_ASSERT(GetDeclNode()->AsClassDefinition()->IsEnumTransformed());
+            return true;
+        }
+        return false;
+    }
+    Type *GetBaseEnumElementType(ETSChecker *checker);
+
+private:
+    void InitElementsShortcuts(ir::ClassDefinition *declNode)
+    {
+        Span<ir::Expression *> membersNames {};
+        for (auto elem : declNode->Body()) {
+            auto elemName = elem->AsClassElement()->Key()->AsIdentifier()->Name();
+            if (elemName == NAMES_ARRAY_NAME) {
+                membersNames = Span(elem->AsClassProperty()->Value()->AsArrayExpression()->Elements());
+            } else if (elemName == VALUES_ARRAY_NAME) {
+                membersValues_ = elem->AsClassProperty()->Value()->AsArrayExpression();  // int-enum
+            } else if ((elemName == STRING_VALUES_ARRAY_NAME) && (membersValues_ == nullptr)) {
+                membersValues_ = elem->AsClassProperty()->Value()->AsArrayExpression();  // string-enum
+            }
+        }
+        auto membersValues = Span {membersValues_->Elements()};
+        ES2PANDA_ASSERT(membersValues.size() == membersNames.size());
+        for (size_t i = 0; i < membersNames.size(); i++) {
+            memberNameToOrdinal_.insert({membersNames[i]->AsStringLiteral()->Str(), i});
+            ES2PANDA_ASSERT(membersValues[i]->IsStringLiteral() || membersValues[i]->IsNumberLiteral());
+        }
+    }
+
+private:
+    ArenaMap<util::StringView, size_t> memberNameToOrdinal_;
+    ir::ArrayExpression *membersValues_;
 };
 
 class ETSIntEnumType : public ETSEnumType {
 public:
-    explicit ETSIntEnumType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
+    explicit ETSIntEnumType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView internalName,
                             ir::AstNode *declNode, TypeRelation *relation)
-        : ETSEnumType(allocator, name, internalName, declNode, relation)
+        : ETSEnumType(allocator, name, internalName, declNode, relation, ETSObjectFlags::INT_ENUM_OBJECT)
     {
         AddTypeFlag(checker::TypeFlag::ETS_INT_ENUM);
     }
@@ -70,9 +143,9 @@ public:
 
 class ETSStringEnumType : public ETSEnumType {
 public:
-    explicit ETSStringEnumType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
-                               ir::AstNode *declNode, TypeRelation *relation)
-        : ETSEnumType(allocator, name, internalName, declNode, relation)
+    explicit ETSStringEnumType(ThreadSafeArenaAllocator *allocator, util::StringView name,
+                               util::StringView internalName, ir::AstNode *declNode, TypeRelation *relation)
+        : ETSEnumType(allocator, name, internalName, declNode, relation, ETSObjectFlags::STRING_ENUM_OBJECT)
     {
         AddTypeFlag(checker::TypeFlag::ETS_STRING_ENUM);
     }

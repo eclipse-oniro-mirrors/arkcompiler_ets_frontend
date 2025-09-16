@@ -19,5 +19,5 @@ function foo(): int {
 
 function main(){
     let goo = foo;
-    assertEQ(goo(), 1)
+    arktest.assertEQ(goo(), 1)
 }

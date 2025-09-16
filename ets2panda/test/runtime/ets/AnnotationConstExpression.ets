@@ -35,5 +35,5 @@ const annoC = 123
 function foo1() {}
 
 function main() {
-    assertTrue(true)
+    arktest.assertTrue(true)
 }

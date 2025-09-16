@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-#include "ETSparser.h"
 #include "parser/parserFlags.h"
 #include "parser/parserStatusContext.h"
 #include "util/errorRecovery.h"
@@ -147,10 +146,6 @@ ir::Statement *ParserImpl::ParseStatementControlFlowTokenHelper(StatementParsing
 // NOLINTNEXTLINE(google-default-arguments)
 ir::Statement *ParserImpl::ParseStatement(StatementParsingFlags flags)
 {
-    if (IsETSParser()) {
-        AsETSParser()->HandleJsDocLikeComments();
-    }
-
     const auto tokenType = lexer_->GetToken().Type();
     bool isPunctuatorToken = tokenType == lexer::TokenType::PUNCTUATOR_LEFT_BRACE ||
                              tokenType == lexer::TokenType::PUNCTUATOR_SEMI_COLON ||
@@ -202,7 +197,7 @@ ir::Statement *ParserImpl::ParseStatementBasedOnTokenType(StatementParsingFlags 
             lexer_->NextToken();
             return nullptr;
         case lexer::TokenType::KEYW_ENUM:
-            return ParseEnumDeclaration();
+            return ParseEnumStatement(flags);
         case lexer::TokenType::KEYW_INTERFACE:
             return ParseInterfaceStatement(flags);
         case lexer::TokenType::PUNCTUATOR_AT:
@@ -213,6 +208,11 @@ ir::Statement *ParserImpl::ParseStatementBasedOnTokenType(StatementParsingFlags 
         default:
             return ParseExpressionStatement(flags);
     }
+}
+
+ir::Statement *ParserImpl::ParseInitModuleStatement([[maybe_unused]] StatementParsingFlags flags)
+{
+    ES2PANDA_UNREACHABLE();
 }
 
 ir::Statement *ParserImpl::ParseAnnotationsInStatement([[maybe_unused]] StatementParsingFlags flags)
@@ -333,6 +333,15 @@ ir::Statement *ParserImpl::ParseInterfaceStatement(StatementParsingFlags flags)
     }
 
     return ParseInterfaceDeclaration(false);
+}
+
+ir::Statement *ParserImpl::ParseEnumStatement(StatementParsingFlags flags)
+{
+    if ((flags & StatementParsingFlags::ALLOW_LEXICAL) == 0) {
+        LogError(diagnostic::LEXICAL_DEC_NOT_ALLOWED_IN_SINGLE_STATEMENT_CONTEXT);
+    }
+
+    return ParseEnumDeclaration();
 }
 
 ir::Statement *ParserImpl::ParseStructDeclaration(ir::ClassDefinitionModifiers modifiers, ir::ModifierFlags flags)
@@ -714,9 +723,11 @@ ir::FunctionDeclaration *ParserImpl::ParseFunctionDeclaration(bool canBeAnonymou
 
 ir::Statement *ParserImpl::ParseExpressionStatement(StatementParsingFlags flags)
 {
+    if (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_INIT_MODULE && IsETSParser()) {
+        return ParseInitModuleStatement(flags);
+    }
     const auto startPos = lexer_->Save();
     ParserStatus savedStatus = context_.Status();
-
     auto tokenType = lexer_->GetToken().Type();
     if (tokenType == lexer::TokenType::KEYW_PUBLIC || tokenType == lexer::TokenType::KEYW_PRIVATE ||
         tokenType == lexer::TokenType::KEYW_PROTECTED) {
@@ -751,6 +762,7 @@ ir::Statement *ParserImpl::ParseExpressionStatement(StatementParsingFlags flags)
     }
 
     ir::Expression *exprNode = ParseExpression(ExpressionParseFlags::ACCEPT_COMMA);
+
     context_.Status() = savedStatus;
     lexer::SourcePosition endPos = exprNode->End();
 
@@ -779,6 +791,15 @@ std::tuple<ForStatementKind, ir::Expression *, ir::Expression *> ParserImpl::Par
     ir::Expression *rightNode = nullptr;
 
     if (lexer_->GetToken().IsForInOf()) {
+        ES2PANDA_ASSERT(initNode != nullptr);
+        if (!initNode->IsVariableDeclaration()) {
+            LogError(diagnostic::INVALID_LEFT_HAND_IN_FOR_OF, {}, lexer_->GetToken().Start());
+            return {forKind, rightNode, updateNode};
+        }
+        if (initNode->AsVariableDeclaration()->Declarators().empty()) {
+            LogError(diagnostic::INVALID_LEFT_HAND_IN_FOR_OF, {}, initNode->Start());
+            return {forKind, rightNode, updateNode};
+        }
         const ir::VariableDeclarator *varDecl = initNode->AsVariableDeclaration()->Declarators().front();
 
         if (lexer_->GetToken().KeywordType() == lexer::TokenType::KEYW_IN) {
@@ -872,6 +893,8 @@ std::tuple<ForStatementKind, ir::AstNode *, ir::Expression *, ir::Expression *> 
 std::tuple<ForStatementKind, ir::AstNode *, ir::Expression *, ir::Expression *> ParserImpl::ParseForInOf(
     ir::Expression *leftNode, ExpressionParseFlags exprFlags, bool isAwait)
 {
+    ES2PANDA_ASSERT(lexer_ != nullptr);
+    ES2PANDA_ASSERT(leftNode != nullptr);
     ir::Expression *updateNode = nullptr;
     ir::Expression *rightNode = nullptr;
     if (lexer_->GetToken().IsForInOf()) {
@@ -1003,6 +1026,8 @@ bool ParserImpl::GetCanBeForInOf(ir::Expression *leftNode, ir::AstNode *initNode
         if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SEMI_COLON) {
             lexer_->NextToken();
             canBeForInOf = false;
+        } else if (!initNode->IsVariableDeclaration()) {
+            LogError(diagnostic::INVALID_LEFT_HAND_IN_FOR_OF);
         } else if (initNode->AsVariableDeclaration()->Declarators().size() > 1 && lexer_->GetToken().IsForInOf()) {
             LogError(diagnostic::INVALID_LEFT_HAND_IN_FOR_OF, {},
                      initNode->AsVariableDeclaration()->Declarators()[1]->Start());
@@ -1554,6 +1579,11 @@ ir::Statement *ParserImpl::ParseVariableDeclaration(VariableParsingFlags flags)
         ir::VariableDeclarator *declarator = ParseVariableDeclarator(flags);
         if (declarator != nullptr) {  // Error processing.
             declarators.push_back(declarator);
+            if (declarator->Init() != nullptr && declarator->Init()->IsETSClassLiteral()) {
+                ParseClassBody({});
+                LogError(diagnostic::UNSUPPORTED_CLASS_LITERAL);
+                return AllocBrokenStatement(declarator->Init()->Start());
+            }
         }
 
         if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COMMA) {

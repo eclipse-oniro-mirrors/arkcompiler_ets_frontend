@@ -91,6 +91,8 @@ enum class SignatureFlags : uint32_t {
     RETHROWS = 1U << 17U,
     EXTENSION_FUNCTION = 1U << 18U,
     DUPLICATE_ASM = 1U << 19U,
+    BRIDGE = 1U << 20U,
+    DEFAULT = 1U << 21U,
 
     INTERNAL_PROTECTED = INTERNAL | PROTECTED,
     GETTER_OR_SETTER = GETTER | SETTER,
@@ -220,6 +222,11 @@ public:
     }
 
     [[nodiscard]] const varbinder::LocalVariable *RestVar() const noexcept
+    {
+        return signatureInfo_->restVar;
+    }
+
+    [[nodiscard]] varbinder::LocalVariable *RestVar() noexcept
     {
         return signatureInfo_->restVar;
     }

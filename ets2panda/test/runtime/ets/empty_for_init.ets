@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+
 let foo = (() => {
     for (let i = 0; i < 1;) {
     }
@@ -30,5 +31,5 @@ let foo2 = (() => {
 })
 
 function main() {
-    assertTrue(true);
+    arktest.assertTrue(true);
 }

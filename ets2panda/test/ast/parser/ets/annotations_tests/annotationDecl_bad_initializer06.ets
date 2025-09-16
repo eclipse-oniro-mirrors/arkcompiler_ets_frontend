@@ -20,4 +20,3 @@ class A{}
 }
 
 /* @@@ label Error SyntaxError: Invalid value for annotation field, expected a constant literal.  */
-/* @@@ label Error TypeError: Invalid value for annotation field, expected a constant literal.  */

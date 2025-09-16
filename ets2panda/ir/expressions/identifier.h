@@ -68,42 +68,39 @@ public:
 
     [[nodiscard]] const util::StringView &Name() const noexcept
     {
-        return name_;
+        return GetHistoryNodeAs<Identifier>()->name_;
     }
 
     [[nodiscard]] util::StringView &Name() noexcept
     {
-        return name_;
+        return GetHistoryNodeAs<Identifier>()->name_;
     }
 
     void SetName(const util::StringView &newName) noexcept;
 
+    void SetValueDecorators(Decorator *source, size_t index);
+
     [[nodiscard]] const ArenaVector<Decorator *> &Decorators() const noexcept
     {
-        return decorators_;
-    }
-
-    const ArenaVector<Decorator *> *DecoratorsPtr() const override
-    {
-        return &Decorators();
+        return GetHistoryNodeAs<Identifier>()->decorators_;
     }
 
     bool IsErrorPlaceHolder() const noexcept
     {
-        return (flags_ & IdentifierFlags::ERROR_PLACEHOLDER) != 0;
+        return (IdFlags() & IdentifierFlags::ERROR_PLACEHOLDER) != 0;
     }
 
     [[nodiscard]] bool IsOptional() const noexcept
     {
-        return (flags_ & IdentifierFlags::OPTIONAL) != 0;
+        return (IdFlags() & IdentifierFlags::OPTIONAL) != 0;
     }
 
     void SetOptional(bool const optional) noexcept
     {
         if (optional) {
-            flags_ |= IdentifierFlags::OPTIONAL;
+            AddIdFlags(IdentifierFlags::OPTIONAL);
         } else {
-            flags_ &= ~IdentifierFlags::OPTIONAL;
+            ClearIdFlags(IdentifierFlags::OPTIONAL);
         }
     }
 
@@ -114,86 +111,86 @@ public:
 
     [[nodiscard]] bool IsTdz() const noexcept
     {
-        return (flags_ & IdentifierFlags::TDZ) != 0;
+        return (IdFlags() & IdentifierFlags::TDZ) != 0;
     }
 
     void SetTdz() noexcept
     {
-        flags_ |= IdentifierFlags::TDZ;
+        AddIdFlags(IdentifierFlags::TDZ);
     }
 
     void SetAccessor() noexcept
     {
-        flags_ |= IdentifierFlags::GET;
+        AddIdFlags(IdentifierFlags::GET);
     }
 
     [[nodiscard]] bool IsAccessor() const noexcept
     {
-        return (flags_ & IdentifierFlags::GET) != 0;
+        return (IdFlags() & IdentifierFlags::GET) != 0;
     }
 
     void SetMutator() noexcept
     {
-        flags_ |= IdentifierFlags::SET;
+        AddIdFlags(IdentifierFlags::SET);
     }
 
     [[nodiscard]] bool IsMutator() const noexcept
     {
-        return (flags_ & IdentifierFlags::SET) != 0;
+        return (IdFlags() & IdentifierFlags::SET) != 0;
     }
 
     [[nodiscard]] bool IsReceiver() const noexcept
     {
-        return name_ == varbinder::VarBinder::MANDATORY_PARAM_THIS;
+        return Name() == varbinder::VarBinder::MANDATORY_PARAM_THIS;
     }
 
     [[nodiscard]] bool IsPrivateIdent() const noexcept
     {
-        return (flags_ & IdentifierFlags::PRIVATE) != 0;
+        return (IdFlags() & IdentifierFlags::PRIVATE) != 0;
     }
 
     void SetPrivate(bool const isPrivate) noexcept
     {
         if (isPrivate) {
-            flags_ |= IdentifierFlags::PRIVATE;
+            AddIdFlags(IdentifierFlags::PRIVATE);
         } else {
-            flags_ &= ~IdentifierFlags::PRIVATE;
+            ClearIdFlags(IdentifierFlags::PRIVATE);
         }
     }
 
     [[nodiscard]] bool IsIgnoreBox() const noexcept
     {
-        return (flags_ & IdentifierFlags::IGNORE_BOX) != 0;
+        return (IdFlags() & IdentifierFlags::IGNORE_BOX) != 0;
     }
 
     void SetIgnoreBox() noexcept
     {
-        flags_ |= IdentifierFlags::IGNORE_BOX;
+        AddIdFlags(IdentifierFlags::IGNORE_BOX);
     }
 
     [[nodiscard]] bool IsAnnotationDecl() const noexcept
     {
-        return (flags_ & IdentifierFlags::ANNOTATIONDECL) != 0;
+        return (IdFlags() & IdentifierFlags::ANNOTATIONDECL) != 0;
     }
 
     void SetAnnotationDecl() noexcept
     {
-        flags_ |= IdentifierFlags::ANNOTATIONDECL;
+        AddIdFlags(IdentifierFlags::ANNOTATIONDECL);
     }
 
     [[nodiscard]] bool IsAnnotationUsage() const noexcept
     {
-        return (flags_ & IdentifierFlags::ANNOTATIONUSAGE) != 0;
+        return (IdFlags() & IdentifierFlags::ANNOTATIONUSAGE) != 0;
     }
 
     void SetAnnotationUsage() noexcept
     {
-        flags_ |= IdentifierFlags::ANNOTATIONUSAGE;
+        AddIdFlags(IdentifierFlags::ANNOTATIONUSAGE);
     }
 
     void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
     {
-        decorators_ = std::move(decorators);
+        GetOrCreateHistoryNodeAs<Identifier>()->decorators_ = std::move(decorators);
     }
 
     [[nodiscard]] Identifier *Clone(ArenaAllocator *allocator, AstNode *parent) override;
@@ -222,7 +219,42 @@ public:
         v->Accept(this);
     }
 
+    Identifier *Construct(ArenaAllocator *allocator) override
+    {
+        return allocator->New<Identifier>(allocator);
+    }
+
+    void CopyTo(AstNode *other) const override
+    {
+        auto otherImpl = other->AsIdentifier();
+
+        otherImpl->name_ = name_;
+        otherImpl->flags_ = flags_;
+        otherImpl->decorators_ = decorators_;
+
+        AnnotatedExpression::CopyTo(other);
+    };
+
 private:
+    IdentifierFlags IdFlags() const
+    {
+        return GetHistoryNodeAs<Identifier>()->flags_;
+    }
+
+    void AddIdFlags(IdentifierFlags const flags) noexcept
+    {
+        if (!All(IdFlags(), flags)) {
+            GetOrCreateHistoryNodeAs<Identifier>()->flags_ |= flags;
+        }
+    }
+
+    void ClearIdFlags(IdentifierFlags const flags) noexcept
+    {
+        if (Any(IdFlags(), flags)) {
+            GetOrCreateHistoryNodeAs<Identifier>()->flags_ &= ~flags;
+        }
+    }
+
     bool CheckDeclarationsPart2(const ir::AstNode *parent, ScriptExtension ext) const;
     bool CheckDeclarationsPart1(const ir::AstNode *parent, ScriptExtension ext) const;
     bool CheckNotDeclarations(const ir::AstNode *parent, ScriptExtension ext) const;

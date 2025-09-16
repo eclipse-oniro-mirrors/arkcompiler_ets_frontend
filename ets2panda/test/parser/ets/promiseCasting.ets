@@ -48,5 +48,5 @@ function main() {
     for (let i = 9; i >= 0; i--) {
         cnt += ((ps[i] as Job<Cb>).Await())(i) // <- complains on this line
     }
-    assertEQ(cnt, 90);
+    arktest.assertEQ(cnt, 90);
 }

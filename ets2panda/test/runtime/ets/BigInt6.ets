@@ -14,21 +14,21 @@
  */
 
 function test_plus(): void {
-    assertEQ(new BigInt(10).operatorAdd(new BigInt(20)), 30n)
-    assertEQ(new BigInt(1000).operatorAdd(new BigInt(10)), 1010n)
-    assertEQ(new BigInt(-10).operatorAdd(new BigInt(9)), -1n)
-    assertEQ(new BigInt(-10).operatorAdd(new BigInt(10)), 0n)
-    assertEQ(new BigInt(-100).operatorAdd(new BigInt(10)), -90n)
-    assertEQ(new BigInt(100).operatorAdd(new BigInt(10)), 110n)
-    assertEQ(new BigInt(65535).operatorAdd(new BigInt(65535)) , 131070n)
-    assertEQ(new BigInt(65500).operatorAdd(new BigInt(1)), (65501n))
-    assertEQ(new BigInt(65500).operatorAdd(new BigInt(-1)), (65499n))
-    assertEQ(new BigInt(-65500).operatorAdd(new BigInt(-1)), (-65501n))
-    assertEQ(new BigInt(-65500).operatorAdd(new BigInt(1)), (-65499n))
-    assertEQ(new BigInt(-65500).operatorAdd(new BigInt(100000)), (34500n))
-    assertEQ(new BigInt(100).operatorAdd(new BigInt(0)), (100n))
-    assertEQ(new BigInt(-100).operatorAdd(new BigInt(0)), (-100n))
-    assertEQ(new BigInt(-10).operatorAdd(new BigInt(-10)), (-20n))
+    arktest.assertEQ(new BigInt(10).operatorAdd(new BigInt(20)), 30n)
+    arktest.assertEQ(new BigInt(1000).operatorAdd(new BigInt(10)), 1010n)
+    arktest.assertEQ(new BigInt(-10).operatorAdd(new BigInt(9)), -1n)
+    arktest.assertEQ(new BigInt(-10).operatorAdd(new BigInt(10)), 0n)
+    arktest.assertEQ(new BigInt(-100).operatorAdd(new BigInt(10)), -90n)
+    arktest.assertEQ(new BigInt(100).operatorAdd(new BigInt(10)), 110n)
+    arktest.assertEQ(new BigInt(65535).operatorAdd(new BigInt(65535)) , 131070n)
+    arktest.assertEQ(new BigInt(65500).operatorAdd(new BigInt(1)), (65501n))
+    arktest.assertEQ(new BigInt(65500).operatorAdd(new BigInt(-1)), (65499n))
+    arktest.assertEQ(new BigInt(-65500).operatorAdd(new BigInt(-1)), (-65501n))
+    arktest.assertEQ(new BigInt(-65500).operatorAdd(new BigInt(1)), (-65499n))
+    arktest.assertEQ(new BigInt(-65500).operatorAdd(new BigInt(100000)), (34500n))
+    arktest.assertEQ(new BigInt(100).operatorAdd(new BigInt(0)), (100n))
+    arktest.assertEQ(new BigInt(-100).operatorAdd(new BigInt(0)), (-100n))
+    arktest.assertEQ(new BigInt(-10).operatorAdd(new BigInt(-10)), (-20n))
 }
 
 function test_addition_1(): void {
@@ -37,17 +37,17 @@ function test_addition_1(): void {
     const c = 0n;
 
     /* Minus testing (-) */
-    assertEQ(-a, -97567789101304567800013210071n)
-    assertEQ(-b, 533923234343411557221n)
-    assertEQ(-c, -0n)
-    assertEQ(-(-a), a)
-    assertEQ(-(-b), b)
-    assertEQ(-(-c), c)
+    arktest.assertEQ(-a, -97567789101304567800013210071n)
+    arktest.assertEQ(-b, 533923234343411557221n)
+    arktest.assertEQ(-c, -0n)
+    arktest.assertEQ(-(-a), a)
+    arktest.assertEQ(-(-b), b)
+    arktest.assertEQ(-(-c), c)
 
     /* Plus testing (+) */
-    assertEQ(+a, a)
-    assertEQ(+b, b)
-    assertEQ(+c, 0n)
+    arktest.assertEQ(+a, a)
+    arktest.assertEQ(+b, b)
+    arktest.assertEQ(+c, 0n)
 }
 
 function test_addition_2(): void {
@@ -55,11 +55,11 @@ function test_addition_2(): void {
     const b = 36893488147419103232n;
     const c = -10000000000000000000n;
     /* Addition testing (+) */
-    assertEQ(999999999999999n + 1n, 1000000000000000n)
-    assertEQ(a + b, 55340232221128654848n)
-    assertEQ(a + a, b)
-    assertEQ(a + c, 8446744073709551616n)
-    assertEQ(a + b + b, 92233720368547758080n)
+    arktest.assertEQ(999999999999999n + 1n, 1000000000000000n)
+    arktest.assertEQ(a + b, 55340232221128654848n)
+    arktest.assertEQ(a + a, b)
+    arktest.assertEQ(a + c, 8446744073709551616n)
+    arktest.assertEQ(a + b + b, 92233720368547758080n)
 }
 
 function main() {

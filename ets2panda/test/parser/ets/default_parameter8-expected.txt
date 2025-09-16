@@ -3363,9 +3363,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 43,
+                                "column": 5,
+                                "program": "default_parameter8.ets"
+                              },
+                              "end": {
+                                "line": 43,
+                                "column": 12,
+                                "program": "default_parameter8.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 43,
+                                "column": 13,
+                                "program": "default_parameter8.ets"
+                              },
+                              "end": {
+                                "line": 43,
+                                "column": 21,
+                                "program": "default_parameter8.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 43,
@@ -3374,7 +3408,7 @@
                             },
                             "end": {
                               "line": 43,
-                              "column": 13,
+                              "column": 21,
                               "program": "default_parameter8.ets"
                             }
                           }
@@ -3389,12 +3423,12 @@
                               "loc": {
                                 "start": {
                                   "line": 43,
-                                  "column": 14,
+                                  "column": 22,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
                                   "line": 43,
-                                  "column": 15,
+                                  "column": 23,
                                   "program": "default_parameter8.ets"
                                 }
                               }
@@ -3406,12 +3440,12 @@
                               "loc": {
                                 "start": {
                                   "line": 43,
-                                  "column": 16,
+                                  "column": 24,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
                                   "line": 43,
-                                  "column": 17,
+                                  "column": 25,
                                   "program": "default_parameter8.ets"
                                 }
                               }
@@ -3421,12 +3455,12 @@
                             "loc": {
                               "start": {
                                 "line": 43,
-                                "column": 14,
+                                "column": 22,
                                 "program": "default_parameter8.ets"
                               },
                               "end": {
                                 "line": 43,
-                                "column": 17,
+                                "column": 25,
                                 "program": "default_parameter8.ets"
                               }
                             }
@@ -3437,12 +3471,12 @@
                             "loc": {
                               "start": {
                                 "line": 43,
-                                "column": 19,
+                                "column": 27,
                                 "program": "default_parameter8.ets"
                               },
                               "end": {
                                 "line": 43,
-                                "column": 22,
+                                "column": 30,
                                 "program": "default_parameter8.ets"
                               }
                             }
@@ -3457,7 +3491,7 @@
                           },
                           "end": {
                             "line": 43,
-                            "column": 23,
+                            "column": 31,
                             "program": "default_parameter8.ets"
                           }
                         }
@@ -3470,7 +3504,7 @@
                         },
                         "end": {
                           "line": 43,
-                          "column": 24,
+                          "column": 32,
                           "program": "default_parameter8.ets"
                         }
                       }
@@ -3563,9 +3597,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 45,
+                                "column": 5,
+                                "program": "default_parameter8.ets"
+                              },
+                              "end": {
+                                "line": 45,
+                                "column": 12,
+                                "program": "default_parameter8.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 45,
+                                "column": 13,
+                                "program": "default_parameter8.ets"
+                              },
+                              "end": {
+                                "line": 45,
+                                "column": 21,
+                                "program": "default_parameter8.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 45,
@@ -3574,7 +3642,7 @@
                             },
                             "end": {
                               "line": 45,
-                              "column": 13,
+                              "column": 21,
                               "program": "default_parameter8.ets"
                             }
                           }
@@ -3591,12 +3659,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 45,
-                                    "column": 14,
+                                    "column": 22,
                                     "program": "default_parameter8.ets"
                                   },
                                   "end": {
                                     "line": 45,
-                                    "column": 15,
+                                    "column": 23,
                                     "program": "default_parameter8.ets"
                                   }
                                 }
@@ -3608,12 +3676,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 45,
-                                    "column": 16,
+                                    "column": 24,
                                     "program": "default_parameter8.ets"
                                   },
                                   "end": {
                                     "line": 45,
-                                    "column": 20,
+                                    "column": 28,
                                     "program": "default_parameter8.ets"
                                   }
                                 }
@@ -3623,12 +3691,12 @@
                               "loc": {
                                 "start": {
                                   "line": 45,
-                                  "column": 14,
+                                  "column": 22,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
                                   "line": 45,
-                                  "column": 20,
+                                  "column": 28,
                                   "program": "default_parameter8.ets"
                                 }
                               }
@@ -3638,12 +3706,12 @@
                             "loc": {
                               "start": {
                                 "line": 45,
-                                "column": 14,
+                                "column": 22,
                                 "program": "default_parameter8.ets"
                               },
                               "end": {
                                 "line": 45,
-                                "column": 22,
+                                "column": 30,
                                 "program": "default_parameter8.ets"
                               }
                             }
@@ -3654,12 +3722,12 @@
                             "loc": {
                               "start": {
                                 "line": 45,
-                                "column": 24,
+                                "column": 32,
                                 "program": "default_parameter8.ets"
                               },
                               "end": {
                                 "line": 45,
-                                "column": 29,
+                                "column": 37,
                                 "program": "default_parameter8.ets"
                               }
                             }
@@ -3674,7 +3742,7 @@
                           },
                           "end": {
                             "line": 45,
-                            "column": 30,
+                            "column": 38,
                             "program": "default_parameter8.ets"
                           }
                         }
@@ -3687,7 +3755,7 @@
                         },
                         "end": {
                           "line": 45,
-                          "column": 31,
+                          "column": 39,
                           "program": "default_parameter8.ets"
                         }
                       }
@@ -3697,9 +3765,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 46,
+                                "column": 5,
+                                "program": "default_parameter8.ets"
+                              },
+                              "end": {
+                                "line": 46,
+                                "column": 12,
+                                "program": "default_parameter8.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 46,
+                                "column": 13,
+                                "program": "default_parameter8.ets"
+                              },
+                              "end": {
+                                "line": 46,
+                                "column": 21,
+                                "program": "default_parameter8.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 46,
@@ -3708,7 +3810,7 @@
                             },
                             "end": {
                               "line": 46,
-                              "column": 13,
+                              "column": 21,
                               "program": "default_parameter8.ets"
                             }
                           }
@@ -3725,12 +3827,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 46,
-                                    "column": 14,
+                                    "column": 22,
                                     "program": "default_parameter8.ets"
                                   },
                                   "end": {
                                     "line": 46,
-                                    "column": 15,
+                                    "column": 23,
                                     "program": "default_parameter8.ets"
                                   }
                                 }
@@ -3742,12 +3844,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 46,
-                                    "column": 16,
+                                    "column": 24,
                                     "program": "default_parameter8.ets"
                                   },
                                   "end": {
                                     "line": 46,
-                                    "column": 19,
+                                    "column": 27,
                                     "program": "default_parameter8.ets"
                                   }
                                 }
@@ -3757,12 +3859,12 @@
                               "loc": {
                                 "start": {
                                   "line": 46,
-                                  "column": 14,
+                                  "column": 22,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
                                   "line": 46,
-                                  "column": 19,
+                                  "column": 27,
                                   "program": "default_parameter8.ets"
                                 }
                               }
@@ -3772,12 +3874,12 @@
                             "loc": {
                               "start": {
                                 "line": 46,
-                                "column": 14,
+                                "column": 22,
                                 "program": "default_parameter8.ets"
                               },
                               "end": {
                                 "line": 46,
-                                "column": 21,
+                                "column": 29,
                                 "program": "default_parameter8.ets"
                               }
                             }
@@ -3794,12 +3896,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 46,
-                                    "column": 24,
+                                    "column": 32,
                                     "program": "default_parameter8.ets"
                                   },
                                   "end": {
                                     "line": 46,
-                                    "column": 25,
+                                    "column": 33,
                                     "program": "default_parameter8.ets"
                                   }
                                 }
@@ -3811,12 +3913,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 46,
-                                    "column": 26,
+                                    "column": 34,
                                     "program": "default_parameter8.ets"
                                   },
                                   "end": {
                                     "line": 46,
-                                    "column": 28,
+                                    "column": 36,
                                     "program": "default_parameter8.ets"
                                   }
                                 }
@@ -3826,12 +3928,12 @@
                               "loc": {
                                 "start": {
                                   "line": 46,
-                                  "column": 24,
+                                  "column": 32,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
                                   "line": 46,
-                                  "column": 28,
+                                  "column": 36,
                                   "program": "default_parameter8.ets"
                                 }
                               }
@@ -3842,12 +3944,12 @@
                               "loc": {
                                 "start": {
                                   "line": 46,
-                                  "column": 29,
+                                  "column": 37,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
                                   "line": 46,
-                                  "column": 30,
+                                  "column": 38,
                                   "program": "default_parameter8.ets"
                                 }
                               }
@@ -3855,12 +3957,12 @@
                             "loc": {
                               "start": {
                                 "line": 46,
-                                "column": 23,
+                                "column": 31,
                                 "program": "default_parameter8.ets"
                               },
                               "end": {
                                 "line": 46,
-                                "column": 31,
+                                "column": 39,
                                 "program": "default_parameter8.ets"
                               }
                             }
@@ -3875,7 +3977,7 @@
                           },
                           "end": {
                             "line": 46,
-                            "column": 32,
+                            "column": 40,
                             "program": "default_parameter8.ets"
                           }
                         }
@@ -3888,7 +3990,7 @@
                         },
                         "end": {
                           "line": 46,
-                          "column": 33,
+                          "column": 41,
                           "program": "default_parameter8.ets"
                         }
                       }

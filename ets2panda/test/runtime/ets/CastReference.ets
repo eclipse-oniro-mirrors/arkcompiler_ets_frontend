@@ -41,16 +41,16 @@ final class B extends A {
 
 function reference_reference_test(): void {
   let B_ = new B();
-  assertEQ(B_.name(), c'B')
-  assertEQ(B_.b(), c'B')
+  arktest.assertEQ(B_.name(), c'B')
+  arktest.assertEQ(B_.b(), c'B')
 
   let B_A = B_ as A;
-  assertEQ(B_A.name(), c'B')
-  assertEQ(B_A.a(), c'A')
+  arktest.assertEQ(B_A.name(), c'B')
+  arktest.assertEQ(B_A.a(), c'A')
 
   let A_B = B_A as B;
-  assertEQ(B_.name(), c'B')
-  assertEQ(B_.b(), c'B')
+  arktest.assertEQ(B_.name(), c'B')
+  arktest.assertEQ(B_.b(), c'B')
 }
 
 function array_test(): void {
@@ -58,16 +58,16 @@ function array_test(): void {
 
   let B_As: FixedArray<A> = Bs as FixedArray<A>;
   for (let i: int = 0; i < B_As.length; i++) {
-    assertEQ(B_As[i].name(), c'B')
-    assertEQ(B_As[i].a(), c'A')
+    arktest.assertEQ(B_As[i].name(), c'B')
+    arktest.assertEQ(B_As[i].a(), c'A')
   }
 
   let Object_: Object = B_As as Object;
 
   let Object_Bs: FixedArray<B> = Object_ as FixedArray<B>;
   for (let i: int = 0; i < Object_Bs.length; i++) {
-    assertEQ(Object_Bs[i].name(), c'B')
-    assertEQ(Object_Bs[i].b(), c'B')
+    arktest.assertEQ(Object_Bs[i].name(), c'B')
+    arktest.assertEQ(Object_Bs[i].b(), c'B')
   }
 }
 
@@ -77,8 +77,8 @@ function multi_array_test(): void {
   let B_As: FixedArray<FixedArray<A>> = Bs as FixedArray<FixedArray<A>>;
   for (let i: int = 0; i < B_As.length; i++) {
     for (let j: int = 0; j < B_As[i].length; j++) {
-      assertEQ(B_As[i][j].name(), c'B')
-      assertEQ(B_As[i][j].a(), c'A')
+      arktest.assertEQ(B_As[i][j].name(), c'B')
+      arktest.assertEQ(B_As[i][j].a(), c'A')
     }
   }
 
@@ -87,8 +87,8 @@ function multi_array_test(): void {
   let Object_Bs: FixedArray<FixedArray<B>> = Object_ as FixedArray<FixedArray<B>>;
   for (let i: int = 0; i < Object_Bs.length; i++) {
     for (let j: int = 0; j < Object_Bs[i].length; j++) {
-      assertEQ(Object_Bs[i][j].name(), c'B')
-      assertEQ(Object_Bs[i][j].b(), c'B')
+      arktest.assertEQ(Object_Bs[i][j].name(), c'B')
+      arktest.assertEQ(Object_Bs[i][j].b(), c'B')
     }
   }
 }
@@ -96,9 +96,9 @@ function multi_array_test(): void {
 function primitive_reference_test(): void {
   let int_: int = 42;
   let Int_ = int_ as Int;
-  assertTrue(Int_ instanceof Int)
-  assertEQ(Int_.toInt(), 42)
-  assertEQ(Int_.add(1) as int, 43)
+  arktest.assertTrue(Int_ instanceof Int)
+  arktest.assertEQ(Int_.toInt(), 42)
+  arktest.assertEQ(Int_.add(1) as int, 43)
 }
 
 function main(): void {

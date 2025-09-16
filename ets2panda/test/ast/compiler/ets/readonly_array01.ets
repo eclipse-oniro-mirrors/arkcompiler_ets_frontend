@@ -14,10 +14,10 @@
  */
 
 function main() {
-    let v: readonly number[][] = [[1.0,2.0]]
+    let v = [[1.0,2.0]] as readonly number[][] // smart cast workaround
     v[0][0] = 3.0  // ok
     v[0] = []  // CTE
 }
 
-/* @@? 19:5 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter  */
-
+/* @@? 19:5 Error TypeError: Object type doesn't have proper index access method.  */
+/* @@? 19:12 Error TypeError: Can't resolve array type  */

@@ -40,8 +40,8 @@ class C extends A {
 
 function main(): void {
     let b: C = new C();
-    assertEQ(b.a, 101);
+    arktest.assertEQ(b.a, 101);
     b.setC();
-    assertEQ(b.getC(), 10001);
-    assertEQ(C.foo(), (C.fs*2));
+    arktest.assertEQ(b.getC(), 10001);
+    arktest.assertEQ(C.foo(), (C.fs*2));
 }

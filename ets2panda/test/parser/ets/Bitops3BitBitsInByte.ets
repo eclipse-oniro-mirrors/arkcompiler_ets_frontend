@@ -34,7 +34,7 @@ export class Bitops3BitBitsInByte {
         sum += Bitops3BitBitsInByte.fast3bitlookup(y);
       }
     }
-    assertEQ(sum, Bitops3BitBitsInByte.expected,  "Incorrect result");
+    arktest.assertEQ(sum, Bitops3BitBitsInByte.expected,  "Incorrect result");
   }
 }
 

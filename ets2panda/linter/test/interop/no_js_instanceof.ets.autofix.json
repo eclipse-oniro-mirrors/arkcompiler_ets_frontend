@@ -20,26 +20,6 @@
             "endLine": 16,
             "endColumn": 88,
             "problem": "InterOpImportJs",
-            "autofix": [
-                {
-                    "start": 605,
-                    "end": 692,
-                    "replacementText": "",
-                    "line": 16,
-                    "column": 1,
-                    "endLine": 16,
-                    "endColumn": 88
-                },
-                {
-                    "start": 692,
-                    "end": 692,
-                    "replacementText": "let GeneratedImportVar_1 = ESValue.load('./no_js_instanceof_file.js');\nlet Foo = GeneratedImportVar_1.getProperty('Foo');\nlet foo = GeneratedImportVar_1.getProperty('foo');\nlet CreatePerson = GeneratedImportVar_1.getProperty('CreatePerson');\nlet a = GeneratedImportVar_1.getProperty('a');\nlet b = GeneratedImportVar_1.getProperty('b');\nlet MyNamespace = GeneratedImportVar_1.getProperty('MyNamespace');\n",
-                    "line": 16,
-                    "column": 1,
-                    "endLine": 16,
-                    "endColumn": 88
-                }
-            ],
             "suggest": "",
             "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
@@ -126,27 +106,6 @@
             ],
             "suggest": "",
             "rule": "ArkTS directly call JS functions or parameters is not supported (arkts-interop-js2s-call-js-func)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 38,
-            "column": 47,
-            "endLine": 38,
-            "endColumn": 49,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 902,
-                    "end": 904,
-                    "replacementText": "18.0",
-                    "line": 38,
-                    "column": 47,
-                    "endLine": 38,
-                    "endColumn": 49
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

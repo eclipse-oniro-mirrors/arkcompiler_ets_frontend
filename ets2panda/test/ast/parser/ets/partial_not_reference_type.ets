@@ -14,6 +14,4 @@
  */
 
 
-function foo(a:Partial/* @@ label */<int>){}
-
-/* @@@ label Error TypeError: Only reference types can be converted to utility types. */
+function foo(a:Partial<int>){}

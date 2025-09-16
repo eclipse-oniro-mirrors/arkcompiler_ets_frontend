@@ -21,4 +21,4 @@ let c: C = {
     f: /* @@ label */"ouch"
 };
 
-/* @@@ label Error TypeError: Type '"ouch"' is not compatible with type 'int' at property 'f'  */
+/* @@@ label Error TypeError: Type '"ouch"' is not compatible with type 'Int' at property 'f'  */

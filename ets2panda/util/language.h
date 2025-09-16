@@ -77,6 +77,17 @@ public:
         ES2PANDA_UNREACHABLE();
     }
 
+    bool IsValid() const
+    {
+        for (auto [id, _, isDynamic] : ID_TABLE) {
+            if (id_ == id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     bool operator==(const Language &l) const
     {
         return id_ == l.id_;

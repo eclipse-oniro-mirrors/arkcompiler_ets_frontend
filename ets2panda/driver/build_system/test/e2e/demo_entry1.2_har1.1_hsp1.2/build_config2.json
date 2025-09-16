@@ -1,0 +1,47 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.2/entry/a.ets"
+    ],
+
+    "packageName": "entry",
+    "moduleType": "shared",
+
+    "buildType": "build",
+    "buildMode": "Debug",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.2/entry",
+    "sourceRoots": ["./", "src/main1/ets"],
+
+    "loaderOutPath": "./dist/out/entry",
+    "cachePath": "./dist/cache",
+
+    "enableDeclgenEts2Ts": false,
+    "declgenV1OutPath": "./dist/declgen/decl_ets",
+    "declgenV2OutPath": "./dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "hasMainModule": true,
+
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+
+    "dependentModuleList": [
+        {
+            "packageName": "harA",
+            "moduleName": "harA",
+            "moduleType": "har",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.2/harA",
+            "sourceRoots": ["./"],
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.2/harA/index.ets",
+            "language": "1.1",
+            "dependencies": [ "hspA" ],
+            "declFilesPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.2/harA/decl-fileInfo.json"
+        },
+        {
+            "packageName": "hspA",
+            "moduleName": "hspA",
+            "moduleType": "shared",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.2/hspA",
+            "sourceRoots": ["./"],
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.2/hspA/index.ets",
+            "language": "1.2"
+        }
+    ]
+}

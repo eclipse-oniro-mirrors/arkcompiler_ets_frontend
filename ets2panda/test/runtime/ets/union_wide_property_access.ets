@@ -23,20 +23,20 @@ function bar(a0: A | B): void {
 
 function foo(arr: Int8Array | Int16Array): void {
     let len = arr.length
-    assertEQ(len, 42)
+    arktest.assertEQ(len, 42)
 }
 
 function main() {
     let buffer: ArrayBuffer = new ArrayBuffer(42);
     let byteArr: Int8Array= new Int8Array(buffer)
     foo(byteArr);
-    assertEQ(byteArr.length, 42)
+    arktest.assertEQ(byteArr.length, 42)
 
     let ab: A|B = new A();
     bar(ab);
-    assertEQ(ab.memb, 50)
+    arktest.assertEQ(ab.memb, 50)
 
     let cClass: C = new C();
     cClass.memb = new B();
-    assertEQ(cClass.memb.memb, 6)
+    arktest.assertEQ(cClass.memb.memb, 6)
 }

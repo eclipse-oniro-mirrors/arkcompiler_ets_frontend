@@ -24,5 +24,5 @@ function main(): void {
     catched = true;
   }
 
-  assertTrue(catched)
+  arktest.assertTrue(catched)
 }

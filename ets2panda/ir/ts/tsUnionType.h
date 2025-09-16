@@ -41,6 +41,8 @@ public:
     checker::VerifiedType Check([[maybe_unused]] checker::ETSChecker *checker) override;
     checker::Type *GetType([[maybe_unused]] checker::TSChecker *checker) override;
 
+    TSUnionType *Clone(ArenaAllocator *allocator, AstNode *parent) override;
+
     void Accept(ASTVisitorT *v) override
     {
         v->Accept(this);

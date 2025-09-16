@@ -16,6 +16,6 @@
 
 function main(): void {
   let count = 1 + 2;
-  assertEQ(count, 3)
+  arktest.assertEQ(count, 3)
   return;
 }

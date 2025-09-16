@@ -45,39 +45,47 @@ public:
     void IsSupertypeOf(TypeRelation *relation, Type *source) override;
     void IsSubtypeOf(TypeRelation *relation, Type *target) override;
     void CheckVarianceRecursively(TypeRelation *relation, VarianceFlag varianceFlag) override;
-    Type *FindTypeIsCastableToThis(ir::Expression *node, TypeRelation *relation, Type *source) const;
-    Type *FindTypeIsCastableToSomeType(ir::Expression *node, TypeRelation *relation, Type *target) const;
-    Type *FindUnboxableType() const;
 
-    bool HasObjectType(ETSObjectFlags flag) const;
-    bool HasType(Type *type) const;
+    [[nodiscard]] Type *FindUnboxableType() const noexcept;
 
-    bool IsOverlapWith(TypeRelation *relation, Type *type);
-
-    Type *FindExactOrBoxedType(ETSChecker *checker, Type *type) const;
+    [[nodiscard]] bool IsOverlapWith(TypeRelation *relation, Type const *type) const noexcept;
 
     static void NormalizeTypes(TypeRelation *relation, ArenaVector<Type *> &types);
 
-    static ArenaVector<Type *> GetNonConstantTypes(ETSChecker *checker, const ArenaVector<Type *> &types);
+    [[nodiscard]] ArenaVector<Type *> GetNonConstantTypes(ETSChecker *checker) const noexcept;
 
-    std::tuple<bool, bool> ResolveConditionExpr() const override;
-
-    // Do not use it anywhere except codegen
-    Type *GetAssemblerLUB() const
+    const util::StringView &GetAssemblerType() const
     {
-        return assemblerLub_;
+        return assemblerTypeCache_;
     }
 
     template <class UnaryPredicate>
-    bool AllOfConstituentTypes(UnaryPredicate p) const
+    [[nodiscard]] bool AllOfConstituentTypes(UnaryPredicate p) const noexcept
     {
         return std::all_of(constituentTypes_.cbegin(), constituentTypes_.cend(), p);
     }
 
-    checker::Type *HandleNumericPrecedence(checker::ETSChecker *checker, checker::ETSObjectType *objectType,
-                                           checker::Type *sourceType,
-                                           std::map<std::uint32_t, checker::Type *> &numericTypes) const noexcept;
-    [[nodiscard]] checker::Type *GetAssignableType(ETSChecker *checker, checker::Type *sourceType) const noexcept;
+    template <class UnaryPredicate>
+    [[nodiscard]] bool AnyOfConstituentTypes(UnaryPredicate p) const noexcept
+    {
+        return std::any_of(constituentTypes_.cbegin(), constituentTypes_.cend(), p);
+    }
+
+    template <class UnaryPredicate>
+    [[nodiscard]] Type *FindSpecificType(UnaryPredicate p) const noexcept
+    {
+        auto const it = std::find_if(constituentTypes_.cbegin(), constituentTypes_.cend(), p);
+        return it != constituentTypes_.cend() ? *it : nullptr;
+    }
+
+    template <class UnaryPredicate>
+    [[nodiscard]] bool HasSpecificType(UnaryPredicate p) const noexcept
+    {
+        return FindSpecificType(p) != nullptr;
+    }
+
+    [[nodiscard]] checker::Type *GetAssignableType(ETSChecker *checker, checker::Type *sourceType,
+                                                   std::optional<double> value) const;
     [[nodiscard]] std::pair<checker::Type *, checker::Type *> GetComplimentaryType(ETSChecker *checker,
                                                                                    checker::Type *sourceType);
 
@@ -89,21 +97,24 @@ private:
     void RelationTarget(TypeRelation *relation, Type *source, RelFN const &relFn);
 
     static void LinearizeAndEraseIdentical(TypeRelation *relation, ArenaVector<Type *> &types);
-    [[nodiscard]] static bool ExtractType(ETSChecker *checker, checker::ETSObjectType *sourceType,
-                                          ArenaVector<Type *> &unionTypes) noexcept;
-    [[nodiscard]] static bool ExtractType(ETSChecker *checker, checker::ETSArrayType *sourceType,
+    [[nodiscard]] static bool ExtractType(ETSChecker *checker, checker::Type *source,
                                           ArenaVector<Type *> &unionTypes) noexcept;
 
     [[nodiscard]] checker::Type *GetAssignableBuiltinType(
-        checker::ETSChecker *checker, checker::ETSObjectType *sourceType, bool isBool, bool isChar,
-        std::map<std::uint32_t, checker::Type *> &numericTypes) const noexcept;
+        checker::ETSChecker *checker, checker::ETSObjectType *sourceType,
+        std::map<std::uint32_t, checker::ETSObjectType *> &numericTypes) const;
 
-    bool IsAssignableType(checker::Type *sourceType) const noexcept;
+    void CanonicalizedAssemblerType(ETSChecker *checker);
+    void InitAssemblerTypeCache(ETSChecker *checker);
 
-    static Type *ComputeAssemblerLUB(ETSChecker *checker, ETSUnionType *un);
+    const ArenaVector<Type *> &GetAssemblerTypes() const
+    {
+        return assemblerConstituentTypes_;
+    }
 
     ArenaVector<Type *> const constituentTypes_;
-    Type *assemblerLub_ {nullptr};
+    ArenaVector<Type *> assemblerConstituentTypes_;
+    util::StringView assemblerTypeCache_;
 };
 }  // namespace ark::es2panda::checker
 

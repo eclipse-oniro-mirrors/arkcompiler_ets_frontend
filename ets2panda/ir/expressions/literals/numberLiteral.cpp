@@ -20,8 +20,6 @@
 #include "compiler/core/pandagen.h"
 #include "util/dtoa_helper.h"
 
-#include <cstdlib>
-
 namespace ark::es2panda::ir {
 
 inline constexpr size_t BUF_SIZE = 128;
@@ -64,6 +62,16 @@ void NumberLiteral::Dump(ir::SrcDumper *dumper) const
             dumper->Add(number_.GetDouble());
             return;
         }
+
+        if (number_.IsShort()) {
+            dumper->Add(number_.GetShort());
+            return;
+        }
+
+        if (number_.IsByte()) {
+            dumper->Add(number_.GetByte());
+            return;
+        }
     }
     dumper->Add(std::string(number_.Str()));
 }
@@ -96,6 +104,7 @@ NumberLiteral *NumberLiteral::Clone(ArenaAllocator *const allocator, AstNode *co
         clone->SetParent(parent);
     }
     clone->SetRange(Range());
+    clone->SetFolded(IsFolded());
     return clone;
 }
 
@@ -256,7 +265,7 @@ static Span<char> FpToStringDecimalRadixMainCase(FpType number, bool negative, S
         // 8. If −6 < n ≤ 0, return the String consisting of the code unit 0x0030 (DIGIT ZERO), followed by the code
         // unit 0x002E (FULL STOP), followed by −n occurrences of the code unit 0x0030 (DIGIT ZERO), followed by the
         // code units of the k digits of the decimal representation of s.
-        int length = -n + 2U;
+        size_t length = -n + 2U;
         auto fracStart = bufferStart + length;
         if (memmove_s(fracStart, buffer.end() - fracStart, bufferStart, k) != EOK) {
             ES2PANDA_UNREACHABLE();
@@ -388,6 +397,14 @@ std::string NumberLiteral::ToString() const
 
     if (number_.IsFloat()) {
         FpToString(number_.GetFloat(), result);
+    }
+
+    if (number_.IsShort()) {
+        IntegerToString(number_.GetShort(), result);
+    }
+
+    if (number_.IsByte()) {
+        IntegerToString(static_cast<int32_t>(number_.GetByte()), result);
     }
 
     ES2PANDA_ASSERT(!result.empty());

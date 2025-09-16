@@ -375,7 +375,7 @@ ArenaVector<ir::Statement *> ETSParser::CreateFormattedStatements(std::string_vi
 ir::AstNode *ETSParser::CreateFormattedClassFieldDefinition(std::string_view sourceCode,
                                                             std::vector<ir::AstNode *> &insertingNodes)
 {
-    static ArenaVector<ir::AstNode *> const DUMMY_ARRAY {Allocator()->Adapter()};
+    thread_local static ArenaVector<ir::AstNode *> const DUMMY_ARRAY {Allocator()->Adapter()};
     insertingNodes_.swap(insertingNodes);
 
     auto *const property = CreateClassElement(sourceCode, DUMMY_ARRAY, ir::ClassDefinitionModifiers::NONE);
@@ -392,7 +392,7 @@ ir::AstNode *ETSParser::CreateFormattedClassFieldDefinition(std::string_view sou
 ir::AstNode *ETSParser::CreateFormattedClassMethodDefinition(std::string_view sourceCode,
                                                              std::vector<ir::AstNode *> &insertingNodes)
 {
-    static ArenaVector<ir::AstNode *> const DUMMY_ARRAY {Allocator()->Adapter()};
+    thread_local static ArenaVector<ir::AstNode *> const DUMMY_ARRAY {Allocator()->Adapter()};
     insertingNodes_.swap(insertingNodes);
 
     auto *const property = CreateClassElement(sourceCode, DUMMY_ARRAY, ir::ClassDefinitionModifiers::NONE);

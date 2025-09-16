@@ -1,0 +1,428 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 27,
+            "column": 10,
+            "endLine": 27,
+            "endColumn": 14,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"mode\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 7,
+            "endLine": 26,
+            "endColumn": 16,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouter\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 15,
+            "endLine": 27,
+            "endColumn": 27,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouteMode\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 28,
+            "endLine": 27,
+            "endColumn": 46,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"PUSH_WITH_RECREATE\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 10,
+            "endLine": 30,
+            "endColumn": 23,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"onStateChange\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 10,
+            "endLine": 29,
+            "endColumn": 14,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"mode\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 7,
+            "endLine": 28,
+            "endColumn": 16,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouter\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 18,
+            "endLine": 28,
+            "endColumn": 22,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"name\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 26,
+            "endLine": 28,
+            "endColumn": 31,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"param\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 15,
+            "endLine": 29,
+            "endColumn": 27,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouteMode\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 28,
+            "endLine": 29,
+            "endColumn": 46,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"PUSH_WITH_RECREATE\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 23,
+            "endLine": 31,
+            "endColumn": 35,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouteMode\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 36,
+            "endLine": 31,
+            "endColumn": 43,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"REPLACE\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 28,
+            "endLine": 32,
+            "endColumn": 46,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouterAttribute\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 16,
+            "endLine": 33,
+            "endColumn": 20,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"mode\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 21,
+            "endLine": 33,
+            "endColumn": 33,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouteMode\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 34,
+            "endLine": 33,
+            "endColumn": 38,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"PUSH\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 25,
+            "endLine": 35,
+            "endColumn": 29,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"mode\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 30,
+            "endLine": 35,
+            "endColumn": 42,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouteMode\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 43,
+            "endLine": 35,
+            "endColumn": 50,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"REPLACE\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 23,
+            "endLine": 39,
+            "endColumn": 41,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouterInterface\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 3,
+            "endLine": 40,
+            "endColumn": 9,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 3,
+            "endLine": 40,
+            "endColumn": 33,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 14,
+            "endLine": 40,
+            "endColumn": 32,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouterAttribute\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 3,
+            "endLine": 41,
+            "endColumn": 9,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 3,
+            "endLine": 41,
+            "endColumn": 49,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 18,
+            "endLine": 41,
+            "endColumn": 27,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"RouteInfo\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 30,
+            "endLine": 41,
+            "endColumn": 48,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouterAttribute\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 3,
+            "endLine": 42,
+            "endColumn": 9,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 3,
+            "endLine": 44,
+            "endColumn": 4,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 31,
+            "endLine": 42,
+            "endColumn": 54,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 19,
+            "endLine": 42,
+            "endColumn": 28,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"RouteInfo\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 50,
+            "endLine": 42,
+            "endColumn": 54,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 31,
+            "endLine": 42,
+            "endColumn": 49,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouterAttribute\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 22,
+            "endLine": 43,
+            "endColumn": 40,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouterAttribute\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 24,
+            "endLine": 46,
+            "endColumn": 42,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"NavRouterInterface\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 2,
+            "endLine": 18,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 2,
+            "endLine": 19,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 4,
+            "endLine": 21,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"State\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 4,
+            "endLine": 22,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"State\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 5,
+            "endLine": 25,
+            "endColumn": 15,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Navigation\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        }
+    ]
+}

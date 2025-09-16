@@ -35,3 +35,9 @@ function anotherName(ctorName0: BigIntConstructor) { // ERROR
   let ctorName2:BigIntConstructor1 = ctorName1 // ERROR
   const rs2 = ctorName2(1); // ERROR
 }
+
+class A extends Error {
+  constructor(str: string) {
+    super(str);
+  }
+}

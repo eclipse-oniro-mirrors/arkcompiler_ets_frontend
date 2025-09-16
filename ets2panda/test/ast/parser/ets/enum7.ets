@@ -17,8 +17,8 @@ enum Color { Red }
 enum Color2 { Red }
 
 function main(): void {
-  // Is used 'assertTrue' due to #22840
-  assertTrue(/* @@ label */Color.Red != Color2.Red);
+  // Is used 'arktest.assertTrue' due to #22840
+  arktest.assertTrue(/* @@ label */Color.Red != Color2.Red);
 }
 
 /* @@@ label Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */

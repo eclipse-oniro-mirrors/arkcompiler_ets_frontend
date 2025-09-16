@@ -30,23 +30,23 @@ function main() {
      let y: Number|String|undefined = 2;   // hides outer declaration!
      x = z; 
      let tmp: number = y;                  // smart cast is used
-     assertEQ(tmp, 2);
+     arktest.assertEQ(tmp, 2);
   };
 
   if (x instanceof string) {
     let tmp: string = x as string;         // no smart cast!
-    assertEQ(tmp, "test1");
+    arktest.assertEQ(tmp, "test1");
   }	
 
   lam();
 
-  assertEQ(x, 7);
+  arktest.assertEQ(x, 7);
 
   if (y instanceof string) {
     let tmp: string = y;                   // smart cast is used
-    assertEQ(tmp, "test2");
+    arktest.assertEQ(tmp, "test2");
   }     
 
   let w: number = z;                       // smart cast is used
-  assertEQ(w, 7)
+  arktest.assertEQ(w, 7)
 }

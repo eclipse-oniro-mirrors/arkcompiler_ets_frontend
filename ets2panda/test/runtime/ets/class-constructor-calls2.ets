@@ -40,17 +40,17 @@ final class D extends A {
 
 function main(): void {
     const a: A = new A();
-    assertEQ(a.a, 42)
+    arktest.assertEQ(a.a, 42)
 
     const b: B = new B();
-    assertEQ(b.a, 42)
+    arktest.assertEQ(b.a, 42)
 
     const c: C = new C();
-    assertEQ(c.a, 42)
+    arktest.assertEQ(c.a, 42)
 
     const d: D = new D();
-    assertEQ(d.a, 42)
+    arktest.assertEQ(d.a, 42)
 
     let d_as_A: A = d;
-    assertEQ(d_as_A.a, 42)
+    arktest.assertEQ(d_as_A.a, 42)
 }

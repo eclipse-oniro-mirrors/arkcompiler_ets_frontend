@@ -67,32 +67,32 @@ class E<U extends Integral> extends C<U> {
 
 
 function foo1(c: C<Int>) {
- assert (c.f1(0) == 7);
- assert (c.f2(c).f1(0) == 7);
- assert (c.f5(1, 2) == "C.f5"); 
- assert (c.f6(c, c) == "C.f6");
+ arktest.assert (c.f1(0) == 7);
+ arktest.assert (c.f2(c).f1(0) == 7);
+ arktest.assert (c.f5(1, 2) == "C.f5"); 
+ arktest.assert (c.f6(c, c) == "C.f6");
 }
 
 function foo2(c: C<Long>) {
- assert (c.f1(0) == 8);
- assert (c.f2(c).f1(0) == 8);
- assert (c.f5(3, 4) == "C.f5");
- assert (c.f7(3, c) == "C.f7");
+ arktest.assert (c.f1(0) == 8);
+ arktest.assert (c.f2(c).f1(0) == 8);
+ arktest.assert (c.f5(3, 4) == "C.f5");
+ arktest.assert (c.f7(3, c) == "C.f7");
 }
 
 
 function ttt(c: C<string>): void {
-  assert (c.f1("ah") == "oh"); 
-  assert (c.f2(c).f1("ah") == "oh");
+  arktest.assert (c.f1("ah") == "oh"); 
+  arktest.assert (c.f2(c).f1("ah") == "oh");
 
   let a: Object = "ah";
-  assert (c.f1(a) == "oh");
-  assert (c.f2(c).f1(a) == "oh");
+  arktest.assert (c.f1(a) == "oh");
+  arktest.assert (c.f2(c).f1(a) == "oh");
 
-  assert (c.f5("ah", "ah") == "C.f5");
-  assert (c.f6(c, c) == "C.f6");;
-  assert ((c as D).f6() == "D.f6");
-  assert (c.f7("ah", c) == "D.f7");
+  arktest.assert (c.f5("ah", "ah") == "C.f5");
+  arktest.assert (c.f6(c, c) == "C.f6");;
+  arktest.assert ((c as D).f6() == "D.f6");
+  arktest.assert (c.f7("ah", c) == "D.f7");
 }
 
 function main() {

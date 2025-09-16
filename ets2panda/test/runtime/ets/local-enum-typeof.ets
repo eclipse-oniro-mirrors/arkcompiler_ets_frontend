@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
+enum Color {Red, Green, Blue}
+enum Fruit {Apple="Apple", Pearl="Pearl", Peach="Peach"}
 
 function main():void {
-    enum Color {Red, Green, Blue}
-    enum Fruit {Apple="Apple", Pearl="Pearl", Peach="Peach"}
     let c: Color = Color.Green
-    assertEQ(typeof c, "number")
+    arktest.assertEQ(typeof c, "number")
     let f: Fruit = Fruit.Pearl
-    assertEQ(typeof f, "string")
+    arktest.assertEQ(typeof f, "string")
 }

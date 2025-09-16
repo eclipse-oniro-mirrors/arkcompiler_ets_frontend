@@ -15,6 +15,6 @@
 
 export class Test {
   private static fn(u: double[], i: double): void {
-     u[/* @@ label */i] = 0.0
+     u[/* @@ label */i.toInt()] = 0.0
   }
 }

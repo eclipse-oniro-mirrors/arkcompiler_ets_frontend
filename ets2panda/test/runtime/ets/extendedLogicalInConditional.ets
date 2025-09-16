@@ -18,8 +18,8 @@ let numB = new Number(4);
 let numArr :number[] = []
 
 function main() {
-    assertTrue((numA || numB) ? true : false);
-    assertTrue((numArr || numB) ? true : false);
-    assertTrue((numA && numB) ? true : false);
-    assertTrue((numArr && numB) ? true : false);
+    arktest.assertTrue((numA || numB) ? true : false);
+    arktest.assertTrue((numArr || numB) ? true : false);
+    arktest.assertTrue((numA && numB) ? true : false);
+    arktest.assertTrue((numArr && numB) ? true : false);
 }

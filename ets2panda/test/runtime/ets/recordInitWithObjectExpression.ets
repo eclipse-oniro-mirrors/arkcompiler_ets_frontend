@@ -18,7 +18,7 @@ function main(){
         2: 2,
         3: 3
     }
-    assertEQ(r.get(1), 1)
-    assertEQ(r.get(2), 2)
-    assertEQ(r.get(3), 3)
+    arktest.assertEQ(r.get(1), 1)
+    arktest.assertEQ(r.get(2), 2)
+    arktest.assertEQ(r.get(3), 3)
 }

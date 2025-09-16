@@ -20,6 +20,6 @@ final class TypeCreateCtx {
 /* @@? 17:66 Error TypeError: FixedArray<T> must have only one type parameter. */
 /* @@? 17:88 Error SyntaxError: Unexpected token, expected '>'. */
 /* @@? 17:88 Error SyntaxError: Unexpected token '>'. */
-/* @@? 17:98 Error SyntaxError: Field type annotation expected. */
+/* @@? 17:97 Error SyntaxError: Field type annotation expected. */
 /* @@? 17:120 Error TypeError: Only abstract or native methods can't have body. */
 /* @@? 17:138 Error TypeError: Cannot find type 'RuntimeTypeDescriptor'. */

@@ -29,15 +29,15 @@ class C extends B {
 
 function foo(c: Int|String|A|null|undefined): void {
   if (c instanceof String)  {
-    assertEQ(c.length, 11)
+    arktest.assertEQ(c.length, 11)
   } else if (c instanceof C) {
-    assertEQ(c.bar(), "Class C")
+    arktest.assertEQ(c.bar(), "Class C")
   } else if (c instanceof Int) {
-    assertEQ(c * c, 49)
+    arktest.assertEQ(c * c, 49)
   } else if (c === undefined) {
-     assertEQ(c, undefined)
+     arktest.assertEQ(c, undefined)
   } else {
-     assertEQ(c, null)
+     arktest.assertEQ(c, null)
   }
 }
 

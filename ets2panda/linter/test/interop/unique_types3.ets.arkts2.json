@@ -1,0 +1,698 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 77,
+            "column": 19,
+            "endLine": 77,
+            "endColumn": 26,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 81,
+            "column": 19,
+            "endLine": 81,
+            "endColumn": 30,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 85,
+            "column": 19,
+            "endLine": 85,
+            "endColumn": 29,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 12,
+            "endLine": 89,
+            "endColumn": 24,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 12,
+            "endLine": 89,
+            "endColumn": 24,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 93,
+            "column": 12,
+            "endLine": 93,
+            "endColumn": 20,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 17,
+            "endLine": 97,
+            "endColumn": 49,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 42,
+            "endLine": 97,
+            "endColumn": 45,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 46,
+            "endLine": 97,
+            "endColumn": 47,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 18,
+            "endLine": 98,
+            "endColumn": 53,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 43,
+            "endLine": 98,
+            "endColumn": 47,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 18,
+            "endLine": 99,
+            "endColumn": 56,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 43,
+            "endLine": 99,
+            "endColumn": 47,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 48,
+            "endLine": 99,
+            "endColumn": 49,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
+            "column": 18,
+            "endLine": 100,
+            "endColumn": 49,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 105,
+            "column": 42,
+            "endLine": 105,
+            "endColumn": 45,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 106,
+            "column": 43,
+            "endLine": 106,
+            "endColumn": 47,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 107,
+            "column": 43,
+            "endLine": 107,
+            "endColumn": 47,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 108,
+            "column": 43,
+            "endLine": 108,
+            "endColumn": 47,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 114,
+            "column": 12,
+            "endLine": 114,
+            "endColumn": 30,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 116,
+            "column": 12,
+            "endLine": 116,
+            "endColumn": 31,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 117,
+            "column": 12,
+            "endLine": 117,
+            "endColumn": 30,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 118,
+            "column": 12,
+            "endLine": 118,
+            "endColumn": 30,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 119,
+            "column": 12,
+            "endLine": 119,
+            "endColumn": 31,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 120,
+            "column": 19,
+            "endLine": 120,
+            "endColumn": 36,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 125,
+            "column": 17,
+            "endLine": 125,
+            "endColumn": 29,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 126,
+            "column": 19,
+            "endLine": 126,
+            "endColumn": 23,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 130,
+            "column": 14,
+            "endLine": 130,
+            "endColumn": 23,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 133,
+            "column": 15,
+            "endLine": 133,
+            "endColumn": 25,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 139,
+            "column": 19,
+            "endLine": 139,
+            "endColumn": 23,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 144,
+            "column": 32,
+            "endLine": 144,
+            "endColumn": 40,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 149,
+            "column": 12,
+            "endLine": 149,
+            "endColumn": 36,
+            "problem": "PropertyAccessByIndex",
+            "suggest": "",
+            "rule": "Indexed access is not supported for fields (arkts-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 149,
+            "column": 12,
+            "endLine": 149,
+            "endColumn": 33,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 153,
+            "column": 12,
+            "endLine": 153,
+            "endColumn": 28,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 153,
+            "column": 41,
+            "endLine": 153,
+            "endColumn": 57,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 157,
+            "column": 21,
+            "endLine": 157,
+            "endColumn": 31,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 158,
+            "column": 14,
+            "endLine": 158,
+            "endColumn": 16,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 159,
+            "column": 17,
+            "endLine": 159,
+            "endColumn": 20,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 160,
+            "column": 5,
+            "endLine": 160,
+            "endColumn": 12,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 162,
+            "column": 10,
+            "endLine": 162,
+            "endColumn": 13,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 163,
+            "column": 16,
+            "endLine": 163,
+            "endColumn": 19,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 164,
+            "column": 10,
+            "endLine": 164,
+            "endColumn": 14,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 169,
+            "column": 12,
+            "endLine": 169,
+            "endColumn": 18,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 169,
+            "column": 20,
+            "endLine": 169,
+            "endColumn": 21,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 170,
+            "column": 7,
+            "endLine": 170,
+            "endColumn": 14,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 171,
+            "column": 22,
+            "endLine": 171,
+            "endColumn": 33,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 172,
+            "column": 5,
+            "endLine": 172,
+            "endColumn": 12,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 172,
+            "column": 19,
+            "endLine": 172,
+            "endColumn": 32,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 173,
+            "column": 30,
+            "endLine": 173,
+            "endColumn": 33,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 175,
+            "column": 14,
+            "endLine": 175,
+            "endColumn": 17,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 176,
+            "column": 14,
+            "endLine": 176,
+            "endColumn": 17,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 177,
+            "column": 19,
+            "endLine": 177,
+            "endColumn": 33,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 187,
+            "column": 13,
+            "endLine": 187,
+            "endColumn": 24,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 188,
+            "column": 11,
+            "endLine": 188,
+            "endColumn": 20,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 188,
+            "column": 28,
+            "endLine": 188,
+            "endColumn": 31,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 193,
+            "column": 13,
+            "endLine": 193,
+            "endColumn": 25,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 193,
+            "column": 26,
+            "endLine": 193,
+            "endColumn": 38,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 194,
+            "column": 11,
+            "endLine": 194,
+            "endColumn": 17,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 195,
+            "column": 13,
+            "endLine": 195,
+            "endColumn": 20,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 200,
+            "column": 16,
+            "endLine": 200,
+            "endColumn": 27,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 200,
+            "column": 30,
+            "endLine": 200,
+            "endColumn": 57,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 200,
+            "column": 30,
+            "endLine": 200,
+            "endColumn": 53,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 201,
+            "column": 12,
+            "endLine": 201,
+            "endColumn": 31,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 202,
+            "column": 19,
+            "endLine": 202,
+            "endColumn": 38,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 206,
+            "column": 24,
+            "endLine": 206,
+            "endColumn": 40,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 206,
+            "column": 24,
+            "endLine": 206,
+            "endColumn": 40,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 211,
+            "column": 19,
+            "endLine": 211,
+            "endColumn": 26,
+            "problem": "InteropDirectAccessToTSTypes",
+            "suggest": "",
+            "rule": "Cannot access typescript types directly (arkts-interop-ts2s-static-access-ts-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 188,
+            "column": 23,
+            "endLine": 188,
+            "endColumn": 31,
+            "problem": "StrictDiagnostic",
+            "suggest": "Conversion of type 'undefined' to type 'number' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+            "rule": "Conversion of type 'undefined' to type 'number' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+            "severity": "ERROR"
+        }
+    ]
+}

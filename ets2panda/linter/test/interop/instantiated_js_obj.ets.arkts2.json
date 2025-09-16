@@ -25,16 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 18,
-            "column": 19,
-            "endLine": 18,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 22,
             "column": 1,
             "endLine": 22,
@@ -42,16 +32,6 @@
             "problem": "InstantiatedJsOjbect",
             "suggest": "",
             "rule": "ArkTS directly instantiated JS objects is not supported (arkts-interop-js2s-create-js-instance)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 9,
-            "endLine": 22,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -95,16 +75,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 29,
-            "column": 10,
-            "endLine": 29,
-            "endColumn": 11,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 31,
             "column": 1,
             "endLine": 31,
@@ -122,16 +92,6 @@
             "problem": "InstantiatedJsOjbect",
             "suggest": "",
             "rule": "ArkTS directly instantiated JS objects is not supported (arkts-interop-js2s-create-js-instance)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 32,
-            "column": 10,
-            "endLine": 32,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

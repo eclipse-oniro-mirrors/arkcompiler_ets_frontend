@@ -24,6 +24,6 @@ function main(): void {
 /* @@? 18:40 Error SyntaxError: Unexpected token, expected ',' or ']'. */
 /* @@? 18:40 Error SyntaxError: Unexpected token '>'. */
 /* @@? 18:43 Error SyntaxError: Unexpected token 'Int'. */
-/* @@? 18:43 Error TypeError: Class name 'Int' used in the wrong context */
+/* @@? 18:43 Error SyntaxError: Class cannot be used as object. */
 /* @@? 18:43 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 18:47 Error SyntaxError: Unexpected token ']'. */

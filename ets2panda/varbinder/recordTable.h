@@ -21,6 +21,8 @@
 #include "util/ustring.h"
 #include "util/enumbitops.h"
 
+#include <ir/base/scriptFunction.h>
+
 namespace ark::es2panda::parser {
 class Program;
 }  // namespace ark::es2panda::parser
@@ -72,6 +74,25 @@ public:
 
     ~RecordTable() = default;
 
+    void Merge(RecordTable *other)
+    {
+        for (auto classDef : other->classDefinitions_) {
+            classDefinitions_.insert(classDef);
+        }
+
+        for (auto interfaceDecl : other->InterfaceDeclarations()) {
+            interfaceDeclarations_.insert(interfaceDecl);
+        }
+
+        for (auto annoDecl : other->AnnotationDeclarations()) {
+            annotationDeclarations_.insert(annoDecl);
+        }
+
+        for (auto sig : other->signatures_) {
+            signatures_.insert(sig);
+        }
+    }
+
     bool IsExternal() const
     {
         return (flags_ & RecordTableFlags::EXTERNAL) != 0;
@@ -107,14 +128,20 @@ public:
         return annotationDeclarations_;
     }
 
-    ArenaVector<FunctionScope *> &Signatures()
+    ArenaSet<FunctionScope *> &Signatures()
     {
         return signatures_;
     }
 
-    const ArenaVector<FunctionScope *> &Signatures() const
+    const ArenaSet<FunctionScope *> &Signatures() const
     {
         return signatures_;
+    }
+
+    void EmplaceSignatures(varbinder::FunctionScope *signature, ir::ScriptFunction *func)
+    {
+        func->AddFlag(ir::ScriptFunctionFlags::IN_RECORD);
+        signatures_.insert(signature);
     }
 
     void SetClassDefinition(ir::ClassDefinition *classDefinition)
@@ -208,7 +235,7 @@ private:
     ArenaSet<ir::ClassDefinition *> classDefinitions_;
     ArenaSet<ir::TSInterfaceDeclaration *> interfaceDeclarations_;
     ArenaSet<ir::AnnotationDeclaration *> annotationDeclarations_;
-    ArenaVector<varbinder::FunctionScope *> signatures_;
+    ArenaSet<varbinder::FunctionScope *> signatures_;
     RecordHolder record_ {nullptr};
     parser::Program *program_ {};
     BoundContext *boundCtx_ {};

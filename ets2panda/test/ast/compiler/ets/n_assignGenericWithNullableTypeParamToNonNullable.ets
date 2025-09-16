@@ -18,7 +18,8 @@ class B {}
 
 function main(): void {
   let abn : A<B | null> = /* @@ label */new A<B>(); // should not work: non nullable B is the subtype of nullable B, but T has no variance mark
-  let ab : A<B> = abn; // should not work: nullable B (the type of abn) is not the subtype of non nullable B
+  let ab : A<B> = /* @@ label1 */abn; // should not work: nullable B (the type of abn) is not the subtype of non nullable B
 }
 
 /* @@@ label Error TypeError: Type 'A<B>' cannot be assigned to type 'A<B|null>'  */
+/* @@@ label1 Error TypeError: Type 'A<B|null>' cannot be assigned to type 'A<B>'  */

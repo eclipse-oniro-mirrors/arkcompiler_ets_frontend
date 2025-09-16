@@ -29,21 +29,21 @@ function extension(this: Fruit): int {
 function asFuncCall() {
     let fruit = new Fruit();
     let res1: int = fruit.price;
-    assertEQ(res1, 1 )
+    arktest.assertEQ(res1, 1 )
     let res2: int = extension(fruit);
-    assertEQ(res2, 25 )
+    arktest.assertEQ(res2, 25 )
     let res3: int = fruit.price;
-    assertEQ(res3, 25 )
+    arktest.assertEQ(res3, 25 )
 }
 
 function asMethodCall() {
     let fruit = new Fruit();
     let res1: int = fruit.price;
-    assertEQ(res1, 1 )
+    arktest.assertEQ(res1, 1 )
     let res2: int = fruit.extension();
-    assertEQ(res2, 25 )
+    arktest.assertEQ(res2, 25 )
     let res3: int = fruit.price;
-    assertEQ(res3, 25 )
+    arktest.assertEQ(res3, 25 )
 }
 
 function main() {

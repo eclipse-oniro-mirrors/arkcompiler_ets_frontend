@@ -29,10 +29,10 @@ function main() {
     let a1 = new A(1.0, 2.0, 3.0);
     let a2 = new A(...nums);
     let a3 = new A(...foo());
-    assertEQ(a1.fld.length, a2.fld.length)
-    assertEQ(a2.fld.length, a3.fld.length)
+    arktest.assertEQ(a1.fld.length, a2.fld.length)
+    arktest.assertEQ(a2.fld.length, a3.fld.length)
     for (let i = 0; i < a1.fld.length; ++i) {
-        assertEQ(a1.fld[i], a2.fld[i])
-        assertEQ(a2.fld[i], a3.fld[i])
+        arktest.assertEQ(a1.fld[i], a2.fld[i])
+        arktest.assertEQ(a2.fld[i], a3.fld[i])
     }
 }

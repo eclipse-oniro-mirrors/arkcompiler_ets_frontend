@@ -28,7 +28,7 @@ function dummy(): Person | null {
 function main(): void {
     let john: Person | null = dummy();
     let test = john?.residence?.numberOfRooms;
-    assertTrue(test == null)
+    arktest.assertTrue(test == null)
     let nullsafety_test = john?.residence?.numberOfRooms ?? "unknown";
-    assertEQ(nullsafety_test, "unknown")
+    arktest.assertEQ(nullsafety_test, "unknown")
 }

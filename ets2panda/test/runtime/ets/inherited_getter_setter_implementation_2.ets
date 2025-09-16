@@ -39,5 +39,5 @@ class B extends A {
 
 function main() {
     let b = new B()
-    assertTrue(b.a)
+    arktest.assertTrue(b.a)
 }

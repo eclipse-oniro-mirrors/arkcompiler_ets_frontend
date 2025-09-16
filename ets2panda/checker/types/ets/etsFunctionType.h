@@ -134,11 +134,6 @@ public:
     void Cast(TypeRelation *relation, Type *target) override;
     void CastTarget(TypeRelation *relation, Type *source) override;
 
-    std::tuple<bool, bool> ResolveConditionExpr() const override
-    {
-        return {false, false};
-    }
-
     void SetHelperSignature(Signature *signature) noexcept
     {
         helperSignature_ = signature;
@@ -165,8 +160,6 @@ private:
     ArenaVector<Signature *> extensionAccessorSigs_;
     util::StringView const name_;
     util::StringView const assemblerName_;
-    ETSFunctionType *invokeToArrowSignature_ {};
-    ETSObjectType *arrowToFuncInterface_ {};
     Signature *helperSignature_ {};
 };
 }  // namespace ark::es2panda::checker

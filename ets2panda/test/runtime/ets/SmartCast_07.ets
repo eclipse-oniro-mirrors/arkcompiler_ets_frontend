@@ -15,13 +15,13 @@
 
 function main(): void {
   let x: int | boolean | string  = 7;
-  assertEQ(x, 7)
+  arktest.assertEQ(x, 7)
   x--;
-  assertEQ(x, 6)
+  arktest.assertEQ(x, 6)
   x = x == 7;
-  assertTrue(!x)
+  arktest.assertTrue(!x)
   x = !x;
-  assertEQ(x, true)
+  arktest.assertEQ(x, true)
   x = "x = " + x.toString();
-  assertEQ(x, "x = true")
+  arktest.assertEQ(x, "x = true")
 }

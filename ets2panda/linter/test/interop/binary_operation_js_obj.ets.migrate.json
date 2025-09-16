@@ -16,19 +16,19 @@
     "result": [
         {
             "line": 15,
-            "column": 5,
+            "column": 1,
             "endLine": 15,
-            "endColumn": 72,
-            "problem": "AnyType",
+            "endColumn": 53,
+            "problem": "InterOpImportJs",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
         },
         {
             "line": 16,
             "column": 5,
             "endLine": 16,
-            "endColumn": 50,
+            "endColumn": 29,
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
@@ -38,26 +38,6 @@
             "line": 17,
             "column": 5,
             "endLine": 17,
-            "endColumn": 46,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 18,
-            "column": 5,
-            "endLine": 18,
-            "endColumn": 46,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 5,
-            "endLine": 20,
             "endColumn": 29,
             "problem": "AnyType",
             "suggest": "",
@@ -65,19 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 21,
-            "column": 5,
-            "endLine": 21,
-            "endColumn": 29,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 27,
+            "line": 23,
             "column": 1,
-            "endLine": 27,
+            "endLine": 23,
             "endColumn": 15,
             "problem": "MathPow",
             "suggest": "",
@@ -85,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 31,
+            "line": 27,
             "column": 1,
-            "endLine": 31,
+            "endLine": 27,
             "endColumn": 37,
             "problem": "MathPow",
             "suggest": "",
@@ -95,9 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 37,
+            "line": 33,
             "column": 1,
-            "endLine": 37,
+            "endLine": 33,
             "endColumn": 15,
             "problem": "MathPow",
             "suggest": "",
@@ -105,9 +75,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 49,
+            "line": 45,
             "column": 1,
-            "endLine": 49,
+            "endLine": 45,
             "endColumn": 17,
             "problem": "MathPow",
             "suggest": "",

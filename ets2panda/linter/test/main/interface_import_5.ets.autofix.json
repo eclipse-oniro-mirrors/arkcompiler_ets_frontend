@@ -1,0 +1,228 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 31,
+            "column": 36,
+            "endLine": 31,
+            "endColumn": 46,
+            "problem": "NoDeprecatedApi",
+            "autofix": [
+                {
+                    "start": 967,
+                    "end": 977,
+                    "replacementText": "getUIContext().getHostContext",
+                    "line": 31,
+                    "column": 36,
+                    "endLine": 31,
+                    "endColumn": 46
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"getContext\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 2,
+            "endLine": 18,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Row,\n  Column,\n  Text,\n  FontWeight,\n  Context,\n  getUIContext,\n} from '@kit.ArkUI';",
+                    "line": 31,
+                    "column": 56,
+                    "endLine": 31,
+                    "endColumn": 63
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 2,
+            "endLine": 19,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Row,\n  Column,\n  Text,\n  FontWeight,\n  Context,\n  getUIContext,\n} from '@kit.ArkUI';",
+                    "line": 31,
+                    "column": 56,
+                    "endLine": 31,
+                    "endColumn": 63
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 4,
+            "endLine": 21,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Row,\n  Column,\n  Text,\n  FontWeight,\n  Context,\n  getUIContext,\n} from '@kit.ArkUI';",
+                    "line": 31,
+                    "column": 56,
+                    "endLine": 31,
+                    "endColumn": 63
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"State\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 5,
+            "endLine": 24,
+            "endColumn": 8,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Row,\n  Column,\n  Text,\n  FontWeight,\n  Context,\n  getUIContext,\n} from '@kit.ArkUI';",
+                    "line": 31,
+                    "column": 56,
+                    "endLine": 31,
+                    "endColumn": 63
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Row\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 7,
+            "endLine": 25,
+            "endColumn": 13,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Row,\n  Column,\n  Text,\n  FontWeight,\n  Context,\n  getUIContext,\n} from '@kit.ArkUI';",
+                    "line": 31,
+                    "column": 56,
+                    "endLine": 31,
+                    "endColumn": 63
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Column\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 9,
+            "endLine": 26,
+            "endColumn": 13,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Row,\n  Column,\n  Text,\n  FontWeight,\n  Context,\n  getUIContext,\n} from '@kit.ArkUI';",
+                    "line": 31,
+                    "column": 56,
+                    "endLine": 31,
+                    "endColumn": 63
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 23,
+            "endLine": 28,
+            "endColumn": 33,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Row,\n  Column,\n  Text,\n  FontWeight,\n  Context,\n  getUIContext,\n} from '@kit.ArkUI';",
+                    "line": 31,
+                    "column": 56,
+                    "endLine": 31,
+                    "endColumn": 63
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"FontWeight\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 26,
+            "endLine": 31,
+            "endColumn": 33,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Row,\n  Column,\n  Text,\n  FontWeight,\n  Context,\n  getUIContext,\n} from '@kit.ArkUI';",
+                    "line": 31,
+                    "column": 56,
+                    "endLine": 31,
+                    "endColumn": 63
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Context\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 56,
+            "endLine": 31,
+            "endColumn": 63,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Row,\n  Column,\n  Text,\n  FontWeight,\n  Context,\n  getUIContext,\n} from '@kit.ArkUI';",
+                    "line": 31,
+                    "column": 56,
+                    "endLine": 31,
+                    "endColumn": 63
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Context\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        }
+    ]
+}

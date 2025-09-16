@@ -25,13 +25,13 @@ function xxx(this:B, m: int, n:int):int {
 function asFuncCall() {
     let b = new B();
     let res: int = xxx(b, 5, 8);
-    assertEQ(res, 22 )
+    arktest.assertEQ(res, 22 )
 }
 
 function asMethodCall() {
     let b = new B();
     let res: int = b.xxx(5, 8);
-    assertEQ(res, 22 )
+    arktest.assertEQ(res, 22 )
 }
 
 function main() {

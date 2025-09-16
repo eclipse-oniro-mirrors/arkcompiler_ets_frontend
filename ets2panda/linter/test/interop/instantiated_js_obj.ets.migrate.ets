@@ -13,23 +13,20 @@
  * limitations under the License.
  */
 
-let GeneratedImportVar_1 = ESValue.load('./instantiated_js_obj_js');
-let Foo = GeneratedImportVar_1.getProperty('Foo');
-let Foo1 = GeneratedImportVar_1.getProperty('Foo1');
-
+import {Foo, Foo1} from "./instantiated_js_obj_js"
 class A {
-    num: number = 1.0;
+    num: number = 1;
     constructor() {
     }
 }
-Foo.instantiate(ESValue.wrap(123.0))
+Foo.instantiate(ESValue.wrap(123))
 Foo.instantiate(ESValue.wrap('hello'))
 Foo.instantiate(ESValue.wrap(new A()))
 let a: A = new A();
 Foo.instantiate(ESValue.wrap(a.num))
 Foo.instantiate(ESValue.wrap(a))
 function test(): number {
-  return 1.0;
+  return 1;
 }
 Foo.instantiate(ESValue.wrap(test()))
-Foo1.instantiate(ESValue.wrap(123.0), ESValue.wrap('hello'))
+Foo1.instantiate(ESValue.wrap(123), ESValue.wrap('hello'))

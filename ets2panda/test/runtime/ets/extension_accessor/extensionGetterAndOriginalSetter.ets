@@ -35,19 +35,19 @@ get sfield(this: A): int {
 
 function main(): void {
     let obj: A = new A();
-    assertEQ(obj.field, 30);
+    arktest.assertEQ(obj.field, 30);
     obj.field = 1;
-    assertEQ(obj.field, 1);
+    arktest.assertEQ(obj.field, 1);
     obj.field++;
-    assertEQ(obj.field, 2);
+    arktest.assertEQ(obj.field, 2);
     ++obj.field;
-    assertEQ(obj.field, 3);
+    arktest.assertEQ(obj.field, 3);
     new A().sfield = 30;
-    assertEQ(new A().sfield, 30);
+    arktest.assertEQ(new A().sfield, 30);
     new A().sfield = 1;
-    assertEQ(new A().sfield, 1);
+    arktest.assertEQ(new A().sfield, 1);
     new A().sfield++;
-    assertEQ(new A().sfield, 2);
+    arktest.assertEQ(new A().sfield, 2);
     ++new A().sfield;
-    assertEQ(new A().sfield, 3);
+    arktest.assertEQ(new A().sfield, 3);
 }

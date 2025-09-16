@@ -24,12 +24,12 @@ function test_captures(): void {
 
     // capture in lambda
     foo() {
-        assertEQ(num_const, 1)
-        assertEQ(num, 2)
+        arktest.assertEQ(num_const, 1)
+        arktest.assertEQ(num, 2)
         {
             num++
-            assertEQ(num_const, 1)
-            assertEQ(num, 3)
+            arktest.assertEQ(num_const, 1)
+            arktest.assertEQ(num, 3)
         }
 
         let x: ()=>void = () => {
@@ -39,16 +39,16 @@ function test_captures(): void {
 
         if (true) {
             num++;
-            assertEQ(num, 4)
-            assertEQ(num_const, 1)
+            arktest.assertEQ(num, 4)
+            arktest.assertEQ(num_const, 1)
         }
 
         for (let i = 0; i < 2; ++i) {
             num++;
-            assertEQ(num_const, 1)
+            arktest.assertEQ(num_const, 1)
         }
 
-        assertEQ(num, 6)
+        arktest.assertEQ(num, 6)
 
         while (true) {
             if (num < 7) {
@@ -57,11 +57,11 @@ function test_captures(): void {
                 break;
             }
         }
-        assertEQ(num, 7)
+        arktest.assertEQ(num, 7)
 
         foo() {
             num++;
-            assertEQ(num, 8)
+            arktest.assertEQ(num, 8)
         }
     };
 }

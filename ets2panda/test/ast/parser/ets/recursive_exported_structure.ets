@@ -97,14 +97,6 @@ export default _exported;
 /* @@? 61:66 Error SyntaxError: Unexpected token '{'. */
 /* @@? 62:12 Error SyntaxError: Label must be followed by a loop statement. */
 /* @@? 62:12 Error TypeError: Type name 'IndexableType' used in the wrong context */
-/* @@? 66:36 Error TypeError: Interface expected here. */
-/* @@? 73:6 Error SyntaxError: Unexpected token 'key'. */
-/* @@? 73:9 Error SyntaxError: Unexpected token ':'. */
-/* @@? 73:17 Error SyntaxError: Field type annotation expected. */
-/* @@? 73:17 Error SyntaxError: Unexpected token ']'. */
-/* @@? 73:18 Error SyntaxError: Unexpected token ':'. */
-/* @@? 73:31 Error SyntaxError: Unexpected token '|'. */
-/* @@? 73:31 Error SyntaxError: Field type annotation expected. */
-/* @@? 73:46 Error SyntaxError: Field type annotation expected. */
+/* @@? 66:36 Error TypeError: Interfaces cannot extend classes, only other interfaces. */
+/* @@? 73:6 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 76:16 Error TypeError: Cannot cast type 'ExportedStructure' to 'Record<String,() => Double|Record<String,() => Double>>' */
-/* @@? 82:44 Error SyntaxError: Property or signature expected. */

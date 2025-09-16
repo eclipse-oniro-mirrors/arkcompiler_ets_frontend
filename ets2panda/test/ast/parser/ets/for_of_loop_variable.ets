@@ -30,7 +30,7 @@ for (let value = 40 /* @@ label2 */of iterable2) {
   console.log(value);
 }
 
-/* @@? 18:1 Error TypeError: Source element type 'Double' is not assignable to the loop iterator type 'int'. */
-/* @@? 18:38 Error SyntaxError: for-of loop variable declaration may not have an initializer. */
-/* @@? 28:1 Error TypeError: Source element type 'Double' is not assignable to the loop iterator type 'int'. */
-/* @@? 28:36 Error SyntaxError: for-of loop variable declaration may not have an initializer. */
+/* @@@ label1 Error SyntaxError: for-of loop variable declaration may not have an initializer. */
+/* @@@ label2 Error SyntaxError: for-of loop variable declaration may not have an initializer. */
+/* @@? 18:1 Error TypeError: Source element type 'Double' is not assignable to the loop iterator type 'Int'. */
+/* @@? 28:1 Error TypeError: Source element type 'Double' is not assignable to the loop iterator type 'Int'. */

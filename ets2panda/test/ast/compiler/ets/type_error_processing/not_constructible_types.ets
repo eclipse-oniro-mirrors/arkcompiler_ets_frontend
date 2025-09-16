@@ -34,6 +34,6 @@ WeakSet [12] = new undefined()
 /* @@? 19:1 Error TypeError: Type 'never' is not constructible. */
 /* @@? 20:1 Error TypeError: This expression is not constructible. */
 /* @@? 23:1 Error TypeError: The union type is not constructible. */
-/* @@? 26:1 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 26:1 Error TypeError: Class name 'WeakSet' used in the wrong context */
+/* @@? 26:1 Error TypeError: Object type doesn't have proper index access method. */
+/* @@? 26:1 Error SyntaxError: Class cannot be used as object. */
 /* @@? 26:16 Error TypeError: Type 'undefined' is not constructible. */

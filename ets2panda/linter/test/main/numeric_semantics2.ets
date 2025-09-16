@@ -70,7 +70,7 @@ namespace NumericSemanticsOther {
 
 namespace BeCareful {
     `${1/2}`
-    
+
 }
 
 namespace NoDiffInArk1_1To1_2 {

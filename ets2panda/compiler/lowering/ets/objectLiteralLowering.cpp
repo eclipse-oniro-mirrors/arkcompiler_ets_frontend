@@ -192,6 +192,7 @@ static void GenerateNewStatements(public_lib::Context *ctx, ir::ObjectExpression
     // Generating: let <genSym>: <TsType> = new <TsType>();
     auto *genSymIdent = Gensym(allocator);
     auto *type = ctx->AllocNode<ir::OpaqueTypeNode>(classType, allocator);
+    ES2PANDA_ASSERT(genSymIdent != nullptr && type != nullptr);
     ss << "let @@I" << addNode(genSymIdent) << ": @@T" << addNode(type) << " = new @@T"
        << addNode(type->Clone(allocator, nullptr)) << "();" << std::endl;
 
@@ -204,7 +205,7 @@ static void GenerateNewStatements(public_lib::Context *ctx, ir::ObjectExpression
     for (auto *propExpr : objExpr->Properties()) {
         //  Skip possibly invalid properties:
         if (!propExpr->IsProperty()) {
-            ES2PANDA_ASSERT(ctx->checker->AsETSChecker()->IsAnyError());
+            ES2PANDA_ASSERT(ctx->GetChecker()->AsETSChecker()->IsAnyError());
             continue;
         }
 
@@ -225,7 +226,6 @@ static void GenerateNewStatements(public_lib::Context *ctx, ir::ObjectExpression
         if (isAnonymous && CheckReadonlyAndUpdateCtorArgs(keyIdent, value, ctorArgumentsMap)) {
             continue;
         }
-        ES2PANDA_ASSERT(genSymIdent != nullptr);
         ss << "@@I" << addNode(genSymIdent->Clone(allocator, nullptr)) << ".@@I" << addNode(keyIdent);
 
         if (value->IsBlockExpression()) {
@@ -261,9 +261,9 @@ static ir::AstNode *HandleObjectLiteralLowering(public_lib::Context *ctx, ir::Ob
         return objExpr;
     }
 
-    auto *const checker = ctx->checker->AsETSChecker();
+    auto *const checker = ctx->GetChecker()->AsETSChecker();
     auto *const parser = ctx->parser->AsETSParser();
-    auto *const varbinder = ctx->checker->VarBinder()->AsETSBinder();
+    auto *const varbinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
 
     checker->CheckObjectLiteralKeys(objExpr->Properties());
 
@@ -300,6 +300,42 @@ static ir::AstNode *HandleObjectLiteralLowering(public_lib::Context *ctx, ir::Ob
     return loweringResult;
 }
 
+static ir::AstNode *HandleDynamicObjectLiteralLowering(public_lib::Context *ctx, ir::ObjectExpression *objExpr)
+{
+    auto parser = ctx->parser->AsETSParser();
+    auto checker = ctx->GetChecker()->AsETSChecker();
+    auto varBinder = checker->VarBinder()->AsETSBinder();
+    auto allocator = checker->ProgramAllocator();
+
+    std::stringstream ss;
+    ArenaVector<ir::Statement *> blockStatements(allocator->Adapter());
+    std::vector<ir::AstNode *> args;
+    auto gensym = Gensym(allocator);
+    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1:ESValue = ESValue.instantiateEmptyObject();",
+                                                               gensym->Clone(allocator, nullptr)));
+    size_t counter = 0;
+    for (auto property : objExpr->Properties()) {
+        auto appendArgument = [&](auto &&arg) {
+            args.push_back(std::forward<decltype(arg)>(arg));
+            return ++counter;
+        };
+
+        const size_t genSymId = appendArgument(gensym->Clone(allocator, nullptr));
+        const size_t valueId = appendArgument(property->AsProperty()->Value()->Clone(allocator, nullptr));
+
+        ss << "@@I" << genSymId << ".setProperty('" << property->AsProperty()->Key()->DumpEtsSrc()
+           << "', ESValue.wrap(@@E" << valueId << "));";
+    }
+    if (!objExpr->Properties().empty()) {
+        blockStatements.push_back(parser->CreateFormattedStatement(ss.str(), args));
+    }
+    blockStatements.push_back(parser->CreateFormattedStatement("@@I1.unwrap();", gensym->Clone(allocator, nullptr)));
+    auto *blockExpr = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));
+    blockExpr->SetParent(objExpr->Parent());
+    CheckLoweredNode(varBinder, checker, blockExpr);
+    return blockExpr;
+}
+
 bool ObjectLiteralLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
@@ -308,9 +344,13 @@ bool ObjectLiteralLowering::PerformForModule(public_lib::Context *ctx, parser::P
             // Skip processing invalid and dynamic objects
             if (ast->IsObjectExpression()) {
                 auto *exprType = ast->AsObjectExpression()->TsType();
-                if (exprType != nullptr && exprType->IsETSObjectType() &&
-                    !exprType->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::DYNAMIC)) {
-                    return HandleObjectLiteralLowering(ctx, ast->AsObjectExpression());
+                if (exprType == nullptr) {
+                    return ast;
+                }
+                if (exprType->IsETSObjectType()) {
+                    return exprType->AsETSObjectType()->GetDeclNode()->AsTyped()->TsType()->IsGradualType()
+                               ? HandleDynamicObjectLiteralLowering(ctx, ast->AsObjectExpression())
+                               : HandleObjectLiteralLowering(ctx, ast->AsObjectExpression());
                 }
             }
             return ast;
@@ -325,8 +365,7 @@ bool ObjectLiteralLowering::PostconditionForModule([[maybe_unused]] public_lib::
 {
     // In all object literal contexts (except dynamic) a substitution should take place
     return !program->Ast()->IsAnyChild([](const ir::AstNode *ast) -> bool {
-        return ast->IsObjectExpression() && ast->AsObjectExpression()->TsType()->IsETSObjectType() &&
-               !ast->AsObjectExpression()->TsType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::DYNAMIC);
+        return ast->IsObjectExpression() && ast->AsObjectExpression()->TsType()->IsETSObjectType();
     });
 }
 

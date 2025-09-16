@@ -23,7 +23,7 @@
 
 namespace ark::es2panda::lsp {
 
-bool HasConstructorNode(ir::AstNode *classNode)
+ir::AstNode *GetConstructorNode(const ir::AstNode *classNode)
 {
     size_t start = classNode->Start().index;
     size_t end = classNode->End().index;
@@ -34,7 +34,7 @@ bool HasConstructorNode(ir::AstNode *classNode)
         return node->Start().index >= start && node->End().index <= end && node->IsConstructor();
     });
 
-    return constructorNode != nullptr;
+    return constructorNode;
 }
 
 std::vector<ir::AstNode *> GetClassProperties(ir::AstNode *classNode, const std::vector<std::string> &properties)
@@ -45,6 +45,9 @@ std::vector<ir::AstNode *> GetClassProperties(ir::AstNode *classNode, const std:
         auto property = ark::es2panda::lsp::FilterFromBody(bodyNodes, triggerWord);
         for (const auto &node : property) {
             if (node->IsStatic() || !node->IsClassProperty()) {
+                continue;
+            }
+            if (classNode->AsClassDeclaration()->Definition()->IsAbstract() && node->IsAbstract()) {
                 continue;
             }
             classProperties.emplace_back(node);
@@ -60,19 +63,25 @@ std::vector<ir::AstNode *> GetExtendedClassProperties(ir::AstNode *classNode)
     if (baseNode == nullptr) {
         return {};
     }
-    std::vector<ir::AstNode *> extendedClassProperties = {};
-    auto baseNodeBody = baseNode->AsClassDeclaration()->Definition()->Body();
-    for (auto node : baseNodeBody) {
-        if (!node->IsClassProperty()) {
-            continue;
-        }
-        auto tmp = node->AsClassProperty();
-        if (tmp->IsStatic()) {
-            continue;
-        }
 
-        extendedClassProperties.push_back(node);
+    auto constructorNode = GetConstructorNode(baseNode);
+    if (constructorNode == nullptr) {
+        return {};
     }
+
+    std::vector<ir::AstNode *> extendedClassProperties;
+    auto params = constructorNode->AsMethodDefinition()
+                      ->Value()
+                      ->AsFunctionExpression()
+                      ->Function()
+                      ->AsScriptFunction()
+                      ->Params();
+    for (auto param : params) {
+        auto id = param->AsETSParameterExpression()->Ident();
+        auto tmp = compiler::DeclarationFromIdentifier(id);
+        extendedClassProperties.emplace_back(tmp);
+    }
+
     return extendedClassProperties;
 }
 
@@ -86,43 +95,31 @@ void RemoveTrailingChar(std::string &str, const std::string &lastChar)
     }
 }
 
-void GetParameterListAndFunctionBody(std::string &parameterList, std::string &functionBody,
-                                     const std::vector<ir::AstNode *> &nodeList, bool isSuper)
+std::string FilterSubstring(const std::string &input, const std::string &toRemove)
 {
-    if (nodeList.empty()) {
-        return;
+    std::string result = input;
+    size_t pos = 0;
+
+    while ((pos = result.find(toRemove)) != std::string::npos) {
+        result.erase(pos, toRemove.length());
     }
 
-    std::vector<std::string> strList1 = {};
-    std::vector<std::string> strList2 = {};
-    for (auto propertyNode : nodeList) {
-        auto nodeName = GetIdentifierName(propertyNode);
-        auto typeAnnotation = propertyNode->AsClassProperty()->TypeAnnotation();
-        if (typeAnnotation->IsETSTypeReference()) {
-            auto propertyType = GetNameForTypeReference(typeAnnotation);
-            auto str = nodeName;
-            str += ": ";
-            str += propertyType;
-            str += ", ";
-            strList1.push_back(str);
-            strList2.push_back(nodeName);
-        }
-    }
+    return result;
+}
 
-    for (const auto &str : strList1) {
-        parameterList += str;
-    }
-
+std::string GetFunctionBody(const std::vector<std::string> &strVec, bool isSuper)
+{
+    std::string functionBody;
     if (isSuper) {
         functionBody += "  super(";
-        for (const auto &str : strList2) {
+        for (const auto &str : strVec) {
             functionBody += str;
             functionBody += ", ";
         }
         RemoveTrailingChar(functionBody, ",");
         functionBody += ");\n";
     } else {
-        for (const auto &str : strList2) {
+        for (const auto &str : strVec) {
             functionBody += "  this.";
             functionBody += str;
             functionBody += " = ";
@@ -130,16 +127,107 @@ void GetParameterListAndFunctionBody(std::string &parameterList, std::string &fu
             functionBody += ";\n";
         }
     }
+
+    return functionBody;
 }
 
-std::string CollectConstructorInfo(const std::vector<ir::AstNode *> &classProperties,
+std::string GetNameForFunctionExpression(const ir::Expression *type)
+{
+    auto function = type->AsArrowFunctionExpression()->Function();
+    if (function == nullptr || !function->IsScriptFunction()) {
+        return "undefined";
+    }
+
+    std::string returnType;
+    auto statements = function->AsScriptFunction()->Body()->AsBlockStatement()->Statements();
+    if (!statements.empty()) {
+        auto argType = statements.at(0)->AsReturnStatement()->Argument();
+        if (argType->IsStringLiteral()) {
+            returnType = "String";
+        } else if (argType->IsNumberLiteral()) {
+            returnType = "Number";
+        } else if (argType->IsBooleanLiteral()) {
+            returnType = "Boolean";
+        } else {
+            returnType = "void";
+        }
+    }
+
+    return "(() => " + returnType + ")";
+}
+
+std::string GetNameForValue(const ir::AstNode *propertyNode)
+{
+    auto valueType = propertyNode->AsClassProperty()->Value();
+    if (valueType == nullptr) {
+        return "undefined";
+    }
+
+    if (valueType->IsStringLiteral()) {
+        return "String";
+    }
+    if (valueType->IsNumberLiteral()) {
+        return "Number";
+    }
+    if (valueType->IsBooleanLiteral()) {
+        return "Boolean";
+    }
+    if (valueType->IsArrowFunctionExpression()) {
+        return GetNameForFunctionExpression(valueType);
+    }
+
+    return "undefined";
+}
+
+void GetParameterListAndFunctionBody(std::string &parameterList, std::string &functionBody,
+                                     const std::vector<ir::AstNode *> &nodeList, bool isSuper)
+{
+    std::vector<std::string> strVec = {};
+    for (auto propertyNode : nodeList) {
+        auto nodeName = GetIdentifierName(propertyNode);
+        auto propertyName = FilterSubstring(nodeName, "<property>");
+        ark::es2panda::ir::TypeNode *typeAnnotation = nullptr;
+        if (propertyNode->IsETSParameterExpression()) {
+            typeAnnotation = propertyNode->AsETSParameterExpression()->TypeAnnotation();
+        } else if (propertyNode->IsClassProperty()) {
+            typeAnnotation = propertyNode->AsClassProperty()->TypeAnnotation();
+        }
+
+        std::string propertyType;
+        if (typeAnnotation == nullptr) {
+            propertyType = GetNameForValue(propertyNode);
+        } else {
+            propertyType = GetNameForTypeNode(typeAnnotation);
+        }
+
+        auto str = propertyName;
+        str += ": ";
+        str += propertyType;
+        str += ", ";
+
+        if (parameterList.find(str) == std::string::npos) {
+            parameterList += str;
+        }
+        strVec.push_back(propertyName);
+    }
+
+    auto body = GetFunctionBody(strVec, isSuper);
+    functionBody += body;
+}
+
+bool HasBaseNode(ir::AstNode *classNode)
+{
+    return nullptr != ark::es2panda::lsp::GetEffectiveBaseTypeNode(classNode);
+}
+
+std::string CollectConstructorInfo(ir::AstNode *classNode, const std::vector<ir::AstNode *> &classProperties,
                                    const std::vector<ir::AstNode *> &extendedClassProperties)
 {
     std::string constructorInfoText = "constructor(";
     std::string parameterList;
     std::string functionBody;
 
-    if (!extendedClassProperties.empty()) {
+    if (HasBaseNode(classNode)) {
         GetParameterListAndFunctionBody(parameterList, functionBody, extendedClassProperties, true);
     }
     GetParameterListAndFunctionBody(parameterList, functionBody, classProperties, false);
@@ -189,14 +277,14 @@ std::vector<FileTextChanges> GetRefactorActionsToGenerateConstructor(es2panda_Co
         return {};
     }
 
-    if (HasConstructorNode(classDeclaration)) {
+    if (GetConstructorNode(classDeclaration) != nullptr) {
         return {};
     }
 
     std::vector<ir::AstNode *> classProperties = GetClassProperties(classDeclaration, properties);
     std::vector<ir::AstNode *> extendedClassProperties = GetExtendedClassProperties(classDeclaration);
 
-    std::string text = CollectConstructorInfo(classProperties, extendedClassProperties);
+    std::string text = CollectConstructorInfo(classDeclaration, classProperties, extendedClassProperties);
     size_t insertPosition = 0;
     GetInsertNodePosition(classDeclaration, insertPosition);
 

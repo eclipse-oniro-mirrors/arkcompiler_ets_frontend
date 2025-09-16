@@ -17,20 +17,20 @@ enum Color { Red, Green = 10, Blue }
 enum Commands { Open = "fopen",  Close = "fclose" }
 
 function foo(c: Color, d: Commands): Color {
-    assertEQ(c, Color.Green)
-    assertEQ(d, Commands.Close)
+    arktest.assertEQ(c, Color.Green)
+    arktest.assertEQ(d, Commands.Close)
     return c;
 }
 
 function main() {
     let lambda = (c: Color, d: Commands) => { 
-        assertEQ(c, Color.Green)
-        assertEQ(d, Commands.Close)
+        arktest.assertEQ(c, Color.Green)
+        arktest.assertEQ(d, Commands.Close)
         return d;
     };
 
     let green = Color.Green;
     let close = Commands.Close;
-    assertEQ(foo(green, close), Color.Green)
-    assertEQ(lambda(green, close), Commands.Close)
+    arktest.assertEQ(foo(green, close), Color.Green)
+    arktest.assertEQ(lambda(green, close), Commands.Close)
 }

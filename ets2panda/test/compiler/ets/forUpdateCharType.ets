@@ -20,5 +20,5 @@ function main(): void {
     mystring += a;
   }
 
-  assertEQ(mystring, "abcd");
+  arktest.assertEQ(mystring, "abcd");
 }

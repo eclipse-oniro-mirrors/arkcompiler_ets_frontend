@@ -17,7 +17,7 @@ class TestClass {
     /**
      * This is a comment.
      */
-    property: number = 123.0; // This is a comment.
+    property = 123; // This is a comment.
     // This is a comment.
-    arr: number[] = [1.0, 0.0]; // This is a comment.
+    arr = [1, 0]; // This is a comment.
 }

@@ -99,11 +99,12 @@ using ark::es2panda::ir::VariableDeclarationBuilder;
 using ark::es2panda::ir::VariableDeclaratorBuilder;
 using ark::es2panda::ir::WhileStatementBuilder;
 
+// NOLINTBEGIN(readability-magic-numbers)
 namespace {
 TEST_F(ASTVerifierTest, arrowFunctionExpressionBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -115,8 +116,8 @@ TEST_F(ASTVerifierTest, arrowFunctionExpressionBuild)
 
 TEST_F(ASTVerifierTest, awaitExpressionBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -134,8 +135,8 @@ TEST_F(ASTVerifierTest, bigintLiteralBuild)
 
 TEST_F(ASTVerifierTest, binaryExpressionBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -146,8 +147,8 @@ TEST_F(ASTVerifierTest, binaryExpressionBuild)
 
 TEST_F(ASTVerifierTest, blockExpressionBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -160,8 +161,8 @@ TEST_F(ASTVerifierTest, blockExpressionBuild)
 
 TEST_F(ASTVerifierTest, blockStatementBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -201,7 +202,7 @@ TEST_F(ASTVerifierTest, charLiteralBuild)
 TEST_F(ASTVerifierTest, classDeclarationBuild)
 {
     auto id = IdentifierBuilder(Allocator()).SetName("a").Build();
-    auto number = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
+    auto number = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
     auto classProperty = ClassPropertyBuilder(Allocator())
                              .SetKey(id)
                              .SetValue(number)
@@ -227,7 +228,7 @@ TEST_F(ASTVerifierTest, exportDefaultDeclarationBuild)
 {
     auto idParent = IdentifierBuilder(Allocator()).SetName("parent").Build();
     auto id = IdentifierBuilder(Allocator()).SetName("a").SetParent<IdentifierBuilder>(idParent).Build();
-    auto number = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
+    auto number = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
     auto classProperty = ClassPropertyBuilder(Allocator())
                              .SetKey(id)
                              .SetValue(number)
@@ -244,8 +245,8 @@ TEST_F(ASTVerifierTest, exportDefaultDeclarationBuild)
 
 TEST_F(ASTVerifierTest, expressionStatementBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -257,8 +258,8 @@ TEST_F(ASTVerifierTest, expressionStatementBuild)
 
 TEST_F(ASTVerifierTest, ifStatementBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -273,7 +274,7 @@ TEST_F(ASTVerifierTest, ifStatementBuild)
 
 TEST_F(ASTVerifierTest, memberExpressionBuild)
 {
-    auto member = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
+    auto member = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
     auto thisExpr = ThisExpressionBuilder(Allocator()).Build();
     auto memberExpression = MemberExpressionBuilder(Allocator())
                                 .SetObject(thisExpr)
@@ -307,8 +308,8 @@ TEST_F(ASTVerifierTest, stringLiteralBuild)
 
 TEST_F(ASTVerifierTest, tsClassImplementsBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -323,8 +324,8 @@ TEST_F(ASTVerifierTest, tsClassImplementsBuild)
 
 TEST_F(ASTVerifierTest, switchStatementBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -346,7 +347,7 @@ TEST_F(ASTVerifierTest, enumBuild)
 {
     auto id = IdentifierBuilder(Allocator()).SetName("a").Build();
     auto idMember = IdentifierBuilder(Allocator()).SetName("s").Build();
-    auto init = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
+    auto init = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
     auto enumMember = TSEnumMemberBuilder(Allocator()).SetKey(idMember).SetInit(init).Build();
     auto enumDecl = TSEnumDeclarationBuilder(Allocator())
                         .SetKey(id)
@@ -388,7 +389,7 @@ TEST_F(ASTVerifierTest, updateExpressionBuild)
 TEST_F(ASTVerifierTest, VariableDeclarationBuild)
 {
     auto idDeclarator = IdentifierBuilder(Allocator()).SetName("a").Build();
-    auto init = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
+    auto init = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
     auto varDeclarator = VariableDeclaratorBuilder(Allocator()).SetId(idDeclarator).SetInit(init).Build();
     ark::ArenaVector<ark::es2panda::ir::VariableDeclarator *> declarators(Allocator()->Adapter());
     declarators.push_back(varDeclarator);
@@ -401,8 +402,8 @@ TEST_F(ASTVerifierTest, VariableDeclarationBuild)
 
 TEST_F(ASTVerifierTest, whileStatementBuild)
 {
-    auto left = NumberLiteralBuilder(Allocator()).SetValue("10").Build();
-    auto right = NumberLiteralBuilder(Allocator()).SetValue("5").Build();
+    auto left = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
+    auto right = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(5)).Build();
     auto binaryExpr = BinaryExpressionBuilder(Allocator())
                           .SetLeft(left)
                           .SetRight(right)
@@ -429,3 +430,4 @@ TEST_F(ASTVerifierTest, multipleImportTest)
     ASSERT_TRUE(classDecl->IsClassDeclaration());
 }
 }  // anonymous namespace
+// NOLINTEND(readability-magic-numbers)

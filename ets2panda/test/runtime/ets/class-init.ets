@@ -34,17 +34,17 @@ function main(): void {
     // x.member_cls;
 
     let y : cls = new cls(null, 2);
-    assertTrue(y.member_cls == null && y.member_int == 2)
+    arktest.assertTrue(y.member_cls == null && y.member_int == 2)
 
     // TODO: catch NullPointerError if exception handling is implemented
     // y = null;
     // y.member_cls;
 
     let z : cls = new cls(y, 4);
-    assertTrue(z.member_cls != null && z.member_int == 4)
+    arktest.assertTrue(z.member_cls != null && z.member_int == 4)
 
     let u : cls2 = new cls2();
-    assertTrue(u.member_cls == null && u.member_int == 0)
+    arktest.assertTrue(u.member_cls == null && u.member_int == 0)
 
     return;
 }

@@ -20,5 +20,5 @@ function  foo(p:()=>Promise<void>):number{
 }
 
 function main(){
-    assertTrue(foo(fn) == 1);
+    arktest.assertTrue(foo(fn) == 1);
 }

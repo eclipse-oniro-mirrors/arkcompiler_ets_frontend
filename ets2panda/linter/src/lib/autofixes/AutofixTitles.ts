@@ -56,7 +56,6 @@ export const cookBookRefToFixTitle: Map<number, string> = new Map([
   [282, '"@StorageProp" transform to "@StoragePropRef"'],
   [283, '"@LocalStorageProp" transform to "@LocalStoragePropRef"'],
   [300, 'Replace calling method of the TS-like `Function` type'],
-  [330, 'Convert import named objects from JS to ESValue'],
   [332, 'Using the ESValue interface to access properties'],
   [334, 'Call typeOf function'],
   [335, 'Call toNumber function to convert'],
@@ -65,5 +64,6 @@ export const cookBookRefToFixTitle: Map<number, string> = new Map([
   [341, 'Create JS objects using instantite'],
   [358, 'Replace missing attribute'],
   [359, '"@LocalBuilder" transform to "@Builder"'],
+  [360, '"Repeat" disable default "virtualScroll"'],
   [381, 'StateStyles needs arrow function block']
 ]);

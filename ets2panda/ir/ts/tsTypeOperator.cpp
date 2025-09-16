@@ -28,12 +28,8 @@ void TSTypeOperator::TransformChildren(const NodeTransformer &cb, std::string_vi
         type_->SetTransformedNode(transformationName, transformedNode);
         type_ = static_cast<TypeNode *>(transformedNode);
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSTypeOperator::Iterate(const NodeTraverser &cb) const
@@ -82,5 +78,38 @@ checker::Type *TSTypeOperator::GetType([[maybe_unused]] checker::TSChecker *chec
 checker::VerifiedType TSTypeOperator::Check([[maybe_unused]] checker::ETSChecker *checker)
 {
     return {this, checker->GetAnalyzer()->Check(this)};
+}
+
+TSTypeOperator *TSTypeOperator::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    // Clone the type annotation
+    TypeNode *clonedType = nullptr;
+    if (type_ != nullptr) {
+        clonedType = type_->Clone(allocator, nullptr)->AsTypeNode();
+    }
+
+    auto *clone = allocator->New<TSTypeOperator>(clonedType, operatorType_, allocator);
+
+    // Set parent for cloned type
+    if (clonedType != nullptr) {
+        clonedType->SetParent(clone);
+    }
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    // Clone annotations if any
+    if (!Annotations().empty()) {
+        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
+        for (auto *annotationUsage : Annotations()) {
+            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
+        }
+        clone->SetAnnotations(std::move(annotationUsages));
+    }
+
+    return clone;
 }
 }  // namespace ark::es2panda::ir

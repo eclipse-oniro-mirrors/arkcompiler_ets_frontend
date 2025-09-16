@@ -17,6 +17,6 @@
    let a = Type.from<()=>number>();
    let b = Type.from<()=>number>();
    let c = Type.from<(v:string)=>number>();
-   assertTrue(a.toString() == b.toString());
-   assertTrue(a.toString() != c.toString());
+   arktest.assertTrue(a.toString() == b.toString());
+   arktest.assertTrue(a.toString() != c.toString());
  }

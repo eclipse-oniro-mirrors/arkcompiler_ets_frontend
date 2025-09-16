@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 76,
+            "line": 78,
             "column": 7,
-            "endLine": 76,
+            "endLine": 78,
             "endColumn": 69,
             "problem": "AnyType",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 158,
+            "line": 160,
             "column": 7,
-            "endLine": 158,
+            "endLine": 160,
             "endColumn": 58,
             "problem": "AnyType",
             "suggest": "",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 195,
+            "line": 197,
             "column": 52,
-            "endLine": 195,
+            "endLine": 197,
             "endColumn": 55,
             "problem": "AnyType",
             "suggest": "",
@@ -45,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 245,
+            "line": 247,
             "column": 54,
-            "endLine": 245,
+            "endLine": 247,
             "endColumn": 57,
             "problem": "AnyType",
             "suggest": "",
@@ -55,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 282,
+            "line": 284,
             "column": 7,
-            "endLine": 282,
+            "endLine": 284,
             "endColumn": 57,
             "problem": "AnyType",
             "suggest": "",
@@ -65,9 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 303,
+            "line": 305,
             "column": 7,
-            "endLine": 303,
+            "endLine": 305,
             "endColumn": 60,
             "problem": "AnyType",
             "suggest": "",
@@ -75,9 +75,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 355,
+            "line": 357,
             "column": 7,
-            "endLine": 355,
+            "endLine": 357,
             "endColumn": 61,
             "problem": "AnyType",
             "suggest": "",
@@ -85,9 +85,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 182,
+            "line": 184,
             "column": 3,
-            "endLine": 182,
+            "endLine": 184,
             "endColumn": 13,
             "problem": "StrictDiagnostic",
             "suggest": "Property 'myProperty' has no initializer and is not definitely assigned in the constructor.",
@@ -95,9 +95,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 202,
+            "line": 204,
             "column": 11,
-            "endLine": 202,
+            "endLine": 204,
             "endColumn": 16,
             "problem": "StrictDiagnostic",
             "suggest": "Property '_name' has no initializer and is not definitely assigned in the constructor.",
@@ -105,9 +105,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 214,
+            "line": 216,
             "column": 11,
-            "endLine": 214,
+            "endLine": 216,
             "endColumn": 15,
             "problem": "StrictDiagnostic",
             "suggest": "Property '_age' has no initializer and is not definitely assigned in the constructor.",
@@ -115,9 +115,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 232,
+            "line": 234,
             "column": 5,
-            "endLine": 232,
+            "endLine": 234,
             "endColumn": 15,
             "problem": "StrictDiagnostic",
             "suggest": "Property 'myProperty' has no initializer and is not definitely assigned in the constructor.",

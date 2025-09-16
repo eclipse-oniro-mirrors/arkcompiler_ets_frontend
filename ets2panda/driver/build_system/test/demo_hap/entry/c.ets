@@ -13,7 +13,9 @@
  * limitations under the License.
  */
 
-import {strd} from './d'
+import {strd, strArr} from './d'
+
+let d: string[] = strArr;
 
 export let str: string = "hello world from c!";
 export {strd}

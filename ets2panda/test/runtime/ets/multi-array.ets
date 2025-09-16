@@ -21,29 +21,29 @@ function main(): void {
     [6.7, 7.8]
   ];
 
-  assertEQ(DATA[0][0], 0.1)
-  assertEQ(DATA[0][1], 1.2)
-  assertEQ(DATA[1][0], 2.3)
-  assertEQ(DATA[1][1], 3.4)
-  assertEQ(DATA[2][0], 4.5)
-  assertEQ(DATA[2][1], 5.6)
-  assertEQ(DATA[3][0], 6.7)
-  assertEQ(DATA[3][1], 7.8)
+  arktest.assertEQ(DATA[0][0], 0.1)
+  arktest.assertEQ(DATA[0][1], 1.2)
+  arktest.assertEQ(DATA[1][0], 2.3)
+  arktest.assertEQ(DATA[1][1], 3.4)
+  arktest.assertEQ(DATA[2][0], 4.5)
+  arktest.assertEQ(DATA[2][1], 5.6)
+  arktest.assertEQ(DATA[3][0], 6.7)
+  arktest.assertEQ(DATA[3][1], 7.8)
   DATA[1][1] = 8.9;
-  assertEQ(DATA[1][1], 8.9)
+  arktest.assertEQ(DATA[1][1], 8.9)
 
   let b: String[][] = new String[2][2];
 
   b[0][0] = "hello";
-  assertEQ(b[0][0], "hello")
+  arktest.assertEQ(b[0][0], "hello")
 
   let strArray: String[][] = [
     ["ab", "ac"],
     ["bb", "bc"]
   ];
 
-  assertEQ(strArray[0][0], "ab")
-  assertEQ(strArray[0][1], "ac")
-  assertEQ(strArray[1][0], "bb")
-  assertEQ(strArray[1][1], "bc")
+  arktest.assertEQ(strArray[0][0], "ab")
+  arktest.assertEQ(strArray[0][1], "ac")
+  arktest.assertEQ(strArray[1][0], "bb")
+  arktest.assertEQ(strArray[1][1], "bc")
 }

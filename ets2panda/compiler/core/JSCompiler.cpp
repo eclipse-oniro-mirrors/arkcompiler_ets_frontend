@@ -260,8 +260,7 @@ static void CompileStaticFieldInitializers(compiler::PandaGen *pg, compiler::VRe
             prop->Value()->Compile(pg);
         }
 
-        if (prop->IsPrivateElement()) {
-            ES2PANDA_ASSERT(prop->Id() != nullptr);
+        if (prop->IsPrivateElement() && prop->Id() != nullptr) {
             pg->ClassPrivateFieldAdd(prop, classReg, classReg, prop->Id()->Name());
             continue;
         }

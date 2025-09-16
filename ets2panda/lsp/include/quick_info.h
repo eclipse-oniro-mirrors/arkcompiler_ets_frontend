@@ -36,8 +36,9 @@ std::vector<SymbolDisplayPart> CreateDisplayForTypeAlias(ir::AstNode *node);
 std::vector<SymbolDisplayPart> CreateDisplayForEnum(ir::AstNode *node);
 std::vector<SymbolDisplayPart> CreateDisplayForEnumMember(ir::AstNode *node);
 std::vector<SymbolDisplayPart> CreateDisplayForTypeParameter(ir::AstNode *node);
-std::vector<SymbolDisplayPart> CreateDisplayForMethodDefinition(ir::AstNode *node, const std::string &kindModifier);
-std::vector<SymbolDisplayPart> CreateDisplayForClassProperty(ir::AstNode *node, const std::string &kindModifier);
+std::vector<SymbolDisplayPart> CreateDisplayForMethodDefinition(ir::AstNode *node, const std::string &kindModifier,
+                                                                checker::ETSChecker *checker);
+std::vector<SymbolDisplayPart> CreateDisplayForClassProperty(ir::AstNode *node);
 std::vector<SymbolDisplayPart> CreateDisplayForETSParameterExpression(ir::AstNode *node);
 QuickInfo GetQuickInfoAtPositionImpl(es2panda_Context *context, size_t position, std::string fileName);
 std::string GetNameForTypeReference(const ir::TypeNode *typeReference);

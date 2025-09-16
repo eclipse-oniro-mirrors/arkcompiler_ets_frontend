@@ -14,7 +14,9 @@
  */
 
 #include "astNode.h"
+#include "compiler/lowering/phase.h"
 #include "ir/astDump.h"
+#include "ir/astNodeHistory.h"
 #include "ir/srcDump.h"
 #include "ir/typed.h"
 
@@ -22,50 +24,51 @@ namespace ark::es2panda::ir {
 
 AstNode::AstNode(AstNode const &other)
 {
-    range_ = other.range_;
-    type_ = other.type_;
-    if (other.variable_ != nullptr) {
-        variable_ = other.variable_;
+    auto otherHistoryNode = other.GetHistoryNode();
+    range_ = otherHistoryNode->range_;
+    type_ = otherHistoryNode->type_;
+    if (otherHistoryNode->variable_ != nullptr) {
+        variable_ = otherHistoryNode->variable_;
     }
-    flags_ = other.flags_;
-    astNodeFlags_ = other.astNodeFlags_;
+    flags_ = otherHistoryNode->flags_;
+    astNodeFlags_ = otherHistoryNode->astNodeFlags_;
     // boxing_unboxing_flags_ {};  leave default value!
 }
 
 [[nodiscard]] bool AstNode::IsExported() const noexcept
 {
     if (UNLIKELY(IsClassDefinition())) {
-        return parent_->IsExported();
+        return GetHistoryNode()->parent_->IsExported();
     }
 
-    return (flags_ & ModifierFlags::EXPORT) != 0;
+    return (Modifiers() & ModifierFlags::EXPORT) != 0;
 }
 
 [[nodiscard]] bool AstNode::IsDefaultExported() const noexcept
 {
     if (UNLIKELY(IsClassDefinition())) {
-        return parent_->IsDefaultExported();
+        return GetHistoryNode()->parent_->IsDefaultExported();
     }
 
-    return (flags_ & ModifierFlags::DEFAULT_EXPORT) != 0;
+    return (Modifiers() & ModifierFlags::DEFAULT_EXPORT) != 0;
 }
 
 [[nodiscard]] bool AstNode::IsExportedType() const noexcept
 {
     if (UNLIKELY(IsClassDefinition())) {
-        return this->parent_->IsExportedType();
+        return GetHistoryNode()->parent_->IsExportedType();
     }
 
-    return (flags_ & ModifierFlags::EXPORT_TYPE) != 0;
+    return (Modifiers() & ModifierFlags::EXPORT_TYPE) != 0;
 }
 
 [[nodiscard]] bool AstNode::HasExportAlias() const noexcept
 {
     if (UNLIKELY(IsClassDefinition())) {
-        return parent_->HasExportAlias();
+        return GetHistoryNode()->parent_->HasExportAlias();
     }
 
-    return (astNodeFlags_ & AstNodeFlags::HAS_EXPORT_ALIAS) != 0;
+    return (GetHistoryNode()->astNodeFlags_ & AstNodeFlags::HAS_EXPORT_ALIAS) != 0;
 }
 
 bool AstNode::IsScopeBearer() const noexcept
@@ -85,13 +88,13 @@ void AstNode::ClearScope() noexcept
 
 ir::ClassElement *AstNode::AsClassElement()
 {
-    ES2PANDA_ASSERT(IsMethodDefinition() || IsClassProperty() || IsClassStaticBlock());
+    ES2PANDA_ASSERT(IsMethodDefinition() || IsClassProperty() || IsClassStaticBlock() || IsOverloadDeclaration());
     return reinterpret_cast<ir::ClassElement *>(this);
 }
 
 const ir::ClassElement *AstNode::AsClassElement() const
 {
-    ES2PANDA_ASSERT(IsMethodDefinition() || IsClassProperty() || IsClassStaticBlock());
+    ES2PANDA_ASSERT(IsMethodDefinition() || IsClassProperty() || IsClassStaticBlock() || IsOverloadDeclaration());
     return reinterpret_cast<const ir::ClassElement *>(this);
 }
 
@@ -122,95 +125,6 @@ AstNode *AstNode::Clone([[maybe_unused]] ArenaAllocator *const allocator, [[mayb
     ES2PANDA_UNREACHABLE();
 }
 
-void AstNode::TransformChildrenRecursively(const NodeTransformer &cb, std::string_view transformationName)
-{  // post-order, but use when you don't care about the order
-    TransformChildrenRecursivelyPostorder(cb, transformationName);
-}
-
-void AstNode::TransformChildrenRecursivelyPreorder(const NodeTransformer &cb, std::string_view transformationName)
-{
-    TransformChildren(
-        [=](AstNode *child) {
-            auto *res = cb(child);
-            res->TransformChildrenRecursivelyPreorder(cb, transformationName);
-            return res;
-        },
-        transformationName);
-}
-
-void AstNode::TransformChildrenRecursivelyPostorder(const NodeTransformer &cb, std::string_view transformationName)
-{
-    TransformChildren(
-        [=](AstNode *child) {
-            child->TransformChildrenRecursivelyPostorder(cb, transformationName);
-            return cb(child);
-        },
-        transformationName);
-}
-
-void AstNode::IterateRecursively(const NodeTraverser &cb) const
-{  // pre-order, use when you don't care
-    IterateRecursivelyPreorder(cb);
-}
-
-void AstNode::IterateRecursivelyPreorder(const NodeTraverser &cb) const
-{
-    Iterate([=](AstNode *child) {
-        cb(child);
-        child->IterateRecursivelyPreorder(cb);
-    });
-}
-
-void AstNode::IterateRecursivelyPostorder(const NodeTraverser &cb) const
-{
-    Iterate([=](AstNode *child) {
-        child->IterateRecursivelyPostorder(cb);
-        cb(child);
-    });
-}
-
-void AnyChildHelper(bool *found, const NodePredicate &cb, AstNode *ast)
-{
-    if (*found) {
-        return;
-    }
-
-    if (cb(ast)) {
-        *found = true;
-        return;
-    }
-
-    ast->Iterate([=](AstNode *child) { AnyChildHelper(found, cb, child); });
-}
-
-bool AstNode::IsAnyChild(const NodePredicate &cb) const
-{
-    bool found = false;
-    Iterate([&found, cb](AstNode *child) { AnyChildHelper(&found, cb, child); });
-    return found;
-}
-
-void FindChildHelper(AstNode *&found, const NodePredicate &cb, AstNode *ast)
-{
-    if (found != nullptr) {
-        return;
-    }
-
-    if (cb(ast)) {
-        found = ast;
-        return;
-    }
-
-    ast->Iterate([&found, cb](AstNode *child) { FindChildHelper(found, cb, child); });
-}
-
-AstNode *AstNode::FindChild(const NodePredicate &cb) const
-{
-    AstNode *found = nullptr;
-    Iterate([&found, cb](AstNode *child) { FindChildHelper(found, cb, child); });
-    return found;
-}
-
 varbinder::Scope *AstNode::EnclosingScope(const ir::AstNode *expr) noexcept
 {
     while (expr != nullptr && !expr->IsScopeBearer()) {
@@ -238,27 +152,23 @@ std::string AstNode::DumpDecl() const
     return dumper.Str();
 }
 
-std::string AstNode::IsolatedDumpDecl() const
-{
-    ir::SrcDumper dumper {this, true, true};
-    dumper.Run();
-    return dumper.Str();
-}
-
 void AstNode::SetOriginalNode(AstNode *originalNode) noexcept
 {
-    originalNode_ = originalNode;
+    if (OriginalNode() != originalNode) {
+        GetOrCreateHistoryNode()->originalNode_ = originalNode;
+    }
 }
 
 AstNode *AstNode::OriginalNode() const noexcept
 {
-    return originalNode_;
+    return GetHistoryNode()->originalNode_;
 }
 
-void AstNode::SetTransformedNode(std::string_view const transformationName, AstNode *transformedNode)
+void AstNode::SetTransformedNode([[maybe_unused]] std::string_view const transformationName, AstNode *transformedNode)
 {
-    transformedNode->SetOriginalNode(this);
-    transformedNode_ = std::make_optional(std::make_pair(transformationName, transformedNode));
+    if (transformedNode != nullptr) {
+        transformedNode->SetOriginalNode(this);
+    }
 }
 
 void AstNode::CleanUp()
@@ -269,38 +179,39 @@ void AstNode::CleanUp()
     }
     if (IsTyped()) {
         this->AsTyped()->SetTsType(nullptr);
+        this->AsTyped()->SetPreferredType(nullptr);
     }
 }
 
 bool AstNode::IsReadonly() const noexcept
 {
-    return (flags_ & ModifierFlags::READONLY) != 0;
+    return (Modifiers() & ModifierFlags::READONLY) != 0;
 }
 
 // NOTE: For readonly parameter type
 bool AstNode::IsReadonlyType() const noexcept
 {
-    return (flags_ & ModifierFlags::READONLY_PARAMETER) != 0;
+    return (Modifiers() & ModifierFlags::READONLY_PARAMETER) != 0;
 }
 
 bool AstNode::IsOptionalDeclaration() const noexcept
 {
-    return (flags_ & ModifierFlags::OPTIONAL) != 0;
+    return (Modifiers() & ModifierFlags::OPTIONAL) != 0;
 }
 
 bool AstNode::IsDefinite() const noexcept
 {
-    return (flags_ & ModifierFlags::DEFINITE) != 0;
+    return (Modifiers() & ModifierFlags::DEFINITE) != 0;
 }
 
 bool AstNode::IsConstructor() const noexcept
 {
-    return (flags_ & ModifierFlags::CONSTRUCTOR) != 0;
+    return (Modifiers() & ModifierFlags::CONSTRUCTOR) != 0;
 }
 
 bool AstNode::IsOverride() const noexcept
 {
-    return (flags_ & ModifierFlags::OVERRIDE) != 0;
+    return (Modifiers() & ModifierFlags::OVERRIDE) != 0;
 }
 
 AstNode *AstNode::ShallowClone(ArenaAllocator *allocator)
@@ -318,14 +229,96 @@ void AstNode::CopyTo(AstNode *other) const
     other->range_ = range_;
     other->flags_ = flags_;
     other->astNodeFlags_ = astNodeFlags_;
-    other->boxingUnboxingFlags_ = boxingUnboxingFlags_;
+    other->history_ = history_;
     other->variable_ = variable_;
     other->originalNode_ = originalNode_;
-    other->transformedNode_ = transformedNode_;
 }
 
 AstNode *AstNode::Construct([[maybe_unused]] ArenaAllocator *allocator)
 {
     ES2PANDA_UNREACHABLE();
 }
+
+bool AstNode::IsValidInCurrentPhase() const
+{
+    if (!HistoryInitialized()) {
+        return true;
+    }
+    return compiler::GetPhaseManager()->CurrentPhaseId() >= GetFirstCreated();
+}
+
+compiler::PhaseId AstNode::GetFirstCreated() const
+{
+    return history_->FirstCreated();
+}
+
+AstNode *AstNode::GetFromExistingHistory() const
+{
+    ES2PANDA_ASSERT(HistoryInitialized());
+    auto node = history_->Get(compiler::GetPhaseManager()->CurrentPhaseId());
+    if (UNLIKELY(node == nullptr)) {
+        // the callee assumes the nullptr might be returned, but
+        // the caller asserts it is not possible, so the explicit check is inserted
+        ES2PANDA_UNREACHABLE();
+    }
+    return node;
+}
+
+AstNode *AstNode::GetOrCreateHistoryNode() const
+{
+    AstNode *node = nullptr;
+
+    if (HistoryInitialized()) {
+        node = history_->At(compiler::GetPhaseManager()->CurrentPhaseId());
+        if (node == nullptr) {
+            node = history_->Get(compiler::GetPhaseManager()->PreviousPhaseId());
+            ES2PANDA_ASSERT(node != nullptr);
+            node = node->ShallowClone(compiler::GetPhaseManager()->Allocator());
+            history_->Set(node, compiler::GetPhaseManager()->CurrentPhaseId());
+        }
+    } else {
+        node = const_cast<AstNode *>(this);
+    }
+
+    return node;
+}
+
+void AstNode::AddModifier(ModifierFlags const flags) noexcept
+{
+    if (!All(Modifiers(), flags)) {
+        GetOrCreateHistoryNode()->flags_ |= flags;
+    }
+}
+
+void AstNode::ClearModifier(ModifierFlags const flags) noexcept
+{
+    if (Any(Modifiers(), flags)) {
+        GetOrCreateHistoryNode()->flags_ &= ~flags;
+    }
+}
+
+void AstNode::InitHistory()
+{
+    if (!g_enableContextHistory || HistoryInitialized()) {
+        return;
+    }
+
+    history_ = compiler::GetPhaseManager()->Allocator()->New<AstNodeHistory>(
+        this, compiler::GetPhaseManager()->CurrentPhaseId(), compiler::GetPhaseManager()->Allocator());
+}
+
+bool AstNode::HistoryInitialized() const
+{
+    return history_ != nullptr;
+}
+
+void AstNode::CleanCheckInformation()
+{
+    if (IsTyped()) {
+        this->AsTyped()->SetTsType(nullptr);
+        this->AsTyped()->SetPreferredType(nullptr);
+    }
+    Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
+}
+
 }  // namespace ark::es2panda::ir

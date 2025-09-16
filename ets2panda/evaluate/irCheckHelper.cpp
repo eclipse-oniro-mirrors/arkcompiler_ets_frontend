@@ -65,15 +65,16 @@ void IrCheckHelper::PreCheck()
     isPrecheckPassed_ = true;
 }
 
+// NOLINTBEGIN(readability-identifier-naming)
 void IrCheckHelper::CheckDecls()
 {
     // All dependent user-classes must be created at this point, so we can run checker.
     while (!recursiveDecls_.empty()) {
         auto [program, scope, parent, node] = recursiveDecls_.front();
         recursiveDecls_.pop_front();
-        helpers::DoScopedAction(checker_, varBinder_, program, scope, parent, [this, node = node, scope = scope]() {
-            varBinder_->ResolveReferencesForScope(node, scope);
-            node->Check(checker_);
+        helpers::DoScopedAction(checker_, varBinder_, program, scope, parent, [this, node_ = node, scope_ = scope]() {
+            varBinder_->ResolveReferencesForScope(node_, scope_);
+            node_->Check(checker_);
         });
     }
 }
@@ -87,10 +88,11 @@ void IrCheckHelper::HandleCustomNodes()
         // Hence we delay `ETSChecker::Check` until all required classes are built and initialized in varbinder.
         auto [program, scope, parent, node] = *iter;
         helpers::DoScopedAction(checker_, varBinder_, program, scope, parent,
-                                [varBinder = varBinder_, node = node]() { varBinder->HandleCustomNodes(node); });
+                                [varBinder = varBinder_, node_ = node]() { varBinder->HandleCustomNodes(node_); });
         ++iter;
     }
 }
+// NOLINTEND(readability-identifier-naming)
 
 void IrCheckHelper::CheckGlobalEntity(parser::Program *program, ir::AstNode *node, bool mustCheck)
 {

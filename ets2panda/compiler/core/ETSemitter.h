@@ -85,17 +85,15 @@ public:
 private:
     using DynamicCallNamesMap = ArenaMap<const ArenaVector<util::StringView>, uint32_t>;
 
+    void GenRecords(varbinder::RecordTable *globalRecordTable);
     void GenExternalRecord(varbinder::RecordTable *recordTable, const parser::Program *extProg);
     void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType, checker::Signature *signature);
     std::vector<pandasm::AnnotationData> GenAnnotations(const ir::ClassDefinition *classDef);
     void GenClassRecord(const ir::ClassDefinition *classDef, bool external);
     pandasm::AnnotationElement ProcessArrayType(const ir::ClassProperty *prop, std::string &baseName,
                                                 const ir::Expression *init);
-    pandasm::AnnotationElement ProcessETSEnumType(std::string &baseName, const ir::Expression *init,
-                                                  const checker::Type *type);
     pandasm::AnnotationElement GenCustomAnnotationElement(const ir::ClassProperty *prop, std::string &baseName);
     pandasm::AnnotationData GenCustomAnnotation(ir::AnnotationUsage *anno, std::string &baseName);
-    void CreateEnumProp(const ir::ClassProperty *prop, pandasm::Field &field);
     void ProcessArrayElement(const ir::Expression *elem, std::vector<pandasm::LiteralArray::Literal> &literals,
                              std::string &baseName, LiteralArrayVector &result);
     LiteralArrayVector CreateLiteralArray(std::string &baseName, const ir::Expression *array);
@@ -113,6 +111,7 @@ private:
     void GenClassInheritedFields(const checker::ETSObjectType *baseType, pandasm::Record &classRecord);
     pandasm::AnnotationData GenAnnotationSignature(const ir::ClassDefinition *classDef);
     pandasm::AnnotationData GenAnnotationModule(const ir::ClassDefinition *classDef);
+    pandasm::AnnotationData GenAnnotationFunctionOverload(const ArenaVector<ir::AstNode *> &body);
     pandasm::AnnotationData GenAnnotationEnclosingClass(std::string_view className);
     pandasm::AnnotationData GenAnnotationEnclosingMethod(const ir::MethodDefinition *methodDef);
     pandasm::AnnotationData GenAnnotationFunctionalReference(const ir::ClassDefinition *classDef);

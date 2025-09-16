@@ -18,8 +18,8 @@ function foo(a: (()=>void)|Object):string {
 };
 
 function main() {
-    assertEQ(foo("HI"), "hello")
-    assertEQ(foo(new Int()), "hello")
-    assertEQ(foo(12), "hello")
+    arktest.assertEQ(foo("HI"), "hello")
+    arktest.assertEQ(foo(new Int()), "hello")
+    arktest.assertEQ(foo(12), "hello")
 }
 

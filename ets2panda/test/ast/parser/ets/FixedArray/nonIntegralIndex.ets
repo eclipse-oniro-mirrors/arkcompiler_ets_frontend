@@ -19,4 +19,4 @@ export class Test {
   }
 }
 
-/* @@@ label Error TypeError: Type 'double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index.  */
+/* @@@ label Error TypeError: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index.  */

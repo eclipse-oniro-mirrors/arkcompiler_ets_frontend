@@ -31,7 +31,7 @@ interface ChildComponentOptions {
 
 @Component
 struct SuperComponent1 {
-  @State countOptions: ChildComponentOptions = { count: 0.0 }
+  @State countOptions: ChildComponentOptions = { count: 0 }
 
   build() {
     Column() {
@@ -43,7 +43,7 @@ struct SuperComponent1 {
 
 @Component
 struct SuperComponent2 {
-  @State countOptions: ChildComponentOptions = { count: 0.0 }
+  @State countOptions: ChildComponentOptions = { count: 0 }
 
   build() {
     Column() {
@@ -55,7 +55,7 @@ struct SuperComponent2 {
 
 @Component
 struct SuperComponent3 {
-  @State countOptions: ChildComponentOptions = { count: 0.0 }
+  @State countOptions: ChildComponentOptions = { count: 0 }
 
   build() {
     Column() {
@@ -92,10 +92,10 @@ struct ChildComponent2 {
       Text(`${this.options2.count}`)
       Blank()
       Button('change1').onClick(() => {
-        this.options2.count = 1.0;
+        this.options2.count = 1;
       })
       Button('change2').onClick(() => {
-        this.options2.count = 1.0;
+        this.options2.count = 1;
       })
     }
   }

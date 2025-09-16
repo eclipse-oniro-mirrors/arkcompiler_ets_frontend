@@ -127,17 +127,17 @@ function labeledTest05(): int {
 
 function main(): void {
     let test1 = labeledTest01();
-    assertEQ(test1, 10)
+    arktest.assertEQ(test1, 10)
 
     let test2 = labeledTest02();
-    assertEQ(test2, 200)
+    arktest.assertEQ(test2, 200)
 
     let test3 = labeledTest03();
-    assertEQ(test3, -999)
+    arktest.assertEQ(test3, -999)
 
     let test4 = labeledTest04();
-    assertEQ(test4, 10000)
+    arktest.assertEQ(test4, 10000)
 
     let test5 = labeledTest05();
-    assertEQ(test5, 420)
+    arktest.assertEQ(test5, 420)
 }

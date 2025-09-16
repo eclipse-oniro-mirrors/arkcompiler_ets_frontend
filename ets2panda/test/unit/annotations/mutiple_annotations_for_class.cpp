@@ -43,8 +43,8 @@ public:
         const std::vector<std::pair<std::string, std::string>> expectedAnnotations = {
             {
                 {"favorColor", "1"},
-                {"color", "ETSGLOBAL$Anno2$color$0"},
-                {"reviewers", "ETSGLOBAL$Anno2$reviewers$1"},
+                {"color", "ETSGLOBAL%%annotation-Anno2-color-0"},
+                {"reviewers", "ETSGLOBAL%%annotation-Anno2-reviewers-1"},
             },
         };
         AnnotationEmitTest::CheckAnnoDecl(program, annoName, expectedAnnotations);
@@ -63,14 +63,14 @@ public:
             {"Anno2",
              {
                  {"favorColor", "1"},
-                 {"color", "A$Anno2$color$2"},
-                 {"reviewers", "A$Anno2$reviewers$3"},
+                 {"color", "A%%annotation-Anno2-color-2"},
+                 {"reviewers", "A%%annotation-Anno2-reviewers-3"},
              }},
             {"Anno3",
              {
-                 {"reviewersAge", "A$Anno3$reviewersAge$4"},
-                 {"testBools", "A$Anno3$testBools$5"},
-                 {"mutiArray", "A$Anno3$mutiArray$9"},
+                 {"reviewersAge", "A%%annotation-Anno3-reviewersAge-4"},
+                 {"testBools", "A%%annotation-Anno3-testBools-5"},
+                 {"mutiArray", "A%%annotation-Anno3-mutiArray-9"},
              }},
         };
         AnnotationEmitTest::CheckRecordAnnotations(program, recordName, expectedClassAnnotations);
@@ -79,21 +79,22 @@ public:
     void CheckLiteralArrayTable(pandasm::Program *program)
     {
         std::vector<std::pair<std::string, std::vector<AnnotationValueType>>> expectedLiteralArrayTable = {
-            {"ETSGLOBAL$Anno2$color$0", std::vector<AnnotationValueType> {COLOR_0, COLOR_1}},
-            {"ETSGLOBAL$Anno2$reviewers$1",
+            {"ETSGLOBAL%%annotation-Anno2-color-0", std::vector<AnnotationValueType> {COLOR_0, COLOR_1}},
+            {"ETSGLOBAL%%annotation-Anno2-reviewers-1",
              std::vector<AnnotationValueType> {std::string("Bob"), std::string("Jim"), std::string("Tom")}},
-            {"A$Anno2$color$2", std::vector<AnnotationValueType> {COLOR_0, COLOR_1}},
-            {"A$Anno2$reviewers$3",
+            {"A%%annotation-Anno2-color-2", std::vector<AnnotationValueType> {COLOR_0, COLOR_1}},
+            {"A%%annotation-Anno2-reviewers-3",
              std::vector<AnnotationValueType> {std::string("Bob"), std::string("Jim"), std::string("Tom")}},
-            {"A$Anno3$reviewersAge$4",
+            {"A%%annotation-Anno3-reviewersAge-4",
              std::vector<AnnotationValueType> {REVIEWER_AGE_19, REVIEWER_AGE_20, REVIEWER_AGE_24}},
-            {"A$Anno3$testBools$5", std::vector<AnnotationValueType> {true, true, true}},
-            {"A$Anno3$mutiArray$6", std::vector<AnnotationValueType> {VALUE_9, VALUE_8, VALUE_7}},
-            {"A$Anno3$mutiArray$7", std::vector<AnnotationValueType> {VALUE_6, VALUE_5, VALUE_4}},
-            {"A$Anno3$mutiArray$8", std::vector<AnnotationValueType> {VALUE_3, VALUE_2, VALUE_1}},
-            {"A$Anno3$mutiArray$9",
-             std::vector<AnnotationValueType> {std::string("A$Anno3$mutiArray$6"), std::string("A$Anno3$mutiArray$7"),
-                                               std::string("A$Anno3$mutiArray$8")}}};
+            {"A%%annotation-Anno3-testBools-5", std::vector<AnnotationValueType> {true, true, true}},
+            {"A%%annotation-Anno3-mutiArray-6", std::vector<AnnotationValueType> {VALUE_9, VALUE_8, VALUE_7}},
+            {"A%%annotation-Anno3-mutiArray-7", std::vector<AnnotationValueType> {VALUE_6, VALUE_5, VALUE_4}},
+            {"A%%annotation-Anno3-mutiArray-8", std::vector<AnnotationValueType> {VALUE_3, VALUE_2, VALUE_1}},
+            {"A%%annotation-Anno3-mutiArray-9",
+             std::vector<AnnotationValueType> {std::string("A%%annotation-Anno3-mutiArray-6"),
+                                               std::string("A%%annotation-Anno3-mutiArray-7"),
+                                               std::string("A%%annotation-Anno3-mutiArray-8")}}};
 
         AnnotationEmitTest::CheckLiteralArrayTable(program, expectedLiteralArrayTable);
     }

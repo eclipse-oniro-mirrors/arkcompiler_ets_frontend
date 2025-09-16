@@ -15,43 +15,13 @@
     ],
     "result": [
         {
-            "line": 19,
-            "column": 16,
-            "endLine": 19,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 28,
             "column": 26,
             "endLine": 28,
             "endColumn": 46,
-            "problem": "MakeObservedIsNotSupported",
+            "problem": "MakeObservedCannotObserveCustomClass",
             "suggest": "",
-            "rule": "The makeObserved function is not supported (arkui-no-makeobserved-function)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 56,
-            "endLine": 28,
-            "endColumn": 58,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 35,
-            "column": 33,
-            "endLine": 35,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "The \"makeObserved\" function cannot observe custom class (arkui-makeobserved-cannot-observe-custom-class)",
             "severity": "ERROR"
         },
         {
@@ -59,19 +29,9 @@
             "column": 24,
             "endLine": 38,
             "endColumn": 44,
-            "problem": "MakeObservedIsNotSupported",
+            "problem": "MakeObservedCannotObserveCustomClass",
             "suggest": "",
-            "rule": "The makeObserved function is not supported (arkui-no-makeobserved-function)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 38,
-            "column": 54,
-            "endLine": 38,
-            "endColumn": 56,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "The \"makeObserved\" function cannot observe custom class (arkui-makeobserved-cannot-observe-custom-class)",
             "severity": "ERROR"
         },
         {

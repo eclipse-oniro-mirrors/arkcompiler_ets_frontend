@@ -112,7 +112,7 @@ static void ProcessTSInterface(es2panda_Context *context, es2panda_AstNode *node
 static void ProcessNewExpression(es2panda_Context *context, es2panda_AstNode *node)
 {
     counter.newExpressionCount++;
-    auto *typeRef = node ? impl->ETSNewClassInstanceExpressionGetTypeRefConst(context, node) : nullptr;
+    auto *typeRef = node ? impl->ETSTypeReferencePartName(context, node) : nullptr;
     if (!typeRef) {
         return;
     }

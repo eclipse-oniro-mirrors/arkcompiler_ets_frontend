@@ -13,37 +13,31 @@
  * limitations under the License.
  */
 
-class A{
-  field1:number = 10;
-  private field2:number = 20;
-  foo(){}
+class A {
+  field1: number = 10;
+  private field2: number = 20;
+  foo() { }
 }
 
-function main():void{
-  let a:A = new A();
+function main(): void {
+  let a: A = new A();
   type keyofA = keyof A;
 
-  let x1:("abcd"|keyofA|number|A)[] = ["abcd",/* @@ label1 */"field2","foo",123,a];
-  let x2:("abcd"|keyofA|number|A)[] = ["abcd",/* @@ label2 */"other field","foo",123,a];
+  let x1: ("abcd" | keyofA | number | A)[] = ["abcd", "field2", "foo", 123, a];
+  let x2: ("abcd" | keyofA | number | A)[] = ["abcd", "other field", "foo", 123, a];
 
-  let x3:["abcd",keyofA,number,A] = ["abcd",/* @@ label3 */"field2",123,a];
-  let x4:["abcd",keyofA,number,A] = ["abcd",/* @@ label4 */"other field",123,a];
+  let x3: ["abcd", keyofA, number, A] = ["abcd", "field2", 123, a];
+  let x4: ["abcd", keyofA, number, A] = ["abcd", "other field", 123, a];
 
-  let x5:Array<"abcd"|keyofA|number|A> = /* @@ label5 */new Array<"abcd"|keyofA|number|A>("abcd","field2","foo",123,a);
-  let x6:Array<"abcd"|keyofA|number|A> = /* @@ label6 */new Array<"abcd"|keyofA|number|A>("abcd","other field","foo",123,a);
+  let x5: Array<"abcd" | keyofA | number | A> = new Array<"abcd" | keyofA | number | A>("abcd", "field2", "foo", 123, a);
+  let x6: Array<"abcd" | keyofA | number | A> = new Array<"abcd" | keyofA | number | A>("abcd", "other field", "foo", 123, a);
 }
 
-/* @@? 26:62 Error TypeError: Array element at index 1 with type '"field2"' is not compatible with the target array element type '"abcd"|Double|A|"foo"|"field1"' */
-/* @@? 27:62 Error TypeError: Array element at index 1 with type '"other field"' is not compatible with the target array element type '"abcd"|Double|A|"foo"|"field1"' */
-/* @@? 29:60 Error TypeError: Array initializer's type is not assignable to tuple type at index: 1 */
-/* @@? 30:60 Error TypeError: Array initializer's type is not assignable to tuple type at index: 1 */
-/* @@? 32:57 Error TypeError: Expected 1 arguments, got 5. */
-/* @@? 32:57 Error TypeError: Expected 2 arguments, got 5. */
-/* @@? 32:57 Error TypeError: Expected 0 arguments, got 5. */
-/* @@? 32:57 Error TypeError: No matching construct signature for escompat.Array("abcd", "field2", "foo", int, A) */
-/* @@? 32:98 Error TypeError: Type '"field2"' is not compatible with rest parameter type '"abcd"|Double|A|"foo"|"field1"' at index 2 */
-/* @@? 33:57 Error TypeError: Expected 1 arguments, got 5. */
-/* @@? 33:57 Error TypeError: Expected 2 arguments, got 5. */
-/* @@? 33:57 Error TypeError: Expected 0 arguments, got 5. */
-/* @@? 33:57 Error TypeError: No matching construct signature for escompat.Array("abcd", "other field", "foo", int, A) */
-/* @@? 33:98 Error TypeError: Type '"other field"' is not compatible with rest parameter type '"abcd"|Double|A|"foo"|"field1"' at index 2 */
+/* @@? 1:3 Error TypeError: Cannot find type 'keyofA'. */
+/* @@? 24:3 Error SyntaxError: Illegal start of Type Alias expression. */
+/* @@? 29:20 Error TypeError: Cannot find type 'keyofA'. */
+/* @@? 30:20 Error TypeError: Cannot find type 'keyofA'. */
+/* @@? 32:26 Error TypeError: Cannot find type 'keyofA'. */
+/* @@? 32:68 Error TypeError: Cannot find type 'keyofA'. */
+/* @@? 33:26 Error TypeError: Cannot find type 'keyofA'. */
+/* @@? 33:68 Error TypeError: Cannot find type 'keyofA'. */

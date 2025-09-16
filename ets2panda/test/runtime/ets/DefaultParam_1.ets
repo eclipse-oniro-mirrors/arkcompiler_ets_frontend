@@ -14,27 +14,27 @@
  */
 
 function main(): void {
-    assertEQ(foo1(), 10)
-    assertEQ(foo2(), c'a')
-    assertEQ(foo3(), true)
+    arktest.assertEQ(foo1(), 10)
+    arktest.assertEQ(foo2(), c'a')
+    arktest.assertEQ(foo3(), true)
 
-    assertEQ(foo4(), 30)
-    assertEQ(foo4(5), 25)
+    arktest.assertEQ(foo4(), 30)
+    arktest.assertEQ(foo4(5), 25)
 
-    assertEQ(foo5(5), 55)
-    assertEQ(foo5(5, 10), 45)
-
-
-    assertEQ(foo6(), undefined)
-    assertEQ(foo7(), undefined)
-    assertEQ(foo8(), undefined)
+    arktest.assertEQ(foo5(5), 55)
+    arktest.assertEQ(foo5(5, 10), 45)
 
 
-    assertEQ(foo13(10), 15)
-    assertEQ(foo14(10), 25)
+    arktest.assertEQ(foo6(), undefined)
+    arktest.assertEQ(foo7(), undefined)
+    arktest.assertEQ(foo8(), undefined)
 
-    assertEQ(foo15(10, 5), 20)
-    assertEQ(foo16(10, 5), 30)
+
+    arktest.assertEQ(foo13(10), 15)
+    arktest.assertEQ(foo14(10), 25)
+
+    arktest.assertEQ(foo15(10, 5), 20)
+    arktest.assertEQ(foo16(10, 5), 30)
 }
 
 function foo1(a: int = 10): int {
@@ -54,7 +54,7 @@ function foo4(a: int = 10, b: int = 20): int {
 }
 
 function foo5(a: int = 10, b: int = 20, c: int = 30): int {
-    assertEQ(a, 5)
+    arktest.assertEQ(a, 5)
 
     return a + b + c;
 }

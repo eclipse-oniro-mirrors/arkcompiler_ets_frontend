@@ -18,7 +18,7 @@ function main(){
         ():int =>{return 1},
         ():int =>{return 2}
     ]
-    assertEQ(x[0](), 1)
-    assertEQ(x[1](), 2)
+    arktest.assertEQ(x[0](), 1)
+    arktest.assertEQ(x[1](), 2)
 }
 

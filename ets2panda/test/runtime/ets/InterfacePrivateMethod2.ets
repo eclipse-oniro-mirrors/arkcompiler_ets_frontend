@@ -34,6 +34,6 @@ interface Vehicle {
 class Car implements Vehicle{}
 
 function main(): void {
-    assertEQ(new Car().getPwrIndex(1), 1)
-    assertEQ(new Car().getPwrIndex(1,1), 2)
+    arktest.assertEQ(new Car().getPwrIndex(1), 1)
+    arktest.assertEQ(new Car().getPwrIndex(1,1), 2)
 }

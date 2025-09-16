@@ -22,8 +22,8 @@ enum Enum {e1 = "A", e2 = "B", e3 = "C"}
 function main() {
   let v = Enum.e3
   switch (v) {
-    case Enum.e2: assertTrue(false); break;
-    case Enum.e1: assertTrue(false); break;
+    case Enum.e2: arktest.assertTrue(false); break;
+    case Enum.e1: arktest.assertTrue(false); break;
     case Enum.e3:  break;
   }
 }

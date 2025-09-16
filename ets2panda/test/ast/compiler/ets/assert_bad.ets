@@ -15,9 +15,9 @@
 
 function main(): int {
    let n: int = 2
-   /* @@ label1 */assertEQ(n, 5, /* @@ label2 */42);
+   /* @@ label1 */arktest.assertEQ(n, 5, /* @@ label2 */42);
    return 0;
 }
 
-/* @@@ label1 Error TypeError: No matching call signature for assertEQ(int, int, int)  */
-/* @@@ label2 Error TypeError: Type 'int' is not compatible with type 'String|undefined' at index 3  */
+/* @@@ label1 Error TypeError: No matching call signature for assertEQ(Int, Int, Int)  */
+/* @@@ label2 Error TypeError: Type 'Int' is not compatible with type 'String|undefined' at index 3  */

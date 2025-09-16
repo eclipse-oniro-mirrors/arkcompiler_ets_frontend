@@ -25,7 +25,7 @@
 
 static es2panda_Impl *impl = nullptr;
 
-static auto source = std::string("function main() { 1 + 2 }");
+static auto source = std::string("function main(): void { let v = 1; v + 2 }");
 
 static es2panda_AstNode *binExpr = nullptr;
 static es2panda_Context *ctx = nullptr;
@@ -53,7 +53,7 @@ static bool TestAstNodeCheck(es2panda_Context *context, es2panda_AstNode *root)
 
     auto *mainType = impl->AstNodeCheck(context, binExpr);
     std::cout << impl->TypeToStringConst(context, mainType) << std::endl;
-    return impl->TypeIsIntType(mainType);
+    return impl->TypeIsETSObjectType(mainType);  // boxed Int
 }
 
 int main(int argc, char **argv)

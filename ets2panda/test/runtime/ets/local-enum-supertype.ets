@@ -13,20 +13,21 @@
  * limitations under the License.
  */
 
+enum Commands { Open = "fopen",  Close = "fclose" }
+
 function main():void {
-    enum Commands { Open = "fopen",  Close = "fclose" }
     let c: Commands = Commands.Close
     let o: Object = c // Autoboxing of enum type to its reference version
     // Such reference version type has no name, but can be detected by instanceof
     if (o instanceof Commands) {
         let d = o as Commands // And explicitly converted back by 'as' conversion
-        assertEQ(d, Commands.Close)
+        arktest.assertEQ(d, Commands.Close)
     }
 
     let u : Object | Commands = Commands.Close;
     if (u instanceof Commands)
     {
         let d = o as Commands;
-        assertEQ(d, Commands.Close)
+        arktest.assertEQ(d, Commands.Close)
     }
 }

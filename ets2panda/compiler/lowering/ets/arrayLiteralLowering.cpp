@@ -44,7 +44,9 @@ ArenaVector<ir::Statement *> ArrayLiteralLowering::GenerateDefaultCallToConstruc
         auto *indexSymbol = Gensym(Allocator());
         auto *lengthSymbol = Gensym(Allocator());
         auto *typeNode = checker_->AllocNode<ir::OpaqueTypeNode>(eleType, Allocator());
-        ss << "let @@I1 : int = @@I2.length as int;";
+        ES2PANDA_ASSERT(typeNode != nullptr);
+
+        ss << "let @@I1 : int = @@I2.length.toInt();";
         newStmts.emplace_back(lengthSymbol);
         newStmts.emplace_back(arraySymbol->Clone(Allocator(), nullptr));
         ss << "for (let @@I3 = 0; @@I4 < @@E5;  @@I6 = @@I7 + 1) {";
@@ -79,8 +81,7 @@ static bool IsInAnnotationContext(ir::AstNode *node)
 
 ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayExpression *literalArray)
 {
-    auto literalArrayType =
-        literalArray->TsType() != nullptr ? literalArray->TsType() : literalArray->GetPreferredType();
+    auto literalArrayType = literalArray->TsType() != nullptr ? literalArray->TsType() : literalArray->PreferredType();
     if (literalArrayType->IsETSArrayType() || literalArrayType->IsETSTupleType() ||
         !literalArrayType->IsETSResizableArrayType() || IsInAnnotationContext(literalArray)) {
         return literalArray;
@@ -89,15 +90,26 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
     std::vector<ir::AstNode *> newStmts;
     std::stringstream ss;
     auto *genSymIdent = Gensym(Allocator());
+    auto *genSymIdent2 = Gensym(Allocator());
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
+    // ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
+    // ss << "Array.from<@@T4>(@@I5);";
     ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-    ss << "Array.from<@@T4>(@@I5);";
+    ss << "let @@I4 : Array<@@T5> = new Array<@@T6>(@@I7.length);";
+    ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";
+    ss << "@@I11;";
     newStmts.emplace_back(genSymIdent);
     newStmts.emplace_back(type);
-    literalArray->SetTsType(nullptr);
     newStmts.emplace_back(literalArray);
+    literalArray->SetTsType(nullptr);
+    newStmts.emplace_back(genSymIdent2);
+    newStmts.emplace_back(type->Clone(Allocator(), nullptr));
     newStmts.emplace_back(type->Clone(Allocator(), nullptr));
     newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+    newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+    newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
+    newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+    newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
 
     auto *parent = literalArray->Parent();
     auto *loweringResult = parser_->CreateFormattedExpression(ss.str(), newStmts);
@@ -123,7 +135,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewArrayExprToRefArray(ir::ETSNew
     auto *genSymIdent = Gensym(Allocator());
 
     std::stringstream ss;
-    ss << "let @@I1 = new Array<@@T2>(@@E3 as number);";
+    ss << "let @@I1 = new Array<@@T2>(@@E3.toDouble());";
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     auto *dimension = newExpr->Dimension()->Clone(Allocator(), nullptr);
     newStmts.emplace_back(genSymIdent);
@@ -161,7 +173,7 @@ ir::Statement *ArrayLiteralLowering::CreateNestedArrayCreationStatement(ArenaVec
         ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
 
     std::string creationTemplate =
-        "for (let @@I1 = 0; @@I2 < @@I3; @@I4 = @@I5 + 1) { let @@I6 = new Array<@@T7>(@@E8 as number); @@E9 = @@I10}";
+        "for (let @@I1 = 0; @@I2 < @@I3; @@I4 = @@I5 + 1) { let @@I6 = new Array<@@T7>(@@E8.toDouble()); @@E9 = @@I10}";
     ir::Statement *forUpdateStmt = parser_->CreateFormattedStatement(
         creationTemplate, genSymIdent, genSymIdent->Clone(Allocator(), nullptr),
         lastDimIdent->Clone(Allocator(), nullptr), genSymIdent->Clone(Allocator(), nullptr),
@@ -211,7 +223,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewMultiDimArrayToRefArray(
     auto arrayType = newExpr->TsType()->AsETSResizableArrayType()->ElementType();
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     auto *genSymIdent = Gensym(Allocator());
-    std::string newArray = "let @@I1 = new Array<@@T2>(@@I3 as number)";
+    std::string newArray = "let @@I1 = new Array<@@T2>(@@I3.toDouble())";
     auto idents = TransformDimVectorToIdentVector(newExpr->Dimensions(), statements);
     auto newArraystatement =
         parser_->CreateFormattedStatements(newArray, genSymIdent, type, idents[0]->Clone(Allocator(), nullptr));
@@ -233,7 +245,7 @@ bool ArrayLiteralLowering::PerformForModule(public_lib::Context *ctx, parser::Pr
 {
     parser_ = ctx->parser->AsETSParser();
     varbinder_ = ctx->parserProgram->VarBinder()->AsETSBinder();
-    checker_ = ctx->checker->AsETSChecker();
+    checker_ = ctx->GetChecker()->AsETSChecker();
     program->Ast()->TransformChildrenRecursively(
         [this](ir::AstNode *ast) -> AstNodePtr {
             if (ast->IsArrayExpression()) {

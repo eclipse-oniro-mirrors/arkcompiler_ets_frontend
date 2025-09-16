@@ -149,7 +149,7 @@ export class AccessNBody  {
             ret += bodies.energy();
         }
 
-        assertEQ(ret, this.expected,  "Incorrect result")
+        arktest.assertEQ(ret, this.expected,  "Incorrect result")
     }
 }
 

@@ -24,13 +24,13 @@ export { utils } from './oh_modules/@arkts.utils';
 
 function tesCollectionsUsage() {
 
-  const utils1: string = JSON.stringify(1.0);
+  const utils1: string = JSON.stringify(1);
 
-  const utils2 = JSON.stringify(1.0);
+  const utils2 = JSON.stringify(1);
 
-  const utils3 = JSON.stringify(1.0);
+  const utils3 = JSON.stringify(1);
 
-  const utils4: string = JSON.stringify(1.0);
+  const utils4: string = JSON.stringify(1);
 
   type CreatedType = ArkTSUtils.ASON.SomeType;
 

@@ -26,17 +26,17 @@ function name(this:Fruit, id: int): int {
 function asFuncCall() {
     let fruit = new Fruit();
     let res: int = fruit.name();
-    assertEQ(res, 3 )
+    arktest.assertEQ(res, 3 )
     let res1: int = name(fruit, 2);
-    assertEQ(res1, 1 )
+    arktest.assertEQ(res1, 1 )
 }
 
 function asMethodCall() {
     let fruit = new Fruit();
     let res: int = fruit.name();
-    assertEQ(res, 3 )
+    arktest.assertEQ(res, 3 )
     let res1: int = fruit.name(2);
-    assertEQ(res1, 1 )
+    arktest.assertEQ(res1, 1 )
 }
 
 function main() {

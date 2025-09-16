@@ -49,5 +49,17 @@
       "start": 655,
       "length": 1
     }
+  ],
+  "4": [
+    {
+      "fileName": "getReferencesAtPosition6.ets",
+      "start": 695,
+      "length": 4
+    },
+    {
+      "fileName": "getReferencesAtPosition6.ets",
+      "start": 708,
+      "length": 4
+    }
   ]
 }

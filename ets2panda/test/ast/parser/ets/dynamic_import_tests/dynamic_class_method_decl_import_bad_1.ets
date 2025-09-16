@@ -22,5 +22,5 @@ import { A } from "dynamic_import_tests/modules/module"
 function foo(p: A): void {
     /* @@ label */p.foo(/* @@ label1 */"abc")
 }
-/* @@@ label1 Error TypeError: Type '"abc"' is not compatible with type 'double' at index 1  */
+/* @@@ label1 Error TypeError: Type '"abc"' is not compatible with type 'Double' at index 1  */
 /* @@@ label Error TypeError: No matching call signature for foo("abc")  */

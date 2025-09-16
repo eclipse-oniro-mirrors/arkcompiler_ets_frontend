@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 27,
+            "line": 32,
             "column": 16,
-            "endLine": 27,
+            "endLine": 32,
             "endColumn": 17,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 30,
+            "line": 35,
             "column": 5,
-            "endLine": 30,
+            "endLine": 35,
             "endColumn": 12,
             "problem": "AnyType",
             "suggest": "",

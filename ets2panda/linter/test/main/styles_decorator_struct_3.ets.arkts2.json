@@ -25,16 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 22,
-            "column": 19,
-            "endLine": 22,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 25,
             "column": 3,
             "endLine": 29,
@@ -42,16 +32,6 @@
             "problem": "StylesDecoratorNotSupported",
             "suggest": "",
             "rule": "\"@Styles\" decorator is not supported (arkui-no-styles-decorator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 19,
-            "endLine": 28,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

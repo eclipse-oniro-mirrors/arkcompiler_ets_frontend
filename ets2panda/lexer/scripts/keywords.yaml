@@ -68,9 +68,9 @@ keywords:
   - name: 'bigint'
     token: KEYW_BIGINT
     keyword_like: [ets, ts]
-    flags: [definable_type_name]
+    flags: [predefined_type]
 
-  - name: 'Bigint'
+  - name: 'BigInt'
     token: KEYW_BUILTIN_BIGINT
     keyword_like: [ets]
     flags:  [predefined_type]
@@ -79,7 +79,7 @@ keywords:
     token: KEYW_BOOLEAN
     keyword: [ets]
     keyword_like: [js, ts]
-    flags: [reserved_type_name, definable_type_name]
+    flags: [reserved_type_name, predefined_type]
 
   - name: 'Boolean'
     token: KEYW_BUILTIN_BOOLEAN
@@ -94,7 +94,7 @@ keywords:
   - name: 'byte'
     token: KEYW_BYTE
     keyword: [ets]
-    flags: [reserved_type_name, definable_type_name]
+    flags: [reserved_type_name, predefined_type]
 
   - name: 'Byte'
     token: KEYW_BUILTIN_BYTE
@@ -114,7 +114,7 @@ keywords:
   - name: 'char'
     token: KEYW_CHAR
     keyword: [ets]
-    flags: [reserved_type_name, definable_type_name]
+    flags: [reserved_type_name, predefined_type]
 
   - name: 'Char'
     token: KEYW_BUILTIN_CHAR
@@ -168,7 +168,7 @@ keywords:
   - name: 'double'
     token: KEYW_DOUBLE
     keyword: [ets]
-    flags: [reserved_type_name, definable_type_name]
+    flags: [reserved_type_name, predefined_type]
 
   - name: 'Double'
     token: KEYW_BUILTIN_DOUBLE
@@ -229,7 +229,7 @@ keywords:
   - name: 'float'
     token: KEYW_FLOAT
     keyword: [ets]
-    flags: [reserved_type_name, definable_type_name]
+    flags: [reserved_type_name, predefined_type]
 
   - name: 'Float'
     token: KEYW_BUILTIN_FLOAT
@@ -305,6 +305,11 @@ keywords:
     token: KEYW_INFER
     keyword_like: [ts]
 
+  - name: 'initModule'
+    token: KEYW_INIT_MODULE
+    keyword_like: [ets]
+    flags: [reserved_type_name]
+
   - name: 'instanceof'
     token: KEYW_INSTANCEOF
     keyword: [as, js, ts]
@@ -314,7 +319,7 @@ keywords:
   - name: 'int'
     token: KEYW_INT
     keyword: [ets]
-    flags: [reserved_type_name, definable_type_name]
+    flags: [reserved_type_name, predefined_type]
 
   - name: 'Int'
     token: KEYW_BUILTIN_INT
@@ -345,7 +350,7 @@ keywords:
   - name: 'long'
     token: KEYW_LONG
     keyword: [ets]
-    flags: [reserved_type_name, definable_type_name]
+    flags: [reserved_type_name, predefined_type]
 
   - name: 'Long'
     token: KEYW_BUILTIN_LONG
@@ -377,6 +382,11 @@ keywords:
   - name: 'new'
     token: KEYW_NEW
     keyword: [as, js, ets, ts]
+
+  - name: "NonNullable"
+    token: KEYW_NON_NULLABLE
+    keyword_like: [ets]
+    flags: [reserved_type_name, definable_type_name]
 
   - name: 'null'
     token: LITERAL_NULL
@@ -416,6 +426,10 @@ keywords:
     token: KEYW_OUT
     keyword_like: [ets]
 
+  - name: 'overload'
+    token: KEYW_OVERLOAD
+    keyword: [ets]
+
   - name: 'override'
     token: KEYW_OVERRIDE
     keyword: [ets]
@@ -445,10 +459,6 @@ keywords:
     token: KEYW_READONLY
     keyword_like: [as, ts, ets]
 
-  - name: 'rethrows'
-    token: KEYW_RETHROWS
-    keyword_like: [ets]
-
   - name: 'return'
     token: KEYW_RETURN
     keyword: [as, js, ets, ts]
@@ -464,7 +474,7 @@ keywords:
   - name: 'short'
     token: KEYW_SHORT
     keyword: [ets]
-    flags: [reserved_type_name, definable_type_name]
+    flags: [reserved_type_name, predefined_type]
 
   - name: 'Short'
     token: KEYW_BUILTIN_SHORT
@@ -478,7 +488,7 @@ keywords:
   - name: 'string'
     token: KEYW_STRING
     keyword_like: [ets, ts]
-    flags: [definable_type_name]
+    flags: [predefined_type]
 
   - name: 'String'
     token: KEYW_BUILTIN_STRING
@@ -488,7 +498,7 @@ keywords:
   - name: 'struct'
     token: KEYW_STRUCT
     keyword_like: [ets]
-    flags: [definable_type_name]
+    flags: [reserved_type_name]
 
   - name: 'super'
     token: KEYW_SUPER
@@ -510,10 +520,6 @@ keywords:
     token: KEYW_THROW
     keyword: [js, ets, ts, as]
 
-  - name: 'throws'
-    token: KEYW_THROWS
-    keyword_like: [ets]
-
   - name: 'true'
     token: LITERAL_TRUE
     keyword: [as, js, ets, ts]
@@ -530,8 +536,8 @@ keywords:
 
   - name: 'typeof'
     token: KEYW_TYPEOF
-    keyword: [js, ts]
-    keyword_like: [ets]
+    keyword: [js, ts, ets]
+    keyword_like: []
     flags: [unary]
 
   - name: 'u8'
@@ -578,7 +584,7 @@ keywords:
   - name: 'void'
     token: KEYW_VOID
     keyword: [as, ets, js, ts]
-    flags: [unary, reserved_type_name, definable_type_name]
+    flags: [unary, reserved_type_name, predefined_type]
 
   - name: 'while'
     token: KEYW_WHILE

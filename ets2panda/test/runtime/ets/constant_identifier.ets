@@ -17,8 +17,10 @@ const const1: byte = 101
 const const2: short = const1
 const const3: short = const2
 
+enum TestEnum { One = const3 }
+
 function main() {
-    enum TestEnum { One = const3 }
-    assertEQ(TestEnum.One.valueOf(), 101)
+    
+    arktest.assertEQ(TestEnum.One.valueOf(), 101)
 }
 

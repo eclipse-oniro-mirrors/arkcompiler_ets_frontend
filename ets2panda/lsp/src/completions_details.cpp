@@ -32,51 +32,40 @@
 namespace ark::es2panda::lsp::details {
 
 void GetDisplayPartAndKind(ir::AstNode *node, std::vector<SymbolDisplayPart> &displayParts, std::string &kind,
-                           std::string &kindModifiers)
+                           std::string &kindModifiers, checker::ETSChecker *checker)
 {
     if (IsClass(node)) {
         displayParts = ark::es2panda::lsp::CreateDisplayForClass(node);
-        kind = "class";
-    } else if (node->Type() == ir::AstNodeType::ETS_PARAMETER_EXPRESSION) {
+    } else if (node->IsETSParameterExpression()) {
         displayParts = ark::es2panda::lsp::CreateDisplayForETSParameterExpression(node);
-        kind = "parameter";
-    } else if (node->Type() == ir::AstNodeType::CLASS_PROPERTY) {
+    } else if (node->IsClassProperty()) {
         // After enum refactoring, enum declaration is transformed to a class declaration
         if (compiler::ClassDefinitionIsEnumTransformed(node->Parent())) {
             auto enumDecl = node->Parent()->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
             auto enumMember = GetEnumMemberByName(enumDecl, node->AsClassProperty()->Key()->AsIdentifier()->Name());
             displayParts = ark::es2panda::lsp::CreateDisplayForEnumMember(enumMember);
-            kind = "enum member";
         } else {
-            displayParts = ark::es2panda::lsp::CreateDisplayForClassProperty(node, kindModifiers);
-            kind = "property";
+            displayParts = ark::es2panda::lsp::CreateDisplayForClassProperty(node);
         }
-    } else if (node->Type() == ir::AstNodeType::TS_INTERFACE_DECLARATION) {
+    } else if (node->IsTSInterfaceDeclaration()) {
         displayParts = ark::es2panda::lsp::CreateDisplayForInterface(node);
-        kind = "interface";
-    } else if (node->Type() == ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION) {
+    } else if (node->IsTSTypeAliasDeclaration()) {
         displayParts = ark::es2panda::lsp::CreateDisplayForTypeAlias(node);
-        kind = "type alias";
-    } else if (node->Type() == ir::AstNodeType::TS_ENUM_DECLARATION) {
+    } else if (node->IsTSEnumDeclaration()) {
         displayParts = ark::es2panda::lsp::CreateDisplayForEnum(node);
-        kind = "enum";
-    } else if (node->Type() == ir::AstNodeType::IMPORT_DECLARATION) {
+    } else if (node->IsImportDeclaration()) {
         displayParts = CreateDisplayForImportDeclaration(node);
-        kind = "import";
-    } else if (node->Type() == ir::AstNodeType::TS_TYPE_PARAMETER) {
+    } else if (node->IsTSTypeParameter()) {
         displayParts = ark::es2panda::lsp::CreateDisplayForTypeParameter(node);
-        kind = "type parameter";
-    } else if (node->Type() == ir::AstNodeType::METHOD_DEFINITION) {
-        displayParts = ark::es2panda::lsp::CreateDisplayForMethodDefinition(node, kindModifiers);
-        kind = "function";
-        if (node->Parent() != nullptr && node->Parent()->Type() == ir::AstNodeType::TS_INTERFACE_BODY) {
-            kind = "property";
-        }
+    } else if (node->IsMethodDefinition()) {
+        displayParts = ark::es2panda::lsp::CreateDisplayForMethodDefinition(node, kindModifiers, checker);
     }
+    // Unify this kind
+    kind = GetNodeKindForRenameInfo(node);
 }
 
 CompletionEntryDetails GetCompletionEntryDetails(ir::AstNode *node, const std::string &entryName,
-                                                 const std::string &fileName)
+                                                 const std::string &fileName, checker::ETSChecker *checker)
 {
     if (node == nullptr) {
         return CompletionEntryDetails();
@@ -89,7 +78,7 @@ CompletionEntryDetails GetCompletionEntryDetails(ir::AstNode *node, const std::s
     std::vector<SymbolDisplayPart> source;
     std::vector<SymbolDisplayPart> sourceDisplay;
 
-    GetDisplayPartAndKind(node, displayParts, kind, kindModifiers);
+    GetDisplayPartAndKind(node, displayParts, kind, kindModifiers, checker);
 
     return CompletionEntryDetails(entryName, kind, kindModifiers, displayParts, document, source, sourceDisplay,
                                   fileName);
@@ -106,6 +95,7 @@ CompletionEntryDetails GetCompletionEntryDetailsImpl(es2panda_Context *context, 
         return CompletionEntryDetails();
     }
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctx->GetChecker());
     auto ast = ctx->parserProgram->Ast();
     auto leIdentifier =
         ast->FindChild([entryName](ir::AstNode *node) { return HasPropertyAccessExpressionWithName(node, entryName); });
@@ -116,7 +106,7 @@ CompletionEntryDetails GetCompletionEntryDetailsImpl(es2panda_Context *context, 
     if (targetNode == nullptr) {
         return CompletionEntryDetails();
     }
-    return GetCompletionEntryDetails(targetNode, entryName, fileName);
+    return GetCompletionEntryDetails(targetNode, entryName, fileName, checker);
 }
 
 }  // namespace ark::es2panda::lsp::details

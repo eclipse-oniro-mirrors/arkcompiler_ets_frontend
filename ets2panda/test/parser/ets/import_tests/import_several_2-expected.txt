@@ -211,12 +211,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "import_several_2.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "import_several_2.ets"
                     }
                   }
                 },
@@ -224,12 +224,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "import_several_2.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "import_several_2.ets"
                   }
                 }
               },
@@ -237,218 +237,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "import_several_2.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "import_several_2.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "import_several_2.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "x",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 5,
-                              "program": "import_several_2.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 6,
-                              "program": "import_several_2.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "CallExpression",
-                          "callee": {
-                            "type": "Identifier",
-                            "name": "foo",
-                            "decorators": [],
-                            "loc": {
-                              "start": {
-                                "line": 19,
-                                "column": 9,
-                                "program": "import_several_2.ets"
-                              },
-                              "end": {
-                                "line": 19,
-                                "column": 12,
-                                "program": "import_several_2.ets"
-                              }
-                            }
-                          },
-                          "arguments": [
-                            {
-                              "type": "NumberLiteral",
-                              "value": 3.14,
-                              "loc": {
-                                "start": {
-                                  "line": 19,
-                                  "column": 13,
-                                  "program": "import_several_2.ets"
-                                },
-                                "end": {
-                                  "line": 19,
-                                  "column": 17,
-                                  "program": "import_several_2.ets"
-                                }
-                              }
-                            }
-                          ],
-                          "optional": false,
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 9,
-                              "program": "import_several_2.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 18,
-                              "program": "import_several_2.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 19,
-                            "column": 5,
-                            "program": "import_several_2.ets"
-                          },
-                          "end": {
-                            "line": 19,
-                            "column": 18,
-                            "program": "import_several_2.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 19,
-                          "column": 5,
-                          "program": "import_several_2.ets"
-                        },
-                        "end": {
-                          "line": 19,
-                          "column": 18,
-                          "program": "import_several_2.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "import_several_2.ets"
                 }
               }
             },

@@ -28,17 +28,17 @@ function foo(this:Banana):int {
 function asFuncCall() {
     let banana = new Banana();
     let res: int = foo(banana);
-    assertEQ(res, 2 )
+    arktest.assertEQ(res, 2 )
     let res1: int = foo((banana as Fruit));
-    assertEQ(res1, 1 )
+    arktest.assertEQ(res1, 1 )
 }
 
 function asMethodCall() {
     let banana = new Banana();
     let res: int = banana.foo();
-    assertEQ(res, 2 )
+    arktest.assertEQ(res, 2 )
     let res1: int = (banana as Fruit).foo();
-    assertEQ(res1, 1 )
+    arktest.assertEQ(res1, 1 )
 }
 
 function main() {

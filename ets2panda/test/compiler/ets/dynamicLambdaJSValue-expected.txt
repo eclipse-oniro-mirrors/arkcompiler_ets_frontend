@@ -797,7 +797,7 @@
                                       "loc": {
                                         "start": {
                                           "line": 24,
-                                          "column": 56,
+                                          "column": 60,
                                           "program": "dynamicLambdaJSValue.ets"
                                         },
                                         "end": {

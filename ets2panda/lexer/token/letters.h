@@ -156,13 +156,6 @@ inline constexpr char32_t LEX_UTF8_EXTRA_BYTE_MASK = 0xC0;
 inline constexpr char32_t LEX_CHAR_EOS = 0xFFFF;
 inline constexpr char32_t UNICODE_CODE_POINT_MAX = 0x10FFFF;
 inline constexpr char32_t UNICODE_INVALID_CP = UINT32_MAX;
-
-inline constexpr size_t JS_DOC_START_SIZE = 3;
-inline constexpr size_t JS_DOC_END_SIZE = 2;
-// NOLINTBEGIN(modernize-avoid-c-arrays)
-inline constexpr char32_t JS_DOC_START_LEX[JS_DOC_START_SIZE] = {LEX_CHAR_ASTERISK, LEX_CHAR_ASTERISK, LEX_CHAR_LF};
-inline constexpr char32_t JS_DOC_END_LEX[JS_DOC_END_SIZE] = {LEX_CHAR_SLASH, LEX_CHAR_LF};
-// NOLINTEND(modernize-avoid-c-arrays)
 }  // namespace ark::es2panda::lexer
 
 #endif

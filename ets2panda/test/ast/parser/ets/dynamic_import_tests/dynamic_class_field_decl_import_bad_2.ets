@@ -22,4 +22,4 @@ import { A } from "dynamic_import_tests/modules/module"
 function foo(): void {
     let x: string = /* @@ label */A.f2
 }
-/* @@@ label Error TypeError: Type 'double' cannot be assigned to type 'String'  */
+/* @@@ label Error TypeError: Type 'Double' cannot be assigned to type 'String'  */

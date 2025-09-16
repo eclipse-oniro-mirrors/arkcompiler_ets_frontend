@@ -98,7 +98,7 @@ static void TryInsertDefaultAnnotation(public_lib::Context *ctx, ir::AstNode *no
         auto methodFunc = methodDef->Function();
         auto defaultAnno = CreateDefaultAnnotationUsageForFunction(ctx, methodFunc);
         if (defaultAnno != nullptr) {
-            methodFunc->Annotations().emplace_back(defaultAnno->AsAnnotationUsage());
+            methodFunc->EmplaceAnnotations(defaultAnno->AsAnnotationUsage());
             defaultAnno->SetParent(methodFunc);
             RefineSourceRanges(defaultAnno);
         }

@@ -17,11 +17,11 @@ let globalVariable:String = "globalVariable";
 function main(){
     let localVariable:String = "localVariable"
     let f1 = (a:String, b:number, ...args:(number|string|undefined)[])=>{
-        assertEQ(a,"000");
-        assertEQ(b,111);
-        assertEQ(args[0],123);
-        assertEQ(localVariable,"localVariable");
-        assertEQ(globalVariable,"globalVariable")
+        arktest.assertEQ(a,"000");
+        arktest.assertEQ(b,111.0);
+        arktest.assertEQ(args[0],123.0);
+        arktest.assertEQ(localVariable,"localVariable");
+        arktest.assertEQ(globalVariable,"globalVariable")
     }
-    f1("000",111,123,"123")
+    f1("000",111.0,123.0,"123")
 }

@@ -30,12 +30,8 @@ void TSUnionType::TransformChildren(const NodeTransformer &cb, std::string_view 
             it = static_cast<TypeNode *>(transformedNode);
         }
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSUnionType::Iterate(const NodeTraverser &cb) const
@@ -95,5 +91,42 @@ checker::Type *TSUnionType::GetType(checker::TSChecker *checker)
 
     SetTsType(checker->CreateUnionType(std::move(types)));
     return TsType();
+}
+
+TSUnionType *TSUnionType::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    // Clone all type nodes in the union
+    ArenaVector<TypeNode *> clonedTypes(allocator->Adapter());
+    for (auto *type : types_) {
+        if (type != nullptr) {
+            clonedTypes.push_back(type->Clone(allocator, nullptr)->AsTypeNode());
+        }
+    }
+
+    auto *clone = allocator->New<TSUnionType>(std::move(clonedTypes), allocator);
+
+    // Set parent for all cloned types
+    for (auto *clonedType : clone->Types()) {
+        if (clonedType != nullptr) {
+            clonedType->SetParent(clone);
+        }
+    }
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    // Clone annotations if any
+    if (!Annotations().empty()) {
+        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
+        for (auto *annotationUsage : Annotations()) {
+            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
+        }
+        clone->SetAnnotations(std::move(annotationUsages));
+    }
+
+    return clone;
 }
 }  // namespace ark::es2panda::ir

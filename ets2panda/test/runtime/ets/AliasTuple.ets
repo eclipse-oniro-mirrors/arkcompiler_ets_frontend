@@ -34,20 +34,20 @@ function main() {
     let v4: Alias2Tuple<double> = [new Double(5), new Int(6)];  //  [Double, Int]
 
     let v5: Alias3Tuple<double> = [new C<double>(7), 8];        //  [C<Double>, Double]
-    assertEQ(v5[0].v, 7)
-    assertEQ(v5[1], 8)
+    arktest.assertEQ(v5[0].v, 7)
+    arktest.assertEQ(v5[1], 8)
 
     let v6: Alias4Tuple<double, double> = [[new Int(9), new Int(10), new Int(11)], 12];  // [double[], Double]
-    assertEQ(v6[0][0], 9)
-    assertEQ(v6[0][1], 10)
-    assertEQ(v6[0][2], 11)
-    assertEQ(v6[1], 12)
+    arktest.assertEQ(v6[0][0], 9)
+    arktest.assertEQ(v6[0][1], 10)
+    arktest.assertEQ(v6[0][2], 11)
+    arktest.assertEQ(v6[1], 12)
 
     let v7: Alias5Tuple<double, double> = [[new C<double>(13)], 14];  // [C<Double>[], Double]
-    assertEQ(v7[0][0].v, 13)
-    assertEQ(v7[1], 14)
+    arktest.assertEQ(v7[0][0].v, 13)
+    arktest.assertEQ(v7[1], 14)
 
     let v9: Alias6Tuple<double, double> = [(p: double) : double => { return p;}, 16];  // [(p: Double) => Double, Double]
-    assertEQ(v9[0](15), 15)
-    assertEQ(v9[1], 16)
+    arktest.assertEQ(v9[0](15), 15)
+    arktest.assertEQ(v9[1], 16)
 }

@@ -14,5 +14,30 @@
       "whitespaceBefore": false,
       "whitespaceAfter": true
     }
+  ],
+  "2": [
+    {
+      "text": "item",
+      "number": 687,
+      "kind": 1,
+      "whitespaceBefore": false,
+      "whitespaceAfter": true
+    }
+  ],
+  "3": [
+    {
+      "text": "key",
+      "number": 750,
+      "kind": 1,
+      "whitespaceBefore": false,
+      "whitespaceAfter": true
+    },
+    {
+      "text": "val",
+      "number": 755,
+      "kind": 1,
+      "whitespaceBefore": false,
+      "whitespaceAfter": true
+    }
   ]
 }

@@ -15,7 +15,9 @@
 
 import { ArkClass, ArkFile } from 'arkanalyzer';
 import { isMatchedFile, isMatchedNamespace, isMatchedClass, FieldMatcher, isMatchedField } from '../Matchers';
+import Logger, { LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
 
+const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'matchFields');
 
 export function matchFields(arkFiles: ArkFile[], matcher: FieldMatcher, callback: Function): void {
     for (let arkFile of arkFiles) {
@@ -26,20 +28,22 @@ export function matchFields(arkFiles: ArkFile[], matcher: FieldMatcher, callback
             if (matcher.namespace && !isMatchedNamespace(ns, matcher.namespace)) {
                 continue;
             }
-            matchFieldsInClasses(matcher, ns.getClasses(), callback);
+            ns.getClasses().forEach(cls => matchFieldsInClass(matcher, cls, callback));
         }
-        matchFieldsInClasses(matcher, arkFile.getClasses(), callback);
+        arkFile.getClasses().forEach(cls => matchFieldsInClass(matcher, cls, callback));
     }
 }
 
-function matchFieldsInClasses(matcher: FieldMatcher, classes: ArkClass[], callback: Function): void {
-    for (const arkClass of classes) {
-        if (matcher.class && !isMatchedClass(arkClass, matcher.class)) {
-            continue;
-        }
-        for (const arkField of arkClass.getFields()) {
-            if (isMatchedField(arkField, [matcher])) {
+function matchFieldsInClass(matcher: FieldMatcher, arkClass: ArkClass, callback: Function): void {
+    if (matcher.class && !isMatchedClass(arkClass, matcher.class)) {
+        return;
+    }
+    for (const arkField of arkClass.getFields()) {
+        if (isMatchedField(arkField, [matcher])) {
+            try {
                 callback(arkField);
+            } catch (error) {
+                logger.error('Error in field callback: ', error);
             }
         }
     }

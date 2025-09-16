@@ -1,0 +1,228 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 17,
+            "column": 8,
+            "endLine": 17,
+            "endColumn": 17,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"showToast\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 3,
+            "endLine": 18,
+            "endColumn": 10,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"message\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 3,
+            "endLine": 19,
+            "endColumn": 11,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"duration\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 3,
+            "endLine": 20,
+            "endColumn": 9,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"bottom\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 8,
+            "endLine": 23,
+            "endColumn": 18,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"showDialog\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 3,
+            "endLine": 24,
+            "endColumn": 8,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"title\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 3,
+            "endLine": 25,
+            "endColumn": 10,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"message\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 7,
+            "endLine": 29,
+            "endColumn": 12,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"color\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 8,
+            "endLine": 34,
+            "endColumn": 22,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"showActionMenu\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 3,
+            "endLine": 36,
+            "endColumn": 10,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"buttons\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 7,
+            "endLine": 39,
+            "endColumn": 12,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"color\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 7,
+            "endLine": 43,
+            "endColumn": 12,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"color\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 5,
+            "endLine": 46,
+            "endColumn": 8,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 10,
+            "endLine": 46,
+            "endColumn": 14,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 8,
+            "endLine": 54,
+            "endColumn": 18,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"showDialog\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 3,
+            "endLine": 55,
+            "endColumn": 8,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"title\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 3,
+            "endLine": 56,
+            "endColumn": 10,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"message\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 7,
+            "endLine": 60,
+            "endColumn": 12,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"color\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 7,
+            "endLine": 64,
+            "endColumn": 12,
+            "problem": "NoDeprecatedApi",
+            "suggest": "",
+            "rule": "The ArkUI interface \"color\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 5,
+            "endLine": 67,
+            "endColumn": 8,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 10,
+            "endLine": 67,
+            "endColumn": 14,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        }
+    ]
+}

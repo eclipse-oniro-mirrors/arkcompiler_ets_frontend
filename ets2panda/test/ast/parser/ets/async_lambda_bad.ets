@@ -14,5 +14,3 @@
  */
 
 let lambda: () => int = async /* @@ label */(): int => { return 1; }
-
-/* @@@ label Error TypeError: Return type of async lambda must be 'Promise'  */

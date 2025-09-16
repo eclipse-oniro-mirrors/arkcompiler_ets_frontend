@@ -40,10 +40,10 @@ function main() {
     QualifiedNamespace.resetQualifiedState();
 
     // Test access to deeply qualified namespace members
-    assertEQ(QualifiedNamespace.LevelOne.LevelTwo.qualifiedFunction(), "Qualified Function",  "Qualified function access failed")
-    assertEQ(QualifiedNamespace.LevelOne.LevelTwo.qualifiedValue, 100,  "Qualified value access failed")
+    arktest.assertEQ(QualifiedNamespace.LevelOne.LevelTwo.qualifiedFunction(), "Qualified Function",  "Qualified function access failed")
+    arktest.assertEQ(QualifiedNamespace.LevelOne.LevelTwo.qualifiedValue, 100,  "Qualified value access failed")
 
     // Test modification of qualified value
     QualifiedNamespace.LevelOne.LevelTwo.qualifiedValue = QualifiedNamespace.LevelOne.LevelTwo.qualifiedValue + 50;
-    assertEQ(QualifiedNamespace.LevelOne.LevelTwo.qualifiedValue, 150,  "Qualified value update failed")
+    arktest.assertEQ(QualifiedNamespace.LevelOne.LevelTwo.qualifiedValue, 150,  "Qualified value update failed")
 }

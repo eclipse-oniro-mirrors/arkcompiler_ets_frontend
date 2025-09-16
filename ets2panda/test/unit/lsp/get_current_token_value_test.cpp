@@ -80,8 +80,9 @@ TEST_F(LSPAPITests, GetTokenPosOfNode1)
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
 
     auto ast = GetAstFromContext<AstNode>(ctx);
-    auto targetNode =
-        ast->FindChild([](AstNode *node) { return node->IsIdentifier() && node->AsIdentifier()->Name() == "A"; });
+    auto targetNode = ast->FindChild([](AstNode *node) {
+        return node->IsIdentifier() && node->AsIdentifier()->Name() == "A" && node->Parent()->IsCallExpression();
+    });
 
     ASSERT_NE(targetNode, nullptr);
     auto result = ark::es2panda::lsp::GetTokenPosOfNode(targetNode);

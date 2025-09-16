@@ -14,13 +14,13 @@
  */
 
 interface PL<T> {
-    then<U, E = never>(onFulfilled?: (value: T) => U|PL<U> throws,
-            onRejected?: (error: NullishType) => E|PL<E> throws): PL<U|E>;
+    then<U, E = never>(onFulfilled?: (value: T) => U|PL<U>,
+            onRejected?: (error: NullishType) => E|PL<E>): PL<U|E>;
 }
 
 class P<T> implements PL<T> {
-    then<U, E = never>(onFulfilled?: (value: T) => U|PL<U> throws,
-            onRejected?: (error: NullishType) => E|PL<E> throws): PL<U|E> {
+    then<U, E = never>(onFulfilled?: (value: T) => U|PL<U>,
+            onRejected?: (error: NullishType) => E|PL<E>): PL<U|E> {
         return new P<U|E>()
     }
 }

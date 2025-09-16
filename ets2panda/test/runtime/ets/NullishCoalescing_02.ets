@@ -60,13 +60,13 @@ function foo9(z: double|undefined) {
 
 
 function main() {
-  assertEQ(foo1(undefined), 10000000000);
-  assertEQ(foo2(undefined), 10000000);
-  assertEQ(foo3(undefined), 10000);
-  assertEQ(foo4(undefined), 100);
-  assertEQ(foo5(undefined), 100000.0f);
-  assertEQ(foo6(undefined), 100000.0f);
-  assertEQ(foo7(undefined), 10000000.0);
-  assertEQ(foo8(undefined), 10000000.0);
-  assertEQ(foo9(undefined), 10000000.0);
+  arktest.assertEQ(foo1(undefined), 10000000000);
+  arktest.assertEQ(foo2(undefined), 10000000);
+  arktest.assertEQ(foo3(undefined), 10000);
+  arktest.assertEQ(foo4(undefined), 100);
+  arktest.assertEQ(foo5(undefined), 100000.0f);
+  arktest.assertEQ(foo6(undefined), 100000.0f);
+  arktest.assertEQ(foo7(undefined), 10000000.0);
+  arktest.assertEQ(foo8(undefined), 10000000.0);
+  arktest.assertEQ(foo9(undefined), 10000000.0);
 }

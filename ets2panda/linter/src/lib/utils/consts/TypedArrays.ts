@@ -14,15 +14,15 @@
  */
 
 export const TYPED_ARRAYS = [
-  'Int8Array',
-  'Uint8ClampedArray',
-  'Uint8Array',
-  'Uint16Array',
-  'Int16Array',
-  'Uint32Array',
-  'Int32Array',
-  'Float64Array',
-  'Float32Array',
+  'BigInt64Array',
   'BigUint64Array',
-  'BigInt64Array'
+  'Float32Array',
+  'Float64Array',
+  'Int8Array',
+  'Int16Array',
+  'Int32Array',
+  'Uint8Array',
+  'Uint8ClampedArray',
+  'Uint16Array',
+  'Uint32Array'
 ];

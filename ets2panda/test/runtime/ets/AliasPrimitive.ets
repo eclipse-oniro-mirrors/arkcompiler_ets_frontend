@@ -18,7 +18,7 @@ type AliasAlias<T> = AliasPrimitive<T>;
 
 function fn(p: Double)
 {
-    assertEQ(p, 42)
+    arktest.assertEQ(p, 42)
 }
 
 function main() {

@@ -127,7 +127,7 @@ export default tseslint.config(
       '@stylistic/eol-last': ['error', 'always'],
       '@stylistic/no-confusing-arrow': 'error',
       '@stylistic/no-floating-decimal': 'error',
-      '@stylistic/func-call-spacing': ['error', 'never'],
+      '@/func-call-spacing': ['error', 'never'],
       '@stylistic/function-call-argument-newline': ['error', 'consistent'],
       '@stylistic/function-paren-newline': ['error', 'consistent'],
       '@stylistic/generator-star-spacing': ['error', { before: true, after: false }],

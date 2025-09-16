@@ -23,19 +23,19 @@ function foo(): Int {
 function main() : void {
   let a : Int = 1;
   let c = a ?? foo();
-  assertEQ(b, 10)
-  assertEQ(c, 1)
+  arktest.assertEQ(b, 10)
+  arktest.assertEQ(c, 1)
 
   a = null;
   c = a ?? b;
-  assertEQ(c, 10)
+  arktest.assertEQ(c, 10)
 
   c = a ?? foo();
-  assertEQ(b, 11)
-  assertEQ(c, 12)
+  arktest.assertEQ(b, 11)
+  arktest.assertEQ(c, 12)
 
   let d : Boolean = true;
   let e : boolean = false;
   let f = d ?? e;
-  assertEQ(f, true)
+  arktest.assertEQ(f, true)
 }

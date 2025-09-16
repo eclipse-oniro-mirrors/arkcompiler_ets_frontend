@@ -21,12 +21,12 @@ function main(): void {
     let e: float = 2.2f;
     let f: double = 2.2222222222;
     let g: double[] = [a, b, c, d, e, f];
-    assertEQ(g[0], 2)
-    assertEQ(g[1], 20000)
-    assertEQ(g[2], 2000000)
-    assertEQ(g[3], 200000000000)
-    assertEQ(g[4], (2.2 as float))
-    assertEQ(g[5], 2.2222222222)
+    arktest.assertEQ(g[0], 2)
+    arktest.assertEQ(g[1], 20000)
+    arktest.assertEQ(g[2], 2000000)
+    arktest.assertEQ(g[3], 200000000000)
+    arktest.assertEQ(g[4], (2.2 as float))
+    arktest.assertEQ(g[5], 2.2222222222)
 
     const h: byte = 2;
     const i: short = 2;
@@ -34,24 +34,24 @@ function main(): void {
     const k: long = 2;
     const l: float = 2.0f;
     const m: double = 2.0;
-    const n: byte[] = [h, i, j, k, Float.toByte(l), Double.toByte(m)];
-    assertEQ(n[0], 2)
-    assertEQ(n[1], 2)
-    assertEQ(n[2], 2)
-    assertEQ(n[3], 2)
-    assertEQ(n[4], 2)
-    assertEQ(n[5], 2)
+    const n: byte[] = [h, Short.toByte(i), j, Long.toByte(k), Float.toByte(l), Double.toByte(m)];
+    arktest.assertEQ(n[0], 2)
+    arktest.assertEQ(n[1], 2)
+    arktest.assertEQ(n[2], 2)
+    arktest.assertEQ(n[3], 2)
+    arktest.assertEQ(n[4], 2)
+    arktest.assertEQ(n[5], 2)
 
     let o: Object[] = [1, 1.1, "testStr", new Int(2), d, k];
-    assertEQ(o[0] as Int, 1)
-    assertEQ(o[1] as Double, 1.1)
-    assertTrue((o[2] as String).equals("testStr"))
-    assertEQ(o[3] as Int, 2)
-    assertEQ(o[4] as Long, 200000000000)
-    assertEQ(o[5] as Long, 2)
+    arktest.assertEQ(o[0] as Int, 1)
+    arktest.assertEQ(o[1] as Double, 1.1)
+    arktest.assertTrue((o[2] as String).equals("testStr"))
+    arktest.assertEQ(o[3] as Int, 2)
+    arktest.assertEQ(o[4] as Long, 200000000000)
+    arktest.assertEQ(o[5] as Long, 2)
 
     let p: long[] = [new Int(3), new Short(2 as short), new Long(4)];
-    assertEQ(p[0], 3)
-    assertEQ(p[1], 2)
-    assertEQ(p[2], 4)
+    arktest.assertEQ(p[0], 3)
+    arktest.assertEQ(p[1], 2)
+    arktest.assertEQ(p[2], 4)
 }

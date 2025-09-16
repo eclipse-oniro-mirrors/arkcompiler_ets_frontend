@@ -21,5 +21,5 @@ function main() {
     let a = new Set<number>();
     a.add(1);
     let arr = foo(a);
-    assertEQ(arr[0], 1)
+    arktest.assertEQ(arr[0], 1)
 }

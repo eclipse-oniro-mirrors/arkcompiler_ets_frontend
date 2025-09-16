@@ -33,7 +33,7 @@ namespace ark::es2panda::ir {
 class AstNode;
 class Expression;
 class BlockStatement;
-enum class AstNodeType;
+enum class AstNodeType : uint8_t;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::varbinder {
@@ -50,6 +50,7 @@ namespace ark::es2panda::checker {
 class ETSChecker;
 class InterfaceType;
 class GlobalTypesHolder;
+class SemanticAnalyzer;
 
 using StringLiteralPool = std::unordered_map<util::StringView, Type *>;
 using NumberLiteralPool = std::unordered_map<double, Type *>;
@@ -63,15 +64,16 @@ using ArgRange = std::pair<uint32_t, uint32_t>;
 
 class Checker {
 public:
-    explicit Checker(util::DiagnosticEngine &diagnosticEngine, ArenaAllocator *programAllocator = nullptr);
+    explicit Checker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine,
+                     ThreadSafeArenaAllocator *programAllocator = nullptr);
     virtual ~Checker() = default;
 
     NO_COPY_SEMANTIC(Checker);
     NO_MOVE_SEMANTIC(Checker);
 
-    [[nodiscard]] ArenaAllocator *Allocator() noexcept
+    [[nodiscard]] ThreadSafeArenaAllocator *Allocator() noexcept
     {
-        return &allocator_;
+        return allocator_;
     }
 
     [[nodiscard]] varbinder::Scope *Scope() const noexcept
@@ -114,7 +116,7 @@ public:
         return globalTypes_;
     }
 
-    void SetGlobalTypes(GlobalTypesHolder *globalTypes) noexcept
+    void SetGlobalTypesHolder(GlobalTypesHolder *globalTypes)
     {
         globalTypes_ = globalTypes;
     }
@@ -232,18 +234,20 @@ public:
 
     virtual void CleanUp();
 
-    [[nodiscard]] ArenaAllocator *ProgramAllocator()
+    [[nodiscard]] ThreadSafeArenaAllocator *ProgramAllocator()
     {
-        return programAllocator_ == nullptr ? &allocator_ : programAllocator_;
+        return programAllocator_ == nullptr ? allocator_ : programAllocator_;
     }
+
+    bool IsDeclForDynamicStaticInterop() const;
 
 protected:
     parser::Program *Program() const;
     void SetProgram(parser::Program *program);
 
 private:
-    ArenaAllocator allocator_;
-    ArenaAllocator *programAllocator_ {nullptr};
+    ThreadSafeArenaAllocator *allocator_;
+    ThreadSafeArenaAllocator *programAllocator_ {nullptr};
     CheckerContext context_;
     GlobalTypesHolder *globalTypes_ {nullptr};
     TypeRelation *relation_;
@@ -253,11 +257,11 @@ private:
     varbinder::Scope *scope_ {};
     util::DiagnosticEngine &diagnosticEngine_;
 
-    RelationHolder identicalResults_ {{}, RelationType::IDENTICAL};
-    RelationHolder assignableResults_ {{}, RelationType::ASSIGNABLE};
-    RelationHolder comparableResults_ {{}, RelationType::COMPARABLE};
-    RelationHolder uncheckedCastableResults_ {{}, RelationType::UNCHECKED_CASTABLE};
-    RelationHolder supertypeResults_ {{}, RelationType::SUPERTYPE};
+    RelationHolder identicalResults_ {Allocator()};
+    RelationHolder assignableResults_ {Allocator()};
+    RelationHolder comparableResults_ {Allocator()};
+    RelationHolder uncheckedCastableResults_ {Allocator()};
+    RelationHolder supertypeResults_ {Allocator()};
 
     std::unordered_map<const void *, Type *> typeStack_;
     std::unordered_set<Type *> namedTypeStack_;
@@ -284,8 +288,9 @@ private:
 
 class TypeStackElement {
 public:
-    explicit TypeStackElement(Checker *checker, void *element, const std::optional<util::DiagnosticWithParams> &diag,
-                              const lexer::SourcePosition &pos, bool isRecursive = false)
+    explicit TypeStackElement(Checker *checker, const void *element,
+                              const std::optional<util::DiagnosticWithParams> &diag, const lexer::SourcePosition &pos,
+                              bool isRecursive = false)
         : checker_(checker), element_(element), isRecursive_(isRecursive)
     {
         if (!checker->typeStack_.insert({element, nullptr}).second) {
@@ -331,7 +336,7 @@ public:
 
 private:
     Checker *checker_;
-    void *element_;
+    const void *element_;
     bool hasErrorChecker_ {false};
     bool isRecursive_;
     bool cleanup_ {true};
@@ -477,6 +482,42 @@ public:
 
 private:
     Type *type_ {};
+};
+
+class SignatureMatchContext {
+public:
+    explicit SignatureMatchContext(Checker *checker, util::DiagnosticType diagnosticKind, bool isLogError = true)
+        : diagnosticEngine_(checker->DiagnosticEngine()),
+          diagnosticCheckpoint_(),
+          diagnosticKind_(diagnosticKind),
+          isLogError_(isLogError)
+    {
+        diagnosticCheckpoint_ = diagnosticEngine_.Save();
+    }
+
+    bool ValidSignatureMatchStatus()
+    {
+        std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint = diagnosticEngine_.Save();
+        return diagnosticCheckpoint_[diagnosticKind_] == diagnosticCheckpoint[diagnosticKind_];
+    }
+
+    ~SignatureMatchContext()
+    {
+        if (isLogError_) {
+            return;
+        }
+
+        diagnosticEngine_.Rollback(diagnosticCheckpoint_);
+    }
+
+    NO_COPY_SEMANTIC(SignatureMatchContext);
+    NO_MOVE_SEMANTIC(SignatureMatchContext);
+
+private:
+    util::DiagnosticEngine &diagnosticEngine_;
+    std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint_;
+    util::DiagnosticType diagnosticKind_;
+    bool isLogError_;
 };
 
 }  // namespace ark::es2panda::checker

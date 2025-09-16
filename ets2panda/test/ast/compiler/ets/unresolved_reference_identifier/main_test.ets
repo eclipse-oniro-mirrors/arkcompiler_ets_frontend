@@ -16,5 +16,5 @@
 import {atomicTask} from "./file1"
 const task = new taskpool.Task(atomicTask);
 
-/* @@? file1.ets:23:12 Error TypeError: Call to `load` is ambiguous as `2` versions of `load` are available: `load(typedArray: BigInt64Array, index: double): BigInt` and `load(typedArray: BigUint64Array, index: double): BigInt` */
+/* @@? file1.ets:23:12 Error TypeError: Call to `load` is ambiguous as `2` versions of `load` are available: `load(typedArray: BigInt64Array, index: Double): BigInt` and `load(typedArray: BigUint64Array, index: Double): BigInt` */
 /* @@? file1.ets:23:25 Error TypeError: Unresolved reference shareArray  */

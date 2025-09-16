@@ -22,5 +22,5 @@ function foo<T extends A>(this: T) {
 }
 
 function demo(p1: A) {
-    assertEQ(p1.foo(), 1)
+    arktest.assertEQ(p1.foo(), 1)
 }

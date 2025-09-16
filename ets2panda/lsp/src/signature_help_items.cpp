@@ -111,12 +111,6 @@ SignatureHelpItem CreateSignatureHelpItem(checker::Signature &signature)
     std::string returnType = signature.ReturnType()->ToString();
     item.SetSuffixDisplayParts(CreateTypeName(returnType));
 
-    if (signature.HasSignatureFlag(checker::SignatureFlags::THROWS)) {
-        item.SetSuffixDisplayParts(CreateKeyword("throws"));
-    } else if (signature.HasSignatureFlag(checker::SignatureFlags::RETHROWS)) {
-        item.SetSuffixDisplayParts(CreateKeyword("rethrows"));
-    }
-
     return item;
 }
 

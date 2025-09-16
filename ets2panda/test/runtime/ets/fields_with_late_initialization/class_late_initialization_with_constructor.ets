@@ -23,5 +23,5 @@ class Base {
 
 function main(): void {
     let a = new Base("aa");
-    assertEQ( a.f,"aa" );
+    arktest.assertEQ( a.f,"aa" );
 }

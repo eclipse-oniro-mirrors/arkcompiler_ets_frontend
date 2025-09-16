@@ -47,35 +47,35 @@ function foo(a: A, n: number, f: () => void) {
 let a = new A();
 // function with receiver append trailing lambda with receiver.
 a.foo(){ this.data = 1; } 
-assertEQ(a.data, 1); 
+arktest.assertEQ(a.data, 1); 
 foo(a) {this.data = 2; }
-assertEQ(a.data, 2);
+arktest.assertEQ(a.data, 2);
 
 // function with receiver append trailing lambda.
 a.foo(1, 2){ a.data = -1; } 
-assertEQ(a.data, -1); 
+arktest.assertEQ(a.data, -1); 
 foo(a, 1, 2) {a.data = -2; }
-assertEQ(a.data, -2);
+arktest.assertEQ(a.data, -2);
 
 // function with receiver contain param as lambda with receiver.
 let n: number = 3;
 a.foo((this: A):void =>{ this.data = n}, n);
-assertEQ(a.data, 3);
+arktest.assertEQ(a.data, 3);
 foo(a, (this: A):void =>{ this.data = n + 1}, n);
-assertEQ(a.data, 4);
+arktest.assertEQ(a.data, 4);
 
 // normal function append trailing lambda with receiver.
 foo(a, n + 2){ this.data = n + 2 };
-assertEQ(a.data, 5);
+arktest.assertEQ(a.data, 5);
 
 // method append trailing lambda with receiver.
 a.foo(n + 3){ this.data = n + 3 };
-assertEQ(a.data, 6);
+arktest.assertEQ(a.data, 6);
 
 // method append normal trailing lambda.
 a.foo(n + 4){a.data = n + 4}
-assertEQ(a.data, 7);
+arktest.assertEQ(a.data, 7);
 
 // normal function append normal trailing lambda.
 foo(a, n + 5){a.data = n + 5}
-assertEQ(a.data, 8);
+arktest.assertEQ(a.data, 8);

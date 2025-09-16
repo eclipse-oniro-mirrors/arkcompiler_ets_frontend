@@ -15,11 +15,18 @@
 
 import { ArkFile } from 'arkanalyzer';
 import { FileMatcher, isMatchedFile } from '../Matchers';
+import Logger, { LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
+
+const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'matchFiles');
 
 export function matchFiles(arkFiles: ArkFile[], matcher: FileMatcher, callback: Function): void {
     for (let arkFile of arkFiles) {
         if (isMatchedFile(arkFile, [matcher])) {
-            callback(arkFile);
+            try {
+                callback(arkFile);
+            } catch (error) {
+                logger.error('Error in file callback: ', error);
+            }
         }
     }
 }

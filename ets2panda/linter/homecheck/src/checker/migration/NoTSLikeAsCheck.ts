@@ -71,6 +71,7 @@ enum TypeAssuranceCondition {
 
 export class NoTSLikeAsCheck implements BaseChecker {
     readonly metaData: BaseMetaData = gMetaData;
+    readonly checkedBinaryOperator: string[] = ['+', '-', '*', '/', '%', '**'];
     public rule: Rule;
     public defects: Defects[] = [];
     public issues: IssueReport[] = [];
@@ -147,8 +148,8 @@ export class NoTSLikeAsCheck implements BaseChecker {
                 continue;
             }
 
-            // 判断是否为cast表达式的自增自减运算，属于告警场景之一
-            if (this.isCastExprWithIncrementDecrement(stmt)) {
+            // 判断是否为cast表达式的算数运算，属于告警场景之一
+            if (this.isCastExprWithNumericOperation(stmt)) {
                 this.addIssueReport(stmt, castExpr, undefined, true);
                 continue;
             }
@@ -176,6 +177,29 @@ export class NoTSLikeAsCheck implements BaseChecker {
                 }
             }
         }
+    }
+
+    private isCastExprWithNumericOperation(stmt: Stmt): boolean {
+        if (this.isCastExprWithIncrementDecrement(stmt)) {
+            return true;
+        }
+        if (!(stmt instanceof ArkAssignStmt)) {
+            return false;
+        }
+        const leftOp = stmt.getLeftOp();
+        if (!(leftOp instanceof ArkCastExpr)) {
+            return false;
+        }
+        const rightOp = stmt.getRightOp();
+        if (!(rightOp instanceof ArkNormalBinopExpr)) {
+            return false;
+        }
+        const op1 = rightOp.getOp1();
+        if (leftOp !== op1) {
+            return false;
+        }
+        const operator = rightOp.getOperator();
+        return this.checkedBinaryOperator.includes(operator);
     }
 
     private isCastExprWithIncrementDecrement(stmt: Stmt): boolean {
@@ -585,10 +609,20 @@ export class NoTSLikeAsCheck implements BaseChecker {
             return null;
         }
         const rightOp = stmt.getRightOp();
-        if (!(rightOp instanceof ArkCastExpr)) {
-            return null;
+        if (rightOp instanceof ArkCastExpr) {
+            return rightOp;
         }
-        return rightOp;
+        if (rightOp instanceof ArkNormalBinopExpr) {
+            const op1 = rightOp.getOp1();
+            const op2 = rightOp.getOp2();
+            if (op1 instanceof ArkCastExpr) {
+                return op1;
+            }
+            if (op2 instanceof ArkCastExpr) {
+                return op2;
+            }
+        }
+        return null;
     }
 
     private collectArgDefs(argIdx: number, callsites: Stmt[]): Stmt[] {
@@ -611,7 +645,6 @@ export class NoTSLikeAsCheck implements BaseChecker {
         const problem = 'As';
         const descPrefix = 'The value in type assertion is assigned by value with interface annotation';
         let desc = `(${this.rule.ruleId.replace('@migration/', '')})`;
-
         if (incrementCase) {
             desc = 'Can not use neither increment nor decrement with cast expression ' + desc;
         } else if (relatedStmt === undefined) {

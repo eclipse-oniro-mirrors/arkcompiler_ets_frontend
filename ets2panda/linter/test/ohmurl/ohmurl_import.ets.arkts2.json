@@ -21,7 +21,7 @@
             "endColumn": 60,
             "problem": "OhmUrlFullPath",
             "suggest": "",
-            "rule": "Importing from \"oh module\" requires specifying full path (arkts-ohmurl-full-path)",
+            "rule": "Importing from \"oh module\" requires specifying full path (arkts-require-fullpath-name)",
             "severity": "ERROR"
         },
         {
@@ -31,7 +31,7 @@
             "endColumn": 56,
             "problem": "OhmUrlFullPath",
             "suggest": "",
-            "rule": "Importing from \"oh module\" requires specifying full path (arkts-ohmurl-full-path)",
+            "rule": "Importing from \"oh module\" requires specifying full path (arkts-require-fullpath-name)",
             "severity": "ERROR"
         },
         {
@@ -41,7 +41,7 @@
             "endColumn": 45,
             "problem": "OhmUrlFullPath",
             "suggest": "",
-            "rule": "Importing from \"oh module\" requires specifying full path (arkts-ohmurl-full-path)",
+            "rule": "Importing from \"oh module\" requires specifying full path (arkts-require-fullpath-name)",
             "severity": "ERROR"
         },
         {
@@ -51,7 +51,7 @@
             "endColumn": 52,
             "problem": "OhmUrlFullPath",
             "suggest": "",
-            "rule": "Importing from \"oh module\" requires specifying full path (arkts-ohmurl-full-path)",
+            "rule": "Importing from \"oh module\" requires specifying full path (arkts-require-fullpath-name)",
             "severity": "ERROR"
         },
         {
@@ -61,7 +61,7 @@
             "endColumn": 48,
             "problem": "OhmUrlFullPath",
             "suggest": "",
-            "rule": "Importing from \"oh module\" requires specifying full path (arkts-ohmurl-full-path)",
+            "rule": "Importing from \"oh module\" requires specifying full path (arkts-require-fullpath-name)",
             "severity": "ERROR"
         }
     ]

@@ -55,10 +55,30 @@
             "severity": "ERROR"
         },
         {
+            "line": 17,
+            "column": 4,
+            "endLine": 17,
+            "endColumn": 16,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
             "line": 18,
             "column": 2,
             "endLine": 18,
             "endColumn": 3,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 4,
+            "endLine": 18,
+            "endColumn": 14,
             "problem": "NoPropertyDescriptor",
             "suggest": "",
             "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
@@ -75,10 +95,30 @@
             "severity": "ERROR"
         },
         {
+            "line": 19,
+            "column": 4,
+            "endLine": 19,
+            "endColumn": 9,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
             "line": 20,
             "column": 2,
             "endLine": 20,
             "endColumn": 3,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 4,
+            "endLine": 20,
+            "endColumn": 12,
             "problem": "NoPropertyDescriptor",
             "suggest": "",
             "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
@@ -125,33 +165,53 @@
             "severity": "ERROR"
         },
         {
-            "line": 27,
+            "line": 26,
             "column": 3,
-            "endLine": 27,
-            "endColumn": 35,
-            "problem": "ObjectLiteralProperty",
+            "endLine": 26,
+            "endColumn": 8,
+            "problem": "NoPropertyDescriptor",
             "suggest": "",
-            "rule": "Object literal properties can only contain name-value pairs (arkts-obj-literal-props)",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
             "severity": "ERROR"
         },
         {
             "line": 28,
-            "column": 3,
+            "column": 7,
             "endLine": 28,
-            "endColumn": 32,
-            "problem": "ObjectLiteralProperty",
+            "endColumn": 8,
+            "problem": "ParameterType",
             "suggest": "",
-            "rule": "Object literal properties can only contain name-value pairs (arkts-obj-literal-props)",
+            "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
             "severity": "ERROR"
         },
         {
-            "line": 26,
-            "column": 9,
-            "endLine": 26,
-            "endColumn": 10,
-            "problem": "NumericSemantics",
+            "line": 29,
+            "column": 3,
+            "endLine": 29,
+            "endColumn": 13,
+            "problem": "NoPropertyDescriptor",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 3,
+            "endLine": 30,
+            "endColumn": 15,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 3,
+            "endLine": 31,
+            "endColumn": 11,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
             "severity": "ERROR"
         },
         {
@@ -185,10 +245,30 @@
             "severity": "ERROR"
         },
         {
+            "line": 38,
+            "column": 7,
+            "endLine": 38,
+            "endColumn": 19,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
             "line": 39,
             "column": 5,
             "endLine": 39,
             "endColumn": 6,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 7,
+            "endLine": 39,
+            "endColumn": 17,
             "problem": "NoPropertyDescriptor",
             "suggest": "",
             "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
@@ -205,10 +285,30 @@
             "severity": "ERROR"
         },
         {
+            "line": 40,
+            "column": 7,
+            "endLine": 40,
+            "endColumn": 12,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
             "line": 41,
             "column": 5,
             "endLine": 41,
             "endColumn": 6,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 7,
+            "endLine": 41,
+            "endColumn": 15,
             "problem": "NoPropertyDescriptor",
             "suggest": "",
             "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
@@ -245,33 +345,53 @@
             "severity": "ERROR"
         },
         {
-            "line": 48,
+            "line": 47,
             "column": 5,
-            "endLine": 48,
-            "endColumn": 41,
-            "problem": "ObjectLiteralProperty",
+            "endLine": 47,
+            "endColumn": 10,
+            "problem": "NoPropertyDescriptor",
             "suggest": "",
-            "rule": "Object literal properties can only contain name-value pairs (arkts-obj-literal-props)",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
             "severity": "ERROR"
         },
         {
             "line": 49,
-            "column": 5,
+            "column": 9,
             "endLine": 49,
-            "endColumn": 34,
-            "problem": "ObjectLiteralProperty",
+            "endColumn": 10,
+            "problem": "ParameterType",
             "suggest": "",
-            "rule": "Object literal properties can only contain name-value pairs (arkts-obj-literal-props)",
+            "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
             "severity": "ERROR"
         },
         {
-            "line": 47,
-            "column": 12,
-            "endLine": 47,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
+            "line": 50,
+            "column": 5,
+            "endLine": 50,
+            "endColumn": 15,
+            "problem": "NoPropertyDescriptor",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 5,
+            "endLine": 51,
+            "endColumn": 17,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 5,
+            "endLine": 52,
+            "endColumn": 13,
+            "problem": "NoPropertyDescriptor",
+            "suggest": "",
+            "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
             "severity": "ERROR"
         },
         {

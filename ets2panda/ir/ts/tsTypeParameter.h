@@ -31,6 +31,7 @@ public:
           constraint_(constraint),
           defaultType_(defaultType)
     {
+        InitHistory();
     }
 
     explicit TSTypeParameter(Identifier *name, TypeNode *constraint, TypeNode *defaultType, ModifierFlags flags,
@@ -41,42 +42,67 @@ public:
           defaultType_(defaultType)
     {
         ES2PANDA_ASSERT(flags == ModifierFlags::NONE || flags == ModifierFlags::IN || flags == ModifierFlags::OUT);
+        InitHistory();
+    }
+
+    // CC-OFFNXT(G.FUN.01-CPP) solid logic
+    explicit TSTypeParameter(Identifier *name, TypeNode *constraint, TypeNode *defaultType, ModifierFlags flags,
+                             ArenaAllocator *const allocator, AstNodeHistory *history)
+        : AnnotationAllowed<Expression>(AstNodeType::TS_TYPE_PARAMETER, flags, allocator),
+          name_(name),
+          constraint_(constraint),
+          defaultType_(defaultType)
+    {
+        ES2PANDA_ASSERT(flags == ModifierFlags::NONE || flags == ModifierFlags::IN || flags == ModifierFlags::OUT);
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
+    }
+
+    explicit TSTypeParameter(Identifier *name, TypeNode *constraint, TypeNode *defaultType,
+                             ArenaAllocator *const allocator, AstNodeHistory *history)
+        : AnnotationAllowed<Expression>(AstNodeType::TS_TYPE_PARAMETER, allocator),
+          name_(name),
+          constraint_(constraint),
+          defaultType_(defaultType)
+    {
+        if (history != nullptr) {
+            history_ = history;
+        } else {
+            InitHistory();
+        }
     }
 
     const Identifier *Name() const
     {
-        return name_;
+        return GetHistoryNodeAs<TSTypeParameter>()->name_;
     }
 
     Identifier *Name()
     {
-        return name_;
+        return GetHistoryNodeAs<TSTypeParameter>()->name_;
     }
 
     TypeNode *Constraint()
     {
-        return constraint_;
+        return GetHistoryNodeAs<TSTypeParameter>()->constraint_;
     }
 
     const TypeNode *Constraint() const
     {
-        return constraint_;
+        return GetHistoryNodeAs<TSTypeParameter>()->constraint_;
     }
 
-    void SetConstraint(TypeNode *constraint)
-    {
-        constraint_ = constraint;
-    }
+    void SetConstraint(TypeNode *constraint);
 
     TypeNode *DefaultType() const
     {
-        return defaultType_;
+        return GetHistoryNodeAs<TSTypeParameter>()->defaultType_;
     }
 
-    void SetDefaultType(TypeNode *defaultType)
-    {
-        defaultType_ = defaultType;
-    }
+    void SetDefaultType(TypeNode *defaultType);
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
@@ -97,6 +123,8 @@ public:
 
 private:
     friend class SizeOfNodeTest;
+    void SetName(Identifier *name);
+
     Identifier *name_;
     TypeNode *constraint_;
     TypeNode *defaultType_;

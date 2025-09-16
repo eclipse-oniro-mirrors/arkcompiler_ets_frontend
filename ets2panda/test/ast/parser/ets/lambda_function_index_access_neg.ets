@@ -20,10 +20,8 @@ let a = (... ( ()   => {
 } []
 
 /* @@? 16:9 Error TypeError: Invalid left-hand side of assignment expression */
-/* @@? 16:9 Error TypeError: No matching call signature for *ERROR_LITERAL*(() => void) */
-/* @@? 16:9 Error TypeError: Invalid left-hand side of assignment expression */
-/* @@? 16:9 Error TypeError: No matching call signature for *ERROR_LITERAL*(() => void) */
 /* @@? 16:10 Error SyntaxError: Unexpected token '...'. */
+/* @@? 16:10 Error TypeError: This expression is not callable. */
 /* @@? 18:5 Error SyntaxError: Invalid left-hand side in assignment expression. */
 /* @@? 18:7 Error SyntaxError: Unexpected token ':'. */
 /* @@? 18:9 Error SyntaxError: Unexpected token 'async'. */

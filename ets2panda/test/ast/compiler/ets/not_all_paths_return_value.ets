@@ -34,6 +34,12 @@ async function test2(isError: boolean): Promise<undefined> { //ok
   }
 }
 
+async function test3(isError: boolean): Promise<void> { //ok
+  if (isError) {
+    return Promise.resolve(undefined)
+  }
+}
+
 
 /* @@? 16:16 Error TypeError: Not all code paths return a value. */
 /* @@? 23:16 Error TypeError: Not all code paths return a value. */

@@ -50,7 +50,7 @@ class NBodySystem  {
          let px : double = 0.0;
          let py : double = 0.0;
          let pz : double = 0.0;
-         let size : int = this.bodies.length as int;
+         let size : int = this.bodies.length.toInt();
          for (let i : int = 0; i < size; i++) {
              let b : Body = this.bodies[i];
              let m : double = b.mass;
@@ -67,7 +67,7 @@ class NBodySystem  {
          let dz : double ;
          let distance : double ;
          let mag : double ;
-         let size : int = this.bodies.length as int;
+         let size : int = this.bodies.length.toInt();
          for (let i : int = 0; i < size; i++) {
              let bodyi : Body = this.bodies[i];
              for (let j : int = i + 1; j < size; j++) {
@@ -98,7 +98,7 @@ class NBodySystem  {
          let dz : double ;
          let distance : double ;
          let e : double = 0.0;
-         let size : int = this.bodies.length as int;
+         let size : int = this.bodies.length.toInt();
          for (let i : int = 0; i < size; i++) {
              let bodyi : Body = this.bodies[i];
              e += 0.5 * bodyi.mass * (bodyi.vx * bodyi.vx + bodyi.vy * bodyi.vy + bodyi.vz * bodyi.vz);
@@ -149,7 +149,7 @@ export class AccessNBody  {
             ret += bodies.energy();
         }
 
-        assertEQ(ret, this.expected,  "Incorrect result");
+        arktest.assertEQ(ret, this.expected,  "Incorrect result");
     }
 }
 

@@ -16,8 +16,8 @@
     let x = z.meth(foo)
 
 {
-        assert(y[0] == 1)
-        assert(y[1] == 2)
+        arktest.assert(y[0] == 1)
+        arktest.assert(y[1] == 2)
     
 classtext: string, reviver: ((key: string, value: NullishType) => NullishType) | undefined, type: Type
 

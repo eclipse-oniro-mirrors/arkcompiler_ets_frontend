@@ -24,13 +24,13 @@ namespace A {
 function main() {
     switch(A.B.Color.A) {
         case A.B.Color.A:
-            assertTrue(true)
+            arktest.assertTrue(true)
             break;
         case A.B.Color.B:
-            assertTrue(false)
+            arktest.assertTrue(false)
             break;
         default:
-            assertTrue(false)
+            arktest.assertTrue(false)
             break;
     }
 }

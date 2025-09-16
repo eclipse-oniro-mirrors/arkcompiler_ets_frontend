@@ -39,10 +39,7 @@ std::string Expression::ToString() const
 
 void Expression::CopyTo(AstNode *other) const
 {
-    auto otherImpl = other->AsExpression();
-
-    otherImpl->grouped_ = grouped_;
-
+    [[maybe_unused]] auto otherImpl = other->AsExpression();
     TypedAstNode::CopyTo(other);
 }
 

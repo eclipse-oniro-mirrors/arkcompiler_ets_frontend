@@ -26,21 +26,21 @@ class A<T, U, K> {
 }
 
 function foo<T, U extends Number, K, L extends A<T, K, T>>(a: A<T, K, int>, b: U, c: K, d: U, e: L) {
-    assertEQ(typeof a.a, "number")
-    assertEQ(typeof a.b, "string")
-    assertEQ(typeof a.c, "number")
-    assertEQ(typeof b, "number")
-    assertEQ(typeof c, "string")
-    assertEQ(typeof d, "number")
-    assertEQ(typeof e, "object")
+    arktest.assertEQ(typeof a.a, "number")
+    arktest.assertEQ(typeof a.b, "string")
+    arktest.assertEQ(typeof a.c, "number")
+    arktest.assertEQ(typeof b, "number")
+    arktest.assertEQ(typeof c, "string")
+    arktest.assertEQ(typeof d, "number")
+    arktest.assertEQ(typeof e, "object")
     return new A<T, U, K>(a.a, b, a.b);
 }
 
 function bar<T, U, K>(a: A<T, K, T>, b : U) {
-    assertEQ(typeof a.a, "number")
-    assertEQ(typeof a.b, "string")
-    assertEQ(typeof a.c, "number")
-    assertEQ(typeof b, "number")
+    arktest.assertEQ(typeof a.a, "number")
+    arktest.assertEQ(typeof a.b, "string")
+    arktest.assertEQ(typeof a.c, "number")
+    arktest.assertEQ(typeof b, "number")
     return new A<T, U, K>(a.a, b, a.b);
 }
 
@@ -48,11 +48,11 @@ function main() {
     let a = new A<int, String, int>(10, "Test", 40);
     let b: number = 20;
     let c = foo(a, b, "Test", 20, a);
-    assertEQ(typeof c.a, "number")
-    assertEQ(typeof c.b, "number")
-    assertEQ(typeof c.c, "string")
+    arktest.assertEQ(typeof c.a, "number")
+    arktest.assertEQ(typeof c.b, "number")
+    arktest.assertEQ(typeof c.c, "string")
     let d = bar(a, b);
-    assertEQ(typeof d.a, "number")
-    assertEQ(typeof d.b, "number")
-    assertEQ(typeof d.c, "string")
+    arktest.assertEQ(typeof d.a, "number")
+    arktest.assertEQ(typeof d.b, "number")
+    arktest.assertEQ(typeof d.c, "string")
 }

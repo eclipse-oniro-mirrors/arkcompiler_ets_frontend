@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-function assert_n(v: Object | null | undefined) { assertTrue(v === null); }
-function assert_u(v: Object | null | undefined) { assertTrue(v === undefined); }
-function assert_o(v: Object | null | undefined) { assertTrue(v !== null && v !== undefined); }
+function assert_n(v: Object | null | undefined) { arktest.assertTrue(v === null); }
+function assert_u(v: Object | null | undefined) { arktest.assertTrue(v === undefined); }
+function assert_o(v: Object | null | undefined) { arktest.assertTrue(v !== null && v !== undefined); }
 function assert_npe(f: () => void) {
     try {
         f();
     } catch (e: NullPointerError) {
         return;
     }
-    assertTrue(false,  "npe was not thrown")
+    arktest.assertTrue(false,  "npe was not thrown")
 }
 
 class Link {

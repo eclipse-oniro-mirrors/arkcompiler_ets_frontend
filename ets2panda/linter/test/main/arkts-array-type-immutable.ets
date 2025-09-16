@@ -154,3 +154,19 @@ if (handler.apply) handler.apply(objA, objA, []);
 let readonlyArr: ReadonlyArray<number> = [];
 let arr66 = new Array<number>();
 readonlyArr = arr66; //error
+
+let stringArray: string[] = []
+let correctArr: (string | number)[] = []
+
+const Foo = (): string[] => stringArray;
+
+const FooBar = (): (string | number)[] => stringArray;
+const Baz = (): (string | number)[] => correctArr;
+
+async function Foo_a(): Promise<(string| number)[]> {
+    return stringArray;
+}
+
+async function Foo_b(): Promise<(string| number)[]> {
+    return correctArr;
+}

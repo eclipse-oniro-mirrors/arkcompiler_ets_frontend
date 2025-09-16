@@ -19,39 +19,18 @@ function foo<T>(this:A<T>, p: T): T {
 
 class A<T> {
     data: T
-    constructor(p: T) {
-        this.data = p;
-    }
-    goo1(): T {
-        return this.foo(this.data);
-    }
-
     goo
         return this./* @@ label */classVal;
     
-(): T {
+    (): T {
         return foo(this, this.data);
     }
 
 }
 
-/* @@? 30:9 Error SyntaxError: Unexpected token 'return'. */
-/* @@? 30:9 Error SyntaxError: Field type annotation expected. */
-/* @@? 30:16 Error SyntaxError: Unexpected token 'this'. */
-/* @@? 30:20 Error SyntaxError: Unexpected token '.'. */
-/* @@? 30:43 Error SyntaxError: Field type annotation expected. */
-/* @@? 32:1 Error SyntaxError: Unexpected token '('. */
-/* @@? 32:2 Error SyntaxError: Unexpected token ')'. */
-/* @@? 32:3 Error SyntaxError: Unexpected token ':'. */
-/* @@? 32:7 Error SyntaxError: Field type annotation expected. */
-/* @@? 32:7 Error SyntaxError: Unexpected token '{'. */
-/* @@? 33:9 Error SyntaxError: Unexpected token 'return'. */
-/* @@? 33:19 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 33:24 Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation. */
-/* @@? 33:30 Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation. */
-/* @@? 33:30 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 33:30 Error SyntaxError: Unexpected token '.'. */
-/* @@? 33:31 Error TypeError: Variable 'data' has already been declared. */
-/* @@? 33:35 Error SyntaxError: Field type annotation expected. */
-/* @@? 33:35 Error SyntaxError: Unexpected token ')'. */
-/* @@? 36:1 Error SyntaxError: Unexpected token '}'. */
+/* @@? 22:8 Error SyntaxError: Field type annotation expected. */
+/* @@? 23:9 Error SyntaxError: Unexpected token 'return'. */
+/* @@? 23:16 Error SyntaxError: Unexpected token 'this'. */
+/* @@? 23:20 Error SyntaxError: Unexpected token '.'. */
+/* @@? 23:43 Error SyntaxError: Field type annotation expected. */
+/* @@? 25:5 Error SyntaxError: Call signatures in object types are not supported. Use '$_invoke' method instead. */

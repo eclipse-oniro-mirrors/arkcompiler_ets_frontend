@@ -25,6 +25,6 @@ function main(): void {
     const child = new Child();
     console.log(child.parentField);
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

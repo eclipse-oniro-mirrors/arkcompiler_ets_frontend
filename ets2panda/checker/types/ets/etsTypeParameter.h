@@ -38,7 +38,7 @@ public:
         return declNode_;
     }
 
-    [[nodiscard]] ETSTypeParameter *GetOriginal() const noexcept;
+    [[nodiscard]] ETSTypeParameter *GetOriginal() const;
     [[nodiscard]] util::StringView const &Name() const noexcept;
 
     void SetDefaultType(Type *type) noexcept

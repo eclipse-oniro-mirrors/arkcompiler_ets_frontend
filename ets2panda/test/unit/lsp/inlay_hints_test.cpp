@@ -23,6 +23,9 @@
 #include "lsp/include/inlay_hints.h"
 #include "public/es2panda_lib.h"
 
+namespace {
+using ark::es2panda::lsp::Initializer;
+
 class LSPInlayHintsTests : public LSPAPITests {};
 
 TEST_F(LSPInlayHintsTests, VisitCallOrNewExpressionTest)
@@ -50,7 +53,7 @@ TEST_F(LSPInlayHintsTests, VisitCallOrNewExpressionTest)
 
     InlayHintList result = {};
 
-    ark::es2panda::lsp::Initializer initializer;
+    Initializer initializer;
     const auto ctx = initializer.CreateContext(filePath[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     ASSERT_NE(astContext, nullptr);
@@ -120,7 +123,7 @@ let classText = text.className;
     const size_t i2 = 2;
     const size_t i3 = 3;
 
-    ark::es2panda::lsp::Initializer initializer;
+    Initializer initializer;
     const auto ctx = initializer.CreateContext(filePath[i0].c_str(), ES2PANDA_STATE_CHECKED);
     const auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     ASSERT_NE(astContext, nullptr);
@@ -159,10 +162,10 @@ TEST_F(LSPInlayHintsTests, VisitFunctionLikeForParameterTypeTest)
     const std::string voidString = "void";
     const std::string numberString = "number";
     const std::string stdString = "string";
-    const size_t index1 = 32;
-    const size_t index2 = 43;
-    const size_t index3 = 127;
-    const size_t index4 = 140;
+    const size_t index1 = 31;
+    const size_t index2 = 42;
+    const size_t index3 = 126;
+    const size_t index4 = 139;
     const size_t i0 = 0;
     const size_t i1 = 1;
     const size_t i2 = 2;
@@ -170,7 +173,7 @@ TEST_F(LSPInlayHintsTests, VisitFunctionLikeForParameterTypeTest)
     const auto filePaths = CreateTempFile(files, fileContent);
     ASSERT_EQ(filePaths.size(), i1);
     InlayHintList result = {};
-    ark::es2panda::lsp::Initializer initializer;
+    Initializer initializer;
 
     const auto ctx = initializer.CreateContext(filePaths[i0].c_str(), ES2PANDA_STATE_CHECKED);
     ASSERT_NE(ctx, nullptr);
@@ -212,17 +215,16 @@ TEST_F(LSPInlayHintsTests, VisitFunctionDeclarationLikeForReturnTypeTest1)
         };
     )"};
 
-    const std::string doubleString = "double";
+    const std::string doubleString = "Double";
     const size_t addIndex = 89;
     const size_t multiplyIndex = 186;
     const size_t i0 = 0;
     const size_t i1 = 1;
     const size_t i2 = 2;
-    const size_t i3 = 3;
     const auto filePaths = CreateTempFile(files, fileContent);
     ASSERT_EQ(filePaths.size(), i1);
     InlayHintList result;
-    ark::es2panda::lsp::Initializer initializer;
+    Initializer initializer;
     const auto ctx = initializer.CreateContext(filePaths[i0].c_str(), ES2PANDA_STATE_CHECKED);
     ASSERT_NE(ctx, nullptr);
     const auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
@@ -235,10 +237,10 @@ TEST_F(LSPInlayHintsTests, VisitFunctionDeclarationLikeForReturnTypeTest1)
         }
         return false;
     });
+    ASSERT_EQ(result.hints[i1].text, doubleString);
+    ASSERT_EQ(result.hints[i1].number, addIndex);
     ASSERT_EQ(result.hints[i2].text, doubleString);
-    ASSERT_EQ(result.hints[i2].number, addIndex);
-    ASSERT_EQ(result.hints[i3].text, doubleString);
-    ASSERT_EQ(result.hints[i3].number, multiplyIndex);
+    ASSERT_EQ(result.hints[i2].number, multiplyIndex);
     initializer.DestroyContext(ctx);
 }
 
@@ -262,12 +264,11 @@ TEST_F(LSPInlayHintsTests, VisitFunctionDeclarationLikeForReturnTypeTest2)
     const size_t i0 = 0;
     const size_t i1 = 1;
     const size_t i2 = 2;
-    const size_t i3 = 3;
 
     const auto filePaths = CreateTempFile(files, fileContent);
     ASSERT_EQ(filePaths.size(), i1);
     InlayHintList result;
-    ark::es2panda::lsp::Initializer initializer;
+    Initializer initializer;
     const auto ctx = initializer.CreateContext(filePaths[i0].c_str(), ES2PANDA_STATE_CHECKED);
     ASSERT_NE(ctx, nullptr);
     const auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
@@ -280,10 +281,10 @@ TEST_F(LSPInlayHintsTests, VisitFunctionDeclarationLikeForReturnTypeTest2)
         }
         return false;
     });
-    ASSERT_EQ(result.hints[i2].text, stdString);
-    ASSERT_EQ(result.hints[i2].number, greetIndex);
-    ASSERT_EQ(result.hints[i3].text, voidString);
-    ASSERT_EQ(result.hints[i3].number, sayHelloIndex);
+    ASSERT_EQ(result.hints[i1].text, stdString);
+    ASSERT_EQ(result.hints[i1].number, greetIndex);
+    ASSERT_EQ(result.hints[i2].text, voidString);
+    ASSERT_EQ(result.hints[i2].number, sayHelloIndex);
     initializer.DestroyContext(ctx);
 }
 
@@ -309,7 +310,7 @@ TEST_F(LSPInlayHintsTests, VisitVariableLikeDeclarationTest)
     const auto filePaths = CreateTempFile(files, fileContent);
     ASSERT_EQ(filePaths.size(), i1);
     InlayHintList result;
-    ark::es2panda::lsp::Initializer initializer;
+    Initializer initializer;
     const auto ctx = initializer.CreateContext(filePaths[i0].c_str(), ES2PANDA_STATE_CHECKED);
     ASSERT_NE(ctx, nullptr);
     const auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
@@ -334,3 +335,33 @@ TEST_F(LSPInlayHintsTests, VisitVariableLikeDeclarationTest)
     ASSERT_EQ(result.hints[i2].number, index3);
     initializer.DestroyContext(ctx);
 }
+
+TEST_F(LSPInlayHintsTests, StdLibMapGet)
+{
+    std::vector<std::string> files = {"getSignatureHelpItemsTest_map.ets"};
+    std::vector<std::string> texts = {R"(let map = new Map<string, number>();
+map.set("a", 1);
+let a = map.get("a");
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    const size_t start = 66;
+    const size_t length = 8;
+    auto res = lspApi->provideInlayHints(ctx, new TextSpan {start, length});
+    const int expectedNumber = 70;
+    ASSERT_EQ(res.hints.size(), 1);
+    ASSERT_EQ(res.hints[0].text, "key");
+    ASSERT_EQ(res.hints[0].number, expectedNumber);
+    ASSERT_EQ(res.hints[0].kind, InlayHintKind::PARAMETER);
+    ASSERT_FALSE(res.hints[0].whitespaceBefore);
+    ASSERT_TRUE(res.hints[0].whitespaceAfter);
+    initializer.DestroyContext(ctx);
+}
+
+}  // namespace

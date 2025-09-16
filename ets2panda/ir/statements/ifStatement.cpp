@@ -106,7 +106,7 @@ IfStatement *IfStatement::Clone(ArenaAllocator *const allocator, AstNode *const 
 {
     auto *const test = test_->Clone(allocator, nullptr)->AsExpression();
     auto *const consequent = consequent_->Clone(allocator, nullptr)->AsStatement();
-    auto *const alternate = alternate_ != nullptr ? consequent_->Clone(allocator, nullptr)->AsStatement() : nullptr;
+    auto *const alternate = alternate_ != nullptr ? alternate_->Clone(allocator, nullptr)->AsStatement() : nullptr;
     auto *const clone = allocator->New<IfStatement>(test, consequent, alternate);
 
     if (parent != nullptr) {

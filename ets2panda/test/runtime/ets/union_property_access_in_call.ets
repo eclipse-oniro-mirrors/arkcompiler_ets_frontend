@@ -26,7 +26,7 @@ function getProp(p: int) {
 }
 
 function myFunc(p: A | B) {
-    assertEQ(getProp(p.prop), 2)
+    arktest.assertEQ(getProp(p.prop), 2)
 }
 
 function main() {

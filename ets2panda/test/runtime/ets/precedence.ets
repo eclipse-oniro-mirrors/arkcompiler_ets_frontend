@@ -21,7 +21,7 @@ function testAsAndDiv() : void {
   let i : int = 1
   let f : float
   f = Int.toFloat(i) / 2
-  assertEQ(f, 0.5)
+  arktest.assertEQ(f, 0.5)
   f = Int.toFloat(i / 2)
-  assertEQ(f, 0.0)
+  arktest.assertEQ(f, 0.0)
 }

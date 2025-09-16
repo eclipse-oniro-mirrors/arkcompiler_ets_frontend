@@ -64,29 +64,29 @@ function sameTypeLUB(): void {
     let a : A = new A();
     let b : A = new A();
     let c = getTrue() ? a : b;
-    assertEQ(foo(c), 2)
+    arktest.assertEQ(foo(c), 2)
 }
 
 function objectLUB(): void {
     let a : A = new A();
     let b : Int = 2;
     let c = getTrue() ? a : b;
-    assertEQ(foo(c), 1)
+    arktest.assertEQ(foo(c), 1)
 
     let arr : Int[] | null = null;
     let d = getTrue() ? a : arr;
-    assertEQ(foo7(d), 7)
+    arktest.assertEQ(foo7(d), 7)
 }
 
 function forkSubtypeLUB(): void {
     let a : F = new F();
     let b : D = new D();
     let c = getTrue() ? a : b;
-    assertEQ(foo(c), 2)
+    arktest.assertEQ(foo(c), 2)
     let d : A = new A();
     let e = getTrue() ? a : b;
-    assertEQ(foo(e), 2)
+    arktest.assertEQ(foo(e), 2)
     let f : B = new B();
     let g = getTrue() ? a : f;
-    assertEQ(foo(g), 3)
+    arktest.assertEQ(foo(g), 3)
 }

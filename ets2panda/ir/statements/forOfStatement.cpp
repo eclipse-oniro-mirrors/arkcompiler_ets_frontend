@@ -27,12 +27,11 @@ checker::Type *ForOfStatement::CreateUnionIteratorTypes(checker::ETSChecker *che
 
     for (auto it : exprType->AsETSUnionType()->ConstituentTypes()) {
         if (it->IsETSStringType()) {
-            types.push_back(checker->GetGlobalTypesHolder()->GlobalCharType());
+            types.emplace_back(checker->GlobalCharBuiltinType());
         } else if (it->IsETSObjectType()) {
-            types.push_back(this->CheckIteratorMethodForObject(checker, it->AsETSObjectType()));
+            types.emplace_back(this->CheckIteratorMethodForObject(checker, it->AsETSObjectType()));
         } else if (it->IsETSArrayType()) {
-            types.push_back(it->AsETSArrayType()->ElementType()->Instantiate(checker->Allocator(), checker->Relation(),
-                                                                             checker->GetGlobalTypesHolder()));
+            types.emplace_back(it->AsETSArrayType()->ElementType()->Clone(checker));
             types.back()->RemoveTypeFlag(checker::TypeFlag::CONSTANT);
         } else {
             return checker->GlobalTypeError();

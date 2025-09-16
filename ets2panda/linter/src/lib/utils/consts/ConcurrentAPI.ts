@@ -18,3 +18,4 @@ export const USE_SHARED = 'use shared';
 export const ESLIB_SHAREDARRAYBUFFER = 'SharedArrayBuffer';
 export const ESLIB_SHAREDMEMORY_FILENAME = 'lib.es2017.sharedmemory.d.ts';
 export const TASKPOOL_MODULES = ['@kit.ArkTS', '@ohos.taskpool'];
+export const SYSTEM_MODULES = ['@kit.ArkTS', '@ohos.'];

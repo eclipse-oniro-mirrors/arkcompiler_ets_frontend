@@ -21,11 +21,11 @@ function testConstraints<U>(arg: A<U> | U[] | U): string {
 
 function main() {
     const valid1: A<string> = new A<string>();
-    assertEQ(testConstraints(valid1), "constraints passed");
+    arktest.assertEQ(testConstraints(valid1), "constraints passed");
 
     const valid2 = ["text"];
-    assertEQ(testConstraints(valid2), "constraints passed");
+    arktest.assertEQ(testConstraints(valid2), "constraints passed");
 
     const valid3 = "text";
-    assertEQ(testConstraints(valid3), "constraints passed");
+    arktest.assertEQ(testConstraints(valid3), "constraints passed");
 }

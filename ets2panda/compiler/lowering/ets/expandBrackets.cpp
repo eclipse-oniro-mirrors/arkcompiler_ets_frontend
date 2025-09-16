@@ -33,8 +33,8 @@ static constexpr char const FORMAT_NEW_ARRAY_EXPRESSION[] =
     "  throw new TypeError(\"Fractional part of index expression should be zero.\");"
     "};"
     "(@@E5);";
-static constexpr char const CAST_NEW_DIMENSION_EXPRESSION[] = "@@I1 as int";
-static constexpr char const CAST_OLD_DIMENSION_EXPRESSION[] = "(@@E1) as int";
+static constexpr char const CAST_NEW_DIMENSION_EXPRESSION[] = "(@@I1).toInt()";
+static constexpr char const CAST_OLD_DIMENSION_EXPRESSION[] = "(@@E1).toInt()";
 // NOLINTEND(modernize-avoid-c-arrays)
 
 ir::Expression *ExpandBracketsPhase::ProcessNewArrayInstanceExpression(
@@ -42,14 +42,13 @@ ir::Expression *ExpandBracketsPhase::ProcessNewArrayInstanceExpression(
 {
     auto *const parser = ctx->parser->AsETSParser();
     ES2PANDA_ASSERT(parser != nullptr);
-    auto *const checker = ctx->checker->AsETSChecker();
+    auto *const checker = ctx->GetChecker()->AsETSChecker();
     ES2PANDA_ASSERT(checker != nullptr);
     auto *dimension = newInstanceExpression->Dimension();
     auto *dimType = dimension->TsType();
-    if (auto *unboxed = checker->MaybeUnboxInRelation(dimType); unboxed != nullptr) {
-        dimType = unboxed;
-    }
-    if (dimType == nullptr || !dimType->HasTypeFlag(checker::TypeFlag::ETS_FLOATING_POINT)) {
+    ES2PANDA_ASSERT(dimType->IsETSObjectType());
+
+    if (!dimType->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_FLOATING_POINT)) {
         return newInstanceExpression;
     }
 
@@ -84,7 +83,7 @@ ir::Expression *ExpandBracketsPhase::ProcessNewMultiDimArrayInstanceExpression(
 {
     auto *const parser = ctx->parser->AsETSParser();
     ES2PANDA_ASSERT(parser != nullptr);
-    auto *const checker = ctx->checker->AsETSChecker();
+    auto *const checker = ctx->GetChecker()->AsETSChecker();
     ES2PANDA_ASSERT(checker != nullptr);
     ir::BlockExpression *returnExpression = nullptr;
 
@@ -98,10 +97,8 @@ ir::Expression *ExpandBracketsPhase::ProcessNewMultiDimArrayInstanceExpression(
     for (std::size_t i = 0U; i < newInstanceExpression->Dimensions().size(); ++i) {
         auto *dimension = newInstanceExpression->Dimensions()[i];
         auto *dimType = dimension->TsType();
-        if (auto *unboxed = checker->MaybeUnboxInRelation(dimType); unboxed != nullptr) {
-            dimType = unboxed;
-        }
-        if (dimType == nullptr || !dimType->HasTypeFlag(checker::TypeFlag::ETS_FLOATING_POINT)) {
+        ES2PANDA_ASSERT(dimType->IsETSObjectType());
+        if (!dimType->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_FLOATING_POINT)) {
             continue;
         }
 
@@ -146,7 +143,7 @@ ir::Expression *ExpandBracketsPhase::CreateNewMultiDimArrayInstanceExpression(
     newInstanceExpression->SetTsType(nullptr);
     blockExpression->AddStatement(ctx->AllocNode<ir::ExpressionStatement>(newInstanceExpression));
 
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     InitScopesPhaseETS::RunExternalNode(blockExpression, checker->VarBinder());
     checker->VarBinder()->AsETSBinder()->ResolveReferencesForScope(blockExpression, NearestScope(blockExpression));
     blockExpression->Check(checker);

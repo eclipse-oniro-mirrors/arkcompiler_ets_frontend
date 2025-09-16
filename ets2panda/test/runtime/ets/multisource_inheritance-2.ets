@@ -29,9 +29,9 @@ class Derived extends Abstract implements Interface {
 
 function main() {
     let d = new Derived
-    assertEQ(d.instance_field, -1)
+    arktest.assertEQ(d.instance_field, -1)
 
     d.instance_field = 3
-    assertEQ(d.instance_field, 3)
+    arktest.assertEQ(d.instance_field, 3)
 }
 

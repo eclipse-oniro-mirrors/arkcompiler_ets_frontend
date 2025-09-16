@@ -96,7 +96,7 @@
                             },
                             "end": {
                               "line": 16,
-                              "column": 33,
+                              "column": 31,
                               "program": "generic_typealias_6.ets"
                             }
                           }
@@ -109,7 +109,7 @@
                           },
                           "end": {
                             "line": 16,
-                            "column": 33,
+                            "column": 31,
                             "program": "generic_typealias_6.ets"
                           }
                         }
@@ -388,7 +388,7 @@
                     },
                     "end": {
                       "line": 18,
-                      "column": 22,
+                      "column": 21,
                       "program": "generic_typealias_6.ets"
                     }
                   }
@@ -401,7 +401,7 @@
                   },
                   "end": {
                     "line": 18,
-                    "column": 22,
+                    "column": 21,
                     "program": "generic_typealias_6.ets"
                   }
                 }
@@ -428,7 +428,7 @@
             },
             "end": {
               "line": 18,
-              "column": 23,
+              "column": 22,
               "program": "generic_typealias_6.ets"
             }
           }
@@ -441,7 +441,7 @@
           },
           "end": {
             "line": 18,
-            "column": 23,
+            "column": 22,
             "program": "generic_typealias_6.ets"
           }
         }
@@ -531,112 +531,6 @@
         "superClass": null,
         "implements": [],
         "body": [
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "generic_typealias_6.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "generic_typealias_6.ets"
-              }
-            }
-          },
           {
             "type": "MethodDefinition",
             "key": {
@@ -765,7 +659,7 @@
                                           },
                                           "end": {
                                             "line": 21,
-                                            "column": 18,
+                                            "column": 17,
                                             "program": "generic_typealias_6.ets"
                                           }
                                         }
@@ -778,7 +672,7 @@
                                         },
                                         "end": {
                                           "line": 21,
-                                          "column": 18,
+                                          "column": 17,
                                           "program": "generic_typealias_6.ets"
                                         }
                                       }
@@ -805,7 +699,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 19,
+                                    "column": 18,
                                     "program": "generic_typealias_6.ets"
                                   }
                                 }
@@ -818,7 +712,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 19,
+                                  "column": 18,
                                   "program": "generic_typealias_6.ets"
                                 }
                               }

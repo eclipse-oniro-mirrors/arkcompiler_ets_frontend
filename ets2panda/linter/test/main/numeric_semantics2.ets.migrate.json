@@ -15,9 +15,19 @@
     ],
     "result": [
         {
-            "line": 24,
+            "line": 22,
             "column": 5,
-            "endLine": 24,
+            "endLine": 22,
+            "endColumn": 26,
+            "problem": "NonDeclarationInNamespace",
+            "suggest": "",
+            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 5,
+            "endLine": 31,
             "endColumn": 30,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
@@ -25,19 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 33,
+            "line": 38,
             "column": 5,
-            "endLine": 33,
-            "endColumn": 30,
-            "problem": "NonDeclarationInNamespace",
-            "suggest": "",
-            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
-            "column": 5,
-            "endLine": 40,
+            "endLine": 38,
             "endColumn": 24,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
@@ -45,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 47,
+            "line": 45,
             "column": 5,
-            "endLine": 47,
+            "endLine": 45,
             "endColumn": 25,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
@@ -55,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 44,
+            "line": 42,
             "column": 17,
-            "endLine": 44,
+            "endLine": 42,
             "endColumn": 18,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
@@ -66,18 +66,8 @@
         },
         {
             "line": 44,
-            "column": 30,
-            "endLine": 44,
-            "endColumn": 31,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 46,
             "column": 17,
-            "endLine": 46,
+            "endLine": 44,
             "endColumn": 19,
             "problem": "NosparseArray",
             "suggest": "",
@@ -85,9 +75,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 47,
+            "line": 45,
             "column": 17,
-            "endLine": 47,
+            "endLine": 45,
             "endColumn": 23,
             "problem": "RuntimeArrayCheck",
             "suggest": "",
@@ -95,19 +85,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 74,
+            "line": 72,
             "column": 5,
-            "endLine": 74,
-            "endColumn": 17,
+            "endLine": 72,
+            "endColumn": 13,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
             "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
             "severity": "ERROR"
         },
         {
-            "line": 85,
+            "line": 83,
             "column": 5,
-            "endLine": 85,
+            "endLine": 83,
             "endColumn": 35,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
@@ -115,29 +105,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 103,
+            "line": 100,
             "column": 5,
-            "endLine": 103,
-            "endColumn": 29,
-            "problem": "NonDeclarationInNamespace",
-            "suggest": "",
-            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 104,
-            "column": 5,
-            "endLine": 104,
-            "endColumn": 42,
-            "problem": "NonDeclarationInNamespace",
-            "suggest": "",
-            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 105,
-            "column": 5,
-            "endLine": 105,
+            "endLine": 100,
             "endColumn": 27,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
@@ -145,20 +115,60 @@
             "severity": "ERROR"
         },
         {
-            "line": 117,
+            "line": 101,
             "column": 5,
-            "endLine": 117,
-            "endColumn": 19,
+            "endLine": 101,
+            "endColumn": 38,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
             "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
             "severity": "ERROR"
         },
         {
-            "line": 118,
+            "line": 102,
             "column": 5,
-            "endLine": 118,
-            "endColumn": 19,
+            "endLine": 102,
+            "endColumn": 25,
+            "problem": "NonDeclarationInNamespace",
+            "suggest": "",
+            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 114,
+            "column": 5,
+            "endLine": 114,
+            "endColumn": 15,
+            "problem": "NonDeclarationInNamespace",
+            "suggest": "",
+            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 115,
+            "column": 5,
+            "endLine": 115,
+            "endColumn": 17,
+            "problem": "NonDeclarationInNamespace",
+            "suggest": "",
+            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 120,
+            "column": 5,
+            "endLine": 120,
+            "endColumn": 27,
+            "problem": "NonDeclarationInNamespace",
+            "suggest": "",
+            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 121,
+            "column": 5,
+            "endLine": 121,
+            "endColumn": 28,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
             "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
@@ -168,7 +178,7 @@
             "line": 123,
             "column": 5,
             "endLine": 123,
-            "endColumn": 31,
+            "endColumn": 38,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
             "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
@@ -178,46 +188,26 @@
             "line": 124,
             "column": 5,
             "endLine": 124,
-            "endColumn": 32,
+            "endColumn": 53,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
             "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
             "severity": "ERROR"
         },
         {
-            "line": 126,
+            "line": 125,
             "column": 5,
-            "endLine": 126,
-            "endColumn": 44,
+            "endLine": 125,
+            "endColumn": 57,
             "problem": "NonDeclarationInNamespace",
             "suggest": "",
             "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
             "severity": "ERROR"
         },
         {
-            "line": 127,
-            "column": 5,
-            "endLine": 127,
-            "endColumn": 59,
-            "problem": "NonDeclarationInNamespace",
-            "suggest": "",
-            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 128,
-            "column": 5,
-            "endLine": 128,
-            "endColumn": 59,
-            "problem": "NonDeclarationInNamespace",
-            "suggest": "",
-            "rule": "Non-declaration statements in namespaces are not supported (single semicolons are considered as empty non-declaration statements) (arkts-no-ns-statements)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 112,
+            "line": 109,
             "column": 32,
-            "endLine": 112,
+            "endLine": 109,
             "endColumn": 60,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",

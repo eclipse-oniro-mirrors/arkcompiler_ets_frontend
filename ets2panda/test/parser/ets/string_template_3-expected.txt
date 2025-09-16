@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "string_template_3.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "string_template_3.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -205,29 +99,8 @@
                             }
                           },
                           "init": {
-                            "type": "TemplateLiteral",
-                            "expressions": [],
-                            "quasis": [
-                              {
-                                "type": "TemplateElement",
-                                "value": {
-                                  "raw": "(slash at curly braces) $\{true || false\}",
-                                  "cooked": "(slash at curly braces) ${true || false}"
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 17,
-                                    "column": 13,
-                                    "program": "string_template_3.ets"
-                                  },
-                                  "end": {
-                                    "line": 17,
-                                    "column": 55,
-                                    "program": "string_template_3.ets"
-                                  }
-                                }
-                              }
-                            ],
+                            "type": "StringLiteral",
+                            "value": "(slash at curly braces) ${true || false}",
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -326,9 +199,8 @@
                         },
                         "arguments": [
                           {
-                            "type": "Identifier",
-                            "name": "v",
-                            "decorators": [],
+                            "type": "StringLiteral",
+                            "value": "(slash at curly braces) ${true || false}",
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -393,97 +265,8 @@
                             }
                           },
                           "init": {
-                            "type": "TemplateLiteral",
-                            "expressions": [
-                              {
-                                "type": "LogicalExpression",
-                                "operator": "||",
-                                "left": {
-                                  "type": "BooleanLiteral",
-                                  "value": true,
-                                  "loc": {
-                                    "start": {
-                                      "line": 19,
-                                      "column": 46,
-                                      "program": "string_template_3.ets"
-                                    },
-                                    "end": {
-                                      "line": 19,
-                                      "column": 50,
-                                      "program": "string_template_3.ets"
-                                    }
-                                  }
-                                },
-                                "right": {
-                                  "type": "BooleanLiteral",
-                                  "value": false,
-                                  "loc": {
-                                    "start": {
-                                      "line": 19,
-                                      "column": 54,
-                                      "program": "string_template_3.ets"
-                                    },
-                                    "end": {
-                                      "line": 19,
-                                      "column": 59,
-                                      "program": "string_template_3.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 19,
-                                    "column": 46,
-                                    "program": "string_template_3.ets"
-                                  },
-                                  "end": {
-                                    "line": 19,
-                                    "column": 59,
-                                    "program": "string_template_3.ets"
-                                  }
-                                }
-                              }
-                            ],
-                            "quasis": [
-                              {
-                                "type": "TemplateElement",
-                                "value": {
-                                  "raw": "(slash at curly braces) ",
-                                  "cooked": "(slash at curly braces) "
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 19,
-                                    "column": 20,
-                                    "program": "string_template_3.ets"
-                                  },
-                                  "end": {
-                                    "line": 19,
-                                    "column": 44,
-                                    "program": "string_template_3.ets"
-                                  }
-                                }
-                              },
-                              {
-                                "type": "TemplateElement",
-                                "value": {
-                                  "raw": "",
-                                  "cooked": ""
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 19,
-                                    "column": 60,
-                                    "program": "string_template_3.ets"
-                                  },
-                                  "end": {
-                                    "line": 19,
-                                    "column": 60,
-                                    "program": "string_template_3.ets"
-                                  }
-                                }
-                              }
-                            ],
+                            "type": "StringLiteral",
+                            "value": "(slash at curly braces) true",
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -530,9 +313,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 2,
+                                "program": "string_template_3.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 9,
+                                "program": "string_template_3.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 10,
+                                "program": "string_template_3.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 18,
+                                "program": "string_template_3.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -541,42 +358,40 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 10,
+                              "column": 18,
                               "program": "string_template_3.ets"
                             }
                           }
                         },
                         "arguments": [
                           {
-                            "type": "Identifier",
-                            "name": "v",
-                            "decorators": [],
+                            "type": "StringLiteral",
+                            "value": "(slash at curly braces) ${true || false}",
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 11,
+                                "column": 19,
                                 "program": "string_template_3.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 12,
+                                "column": 20,
                                 "program": "string_template_3.ets"
                               }
                             }
                           },
                           {
-                            "type": "Identifier",
-                            "name": "expected",
-                            "decorators": [],
+                            "type": "StringLiteral",
+                            "value": "(slash at curly braces) true",
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 14,
+                                "column": 22,
                                 "program": "string_template_3.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 22,
+                                "column": 30,
                                 "program": "string_template_3.ets"
                               }
                             }
@@ -591,7 +406,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 23,
+                            "column": 31,
                             "program": "string_template_3.ets"
                           }
                         }
@@ -604,7 +419,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 24,
+                          "column": 32,
                           "program": "string_template_3.ets"
                         }
                       }

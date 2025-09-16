@@ -1,0 +1,7 @@
+import A from "./test_ets2ts_isolated_enum";
+import B from "./test_ets2ts_isolated_enum";
+import C from "./test_ets2ts_isolated_enum";
+export declare let b: A;
+declare let d: number;
+export default d;
+export declare function foo(a: number, c: C): A | Array<boolean> | Array<number> | Array<string> | B | number | string;

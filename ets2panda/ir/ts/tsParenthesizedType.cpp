@@ -28,12 +28,8 @@ void TSParenthesizedType::TransformChildren(const NodeTransformer &cb, std::stri
         type_->SetTransformedNode(transformationName, transformedNode);
         type_ = static_cast<TypeNode *>(transformedNode);
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSParenthesizedType::Iterate(const NodeTraverser &cb) const

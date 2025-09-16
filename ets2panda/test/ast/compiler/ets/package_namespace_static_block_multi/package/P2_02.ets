@@ -21,4 +21,4 @@ export namespace NS {
     }
 }
 
-/* @@? P2_02.ets:20:9 Error SyntaxError: Only one static block is allowed in one namespace or class. */
+/* @@? P2_02.ets:21:5 Error SyntaxError: Only one static block is allowed in one namespace or class. */

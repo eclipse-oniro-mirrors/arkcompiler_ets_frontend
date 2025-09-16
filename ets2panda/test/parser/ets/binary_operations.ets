@@ -20,9 +20,9 @@ export class binary_operations  {
     private sub2 : int = 8 - 3 + 8;
     private rem1 : int = 5 % 3;
     private rem2 : int = 5 % 3 - 2 * 8;
-    private mult1 : float = 6.2 * 3.14;
+    private mult1 : float = 6.2f * 3.14f;
     private mult2 : double = 6.2 * (3.7 + 8.18) / 2.2;
-    private div1 : float = 4.2 / 2.3;
+    private div1 : float = 4.2f / 2.3f;
     private div2 : double = 4.2 / (2.2 - 0.1) + (3.3 / 6.1);
     private lsh : int = 7 << 2;
     private rsh1 : int = 7 >> 2;

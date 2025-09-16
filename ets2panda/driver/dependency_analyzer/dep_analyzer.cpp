@@ -146,6 +146,8 @@ int DepAnalyzer::AnalyzeDepsForMultiFiles(const char *exec, std::vector<std::str
     std::unordered_set<std::string> parsedFileList;
     const auto *impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
 
+    impl->MemInitialize();
+
     for (auto &file : fileList) {
         if (parsedFileList.count(file) != 0U || fileDirectDependencies_.count(file) != 0U) {
             continue;
@@ -173,8 +175,8 @@ int DepAnalyzer::AnalyzeDepsForMultiFiles(const char *exec, std::vector<std::str
         impl->ProceedToState(ctx, ES2PANDA_STATE_PARSED);
 
         if (ctxImpl->state == ES2PANDA_STATE_ERROR) {
-            ctxImpl->checker->LogTypeError(std::string("Parse Failed: ").append(ctxImpl->errorMessage),
-                                           ctxImpl->errorPos);
+            ctxImpl->GetChecker()->LogTypeError(std::string("Parse Failed: ").append(ctxImpl->errorMessage),
+                                                ctxImpl->errorPos);
             impl->DestroyContext(ctx);
             impl->DestroyConfig(cfg);
             return 1;
@@ -188,6 +190,8 @@ int DepAnalyzer::AnalyzeDepsForMultiFiles(const char *exec, std::vector<std::str
         impl->DestroyContext(ctx);
         impl->DestroyConfig(cfg);
     }
+
+    impl->MemFinalize();
     return 0;
 }
 
@@ -230,6 +234,7 @@ std::optional<DepAnalyzerArgs> ParseArguments(ark::Span<const char *const> args)
 
 int DepAnalyzer::AnalyzeDeps(int argc, const char **argv)
 {
+    // NOLINTBEGIN
     int minArgCount = 2;
     if (argc < minArgCount) {
         std::cerr << "No file has been entered for analysis" << std::endl;
@@ -241,4 +246,5 @@ int DepAnalyzer::AnalyzeDeps(int argc, const char **argv)
         return 1;
     }
     return 0;
+    // NOLINTEND
 }

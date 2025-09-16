@@ -285,6 +285,15 @@ protected:
         functionScopes_.clear();
     }
 
+    virtual void CopyTo(VarBinder *target)
+    {
+        target->program_ = program_;
+        target->allocator_ = allocator_;
+        target->context_ = context_;
+        target->bindingOptions_ = bindingOptions_;
+        target->genStdLib_ = genStdLib_;
+    }
+
 private:
     parser::Program *program_ {};
     ArenaAllocator *allocator_ {};

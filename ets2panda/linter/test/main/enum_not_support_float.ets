@@ -53,3 +53,9 @@ enum ExprInits {
   H = '123'.length,
   I = 1 && 2,
 }
+
+enum Numbers14{
+  RED = 1 as number,
+  BLUE = 2,
+  GREEN = -1
+}

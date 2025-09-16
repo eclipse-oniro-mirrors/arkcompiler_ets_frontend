@@ -22,11 +22,11 @@ class B {}
 
 function main() {
     let x : String | short | A = 5 as short;
-    assertEQ((x as short) * 2, 10, "Error! Must be 10");
+    arktest.assertEQ((x as short) * 2, 10, "Error! Must be 10");
     x = "STRSTR";
-    assertTrue((x as String).equals("STRSTR"), "Error! Must be `STRSTR`")
+    arktest.assertTrue((x as String).equals("STRSTR"), "Error! Must be `STRSTR`")
     x = new A();
-    assertEQ((x as A).num, 42, "Error! Field of A must be `42`");
+    arktest.assertEQ((x as A).num, 42, "Error! Field of A must be `42`");
     x = /* @@ label */new B();  // CTE
 }
 

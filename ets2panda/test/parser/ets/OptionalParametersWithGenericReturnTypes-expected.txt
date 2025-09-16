@@ -156,7 +156,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 24,
+                              "column": 23,
                               "program": "OptionalParametersWithGenericReturnTypes.ets"
                             }
                           }
@@ -169,7 +169,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 24,
+                            "column": 23,
                             "program": "OptionalParametersWithGenericReturnTypes.ets"
                           }
                         }
@@ -183,7 +183,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 24,
+                          "column": 23,
                           "program": "OptionalParametersWithGenericReturnTypes.ets"
                         }
                       }
@@ -196,7 +196,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 24,
+                        "column": 23,
                         "program": "OptionalParametersWithGenericReturnTypes.ets"
                       }
                     }
@@ -255,7 +255,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 30,
+                                "column": 29,
                                 "program": "OptionalParametersWithGenericReturnTypes.ets"
                               }
                             }
@@ -268,7 +268,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 30,
+                              "column": 29,
                               "program": "OptionalParametersWithGenericReturnTypes.ets"
                             }
                           }
@@ -295,7 +295,7 @@
                       },
                       "end": {
                         "line": 17,
-                        "column": 32,
+                        "column": 30,
                         "program": "OptionalParametersWithGenericReturnTypes.ets"
                       }
                     }
@@ -308,7 +308,7 @@
                     },
                     "end": {
                       "line": 17,
-                      "column": 32,
+                      "column": 30,
                       "program": "OptionalParametersWithGenericReturnTypes.ets"
                     }
                   }
@@ -872,7 +872,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 24,
+                              "column": 23,
                               "program": "OptionalParametersWithGenericReturnTypes.ets"
                             }
                           }
@@ -885,7 +885,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 24,
+                            "column": 23,
                             "program": "OptionalParametersWithGenericReturnTypes.ets"
                           }
                         }
@@ -899,7 +899,7 @@
                         },
                         "end": {
                           "line": 23,
-                          "column": 24,
+                          "column": 23,
                           "program": "OptionalParametersWithGenericReturnTypes.ets"
                         }
                       }
@@ -912,7 +912,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 24,
+                        "column": 23,
                         "program": "OptionalParametersWithGenericReturnTypes.ets"
                       }
                     }
@@ -971,7 +971,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 30,
+                                "column": 29,
                                 "program": "OptionalParametersWithGenericReturnTypes.ets"
                               }
                             }
@@ -984,7 +984,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 30,
+                              "column": 29,
                               "program": "OptionalParametersWithGenericReturnTypes.ets"
                             }
                           }
@@ -1018,7 +1018,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 32,
+                                "column": 31,
                                 "program": "OptionalParametersWithGenericReturnTypes.ets"
                               }
                             }
@@ -1031,7 +1031,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 32,
+                              "column": 31,
                               "program": "OptionalParametersWithGenericReturnTypes.ets"
                             }
                           }
@@ -1058,7 +1058,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 34,
+                        "column": 32,
                         "program": "OptionalParametersWithGenericReturnTypes.ets"
                       }
                     }
@@ -1071,7 +1071,7 @@
                     },
                     "end": {
                       "line": 23,
-                      "column": 34,
+                      "column": 32,
                       "program": "OptionalParametersWithGenericReturnTypes.ets"
                     }
                   }
@@ -1527,12 +1527,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "OptionalParametersWithGenericReturnTypes.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "OptionalParametersWithGenericReturnTypes.ets"
                     }
                   }
                 },
@@ -1540,12 +1540,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "OptionalParametersWithGenericReturnTypes.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "OptionalParametersWithGenericReturnTypes.ets"
                   }
                 }
               },
@@ -1553,118 +1553,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "OptionalParametersWithGenericReturnTypes.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "OptionalParametersWithGenericReturnTypes.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "OptionalParametersWithGenericReturnTypes.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "OptionalParametersWithGenericReturnTypes.ets"
                 }
               }
             },

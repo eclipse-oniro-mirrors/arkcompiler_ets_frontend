@@ -91,6 +91,10 @@ ets2panda_add_gtest(lsp_quick_info_api_test_1 CPP_SOURCES
     quick_info_test_1.cpp
 )
 
+ets2panda_add_gtest(lsp_quick_info_api_test_api CPP_SOURCES
+    quick_info_api_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_completions_entry_details_test CPP_SOURCES
     get_completions_entry_details.cpp
 )
@@ -136,6 +140,18 @@ ets2panda_add_gtest(lsp_api_test_class_hierarchy CPP_SOURCES
     class_hierarchy_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_class_hierarchy2 CPP_SOURCES
+    class_hierarchy2_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_class_hierarchy3 CPP_SOURCES
+    class_hierarchy3_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_class_hierarchy4 CPP_SOURCES
+    class_hierarchy4_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_find_safe_delete_location CPP_SOURCES
     find_safe_delete_location_test.cpp
 )
@@ -168,12 +184,12 @@ ets2panda_add_gtest(lsp_api_completions_test CPP_SOURCES
     get_completions.cpp
 )
 
-ets2panda_add_gtest(lsp_api_ui_suggest_test CPP_SOURCES
-    code_fix/ui_plugin_suggest.cpp
-)
-
 ets2panda_add_gtest(lsp_api_completions_test_1 CPP_SOURCES
     get_completions_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_ui_suggest_test CPP_SOURCES
+    code_fix/ui_plugin_suggest.cpp
 )
 
 ets2panda_add_gtest(lsp_api_test_get_class_hierarchy_info CPP_SOURCES
@@ -207,6 +223,10 @@ ets2panda_add_gtest(lsp_api_test_refactor_provider_test CPP_SOURCES
 ets2panda_add_gtest(lsp_api_test_find_rename_locations CPP_SOURCES
     find_rename_locations_test.cpp
 )
+
+ets2panda_add_gtest(lsp_api_test_fix_expected_comma CPP_SOURCES
+    fix_expected_comma_test.cpp
+ )
 
 ets2panda_add_gtest(lsp_api_test_change_tracker CPP_SOURCES
     change_tracker_test.cpp
@@ -244,14 +264,38 @@ ets2panda_add_gtest(lsp_api_test_navigate_to CPP_SOURCES
     navigate_to_test.cpp
 )
 
-ets2panda_add_gtest(lsp_api_test_navigate_to_1 CPP_SOURCES
-    navigate_to_test_1.cpp
+ets2panda_add_gtest(lsp_api_test_offset CPP_SOURCES
+    get_offset_by_col_and_line.cpp
 )
 
 ets2panda_add_gtest(lsp_api_test_code_fix_registration CPP_SOURCES
     code_fix_registration_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_fix_return_type_in_async_func CPP_SOURCES
+    fix_return_type_in_async_function_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_fix_abstract_member CPP_SOURCES
+    fix_class_doesnt_implement_inherited_abstract_member_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_get_name_or_dotted_name_span CPP_SOURCES
     get_name_or_dotted_name_span_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_fix_convert_const_to_let CPP_SOURCES
+    fix_convert_const_to_let_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_forgotten_this_property_access CPP_SOURCES
+    forgotten_this_property_access_test.cpp
+)
+
+ ets2panda_add_gtest(lsp_api_test_remove_accidental_call_parentheses CPP_SOURCES
+    remove_accidental_call_parentheses_test.cpp
+ )
+
+ets2panda_add_gtest(lsp_api_add_missing_new_operator CPP_SOURCES
+    add_missing_new_operator_test.cpp
 )

@@ -27,6 +27,6 @@ let fob:(...args:FixedArray<number>)=>number = (...args:FixedArray<number>):numb
 
 
 function main(){
-    assertEQ(foa("1"), "c")
-    assertEQ(fob(1, 2, 3, 4), 10)
+    arktest.assertEQ(foa("1"), "c")
+    arktest.assertEQ(fob(1, 2, 3, 4), 10)
 }

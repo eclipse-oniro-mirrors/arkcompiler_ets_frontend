@@ -16,4 +16,4 @@
 function func(fn:(x:int)=>string){}
 func((x)=>1)
 
-/* @@? 17:11 Error TypeError: Type 'int' is not compatible with the enclosing method's return type 'String' */
+/* @@? 17:11 Error TypeError: Type 'Int' is not compatible with the enclosing method's return type 'String' */

@@ -42,14 +42,14 @@ export class MathCordic  {
         for (step = 0; step < 12; step++) {
             let newX : double ;
             if (targetAngle > currAngle) {
-                newX = x - (y as int >> step);
-                y = (x as int >> step) + y;
+                newX = x - (y.toInt() >> step);
+                y = (x.toInt() >> step) + y;
                 x = newX;
                 currAngle += MathCordic.ANGLES[step];
             }
             else {
-                newX = x + (y as int >> step);
-                y = -(x as int >> step) + y;
+                newX = x + (y.toInt() >> step);
+                y = -(x.toInt() >> step) + y;
                 x = newX;
                 currAngle -= MathCordic.ANGLES[step];
             }
@@ -71,7 +71,7 @@ export class MathCordic  {
         this.n = 25000;
         let total : double = MathCordic.cordic(this.n);
 
-        assertEQ(total, MathCordic.expected,  "Incorrect result");
+        arktest.assertEQ(total, MathCordic.expected,  "Incorrect result");
     }
 }
 

@@ -21,11 +21,11 @@ function main() : void{
     try {
       throw new Exception();
     } catch (e: exc) {
-      assertTrue(false)
+      arktest.assertTrue(false)
     } finally {
       a = 1;
     }
   } catch (e) {}    
 
-  assertEQ(a, 1)
+  arktest.assertEQ(a, 1)
 }

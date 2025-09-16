@@ -18,5 +18,5 @@ interface A {
 }
 let a : A = {name:"name"}
 
-assertEQ(((Value.of(a)) as ClassValue).getFieldByName("<property>name").toString(), "name")
+arktest.assertEQ(((reflect.Value.of(a)) as ClassValue).getFieldByName("<property>name").toString(), "name")
 

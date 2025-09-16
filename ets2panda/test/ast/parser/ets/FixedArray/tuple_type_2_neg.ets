@@ -23,7 +23,6 @@ let a: [number, FixedArray<...number>, number] = [1, 2, 3];
 /* @@? 17:28 Error SyntaxError: Unexpected token '>'. */
 /* @@? 17:31 Error SyntaxError: Unexpected token 'number'. */
 /* @@? 17:31 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 17:31 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 17:38 Error SyntaxError: Unexpected token ','. */
 /* @@? 17:40 Error SyntaxError: Unexpected token 'number'. */
 /* @@? 17:40 Error TypeError: Type name 'number' used in the wrong context */

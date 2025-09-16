@@ -27,4 +27,4 @@ class Derived extends Base {
 }
 
 let y: A = new Derived().foo;
-assertEQ(y.a, 1)
+arktest.assertEQ(y.a, 1)

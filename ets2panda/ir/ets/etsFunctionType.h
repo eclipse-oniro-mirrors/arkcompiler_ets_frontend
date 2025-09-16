@@ -32,6 +32,7 @@ public:
                              ArenaAllocator *const allocator) noexcept
         : TypeNode(AstNodeType::ETS_FUNCTION_TYPE, allocator), signature_(std::move(signature)), funcFlags_(funcFlags)
     {
+        InitHistory();
     }
 
     ETSFunctionType() = delete;
@@ -46,77 +47,72 @@ public:
 
     [[nodiscard]] varbinder::Scope *Scope() const noexcept override
     {
-        return scope_;
+        return GetHistoryNodeAs<ETSFunctionType>()->scope_;
     }
 
     void SetScope(varbinder::Scope *scope)
     {
-        scope_ = scope;
+        GetOrCreateHistoryNodeAs<ETSFunctionType>()->scope_ = scope;
     }
 
     void ClearScope() noexcept override
     {
-        scope_ = nullptr;
+        SetScope(nullptr);
     }
 
     const TSTypeParameterDeclaration *TypeParams() const
     {
-        return signature_.TypeParams();
+        return GetHistoryNodeAs<ETSFunctionType>()->signature_.TypeParams();
     }
 
     TSTypeParameterDeclaration *TypeParams()
     {
-        return signature_.TypeParams();
+        return GetHistoryNodeAs<ETSFunctionType>()->signature_.TypeParams();
     }
 
     const ArenaVector<ir::Expression *> &Params() const
     {
-        return signature_.Params();
+        return GetHistoryNodeAs<ETSFunctionType>()->signature_.Params();
     }
 
     const TypeNode *ReturnType() const
     {
-        return signature_.ReturnType();
+        return GetHistoryNodeAs<ETSFunctionType>()->signature_.ReturnType();
     }
 
     TypeNode *ReturnType()
     {
-        return signature_.ReturnType();
+        return GetHistoryNodeAs<ETSFunctionType>()->signature_.ReturnType();
     }
 
     ir::TSInterfaceDeclaration *FunctionalInterface()
     {
-        return functionalInterface_;
+        return GetHistoryNodeAs<ETSFunctionType>()->functionalInterface_;
     }
 
     const ir::TSInterfaceDeclaration *FunctionalInterface() const
     {
-        return functionalInterface_;
+        return GetHistoryNodeAs<ETSFunctionType>()->functionalInterface_;
     }
 
     void SetFunctionalInterface(ir::TSInterfaceDeclaration *functionalInterface)
     {
-        functionalInterface_ = functionalInterface;
+        GetOrCreateHistoryNodeAs<ETSFunctionType>()->functionalInterface_ = functionalInterface;
     }
 
     ir::ScriptFunctionFlags Flags()
     {
-        return funcFlags_;
+        return GetHistoryNodeAs<ETSFunctionType>()->funcFlags_;
     }
 
-    bool IsThrowing() const
+    ir::ScriptFunctionFlags Flags() const
     {
-        return (funcFlags_ & ir::ScriptFunctionFlags::THROWS) != 0;
-    }
-
-    bool IsRethrowing() const
-    {
-        return (funcFlags_ & ir::ScriptFunctionFlags::RETHROWS) != 0;
+        return GetHistoryNodeAs<ETSFunctionType>()->funcFlags_;
     }
 
     bool IsExtensionFunction() const
     {
-        return signature_.HasReceiver();
+        return GetHistoryNodeAs<ETSFunctionType>()->signature_.HasReceiver();
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -136,6 +132,10 @@ public:
     }
 
     [[nodiscard]] ETSFunctionType *Clone(ArenaAllocator *allocator, AstNode *parent) override;
+
+protected:
+    ETSFunctionType *Construct(ArenaAllocator *allocator) override;
+    void CopyTo(AstNode *other) const override;
 
 private:
     varbinder::Scope *scope_ {};

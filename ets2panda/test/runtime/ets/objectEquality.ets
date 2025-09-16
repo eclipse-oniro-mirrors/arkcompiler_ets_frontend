@@ -26,21 +26,21 @@ function main(): int {
 function classEquality(): void {
   let a = new A;
   let b = a;
-  assertEQ(a, b)
+  arktest.assertEQ(a, b)
   b = new A;
-  assertEQ(a, b)
+  arktest.assertEQ(a, b)
 }
 
 function arrayEquality(): void {
   let a : int[] = null;
   let b = a;
-  assertEQ(a, b)
+  arktest.assertEQ(a, b)
 }
 
 function functiontypeEquality(): void {
   let a : (x : double, y : double) => double;
   let b = a;
-  assertEQ(a, b)
+  arktest.assertEQ(a, b)
 }
 
 function nullEquality(): void {
@@ -48,61 +48,61 @@ function nullEquality(): void {
   let hit : int = 0;
 
   if (a == null) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } else {
     hit = 1;
   }
-  assertEQ(hit, 1)
+  arktest.assertEQ(hit, 1)
 
   if (a != null) {
     hit = 2;
   } else {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
-  assertEQ(hit, 2)
+  arktest.assertEQ(hit, 2)
 
   if (null == a) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } else {
     hit = 3;
   }
-  assertEQ(hit, 3)
+  arktest.assertEQ(hit, 3)
 
   if (null != a) {
     hit = 4;
   } else {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
-  assertEQ(hit, 4)
+  arktest.assertEQ(hit, 4)
 
 
   a = null;
 
   if (a != null) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } else {
     hit = 1;
   }
-  assertEQ(hit, 1)
+  arktest.assertEQ(hit, 1)
 
   if (a == null) {
     hit = 2;
   } else {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
-  assertEQ(hit, 2)
+  arktest.assertEQ(hit, 2)
 
   if (null != a) {
-    assertTrue(false)
+    arktest.assertTrue(false)
   } else {
     hit = 3;
   }
-  assertEQ(hit, 3)
+  arktest.assertEQ(hit, 3)
 
   if (null == a) {
     hit = 4;
   } else {
-    assertTrue(false)
+    arktest.assertTrue(false)
   }
-  assertEQ(hit, 4)
+  arktest.assertEQ(hit, 4)
 }

@@ -30,13 +30,17 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
 {
     auto *allocator = context->allocator;
     auto *parser = context->parser->AsETSParser();
-    auto *checker = context->checker->AsETSChecker();
+    auto *checker = context->GetChecker()->AsETSChecker();
 
     ArenaVector<ir::Statement *> blockStatements(allocator->Adapter());
     const auto arraySymbol = Gensym(allocator);
+    ES2PANDA_ASSERT(arraySymbol != nullptr);
     const auto argumentSymbol = Gensym(allocator);
+    ES2PANDA_ASSERT(argumentSymbol != nullptr);
     const auto iteratorIndex = Gensym(allocator);
+    ES2PANDA_ASSERT(iteratorIndex != nullptr);
     const auto iteratorSymbol = Gensym(allocator);
+    ES2PANDA_ASSERT(iteratorSymbol != nullptr);
     const auto elementType = checker->GetElementTypeOfArray(spreadElement->Argument()->TsType());
     auto *typeNode = allocator->New<ir::OpaqueTypeNode>(elementType, allocator);
     blockStatements.push_back(
@@ -51,7 +55,6 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
     args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
     ss << "@@I3[@@I4] = @@I5;";
     args.emplace_back(arraySymbol->Clone(allocator, nullptr));
-    ES2PANDA_ASSERT(iteratorIndex != nullptr);
     args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
     args.emplace_back(iteratorSymbol->Clone(allocator, nullptr));
     ss << "@@I6 = @@I7 + 1;";
@@ -83,7 +86,8 @@ static ir::BlockExpression *ConvertSpreadToBlockExpression(public_lib::Context *
 static bool ShouldProcessRestParameters(checker::Signature *signature, const ArenaVector<ir::Expression *> &arguments)
 {
     return signature != nullptr && signature->HasRestParameter() && !signature->RestVar()->TsType()->IsETSArrayType() &&
-           arguments.size() >= signature->Params().size() && !signature->RestVar()->TsType()->IsETSTupleType();
+           arguments.size() >= signature->Params().size() && !signature->RestVar()->TsType()->IsETSTupleType() &&
+           !signature->Function()->IsDynamic();
 }
 
 static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVector<ir::Expression *> &arguments,
@@ -91,7 +95,7 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVe
 {
     auto *allocator = context->allocator;
     auto *parser = context->parser->AsETSParser();
-    auto *checker = context->checker->AsETSChecker();
+    auto *checker = context->GetChecker()->AsETSChecker();
 
     // Handle single spread element case
     const size_t extraArgs = arguments.size() - signature->Params().size();
@@ -110,13 +114,24 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVe
 
     std::stringstream ss;
     auto *genSymIdent = Gensym(allocator);
+    auto *genSymIdent2 = Gensym(allocator);
+    // Was:
+    // ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
+    // ss << "Array.from<@@T4>(@@I5);";
+    // Now:
+    // NOTE: refactor me!
+    ES2PANDA_ASSERT(genSymIdent != nullptr && genSymIdent2 != nullptr);
     ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-    ss << "Array.from<@@T4>(@@I5);";
+    ss << "let @@I4 : Array<@@T5> = new Array<@@T6>(@@I7.length);";
+    ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";
+    ss << "@@I11;";
     auto *arrayExpr = checker->AllocNode<ir::ArrayExpression>(std::move(copiedArguments), allocator);
     ES2PANDA_ASSERT(type != nullptr);
-    auto *loweringResult =
-        parser->CreateFormattedExpression(ss.str(), genSymIdent, type, arrayExpr, type->Clone(allocator, nullptr),
-                                          genSymIdent->Clone(allocator, nullptr));
+    auto *loweringResult = parser->CreateFormattedExpression(
+        ss.str(), genSymIdent, type->Clone(allocator, nullptr), arrayExpr, genSymIdent2, type,
+        type->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr),
+        genSymIdent2->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr),
+        genSymIdent2->Clone(allocator, nullptr));
     return loweringResult;
 }
 
@@ -124,12 +139,11 @@ static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, i
                                                  checker::Signature *signature, ir::Expression *restArgsArray)
 {
     auto *allocator = context->allocator;
-    auto *varbinder = context->checker->VarBinder()->AsETSBinder();
+    auto *varbinder = context->GetChecker()->VarBinder()->AsETSBinder();
     ArenaVector<ir::Expression *> newArgs(allocator->Adapter());
 
     for (size_t i = 0; i < signature->Params().size(); ++i) {
         newArgs.push_back(originalCall->Arguments()[i]);
-        newArgs[i]->SetBoxingUnboxingFlags(ir::BoxingUnboxingFlags::NONE);
     }
 
     newArgs.push_back(restArgsArray);
@@ -140,13 +154,12 @@ static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, i
     restArgsArray->SetParent(newCall);
     newCall->SetParent(originalCall->Parent());
     newCall->AddModifier(originalCall->Modifiers());
-    newCall->AddBoxingUnboxingFlags(originalCall->GetBoxingUnboxingFlags());
     newCall->SetTypeParams(originalCall->TypeParams());
     newCall->AddAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST);
 
     auto *scope = NearestScope(newCall->Parent());
     auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, scope);
-    CheckLoweredNode(context->checker->VarBinder()->AsETSBinder(), context->checker->AsETSChecker(), newCall);
+    CheckLoweredNode(context->GetChecker()->VarBinder()->AsETSBinder(), context->GetChecker()->AsETSChecker(), newCall);
     newCall->RemoveAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST);
     return newCall;
 }
@@ -170,10 +183,10 @@ static ir::ETSNewClassInstanceExpression *RebuildNewClassInstanceExpression(
     restArgsArray->SetParent(newCall);
     newCall->SetParent(originalCall->Parent());
     newCall->AddModifier(originalCall->Modifiers());
-    newCall->AddBoxingUnboxingFlags(originalCall->GetBoxingUnboxingFlags());
     auto *scope = NearestScope(newCall->Parent());
-    auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(context->checker->VarBinder()->AsETSBinder(), scope);
-    CheckLoweredNode(context->checker->VarBinder()->AsETSBinder(), context->checker->AsETSChecker(), newCall);
+    auto bscope =
+        varbinder::LexicalScope<varbinder::Scope>::Enter(context->GetChecker()->VarBinder()->AsETSBinder(), scope);
+    CheckLoweredNode(context->GetChecker()->VarBinder()->AsETSBinder(), context->GetChecker()->AsETSChecker(), newCall);
     return newCall;
 }
 
@@ -195,7 +208,8 @@ ir::CallExpression *RestArgsLowering::TransformCallExpressionWithRestArgs(ir::Ca
                                                                           public_lib::Context *context)
 {
     checker::Type *calleeType = callExpr->Callee()->TsType();
-    if (calleeType == nullptr || calleeType->IsETSDynamicType() || calleeType->IsETSArrowType()) {
+    if (calleeType == nullptr || calleeType->IsETSArrowType() ||
+        (callExpr->Signature() != nullptr && callExpr->Signature()->Function()->IsDynamic())) {
         return callExpr;
     }
 

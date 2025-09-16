@@ -1,0 +1,1 @@
+# Known failures list for  app_workload-cmc-gc-fastverify-qemu-int

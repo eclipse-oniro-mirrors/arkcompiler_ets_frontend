@@ -1,0 +1,18 @@
+export declare interface I0 {
+    I0Method(a: string): string;
+}
+export declare interface I1 {
+    I1Method(a: number): number;
+}
+export declare class Base {
+    public get a(): number;
+    public set a(value: number);
+    public constructor(a: number);
+}
+export declare class Derived extends Base implements I0, I1 {
+    public I0Method(a: string): string;
+    public I1Method(a: number): number;
+    public get b(): number;
+    public set b(value: number);
+    public constructor(a: number, b: number);
+}

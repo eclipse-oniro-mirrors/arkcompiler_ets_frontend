@@ -16,5 +16,5 @@
 function main(): void {
     let A: Array<number> = new Array<number>();
     let a: Number[] = new Number[A.length + 2]
-    assertEQ(a.length, 2)
+    arktest.assertEQ(a.length, 2)
 }

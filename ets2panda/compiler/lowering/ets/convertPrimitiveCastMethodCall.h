@@ -31,7 +31,7 @@ namespace ark::es2panda::compiler {
 // let d: double = 3.14
 // let i: int = d as int
 //
-class ConvertPrimitiveCastMethodCall : public PhaseForDeclarations {
+class ConvertPrimitiveCastMethodCall : public PhaseForBodies {
 public:
     std::string_view Name() const override;
     bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;

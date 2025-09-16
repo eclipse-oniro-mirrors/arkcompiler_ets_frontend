@@ -20,6 +20,6 @@ class A {}
 }
 
 
-/* @@? 18:18 Error TypeError: Cannot cast type 'int' to 'String'  */
-/* @@? 19:15 Error TypeError: Cannot cast type 'int' to 'A'  */
-/* @@? 19:15 Error TypeError: Type 'A' cannot be assigned to type 'int'  */
+/* @@? 18:18 Error TypeError: Cannot cast type 'Int' to 'String'  */
+/* @@? 19:15 Error TypeError: Cannot cast type 'Int' to 'A'  */
+/* @@? 19:15 Error TypeError: Type 'A' cannot be assigned to type 'Int'  */

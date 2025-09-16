@@ -69,6 +69,7 @@ Decorator *Decorator::Clone(ArenaAllocator *const allocator, AstNode *const pare
     auto *const expr = expr_ != nullptr ? expr_->Clone(allocator, nullptr)->AsExpression() : nullptr;
     auto *const clone = allocator->New<Decorator>(expr);
     ES2PANDA_ASSERT(clone != nullptr);
+
     if (expr != nullptr) {
         expr->SetParent(clone);
     }

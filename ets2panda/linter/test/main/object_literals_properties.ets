@@ -295,3 +295,28 @@ function baz(fooBar: Map<string, Object>) {
 
 function baz2(fooBarBaz: FooBarBaz) {
 }
+
+class JJ {
+    mm?: Map<string, Object>
+    aa?: string
+}
+const mm: Map<string,Object> = new Map();
+let nn: JJ = {mm} // no error
+
+
+class DD {
+    tt?: Map<number, Object>
+    gg?: string
+}
+const tt: Map<string,Object> = new Map();
+let gg: DD = {tt} // error
+
+interface Q {
+    a:number;
+    foo():void;
+}
+
+let w: Q = {
+    a:1.0,
+    foo(){} // no error
+}

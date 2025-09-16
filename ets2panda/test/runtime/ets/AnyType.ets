@@ -27,10 +27,10 @@ a = 1 as Any
 
 function asgn<T = Any>(a: T): Any { return a }
 
-assertTrue(asgn(null) === null)
-assertTrue(asgn(undefined) === undefined)
-assertTrue(asgn("a") === "a")
-assertTrue(asgn(1) === 1)
+arktest.assertTrue(asgn(null) === null)
+arktest.assertTrue(asgn(undefined) === undefined)
+arktest.assertTrue(asgn("a") === "a")
+arktest.assertTrue(asgn(1) === 1)
 
 class C<out T> {}
 

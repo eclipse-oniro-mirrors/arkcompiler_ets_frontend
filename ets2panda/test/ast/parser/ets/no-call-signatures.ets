@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+class DescribableFunction {
+    description: string
+    /* @@ label */(someArg: number): string {
+        return someArg.toString()
+    }
+}
+function doSomething(fn: DescribableFunction) {
+    fn(6)
+}
+
+/* @@@ label Error SyntaxError: Call signatures in object types are not supported. Use '$_invoke' method instead. */
+/* @@? 23:5 Error TypeError: No static $_invoke method and static $_instantiate method in fn. fn() is not allowed. */
+/* @@? 23:5 Error TypeError: Type 'DescribableFunction' has no call signatures. */

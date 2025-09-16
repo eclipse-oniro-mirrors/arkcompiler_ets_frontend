@@ -16,4 +16,4 @@
 enum StringEnum {a = "a", b = "b", c = "c"}
 let se: StringEnum = StringEnum.b
 let s: string = se // n will get the value of "b" 
-assertEQ(s, "b")
+arktest.assertEQ(s, "b")

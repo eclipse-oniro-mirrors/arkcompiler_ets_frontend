@@ -64,7 +64,8 @@ ir::ReturnStatement *CreateTypedReturnStatement(checker::ETSChecker *checker, ir
     auto *callee = checker->AllocNode<ir::MemberExpression>(apiClass, prop, ir::MemberExpressionKind::PROPERTY_ACCESS,
                                                             false, false);
 
-    ArenaVector<ir::Expression *> args(1, checker->AllocNode<ir::NumberLiteral>("0"), allocator->Adapter());
+    ArenaVector<ir::Expression *> args(1, checker->AllocNode<ir::NumberLiteral>(lexer::Number((int64_t)0)),
+                                       allocator->Adapter());
     auto *callExpression = checker->AllocNode<ir::CallExpression>(callee, std::move(args), nullptr, false);
 
     auto *asExpression = checker->AllocNode<ir::TSAsExpression>(callExpression, type->Clone(allocator, nullptr), false);
@@ -204,6 +205,7 @@ ir::FunctionExpression *MethodBuilder::CreateFunctionExpression(ir::Identifier *
         ir::ScriptFunction::ScriptFunctionData {body, std::move(funcSignature), scriptFuncFlags, modifierFlags_});
     ES2PANDA_ASSERT(func != nullptr);
 
+    ES2PANDA_ASSERT(func != nullptr);
     func->SetIdent(id);
     func->SetReturnTypeAnnotation(returnType_);
 

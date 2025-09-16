@@ -602,12 +602,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "export.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "export.ets"
                     }
                   }
                 },
@@ -615,12 +615,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "export.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "export.ets"
                   }
                 }
               },
@@ -628,247 +628,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "export.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "export.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "export.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "goo1",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 28,
-                              "column": 5,
-                              "program": "export.ets"
-                            },
-                            "end": {
-                              "line": 28,
-                              "column": 9,
-                              "program": "export.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 10,
-                          "loc": {
-                            "start": {
-                              "line": 28,
-                              "column": 12,
-                              "program": "export.ets"
-                            },
-                            "end": {
-                              "line": 28,
-                              "column": 14,
-                              "program": "export.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 28,
-                            "column": 5,
-                            "program": "export.ets"
-                          },
-                          "end": {
-                            "line": 28,
-                            "column": 14,
-                            "program": "export.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 28,
-                          "column": 5,
-                          "program": "export.ets"
-                        },
-                        "end": {
-                          "line": 28,
-                          "column": 14,
-                          "program": "export.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "goo2",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 30,
-                              "column": 12,
-                              "program": "export.ets"
-                            },
-                            "end": {
-                              "line": 30,
-                              "column": 16,
-                              "program": "export.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 10,
-                          "loc": {
-                            "start": {
-                              "line": 30,
-                              "column": 19,
-                              "program": "export.ets"
-                            },
-                            "end": {
-                              "line": 30,
-                              "column": 21,
-                              "program": "export.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 30,
-                            "column": 12,
-                            "program": "export.ets"
-                          },
-                          "end": {
-                            "line": 30,
-                            "column": 21,
-                            "program": "export.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 30,
-                          "column": 12,
-                          "program": "export.ets"
-                        },
-                        "end": {
-                          "line": 30,
-                          "column": 21,
-                          "program": "export.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "export.ets"
                 }
               }
             },

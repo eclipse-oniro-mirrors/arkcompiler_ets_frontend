@@ -17,5 +17,5 @@ let set = 1;
 set = 2;
 let get = 3;
 get = 5;
-assertEQ(set, 2)
-assertEQ(get, 5)
+arktest.assertEQ(set, 2)
+arktest.assertEQ(get, 5)

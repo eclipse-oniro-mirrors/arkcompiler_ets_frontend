@@ -14,7 +14,7 @@
  */
 
 interface IBase { foo () {
-    assertTrue(true)
+    arktest.assertTrue(true)
 }}
 
 interface I1 extends IBase {}

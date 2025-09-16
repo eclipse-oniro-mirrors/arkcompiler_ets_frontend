@@ -37,9 +37,41 @@ void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic) const
     Print(diagnostic, std::cout);
 }
 
+void DiagnosticEngine::CleanDuplicateLog(DiagnosticType type)
+{
+    DiagnosticStorage &log = diagnostics_[type];
+    std::sort(log.begin(), log.end(), [](const auto &lhs, const auto &rhs) { return *lhs < *rhs; });
+    auto last =
+        std::unique(log.begin(), log.end(), [&](const auto &rhs, const auto &lhs) -> bool { return *rhs == *lhs; });
+    log.resize(std::distance(log.begin(), last));
+}
+
 const DiagnosticStorage &DiagnosticEngine::GetDiagnosticStorage(DiagnosticType type)
 {
     return diagnostics_[type];
+}
+
+[[nodiscard]] DiagnosticCheckpoint DiagnosticEngine::Save() const
+{
+    DiagnosticCheckpoint cp;
+    for (size_t i = 0; i < diagnostics_.size(); i++) {
+        cp[i] = diagnostics_[i].size();
+    }
+    return cp;
+}
+
+void DiagnosticEngine::Rollback(const DiagnosticCheckpoint &checkpoint)
+{
+    for (size_t i = 0; i < diagnostics_.size(); i++) {
+        diagnostics_[i].resize(checkpoint[i]);
+    }
+}
+
+void DiagnosticEngine::UndoRange(const DiagnosticCheckpoint &from, const DiagnosticCheckpoint &to)
+{
+    for (size_t i = 0; i < diagnostics_.size(); i++) {
+        diagnostics_[i].erase(diagnostics_[i].begin() + from[i], diagnostics_[i].begin() + to[i]);
+    }
 }
 
 [[noreturn]] void DiagnosticEngine::Throw(ThrowableDiagnostic diag) const
@@ -57,8 +89,8 @@ DiagnosticStorage DiagnosticEngine::GetAllDiagnostic()
     DiagnosticStorage merged;
     merged.reserve(totalSize);
     for (auto &vec : diagnostics_) {
-        for (auto &&diag : vec) {
-            merged.emplace_back(std::move(diag));
+        for (auto &diag : vec) {
+            merged.emplace_back(diag);
         }
     }
     return merged;
@@ -153,8 +185,8 @@ bool DiagnosticEngine::IsError(DiagnosticType type) const
         case DiagnosticType::SEMANTIC:
         case DiagnosticType::PLUGIN_ERROR:
         case DiagnosticType::DECLGEN_ETS2TS_ERROR:
-        case DiagnosticType::ARKTS_CONFIG_ERROR:
         case DiagnosticType::ISOLATED_DECLGEN:
+        case DiagnosticType::ARKTS_CONFIG_ERROR:
             return true;
         case DiagnosticType::WARNING:
         case DiagnosticType::DECLGEN_ETS2TS_WARNING:

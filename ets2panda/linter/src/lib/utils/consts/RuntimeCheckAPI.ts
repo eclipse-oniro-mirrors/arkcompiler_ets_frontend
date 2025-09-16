@@ -25,7 +25,7 @@ export type UncheckedIdentifier = ts.Identifier | typeof NUMBER_LITERAL | undefi
 export type CheckedIdentifier = ts.Identifier | typeof NUMBER_LITERAL;
 
 export const NUMBER_LITERAL = 'number';
-
+export const LENGTH_IDENTIFIER = 'length';
 export enum LoopConditionChecked {
   LEFT,
   RIGHT,

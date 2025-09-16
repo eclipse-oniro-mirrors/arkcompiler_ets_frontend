@@ -29,12 +29,8 @@ void TSInferType::TransformChildren(const NodeTransformer &cb, std::string_view 
         typeParam_->SetTransformedNode(transformationName, transformedNode);
         typeParam_ = transformedNode->AsTSTypeParameter();
     }
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+
+    TransformAnnotations(cb, transformationName);
 }
 
 void TSInferType::Iterate(const NodeTraverser &cb) const

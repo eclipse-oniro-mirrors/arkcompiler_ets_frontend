@@ -29,56 +29,11 @@ if ($args.Count -gt 0 -and $args[0] -eq "--restore") {
     $RestoreMode = 1
 }
 
-$OldPath = "path/to/bindings/test"
-
-$TestcasesDir = "$ScriptDir\testcases"
-
-if ($RestoreMode -eq 1) {
-    Write-Host "Restoring path '$ScriptDir' back to '$OldPath' in files..."
-}
-else {
-    Write-Host "Replacing path '$OldPath' with '$ScriptDir' in files..."
-}
-
-function Process-Directory {
-    param (
-        [string] $directory
-    )
-
-    if (-not (Test-Path -Path $directory -PathType Container)) {
-        Write-Host "Directory $directory does not exist. Skipping."
-        return
-    }
-
-    Write-Host "Processing directory: $directory"
-
-    $jsonFiles = Get-ChildItem -Path $directory -Filter "*.json" -File -Recurse
-
-    foreach ($file in $jsonFiles) {
-        Write-Host "Processing file: $($file.FullName)"
-        $content = Get-Content -Path $file.FullName -Raw
-
-        $scriptDirJson = $ScriptDir -replace '\\', '/'
-
-        if ($RestoreMode -eq 1) {
-            $newContent = $content -replace [regex]::Escape($scriptDirJson), $OldPath
-        }
-        else {
-            $newContent = $content -replace [regex]::Escape($OldPath), $scriptDirJson
-        }
-
-        Set-Content -Path $file.FullName -Value $newContent -NoNewline
-    }
-}
-
-Process-Directory -directory $TestcasesDir
-
 if ($RestoreMode -eq 1) {
     if (Test-Path -Path "$ScriptDir\..\ets2panda") {
         Remove-Item -Path "$ScriptDir\..\ets2panda" -Recurse -Force
         Write-Host "Removed '$ScriptDir\..\ets2panda' directory."
     }
-    Write-Host "Path restoration completed."
 }
 else {
     $sourceDir = "$ScriptDir\ets\ets1.2\build-tools\ets2panda"
@@ -99,7 +54,6 @@ else {
     try {
         Copy-Item -Path $sourceDir -Destination $destinationDir -Recurse -Force
         Write-Host "Directory copied successfully from '$sourceDir' to '$destinationDir'."
-        Write-Host "Path replacement completed."
     }
     catch {
         Write-Error "Failed to copy directory."

@@ -15,16 +15,6 @@
     ],
     "result": [
         {
-            "line": 20,
-            "column": 26,
-            "endLine": 20,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 25,
             "column": 16,
             "endLine": 25,
@@ -45,46 +35,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 46,
-            "column": 26,
-            "endLine": 46,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 58,
-            "column": 26,
-            "endLine": 58,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 70,
-            "column": 26,
-            "endLine": 70,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 83,
-            "column": 26,
-            "endLine": 83,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 92,
             "column": 21,
             "endLine": 92,
@@ -102,26 +52,6 @@
             "problem": "DoubleExclaBindingNotSupported",
             "suggest": "",
             "rule": "\"!!\" for bidirectional data binding is not supported (arkui-no-!!-bidirectional-data-binding)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 101,
-            "column": 26,
-            "endLine": 101,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 108,
-            "column": 21,
-            "endLine": 108,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

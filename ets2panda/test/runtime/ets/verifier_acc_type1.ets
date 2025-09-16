@@ -37,5 +37,5 @@ function foo(a: int, ...p: boolean[]): int {
 function main() {
     // use super expression
     let b: B = new B([false, false], [true, true])
-    assertEQ(b.bar(), 46)
+    arktest.assertEQ(b.bar(), 46)
 }

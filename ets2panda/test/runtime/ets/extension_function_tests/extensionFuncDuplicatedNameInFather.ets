@@ -29,7 +29,7 @@ function foo(this: Son): int {
 
 function main() {
     let s = new Son();
-    assertEQ(s.foo(), 2)
-    assertEQ(foo(s), 2)
-    assertEQ(s.goo(), 1)
+    arktest.assertEQ(s.foo(), 2)
+    arktest.assertEQ(foo(s), 2)
+    arktest.assertEQ(s.goo(), 1)
 }

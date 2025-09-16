@@ -24,7 +24,11 @@
                 {
                     "start": 605,
                     "end": 617,
-                    "replacementText": ""
+                    "replacementText": "",
+                    "line": 16,
+                    "column": 1,
+                    "endLine": 16,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -51,7 +55,32 @@
                 {
                     "start": 687,
                     "end": 703,
-                    "replacementText": ""
+                    "replacementText": "",
+                    "line": 20,
+                    "column": 5,
+                    "endLine": 20,
+                    "endColumn": 21
+                }
+            ],
+            "suggest": "",
+            "rule": "\"use concurrent\" is not supported (arkts-limited-stdlib-no-use-concurrent)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 3,
+            "endLine": 44,
+            "endColumn": 19,
+            "problem": "UseConcurrentDeprecated",
+            "autofix": [
+                {
+                    "start": 1019,
+                    "end": 1036,
+                    "replacementText": "",
+                    "line": 44,
+                    "column": 3,
+                    "endLine": 44,
+                    "endColumn": 19
                 }
             ],
             "suggest": "",

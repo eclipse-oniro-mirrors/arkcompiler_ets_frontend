@@ -35,6 +35,6 @@ function main() {
     new ClosureDemo();
     new ClosureError();
   } catch (e) {
-    assertTrue(e instanceof NullPointerError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
 }

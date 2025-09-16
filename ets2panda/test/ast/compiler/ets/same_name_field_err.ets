@@ -20,7 +20,7 @@ class SameName {
 }
 
 function main(): void { 
-    assertEQ(SameName.a, 32);
+    arktest.assertEQ(SameName.a, 32);
 }
 
 /* @@? 19:12 Error TypeError: Variable 'a' has already been declared. */

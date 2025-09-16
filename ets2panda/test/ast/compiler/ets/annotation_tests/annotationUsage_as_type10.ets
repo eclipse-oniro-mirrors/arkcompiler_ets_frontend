@@ -19,4 +19,4 @@
 let a = 1 instanceof MyAnno
 
 /* @@? 19:22 Error TypeError: Annotations cannot be used as a type.  */
-/* @@? 19:9 Error TypeError: Bad operand type, the types of the operands must be same type.  */
+/* @@? 19:22 Error TypeError: Annotations cannot be used as a type.  */

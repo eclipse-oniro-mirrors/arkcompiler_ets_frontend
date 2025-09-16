@@ -42,9 +42,11 @@ using NodeVariant =
 class SrcDumper {
 public:
     explicit SrcDumper(const ir::AstNode *node);
-    explicit SrcDumper(const ir::AstNode *node, bool isDeclgen, bool isIsolatedDeclgen = false);
+    explicit SrcDumper(const ir::AstNode *node, bool isDeclgen);
 
     void Add(const std::string &str);
+    void Add(int8_t i);
+    void Add(int16_t i);
     void Add(int32_t i);
     void Add(int64_t l);
     void Add(float f);
@@ -60,10 +62,6 @@ public:
     void Endl(size_t num = 1);
 
     bool IsDeclgen() const;
-    bool IsIsolatedDeclgen() const
-    {
-        return isIsolatedDeclgen_;
-    }
     void DumpVariant(NodeVariant &node);
     void DumpNode(const std::string &key);
 
@@ -98,7 +96,6 @@ private:
     std::stringstream ss_;
     std::string indent_;
     bool isDeclgen_ = false;
-    bool isIsolatedDeclgen_ = false;
     bool isIndirectDepPhase_ = false;
     std::unordered_map<std::string, NodeVariant> unExportNode_;
 

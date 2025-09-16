@@ -14,6 +14,11 @@
  */
 
 export namespace utils {
+  export namespace locks {
+    export class AsyncLock {
+      request(s: string): AsyncLock;
+    }
+  }
   namespace ASON {
     function stringify(value: Object | null | undefined): string;
   }

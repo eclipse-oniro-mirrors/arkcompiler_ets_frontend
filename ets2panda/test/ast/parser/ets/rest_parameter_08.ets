@@ -26,8 +26,8 @@ function sum(a: int, ...numbers: [number, number, number]): number {
 /* @@@ label1 Error TypeError: Expected 4 arguments, got 0. */
 /* @@@ label1 Error TypeError: No matching call signature */
 /* @@@ label2 Error TypeError: Expected 4 arguments, got 1. */
-/* @@@ label2 Error TypeError: No matching call signature for sum(int) */
+/* @@@ label2 Error TypeError: No matching call signature for sum(Int) */
 /* @@@ label3 Error TypeError: Expected 4 arguments, got 3. */
-/* @@@ label3 Error TypeError: No matching call signature for sum(int, int, int) */
+/* @@@ label3 Error TypeError: No matching call signature for sum(Int, Int, Int) */
 /* @@@ label4 Error TypeError: Expected 4 arguments, got 5. */
-/* @@@ label4 Error TypeError: No matching call signature for sum(int, int, int, int, int) */
+/* @@@ label4 Error TypeError: No matching call signature for sum(Int, Int, Int, Int, Int) */

@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "string_template_1.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "string_template_1.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -428,7 +322,7 @@
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 11,
+                                    "column": 20,
                                     "program": "string_template_1.ets"
                                   },
                                   "end": {
@@ -1193,9 +1087,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 31,
+                                "column": 3,
+                                "program": "string_template_1.ets"
+                              },
+                              "end": {
+                                "line": 31,
+                                "column": 10,
+                                "program": "string_template_1.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 31,
+                                "column": 11,
+                                "program": "string_template_1.ets"
+                              },
+                              "end": {
+                                "line": 31,
+                                "column": 19,
+                                "program": "string_template_1.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 31,
@@ -1204,7 +1132,7 @@
                             },
                             "end": {
                               "line": 31,
-                              "column": 11,
+                              "column": 19,
                               "program": "string_template_1.ets"
                             }
                           }
@@ -1217,12 +1145,12 @@
                             "loc": {
                               "start": {
                                 "line": 31,
-                                "column": 12,
+                                "column": 20,
                                 "program": "string_template_1.ets"
                               },
                               "end": {
                                 "line": 31,
-                                "column": 13,
+                                "column": 21,
                                 "program": "string_template_1.ets"
                               }
                             }
@@ -1234,12 +1162,12 @@
                             "loc": {
                               "start": {
                                 "line": 31,
-                                "column": 15,
+                                "column": 23,
                                 "program": "string_template_1.ets"
                               },
                               "end": {
                                 "line": 31,
-                                "column": 16,
+                                "column": 24,
                                 "program": "string_template_1.ets"
                               }
                             }
@@ -1254,7 +1182,7 @@
                           },
                           "end": {
                             "line": 31,
-                            "column": 17,
+                            "column": 25,
                             "program": "string_template_1.ets"
                           }
                         }
@@ -1267,7 +1195,7 @@
                         },
                         "end": {
                           "line": 31,
-                          "column": 18,
+                          "column": 26,
                           "program": "string_template_1.ets"
                         }
                       }
@@ -1277,9 +1205,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 32,
+                                "column": 3,
+                                "program": "string_template_1.ets"
+                              },
+                              "end": {
+                                "line": 32,
+                                "column": 10,
+                                "program": "string_template_1.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 32,
+                                "column": 11,
+                                "program": "string_template_1.ets"
+                              },
+                              "end": {
+                                "line": 32,
+                                "column": 19,
+                                "program": "string_template_1.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 32,
@@ -1288,7 +1250,7 @@
                             },
                             "end": {
                               "line": 32,
-                              "column": 11,
+                              "column": 19,
                               "program": "string_template_1.ets"
                             }
                           }
@@ -1301,12 +1263,12 @@
                             "loc": {
                               "start": {
                                 "line": 32,
-                                "column": 12,
+                                "column": 20,
                                 "program": "string_template_1.ets"
                               },
                               "end": {
                                 "line": 32,
-                                "column": 14,
+                                "column": 22,
                                 "program": "string_template_1.ets"
                               }
                             }
@@ -1318,12 +1280,12 @@
                             "loc": {
                               "start": {
                                 "line": 32,
-                                "column": 16,
+                                "column": 24,
                                 "program": "string_template_1.ets"
                               },
                               "end": {
                                 "line": 32,
-                                "column": 18,
+                                "column": 26,
                                 "program": "string_template_1.ets"
                               }
                             }
@@ -1338,7 +1300,7 @@
                           },
                           "end": {
                             "line": 32,
-                            "column": 19,
+                            "column": 27,
                             "program": "string_template_1.ets"
                           }
                         }
@@ -1351,7 +1313,7 @@
                         },
                         "end": {
                           "line": 32,
-                          "column": 20,
+                          "column": 28,
                           "program": "string_template_1.ets"
                         }
                       }

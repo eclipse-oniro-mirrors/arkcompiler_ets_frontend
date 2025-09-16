@@ -149,4 +149,15 @@ const parser::Program *SourceLocation::Program() const
     return program_;
 }
 
+void SourcePosition::SetProgram(const parser::Program *program)
+{
+    program_ = program;
+}
+
+void SourceRange::SetProgram(const parser::Program *program)
+{
+    start.SetProgram(program);
+    end.SetProgram(program);
+}
+
 }  // namespace ark::es2panda::lexer

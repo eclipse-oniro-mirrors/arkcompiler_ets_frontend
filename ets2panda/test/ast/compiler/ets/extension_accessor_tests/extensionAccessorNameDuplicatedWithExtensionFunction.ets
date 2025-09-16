@@ -20,13 +20,13 @@ class B {
 function name(b: B) {}
 function name(b: B, n: string) {}
 
-get name/* @@ label1 */(this: B): string {
-    return this.name_; 
+get name(this: B): string {
+    return this.name_;
 }
 
-set name/* @@ label2 */(this: B, n: string) {
+set name/* @@ label */(this: B, n: string) {
     this.name_ = n;
 }
 
-/* @@@ label1 Error TypeError: Function name with this assembly signature already declared.  */
-/* @@@ label2 Error TypeError: Function name with this assembly signature already declared.  */
+/* @@@ label Error TypeError: Function name with this assembly signature already declared.  */
+/* @@@ label Error TypeError: Function name with this assembly signature already declared.  */

@@ -24,6 +24,6 @@ class A{}
 let x = "abc"
 
 
-/* @@@ label Error TypeError: Class name 'A' used in the wrong context  */
+/* @@@ label Error SyntaxError: Class cannot be used as object.  */
 /* @@@ label Error TypeError: Type 'A' cannot be assigned to type 'String'  */
 /* @@@ label Error TypeError: Invalid value for annotation field, expected a constant literal.  */

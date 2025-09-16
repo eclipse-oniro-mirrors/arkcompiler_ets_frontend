@@ -41,6 +41,12 @@ config("libes2panda_public_config") {
   }
 }
 
+action("check_build_system_consistency") {
+  script = "./scripts/check_build_system_consistency.py"
+  args = [ rebase_path(".", root_build_dir) ]
+  outputs = [ "$target_gen_dir/consistency_check.stamp" ]
+}
+
 libes2panda_sources = [
   "ast_verifier/ASTVerifier.cpp",
   "ast_verifier/helpers.cpp",
@@ -69,7 +75,6 @@ libes2panda_sources = [
   "checker/ETSAnalyzerHelpers.cpp",
   "checker/ETSAnalyzerUnreachable.cpp",
   "checker/ETSchecker.cpp",
-  "checker/IsolatedDeclgenChecker.cpp",
   "checker/JSchecker.cpp",
   "checker/TSAnalyzer.cpp",
   "checker/TSAnalyzerUnreachable.cpp",
@@ -84,12 +89,9 @@ libes2panda_sources = [
   "checker/ets/castingContext.cpp",
   "checker/ets/conversion.cpp",
   "checker/ets/dynamic.cpp",
-  "checker/ets/dynamic/dynamicCall.cpp",
   "checker/ets/etsWarningAnalyzer.cpp",
   "checker/ets/function.cpp",
   "checker/ets/helpers.cpp",
-  "checker/ets/narrowingConverter.cpp",
-  "checker/ets/narrowingWideningConverter.cpp",
   "checker/ets/object.cpp",
   "checker/ets/typeCheckingHelpers.cpp",
   "checker/ets/typeConverter.cpp",
@@ -116,7 +118,6 @@ libes2panda_sources = [
   "checker/types/ets/etsAsyncFuncReturnType.cpp",
   "checker/types/ets/etsBigIntType.cpp",
   "checker/types/ets/etsBooleanType.cpp",
-  "checker/types/ets/etsDynamicType.cpp",
   "checker/types/ets/etsEnumType.cpp",
   "checker/types/ets/etsExtensionFuncHelperType.cpp",
   "checker/types/ets/etsFunctionType.cpp",
@@ -139,6 +140,7 @@ libes2panda_sources = [
   "checker/types/ets/shortType.cpp",
   "checker/types/ets/wildcardType.cpp",
   "checker/types/globalTypesHolder.cpp",
+  "checker/types/gradualType.cpp",
   "checker/types/signature.cpp",
   "checker/types/ts/anyType.cpp",
   "checker/types/ts/arrayType.cpp",
@@ -214,26 +216,30 @@ libes2panda_sources = [
   "compiler/function/generatorFunctionBuilder.cpp",
   "compiler/lowering/checkerPhase.cpp",
   "compiler/lowering/ets/ambientLowering.cpp",
+  "compiler/lowering/ets/annotationCopyLowering.cpp",
+  "compiler/lowering/ets/annotationCopyPostLowering.cpp",
   "compiler/lowering/ets/arrayLiteralLowering.cpp",
   "compiler/lowering/ets/asyncMethodLowering.cpp",
   "compiler/lowering/ets/bigintLowering.cpp",
-  "compiler/lowering/ets/boxedTypeLowering.cpp",
   "compiler/lowering/ets/boxingForLocals.cpp",
   "compiler/lowering/ets/capturedVariables.cpp",
   "compiler/lowering/ets/cfgBuilderPhase.cpp",
   "compiler/lowering/ets/constantExpressionLowering.cpp",
   "compiler/lowering/ets/convertPrimitiveCastMethodCall.cpp",
+  "compiler/lowering/ets/declGenPhase.cpp",
   "compiler/lowering/ets/declareOverloadLowering.cpp",
   "compiler/lowering/ets/defaultParametersInConstructorLowering.cpp",
   "compiler/lowering/ets/defaultParametersLowering.cpp",
-  "compiler/lowering/ets/dynamicImportLowering.cpp",
+  "compiler/lowering/ets/dynamicImport.cpp",
   "compiler/lowering/ets/enumLowering.cpp",
   "compiler/lowering/ets/enumPostCheckLowering.cpp",
+  "compiler/lowering/ets/enumPropertiesInAnnotationsLowering.cpp",
   "compiler/lowering/ets/expandBrackets.cpp",
   "compiler/lowering/ets/exportAnonymousConst.cpp",
   "compiler/lowering/ets/expressionLambdaLowering.cpp",
   "compiler/lowering/ets/extensionAccessorLowering.cpp",
   "compiler/lowering/ets/genericBridgesLowering.cpp",
+  "compiler/lowering/ets/gradualTypeNarrowing.cpp",
   "compiler/lowering/ets/insertOptionalParametersAnnotation.cpp",
   "compiler/lowering/ets/interfaceObjectLiteralLowering.cpp",
   "compiler/lowering/ets/interfacePropertyDeclarations.cpp",
@@ -245,14 +251,17 @@ libes2panda_sources = [
   "compiler/lowering/ets/opAssignment.cpp",
   "compiler/lowering/ets/optionalArgumentsLowering.cpp",
   "compiler/lowering/ets/optionalLowering.cpp",
+  "compiler/lowering/ets/overloadMappingLowering.cpp",
   "compiler/lowering/ets/packageImplicitImport.cpp",
   "compiler/lowering/ets/partialExportClassGen.cpp",
+  "compiler/lowering/ets/primitiveConversionPhase.cpp",
   "compiler/lowering/ets/promiseVoid.cpp",
   "compiler/lowering/ets/recordLowering.cpp",
   "compiler/lowering/ets/resizableArrayLowering.cpp",
   "compiler/lowering/ets/restArgsLowering.cpp",
   "compiler/lowering/ets/restTupleLowering.cpp",
   "compiler/lowering/ets/setJumpTarget.cpp",
+  "compiler/lowering/ets/setterLowering.cpp",
   "compiler/lowering/ets/spreadLowering.cpp",
   "compiler/lowering/ets/stringComparison.cpp",
   "compiler/lowering/ets/stringConstantsLowering.cpp",
@@ -262,6 +271,7 @@ libes2panda_sources = [
   "compiler/lowering/ets/topLevelStmts/importExportDecls.cpp",
   "compiler/lowering/ets/topLevelStmts/topLevelStmts.cpp",
   "compiler/lowering/ets/typeFromLowering.cpp",
+  "compiler/lowering/ets/unboxLowering.cpp",
   "compiler/lowering/ets/unionLowering.cpp",
   "compiler/lowering/phase.cpp",
   "compiler/lowering/plugin_phase.cpp",
@@ -295,6 +305,7 @@ libes2panda_sources = [
   "ir/base/decorator.cpp",
   "ir/base/metaProperty.cpp",
   "ir/base/methodDefinition.cpp",
+  "ir/base/overloadDeclaration.cpp",
   "ir/base/property.cpp",
   "ir/base/scriptFunction.cpp",
   "ir/base/scriptFunctionSignature.cpp",
@@ -307,6 +318,7 @@ libes2panda_sources = [
   "ir/brokenTypeNode.cpp",
   "ir/ets/etsClassLiteral.cpp",
   "ir/ets/etsFunctionType.cpp",
+  "ir/ets/etsIntrinsicNode.cpp",
   "ir/ets/etsKeyofType.cpp",
   "ir/ets/etsModule.cpp",
   "ir/ets/etsNeverType.cpp",
@@ -471,11 +483,11 @@ libes2panda_sources = [
   "parser/ETSparserClasses.cpp",
   "parser/ETSparserEnums.cpp",
   "parser/ETSparserExpressions.cpp",
-  "parser/ETSparserJsDocInfo.cpp",
   "parser/ETSparserNamespaces.cpp",
   "parser/ETSparserStatements.cpp",
   "parser/ETSparserTypes.cpp",
   "parser/JSparser.cpp",
+  "parser/JsdocHelper.cpp",
   "parser/TSparser.cpp",
   "parser/ThrowingTypedParser.cpp",
   "parser/TypedParser.cpp",
@@ -488,6 +500,7 @@ libes2panda_sources = [
   "parser/program/program.cpp",
   "parser/statementParser.cpp",
   "parser/statementTSParser.cpp",
+  "public/public.cpp",
   "util/arktsconfig.cpp",
   "util/bitset.cpp",
   "util/diagnostic.cpp",
@@ -497,7 +510,9 @@ libes2panda_sources = [
   "util/es2pandaMacros.cpp",
   "util/helpers.cpp",
   "util/importPathManager.cpp",
+  "util/nameMangler.cpp",
   "util/path.cpp",
+  "util/perfMetrics.cpp",
   "util/plugin.cpp",
   "util/ustring.cpp",
   "varbinder/ASBinder.cpp",
@@ -540,6 +555,7 @@ HEADERS_TO_BE_PARSED = [
   "ir/statement.h",
   "ir/irnode.h",
   "checker/types/typeRelation.h",
+  "ir/ets/etsIntrinsicNode.h",
   "ir/visitor/AstVisitor.h",
   "ir/statements/classDeclaration.h",
   "ir/base/tsMethodSignature.h",
@@ -548,7 +564,6 @@ HEADERS_TO_BE_PARSED = [
   "checker/types/ts/nonPrimitiveType.h",
   "ir/ts/tsTypeParameterInstantiation.h",
   "ir/module/importDeclaration.h",
-  "checker/types/ets/etsDynamicType.h",
   "ir/statements/doWhileStatement.h",
   "ir/expressions/literals/bigIntLiteral.h",
   "ir/expressions/assignmentExpression.h",
@@ -636,7 +651,6 @@ HEADERS_TO_BE_PARSED = [
   "ir/ts/tsParenthesizedType.h",
   "ir/ts/tsModuleDeclaration.h",
   "ir/ets/etsPackageDeclaration.h",
-  "checker/types/ets/etsDynamicFunctionType.h",
   "ir/expressions/literals/regExpLiteral.h",
   "ir/ets/etsNewArrayInstanceExpression.h",
   "checker/types/ets/etsVoidType.h",
@@ -726,6 +740,7 @@ HEADERS_TO_BE_PARSED = [
   "ir/ts/tsImportEqualsDeclaration.h",
   "ir/validationInfo.h",
   "ir/base/methodDefinition.h",
+  "ir/base/overloadDeclaration.h",
   "ir/ts/tsIntersectionType.h",
   "checker/types/ts/nullType.h",
   "checker/types/ts/unknownType.h",
@@ -762,7 +777,6 @@ HEADERS_TO_BE_PARSED = [
   "ir/ets/etsParameterExpression.h",
   "ir/ts/tsTypeQuery.h",
   "ir/expressions/importExpression.h",
-  "ir/jsDocAllowed.h",
   "varbinder/variable.h",
   "varbinder/scope.h",
   "varbinder/varbinder.h",
@@ -780,6 +794,9 @@ HEADERS_TO_BE_PARSED = [
   "es2panda.h",
   "ast_verifier/ASTVerifier.h",
   "util/importPathManager.h",
+  "util/options.h",
+  "util/path.h",
+  "util/arktsconfig.h",
 ]
 
 ES2PANDA_API_GENERATED = [
@@ -789,7 +806,6 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/varbinder/variableFlags.yaml",
   "$LIBGEN_DIR/gen/headers/ir/typed.yaml",
   "$LIBGEN_DIR/gen/headers/ir/annotationAllowed.yaml",
-  "$LIBGEN_DIR/gen/headers/ir/jsDocAllowed.yaml",
   "$LIBGEN_DIR/gen/headers/es2panda.yaml",
   "$LIBGEN_DIR/gen/headers/ir/statements/labelledStatement.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ts/unknownType.yaml",
@@ -809,7 +825,6 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/ir/expressions/objectExpression.yaml",
   "$LIBGEN_DIR/gen/headers/ir/module/importSpecifier.yaml",
   "$LIBGEN_DIR/gen/headers/ir/expressions/conditionalExpression.yaml",
-  "$LIBGEN_DIR/gen/headers/checker/types/ets/etsDynamicFunctionType.yaml",
   "$LIBGEN_DIR/gen/headers/ir/expressions/callExpression.yaml",
   "$LIBGEN_DIR/gen/headers/ir/expressions/literals/bigIntLiteral.yaml",
   "$LIBGEN_DIR/gen/headers/ir/base/classElement.yaml",
@@ -819,6 +834,7 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/ir/visitor/IterateAstVisitor.yaml",
   "$LIBGEN_DIR/gen/headers/ir/statements/functionDeclaration.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ets/etsTypeReference.yaml",
+  "$LIBGEN_DIR/gen/headers/ir/ets/etsIntrinsicNode.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ts/tupleType.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsTypeReference.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ts/functionType.yaml",
@@ -933,7 +949,6 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/ir/expressions/blockExpression.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsTypeLiteral.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsTypeParameter.yaml",
-  "$LIBGEN_DIR/gen/headers/checker/types/ets/etsDynamicType.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ets/charType.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsBooleanKeyword.yaml",
   "$LIBGEN_DIR/gen/headers/ir/base/spreadElement.yaml",
@@ -973,6 +988,7 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/ir/expressions/directEvalExpression.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsTypeParameterDeclaration.yaml",
   "$LIBGEN_DIR/gen/headers/ir/base/methodDefinition.yaml",
+  "$LIBGEN_DIR/gen/headers/ir/base/overloadDeclaration.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsNullKeyword.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsInterfaceHeritage.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ts/enumLiteralType.yaml",
@@ -1047,6 +1063,9 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/parser/program/program.yaml",
   "$LIBGEN_DIR/gen/headers/ast_verifier/ASTVerifier.yaml",
   "$LIBGEN_DIR/gen/headers/util/importPathManager.yaml",
+  "$LIBGEN_DIR/gen/headers/util/path.yaml",
+  "$LIBGEN_DIR/gen/headers/util/arktsconfig.yaml",
+  "$LIBGEN_DIR/gen/headers/util/options.yaml",
 ]
 
 ES2PANDA_API = [
@@ -1064,6 +1083,7 @@ action("libes2panda_public_parse_headers") {
   script = "./public/headers_parser/main.py"
 
   deps = [
+    ":check_build_system_consistency",
     ":es2panda_options_gen_options_h",
     ":gen_es2panda_lexer_tokenType_h",
   ]
@@ -1106,6 +1126,7 @@ ark_gen("gen") {
 # libarkruntime, and conflict with JIT setup ensues
 libes2panda_public_sources = [
   "declgen_ets2ts/declgenEts2Ts.cpp",
+  "declgen_ets2ts/isolatedDeclgenChecker.cpp",
   "public/${LIB_NAME}.cpp",
   "util/generateBin.cpp",
   "util/options.cpp",
@@ -1134,6 +1155,7 @@ if (ark_standalone_build || ark_static_standalone_build) {
     "$ark_root/assembler:arkassembler_public_config",
     "$ark_root/libpandabase:arkbase_public_config",
     "$ark_root/libpandafile:arkfile_public_config",
+    "$ark_root/abc2program:arkts_abc2program_public_config",
   ]
 }
 
@@ -1187,6 +1209,7 @@ ohos_source_set("libes2panda_frontend_static") {
     ":isa_gen_es2panda_isa_h",
   ]
   external_deps = [
+    "runtime_core:libarktsabc2program_package",
     "runtime_core:libarktsassembler_package",
     "runtime_core:libarktsbase_package",
     "runtime_core:libarktscompiler_package",
@@ -1202,6 +1225,7 @@ ohos_source_set("libes2panda_frontend_static") {
     external_deps += [
       "icu:static_icui18n",
       "icu:static_icuuc",
+      "runtime_core:arkts_abc2program_public_headers",
       "runtime_core:assembler_headers",
       "runtime_core:libpandabase_headers",
       "runtime_core:libpandafile_headers",
@@ -1238,7 +1262,7 @@ if (!(defined(ark_static_standalone_build) && ark_static_standalone_build)) {
       ":gen_${LIB_NAME}_idl",
       ":gen_${LIB_NAME}_impl_inc",
       ":gen_${LIB_NAME}_include_inc",
-      ":gen_${LIB_NAME}_list_inc"
+      ":gen_${LIB_NAME}_list_inc",
     ]
     part_name = "ets_frontend"
     subsystem_name = "arkcompiler"
@@ -1267,12 +1291,20 @@ ohos_source_set("libes2panda_public_frontend_static") {
   }
 
   external_deps = [
+    "runtime_core:libarktsabc2program_package",
     "runtime_core:libarktsbytecodeopt_package",
     sdk_libc_secshared_dep,
   ]
 
   if (ark_standalone_build || ark_static_standalone_build) {
-    deps += [ "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package" ]
+    deps += [
+      "$ark_root/abc2program:libarktsabc2program_package",
+      "$ark_root/assembler:libarktsassembler",
+      "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package",
+      "$ark_root/compiler:libarktscompiler",
+      "$ark_root/libpandabase:libarktsbase",
+      "$ark_root/libpandafile:libarktsfile",
+    ]
   } else {
     external_deps += [
       "runtime_core:assembler_headers",
@@ -1313,9 +1345,9 @@ ark_gen("es2panda_diagnostic_gen") {
     "util/diagnostic/semantic.yaml",
     "util/diagnostic/warning.yaml",
     "util/diagnostic/fatal.yaml",
-    "util/diagnostic/isolated_declgen.yaml",
     "declgen_ets2ts/declgen_ets2ts_error.yaml",
     "declgen_ets2ts/declgen_ets2ts_warning.yaml",
+    "declgen_ets2ts/isolated_declgen.yaml",
     "util/diagnostic/arktsconfig_error.yaml",
   ]
   template_files = [ "diagnostic.h.erb" ]
@@ -1357,4 +1389,42 @@ ark_gen("gen_es2panda_compiler") {
   sources = "compiler/templates"
   destination = "$target_gen_dir/generated"
   api = [ "compiler/scripts/signatures.rb" ]
+}
+
+template("panda_code_fix_gen") {
+  code_fix_api = "$ark_es2panda_root/lsp/code_fix_register.rb"
+  api_list = []
+  foreach(i, invoker.data) {
+    api_list += [ code_fix_api ]
+  }
+
+  ark_gen("$target_name") {
+    data = invoker.data
+    template_files = invoker.template_files
+    sources = invoker.sources
+    destination = invoker.destination
+    api = api_list
+    if (defined(invoker.requires)) {
+      requires = invoker.requires
+    }
+    if (defined(invoker.extra_dependencies)) {
+      extra_dependencies = invoker.extra_dependencies
+    }
+  }
+}
+
+panda_code_fix_gen("es2panda_lsp_code_fix_register_gen") {
+  data = [
+    "util/diagnostic/syntax.yaml",
+    "util/diagnostic/semantic.yaml",
+    "util/diagnostic/warning.yaml",
+    "util/diagnostic/fatal.yaml",
+    "declgen_ets2ts/declgen_ets2ts_error.yaml",
+    "declgen_ets2ts/declgen_ets2ts_warning.yaml",
+    "declgen_ets2ts/isolated_declgen.yaml",
+    "util/diagnostic/arktsconfig_error.yaml",
+  ]
+  template_files = [ "code_fix_register.h.erb" ]
+  sources = "lsp"
+  destination = "$target_gen_dir/generated"
 }

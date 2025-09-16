@@ -21,5 +21,5 @@ function foo(...x: FixedArray<int>) {
     return 2;
 }
 
-assertEQ(foo("bar"), 1)
-assertEQ(foo(1), 2)
+arktest.assertEQ(foo("bar"), 1)
+arktest.assertEQ(foo(1), 2)

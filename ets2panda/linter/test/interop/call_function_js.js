@@ -15,3 +15,5 @@
 
 export function foo(){}
 export function bar(a){}
+export function a(){}
+export function b(){}

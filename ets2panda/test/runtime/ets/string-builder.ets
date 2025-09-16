@@ -27,10 +27,10 @@ function concatenate_float(prefix: String, number: float, suffix: String) : Stri
 
 function concatenate_compile_time() : void {
   let x: String = 5 + "10";
-  assertEQ(x, "510")
+  arktest.assertEQ(x, "510")
 
   let y = 5 + "10";
-  assertEQ(y, "510")
+  arktest.assertEQ(y, "510")
 }
 
 function main(): void {
@@ -38,13 +38,13 @@ function main(): void {
   let a: String = "abc";
   a += foo(123);
 
-  assertEQ(a, "abcd")
-  assertEQ(count, 1)
+  arktest.assertEQ(a, "abcd")
+  arktest.assertEQ(count, 1)
 
   let const_str: String = 'str' + c'a';
-  assertEQ(const_str, "stra")
+  arktest.assertEQ(const_str, "stra")
 
-  assertEQ(concatenate_float('x', 1.0 as float, "y"), "x1y")
+  arktest.assertEQ(concatenate_float('x', 1.0 as float, "y"), "x1y")
 
   concatenate_compile_time();
 }

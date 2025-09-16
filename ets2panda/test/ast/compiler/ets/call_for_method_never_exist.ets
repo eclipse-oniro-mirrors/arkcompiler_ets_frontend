@@ -21,4 +21,5 @@ function main(){
     let a = new A<number>./* @@ label */foo<number>(123)
 }
 
-/* @@@ label Error TypeError: Invalid type reference.  */
+/* @@? 21:17 Error TypeError: Invalid type reference. */
+/* @@? 21:41 Error TypeError: Invalid type reference. */

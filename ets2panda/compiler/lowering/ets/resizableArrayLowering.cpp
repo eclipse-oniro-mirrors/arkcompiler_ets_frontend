@@ -13,37 +13,55 @@
  * limitations under the License.
  */
 
+#include <sstream>
+
 #include "resizableArrayLowering.h"
-#include <utility>
 #include "compiler/lowering/util.h"
-#include "ir/ets/etsUnionType.h"
 
 namespace ark::es2panda::compiler {
 
 using AstNodePtr = ir::AstNode *;
 
-static ir::AstNode *ConvertToResizableArrayType(ir::TSArrayType *node, public_lib::Context *ctx)
+static ir::AstNode *ConvertToResizableArrayType(ir::TSArrayType *node, public_lib::Context *ctx, bool insideAnnotdecl)
 {
+    std::stringstream typeAnnotationSrc;
+    typeAnnotationSrc << (insideAnnotdecl ? "FixedArray" : (node->IsReadonlyType() ? "ReadonlyArray" : "Array")) << "<"
+                      << node->ElementType()->DumpEtsSrc() << ">";
+
     auto *parser = ctx->parser->AsETSParser();
-    ir::TypeNode *typeAnnotation =
-        parser->CreateFormattedTypeAnnotation("Array<" + node->ElementType()->DumpEtsSrc() + ">");
+    ir::TypeNode *typeAnnotation = parser->CreateFormattedTypeAnnotation(typeAnnotationSrc.str());
     ES2PANDA_ASSERT(typeAnnotation != nullptr);
-    typeAnnotation->SetAnnotations(std::move(node->Annotations()));
+    typeAnnotation->SetAnnotations(node->Annotations());
     typeAnnotation->SetParent(node->Parent());
     typeAnnotation->SetRange(node->Range());
     RefineSourceRanges(node);
-    typeAnnotation->AddModifier(node->Modifiers());
+    auto modifier = node->Modifiers();
+    if (node->IsReadonlyType()) {
+        modifier &= ~ir::ModifierFlags::READONLY_PARAMETER;
+    }
+    typeAnnotation->AddModifier(modifier);
     return typeAnnotation;
 }
 
 bool ResizableArrayConvert::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
-    program->Ast()->TransformChildrenRecursivelyPreorder(
-        [ctx](ir::AstNode *node) -> AstNodePtr {
+    bool insideAnnotdecl = false;
+    program->Ast()->PreTransformChildrenRecursively(
+        [&insideAnnotdecl, ctx](ir::AstNode *node) -> AstNodePtr {
+            if (node->IsAnnotationDeclaration()) {
+                ES2PANDA_ASSERT(!insideAnnotdecl);
+                insideAnnotdecl = true;
+            }
             if (node->IsTSArrayType()) {
-                return ConvertToResizableArrayType(node->AsTSArrayType(), ctx);
+                return ConvertToResizableArrayType(node->AsTSArrayType(), ctx, insideAnnotdecl);
             }
             return node;
+        },
+        [&insideAnnotdecl](ir::AstNode *node) {
+            if (node->IsAnnotationDeclaration()) {
+                ES2PANDA_ASSERT(insideAnnotdecl);
+                insideAnnotdecl = false;
+            }
         },
         Name());
 

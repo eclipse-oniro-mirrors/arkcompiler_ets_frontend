@@ -21,4 +21,4 @@ function main(){
         2: 2
     }
 }
-/* @@@ label Error TypeError: Type A|Double is not assignable to constraint type Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String> */
+/* @@@ label Error TypeError: Type argument 'A|Double' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>'-constraint */

@@ -27,5 +27,5 @@ let arr = foo1()
 let tuple = foo2()
 /* @@ label1 */tuple[1] = "c"
 
-/* @@@ label Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label Error TypeError: Object type doesn't have proper index access method. */
 /* @@@ label1 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */

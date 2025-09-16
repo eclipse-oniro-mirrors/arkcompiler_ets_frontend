@@ -19,7 +19,7 @@ import { MyCard } from './'
 
 @Component
 struct MyComponent {
-  @State value: number = 0.0
+  @State value: number = 0
 
   build() {
     Row() {
@@ -45,7 +45,7 @@ struct Test {
 
 @Component
 struct MyComponent2 {
-  @State value: number = 0.0;
+  @State value: number = 0;
   build() {
     Row() {
       Slider({
@@ -57,7 +57,7 @@ struct MyComponent2 {
 
 @Component
 struct MyComponent3 {
-  @State value: number = 0.0;
+  @State value: number = 0;
   build() {
     Row() {
       Slider({
@@ -69,7 +69,7 @@ struct MyComponent3 {
 
 @Component
 struct MyComponent4 {
-  @State value: number = 0.0;
+  @State value: number = 0;
   build() {
     Row() {
       Slider({
@@ -82,7 +82,7 @@ struct MyComponent4 {
 @Entry
 @ComponentV2
 struct Index {
-  @Local value: number = 0.0;
+  @Local value: number = 0;
 
   build() {
     Column() {
@@ -109,14 +109,14 @@ struct Index {
 
 @ComponentV2
 struct Star {
-  @Param value: number = 0.0;
+  @Param value: number = 0;
   @Event $value: (val: number) => void = (val: number) => {};
 
   build() {
     Column() {
       Text(`${this.value}`)
       Button(`change value `).onClick(() => {
-        this.$value(10.0);
+        this.$value(10);
       })
     }
   }

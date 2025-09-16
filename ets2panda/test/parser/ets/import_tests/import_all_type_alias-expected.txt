@@ -145,12 +145,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "import_all_type_alias.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "import_all_type_alias.ets"
                     }
                   }
                 },
@@ -158,12 +158,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "import_all_type_alias.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "import_all_type_alias.ets"
                   }
                 }
               },
@@ -171,262 +171,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "import_all_type_alias.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "import_all_type_alias.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "import_all_type_alias.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "test_var",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 5,
-                              "program": "import_all_type_alias.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 13,
-                              "program": "import_all_type_alias.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ETSNewClassInstanceExpression",
-                          "typeReference": {
-                            "type": "ETSTypeReference",
-                            "part": {
-                              "type": "ETSTypeReferencePart",
-                              "name": {
-                                "type": "TSQualifiedName",
-                                "left": {
-                                  "type": "Identifier",
-                                  "name": "all",
-                                  "decorators": [],
-                                  "loc": {
-                                    "start": {
-                                      "line": 22,
-                                      "column": 20,
-                                      "program": "import_all_type_alias.ets"
-                                    },
-                                    "end": {
-                                      "line": 22,
-                                      "column": 23,
-                                      "program": "import_all_type_alias.ets"
-                                    }
-                                  }
-                                },
-                                "right": {
-                                  "type": "Identifier",
-                                  "name": "test_class",
-                                  "decorators": [],
-                                  "loc": {
-                                    "start": {
-                                      "line": 22,
-                                      "column": 24,
-                                      "program": "import_all_type_alias.ets"
-                                    },
-                                    "end": {
-                                      "line": 22,
-                                      "column": 34,
-                                      "program": "import_all_type_alias.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 22,
-                                    "column": 20,
-                                    "program": "import_all_type_alias.ets"
-                                  },
-                                  "end": {
-                                    "line": 22,
-                                    "column": 35,
-                                    "program": "import_all_type_alias.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 20,
-                                  "program": "import_all_type_alias.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 35,
-                                  "program": "import_all_type_alias.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 22,
-                                "column": 20,
-                                "program": "import_all_type_alias.ets"
-                              },
-                              "end": {
-                                "line": 22,
-                                "column": 35,
-                                "program": "import_all_type_alias.ets"
-                              }
-                            }
-                          },
-                          "arguments": [],
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 16,
-                              "program": "import_all_type_alias.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 37,
-                              "program": "import_all_type_alias.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 22,
-                            "column": 5,
-                            "program": "import_all_type_alias.ets"
-                          },
-                          "end": {
-                            "line": 22,
-                            "column": 37,
-                            "program": "import_all_type_alias.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 22,
-                          "column": 5,
-                          "program": "import_all_type_alias.ets"
-                        },
-                        "end": {
-                          "line": 22,
-                          "column": 37,
-                          "program": "import_all_type_alias.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "import_all_type_alias.ets"
                 }
               }
             },

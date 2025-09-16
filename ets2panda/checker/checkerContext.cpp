@@ -473,10 +473,6 @@ void CheckerContext::OnBreakStatement(ir::BreakStatement const *breakStatement)
 
     status_ |= CheckerStatus::MEET_BREAK;
 
-    if (smartCasts_.empty()) {
-        return;
-    }
-
     SmartCastArray smartCasts {};
     smartCasts.reserve(smartCasts_.size());
 
@@ -486,9 +482,7 @@ void CheckerContext::OnBreakStatement(ir::BreakStatement const *breakStatement)
         }
     }
 
-    if (!smartCasts.empty()) {
-        AddBreakSmartCasts(targetStatement, std::move(smartCasts));
-    }
+    AddBreakSmartCasts(targetStatement, std::move(smartCasts));
 
     ClearSmartCasts();
 }
@@ -500,7 +494,8 @@ void CheckerContext::AddBreakSmartCasts(ir::Statement const *targetStatement, Sm
 
 void CheckerContext::CombineBreakSmartCasts(ir::Statement const *targetStatement)
 {
-    ES2PANDA_ASSERT(smartCasts_.empty());
+    ES2PANDA_ASSERT((targetStatement->IsSwitchStatement() && targetStatement->AsSwitchStatement()->Cases().empty()) ||
+                    smartCasts_.empty());
 
     if (!breakSmartCasts_.empty()) {
         bool firstCase = true;

@@ -35,10 +35,10 @@ function main() {
     let a: A = new A();
     let b: B = new B();
     let c: C = new C();
-    assertEQ(a.foo(), "A")
-    assertEQ(a.foo(1), "A")
-    assertEQ(b.foo(), "B")
-    assertEQ(b.foo(1,2), "B")
-    assertEQ(c.foo(), "C")
-    assertEQ(c.foo(1,2,3), "C")
+    arktest.assertEQ(a.foo(), "A")
+    arktest.assertEQ(a.foo(1), "A")
+    arktest.assertEQ(b.foo(), "B")
+    arktest.assertEQ(b.foo(1,2), "B")
+    arktest.assertEQ(c.foo(), "C")
+    arktest.assertEQ(c.foo(1,2,3), "C")
 }

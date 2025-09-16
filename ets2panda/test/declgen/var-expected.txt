@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+'use static'
 export declare let n: double;
 
 export declare let o: Object;

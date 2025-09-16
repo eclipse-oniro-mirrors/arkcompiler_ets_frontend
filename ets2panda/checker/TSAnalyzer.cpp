@@ -1740,6 +1740,7 @@ static void AddEnumValueDeclaration(checker::TSChecker *checker, double number, 
         enumScope->AddDecl(checker->Allocator(), decl, ScriptExtension::TS);
         res = enumScope->FindLocal(memberStr, varbinder::ResolveBindingOptions::BINDINGS);
         ES2PANDA_ASSERT(res && res->IsEnumVariable());
+        ES2PANDA_ASSERT(enumVar != nullptr);
         enumVar = res->AsEnumVariable();
         enumVar->AsEnumVariable()->SetBackReference();
         enumVar->SetTsType(checker->GlobalStringType());

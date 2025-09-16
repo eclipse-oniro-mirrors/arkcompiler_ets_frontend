@@ -34,8 +34,8 @@ class A<T> {
 
 function main() {
     let a1 = new A<int>(2);
-    assertEQ(a1.foo(1), 2)
-    assertEQ(foo(a1, 1), 2)
-    assertEQ(a1.goo1(), 2)
-    assertEQ(a1.goo2(), 2)
+    arktest.assertEQ(a1.foo(1), 2)
+    arktest.assertEQ(foo(a1, 1), 2)
+    arktest.assertEQ(a1.goo1(), 2)
+    arktest.assertEQ(a1.goo2(), 2)
 }

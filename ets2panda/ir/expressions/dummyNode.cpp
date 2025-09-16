@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,7 @@ void DummyNode::Dump(ir::AstDumper *dumper) const
     dumper->Add({{"type", "DummyNode"},
                  {"name", name_},
                  {"indexName", indexName_},
-                 {"returnType", returnType_->AsETSTypeReferencePart()->Name()->AsIdentifier()->Name()}});
+                 {"returnType", AstDumper::Optional(GetReturnTypeLiteral())}});
 }
 
 void DummyNode::Dump(ir::SrcDumper *dumper) const

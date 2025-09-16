@@ -22,7 +22,7 @@ function bool2Levels(): void {
         const a0 = true;
         force(() => {
             const a1 = a0;
-            assertTrue(a0 && a1)
+            arktest.assertTrue(a0 && a1)
         });
     });
 }
@@ -36,7 +36,7 @@ function bool4Levels(): void {
                 const a2 = a1;
                 force(()=>{
                     const a3 = a2;
-                    assertTrue(a0 && a1 && a2 && a3)
+                    arktest.assertTrue(a0 && a1 && a2 && a3)
                 });
             });
         });
@@ -52,7 +52,7 @@ function number4Levels(): void {
                 const a2 = a1;
                 force(()=>{
                     const a3 = a2;
-                    assertEQ(4, a0 + a1 + a2 + a3)
+                    arktest.assertEQ(4, a0 + a1 + a2 + a3)
                 });
             });
         });
@@ -71,7 +71,7 @@ function array4Levels(): void {
                 force(()=>{
                     const a3 = a2;
                     a3[3]=a2[2];
-                    assertEQ(a0[0]+a0[1]+a0[2]+a0[3], 4)
+                    arktest.assertEQ(a0[0]+a0[1]+a0[2]+a0[3], 4)
                 });
             });
         });
@@ -90,8 +90,8 @@ function arrayProp4Levels(): void {
                 force(()=>{
                     const a3 = a2;
                     a3[3]=a2[2];
-                    assertEQ(a0.length, 4)
-                    assertEQ(a0[0]+a0[1]+a0[2]+a0[3], 4)
+                    arktest.assertEQ(a0.length, 4)
+                    arktest.assertEQ(a0[0]+a0[1]+a0[2]+a0[3], 4)
                 });
             });
         });
@@ -106,7 +106,7 @@ function paramCapture(): void {
             const a1 = a0;
             const a2 = p1;
             const a3 = v0;
-            assertEQ(a0 + a1 + a2 + a3, 4)
+            arktest.assertEQ(a0 + a1 + a2 + a3, 4)
         }
         f1(p0);
     }

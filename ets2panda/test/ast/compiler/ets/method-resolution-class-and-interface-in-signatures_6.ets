@@ -42,4 +42,6 @@ function main(): int {
     let asd5: double = /* @@ label */foo(new A(), 2.1);
     return 0;
 }
-/* @@@ label Error TypeError: Call to `foo` is ambiguous as `2` versions of `foo` are available: `foo(a: J, d: double): double` and `foo(a: I, d: double): double`  */
+/* @@? 38:21 Error TypeError: Call to `foo` is ambiguous as `2` versions of `foo` are available: `foo(b: Int, a: I): Int` and `foo(d: Double, a: J): Double` */
+/* @@? 41:21 Error TypeError: Call to `foo` is ambiguous as `2` versions of `foo` are available: `foo(a: I, b: Int): Int` and `foo(a: J, d: Double): Double` */
+/* @@@ label Error TypeError: Call to `foo` is ambiguous as `2` versions of `foo` are available: `foo(a: J, d: Double): Double` and `foo(a: I, d: Double): Double`  */

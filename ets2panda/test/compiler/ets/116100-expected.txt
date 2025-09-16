@@ -80,12 +80,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "116100.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "116100.ets"
                     }
                   }
                 },
@@ -93,12 +93,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "116100.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "116100.ets"
                   }
                 }
               },
@@ -106,233 +106,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "116100.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "116100.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "116100.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "fp",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 16,
-                              "column": 5,
-                              "program": "116100.ets"
-                            },
-                            "end": {
-                              "line": 16,
-                              "column": 7,
-                              "program": "116100.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ArrowFunctionExpression",
-                          "function": {
-                            "type": "ScriptFunction",
-                            "id": null,
-                            "generator": false,
-                            "async": false,
-                            "expression": false,
-                            "params": [],
-                            "returnType": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 16,
-                                  "column": 33,
-                                  "program": "116100.ets"
-                                },
-                                "end": {
-                                  "line": 16,
-                                  "column": 37,
-                                  "program": "116100.ets"
-                                }
-                              }
-                            },
-                            "body": {
-                              "type": "BlockStatement",
-                              "statements": [],
-                              "loc": {
-                                "start": {
-                                  "line": 16,
-                                  "column": 41,
-                                  "program": "116100.ets"
-                                },
-                                "end": {
-                                  "line": 16,
-                                  "column": 43,
-                                  "program": "116100.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 16,
-                                "column": 29,
-                                "program": "116100.ets"
-                              },
-                              "end": {
-                                "line": 16,
-                                "column": 43,
-                                "program": "116100.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 16,
-                              "column": 29,
-                              "program": "116100.ets"
-                            },
-                            "end": {
-                              "line": 16,
-                              "column": 43,
-                              "program": "116100.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 16,
-                            "column": 5,
-                            "program": "116100.ets"
-                          },
-                          "end": {
-                            "line": 16,
-                            "column": 43,
-                            "program": "116100.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 16,
-                          "column": 5,
-                          "program": "116100.ets"
-                        },
-                        "end": {
-                          "line": 16,
-                          "column": 43,
-                          "program": "116100.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "116100.ets"
                 }
               }
             },
@@ -449,7 +228,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 43,
+                "column": 29,
                 "program": "116100.ets"
               }
             }

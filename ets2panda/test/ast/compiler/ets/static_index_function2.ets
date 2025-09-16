@@ -27,5 +27,5 @@ function main(): int {
 }
 
 /* @@@ label Error TypeError: '$_set' is a static property of 'A' */
-/* @@@ label1 Error TypeError: Class name 'A' used in the wrong context */
+/* @@@ label1 Error SyntaxError: Class cannot be used as object. */
 /* @@@ label2 Error TypeError: '$_set' is a static property of 'A' */

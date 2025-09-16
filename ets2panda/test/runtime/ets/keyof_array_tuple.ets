@@ -22,9 +22,10 @@ class B{
   readonly field1:("abcd"|(keyof A)|number|A)[] = ["abcd","field1","foo",123,new A()];
 }
 
+type keyofA = keyof A;
+
 function main():void{
   let a:A = new A();
-  type keyofA = keyof A;
 
   let x:("abcd"|keyofA|number|A)[] = ["abcd","field1","foo",123,a];
   let x2:("abcd"|(keyof A)|number|A)[] = ["abcd","field1","foo",123,a];

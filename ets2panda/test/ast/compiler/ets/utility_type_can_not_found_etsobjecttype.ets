@@ -26,4 +26,5 @@ class X<T extends BaseObject> {
 }
 
 /* @@? 16:34 Error TypeError: Cannot find type 'any'. */
+/* @@? 21:29 Error TypeError: T in Partial<T> must be a class or an interface type. */
 /* @@? 23:14 Error TypeError: Target type for class composite needs to be an object type, found 'T' */

@@ -128,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 25,
+                                    "column": 23,
                                     "program": "this_cmp_object.ets"
                                   }
                                 }
@@ -141,7 +141,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 25,
+                                  "column": 23,
                                   "program": "this_cmp_object.ets"
                                 }
                               }
@@ -161,53 +161,7 @@
                             }
                           },
                           "init": {
-                            "type": "ConditionalExpression",
-                            "test": {
-                              "type": "BooleanLiteral",
-                              "value": true,
-                              "loc": {
-                                "start": {
-                                  "line": 18,
-                                  "column": 26,
-                                  "program": "this_cmp_object.ets"
-                                },
-                                "end": {
-                                  "line": 18,
-                                  "column": 30,
-                                  "program": "this_cmp_object.ets"
-                                }
-                              }
-                            },
-                            "consequent": {
-                              "type": "ThisExpression",
-                              "loc": {
-                                "start": {
-                                  "line": 18,
-                                  "column": 33,
-                                  "program": "this_cmp_object.ets"
-                                },
-                                "end": {
-                                  "line": 18,
-                                  "column": 37,
-                                  "program": "this_cmp_object.ets"
-                                }
-                              }
-                            },
-                            "alternate": {
-                              "type": "ThisExpression",
-                              "loc": {
-                                "start": {
-                                  "line": 18,
-                                  "column": 40,
-                                  "program": "this_cmp_object.ets"
-                                },
-                                "end": {
-                                  "line": 18,
-                                  "column": 44,
-                                  "program": "this_cmp_object.ets"
-                                }
-                              }
-                            },
+                            "type": "ThisExpression",
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -353,7 +307,7 @@
                         "loc": {
                           "start": {
                             "line": 19,
-                            "column": 12,
+                            "column": 20,
                             "program": "this_cmp_object.ets"
                           },
                           "end": {
@@ -421,7 +375,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 3,
+                "column": 10,
                 "program": "this_cmp_object.ets"
               },
               "end": {
@@ -642,12 +596,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "this_cmp_object.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "this_cmp_object.ets"
                     }
                   }
                 },
@@ -655,12 +609,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "this_cmp_object.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "this_cmp_object.ets"
                   }
                 }
               },
@@ -668,118 +622,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "this_cmp_object.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "this_cmp_object.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "this_cmp_object.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "this_cmp_object.ets"
                 }
               }
             },

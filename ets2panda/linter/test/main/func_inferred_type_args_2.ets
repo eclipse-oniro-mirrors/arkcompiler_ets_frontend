@@ -98,3 +98,43 @@ let a: Array<string> | undefined = new Array();
 let aa: Array<string> | Set<string> | undefined = new Array();
 let b: Array<string> | Array<number> | undefined = new Array();
 let test: string[] = new Array();
+
+class A {
+  test(key: string): Promise<string> {
+    if (key == undefined || key.length == 0.0) {
+      return new Promise((resolve, reject) => {
+        reject("empty key");});
+    } else {
+    }
+  }
+}
+class SubArr extends Array {}
+let subArr = new SubArr();
+class SubSet extends Set{}
+let subSet = new SubSet();
+class SubMap extends Map{}
+let subMap = new SubMap();
+class SubWeakMap extends WeakMap{}
+let subWeakMap = new SubWeakMap();
+class SubWeakSet extends WeakSet{}
+let subWeakSet = new SubWeakSet();
+
+class C {}
+class D<T> {}
+let a: D<[C]> = new D();
+
+function fun(a?:Map<string,string>){
+  let c:Map<string,string>|undefined
+  if(a === undefined){
+    a = new Map()
+  }
+  if(a){
+    a = new Map()
+  }
+  if(c){
+    c = new Map()
+  }
+  if(c === undefined){
+    c = new Map()
+  }
+}

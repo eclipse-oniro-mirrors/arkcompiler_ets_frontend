@@ -25,12 +25,12 @@ function main(): void {
         128: (param: Number):string => { return "7" },
         256: (param: Number):string => { return "8" }
     }
-    assertEQ(handlerMap.get(2)!(1), "1")
-    assertEQ(handlerMap.get(4)!(1), "2")
-    assertEQ(handlerMap.get(8)!(1), "3")
-    assertEQ(handlerMap.get(16)!(1), "4")
-    assertEQ(handlerMap.get(32)!(1), "5")
-    assertEQ(handlerMap.get(64)!(1), "6")
-    assertEQ(handlerMap.get(128)!(1), "7")
-    assertEQ(handlerMap.get(256)!(1), "8")
+    arktest.assertEQ(handlerMap.get(2)!(1), "1")
+    arktest.assertEQ(handlerMap.get(4)!(1), "2")
+    arktest.assertEQ(handlerMap.get(8)!(1), "3")
+    arktest.assertEQ(handlerMap.get(16)!(1), "4")
+    arktest.assertEQ(handlerMap.get(32)!(1), "5")
+    arktest.assertEQ(handlerMap.get(64)!(1), "6")
+    arktest.assertEQ(handlerMap.get(128)!(1), "7")
+    arktest.assertEQ(handlerMap.get(256)!(1), "8")
 }

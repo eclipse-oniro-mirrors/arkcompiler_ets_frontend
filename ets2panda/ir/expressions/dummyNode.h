@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,8 +44,13 @@ public:
 
 public:
     explicit DummyNode(util::StringView const name, util::StringView indexName, TypeNode *returnType,
-                       DummyNodeFlag flag)
-        : AstNode(AstNodeType::DUMMYNODE), name_(name), indexName_(indexName), returnType_(returnType), flag_(flag)
+                       DummyNodeFlag flag, TypeNode *indexTypeAnno = nullptr)
+        : AstNode(AstNodeType::DUMMYNODE),
+          name_(name),
+          indexName_(indexName),
+          returnType_(returnType),
+          indexTypeAnno_(indexTypeAnno),
+          flag_(flag)
     {
     }
 
@@ -88,6 +93,11 @@ public:
         return name_;
     }
 
+    TypeNode *IndexTypeAnno() const
+    {
+        return indexTypeAnno_;
+    }
+
     bool operator==(const DummyNode &node) const
     {
         return name_.Is(std::string(node.Name().Bytes()));
@@ -111,6 +121,7 @@ private:
     util::StringView name_;
     util::StringView indexName_;
     TypeNode *returnType_;
+    TypeNode *indexTypeAnno_;
     DummyNodeFlag flag_ {DummyNodeFlag::NONE};
 };
 }  // namespace ark::es2panda::ir

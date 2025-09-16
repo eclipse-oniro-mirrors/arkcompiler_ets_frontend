@@ -19,6 +19,11 @@
 
 namespace ark::es2panda::ir {
 
+void ETSReExportDeclaration::SetETSImportDeclarations(ETSImportDeclaration *etsImportDeclarations)
+{
+    this->GetOrCreateHistoryNodeAs<ETSReExportDeclaration>()->etsImportDeclarations_ = etsImportDeclarations;
+}
+
 ETSReExportDeclaration::ETSReExportDeclaration(ETSImportDeclaration *etsImportDeclarations,
                                                const std::vector<std::string> &userPaths, util::StringView programPath,
                                                ArenaAllocator *allocator)
@@ -30,26 +35,29 @@ ETSReExportDeclaration::ETSReExportDeclaration(ETSImportDeclaration *etsImportDe
     for (const auto &path : userPaths) {
         userPaths_.emplace_back(util::UString(path, allocator).View());
     }
+    InitHistory();
 }
 
 void ETSReExportDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
-    if (etsImportDeclarations_ != nullptr) {
-        if (auto *transformedNode = cb(etsImportDeclarations_); etsImportDeclarations_ != transformedNode) {
-            etsImportDeclarations_->SetTransformedNode(transformationName, transformedNode);
-            etsImportDeclarations_ = transformedNode->AsETSImportDeclaration();
+    auto const etsImportDecl = GetETSImportDeclarations();
+    if (etsImportDecl != nullptr) {
+        if (auto *transformedNode = cb(etsImportDecl); etsImportDecl != transformedNode) {
+            etsImportDecl->SetTransformedNode(transformationName, transformedNode);
+            SetETSImportDeclarations(transformedNode->AsETSImportDeclaration());
         }
     }
+    InitHistory();
 }
 
 void ETSReExportDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    etsImportDeclarations_->Iterate(cb);
+    GetETSImportDeclarations()->Iterate(cb);
 }
 
 void ETSReExportDeclaration::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", "ETSReExportDeclaration"}, {"ets_import_declarations", etsImportDeclarations_}});
+    dumper->Add({{"type", "ETSReExportDeclaration"}, {"ets_import_declarations", GetETSImportDeclarations()}});
 }
 
 void ETSReExportDeclaration::Dump([[maybe_unused]] ir::SrcDumper *dumper) const
@@ -82,14 +90,16 @@ checker::VerifiedType ETSReExportDeclaration::Check(checker::ETSChecker * /*chec
     return {this, nullptr};
 }
 
-AstNode *ETSReExportDeclaration::Construct(ArenaAllocator *allocator)
+ETSReExportDeclaration *ETSReExportDeclaration::Construct(ArenaAllocator *allocator)
 {
-    return allocator->New<ETSReExportDeclaration>(nullptr, std::vector<std::string> {}, util::StringView {}, allocator);
+    std::vector<std::string> userPaths;
+    return allocator->New<ETSReExportDeclaration>(nullptr, std::move(userPaths),
+                                                  util::UString(std::string(), allocator).View(), allocator);
 }
 
 void ETSReExportDeclaration::CopyTo(AstNode *other) const
 {
-    auto otherImpl = other->AsETSReExportDeclaration();
+    auto otherImpl = reinterpret_cast<ETSReExportDeclaration *>(other);
 
     otherImpl->etsImportDeclarations_ = etsImportDeclarations_;
     otherImpl->userPaths_ = userPaths_;

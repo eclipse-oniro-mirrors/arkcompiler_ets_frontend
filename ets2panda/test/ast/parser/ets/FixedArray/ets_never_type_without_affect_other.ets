@@ -25,5 +25,6 @@ function foo(): number {
     }
     return n!
 }
-/* @@? 23:17 Error TypeError: Bad operand type, the types of the operands must be numeric type.  */
-/* @@? 26:12 Warning Warning: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'.  */
+
+/* @@? 23:17 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 26:12 Error Warning: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */

@@ -125,7 +125,13 @@ TryStatement::TryStatement(TryStatement const &other, ArenaAllocator *allocator)
       finalizerInsertions_(allocator->Adapter()),
       finallyCanCompleteNormally_(other.finallyCanCompleteNormally_)
 {
-    block_ = other.block_ == nullptr ? nullptr : other.block_->Clone(allocator, this)->AsBlockStatement();
+    if (other.block_ == nullptr) {
+        block_ = nullptr;
+    } else {
+        auto *blockClone = other.block_->Clone(allocator, this);
+        ES2PANDA_ASSERT(blockClone != nullptr);
+        block_ = blockClone->AsBlockStatement();
+    }
     for (auto &cc : other.catchClauses_) {
         if (cc == nullptr) {
             catchClauses_.push_back(nullptr);

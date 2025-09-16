@@ -27,5 +27,6 @@ function main() : void {
     type t2<T> = Array<T>
 }
 
-/* @@? 26:6 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
 /* @@? 22:2 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
+/* @@? 27:5 Error SyntaxError: Illegal start of Type Alias expression.  */
+/* @@? 27:5 Error SyntaxError: Annotations are not allowed on this type of declaration.  */

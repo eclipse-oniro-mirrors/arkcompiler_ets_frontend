@@ -25,17 +25,17 @@ function main(): void {
   let bill : Person = new Person();
   let name = bill.name;
 
-  assertEQ(name, "Bill")
-  assertEQ(name.length, 4)
+  arktest.assertEQ(name, "Bill")
+  arktest.assertEQ(name.length, 4)
 
   name = bill.name;
-  assertEQ(name, "Bill")
+  arktest.assertEQ(name, "Bill")
 
   let juan: Person | null = dummy();
   name = juan?.name ?? "Juan";
-  assertEQ(name.length, 4)
+  arktest.assertEQ(name.length, 4)
 
   let test = false;
 
-  assertTrue(juan?.name === undefined)
+  arktest.assertTrue(juan?.name === undefined)
 }

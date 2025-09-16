@@ -34,8 +34,8 @@ function returnC(): C {
 }
 
 function test(c: C = {}, x: int = 0, ivv: int = 0) {
-    assertEQ(c.x, x, "c.x != x")
-    assertEQ(c.iv.v, ivv, "c.iv.v != ivv")
+    arktest.assertEQ(c.x, x, "c.x != x")
+    arktest.assertEQ(c.iv.v, ivv, "c.iv.v != ivv")
 }
 
 function main(): int {

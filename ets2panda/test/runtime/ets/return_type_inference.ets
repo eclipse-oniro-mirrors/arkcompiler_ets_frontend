@@ -21,5 +21,5 @@ function bar(a:number) {
 }
 
 function main() {
-    assertEQ(bar(1.1), Number.parseInt("100"))
+    arktest.assertEQ(bar(1.1), Number.parseInt("100"))
 }

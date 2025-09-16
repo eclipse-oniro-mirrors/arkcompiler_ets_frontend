@@ -18,7 +18,7 @@ function main() {
     b[0] = 2.0;
     let myvar: double = b[0] as double;
 
-    assertEQ(myvar, 2.0)
+    arktest.assertEQ(myvar, 2.0)
 
     let c: Object;
     c = 2.0;
@@ -35,6 +35,6 @@ function main() {
         c as double;
     } catch (e: ClassCastError){
     } catch(other) {
-        assertEQ(1, 0)
+        arktest.assertEQ(1, 0)
     }
 }

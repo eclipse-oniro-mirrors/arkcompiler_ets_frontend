@@ -23,7 +23,7 @@ function fn(...ns: (Object|null|undefined)[]): int {
 
 function main(): int {
     const fp: FunctionN<int> = fn
-    assertEQ(fp(2, 3, 5), 10)
+    arktest.assertEQ(fp(2, 3, 5), 10)
     const fp2: FunctionN<int> = (...vs: (Object|null|undefined)[]): int => {
         let sum: int = 0
         for (const v of vs) {
@@ -31,6 +31,6 @@ function main(): int {
         }
         return sum
     }
-    assertEQ((fp2(7, 11, 13), 31)
+    arktest.assertEQ((fp2(7, 11, 13), 31)
     return 0
 }

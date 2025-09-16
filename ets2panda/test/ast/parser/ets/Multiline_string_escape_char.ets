@@ -18,5 +18,6 @@ function main(){
               Test escape characters` | "X";
 }
 
+/* @@? 17:5 Error SyntaxError: Illegal start of Type Alias expression. */
 /* @@? 17:15 Error SyntaxError: Invalid character escape sequence. */
 /* @@? 17:15 Error SyntaxError: Invalid Unicode escape. */

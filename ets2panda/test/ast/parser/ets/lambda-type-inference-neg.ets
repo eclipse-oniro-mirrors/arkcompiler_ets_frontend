@@ -20,10 +20,9 @@ function foo(callback: (x: boolean) => void): void {
 }
 
 function main(): void {
-    /* @@ label1 */foo((x) => {
+    foo((x) => {
     });
 }
 
 
 /* @@@ label Error TypeError: Function foo with this assembly signature already declared.  */
-/* @@@ label1 Error TypeError: Reference to foo is ambiguous  */

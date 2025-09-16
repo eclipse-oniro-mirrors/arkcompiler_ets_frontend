@@ -26,12 +26,12 @@
      let classA  = Type.from<A>();
      let classB  = Type.from<B>();
      let classC  = Type.from<A>();
-     assertTrue(classA.toString() == classC.toString())
-     assertTrue(classA.toString() != classB.toString())
+     arktest.assertTrue(classA.toString() == classC.toString())
+     arktest.assertTrue(classA.toString() != classB.toString())
 
      let interfaceA  = Type.from<C>();
      let interfaceB  = Type.from<D>();
      let interfaceC  = Type.from<C>();
-     assertTrue(interfaceA.toString() == interfaceC.toString())
-     assertTrue(interfaceA.toString() != interfaceB.toString())
+     arktest.assertTrue(interfaceA.toString() == interfaceC.toString())
+     arktest.assertTrue(interfaceA.toString() != interfaceB.toString())
 }

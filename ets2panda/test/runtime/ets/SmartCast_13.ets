@@ -21,7 +21,7 @@ function foo(arg?: number): C | undefined {
 }
 
 function main() {
-    assertTrue(foo(5) instanceof C)
-    assertEQ(foo(3), undefined)
-    assertTrue(foo(undefined) instanceof C)
+    arktest.assertTrue(foo(5) instanceof C)
+    arktest.assertEQ(foo(3), undefined)
+    arktest.assertTrue(foo(undefined) instanceof C)
 }

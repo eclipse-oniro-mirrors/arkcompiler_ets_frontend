@@ -34,9 +34,9 @@ class A {
 
 function main(){
     let a = new A()
-    assertEQ(a.catch(()=>{}),"first catch is matched")
-    assertEQ(a.catch((e:Error|undefined|null)=>{}),"second catch is matched")
-    assertEQ(a.catch((e:Error)=>{}),"second catch is matched")
-    assertEQ(a.catch((e:Error,e2:Error)=>{}),"third catch is matched")
-    assertEQ(a.catch((e:Error,e2:Error,e3:Error)=>{}),"fourth catch is matched")
+    arktest.assertEQ(a.catch(()=>{}),"first catch is matched")
+    arktest.assertEQ(a.catch((e:Error|undefined|null)=>{}),"second catch is matched")
+    arktest.assertEQ(a.catch((e:Error)=>{}),"second catch is matched")
+    arktest.assertEQ(a.catch((e:Error,e2:Error)=>{}),"third catch is matched")
+    arktest.assertEQ(a.catch((e:Error,e2:Error,e3:Error)=>{}),"fourth catch is matched")
 }

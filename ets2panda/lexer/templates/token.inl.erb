@@ -32,10 +32,6 @@ const char *TokenToString(TokenType type)  // NOLINT(readability-function-size)
             return "string literal";
         case TokenType::LITERAL_CHAR:
             return "char literal";
-        case TokenType::JS_DOC_START:
-            return "/**";
-        case TokenType::JS_DOC_END:
-            return "*/";
         case TokenType::EOS:
             return "end of stream";
         default:

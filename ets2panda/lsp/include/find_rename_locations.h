@@ -26,7 +26,7 @@ namespace ark::es2panda::lsp {
 
 // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
 struct RenameLocation {
-    std::string filePath;
+    std::string fileName;
     size_t start = 0;
     size_t end = 0;
     size_t line = 0;
@@ -35,18 +35,18 @@ struct RenameLocation {
 
     bool operator<(const RenameLocation &other) const
     {
-        return std::tie(filePath, start, end, line, prefixText, suffixText) <
-               std::tie(other.filePath, other.start, other.end, other.line, other.prefixText, other.suffixText);
+        return std::tie(fileName, start, end, line, prefixText, suffixText) <
+               std::tie(other.fileName, other.start, other.end, other.line, other.prefixText, other.suffixText);
     }
 };
 // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 std::set<RenameLocation> FindRenameLocations(CancellationToken *tkn,
-                                             const std::vector<ark::es2panda::SourceFile> &files,
-                                             const ark::es2panda::SourceFile &file, size_t position);
+                                             const std::vector<es2panda_Context *> &fileContexts,
+                                             es2panda_Context *context, size_t position);
 
-std::set<RenameLocation> FindRenameLocations(const std::vector<ark::es2panda::SourceFile> &files,
-                                             const ark::es2panda::SourceFile &file, size_t position);
+std::set<RenameLocation> FindRenameLocations(const std::vector<es2panda_Context *> &fileContexts,
+                                             es2panda_Context *context, size_t position);
 
 }  // namespace ark::es2panda::lsp
 

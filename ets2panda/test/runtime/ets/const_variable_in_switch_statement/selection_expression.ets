@@ -14,9 +14,9 @@
  */
 let d = 1
 const a = (d == 1) ? 2 : 3;
-assertEQ(a, 2);
+arktest.assertEQ(a, 2);
 const b = (d == 0) ? 4 : 5;
-assertEQ(b, 5);
+arktest.assertEQ(b, 5);
 let c = 5
 let e = 0
 switch (c) {
@@ -30,5 +30,5 @@ switch (c) {
         break;
 }
 
-assertNE(e, a);
-assertEQ(e, b);
+arktest.assertNE(e, a);
+arktest.assertEQ(e, b);

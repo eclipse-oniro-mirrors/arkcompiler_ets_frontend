@@ -32,7 +32,7 @@ static void MergeExternalFilesIntoCompiledProgram(parser::Program *const program
 
             // Because same package files must be in one folder, relative path references in an external
             // source's import declaration certainly will be the same (and can be resolved) from the global program too
-            program->Ast()->Statements().emplace_back(stmt);
+            program->Ast()->AddStatement(stmt);
         }
     }
 }

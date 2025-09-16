@@ -26,11 +26,11 @@ function foo(value:Object) {
 }
 function main(){
     let array = Array<NS1.I>();
-    assertEQ(foo(array), true)
+    arktest.assertEQ(foo(array), true)
     let a: NS1.I = { a: "test", b: true, array: [1, 2, 3] }
     array.push(a);
     let firstElement = array[0] as NS1.I;
-    assertEQ(firstElement.a, "test");
-    assertEQ(firstElement.b, true);
-    assertEQ(firstElement.array.length, 3);
+    arktest.assertEQ(firstElement.a, "test");
+    arktest.assertEQ(firstElement.b, true);
+    arktest.assertEQ(firstElement.array.length, 3);
 }

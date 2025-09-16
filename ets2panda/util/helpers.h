@@ -19,6 +19,7 @@
 #include "varbinder/variableFlags.h"
 #include "mem/pool_manager.h"
 #include "util/ustring.h"
+#include "util/perfMetrics.h"
 #include "ir/module/importSpecifier.h"
 
 #include <cmath>
@@ -30,6 +31,7 @@ class Program;
 
 namespace ark::es2panda::varbinder {
 class Variable;
+class ETSBinder;
 }  // namespace ark::es2panda::varbinder
 
 namespace ark::es2panda::checker {
@@ -55,7 +57,7 @@ class ClassStaticBlock;
 class TSInterfaceDeclaration;
 class TSEnumDeclaration;
 class ETSImportDeclaration;
-enum class AstNodeType;
+enum class AstNodeType : uint8_t;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::util {
@@ -161,6 +163,14 @@ public:
     static bool IsAsyncMethod(ir::AstNode const *node);
 
     static bool IsGlobalVar(const ark::es2panda::varbinder::Variable *var);
+
+    static varbinder::Scope *NearestScope(const ir::AstNode *ast);
+    static checker::ETSObjectType const *ContainingClass(const ir::AstNode *ast);
+    // Note: run varbinder and checker on the new node generated in lowering phases (without
+    // ClearTypesVariablesAndScopes)
+    static void CheckLoweredNode(varbinder::ETSBinder *varBinder, checker::ETSChecker *checker, ir::AstNode *node);
+
+    static bool IsNumericGlobalBuiltIn(checker::Type *type, checker::ETSChecker *checker);
 
     template <typename T, typename V>
     static ArenaVector<T *> ConvertVector(const ArenaVector<V *> &src)

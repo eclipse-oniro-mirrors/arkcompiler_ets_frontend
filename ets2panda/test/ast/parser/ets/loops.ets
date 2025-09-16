@@ -65,4 +65,3 @@ function labeledcontinue(): void {
 }
 
 /* @@? 19:15 Error TypeError: Unresolved reference i */
-/* @@? 19:15 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */

@@ -36,7 +36,6 @@ public:
     virtual checker::Type *Check(ir::nodeType *node) const override;  // CC-OFF(G.PRE.02,G.PRE.09) name part
     AST_NODE_REINTERPRET_MAPPING(DECLARE_ETSANALYZER_CHECK_METHOD)
 #undef DECLARE_ETSANALYZER_CHECK_METHOD
-    checker::Type *PreferredType(ir::ObjectExpression *expr) const;
     checker::Type *CheckDynamic(ir::ObjectExpression *expr) const;
     checker::Type *GetPreferredType(ir::ArrayExpression *expr) const;
     void GetUnionPreferredType(ir::Expression *expr, Type *originalType) const;
@@ -58,6 +57,7 @@ private:
     checker::Type *UnwrapPromiseType(checker::Type *type) const;
     checker::Type *GetSmartType(ir::AssignmentExpression *expr, checker::Type *leftType,
                                 checker::Type *rightType) const;
+    bool SetAssignmentExpressionTarget(ir::AssignmentExpression *const expr, ETSChecker *checker) const;
     bool CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc,
                                          checker::Type *&funcReturnType, ir::TypeNode *returnTypeAnnotation,
                                          ETSChecker *checker) const;

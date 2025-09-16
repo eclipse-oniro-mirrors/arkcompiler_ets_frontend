@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
+type Matrix = int[][]
+
 class A {
   fn(): void {
-    type Matrix = int[][]
   }
 }

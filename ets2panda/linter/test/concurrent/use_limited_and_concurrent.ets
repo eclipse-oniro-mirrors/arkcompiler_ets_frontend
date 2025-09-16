@@ -39,3 +39,16 @@ switch (variable2) {
     case 'use shared':
         break;
 }
+
+function refreshToGetFontScale(): number {
+  'use concurrent';
+  const TAG = 'SCBScreenLock-refreshToGetFontScale';
+  const log: LogHelper = LogHelper.getLogHelper(LogDomain.KG, TAG);
+  const FONT_SCALE_DEFAULT: number = 1;
+  try {
+    return uiAppearance.getFontScale();
+  } catch (err) {
+    log.showError(`uiAppearance getFontScale err,code:${err?.code}`);
+  }
+  return FONT_SCALE_DEFAULT;
+}

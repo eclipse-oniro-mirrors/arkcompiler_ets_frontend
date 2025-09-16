@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,12 +23,16 @@ class ResolveIdentifiers : public Phase {
 public:
     static constexpr std::string_view NAME = "ResolveIdentifiers";
 
+    void FetchCache(public_lib::Context *ctx, parser::Program *program) override;
+
     std::string_view Name() const override
     {
         return "ResolveIdentifiers";
     }
 
     bool Perform(public_lib::Context *ctx, parser::Program *program) override;
+
+    void InsertReExported(parser::Program *program, varbinder::ETSBinder *pVarBinder, parser::Program *extProgram);
 };
 }  // namespace ark::es2panda::compiler
 

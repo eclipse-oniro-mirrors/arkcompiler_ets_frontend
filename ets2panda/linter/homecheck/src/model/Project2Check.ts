@@ -85,40 +85,34 @@ export class Project2Check {
     }
 
     public async emitCheck(): Promise<void> {
-        await Promise.all(Array.from(this.enabledRuleCheckerMap.values()).map(checker => {
-            try {
-                this.processSceneCallbacks();
-                this.flMatcherMap.forEach((callback, matcher) => {
-                    matchFiles(this.arkFiles, matcher, callback);
-                });
-                this.nsMatcherMap.forEach((callback, matcher) => {
-                    matchNameSpaces(this.arkFiles, matcher, callback);
-                });
-                this.clsMatcherMap.forEach((callback, matcher) => {
-                    matchClass(this.arkFiles, matcher, callback);
-                });
-                this.mtdMatcherMap.forEach((callback, matcher) => {
-                    matchMethods(this.arkFiles, matcher, callback);
-                });
-                this.fieldMatcherMap.forEach((callback, matcher) => {
-                    matchFields(this.arkFiles, matcher, callback);
-                });
-            } catch (error) {
-                logger.error(`Checker ${checker.rule.ruleId} error: `, error);
-            }
-        }));
+        this.processSceneCallbacks();
+        this.flMatcherMap.forEach((callback, matcher) => {
+            matchFiles(this.arkFiles, matcher, callback);
+        });
+        this.nsMatcherMap.forEach((callback, matcher) => {
+            matchNameSpaces(this.arkFiles, matcher, callback);
+        });
+        this.clsMatcherMap.forEach((callback, matcher) => {
+            matchClass(this.arkFiles, matcher, callback);
+        });
+        this.mtdMatcherMap.forEach((callback, matcher) => {
+            matchMethods(this.arkFiles, matcher, callback);
+        });
+        this.fieldMatcherMap.forEach((callback, matcher) => {
+            matchFields(this.arkFiles, matcher, callback);
+        });
     }
 
     private processSceneCallbacks(): void {
-        try {
-            this.sceneCallBacks.forEach((callback) => {
-                if (this.arkFiles.length !== 0) {
+        this.sceneCallBacks.forEach((callback) => {
+            if (this.arkFiles.length !== 0) {
+                try {
                     callback(this.arkFiles[0].getScene());
+                } catch (error) {
+                    logger.error(`Error in scene callback: `, error);
                 }
-            });
-        } catch (error) {
-            logger.error(`Error in scene callbacks: `, error);
-        }
+            }
+        });
     }
 
     public collectIssues(): void {

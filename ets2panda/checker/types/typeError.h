@@ -52,4 +52,42 @@ public:
 
 }  // namespace ark::es2panda::checker
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+#define EMPTY_VALUE
+
+// CC-OFFNXT(G.PRE.02-CPP) TypeError handling macro definition
+#define ERROR_SANITY_CHECK(etsChecker, test, whatIfFails) \
+    if (!(test)) {                                        \
+        ES2PANDA_ASSERT((etsChecker)->IsAnyError());      \
+        whatIfFails;                                      \
+    }
+
+// CC-OFFNXT(G.PRE.02-CPP) TypeError handling macro definition
+#define ERROR_TYPE_CHECK(etsChecker, testType, whatIfError) \
+    ES2PANDA_ASSERT((testType) != nullptr);                 \
+    if ((testType)->IsTypeError()) {                        \
+        ES2PANDA_ASSERT((etsChecker)->IsAnyError());        \
+        whatIfError;                                        \
+    }
+
+// CC-OFFNXT(G.PRE.02-CPP) TypeError handling macro definition
+#define FORWARD_TYPE_ERROR(etsChecker, testType, target)             \
+    ES2PANDA_ASSERT((testType) != nullptr);                          \
+    if ((testType)->IsTypeError()) {                                 \
+        ES2PANDA_ASSERT((etsChecker)->IsAnyError());                 \
+        /* CC-OFFNXT(G.PRE.05) error handling. */                    \
+        return (target)->SetTsType((etsChecker)->GlobalTypeError()); \
+    }
+
+// CC-OFFNXT(G.PRE.02-CPP) TypeError handling macro definition
+#define FORWARD_VALUE_ON_TYPE_ERROR(etsChecker, testType, target, value) \
+    ES2PANDA_ASSERT((testType) != nullptr);                              \
+    if ((testType)->IsTypeError()) {                                     \
+        ES2PANDA_ASSERT((etsChecker)->IsAnyError());                     \
+        (target)->SetTsType((etsChecker)->GlobalTypeError());            \
+        /* CC-OFFNXT(G.PRE.05) error handling. */                        \
+        return value;                                                    \
+    }
+// NOLINTEND(cppcoreguidelines-macro-usage)
+
 #endif

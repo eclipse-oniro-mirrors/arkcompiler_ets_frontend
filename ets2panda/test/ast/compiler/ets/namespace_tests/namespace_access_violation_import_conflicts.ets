@@ -24,6 +24,6 @@ Space1.foo(); // CTE
 Space1.foo(1234); //ok
 
 /* @@? 19:31 Error TypeError: Property 'constant' does not exist on type 'Space2'  */
-/* @@? 20:23 Error TypeError: Type 'int' cannot be assigned to type 'String'  */
+/* @@? 20:23 Error TypeError: Type 'Int' cannot be assigned to type 'String'  */
 /* @@? 23:1 Error TypeError: Expected 1 arguments, got 0.  */
 /* @@? 23:1 Error TypeError: No matching call signature  */

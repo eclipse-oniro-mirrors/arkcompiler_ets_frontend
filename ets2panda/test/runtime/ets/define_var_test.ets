@@ -16,6 +16,6 @@
 function main() {
     let Infinity: number = Double.POSITIVE_INFINITY;
     let NaN: number;
-    assertEQ(Infinity, Double.POSITIVE_INFINITY);
-    assertEQ(NaN, 0);
+    arktest.assertEQ(Infinity, Double.POSITIVE_INFINITY);
+    arktest.assertEQ(NaN, 0);
 }

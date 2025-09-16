@@ -41,7 +41,7 @@ x = 20;
 
 function main() : void 
 {
-  assertEQ(a.getx(), 1)
-  assertEQ(b.getx(), 10)
-  assertEQ(x, 20)
+  arktest.assertEQ(a.getx(), 1)
+  arktest.assertEQ(b.getx(), 10)
+  arktest.assertEQ(x, 20)
 }

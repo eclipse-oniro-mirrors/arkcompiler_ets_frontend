@@ -25,12 +25,12 @@ function foo(this: A): string {
 
 let show2: (this: A) => string;
 show2 = show;
-assertEQ(show2(a), "Hi,Bob")
-assertEQ(a.show2(), "Hi,Bob" )
-assertEQ(show2(new A()), "Hi,Bob")
-assertEQ(new A().show2(), "Hi,Bob" )
+arktest.assertEQ(show2(a), "Hi,Bob")
+arktest.assertEQ(a.show2(), "Hi,Bob" )
+arktest.assertEQ(show2(new A()), "Hi,Bob")
+arktest.assertEQ(new A().show2(), "Hi,Bob" )
 show2 = foo;
-assertEQ(show2(a), "Hello,Bob")
-assertEQ(a.show2(), "Hello,Bob" )
-assertEQ(show2(new A()), "Hello,Bob")
-assertEQ(new A().show2(), "Hello,Bob" )
+arktest.assertEQ(show2(a), "Hello,Bob")
+arktest.assertEQ(a.show2(), "Hello,Bob" )
+arktest.assertEQ(show2(new A()), "Hello,Bob")
+arktest.assertEQ(new A().show2(), "Hello,Bob" )

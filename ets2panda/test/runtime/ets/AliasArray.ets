@@ -33,41 +33,41 @@ function main()
 {
     let v1 : double[] = [1,2,3];                       // double[]
     v1[0] = new Double(4);
-    assertEQ(v1[0], 4)
-    assertEQ(v1[1], 2)
-    assertEQ(v1[2], 3)
+    arktest.assertEQ(v1[0], 4)
+    arktest.assertEQ(v1[1], 2)
+    arktest.assertEQ(v1[2], 3)
     
     let v2 : Alias1Array<double> =  [5, 6, 7];         // double[]
     v2[0] = new Double(8);
-    assertEQ(v2[0], 8)
-    assertEQ(v2[1], 6)
-    assertEQ(v2[2], 7)
+    arktest.assertEQ(v2[0], 8)
+    arktest.assertEQ(v2[1], 6)
+    arktest.assertEQ(v2[2], 7)
 
     let v3 : Alias2Array<double> = [new C<double>(9)];  // C<Double>[]
-    assertEQ(v3[0].v, 9)
+    arktest.assertEQ(v3[0].v, 9)
     v3[0].v = 10;
-    assertEQ(v3[0].v, 10)
+    arktest.assertEQ(v3[0].v, 10)
 
     let v4 : Alias3Array<double> = [[new C<double>(11)]];  // C<Double>[][]
-    assertEQ(v4[0][0].v, 11)
+    arktest.assertEQ(v4[0][0].v, 11)
     v4[0][0].v = 12;
-    assertEQ(v4[0][0].v, 12)
+    arktest.assertEQ(v4[0][0].v, 12)
 
     let v5 : Alias4Array<double> = [(p : double) : double => { return p; }];  // [(p: Double)=>Double]
-    assertEQ(v5[0](13), 13)
+    arktest.assertEQ(v5[0](13), 13)
 
     let v6 : Alias5Array<double> = (p : double[]) : double => { return p[0]; };  // (p: double[])=>Double
-    assertEQ(v6([14.0]), 14)
+    arktest.assertEQ(v6([14.0]), 14)
 
     // let v7 : Alias6Array<double> = (p : double[], q: double) : double => { return p[0]; };  // (p: Double[], q: Double)=>Double
-    // assertEQ(v7([15.0], 16), 15)
+    // arktest.assertEQ(v7([15.0], 16), 15)
 
     let v9 : Alias7Array<double, double> = (p : double[], q: double) : double => { return p[0]; };  // (p: double[], q: Double)=>Double
-    assertEQ(v9([17.0], 18), 17)
+    arktest.assertEQ(v9([17.0], 18), 17)
 
     let v10 : Alias8Array<double> = [[new Int(18)]];  //  [double][]
-    assertEQ(v10[0][0], 18)
+    arktest.assertEQ(v10[0][0], 18)
 
     let v11 : Alias9Array<double> = [[new C<double>(19)]]; // [C<Double>][]
-    assertEQ(v11[0][0].v, 19)
+    arktest.assertEQ(v11[0][0].v, 19)
 }

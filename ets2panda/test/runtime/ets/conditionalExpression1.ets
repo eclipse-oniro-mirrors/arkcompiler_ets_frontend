@@ -20,13 +20,13 @@ function main(): void {
     let d : int = 10000;
 
     let x : int = (a == b ? 2 : 4)
-    assertEQ(x, 2)
+    arktest.assertEQ(x, 2)
 
     let y : int = (c == d ? 8 : 16)
-    assertEQ(y, 16)
+    arktest.assertEQ(y, 16)
 
-    assertEQ(foo(true), "true")
-    assertEQ(foo(false), "false")
+    arktest.assertEQ(foo(true), "true")
+    arktest.assertEQ(foo(false), "false")
 }
 
 function foo(b: boolean): String {

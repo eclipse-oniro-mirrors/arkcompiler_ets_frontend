@@ -19,6 +19,7 @@
 #include "compiler/compiler_logger.h"
 #include "compiler/compiler_options.h"
 #include "util/options.h"
+#include "util/perfMetrics.h"
 
 namespace ark::es2panda::util {
 
@@ -104,14 +105,18 @@ static int GenerateProgramImpl(ark::pandasm::Program *prog, const util::Options 
 
 int GenerateProgram(ark::pandasm::Program *prog, const util::Options &options, const ReporterFun &reporter)
 {
+    ES2PANDA_PERF_SCOPE("@GenerateProgram");
     std::map<std::string, size_t> stat;
     std::map<std::string, size_t> *statp = options.GetOptLevel() != 0 ? &stat : nullptr;
     ark::pandasm::AsmEmitter::PandaFileToPandaAsmMaps maps {};
     ark::pandasm::AsmEmitter::PandaFileToPandaAsmMaps *mapsp = options.GetOptLevel() != 0 ? &maps : nullptr;
 
 #ifdef PANDA_WITH_BYTECODE_OPTIMIZER
-    if (OptimizeBytecode(prog, options, reporter, statp, mapsp) != 0) {
-        return 1;
+    {
+        ES2PANDA_PERF_SCOPE("@GenerateProgram/OptimizeBytecode");
+        if (OptimizeBytecode(prog, options, reporter, statp, mapsp) != 0) {
+            return 1;
+        }
     }
 #endif
     if (GenerateProgramImpl(prog, options, reporter, statp, mapsp) != 0) {

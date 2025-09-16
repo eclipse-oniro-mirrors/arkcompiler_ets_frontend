@@ -18,28 +18,8 @@
             "line": 16,
             "column": 1,
             "endLine": 16,
-            "endColumn": 52,
+            "endColumn": 58,
             "problem": "InterOpImportJs",
-            "autofix": [
-                {
-                    "start": 605,
-                    "end": 656,
-                    "replacementText": "",
-                    "line": 16,
-                    "column": 1,
-                    "endLine": 16,
-                    "endColumn": 52
-                },
-                {
-                    "start": 656,
-                    "end": 656,
-                    "replacementText": "let GeneratedImportVar_1 = ESValue.load('./interop_equality_judgment_js');\nlet a = GeneratedImportVar_1.getProperty('a');\nlet b = GeneratedImportVar_1.getProperty('b');\n",
-                    "line": 16,
-                    "column": 1,
-                    "endLine": 16,
-                    "endColumn": 52
-                }
-            ],
             "suggest": "",
             "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
             "severity": "ERROR"
@@ -52,8 +32,8 @@
             "problem": "InteropEqualityJudgment",
             "autofix": [
                 {
-                    "start": 657,
-                    "end": 663,
+                    "start": 663,
+                    "end": 669,
                     "replacementText": "a.areEqual(b)",
                     "line": 17,
                     "column": 1,
@@ -73,8 +53,8 @@
             "problem": "InteropEqualityJudgment",
             "autofix": [
                 {
-                    "start": 664,
-                    "end": 670,
+                    "start": 670,
+                    "end": 676,
                     "replacementText": "!a.areEqual(b)",
                     "line": 18,
                     "column": 1,
@@ -94,8 +74,8 @@
             "problem": "InteropEqualityJudgment",
             "autofix": [
                 {
-                    "start": 671,
-                    "end": 678,
+                    "start": 677,
+                    "end": 684,
                     "replacementText": "a.areStrictlyEqual(b)",
                     "line": 19,
                     "column": 1,
@@ -115,8 +95,8 @@
             "problem": "InteropEqualityJudgment",
             "autofix": [
                 {
-                    "start": 679,
-                    "end": 686,
+                    "start": 685,
+                    "end": 692,
                     "replacementText": "!a.areStrictlyEqual(b)",
                     "line": 20,
                     "column": 1,
@@ -126,6 +106,258 @@
             ],
             "suggest": "",
             "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 1,
+            "endLine": 21,
+            "endColumn": 17,
+            "problem": "InteropEqualityJudgment",
+            "autofix": [
+                {
+                    "start": 693,
+                    "end": 709,
+                    "replacementText": "c.getProperty(\"num1\").areEqual(d.getProperty(\"num1\"))",
+                    "line": 21,
+                    "column": 1,
+                    "endLine": 21,
+                    "endColumn": 17
+                }
+            ],
+            "suggest": "",
+            "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 1,
+            "endLine": 21,
+            "endColumn": 7,
+            "problem": "InteropObjectProperty",
+            "autofix": [
+                {
+                    "start": 693,
+                    "end": 699,
+                    "replacementText": "c.getProperty(\"num1\")",
+                    "line": 21,
+                    "column": 1,
+                    "endLine": 21,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 11,
+            "endLine": 21,
+            "endColumn": 17,
+            "problem": "InteropObjectProperty",
+            "autofix": [
+                {
+                    "start": 703,
+                    "end": 709,
+                    "replacementText": "d.getProperty(\"num1\")",
+                    "line": 21,
+                    "column": 11,
+                    "endLine": 21,
+                    "endColumn": 17
+                }
+            ],
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 1,
+            "endLine": 22,
+            "endColumn": 17,
+            "problem": "InteropEqualityJudgment",
+            "autofix": [
+                {
+                    "start": 710,
+                    "end": 726,
+                    "replacementText": "!c.getProperty(\"num1\").areEqual(d.getProperty(\"num2\"))",
+                    "line": 22,
+                    "column": 1,
+                    "endLine": 22,
+                    "endColumn": 17
+                }
+            ],
+            "suggest": "",
+            "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 1,
+            "endLine": 22,
+            "endColumn": 7,
+            "problem": "InteropObjectProperty",
+            "autofix": [
+                {
+                    "start": 710,
+                    "end": 716,
+                    "replacementText": "c.getProperty(\"num1\")",
+                    "line": 22,
+                    "column": 1,
+                    "endLine": 22,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 11,
+            "endLine": 22,
+            "endColumn": 17,
+            "problem": "InteropObjectProperty",
+            "autofix": [
+                {
+                    "start": 720,
+                    "end": 726,
+                    "replacementText": "d.getProperty(\"num2\")",
+                    "line": 22,
+                    "column": 11,
+                    "endLine": 22,
+                    "endColumn": 17
+                }
+            ],
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 1,
+            "endLine": 23,
+            "endColumn": 18,
+            "problem": "InteropEqualityJudgment",
+            "autofix": [
+                {
+                    "start": 727,
+                    "end": 744,
+                    "replacementText": "c.getProperty(\"num1\").areStrictlyEqual(d.getProperty(\"num1\"))",
+                    "line": 23,
+                    "column": 1,
+                    "endLine": 23,
+                    "endColumn": 18
+                }
+            ],
+            "suggest": "",
+            "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 1,
+            "endLine": 23,
+            "endColumn": 7,
+            "problem": "InteropObjectProperty",
+            "autofix": [
+                {
+                    "start": 727,
+                    "end": 733,
+                    "replacementText": "c.getProperty(\"num1\")",
+                    "line": 23,
+                    "column": 1,
+                    "endLine": 23,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 12,
+            "endLine": 23,
+            "endColumn": 18,
+            "problem": "InteropObjectProperty",
+            "autofix": [
+                {
+                    "start": 738,
+                    "end": 744,
+                    "replacementText": "d.getProperty(\"num1\")",
+                    "line": 23,
+                    "column": 12,
+                    "endLine": 23,
+                    "endColumn": 18
+                }
+            ],
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 1,
+            "endLine": 24,
+            "endColumn": 18,
+            "problem": "InteropEqualityJudgment",
+            "autofix": [
+                {
+                    "start": 745,
+                    "end": 762,
+                    "replacementText": "!c.getProperty(\"num1\").areStrictlyEqual(d.getProperty(\"num2\"))",
+                    "line": 24,
+                    "column": 1,
+                    "endLine": 24,
+                    "endColumn": 18
+                }
+            ],
+            "suggest": "",
+            "rule": "\"JS\" objects can't be used directly as operands of the equality operators (arkts-interop-js2s-equality-judgment)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 1,
+            "endLine": 24,
+            "endColumn": 7,
+            "problem": "InteropObjectProperty",
+            "autofix": [
+                {
+                    "start": 745,
+                    "end": 751,
+                    "replacementText": "c.getProperty(\"num1\")",
+                    "line": 24,
+                    "column": 1,
+                    "endLine": 24,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 12,
+            "endLine": 24,
+            "endColumn": 18,
+            "problem": "InteropObjectProperty",
+            "autofix": [
+                {
+                    "start": 756,
+                    "end": 762,
+                    "replacementText": "d.getProperty(\"num2\")",
+                    "line": 24,
+                    "column": 12,
+                    "endLine": 24,
+                    "endColumn": 18
+                }
+            ],
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
             "severity": "ERROR"
         }
     ]

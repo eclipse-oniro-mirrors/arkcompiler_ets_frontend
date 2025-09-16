@@ -14,18 +14,18 @@
  */
 
 interface IBase { foo () {
-    assertTrue(false)
+    arktest.assertTrue(false)
 }}
 
 interface I1 extends IBase { foo () {
-    assertTrue(false)
+    arktest.assertTrue(false)
 }}
 
 interface I2 extends IBase {}
 
 class C implements I1, I2 {
     foo() {
-        assertTrue(true)
+        arktest.assertTrue(true)
     }
 }
 

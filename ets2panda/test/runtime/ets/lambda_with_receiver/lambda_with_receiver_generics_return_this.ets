@@ -25,10 +25,10 @@ type FB<T> = (this: B<T>, x: T) => this;
 type FBSI = (this: B<string|Int>, x: string|Int) => this;
 function apply(bb: B<string|Int>[], ff: FBSI) {
     for (let b of bb) {
-        assertEQ(b.ff("hello").value, b.value)
-        assertEQ(b.ff("hello").x, "hello")
-        assertEQ(ff(b, "hello").value, b.value)
-        assertEQ(ff(b, "hello").x, "hello")
+        arktest.assertEQ(b.ff("hello").value, b.value)
+        arktest.assertEQ(b.ff("hello").x, "hello")
+        arktest.assertEQ(ff(b, "hello").value, b.value)
+        arktest.assertEQ(ff(b, "hello").x, "hello")
     }
 }
 let bb: B<string|Int>[] = [new B<string|Int>("aa"), new B<string|Int>(1)]

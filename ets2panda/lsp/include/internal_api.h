@@ -59,15 +59,16 @@ public:
     }
 
     es2panda_SuggestionInfo *CreateSuggestionInfo(es2panda_Context *context, const es2panda_DiagnosticKind *kind,
-                                                  const char **args, size_t argc, const char *substitutionCode)
+                                                  const char **args, size_t argc, const char *substitutionCode,
+                                                  const char *title, es2panda_SourceRange *range)
     {
-        return impl_->CreateSuggestionInfo(context, kind, args, argc, substitutionCode);
+        return impl_->CreateSuggestionInfo(context, kind, args, argc, substitutionCode, title, range);
     }
 
     es2panda_DiagnosticInfo *CreateDiagnosticInfo(es2panda_Context *context, const es2panda_DiagnosticKind *kind,
-                                                  const char **args, size_t argc)
+                                                  const char **args, size_t argc, es2panda_SourcePosition *pos)
     {
-        return impl_->CreateDiagnosticInfo(context, kind, args, argc);
+        return impl_->CreateDiagnosticInfo(context, kind, args, argc, pos);
     }
 
     es2panda_SourcePosition *CreateSourcePosition(es2panda_Context *context, size_t index, size_t line)
@@ -82,9 +83,9 @@ public:
     }
 
     void LogDiagnosticWithSuggestion(es2panda_Context *context, const es2panda_DiagnosticInfo *diagnosticInfo,
-                                     const es2panda_SuggestionInfo *suggestionInfo, es2panda_SourceRange *range)
+                                     const es2panda_SuggestionInfo *suggestionInfo)
     {
-        return impl_->LogDiagnosticWithSuggestion(context, diagnosticInfo, suggestionInfo, range);
+        return impl_->LogDiagnosticWithSuggestion(context, diagnosticInfo, suggestionInfo);
     }
 
     void LogDiagnostic(es2panda_Context *context, const es2panda_DiagnosticKind *ekind, const char **args, size_t argc,
@@ -109,7 +110,7 @@ ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode, 
 ir::AstNode *GetIdentifierFromSuper(ir::AstNode *super);
 ir::AstNode *GetOriginalNode(ir::AstNode *astNode);
 checker::VerifiedType GetTypeOfSymbolAtLocation(checker::ETSChecker *checker, ir::AstNode *astNode);
-FileDiagnostic CreateDiagnosticForNode(es2panda_AstNode *node, Diagnostic diagnostic,
+FileDiagnostic CreateDiagnosticForNode(es2panda_AstNode *node, Diagnostic diagnostic, es2panda_Context *context,
                                        const std::vector<std::string> &args = std::vector<std::string>());
 std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position);
 void GetRangeOfEnclosingComment(es2panda_Context *context, size_t pos, CommentRange *result);
@@ -136,6 +137,10 @@ std::vector<CodeFixActionInfo> GetCodeFixesAtPositionImpl(es2panda_Context *cont
 CombinedCodeActionsInfo GetCombinedCodeFixImpl(es2panda_Context *context, const std::string &fixId,
                                                CodeFixOptions &codeFixOptions);
 ir::Identifier *GetIdentFromNewClassExprPart(const ir::Expression *value);
+varbinder::Decl *FindDeclInFunctionScope(varbinder::Scope *scope, const util::StringView &name);
+varbinder::Decl *FindDeclInGlobalScope(varbinder::Scope *scope, const util::StringView &name);
+varbinder::Decl *FindDeclInScopeWithFallback(varbinder::Scope *scope, const util::StringView &name);
+
 }  // namespace ark::es2panda::lsp
 
 #endif

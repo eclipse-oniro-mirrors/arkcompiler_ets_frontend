@@ -19,12 +19,12 @@ function main(): void {
   let c: Object = new object();
   let d: Object = new Object();
 
-  assertTrue(a instanceof Object)
-  assertTrue(a instanceof object)
-  assertTrue(b instanceof Object)
-  assertTrue(b instanceof object)
-  assertTrue(c instanceof Object)
-  assertTrue(c instanceof object)
-  assertTrue(d instanceof Object)
-  assertTrue(d instanceof object)
+  arktest.assertTrue(a instanceof Object)
+  arktest.assertTrue(a instanceof object)
+  arktest.assertTrue(b instanceof Object)
+  arktest.assertTrue(b instanceof object)
+  arktest.assertTrue(c instanceof Object)
+  arktest.assertTrue(c instanceof object)
+  arktest.assertTrue(d instanceof Object)
+  arktest.assertTrue(d instanceof object)
 }

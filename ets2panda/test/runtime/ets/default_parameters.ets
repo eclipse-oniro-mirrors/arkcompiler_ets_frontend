@@ -30,20 +30,20 @@ class C {
 function main(): void {
 
   let res = foo(5, 7);
-  assertEQ(res, 57)
+  arktest.assertEQ(res, 57)
 
   res = foo(7);
-  assertEQ(res, 75)
+  arktest.assertEQ(res, 75)
 
   res = foo();
-  assertEQ(res, 35)
+  arktest.assertEQ(res, 35)
 
   let c0 = new C();
-  assertTrue(c0.x == 3 && c0.y == 5)
+  arktest.assertTrue(c0.x == 3 && c0.y == 5)
 
   let c1 = new C(7);
-  assertTrue(c1.x == 7 && c1.y == 5)
+  arktest.assertTrue(c1.x == 7 && c1.y == 5)
 
   let c2 = new C(5, 7);
-  assertTrue(c2.x == 5 && c2.y == 7)
+  arktest.assertTrue(c2.x == 5 && c2.y == 7)
 }

@@ -38,7 +38,7 @@ class A {
 function main(): int {
     let a = new A;
     for(let it of a) {
-        assertEQ(it, a.data[idx]);
+        arktest.assertEQ(it, a.data[idx]);
         ++idx;
     }
     return 0;

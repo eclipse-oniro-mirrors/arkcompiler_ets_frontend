@@ -75,8 +75,8 @@ class I24 {
   constructor(par: Function, par1?: string) {}
 }
 class I24_1 extends I24 {
-  constructor() {
-    super(Function)
+  constructor(par: Function) {
+    super(par)
   }
 }
 
@@ -178,3 +178,7 @@ SysApiWrapper.setTimeout = (handler: Function | string, delay?: number): number 
   (handler as Function)?.();
   return Math.random();
 }
+
+new Function('return 42')();
+
+Function('return 42')();

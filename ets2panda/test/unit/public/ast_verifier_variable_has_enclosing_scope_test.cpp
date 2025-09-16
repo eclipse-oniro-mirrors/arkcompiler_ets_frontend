@@ -64,7 +64,7 @@ TEST_F(ASTVerifierTest, ParametersInArrowFunctionExpression)
         let b = 1;
         let f = (p: double) => b + p;
         function main () {
-            assertEQ(f(42), 43)
+            arktest.assertEQ(f(42), 43)
         }
     )";
 

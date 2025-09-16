@@ -21,6 +21,7 @@ function foo2(): /* @@ label1 */MyAnno {}
 
 foo1(new /* @@ label2 */MyAnno())
 
-/* @@@ label1 Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label2 Error TypeError: Annotations cannot be used as a type.  */
+/* @@? 19:31 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 20:33 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 22:25 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 22:25 Error TypeError: Invalid type reference. */

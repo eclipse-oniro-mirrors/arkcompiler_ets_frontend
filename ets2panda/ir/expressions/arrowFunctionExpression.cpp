@@ -28,12 +28,7 @@ void ArrowFunctionExpression::TransformChildren(const NodeTransformer &cb, std::
         func_ = transformedNode->AsScriptFunction();
     }
 
-    for (auto *&it : VectorIterationGuard(Annotations())) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsAnnotationUsage();
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void ArrowFunctionExpression::Iterate(const NodeTraverser &cb) const
@@ -86,7 +81,7 @@ checker::VerifiedType ArrowFunctionExpression::Check(checker::ETSChecker *checke
 }
 
 ArrowFunctionExpression::ArrowFunctionExpression(ArrowFunctionExpression const &other, ArenaAllocator *const allocator)
-    : JsDocAllowed<AnnotationAllowed<Expression>>(static_cast<Expression const &>(other), allocator)
+    : AnnotationAllowed<Expression>(static_cast<Expression const &>(other), allocator)
 {
     ES2PANDA_ASSERT(other.func_->Clone(allocator, this));
     func_ = other.func_->Clone(allocator, this)->AsScriptFunction();

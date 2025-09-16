@@ -13,6 +13,7 @@
 # limitations under the License.
 
 set -ex
+set -o pipefail
 
 function about() {
     cat <<-ENDHELP
@@ -23,13 +24,13 @@ function about() {
         --openlab-token   Token to access to openlab
         (you can ask this information from Titova Tatiana)
     Please use this file to set up your .npmrc
-        https://gitee.com/openharmony-sig/arkcompiler_ets_frontend/wikis/npmrc
+        BZ - https://gitee.com/rri_opensource/koala_projects/wikis/Environment%20Setup/%20npmrc%20(blue%20zone)
+        GZ - https://gitee.com/rri_opensource/koala_projects/wikis/Environment%20Setup/npmrc%20(yellow%20and%20green%20zone)
     Use these instructions to manually prepare ArkUI Hello app
-        https://gitee.com/openharmony-sig/arkcompiler_ets_frontend/wikis/How%20to%20Build%20the%20Shopping%20Application%20(for%20host)
-        https://gitee.com/openharmony-sig/arkcompiler_ets_frontend/wikis/How%20to%20Build%20the%20Shopping%20Application%20(for%20Board%20and%20Mobile%20Devices)
+        HOST - https://gitee.com/titovatatiana/arkcompiler_ets_frontend/wikis/Guide:%20How%20to%20Download%20and%20Build%20ArkUI%20Project
+        DEVICE - https://gitee.com/rri_opensource/koala_projects/wikis/Setup%20Guide/Trivial%20Build%20%2526%20Setup%20Guide
     Use these instructions to install custom compiler
-        https://gitee.com/openharmony-sig/arkcompiler_ets_frontend/wikis/Setup%20custom%20SDK%20to%20run%20apps
-        https://gitee.com/openharmony-sig/arkcompiler_ets_frontend/wikis/How%20to%20build%20es2panda
+        https://gitee.com/titovatatiana/arkcompiler_ets_frontend/wikis/How%20to%20manage%20the%20integration%20process%20with%20ArkUI%20jobs
 ENDHELP
 }
 
@@ -38,6 +39,10 @@ while [ -n "$1" ]; do
         -h | --help)
             about
             exit 0
+            ;;
+        --demo)
+            DEMO="${2}"
+            shift 2
             ;;
         --nexus-repo)
             NEXUS_REPO="${2}"
@@ -66,7 +71,7 @@ fi
 
 HUAWEI_MIRROR="${HUAWEI_MIRROR:-https://repo.huaweicloud.com/repository/npm/}"
 KOALA_REGISTRY="${KOALA_REGISTRY:-https://$NEXUS_REPO/repository/koala-npm/}"
-NINJA_OPTIONS="-j ${NPROC_PER_JOB}"
+export NINJA_OPTIONS="-j ${NPROC_PER_JOB}"
 
 retry() {
   local -r -i max_attempts="$1"; shift
@@ -125,6 +130,7 @@ npm config set package-lock false
 npm config set strict-ssl false
 npm config set registry "${HUAWEI_MIRROR}"
 npm config set @koalaui:registry "${KOALA_REGISTRY}"
+npm config set @idlizer:registry "${KOALA_REGISTRY}"
 npm config set @panda:registry "https://$NEXUS_REPO/repository/koala-npm/"
 npm config set @ohos:registry "https://repo.harmonyos.com/npm/"
 if [ -z "${KOALA_REPO}" ] ; then
@@ -134,15 +140,60 @@ fi
 npm install -d
 
 pushd incremental/tools/panda/ || exit 1
-if [ -z "${PANDA_SDK_TARBALL}" ] ; then
-npm run panda:sdk:install
+if [ -z "${PANDA_SDK_HOST_TARBALL}" ] ; then
+    npm run panda:sdk:install
 else
-npm install "${PANDA_SDK_TARBALL}"
+    npm install "${PANDA_SDK_HOST_TARBALL}"
+    if [ -n "${PANDA_SDK_DEV_TARBALL}" ] ; then
+        npm install "${PANDA_SDK_DEV_TARBALL}"
+    else
+        echo "PANDA_SDK_DEV_TARBALL is not set, skipping!"
+    fi
 fi
 popd >/dev/null 2>&1 || exit 1
 
-pushd arkoala-arkts || exit 1
-npm install -d
+function run_script() {
+    npm run $1 | tee out.txt
+    if [ -n "$(grep 'Error:' out.txt)" ] ; then
+        exit 1
+    fi
+}
+
+export ENABLE_BUILD_CACHE=0
+
+# Compile libarkts
+pushd ui2abc/libarkts || exit 1
+run_script "regenerate"
+run_script "compile --prefix ../fast-arktsc"
+run_script "run"
 popd >/dev/null 2>&1 || exit 1
 
-return 0
+# Compile memo-plugin, ui-plugins
+
+# need to fix ui2abc tests
+# run_script "all --prefix ui2abc"
+run_script "build:all --prefix ui2abc"
+
+run_script "build:deps --prefix ets-tests"
+
+if [ -z "${DEMO}" ] ; then
+    echo "Just compiled ArkUI, but no demo specified."
+    exit 1
+fi
+
+case "${DEMO}" in
+    "shopping")
+        run_script "run:node --prefix arkoala-arkts/shopping/user"
+        ;;
+    "trivial")
+        run_script "run --prefix arkoala-arkts/trivial/user"
+        ;;
+    "empty")
+        ;;
+    *)
+        echo "Unknown demo" "${DEMO}"
+        exit 1
+        ;;
+esac
+
+echo "ArkUI ${DEMO} demo completed successfully."

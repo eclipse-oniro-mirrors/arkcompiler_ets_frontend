@@ -25,4 +25,4 @@ class A {
   }
 }
 
-/* @@@ label Error TypeError: Type 'int' has no call signatures.  */
+/* @@@ label Error TypeError: Type 'Int' has no call signatures.  */

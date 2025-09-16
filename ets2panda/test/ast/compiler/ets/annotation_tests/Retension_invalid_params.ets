@@ -21,3 +21,4 @@
 /* @@? 16:12 Error SyntaxError: Invalid value for annotation field, expected a constant literal.  */
 /* @@? 16:12 Error TypeError: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'.  */
 /* @@? 16:12 Error TypeError: Unresolved reference policy  */
+/* @@? 16:12 Error TypeError: Invalid value for annotation field, expected a constant literal. */

@@ -15,7 +15,7 @@
 
 function main(): void {
     while (false) {
-        assertTrue( false );
+        arktest.assertTrue( false );
     }
 }
 

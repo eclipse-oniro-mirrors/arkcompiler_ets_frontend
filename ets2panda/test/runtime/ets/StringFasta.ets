@@ -113,7 +113,7 @@ export class StringFasta  {
         ret += fastaRandom(3 * count * 1000, IUB);
         ret += fastaRandom(5 * count * 1000, HomoSap);
 
-        assertEQ(ret, this.expected,  "Incorrect result")
+        arktest.assertEQ(ret, this.expected,  "Incorrect result")
     }
 }
 

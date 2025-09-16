@@ -19,5 +19,5 @@ function foo(a: (()=>string)|Object):string {
 
 function main() {
     let s = foo(()=>{return "hello"})
-    assertEQ(s, "hello")
+    arktest.assertEQ(s, "hello")
 }

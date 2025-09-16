@@ -19,4 +19,3 @@ function foo<T>(data: T | A): void {
     let aNumber = data as int
 }
 
-/* @@? 19:19 Error TypeError: Cannot cast type 'T|A' to 'int' */

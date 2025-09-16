@@ -30,6 +30,7 @@ es2panda_AstNode *Transform(es2panda_AstNode *ast)
 {
     if (g_impl->IsIdentifier(ast) && strcmp(g_impl->IdentifierName(g_ctx, ast), "main") == 0) {
         auto *id = g_impl->CreateIdentifier1(g_ctx, const_cast<char *>("foo"));
+        g_impl->AstNodeSetParent(g_ctx, id, g_impl->AstNodeParent(g_ctx, ast));
         g_isFound = true;
         return id;
     }

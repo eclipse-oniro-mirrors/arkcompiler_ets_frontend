@@ -27,9 +27,9 @@ class StringLiteral;
 
 class ETSImportDeclaration : public ImportDeclaration {
 public:
-    ETSImportDeclaration(ir::StringLiteral *importPath, util::ImportPathManager::ImportMetadata importMetadata,
+    ETSImportDeclaration(ir::StringLiteral *importPath, util::ImportPathManager::ImportMetadata &&importMetadata,
                          ArenaVector<AstNode *> &&specifiers, const ImportKinds importKinds = ImportKinds::ALL)
-        : ImportDeclaration(importPath, std::move(specifiers), importKinds), importMetadata_(importMetadata)
+        : ImportDeclaration(importPath, std::move(specifiers), importKinds), importMetadata_(std::move(importMetadata))
     {
         SetType(AstNodeType::ETS_IMPORT_DECLARATION);
     }
@@ -44,62 +44,79 @@ public:
     void SetImportMetadata(util::ImportFlags importFlags, Language::Id lang, std::string_view resolvedSource,
                            std::string_view declPath, std::string_view ohmUrl)
     {
-        importMetadata_.importFlags = importFlags;
-        importMetadata_.lang = lang;
-        importMetadata_.resolvedSource = resolvedSource;
-        importMetadata_.declPath = declPath;
-        importMetadata_.ohmUrl = ohmUrl;
+        auto node = GetOrCreateHistoryNode()->AsETSImportDeclaration();
+        node->importMetadata_.importFlags = importFlags;
+        node->importMetadata_.lang = lang;
+        node->importMetadata_.resolvedSource = resolvedSource;
+        node->importMetadata_.declPath = declPath;
+        node->importMetadata_.ohmUrl = ohmUrl;
     }
 
     es2panda::Language Language() const
     {
-        return es2panda::Language {importMetadata_.lang};
+        return es2panda::Language {ImportMetadata().lang};
     }
 
     std::string_view DeclPath() const
     {
-        return importMetadata_.declPath;
+        return ImportMetadata().declPath;
     }
 
     std::string_view OhmUrl() const
     {
-        return importMetadata_.ohmUrl;
+        return ImportMetadata().ohmUrl;
     }
 
     bool IsValid() const
     {
-        return (Source()->Str() != ERROR_LITERAL) && importMetadata_.IsValid();
+        return (Source()->Str() != ERROR_LITERAL) && ImportMetadata().IsValid();
     }
 
     bool IsPureDynamic() const
     {
-        return IsValid() && DeclPath().empty() && Language().IsDynamic();
+        return IsValid() && !DeclPath().empty() && Language().IsDynamic();
     }
 
-    util::StringView &AssemblerName()
+    void SetAssemblerName(util::StringView assemblerName)
     {
-        return assemblerName_;
+        GetOrCreateHistoryNode()->AsETSImportDeclaration()->assemblerName_ = assemblerName;
     }
 
     const util::StringView &AssemblerName() const
     {
-        return assemblerName_;
+        return GetHistoryNode()->AsETSImportDeclaration()->assemblerName_;
     }
 
     std::string_view ResolvedSource() const
     {
-        return importMetadata_.resolvedSource;
+        return ImportMetadata().resolvedSource;
     }
 
-    const auto &ImportMetadata() const
+    const util::ImportPathManager::ImportMetadata &ImportMetadata() const
     {
-        return importMetadata_;
+        return GetHistoryNode()->AsETSImportDeclaration()->importMetadata_;
     }
 
     void Accept(ASTVisitorT *v) override
     {
         v->Accept(this);
     }
+
+    ETSImportDeclaration *Construct(ArenaAllocator *allocator) override
+    {
+        ArenaVector<AstNode *> specifiers(allocator->Adapter());
+        return allocator->New<ETSImportDeclaration>(nullptr, std::move(specifiers));
+    }
+
+    void CopyTo(AstNode *other) const override
+    {
+        auto otherImpl = other->AsETSImportDeclaration();
+
+        otherImpl->importMetadata_ = importMetadata_;
+        otherImpl->assemblerName_ = assemblerName_;
+
+        ImportDeclaration::CopyTo(other);
+    };
 
 private:
     util::ImportPathManager::ImportMetadata importMetadata_;

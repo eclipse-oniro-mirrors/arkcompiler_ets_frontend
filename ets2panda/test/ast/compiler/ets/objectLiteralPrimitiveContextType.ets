@@ -14,4 +14,4 @@
  */
 
 let x: int = /* @@ label */{};
-/* @@@ label Error TypeError: Target type for class composite needs to be an object type, found 'int'  */
+

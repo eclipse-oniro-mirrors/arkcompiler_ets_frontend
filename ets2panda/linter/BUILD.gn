@@ -62,7 +62,6 @@ action("build_linter") {
     "./src/lib/ts-diagnostics/TransformTscDiagnostics.ts",
     "./src/lib/ts-diagnostics/TypeScriptDiagnosticsExtractor.ts",
     "./src/lib/utils/TsUtils.ts",
-    "./src/lib/utils/consts/ArkTS2Rules.ts",
     "./src/lib/utils/consts/ArktsIgnorePaths.ts",
     "./src/lib/utils/consts/BuiltinGenericConstructor.ts",
     "./src/lib/utils/consts/DefaultDecoratorWhitelist.ts",

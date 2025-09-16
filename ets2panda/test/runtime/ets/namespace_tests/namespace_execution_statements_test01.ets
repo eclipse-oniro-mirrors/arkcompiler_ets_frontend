@@ -61,25 +61,25 @@ function main() {
     ComprehensiveNamespace.resetState();
 
     // 1. Test variable assignment
-    assertEQ(ComprehensiveNamespace.counter, 5,  "Counter should be 5 after assignment")
+    arktest.assertEQ(ComprehensiveNamespace.counter, 5,  "Counter should be 5 after assignment")
 
     // 2. Test assignment expression
-    assertEQ(ComprehensiveNamespace.message, "Initial message",  "Message should be the initial value")
+    arktest.assertEQ(ComprehensiveNamespace.message, "Initial message",  "Message should be the initial value")
 
     // 3. Test function call
     ComprehensiveNamespace.incrementCounter();
-    assertEQ(ComprehensiveNamespace.counter, 6,  "Counter should be 6 after increment")
+    arktest.assertEQ(ComprehensiveNamespace.counter, 6,  "Counter should be 6 after increment")
 
     ComprehensiveNamespace.resetMessage();
-    assertEQ(ComprehensiveNamespace.message, "Message reset inside namespace",  "Message should be reset after function call")
+    arktest.assertEQ(ComprehensiveNamespace.message, "Message reset inside namespace",  "Message should be reset after function call")
 
     // 4. Test conditional statement
     ComprehensiveNamespace.checkCounter();
-    assertEQ(ComprehensiveNamespace.message, "Counter is greater than 5",  "Condition failed for counter > 5")
+    arktest.assertEQ(ComprehensiveNamespace.message, "Counter is greater than 5",  "Condition failed for counter > 5")
 
     // 5. Test loop statement
     let loopResult = ComprehensiveNamespace.loopTest();
-    assertEQ(loopResult, 15,  "Loop test failed, sum should be 15")
+    arktest.assertEQ(loopResult, 15,  "Loop test failed, sum should be 15")
 }
 
 

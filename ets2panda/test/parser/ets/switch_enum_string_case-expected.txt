@@ -5120,14 +5120,14 @@
       },
       "loc": {
         "start": {
-          "line": 1,
+          "line": 20,
           "column": 1,
-          "program": null
+          "program": "switch_enum_string_case.ets"
         },
         "end": {
-          "line": 1,
-          "column": 1,
-          "program": null
+          "line": 20,
+          "column": 41,
+          "program": "switch_enum_string_case.ets"
         }
       }
     },
@@ -5154,112 +5154,6 @@
         "superClass": null,
         "implements": [],
         "body": [
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "switch_enum_string_case.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "switch_enum_string_case.ets"
-              }
-            }
-          },
           {
             "type": "MethodDefinition",
             "key": {
@@ -5492,9 +5386,43 @@
                               "expression": {
                                 "type": "CallExpression",
                                 "callee": {
-                                  "type": "Identifier",
-                                  "name": "assertTrue",
-                                  "decorators": [],
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "arktest",
+                                    "decorators": [],
+                                    "loc": {
+                                      "start": {
+                                        "line": 25,
+                                        "column": 19,
+                                        "program": "switch_enum_string_case.ets"
+                                      },
+                                      "end": {
+                                        "line": 25,
+                                        "column": 26,
+                                        "program": "switch_enum_string_case.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "assertTrue",
+                                    "decorators": [],
+                                    "loc": {
+                                      "start": {
+                                        "line": 25,
+                                        "column": 27,
+                                        "program": "switch_enum_string_case.ets"
+                                      },
+                                      "end": {
+                                        "line": 25,
+                                        "column": 37,
+                                        "program": "switch_enum_string_case.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
                                   "loc": {
                                     "start": {
                                       "line": 25,
@@ -5503,7 +5431,7 @@
                                     },
                                     "end": {
                                       "line": 25,
-                                      "column": 29,
+                                      "column": 37,
                                       "program": "switch_enum_string_case.ets"
                                     }
                                   }
@@ -5515,12 +5443,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 25,
-                                        "column": 30,
+                                        "column": 38,
                                         "program": "switch_enum_string_case.ets"
                                       },
                                       "end": {
                                         "line": 25,
-                                        "column": 35,
+                                        "column": 43,
                                         "program": "switch_enum_string_case.ets"
                                       }
                                     }
@@ -5535,7 +5463,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 36,
+                                    "column": 44,
                                     "program": "switch_enum_string_case.ets"
                                   }
                                 }
@@ -5548,7 +5476,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 37,
+                                  "column": 45,
                                   "program": "switch_enum_string_case.ets"
                                 }
                               }
@@ -5559,12 +5487,12 @@
                               "loc": {
                                 "start": {
                                   "line": 25,
-                                  "column": 38,
+                                  "column": 46,
                                   "program": "switch_enum_string_case.ets"
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 44,
+                                  "column": 52,
                                   "program": "switch_enum_string_case.ets"
                                 }
                               }
@@ -5578,7 +5506,7 @@
                             },
                             "end": {
                               "line": 25,
-                              "column": 44,
+                              "column": 52,
                               "program": "switch_enum_string_case.ets"
                             }
                           }
@@ -5642,9 +5570,43 @@
                               "expression": {
                                 "type": "CallExpression",
                                 "callee": {
-                                  "type": "Identifier",
-                                  "name": "assertTrue",
-                                  "decorators": [],
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "arktest",
+                                    "decorators": [],
+                                    "loc": {
+                                      "start": {
+                                        "line": 26,
+                                        "column": 19,
+                                        "program": "switch_enum_string_case.ets"
+                                      },
+                                      "end": {
+                                        "line": 26,
+                                        "column": 26,
+                                        "program": "switch_enum_string_case.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "assertTrue",
+                                    "decorators": [],
+                                    "loc": {
+                                      "start": {
+                                        "line": 26,
+                                        "column": 27,
+                                        "program": "switch_enum_string_case.ets"
+                                      },
+                                      "end": {
+                                        "line": 26,
+                                        "column": 37,
+                                        "program": "switch_enum_string_case.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
                                   "loc": {
                                     "start": {
                                       "line": 26,
@@ -5653,7 +5615,7 @@
                                     },
                                     "end": {
                                       "line": 26,
-                                      "column": 29,
+                                      "column": 37,
                                       "program": "switch_enum_string_case.ets"
                                     }
                                   }
@@ -5665,12 +5627,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 26,
-                                        "column": 30,
+                                        "column": 38,
                                         "program": "switch_enum_string_case.ets"
                                       },
                                       "end": {
                                         "line": 26,
-                                        "column": 35,
+                                        "column": 43,
                                         "program": "switch_enum_string_case.ets"
                                       }
                                     }
@@ -5685,7 +5647,7 @@
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 36,
+                                    "column": 44,
                                     "program": "switch_enum_string_case.ets"
                                   }
                                 }
@@ -5698,7 +5660,7 @@
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 37,
+                                  "column": 45,
                                   "program": "switch_enum_string_case.ets"
                                 }
                               }
@@ -5709,12 +5671,12 @@
                               "loc": {
                                 "start": {
                                   "line": 26,
-                                  "column": 38,
+                                  "column": 46,
                                   "program": "switch_enum_string_case.ets"
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 44,
+                                  "column": 52,
                                   "program": "switch_enum_string_case.ets"
                                 }
                               }
@@ -5728,7 +5690,7 @@
                             },
                             "end": {
                               "line": 26,
-                              "column": 44,
+                              "column": 52,
                               "program": "switch_enum_string_case.ets"
                             }
                           }

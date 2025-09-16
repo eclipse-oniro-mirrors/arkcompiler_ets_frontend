@@ -12,45 +12,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 const fs = require('fs');
 const path = require('path');
 const libCoverage = require('istanbul-lib-coverage');
 const libReport = require('istanbul-lib-report');
 const reports = require('istanbul-reports');
 
-const projectRoot = path.join(__dirname, '..', '..');
+const projectRoot = path.resolve(__dirname, '../..');
 const coverageDir = path.join(projectRoot, 'coverage');
+const reportDir = path.join(coverageDir, 'arkcompiler/ets_frontend/ets2panda/linter/src');
+const ABS_REPORT_DIR = 'arkcompiler/ets_frontend/ets2panda/linter/src';
 
-const coverageFile = fs.readFileSync(path.join(coverageDir, 'newCoverage.json'), 'utf8');
-const coverageData = JSON.parse(coverageFile);
-const coverageMap = libCoverage.createCoverageMap(coverageData);
+const coverageFile = path.join(coverageDir, 'newCoverage.json');
+if (!fs.existsSync(coverageFile)) {
+  throw new Error(`Coverage file not found: ${coverageFile}`);
+}
 
-// create summary report
-const summary = libCoverage.createCoverageSummary();
-coverageMap.files().forEach(file => {
-    const fc = coverageMap.fileCoverageFor(file);
-    const s = fc.toSummary();
-    summary.merge(s);
+const coverageData = JSON.parse(fs.readFileSync(coverageFile, 'utf8'));
+
+Object.keys(coverageData).forEach(filePath => {
+  coverageData[filePath].fullPath = path.resolve(projectRoot, filePath);
 });
-console.log(summary);
 
-// Watermarks for the report
-const configWatermarks = {
+const coverageMap = libCoverage.createCoverageMap(coverageData);
+console.log(coverageMap);
+const context = libReport.createContext({
+  dir: reportDir,
+  watermarks: {
     statements: [50, 80],
     branches: [50, 80],
     functions: [50, 80],
-    lines: [50, 80],
-};
-const context = libReport.createContext({
-    dir: path.join(coverageDir, 'report-html'),
-    defaultSummarizer: 'nested',
-    watermarks: configWatermarks,
-    coverageMap,
+    lines: [50, 80]
+  },
+  coverageMap
 });
 
-const report = reports.create('html', {});
-report.execute(context);
+reports.create('html', {}).execute(context);
 
-const report_text = reports.create('text', {});
-report_text.execute(context);
+function enhanceHtmlReports() {
+  const indexPath = path.join(reportDir, 'index.html');
+  if (!fs.existsSync(indexPath)) 
+    {
+        return;
+    }
+
+  let html = fs.readFileSync(indexPath, 'utf8');
+
+  html = html.replace(
+    /<a href="(.+?\/index\.html)">(.+?)<\/a>/g,
+    (match, link, name) => {
+      const absPath = path.join(ABS_REPORT_DIR, link.replace('/index.html', ''));
+      return `<a href="${link}" title="${absPath}">${absPath}</a>`;
+    }
+  );
+  
+  fs.writeFileSync(indexPath, html);
+  console.log(`Added full paths to: ${indexPath}`);
+}
+
+enhanceHtmlReports();
+console.log(`View coverage at: file://${reportDir}/index.html`);

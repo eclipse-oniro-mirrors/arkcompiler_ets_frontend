@@ -21,4 +21,7 @@ class A {
 let a: readonly<A> = new A();
 
 /* @@? 21:16 Error SyntaxError: Invalid Type. */
-/* @@? 21:20 Error SyntaxError: Readonly<T> utility type expected but readonly<T> found. */
+/* @@? 21:16 Error SyntaxError: Unexpected token '<'. */
+/* @@? 21:16 Error SyntaxError: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
+/* @@? 21:20 Error SyntaxError: Unexpected token '='. */
+/* @@? 21:22 Error SyntaxError: Unexpected token 'new'. */

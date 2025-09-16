@@ -15,27 +15,6 @@
     ],
     "result": [
         {
-            "line": 22,
-            "column": 57,
-            "endLine": 22,
-            "endColumn": 58,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 751,
-                    "end": 752,
-                    "replacementText": "0.0",
-                    "line": 22,
-                    "column": 57,
-                    "endLine": 22,
-                    "endColumn": 58
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 26,
             "column": 25,
             "endLine": 26,
@@ -46,27 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 34,
-            "column": 57,
-            "endLine": 34,
-            "endColumn": 58,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 984,
-                    "end": 985,
-                    "replacementText": "0.0",
-                    "line": 34,
-                    "column": 57,
-                    "endLine": 34,
-                    "endColumn": 58
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 38,
             "column": 25,
             "endLine": 38,
@@ -74,27 +32,6 @@
             "problem": "PropNeedCallMethodForDeepCopy",
             "suggest": "",
             "rule": "Parameters decorated with \"@Prop\" need to call the specific method when receiving data to ensure deep copy of the data (arkui-prop-need-call-method-for-deep-copy)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 46,
-            "column": 57,
-            "endLine": 46,
-            "endColumn": 58,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1217,
-                    "end": 1218,
-                    "replacementText": "0.0",
-                    "line": 46,
-                    "column": 57,
-                    "endLine": 46,
-                    "endColumn": 58
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -115,9 +52,9 @@
             "problem": "PropDecoratorNotSupported",
             "autofix": [
                 {
-                    "start": 1396,
+                    "start": 1397,
                     "end": 1401,
-                    "replacementText": "@PropRef",
+                    "replacementText": "PropRef",
                     "line": 58,
                     "column": 3,
                     "endLine": 58,
@@ -136,9 +73,9 @@
             "problem": "PropDecoratorNotSupported",
             "autofix": [
                 {
-                    "start": 1710,
+                    "start": 1711,
                     "end": 1715,
-                    "replacementText": "@PropRef",
+                    "replacementText": "PropRef",
                     "line": 76,
                     "column": 3,
                     "endLine": 76,
@@ -150,48 +87,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 83,
-            "column": 31,
-            "endLine": 83,
-            "endColumn": 32,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1895,
-                    "end": 1896,
-                    "replacementText": "1.0",
-                    "line": 83,
-                    "column": 31,
-                    "endLine": 83,
-                    "endColumn": 32
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 86,
-            "column": 31,
-            "endLine": 86,
-            "endColumn": 32,
-            "problem": "NumericSemantics",
-            "autofix": [
-                {
-                    "start": 1977,
-                    "end": 1978,
-                    "replacementText": "1.0",
-                    "line": 86,
-                    "column": 31,
-                    "endLine": 86,
-                    "endColumn": 32
-                }
-            ],
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 94,
             "column": 3,
             "endLine": 94,
@@ -199,9 +94,9 @@
             "problem": "PropDecoratorNotSupported",
             "autofix": [
                 {
-                    "start": 2040,
+                    "start": 2041,
                     "end": 2045,
-                    "replacementText": "@PropRef",
+                    "replacementText": "PropRef",
                     "line": 94,
                     "column": 3,
                     "endLine": 94,

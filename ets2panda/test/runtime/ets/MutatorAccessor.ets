@@ -41,62 +41,62 @@ function main(): void {
   let obj: A = new A();
 
   let get_field = obj.field;
-  assertEQ(get_field, 30)
+  arktest.assertEQ(get_field, 30)
 
   get_field = obj.field + obj.field;
-  assertEQ(get_field, 60)
+  arktest.assertEQ(get_field, 60)
 
   get_field = obj.field + 10;
-  assertEQ(get_field, 40)
+  arktest.assertEQ(get_field, 40)
 
   get_field = 10 + obj.field;
-  assertEQ(get_field, 40)
+  arktest.assertEQ(get_field, 40)
 
   obj.field = 10;
   get_field = obj.field;
-  assertEQ(get_field, 10)
+  arktest.assertEQ(get_field, 10)
 
   obj.field = obj.field;
   get_field = obj.field;
-  assertEQ(get_field, 10)
+  arktest.assertEQ(get_field, 10)
 
   obj.field = obj.field + obj.field;
   get_field = obj.field;
-  assertEQ(get_field, 20)
+  arktest.assertEQ(get_field, 20)
 
   obj.field = obj.field + 10;
   get_field = obj.field;
-  assertEQ(get_field, 30)
+  arktest.assertEQ(get_field, 30)
 
   obj.field = 10 + obj.field;
   get_field = obj.field;
-  assertEQ(get_field, 40)
+  arktest.assertEQ(get_field, 40)
 
   obj.field = 10 * obj.field;
   get_field = obj.field;
-  assertEQ(get_field, 400)
+  arktest.assertEQ(get_field, 400)
 
   obj.field = obj.field / 2;
   get_field = obj.field;
-  assertEQ(get_field, 200)
+  arktest.assertEQ(get_field, 200)
 
   obj.field = 1;
   obj.field = obj.field & 0;
   get_field = obj.field;
-  assertEQ(get_field, 0)
+  arktest.assertEQ(get_field, 0)
 
   obj._bfield = true;
   obj._bfield = obj._bfield & false;
   let get_bfield = obj._bfield;
-  assertEQ(get_bfield, false)
+  arktest.assertEQ(get_bfield, false)
 
   obj._bfield = true;
   obj._bfield = obj._bfield | false;
   get_bfield = obj._bfield;
-  assertEQ(get_bfield, true)
+  arktest.assertEQ(get_bfield, true)
 
   obj._bfield = true;
   obj._bfield = obj._bfield | obj._bfield;
   get_bfield = obj._bfield;
-  assertEQ(get_bfield, true)
+  arktest.assertEQ(get_bfield, true)
 }

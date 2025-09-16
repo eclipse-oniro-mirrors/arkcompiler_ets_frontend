@@ -15,7 +15,7 @@
 
 function fn(o: Object): Object {
   let arr = o as long[];
-  assertEQ(arr[5], 42)
+  arktest.assertEQ(arr[5], 42)
   arr[6] = arr[5] * 2;
   return arr as Object;
 }
@@ -25,5 +25,5 @@ function main() {
   arr[5] = 42;
 
   let obj = fn(arr as Object);
-  assertEQ((obj as long[])[6], 84)
+  arktest.assertEQ((obj as long[])[6], 84)
 }

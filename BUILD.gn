@@ -11,7 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if ((defined(ark_standalone_build) && ark_standalone_build) || (defined(is_arkui_x) && is_arkui_x)) {
+if ((defined(ark_standalone_build) && ark_standalone_build) ||
+    (defined(is_arkui_x) && is_arkui_x)) {
   import("//arkcompiler/runtime_core/ark_config.gni")
 } else {
   import("//arkcompiler/ets_frontend/ark_config.gni")

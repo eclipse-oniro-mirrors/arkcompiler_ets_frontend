@@ -15,16 +15,6 @@
     ],
     "result": [
         {
-            "line": 16,
-            "column": 20,
-            "endLine": 16,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 17,
             "column": 5,
             "endLine": 17,
@@ -35,16 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 32,
-            "endLine": 19,
-            "endColumn": 33,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 23,
             "column": 1,
             "endLine": 23,
@@ -52,16 +32,6 @@
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 26,
-            "column": 31,
-            "endLine": 26,
-            "endColumn": 32,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -86,32 +56,12 @@
         },
         {
             "line": 32,
-            "column": 49,
+            "column": 35,
             "endLine": 32,
-            "endColumn": 50,
-            "problem": "NumericSemantics",
+            "endColumn": 40,
+            "problem": "BuiltinNewCtor",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 32,
-            "column": 52,
-            "endLine": 32,
-            "endColumn": 53,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 35,
-            "column": 33,
-            "endLine": 35,
-            "endColumn": 34,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -125,16 +75,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 39,
-            "column": 39,
-            "endLine": 39,
-            "endColumn": 40,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 40,
             "column": 5,
             "endLine": 40,
@@ -142,16 +82,6 @@
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 43,
-            "column": 36,
-            "endLine": 43,
-            "endColumn": 37,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -172,16 +102,6 @@
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 47,
-            "column": 37,
-            "endLine": 47,
-            "endColumn": 38,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -215,36 +135,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 72,
-            "column": 19,
-            "endLine": 72,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 72,
-            "column": 22,
-            "endLine": 72,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 73,
-            "column": 45,
-            "endLine": 73,
-            "endColumn": 46,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 74,
             "column": 3,
             "endLine": 74,
@@ -275,16 +165,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 84,
-            "column": 19,
-            "endLine": 84,
-            "endColumn": 21,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 95,
             "column": 9,
             "endLine": 95,
@@ -302,26 +182,6 @@
             "problem": "LimitedReturnTypeInference",
             "suggest": "",
             "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 113,
-            "column": 38,
-            "endLine": 113,
-            "endColumn": 39,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 114,
-            "column": 45,
-            "endLine": 114,
-            "endColumn": 46,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -406,62 +266,12 @@
         },
         {
             "line": 134,
-            "column": 38,
-            "endLine": 134,
-            "endColumn": 39,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 134,
             "column": 44,
             "endLine": 134,
             "endColumn": 45,
             "problem": "UnknownType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 134,
-            "column": 65,
-            "endLine": 134,
-            "endColumn": 66,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 134,
-            "column": 71,
-            "endLine": 134,
-            "endColumn": 72,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 134,
-            "column": 91,
-            "endLine": 134,
-            "endColumn": 92,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 134,
-            "column": 97,
-            "endLine": 134,
-            "endColumn": 98,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -482,86 +292,6 @@
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 136,
-            "column": 34,
-            "endLine": 136,
-            "endColumn": 35,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 136,
-            "column": 37,
-            "endLine": 136,
-            "endColumn": 38,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 136,
-            "column": 40,
-            "endLine": 136,
-            "endColumn": 41,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 136,
-            "column": 43,
-            "endLine": 136,
-            "endColumn": 44,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 136,
-            "column": 46,
-            "endLine": 136,
-            "endColumn": 47,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 137,
-            "column": 54,
-            "endLine": 137,
-            "endColumn": 55,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 137,
-            "column": 60,
-            "endLine": 137,
-            "endColumn": 61,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 137,
-            "column": 79,
-            "endLine": 137,
-            "endColumn": 80,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -595,66 +325,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 140,
-            "column": 30,
-            "endLine": 140,
-            "endColumn": 31,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 140,
-            "column": 33,
-            "endLine": 140,
-            "endColumn": 34,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 140,
-            "column": 36,
-            "endLine": 140,
-            "endColumn": 37,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 140,
-            "column": 39,
-            "endLine": 140,
-            "endColumn": 40,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 140,
-            "column": 42,
-            "endLine": 140,
-            "endColumn": 43,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 142,
-            "column": 22,
-            "endLine": 142,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 143,
             "column": 5,
             "endLine": 143,
@@ -662,6 +332,16 @@
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 149,
+            "column": 40,
+            "endLine": 149,
+            "endColumn": 45,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -676,6 +356,16 @@
         },
         {
             "line": 150,
+            "column": 21,
+            "endLine": 150,
+            "endColumn": 26,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 150,
             "column": 17,
             "endLine": 150,
             "endColumn": 29,
@@ -686,13 +376,13 @@
         },
         {
             "line": 150,
-            "column": 27,
+            "column": 17,
             "endLine": 150,
-            "endColumn": 28,
-            "problem": "NumericSemantics",
+            "endColumn": 29,
+            "problem": "UninitializedArrayElements",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
+            "rule": "Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)",
+            "severity": "WARNING"
         },
         {
             "line": 151,
@@ -716,12 +406,12 @@
         },
         {
             "line": 155,
-            "column": 5,
+            "column": 17,
             "endLine": 155,
-            "endColumn": 32,
-            "problem": "NumericSemantics",
+            "endColumn": 22,
+            "problem": "BuiltinNewCtor",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -729,6 +419,26 @@
             "column": 1,
             "endLine": 156,
             "endColumn": 20,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 163,
+            "column": 43,
+            "endLine": 163,
+            "endColumn": 54,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 167,
+            "column": 5,
+            "endLine": 167,
+            "endColumn": 24,
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",

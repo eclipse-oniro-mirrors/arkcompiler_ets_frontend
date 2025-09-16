@@ -83,12 +83,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "generic_function_call_5.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "generic_function_call_5.ets"
                 }
               }
             },
@@ -109,12 +109,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "generic_function_call_5.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "generic_function_call_5.ets"
                     }
                   }
                 },
@@ -172,7 +172,7 @@
                                             },
                                             "end": {
                                               "line": 17,
-                                              "column": 47,
+                                              "column": 46,
                                               "program": "generic_function_call_5.ets"
                                             }
                                           }
@@ -185,7 +185,7 @@
                                           },
                                           "end": {
                                             "line": 17,
-                                            "column": 47,
+                                            "column": 46,
                                             "program": "generic_function_call_5.ets"
                                           }
                                         }
@@ -199,7 +199,7 @@
                                         },
                                         "end": {
                                           "line": 17,
-                                          "column": 47,
+                                          "column": 46,
                                           "program": "generic_function_call_5.ets"
                                         }
                                       }
@@ -212,7 +212,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 47,
+                                        "column": 46,
                                         "program": "generic_function_call_5.ets"
                                       }
                                     }
@@ -289,7 +289,6 @@
                             }
                           }
                         },
-                        "throwMarker": "throws",
                         "loc": {
                           "start": {
                             "line": 17,
@@ -337,7 +336,7 @@
                   "loc": {
                     "start": {
                       "line": 17,
-                      "column": 73,
+                      "column": 66,
                       "program": "generic_function_call_5.ets"
                     },
                     "end": {
@@ -438,7 +437,7 @@
                     },
                     "end": {
                       "line": 20,
-                      "column": 38,
+                      "column": 37,
                       "program": "generic_function_call_5.ets"
                     }
                   }
@@ -451,7 +450,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 38,
+                    "column": 37,
                     "program": "generic_function_call_5.ets"
                   }
                 }
@@ -505,7 +504,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 26,
+                    "column": 24,
                     "program": "generic_function_call_5.ets"
                   }
                 }
@@ -518,7 +517,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 26,
+                  "column": 24,
                   "program": "generic_function_call_5.ets"
                 }
               }
@@ -644,12 +643,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "generic_function_call_5.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "generic_function_call_5.ets"
                     }
                   }
                 },
@@ -657,12 +656,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "generic_function_call_5.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "generic_function_call_5.ets"
                   }
                 }
               },
@@ -670,118 +669,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "generic_function_call_5.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "generic_function_call_5.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "generic_function_call_5.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "program": "generic_function_call_5.ets"
                 }
               }
             },
@@ -902,7 +795,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 26,
+                                "column": 25,
                                 "program": "generic_function_call_5.ets"
                               }
                             }
@@ -915,7 +808,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 26,
+                              "column": 25,
                               "program": "generic_function_call_5.ets"
                             }
                           }
@@ -942,7 +835,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 28,
+                        "column": 26,
                         "program": "generic_function_call_5.ets"
                       }
                     }
@@ -955,7 +848,7 @@
                     },
                     "end": {
                       "line": 23,
-                      "column": 28,
+                      "column": 26,
                       "program": "generic_function_call_5.ets"
                     }
                   }
@@ -1020,7 +913,7 @@
                                       },
                                       "end": {
                                         "line": 24,
-                                        "column": 25,
+                                        "column": 24,
                                         "program": "generic_function_call_5.ets"
                                       }
                                     }
@@ -1033,7 +926,7 @@
                                     },
                                     "end": {
                                       "line": 24,
-                                      "column": 25,
+                                      "column": 24,
                                       "program": "generic_function_call_5.ets"
                                     }
                                   }
@@ -1060,7 +953,7 @@
                               },
                               "end": {
                                 "line": 24,
-                                "column": 26,
+                                "column": 25,
                                 "program": "generic_function_call_5.ets"
                               }
                             }
@@ -1073,7 +966,7 @@
                             },
                             "end": {
                               "line": 24,
-                              "column": 26,
+                              "column": 25,
                               "program": "generic_function_call_5.ets"
                             }
                           }
@@ -1130,7 +1023,7 @@
                                                   },
                                                   "end": {
                                                     "line": 24,
-                                                    "column": 49,
+                                                    "column": 48,
                                                     "program": "generic_function_call_5.ets"
                                                   }
                                                 }
@@ -1143,7 +1036,7 @@
                                                 },
                                                 "end": {
                                                   "line": 24,
-                                                  "column": 49,
+                                                  "column": 48,
                                                   "program": "generic_function_call_5.ets"
                                                 }
                                               }
@@ -1157,7 +1050,7 @@
                                               },
                                               "end": {
                                                 "line": 24,
-                                                "column": 49,
+                                                "column": 48,
                                                 "program": "generic_function_call_5.ets"
                                               }
                                             }
@@ -1170,7 +1063,7 @@
                                             },
                                             "end": {
                                               "line": 24,
-                                              "column": 49,
+                                              "column": 48,
                                               "program": "generic_function_call_5.ets"
                                             }
                                           }

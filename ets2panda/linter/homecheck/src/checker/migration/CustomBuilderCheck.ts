@@ -25,6 +25,7 @@ import {
     Value,
     AstTreeUtils,
     ts,
+    UnionType,
 } from 'arkanalyzer';
 import Logger, { LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
 import { BaseChecker, BaseMetaData } from '../BaseChecker';
@@ -96,8 +97,11 @@ export class CustomBuilderCheck implements BaseChecker {
         return undefined;
     }
 
-    private isCustomBuilderTy(ty: Type): boolean {
-        return ty instanceof AliasType && ty.getName() === 'CustomBuilder';
+    private isCustomBuilderTy(type: Type): boolean {
+        const isRawCustomBuilderTy = (ty: Type): boolean => {
+            return ty instanceof AliasType && ty.getName() === 'CustomBuilder';
+        };
+        return isRawCustomBuilderTy(type) || (type instanceof UnionType && type.getTypes().some(ty => isRawCustomBuilderTy(ty)));
     }
 
     private isPassToCustomBuilder(stmt: Stmt, locals: Set<Local>): Local | undefined {
@@ -187,6 +191,9 @@ export class CustomBuilderCheck implements BaseChecker {
         const arkFile = stmt.getCfg().getDeclaringMethod().getDeclaringArkFile();
         const sourceFile = AstTreeUtils.getASTNode(arkFile.getName(), arkFile.getCode());
         const range = FixUtils.getRangeWithAst(sourceFile, fixPosition);
+        if (range === null) {
+            return null;
+        }
         ruleFix.range = range;
         const originalText = FixUtils.getSourceWithRange(sourceFile, range);
         if (originalText !== null) {

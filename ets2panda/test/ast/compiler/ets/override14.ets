@@ -21,5 +21,3 @@ class B extends A {
   override fn<Object>(t: Object): int { return 1}
 }
 
-/* @@? 21:14 Error TypeError: fn<Object>(t: Object): int in B cannot override fn<T>(t: T): T in A because overriding return type is not compatible with the other return type.  */
-/* @@? 21:14 Error TypeError: Method fn<Object>(t: Object): int in B not overriding any method  */

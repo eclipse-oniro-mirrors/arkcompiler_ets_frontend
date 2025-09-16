@@ -15,26 +15,6 @@
     ],
     "result": [
         {
-            "line": 23,
-            "column": 24,
-            "endLine": 23,
-            "endColumn": 25,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 53,
-            "column": 26,
-            "endLine": 53,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 63,
             "column": 5,
             "endLine": 63,
@@ -112,16 +92,6 @@
             "problem": "ThisType",
             "suggest": "",
             "rule": "Type notation using \"this\" is not supported (arkts-no-typing-with-this)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 75,
-            "column": 26,
-            "endLine": 75,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

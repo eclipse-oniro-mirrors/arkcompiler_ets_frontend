@@ -450,112 +450,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "switch_readonly_member_compare_char.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "switch_readonly_member_compare_char.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -693,43 +587,8 @@
                         {
                           "type": "SwitchCase",
                           "test": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "Fgr",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 27,
-                                  "column": 14,
-                                  "program": "switch_readonly_member_compare_char.ets"
-                                },
-                                "end": {
-                                  "line": 27,
-                                  "column": 17,
-                                  "program": "switch_readonly_member_compare_char.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "BR",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 27,
-                                  "column": 18,
-                                  "program": "switch_readonly_member_compare_char.ets"
-                                },
-                                "end": {
-                                  "line": 27,
-                                  "column": 20,
-                                  "program": "switch_readonly_member_compare_char.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
+                            "type": "CharLiteral",
+                            "value": "{",
                             "loc": {
                               "start": {
                                 "line": 27,
@@ -777,43 +636,8 @@
                         {
                           "type": "SwitchCase",
                           "test": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "Sqr",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 29,
-                                  "column": 14,
-                                  "program": "switch_readonly_member_compare_char.ets"
-                                },
-                                "end": {
-                                  "line": 29,
-                                  "column": 17,
-                                  "program": "switch_readonly_member_compare_char.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "BR",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 29,
-                                  "column": 18,
-                                  "program": "switch_readonly_member_compare_char.ets"
-                                },
-                                "end": {
-                                  "line": 29,
-                                  "column": 20,
-                                  "program": "switch_readonly_member_compare_char.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
+                            "type": "CharLiteral",
+                            "value": "[",
                             "loc": {
                               "start": {
                                 "line": 29,

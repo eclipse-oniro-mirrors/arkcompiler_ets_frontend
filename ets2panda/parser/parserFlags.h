@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -69,6 +69,7 @@ enum class StatementParsingFlags : uint32_t {
     GLOBAL = 1U << 1U,
     IF_ELSE = 1U << 2U,
     LABELLED = 1U << 3U,
+    INIT_MODULE = 1U << 4U,
 
     STMT_LEXICAL_SCOPE_NEEDED = IF_ELSE | LABELLED,
     STMT_GLOBAL_LEXICAL = GLOBAL | ALLOW_LEXICAL,

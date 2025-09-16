@@ -40,5 +40,4 @@ function main() {
     }
 }
 
-/* @@@ label Error TypeError: Enum switch case must be unqualified name of an enum constant  */
-/* @@@ label1 Error TypeError: Enum switch case must be unqualified name of an enum constant  */
+/* @@@ label Error TypeError: Case duplicate  */

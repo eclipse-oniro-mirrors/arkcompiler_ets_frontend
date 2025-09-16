@@ -39,6 +39,15 @@ void ETSAsyncFuncReturnType::Identical(TypeRelation *relation, Type *other)
     relation->Result(false);
 }
 
+void ETSAsyncFuncReturnType::IsSupertypeOf(TypeRelation *relation, Type *source)
+{
+    GetPromiseTypeArg()->IsSupertypeOf(relation, source);
+    if (relation->IsTrue()) {
+        return;
+    }
+    promiseType_->IsSupertypeOf(relation, source);
+}
+
 bool ETSAsyncFuncReturnType::AssignmentSource([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *target)
 {
     return false;
@@ -47,9 +56,6 @@ bool ETSAsyncFuncReturnType::AssignmentSource([[maybe_unused]] TypeRelation *rel
 void ETSAsyncFuncReturnType::AssignmentTarget(TypeRelation *relation, Type *source)
 {
     relation->IsAssignableTo(source, promiseType_) || relation->IsAssignableTo(source, GetPromiseTypeArg());
-    if (relation->IsTrue() && !source->IsETSObjectType() && relation->ApplyBoxing()) {
-        relation->GetChecker()->AsETSChecker()->MaybeAddBoxingFlagInRelation(relation, source);
-    }
 }
 
 void ETSAsyncFuncReturnType::CheckVarianceRecursively(TypeRelation *relation, VarianceFlag varianceFlag)

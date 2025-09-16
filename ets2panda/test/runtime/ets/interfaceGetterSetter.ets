@@ -46,14 +46,14 @@ class A implements inter{
 
 function main(){
     let a: inter = new A();
-    assertEQ(a.foo(), a.alma)
+    arktest.assertEQ(a.foo(), a.alma)
     a.alma = 4;
-    assertEQ(a.foo(), a.alma)
+    arktest.assertEQ(a.foo(), a.alma)
 
 
-    assertTrue(a.foo2() === a.korte)
+    arktest.assertTrue(a.foo2() === a.korte)
     a.korte = new Object();
-    assertTrue(a.foo2() === a.korte)
+    arktest.assertTrue(a.foo2() === a.korte)
 
-    assertEQ(a.labda, a.foo3())
+    arktest.assertEQ(a.labda, a.foo3())
 }

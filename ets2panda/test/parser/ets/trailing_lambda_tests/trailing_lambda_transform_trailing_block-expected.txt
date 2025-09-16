@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "trailing_lambda_transform_trailing_block.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "trailing_lambda_transform_trailing_block.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "f",
               "decorators": [],
               "loc": {
@@ -478,8 +372,8 @@
                             "program": "trailing_lambda_transform_trailing_block.ets"
                           },
                           "end": {
-                            "line": 23,
-                            "column": 8,
+                            "line": 25,
+                            "column": 6,
                             "program": "trailing_lambda_transform_trailing_block.ets"
                           }
                         }
@@ -491,8 +385,8 @@
                           "program": "trailing_lambda_transform_trailing_block.ets"
                         },
                         "end": {
-                          "line": 23,
-                          "column": 8,
+                          "line": 25,
+                          "column": 6,
                           "program": "trailing_lambda_transform_trailing_block.ets"
                         }
                       }
@@ -527,8 +421,8 @@
                             "program": "trailing_lambda_transform_trailing_block.ets"
                           },
                           "end": {
-                            "line": 27,
-                            "column": 8,
+                            "line": 30,
+                            "column": 6,
                             "program": "trailing_lambda_transform_trailing_block.ets"
                           }
                         }
@@ -540,8 +434,8 @@
                           "program": "trailing_lambda_transform_trailing_block.ets"
                         },
                         "end": {
-                          "line": 27,
-                          "column": 8,
+                          "line": 30,
+                          "column": 6,
                           "program": "trailing_lambda_transform_trailing_block.ets"
                         }
                       }
@@ -612,7 +506,7 @@
                               },
                               "end": {
                                 "line": 33,
-                                "column": 21,
+                                "column": 24,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               }
                             }
@@ -625,7 +519,7 @@
                             },
                             "end": {
                               "line": 33,
-                              "column": 21,
+                              "column": 24,
                               "program": "trailing_lambda_transform_trailing_block.ets"
                             }
                           }
@@ -640,7 +534,7 @@
                         },
                         "end": {
                           "line": 33,
-                          "column": 21,
+                          "column": 24,
                           "program": "trailing_lambda_transform_trailing_block.ets"
                         }
                       }
@@ -710,8 +604,8 @@
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               },
                               "end": {
-                                "line": 35,
-                                "column": 21,
+                                "line": 36,
+                                "column": 7,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               }
                             }
@@ -723,8 +617,8 @@
                               "program": "trailing_lambda_transform_trailing_block.ets"
                             },
                             "end": {
-                              "line": 35,
-                              "column": 21,
+                              "line": 36,
+                              "column": 7,
                               "program": "trailing_lambda_transform_trailing_block.ets"
                             }
                           }
@@ -738,8 +632,8 @@
                           "program": "trailing_lambda_transform_trailing_block.ets"
                         },
                         "end": {
-                          "line": 35,
-                          "column": 21,
+                          "line": 36,
+                          "column": 7,
                           "program": "trailing_lambda_transform_trailing_block.ets"
                         }
                       }
@@ -749,9 +643,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 39,
+                                "column": 5,
+                                "program": "trailing_lambda_transform_trailing_block.ets"
+                              },
+                              "end": {
+                                "line": 39,
+                                "column": 12,
+                                "program": "trailing_lambda_transform_trailing_block.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 39,
+                                "column": 13,
+                                "program": "trailing_lambda_transform_trailing_block.ets"
+                              },
+                              "end": {
+                                "line": 39,
+                                "column": 21,
+                                "program": "trailing_lambda_transform_trailing_block.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 39,
@@ -760,7 +688,7 @@
                             },
                             "end": {
                               "line": 39,
-                              "column": 13,
+                              "column": 21,
                               "program": "trailing_lambda_transform_trailing_block.ets"
                             }
                           }
@@ -772,12 +700,12 @@
                             "loc": {
                               "start": {
                                 "line": 39,
-                                "column": 14,
+                                "column": 22,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               },
                               "end": {
                                 "line": 39,
-                                "column": 15,
+                                "column": 23,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               }
                             }
@@ -791,12 +719,12 @@
                               "loc": {
                                 "start": {
                                   "line": 39,
-                                  "column": 17,
+                                  "column": 25,
                                   "program": "trailing_lambda_transform_trailing_block.ets"
                                 },
                                 "end": {
                                   "line": 39,
-                                  "column": 18,
+                                  "column": 26,
                                   "program": "trailing_lambda_transform_trailing_block.ets"
                                 }
                               }
@@ -806,12 +734,12 @@
                             "loc": {
                               "start": {
                                 "line": 39,
-                                "column": 17,
+                                "column": 25,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               },
                               "end": {
                                 "line": 39,
-                                "column": 20,
+                                "column": 30,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               }
                             }
@@ -826,7 +754,7 @@
                           },
                           "end": {
                             "line": 39,
-                            "column": 23,
+                            "column": 31,
                             "program": "trailing_lambda_transform_trailing_block.ets"
                           }
                         }
@@ -839,7 +767,7 @@
                         },
                         "end": {
                           "line": 39,
-                          "column": 24,
+                          "column": 32,
                           "program": "trailing_lambda_transform_trailing_block.ets"
                         }
                       }
@@ -849,9 +777,43 @@
                       "expression": {
                         "type": "CallExpression",
                         "callee": {
-                          "type": "Identifier",
-                          "name": "assertEQ",
-                          "decorators": [],
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "arktest",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 40,
+                                "column": 5,
+                                "program": "trailing_lambda_transform_trailing_block.ets"
+                              },
+                              "end": {
+                                "line": 40,
+                                "column": 12,
+                                "program": "trailing_lambda_transform_trailing_block.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "assertEQ",
+                            "decorators": [],
+                            "loc": {
+                              "start": {
+                                "line": 40,
+                                "column": 13,
+                                "program": "trailing_lambda_transform_trailing_block.ets"
+                              },
+                              "end": {
+                                "line": 40,
+                                "column": 21,
+                                "program": "trailing_lambda_transform_trailing_block.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 40,
@@ -860,7 +822,7 @@
                             },
                             "end": {
                               "line": 40,
-                              "column": 13,
+                              "column": 21,
                               "program": "trailing_lambda_transform_trailing_block.ets"
                             }
                           }
@@ -872,12 +834,12 @@
                             "loc": {
                               "start": {
                                 "line": 40,
-                                "column": 14,
+                                "column": 22,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               },
                               "end": {
                                 "line": 40,
-                                "column": 15,
+                                "column": 23,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               }
                             }
@@ -891,12 +853,12 @@
                               "loc": {
                                 "start": {
                                   "line": 40,
-                                  "column": 17,
+                                  "column": 25,
                                   "program": "trailing_lambda_transform_trailing_block.ets"
                                 },
                                 "end": {
                                   "line": 40,
-                                  "column": 18,
+                                  "column": 26,
                                   "program": "trailing_lambda_transform_trailing_block.ets"
                                 }
                               }
@@ -917,12 +879,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 40,
-                                        "column": 23,
+                                        "column": 31,
                                         "program": "trailing_lambda_transform_trailing_block.ets"
                                       },
                                       "end": {
                                         "line": 40,
-                                        "column": 25,
+                                        "column": 33,
                                         "program": "trailing_lambda_transform_trailing_block.ets"
                                       }
                                     }
@@ -930,12 +892,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 40,
-                                      "column": 19,
+                                      "column": 27,
                                       "program": "trailing_lambda_transform_trailing_block.ets"
                                     },
                                     "end": {
                                       "line": 40,
-                                      "column": 25,
+                                      "column": 33,
                                       "program": "trailing_lambda_transform_trailing_block.ets"
                                     }
                                   }
@@ -943,12 +905,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 40,
-                                    "column": 19,
+                                    "column": 27,
                                     "program": "trailing_lambda_transform_trailing_block.ets"
                                   },
                                   "end": {
                                     "line": 40,
-                                    "column": 25,
+                                    "column": 33,
                                     "program": "trailing_lambda_transform_trailing_block.ets"
                                   }
                                 }
@@ -958,12 +920,12 @@
                             "loc": {
                               "start": {
                                 "line": 40,
-                                "column": 17,
+                                "column": 25,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               },
                               "end": {
                                 "line": 40,
-                                "column": 26,
+                                "column": 34,
                                 "program": "trailing_lambda_transform_trailing_block.ets"
                               }
                             }
@@ -978,7 +940,7 @@
                           },
                           "end": {
                             "line": 40,
-                            "column": 27,
+                            "column": 35,
                             "program": "trailing_lambda_transform_trailing_block.ets"
                           }
                         }
@@ -991,7 +953,7 @@
                         },
                         "end": {
                           "line": 40,
-                          "column": 28,
+                          "column": 36,
                           "program": "trailing_lambda_transform_trailing_block.ets"
                         }
                       }

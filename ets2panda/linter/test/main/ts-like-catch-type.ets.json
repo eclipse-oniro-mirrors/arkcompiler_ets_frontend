@@ -13,5 +13,116 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
       ],
-    "result": []
+    "result": [
+        {
+            "line": 33,
+            "column": 10,
+            "endLine": 33,
+            "endColumn": 28,
+            "problem": "CatchWithUnsupportedType",
+            "suggest": "",
+            "rule": "Type annotation in catch clause is not supported (arkts-no-types-in-catch)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 5,
+            "endLine": 50,
+            "endColumn": 38,
+            "problem": "ThrowStatement",
+            "suggest": "",
+            "rule": "\"throw\" statements cannot accept values of arbitrary types (arkts-limited-throw)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 75,
+            "column": 11,
+            "endLine": 75,
+            "endColumn": 19,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 88,
+            "column": 5,
+            "endLine": 88,
+            "endColumn": 32,
+            "problem": "ThrowStatement",
+            "suggest": "",
+            "rule": "\"throw\" statements cannot accept values of arbitrary types (arkts-limited-throw)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 113,
+            "column": 11,
+            "endLine": 113,
+            "endColumn": 19,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 169,
+            "column": 11,
+            "endLine": 169,
+            "endColumn": 19,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 206,
+            "column": 11,
+            "endLine": 206,
+            "endColumn": 19,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 3,
+            "endLine": 38,
+            "endColumn": 6,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'msg' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'msg' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 3,
+            "endLine": 39,
+            "endColumn": 7,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'code' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'code' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 3,
+            "endLine": 43,
+            "endColumn": 6,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'msg' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'msg' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 3,
+            "endLine": 44,
+            "endColumn": 7,
+            "problem": "StrictDiagnostic",
+            "suggest": "Property 'code' has no initializer and is not definitely assigned in the constructor.",
+            "rule": "Property 'code' has no initializer and is not definitely assigned in the constructor.",
+            "severity": "ERROR"
+        }
+    ]
 }

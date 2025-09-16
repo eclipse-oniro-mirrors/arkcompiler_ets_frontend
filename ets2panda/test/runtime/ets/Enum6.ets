@@ -27,24 +27,24 @@ enum TestEnum {
 
 function main(): void {
     test_access_enum_bitwise(Access.WRITE);
-    assertEQ((Access.WRITE & Access.READWRITE), 2)
+    arktest.assertEQ((Access.WRITE & Access.READWRITE), 2)
 
     test_test_enum_bitwise(TestEnum.C);
-    assertEQ((TestEnum.B & TestEnum.A), 144)
+    arktest.assertEQ((TestEnum.B & TestEnum.A), 144)
 
 }
 
 function test_access_enum_bitwise(enum_val: Access): void {
-    assertEQ((enum_val & Access.READ), 0)
-    assertEQ((enum_val & Access.WRITE), 2)
-    assertEQ((enum_val | Access.READ), 3)
-    assertEQ((enum_val | Access.READWRITE), 3)
-    assertEQ((enum_val & Access.READWRITE), 2)
+    arktest.assertEQ((enum_val & Access.READ), 0)
+    arktest.assertEQ((enum_val & Access.WRITE), 2)
+    arktest.assertEQ((enum_val | Access.READ), 3)
+    arktest.assertEQ((enum_val | Access.READWRITE), 3)
+    arktest.assertEQ((enum_val & Access.READWRITE), 2)
 }
 
 function test_test_enum_bitwise(enum_val: TestEnum): void {
-    assertEQ((enum_val & TestEnum.A), 16)
-    assertEQ((enum_val | TestEnum.A), 923)
-    assertEQ((enum_val & TestEnum.B), 17)
-    assertEQ((enum_val | TestEnum.B), 923)
+    arktest.assertEQ((enum_val & TestEnum.A), 16)
+    arktest.assertEQ((enum_val | TestEnum.A), 923)
+    arktest.assertEQ((enum_val & TestEnum.B), 17)
+    arktest.assertEQ((enum_val | TestEnum.B), 923)
 }

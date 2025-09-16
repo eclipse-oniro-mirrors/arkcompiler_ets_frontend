@@ -74,46 +74,14 @@ static lexer::TokenType CombinedOpToOp(const lexer::TokenType combinedOp)
     ES2PANDA_UNREACHABLE();
 }
 
-void AdjustBoxingUnboxingFlags(ir::Expression *loweringResult, const ir::Expression *oldExpr)
-{
-    ir::Expression *exprToProcess = nullptr;
-    if (loweringResult->IsAssignmentExpression()) {
-        exprToProcess = loweringResult->AsAssignmentExpression();
-    } else if (loweringResult->IsBlockExpression() && !loweringResult->AsBlockExpression()->Statements().empty()) {
-        auto *statement = loweringResult->AsBlockExpression()->Statements().back();
-        if (statement->IsExpressionStatement()) {
-            exprToProcess = statement->AsExpressionStatement()->GetExpression();
-        }
-    } else {
-        ES2PANDA_UNREACHABLE();
-    }
-
-    // NOTE: gogabr. make sure that the checker never puts both a boxing and an unboxing flag on the same node.
-    // Then this function will become unnecessary.
-    const ir::BoxingUnboxingFlags oldBoxingFlag {oldExpr->GetBoxingUnboxingFlags() &
-                                                 ir::BoxingUnboxingFlags::BOXING_FLAG};
-    const ir::BoxingUnboxingFlags oldUnboxingFlag {oldExpr->GetBoxingUnboxingFlags() &
-                                                   ir::BoxingUnboxingFlags::UNBOXING_FLAG};
-    ES2PANDA_ASSERT(exprToProcess != nullptr);
-    if (exprToProcess->TsType()->IsETSPrimitiveType()) {
-        loweringResult->SetBoxingUnboxingFlags(oldBoxingFlag);
-    } else if (exprToProcess->TsType()->IsETSObjectType()) {
-        loweringResult->SetBoxingUnboxingFlags(oldUnboxingFlag);
-    }
-}
-
-static ir::OpaqueTypeNode *CreateProxyTypeNode(public_lib::Context *ctx, ir::Expression *expr)
+static ir::OpaqueTypeNode *CreateProxyTypeNode(checker::ETSChecker *checker, ir::Expression *expr)
 {
     auto *lcType = expr->TsType();
-    auto *checker = ctx->checker->AsETSChecker();
     if (checker->IsExtensionETSFunctionType(lcType) && expr->IsMemberExpression() &&
         expr->AsMemberExpression()->HasMemberKind(ir::MemberExpressionKind::EXTENSION_ACCESSOR)) {
         lcType = expr->AsMemberExpression()->ExtensionAccessorType();
     }
-    if (auto *lcTypeAsPrimitive = checker->MaybeUnboxInRelation(lcType); lcTypeAsPrimitive != nullptr) {
-        lcType = lcTypeAsPrimitive;
-    }
-    return ctx->AllocNode<ir::OpaqueTypeNode>(lcType, ctx->Allocator());
+    return checker->AllocNode<ir::OpaqueTypeNode>(lcType, checker->Allocator());
 }
 
 static std::string GenFormatForExpression(ir::Expression *expr, size_t ix1, size_t ix2)
@@ -129,15 +97,15 @@ static std::string GenFormatForExpression(ir::Expression *expr, size_t ix1, size
         if ((kind & ir::MemberExpressionKind::PROPERTY_ACCESS) != 0) {
             res += ".@@I" + std::to_string(ix2);
         } else if (kind == ir::MemberExpressionKind::ELEMENT_ACCESS) {
-            res += "[@@I" + std::to_string(ix2) + "]";
+            res += "[@@E" + std::to_string(ix2) + "]";
         }
     }
     return res;
 }
 
-static ir::Identifier *GetClone(ArenaAllocator *allocator, ir::Identifier *node)
+static ir::Expression *GetClone(ArenaAllocator *allocator, ir::Expression *node)
 {
-    return node == nullptr ? nullptr : node->Clone(allocator, nullptr);
+    return node == nullptr ? nullptr : node->Clone(allocator, nullptr)->AsExpression();
 }
 
 static std::string GetFormatPlaceholder(const ir::Expression *expr, const size_t counter)
@@ -208,15 +176,30 @@ static std::tuple<std::string, ArenaVector<ir::Expression *>> GenerateStringForA
     auto result = GenerateNestedMemberAccess(expr, allocator, counter);
     counter += std::get<1>(result).size();
     retStr += " = ( " + std::get<0>(result) + ' ' + std::string {lexer::TokenToString(CombinedOpToOp(opEqual))} +
-              " (@@E" + std::to_string(counter) + ")) as @@T" + std::to_string(counter + 1);
+              " (@@E" + std::to_string(counter) + "))";
     retVec.insert(retVec.end(), std::get<1>(result).begin(), std::get<1>(result).end());
     return {retStr, retVec};
 }
 
-static ir::Expression *GenerateLoweredResultForLoweredAssignment(
-    const lexer::TokenType opEqual, ir::MemberExpression *expr, ArenaAllocator *const allocator,
-    parser::ETSParser *parser, const std::array<ir::Expression *, 2> additionalAssignmentExpressions)
+static std::string GetCastString(checker::ETSChecker *checker, ir::Expression *expr, ArenaVector<ir::Expression *> &vec)
 {
+    auto type = expr->TsType();
+    if (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) {
+        return ".to" + type->ToString() + "()";
+    }
+
+    vec.push_back(CreateProxyTypeNode(checker, expr));
+
+    return " as @@T" + std::to_string(vec.size());
+}
+
+static ir::Expression *GenerateLoweredResultForLoweredAssignment(const lexer::TokenType opEqual,
+                                                                 ir::MemberExpression *expr,
+                                                                 checker::ETSChecker *const checker,
+                                                                 parser::ETSParser *parser,
+                                                                 ir::Expression *additionalAssignmentExpression)
+{
+    auto *allocator = checker->Allocator();
     // Generated a formatString for the new lowered assignment expression
     // The formatString will look like this: "A = (A `operation` B) as T"
     // Where A is a member access
@@ -238,16 +221,16 @@ static ir::Expression *GenerateLoweredResultForLoweredAssignment(
         expr->SetProperty(dummyIndex->Clone(allocator, expr));
         auto [retStr, retVec] =
             GenerateStringForAssignment(opEqual, expr, allocator, dummyIndexDeclExpression.size() + 1);
-        retVec.push_back(additionalAssignmentExpressions[0]);
-        retVec.push_back(additionalAssignmentExpressions[1]);
+        retVec.push_back(additionalAssignmentExpression);
+        retStr += GetCastString(checker, expr, retVec);
         retVec.insert(retVec.begin(), dummyIndexDeclExpression.begin(), dummyIndexDeclExpression.end());
         retStr = dummyIndexDeclStr + retStr;
         return parser->CreateFormattedExpression(retStr, retVec);
     }
 
     auto [retStr, retVec] = GenerateStringForAssignment(opEqual, expr, allocator, 1);
-    retVec.push_back(additionalAssignmentExpressions[0]);
-    retVec.push_back(additionalAssignmentExpressions[1]);
+    retVec.push_back(additionalAssignmentExpression);
+    retStr += GetCastString(checker, expr, retVec);
     return parser->CreateFormattedExpression(retStr, retVec);
 }
 
@@ -255,27 +238,29 @@ static ir::Expression *ConstructOpAssignmentResult(public_lib::Context *ctx, ir:
 {
     auto *allocator = ctx->allocator;
     auto *parser = ctx->parser->AsETSParser();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
 
     const auto opEqual = assignment->OperatorType();
     ES2PANDA_ASSERT(opEqual != lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
 
     auto *const left = assignment->Left();
     auto *const right = assignment->Right();
-    right->SetBoxingUnboxingFlags(ir::BoxingUnboxingFlags::NONE);
 
-    auto *exprType = CreateProxyTypeNode(ctx, left);
     ir::Expression *retVal = nullptr;
 
     // Create temporary variable(s) if left hand of assignment is not defined by simple identifier[s]
     if (left->IsIdentifier()) {
-        const std::string formatString =
-            "@@I1 = (@@I2 " + std::string(lexer::TokenToString(CombinedOpToOp(opEqual))) + " (@@E3)) as @@T4";
-        retVal = parser->CreateFormattedExpression(formatString, GetClone(allocator, left->AsIdentifier()),
-                                                   GetClone(allocator, left->AsIdentifier()), right, exprType);
+        std::string formatString =
+            "@@I1 = (@@I2 " + std::string(lexer::TokenToString(CombinedOpToOp(opEqual))) + " (@@E3))";
+        ArenaVector<ir::Expression *> retVec(allocator->Adapter());
+        retVec.push_back(GetClone(allocator, left->AsIdentifier()));
+        retVec.push_back(GetClone(allocator, left->AsIdentifier()));
+        retVec.push_back(right);
+        formatString += GetCastString(checker, left, retVec);
+        retVal = parser->CreateFormattedExpression(formatString, retVec);
     } else if (left->IsMemberExpression()) {
         // Generate ArkTS code string for new lowered assignment expression:
-        retVal = GenerateLoweredResultForLoweredAssignment(opEqual, left->AsMemberExpression(), allocator, parser,
-                                                           {right, exprType});
+        retVal = GenerateLoweredResultForLoweredAssignment(opEqual, left->AsMemberExpression(), checker, parser, right);
     } else {
         ES2PANDA_UNREACHABLE();
     }
@@ -285,7 +270,7 @@ static ir::Expression *ConstructOpAssignmentResult(public_lib::Context *ctx, ir:
 
 ir::AstNode *HandleOpAssignment(public_lib::Context *ctx, ir::AssignmentExpression *assignment)
 {
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
 
     if (assignment->TsType() == nullptr) {  // hasn't been through checker
         return assignment;
@@ -314,16 +299,13 @@ ir::AstNode *HandleOpAssignment(public_lib::Context *ctx, ir::AssignmentExpressi
     checker::ScopeContext sc {checker, scope};
 
     loweringResult->Check(checker);
-
-    AdjustBoxingUnboxingFlags(loweringResult, assignment);
-
     return loweringResult;
 }
 
 struct ArgumentInfo {
     std::string newAssignmentStatements {};
     ir::Identifier *id1 = nullptr;
-    ir::Identifier *id2 = nullptr;
+    ir::Expression *id2 = nullptr;
     ir::Identifier *id3 = nullptr;
     ir::Expression *object = nullptr;
     ir::Expression *property = nullptr;
@@ -340,12 +322,12 @@ static void ParseArgument(public_lib::Context *ctx, ir::Expression *argument, Ar
     }
 
     if (argument->IsIdentifier()) {
-        info.id1 = GetClone(allocator, argument->AsIdentifier());
+        info.id1 = GetClone(allocator, argument->AsIdentifier())->AsIdentifier();
     } else if (argument->IsMemberExpression()) {
         auto *memberExpression = argument->AsMemberExpression();
 
         if (info.object = memberExpression->Object(); info.object != nullptr && info.object->IsIdentifier()) {
-            info.id1 = GetClone(allocator, info.object->AsIdentifier());
+            info.id1 = GetClone(allocator, info.object->AsIdentifier())->AsIdentifier();
         } else if (info.object != nullptr) {
             info.id1 = Gensym(allocator);
             info.newAssignmentStatements = "const @@I1 = (@@E2) as @@T3; ";
@@ -354,9 +336,13 @@ static void ParseArgument(public_lib::Context *ctx, ir::Expression *argument, Ar
 
         if (info.property = memberExpression->Property(); info.property != nullptr && info.property->IsIdentifier()) {
             info.id2 = GetClone(allocator, info.property->AsIdentifier());
+        } else if (info.property != nullptr && info.property->IsLiteral()) {
+            // Be careful not to disturb tuple element access
+            info.id2 = GetClone(allocator, info.property);
         } else if (info.property != nullptr) {
             info.id2 = Gensym(allocator);
-            info.newAssignmentStatements += "const @@I4 = (@@E5) as @@T6; ";
+            info.newAssignmentStatements += "const @@I4 = (@@E5) as @@T6;";
+            info.newAssignmentStatements += ";";
             info.propType = info.property->TsType();
         }
     }
@@ -367,7 +353,7 @@ static ir::Expression *ConstructUpdateResult(public_lib::Context *ctx, ir::Updat
     auto *allocator = ctx->allocator;
     auto *parser = ctx->parser->AsETSParser();
     auto *argument = upd->Argument();
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
 
     ArgumentInfo argInfo {};
     argInfo.objType = checker->GlobalVoidType();
@@ -384,25 +370,27 @@ static ir::Expression *ConstructUpdateResult(public_lib::Context *ctx, ir::Updat
 
     // NOLINTBEGIN(readability-magic-numbers)
     if (upd->IsPrefix()) {
-        argInfo.newAssignmentStatements +=
-            "const @@I7 = (" + GenFormatForExpression(argument, 8U, 9U) + opSign + " 1" + suffix + ") as @@T10;";
-        argInfo.newAssignmentStatements += GenFormatForExpression(argument, 11U, 12U) + " = @@I13; @@I14";
+        argInfo.newAssignmentStatements += "const @@I7 = (" + GenFormatForExpression(argument, 8U, 9U) +
+                                           (argument->IsTSNonNullExpression() ? "!" : "") + opSign + " 1" + suffix +
+                                           ").to" + argument->TsType()->ToString() + "();";
+        argInfo.newAssignmentStatements += GenFormatForExpression(argument, 10U, 11U) + " = @@I12; @@I13";
         return parser->CreateFormattedExpression(
             argInfo.newAssignmentStatements, argInfo.id1, argInfo.object, argInfo.objType, argInfo.id2,
             argInfo.property, argInfo.propType, argInfo.id3, GetClone(allocator, argInfo.id1),
-            GetClone(allocator, argInfo.id2), argument->TsType(), GetClone(allocator, argInfo.id1),
-            GetClone(allocator, argInfo.id2), GetClone(allocator, argInfo.id3), GetClone(allocator, argInfo.id3));
+            GetClone(allocator, argInfo.id2), GetClone(allocator, argInfo.id1), GetClone(allocator, argInfo.id2),
+            GetClone(allocator, argInfo.id3), GetClone(allocator, argInfo.id3));
     }
 
     // upd is postfix
-    argInfo.newAssignmentStatements += "const @@I7 = " + GenFormatForExpression(argument, 8, 9) + " as @@T10;" +
-                                       GenFormatForExpression(argument, 11U, 12U) + " = (@@I13 " + opSign + " 1" +
-                                       suffix + ") as @@T14; @@I15;";
+    argInfo.newAssignmentStatements +=
+        "const @@I7 = " + GenFormatForExpression(argument, 8, 9) + (argument->IsTSNonNullExpression() ? "!" : "") +
+        ".to" + argument->TsType()->ToString() + "();" + GenFormatForExpression(argument, 10U, 11U) + " = (@@I12 " +
+        opSign + " 1" + suffix + ").to" + argument->TsType()->ToString() + "(); @@I13;";
     return parser->CreateFormattedExpression(
         argInfo.newAssignmentStatements, argInfo.id1, argInfo.object, argInfo.objType, argInfo.id2, argInfo.property,
         argInfo.propType, argInfo.id3, GetClone(allocator, argInfo.id1), GetClone(allocator, argInfo.id2),
-        argument->TsType(), GetClone(allocator, argInfo.id1), GetClone(allocator, argInfo.id2),
-        GetClone(allocator, argInfo.id3), argument->TsType(), GetClone(allocator, argInfo.id3));
+        GetClone(allocator, argInfo.id1), GetClone(allocator, argInfo.id2), GetClone(allocator, argInfo.id3),
+        GetClone(allocator, argInfo.id3));
     // NOLINTEND(readability-magic-numbers)
 }
 
@@ -412,7 +400,7 @@ static ir::AstNode *HandleUpdate(public_lib::Context *ctx, ir::UpdateExpression 
 
     ir::Expression *loweringResult = ConstructUpdateResult(ctx, upd);
 
-    auto *checker = ctx->checker->AsETSChecker();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
 
     auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
     checker::SavedCheckerContext scc {checker, checker::CheckerStatus::IGNORE_VISIBILITY, ContainingClass(upd)};
@@ -434,9 +422,6 @@ static ir::AstNode *HandleUpdate(public_lib::Context *ctx, ir::UpdateExpression 
     checker->VarBinder()->AsETSBinder()->ResolveReferencesForScopeWithContext(loweringResult,
                                                                               NearestScope(loweringResult));
     loweringResult->Check(checker);
-
-    AdjustBoxingUnboxingFlags(loweringResult, upd);
-
     return loweringResult;
 }
 

@@ -202,7 +202,6 @@ public:
 
         inline void Reset(size_t offset)
         {
-            ES2PANDA_ASSERT(sv_.begin() + offset <= sv_.end());
             iter_ = sv_.begin() + offset;
         }
 

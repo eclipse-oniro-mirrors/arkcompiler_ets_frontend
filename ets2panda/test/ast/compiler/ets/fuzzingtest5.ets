@@ -20,4 +20,4 @@ class A {
 }
 
 /* @@? 18:9 Error TypeError: Property 'f' must be accessed through 'this' */
-/* @@? 18:13 Error TypeError: Type 'int' cannot be assigned to type '() => void' */
+/* @@? 18:13 Error TypeError: Type 'Int' cannot be assigned to type '() => void' */

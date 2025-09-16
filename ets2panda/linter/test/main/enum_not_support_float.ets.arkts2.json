@@ -15,16 +15,6 @@
     ],
     "result": [
         {
-            "line": 23,
-            "column": 7,
-            "endLine": 23,
-            "endColumn": 9,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 24,
             "column": 3,
             "endLine": 24,
@@ -42,86 +32,6 @@
             "problem": "EnumMemberNonConstInit",
             "suggest": "",
             "rule": "Enumeration members can be initialized only with compile time expressions of the same type (arkts-no-enum-mixed-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 39,
-            "column": 10,
-            "endLine": 39,
-            "endColumn": 11,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 39,
-            "column": 15,
-            "endLine": 39,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
-            "column": 11,
-            "endLine": 40,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
-            "column": 16,
-            "endLine": 40,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 44,
-            "column": 7,
-            "endLine": 44,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 44,
-            "column": 18,
-            "endLine": 44,
-            "endColumn": 20,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 45,
-            "column": 5,
-            "endLine": 45,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 45,
-            "column": 14,
-            "endLine": 45,
-            "endColumn": 16,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -145,23 +55,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 54,
-            "column": 7,
-            "endLine": 54,
-            "endColumn": 8,
-            "problem": "NumericSemantics",
+            "line": 58,
+            "column": 3,
+            "endLine": 58,
+            "endColumn": 20,
+            "problem": "EnumMemberNonConstInit",
             "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 54,
-            "column": 12,
-            "endLine": 54,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
+            "rule": "Enumeration members can be initialized only with compile time expressions of the same type (arkts-no-enum-mixed-types)",
             "severity": "ERROR"
         }
     ]

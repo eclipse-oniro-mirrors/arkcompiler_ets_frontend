@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 import {foo,bar} from "./call_function_js"
+import {a,b} from "./call_function_js"
 
 foo()
 bar(123)
+
+//a();
+b();

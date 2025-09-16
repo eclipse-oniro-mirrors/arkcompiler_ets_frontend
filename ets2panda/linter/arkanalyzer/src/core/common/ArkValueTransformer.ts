@@ -1675,7 +1675,7 @@ export class ArkValueTransformer {
         let constant: Constant | null = null;
         switch (syntaxKind) {
             case ts.SyntaxKind.NumericLiteral:
-                constant = ValueUtil.getOrCreateNumberConst(parseFloat((literalNode as ts.NumericLiteral).text));
+                constant = ValueUtil.getOrCreateNumberConst((literalNode as ts.NumericLiteral).getText(this.sourceFile));
                 break;
             case ts.SyntaxKind.BigIntLiteral:
                 constant = ValueUtil.createBigIntConst(BigInt((literalNode as ts.BigIntLiteral).text.slice(0, -1)));

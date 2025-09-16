@@ -1,4 +1,4 @@
-#FailKind.SEGFAULT_FAIL - 1 tests:
+#FailKind.SEGFAULT_FAIL - 3 tests:
 lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
 #FailKind.DECLGEN_ETS2TS_FAIL - 6 tests:
 StringFasta.ets
@@ -12,13 +12,16 @@ first_match/ctor_need_fix_bytecode.ets
 overload_declaration/constructor_overload_sig_with_ref_type.ets
 #FailKind.ABORT_FAIL - 2 tests:
 type_param_in_union.ets
+first_match/ctor_need_fix_bytecode.ets
+overload_declaration/constructor_overload_sig_with_ref_type.ets
+#FailKind.ABORT_FAIL - 2 tests:
+type_param_in_union.ets
 mypackage/implicit_package_import_2.ets
 #FailKind.TSC_FAIL - 21 tests:
 ClassNewInstance.ets
 Enum7.ets
 GenericBridges_01.ets
 GenericBridges_02.ets
-InterfaceWithDefaultFunction1.ets
 RecordKeyTypeCheck.ets
 StringFasta.ets
 function_type_with_receiver/validReturnThisOfExtensionFunction.ets
@@ -32,5 +35,14 @@ top_level_03.ets
 multisource_inheritance.ets
 as_string.ets
 function_type_with_receiver/extensionFunctionType_return_this.ets
+<<<<<<< HEAD
 forOfCustomIterator3.ets
 too_many_async.ets
+=======
+defaultExportObjectLiteral_exp.ets
+forOfCustomIterator3.ets
+fuzz/too_many_async.ets
+typeAlias_2.ets
+Multiline_string.ets
+Multiline_string_escape_char.ets
+>>>>>>> origin/OpenHarmony_feature_Release_20250728

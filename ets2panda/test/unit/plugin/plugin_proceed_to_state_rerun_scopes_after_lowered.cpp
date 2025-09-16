@@ -25,7 +25,7 @@
 
 static es2panda_Impl *impl = nullptr;
 
-static auto source = std::string("function main() { \nlet a = 5;\n assertEQ(a, 5);\n  }");
+static auto source = std::string("function main() { \nlet a = 5;\n arktest.assertEQ(a, 5);\n  }");
 
 static es2panda_AstNode *letStatement = nullptr;
 static es2panda_AstNode *assertStatement = nullptr;

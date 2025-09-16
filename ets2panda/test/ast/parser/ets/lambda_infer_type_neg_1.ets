@@ -16,5 +16,5 @@
 let lam :(x:string, y:int) => void = (a,b) =>{}
 lam(2, 3)
 
-/* @@? 17:1 Error TypeError: No matching call signature for (int, int) */
-/* @@? 17:5 Error TypeError: Type 'int' is not compatible with type 'String' at index 1 */
+/* @@? 17:1 Error TypeError: No matching call signature for (Int, Int) */
+/* @@? 17:5 Error TypeError: Type 'Int' is not compatible with type 'String' at index 1 */

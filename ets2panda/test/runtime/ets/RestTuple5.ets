@@ -27,15 +27,15 @@ function moo<T, U>(a:int, ...p: [A<T>, B<U>]): boolean {
 function main() {
     let a1: [A<Long>, B<Error>] = [new A<Long>, new B<Error>]
     
-    assertTrue(foo<Long, Error>(...a1) == false)
-    assertTrue(moo<Long, Error>(12, ...a1) == false)
+    arktest.assertTrue(foo<Long, Error>(...a1) == false)
+    arktest.assertTrue(moo<Long, Error>(12, ...a1) == false)
 
-    assertTrue(foo<Long, Error>(...[new A<Long>, new B<Error>]) == false)
-    assertTrue(moo<Long, Error>(12, ...[new A<Long>, new B<Error>]) == false)
+    arktest.assertTrue(foo<Long, Error>(...[new A<Long>, new B<Error>]) == false)
+    arktest.assertTrue(moo<Long, Error>(12, ...[new A<Long>, new B<Error>]) == false)
 
-    assertTrue(foo<Long, Error>(...[new A<Long>, new B<Error>] as [A<Long>, B<Error>]) == false)
-    assertTrue(moo<Long, Error>(12, ...[new A<Long>, new B<Error>] as [A<Long>, B<Error>]) == false)
+    arktest.assertTrue(foo<Long, Error>(...[new A<Long>, new B<Error>] as [A<Long>, B<Error>]) == false)
+    arktest.assertTrue(moo<Long, Error>(12, ...[new A<Long>, new B<Error>] as [A<Long>, B<Error>]) == false)
     
-    assertTrue(foo<Long, Error>(new A<Long>, new B<Error>) == false)
-    assertTrue(moo<Long, Error>(12, new A<Long>, new B<Error>) == false)
+    arktest.assertTrue(foo<Long, Error>(new A<Long>, new B<Error>) == false)
+    arktest.assertTrue(moo<Long, Error>(12, new A<Long>, new B<Error>) == false)
 }

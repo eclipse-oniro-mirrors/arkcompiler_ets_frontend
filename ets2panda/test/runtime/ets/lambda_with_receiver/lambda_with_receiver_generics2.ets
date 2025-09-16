@@ -26,8 +26,8 @@ type FBSI = (this: B<string|Int>, x: string|Int) => string|Int;
 
 function apply(bb: B<string|Int>[], ff: FBSI) {
     for (let b of bb) {
-        assertEQ(b.ff("hello"), b.value)
-        assertEQ(ff(b, "hello"), b.value)
+        arktest.assertEQ(b.ff("hello"), b.value)
+        arktest.assertEQ(ff(b, "hello"), b.value)
     }
 }
 let bb: B<string|Int>[] = [new B<string|Int>("aa"), new B<string|Int>(1)]

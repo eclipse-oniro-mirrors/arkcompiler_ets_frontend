@@ -35,13 +35,13 @@ let x2 : Readonly<int[]> = [0]
 let y2 : Readonly<[int, string]>
 /* @@ label9 */y2[1] = "b"
 
-/* @@@ label6 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label7 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label8 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label9 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label Error TypeError: Object type doesn't have proper index access method. */
 /* @@@ label1 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label2 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label3 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label4 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label5 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label6 Error TypeError: Object type doesn't have proper index access method. */
+/* @@@ label7 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label8 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label9 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */

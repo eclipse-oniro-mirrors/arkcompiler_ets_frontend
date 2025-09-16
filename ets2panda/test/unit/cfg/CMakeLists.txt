@@ -15,12 +15,13 @@ if(NOT PANDA_WITH_ETS)
     return()
 endif()
 
-ets2panda_add_gtest(cfg_tests
-    CPP_SOURCES cfg_test_do_while.cpp
-                cfg_test_for.cpp
-                cfg_test_for_of.cpp
-                cfg_test_if.cpp
-                cfg_test_switch.cpp
-#                cfg_test_try_catch.cpp
-                cfg_test_while.cpp
-)
+# 26593 - code should be moved out of the compilation pipeline
+# ets2panda_add_gtest(cfg_tests
+#     CPP_SOURCES cfg_test_do_while.cpp
+#                 cfg_test_for.cpp
+#                 cfg_test_for_of.cpp
+#                 cfg_test_if.cpp
+#                 cfg_test_switch.cpp
+# #                cfg_test_try_catch.cpp
+#                 cfg_test_while.cpp
+# )

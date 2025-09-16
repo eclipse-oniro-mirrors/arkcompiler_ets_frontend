@@ -31,6 +31,6 @@ function foo<T extends AAA>(a : T) {
     return a.foo()
 }
 function main() {
-    assertEQ(foo(new A()), 1)
-    assertEQ(foo(new B()), 2)
+    arktest.assertEQ(foo(new A()), 1)
+    arktest.assertEQ(foo(new B()), 2)
 }

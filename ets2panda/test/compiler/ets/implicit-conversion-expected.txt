@@ -28,112 +28,6 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "implicit-conversion.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "implicit-conversion.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
               "name": "main",
               "decorators": [],
               "loc": {
@@ -234,7 +128,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 23,
+                                    "column": 21,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -247,7 +141,7 @@
                                 },
                                 "end": {
                                   "line": 17,
-                                  "column": 23,
+                                  "column": 21,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -347,7 +241,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 25,
+                                    "column": 23,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -360,7 +254,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 25,
+                                  "column": 23,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -460,7 +354,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 23,
+                                    "column": 21,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -473,7 +367,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 23,
+                                  "column": 21,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -573,7 +467,7 @@
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 22,
+                                    "column": 20,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -586,7 +480,7 @@
                                 },
                                 "end": {
                                   "line": 20,
-                                  "column": 22,
+                                  "column": 20,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -606,8 +500,77 @@
                             }
                           },
                           "init": {
-                            "type": "NumberLiteral",
-                            "value": 3,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Double",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 20,
+                                    "column": 23,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 20,
+                                    "column": 29,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toLong",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 20,
+                                    "column": 30,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 20,
+                                    "column": 36,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 20,
+                                  "column": 23,
+                                  "program": "implicit-conversion.ets"
+                                },
+                                "end": {
+                                  "line": 20,
+                                  "column": 36,
+                                  "program": "implicit-conversion.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 3,
+                                "loc": {
+                                  "start": {
+                                    "line": 20,
+                                    "column": 37,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 20,
+                                    "column": 40,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -616,7 +579,7 @@
                               },
                               "end": {
                                 "line": 20,
-                                "column": 26,
+                                "column": 41,
                                 "program": "implicit-conversion.ets"
                               }
                             }
@@ -629,7 +592,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 26,
+                              "column": 41,
                               "program": "implicit-conversion.ets"
                             }
                           }
@@ -644,7 +607,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 27,
+                          "column": 42,
                           "program": "implicit-conversion.ets"
                         }
                       }
@@ -686,7 +649,7 @@
                                   },
                                   "end": {
                                     "line": 21,
-                                    "column": 29,
+                                    "column": 27,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -699,7 +662,7 @@
                                 },
                                 "end": {
                                   "line": 21,
-                                  "column": 29,
+                                  "column": 27,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -719,8 +682,77 @@
                             }
                           },
                           "init": {
-                            "type": "NumberLiteral",
-                            "value": 4,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Double",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 21,
+                                    "column": 30,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 21,
+                                    "column": 36,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toFloat",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 21,
+                                    "column": 37,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 21,
+                                    "column": 44,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 21,
+                                  "column": 30,
+                                  "program": "implicit-conversion.ets"
+                                },
+                                "end": {
+                                  "line": 21,
+                                  "column": 44,
+                                  "program": "implicit-conversion.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 4,
+                                "loc": {
+                                  "start": {
+                                    "line": 21,
+                                    "column": 45,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 21,
+                                    "column": 48,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 21,
@@ -729,7 +761,7 @@
                               },
                               "end": {
                                 "line": 21,
-                                "column": 33,
+                                "column": 49,
                                 "program": "implicit-conversion.ets"
                               }
                             }
@@ -742,7 +774,7 @@
                             },
                             "end": {
                               "line": 21,
-                              "column": 33,
+                              "column": 49,
                               "program": "implicit-conversion.ets"
                             }
                           }
@@ -757,7 +789,7 @@
                         },
                         "end": {
                           "line": 21,
-                          "column": 34,
+                          "column": 50,
                           "program": "implicit-conversion.ets"
                         }
                       }
@@ -799,7 +831,7 @@
                                   },
                                   "end": {
                                     "line": 22,
-                                    "column": 22,
+                                    "column": 20,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -812,7 +844,7 @@
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 22,
+                                  "column": 20,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -832,8 +864,77 @@
                             }
                           },
                           "init": {
-                            "type": "NumberLiteral",
-                            "value": 4,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Double",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 22,
+                                    "column": 23,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 22,
+                                    "column": 29,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toFloat",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 22,
+                                    "column": 30,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 22,
+                                    "column": 37,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 22,
+                                  "column": 23,
+                                  "program": "implicit-conversion.ets"
+                                },
+                                "end": {
+                                  "line": 22,
+                                  "column": 37,
+                                  "program": "implicit-conversion.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 4,
+                                "loc": {
+                                  "start": {
+                                    "line": 22,
+                                    "column": 38,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 22,
+                                    "column": 41,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -842,7 +943,7 @@
                               },
                               "end": {
                                 "line": 22,
-                                "column": 26,
+                                "column": 42,
                                 "program": "implicit-conversion.ets"
                               }
                             }
@@ -855,7 +956,7 @@
                             },
                             "end": {
                               "line": 22,
-                              "column": 26,
+                              "column": 42,
                               "program": "implicit-conversion.ets"
                             }
                           }
@@ -870,7 +971,7 @@
                         },
                         "end": {
                           "line": 22,
-                          "column": 27,
+                          "column": 43,
                           "program": "implicit-conversion.ets"
                         }
                       }
@@ -912,7 +1013,7 @@
                                   },
                                   "end": {
                                     "line": 23,
-                                    "column": 25,
+                                    "column": 23,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -925,7 +1026,7 @@
                                 },
                                 "end": {
                                   "line": 23,
-                                  "column": 25,
+                                  "column": 23,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -1025,7 +1126,7 @@
                                   },
                                   "end": {
                                     "line": 24,
-                                    "column": 33,
+                                    "column": 31,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -1038,7 +1139,7 @@
                                 },
                                 "end": {
                                   "line": 24,
-                                  "column": 33,
+                                  "column": 31,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -1138,7 +1239,7 @@
                                   },
                                   "end": {
                                     "line": 25,
-                                    "column": 28,
+                                    "column": 26,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -1151,7 +1252,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 28,
+                                  "column": 26,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -1251,7 +1352,7 @@
                                   },
                                   "end": {
                                     "line": 28,
-                                    "column": 28,
+                                    "column": 26,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -1264,7 +1365,7 @@
                                 },
                                 "end": {
                                   "line": 28,
-                                  "column": 28,
+                                  "column": 26,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -1284,8 +1385,77 @@
                             }
                           },
                           "init": {
-                            "type": "NumberLiteral",
-                            "value": 1,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Double",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 28,
+                                    "column": 29,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 28,
+                                    "column": 35,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toShort",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 28,
+                                    "column": 36,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 28,
+                                    "column": 43,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 28,
+                                  "column": 29,
+                                  "program": "implicit-conversion.ets"
+                                },
+                                "end": {
+                                  "line": 28,
+                                  "column": 43,
+                                  "program": "implicit-conversion.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 1,
+                                "loc": {
+                                  "start": {
+                                    "line": 28,
+                                    "column": 44,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 28,
+                                    "column": 47,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 28,
@@ -1294,7 +1464,7 @@
                               },
                               "end": {
                                 "line": 28,
-                                "column": 32,
+                                "column": 48,
                                 "program": "implicit-conversion.ets"
                               }
                             }
@@ -1307,7 +1477,7 @@
                             },
                             "end": {
                               "line": 28,
-                              "column": 32,
+                              "column": 48,
                               "program": "implicit-conversion.ets"
                             }
                           }
@@ -1322,7 +1492,7 @@
                         },
                         "end": {
                           "line": 28,
-                          "column": 33,
+                          "column": 49,
                           "program": "implicit-conversion.ets"
                         }
                       }
@@ -1364,7 +1534,7 @@
                                   },
                                   "end": {
                                     "line": 29,
-                                    "column": 27,
+                                    "column": 25,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -1377,7 +1547,7 @@
                                 },
                                 "end": {
                                   "line": 29,
-                                  "column": 27,
+                                  "column": 25,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -1397,8 +1567,77 @@
                             }
                           },
                           "init": {
-                            "type": "NumberLiteral",
-                            "value": 2,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Double",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 29,
+                                    "column": 28,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 29,
+                                    "column": 34,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toInt",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 29,
+                                    "column": 35,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 29,
+                                    "column": 40,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 29,
+                                  "column": 28,
+                                  "program": "implicit-conversion.ets"
+                                },
+                                "end": {
+                                  "line": 29,
+                                  "column": 40,
+                                  "program": "implicit-conversion.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 2,
+                                "loc": {
+                                  "start": {
+                                    "line": 29,
+                                    "column": 41,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 29,
+                                    "column": 44,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 29,
@@ -1407,7 +1646,7 @@
                               },
                               "end": {
                                 "line": 29,
-                                "column": 31,
+                                "column": 45,
                                 "program": "implicit-conversion.ets"
                               }
                             }
@@ -1420,7 +1659,7 @@
                             },
                             "end": {
                               "line": 29,
-                              "column": 31,
+                              "column": 45,
                               "program": "implicit-conversion.ets"
                             }
                           }
@@ -1435,7 +1674,7 @@
                         },
                         "end": {
                           "line": 29,
-                          "column": 32,
+                          "column": 46,
                           "program": "implicit-conversion.ets"
                         }
                       }
@@ -1477,7 +1716,7 @@
                                   },
                                   "end": {
                                     "line": 30,
-                                    "column": 24,
+                                    "column": 22,
                                     "program": "implicit-conversion.ets"
                                   }
                                 }
@@ -1490,7 +1729,7 @@
                                 },
                                 "end": {
                                   "line": 30,
-                                  "column": 24,
+                                  "column": 22,
                                   "program": "implicit-conversion.ets"
                                 }
                               }
@@ -1510,8 +1749,77 @@
                             }
                           },
                           "init": {
-                            "type": "NumberLiteral",
-                            "value": 3,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Double",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 30,
+                                    "column": 25,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 30,
+                                    "column": 31,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toLong",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 30,
+                                    "column": 32,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 30,
+                                    "column": 38,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 30,
+                                  "column": 25,
+                                  "program": "implicit-conversion.ets"
+                                },
+                                "end": {
+                                  "line": 30,
+                                  "column": 38,
+                                  "program": "implicit-conversion.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 3,
+                                "loc": {
+                                  "start": {
+                                    "line": 30,
+                                    "column": 39,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 30,
+                                    "column": 42,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 30,
@@ -1520,7 +1828,7 @@
                               },
                               "end": {
                                 "line": 30,
-                                "column": 28,
+                                "column": 43,
                                 "program": "implicit-conversion.ets"
                               }
                             }
@@ -1533,7 +1841,7 @@
                             },
                             "end": {
                               "line": 30,
-                              "column": 28,
+                              "column": 43,
                               "program": "implicit-conversion.ets"
                             }
                           }
@@ -1548,120 +1856,7 @@
                         },
                         "end": {
                           "line": 30,
-                          "column": 29,
-                          "program": "implicit-conversion.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "VariableDeclaration",
-                      "declarations": [
-                        {
-                          "type": "VariableDeclarator",
-                          "id": {
-                            "type": "Identifier",
-                            "name": "uglifruit",
-                            "typeAnnotation": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Char",
-                                  "decorators": [],
-                                  "loc": {
-                                    "start": {
-                                      "line": 31,
-                                      "column": 21,
-                                      "program": "implicit-conversion.ets"
-                                    },
-                                    "end": {
-                                      "line": 31,
-                                      "column": 25,
-                                      "program": "implicit-conversion.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 31,
-                                    "column": 21,
-                                    "program": "implicit-conversion.ets"
-                                  },
-                                  "end": {
-                                    "line": 31,
-                                    "column": 27,
-                                    "program": "implicit-conversion.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 31,
-                                  "column": 21,
-                                  "program": "implicit-conversion.ets"
-                                },
-                                "end": {
-                                  "line": 31,
-                                  "column": 27,
-                                  "program": "implicit-conversion.ets"
-                                }
-                              }
-                            },
-                            "decorators": [],
-                            "loc": {
-                              "start": {
-                                "line": 31,
-                                "column": 9,
-                                "program": "implicit-conversion.ets"
-                              },
-                              "end": {
-                                "line": 31,
-                                "column": 18,
-                                "program": "implicit-conversion.ets"
-                              }
-                            }
-                          },
-                          "init": {
-                            "type": "NumberLiteral",
-                            "value": 65,
-                            "loc": {
-                              "start": {
-                                "line": 31,
-                                "column": 28,
-                                "program": "implicit-conversion.ets"
-                              },
-                              "end": {
-                                "line": 31,
-                                "column": 32,
-                                "program": "implicit-conversion.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 31,
-                              "column": 9,
-                              "program": "implicit-conversion.ets"
-                            },
-                            "end": {
-                              "line": 31,
-                              "column": 32,
-                              "program": "implicit-conversion.ets"
-                            }
-                          }
-                        }
-                      ],
-                      "kind": "let",
-                      "loc": {
-                        "start": {
-                          "line": 31,
-                          "column": 5,
-                          "program": "implicit-conversion.ets"
-                        },
-                        "end": {
-                          "line": 31,
-                          "column": 33,
+                          "column": 44,
                           "program": "implicit-conversion.ets"
                         }
                       }
@@ -1671,12 +1866,12 @@
                       "argument": null,
                       "loc": {
                         "start": {
-                          "line": 33,
+                          "line": 32,
                           "column": 3,
                           "program": "implicit-conversion.ets"
                         },
                         "end": {
-                          "line": 33,
+                          "line": 32,
                           "column": 10,
                           "program": "implicit-conversion.ets"
                         }
@@ -1690,7 +1885,7 @@
                       "program": "implicit-conversion.ets"
                     },
                     "end": {
-                      "line": 34,
+                      "line": 33,
                       "column": 2,
                       "program": "implicit-conversion.ets"
                     }
@@ -1703,7 +1898,7 @@
                     "program": "implicit-conversion.ets"
                   },
                   "end": {
-                    "line": 34,
+                    "line": 33,
                     "column": 2,
                     "program": "implicit-conversion.ets"
                   }
@@ -1716,7 +1911,7 @@
                   "program": "implicit-conversion.ets"
                 },
                 "end": {
-                  "line": 34,
+                  "line": 33,
                   "column": 2,
                   "program": "implicit-conversion.ets"
                 }
@@ -1731,7 +1926,7 @@
                 "program": "implicit-conversion.ets"
               },
               "end": {
-                "line": 34,
+                "line": 33,
                 "column": 2,
                 "program": "implicit-conversion.ets"
               }
@@ -1772,7 +1967,7 @@
       "program": "implicit-conversion.ets"
     },
     "end": {
-      "line": 36,
+      "line": 35,
       "column": 1,
       "program": "implicit-conversion.ets"
     }

@@ -14,7 +14,10 @@
  */
 
 import { BaseMode } from './base_mode';
-import { BuildConfig } from '../types';
+import { 
+  BuildConfig,
+  ES2PANDA_MODE
+} from '../types';
 
 export class BuildMode extends BaseMode {
   constructor(buildConfig: BuildConfig) {
@@ -26,6 +29,18 @@ export class BuildMode extends BaseMode {
   }
 
   public async run(): Promise<void> {
-    await super.runParallel();
+    if (this.es2pandaMode === ES2PANDA_MODE.RUN_PARALLEL) {
+      // RUN_PARALLEL: Executes tasks using multiple processes
+      await super.runParallel();
+    } else if (this.es2pandaMode === ES2PANDA_MODE.RUN_CONCURRENT) {
+      // RUN_CONCURRENT: Executes tasks using multiple threads with astcache
+      await super.runConcurrent();
+    } else if (this.es2pandaMode === ES2PANDA_MODE.RUN) {
+      // RUN: Executes tasks sequentially in a single process and single thread
+      await super.run();
+    } else {
+      // Default fallback: Uses parallel execution (same as RUN_PARALLEL)
+      await super.run();
+    }
   }
 }

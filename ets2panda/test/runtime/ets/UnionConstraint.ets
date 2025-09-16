@@ -22,10 +22,10 @@ function id_sx(x: string | X) { return id(x) }
 function main() {
     let x = new X();
 
-    assertEQ(id(1.1), 1.1)
-    assertEQ(id("a"), "a")
-    assertEQ(id(x), x)
+    arktest.assertEQ(id(1.1), 1.1)
+    arktest.assertEQ(id("a"), "a")
+    arktest.assertEQ(id(x), x)
 
-    assertEQ(id_s("a"), "a")
-    assertEQ(id_sx(x), x)
+    arktest.assertEQ(id_s("a"), "a")
+    arktest.assertEQ(id_sx(x), x)
 }

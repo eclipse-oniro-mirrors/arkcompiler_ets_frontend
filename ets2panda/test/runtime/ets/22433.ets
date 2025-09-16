@@ -17,7 +17,7 @@ function f(a: boolean | undefined): string {
 	return a ? (a ? "true" : "false") : (a ? "true" : "false");
 }
 
-assertEQ(f(undefined), "false");
-assertEQ(f(true), "true");
+arktest.assertEQ(f(undefined), "false");
+arktest.assertEQ(f(true), "true");
 // # NOTE: #22892 wrong type inferred, a frontend bug in smart casts
-// assertEQ(f(false), "false");
+// arktest.assertEQ(f(false), "false");

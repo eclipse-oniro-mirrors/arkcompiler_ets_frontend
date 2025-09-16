@@ -29,3 +29,4 @@ function main() : void {
 /* @@? 19:1 Error TypeError: This expression is not callable.  */
 /* @@? 23:5 Error TypeError: Annotation missing '@' symbol before annotation name.  */
 /* @@? 23:5 Error TypeError: This expression is not callable.  */
+/* @@? 24:5 Error SyntaxError: Illegal start of Type Alias expression.  */

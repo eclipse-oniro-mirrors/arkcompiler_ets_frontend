@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 using ENUMBITOPS_OPERATORS;
 
-enum class AstNodeFlags {
+enum class AstNodeFlags : uint16_t {
     NO_OPTS = 0,
     CHECKCAST = 1U << 0U,
     ALLOW_REQUIRED_INSTANTIATION = 1U << 2U,
@@ -35,6 +35,8 @@ enum class AstNodeFlags {
     RESIZABLE_REST = 1U << 7U,
     // TO BE REMOVED AFTER COMPLETE PRIMITIVE TYPES REFACTORING, DO NOT USE!!
     TMP_CONVERT_PRIMITIVE_CAST_METHOD_CALL = 1U << 8U,
+    // Moved out of the ir::Expression
+    IS_GROUPED = 1U << 9U,
     /* do not introduce new flags. all the existing to be removed */
 };
 
@@ -70,6 +72,7 @@ enum class ModifierFlags : uint32_t {
     ANNOTATION_USAGE = 1U << 28U,
     READONLY_PARAMETER = 1U << 29U,
     ARRAY_SETTER = 1U << 30U,
+    DEFAULT = 1U << 31U,
     ACCESS = PUBLIC | PROTECTED | PRIVATE | INTERNAL,
     ALL = STATIC | ASYNC | ACCESS | DECLARE | READONLY | ABSTRACT,
     ALLOWED_IN_CTOR_PARAMETER = ACCESS | READONLY,
@@ -79,7 +82,18 @@ enum class ModifierFlags : uint32_t {
     EXPORTED = EXPORT | DEFAULT_EXPORT | EXPORT_TYPE
 };
 
-enum class PrivateFieldKind { FIELD, METHOD, GET, SET, STATIC_FIELD, STATIC_METHOD, STATIC_GET, STATIC_SET };
+enum class PrivateFieldKind {
+    FIELD,
+    METHOD,
+    GET,
+    SET,
+    STATIC_FIELD,
+    STATIC_METHOD,
+    STATIC_GET,
+    STATIC_SET,
+    OVERLOAD,
+    STATIC_OVERLOAD
+};
 
 enum class ScriptFunctionFlags : uint32_t {
     NONE = 0U,
@@ -105,35 +119,14 @@ enum class ScriptFunctionFlags : uint32_t {
     ASYNC_IMPL = 1U << 19U,
     EXTERNAL_OVERLOAD = 1U << 20U,
     HAS_THROW = 1U << 21U,
+    IN_RECORD = 1U << 22U,
+    TRAILING_LAMBDA = 1U << 23U,
+    SYNTHETIC = 1U << 24U,
 };
 
 enum class TSOperatorType { READONLY, KEYOF, UNIQUE };
 enum class MappedOption { NO_OPTS, PLUS, MINUS };
 
-enum class BoxingUnboxingFlags : uint32_t {
-    NONE = 0U,
-    BOX_TO_BOOLEAN = 1U << 0U,
-    BOX_TO_BYTE = 1U << 1U,
-    BOX_TO_SHORT = 1U << 2U,
-    BOX_TO_CHAR = 1U << 3U,
-    BOX_TO_INT = 1U << 4U,
-    BOX_TO_LONG = 1U << 5U,
-    BOX_TO_FLOAT = 1U << 6U,
-    BOX_TO_DOUBLE = 1U << 7U,
-    BOX_TO_ENUM = 1U << 8U,
-    UNBOX_TO_BOOLEAN = 1U << 9U,
-    UNBOX_TO_BYTE = 1U << 10U,
-    UNBOX_TO_SHORT = 1U << 11U,
-    UNBOX_TO_CHAR = 1U << 12U,
-    UNBOX_TO_INT = 1U << 13U,
-    UNBOX_TO_LONG = 1U << 14U,
-    UNBOX_TO_FLOAT = 1U << 15U,
-    UNBOX_TO_DOUBLE = 1U << 16U,
-    BOXING_FLAG = BOX_TO_BOOLEAN | BOX_TO_BYTE | BOX_TO_SHORT | BOX_TO_CHAR | BOX_TO_INT | BOX_TO_LONG | BOX_TO_FLOAT |
-                  BOX_TO_DOUBLE | BOX_TO_ENUM,
-    UNBOXING_FLAG = UNBOX_TO_BOOLEAN | UNBOX_TO_BYTE | UNBOX_TO_SHORT | UNBOX_TO_CHAR | UNBOX_TO_INT | UNBOX_TO_LONG |
-                    UNBOX_TO_FLOAT | UNBOX_TO_DOUBLE,
-};
 }  // namespace ark::es2panda::ir
 
 namespace enumbitops {
@@ -148,10 +141,6 @@ struct IsAllowedType<ark::es2panda::ir::ModifierFlags> : std::true_type {
 
 template <>
 struct IsAllowedType<ark::es2panda::ir::ScriptFunctionFlags> : std::true_type {
-};
-
-template <>
-struct IsAllowedType<ark::es2panda::ir::BoxingUnboxingFlags> : std::true_type {
 };
 
 }  // namespace enumbitops

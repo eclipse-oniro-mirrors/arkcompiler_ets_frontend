@@ -21,7 +21,7 @@ function main(): int {
 
   a[0] = a;
 
-  assertNE(a, null)
+  arktest.assertNE(a, null)
 
   return 0;
 }

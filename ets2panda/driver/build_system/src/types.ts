@@ -13,6 +13,23 @@
  * limitations under the License.
  */
 
+export enum BUILD_MODE {
+  DEBUG = 'Debug',
+  RELEASE = 'Release'
+};
+
+export enum BUILD_TYPE {
+  BUILD = 'build',
+  PREVIEW = 'preview'
+}
+
+export enum OHOS_MODULE_TYPE {
+  HAP = 'hap',
+  FEATURE = 'feature',
+  SHARED = 'shared',
+  HAR = 'har',
+}
+
 // ProjectConfig begins
 export interface PluginsConfig {
   [pluginName: string]: string;
@@ -23,8 +40,9 @@ export interface PathsConfig {
 }
 
 export interface BuildBaseConfig {
-  buildType: 'build' | 'preview' | 'hotreload' | 'coldreload';
-  buildMode: 'Debug' | 'Release';
+  buildType: BUILD_TYPE;
+  buildMode: BUILD_MODE;
+  es2pandaMode: ES2PANDA_MODE;
   hasMainModule: boolean;
   arkts: ArkTS;
   arktsGlobal: ArkTSGlobal;
@@ -41,6 +59,10 @@ export interface ArkTSGlobal {
   };
   es2panda: {
     _DestroyContext: Function;
+    _MemInitialize: Function;
+    _MemFinalize: Function;
+    _CreateGlobalContext: Function;
+    _DestroyGlobalContext: Function;
     _SetUpSoPath: Function;
   }
 }
@@ -52,14 +74,34 @@ export interface ArkTS {
   };
   Context: {
     createFromString: Function;
+    createFromStringWithHistory: Function;
   };
   EtsScript: {
     fromContext: Function;
   };
   proceedToState: Function;
   generateTsDeclarationsFromContext: Function;
+  generateStaticDeclarationsFromContext: Function;
   destroyConfig: Function;
   Es2pandaContextState: typeof Es2pandaContextState;
+  MemInitialize: Function;
+  CreateGlobalContext: Function;
+  AstNode: AstNode;
+  ETSImportDeclaration: ETSImportDeclaration;
+  isEtsScript: Function;
+  isImportSpecifier: Function;
+  isETSImportDeclaration: Function;
+  factory: {
+    createEtsScript: Function;
+    createImportDeclaration: Function;
+    createImportSpecifier: Function;
+    createLiteral: Function;
+    createIdentifier: Function;
+    updateEtsScript: Function;
+    createStringLiteral: Function;
+  };
+  Es2pandaImportKinds: typeof Es2pandaImportKinds;
+  Es2pandaImportFlags: typeof Es2pandaImportFlags;
 }
 
 export enum Es2pandaContextState {
@@ -75,7 +117,7 @@ export enum Es2pandaContextState {
 
 export interface ModuleConfig {
   packageName: string;
-  moduleType: string;
+  moduleType: OHOS_MODULE_TYPE;
   moduleRootPath: string;
   sourceRoots: string[];
   byteCodeHar: boolean;
@@ -90,6 +132,10 @@ export interface PathConfig {
   externalApiPaths: string[];
   abcLinkerPath?: string;
   dependencyAnalyzerPath?: string;
+  sdkAliasConfigPaths?: string[];
+  sdkAliasMap: Map<string, string>;
+  interopSDKPaths: Set<string>;
+  interopApiPaths:string[];
   projectRootPath: string;
 }
 
@@ -119,6 +165,7 @@ export interface DeclgenConfig {
   declgenV1OutPath?: string;
   declgenV2OutPath?: string;
   declgenBridgeCodePath?: string;
+  skipDeclCheck?: boolean;
 }
 
 export interface LoggerConfig {
@@ -135,6 +182,7 @@ export interface DependentModuleConfig {
   language: string;
   declFilesPath?: string;
   dependencies?: string[];
+  abcPath?: string;
   declgenV1OutPath?: string;
   declgenV2OutPath?: string;
   declgenBridgeCodePath?: string;
@@ -145,38 +193,44 @@ export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfi
   plugins: PluginsConfig;
   paths: PathsConfig; // paths config passed from template to generate arktsconfig.json "paths" configs.
   compileFiles: string[];
+  entryFiles?: string[];
   dependentModuleList: DependentModuleConfig[];
+  aliasConfig: Record<string, Record<string, AliasConfig>>;
 }
 // ProjectConfig ends
 
 export interface CompileFileInfo {
-  filePath: string,
-  dependentFiles: string[],
-  abcFilePath: string,
-  arktsConfigFile: string,
-  packageName: string,
+  filePath: string;
+  dependentFiles: string[];
+  abcFilePath: string;
+  arktsConfigFile: string;
+  packageName: string;
 };
 
 export interface ModuleInfo {
-  isMainModule: boolean,
-  packageName: string,
-  moduleRootPath: string,
-  moduleType: string,
-  sourceRoots: string[],
-  entryFile: string,
-  arktsConfigFile: string,
-  compileFileInfos: CompileFileInfo[],
-  declgenV1OutPath: string | undefined,
-  declgenV2OutPath: string | undefined,
-  declgenBridgeCodePath: string | undefined,
-  dependencies?: string[]
+  isMainModule: boolean;
+  packageName: string;
+  moduleRootPath: string;
+  moduleType: string;
+  sourceRoots: string[];
+  entryFile: string;
+  arktsConfigFile: string;
+  compileFileInfos: CompileFileInfo[];
+  declgenV1OutPath: string | undefined;
+  declgenV2OutPath: string | undefined;
+  declgenBridgeCodePath: string | undefined;
+  dependencies?: string[];
   staticDepModuleInfos: Map<string, ModuleInfo>;
   dynamicDepModuleInfos: Map<string, ModuleInfo>;
   language?: string;
   declFilesPath?: string;
+  abcPath?: string;
   frameworkMode?: boolean;
   useEmptyPackage?: boolean;
   byteCodeHar: boolean;
+  //for topological order merging
+  dependenciesSet:Set<string>;
+  dependentSet:Set<string>;
 }
 
 export type SetupClusterOptions = {
@@ -193,3 +247,84 @@ export interface DependencyFileConfig {
     [filePath: string]: string[];
   }
 }
+
+export interface JobInfo {
+  id: string;
+  isCompileAbc: boolean;
+  compileFileInfo: CompileFileInfo;
+  buildConfig: Object;
+  globalContextPtr?: KPointer;
+}
+
+export type KPointer = number | bigint;
+
+export interface AliasConfig {
+  originalAPIName: string;
+  isStatic: boolean;
+}
+
+export interface AstNode {
+  kind: string;
+  statements: AstNode[];
+  source: LiteralNode;
+  specifiers: ImportSpecifierNode[];
+}
+
+export interface LiteralNode {
+  str: string;
+  clone: Function;
+}
+
+export interface IdentifierNode {
+  name: string;
+}
+
+export interface ImportSpecifierNode {
+  imported?: IdentifierNode;
+}
+
+export interface ETSImportDeclaration extends AstNode {
+  specifiers: ImportSpecifierNode[];
+  source: LiteralNode;
+}
+
+export enum Es2pandaImportKinds {
+  IMPORT_KINDS_VALUE = 0,
+}
+
+export enum Es2pandaImportFlags {
+  IMPORT_FLAGS_NONE,
+}
+
+export enum ES2PANDA_MODE {
+  RUN_PARALLEL = 0,
+  RUN_CONCURRENT = 1,
+  RUN = 2,
+  RUN_WITH_MUTIL = 3
+};
+
+export interface DynamicFileContext {
+  filePath: string;
+  fileName: string;
+  relativePath: string;
+  isExcludedDir: boolean;
+  dependencySection: Record<string, DependencyItem>;
+  prefix?: string;
+}
+
+export interface DependencyItem {
+  language: string,
+  path: string,
+  ohmUrl: string,
+  alias?:string[]
+}
+
+export interface ArkTSConfigObject {
+  compilerOptions: {
+    package: string,
+    baseUrl: string,
+    paths: Record<string, string[]>;
+    dependencies: Record<string, DependencyItem>;
+    useEmptyPackage?: boolean;
+  }
+};

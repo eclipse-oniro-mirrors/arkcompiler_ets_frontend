@@ -25,23 +25,57 @@
 #include "ir/base/classDefinition.h"
 #include "ir/statements/blockStatement.h"
 
+#include <compiler/lowering/phase.h>
+
 namespace ark::es2panda::parser {
 
 Program::Program(ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
     : allocator_(allocator),
-      varbinder_(varbinder),
       externalSources_(allocator_->Adapter()),
       directExternalSources_(allocator_->Adapter()),
       extension_(varbinder != nullptr ? varbinder->Extension() : ScriptExtension::INVALID),
       etsnolintCollection_(allocator_->Adapter()),
       cfg_(allocator_->New<compiler::CFG>(allocator_)),
-      functionScopes_(allocator_->Adapter())
+      functionScopes_(allocator_->Adapter()),
+      varbinders_(allocator_->Adapter()),
+      checkers_(allocator_->Adapter())
 {
+    PushVarBinder(varbinder);
+}
+
+void Program::PushVarBinder(varbinder::VarBinder *varbinder)
+{
+    varbinders_.insert({compiler::GetPhaseManager()->GetCurrentMajor(), varbinder});
+}
+
+const varbinder::VarBinder *Program::VarBinder() const
+{
+    return varbinders_.at(compiler::GetPhaseManager()->GetCurrentMajor());
+}
+
+varbinder::VarBinder *Program::VarBinder()
+{
+    return varbinders_.at(compiler::GetPhaseManager()->GetCurrentMajor());
+}
+
+checker::Checker *Program::Checker()
+{
+    return checkers_.at(compiler::GetPhaseManager()->GetCurrentMajor());
+}
+
+void Program::PushChecker(checker::Checker *checker)
+{
+    checkers_.push_back(checker);
+}
+
+const checker::Checker *Program::Checker() const
+{
+    return checkers_.at(compiler::GetPhaseManager()->GetCurrentMajor());
 }
 
 bool Program::IsGenAbcForExternal() const
 {
-    return VarBinder()->GetContext()->config->options->GetCompilationMode() ==
+    return compiler::GetPhaseManager()->Context()->config->options->GetCompilationMode() ==
                CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE &&
            genAbcForExternalSource_;
 }
@@ -60,16 +94,16 @@ void Program::DumpSilent() const
 
 varbinder::ClassScope *Program::GlobalClassScope()
 {
-    ES2PANDA_ASSERT(globalClass_ != nullptr);
-    ES2PANDA_ASSERT(globalClass_->Scope() != nullptr);
-    return globalClass_->Scope()->AsClassScope();
+    ES2PANDA_ASSERT(GlobalClass() != nullptr);
+    ES2PANDA_ASSERT(GlobalClass()->Scope() != nullptr);
+    return GlobalClass()->Scope()->AsClassScope();
 }
 
 const varbinder::ClassScope *Program::GlobalClassScope() const
 {
-    ES2PANDA_ASSERT(globalClass_ != nullptr);
-    ES2PANDA_ASSERT(globalClass_->Scope() != nullptr);
-    return globalClass_->Scope()->AsClassScope();
+    ES2PANDA_ASSERT(GlobalClass() != nullptr);
+    ES2PANDA_ASSERT(GlobalClass()->Scope() != nullptr);
+    return GlobalClass()->Scope()->AsClassScope();
 }
 
 varbinder::GlobalScope *Program::GlobalScope()
@@ -142,14 +176,14 @@ bool Program::GetFlag(ProgramFlags flag) const
     return (programFlags_ & flag) != 0U;
 }
 
-void Program::ClearASTCheckedStatus()
-{
-    programFlags_ &= ~ProgramFlags::AST_CHECKED;
-}
-
 void Program::SetASTChecked()
 {
     programFlags_ |= ProgramFlags::AST_CHECKED;
+}
+
+void Program::RemoveAstChecked()
+{
+    programFlags_ &= ~ProgramFlags::AST_CHECKED;
 }
 
 bool Program::IsASTChecked()
@@ -170,9 +204,40 @@ compiler::CFG *Program::GetCFG()
     return cfg_;
 }
 
+ir::ClassDefinition *Program::GlobalClass()
+{
+    return ast_->AsETSModule()->GlobalClass();
+}
+
+const ir::ClassDefinition *Program::GlobalClass() const
+{
+    return ast_->AsETSModule()->GlobalClass();
+}
+
+void Program::SetGlobalClass(ir::ClassDefinition *globalClass)
+{
+    ast_->AsETSModule()->SetGlobalClass(globalClass);
+}
+
 const compiler::CFG *Program::GetCFG() const
 {
     return cfg_;
+}
+
+bool Program::MergeExternalSource(const ExternalSource *externalSource)
+{
+    // prevent using cache for cycle import
+    for (const auto &[moduleName, _] : *externalSource) {
+        if (ModuleName() == moduleName) {
+            return false;
+        }
+    }
+
+    for (const auto &[moduleName, extProgs] : *externalSource) {
+        externalSources_.emplace(moduleName, extProgs);
+    }
+
+    return true;
 }
 
 }  // namespace ark::es2panda::parser

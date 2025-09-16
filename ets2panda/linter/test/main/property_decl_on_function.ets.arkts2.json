@@ -45,16 +45,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 24,
-            "column": 11,
-            "endLine": 24,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 26,
             "column": 1,
             "endLine": 26,
@@ -72,26 +62,6 @@
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 26,
-            "column": 16,
-            "endLine": 26,
-            "endColumn": 17,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 26,
-            "column": 22,
-            "endLine": 26,
-            "endColumn": 23,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {
@@ -162,16 +132,6 @@
             "problem": "PropertyDeclOnFunction",
             "suggest": "",
             "rule": "Declaring properties on functions is not supported (arkts-no-func-props)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
-            "column": 12,
-            "endLine": 40,
-            "endColumn": 13,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         },
         {

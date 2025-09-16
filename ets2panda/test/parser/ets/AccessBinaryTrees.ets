@@ -72,7 +72,7 @@ export class AccessBinaryTrees {
       ret += longLivedTree.itemCheck();
     }
 
-    assertEQ(ret, AccessBinaryTrees.expected,  "Incorrect result");
+    arktest.assertEQ(ret, AccessBinaryTrees.expected,  "Incorrect result");
   }
 }
 

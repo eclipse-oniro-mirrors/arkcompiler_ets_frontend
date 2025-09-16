@@ -28,6 +28,6 @@ function main(): void {
   //Console.print("'" + v1 + "'\n");
   //Console.print("'" + v2 + "'\n");
 
-  assertEQ(x, z);
-  assertEQ(v1, v2);
+  arktest.assertEQ(x, z);
+  arktest.assertEQ(v1, v2);
 }

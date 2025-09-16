@@ -22,30 +22,30 @@ class MyType {
 }
 
 function main(): void {
-    assertEQ(foo1(), 8)
+    arktest.assertEQ(foo1(), 8)
 
-    assertEQ(foo2(), 30)
-    assertEQ(foo2(new MyType(5)), 25)
+    arktest.assertEQ(foo2(), 30)
+    arktest.assertEQ(foo2(new MyType(5)), 25)
 
-    assertEQ(foo3(new MyType(5)), 55)
-    assertEQ(foo3(new MyType(5), new MyType(10) ), 45)
+    arktest.assertEQ(foo3(new MyType(5)), 55)
+    arktest.assertEQ(foo3(new MyType(5), new MyType(10) ), 45)
 
-    assertEQ(foo4(), 0)
+    arktest.assertEQ(foo4(), 0)
 
-    assertEQ(foo5(), 0)
-    assertEQ(foo5(new MyType(5)), -1)
+    arktest.assertEQ(foo5(), 0)
+    arktest.assertEQ(foo5(new MyType(5)), -1)
 
-    assertEQ(foo6(new MyType(5)), 0)
-    assertEQ(foo6(new MyType(5), new MyType(10)), -1)
+    arktest.assertEQ(foo6(new MyType(5)), 0)
+    arktest.assertEQ(foo6(new MyType(5), new MyType(10)), -1)
 
-    assertEQ(foo7(), 0)
-    assertEQ(foo8(), 0)
+    arktest.assertEQ(foo7(), 0)
+    arktest.assertEQ(foo8(), 0)
 
-    assertEQ(foo9(new MyType(10)), 15)
-    assertEQ(foo10(new MyType(10)), 25)
+    arktest.assertEQ(foo9(new MyType(10)), 15)
+    arktest.assertEQ(foo10(new MyType(10)), 25)
 
-    assertEQ(foo11(new MyType(10), new MyType(5)), 20)
-    assertEQ(foo12(new MyType(10), new MyType(5)), 30)
+    arktest.assertEQ(foo11(new MyType(10), new MyType(5)), 20)
+    arktest.assertEQ(foo12(new MyType(10), new MyType(5)), 30)
 }
 
 function foo1(a: MyType|null = new MyType(8)): int {
@@ -60,7 +60,7 @@ function foo2(a: MyType = new MyType(10), b: MyType = new MyType(20)): int {
 }
 
 function foo3(a: MyType = new MyType(10), b: MyType = new MyType(20), c: MyType = new MyType(30)): int {
-    assertEQ(a.x, 5)
+    arktest.assertEQ(a.x, 5)
 
     return a.x + b.x + c.x;
 }
@@ -83,7 +83,7 @@ function foo5(a?: MyType, b?: MyType): int {
 }
 
 function foo6(a?: MyType, b?: MyType, c?: MyType): int {
-    assertEQ(a!.x, 5)
+    arktest.assertEQ(a!.x, 5)
     if (b == null && c == null) {
         return 0;
     }
@@ -102,7 +102,7 @@ function foo7(a: MyType = new MyType(5), b?: MyType): int {
 }
 
 function foo8(a?: MyType, b: MyType = new MyType(5), c?: MyType): int {
-    assertEQ(b.x, 5)
+    arktest.assertEQ(b.x, 5)
 
     if (a == null && c == null) {
         return 0;

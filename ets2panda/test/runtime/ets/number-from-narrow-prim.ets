@@ -20,5 +20,5 @@
 function main() {
     let n: Number = 5
 
-    assertEQ(n, 5)
+    arktest.assertEQ(n, 5)
 }

@@ -29,3 +29,5 @@ export const ASYNC_LIFECYCLE_SDK_LIST = new Set([
   'AutoFillExtensionAbility',
   'ServiceExtensionAbility'
 ]);
+
+export const ABILITY_LIFECYCLE_SDK = 'ApplicationContext';

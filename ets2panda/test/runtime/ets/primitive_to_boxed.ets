@@ -56,38 +56,38 @@ function fooEnum() : Color{
 function main() {
     let c : Boolean = true;
     let val : Boolean = fooBoolean()
-    assertEQ(val, c)
+    arktest.assertEQ(val, c)
 
     let c1 : Byte = 1;
     let val1 : Byte = fooByte()
-    assertEQ(val1, c1)
+    arktest.assertEQ(val1, c1)
 
     let c2 : Short = 1;
     let val2 : Short = fooShort()
-    assertEQ(val2, c2)
+    arktest.assertEQ(val2, c2)
 
     let c3 : Char = c'c';
     let val3 : Char = fooChar()
-    assertEQ(val3, c3)
+    arktest.assertEQ(val3, c3)
 
     let c4 : Int = 1;
     let val4 : Int = fooInt()
-    assertEQ(val4, c4)
+    arktest.assertEQ(val4, c4)
 
     let c5 : Long = 1;
     let val5 : Long = fooLong()
-    assertEQ(val5, c5)
+    arktest.assertEQ(val5, c5)
 
     let c6 : Float = 1;
     let val6 : Float = fooFloat()
-    assertEQ(val6, c6)
+    arktest.assertEQ(val6, c6)
 
 
     let c7 : Double = 1;
     let val7 : Double = fooDouble()
-    assertEQ(val7, c7)
+    arktest.assertEQ(val7, c7)
 
     let c8 : Color = Color.Green;
     let val8 : Color = fooEnum();
-    assertEQ(c8, val8)
+    arktest.assertEQ(c8, val8)
 }

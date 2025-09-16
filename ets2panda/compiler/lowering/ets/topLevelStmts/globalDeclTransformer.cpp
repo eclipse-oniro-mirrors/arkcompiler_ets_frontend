@@ -14,6 +14,7 @@
  */
 
 #include "compiler/lowering/ets/topLevelStmts/globalDeclTransformer.h"
+#include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
 
@@ -34,6 +35,23 @@ GlobalDeclTransformer::ResultT GlobalDeclTransformer::TransformStatements(const 
         stmt->Accept(this);
     }
     return std::move(result_);
+}
+
+void GlobalDeclTransformer::VisitExpressionStatement(ir::ExpressionStatement *exprStmt)
+{
+    if (exprStmt->GetExpression()->IsCallExpression()) {
+        auto *callExpr = exprStmt->GetExpression()->AsCallExpression();
+        if (callExpr->Callee()->IsIdentifier() &&
+            callExpr->Callee()->AsIdentifier()->Name() == compiler::Signatures::INIT_MODULE_METHOD) {
+            return;  // skip initModule call
+        }
+    }
+    result_.immediateInit.emplace_back(exprStmt);
+}
+
+void GlobalDeclTransformer::VisitOverloadDeclaration(ir::OverloadDeclaration *overloadDeclaration)
+{
+    result_.classProperties.emplace_back(overloadDeclaration);
 }
 
 void GlobalDeclTransformer::VisitFunctionDeclaration(ir::FunctionDeclaration *funcDecl)
@@ -58,8 +76,9 @@ void GlobalDeclTransformer::VisitFunctionDeclaration(ir::FunctionDeclaration *fu
     auto *method = util::NodeAllocator::ForceSetParent<ir::MethodDefinition>(
         allocator_, methodKind, funcDecl->Function()->Id()->Clone(allocator_, nullptr), funcExpr,
         funcDecl->Function()->Modifiers(), allocator_, false);
+    ES2PANDA_ASSERT(method != nullptr && method->Function() != nullptr);
     method->SetRange(funcDecl->Range());
-    method->Function()->SetAnnotations(std::move(funcDecl->Annotations()));
+    method->Function()->SetAnnotations(funcDecl->Annotations());
 
     if (funcDecl->Function()->HasExportAlias()) {
         method->AddAstNodeFlags(ir::AstNodeFlags::HAS_EXPORT_ALIAS);
@@ -75,19 +94,24 @@ void GlobalDeclTransformer::VisitVariableDeclaration(ir::VariableDeclaration *va
         auto typeAnn = id->TypeAnnotation();
         id->SetTsTypeAnnotation(nullptr);
         auto modifiers = varDecl->Modifiers() | declarator->Modifiers();
-        bool needInitializeInStaticBlock = (declarator->Init() == nullptr) &&
-                                           (modifiers & ir::ModifierFlags::CONST) != 0 &&
-                                           currentModule_->AsETSModule()->Program()->IsPackage();
         auto *field = util::NodeAllocator::ForceSetParent<ir::ClassProperty>(
             allocator_, id->Clone(allocator_, nullptr), declarator->Init(), typeAnn, modifiers, allocator_, false);
-        field->SetInitInStaticBlock(needInitializeInStaticBlock);
+        ES2PANDA_ASSERT(field != nullptr);
+        if (declarator->Init() != nullptr) {
+            field->SetIsImmediateInit();
+        } else if ((modifiers & ir::ModifierFlags::CONST) != 0 &&
+                   currentModule_->AsETSModule()->Program()->IsPackage()) {
+            field->SetNeedInitInStaticBlock();
+        }
         field->SetRange(declarator->Range());
 
         if (!varDecl->Annotations().empty()) {
             ArenaVector<ir::AnnotationUsage *> propAnnotations(allocator_->Adapter());
             for (auto *annotationUsage : varDecl->Annotations()) {
                 ES2PANDA_ASSERT(annotationUsage != nullptr);
-                propAnnotations.push_back(annotationUsage->Clone(allocator_, field)->AsAnnotationUsage());
+                auto annotationUsageClone = annotationUsage->Clone(allocator_, field);
+                ES2PANDA_ASSERT(annotationUsageClone != nullptr);
+                propAnnotations.push_back(annotationUsageClone->AsAnnotationUsage());
             }
             field->SetAnnotations(std::move(propAnnotations));
         }
@@ -151,15 +175,11 @@ ir::Identifier *GlobalDeclTransformer::RefIdent(const util::StringView &name)
     return callee;
 }
 
-ir::ExpressionStatement *GlobalDeclTransformer::InitTopLevelProperty(ir::ClassProperty *classProperty)
+ir::ExpressionStatement *GlobalDeclTransformer::CreateAssignmentStatement(ir::ClassProperty *classProperty,
+                                                                          ir::Expression *initializer)
 {
-    const auto initializer = classProperty->Value();
-    if (classProperty->IsConst() || initializer == nullptr) {
-        classProperty->SetStart(classProperty->Id()->Start());
-        return nullptr;
-    }
-
     auto const ident = RefIdent(classProperty->Id()->Name());
+    ES2PANDA_ASSERT(ident != nullptr);
     ident->SetRange(classProperty->Id()->Range());
 
     initializer->SetParent(nullptr);
@@ -170,17 +190,32 @@ ir::ExpressionStatement *GlobalDeclTransformer::InitTopLevelProperty(ir::ClassPr
     assignmentExpression->SetTsType(initializer->TsType());
 
     auto expressionStatement = util::NodeAllocator::Alloc<ir::ExpressionStatement>(allocator_, assignmentExpression);
+    ES2PANDA_ASSERT(expressionStatement != nullptr);
     expressionStatement->SetRange(classProperty->Range());
+    assignmentExpression->SetIgnoreConstAssign();
 
-    classProperty->SetRange({ident->Start(), initializer->End()});
-
-    if (classProperty->TypeAnnotation() != nullptr) {
-        classProperty->SetValue(nullptr);
-    } else {
-        // Code will be ignored, but checker is going to deduce the type.
-        classProperty->SetValue(initializer->Clone(allocator_, classProperty)->AsExpression());
-    }
     return expressionStatement;
+}
+
+ir::ExpressionStatement *GlobalDeclTransformer::InitTopLevelProperty(ir::ClassProperty *classProperty)
+{
+    ES2PANDA_ASSERT(classProperty->Id() != nullptr);
+    if (classProperty->Value() == nullptr) {
+        classProperty->SetStart(classProperty->Id()->Start());
+        return nullptr;
+    }
+
+    ir::Expression *initializer = nullptr;
+    if (classProperty->TypeAnnotation() != nullptr && !classProperty->IsConst()) {
+        initializer = classProperty->Value();
+        classProperty->SetEnd(classProperty->Value()->Start());
+        classProperty->SetValue(nullptr);
+        return CreateAssignmentStatement(classProperty, initializer);
+    }
+
+    // Code will be ignored, but checker is going to deduce the type.
+    initializer = classProperty->Value()->Clone(allocator_, classProperty)->AsExpression();
+    return CreateAssignmentStatement(classProperty, initializer);
 }
 
 void GlobalDeclTransformer::HandleNode(ir::AstNode *node)

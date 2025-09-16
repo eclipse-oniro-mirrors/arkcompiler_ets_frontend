@@ -30,4 +30,4 @@ a.name;
 a.name = "new Bob";
 new A().name;
 new A().name = "new Bob";
-assertTrue(true)
+arktest.assertTrue(true)

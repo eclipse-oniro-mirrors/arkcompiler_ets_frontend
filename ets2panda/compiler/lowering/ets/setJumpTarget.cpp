@@ -51,7 +51,7 @@ void SetJumpTargetPhase::FindJumpTarget(const public_lib::Context *ctx, ir::AstN
             var->SetScope(varbinder->GetScope());
             label->SetVariable(var);
             decl->BindNode(label);
-            label->SetTsType(var->SetTsType(ctx->checker->GetGlobalTypesHolder()->GlobalTypeError()));
+            label->SetTsType(var->SetTsType(ctx->GetChecker()->GetGlobalTypesHolder()->GlobalTypeError()));
         } else if (var->Declaration()->IsLabelDecl()) {
             SetTarget(node, var->Declaration()->Node());
             return;
@@ -95,21 +95,13 @@ void SetJumpTargetPhase::FindJumpTarget(const public_lib::Context *ctx, ir::AstN
     SetTarget(node, nullptr);
 }
 
-bool SetJumpTargetPhase::Perform(public_lib::Context *ctx, parser::Program *program)
+bool SetJumpTargetPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
-    for (auto &[_, ext_programs] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : ext_programs) {
-            Perform(ctx, extProg);
-        }
-    }
-
     program->Ast()->IterateRecursivelyPostorder([&](ir::AstNode *const node) -> void {
         if (node->IsBreakStatement() || node->IsContinueStatement()) {
             FindJumpTarget(ctx, node);
         }
     });
-
     return true;
 }
 

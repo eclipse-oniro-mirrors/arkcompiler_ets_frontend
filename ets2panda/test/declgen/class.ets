@@ -31,3 +31,18 @@ export class Derived extends Base implements I0, I1 {
     b: double = 2;
     constructor(a: double, b: double) {super(a); this.b = b;}
 }
+
+export class Core {
+    public beforeItSpecified: (itDescs: string | string[], func: HookFuncType) => void;
+
+    async Event() {}
+
+    private context: string;
+
+    private foo() { return "foo" }
+
+    constructor() {
+        this.beforeItSpecified = (itDescs: string | string[], func: HookFuncType) => {};
+        this.context = "context";
+    }
+}

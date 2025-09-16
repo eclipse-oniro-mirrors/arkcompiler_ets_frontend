@@ -27,9 +27,9 @@ function main() {
   let local_int = 100;
   lambda1();
 
-  assertEQ(lambda2(local_int), 142)
+  arktest.assertEQ(lambda2(local_int), 142)
   local_int = 0;
-  assertEQ(lambda2(local_int), 42)
+  arktest.assertEQ(lambda2(local_int), 42)
 
   const const_int = 100;
   const const_local_int = local_int;
@@ -39,5 +39,5 @@ function main() {
     let result: int = num_int + b + lambda2(const_local_int);
     return result;
   }
-  assertEQ(lambda3(42 as byte), 100 + 42 + 42)
+  arktest.assertEQ(lambda3(42 as byte), 100 + 42 + 42)
 }

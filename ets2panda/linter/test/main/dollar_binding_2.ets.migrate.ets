@@ -17,8 +17,8 @@ import { Component, State, Column, Link, Row, Text } from '@kit.ArkUI';
 
 @Component
 struct MyComponent {
-  @State count: number = 0.0
-  @State $$: number = 0.0
+  @State count: number = 0
+  @State $$: number = 0
 
   build() {
     Column() {

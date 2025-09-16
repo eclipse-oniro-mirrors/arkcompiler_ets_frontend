@@ -18,7 +18,7 @@ let h1: Function = new Function('return 42'); //  NOT OK
 let g2 = () => { }; // OK
 let h2 = new Function('return 42'); //  NOT OK
 let j1 = () => {}; // OK
-let f2 = (x: number) => x + 1.0; // OK
+let f2 = (x: number) => x + 1; // OK
 
 
 type F<R> = () => R;
@@ -26,7 +26,7 @@ type F1<P, R> = (p: P) => R;
 type F2<P1, P2, R> = (p1: P1, p2: P2) => R;
 
 let f3: F<void> = () => {}; // OK
-let g3: F<number> = () => 42.0; // OK
+let g3: F<number> = () => 42; // OK
 let h3: F1<string, number> = (s: string) => s.length; // OK
 let i: F2<number, string, boolean> = (n: number, s: string) => s.length > n; // OK
 
@@ -75,8 +75,8 @@ class I24 {
   constructor(par: Function, par1?: string) {}
 }
 class I24_1 extends I24 {
-  constructor() {
-    super(Function)
+  constructor(par: Function) {
+    super(par)
   }
 }
 
@@ -90,7 +90,7 @@ class I25 {
 }
 class I25_1 extends I25 {
   constructor() {
-    super(2.0)
+    super(2)
   }
 
   override foo3(fn: Function): void {
@@ -115,7 +115,7 @@ function foo33(par1: number, par2: boolean, par3: string, par4: [string, Array<F
   console.log("ArkTs foo33")
 }
 
-let array34 = [Function, 1.0, 2.0, 3.0];
+let array34 = [Function, 1, 2, 3];
 
 class L36 {
   foo1();
@@ -125,12 +125,12 @@ class L36 {
   }
 }
 
-let tup38:[['arkts'|Function, 1.0|true, false], string[], Function] = [['arkts', 1.0, false], ['arkts1', 'arkts2'], tup38_1];
+let tup38:[['arkts'|Function, 1|true, false], string[], Function] = [['arkts', 1, false], ['arkts1', 'arkts2'], tup38_1];
 
 //枚举
 enum E39 {
   Function,
-  BLUE = 1.0,
+  BLUE = 1,
   YELLOW
 }
 
@@ -139,7 +139,7 @@ function handleEvent41(callback: Function) {
   callback.unsafeCall("event", Date.now());
 }
 
-let fn43: Function = (x: number) => x + 1.0;
+let fn43: Function = (x: number) => x + 1;
 function process43(input: number): Function {
   if (typeof input === "string") return fn43;
   if (typeof input === "number") return fn43;
@@ -178,3 +178,7 @@ SysApiWrapper.setTimeout = (handler: Function | string, delay?: number): number 
   (handler as Function)?.unsafeCall();
   return Math.random();
 }
+
+new Function('return 42')();
+
+Function('return 42')();

@@ -14,6 +14,7 @@
  */
 
 #include "parserImpl.h"
+#include "forwardDeclForParserImpl.h"
 #include "parserStatusContext.h"
 
 #include "generated/diagnostic.h"
@@ -28,6 +29,7 @@
 #include "ir/expressions/arrayExpression.h"
 #include "ir/expressions/assignmentExpression.h"
 #include "ir/expressions/callExpression.h"
+#include "ir/expressions/dummyNode.h"
 #include "ir/expressions/functionExpression.h"
 #include "ir/expressions/literals/bigIntLiteral.h"
 #include "ir/expressions/literals/numberLiteral.h"
@@ -44,10 +46,7 @@ using namespace std::literals::string_literals;
 namespace ark::es2panda::parser {
 ParserImpl::ParserImpl(Program *program, const util::Options *options, util::DiagnosticEngine &diagnosticEngine,
                        ParserStatus status)
-    : program_(program),
-      context_(program_, status, options == nullptr ? false : options->IsEnableJsdocParse()),
-      options_(options),
-      diagnosticEngine_(diagnosticEngine)
+    : program_(program), context_(program_, status), options_(options), diagnosticEngine_(diagnosticEngine)
 {
 }
 
@@ -493,10 +492,6 @@ ir::ClassElement *ParserImpl::ParseClassProperty(ClassElementDescriptor *desc,
     ir::ClassElement *property = nullptr;
 
     if (desc->classMethod) {
-        if ((desc->modifiers & ir::ModifierFlags::DECLARE) != 0) {
-            LogError(diagnostic::DECLARE_MODIFIER_ON_INVALID_CLASS_ELEMENT);
-        }
-
         property = ParseClassMethod(desc, properties, propName, &propEnd);
         ES2PANDA_ASSERT(property != nullptr);
         property->SetRange({desc->propStart, propEnd});
@@ -694,8 +689,9 @@ ir::MethodDefinition *ParserImpl::BuildImplicitConstructor(ir::ClassDefinitionMo
     }
 
     auto *ctor = AllocNode<ir::MethodDefinition>(ir::MethodDefinitionKind::CONSTRUCTOR, key, funcExpr,
-                                                 ir::ModifierFlags::NONE, Allocator(), false);
+                                                 ir::ModifierFlags::CONSTRUCTOR, Allocator(), false);
     ES2PANDA_ASSERT(ctor != nullptr);
+
     const auto rangeImplicitContstuctor = lexer::SourceRange(startLoc, startLoc);
     ctor->IterateRecursively(
         [&rangeImplicitContstuctor](ir::AstNode *node) -> void { node->SetRange(rangeImplicitContstuctor); });
@@ -841,15 +837,20 @@ ParserImpl::ClassBody ParserImpl::ParseClassBody(ir::ClassDefinitionModifiers mo
 
             util::ErrorRecursionGuard infiniteLoopBlocker(Lexer());
             ir::AstNode *property = ParseClassElement(properties, modifiers, flags);
-            if (property == nullptr) {
-                continue;
-            }
-
             if (property->IsBrokenStatement()) {  // Error processing.
                 continue;
             }
 
             if (CheckClassElement(property, ctor, properties)) {
+                continue;
+            }
+            auto isIndexer = [](ir::AstNode *node) {
+                return node->IsDummyNode() && node->AsDummyNode()->IsDeclareIndexer();
+            };
+            if (std::any_of(properties.begin(), properties.end(),
+                            [&isIndexer](ir::AstNode *node) { return isIndexer(node); }) &&
+                isIndexer(property)) {
+                LogError(diagnostic::MORE_INDEXER, {}, property->Start());
                 continue;
             }
 
@@ -992,10 +993,8 @@ FunctionSignature ParserImpl::ParseFunctionSignature(ParserStatus status)
         LogError(diagnostic::EXTENSION_ACCESSOR_RECEIVER);
     }
 
-    ir::ScriptFunctionFlags throwMarker = ParseFunctionThrowMarker(true);
-
     auto res = ir::FunctionSignature(typeParamDecl, std::move(params), returnTypeAnnotation, hasReceiver);
-    return {std::move(res), throwMarker};
+    return {std::move(res), ir::ScriptFunctionFlags::NONE};
 }
 
 ir::ScriptFunction *ParserImpl::ParseFunction(ParserStatus newStatus)
@@ -1042,10 +1041,6 @@ ir::SpreadElement *ParserImpl::ParseSpreadElement(ExpressionParseFlags flags)
         }
     } else {
         argument = ParseExpression(flags);
-    }
-
-    if (inPattern && argument->IsAssignmentExpression()) {
-        LogError(diagnostic::RESTPARAM_INIT);
     }
 
     auto nodeType = inPattern ? ir::AstNodeType::REST_ELEMENT : ir::AstNodeType::SPREAD_ELEMENT;
@@ -1218,6 +1213,39 @@ ArenaVector<ir::Expression *> &ParserImpl::ParseExpressionsArrayFormatPlaceholde
     ES2PANDA_UNREACHABLE();
 }
 
+bool ParserImpl::ParsePunctuatorGreaterThan(bool throwError)
+{
+    switch (Lexer()->GetToken().Type()) {
+        case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL:
+        case lexer::TokenType::PUNCTUATOR_RIGHT_SHIFT: {
+            Lexer()->BackwardToken(lexer::TokenType::PUNCTUATOR_GREATER_THAN, 1);
+            break;
+        }
+        case lexer::TokenType::PUNCTUATOR_RIGHT_SHIFT_EQUAL:
+        case lexer::TokenType::PUNCTUATOR_UNSIGNED_RIGHT_SHIFT: {
+            Lexer()->BackwardToken(lexer::TokenType::PUNCTUATOR_GREATER_THAN, 2U);
+            break;
+        }
+        case lexer::TokenType::PUNCTUATOR_UNSIGNED_RIGHT_SHIFT_EQUAL: {
+            Lexer()->BackwardToken(lexer::TokenType::PUNCTUATOR_GREATER_THAN, 3U);
+            break;
+        }
+        case lexer::TokenType::PUNCTUATOR_GREATER_THAN: {
+            break;
+        }
+        default: {
+            if (throwError) {
+                LogError(diagnostic::EXPECTED_PARAM_GOT_PARAM,
+                         {TokenToString(lexer::TokenType::PUNCTUATOR_GREATER_THAN),
+                          TokenToString(Lexer()->GetToken().Type())});
+            }
+            return false;
+        }
+    }
+    Lexer()->NextToken();  // eat `>`
+    return true;
+}
+
 util::StringView ParserImpl::ParseSymbolIteratorIdentifier() const noexcept
 {
     // Duplicate check - just in case of improper call!
@@ -1249,6 +1277,51 @@ util::StringView ParserImpl::ParseSymbolIteratorIdentifier() const noexcept
     return util::StringView {compiler::Signatures::ITERATOR_METHOD};
 }
 
+void ParserImpl::EatTypeAnnotation()
+{
+    lexer_->NextToken();  // eat ':' or '|'
+    if (lexer_->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
+        LogUnexpectedToken(lexer_->GetToken());
+        auto pos = lexer_->Save();
+        lexer_->NextToken();
+        while (lexer_->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
+            // just skip usls tokens, we have an identifier after
+            lexer_->Rewind(pos);
+            lexer_->NextToken();
+            pos = lexer_->Save();
+        }
+        if (lexer_->GetToken().Type() == lexer::TokenType::LITERAL_IDENT) {
+            // if next token is not an ident, so current token should be an identifier
+            // and we set it as literal ident
+            lexer_->GetToken().SetTokenType(lexer::TokenType::LITERAL_IDENT);
+            lexer_->GetToken().SetTokenStr(ERROR_LITERAL);
+        }
+    }
+    lexer_->NextToken();  // eat type
+    if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_BITWISE_OR) {
+        EatTypeAnnotation();
+    }
+}
+
+void ParserImpl::ParseIndexSignature()
+{
+    if (lexer_->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
+        return;
+    }
+    lexer_->NextToken();  // eat param
+
+    if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COLON) {
+        return;
+    }
+
+    EatTypeAnnotation();
+
+    if (!lexer_->TryEatTokenType(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET)) {
+        return;
+    }
+    EatTypeAnnotation();
+}
+
 ir::Identifier *ParserImpl::ExpectIdentifier([[maybe_unused]] bool isReference, bool isUserDefinedType,
                                              TypeAnnotationParsingOptions options)
 {
@@ -1261,8 +1334,7 @@ ir::Identifier *ParserImpl::ExpectIdentifier([[maybe_unused]] bool isReference, 
     }
 
     auto const &tokenStart = token.Start();
-    if (token.IsPredefinedType() && !util::Helpers::IsStdLib(program_) &&
-        ((options & TypeAnnotationParsingOptions::ADD_TYPE_PARAMETER_BINDING) == 0)) {
+    if (!IsValidIdentifierName(token) && ((options & TypeAnnotationParsingOptions::ADD_TYPE_PARAMETER_BINDING) == 0)) {
         LogError(diagnostic::PREDEFINED_TYPE_AS_IDENTIFIER, {token.Ident()}, tokenStart);
         lexer_->NextToken();
         return AllocBrokenExpression(tokenStart);
@@ -1279,11 +1351,21 @@ ir::Identifier *ParserImpl::ExpectIdentifier([[maybe_unused]] bool isReference, 
     } else if (tokenType == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET) {
         // Special case for processing of special '[Symbol.iterator]` identifier using in stdlib.
         tokenName = ParseSymbolIteratorIdentifier();
+        if (tokenName.Empty()) {
+            LogError(diagnostic::ERROR_ARKTS_NO_PROPERTIES_BY_INDEX, {});
+            ParseIndexSignature();
+            return AllocBrokenExpression(Lexer()->GetToken().Start());
+        }
     }
 
     if (tokenName.Empty()) {
         if ((options & TypeAnnotationParsingOptions::REPORT_ERROR) == 0) {
             return nullptr;
+        }
+        if (token.IsLiteral()) {
+            LogError(diagnostic::LITERAL_VALUE_IDENT, {token.ToString()}, tokenStart);
+        } else if (token.IsKeyword()) {
+            LogError(diagnostic::HARD_KEYWORD_IDENT, {token.ToString()}, tokenStart);
         }
         LogError(diagnostic::IDENTIFIER_EXPECTED_HERE, {TokenToString(tokenType)}, tokenStart);
         lexer_->NextToken();

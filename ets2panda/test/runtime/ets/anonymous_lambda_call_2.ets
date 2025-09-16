@@ -15,5 +15,5 @@
 
 function main() {
     let ret: number = ((x: number) => x)(5)
-    assertEQ(ret, 5)
+    arktest.assertEQ(ret, 5)
 }

@@ -65,26 +65,26 @@ function main(): void {
     let bClass: B = new B();
 
     let a: int = bClass.foo();
-    assertEQ(a, 2)
+    arktest.assertEQ(a, 2)
 
     let b: int = bClass.bar();
-    assertEQ(b, 1)
+    arktest.assertEQ(b, 1)
 
     let c: int = bClass.virt();
-    assertEQ(c, 2)
+    arktest.assertEQ(c, 2)
 
     const f: F = new F();
-    assertEQ(f.f, 42)
+    arktest.assertEQ(f.f, 42)
 
     const g: G = new G();
-    assertEQ(g.f, 42)
+    arktest.assertEQ(g.f, 42)
 
     const h: H = new H();
-    assertEQ(h.f, 42)
+    arktest.assertEQ(h.f, 42)
 
     const i: I = new I();
-    assertEQ(i.f, 42)
+    arktest.assertEQ(i.f, 42)
 
     let d_as_A: F = i;
-    assertEQ(d_as_A.f, 42)
+    arktest.assertEQ(d_as_A.f, 42)
 }

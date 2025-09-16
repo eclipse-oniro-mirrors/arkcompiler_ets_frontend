@@ -14,10 +14,10 @@
  */
 
 function foo(a: number, b?: string, f?: () => string) {
-    assertEQ(a, 1)
-    assertEQ(b, b == undefined ? undefined : "1")
+    arktest.assertEQ(a, 1)
+    arktest.assertEQ(b, b == undefined ? undefined : "1")
     if(f != undefined) {
-        assertEQ(f(), "Ok")
+        arktest.assertEQ(f(), "Ok")
     }
 }
 

@@ -30,6 +30,6 @@ class B extends A {
 }
 
 /* @@? 28:9 Error TypeError: Expected 0 arguments, got 1. */
-/* @@? 28:9 Error TypeError: No matching call signature for cycle_constructor.B(int)  */
+/* @@? 28:9 Error TypeError: No matching call signature for cycle_constructor.B(Int)  */
 /* @@? 28:9 Error TypeError: No matching call signature for constructor  */
 /* @@? 28:14 Error TypeError: Using super is not allowed in constructor  */

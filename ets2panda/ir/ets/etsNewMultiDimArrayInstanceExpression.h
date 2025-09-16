@@ -79,21 +79,6 @@ public:
         return signature_;
     }
 
-    [[nodiscard]] checker::Type *GetPreferredType() noexcept
-    {
-        return preferredType_;
-    }
-
-    [[nodiscard]] checker::Type const *GetPreferredType() const noexcept
-    {
-        return preferredType_;
-    }
-
-    void SetPreferredType(checker::Type *preferredType) noexcept
-    {
-        preferredType_ = preferredType;
-    }
-
     void SetSignature(checker::Signature *signature) noexcept
     {
         signature_ = signature;
@@ -125,12 +110,12 @@ public:
     }
 
     void ClearPreferredType();
+    void CleanCheckInformation() override;
 
 private:
     ir::TypeNode *typeReference_;
     ArenaVector<ir::Expression *> dimensions_;
     checker::Signature *signature_ {};
-    checker::Type *preferredType_ {};
 };
 }  // namespace ark::es2panda::ir
 

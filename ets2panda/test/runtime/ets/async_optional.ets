@@ -26,5 +26,5 @@ function main() {
     let t : InputT = {name: "zztest"};
     let a : A = new A();
     let b = await a.update(t);
-    assertEQ(b, "zztest")
+    arktest.assertEQ(b, "zztest")
 }

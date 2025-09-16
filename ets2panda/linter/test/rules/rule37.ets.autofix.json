@@ -24,11 +24,25 @@
                 {
                     "start": 631,
                     "end": 637,
-                    "replacementText": "new RegExp(\"bc*d\")"
+                    "replacementText": "new RegExp(\"bc*d\")",
+                    "line": 16,
+                    "column": 22,
+                    "endLine": 16,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 27,
+            "endLine": 18,
+            "endColumn": 33,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -41,11 +55,25 @@
                 {
                     "start": 699,
                     "end": 764,
-                    "replacementText": "new RegExp(\"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*(\\\\.[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)*$\")"
+                    "replacementText": "new RegExp(\"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*(\\\\.[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)*$\")",
+                    "line": 20,
+                    "column": 17,
+                    "endLine": 20,
+                    "endColumn": 82
                 }
             ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 29,
+            "endLine": 21,
+            "endColumn": 35,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -58,11 +86,35 @@
                 {
                     "start": 892,
                     "end": 900,
-                    "replacementText": "new RegExp(\"bc*d\", \"ig\")"
+                    "replacementText": "new RegExp(\"bc*d\", \"ig\")",
+                    "line": 23,
+                    "column": 23,
+                    "endLine": 23,
+                    "endColumn": 31
                 }
             ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 27,
+            "endLine": 25,
+            "endColumn": 33,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 27,
+            "endLine": 27,
+            "endColumn": 33,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -75,11 +127,35 @@
                 {
                     "start": 985,
                     "end": 992,
-                    "replacementText": "new RegExp(\"bc*d\", \"i\")"
+                    "replacementText": "new RegExp(\"bc*d\", \"i\")",
+                    "line": 27,
+                    "column": 34,
+                    "endLine": 27,
+                    "endColumn": 41
                 }
             ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 27,
+            "endLine": 29,
+            "endColumn": 33,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 38,
+            "endLine": 29,
+            "endColumn": 44,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -92,11 +168,25 @@
                 {
                     "start": 1088,
                     "end": 1093,
-                    "replacementText": "new RegExp(\"a\\\\\\\\\")"
+                    "replacementText": "new RegExp(\"a\\\\\\\\\")",
+                    "line": 31,
+                    "column": 23,
+                    "endLine": 31,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 28,
+            "endLine": 33,
+            "endColumn": 34,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -109,7 +199,11 @@
                 {
                     "start": 1195,
                     "end": 1201,
-                    "replacementText": "new RegExp(\"bc*d\")"
+                    "replacementText": "new RegExp(\"bc*d\")",
+                    "line": 36,
+                    "column": 44,
+                    "endLine": 36,
+                    "endColumn": 50
                 }
             ],
             "suggest": "",
@@ -126,11 +220,25 @@
                 {
                     "start": 1239,
                     "end": 1304,
-                    "replacementText": "new RegExp(\"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*(\\\\.[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)*$\")"
+                    "replacementText": "new RegExp(\"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*(\\\\.[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)*$\")",
+                    "line": 38,
+                    "column": 36,
+                    "endLine": 38,
+                    "endColumn": 101
                 }
             ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 32,
+            "endLine": 40,
+            "endColumn": 38,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -143,11 +251,25 @@
                 {
                     "start": 1410,
                     "end": 1416,
-                    "replacementText": "new RegExp(\"bc*d\")"
+                    "replacementText": "new RegExp(\"bc*d\")",
+                    "line": 43,
+                    "column": 22,
+                    "endLine": 43,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 34,
+            "endLine": 47,
+            "endColumn": 40,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -160,11 +282,25 @@
                 {
                     "start": 1557,
                     "end": 1563,
-                    "replacementText": "new RegExp(\"bc*d\")"
+                    "replacementText": "new RegExp(\"bc*d\")",
+                    "line": 51,
+                    "column": 22,
+                    "endLine": 51,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 34,
+            "endLine": 55,
+            "endColumn": 40,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {
@@ -177,7 +313,11 @@
                 {
                     "start": 1694,
                     "end": 1759,
-                    "replacementText": "new RegExp(\"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*(\\\\.[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)*$\")"
+                    "replacementText": "new RegExp(\"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*(\\\\.[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)*$\")",
+                    "line": 59,
+                    "column": 17,
+                    "endLine": 59,
+                    "endColumn": 82
                 }
             ],
             "suggest": "",
@@ -194,7 +334,11 @@
                 {
                     "start": 1799,
                     "end": 1864,
-                    "replacementText": "new RegExp(\"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*(\\\\.[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)*$\")"
+                    "replacementText": "new RegExp(\"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*(\\\\.[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)*$\")",
+                    "line": 63,
+                    "column": 28,
+                    "endLine": 63,
+                    "endColumn": 93
                 }
             ],
             "suggest": "",
@@ -211,7 +355,11 @@
                 {
                     "start": 1890,
                     "end": 1904,
-                    "replacementText": "new RegExp(\"ab*c\")"
+                    "replacementText": "new RegExp(\"ab*c\")",
+                    "line": 65,
+                    "column": 24,
+                    "endLine": 65,
+                    "endColumn": 38
                 }
             ],
             "suggest": "",
@@ -228,7 +376,11 @@
                 {
                     "start": 1929,
                     "end": 1947,
-                    "replacementText": "new RegExp(\"ab*c\", \"i\")"
+                    "replacementText": "new RegExp(\"ab*c\", \"i\")",
+                    "line": 67,
+                    "column": 24,
+                    "endLine": 67,
+                    "endColumn": 42
                 }
             ],
             "suggest": "",
@@ -245,7 +397,11 @@
                 {
                     "start": 1968,
                     "end": 1992,
-                    "replacementText": "new RegExp('dawfgr' + '12345')"
+                    "replacementText": "new RegExp('dawfgr' + '12345')",
+                    "line": 69,
+                    "column": 20,
+                    "endLine": 69,
+                    "endColumn": 44
                 }
             ],
             "suggest": "",
@@ -262,7 +418,11 @@
                 {
                     "start": 2013,
                     "end": 2169,
-                    "replacementText": "new RegExp('.∗?(?:(?:元宵|三八|妇女|母亲|父亲|七夕|重阳|情人|儿童|六一' + '|愚人|复活|青年|护士|建军|教师|建党|万圣|感恩|秘书|七一|五四|八一|腊八|光棍|植树|中元)节|除夕|大年三十|大年30|七夕' + '|平安夜|六一|七一|五四|八一|三八|腊八|双十一|双十二).∗')"
+                    "replacementText": "new RegExp('.∗?(?:(?:元宵|三八|妇女|母亲|父亲|七夕|重阳|情人|儿童|六一' + '|愚人|复活|青年|护士|建军|教师|建党|万圣|感恩|秘书|七一|五四|八一|腊八|光棍|植树|中元)节|除夕|大年三十|大年30|七夕' + '|平安夜|六一|七一|五四|八一|三八|腊八|双十一|双十二).∗')",
+                    "line": 71,
+                    "column": 20,
+                    "endLine": 71,
+                    "endColumn": 176
                 }
             ],
             "suggest": "",
@@ -279,7 +439,11 @@
                 {
                     "start": 2195,
                     "end": 2227,
-                    "replacementText": "new RegExp('dawfgr'.concat('12345'))"
+                    "replacementText": "new RegExp('dawfgr'.concat('12345'))",
+                    "line": 73,
+                    "column": 24,
+                    "endLine": 73,
+                    "endColumn": 56
                 }
             ],
             "suggest": "",
@@ -296,7 +460,11 @@
                 {
                     "start": 2250,
                     "end": 2282,
-                    "replacementText": "new RegExp('dawfgr' + '12345' + '789')"
+                    "replacementText": "new RegExp('dawfgr' + '12345' + '789')",
+                    "line": 75,
+                    "column": 21,
+                    "endLine": 75,
+                    "endColumn": 53
                 }
             ],
             "suggest": "",

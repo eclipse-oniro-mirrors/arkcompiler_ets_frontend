@@ -19,6 +19,7 @@
 #include "es2panda.h"
 #include "astNodeFlags.h"
 #include "astNodeMapping.h"
+#include "compiler/lowering/phase_id.h"
 #include "ir/visitor/AstVisitor.h"
 #include "lexer/token/sourceLocation.h"
 #include "util/es2pandaMacros.h"
@@ -41,6 +42,20 @@ class Scope;
 }  // namespace ark::es2panda::varbinder
 
 namespace ark::es2panda::ir {
+
+inline thread_local bool g_enableContextHistory;
+// CC-OFFNXT(G.INC.10)
+[[maybe_unused]] static void DisableContextHistory()
+{
+    g_enableContextHistory = false;
+}
+
+// CC-OFFNXT(G.INC.10)
+[[maybe_unused]] static void EnableContextHistory()
+{
+    g_enableContextHistory = true;
+}
+
 // NOLINTBEGIN(modernize-avoid-c-arrays)
 inline constexpr char const CLONE_ALLOCATION_ERROR[] = "Unsuccessful allocation during cloning.";
 // NOLINTEND(modernize-avoid-c-arrays)
@@ -52,7 +67,7 @@ using NodeTransformer = std::function<AstNode *(AstNode *)>;
 using NodeTraverser = std::function<void(AstNode *)>;
 using NodePredicate = std::function<bool(AstNode *)>;
 
-enum class AstNodeType {
+enum class AstNodeType : uint8_t {
 /* CC-OFFNXT(G.PRE.02,G.PRE.09) name part*/
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DECLARE_NODE_TYPES(nodeType, className) nodeType,
@@ -96,6 +111,7 @@ inline std::string_view ToString(AstNodeType nodeType)
 #undef STRING_FROM_NODE_TYPE
 
 // Forward declarations
+class AstNodeHistory;
 class AstDumper;
 class Expression;
 class SrcDumper;
@@ -119,7 +135,7 @@ AST_NODE_REINTERPRET_MAPPING(DECLARE_CLASSES)
 class AstNode {
 public:
     explicit AstNode(AstNodeType type) : type_(type) {};
-    explicit AstNode(AstNodeType type, ModifierFlags flags) : type_(type), flags_(flags) {};
+    explicit AstNode(AstNodeType type, ModifierFlags flags) : flags_(flags), type_(type) {};
     virtual ~AstNode() = default;
 
     AstNode() = delete;
@@ -127,31 +143,31 @@ public:
 
     bool IsProgram() const
     {
-        return parent_ == nullptr;
+        return GetHistoryNode()->parent_ == nullptr;
     }
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define DECLARE_IS_CHECKS(nodeType, className)                                               \
-    bool Is##className() const                                                               \
-    {                                                                                        \
-        /* CC-OFFNXT(G.PRE.02) name part*/                                                   \
-        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */ \
-        return type_ == AstNodeType::nodeType; /* CC-OFF(G.PRE.02) name part*/               \
+#define DECLARE_IS_CHECKS(nodeType, className)                                                   \
+    bool Is##className() const                                                                   \
+    {                                                                                            \
+        /* CC-OFFNXT(G.PRE.02) name part*/                                                       \
+        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */     \
+        return GetHistoryNode()->type_ == AstNodeType::nodeType; /* CC-OFF(G.PRE.02) name part*/ \
     }
     AST_NODE_MAPPING(DECLARE_IS_CHECKS)
 #undef DECLARE_IS_CHECKS
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define DECLARE_IS_CHECKS(nodeType1, nodeType2, baseClass, reinterpretClass)                 \
-    bool Is##baseClass() const                                                               \
-    {                                                                                        \
-        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */ \
-        return type_ == AstNodeType::nodeType1; /* CC-OFF(G.PRE.02) name part*/              \
-    }                                                                                        \
-    bool Is##reinterpretClass() const                                                        \
-    {                                                                                        \
-        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */ \
-        return type_ == AstNodeType::nodeType2; /* CC-OFF(G.PRE.02) name part*/              \
+#define DECLARE_IS_CHECKS(nodeType1, nodeType2, baseClass, reinterpretClass)                      \
+    bool Is##baseClass() const                                                                    \
+    {                                                                                             \
+        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */      \
+        return GetHistoryNode()->type_ == AstNodeType::nodeType1; /* CC-OFF(G.PRE.02) name part*/ \
+    }                                                                                             \
+    bool Is##reinterpretClass() const                                                             \
+    {                                                                                             \
+        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */      \
+        return GetHistoryNode()->type_ == AstNodeType::nodeType2; /* CC-OFF(G.PRE.02) name part*/ \
     }
     AST_NODE_REINTERPRET_MAPPING(DECLARE_IS_CHECKS)
 #undef DECLARE_IS_CHECKS
@@ -265,62 +281,87 @@ public:
 
     void SetRange(const lexer::SourceRange &loc) noexcept
     {
-        range_ = loc;
+        if (GetHistoryNode()->range_.GetRange() != loc) {
+            GetOrCreateHistoryNode()->range_.SetRange(loc);
+        }
+    }
+
+    void SetProgram(const parser::Program *program) noexcept
+    {
+        if (program != nullptr) {
+            GetOrCreateHistoryNode()->range_.SetProgram(program);
+        }
     }
 
     void SetStart(const lexer::SourcePosition &start) noexcept
     {
-        range_.start = start;
+        if (GetHistoryNode()->range_.GetStart() != start) {
+            GetOrCreateHistoryNode()->range_.SetStart(start);
+        }
     }
 
     void SetEnd(const lexer::SourcePosition &end) noexcept
     {
-        range_.end = end;
+        if (GetHistoryNode()->range_.GetEnd() != end) {
+            GetOrCreateHistoryNode()->range_.SetEnd(end);
+        }
     }
 
-    [[nodiscard]] const lexer::SourcePosition &Start() const noexcept
+    [[nodiscard]] const parser::Program *Program() const noexcept
     {
-        return range_.start;
+        return range_.GetStart().Program();
     }
 
-    [[nodiscard]] const lexer::SourcePosition &End() const noexcept
+    [[nodiscard]] lexer::SourcePosition Start() const noexcept
     {
-        return range_.end;
+        return GetHistoryNode()->range_.GetStart();
     }
 
-    [[nodiscard]] const lexer::SourceRange &Range() const noexcept
+    [[nodiscard]] lexer::SourcePosition End() const noexcept
     {
-        return range_;
+        return GetHistoryNode()->range_.GetEnd();
+    }
+
+    [[nodiscard]] lexer::SourceRange Range() const noexcept
+    {
+        return GetHistoryNode()->range_.GetRange();
     }
 
     [[nodiscard]] AstNodeType Type() const noexcept
     {
-        return type_;
+        return GetHistoryNode()->type_;
     }
 
     [[nodiscard]] AstNode *Parent() noexcept
     {
-        return parent_;
+        return GetHistoryNode()->parent_;
     }
 
     [[nodiscard]] const AstNode *Parent() const noexcept
     {
-        return parent_;
+        return GetHistoryNode()->parent_;
     }
 
     void SetParent(AstNode *const parent) noexcept
     {
-        parent_ = parent;
+        if (GetHistoryNode()->parent_ != parent) {
+            GetOrCreateHistoryNode()->parent_ = parent;
+        }
+        if (parent != nullptr && Program() == nullptr) {
+            GetOrCreateHistoryNode()->SetProgram(parent->Program());
+        }
     }
 
     [[nodiscard]] varbinder::Variable *Variable() const noexcept
     {
-        return variable_;
+        return GetHistoryNode()->variable_;
     }
 
     void SetVariable(varbinder::Variable *variable) noexcept
     {
-        variable_ = variable;
+        if (GetHistoryNode()->variable_ != variable) {
+            GetOrCreateHistoryNode()->variable_ = variable;
+        }
     }
 
     // When no decorators are allowed, we cannot return a reference to an empty vector.
@@ -354,62 +395,62 @@ public:
 
     void SetOverride() noexcept
     {
-        flags_ |= ModifierFlags::OVERRIDE;
+        AddModifier(ModifierFlags::OVERRIDE);
     }
 
     [[nodiscard]] bool IsAsync() const noexcept
     {
-        return (flags_ & ModifierFlags::ASYNC) != 0;
+        return (Modifiers() & ModifierFlags::ASYNC) != 0;
     }
 
     [[nodiscard]] bool IsSynchronized() const noexcept
     {
-        return (flags_ & ModifierFlags::SYNCHRONIZED) != 0;
+        return (Modifiers() & ModifierFlags::SYNCHRONIZED) != 0;
     }
 
     [[nodiscard]] bool IsNative() const noexcept
     {
-        return (flags_ & ModifierFlags::NATIVE) != 0;
+        return (Modifiers() & ModifierFlags::NATIVE) != 0;
     }
 
     [[nodiscard]] bool IsConst() const noexcept
     {
-        return (flags_ & ModifierFlags::CONST) != 0;
+        return (Modifiers() & ModifierFlags::CONST) != 0;
     }
 
     [[nodiscard]] bool IsStatic() const noexcept
     {
-        return (flags_ & ModifierFlags::STATIC) != 0;
+        return (Modifiers() & ModifierFlags::STATIC) != 0;
     }
 
     [[nodiscard]] bool IsFinal() const noexcept
     {
-        return (flags_ & ModifierFlags::FINAL) != 0U;
+        return (Modifiers() & ModifierFlags::FINAL) != 0U;
     }
 
     [[nodiscard]] bool IsAbstract() const noexcept
     {
-        return (flags_ & ModifierFlags::ABSTRACT) != 0;
+        return (Modifiers() & ModifierFlags::ABSTRACT) != 0;
     }
 
     [[nodiscard]] bool IsPublic() const noexcept
     {
-        return (flags_ & ModifierFlags::PUBLIC) != 0;
+        return (Modifiers() & ModifierFlags::PUBLIC) != 0;
     }
 
     [[nodiscard]] bool IsProtected() const noexcept
     {
-        return (flags_ & ModifierFlags::PROTECTED) != 0;
+        return (Modifiers() & ModifierFlags::PROTECTED) != 0;
     }
 
     [[nodiscard]] bool IsPrivate() const noexcept
     {
-        return (flags_ & ModifierFlags::PRIVATE) != 0;
+        return (Modifiers() & ModifierFlags::PRIVATE) != 0;
     }
 
     [[nodiscard]] bool IsInternal() const noexcept
     {
-        return (flags_ & ModifierFlags::INTERNAL) != 0;
+        return (Modifiers() & ModifierFlags::INTERNAL) != 0;
     }
 
     [[nodiscard]] bool IsExported() const noexcept;
@@ -420,42 +461,36 @@ public:
 
     [[nodiscard]] bool IsDeclare() const noexcept
     {
-        return (flags_ & ModifierFlags::DECLARE) != 0;
+        return (Modifiers() & ModifierFlags::DECLARE) != 0;
     }
 
     [[nodiscard]] bool IsIn() const noexcept
     {
-        return (flags_ & ModifierFlags::IN) != 0;
+        return (Modifiers() & ModifierFlags::IN) != 0;
     }
 
     [[nodiscard]] bool IsOut() const noexcept
     {
-        return (flags_ & ModifierFlags::OUT) != 0;
+        return (Modifiers() & ModifierFlags::OUT) != 0;
     }
 
     [[nodiscard]] bool IsSetter() const noexcept
     {
-        return (flags_ & ModifierFlags::SETTER) != 0;
+        return (Modifiers() & ModifierFlags::SETTER) != 0;
     }
 
-    void AddModifier(ModifierFlags const flags) noexcept
-    {
-        flags_ |= flags;
-    }
+    void AddModifier(ModifierFlags const flags) noexcept;
 
-    void ClearModifier(ModifierFlags const flags) noexcept
-    {
-        flags_ &= ~flags;
-    }
+    void ClearModifier(ModifierFlags const flags) noexcept;
 
     [[nodiscard]] ModifierFlags Modifiers() noexcept
     {
-        return flags_;
+        return GetHistoryNode()->flags_;
     }
 
     [[nodiscard]] ModifierFlags Modifiers() const noexcept
     {
-        return flags_;
+        return GetHistoryNode()->flags_;
     }
 
     [[nodiscard]] bool HasExportAlias() const noexcept;
@@ -464,31 +499,36 @@ public:
 #define DECLARE_FLAG_OPERATIONS(flag_type, member_name)                                     \
     void Set##flag_type(flag_type flags) const noexcept                                     \
     {                                                                                       \
-        (member_name) = flags;                                                              \
+        if (GetHistoryNode()->member_name != flags) {                                       \
+            GetOrCreateHistoryNode()->member_name = flags;                                  \
+        }                                                                                   \
     }                                                                                       \
                                                                                             \
     void Add##flag_type(flag_type flag) const noexcept                                      \
     {                                                                                       \
-        (member_name) |= flag;                                                              \
+        if (!All(GetHistoryNode()->member_name, flag)) {                                    \
+            GetOrCreateHistoryNode()->member_name |= flag;                                  \
+        }                                                                                   \
     }                                                                                       \
                                                                                             \
     [[nodiscard]] flag_type Get##flag_type() const noexcept                                 \
     {                                                                                       \
         /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed*/ \
-        return (member_name);                                                               \
+        return GetHistoryNode()->member_name;                                               \
     }                                                                                       \
                                                                                             \
     bool Has##flag_type(flag_type flag) const noexcept                                      \
     {                                                                                       \
         /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed*/ \
-        return ((member_name)&flag) != 0U;                                                  \
+        return (GetHistoryNode()->member_name & flag) != 0U;                                \
     }                                                                                       \
     void Remove##flag_type(flag_type flag) const noexcept                                   \
     {                                                                                       \
-        (member_name) &= ~flag;                                                             \
+        if (Any(GetHistoryNode()->member_name, flag)) {                                     \
+            GetOrCreateHistoryNode()->member_name &= ~flag;                                 \
+        }                                                                                   \
     }
 
-    DECLARE_FLAG_OPERATIONS(BoxingUnboxingFlags, boxingUnboxingFlags_);
     DECLARE_FLAG_OPERATIONS(AstNodeFlags, astNodeFlags_);
 #undef DECLARE_FLAG_OPERATIONS
 
@@ -510,21 +550,122 @@ public:
     virtual void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) = 0;
     virtual void Iterate(const NodeTraverser &cb) const = 0;
 
-    void TransformChildrenRecursively(const NodeTransformer &cb, std::string_view transformationName);
-    void TransformChildrenRecursivelyPreorder(const NodeTransformer &cb, std::string_view transformationName);
-    void TransformChildrenRecursivelyPostorder(const NodeTransformer &cb, std::string_view transformationName);
+    template <typename F>
+    void TransformChildrenRecursively(const F &cb, std::string_view transformationName)
+    {
+        TransformChildrenRecursivelyPostorder(cb, transformationName);
+    }
 
-    void IterateRecursively(const NodeTraverser &cb) const;
-    void IterateRecursivelyPreorder(const NodeTraverser &cb) const;
-    void IterateRecursivelyPostorder(const NodeTraverser &cb) const;
+    // Preserved for the API bindings
+    void TransformChildrenRecursively(const NodeTransformer &cb, std::string_view transformationName)
+    {
+        return TransformChildrenRecursively<NodeTransformer>(cb, transformationName);
+    }
 
-    bool IsAnyChild(const NodePredicate &cb) const;
-    AstNode *FindChild(const NodePredicate &cb) const;
+    template <typename F>
+    void TransformChildrenRecursivelyPreorder(const F &cb, std::string_view transformationName)
+    {
+        std::function<AstNode *(AstNode *)> hcb = [&](AstNode *child) {
+            AstNode *res = cb(child);
+            res->TransformChildren(hcb, transformationName);
+            return res;
+        };
+        TransformChildren(hcb, transformationName);
+    }
+
+    template <typename F>
+    void TransformChildrenRecursivelyPostorder(const F &cb, std::string_view transformationName)
+    {
+        std::function<AstNode *(AstNode *)> hcb = [&](AstNode *child) {
+            child->TransformChildren(hcb, transformationName);
+            return cb(child);
+        };
+        TransformChildren(hcb, transformationName);
+    }
+
+    template <typename F1, typename F2>
+    void PreTransformChildrenRecursively(const F1 &pre, const F2 &post, std::string_view transformationName)
+    {
+        std::function<AstNode *(AstNode *)> hcb = [&](AstNode *child) {
+            AstNode *upd = pre(child);
+            upd->TransformChildren(hcb, transformationName);
+            post(upd);
+            return upd;
+        };
+        TransformChildren(hcb, transformationName);
+    }
+
+    template <typename F1, typename F2>
+    void PostTransformChildrenRecursively(const NodeTraverser &pre, const NodeTransformer &post,
+                                          std::string_view transformationName)
+    {
+        std::function<AstNode *(AstNode *)> hcb = [&](AstNode *child) {
+            pre(child);
+            child->TransformChildren(hcb, transformationName);
+            return post(child);
+        };
+        TransformChildren(hcb, transformationName);
+    }
+
+    template <typename F>
+    void IterateRecursively(const F &cb) const
+    {
+        IterateRecursivelyPreorder(cb);
+    }
+
+    template <typename F>
+    void IterateRecursivelyPreorder(const F &cb) const
+    {
+        std::function<void(AstNode *)> hcb = [&](AstNode *child) {
+            cb(child);
+            child->Iterate(hcb);
+        };
+        Iterate(hcb);
+    }
+
+    template <typename F>
+    void IterateRecursivelyPostorder(const F &cb) const
+    {
+        std::function<void(AstNode *)> hcb = [&](AstNode *child) {
+            child->Iterate(hcb);
+            cb(child);
+        };
+        Iterate(hcb);
+    }
+
+    template <typename F>
+    AstNode *FindChild(const F &cb) const
+    {
+        AstNode *found = nullptr;
+        std::function<void(AstNode *)> hcb = [&](AstNode *child) {
+            if (found != nullptr) {
+                return;
+            }
+            if (cb(child)) {
+                found = child;
+                return;
+            }
+            child->Iterate(hcb);
+        };
+        Iterate(hcb);
+        return found;
+    }
+
+    template <typename F>
+    bool IsAnyChild(const F &cb) const
+    {
+        return FindChild(cb) != nullptr;
+    }
+
+    // Preserved for the API bindings
+    bool IsAnyChild(const NodePredicate &cb) const
+    {
+        return IsAnyChild<NodePredicate>(cb);
+    }
 
     std::string DumpJSON() const;
     std::string DumpEtsSrc() const;
     std::string DumpDecl() const;
-    std::string IsolatedDumpDecl() const;
 
     virtual void Dump(ir::AstDumper *dumper) const = 0;
     virtual void Dump(ir::SrcDumper *dumper) const = 0;
@@ -552,6 +693,20 @@ public:
 
     AstNode *ShallowClone(ArenaAllocator *allocator);
 
+    bool IsValidInCurrentPhase() const;
+
+    AstNode *GetHistoryNode() const
+    {
+        if (UNLIKELY(history_ != nullptr)) {
+            return GetFromExistingHistory();
+        }
+        return const_cast<AstNode *>(this);
+    }
+
+    AstNode *GetOrCreateHistoryNode() const;
+
+    virtual void CleanCheckInformation();
+
 protected:
     AstNode(AstNode const &other);
 
@@ -561,26 +716,44 @@ protected:
 
     void SetType(AstNodeType const type) noexcept
     {
-        type_ = type;
+        if (Type() != type) {
+            GetOrCreateHistoryNode()->type_ = type;
+        }
+    }
+
+    void InitHistory();
+    bool HistoryInitialized() const;
+
+    AstNode *GetFromExistingHistory() const;
+
+    template <typename T>
+    T *GetHistoryNodeAs() const
+    {
+        return reinterpret_cast<T *>(GetHistoryNode());
+    }
+
+    template <typename T>
+    T *GetOrCreateHistoryNodeAs() const
+    {
+        return reinterpret_cast<T *>(GetOrCreateHistoryNode());
     }
 
     friend class SizeOfNodeTest;
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     AstNode *parent_ {};
-    lexer::SourceRange range_ {};
-    AstNodeType type_;
+    AstNodeHistory *history_ {nullptr};
+    lexer::CompressedSourceRange range_ {};
     ModifierFlags flags_ {};
     mutable AstNodeFlags astNodeFlags_ {};
-    mutable BoxingUnboxingFlags boxingUnboxingFlags_ {};
+    AstNodeType type_;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 private:
+    compiler::PhaseId GetFirstCreated() const;
     AstNode &operator=(const AstNode &) = default;
 
     varbinder::Variable *variable_ {};
     AstNode *originalNode_ = nullptr;
-    // {lowering_phase_name, new_generated_node}
-    std::optional<std::pair<std::string_view, AstNode *>> transformedNode_ = std::nullopt;
 };
 
 template <typename T>
@@ -594,12 +767,14 @@ public:
 
     [[nodiscard]] TypeNode *TypeAnnotation() const noexcept
     {
-        return typeAnnotation_;
+        return AstNode::GetHistoryNodeAs<Annotated<T>>()->typeAnnotation_;
     }
 
     void SetTsTypeAnnotation(TypeNode *const typeAnnotation) noexcept
     {
-        typeAnnotation_ = typeAnnotation;
+        if (TypeAnnotation() != typeAnnotation) {
+            AstNode::GetOrCreateHistoryNodeAs<Annotated<T>>()->typeAnnotation_ = typeAnnotation;
+        }
     }
 
     void CopyTo(AstNode *other) const override

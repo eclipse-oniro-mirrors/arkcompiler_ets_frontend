@@ -35,36 +35,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 26,
-            "column": 5,
-            "endLine": 26,
-            "endColumn": 10,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 26,
-            "column": 9,
-            "endLine": 26,
-            "endColumn": 10,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 27,
-            "column": 5,
-            "endLine": 27,
-            "endColumn": 12,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
             "line": 30,
             "column": 10,
             "endLine": 30,
@@ -86,82 +56,12 @@
         },
         {
             "line": 32,
-            "column": 5,
-            "endLine": 32,
-            "endColumn": 19,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 32,
             "column": 10,
             "endLine": 32,
             "endColumn": 19,
             "problem": "UnsupportPropNameFromValue",
             "suggest": "",
             "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
-            "column": 27,
-            "endLine": 40,
-            "endColumn": 29,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 17,
-            "endLine": 41,
-            "endColumn": 18,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 26,
-            "endLine": 41,
-            "endColumn": 27,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 35,
-            "endLine": 41,
-            "endColumn": 36,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 47,
-            "column": 7,
-            "endLine": 47,
-            "endColumn": 8,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 48,
-            "column": 7,
-            "endLine": 48,
-            "endColumn": 8,
-            "problem": "NumericSemantics",
-            "suggest": "",
-            "rule": "Numeric semantics is different for integer values (arkts-numeric-semantic)",
             "severity": "ERROR"
         }
     ]

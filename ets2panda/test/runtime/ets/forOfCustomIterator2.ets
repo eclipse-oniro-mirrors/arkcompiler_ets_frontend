@@ -50,5 +50,5 @@ function main(): void {
     let res = "";
     let a = new A();
     for (let x of a) res += x;
-    assertEQ(res, "abc")
+    arktest.assertEQ(res, "abc")
 }

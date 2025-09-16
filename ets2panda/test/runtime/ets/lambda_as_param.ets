@@ -19,4 +19,4 @@ const foo = (str: string, func: (() => void) ) => {
 
 let a:string = "";
 foo(a, () => {a = "successfully!"});
-assertEQ(a, "successfully!");
+arktest.assertEQ(a, "successfully!");

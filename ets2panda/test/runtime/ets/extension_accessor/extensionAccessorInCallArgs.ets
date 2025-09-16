@@ -32,9 +32,9 @@ get count(this: A): Int {
 }
 
 function foo(n: string, a:int, c: Int) {
-    assertEQ(n, "Bob")
-    assertEQ(a, 22)
-    assertEQ(c, 11)
+    arktest.assertEQ(n, "Bob")
+    arktest.assertEQ(a, 22)
+    arktest.assertEQ(c, 11)
 }
 
 let a = new A();

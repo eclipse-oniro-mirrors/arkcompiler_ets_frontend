@@ -16,12 +16,22 @@
 import { CompileFileInfo, ModuleInfo } from '../types';
 import * as fs from 'fs';
 import * as path from 'path';
-import { ensurePathExists } from '../utils';
-import { KOALA_WRAPPER_PATH_FROM_SDK } from '../pre_define';
+import {
+  changeFileExtension,
+  ensurePathExists
+} from '../utils';
+import {
+  DECL_ETS_SUFFIX,
+  KOALA_WRAPPER_PATH_FROM_SDK
+} from '../pre_define';
 import { PluginDriver, PluginHook } from '../plugins/plugins_driver';
-import { BuildConfig } from '../types';
-import { BUILD_MODE } from '../pre_define';
+import {
+  BuildConfig,
+  BUILD_MODE,
+  OHOS_MODULE_TYPE
+} from '../types';
 import { Logger } from '../logger';
+import { initKoalaModules } from '../init/init_koala_modules';
 
 process.on('message', (message: {
   taskList: CompileFileInfo[];
@@ -36,8 +46,8 @@ process.on('message', (message: {
 
   Logger.getInstance(buildConfig);
   PluginDriver.getInstance().initPlugins(buildConfig);
-  const koalaWrapperPath = path.resolve(buildConfig.buildSdkPath, KOALA_WRAPPER_PATH_FROM_SDK);
-  let { arkts, arktsGlobal } = require(koalaWrapperPath);
+  let { arkts, arktsGlobal } = initKoalaModules(buildConfig)
+  const { KitImportTransformer } = require('../plugins/KitImportTransformer');
 
   for (const fileInfo of taskList) {
     let errorStatus = false;
@@ -52,6 +62,7 @@ process.on('message', (message: {
       ];
       if (isDebug) {
         ets2pandaCmd.push('--debug-info');
+        ets2pandaCmd.push('--opt-level=0');
       }
       ets2pandaCmd.push(fileInfo.filePath);
 
@@ -61,13 +72,33 @@ process.on('message', (message: {
 
       PluginDriver.getInstance().getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
 
-      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED);
+      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
+      if (buildConfig.aliasConfig && Object.keys(buildConfig.aliasConfig).length > 0) {
+        // if aliasConfig is set, transform aliasName@kit.xxx to default@ohos.xxx through the plugin
+        let ast = arkts.EtsScript.fromContext();
+        let transformAst = new KitImportTransformer(
+          arkts,
+          arktsGlobal.compilerContext.program,
+          buildConfig.buildSdkPath,
+          buildConfig.aliasConfig
+        ).transform(ast);
+        PluginDriver.getInstance().getPluginContext().setArkTSAst(transformAst);
+      }
       PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
 
-      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED);
+      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
+      if (buildConfig.hasMainModule && (buildConfig.byteCodeHar || buildConfig.moduleType === OHOS_MODULE_TYPE.SHARED)) {
+        const filePathFromModuleRoot = path.relative(buildConfig.moduleRootPath, fileInfo.filePath);
+        const declEtsOutputPath = changeFileExtension(
+          path.join(buildConfig.declgenV2OutPath!, filePathFromModuleRoot),
+          DECL_ETS_SUFFIX
+        );
+        ensurePathExists(declEtsOutputPath);
+        arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
+      }
       PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
 
-      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED);
+      arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
     } catch (error) {
       errorStatus = true;
       if (error instanceof Error) {

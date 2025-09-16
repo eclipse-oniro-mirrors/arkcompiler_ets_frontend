@@ -50,8 +50,9 @@ TEST_F(LSPAPITests, GetTouchingToken2)
     size_t const offset = 51;
     auto result = ark::es2panda::lsp::GetTouchingToken(ctx, offset, false);
     auto ast = GetAstFromContext<ark::es2panda::ir::AstNode>(ctx);
-    auto expectedNode = ast->FindChild(
-        [](ark::es2panda::ir::AstNode *node) { return node->IsIdentifier() && node->AsIdentifier()->Name() == "A"; });
+    auto expectedNode = ast->FindChild([](ark::es2panda::ir::AstNode *node) {
+        return node->IsIdentifier() && node->AsIdentifier()->Name() == "A" && node->Parent()->IsCallExpression();
+    });
     ASSERT_EQ(result->DumpJSON(), expectedNode->DumpJSON());
     ASSERT_EQ(result->Start().index, expectedNode->Start().index);
     ASSERT_EQ(result->End().index, expectedNode->End().index);
@@ -67,7 +68,10 @@ TEST_F(LSPAPITests, GetTouchingToken3)
     size_t const offset = 51;
     auto result = ark::es2panda::lsp::GetTouchingToken(ctx, offset, true);
     auto ast = GetAstFromContext<ark::es2panda::ir::AstNode>(ctx);
-    auto expectedNode = ast->FindChild([](ark::es2panda::ir::AstNode *node) { return node->IsExpressionStatement(); });
+    auto expectedNode = ast->FindChild([](ark::es2panda::ir::AstNode *node) {
+        return node->IsClassStaticBlock() && node->Parent()->IsClassDefinition() &&
+               node->Parent()->AsClassDefinition()->IsGlobal();
+    });
     ASSERT_EQ(result->DumpJSON(), expectedNode->DumpJSON());
     ASSERT_EQ(result->Start().index, expectedNode->Start().index);
     ASSERT_EQ(result->End().index, expectedNode->End().index);

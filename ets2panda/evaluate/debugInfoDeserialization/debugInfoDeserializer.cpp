@@ -140,7 +140,7 @@ varbinder::Variable *DebugInfoDeserializer::CreateIrGlobalVariable(parser::Progr
     auto *checkHelper = debugInfoPlugin_.GetIrCheckHelper();
 
     const auto *pf = debugInfoStorage->GetPandaFile(pathToSource.Utf8());
-    ES2PANDA_ASSERT(pf);
+    ES2PANDA_ASSERT(pf != nullptr);
 
     varbinder::Variable *var = nullptr;
 

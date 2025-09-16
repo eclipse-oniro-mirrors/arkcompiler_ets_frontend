@@ -29,8 +29,8 @@
 
 namespace ark::pandasm {
 struct Program;
-struct Function;
-struct Ins;
+class Function;
+class Ins;
 namespace debuginfo {
 struct LocalVariable;
 }  // namespace debuginfo

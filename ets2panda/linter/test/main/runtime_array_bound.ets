@@ -170,3 +170,153 @@ let b: Array<string> = new Array(a.length);
 for (let i = 0; i < a.length; i++) {
   b[i];
 }
+
+function test1(arr: object[]) {
+  if (arr.length == 1 && arr[0] instanceof Array) {}
+}
+
+function test2(arr: object[]) {
+  const str = arr.length < 2 ? arr[0] : arr[1];
+}
+
+function test3(arr: object[]) {
+  let index = 1;
+  if (index < arr.length) {
+    const value = arr[index++];
+  }
+
+  if (index > arr.length) {
+    const value = arr[++index];
+  }
+}
+
+function test4(arr?: object[]) {
+  if (arr && arr.length > 0) {
+    const a = arr[0];
+  }
+}
+
+function test5(arrA: object[], arrB: object[]) {
+  const length = Math.max(arrA.length, arrB.length);
+  for (let i = 0; i < length; i++) {
+    let numA = arrA[i] || 0;
+    let numB = arrB[i] || 0;
+  }
+}
+
+function test6(arr: object[]) {
+  if(arr.length < 2){
+    arr[0]
+  }
+}
+
+let arr:number[]=[];
+if(arr.length > 1){
+    arr[1]
+}
+
+let arr1 = [0, 1, 2, 3, 4, 5]
+let arr2 = new Array<number>();
+let arr3 = new Array<number>(10)
+
+let index1 = 0
+let index2 = 1
+let index3 = 2
+
+
+arr1[index1]
+
+if (index1 >= 0 && index1 < arr1.length) {
+    arr1[index1]
+}
+
+arr1[3]
+
+if (arr1.length > 3) {
+    arr1[3]
+}
+
+for(let i = 0; i < arr1.length; i++) {
+    arr1[i];
+}
+
+let i = 0;
+while(i < arr1.length) {
+    arr1[i];
+}
+
+if (index1 >= 0 && index1 < arr1.length) {
+    index1 = 100
+    arr1[index1]
+}
+
+let a: string[] = [];
+let b: Array<string> = new Array(a.length);
+for (let i = 0; i < a.length; i++) {
+  b[i];
+}
+
+for (let i = 0; i < a.length; i++) {
+  b.push("abc");
+  b[i];
+}
+
+for (let i = 0; i < a.length; i++) {
+  b.pop();
+  b[i];
+}
+
+let arr_len = 8;
+let b: Array<string> = new Array(arr_len);
+for (let i = 0; i < arr_len; i++) {
+  b[i];
+}
+
+function test7(config: Record<string, object>, name: string) {
+  if (config[name][getValue()]) {
+
+  }
+}
+
+function getValue(): string {
+  return '';
+}
+
+const arr: Record<string, string> = {};
+let keys: string[] = Object.keys(arr);
+let values: string[] = Object.values(arr);
+for (let i = 0; i < keys.length; i++) {
+  values[i];
+}
+
+const arr: Map<string, string> = new Map();
+let keys: string[] = Object.keys(arr);
+let values: string[] = Object.values(arr);
+for (let i = 0; i < keys.length; i++) {
+  values[i];
+}
+
+let concatArray: ConcatArray<number> = new Array<number>(1.0, 2.0, 3.0);
+
+let tempNum: number = concatArray[5];
+
+
+for (let i = 0; i < concatArray.length; i++) {
+    concatArray[i]
+};
+
+if (concatArray.length > 10) {
+    concatArray[10]
+};
+
+class DummyClass {
+    public a1: Array<number> = new Array<number>();
+
+    foo() {
+        this.a1[123] = 123;
+    }
+}
+
+let dc = new DummyClass();
+
+dc.a1[123] = 1234;
