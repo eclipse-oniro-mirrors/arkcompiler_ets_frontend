@@ -26,5 +26,7 @@ function foo(param? : Object)
    for (let i? : Number = 1;;)  { break; }
 }
 
-/* @@? 23:14 Error SyntaxError: Optional variable is deprecated and no longer supported.  */
-/* @@? 26:16 Error SyntaxError: Optional variable is deprecated and no longer supported.  */
+/* @@? 23:14 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+/* @@? 24:14 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+/* @@? 25:14 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+/* @@? 26:16 Error SyntaxError: Optional variable is deprecated and no longer supported. */

@@ -1829,12 +1829,11 @@ ir::AnnotatedExpression *ETSParser::ParseVariableDeclaratorKey([[maybe_unused]] 
     ES2PANDA_ASSERT(init != nullptr);
     ir::TypeNode *typeAnnotation = nullptr;
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_QUESTION_MARK) {
+        Lexer()->NextToken();  // eat '?'
         if ((flags & VariableParsingFlags::FOR_OF) != 0U) {
             LogError(diagnostic::OPTIONAL_VAR_IN_FOR_OF);
-        }
-        Lexer()->NextToken();  // eat '?'
-        init->AddModifier(ir::ModifierFlags::OPTIONAL);
-        if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COLON) {
+        } else {
+            init->AddModifier(ir::ModifierFlags::OPTIONAL);
             LogError(diagnostic::OPTIONAL_VARIABLE);
         }
     }
