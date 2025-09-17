@@ -289,23 +289,6 @@ size_t SizeOfNodeTest::SizeOf<FunctionDeclaration>()
 }
 
 template <>
-size_t SizeOfNodeTest::SizeOf<TSEnumDeclaration>()
-{
-    TSEnumDeclaration *node = nullptr;
-
-    // clang-format off
-    return SizeOf<TypedStatement>() +
-        sizeof(node->scope_) +
-        sizeof(node->key_) +
-        sizeof(node->members_) +
-        sizeof(node->internalName_) +
-        sizeof(node->boxedClass_) +
-        sizeof(node->typeNode_) +
-        Align(sizeof(node->isConst_));
-    // clang-format on
-}
-
-template <>
 size_t SizeOfNodeTest::SizeOf<AnnotationAllowed<TypedStatement>>()
 {
     AnnotationAllowed<TypedStatement> *node = nullptr;
@@ -313,6 +296,23 @@ size_t SizeOfNodeTest::SizeOf<AnnotationAllowed<TypedStatement>>()
     // clang-format off
     return SizeOf<TypedStatement>() +
         sizeof(node->annotations_);
+    // clang-format on
+}
+
+template <>
+size_t SizeOfNodeTest::SizeOf<TSEnumDeclaration>()
+{
+    TSEnumDeclaration *node = nullptr;
+
+    // clang-format off
+    return SizeOf<AnnotationAllowed<TypedStatement>>() +
+        sizeof(node->scope_) +
+        sizeof(node->key_) +
+        sizeof(node->members_) +
+        sizeof(node->internalName_) +
+        sizeof(node->boxedClass_) +
+        sizeof(node->typeNode_) +
+        Align(sizeof(node->isConst_));
     // clang-format on
 }
 
