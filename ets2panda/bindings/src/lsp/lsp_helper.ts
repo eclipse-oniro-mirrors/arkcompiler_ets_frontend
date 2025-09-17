@@ -267,6 +267,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getDefinitionAtPosition(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -288,6 +291,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getSemanticDiagnostics(ctx);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -299,6 +305,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getCurrentTokenValue(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -310,6 +319,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getImplementationAtPosition(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -321,6 +333,9 @@ export class Lsp {
     const [cfg, searchCtx] = this.createContext(filename);
     try {
       isPackageModule = global.es2panda._isPackageModule(searchCtx);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, searchCtx);
     }
@@ -331,6 +346,9 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(compileFiles[i]);
       try {
         ptr = global.es2panda._getFileReferences(path.resolve(filename.valueOf()), ctx, isPackageModule);
+      } catch (error) {
+        console.error(error);
+        throw error;
       } finally {
         this.destroyContext(cfg, ctx);
       }
@@ -352,6 +370,9 @@ export class Lsp {
     const [cfg, searchCtx] = this.createContext(filename);
     try {
       declInfo = global.es2panda._getDeclInfo(searchCtx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, searchCtx);
     }
@@ -366,6 +387,9 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(compileFiles[i]);
       try {
         ptr = global.es2panda._getReferencesAtPosition(ctx, declInfo);
+      } catch (error) {
+        console.error(error);
+        throw error;
       } finally {
         this.destroyContext(cfg, ctx);
       }
@@ -417,6 +441,9 @@ export class Lsp {
         nodeInfos = new NativePtrDecoder().decode(ptr).map((elPeer: KNativePointer) => {
           return new LspNodeInfo(elPeer);
         });
+      } catch (error) {
+        console.error(error);
+        throw error;
       } finally {
         this.destroyContext(declFileCfg, declFileCtx);
       }
@@ -450,6 +477,9 @@ export class Lsp {
       } else {
         ptr = global.es2panda._getDefinitionDataFromNode(ctx, passPointerArray(nodeInfoPtrs), nodeInfoPtrs.length);
       }
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -481,6 +511,9 @@ export class Lsp {
       const [cfg, searchCtx] = this.createContext(compileFiles[i]);
       try {
         searchPtr = global.es2panda._getTypeHierarchies(searchCtx, ctx, offset);
+      } catch (error) {
+        console.error(error);
+        throw error;
       } finally {
         this.destroyContext(cfg, searchCtx);
       }
@@ -515,6 +548,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getClassHierarchyInfo(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -526,6 +562,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       kind = global.es2panda._getAliasScriptElementKind(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -564,6 +603,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getClassPropertyInfo(ctx, offset, shouldCollectInherited);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -576,6 +618,9 @@ export class Lsp {
     try {
       ptr = global.es2panda._organizeImports(ctx, filename);
       PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -587,6 +632,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       declInfo = global.es2panda._getDeclInfo(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -597,6 +645,9 @@ export class Lsp {
       const [searchCfg, searchCtx] = this.createContext(compileFiles[i]);
       try {
         ptr = global.es2panda._findSafeDeleteLocation(searchCtx, declInfo);
+      } catch (error) {
+        console.error(error);
+        throw error;
       } finally {
         this.destroyContext(searchCfg, searchCtx);
       }
@@ -611,6 +662,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getCompletionEntryDetails(entryName, filename, ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -623,6 +677,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getApplicableRefactors(ctx, kind, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -636,6 +693,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getClassConstructorInfo(ctx, offset, passStringArray(properties));
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -647,6 +707,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename, false);
     try {
       ptr = global.es2panda._getSyntacticDiagnostics(ctx);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -658,6 +721,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getSuggestionDiagnostics(ctx);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -669,6 +735,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getQuickInfoAtPosition(filename, ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -680,6 +749,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getDocumentHighlights(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -687,35 +759,16 @@ export class Lsp {
   }
 
   getCompletionAtPosition(filename: String, offset: number): LspCompletionInfo {
-    let lspDriverHelper = new LspDriverHelper();
-    let filePath = path.resolve(filename.valueOf());
-    let arktsconfig = this.moduleInfos[filePath].arktsConfigFile;
-    let ets2pandaCmd = ets2pandaCmdPrefix.concat(arktsconfig);
-    let localCfg = lspDriverHelper.createCfg(ets2pandaCmd, filePath, this.pandaLibPath);
-    let source = this.getFileSource(filePath);
-    // This is a temporary solution to support "obj." with wildcard for better solution in internal issue.
-    if (source[offset - 1] === '.') {
-      const wildcard = '_WILDCARD';
-      if (offset < source.length + 1) {
-        source = source.slice(0, offset) + wildcard + source.slice(offset);
-      } else {
-        source += wildcard;
-      }
-      offset += wildcard.length;
+    let ptr: KPointer;
+    const [cfg, ctx] = this.createContext(filename);
+    try {
+      ptr = global.es2panda._getCompletionAtPosition(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      this.destroyContext(cfg, ctx);
     }
-    let localCtx = lspDriverHelper.createCtx(source, filePath, localCfg, this.globalContextPtr);
-    const packageName = this.moduleInfos[filePath].packageName;
-    const buildConfig = this.buildConfigs[packageName];
-    PluginDriver.getInstance().getPluginContext().setCodingFilePath(filePath);
-    PluginDriver.getInstance().getPluginContext().setProjectConfig(buildConfig);
-    PluginDriver.getInstance().getPluginContext().setContextPtr(localCtx);
-    lspDriverHelper.proceedToState(localCtx, Es2pandaContextState.ES2PANDA_STATE_PARSED);
-    PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-    lspDriverHelper.proceedToState(localCtx, Es2pandaContextState.ES2PANDA_STATE_CHECKED);
-    let ptr = global.es2panda._getCompletionAtPosition(localCtx, offset);
-    PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-    lspDriverHelper.destroyContext(localCtx);
-    lspDriverHelper.destroyConfig(localCfg);
     return new LspCompletionInfo(ptr);
   }
 
@@ -724,6 +777,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._toLineColumnOffset(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -735,6 +791,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       result = global.es2panda._getSafeDeleteInfo(ctx, position);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -751,6 +810,9 @@ export class Lsp {
       let ptr: KPointer;
       try {
         ptr = global.es2panda._findRenameLocationsInCurrentFile(ctx, offset);
+      } catch (error) {
+        console.error(error);
+        throw error;
       } finally {
         this.destroyContext(cfg, ctx);
       }
@@ -806,6 +868,9 @@ export class Lsp {
       } else {
         res = new LspRenameInfoFailure(global.es2panda._getRenameInfoFailure(ptr));
       }
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -817,6 +882,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getSpanOfEnclosingComment(ctx, offset, onlyMultiLine);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -828,6 +896,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getCodeFixesAtPosition(ctx, start, end, new Int32Array(errorCodes), errorCodes.length);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -843,6 +914,9 @@ export class Lsp {
     try {
       const nativeSpan = global.es2panda._createTextSpan(span.start, span.length);
       ptr = global.es2panda._getInlayHintList(ctx, nativeSpan);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
@@ -857,6 +931,9 @@ export class Lsp {
     const [cfg, ctx] = this.createContext(filename);
     try {
       ptr = global.es2panda._getSignatureHelpItems(ctx, offset);
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }

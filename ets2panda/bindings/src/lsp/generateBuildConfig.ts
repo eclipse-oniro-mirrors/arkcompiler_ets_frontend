@@ -144,6 +144,7 @@ function getModuleDependencies(modulePath: string, visited = new Set<string>()):
 
     try {
       const packageData = parseJson5(packageFilePath);
+      // Temp solution only support 'file:' until third-party using in 1.2
       return Object.entries(packageData.dependencies || {})
         .filter(([_, depPath]) => depPath.startsWith('file:'))
         .map(([_, depPath]) => path.resolve(modulePath, depPath.replace('file:', '')));

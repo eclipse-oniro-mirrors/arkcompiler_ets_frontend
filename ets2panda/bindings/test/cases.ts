@@ -892,7 +892,8 @@ export const basicCases: TestCases = {
     '14': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition14.ets'), 659],
     '15': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition15.ets'), 722],
     '16': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition17.ets'), 764],
-    '17': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition17.ets'), 782]
+    '17': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition17.ets'), 782],
+    '18': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition18.ets'), 872],
   },
   toLineColumnOffset: {
     expectedFilePath: resolveTestPath('test/expected/toLineColumnOffset.json'),

@@ -211,6 +211,11 @@ bool NodeHasTokens(const ir::AstNode *node)
     return node->Start().index != node->End().index;
 }
 
+bool IsTokenRangeValid(const ir::AstNode *node)
+{
+    return node->Start().index != 0 || node->End().index != 0;
+}
+
 ir::AstNode *FindRightmostChildNodeWithTokens(const std::vector<ir::AstNode *> &nodes, int exclusiveStartPosition)
 {
     for (int i = exclusiveStartPosition - 1; i >= 0; --i) {
@@ -285,8 +290,12 @@ ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode, 
         }
 
         // position is 0, found does not has any tokens
-        if (!NodeHasTokens(found)) {
+        if (!IsTokenRangeValid(found)) {
             return nullptr;
+        }
+        // could return token after '.' of 'cls.ERROR_LITERAL'
+        if (!NodeHasTokens(found)) {
+            return found;
         }
 
         if (IsNonWhitespaceToken(found)) {

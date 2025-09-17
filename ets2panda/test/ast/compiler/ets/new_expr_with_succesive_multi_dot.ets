@@ -19,6 +19,6 @@ importet lock1 = new ArkTSUt../main;
 /* @@? 16:10 Error SyntaxError: Unexpected token 'lock1'.  */
 /* @@? 16:10 Error TypeError: Unresolved reference lock1  */
 /* @@? 16:18 Error TypeError: Bad operand type, the types of the operands must be numeric type.  */
+/* @@? 16:22 Error TypeError: Cannot find type 'ArkTSUt'.  */
 /* @@? 16:30 Error SyntaxError: Identifier expected.  */
 /* @@? 16:31 Error SyntaxError: Identifier expected.  */
-/* @@? 16:31 Error TypeError: Invalid type reference.  */

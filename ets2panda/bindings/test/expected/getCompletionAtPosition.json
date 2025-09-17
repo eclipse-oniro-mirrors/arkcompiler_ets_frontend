@@ -255,5 +255,28 @@
       "kind": 27,
       "data": null
     }
+  ],
+  "18": [
+    {
+      "name": "name",
+      "sortText": "14",
+      "insertText": "",
+      "kind": 10,
+      "data": null
+    },
+    {
+      "name": "age",
+      "sortText": "14",
+      "insertText": "",
+      "kind": 10,
+      "data": null
+    },
+    {
+      "name": "introduce",
+      "sortText": "17",
+      "insertText": "",
+      "kind": 2,
+      "data": null
+    }
   ]
 }

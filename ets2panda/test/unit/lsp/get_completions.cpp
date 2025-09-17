@@ -137,7 +137,7 @@ TEST_F(LSPCompletionsTests, getCompletionsAtPosition16)
 struct MyClass {
   property: string = '1'
   get() {
-    return this._WILDCARD
+    return this.
   }
 }
 )delimiter"};
@@ -147,7 +147,7 @@ struct MyClass {
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 78;  // after 'j._WILDCARD'
+    size_t const offset = 69;  // after 'return this.'
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
@@ -178,7 +178,7 @@ export declare function Text(
   content?: string,
   value?: string
 ): TextAttribute
-Text("Hello").font()._WILDCARD
+Text("Hello").font().
 )delimiter"};
     auto filePaths = CreateTempFile(files, texts);
 
@@ -186,7 +186,7 @@ Text("Hello").font()._WILDCARD
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 385;  // after 'j._WILDCARD'
+    size_t const offset = 376;  // after '.font().'
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
@@ -216,7 +216,7 @@ export class MySonClass extends MyClass {
   public property2: string = '2'
 }
 let c = new MySonClass()
-let p = c._WILDCARD
+let p = c.
 )delimiter"};
     auto filePaths = CreateTempFile(files, texts);
 
@@ -224,7 +224,7 @@ let p = c._WILDCARD
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 292;  // after 'j._WILDCARD'
+    size_t const offset = 283;  // after 'let p = c.'
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
@@ -260,7 +260,7 @@ export declare function Text(
   content?: string,
   value?: string
 ): TextAttribute
-Text("Hello")._WILDCARD
+Text("Hello").
 )delimiter"};
     auto filePaths = CreateTempFile(files, texts);
 
@@ -268,7 +268,7 @@ Text("Hello")._WILDCARD
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 378;  // after 'j._WILDCARD'
+    size_t const offset = 369;  // after 'Text("Hello").'
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
@@ -292,14 +292,14 @@ class JSON {
   }
 }
 let j = new JSON()
-let res = j._WILDCARD
+let res = j.
 )delimiter"};
     auto filePaths = CreateTempFile(files, texts);
     int const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 142;  // after 'j._WILDCARD'
+    size_t const offset = 133;  // after 'let res = j.'
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
@@ -338,14 +338,14 @@ TEST_F(LSPCompletionsTests, getCompletionsAtPosition10)
     std::vector<std::string> texts = {R"delimiter(
 interface Inner { key : string; }
 let i: Inner
-i._WILDCARD
+i.
 let a = 1;)delimiter"};
     auto filePaths = CreateTempFile(files, texts);
     int const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 59;  // after 'i._WILDCARD'
+    size_t const offset = 50;  // after 'i.'
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
@@ -364,14 +364,14 @@ class MyClass {
   public prop: number = 0;
 }
 let obj = new MyClass();
-let p = obj._WILDCARD
+let p = obj.
 let a = 1;)delimiter"};
     auto filePaths = CreateTempFile(files, texts);
     int const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 121;  // after 'obj._WILDCARD' in 'let p = obj._WILDCARD'
+    size_t const offset = 112;  // after 'obj.' in 'let p = obj._WILDCARD'
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
@@ -392,13 +392,13 @@ enum Color {
   Red = "red",
   Blue = "blue"
 }
-let myColor: Color = Color._WILDCARD)delimiter"};
+let myColor: Color = Color.)delimiter"};
     auto filePaths = CreateTempFile(files, texts);
     int const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 83;  // after 'Color._WILDCARD'
+    size_t const offset = 74;  // after '= Color.'
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
