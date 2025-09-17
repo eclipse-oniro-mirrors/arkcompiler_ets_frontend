@@ -1192,10 +1192,6 @@ semantic:
   id: 329
   message: "Invalid reference '{}'."
 
-- name: REPEATED_INTERFACE
-  id: 180
-  message: "Repeated interface."
-
 - name: REQUIRED_PROP_MISSING_INIT
   id: 226
   message: "Class property '{}' needs to be initialized for Required<{}>."
@@ -1511,6 +1507,7 @@ graveyard:
 - 154
 - 157
 - 167
+- 180
 - 185
 - 212
 - 213

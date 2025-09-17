@@ -234,10 +234,6 @@ void ETSChecker::ValidateImplementedInterface(ETSObjectType *type, Type *interfa
         return;
     }
 
-    if (!extendsSet->insert(interface).second) {
-        LogError(diagnostic::REPEATED_INTERFACE, {}, pos);
-    }
-
     auto *baseType = GetOriginalBaseType(interface);
     if (baseType != interface && !extendsSet->insert(baseType).second) {
         LogError(diagnostic::CONFLICTING_GENERIC_INTERFACE_IMPLS, {baseType}, pos);
