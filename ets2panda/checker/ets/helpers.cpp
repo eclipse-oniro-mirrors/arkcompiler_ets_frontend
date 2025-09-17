@@ -443,7 +443,10 @@ Type *ETSChecker::ApplyUnaryOperatorPromotion(ir::Expression *expr, Type *type, 
             [[fallthrough]];
         case TypeFlag::INT:
             return GlobalIntBuiltinType();
-
+        case TypeFlag::LONG:
+            return GlobalLongBuiltinType();
+        case TypeFlag::DOUBLE:
+            return GlobalDoubleBuiltinType();
         default:
             break;
     }
