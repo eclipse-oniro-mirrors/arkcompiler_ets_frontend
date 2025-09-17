@@ -60,6 +60,7 @@ export interface BuildBaseConfig {
 export interface ArkTSGlobal {
     filePath: string;
     config: object;
+    configIsInitialized(): boolean,
     compilerContext: {
         program: object;
         peer: object
@@ -281,7 +282,7 @@ export interface ETSImportDeclaration extends AstNode {
 }
 
 export enum Es2pandaImportKinds {
-    IMPORT_KINDS_VALUE = 0,
+    IMPORT_KINDS_ALL = 0,
 }
 
 export enum Es2pandaImportFlags {

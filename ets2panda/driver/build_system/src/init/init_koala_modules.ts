@@ -14,9 +14,9 @@
  */
 
 
-import { KOALA_WRAPPER_PATH_FROM_SDK, MEMO_PLUGIN_PATH_FROM_SDK, UI_PLUGIN_PATH_FROM_SDK } from '../pre_define';
+import { LIBARKTS_PATH_FROM_SDK, MEMO_PLUGIN_PATH_FROM_SDK, UI_PLUGIN_PATH_FROM_SDK } from '../pre_define';
 import { BuildConfig, KoalaModule } from '../types';
-import path from 'path'
+import path from 'path';
 
 
 let koalaModule: KoalaModule | undefined;
@@ -27,11 +27,11 @@ export function initKoalaModules(buildConfig: BuildConfig): KoalaModule {
             koalaModule = require('../util/koala_wrapper');
             return koalaModule!;
         }
-        const koalaWrapperPath =
+        const libarktsPath =
             process.env.KOALA_WRAPPER_PATH ??
-            path.resolve(buildConfig.buildSdkPath, KOALA_WRAPPER_PATH_FROM_SDK);
+            path.resolve(buildConfig.buildSdkPath, LIBARKTS_PATH_FROM_SDK);
 
-        koalaModule = require(koalaWrapperPath);
+        koalaModule = require(libarktsPath);
         koalaModule!.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
     }
 

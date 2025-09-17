@@ -33,8 +33,8 @@ Method 2: specify `pandaSdkPath` and `pandaStdlibPath` in build_config.json
 
 
 ### step 2
-Mock koala-wrapper
-Modify `initKoalaWrapper` method in `src/init/process_build_config.ts`, set the `koalaWrapperPath` to the actual path in your environment. In OpenHarmony repo, it is now resides in `${path_to_oh_root}/developtools/ace_ets2bundle/koala_wrapper`
+Mock libarkts
+Modify `initKoalaModules` method in `src/init/init_koala_modules.ts`, set the `libarktsPath` to the actual path in your environment. In OpenHarmony repo, it is now resides in `${path_to_oh_root}/developtools/ace_ets2bundle/ets1.2/libarkts`
 
 ### step 3
 Build build system source code

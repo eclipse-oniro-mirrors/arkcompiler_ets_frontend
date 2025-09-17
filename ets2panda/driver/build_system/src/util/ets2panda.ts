@@ -442,8 +442,12 @@ export class Ets2panda {
             }
         } finally {
             this.pluginDriver.runPluginHook(PluginHook.CLEAN);
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
-            arkts.destroyConfig(arktsGlobal.config);
+            if (arktsGlobal.compilerContext) {
+                arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            }
+            if (arktsGlobal.configIsInitialized()) {
+                arkts.destroyConfig(arktsGlobal.config);
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ jest.mock('../../../src/plugins/plugins_driver', () => {
     return { PluginDriver: mPluginDriver };
 });
 jest.mock('../../../src/pre_define', () => ({
-    KOALA_WRAPPER_PATH_FROM_SDK: 'koala',
+    LIBARKTS_PATH_FROM_SDK: 'koala',
     PANDA_SDK_PATH_FROM_SDK: 'panda',
     PROJECT_BUILD_CONFIG_FILE: 'projectionConfig.json'
 }));

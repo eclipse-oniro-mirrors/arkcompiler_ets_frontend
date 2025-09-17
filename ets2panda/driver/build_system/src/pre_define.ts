@@ -66,7 +66,7 @@ export type Record<K extends keyof any, T> = {
 };
 `;
 // Koala experimental variables
-export const KOALA_WRAPPER_PATH_FROM_SDK: string = process.env.USE_KOALA_LIBARKTS ? './build-tools/ui2abc/libarkts/lib/libarkts.js' : './build-tools/koala-wrapper/build/lib/es2panda'
+export const LIBARKTS_PATH_FROM_SDK: string = './build-tools/libarkts/lib/libarkts.js'
 export const UI_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/ui-plugin/lib/entry.js'
 export const MEMO_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/memo-plugin/lib/entry.js'
 

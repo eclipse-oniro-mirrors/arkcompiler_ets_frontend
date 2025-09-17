@@ -48,7 +48,7 @@ jest.mock('../../../src/logger', () => {
 });
 jest.mock('../../../src/pre_define', () => ({
     DECL_ETS_SUFFIX: '.d.ets',
-    KOALA_WRAPPER_PATH_FROM_SDK: 'koala'
+    LIBARKTS_PATH_FROM_SDK: 'koala'
 }));
 
 const fakeArkts = {
