@@ -159,6 +159,11 @@ warning:
   id: 26
   message: "Unreachable statement."
   code_fix_ids: [FixUnreachableCode]
+
+- name: USED_TYPE_IS_NOT_EXPORTED
+  id: 11567
+  message: "Type '{}' used in export declaration(s) is not exported."
+
 graveyard:
 - 18
 - 19

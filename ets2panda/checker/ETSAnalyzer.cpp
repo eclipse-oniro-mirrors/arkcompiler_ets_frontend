@@ -18,28 +18,11 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/typeFlag.h"
 #include "compiler/lowering/util.h"
-#include "generated/diagnostic.h"
-#include "checker/types/globalTypesHolder.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
-#include "ir/astNode.h"
-#include "ir/ets/etsUnionType.h"
-#include "ir/expression.h"
-#include "ir/expressions/assignmentExpression.h"
-#include "ir/statements/variableDeclarator.h"
-#include "lexer/token/number.h"
-#include "libarkbase/utils/logger.h"
-#include "types/signature.h"
 #include "compiler/lowering/ets/setJumpTarget.h"
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
-#include "types/type.h"
 #include "checker/types/typeError.h"
-#include "util/es2pandaMacros.h"
-
-#include <algorithm>
-#include <limits>
-#include <string>
-#include <unordered_set>
 
 namespace ark::es2panda::checker {
 
@@ -50,7 +33,64 @@ ETSChecker *ETSAnalyzer::GetETSChecker() const
     return static_cast<ETSChecker *>(GetChecker());
 }
 
-// from base folder
+//  Helper: checks that node or any of its parents was declared exported
+static bool IsExported(ir::AstNode const *const node) noexcept
+{
+    if (node == nullptr) {
+        return true;
+    }
+
+    bool exported = node->IsExported() || node->IsDefaultExported();
+    auto const *parent = node->Parent();
+    while (!exported && parent != nullptr) {
+        exported = parent->IsExported() || parent->IsDefaultExported();
+        parent = parent->Parent();
+    }
+
+    return exported;
+}
+
+//  Helper: checks that user-defined type was declared exported
+static void CheckExport(ETSChecker *checker, checker::Type const *type)
+{
+    if (type == nullptr || type->IsTypeError()) {
+        return;
+    }
+
+    ir::AstNode const *decl = nullptr;
+    if (type->IsETSObjectType()) {
+        decl = type->AsETSObjectType()->GetDeclNode();
+    } else if (type->IsETSUnionType()) {
+        for (auto const *ct : type->AsETSUnionType()->ConstituentTypes()) {
+            CheckExport(checker, ct);
+        }
+        return;
+    } else if (type->IsETSArrayType()) {
+        CheckExport(checker, type->AsETSArrayType()->ElementType());
+        return;
+    } else if (type->IsETSTupleType()) {
+        for (auto const *tt : type->AsETSTupleType()->GetTupleTypesList()) {
+            CheckExport(checker, tt);
+        }
+        return;
+    } else if (type->IsETSFunctionType()) {
+        auto const *sig = type->AsETSFunctionType()->ArrowSignature();
+        for (auto const *var : sig->Params()) {
+            CheckExport(checker, var->TsType());
+        }
+        CheckExport(checker, sig->ReturnType());
+        return;
+    } else if (type->IsETSTypeAliasType()) {
+        decl = type->AsETSTypeAliasType()->GetDeclNode();
+    }
+
+    if (!IsExported(decl)) {
+        checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {type->ToString()},
+                          decl != nullptr ? decl->Start() : lexer::SourcePosition {});
+    }
+};
+
+//  from base folder
 checker::Type *ETSAnalyzer::Check(ir::CatchClause *st) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -210,10 +250,15 @@ checker::Type *ETSAnalyzer::Check(ir::ClassProperty *st) const
 
     propertyType = propertyType != nullptr ? propertyType : checker->GlobalTypeError();
     st->SetTsType(propertyType);
-    if (st->IsDefinite() && st->TsType()->PossiblyETSNullish()) {
+
+    if (st->IsDefinite() && propertyType->PossiblyETSNullish()) {
         checker->LogError(diagnostic::LATE_INITIALIZATION_FIELD_HAS_INVALID_TYPE, st->TypeAnnotation()->Start());
     }
     CheckOverride(st, checker);
+
+    if (!st->IsPrivate() && IsExported(st) && !propertyType->IsTypeError()) {
+        CheckExport(checker, propertyType);
+    }
 
     return propertyType;
 }
@@ -270,7 +315,24 @@ static void HandleNativeAndAsyncMethods(ETSChecker *checker, ir::MethodDefinitio
     }
 }
 
-//  Extacted from 'ETSAnalyzer::Check(ir::MethodDefinition *node)' to reduce its size
+//  Extracted from 'ETSAnalyzer::Check(ir::MethodDefinition *node)' to reduce its size
+static void CheckMethodDefinitionExport(ETSChecker *checker, ir::MethodDefinition const *method)
+{
+    if (method->IsPrivate() || method->Function() == nullptr || !IsExported(method) ||
+        method->Id()->Name().Utf8().find("lambda_invoke-") != std::string_view::npos) {
+        return;
+    }
+
+    auto const *signature = method->Function()->Signature();
+    ES2PANDA_ASSERT(signature != nullptr);
+
+    for (auto const *variable : signature->Params()) {
+        CheckExport(checker, variable->TsType());
+    }
+    CheckExport(checker, signature->ReturnType());
+}
+
+//  Extracted from 'ETSAnalyzer::Check(ir::MethodDefinition *node)' to reduce its size
 static checker::Type *CheckMethodDefinitionHelper(ETSChecker *checker, ir::MethodDefinition *node) noexcept
 {
     // NOTE(gogabr): temporary, until we have proper bridges, see #16485
@@ -283,6 +345,7 @@ static checker::Type *CheckMethodDefinitionHelper(ETSChecker *checker, ir::Metho
         overload->Check(checker);
     }
 
+    CheckMethodDefinitionExport(checker, node);
     return node->TsType();
 }
 
@@ -2052,7 +2115,7 @@ static void CheckOverloadCall(ETSChecker *checker, ir::CallExpression *expr)
     auto *functionNode = sig->OwnerVar()->Declaration()->Node();
     ir::AstNode *parent = functionNode->Parent();
 
-    bool isExported = functionNode->IsExported() || functionNode->IsDefaultExported();
+    bool isExported = IsExported(functionNode);
     if (parent != nullptr && parent->IsClassDefinition() && parent->AsClassDefinition()->IsNamespaceTransformed() &&
         !parent->AsClassDefinition()->IsDeclare() && !isExported) {
         checker->LogError(diagnostic::NOT_EXPORTED,

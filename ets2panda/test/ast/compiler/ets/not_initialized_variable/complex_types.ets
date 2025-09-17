@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-enum Car {
+export enum Car {
     big,
     small
 }
 
-class Animal {
+export class Animal {
     public age = 0
 }
 
-interface Plug {}
+export interface Plug {}
 
 // There is default value
 export let car: Car
