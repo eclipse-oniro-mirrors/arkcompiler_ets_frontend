@@ -1091,6 +1091,8 @@ private:
     bool IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,
                                      std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases);
 
+    bool IsExceptionOrErrorType(checker::Type *type);
+
     ArrayMap arrayTypes_;
     std::vector<ConstraintCheckRecord> pendingConstraintCheckRecords_ {};
     ObjectInstantiationMap objectInstantiationMap_;
