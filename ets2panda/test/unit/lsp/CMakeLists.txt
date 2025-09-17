@@ -363,9 +363,12 @@ ets2panda_add_gtest(lsp_api_get_definition_from_node_test CPP_SOURCES
     get_definition_from_node_test.cpp
 )
 
-ets2panda_add_gtest(lsp_api_spelling_test CPP_SOURCES
-    fix_spelling_test.cpp
-)
+# NOTE(@srokashevich, #29405): enable with tsan after fix
+if (NOT PANDA_ENABLE_THREAD_SANITIZER)
+    ets2panda_add_gtest(lsp_api_spelling_test CPP_SOURCES
+        fix_spelling_test.cpp
+    )
+endif()
 
 ets2panda_add_gtest(lsp_api_get_node_expression_test CPP_SOURCES
     get_node_expression_test.cpp
