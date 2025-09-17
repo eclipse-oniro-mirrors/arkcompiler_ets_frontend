@@ -83,7 +83,12 @@ bool CompileFileJob::RetrieveProgramFromCacheFiles(const std::string &buffer, bo
             src_->hash = GetHash32String(reinterpret_cast<const uint8_t *>(bufToHash.c_str()));
             auto *cacheProgramInfo = proto::ProtobufSnapshotGenerator::GetCacheContext(cacheFileIter->second,
                                                                                        &allocator);
-            if (cacheProgramInfo != nullptr && cacheProgramInfo->hashCode == src_->hash) {
+            // Use cached program when no symbol-table dump is requested.
+            // If 'patchFixOption.dumpSymbolTable' is set (non-empty), we must run the full
+            // compile pipeline to build the symbol table; using cache would skip compilation
+            // and thus cannot produce the requested symbol map.
+            if (cacheProgramInfo != nullptr && cacheProgramInfo->hashCode == src_->hash &&
+                options_->patchFixOptions.dumpSymbolTable.empty()) {
                 std::unique_lock<std::mutex> lock(globalMutex_);
                 auto *cache = allocator_->New<util::ProgramCache>(src_->hash, std::move(cacheProgramInfo->program));
                 progsInfo_.insert({src_->fileName, cache});
