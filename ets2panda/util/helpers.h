@@ -142,6 +142,7 @@ public:
     static const checker::ETSObjectType *GetContainingObjectType(const ir::AstNode *node);
     static const ir::TSEnumDeclaration *GetContainingEnumDeclaration(const ir::AstNode *node);
     static const ir::ClassDefinition *GetContainingClassDefinition(const ir::AstNode *node);
+    static const util::StringView GetContainingObjectName(const ir::AstNode *node);
     static const ir::TSInterfaceDeclaration *GetContainingInterfaceDeclaration(const ir::AstNode *node);
     static const ir::MethodDefinition *GetContainingClassMethodDefinition(const ir::AstNode *node);
     static const ir::ClassStaticBlock *GetContainingClassStaticBlock(const ir::AstNode *node);

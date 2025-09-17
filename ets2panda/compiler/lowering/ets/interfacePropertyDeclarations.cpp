@@ -22,12 +22,14 @@
 #include "ir/astNode.h"
 #include "ir/expression.h"
 #include "ir/expressions/identifier.h"
+#include "ir/expressions/literals/undefinedLiteral.h"
 #include "ir/opaqueTypeNode.h"
 #include "ir/statements/blockStatement.h"
 #include "ir/ts/tsInterfaceBody.h"
 #include "ir/base/classProperty.h"
 #include "ir/ets/etsUnionType.h"
 #include "ir/ets/etsNullishTypes.h"
+#include "ir/visitor/AstVisitor.h"
 
 namespace ark::es2panda::compiler {
 
@@ -69,6 +71,7 @@ void InterfacePropertyDeclarationsPhase::TransformOptionalFieldTypeAnnotation(pu
     }
 }
 
+// CC-OFFNXT(huge_method[C++], G.FUD.05) solid logic
 ir::FunctionSignature InterfacePropertyDeclarationsPhase::GenerateGetterOrSetterSignature(
     public_lib::Context *ctx, varbinder::ETSBinder *varbinder, ir::ClassProperty *const field, bool isSetter,
     varbinder::FunctionParamScope *paramScope)
@@ -103,10 +106,29 @@ ir::FunctionSignature InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     return ir::FunctionSignature(nullptr, std::move(params), isSetter ? nullptr : field->TypeAnnotation());
 }
 
+ir::AstNode *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetterBodyForOptional(public_lib::Context *ctx,
+                                                                                       bool isSetter, bool isOptional)
+{
+    if (!isOptional) {
+        return nullptr;
+    }
+
+    ArenaVector<ir::Statement *> returnStatement(ctx->Allocator()->Adapter());
+    if (isSetter) {
+        auto *parser = ctx->parser->AsETSParser();
+        returnStatement.emplace_back(parser->CreateFormattedStatement("throw new InvalidStoreAccessError()"));
+    } else {
+        auto *undef = ctx->AllocNode<ir::UndefinedLiteral>();
+        auto *rtStmt = ctx->AllocNode<ir::ReturnStatement>(undef);
+        returnStatement.emplace_back(rtStmt);
+    }
+    return ctx->AllocNode<ir::BlockStatement>(ctx->Allocator(), std::move(returnStatement));
+}
+
 ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter(public_lib::Context *ctx,
                                                                                  varbinder::ETSBinder *varbinder,
                                                                                  ir::ClassProperty *const field,
-                                                                                 bool isSetter)
+                                                                                 bool isSetter, bool isOptional)
 {
     auto classScope = NearestScope(field);
     auto *paramScope = ctx->Allocator()->New<varbinder::FunctionParamScope>(ctx->Allocator(), classScope);
@@ -117,19 +139,30 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     paramScope->BindFunctionScope(functionScope);
 
     auto flags = ir::ModifierFlags::PUBLIC;
-    flags |= ir::ModifierFlags::ABSTRACT;
+    if (!isOptional) {
+        flags |= ir::ModifierFlags::ABSTRACT;
+    }
 
     ir::FunctionSignature signature = GenerateGetterOrSetterSignature(ctx, varbinder, field, isSetter, paramScope);
 
     auto *func = ctx->AllocNode<ir::ScriptFunction>(
         ctx->Allocator(), ir::ScriptFunction::ScriptFunctionData {
-                              nullptr, std::move(signature),  // CC-OFF(G.FMT.02) project code style
                               // CC-OFFNXT(G.FMT.02) project code style
+                              GenerateGetterOrSetterBodyForOptional(ctx, isSetter, isOptional),
+                              std::move(signature),  // CC-OFF(G.FMT.02) project code style
+                                                     // CC-OFFNXT(G.FMT.02) project code style
                               isSetter ? ir::ScriptFunctionFlags::SETTER : ir::ScriptFunctionFlags::GETTER, flags,
                               classScope->Node()->AsTSInterfaceDeclaration()->Language()});
 
+    // Since optional prop has default body, need to set scope.
+    if (isOptional) {
+        auto funcCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, functionScope);
+        InitScopesPhaseETS::RunExternalNode(func, varbinder);
+    } else {
+        func->SetScope(functionScope);
+    }
+
     func->SetRange(field->Range());
-    func->SetScope(functionScope);
 
     auto const &name = field->Key()->AsIdentifier()->Name();
     auto methodIdent = ctx->AllocNode<ir::Identifier>(name, ctx->Allocator());
@@ -226,7 +259,11 @@ ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(pu
             continue;
         }
         auto *originProp = prop->Clone(ctx->allocator, nullptr);
-        auto getter = GenerateGetterOrSetter(ctx, varbinder, prop->AsClassProperty(), false);
+        // Note (daizihan): #30085 Disable this feature temporary after UI-plugin adapted this change.
+        // Change false to prop->AsClassProperty()->IsOptionalDeclaration() && !interface->Parent()->IsDeclare();
+        bool isOptional = false;
+        ir::MethodDefinition *getter =
+            GenerateGetterOrSetter(ctx, varbinder, prop->AsClassProperty(), false, isOptional);
         getter->SetOriginalNode(originProp);
 
         auto methodScope = scope->AsClassScope()->InstanceMethodScope();
@@ -245,7 +282,7 @@ ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(pu
             AddOverload(method, getter, var);
 
             if (!prop->AsClassProperty()->IsReadonly()) {
-                auto setter = GenerateGetterOrSetter(ctx, varbinder, prop->AsClassProperty(), true);
+                auto setter = GenerateGetterOrSetter(ctx, varbinder, prop->AsClassProperty(), true, isOptional);
                 AddOverload(method, setter, var);
             }
             continue;
@@ -255,7 +292,7 @@ ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(pu
         newPropertyList.emplace_back(getter);
 
         if (!prop->AsClassProperty()->IsReadonly()) {
-            auto setter = GenerateGetterOrSetter(ctx, varbinder, prop->AsClassProperty(), true);
+            auto setter = GenerateGetterOrSetter(ctx, varbinder, prop->AsClassProperty(), true, isOptional);
             AddOverload(getter, setter, variable);
         }
         scope->AsClassScope()->InstanceFieldScope()->EraseBinding(name);

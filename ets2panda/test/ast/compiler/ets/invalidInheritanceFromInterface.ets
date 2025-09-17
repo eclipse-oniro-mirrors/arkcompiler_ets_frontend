@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-/* @@ label */interface A {
+interface A {
     x(): boolean {
         return true;
     }
@@ -22,7 +22,7 @@
 class B implements A {
     public x: boolean;
     public getX(): boolean {
-       return /* @@ label1 */this.x();
+       return this.x();
     }
 }
 
@@ -30,5 +30,7 @@ function main(): void {
     let instance: B = new B();
     arktest.assertEQ(instance.getX(), true);
 }
-/* @@@ label1 Error TypeError: Type 'Boolean' has no call signatures.  */
-/* @@@ label Error TypeError: Cannot inherit from interface A because field x is inherited with a different declaration type  */
+
+/* @@? 16:1 Error TypeError: Cannot inherit from interface A because method x is inherited with a different declaration type */
+/* @@? 23:12 Error TypeError: Method x(<property>x: Boolean): void in B not overriding any method */
+/* @@? 25:15 Error TypeError: Type 'Boolean' has no call signatures. */
