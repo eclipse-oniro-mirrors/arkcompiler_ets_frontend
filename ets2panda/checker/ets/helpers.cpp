@@ -737,11 +737,11 @@ checker::Type *PreferredObjectTypeFromAnnotation(checker::Type *annotationType)
 }
 
 // CC-OFFNXT(huge_cyclomatic_complexity, huge_cca_cyclomatic_complexity[C++]) solid logic
-static bool SetPreferredTypeForExpression(ETSChecker *checker, ir::Identifier *ident, ir::TypeNode *typeAnnotation,
-                                          ir::Expression *init, checker::Type *annotationType)
+bool ETSChecker::SetPreferredTypeForExpression(ir::Expression *expr, ir::TypeNode *typeAnnotation, ir::Expression *init,
+                                               checker::Type *annotationType)
 {
     if (init->IsMemberExpression() && init->AsMemberExpression()->Object()->IsObjectExpression()) {
-        checker->LogError(diagnostic::MEMBER_OF_OBJECT_LIT, {}, ident->Start());
+        LogError(diagnostic::MEMBER_OF_OBJECT_LIT, {}, expr->Start());
     }
 
     if (annotationType != nullptr && annotationType->HasTypeFlag(TypeFlag::TYPE_ERROR)) {
@@ -749,12 +749,12 @@ static bool SetPreferredTypeForExpression(ETSChecker *checker, ir::Identifier *i
     }
 
     if ((init->IsMemberExpression()) && (annotationType != nullptr)) {
-        checker->SetArrayPreferredTypeForNestedMemberExpressions(init->AsMemberExpression(), annotationType);
+        SetArrayPreferredTypeForNestedMemberExpressions(init->AsMemberExpression(), annotationType);
     }
 
     if (init->IsArrayExpression() && (annotationType != nullptr)) {
         if (annotationType->IsETSTupleType() &&
-            !checker->IsArrayExprSizeValidForTuple(init->AsArrayExpression(), annotationType->AsETSTupleType())) {
+            !IsArrayExprSizeValidForTuple(init->AsArrayExpression(), annotationType->AsETSTupleType())) {
             return false;
         }
 
@@ -793,7 +793,7 @@ static bool SetPreferredTypeForExpression(ETSChecker *checker, ir::Identifier *i
 
     if (typeAnnotation != nullptr && init->IsArrowFunctionExpression()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        checker->InferAliasLambdaType(typeAnnotation, init->AsArrowFunctionExpression());
+        InferAliasLambdaType(typeAnnotation, init->AsArrowFunctionExpression());
     }
 
     return true;
@@ -823,7 +823,7 @@ bool ETSChecker::CheckInit(ir::Identifier *ident, ir::TypeNode *typeAnnotation, 
             bindingVar->SetTsType(annotationType);
         }
     }
-    return SetPreferredTypeForExpression(this, ident, typeAnnotation, init, annotationType);
+    return SetPreferredTypeForExpression(ident, typeAnnotation, init, annotationType);
 }
 
 void ETSChecker::CheckEnumType(ir::Expression *init, checker::Type *initType, const util::StringView &varName)
