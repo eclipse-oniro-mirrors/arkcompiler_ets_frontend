@@ -133,13 +133,9 @@ static checker::Type *HandlePartialType(checker::ETSChecker *const checker, ETST
     if (baseType != nullptr && baseType->IsETSObjectType() && !baseType->AsETSObjectType()->TypeArguments().empty()) {
         // we treat Partial<A<T,D>> class as a different copy from A<T,D> now,
         // but not a generic type param for Partial<>
-        if (ref->TypeParams() != nullptr) {
-            for (auto &typeRef : ref->TypeParams()->Params()) {
-                checker::InstantiationContext ctx(checker, baseType->AsETSObjectType(),
-                                                  typeRef->AsETSTypeReference()->Part()->TypeParams(), ref->Start());
-                baseType = ctx.Result();
-            }
-        }
+        ArenaVector<checker::Type *> typeArgTypes(baseType->AsETSObjectType()->TypeArguments());
+        checker::InstantiationContext ctx(checker, baseType->AsETSObjectType(), std::move(typeArgTypes), ref->Start());
+        baseType = ctx.Result();
     }
     return baseType;
 }
