@@ -68,6 +68,9 @@ namespace secharmony {
   // used for file name cache
   export let historyFileNameMangledTable: Map<string, string> = undefined;
 
+  // file name whiteList
+  export let reservedFileNames: Set<string> = new Set<string>();
+
   // When the module is compiled, call this function to clear global collections related to file name.
   export function clearCaches(): void {
     globalFileNameMangledTable.clear();
@@ -76,7 +79,6 @@ namespace secharmony {
 
   let profile: IFileNameObfuscationOption | undefined;
   let generator: INameGenerator | undefined;
-  let reservedFileNames: Set<string> | undefined;
   let localPackageSet: Set<string> | undefined;
   let useNormalized: boolean = false;
   let universalReservedFileNames: RegExp[] | undefined;
@@ -98,22 +100,7 @@ namespace secharmony {
 
     generator = getNameGenerator(profile.mNameGeneratorType, nameGeneratorOption);
     let configReservedFileNameOrPath: string[] = profile?.mReservedFileNames ?? [];
-    const tempReservedName: string[] = ['.', '..', ''];
-    configReservedFileNameOrPath.map(fileNameOrPath => {
-      if (!fileNameOrPath || fileNameOrPath.length === 0) {
-        return;
-      }
-      const directories = FileUtils.splitFilePath(fileNameOrPath);
-      directories.forEach(directory => {
-        tempReservedName.push(directory);
-        const pathOrExtension: PathAndExtension = FileUtils.getFileSuffix(directory);
-        if (pathOrExtension.ext) {
-          tempReservedName.push(pathOrExtension.ext);
-          tempReservedName.push(pathOrExtension.path);
-        }
-      });
-    });
-    reservedFileNames = new Set<string>(tempReservedName);
+    reservedFileNames = new Set<string>(generateReservedList(configReservedFileNameOrPath));
     universalReservedFileNames = profile?.mUniversalReservedFileNames ?? [];
     endFilesEvent(EventList.FILENAME_OBFUSCATION_INITIALIZATION);
     return renameFileNameFactory;
@@ -403,11 +390,39 @@ namespace secharmony {
     return mangledName;
   }
 
+  function generateReservedList(fileNameOrPathList: string[]): string[] {
+    const reservedNames: string[] = ['.', '..', ''];
+    fileNameOrPathList.map(fileNameOrPath => {
+      if (!fileNameOrPath || fileNameOrPath.length === 0) {
+        return;
+      }
+      const directories = FileUtils.splitFilePath(fileNameOrPath);
+      directories.forEach(directory => {
+        reservedNames.push(directory);
+        const pathOrExtension: PathAndExtension = FileUtils.getFileSuffix(directory);
+        if (pathOrExtension.ext) {
+          reservedNames.push(pathOrExtension.ext);
+          reservedNames.push(pathOrExtension.path);
+        }
+      });
+    });
+    return reservedNames;
+  }
+
   export let transformerPlugin: TransformPlugin = {
     'name': 'renamePropertiesPlugin',
     'order': TransformerOrder.RENAME_FILE_NAME_TRANSFORMER,
     'createTransformerFactory': createRenameFileNameFactory
   };
+
+  /**
+   * add whiteList of reserved file names
+   * @param fileNameOrPathList file paths that need to reserve 
+   */
+  export function addReservedFileNames(fileNameOrPathList: string[]): void {
+    const tempReservedNames: string[] = generateReservedList(fileNameOrPathList);
+    reservedFileNames = new Set<string>([...reservedFileNames, ...tempReservedNames]);
+  }
 }
 
 export = secharmony;

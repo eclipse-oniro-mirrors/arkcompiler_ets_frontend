@@ -79,7 +79,7 @@ export function initObfuscationConfig(projectConfig: any, arkProjectConfig: any,
     const reservedFileNamesInIDEconfig = collectResevedFileNameInIDEConfig(
       ohPackagePath,
       projectConfig,
-      arkProjectConfig.modulePathMap,
+      mergedObConfig?.options?.stripNotCompiledModuleName ? undefined : arkProjectConfig.modulePathMap,
       entryArray,
     );
     mergedObConfig.reservedFileNames.push(...reservedFileNamesInIDEconfig);
