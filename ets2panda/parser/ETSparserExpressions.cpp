@@ -305,9 +305,9 @@ ir::Expression *ETSParser::ParseDefaultPrimaryExpression(ExpressionParseFlags fl
 {
     auto startLoc = Lexer()->GetToken().Start();
     auto savedPos = Lexer()->Save();
-    TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::POTENTIAL_CLASS_LITERAL |
-                                           TypeAnnotationParsingOptions::IGNORE_FUNCTION_TYPE |
-                                           TypeAnnotationParsingOptions::DISALLOW_UNION;
+    TypeAnnotationParsingOptions options =
+        TypeAnnotationParsingOptions::POTENTIAL_CLASS_LITERAL | TypeAnnotationParsingOptions::IGNORE_FUNCTION_TYPE |
+        TypeAnnotationParsingOptions::DISALLOW_UNION | TypeAnnotationParsingOptions::IGNORE_KEYW_KEYOF;
     ir::TypeNode *potentialType = ParseTypeAnnotation(&options);
 
     if (potentialType != nullptr) {

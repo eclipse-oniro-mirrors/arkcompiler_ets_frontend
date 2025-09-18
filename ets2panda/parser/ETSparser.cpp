@@ -1101,7 +1101,8 @@ ir::TypeNode *ETSParser::ParseLiteralIdent(TypeAnnotationParsingOptions *options
         return GetTypeAnnotationOfPrimitiveType(Lexer()->GetToken().KeywordType(), options);
     }
 
-    if (Lexer()->TryEatTokenFromKeywordType(lexer::TokenType::KEYW_KEYOF)) {
+    if ((((*options) & TypeAnnotationParsingOptions::IGNORE_KEYW_KEYOF) == 0) &&
+        Lexer()->TryEatTokenFromKeywordType(lexer::TokenType::KEYW_KEYOF)) {
         auto keyofOptions = *options | TypeAnnotationParsingOptions::REPORT_ERROR;
         auto *typeAnnotation = ParseTypeAnnotationNoPreferParam(&keyofOptions);
         ES2PANDA_ASSERT(typeAnnotation != nullptr);
