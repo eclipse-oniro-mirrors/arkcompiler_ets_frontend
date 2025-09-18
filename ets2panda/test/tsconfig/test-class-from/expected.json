@@ -1,0 +1,5 @@
+{
+    "returncode": 1,
+    "stdout": "TypeError: Type A cannot be used in the `from` method [main.ets:19:16]\n",
+    "stderr": ""
+}

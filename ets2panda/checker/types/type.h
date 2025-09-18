@@ -225,6 +225,13 @@ public:
         return util::UString(ss.str(), allocator).View();
     }
 
+    util::StringView ToAssemblerTypeWithRankView(ArenaAllocator *allocator) const
+    {
+        std::stringstream ss;
+        ToAssemblerTypeWithRank(ss);
+        return util::UString(ss.str(), allocator).View();
+    }
+
     std::stringstream ToAssemblerName() const
     {
         std::stringstream ss;

@@ -852,6 +852,12 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         }
     }
 
+    void VisitClassFromExpression(ir::ClassFromExpression *classFrom) override
+    {
+        classFrom->TypeAnnotation()->SetTsType(
+            uctx_->checker->MaybeBoxType(NormalizeType(uctx_, classFrom->TypeAnnotation()->TsType())));
+    }
+
     // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
     void VisitCallExpression(ir::CallExpression *call) override
     {

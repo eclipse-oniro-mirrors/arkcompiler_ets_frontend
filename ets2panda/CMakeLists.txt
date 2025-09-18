@@ -331,6 +331,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/capturedVariables.cpp
   compiler/lowering/ets/cfgBuilderPhase.cpp
   compiler/lowering/ets/constantExpressionLowering.cpp
+  compiler/lowering/ets/classFromExpressionLowering.cpp
   compiler/lowering/ets/convertPrimitiveCastMethodCall.cpp
   compiler/lowering/ets/declareOverloadLowering.cpp
   compiler/lowering/ets/declGenPhase.cpp
@@ -458,6 +459,7 @@ set(ES2PANDA_LIB_SRC
   ir/statements/blockStatement.cpp
   ir/statements/breakStatement.cpp
   ir/statements/classDeclaration.cpp
+  ir/expressions/classFromExpression.cpp
   ir/ets/etsStructDeclaration.cpp
   ir/ets/etsReExportDeclaration.cpp
   ir/statements/continueStatement.cpp

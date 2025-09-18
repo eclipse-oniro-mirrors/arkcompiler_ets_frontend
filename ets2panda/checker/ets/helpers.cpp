@@ -1569,7 +1569,7 @@ bool ETSChecker::CheckVoidAnnotation(const ir::ETSPrimitiveType *typeAnnotation)
     if (parent->IsETSFunctionType() && parent->AsETSFunctionType()->ReturnType() == typeAnnotation) {
         return true;
     }
-    if (parent->IsTSTypeParameterInstantiation() || parent->IsTSTypeParameter()) {
+    if (parent->IsTSTypeParameterInstantiation() || parent->IsTSTypeParameter() || parent->IsClassFromExpression()) {
         return true;
     }
     LogError(diagnostic::ANNOT_IS_VOID, {}, typeAnnotation->Start());
