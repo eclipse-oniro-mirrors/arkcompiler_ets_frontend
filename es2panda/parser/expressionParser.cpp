@@ -268,15 +268,15 @@ ir::Expression *ParserImpl::ParseArrayExpression(ExpressionParseFlags flags)
         ParsePotentialTsFunctionParameter(ExpressionParseFlags::NO_OPTS, arrayExpressionNode);
     }
 
-    if (!(flags & ExpressionParseFlags::POTENTIALLY_IN_PATTERN)) {
-        if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION &&
-            !arrayExpressionNode->ConvertibleToArrayPattern()) {
-            ThrowSyntaxError("Invalid left-hand side in array destructuring pattern", arrayExpressionNode->Start());
-        } else if (!inPattern && lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
-            ir::ValidationInfo info = arrayExpressionNode->ValidateExpression();
-            if (info.Fail()) {
-                ThrowSyntaxError(info.msg.Utf8(), info.pos);
-            }
+    if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION &&
+        !arrayExpressionNode->ConvertibleToArrayPattern()) {
+        ThrowSyntaxError("Invalid left-hand side in array destructuring pattern", arrayExpressionNode->Start());
+    }
+    if (!(flags & ExpressionParseFlags::POTENTIALLY_IN_PATTERN) &&
+        !inPattern && lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
+        ir::ValidationInfo info = arrayExpressionNode->ValidateExpression();
+        if (info.Fail()) {
+            ThrowSyntaxError(info.msg.Utf8(), info.pos);
         }
     }
 
@@ -2315,15 +2315,15 @@ ir::ObjectExpression *ParserImpl::ParseObjectExpression(ExpressionParseFlags fla
         ParsePotentialTsFunctionParameter(ExpressionParseFlags::NO_OPTS, objectExpression);
     }
 
-    if (!(flags & ExpressionParseFlags::POTENTIALLY_IN_PATTERN)) {
-        if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION &&
-            !objectExpression->ConvertibleToObjectPattern()) {
-            ThrowSyntaxError("Invalid left-hand side in array destructuring pattern", objectExpression->Start());
-        } else if (!inPattern && lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
-            ir::ValidationInfo info = objectExpression->ValidateExpression();
-            if (info.Fail()) {
-                ThrowSyntaxError(info.msg.Utf8(), info.pos);
-            }
+    if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION &&
+        !objectExpression->ConvertibleToObjectPattern()) {
+        ThrowSyntaxError("Invalid left-hand side in array destructuring pattern", objectExpression->Start());
+    }
+    if (!(flags & ExpressionParseFlags::POTENTIALLY_IN_PATTERN) &&
+        !inPattern && lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
+        ir::ValidationInfo info = objectExpression->ValidateExpression();
+        if (info.Fail()) {
+            ThrowSyntaxError(info.msg.Utf8(), info.pos);
         }
     }
 
