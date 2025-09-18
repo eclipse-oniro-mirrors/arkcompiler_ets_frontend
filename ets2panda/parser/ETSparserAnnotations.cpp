@@ -371,6 +371,9 @@ void ETSParser::ApplyAnnotationsToSpecificNodeType(ir::AstNode *node, ArenaVecto
         case ir::AstNodeType::ANNOTATION_DECLARATION:
             node->AsAnnotationDeclaration()->SetAnnotations(std::move(annotations));
             break;
+        case ir::AstNodeType::TS_ENUM_DECLARATION:
+            node->AsTSEnumDeclaration()->SetAnnotations(std::move(annotations));
+            break;
         default:
             LogError(diagnostic::ANNOTATION_WRONG_DEC, {}, pos);
     }
