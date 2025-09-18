@@ -273,7 +273,7 @@ bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::Json
     if (pathValue != nullptr) {
         normalizedPath =
             IsAbsolute(*pathValue) ? ark::os::GetAbsolutePath(*pathValue) : MakeAbsolute(*pathValue, baseUrl_);
-        if (!Check(ark::os::IsFileExists(normalizedPath), diagnostic::INVALID_PATH, {key})) {
+        if (!Check(ark::os::IsFileExists(normalizedPath), diagnostic::INVALID_PATH, {normalizedPath, key, baseUrl_})) {
             return false;
         }
     } else {
