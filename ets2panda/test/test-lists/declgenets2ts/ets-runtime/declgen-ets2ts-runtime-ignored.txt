@@ -43,6 +43,9 @@ fuzz/too_many_async.ets
 typeAlias_2.ets
 Multiline_string.ets
 Multiline_string_escape_char.ets
+run_ok_without_semicolon.ets
 async_lambda_return_type_test.ets
 fuzz/class_body_interface.ets
 fuzz/repeated_del.ets
+fuzz/create_partial.ets
+namespace_class_decl.ets
