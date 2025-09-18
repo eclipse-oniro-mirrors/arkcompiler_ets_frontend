@@ -319,27 +319,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 23,
-            "column": 3,
-            "endLine": 23,
-            "endColumn": 5,
-            "problem": "ExponentOp",
-            "autofix": [
-                {
-                    "replacementText": "Math.pow(a, b)",
-                    "start": 715,
-                    "end": 721,
-                    "line": 23,
-                    "column": 3,
-                    "endLine": 23,
-                    "endColumn": 5
-                }
-            ],
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
             "line": 25,
             "column": 1,
             "endLine": 25,
@@ -466,48 +445,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 27,
-            "column": 3,
-            "endLine": 27,
-            "endColumn": 5,
-            "problem": "ExponentOp",
-            "autofix": [
-                {
-                    "replacementText": "Math.pow(m, n)",
-                    "start": 735,
-                    "end": 741,
-                    "line": 27,
-                    "column": 3,
-                    "endLine": 27,
-                    "endColumn": 5
-                }
-            ],
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 33,
-            "column": 3,
-            "endLine": 33,
-            "endColumn": 5,
-            "problem": "ExponentOp",
-            "autofix": [
-                {
-                    "replacementText": "Math.pow(x, y)",
-                    "start": 782,
-                    "end": 788,
-                    "line": 33,
-                    "column": 3,
-                    "endLine": 33,
-                    "endColumn": 5
-                }
-            ],
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
             "line": 35,
             "column": 11,
             "endLine": 35,
@@ -535,27 +472,6 @@
             ],
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 4,
-            "endLine": 41,
-            "endColumn": 6,
-            "problem": "ExponentOp",
-            "autofix": [
-                {
-                    "replacementText": "Math.pow(x2, y2)",
-                    "start": 873,
-                    "end": 881,
-                    "line": 41,
-                    "column": 4,
-                    "endLine": 41,
-                    "endColumn": 6
-                }
-            ],
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
             "severity": "ERROR"
         },
         {

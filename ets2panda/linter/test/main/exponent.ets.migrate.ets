@@ -16,10 +16,10 @@
 let kk = Math.pow(6, 3);
 console.log(kk);
 
-let k = Math.pow(5, 2);
+let k = 5 ** 2;
 console.log(k);
 
-k = Math.pow(k, 2);
+k **= 2;
 console.log(k);
 
 k = Math.pow(-1, Infinity);

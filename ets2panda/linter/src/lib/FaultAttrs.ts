@@ -163,7 +163,6 @@ faultsAttrs[FaultID.VoidOperator] = new FaultAttributes(193);
 faultsAttrs[FaultID.TsOverload] = new FaultAttributes(198);
 faultsAttrs[FaultID.NoNeedStdLibSendableContainer] = new FaultAttributes(199);
 faultsAttrs[FaultID.LimitedLiteralType] = new FaultAttributes(202);
-faultsAttrs[FaultID.ExponentOp] = new FaultAttributes(203);
 faultsAttrs[FaultID.DebuggerStatement] = new FaultAttributes(206);
 faultsAttrs[FaultID.ArgumentsObject] = new FaultAttributes(207);
 faultsAttrs[FaultID.TaggedTemplates] = new FaultAttributes(208);
