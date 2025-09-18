@@ -753,6 +753,7 @@ syntax:
 - name: INVALID_SHORTHAND_PROPERTY_INITIALIZER
   id: 18822
   message: "Invalid shorthand property initializer."
+  code_fix_ids: [fixPropertyAssignment]
 
 - name: INVALID_TYPE
   id: 138
