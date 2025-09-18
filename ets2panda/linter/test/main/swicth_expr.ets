@@ -409,3 +409,24 @@ function foo(index: number) {
   }
 }
 
+class CFE {
+    using: number = 0
+    initData(size: Number): void {
+        switch(size) { // legal
+            case 1:
+            this.using = 1;
+            break;
+            case 9:
+            this.using = 9;
+            break;
+            case 0:
+            this.using = 0;
+            break;
+            case 7:
+            this.using = 7;
+            break;
+            default:
+            this.using = 1907;
+        }
+    }
+}

@@ -39,7 +39,7 @@ struct MyPage3 {
 
 @Entry({ routeName: "Index" })
 @ComponentV2
-struct MyPage3 {
+struct MyPage4 {
   build() {
     Text("Hello World")
   }

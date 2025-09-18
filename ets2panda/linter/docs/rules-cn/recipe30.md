@@ -1,96 +1,50 @@
-## 不支持structural typing
+## 不支持Structural Typing
 
-**规则：**`arkts-no-structural-typing`
+**规则：** `arkts-no-structural-typing`
 
-**级别：error**
+**规则解释：**
+ 
+ArkTS1.2不支持Structural Typing。
 
-ArkTS1.2不支持structural typing，编译器无法比较两种类型的publicAPI并决定它们是否相同。使用其他机制，例如继承、接口或类型别名。
+Structural Typing（结构化类型系统）是一种类型系统，其类型兼容性基于类型的实际结构而非声明名称。例如，两个类的属性和方法完全相同，即使名称不同，也被认为是同一个类型，可以互相赋值。
+
+**变更原因：**
+ 
+Structural Typing存在以下劣势，故ArkTS1.2不支持。
+- 意外匹配风险：结构相同但语义不同的类型可能被误用。
+- 重构风险：修改结构可能影响远处代码。
+- 可读性降低：类型关系不直观。
+
+**适配建议：**
+
+NA
+
+**示例：**
 
 **ArkTS1.1**
 
 ```typescript
-// case1
+// 类型定义
 class A {
   v: number = 0
 }
-
 class B {
   v: number = 0
 }
-
+class C<T> {
+  u?: T
+}
+// 场景1，类型转换
 let a = new B() as A
-
-// case2
-class C<T> {
-  u: T
-}
-
+// 场景2，泛型
 let b: C<B> = new C<A>()
-
-// case3
-class A {
-  u: number = 0
+// 场景3，返回类型
+let func = (): A => {
+  return new B()
 }
-
-class B {
-  u: number = 0
-}
-
-(): A => { return new B() }
-
-class A {
-  v: number = 0
-}
-
-class B {
-  v: number = 0
-}
-class C<T> {
-  u: T;
-}
-
-let b: C<B> = new C<A>(); // 违反规则
 ```
 
 **ArkTS1.2**
-
 ```typescript
-// case1
-class A {
-  v: number = 0
-}
-
-class B {
-  v: number = 0
-}
-
-let a = new B()
-
-// case2
-class C<T> {
-  u: T
-}
-
-let b: C<A> = new C<A>()
-
-// case3
-class A {
-  u: number = 0
-}
-
-class B {
-  u: number = 0
-}
-
-(): B => { return new B() }
-
-class A {
-  v: number = 0
-}
-
-class B {
-  v: number = 0
-}
-let b: C<A> = new C<A>(); // 使用相同的泛型类型
-
+NA
 ```

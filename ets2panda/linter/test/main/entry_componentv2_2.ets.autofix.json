@@ -19,12 +19,12 @@
             "column": 1,
             "endLine": 16,
             "endColumn": 60,
-            "problem": "EntryHasInvalidParams",
+            "problem": "EntryHasInvalidParamsWithV2",
             "autofix": [
                 {
-                    "start": 612,
-                    "end": 663,
-                    "replacementText": "{ routeName: \"Index\" }",
+                    "start": 605,
+                    "end": 664,
+                    "replacementText": "@Entry({ routeName: \"Index\" })",
                     "line": 16,
                     "column": 1,
                     "endLine": 16,
@@ -32,7 +32,7 @@
                 }
             ],
             "suggest": "",
-            "rule": "The \"@ComponentV2\" decorator cannot be used together with the \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters (arkui-entry-invalid-params)",
+            "rule": "The \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters cannot be used together with the \"@ComponentV2\" decorator (arkui-entry-invalid-params)",
             "severity": "ERROR"
         },
         {
@@ -50,12 +50,12 @@
             "column": 1,
             "endLine": 24,
             "endColumn": 55,
-            "problem": "EntryHasInvalidParams",
+            "problem": "EntryHasInvalidParamsWithV2",
             "autofix": [
                 {
-                    "start": 745,
-                    "end": 791,
-                    "replacementText": "{ routeName: \"Index\" }",
+                    "start": 738,
+                    "end": 792,
+                    "replacementText": "@Entry({ routeName: \"Index\" })",
                     "line": 24,
                     "column": 1,
                     "endLine": 24,
@@ -63,7 +63,7 @@
                 }
             ],
             "suggest": "",
-            "rule": "The \"@ComponentV2\" decorator cannot be used together with the \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters (arkui-entry-invalid-params)",
+            "rule": "The \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters cannot be used together with the \"@ComponentV2\" decorator (arkui-entry-invalid-params)",
             "severity": "ERROR"
         },
         {
@@ -71,12 +71,12 @@
             "column": 1,
             "endLine": 32,
             "endColumn": 84,
-            "problem": "EntryHasInvalidParams",
+            "problem": "EntryHasInvalidParamsWithV2",
             "autofix": [
                 {
-                    "start": 873,
-                    "end": 948,
-                    "replacementText": "{ routeName: \"Index\" }",
+                    "start": 866,
+                    "end": 949,
+                    "replacementText": "@Entry({ routeName: \"Index\" })",
                     "line": 32,
                     "column": 1,
                     "endLine": 32,
@@ -84,7 +84,7 @@
                 }
             ],
             "suggest": "",
-            "rule": "The \"@ComponentV2\" decorator cannot be used together with the \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters (arkui-entry-invalid-params)",
+            "rule": "The \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters cannot be used together with the \"@ComponentV2\" decorator (arkui-entry-invalid-params)",
             "severity": "ERROR"
         },
         {

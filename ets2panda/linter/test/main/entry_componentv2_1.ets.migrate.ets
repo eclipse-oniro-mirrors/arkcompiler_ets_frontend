@@ -20,7 +20,7 @@ import {
   Text,
 } from '@kit.ArkUI';
 
-@Entry({})
+@Entry
 @ComponentV2
 struct MyPage1 {
   build() {
@@ -28,7 +28,7 @@ struct MyPage1 {
   }
 }
 
-@Entry({})
+@Entry
 @ComponentV2
 struct MyPage2 {
   build() {
@@ -36,9 +36,17 @@ struct MyPage2 {
   }
 }
 
-@Entry({})
+@Entry
 @ComponentV2
 struct MyPage3 {
+  build() {
+    Text("Hello World")
+  }
+}
+
+@Entry
+@ComponentV2
+struct MyPage4 {
   build() {
     Text("Hello World")
   }

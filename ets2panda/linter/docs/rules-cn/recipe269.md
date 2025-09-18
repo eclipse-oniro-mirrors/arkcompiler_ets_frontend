@@ -1,8 +1,8 @@
 ### js对ArkTS1.2对象进行展开语法
 
-**规则：** arkts-interop-js2s-js-expand-static-instance
+**规则：** `arkts-interop-js2s-js-expand-static-instance`
 
-**级别：** error
+js对ArkTS1.2对象进行展开语法时，需重新适配代码。
 
 **ArkTS1.1**
 ```typescript

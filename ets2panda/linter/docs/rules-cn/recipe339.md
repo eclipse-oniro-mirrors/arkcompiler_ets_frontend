@@ -1,8 +1,8 @@
 ### ArkTS1.2访问js索引
 
-**规则：** arkts-interop-js2s-access-js-index
+**规则：** `arkts-interop-js2s-access-js-index`
 
-**级别：** error
+ArkTS1.2使用ESValue接口访问索引，接口接收参数为ESValue类型，传参时需要用wrap接口构造ESValue实例再传参。
 
 **ArkTS1.1**
 ```typescript

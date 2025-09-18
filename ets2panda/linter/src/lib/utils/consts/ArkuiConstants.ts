@@ -164,6 +164,8 @@ export const ENTRY_STORAGE = 'storage';
 export const ENTRY_USE_SHARED_STORAGE = 'useSharedStorage';
 export const LOCAL_STORAGE_TYPE_NAME = 'LocalStorage';
 export const GET_LOCAL_STORAGE_FUNC_NAME = '__get_local_storage__';
+export const GET_SHARED = 'getShared';
+export const GET_SHARED_CAPITALIZED = 'GetShared';
 
 export const COMPONENTV2_DECORATOR_NAME = 'ComponentV2';
 

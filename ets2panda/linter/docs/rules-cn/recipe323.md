@@ -1,8 +1,8 @@
 ### ArkTS1.2导出js实体
 
-**规则：** arkts-interop-js2s-export-js
+**规则：** `arkts-interop-js2s-export-js`
 
-**级别：** error
+ArkTS1.2不能以`export {A} from "./file1"`的形式直接在ets文件中导出js对象。
 
 **ArkTS1.1**
 ```typescript

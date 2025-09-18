@@ -1,8 +1,8 @@
 ### ArkTS1.2处理TS非常规异常
 
-**规则：** arkts-interop-ts2s-ts-exception
+**规则：** `arkts-interop-ts2s-ts-exception`
 
-**级别：** error
+ArkTS1.2中throw和catch的对象只能是Error的实例。
 
 **ArkTS1.1**
 ```typescript
