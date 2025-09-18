@@ -5888,26 +5888,69 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private checkRestrictedAPICall(node: ts.CallExpression): void {
-    if (TypeScriptLinter.isReflectAPICall(node)) {
+    if (!this.options.arkts2) {
+      return;
+    }
+    if (this.isReflectAPICall(node)) {
       this.incrementCounters(node.parent, FaultID.InteropCallReflect);
     }
   }
 
-  static isReflectAPICall(callExpr: ts.CallExpression): boolean {
-    if (ts.isPropertyAccessExpression(callExpr.expression)) {
-      const expr = callExpr.expression.expression;
-      if (ts.isIdentifier(expr) && expr.text === REFLECT_LITERAL) {
-        return true;
+  isReflectAPICall(callExpr: ts.CallExpression): boolean {
+    const callee = callExpr.expression;
+    if (!ts.isPropertyAccessExpression(callee) && !ts.isElementAccessExpression(callee)) {
+      return false;
+    }
+
+    if (!ts.isIdentifier(callee.expression)) {
+      return false;
+    }
+    if (callee.expression.text !== REFLECT_LITERAL) {
+      return false;
+    }
+    // check if the first argument of the callExpression is declared in old arkts
+    return !this.isIdentifierFromArkTs2(callExpr.arguments[0]);
+  }
+
+  private isIdentifierFromArkTs2(node: ts.Node | undefined): boolean {
+    if (!node) {
+      return false;
+    }
+
+    let ident: ts.Identifier | undefined;
+    if (ts.isIdentifier(node)) {
+      ident = node;
+    }
+
+    for (const child of node.getChildren()) {
+      if (ts.isIdentifier(child)) {
+        ident = child;
+        break;
       }
     }
 
-    if (ts.isElementAccessExpression(callExpr.expression)) {
-      const expr = callExpr.expression.expression;
-      if (ts.isIdentifier(expr) && expr.text === REFLECT_LITERAL) {
-        return true;
-      }
+    if (!ident) {
+      return false;
     }
-    return false;
+
+    const typeSym = this.tsTypeChecker.getTypeAtLocation(ident).getSymbol();
+    const declarations = typeSym?.getDeclarations();
+
+    if (!declarations) {
+      return false;
+    }
+
+    const declaration = declarations[0];
+    if (!declaration) {
+      return false;
+    }
+
+    const sourceFile = declaration.getSourceFile();
+    if (sourceFile.fileName.endsWith(EXTNAME_D_TS)) {
+      return false;
+    }
+
+    return this.tsUtils.isArkts12File(sourceFile);
   }
 
   private shouldCheckForForbiddenAPI(declaration: ts.SignatureDeclaration | ts.JSDocSignature): boolean {
@@ -9635,34 +9678,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     return hierarchy;
-  }
-
-  private checkArkTSObjectInterop(tsCallExpr: ts.CallExpression): void {
-    const callSignature = this.tsTypeChecker.getResolvedSignature(tsCallExpr);
-    if (!callSignature?.declaration) {
-      return;
-    }
-
-    if (!this.isDeclaredInArkTs2(callSignature)) {
-      return;
-    }
-
-    if (!this.hasObjectParameter(callSignature, tsCallExpr)) {
-      return;
-    }
-
-    const functionSymbol = this.getFunctionSymbol(callSignature.declaration);
-    const functionDeclaration = functionSymbol?.valueDeclaration;
-    if (!functionDeclaration) {
-      return;
-    }
-
-    if (
-      TypeScriptLinter.isFunctionLike(functionDeclaration) &&
-      TypeScriptLinter.containsForbiddenAPI(functionDeclaration)
-    ) {
-      this.incrementCounters(tsCallExpr.parent, FaultID.InteropCallReflect);
-    }
   }
 
   private hasObjectParameter(callSignature: ts.Signature, tsCallExpr: ts.CallExpression): boolean {

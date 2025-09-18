@@ -63,16 +63,6 @@
             "suggest": "",
             "rule": "Usage of standard library is restricted (arkts-limited-stdlib)",
             "severity": "ERROR"
-        },
-        {
-            "line": 151,
-            "column": 1,
-            "endLine": 151,
-            "endColumn": 54,
-            "problem": "InteropCallReflect",
-            "suggest": "",
-            "rule": "Reflect API usage is not allowed in interop calls when an \"Object\" parameter receives a class instance (arkts-interop-d2s-static-reflect-on-dynamic-instance)",
-            "severity": "ERROR"
         }
     ]
 }
