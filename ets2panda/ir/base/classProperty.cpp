@@ -171,6 +171,20 @@ void ClassProperty::DumpCheckerTypeForDeclGen(ir::SrcDumper *dumper) const
     }
 
     dumper->Add(": ");
+
+    if (TsType()->Variable() != nullptr) {
+        ES2PANDA_ASSERT(TsType()->Variable()->Declaration() != nullptr &&
+                        TsType()->Variable()->Declaration()->Node() != nullptr &&
+                        TsType()->Variable()->Declaration()->Node()->Scope() != nullptr);
+        varbinder::Scope *tsTypeParentScope = TsType()->Variable()->Declaration()->Node()->Scope()->Parent();
+        auto scopes = compiler::DiffClassScopes(compiler::NearestScope(this), tsTypeParentScope);
+
+        std::stringstream namespaces;
+        for (auto it = scopes.rbegin(); it != scopes.rend(); ++it) {
+            namespaces << (*it)->Node()->AsClassDefinition()->Ident()->Name() << ".";
+        }
+        dumper->Add(namespaces.str());
+    }
     dumper->GetDeclgen()->Dump(dumper, TsType());
 }
 

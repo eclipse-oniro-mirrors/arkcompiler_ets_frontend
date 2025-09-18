@@ -38,6 +38,32 @@ varbinder::Scope *NearestScope(const ir::AstNode *ast)
     return ast == nullptr ? nullptr : ast->Scope();
 }
 
+// Returns ArenaVector of ClassScopes from `findFrom` scope to common one with `base` scope, except ETSGLOBAL
+std::vector<varbinder::ClassScope *> DiffClassScopes(varbinder::Scope *base, varbinder::Scope *findFrom)
+{
+    ES2PANDA_ASSERT(base != nullptr && findFrom != nullptr);
+
+    auto result = std::vector<varbinder::ClassScope *> {};
+    auto baseScopes = std::set<varbinder::Scope *> {};
+
+    for (varbinder::Scope *currentScope = base; currentScope != nullptr && !currentScope->IsGlobalScope();
+         currentScope = currentScope->Parent()) {
+        baseScopes.insert(currentScope);
+    }
+
+    for (varbinder::Scope *currentScope = findFrom;
+         baseScopes.find(currentScope) == baseScopes.end() && !currentScope->IsGlobalScope();
+         currentScope = currentScope->Parent()) {
+        if (currentScope->IsClassScope() && currentScope->AsClassScope()->Node() != nullptr &&
+            currentScope->AsClassScope()->Node()->IsClassDefinition() &&
+            !currentScope->AsClassScope()->Node()->AsClassDefinition()->IsGlobal()) {
+            result.push_back(currentScope->AsClassScope());
+        }
+    }
+
+    return result;
+}
+
 checker::ETSObjectType const *ContainingClass(const ir::AstNode *ast)
 {
     ast = util::Helpers::FindAncestorGivenByType(ast, ir::AstNodeType::CLASS_DEFINITION);
