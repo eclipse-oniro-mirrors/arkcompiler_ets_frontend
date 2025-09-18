@@ -59,7 +59,7 @@ bool IsEditBoundaryNode(const ir::AstNode *n)
     return (mods & static_cast<uint32_t>(ModifierFlags::DEFAULT_EXPORT)) != 0U;
 }
 
-ir::AstNode *ToEditBoundary(ir::AstNode *node)
+ir::AstNode *ChangeTracker::ToEditBoundary(ir::AstNode *node)
 {
     if (node == nullptr) {
         return nullptr;
@@ -98,8 +98,8 @@ ir::AstNode *ToEditBoundary(ir::AstNode *node)
 // Build a [start, end) range from two arbitrary nodes by snapping to edit boundaries.
 static inline TextRange MakeEditRange(ir::AstNode *startNode, ir::AstNode *endNode)
 {
-    ir::AstNode *start = ToEditBoundary(startNode);
-    ir::AstNode *end = ToEditBoundary(endNode);
+    ir::AstNode *start = ChangeTracker::ToEditBoundary(startNode);
+    ir::AstNode *end = ChangeTracker::ToEditBoundary(endNode);
     const size_t s = (start != nullptr) ? start->Start().index : startNode->Start().index;
     const size_t e = (end != nullptr) ? end->End().index : endNode->End().index;
     return {s, e};
@@ -305,7 +305,7 @@ size_t ChangeTracker::InsertNodeAfterWorker(es2panda_Context *context, ir::AstNo
         }
     }
 
-    ir::AstNode *anchor = ToEditBoundary(after);
+    ir::AstNode *anchor = ChangeTracker::ToEditBoundary(after);
     if (anchor == nullptr) {
         anchor = after;
     }
