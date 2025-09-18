@@ -25,7 +25,7 @@
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
     "useNormalizedOHMUrl": true,
 
-    "dependentModuleList": [
+    "dependencyModuleList": [
         {
             "packageName": "harA",
             "moduleName": "harA",

@@ -1,0 +1,433 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import * as os from 'os';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as child_process from 'child_process';
+
+import {
+    ARKTSCONFIG_JSON_FILE,
+    DECL_ETS_SUFFIX,
+    ABC_SUFFIX,
+    DEP_ANALYZER_DIR,
+    DEP_ANALYZER_INPUT_FILE,
+    DEP_ANALYZER_OUTPUT_FILE,
+} from './pre_define';
+
+import {
+    changeFileExtension,
+    ensureDirExists,
+    isMac
+} from './util/utils';
+
+import {
+    BuildConfig,
+    ModuleInfo,
+    JobInfo
+} from './types'
+
+import {
+    Logger,
+    LogDataFactory
+} from './logger';
+
+import { ErrorCode, DriverError } from './util/error';
+
+import { ArkTSConfigGenerator, ArkTSConfig } from './build/generate_arktsconfig';
+
+import { computeHash } from './util/utils'
+
+import cloneDeep from 'lodash.clonedeep'
+
+export interface DependencyFileMap {
+    dependants: {
+        [filePath: string]: string[];
+    };
+    dependencies: {
+        [filePath: string]: string[];
+    }
+}
+
+export class DependencyAnalyzer {
+
+    readonly logger: Logger;
+    readonly binPath: string;
+    readonly outputDir: string;
+
+    constructor(buildConfig: BuildConfig) {
+        this.logger = Logger.getInstance();
+        this.outputDir = path.join(buildConfig.cachePath, DEP_ANALYZER_DIR);
+        ensureDirExists(this.outputDir);
+        this.binPath = buildConfig.dependencyAnalyzerPath!;
+    }
+
+    private generateMergedArktsConfig(modules: Array<ModuleInfo>, outputPath: string): void {
+
+        let mainModule = modules.find((module) => module.isMainModule)!
+        // NOTE: create new temporary arktsconfig for dependency analyzer
+        let resArkTSConfig: ArkTSConfig = cloneDeep(ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(mainModule.packageName)!)
+        modules.forEach((module) => {
+            if (module.isMainModule) {
+                return;
+            }
+            resArkTSConfig.mergeArktsConfig(
+                ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(module.packageName)!
+            )
+        });
+
+        fs.writeFileSync(outputPath, JSON.stringify(resArkTSConfig.object, null, 2));
+    }
+
+    private formExecCmd(input: string, output: string, config: string): string {
+        let cmd = [path.resolve(this.binPath)];
+        cmd.push('@' + '"' + input + '"');
+        cmd.push('--arktsconfig=' + '"' + config + '"');
+        cmd.push('--output=' + '"' + output + '"');
+        let res: string = cmd.join(' ');
+        if (isMac()) {
+            const loadLibrary = 'DYLD_LIBRARY_PATH=' + '"' + process.env.DYLD_LIBRARY_PATH + '"';
+            res = loadLibrary + ' ' + res;
+        }
+        return res;
+    }
+
+    private filterDependencyMap(
+        dependencyMap: DependencyFileMap,
+        entryFiles: Set<string>
+    ): DependencyFileMap {
+        let resDependencyMap: DependencyFileMap = {
+            dependants: {},
+            dependencies: {}
+        }
+
+        // Filter files from external api
+        // We do not consider them in dependency analysis
+        // Filter files from arkTs 1.1 and arkTs hybrid
+        Object.entries(dependencyMap.dependencies).forEach(([file, dependencies]: [string, string[]]) => {
+            if (!entryFiles.has(file)) {
+                return
+            }
+            resDependencyMap.dependencies[file] = [...dependencies].filter((dependency: string) => {
+                return entryFiles.has(dependency)
+            })
+        })
+        Object.entries(dependencyMap.dependants).forEach(([file, dependants]: [string, string[]]) => {
+            if (!entryFiles.has(file)) {
+                return
+            }
+            resDependencyMap.dependants[file] = [...dependants].filter((dependant: string) => {
+                return entryFiles.has(dependant)
+            })
+        })
+
+        this.logger.printDebug(`filtered dependency map: ${JSON.stringify(resDependencyMap, null, 1)}`)
+        return resDependencyMap;
+    }
+
+    private generateDependencyMap(
+        entryFiles: Set<string>,
+        modules: Array<ModuleInfo>
+    ): DependencyFileMap {
+        const inputFile: string = path.join(this.outputDir, DEP_ANALYZER_INPUT_FILE);
+        const outputFile: string = path.join(this.outputDir, DEP_ANALYZER_OUTPUT_FILE);
+        const arktsConfigPath: string = path.join(this.outputDir, ARKTSCONFIG_JSON_FILE);
+
+
+        let depAnalyzerInputFileContent: string = Array.from(entryFiles).join(os.EOL);
+        fs.writeFileSync(inputFile, depAnalyzerInputFileContent);
+
+        this.generateMergedArktsConfig(modules, arktsConfigPath)
+
+        let execCmd = this.formExecCmd(inputFile, outputFile, arktsConfigPath)
+
+        try {
+            child_process.execSync(execCmd, {
+                stdio: 'pipe',
+                encoding: 'utf-8'
+            });
+        } catch (error) {
+            if (error instanceof Error) {
+                const execError = error as child_process.ExecException;
+                let fullErrorMessage = execError.message;
+                if (execError.stderr) {
+                    fullErrorMessage += `\nStdErr: ${execError.stderr}`;
+                }
+                if (execError.stdout) {
+                    fullErrorMessage += `\nStdOutput: ${execError.stdout}`;
+                }
+                throw new DriverError(
+                    LogDataFactory.newInstance(
+                        ErrorCode.BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL,
+                        'Failed to analyze files dependency.',
+                        fullErrorMessage
+                    )
+                )
+            }
+        }
+        const fullDependencyMap: DependencyFileMap = JSON.parse(fs.readFileSync(outputFile, 'utf-8'));
+        this.logger.printDebug(`fill dependency map: ${JSON.stringify(fullDependencyMap, null, 1)}`)
+
+        return this.filterDependencyMap(fullDependencyMap, entryFiles);
+    }
+
+    public findStronglyConnectedComponents(fileMap: DependencyFileMap): Map<string, Set<string>> {
+        const adjacencyList: Record<string, string[]> = {};
+        const reverseAdjacencyList: Record<string, string[]> = {};
+        const allNodes = new Set<string>();
+
+        for (const node in fileMap.dependencies) {
+            allNodes.add(node);
+            fileMap.dependencies[node].forEach(dep => allNodes.add(dep));
+        }
+        for (const node in fileMap.dependants) {
+            allNodes.add(node);
+            fileMap.dependants[node].forEach(dep => allNodes.add(dep));
+        }
+
+        allNodes.forEach(node => {
+            adjacencyList[node] = fileMap.dependencies[node] || [];
+            reverseAdjacencyList[node] = fileMap.dependants[node] || [];
+        });
+
+        const visited = new Set<string>();
+        const order: string[] = [];
+
+        function dfs(node: string): void {
+            visited.add(node);
+            for (const neighbor of adjacencyList[node]) {
+                if (!visited.has(neighbor)) {
+                    dfs(neighbor);
+                }
+            }
+            order.push(node);
+        }
+
+        allNodes.forEach(node => {
+            if (!visited.has(node)) {
+                dfs(node);
+            }
+        });
+
+        visited.clear();
+        const components = new Map<string, Set<string>>();
+
+        function reverseDfs(node: string, component: Set<string>): void {
+            visited.add(node);
+            component.add(node);
+            for (const neighbor of reverseAdjacencyList[node]) {
+                if (!visited.has(neighbor)) {
+                    reverseDfs(neighbor, component);
+                }
+            }
+        }
+
+        for (let i = order.length - 1; i >= 0; i--) {
+            const node = order[i];
+            if (!visited.has(node)) {
+                const component = new Set<string>();
+                reverseDfs(node, component);
+                if (component.size > 1) {
+                    const sortedFiles = Array.from(component).sort();
+                    const componentId = computeHash(sortedFiles.join('|'));
+                    components.set(componentId, component);
+                }
+            }
+        }
+
+        this.logger.printDebug(`Found components: ${JSON.stringify([...components], null, 1)}`)
+        return components;
+    }
+
+    private verifyModuleCyclicDependency(files: string[], fileToModule: Map<string, ModuleInfo>) {
+        const modules = files.map((file: string) => {
+            const module = fileToModule.get(file)
+            if (!module) {
+                throw new DriverError(
+                    LogDataFactory.newInstance(
+                        ErrorCode.BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL,
+                        `Failed to find module for file ${file}.`,
+                    )
+                )
+            }
+            return module
+        })
+        const set = new Set(modules.map((module: ModuleInfo) => module.packageName))
+        if (set.size > 1) {
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL,
+                    'Cyclic dependency between modules found.',
+                    "Module cycle: " + Array.from(set).join(" <---> ")
+                )
+            )
+        }
+    }
+
+    private createCycleJob(
+        jobs: Record<string, JobInfo>,
+        cycle: Set<string>,
+        cycleId: string,
+        dependencyMap: DependencyFileMap,
+        fileToCycle: Map<string, string>
+    ) {
+        const cycleFileList = Array.from(cycle)
+        const cycleDependencies = cycleFileList.map(
+            (file: string) => this.collectJobDependencies(file, dependencyMap, fileToCycle)
+        ).reduce((acc: Set<string>, curr: Set<string>) => new Set([...acc, ...curr]))
+
+        const cycleDependants: Set<string> = cycleFileList.map(
+            (file: string) => this.collectJobDependants(file, dependencyMap, fileToCycle)
+        ).reduce((acc: Set<string>, curr: Set<string>) => new Set([...acc, ...curr]))
+
+        jobs[cycleId] = {
+            id: cycleId,
+            fileList: cycleFileList,
+            isAbcJob: true,
+            jobDependencies: Array.from(cycleDependencies),
+            jobDependants: Array.from(cycleDependants)
+        }
+        this.logger.printDebug(`Created job for cycle: ${JSON.stringify(jobs[cycleId], null, 1)}`)
+    }
+
+    public collectJobs(
+        entryFiles: Set<string>,
+        fileToModule: Map<string, ModuleInfo>,
+        moduleInfos: Map<string, ModuleInfo>
+    ): Record<string, JobInfo> {
+        let jobs: Record<string, JobInfo> = {};
+
+        const dependencyMap: DependencyFileMap =
+            this.generateDependencyMap(entryFiles, Array.from(moduleInfos.values()));
+
+        Object.keys(dependencyMap.dependants).forEach((file: string) => {
+            if (!(file in dependencyMap.dependencies)) {
+                dependencyMap.dependencies[file] = [];
+            }
+        });
+
+        const stronglyConnectedComponents: Map<string, Set<string>> = this.findStronglyConnectedComponents(dependencyMap);
+        const fileToCycleMap: Map<string, string> = new Map<string, string>();
+
+        // First iterate to check Module Cyclic Dependencies and fill fileToCycleMap
+        stronglyConnectedComponents.forEach((component: Set<string>, componentId: string) => {
+            this.verifyModuleCyclicDependency(Array.from(component), fileToModule);
+            component.forEach((file) => {
+                fileToCycleMap.set(file, componentId);
+            });
+        });
+        this.logger.printDebug(`Found stronglyConnectedComponents: ${JSON.stringify([...stronglyConnectedComponents], null, 1)}`)
+        this.logger.printDebug(`fileToCycleMap: ${JSON.stringify([...fileToCycleMap], null, 1)}`)
+
+        // Second iterate to create jobs for compiling cycles
+        stronglyConnectedComponents.forEach((component: Set<string>, componentId: string) => {
+            this.createCycleJob(jobs, component, componentId, dependencyMap, fileToCycleMap)
+        });
+
+        entryFiles.forEach((file: string) => {
+            const isInCycle: boolean = fileToCycleMap.has(file)
+            const jobDependencies: Set<string> = this.collectJobDependencies(file, dependencyMap, fileToCycleMap);
+            const jobDependants: Set<string> = this.collectJobDependants(file, dependencyMap, fileToCycleMap);
+
+            if (isInCycle) {
+                return;
+            }
+
+            const declJobId: string = this.getDeclJobId(file)
+            const abcJobId: string = this.getAbcJobId(file)
+
+            jobs[declJobId] = {
+                id: declJobId,
+                fileList: [file],
+                isAbcJob: false,
+                jobDependencies: [...jobDependencies],
+                jobDependants: [...jobDependants, abcJobId]
+            };
+            this.logger.printDebug(`Created Decl job: ${JSON.stringify(jobs[declJobId], null, 1)}`)
+
+            jobs[abcJobId] = {
+                id: abcJobId,
+                isAbcJob: true,
+                fileList: [file],
+                jobDependencies: [declJobId],
+                jobDependants: []
+            }
+            this.logger.printDebug(`Created Abc job: ${JSON.stringify(jobs[abcJobId], null, 1)}`)
+        });
+
+        this.logger.printDebug(`Collected jobs: ${JSON.stringify(jobs, null, 1)}`)
+        return jobs;
+    }
+
+    private collectJobDependencies(
+        file: string,
+        dependencyMap: DependencyFileMap,
+        fileToCycleMap: Map<string, string>
+    ): Set<string> {
+        const fileDependencies = dependencyMap.dependencies[file]
+
+        let dependencySet: Set<string> = new Set<string>();
+        fileDependencies.forEach((dependency) => {
+            if (!fileToCycleMap.has(dependency)) {
+                dependencySet.add(this.getDeclJobId(dependency));
+                return;
+            }
+            const dependencyCycle: string = fileToCycleMap.get(dependency)!
+
+            if (fileToCycleMap.has(file)) {
+                const fileCycle: string = fileToCycleMap.get(file)!
+                if (fileCycle == dependencyCycle) {
+                    return;
+                }
+            }
+            dependencySet.add(dependencyCycle);
+        });
+        return dependencySet;
+    }
+
+    private collectJobDependants(
+        file: string,
+        dependencyMap: DependencyFileMap,
+        fileToCycleMap: Map<string, string>
+    ): Set<string> {
+        const fileDependants = dependencyMap.dependants[file]
+        let dependantSet: Set<string> = new Set<string>();
+
+        fileDependants.forEach((dependant) => {
+            if (!fileToCycleMap.has(dependant)) {
+                dependantSet.add(this.getDeclJobId(dependant));
+                return;
+            }
+            const dependantCycle: string = fileToCycleMap.get(dependant)!
+
+            if (fileToCycleMap.has(file)) {
+                const fileCycle: string = fileToCycleMap.get(file)!
+                if (fileCycle == dependantCycle) {
+                    return;
+                }
+            }
+            dependantSet.add(dependantCycle)
+        });
+        return dependantSet;
+    }
+
+    private getAbcJobId(file: string): string {
+        return changeFileExtension(file, ABC_SUFFIX);
+    }
+
+    private getDeclJobId(file: string): string {
+        return changeFileExtension(file, DECL_ETS_SUFFIX);
+    }
+}

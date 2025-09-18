@@ -23,8 +23,11 @@ jest.mock('../../../src/logger', () => {
     } as any;
     return {
         Logger: mLogger,
-        LogDataFactory: { newInstance: jest.fn(() => ({
-            code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {} })) }
+        LogDataFactory: {
+            newInstance: jest.fn(() => ({
+                code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {}
+            }))
+        }
     };
 });
 jest.mock('../../../src/plugins/plugins_driver', () => {
@@ -47,9 +50,9 @@ jest.mock('../../../src/util/utils', () => ({
 
 const fakeArkts = {
     Config: { create: jest.fn(() => ({ peer: 'peer' })) },
-    Context: { 
+    Context: {
         createFromString: jest.fn(() => ({ program: {}, peer: 'peer' })),
-        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' })) 
+        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' }))
     },
     proceedToState: jest.fn(),
     Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2 },
@@ -71,16 +74,16 @@ const fakeArktsGlobal = {
 
 jest.mock('../../../src/init/init_koala_modules', () => ({
     initKoalaModules: jest.fn((buildConfig) => {
-    const fakeKoala = {
-      arkts: fakeArkts,
-      arktsGlobal: fakeArktsGlobal
-    };
-    fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
-    
-    buildConfig.arkts = fakeKoala.arkts;
-    buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
-    return fakeKoala;
-  })
+        const fakeKoala = {
+            arkts: fakeArkts,
+            arktsGlobal: fakeArktsGlobal
+        };
+        fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+
+        buildConfig.arkts = fakeKoala.arkts;
+        buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
+        return fakeKoala;
+    })
 }));
 
 beforeEach(() => {
@@ -218,15 +221,15 @@ describe('test processBuildConfig in different scenarios', () => {
     });
 
     test('throw if koala wrapper require fails', () => {
-        jest.unmock('../../../src/init/init_koala_modules'); 
-        jest.resetModules(); 
+        jest.unmock('../../../src/init/init_koala_modules');
+        jest.resetModules();
 
         process.env.KOALA_WRAPPER_PATH = '/bad/koala';
         jest.doMock('/bad/koala', () => { throw new Error('fail'); }, { virtual: true });
         const { processBuildConfig } = require('../../../src/init/process_build_config');
         expect(() => processBuildConfig({ ...buildConfigBase })).toThrow();
         delete process.env.KOALA_WRAPPER_PATH;
-});
+    });
 
 
 });
