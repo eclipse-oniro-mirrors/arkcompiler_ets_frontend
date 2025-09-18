@@ -12,10 +12,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-enum Colorset {Red, Green,Blue};
-const result = JSON.stringify(Colorset);
-console.log("Hello",result);
 
-/* @@? 15:1 Error TypeError: Indexed access is not supported for such expression type.  */
-/* @@? 16:16 Error TypeError: No matching call signature for stringify(Colorset)  */
-/* @@? 16:31 Error TypeError: Enum 'Colorset' cannot be used as object  */
+export default null;

@@ -13,11 +13,20 @@
  * limitations under the License.
  */
 
-import {dbl as c} from /* @@ label */"./imported_module_1.ets";
+import {dbl as c} from /* @@ label1 */"./imported_module_1.ets";
 import * as c from "./imported_module_2.ets";
 
 
 function main() {
-    console.log(c);
+    /* @@ label2 */console.log(/* @@ label3 */c);
 }
-/* @@@ label Error TypeError: Variable 'c' is already defined with different type.  */
+/* @@@ label1 Error TypeError: Variable 'c' is already defined with different type.  */
+/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Boolean): void`  */
+/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Byte): void`  */
+/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Short): void`  */
+/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Char): void`  */
+/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Int): void`  */
+/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Long): void`  */
+/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Float): void`  */
+/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Double): void`  */
+/* @@@ label3 Error TypeError: Namespace 'c' cannot be used as object  */

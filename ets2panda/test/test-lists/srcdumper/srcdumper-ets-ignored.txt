@@ -118,6 +118,7 @@ ast/compiler/ets/import_export/external_export.ets
 ast/compiler/ets/import_export/test1_1.ets
 ast/compiler/ets/import_export/test2_1.ets
 ast/compiler/ets/import_export/test3_1.ets
+ast/compiler/ets/namespace_import/namespace_export2.ets
 
 #28389 - Remove catch(e: SomeType) from srcdumper tests
 compiler/ets/catch-soft-keyword.ets

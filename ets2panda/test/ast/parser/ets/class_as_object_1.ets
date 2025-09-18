@@ -15,5 +15,5 @@
 
 console.log(Object)
 
-/* @@? 16:13 Error TypeError: Class or interface or enum 'Object' cannot be used as object  */
+/* @@? 16:13 Error TypeError: Class 'Object' cannot be used as object  */
 /* @@? 16:13 Error TypeError: Class name can't be the argument of function or method.  */
