@@ -141,64 +141,6 @@ util::StringView FunctionEmitter::SourceCode() const
     return cg_->VarBinder()->Program()->SourceCode();
 }
 
-static Format MatchFormat(const IRNode *node, const Formats &formats)
-{
-    std::array<const VReg *, IRNode::MAX_REG_OPERAND> regs {};
-    auto regCnt = node->Registers(&regs);
-    auto registers = Span<const VReg *>(regs.data(), regs.data() + regCnt);
-
-    const auto *iter = formats.begin();
-
-    for (; iter != formats.end(); iter++) {  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto format = *iter;
-        size_t limit = 0;
-        for (const auto &formatItem : format.GetFormatItem()) {
-            if (formatItem.IsVReg()) {
-                limit = 1U << formatItem.BitWidth();
-                break;
-            }
-        }
-
-        if (std::all_of(registers.begin(), registers.end(), [limit](const VReg *reg) { return reg->IsValid(limit); })) {
-            return format;
-        }
-    }
-
-    ES2PANDA_UNREACHABLE();
-    return *iter;
-}
-
-static size_t GetIRNodeWholeLength(const IRNode *node)
-{
-    Formats formats = node->GetFormats();
-    if (formats.empty()) {
-        return 0;
-    }
-
-    size_t len = 1;
-    const auto format = MatchFormat(node, formats);
-
-    for (auto fi : format.GetFormatItem()) {
-        len += fi.BitWidth() / 8U;
-    }
-
-    return len;
-}
-
-static std::string WholeLine(const lexer::SourceRange &range)
-{
-    auto program = range.start.Program();
-    ES2PANDA_ASSERT(program != nullptr);
-    auto source = program->SourceCode();
-    if (source.Empty()) {
-        return {};
-    }
-
-    ES2PANDA_ASSERT(range.end.index <= source.Length());
-    ES2PANDA_ASSERT(range.end.index >= range.start.index);
-    return source.Substr(range.start.index, range.end.index).EscapeSymbol<util::StringView::Mutf8Encode>();
-}
-
 void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, pandasm::Ins *pandaIns)
 {
     const ir::AstNode *astNode = ins->Node();
@@ -214,17 +156,6 @@ void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, pandasm::Ins *p
 
     auto nodeRange = astNode->Range();
     pandaIns->insDebug.SetLineNumber(nodeRange.start.line + 1U);
-
-    if (cg_->IsDebug()) {
-        size_t insLen = GetIRNodeWholeLength(ins);
-        if (insLen != 0) {
-            pandaIns->insDebug.SetBoundLeft(offset_);
-            pandaIns->insDebug.SetBoundRight(offset_ + insLen);
-        }
-
-        offset_ += insLen;
-        pandaIns->insDebug.SetWholeLine(WholeLine(nodeRange));
-    }
 }
 
 void FunctionEmitter::GenFunctionInstructions(pandasm::Function *func)
