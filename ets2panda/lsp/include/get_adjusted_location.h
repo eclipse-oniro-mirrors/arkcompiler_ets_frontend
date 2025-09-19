@@ -31,24 +31,24 @@ std::optional<ir::AstNode *> GetAdjustedLocation(ir::AstNode *node, ArenaAllocat
 std::optional<ir::AstNode *> GetAdjustedLocationForClass(ir::AstNode *node, ArenaAllocator *allocator);
 std::optional<ir::AstNode *> GetAdjustedLocationForFunction(ir::AstNode *node, ArenaAllocator *allocator);
 std::optional<ir::AstNode *> GetAdjustedLocationForDeclaration(ir::AstNode *node,
-                                                               const ArenaVector<ir::AstNode *> &children,
+                                                               const std::vector<ir::AstNode *> &children,
                                                                ArenaAllocator *allocator);
 std::optional<ir::AstNode *> GetAdjustedLocationForImportDeclaration(ir::AstNode *node,
-                                                                     const ArenaVector<ir::AstNode *> &children);
+                                                                     const std::vector<ir::AstNode *> &children);
 std::optional<ir::AstNode *> GetAdjustedLocationForExportDeclaration(ir::AstNode *node,
-                                                                     const ArenaVector<ir::AstNode *> &children);
+                                                                     const std::vector<ir::AstNode *> &children);
 std::optional<ir::AstNode *> GetAdjustedLocationForHeritageClause(ir::AstNode *node);
 ir::AstNode *GetTouchingPropertyName(es2panda_Context *context, size_t pos);
 
 // Node finding functions
-ir::AstNode *FindFirstIdentifier(ir::AstNode *node, bool skipModifiers, const ArenaVector<ir::AstNode *> &children);
-ir::AstNode *FindFirstExpression(ir::AstNode *node, const ArenaVector<ir::AstNode *> &children);
+ir::AstNode *FindFirstIdentifier(ir::AstNode *node, bool skipModifiers, const std::vector<ir::AstNode *> &children);
+ir::AstNode *FindFirstExpression(ir::AstNode *node, const std::vector<ir::AstNode *> &children);
 ir::AstNode *FindFirstExpressionAfter(ir::AstNode *node, ir::AstNode *after,
-                                      const ArenaVector<ir::AstNode *> &children);
-ir::AstNode *FindNodeOfType(ir::AstNode *node, ir::AstNodeType type, const ArenaVector<ir::AstNode *> &children);
-ir::AstNode *FindTypeReference(ir::AstNode *node, const ArenaVector<ir::AstNode *> &children);
-ir::AstNode *FindTypeParameter(ir::AstNode *node, const ArenaVector<ir::AstNode *> &children);
-ir::AstNode *FindArrayType(ir::AstNode *node, const ArenaVector<ir::AstNode *> &children);
+                                      const std::vector<ir::AstNode *> &children);
+ir::AstNode *FindNodeOfType(ir::AstNode *node, ir::AstNodeType type, const std::vector<ir::AstNode *> &children);
+ir::AstNode *FindTypeReference(ir::AstNode *node, const std::vector<ir::AstNode *> &children);
+ir::AstNode *FindTypeParameter(ir::AstNode *node, const std::vector<ir::AstNode *> &children);
+ir::AstNode *FindArrayType(ir::AstNode *node, const std::vector<ir::AstNode *> &children);
 
 // Node property checkers
 bool IsModifier(const ir::AstNode *node);
@@ -60,7 +60,7 @@ bool IsDeclarationOrModifier(ir::AstNode *node, ir::AstNode *parent);
 ir::AstNode *SkipOuterExpressions(ir::AstNode *node);
 
 // Children collection
-ArenaVector<ir::AstNode *> GetChildren(ir::AstNode *node, ArenaAllocator *allocator);
+std::vector<ir::AstNode *> GetChildren(ir::AstNode *node, ArenaAllocator *allocator);
 
 }  // namespace ark::es2panda::lsp
 #endif  // ES2PANDA_LSP_GET_ADJUSTED_LOCATION_H

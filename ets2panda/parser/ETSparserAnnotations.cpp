@@ -441,7 +441,7 @@ ir::AnnotationUsage *ETSParser::ParseAnnotationUsage()
 
 bool ETSParser::TryParseAnnotations()
 {
-    ArenaVector<ir::AnnotationUsage *> annotations(Allocator()->Adapter());
+    std::vector<ir::AnnotationUsage *> annotations {};
 
     while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
         Lexer()->NextToken();

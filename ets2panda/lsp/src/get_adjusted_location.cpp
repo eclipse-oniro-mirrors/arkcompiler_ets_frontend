@@ -46,9 +46,10 @@ static inline bool IsMirroredSimpleKind(AstNodeType t)
     }
 }
 
-ArenaVector<AstNode *> GetChildren(AstNode *node, ArenaAllocator *allocator)
+std::vector<AstNode *> GetChildren(AstNode *node, [[maybe_unused]] ArenaAllocator *allocator)
 {
-    ArenaVector<AstNode *> children(allocator->Adapter());
+    std::vector<AstNode *> children {};
+
     if (node == nullptr) {
         return children;
     }
@@ -124,7 +125,7 @@ AstNode *SkipOuterExpressions(AstNode *node)
     return node;
 }
 
-AstNode *FindFirstIdentifier(AstNode *node, bool skipModifiers, const ArenaVector<AstNode *> & /*children*/)
+AstNode *FindFirstIdentifier(AstNode *node, bool skipModifiers, const std::vector<AstNode *> & /*children*/)
 {
     if (node == nullptr) {
         return nullptr;
@@ -135,7 +136,7 @@ AstNode *FindFirstIdentifier(AstNode *node, bool skipModifiers, const ArenaVecto
     return node->FindChild([&](AstNode *n) { return n->IsIdentifier() && (!skipModifiers || !IsModifier(n)); });
 }
 
-AstNode *FindFirstExpression(AstNode *node, const ArenaVector<AstNode *> & /*children*/)
+AstNode *FindFirstExpression(AstNode *node, const std::vector<AstNode *> & /*children*/)
 {
     if (node == nullptr) {
         return nullptr;
@@ -146,7 +147,7 @@ AstNode *FindFirstExpression(AstNode *node, const ArenaVector<AstNode *> & /*chi
     return node->FindChild([](AstNode *n) { return n->IsExpression(); });
 }
 
-AstNode *FindFirstExpressionAfter(AstNode *node, AstNode *after, const ArenaVector<AstNode *> & /*children*/)
+AstNode *FindFirstExpressionAfter(AstNode *node, AstNode *after, const std::vector<AstNode *> & /*children*/)
 {
     if (node == nullptr) {
         return nullptr;
@@ -170,7 +171,7 @@ AstNode *FindFirstExpressionAfter(AstNode *node, AstNode *after, const ArenaVect
     return found;
 }
 
-AstNode *FindNodeOfType(AstNode *node, AstNodeType type, const ArenaVector<AstNode *> & /*children*/)
+AstNode *FindNodeOfType(AstNode *node, AstNodeType type, const std::vector<AstNode *> & /*children*/)
 {
     if (node == nullptr) {
         return nullptr;
@@ -181,7 +182,7 @@ AstNode *FindNodeOfType(AstNode *node, AstNodeType type, const ArenaVector<AstNo
     return node->FindChild([&](AstNode *n) { return n->Type() == type; });
 }
 
-AstNode *FindTypeReference(AstNode *node, const ArenaVector<AstNode *> & /*children*/)
+AstNode *FindTypeReference(AstNode *node, const std::vector<AstNode *> & /*children*/)
 {
     if (node == nullptr) {
         return nullptr;
@@ -192,7 +193,7 @@ AstNode *FindTypeReference(AstNode *node, const ArenaVector<AstNode *> & /*child
     return node->FindChild([](AstNode *n) { return n->IsTSTypeReference(); });
 }
 
-AstNode *FindTypeParameter(AstNode *node, const ArenaVector<AstNode *> & /*children*/)
+AstNode *FindTypeParameter(AstNode *node, const std::vector<AstNode *> & /*children*/)
 {
     if (node == nullptr) {
         return nullptr;
@@ -203,7 +204,7 @@ AstNode *FindTypeParameter(AstNode *node, const ArenaVector<AstNode *> & /*child
     return node->FindChild([](AstNode *n) { return n->IsTSTypeParameterDeclaration(); });
 }
 
-AstNode *FindArrayType(AstNode *node, const ArenaVector<AstNode *> & /*children*/)
+AstNode *FindArrayType(AstNode *node, const std::vector<AstNode *> & /*children*/)
 {
     if (node == nullptr) {
         return nullptr;
@@ -238,7 +239,7 @@ std::optional<AstNode *> GetAdjustedLocationForClass(AstNode *node, ArenaAllocat
     if (!node->IsClassDeclaration() && !node->IsClassExpression()) {
         return std::nullopt;
     }
-    ArenaVector<AstNode *> dummy(allocator->Adapter());
+    std::vector<AstNode *> dummy {};
     AstNode *id = FindFirstIdentifier(node, false, dummy);
     if (id != nullptr) {
         return id;
@@ -277,12 +278,12 @@ std::optional<AstNode *> GetAdjustedLocationForFunction(AstNode *node, ArenaAllo
     }
     // CC-OFFNXT(G.NAM.03-CPP) project code style
     constexpr bool K_SKIP_MODIFIERS = false;
-    ArenaVector<AstNode *> dummy(allocator->Adapter());
+    std::vector<AstNode *> dummy {};
     AstNode *id = FindFirstIdentifier(fn, K_SKIP_MODIFIERS, dummy);
     return (id != nullptr) ? std::optional<AstNode *> {id} : std::nullopt;
 }
 
-std::optional<AstNode *> GetAdjustedLocationForDeclaration(AstNode *node, const ArenaVector<AstNode *> &children,
+std::optional<AstNode *> GetAdjustedLocationForDeclaration(AstNode *node, const std::vector<AstNode *> &children,
                                                            ArenaAllocator *allocator)
 {
     switch (node->Type()) {
@@ -307,7 +308,7 @@ std::optional<AstNode *> GetAdjustedLocationForDeclaration(AstNode *node, const 
     return std::nullopt;
 }
 
-std::optional<AstNode *> GetAdjustedLocationForImportDeclaration(AstNode *node, const ArenaVector<AstNode *> &children)
+std::optional<AstNode *> GetAdjustedLocationForImportDeclaration(AstNode *node, const std::vector<AstNode *> &children)
 {
     if (!node->IsImportDeclaration()) {
         return std::nullopt;
@@ -324,7 +325,7 @@ std::optional<AstNode *> GetAdjustedLocationForImportDeclaration(AstNode *node, 
     return std::make_optional(spec);
 }
 
-std::optional<AstNode *> GetAdjustedLocationForExportDeclaration(AstNode *node, const ArenaVector<AstNode *> &children)
+std::optional<AstNode *> GetAdjustedLocationForExportDeclaration(AstNode *node, const std::vector<AstNode *> &children)
 {
     if (!node->IsExportAllDeclaration()) {
         return std::nullopt;
@@ -354,7 +355,7 @@ std::optional<AstNode *> GetAdjustedLocationForHeritageClause(AstNode *node)
 }
 
 static std::optional<AstNode *> TryTSAsExpression(AstNode *node, AstNode *parent,
-                                                  const ArenaVector<AstNode *> &parentChildren)
+                                                  const std::vector<AstNode *> &parentChildren)
 {
     if (node == nullptr || parent == nullptr) {
         return std::nullopt;
@@ -379,7 +380,7 @@ static std::optional<AstNode *> TryTSAsExpression(AstNode *node, AstNode *parent
 }
 
 static std::optional<AstNode *> TryTSImportType(AstNode *node, AstNode *parent,
-                                                const ArenaVector<AstNode *> &parentChildren, ArenaAllocator *allocator)
+                                                const std::vector<AstNode *> &parentChildren, ArenaAllocator *allocator)
 {
     if (node == nullptr || parent == nullptr) {
         return std::nullopt;
@@ -401,7 +402,7 @@ static std::optional<AstNode *> TryTSImportType(AstNode *node, AstNode *parent,
 }
 
 static std::optional<AstNode *> TryTSHeritageAndInfer(AstNode *node, AstNode *parent,
-                                                      const ArenaVector<AstNode *> &parentChildren)
+                                                      const std::vector<AstNode *> &parentChildren)
 {
     if (node == nullptr || parent == nullptr) {
         return std::nullopt;
@@ -426,7 +427,7 @@ static std::optional<AstNode *> TryTSHeritageAndInfer(AstNode *node, AstNode *pa
     return std::nullopt;
 }
 
-static std::optional<AstNode *> TryTypeOperatorFamily(AstNode *parent, const ArenaVector<AstNode *> &parentChildren)
+static std::optional<AstNode *> TryTypeOperatorFamily(AstNode *parent, const std::vector<AstNode *> &parentChildren)
 {
     if (parent == nullptr) {
         return std::nullopt;
@@ -450,7 +451,7 @@ static std::optional<AstNode *> TryTypeOperatorFamily(AstNode *parent, const Are
 }
 
 static std::optional<AstNode *> TryDeclaration(AstNode *node, AstNode *parent,
-                                               const ArenaVector<AstNode *> &parentChildren, ArenaAllocator *allocator)
+                                               const std::vector<AstNode *> &parentChildren, ArenaAllocator *allocator)
 {
     if (!IsDeclarationOrModifier(node, parent)) {
         return std::nullopt;
@@ -459,7 +460,7 @@ static std::optional<AstNode *> TryDeclaration(AstNode *node, AstNode *parent,
 }
 
 static std::optional<AstNode *> TryExpressions(AstNode *node, AstNode *parent,
-                                               const ArenaVector<AstNode *> &parentChildren, ArenaAllocator *allocator)
+                                               const std::vector<AstNode *> &parentChildren, ArenaAllocator *allocator)
 {
     if (auto asExpr = TryTSAsExpression(node, parent, parentChildren)) {
         return asExpr;
@@ -476,7 +477,7 @@ static std::optional<AstNode *> TryExpressions(AstNode *node, AstNode *parent,
     return std::nullopt;
 }
 
-static std::optional<AstNode *> TryImportsAndExports(AstNode *parent, const ArenaVector<AstNode *> &parentChildren)
+static std::optional<AstNode *> TryImportsAndExports(AstNode *parent, const std::vector<AstNode *> &parentChildren)
 {
     if (auto importDecl = GetAdjustedLocationForImportDeclaration(parent, parentChildren)) {
         return importDecl;
@@ -489,7 +490,7 @@ static std::optional<AstNode *> TryImportsAndExports(AstNode *parent, const Aren
     return std::nullopt;
 }
 
-static std::optional<AstNode *> TryModuleOrVariable(AstNode *parent, const ArenaVector<AstNode *> &parentChildren)
+static std::optional<AstNode *> TryModuleOrVariable(AstNode *parent, const std::vector<AstNode *> &parentChildren)
 {
     if (parent->IsTSExternalModuleReference()) {
         if (AstNode *expr = FindFirstExpression(parent, parentChildren)) {
@@ -510,7 +511,7 @@ static std::optional<AstNode *> TryModuleOrVariable(AstNode *parent, const Arena
 }
 
 static std::optional<AstNode *> TryConvenienceExpressions(AstNode *node, AstNode *parent,
-                                                          const ArenaVector<AstNode *> &parentChildren)
+                                                          const std::vector<AstNode *> &parentChildren)
 {
     if (node == nullptr || parent == nullptr) {
         return std::nullopt;
@@ -562,7 +563,7 @@ std::optional<AstNode *> GetAdjustedLocation(AstNode *node, ArenaAllocator *allo
         return node;
     }
 
-    ArenaVector<AstNode *> parentChildren = GetChildren(parent, allocator);
+    std::vector<AstNode *> parentChildren = GetChildren(parent, allocator);
     if (auto r = TryDeclaration(node, parent, parentChildren, allocator)) {
         return r;
     }

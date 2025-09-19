@@ -323,6 +323,18 @@ ir::Expression *ETSParser::CreateFormattedExpression(std::string_view const sour
     return CreateFormattedExpression(sourceCode, insertingNodes);
 }
 
+ir::Expression *ETSParser::CreateFormattedExpression(std::string_view const sourceCode,
+                                                     std::vector<ir::Expression *> &args)
+{
+    std::vector<ir::AstNode *> insertingNodes {};
+    insertingNodes.reserve(args.size());
+    for (auto it : args) {
+        ProcessFormattedArg(insertingNodes, it);
+    }
+
+    return CreateFormattedExpression(sourceCode, insertingNodes);
+}
+
 ir::Statement *ETSParser::CreateFormattedStatement(std::string_view const sourceCode,
                                                    std::vector<ir::AstNode *> &insertingNodes)
 {

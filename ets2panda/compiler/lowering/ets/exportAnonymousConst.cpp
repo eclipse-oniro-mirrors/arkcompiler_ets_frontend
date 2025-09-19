@@ -109,7 +109,7 @@ static void HandleExportDefaultInExportNamedDecl(public_lib::Context *const ctx,
     auto *exportNamedDeclaration = (*iterator)->AsExportNamedDeclaration();
     auto oldSpecifiers = exportNamedDeclaration->Specifiers();
     ArenaVector<ir::ExportSpecifier *> newSpecifiers(allocator->Adapter());
-    ArenaVector<ir::ExportNamedDeclaration *> exportDefaulNamedDeclarations(allocator->Adapter());
+    std::vector<ir::ExportNamedDeclaration *> exportDefaulNamedDeclarations {};
 
     for (auto *specifier : oldSpecifiers) {
         if (specifier->IsDefault()) {

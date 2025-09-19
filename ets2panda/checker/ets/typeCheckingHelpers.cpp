@@ -1536,7 +1536,7 @@ bool ETSChecker::CheckLambdaTypeAnnotation(ir::ETSParameterExpression *param,
 
     // Preserve actual lambda types
     ir::ScriptFunction *const lambda = arrowFuncExpr->Function();
-    ArenaVector<ir::TypeNode *> lambdaParamTypes {ProgramAllocator()->Adapter()};
+    std::vector<ir::TypeNode *> lambdaParamTypes {};
     for (auto *const lambdaParam : lambda->Params()) {
         lambdaParamTypes.emplace_back(lambdaParam->AsETSParameterExpression()->Ident()->TypeAnnotation());
     }

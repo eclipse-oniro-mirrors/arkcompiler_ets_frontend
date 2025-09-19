@@ -194,7 +194,7 @@ static void ConvertRestArguments(checker::ETSChecker *const checker, const ir::E
 static void HandleUnionTypeInForOf(compiler::ETSGen *etsg, checker::Type const *const exprType,
                                    const ir::ForOfStatement *st, VReg objReg, VReg *countReg)
 {
-    ArenaVector<Label *> labels(etsg->Allocator()->Adapter());
+    std::vector<Label *> labels {};
 
     for (auto it : exprType->AsETSUnionType()->ConstituentTypes()) {
         labels.push_back(etsg->AllocLabel());

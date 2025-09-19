@@ -303,7 +303,6 @@ public:
     {
         CallImpl<InitobjShort, Initobj, InitobjRange>(node, signature, arguments);
     }
-
     bool IsDevirtualizedSignature(const checker::Signature *signature)
     {
         ES2PANDA_ASSERT(signature != nullptr && !signature->HasSignatureFlag(checker::SignatureFlags::STATIC));

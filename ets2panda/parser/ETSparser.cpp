@@ -286,7 +286,7 @@ ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseDefaultSources(std::stri
 }
 
 void ETSParser::AddDirectImportsToDirectExternalSources(
-    const ArenaVector<util::StringView> &directImportsFromMainSource, parser::Program *const newProg) const
+    const std::vector<util::StringView> &directImportsFromMainSource, parser::Program *const newProg) const
 {
     if (std::find_if(directImportsFromMainSource.begin(), directImportsFromMainSource.end(),
                      [newProg](const util::StringView &sv) { return sv == newProg->AbsoluteName(); }) ==
@@ -309,7 +309,7 @@ void ETSParser::AddDirectImportsToDirectExternalSources(
 
 void ETSParser::ParseParseListElement(const util::ImportPathManager::ParseInfo &parseListElem,
                                       std::string_view const extSrc,
-                                      const ArenaVector<util::StringView> &directImportsFromMainSource,
+                                      const std::vector<util::StringView> &directImportsFromMainSource,
                                       std::vector<Program *> *programs)
 {
     const auto &importData = parseListElem.importData;
@@ -420,7 +420,7 @@ std::optional<std::string_view> ETSParser::GetDeclarationSource(std::string &&fi
 }
 
 std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,
-                                                     ArenaVector<util::StringView> &directImportsFromMainSource)
+                                                     std::vector<util::StringView> &directImportsFromMainSource)
 {
     std::vector<Program *> programs {};
 
@@ -473,7 +473,7 @@ std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPat
 std::vector<Program *> ETSParser::ParseSources(bool firstSource)
 {
     auto &parseList = importPathManager_->ParseList();
-    ArenaVector<util::StringView> directImportsFromMainSource(Allocator()->Adapter());
+    std::vector<util::StringView> directImportsFromMainSource {};
     if (firstSource) {
         // NOLINTNEXTLINE(modernize-loop-convert)
         for (size_t idx = 0; idx < parseList.size(); idx++) {

@@ -135,7 +135,7 @@ DocumentHighlights GetDocumentHighlightsImpl(es2panda_Context *context, size_t p
 void GetReferenceLocationAtPositionImpl(FileNodeInfo fileNodeInfo, es2panda_Context *referenceFileContext,
                                         ReferenceLocationList *list);
 void RemoveFromFiles(std::vector<std::string> &files, const std::vector<std::string> &autoGenerateFolders);
-ir::AstNode *FindRightToken(const size_t pos, const ArenaVector<ir::AstNode *> &nodes);
+ir::AstNode *FindRightToken(const size_t pos, const std::vector<ir::AstNode *> &nodes);
 std::string GetOwnerId(ir::AstNode *node);
 std::string GetIdentifierName(ir::AstNode *node);
 bool NodeHasTokens(const ir::AstNode *node);
