@@ -5072,7 +5072,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return true;
     }
 
-    const typeNode = this.tsTypeChecker.typeToTypeNode(type, undefined, ts.NodeBuilderFlags.None);
+    const typeNode = this.getTypeNodeFromType(type);
 
     if (this.tsUtils.isArkTSCollectionsArrayLikeType(type)) {
       return this.tsUtils.isNumberLikeType(argType);
@@ -5091,6 +5091,24 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       // we allow EsObject here beacuse it is reported later using FaultId.EsObjectType
       TsUtils.isEsValueType(typeNode)
     );
+  }
+
+  getTypeNodeFromType(type: ts.Type): ts.TypeNode | undefined {
+    let typeNode: ts.TypeNode | undefined;
+
+    try {
+      typeNode = this.tsTypeChecker.typeToTypeNode(type, undefined, ts.NodeBuilderFlags.None);
+    } catch (err) {
+
+      /*
+       * NOTE: we should log this error in my opinion, but if we can't get the typeNode from the Type, it should be fine,
+       * this typeNode variable only used for checking of ES_VALUE, if we can't get the typeNode,
+       * then it cannot be ES_VALUE type, all the tests are intact.
+       */
+      void err;
+    }
+
+    return typeNode;
   }
 
   private handleElementAccessExpression(node: ts.Node): void {
