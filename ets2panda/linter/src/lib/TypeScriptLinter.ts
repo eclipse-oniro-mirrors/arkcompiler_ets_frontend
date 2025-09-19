@@ -542,9 +542,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     [ts.SyntaxKind.ReturnStatement, this.handleReturnStatement],
     [ts.SyntaxKind.Decorator, this.handleDecorator],
     [ts.SyntaxKind.ImportType, this.handleImportType],
-    [ts.SyntaxKind.AsteriskAsteriskToken, this.handleExponentOperation],
     [ts.SyntaxKind.VoidExpression, this.handleVoidExpression],
-    [ts.SyntaxKind.AsteriskAsteriskEqualsToken, this.handleExponentOperation],
     [ts.SyntaxKind.RegularExpressionLiteral, this.handleRegularExpressionLiteral],
     [ts.SyntaxKind.DebuggerStatement, this.handleDebuggerStatement],
     [ts.SyntaxKind.SwitchStatement, this.handleSwitchStatement],
@@ -5608,6 +5606,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (callSignatures.length === 0 || BUILTIN_DISABLE_CALLSIGNATURE.includes(node.getText())) {
       return;
     }
+
     const isSameApi = callSignatures.some((callSignature) => {
       const callSignatureDecl = callSignature.getDeclaration();
       if (!ts.isCallSignatureDeclaration(callSignatureDecl)) {
@@ -5887,26 +5886,69 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private checkRestrictedAPICall(node: ts.CallExpression): void {
-    if (TypeScriptLinter.isReflectAPICall(node)) {
+    if (!this.options.arkts2) {
+      return;
+    }
+    if (this.isReflectAPICall(node)) {
       this.incrementCounters(node.parent, FaultID.InteropCallReflect);
     }
   }
 
-  static isReflectAPICall(callExpr: ts.CallExpression): boolean {
-    if (ts.isPropertyAccessExpression(callExpr.expression)) {
-      const expr = callExpr.expression.expression;
-      if (ts.isIdentifier(expr) && expr.text === REFLECT_LITERAL) {
-        return true;
+  isReflectAPICall(callExpr: ts.CallExpression): boolean {
+    const callee = callExpr.expression;
+    if (!ts.isPropertyAccessExpression(callee) && !ts.isElementAccessExpression(callee)) {
+      return false;
+    }
+
+    if (!ts.isIdentifier(callee.expression)) {
+      return false;
+    }
+    if (callee.expression.text !== REFLECT_LITERAL) {
+      return false;
+    }
+    // check if the first argument of the callExpression is declared in old arkts
+    return !this.isIdentifierFromArkTs2(callExpr.arguments[0]);
+  }
+
+  private isIdentifierFromArkTs2(node: ts.Node | undefined): boolean {
+    if (!node) {
+      return false;
+    }
+
+    let ident: ts.Identifier | undefined;
+    if (ts.isIdentifier(node)) {
+      ident = node;
+    }
+
+    for (const child of node.getChildren()) {
+      if (ts.isIdentifier(child)) {
+        ident = child;
+        break;
       }
     }
 
-    if (ts.isElementAccessExpression(callExpr.expression)) {
-      const expr = callExpr.expression.expression;
-      if (ts.isIdentifier(expr) && expr.text === REFLECT_LITERAL) {
-        return true;
-      }
+    if (!ident) {
+      return false;
     }
-    return false;
+
+    const typeSym = this.tsTypeChecker.getTypeAtLocation(ident).getSymbol();
+    const declarations = typeSym?.getDeclarations();
+
+    if (!declarations) {
+      return false;
+    }
+
+    const declaration = declarations[0];
+    if (!declaration) {
+      return false;
+    }
+
+    const sourceFile = declaration.getSourceFile();
+    if (sourceFile.fileName.endsWith(EXTNAME_D_TS)) {
+      return false;
+    }
+
+    return this.tsUtils.isArkts12File(sourceFile);
   }
 
   private shouldCheckForForbiddenAPI(declaration: ts.SignatureDeclaration | ts.JSDocSignature): boolean {
@@ -8428,14 +8470,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return false;
   }
 
-  private handleExponentOperation(node: ts.Node): void {
-    if (!this.options.arkts2) {
-      return;
-    }
-    const autofix = this.autofixer?.fixExponent(node.parent);
-    this.incrementCounters(node, FaultID.ExponentOp, autofix);
-  }
-
   private handleNonNullExpression(node: ts.Node): void {
     if (!this.options.arkts2) {
       return;
@@ -9634,34 +9668,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     return hierarchy;
-  }
-
-  private checkArkTSObjectInterop(tsCallExpr: ts.CallExpression): void {
-    const callSignature = this.tsTypeChecker.getResolvedSignature(tsCallExpr);
-    if (!callSignature?.declaration) {
-      return;
-    }
-
-    if (!this.isDeclaredInArkTs2(callSignature)) {
-      return;
-    }
-
-    if (!this.hasObjectParameter(callSignature, tsCallExpr)) {
-      return;
-    }
-
-    const functionSymbol = this.getFunctionSymbol(callSignature.declaration);
-    const functionDeclaration = functionSymbol?.valueDeclaration;
-    if (!functionDeclaration) {
-      return;
-    }
-
-    if (
-      TypeScriptLinter.isFunctionLike(functionDeclaration) &&
-      TypeScriptLinter.containsForbiddenAPI(functionDeclaration)
-    ) {
-      this.incrementCounters(tsCallExpr.parent, FaultID.InteropCallReflect);
-    }
   }
 
   private hasObjectParameter(callSignature: ts.Signature, tsCallExpr: ts.CallExpression): boolean {
@@ -14262,32 +14268,50 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const parentName = type.symbol ?
       this.tsTypeChecker.getFullyQualifiedName(type.symbol) :
       newExpr.expression.getText();
-    if (constructorDeclaration) {
-      const deprecatedApiCheckMap = TypeScriptLinter.updateDeprecatedApiCheckMap(
-        parentName,
-        constructorDeclaration.parameters as ts.NodeArray<ts.ParameterDeclaration>,
-        SDK_COMMON_VOID,
-        path.basename(constructorDeclaration.getSourceFile().fileName + '')
-      );
-      this.processApiNodeDeprecatedApi(
-        SDK_COMMON_CONSTRUCTOR,
-        newExpr.expression,
-        deprecatedApiCheckMap,
-        undefined,
-        SDK_COMMON_TYPE
-      );
-      if (BUILTIN_CALLSIGNATURE_NEWCTOR.includes(newExpr.expression.getText())) {
-        this.handleNewExpressionForBuiltNewCtor(newExpr.expression, deprecatedApiCheckMap);
-      } else {
-        this.processApiNodeDeprecatedApi(
-          BUILTIN_CONSTRUCTOR_API_NAME,
-          newExpr.expression,
-          deprecatedApiCheckMap,
-          undefined,
-          BUILTIN_TYPE
-        );
-      }
+    if (!constructorDeclaration) {
+      return;
     }
+
+    const deprecatedApiCheckMap = TypeScriptLinter.updateDeprecatedApiCheckMap(
+      parentName,
+      constructorDeclaration.parameters as ts.NodeArray<ts.ParameterDeclaration>,
+      SDK_COMMON_VOID,
+      path.basename(constructorDeclaration.getSourceFile().fileName + '')
+    );
+
+    this.processApiNodeDeprecatedApi(
+      SDK_COMMON_CONSTRUCTOR,
+      newExpr.expression,
+      deprecatedApiCheckMap,
+      undefined,
+      SDK_COMMON_TYPE
+    );
+
+    if (BUILTIN_CALLSIGNATURE_NEWCTOR.includes(newExpr.expression.getText())) {
+      this.handleNewExpressionForBuiltNewCtor(newExpr.expression, deprecatedApiCheckMap);
+      return;
+    }
+
+    if (this.skipProccesingDeprecatedApi(newExpr.expression)) {
+      return;
+    }
+
+    this.processApiNodeDeprecatedApi(
+      BUILTIN_CONSTRUCTOR_API_NAME,
+      newExpr.expression,
+      deprecatedApiCheckMap,
+      undefined,
+      BUILTIN_TYPE
+    );
+  }
+
+  private skipProccesingDeprecatedApi(expr: ts.Expression): boolean {
+    void this;
+    if (!ts.isIdentifier(expr)) {
+      return false;
+    }
+    const ident = expr;
+    return BUILTIN_DISABLE_CALLSIGNATURE.includes(ident.text);
   }
 
   private handleNewExpressionForBuiltNewCtor(

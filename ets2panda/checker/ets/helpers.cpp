@@ -443,7 +443,10 @@ Type *ETSChecker::ApplyUnaryOperatorPromotion(ir::Expression *expr, Type *type, 
             [[fallthrough]];
         case TypeFlag::INT:
             return GlobalIntBuiltinType();
-
+        case TypeFlag::LONG:
+            return GlobalLongBuiltinType();
+        case TypeFlag::DOUBLE:
+            return GlobalDoubleBuiltinType();
         default:
             break;
     }
@@ -1877,12 +1880,11 @@ void ETSChecker::SetPropertiesForModuleObject(checker::ETSObjectType *moduleObjT
             RemoveStatus(CheckerStatus::IN_EXTERNAL);
         }
         auto savedProgram = Program();
+        auto topScopeCtx = varbinder::TopScopeContext(VarBinder(), program->GlobalScope());
         VarBinder()->AsETSBinder()->SetProgram(program);
-        VarBinder()->AsETSBinder()->ResetTopScope(program->GlobalScope());
         program->SetASTChecked();
         program->Ast()->Check(this);
         VarBinder()->AsETSBinder()->SetProgram(savedProgram);
-        VarBinder()->AsETSBinder()->ResetTopScope(savedProgram->GlobalScope());
     }
 
     BindingsModuleObjectAddProperty<checker::PropertyType::STATIC_FIELD>(

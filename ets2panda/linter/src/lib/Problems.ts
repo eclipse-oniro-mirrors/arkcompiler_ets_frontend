@@ -147,7 +147,6 @@ export enum FaultID {
   MathPow,
   InvalidAbstractOverrideReturnType,
   VoidOperator,
-  ExponentOp,
   RegularExpressionLiteral,
   ArgumentsObject,
   LimitedVoidType,

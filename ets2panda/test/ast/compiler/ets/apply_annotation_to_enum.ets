@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,18 +13,7 @@
  * limitations under the License.
  */
 
-class A {
-  internal x : int;
-  internal y : int;
+@interface MyAnnotation {}
 
-  internal constructor(x : int, y : int) {
-    this.x = x;
-    this.y = y;
-  }
-  
-  internal foo(): void {}
-}
-
-function main(): void {
-  let instance : A = new A(2, 3);
-}
+@MyAnnotation
+enum Color {Red, Green, Blue}

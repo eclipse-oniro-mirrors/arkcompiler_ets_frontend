@@ -698,6 +698,9 @@ ir::MethodDefinition *ETSChecker::CreateNullishAccessor(ir::MethodDefinition *co
     function->SetScope(functionScope);
     paramScope->BindNode(function);
     functionScope->BindNode(function);
+    if (!function->IsAbstract()) {
+        VarBinder()->AsETSBinder()->AddCompilableFunction(function);
+    }
 
     if (function->IsGetter()) {
         auto *propTypeAnn = function->ReturnTypeAnnotation();

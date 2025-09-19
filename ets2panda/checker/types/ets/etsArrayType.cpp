@@ -84,22 +84,6 @@ void ETSArrayType::Identical(TypeRelation *relation, Type *other)
     }
 }
 
-static bool IsFixedArrayDeclaration(ir::AstNode *node)
-{
-    return node != nullptr && (node->IsArrayExpression() || node->IsETSNewArrayInstanceExpression() ||
-                               node->IsETSNewMultiDimArrayInstanceExpression());
-}
-
-bool ETSArrayType::AssignmentSource(TypeRelation *relation, Type *target)
-{
-    if (target->IsETSResizableArrayType() && IsFixedArrayDeclaration(relation->GetNode())) {
-        relation->IsAssignableTo(element_, target->AsETSResizableArrayType()->ElementType());
-        // For lowering purpose
-        relation->GetNode()->SetTsType(target);
-    }
-    return relation->IsTrue();
-}
-
 void ETSArrayType::AssignmentTarget(TypeRelation *relation, Type *source)
 {
     if (source->HasTypeFlag(TypeFlag::READONLY)) {

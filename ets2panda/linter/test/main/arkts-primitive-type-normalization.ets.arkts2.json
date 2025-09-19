@@ -105,16 +105,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 13,
-            "endLine": 19,
-            "endColumn": 19,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 20,
             "column": 1,
             "endLine": 20,
@@ -142,16 +132,6 @@
             "problem": "CreatingPrimitiveTypes",
             "suggest": "",
             "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 21,
-            "column": 5,
-            "endLine": 21,
-            "endColumn": 11,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {

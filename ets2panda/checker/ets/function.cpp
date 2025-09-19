@@ -160,7 +160,7 @@ bool ETSChecker::EnhanceSubstitutionForUnion(const ArenaVector<Type *> &typePara
     }
     auto *const argUn = argumentType->AsETSUnionType();
 
-    ArenaVector<Type *> paramWlist(ProgramAllocator()->Adapter());
+    std::vector<Type *> paramWlist {};
     ArenaVector<Type *> argWlist(ProgramAllocator()->Adapter());
 
     for (auto *pc : paramUn->ConstituentTypes()) {
@@ -1554,7 +1554,7 @@ void ETSChecker::CheckObjectLiteralArguments(Signature *signature, ArenaVector<i
 static bool CollectOverload(checker::ETSChecker *checker, ir::MethodDefinition *method, ETSFunctionType *funcType)
 {
     ir::OverloadInfo &ldInfo = method->GetOverloadInfoForUpdate();
-    ArenaVector<ETSFunctionType *> overloads(checker->ProgramAllocator()->Adapter());
+    std::vector<ETSFunctionType *> overloads {};
 
     for (ir::MethodDefinition *const currentFunc : method->Overloads()) {
         if (currentFunc->IsDeclare() != ldInfo.isDeclare) {

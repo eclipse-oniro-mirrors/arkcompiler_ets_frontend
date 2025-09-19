@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-type RF = (p:RF) => RF
+type RF = (p:string) => number
 
 function main(){
     let v1 = () => {return RF}

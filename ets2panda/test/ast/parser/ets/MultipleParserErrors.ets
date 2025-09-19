@@ -109,7 +109,7 @@ function min(v: double, u: double): double {
 }
 
 class D1 {
-  internal getValue(): int { return 1 }
+  public getValue(): int { return 1 }
 }
 
 function foo<T, U>(a: T, case: U): T {

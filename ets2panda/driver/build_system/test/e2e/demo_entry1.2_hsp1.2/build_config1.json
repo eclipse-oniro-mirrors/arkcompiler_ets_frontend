@@ -22,6 +22,6 @@
 
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
 
-    "dependentModuleList": [],
+    "dependencyModuleList": [],
     "hasMainModule": true
 }

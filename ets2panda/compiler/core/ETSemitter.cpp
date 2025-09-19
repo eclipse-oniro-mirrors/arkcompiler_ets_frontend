@@ -864,7 +864,7 @@ void ETSEmitter::ProcessArrayElement(const ir::Expression *elem, std::vector<pan
     }
 }
 
-LiteralArrayVector ETSEmitter::CreateLiteralArray(std::string &baseName, const ir::Expression *array)
+LiteralArrayVector ETSEmitter::CreateLiteralArray(std::string &baseName, [[maybe_unused]] const ir::Expression *array)
 {
     LiteralArrayVector result;
     std::vector<pandasm::LiteralArray::Literal> literals;

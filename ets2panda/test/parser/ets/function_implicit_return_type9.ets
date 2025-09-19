@@ -39,7 +39,7 @@ function main()
    let y = fun(0);
    let z = fun(-1);
 
-   let cons = new Console;
+   let cons = Console.getInstance();
    cons.print("x = " + x + "\n");
    cons.print("y = " + y + "\n");
    cons.print("z = " + z + "\n");

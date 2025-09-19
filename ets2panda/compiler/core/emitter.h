@@ -94,7 +94,6 @@ protected:
 private:
     const CodeGen *cg_;
     ProgramElement *programElement_;
-    size_t offset_ {0};
 };
 
 class Emitter {

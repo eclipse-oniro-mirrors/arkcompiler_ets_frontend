@@ -17,6 +17,7 @@
 #define ES2PANDA_IR_TS_ENUM_DECLARATION_H
 
 #include "ir/statement.h"
+#include "ir/annotationAllowed.h"
 #include "ir/statements/annotationUsage.h"
 #include "varbinder/scope.h"
 
@@ -28,7 +29,7 @@ namespace ark::es2panda::ir {
 class Identifier;
 class TSEnumMember;
 
-class TSEnumDeclaration : public TypedStatement {
+class TSEnumDeclaration : public AnnotationAllowed<TypedStatement> {
 public:
     // NOLINTBEGIN(cppcoreguidelines-pro-type-member-init)
     struct ConstructorFlags {
@@ -40,7 +41,7 @@ public:
 
     explicit TSEnumDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *key,
                                ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, Language lang)
-        : TypedStatement(AstNodeType::TS_ENUM_DECLARATION),
+        : AnnotationAllowed<TypedStatement>(AstNodeType::TS_ENUM_DECLARATION, allocator),
           key_(key),
           typeNode_(nullptr),
           members_(std::move(members)),
@@ -59,7 +60,7 @@ public:
     explicit TSEnumDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *key,
                                ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, ir::TypeNode *typeNode,
                                Language lang)
-        : TypedStatement(AstNodeType::TS_ENUM_DECLARATION),
+        : AnnotationAllowed<TypedStatement>(AstNodeType::TS_ENUM_DECLARATION, allocator),
           key_(key),
           typeNode_(typeNode),
           members_(std::move(members)),
@@ -79,7 +80,7 @@ public:
     explicit TSEnumDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *key,
                                ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, Language lang,
                                AstNodeHistory *history)
-        : TypedStatement(AstNodeType::TS_ENUM_DECLARATION),
+        : AnnotationAllowed<TypedStatement>(AstNodeType::TS_ENUM_DECLARATION, allocator),
           key_(key),
           typeNode_(nullptr),
           members_(std::move(members)),

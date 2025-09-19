@@ -151,7 +151,6 @@ faultDesc[FaultID.MathPow] = 'Exponent call';
 faultDesc[FaultID.InvalidAbstractOverrideReturnType] = 'Missing return type on abstract method';
 faultDesc[FaultID.IncompationbleFunctionType] = 'Incompationble function type';
 faultDesc[FaultID.VoidOperator] = 'Void operator';
-faultDesc[FaultID.ExponentOp] = 'Exponent operation';
 faultDesc[FaultID.RegularExpressionLiteral] = 'Regex literals';
 faultDesc[FaultID.ArgumentsObject] = 'Special arguments object inside functions';
 faultDesc[FaultID.LimitedVoidType] = 'Limited void type';

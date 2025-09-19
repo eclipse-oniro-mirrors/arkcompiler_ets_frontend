@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-/* @@ label */interface Interface {
+interface Interface {
     instance_field(): void {
         return
     }
@@ -34,4 +34,5 @@ function main() {
     let d = new Derived
 }
 
-/* @@@ label Error TypeError: Cannot inherit from interface Interface because field instance_field is inherited with a different declaration type  */
+/* @@? 16:1 Error TypeError: Cannot inherit from interface Interface because method instance_field is inherited with a different declaration type */
+/* @@? 30:5 Error TypeError: Method instance_field(<property>instance_field: Double): void in Derived not overriding any method */

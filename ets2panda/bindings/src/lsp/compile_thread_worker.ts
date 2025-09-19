@@ -32,6 +32,8 @@ function compileExternalProgram(jobInfo: JobInfo): void {
   }
   const source = fs.readFileSync(jobInfo.filePath, 'utf8').replace(/\r\n/g, '\n');
   let context = lspDriverHelper.createCtx(source, jobInfo.filePath, config, jobInfo.globalContextPtr, true);
+  PluginDriver.getInstance().getPluginContext().setCodingFilePath(jobInfo.filePath);
+  PluginDriver.getInstance().getPluginContext().setProjectConfig(config);
   PluginDriver.getInstance().getPluginContext().setContextPtr(context);
   lspDriverHelper.proceedToState(context, Es2pandaContextState.ES2PANDA_STATE_PARSED);
   PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);

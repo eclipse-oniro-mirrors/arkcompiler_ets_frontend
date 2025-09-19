@@ -683,7 +683,7 @@ void TSChecker::CheckAllCodePathsInNonVoidFunctionReturnOrThrow(ir::ScriptFuncti
 }
 
 ArgRange TSChecker::GetArgRange(const ArenaVector<Signature *> &signatures,
-                                ArenaVector<Signature *> *potentialSignatures, uint32_t callArgsSize,
+                                std::vector<Signature *> *potentialSignatures, uint32_t callArgsSize,
                                 bool *haveSignatureWithRest)
 {
     uint32_t minArg = UINT32_MAX;
@@ -752,7 +752,7 @@ Type *TSChecker::ResolveCallOrNewExpression(const ArenaVector<Signature *> &sign
         ThrowTypeError("This expression is not callable.", errPos);
     }
 
-    ArenaVector<checker::Signature *> potentialSignatures(Allocator()->Adapter());
+    std::vector<checker::Signature *> potentialSignatures {};
     bool haveSignatureWithRest = false;
 
     auto argRange = GetArgRange(signatures, &potentialSignatures, arguments.size(), &haveSignatureWithRest);

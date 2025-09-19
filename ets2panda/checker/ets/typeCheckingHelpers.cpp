@@ -805,6 +805,12 @@ bool ETSChecker::IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *t
         return true;
     };
 
+    if (typeAliasNode->TypeAnnotation()->IsETSFunctionType() &&
+        typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->IsETSTypeReference()) {
+        isAllowedRerursiveType &= typeAliasDeclarationCheck(
+            typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->AsETSTypeReference()->Part());
+    }
+
     if (typeAliasNode->TypeAnnotation()->IsETSTypeReference()) {
         isAllowedRerursiveType &=
             typeAliasDeclarationCheck(typeAliasNode->TypeAnnotation()->AsETSTypeReference()->Part());
@@ -834,15 +840,14 @@ Type *ETSChecker::GetTypeFromTypeAliasReference(varbinder::Variable *var)
     TypeStackElement tse(this, aliasTypeNode, {{diagnostic::CYCLIC_ALIAS}}, aliasTypeNode->Start(), isAllowedRecursion);
 
     if (tse.HasTypeError()) {
-        var->SetTsType(GlobalTypeError());
-        return GlobalTypeError();
+        return var->SetTsType(GlobalTypeError());
     }
 
     auto *typeAliasType = tse.GetElementType();
 
     if (typeAliasType != nullptr) {
         typeAliasType->AsETSTypeAliasType()->SetRecursive();
-        return typeAliasType;
+        return var->SetTsType(typeAliasType);
     }
 
     typeAliasType = CreateETSTypeAliasType(aliasTypeNode->Id()->Name(), aliasTypeNode);
@@ -860,8 +865,7 @@ Type *ETSChecker::GetTypeFromTypeAliasReference(varbinder::Variable *var)
     Type *targetType = aliasTypeNode->TypeAnnotation()->GetType(this);
     typeAliasType->AsETSTypeAliasType()->SetTargetType(targetType);
 
-    var->SetTsType(targetType);
-    return targetType;
+    return var->SetTsType(targetType);
 }
 
 Type *ETSChecker::GetTypeFromInterfaceReference(varbinder::Variable *var)
@@ -1532,7 +1536,7 @@ bool ETSChecker::CheckLambdaTypeAnnotation(ir::ETSParameterExpression *param,
 
     // Preserve actual lambda types
     ir::ScriptFunction *const lambda = arrowFuncExpr->Function();
-    ArenaVector<ir::TypeNode *> lambdaParamTypes {ProgramAllocator()->Adapter()};
+    std::vector<ir::TypeNode *> lambdaParamTypes {};
     for (auto *const lambdaParam : lambda->Params()) {
         lambdaParamTypes.emplace_back(lambdaParam->AsETSParameterExpression()->Ident()->TypeAnnotation());
     }

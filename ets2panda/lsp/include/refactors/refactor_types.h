@@ -21,6 +21,7 @@
 #include "../user_preferences.h"
 #include "../types.h"
 #include "es2panda.h"
+#include "lsp/include/services/text_change/text_change_context.h"
 #include <string>
 #include <string_view>
 #include <vector>
@@ -49,8 +50,9 @@ struct TextRange {
 };
 
 struct RefactorContext {
-    ark::es2panda::lsp::CancellationToken *cancellationToken = nullptr;
-    ark::es2panda::lsp::UserPreferences *preferences = nullptr;
+    TextChangesContext *textChangesContext = nullptr;
+    CancellationToken *cancellationToken = nullptr;
+    UserPreferences *userPreferences = nullptr;
     TextRange span = {0, 0};
     es2panda_Context *context = nullptr;
     std::string kind;

@@ -320,11 +320,11 @@ public:
 
     // Object
     void ResolvePropertiesOfObjectType(ObjectType *type, ir::AstNode *member,
-                                       ArenaVector<ir::TSSignatureDeclaration *> &signatureDeclarations,
-                                       ArenaVector<ir::TSIndexSignature *> &indexDeclarations, bool isInterface);
+                                       std::vector<ir::TSSignatureDeclaration *> &signatureDeclarations,
+                                       std::vector<ir::TSIndexSignature *> &indexDeclarations, bool isInterface);
     void ResolveSignaturesOfObjectType(ObjectType *type,
-                                       ArenaVector<ir::TSSignatureDeclaration *> &signatureDeclarations);
-    void ResolveIndexInfosOfObjectType(ObjectType *type, ArenaVector<ir::TSIndexSignature *> &indexDeclarations);
+                                       std::vector<ir::TSSignatureDeclaration *> &signatureDeclarations);
+    void ResolveIndexInfosOfObjectType(ObjectType *type, std::vector<ir::TSIndexSignature *> &indexDeclarations);
     void ResolveDeclaredMembers(InterfaceType *type);
     bool ValidateInterfaceMemberRedeclaration(ObjectType *type, varbinder::Variable *prop,
                                               const lexer::SourcePosition &locInfo);
@@ -366,7 +366,7 @@ public:
     void CreatePatternParameterName(ir::AstNode *node, std::stringstream &ss);
     void HandlePropertyPatternParameterName(ir::Property *prop, std::stringstream &ss);
     void ThrowReturnTypeCircularityError(ir::ScriptFunction *func);
-    ArgRange GetArgRange(const ArenaVector<Signature *> &signatures, ArenaVector<Signature *> *potentialSignatures,
+    ArgRange GetArgRange(const ArenaVector<Signature *> &signatures, std::vector<Signature *> *potentialSignatures,
                          uint32_t callArgsSize, bool *haveSignatureWithRest);
     bool CallMatchesSignature(const ArenaVector<ir::Expression *> &args, Signature *signature, bool throwError);
     Type *ResolveCallOrNewExpression(const ArenaVector<Signature *> &signatures,

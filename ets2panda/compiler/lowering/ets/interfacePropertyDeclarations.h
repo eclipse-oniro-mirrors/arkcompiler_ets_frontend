@@ -128,7 +128,7 @@ private:
                                                           varbinder::FunctionParamScope *paramScope);
 
     ir::MethodDefinition *GenerateGetterOrSetter(public_lib::Context *ctx, varbinder::ETSBinder *varbinder,
-                                                 ir::ClassProperty *const field, bool isSetter);
+                                                 ir::ClassProperty *const field, bool isSetter, bool isOptional);
 
     void CollectPropertiesAndSuperInterfaces(ir::TSInterfaceBody *const interface);
 
@@ -140,6 +140,8 @@ private:
     void CollectSuperInterfaceProperties(InterfacePropertyType &implInterfaceProperties, const std::string &interId);
 
     void UpdateClassProperties(public_lib::Context *ctx, ir::ClassDefinition *const klass);
+
+    ir::AstNode *GenerateGetterOrSetterBodyForOptional(public_lib::Context *ctx, bool isSetter, bool isOptional);
 
 private:
     OptionalInterfacePropertyCollector propCollector_ {};

@@ -37,8 +37,11 @@ jest.mock('../../../src/logger', () => {
     } as any;
     return {
         Logger: mLogger,
-        LogDataFactory: { newInstance: jest.fn(() => ({
-            code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {} })) }
+        LogDataFactory: {
+            newInstance: jest.fn(() => ({
+                code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {}
+            }))
+        }
     };
 });
 jest.mock('../../../src/pre_define', () => ({
@@ -52,9 +55,9 @@ jest.mock('/sdk/koala', () => ({
 
 const fakeArkts = {
     Config: { create: jest.fn(() => ({ peer: 'peer' })) },
-    Context: { 
+    Context: {
         createFromString: jest.fn(() => ({ program: {}, peer: 'peer' })),
-        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' })) 
+        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' }))
     },
     proceedToState: jest.fn(),
     Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2 },
@@ -77,16 +80,16 @@ const fakeArktsGlobal = {
 
 jest.mock('../../../src/init/init_koala_modules', () => ({
     initKoalaModules: jest.fn((buildConfig) => {
-    const fakeKoala = {
-      arkts: fakeArkts,
-      arktsGlobal: fakeArktsGlobal
-    };
-    fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
-    
-    buildConfig.arkts = fakeKoala.arkts;
-    buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
-    return fakeKoala;
-  })
+        const fakeKoala = {
+            arkts: fakeArkts,
+            arktsGlobal: fakeArktsGlobal
+        };
+        fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+
+        buildConfig.arkts = fakeKoala.arkts;
+        buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
+        return fakeKoala;
+    })
 }));
 
 jest.mock('path', () => ({
@@ -113,23 +116,23 @@ afterEach(() => {
 // Test the functions of the compile_worker.ts file
 import { changeFileExtension } from '../../../src/util/utils';
 import { DECL_ETS_SUFFIX } from '../../../src/pre_define';
-import { 
+import {
     CompileFileInfo,
     BuildConfig,
-    ES2PANDA_MODE, 
-    BUILD_MODE, 
-    BUILD_TYPE, 
+    ES2PANDA_MODE,
+    BUILD_MODE,
+    BUILD_TYPE,
 } from '../../../src/types';
 describe('compile_worker', () => {
 
-    const compileFileInfo: CompileFileInfo ={
+    const compileFileInfo: CompileFileInfo = {
         filePath: '/src/foo.ets',
         dependentFiles: [],
         abcFilePath: 'foo.abc',
         arktsConfigFile: '/src/arktsconfig.json',
         packageName: 'pkg',
     };
-    
+
     const buildConfig = {
         hasMainModule: true,
         byteCodeHar: true,
@@ -143,7 +146,7 @@ describe('compile_worker', () => {
         dependentModuleList: [],
         aliasConfig: {},
     };
-    
+
     beforeEach(() => {
         jest.resetModules();
         (process as any).send = jest.fn();
@@ -152,7 +155,7 @@ describe('compile_worker', () => {
         });
     });
 
-    
+
     test('compile all files && exit(0)', () => {
         require('fs').readFileSync.mockReturnValue(Buffer.from('source code'));
         require('path').relative.mockImplementation((from: string, to: string) => to.replace(from, '').replace(/^\//, ''));
@@ -176,7 +179,7 @@ describe('compile_worker', () => {
         expect(fakeArkts.destroyConfig).toHaveBeenCalled();
         expect(fakeArktsGlobal.es2panda._DestroyContext).toHaveBeenCalled();
     });
-    
+
     test('generate decl file', () => {
         require('fs').readFileSync.mockReturnValue(Buffer.from('source code'));
         let config = buildConfig;

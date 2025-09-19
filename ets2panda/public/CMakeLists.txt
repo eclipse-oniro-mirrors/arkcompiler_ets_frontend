@@ -632,6 +632,25 @@ add_custom_command(
 
 add_custom_target(gen_yamls DEPENDS es2panda_options_gen es2panda_keywords ${ES2PANDA_API_GENERATED} ${HEADERS_PARSER_SOURCES})
 
+# add check for PANDA_PRODUCT_BUILD after normal version tracking will be implemented
+execute_process(
+  COMMAND date "+%Y-%m-%d_%H:%M:%S"
+  OUTPUT_VARIABLE CURRENT_DATE
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+  COMMAND git rev-parse HEAD
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  OUTPUT_VARIABLE LAST_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+set_property(
+  SOURCE ../util/options.cpp
+  APPEND
+  PROPERTY COMPILE_DEFINITIONS
+  ES2PANDA_DATE="${CURRENT_DATE}" ES2PANDA_HASH="${LAST_COMMIT_HASH}"
+)
 
 set(ES2PANDA_PUBLIC_SOURCES
     ${LIB_NAME}.cpp
