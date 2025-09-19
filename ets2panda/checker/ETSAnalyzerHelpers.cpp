@@ -474,6 +474,7 @@ checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensi
         // When called `a.foo` in `a.anotherFunc`, we should find signature through private or protected method firstly.
         signature = ResolveCallForClassMethod(type, checker, expr, checker::TypeRelationFlag::NO_THROW);
         if (signature != nullptr) {
+            UpdateDeclarationFromSignature(checker, expr, signature);
             return signature;
         }
     }
@@ -484,6 +485,7 @@ checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensi
                                         expr->Start(), "call");
     }
 
+    UpdateDeclarationFromSignature(checker, expr, signature);
     return signature;
 }
 
@@ -794,5 +796,42 @@ std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr)
     return {false, false};
 }
 // NOLINTEND(readability-else-after-return)
+
+void UpdateDeclarationFromSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Signature *signature)
+{
+    if (signature == nullptr) {
+        return;
+    }
+
+    ir::AstNode *callIdentifier = expr->Callee();
+    while (callIdentifier != nullptr && callIdentifier->IsMemberExpression()) {
+        callIdentifier = callIdentifier->AsMemberExpression()->Property();
+    }
+    if (callIdentifier == nullptr || !callIdentifier->IsIdentifier()) {
+        return;
+    }
+
+    auto signatureVar = callIdentifier->Variable();
+    if (signatureVar == nullptr || !signatureVar->HasFlag(varbinder::VariableFlags::METHOD) ||
+        !signature->HasFunction() || signature->Function()->IsDynamic()) {
+        return;
+    }
+
+    auto sigName = signature->Function()->Id()->Name();
+    if (callIdentifier->AsIdentifier()->Name() != sigName) {
+        return;
+    }
+
+    ir::AstNode *declNode = signature->Function();
+    while (!declNode->IsMethodDefinition()) {
+        declNode = declNode->Parent();
+    }
+    auto allocator = checker->ProgramAllocator();
+    auto newDecl = allocator->New<varbinder::FunctionDecl>(allocator, sigName, declNode);
+    auto newVar = allocator->New<varbinder::LocalVariable>(newDecl, varbinder::VariableFlags::METHOD |
+                                                                        varbinder::VariableFlags::SYNTHETIC);
+    newVar->SetTsType(declNode->AsMethodDefinition()->TsType()->Clone(checker));
+    callIdentifier->SetVariable(newVar);
+}
 
 }  // namespace ark::es2panda::checker
