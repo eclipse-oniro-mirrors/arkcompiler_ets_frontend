@@ -50,8 +50,16 @@ void FunctionBuilder::ImplicitReturn(const ir::AstNode *node) const
         }
         pg_->LoadConst(node, Constant::JS_UNDEFINED);
         pg_->NotifyConcurrentResult(node);
-        pg_->SetSourceLocationFlag(lexer::SourceLocationFlag::VALID_SOURCE_LOCATION);
-        pg_->EmitReturnUndefined(node);
+        // When no source location exists (e.g., in 'instance_initializer'), mark returnundefined as INVALID.
+        bool isEmptyRange = (node->Range().start.line == 0 && node->Range().end.line == 0 &&
+                             node->Range().start.index == 0 && node->Range().end.index == 0);
+        if (isEmptyRange) {
+            pg_->EmitReturnUndefined(node);
+            pg_->SetSourceLocationFlag(lexer::SourceLocationFlag::VALID_SOURCE_LOCATION);
+        } else {
+            pg_->SetSourceLocationFlag(lexer::SourceLocationFlag::VALID_SOURCE_LOCATION);
+            pg_->EmitReturnUndefined(node);
+        }
         return;
     }
 
