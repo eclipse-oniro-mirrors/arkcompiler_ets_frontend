@@ -122,6 +122,7 @@ enum class ScriptFunctionFlags : uint32_t {
     IN_RECORD = 1U << 22U,
     TRAILING_LAMBDA = 1U << 23U,
     SYNTHETIC = 1U << 24U,
+    RETURN_PROMISEVOID = 1U << 25U,
 };
 
 enum class TSOperatorType { READONLY, KEYOF, UNIQUE };

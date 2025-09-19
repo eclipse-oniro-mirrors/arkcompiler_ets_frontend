@@ -18,7 +18,7 @@
 
 namespace ark::es2panda::parser {
 
-constexpr unsigned int MAX_RECURSION_DEPTH = 1024;
+constexpr unsigned int MAX_RECURSION_DEPTH = 5120;
 
 struct RecursiveContext {
     unsigned depth = 0;

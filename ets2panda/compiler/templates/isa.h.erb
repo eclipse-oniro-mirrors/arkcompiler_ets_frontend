@@ -183,6 +183,9 @@ public:
     void Transform(pandasm::Ins *ins, [[maybe_unused]] ProgramElement *programElement,
                    [[maybe_unused]] uint32_t totalRegs) const override {
       ins->opcode = pandasm::Opcode::<%= node_kind %>;
+      if (IsDevirtual()) {
+        ins->SetIsDevirtual();
+      }
 % for reg in op_map['reg']
       ins->EmplaceReg(MapRegister(<%= reg %>.GetIndex(), totalRegs));
 % end

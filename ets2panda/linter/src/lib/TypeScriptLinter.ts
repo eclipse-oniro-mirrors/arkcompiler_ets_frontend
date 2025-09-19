@@ -143,7 +143,10 @@ import {
   GLOBAL_CONNECT_FUNC_NAME,
   CONNECT_FUNC_NAME,
   serializationTypeFlags,
-  serializationTypeName
+  serializationTypeName,
+  COMPONENTV2_DECORATOR_NAME,
+  ENTRY_STORAGE,
+  ENTRY_USE_SHARED_STORAGE
 } from './utils/consts/ArkuiConstants';
 import { arkuiImportList } from './utils/consts/ArkuiImportList';
 import type { IdentifierAndArguments, ForbidenAPICheckResult } from './utils/consts/InteropAPI';
@@ -225,6 +228,8 @@ import { COMPONENT_DECORATOR, SELECT_IDENTIFIER, SELECT_OPTIONS, STRING_ERROR_LI
 import { ES_OBJECT } from './utils/consts/ESObject';
 import { cookBookMsg } from './CookBookMsg';
 import { getCommonApiInfoMap } from './utils/functions/CommonApiInfo';
+import { arkuiDecoratorSet } from './utils/consts/ArkuiDecorator';
+import { ABILITY_LIFECYCLE, ABILITY_LIFECYCLE_CALLBACK } from './utils/consts/LifecycleMonitor';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
   supportedStdCallApiChecker: SupportedStdCallApiChecker;
@@ -955,6 +960,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     this.handleStructDeclarationForLayout(node);
     this.handleInvalidIdentifier(node);
+    this.handleStructDeclForEntryAndComponentV2(node);
   }
 
   private handleParameter(node: ts.Node): void {
@@ -1634,6 +1640,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private checkUsageOfTsTypes(baseType: ts.Type, node: ts.Node): void {
     const typeString = this.tsTypeChecker.typeToString(baseType);
+
+    const symbol = baseType.getSymbol();
+    if (symbol && !isStdLibrarySymbol(symbol)) {
+      return;
+    }
+
     if (
       TsUtils.isAnyType(baseType) ||
       TsUtils.isUnknownType(baseType) ||
@@ -1934,7 +1946,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    const extendedIdent = parent.heritageClauses.at(0);
+    const extendedIdent = parent.heritageClauses[0];
 
     if (!TsUtils.hasModifier(propDecl.modifiers, ts.SyntaxKind.ReadonlyKeyword)) {
       return;
@@ -1960,7 +1972,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return undefined;
     }
 
-    const extendedType = extended.types.at(0);
+    const extendedType = extended.types[0];
     if (!extendedType) {
       return undefined;
     }
@@ -8350,6 +8362,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const isArray = this.tsUtils.isArray(lhsType) && this.tsUtils.isArray(rhsType);
+    if (isArray && this.tsTypeChecker.typeToString(lhsType) === 'never[]') {
+      return;
+    }
     const isTuple =
       this.tsUtils.isOrDerivedFrom(lhsType, TsUtils.isTuple) && this.tsUtils.isOrDerivedFrom(rhsType, TsUtils.isTuple);
     if (!((isArray || isTuple) && lhsType !== rhsType)) {
@@ -8554,6 +8569,20 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     if (!ts.isDecorator(node)) {
+      return;
+    }
+
+    const structDecl = node.parent;
+    if (!ts.isStructDeclaration(structDecl)) {
+      return;
+    }
+
+    const decorators = ts.getDecorators(structDecl);
+    const hasComponentV2 = decorators?.some((decorator) => {
+      return decorator.expression.getText() === COMPONENTV2_DECORATOR_NAME;
+    });
+
+    if (hasComponentV2) {
       return;
     }
 
@@ -10394,6 +10423,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!ts.isClassDeclaration(cls) || !cls.heritageClauses) {
       return false;
     }
+
     return cls.heritageClauses.some((h) => {
       return (
         h.token === ts.SyntaxKind.ExtendsKeyword &&
@@ -10409,16 +10439,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
    * and matches the lifecycle method (onDestroy vs onDisconnect).
    */
   private isSupportedAbilityBase(methodName: string, baseExprNode: ts.Expression): boolean {
-    const sym = this.tsTypeChecker.getSymbolAtLocation(baseExprNode);
+    const sym = this.getExtendedAsyncLifecycleClass(baseExprNode);
     if (!sym) {
       return false;
     }
 
     const baseName = sym.getName();
-    if (!ASYNC_LIFECYCLE_SDK_LIST.has(baseName)) {
-      return false;
-    }
-
     if (methodName === ON_DISCONNECT && baseName !== SERVICE_EXTENSION_ABILITY) {
       return false;
     }
@@ -10436,6 +10462,40 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const srcFile = decl.getSourceFile().fileName;
 
     return moduleName === ABILITY_KIT || srcFile.endsWith(`${baseName}.${EXTNAME_D_TS}`);
+  }
+
+  /*
+   * check if this extended class is among the classes we care about
+   * if not check if that extended class is extending a class in async lifecycle list
+   * if not again
+   */
+  private getExtendedAsyncLifecycleClass(extendedClass: ts.Expression): undefined | ts.Symbol {
+    if (!ts.isIdentifier(extendedClass)) {
+      return undefined;
+    }
+    const sym = this.tsTypeChecker.getSymbolAtLocation(extendedClass);
+    if (!sym) {
+      return undefined;
+    }
+
+    if (ASYNC_LIFECYCLE_SDK_LIST.has(sym.getName())) {
+      return sym;
+    }
+
+    const decls = sym.getDeclarations();
+    if (!decls) {
+      return undefined;
+    }
+
+    const decl = decls[0];
+    if (!ts.isClassDeclaration(decl) || !decl.heritageClauses) {
+      return undefined;
+    }
+
+    const extendedExpression = decl.heritageClauses[0];
+    const extendedType = extendedExpression.types[0];
+
+    return this.getExtendedAsyncLifecycleClass(extendedType.expression);
   }
 
   /**
@@ -10725,35 +10785,49 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    // Guard: exactly two arguments
-    const args = callExpr.arguments;
-    if (args.length !== 2) {
-      return;
-    }
+    const decl = this.getDeclarationOfLifecycleEventCallback(callExpr);
 
-    // Guard: first arg must be string literal "abilityLifecycle"
-    const eventArg = args[0];
-    if (!ts.isStringLiteral(eventArg) || eventArg.text !== 'abilityLifecycle') {
-      return;
-    }
-
-    // Guard: second arg must be a variable declared as AbilityLifecycleCallback
-    const cbArg = args[1];
-    if (!ts.isIdentifier(cbArg)) {
-      return;
-    }
-    const varSym = this.tsUtils.trueSymbolAtLocation(cbArg);
-    const decl = varSym?.declarations?.find(ts.isVariableDeclaration);
     if (
       !decl?.type ||
       !ts.isTypeReferenceNode(decl.type) ||
-      decl.type.typeName.getText() !== 'AbilityLifecycleCallback'
+      decl.type.typeName.getText() !== ABILITY_LIFECYCLE_CALLBACK
     ) {
       return;
     }
 
     // Report the legacy callback usage
     this.incrementCounters(callExpr, FaultID.SdkAbilityLifecycleMonitor);
+  }
+
+  private getDeclarationOfLifecycleEventCallback(callExpr: ts.CallExpression): undefined | ts.VariableDeclaration {
+    const args = callExpr.arguments;
+    if (args.length !== 2) {
+      return undefined;
+    }
+
+    // Guard: first arg must be string literal "abilityLifecycle"
+    const eventArg = args[0];
+    if (!ts.isStringLiteral(eventArg) || eventArg.text !== ABILITY_LIFECYCLE) {
+      return undefined;
+    }
+
+    // Guard: second arg must be a variable declared as AbilityLifecycleCallback
+    let cbArgIdent = args[1];
+    while (!ts.isIdentifier(cbArgIdent)) {
+      if (!ts.isNewExpression(cbArgIdent)) {
+        return undefined;
+      }
+      cbArgIdent = cbArgIdent.expression;
+    }
+
+    if (cbArgIdent.text === ABILITY_LIFECYCLE_CALLBACK) {
+      this.incrementCounters(callExpr, FaultID.SdkAbilityLifecycleMonitor);
+      return undefined;
+    }
+
+    const varSym = this.tsUtils.trueSymbolAtLocation(cbArgIdent);
+
+    return varSym?.declarations?.find(ts.isVariableDeclaration);
   }
 
   private isOnMethod(node: ts.CallExpression): boolean {
@@ -12458,7 +12532,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
         return;
       }
-      if (actualTypeName !== expectedType) {
+      if (actualTypeName !== expectedType && expectedType !== 'any') {
         this.incrementCounters(arg, FaultID.NoTsLikeSmartType);
       }
     }
@@ -12692,6 +12766,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     methodReturnType: ts.Type
   ): void {
     const propName = propAccess.name.getText();
+    const decl = this.tsTypeChecker.getSymbolAtLocation(propAccess.name)?.declarations?.[0];
+    if (decl && ts.isPropertyDeclaration(decl) && decl.type) {
+      if (decl.type.kind === ts.SyntaxKind.BooleanKeyword && decl.questionToken === undefined) {
+        return;
+      } else if (!this.tsTypeChecker.getTypeAtLocation(decl.name).isUnion()) {
+        return;
+      }
+    }
     const propType = propsMap.get(propName);
 
     if (propType && this.isExactlySameType(propType, methodReturnType)) {
@@ -14386,7 +14468,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const deprecatedApiCheckMap = TypeScriptLinter.getDeprecatedApiCheckMapForCallExpression(decl, parName);
     this.reportDeprecatedApi(node, name, deprecatedApiCheckMap);
     this.checkCallExpressionForSdkApi(node, name, parName, !!isNeedGetResolvedSignature, deprecatedApiCheckMap);
-    this.checkSpecialApiForDeprecatedApi(node, name, decl);
+    this.checkSpecialApiForDeprecatedApi(node, name);
+    this.checkOnScrollApiForDeprecatedApi(name, decl);
   }
 
   private static getDeprecatedApiCheckMapForCallExpression(
@@ -14474,9 +14557,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const problemStr = this.getFaultIdWithMatchedDeprecatedApi(name.text, deprecatedApiCheckMap, apiType);
     if (problemStr.length > 0) {
       const autofix = this.autofixer?.fixDeprecatedApiForCallExpression(node);
-      if (autofix) {
-        this.interfacesNeedToImport.add('getUIContext');
-      }
       const isSdkCommon = apiType === SDK_COMMON_TYPE;
       const faultID = TypeScriptLinter.getFinalSdkFaultIdByProblem(problemStr, apiType);
       if (!faultID) {
@@ -14505,11 +14585,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return sdkFaultId;
   }
 
-  private checkSpecialApiForDeprecatedApi(
-    node: ts.CallExpression,
-    name: ts.Identifier,
-    decl: ts.Declaration | undefined
-  ): void {
+  private checkSpecialApiForDeprecatedApi(node: ts.CallExpression, name: ts.Identifier): void {
     if (('mask' === name.getText() || 'clip' === name.getText()) && node.arguments.length === 1) {
       const types = ['CircleAttribute', 'EllipseAttribute', ' PathAttribute', 'RectAttribute'];
       const arg = node.arguments[0];
@@ -14528,13 +14604,25 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
           }
 
           const autofix = this.autofixer?.fixSpecialDeprecatedApiForCallExpression(node, name);
-          this.incrementCounters(name, FaultID.NoDeprecatedApi, autofix);
+          this.incrementCounters(
+            name,
+            FaultID.NoDeprecatedApi,
+            autofix,
+            TypeScriptLinter.getErrorMsgForSdkCommonApi(name.getText(), FaultID.NoDeprecatedApi)
+          );
           return;
         }
-        this.incrementCounters(name, FaultID.NoDeprecatedApi);
-        return;
+        this.incrementCounters(
+          name,
+          FaultID.NoDeprecatedApi,
+          undefined,
+          TypeScriptLinter.getErrorMsgForSdkCommonApi(name.getText(), FaultID.NoDeprecatedApi)
+        );
       }
     }
+  }
+
+  private checkOnScrollApiForDeprecatedApi(name: ts.Identifier, decl: ts.Declaration | undefined): void {
     if (decl?.parent && ts.isClassDeclaration(decl.parent) && 'onScroll' === name.getText()) {
       let parentName = '';
       decl.parent.heritageClauses?.forEach((clause) => {
@@ -14545,7 +14633,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         });
       });
       if (parentName === 'ScrollableCommonMethod') {
-        this.incrementCounters(name, FaultID.NoDeprecatedApi);
+        this.incrementCounters(
+          name,
+          FaultID.NoDeprecatedApi,
+          undefined,
+          TypeScriptLinter.getErrorMsgForSdkCommonApi(name.getText(), FaultID.NoDeprecatedApi)
+        );
       }
     }
   }
@@ -15412,6 +15505,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2 || !TypeScriptLinter.builtApiInfo) {
       return;
     }
+
+    if (arkuiDecoratorSet.has(decorator.expression.getText())) {
+      return;
+    }
+
     const type = this.tsTypeChecker.getTypeAtLocation(decorator.expression);
     const aliasSymbol = type.aliasSymbol;
     const declaration = aliasSymbol?.declarations?.[0];
@@ -15607,5 +15705,59 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (staticContext) {
       this.incrementCounters(node, FaultID.SuperInStaticContext);
     }
+  }
+
+  private handleStructDeclForEntryAndComponentV2(node: ts.StructDeclaration): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+
+    const decorators = ts.getDecorators(node);
+    if (!decorators) {
+      return;
+    }
+
+    let entryDecorator: ts.Decorator | undefined;
+    const hasEntry = decorators.some((decorator) => {
+      if (TsUtils.getDecoratorName(decorator) === ENTRY_DECORATOR_NAME) {
+        entryDecorator = decorator;
+        return true;
+      }
+      return false;
+    });
+    const hasComponentV2 = decorators.some((decorator) => {
+      return TsUtils.getDecoratorName(decorator) === COMPONENTV2_DECORATOR_NAME;
+    });
+    
+    if (!hasEntry || !hasComponentV2 || !entryDecorator) {
+      return;
+    }
+
+    const entryDecoratorHasInvalidParams = TypeScriptLinter.checkEntryDecoratorHasInvalidParams(entryDecorator);
+    if (!entryDecoratorHasInvalidParams) {
+      return;
+    }
+
+    const autofix = this.autofixer?.fixEntryAndComponentV2(entryDecorator);
+    this.incrementCounters(entryDecorator, FaultID.EntryHasInvalidParams, autofix);
+  }
+
+  private static checkEntryDecoratorHasInvalidParams(entryDecorator: ts.Decorator): boolean {
+    const callExpr = entryDecorator.expression;
+    if (!ts.isCallExpression(callExpr)) {
+      return false;
+    }
+
+    const arg = callExpr.arguments?.[0];
+    if (!ts.isObjectLiteralExpression(arg)) {
+      return false;
+    }
+
+    const hasInvalidParams = arg.properties.some((property) => {
+      const name = property.name?.getText();
+      return name === ENTRY_STORAGE || name === ENTRY_USE_SHARED_STORAGE;
+    });
+
+    return hasInvalidParams;
   }
 }

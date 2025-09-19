@@ -1120,6 +1120,10 @@ void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, ArenaVe
     auto superClassType = classType->SuperType();
     while (!functionOverridden && superClassType != nullptr) {
         for (auto *field : superClassType->Fields()) {
+            if (field->Declaration()->Node()->AsClassProperty()->IsStatic()) {
+                continue;
+            }
+
             if (field->Name() == (*it)->Name()) {
                 auto *newProp = field->Declaration()
                                     ->Node()
@@ -2257,6 +2261,11 @@ std::vector<ResolveResult *> ETSChecker::ValidateAccessor(ir::MemberExpression *
                                                           varbinder::Variable *const eAcc,
                                                           PropertySearchFlags searchFlag)
 {
+    if ((eAcc != nullptr && !eAcc->TsType()->IsETSFunctionType()) ||
+        (oAcc != nullptr && !oAcc->TsType()->IsETSFunctionType())) {
+        memberExpr->SetTsType(GlobalTypeError());
+        return {};
+    }
     auto *funcType = eAcc != nullptr ? eAcc->TsType()->AsETSFunctionType() : nullptr;
     auto *propType = oAcc != nullptr ? oAcc->TsType()->AsETSFunctionType() : nullptr;
     searchFlag = memberExpr->Parent()->IsUpdateExpression() ? searchFlag | PropertySearchFlags::IS_SETTER : searchFlag;

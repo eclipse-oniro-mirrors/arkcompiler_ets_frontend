@@ -296,9 +296,9 @@ semantic:
   id: 62
   message: "need to specify target type for class composite"
 
-- name: CLASS_OR_IFACE_AS_OBJ
+- name: CLASS_OR_IFACE_OR_ENUM_AS_OBJ
   id: 294
-  message: "Class or interface '{}' cannot be used as object"
+  message: "Class or interface or enum '{}' cannot be used as object"
 
 - name: COALESCE_NOT_REF
   id: 117
@@ -320,9 +320,9 @@ semantic:
   id: 363
   message: "Missing initializer in const declaration"
 
-- name: CONTINUE_TARGET_OUTSIDE_FUNCTION
+- name: CONTINUE_OR_BREAK_TARGET_OUTSIDE_FUNCTION
   id: 49316
-  message: "Continue target can't be outside the function"
+  message: "Continue or break target can't be outside the function"
 
 - name: CTOR_CLASS_NOT_FIRST
   id: 201
@@ -355,6 +355,10 @@ semantic:
 - name: CYCLIC_CLASS_SUPER_TYPE
   id: 380
   message: "Class's super type is itself"
+
+- name: CYCLIC_EXPORT
+  id: 67633
+  message: "Cyclic export detected re-exports"
 
 - name: CYCLIC_INHERITANCE
   id: 310

@@ -513,6 +513,14 @@ static ir::MethodDefinition *CreateCallee(public_lib::Context *ctx, ir::ArrowFun
     cmInfo.forcedReturnType = forcedReturnType;
     if (lambda->Function()->IsAsyncFunc()) {
         cmInfo.auxFunctionFlags = ir::ScriptFunctionFlags::ASYNC_IMPL;
+        auto retTypeAnnotation = lambda->Function()->ReturnTypeAnnotation();
+        if (retTypeAnnotation != nullptr && retTypeAnnotation->TsType()->IsETSObjectType()) {
+            auto retType = retTypeAnnotation->TsType()->AsETSObjectType();
+            if (retType->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType() &&
+                retType->TypeArguments().front() == checker->GlobalVoidType()) {
+                cmInfo.auxFunctionFlags = ir::ScriptFunctionFlags::RETURN_PROMISEVOID | cmInfo.auxFunctionFlags;
+            }
+        }
     }
     auto *method = CreateCalleeMethod(ctx, lambda, info, &cmInfo);
 

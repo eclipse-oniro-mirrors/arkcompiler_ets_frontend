@@ -90,9 +90,6 @@ ohos_executable("ets2panda") {
     ]
   }
 
-  if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
-    external_deps += [ "icu:shared_icuuc" ]
-  }
 
   libs = platform_libs
   ldflags = platform_ldflags

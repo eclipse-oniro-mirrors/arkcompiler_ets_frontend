@@ -61,6 +61,21 @@ private:
                                              ir::ScriptFunction const *derivedFunction,
                                              std::vector<ir::AstNode *> &typeNodes) const noexcept;
 
+    std::string BuildMethodSignature(ir::ScriptFunction const *derivedFunction, checker::Signature const *baseSignature,
+                                     std::vector<ir::AstNode *> &typeNodes) const noexcept;
+
+    std::string BuildMethodBody(ir::ClassDefinition const *classDefinition, ir::ScriptFunction const *derivedFunction,
+                                std::vector<ir::AstNode *> &typeNodes) const noexcept;
+
+    std::string GetAdjustedParameterName(ir::ScriptFunction const *derivedFunction,
+                                         std::string_view parameterName) const noexcept;
+
+    std::string BuildSetterAssignment(ir::ScriptFunction const *derivedFunction,
+                                      std::vector<ir::AstNode *> &typeNodes) const noexcept;
+
+    std::string BuildMethodCall(ir::ScriptFunction const *derivedFunction,
+                                std::vector<ir::AstNode *> &typeNodes) const noexcept;
+
     public_lib::Context *context_ = nullptr;
 };
 }  // namespace ark::es2panda::compiler

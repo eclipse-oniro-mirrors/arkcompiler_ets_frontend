@@ -22,6 +22,7 @@
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "varbinder/ETSBinder.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
+#include "checker/types/typeError.h"
 #include "util/nameMangler.h"
 
 #include <checker/types/gradualType.h>
@@ -682,7 +683,8 @@ void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *c
 {
     auto &partialInterfaceMethods = partialInterface->Body()->Body();
 
-    auto const addNullishAccessor = [&partialInterfaceMethods](ir::MethodDefinition *accessor) -> void {
+    auto const addNullishAccessor = [this, &partialInterfaceMethods](ir::MethodDefinition *accessor) -> void {
+        (void)this;
         auto const it = std::find_if(partialInterfaceMethods.begin(), partialInterfaceMethods.end(),
                                      [accessor](ir::AstNode const *node) -> bool {
                                          return node->AsMethodDefinition()->Id()->Name() == accessor->Id()->Name();
@@ -696,7 +698,7 @@ void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *c
             accessor->SetParent(*it);
             accessor->Function()->AddFlag(ir::ScriptFunctionFlags::OVERLOAD);
         } else {
-            ES2PANDA_ASSERT_POS((*it)->AsMethodDefinition()->Function()->IsSetter(), (*it)->Start());
+            ERROR_SANITY_CHECK(this, (*it)->AsMethodDefinition()->Function()->IsSetter(), return );
             auto setter = (*it)->AsMethodDefinition();
             accessor->AddOverload(setter);
             setter->SetParent(accessor);

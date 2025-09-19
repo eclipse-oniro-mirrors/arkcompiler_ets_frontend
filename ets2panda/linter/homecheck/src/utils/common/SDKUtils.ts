@@ -63,6 +63,11 @@ export class SdkUtils {
         return projectName === this.OhosSdkName || projectName === this.HmsSdkName;
     }
 
+    static isClassFromSdk(classSignature: ClassSignature): boolean {
+        const projectName = classSignature.getDeclaringFileSignature().getProjectName();
+        return projectName === this.OhosSdkName || projectName === this.HmsSdkName;
+    }
+    
     static getSdkMatchedSignature(ets1SDK: ArkMethod, args: Value[]): MethodSignature | null {
         const declareSigs = ets1SDK.getDeclareSignatures();
         if (declareSigs === null) {

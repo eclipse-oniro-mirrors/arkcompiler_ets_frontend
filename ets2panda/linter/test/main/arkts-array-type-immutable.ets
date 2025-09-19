@@ -170,3 +170,5 @@ async function Foo_a(): Promise<(string| number)[]> {
 async function Foo_b(): Promise<(string| number)[]> {
     return correctArr;
 }
+
+AppStorage.SetOrCreate('passwordArray', [] as string[]);

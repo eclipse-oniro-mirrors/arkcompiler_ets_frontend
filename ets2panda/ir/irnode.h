@@ -151,9 +151,19 @@ public:
     virtual size_t OutRegisters([[maybe_unused]] std::array<OutVReg, MAX_REG_OPERAND> *regs) const = 0;
     virtual void Transform(ark::pandasm::Ins *ins, [[maybe_unused]] ProgramElement *programElement,
                            [[maybe_unused]] uint32_t totalRegs) const = 0;
+    bool IsDevirtual() const
+    {
+        return isDevirtual_;
+    }
+
+    void SetDevirtual()
+    {
+        isDevirtual_ = true;
+    }
 
 private:
     const ir::AstNode *node_;
+    bool isDevirtual_ = false;
 };
 }  // namespace ark::es2panda::compiler
 

@@ -159,6 +159,17 @@ void ScopesInitPhase::VisitForUpdateStatement(ir::ForUpdateStatement *forUpdateS
                              // CC-OFFNXT(G.FMT.06-CPP) project code style
                              VarBinder(), forUpdateStmt->Scope()->DeclScope());
     CallNode(forUpdateStmt->Init());
+    if (auto *init = forUpdateStmt->Init(); init && init->IsVariableDeclaration()) {
+        auto *vd = init->AsVariableDeclaration();
+        for (auto *decl : vd->Declarators()) {
+            if (!decl->Id()->IsIdentifier())
+                continue;
+            auto *id = decl->Id()->AsIdentifier();
+            if (auto *var = id->Variable()) {
+                var->AddFlag(varbinder::VariableFlags::PER_ITERATION);
+            }
+        }
+    }
 
     auto lexicalScope = LexicalScopeCreateOrEnter<varbinder::LoopScope>(VarBinder(), forUpdateStmt);
     AttachLabelToScope(forUpdateStmt);

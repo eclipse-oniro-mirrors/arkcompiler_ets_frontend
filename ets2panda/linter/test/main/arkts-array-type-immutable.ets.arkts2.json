@@ -443,6 +443,16 @@
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
             "severity": "ERROR"
+        },
+        {
+            "line": 174,
+            "column": 1,
+            "endLine": 174,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"AppStorage\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
         }
     ]
 }

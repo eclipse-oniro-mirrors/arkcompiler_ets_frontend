@@ -34,7 +34,8 @@ import {
   VALUE_IDENTIFIER,
   INDENT_STEP,
   ENTRY_DECORATOR_NAME,
-  ENTRY_STORAGE_PROPERITY,
+  ENTRY_STORAGE,
+  ENTRY_USE_SHARED_STORAGE,
   LOCAL_STORAGE_TYPE_NAME,
   GET_LOCAL_STORAGE_FUNC_NAME,
   PROVIDE_DECORATOR_NAME,
@@ -43,7 +44,10 @@ import {
   NEW_PROP_DECORATOR_SUFFIX,
   VIRTUAL_SCROLL_IDENTIFIER,
   DISABLE_VIRTUAL_SCROLL_IDENTIFIER,
-  USE_STATIC_STATEMENT
+  USE_STATIC_STATEMENT,
+  UI_CONTEXT,
+  GET_FOCUSED_UI_CONTEXT,
+  GET_CONTEXT
 } from '../utils/consts/ArkuiConstants';
 import { ES_VALUE } from '../utils/consts/ESObject';
 import type { IncrementDecrementNodeInfo } from '../utils/consts/InteropAPI';
@@ -106,6 +110,13 @@ interface CreateClassPropertyForObjectLiteralParams {
   classFields: ts.PropertyDeclaration[];
   ctorBodyStmts: ts.Statement[];
   ctorInitProps: ts.PropertyAssignment[];
+}
+
+interface ConstructorBodyFixInfo {
+  pos: number;
+  needLeadingNewLine: boolean;
+  needTrailingNewLine: boolean;
+  indentLastLine: boolean;
 }
 
 export interface Autofix {
@@ -1588,75 +1599,35 @@ export class Autofixer {
     ctorDecl: ts.ConstructorDeclaration,
     paramTypes: ts.TypeNode[] | undefined
   ): Autofix[] | undefined {
-    if (paramTypes === undefined) {
+    if (paramTypes === undefined || !ctorDecl.body) {
       return undefined;
     }
 
     const fieldInitStmts: ts.Statement[] = [];
     const newFieldPos = ctorDecl.getStart();
     const autofixes: Autofix[] = [{ start: newFieldPos, end: newFieldPos, replacementText: '' }];
+    const indentStartPos = this.sourceFile.getLineAndCharacterOfPosition(ctorDecl.getStart()).character;
 
     for (let i = 0; i < ctorDecl.parameters.length; i++) {
-      this.fixCtorParameterPropertiesProcessParam(ctorDecl.parameters[i], paramTypes[i], fieldInitStmts, autofixes);
-    }
-
-    // Note: Bodyless ctors can't have parameter properties.
-    if (ctorDecl.body) {
-      const beforeFieldStmts: ts.Statement[] = [];
-      const afterFieldStmts: ts.Statement[] = [];
-      const hasSuperExpressionStatement: boolean = this.hasSuperExpression(
-        ctorDecl.body,
-        beforeFieldStmts,
-        afterFieldStmts
+      this.fixCtorParameterPropertiesProcessParam(
+        ctorDecl.parameters[i],
+        paramTypes[i],
+        fieldInitStmts,
+        autofixes,
+        indentStartPos
       );
-      let finalStmts: ts.Statement[] = [];
-      if (hasSuperExpressionStatement) {
-        finalStmts = beforeFieldStmts.concat(fieldInitStmts).concat(afterFieldStmts);
-      } else {
-        finalStmts = fieldInitStmts.concat(ctorDecl.body.statements);
-      }
-      const newBody = ts.factory.createBlock(finalStmts, true);
-      const newBodyText = this.printer.printNode(ts.EmitHint.Unspecified, newBody, ctorDecl.getSourceFile());
-      autofixes.push({ start: ctorDecl.body.getStart(), end: ctorDecl.body.getEnd(), replacementText: newBodyText });
     }
+    autofixes.push(this.fixCtorParameterPropertiesProcessBody(ctorDecl.body, fieldInitStmts, indentStartPos));
 
     return autofixes;
-  }
-
-  private hasSuperExpression(
-    body: ts.Block,
-    beforeFieldStmts: ts.Statement[],
-    afterFieldStmts: ts.Statement[]
-  ): boolean {
-    void this;
-    let hasSuperExpressionStatement = false;
-    ts.forEachChild(body, (node) => {
-      if (this.isSuperCallStmt(node as ts.Statement)) {
-        hasSuperExpressionStatement = true;
-        beforeFieldStmts.push(node as ts.Statement);
-      } else if (hasSuperExpressionStatement) {
-        afterFieldStmts.push(node as ts.Statement);
-      } else {
-        beforeFieldStmts.push(node as ts.Statement);
-      }
-    });
-    return hasSuperExpressionStatement;
-  }
-
-  private isSuperCallStmt(node: ts.Statement): boolean {
-    void this;
-    if (ts.isExpressionStatement(node) && ts.isCallExpression(node.expression)) {
-      const expr = node.expression.expression;
-      return expr.kind === ts.SyntaxKind.SuperKeyword;
-    }
-    return false;
   }
 
   private fixCtorParameterPropertiesProcessParam(
     param: ts.ParameterDeclaration,
     paramType: ts.TypeNode,
     fieldInitStmts: ts.Statement[],
-    autofixes: Autofix[]
+    autofixes: Autofix[],
+    indentStartPos: number
   ): void {
     // Parameter property can not be a destructuring parameter.
     if (!ts.isIdentifier(param.name)) {
@@ -1669,7 +1640,6 @@ export class Autofixer {
       const paramModifiers = modifiers?.filter((x) => {
         return x.kind !== ts.SyntaxKind.OverrideKeyword;
       });
-
       const newFieldNode = ts.factory.createPropertyDeclaration(
         paramModifiers,
         propIdent,
@@ -1679,7 +1649,7 @@ export class Autofixer {
       );
       const newFieldText =
         this.printer.printNode(ts.EmitHint.Unspecified, newFieldNode, param.getSourceFile()) + this.getNewLine();
-      autofixes[0].replacementText += newFieldText;
+      autofixes[0].replacementText += this.adjustIndentation(newFieldText, indentStartPos);
 
       const newParamDecl = ts.factory.createParameterDeclaration(
         undefined,
@@ -1701,6 +1671,74 @@ export class Autofixer {
         )
       );
     }
+  }
+
+  private fixCtorParameterPropertiesProcessBody(
+    ctorBody: ts.Block,
+    fieldInitStmts: ts.Statement[],
+    indentStartPos: number
+  ): Autofix {
+    let newStmtListText = this.printer.printList(
+      ts.ListFormat.MultiLine | ts.ListFormat.NoTrailingNewLine,
+      ts.factory.createNodeArray(fieldInitStmts),
+      ctorBody.getSourceFile()
+    );
+
+    const ctorBodyFixInfo = this.getParamPropertiesCtorBodyFixInfo(ctorBody);
+
+    if (ctorBodyFixInfo.needLeadingNewLine) {
+      newStmtListText = this.getNewLine() + newStmtListText;
+    }
+    if (ctorBodyFixInfo.needTrailingNewLine) {
+      newStmtListText += this.getNewLine();
+    }
+    newStmtListText = this.adjustIndentation(newStmtListText, indentStartPos, ctorBodyFixInfo.indentLastLine);
+    return { start: ctorBodyFixInfo.pos, end: ctorBodyFixInfo.pos, replacementText: newStmtListText };
+  }
+
+  getParamPropertiesCtorBodyFixInfo(ctorBody: ts.Block): ConstructorBodyFixInfo {
+    let pos: number;
+    let needLeadingNewLine = false;
+    let needTrailingNewLine = false;
+    let indentLastLine = false;
+    const statements = ctorBody.statements;
+    if (statements.length > 0) {
+      const superCallStmt = statements.find(TsUtils.isSuperCallStmt);
+      if (superCallStmt) {
+        // If there's a 'super()' call, then new statements are inserted after it.
+        const superCallIndex = statements.indexOf(superCallStmt);
+        if (superCallIndex === statements.length - 1) {
+          const superCallEndPosition = superCallStmt.getEnd();
+          pos = TsUtils.getTrailingCommentRangesEnd(this.sourceFile, superCallEndPosition) ?? superCallEndPosition;
+          needLeadingNewLine = true;
+        } else {
+          pos = statements[superCallIndex + 1].getStart();
+          needTrailingNewLine = true;
+        }
+      } else {
+        // If there's no 'super()' call, new statements are inserted at the beginning of ctor body.
+        needTrailingNewLine = true;
+        pos = statements[0].getStart();
+      }
+      indentLastLine = true;
+    } else {
+      // Ctor body is empty, insert new statements after inner comments if any.
+      needLeadingNewLine = true;
+      const bracesOnSameLine =
+        this.sourceFile.getLineAndCharacterOfPosition(ctorBody.getStart()).line ===
+        this.sourceFile.getLineAndCharacterOfPosition(ctorBody.getEnd()).line;
+
+      if (bracesOnSameLine) {
+        pos = ctorBody.getEnd() - 1; /* The position of closing brace */
+        needTrailingNewLine = true;
+      } else {
+        const leadingRangesPos = ctorBody.getStart() + 1; /* End position of opening brace */
+        pos = TsUtils.getLeadingCommentRangesEnd(this.sourceFile, leadingRangesPos) ?? leadingRangesPos;
+        indentLastLine = true;
+      }
+    }
+
+    return { pos, needLeadingNewLine, needTrailingNewLine, indentLastLine };
   }
 
   fixPrivateIdentifier(node: ts.PrivateIdentifier): Autofix[] | undefined {
@@ -2934,23 +2972,22 @@ export class Autofixer {
       return undefined;
     }
 
-    const parentNode = entryDecorator.parent;
     const arg = args[0];
-    let getLocalStorageStatement: ts.VariableStatement | undefined;
+    let getLocalStorageStmt: ts.VariableStatement | undefined;
 
     if (ts.isIdentifier(arg) || ts.isNewExpression(arg) || ts.isCallExpression(arg)) {
-      getLocalStorageStatement = Autofixer.createGetLocalStorageLambdaStatement(arg);
+      getLocalStorageStmt = Autofixer.createGetLocalStorageLambdaStatement(arg);
     } else if (ts.isObjectLiteralExpression(arg)) {
-      getLocalStorageStatement = Autofixer.processEntryAnnotationObjectLiteralExpression(arg);
+      getLocalStorageStmt = Autofixer.processEntryAnnotationObjectLiteralExpression(arg);
     }
 
-    if (getLocalStorageStatement !== undefined) {
-      let text = this.printer.printNode(ts.EmitHint.Unspecified, getLocalStorageStatement, parentNode.getSourceFile());
+    if (getLocalStorageStmt !== undefined) {
+      let text = this.printer.printNode(ts.EmitHint.Unspecified, getLocalStorageStmt, entryDecorator.getSourceFile());
       const fixedEntryDecorator = Autofixer.createFixedEntryDecorator();
       const fixedEntryDecoratorText = this.printer.printNode(
         ts.EmitHint.Unspecified,
         fixedEntryDecorator,
-        parentNode.getSourceFile()
+        entryDecorator.getSourceFile()
       );
       text = text + this.getNewLine() + fixedEntryDecoratorText;
       return [{ start: entryDecorator.getStart(), end: entryDecorator.getEnd(), replacementText: text }];
@@ -2960,7 +2997,7 @@ export class Autofixer {
 
   private static createFixedEntryDecorator(): ts.Decorator {
     const storageProperty = ts.factory.createPropertyAssignment(
-      ts.factory.createIdentifier(ENTRY_STORAGE_PROPERITY),
+      ts.factory.createIdentifier(ENTRY_STORAGE),
       ts.factory.createStringLiteral(GET_LOCAL_STORAGE_FUNC_NAME)
     );
     const objectLiteralExpr = ts.factory.createObjectLiteralExpression([storageProperty], false);
@@ -2982,7 +3019,7 @@ export class Autofixer {
       return undefined;
     }
     if (ts.isIdentifier(objectProperty.name)) {
-      if (objectProperty.name.escapedText !== ENTRY_STORAGE_PROPERITY) {
+      if (objectProperty.name.escapedText !== ENTRY_STORAGE) {
         return undefined;
       }
       const properityInitializer = objectProperty.initializer;
@@ -3858,7 +3895,7 @@ export class Autofixer {
     return autofix;
   }
 
-  private adjustIndentation(text: string, startPos: number): string {
+  private adjustIndentation(text: string, startPos: number, indentLastLine = false): string {
     const lines = text.split(this.getNewLine());
     if (lines.length <= 1) {
       return text;
@@ -3876,7 +3913,7 @@ export class Autofixer {
       return line;
     });
 
-    const lastLine = ' '.repeat(startPos) + lines[lines.length - 1];
+    const lastLine = ' '.repeat(indentLastLine ? indentBase : startPos) + lines[lines.length - 1];
     return [firstLine, ...middleLines, lastLine].join(this.getNewLine());
   }
 
@@ -5312,18 +5349,11 @@ export class Autofixer {
   }
 
   fixDeprecatedApiForCallExpression(callExpr: ts.CallExpression): Autofix[] | undefined {
-    const createUIContextAccess = (methodName: string): ts.Node => {
-      return ts.factory.createPropertyAccessExpression(
-        ts.factory.createCallExpression(ts.factory.createIdentifier('getUIContext'), undefined, []),
-        ts.factory.createIdentifier(methodName)
-      );
-    };
-
     if (ts.isPropertyAccessExpression(callExpr.expression)) {
       const fullName = `${callExpr.expression.expression.getText()}.${callExpr.expression.name.getText()}`;
       const methodName = propertyAccessReplacements.get(fullName);
       if (methodName) {
-        const newExpression = createUIContextAccess(methodName);
+        const newExpression = Autofixer.createUIContextAccess(methodName);
         const newText = this.printer.printNode(ts.EmitHint.Unspecified, newExpression, callExpr.getSourceFile());
         return [
           {
@@ -5338,21 +5368,40 @@ export class Autofixer {
     if (ts.isIdentifier(callExpr.expression)) {
       const identifierText = callExpr.expression.getText();
       const methodName = identifierReplacements.get(identifierText);
-
       if (methodName) {
-        const newExpression = createUIContextAccess(methodName);
+        const accessExpr = Autofixer.createUIContextAccess(methodName);
+        const newExpression =
+          identifierText === GET_CONTEXT ?
+            ts.factory.createCallChain(accessExpr, undefined, undefined, []) :
+            accessExpr;
+        const start = identifierText === GET_CONTEXT ? callExpr.getStart() : callExpr.expression.getStart();
+        const end = identifierText === GET_CONTEXT ? callExpr.getEnd() : callExpr.expression.getEnd();
         const newText = this.printer.printNode(ts.EmitHint.Unspecified, newExpression, callExpr.getSourceFile());
         return [
           {
-            start: callExpr.expression.getStart(),
-            end: callExpr.expression.getEnd(),
+            start: start,
+            end: end,
             replacementText: newText
           }
         ];
       }
     }
-
     return undefined;
+  }
+
+  private static createUIContextAccess(methodName: string): ts.PropertyAccessExpression {
+    return ts.factory.createPropertyAccessChain(
+      ts.factory.createCallExpression(
+        ts.factory.createPropertyAccessExpression(
+          ts.factory.createIdentifier(UI_CONTEXT),
+          ts.factory.createIdentifier(GET_FOCUSED_UI_CONTEXT)
+        ),
+        undefined,
+        []
+      ),
+      ts.factory.createToken(ts.SyntaxKind.QuestionDotToken),
+      ts.factory.createIdentifier(methodName)
+    );
   }
 
   fixSpecialDeprecatedApiForCallExpression(callExpr: ts.CallExpression, name: ts.Identifier): Autofix[] | undefined {
@@ -5427,5 +5476,26 @@ export class Autofixer {
         replacementText: `${node.text}.0`
       }
     ];
+  }
+
+  fixEntryAndComponentV2(entryDecorator: ts.Decorator): Autofix[] | undefined {
+    const callExpr = entryDecorator.expression;
+    if (!ts.isCallExpression(callExpr)) {
+      return undefined;
+    }
+
+    const arg = callExpr.arguments?.[0];
+    if (!ts.isObjectLiteralExpression(arg)) {
+      return undefined;
+    }
+
+    const newProperties = arg.properties.filter((property) => {
+      const name = property.name?.getText();
+      return name !== ENTRY_STORAGE && name !== ENTRY_USE_SHARED_STORAGE;
+    });
+
+    const newArg = ts.factory.createObjectLiteralExpression(newProperties, false);
+    const text = this.printer.printNode(ts.EmitHint.Unspecified, newArg, entryDecorator.getSourceFile());
+    return [{ start: arg.getStart(), end: arg.getEnd(), replacementText: text }];
   }
 }

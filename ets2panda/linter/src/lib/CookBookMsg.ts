@@ -424,6 +424,8 @@ cookBookTag[392] =
   'The class of the "defaultValue" parameter in the literal passed to the "persistProps" method must be a primitive type or Date type, or implement the "toJson" and "fromJson" methods (arkui-persistent-props-serialization)';
 cookBookTag[393] =
   'When calling the "globalConnect" and "connect" methods, the parameter list of the methods needs to include "toJson" and "fromJson" (arkui-persistencev2-connect-serialization)';
+cookBookTag[394] =
+  'The "@ComponentV2" decorator cannot be used together with the "@Entry" decorator that has "storage" or "useSharedStorage" parameters (arkui-entry-invalid-params)'
 cookBookTag[399] = 'ArkUI deprecated api check (arkui-no-deprecated-api)';
 cookBookTag[400] = 'ArkUI sdk common deprecated api check (arkui-sdk-common-deprecated-api)';
 cookBookTag[401] = 'ArkUI sdk common whitelist api check (arkui-sdk-common-whitelist-api)';
@@ -440,7 +442,8 @@ cookBookTag[410] = 'Numeric literal exceeds allowed range (arkts-no-large-numeri
 cookBookTag[411] = '"instanceof" operator can\'t be applied to function (arkts-no-instanceof-func)';
 cookBookTag[412] = 'No unfixed length tuple support (arkts-no-unfixed-len-tuple)';
 
-cookBookTag[413] = 'Subclass can\'t call members of super class in static context (arkts-no-super-call-in-static-context)';
+cookBookTag[413] =
+  'Subclass can\'t call members of super class in static context (arkts-no-super-call-in-static-context)';
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';
 }

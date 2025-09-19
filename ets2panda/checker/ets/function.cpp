@@ -210,6 +210,7 @@ bool ETSChecker::ProcessUntypedParameter(ir::AstNode *declNode, size_t paramInde
     varbinder::Variable *argParam = argSig->Params()[paramIndex];
     argParam->SetTsType(inferredType);
     paramExpr->Ident()->SetTsType(inferredType);
+    paramExpr->Ident()->Variable()->SetTsType(inferredType);
 
     return true;
 }
@@ -233,7 +234,31 @@ static void RemoveInvalidTypeMarkers(ir::AstNode *node) noexcept
     doNode(node);
 }
 
-static void ResetInferredNode(ETSChecker *checker)
+static void ResetInferredTypeInArrowBody(ir::AstNode *body, ETSChecker *checker,
+                                         std::unordered_set<varbinder::Variable *> &inferredVarSet)
+{
+    std::function<void(ir::AstNode *)> doNode = [&](ir::AstNode *node) {
+        if (node->IsIdentifier()) {
+            auto *id = node->AsIdentifier();
+            if (inferredVarSet.count(id->Variable()) == 0U) {
+                return;
+            }
+
+            id->Check(checker);
+            if (auto *parent = id->Parent(); parent->IsMemberExpression()) {
+                parent->AsMemberExpression()->Check(checker);
+            }
+        }
+        if (node->IsVariableDeclarator()) {
+            auto *id = node->AsVariableDeclarator()->Id();
+            inferredVarSet.emplace(id->Variable());
+            node->Check(checker);
+        }
+    };
+    body->IterateRecursively(doNode);
+}
+
+static void ResetInferredNode(ETSChecker *checker, std::unordered_set<varbinder::Variable *> &inferredVarSet)
 {
     auto relation = checker->Relation();
     auto resetFuncState = [](ir::ArrowFunctionExpression *expr) {
@@ -252,6 +277,7 @@ static void ResetInferredNode(ETSChecker *checker)
     relation->SetNode(nullptr);
 
     RemoveInvalidTypeMarkers(arrowFunc);
+    ResetInferredTypeInArrowBody(arrowFunc->Function()->Body(), checker, inferredVarSet);
     resetFuncState(arrowFunc);
     arrowFunc->Check(checker);
 }
@@ -277,15 +303,17 @@ bool ETSChecker::EnhanceSubstitutionForFunction(const ArenaVector<Type *> &typeP
     bool res = true;
     const size_t commonArity = std::min(argSig->ArgCount(), paramSig->ArgCount());
 
+    std::unordered_set<varbinder::Variable *> inferredVarSet;
     for (size_t idx = 0; idx < commonArity; idx++) {
         auto *declNode = argSig->Params()[idx]->Declaration()->Node();
         if (ProcessUntypedParameter(declNode, idx, paramSig, argSig, substitution)) {
+            inferredVarSet.emplace(argSig->Params()[idx]);
             continue;
         }
         res &= enhance(paramSig->Params()[idx]->TsType(), argSig->Params()[idx]->TsType());
     }
 
-    ResetInferredNode(this);
+    ResetInferredNode(this, inferredVarSet);
 
     if (argSig->HasRestParameter() && paramSig->HasRestParameter()) {
         res &= enhance(paramSig->RestVar()->TsType(), argSig->RestVar()->TsType());
@@ -391,8 +419,9 @@ bool ETSChecker::CheckOptionalLambdaFunction(ir::Expression *argument, Signature
 static bool IsInvalidArgumentAsIdentifier(varbinder::Scope *scope, const ir::Identifier *identifier)
 {
     auto result = scope->Find(identifier->Name());
-    return result.variable != nullptr && (result.variable->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE |
-                                                                   varbinder::VariableFlags::TYPE_ALIAS));
+    return result.variable != nullptr &&
+           (result.variable->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE_OR_ENUM |
+                                     varbinder::VariableFlags::TYPE_ALIAS));
 }
 
 static void ClearPreferredTypeForArray(checker::ETSChecker *checker, ir::Expression *argument, Type *paramType,
