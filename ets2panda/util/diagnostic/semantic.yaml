@@ -1433,6 +1433,10 @@ semantic:
   id: 245
   message: "Type {} is illegal in union member expression."
 
+- name: UNION_MEMBER_METHOD_REFERENCE
+  id: 186623
+  message: "Union member method reference is not supported now"
+
 - name: UNION_NONCONSTRUCTIBLE
   id: 300
   message: "The union type is not constructible."
