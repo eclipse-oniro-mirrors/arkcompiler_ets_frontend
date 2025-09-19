@@ -14,17 +14,17 @@
 *  @zhuoli72
 .* @zhuoli72 @Prof @igelhaus
 
-/figures ^igelhaus ^Prof @dreamdoomwalker @Ascnbio @jokerxd-liu
-/testTs ^igelhaus ^Prof @dreamdoomwalker @Ascnbio @jokerxd-liu
-/test_ecma_bcopt ^Prof @dreamdoomwalker  @jokerxd-liu
+/figures ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu
+/testTs ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu
+/test_ecma_bcopt ^Prof @Nojpg  @jokerxd-liu
 /arkguard/ @xiao-peiyang
 /es2panda/  @jokerxd-liu
 /ets2panda/ @igelhaus @Prof ^vigavi
 /ets2panda/aot @dkofanov  ^igelhaus ^Prof
 /ets2panda/ast_verifier ^mbolshov @dkofanov ^igelhaus ^Prof
-/ets2panda/bindings ^igelhaus ^Prof @dreamdoomwalker @Ascnbio @jokerxd-liu
+/ets2panda/bindings ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu
 /ets2panda/lexer @robertsipka ^csabaosztrogonac @igelhaus ^zelentsovdmitry @Prof
-/ets2panda/lsp ^igelhaus ^Prof @dreamdoomwalker @Ascnbio @jokerxd-liu
+/ets2panda/lsp ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu
 /ets2panda/public @mbolshov @zhelyapovaleksey ^igelhaus ^Prof
 /ets2panda/test ^akmaevaleksey ^igelhaus ^Prof
 /legacy_bin/ @ctw-ian @jokerxd-liu
@@ -40,8 +40,8 @@
 /ets2panda/checker/ETSAnalyzer.cpp @xingshunxiang ^akmaevaleksey @martinsajti  ^igelhaus ^Prof
 /ets2panda/checker/ETSAnalyzerHelpers.* @xingshunxiang @lirismankarina ^igelhaus ^Prof
 /ets2panda/compiler/ @xuxjeeee @gogabr ^csabaosztrogonac ^igelhaus ^Prof ^zelentsovdmitry
-/ets2panda/declgen_ets2ts/ @dreamdoomwalker ^trubachevilya ^ivagin ^igelhaus ^Prof ^luobohua2025 @chenmudan
-/ets2panda/driver/ @trubachevilya @dreamdoomwalker ^igelhaus ^Prof ^luobohua2025 @chenmudan
+/ets2panda/declgen_ets2ts/ @Nojpg ^trubachevilya ^ivagin ^igelhaus ^Prof ^luobohua2025 @chenmudan
+/ets2panda/driver/ @trubachevilya @Nojpg ^igelhaus ^Prof ^luobohua2025 @chenmudan
 /ets2panda/ir/ @ziziziiziziz @csabaosztrogonac ^igelhaus ^Prof
 /ets2panda/linter/              @cy917474985 @rosinskiyigor @eokolnov1 ^utkugursel ^fouckttt ^
 /ets2panda/parser/ @ziziziiziziz @robertsipka @shimenkovmikhail ^igelhaus ^csabaosztrogonac ^Prof ^zelentsovdmitry ^xuxjeeee
@@ -50,16 +50,16 @@
 /ets2panda/scripts/normalize_yaml @peterpronai ^igelhaus ^Prof
 /ets2panda/test/ast @ozerovnikita ^igelhaus ^Prof
 /ets2panda/test/benchmarks @pishin
-/ets2panda/test/depanalyzer @trubachevilya @dreamdoomwalker ^igelhaus ^Prof
+/ets2panda/test/depanalyzer @trubachevilya @Nojpg ^igelhaus ^Prof
 /ets2panda/test/srcdump @xingshunxiang @mbolshov ^igelhaus ^Prof
 /ets2panda/test/test-lists @igelhaus ^Prof
 /ets2panda/test/utils @mbolshov ^igelhaus ^Prof
 /ets2panda/util/ @shimenkovmikhail @dkofanov ^igelhaus ^Prof
-/ets2panda/util/arktsconfig* @chenmudan @dreamdoomwalker @trubachevilya ^igelhaus ^Prof ^luobohua2025
+/ets2panda/util/arktsconfig* @chenmudan @Nojpg @trubachevilya ^igelhaus ^Prof ^luobohua2025
 /ets2panda/util/diagnostic* @peterpronai @shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/util/diagnostic*yaml @alexey-kanatov @peterpronai @shimenkovmikhail @^igelhaus ^Prof
 /ets2panda/util/diagnosticEngine* @chernykhsergey @peterpronai @shimenkovmikhail ^igelhaus ^Prof
-/ets2panda/util/importPathManager* @chenmudan @dreamdoomwalker @trubachevilya ^igelhaus ^Prof ^luobohua2025
+/ets2panda/util/importPathManager* @chenmudan @Nojpg @trubachevilya ^igelhaus ^Prof ^luobohua2025
 /ets2panda/util/plugin.* @zhelyapovaleksey @mbolshov ^igelhaus ^Prof
 /ets2panda/varbinder/ @lirismankarina @akmaevaleksey  ^zelentsovdmitry ^igelhaus ^Prof
 /ets2panda/varbinder/ETSBinder.* @torokg ^zelentsovdmitry ^igelhaus ^Prof
@@ -88,10 +88,10 @@
 /ets2panda/ir/statements/ @dkofanov  ^akmaevaleksey ^igelhaus ^Prof
 /ets2panda/ir/statements/annotation* @lirismankarina @xuxjeeee ^igelhaus ^Prof
 /ets2panda/test/test-lists/astchecker @chernykhsergey ^igelhaus ^Prof
-/ets2panda/test/test-lists/declgenets2ts @dreamdoomwalker ^igelhaus ^Prof ^luobohua2025 @chenmudan
+/ets2panda/test/test-lists/declgenets2ts @Nojpg ^igelhaus ^Prof ^luobohua2025 @chenmudan
 /ets2panda/test/test-lists/parser @chernykhsergey ^igelhaus ^Prof
-/ets2panda/test/unit/arktsconfig-parser @trubachevilya @dreamdoomwalker ^igelhaus ^Prof
-/ets2panda/test/unit/lsp @dreamdoomwalker @Ascnbio @jokerxd-liu ^igelhaus ^Prof 
+/ets2panda/test/unit/arktsconfig-parser @trubachevilya @Nojpg ^igelhaus ^Prof
+/ets2panda/test/unit/lsp @Nojpg @Ascnbio @jokerxd-liu ^igelhaus ^Prof 
 /ets2panda/test/unit/plugin* @xingshunxiang @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/test/unit/public @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/checker/types/ets/Nullish.* ^vpukhov @gogabr ^igelhaus ^Prof
