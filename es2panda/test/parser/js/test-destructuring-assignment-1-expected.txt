@@ -1,0 +1,1 @@
+SyntaxError: Invalid left-hand side in array destructuring pattern [test-destructuring-assignment-1.js:18:5]

@@ -54,7 +54,12 @@ bool ArrayExpression::ConvertibleToArrayPattern()
             }
             case AstNodeType::META_PROPERTY_EXPRESSION:
             case AstNodeType::CHAIN_EXPRESSION:
-            case AstNodeType::SEQUENCE_EXPRESSION: {
+            case AstNodeType::SEQUENCE_EXPRESSION:
+            case AstNodeType::NUMBER_LITERAL:
+            case AstNodeType::STRING_LITERAL:
+            case AstNodeType::BOOLEAN_LITERAL:
+            case AstNodeType::NULL_LITERAL:
+            case AstNodeType::BIGINT_LITERAL: {
                 convResult = false;
                 break;
             }

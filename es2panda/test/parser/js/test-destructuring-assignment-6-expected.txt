@@ -1,0 +1,1 @@
+SyntaxError: Rest element must be last element [test-destructuring-assignment-6.js:17:5]
