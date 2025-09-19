@@ -26,6 +26,7 @@ import {
     sdkConfigPrefix
 } from '../pre_define';
 import {
+    Logger,
     LogDataFactory
 } from '../logger';
 import { ErrorCode, DriverError } from '../util/error';
@@ -228,10 +229,14 @@ export function computeHash(str: string): string {
 }
 
 export function getFileHash(filePath: string): string {
-    return computeHash(fs.readFileSync(filePath, 'utf8'));
+    return computeHash(fs.readFileSync(filePath, 'utf-8'));
 }
 
-export function formEts2pandaCmd(jobInfo: CompileJobInfo, isDebug: boolean, simultaneous: boolean = false): string[] {
+export function formEts2pandaCmd(
+    jobInfo: CompileJobInfo,
+    isDebug: boolean = false,
+    simultaneous: boolean = false
+): string[] {
     let { inputFilePath, outputFilePath, arktsConfigFile }: CompileFileInfo = jobInfo.compileFileInfo;
 
     const ets2pandaCmd: string[] = [
@@ -246,10 +251,8 @@ export function formEts2pandaCmd(jobInfo: CompileJobInfo, isDebug: boolean, simu
         ets2pandaCmd.push('--simultaneous')
     }
 
-    if (jobInfo.isAbcJob) {
-        ets2pandaCmd.push('--output')
-        ets2pandaCmd.push(outputFilePath)
-    }
+    ets2pandaCmd.push('--output')
+    ets2pandaCmd.push(outputFilePath)
 
     if (isDebug) {
         ets2pandaCmd.push('--debug-info');
@@ -260,4 +263,27 @@ export function formEts2pandaCmd(jobInfo: CompileJobInfo, isDebug: boolean, simu
     return ets2pandaCmd
 }
 
+export function updateFileHash(file: string, hashCache: Record<string, string>): boolean {
+    const fileHash: string = getFileHash(file);
+    const currHash: string = hashCache[file];
+    if (fileHash == currHash) {
+        return false;
+    }
 
+    Logger.getInstance().printDebug(`file ${file} hash changed: was ${currHash} became ${fileHash}`)
+
+    hashCache[file] = fileHash;
+    return true;
+
+}
+
+export function shouldBeCompiled(source: string, target: string): boolean {
+    if (fs.existsSync(target)) {
+        const sourceModified: number = fs.statSync(source).mtimeMs;
+        const targetModified: number = fs.statSync(target).mtimeMs;
+        if (sourceModified < targetModified) {
+            return false;
+        }
+    }
+    return true;
+}
