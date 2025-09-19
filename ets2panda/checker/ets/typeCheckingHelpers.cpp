@@ -840,15 +840,14 @@ Type *ETSChecker::GetTypeFromTypeAliasReference(varbinder::Variable *var)
     TypeStackElement tse(this, aliasTypeNode, {{diagnostic::CYCLIC_ALIAS}}, aliasTypeNode->Start(), isAllowedRecursion);
 
     if (tse.HasTypeError()) {
-        var->SetTsType(GlobalTypeError());
-        return GlobalTypeError();
+        return var->SetTsType(GlobalTypeError());
     }
 
     auto *typeAliasType = tse.GetElementType();
 
     if (typeAliasType != nullptr) {
         typeAliasType->AsETSTypeAliasType()->SetRecursive();
-        return typeAliasType;
+        return var->SetTsType(typeAliasType);
     }
 
     typeAliasType = CreateETSTypeAliasType(aliasTypeNode->Id()->Name(), aliasTypeNode);
@@ -866,8 +865,7 @@ Type *ETSChecker::GetTypeFromTypeAliasReference(varbinder::Variable *var)
     Type *targetType = aliasTypeNode->TypeAnnotation()->GetType(this);
     typeAliasType->AsETSTypeAliasType()->SetTargetType(targetType);
 
-    var->SetTsType(targetType);
-    return targetType;
+    return var->SetTsType(targetType);
 }
 
 Type *ETSChecker::GetTypeFromInterfaceReference(varbinder::Variable *var)

@@ -20,6 +20,7 @@
 #include "checker/ets/baseAnalyzer.h"
 
 #include "libarkbase/utils/arena_containers.h"
+#include "libarkbase/utils/small_vector.h"
 
 namespace ark::es2panda::ir {
 class AstNode;
@@ -27,33 +28,326 @@ class AstNode;
 
 namespace ark::es2panda::checker {
 
-class Set {
+class SmallDynBitset {
 public:
-    Set() = default;
-    ~Set() = default;
+    explicit SmallDynBitset(size_t nbits = 0)
+    {
+        Resize(nbits);
+    }
 
-    DEFAULT_COPY_SEMANTIC(Set);
-    DEFAULT_NOEXCEPT_MOVE_SEMANTIC(Set);
+    void Resize(size_t nbits)
+    {
+        nbits_ = nbits;
+        words_.resize(WordCount(nbits_), 0);
+        MaskTail();
+    }
 
-    void Reset();
-    bool IsReset();
-    void Incl(const int id);
-    void InclRange(const int start, const int limit);
-    void ExcludeFrom(const int start);
-    void Excl(const int id);
-    bool IsMember(const int id) const;
-    Set &AndSet(const Set &xs);
-    Set &OrSet(const Set &xs);
-    Set &DiffSet(const Set &xs);
-    int Next(const int id);
+    size_t Size() const
+    {
+        return nbits_;
+    }
 
-protected:
-    void InternalAndSet(const Set &xs);
+    void Clear()
+    {
+        std::fill(words_.begin(), words_.end(), 0);
+    }
+
+    void Incl(int i)  // legacy helper
+    {
+        if (i < 0) {
+            return;
+        }
+        Incl(TransformIdx(i));
+    }
+
+    void Incl(size_t i)
+    {
+        Ensure(i + 1);
+        SetBit(i);
+        MaskTail();
+    }
+
+    void Excl(int i)  // legacy helper
+    {
+        if (i < 0) {
+            return;
+        }
+        Excl(TransformIdx(i));
+    }
+
+    void Excl(size_t i)
+    {
+        if (i >= nbits_) {
+            return;
+        }
+        ClearBit(i);
+    }
+
+    bool IsMember(int i) const  // legacy helper
+    {
+        if (i < 0) {
+            return false;
+        }
+        return IsMember(TransformIdx(i));
+    }
+
+    bool IsMember(size_t i) const
+    {
+        if (i >= nbits_) {
+            return false;
+        }
+        return TestBit(i);
+    }
+
+    void InclRange(int start, int limit)  // legacy helper
+    {
+        InclRange(TransformIdx(std::max(start, 0)), TransformIdx(std::max(limit, 0)));
+    }
+
+    void InclRange(size_t start, size_t limit)
+    {
+        if (limit <= start) {
+            return;
+        }
+        Ensure(limit);
+
+        size_t sW = WordIndex(start);
+        size_t eW = WordIndex(limit - 1);
+        size_t sB = BitIndex(start);
+        size_t eB = BitIndex(limit - 1);
+
+        if (sW == eW) {
+            words_[sW] |= RangeMaskSameWord(sB, eB) & WordMask(sW);
+            MaskTail();
+            return;
+        }
+
+        words_[sW] |= HeadMask(sB);
+        for (size_t w = sW + 1; w < eW; ++w) {
+            words_[w] = BS_WORD_ALL_SET;
+        }
+        words_[eW] |= TailMask(eB) & WordMask(eW);
+        MaskTail();
+    }
+
+    void ExcludeFrom(int start)  // legacy helper
+    {
+        ExcludeFrom(TransformIdx(std::max(start, 0)));
+    }
+
+    void ExcludeFrom(size_t start)
+    {
+        if (start == 0 || start >= nbits_) {
+            Clear();
+            return;
+        }
+
+        size_t sW = WordIndex(start);
+        size_t sB = BitIndex(start);
+
+        for (size_t w = 0; w < sW; ++w) {
+            words_[w] = 0;
+        }
+        if (sB > 0) {
+            uint64_t below = LowBitsMask(sB);
+            words_[sW] &= ~below;
+        }
+        MaskTail();
+    }
+
+    SmallDynBitset &AndSet(const SmallDynBitset &o)
+    {
+        size_t minW = std::min(words_.size(), o.words_.size());
+        for (size_t i = 0; i < minW; ++i) {
+            words_[i] &= o.words_[i];
+        }
+        if (words_.size() > minW) {
+            words_.resize(minW);
+        }
+        nbits_ = std::min(nbits_, o.nbits_);
+        MaskTail();
+        return *this;
+    }
+
+    SmallDynBitset &OrSet(const SmallDynBitset &o)
+    {
+        if (o.words_.size() > words_.size()) {
+            words_.resize(o.words_.size(), 0);
+        }
+        for (size_t i = 0; i < o.words_.size(); ++i) {
+            words_[i] |= o.words_[i];
+        }
+        nbits_ = std::max(nbits_, o.nbits_);
+        MaskTail();
+        return *this;
+    }
+
+    SmallDynBitset &DiffSet(const SmallDynBitset &o)
+    {
+        size_t minW = std::min(words_.size(), o.words_.size());
+        for (size_t i = 0; i < minW; ++i) {
+            words_[i] &= ~o.words_[i];
+        }
+        MaskTail();
+        return *this;
+    }
+
+    int Next(int id) const
+    {
+        int i = id + 1;
+        if (i < 0) {
+            i = 0;
+        }
+        if (TransformIdx(i) >= nbits_) {
+            return -1;
+        }
+        size_t w = WordIndex(TransformIdx(i));
+        size_t b = BitIndex(TransformIdx(i));
+
+        if (w < words_.size()) {
+            uint64_t cur = words_[w] & (BS_WORD_ALL_SET << b) & WordMask(w);
+            if (cur) {
+                return static_cast<int>((w << BS_WORD_SHIFT) + Ctz64(cur));
+            }
+            for (size_t j = w + 1; j < words_.size(); ++j) {
+                uint64_t ww = words_[j] & WordMask(j);
+                if (ww) {
+                    return static_cast<int>((j << BS_WORD_SHIFT) + Ctz64(ww));
+                }
+            }
+        }
+        return -1;
+    }
+
+    void Reset()
+    {
+        reset_ = true;
+    }
+
+    bool IsReset()
+    {
+        return reset_;
+    }
 
 private:
-    bool reset_ {};
-    std::set<int> nodes_ {};
+    static constexpr size_t BS_WORD_BITS = 64;
+    static constexpr size_t BS_WORD_SHIFT = 6;
+    static constexpr size_t BS_WORD_MASK = BS_WORD_BITS - 1;
+    static constexpr uint64_t BS_WORD_ALL_SET = ~uint64_t(0);
+
+    SmallVector<uint64_t, 4U> words_;
+    size_t nbits_ = 0;
+    bool reset_ = false;  // was provided by the older Set version and still used in the analysis
+
+    static size_t TransformIdx(int i)
+    {
+        return static_cast<size_t>(i);
+    }
+
+    static size_t WordCount(size_t bits)
+    {
+        return (bits + BS_WORD_BITS - 1) >> BS_WORD_SHIFT;
+    }
+
+    static size_t WordIndex(size_t bit)
+    {
+        return bit >> BS_WORD_SHIFT;
+    }
+
+    static size_t BitIndex(size_t bit)
+    {
+        return bit & BS_WORD_MASK;
+    }
+
+    static uint64_t LowBitsMask(size_t count)
+    {
+        return count == 0 ? 0 : ((uint64_t(1) << count) - 1);
+    }
+
+    static uint64_t HeadMask(size_t fromBit)
+    {
+        return BS_WORD_ALL_SET << fromBit;
+    }
+
+    static uint64_t TailMask(size_t toBit)
+    {
+        return BS_WORD_ALL_SET >> (BS_WORD_BITS - 1 - toBit);
+    }
+
+    static uint64_t RangeMaskSameWord(size_t fromBit, size_t toBit)
+    {
+        return HeadMask(fromBit) & TailMask(toBit);
+    }
+
+    uint64_t WordMask(size_t idx) const
+    {
+        if (words_.empty()) {
+            return 0;
+        }
+        if (idx + 1 < words_.size()) {
+            return BS_WORD_ALL_SET;
+        }
+        size_t tail = nbits_ & BS_WORD_MASK;
+        return tail == 0 ? BS_WORD_ALL_SET : LowBitsMask(tail);
+    }
+
+    static uint64_t EffWordMask(size_t idx, size_t bits)
+    {
+        size_t wc = WordCount(bits);
+        if (wc == 0) {
+            return 0;
+        }
+        if (idx + 1 < wc) {
+            return BS_WORD_ALL_SET;
+        }
+        size_t tail = bits & BS_WORD_MASK;
+        return tail == 0 ? BS_WORD_ALL_SET : LowBitsMask(tail);
+    }
+
+    void Ensure(size_t needBits)
+    {
+        if (needBits <= nbits_) {
+            return;
+        }
+        nbits_ = needBits;
+        words_.resize(WordCount(nbits_), 0);
+        MaskTail();
+    }
+
+    void SetBit(size_t bit)
+    {
+        words_[WordIndex(bit)] |= (uint64_t(1) << BitIndex(bit));
+    }
+
+    void ClearBit(size_t bit)
+    {
+        words_[WordIndex(bit)] &= ~(uint64_t(1) << BitIndex(bit));
+    }
+
+    bool TestBit(size_t bit) const
+    {
+        return (words_[WordIndex(bit)] & (uint64_t(1) << BitIndex(bit))) != 0;
+    }
+
+    uint64_t WordAt(size_t idx) const
+    {
+        return idx < words_.size() ? words_[idx] : 0;
+    }
+
+    void MaskTail()
+    {
+        if (!words_.empty()) {
+            words_.back() &= WordMask(words_.size() - 1);
+        }
+    }
+
+    static int Ctz64(uint64_t x)
+    {
+        return Ctz(x);
+    }
 };
+
+using Set = SmallDynBitset;
 
 class AssignPendingExit : public PendingExit {
 public:
@@ -82,7 +376,7 @@ public:
 };
 
 using NodeId = int;
-using NodeIdMap = ArenaMap<const ir::AstNode *, NodeId>;
+using NodeIdMap = std::map<const ir::AstNode *, NodeId>;
 
 class AssignAnalyzer : public BaseAnalyzer<AssignPendingExit> {
 public:
@@ -163,7 +457,7 @@ private:
     Set initsWhenFalse_ {};
     Set uninitsWhenTrue_ {};
     Set uninitsWhenFalse_ {};
-    ArenaVector<const ir::AstNode *> varDecls_;
+    std::vector<const ir::AstNode *> varDecls_;
     const ir::ClassDefinition *globalClass_ {};
     const ir::ClassDefinition *classDef_ {};
     int classFirstAdr_ {};
@@ -175,7 +469,7 @@ private:
     bool hasTryFinallyBlock_ {};
     NodeIdMap nodeIdMap_;
     int numErrors_ {};
-    ArenaSet<const ir::AstNode *> foundErrors_;
+    std::unordered_set<const ir::AstNode *> foundErrors_;
 };
 
 }  // namespace ark::es2panda::checker
