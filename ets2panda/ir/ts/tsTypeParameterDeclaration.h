@@ -67,6 +67,17 @@ public:
         return GetHistoryNodeAs<TSTypeParameterDeclaration>()->params_;
     }
 
+    void SetParams(ArenaVector<TSTypeParameter *> &&paramsList)
+    {
+        auto newNode = GetOrCreateHistoryNodeAs<TSTypeParameterDeclaration>();
+        auto &params = newNode->params_;
+        params = std::move(paramsList);
+
+        for (auto *param : params) {
+            param->SetParent(newNode);
+        }
+    }
+
     void AddParam(TSTypeParameter *param)
     {
         ES2PANDA_ASSERT(param != nullptr);

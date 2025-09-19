@@ -57,6 +57,15 @@ public:
         return argument_;
     }
 
+    void SetArgument(Expression *argument)
+    {
+        argument_ = argument;
+
+        if (argument) {
+            argument->SetParent(this);
+        }
+    }
+
     [[nodiscard]] bool IsPrefix() const noexcept
     {
         return prefix_;

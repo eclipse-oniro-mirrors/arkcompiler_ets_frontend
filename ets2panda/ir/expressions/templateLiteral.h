@@ -47,9 +47,27 @@ public:
         return quasis_;
     }
 
+    void SetQuasis(ArenaVector<TemplateElement *> &&quasisList)
+    {
+        quasis_ = std::move(quasisList);
+
+        for (auto &quasis : quasis_) {
+            quasis->SetParent(this);
+        }
+    }
+
     [[nodiscard]] const ArenaVector<Expression *> &Expressions() const noexcept
     {
         return expressions_;
+    }
+
+    void SetExpressions(ArenaVector<Expression *> &&expressionsList)
+    {
+        expressions_ = std::move(expressionsList);
+
+        for (auto &expression : expressions_) {
+            expression->SetParent(this);
+        }
     }
 
     [[nodiscard]] TemplateLiteral *Clone(ArenaAllocator *allocator, AstNode *parent) override;

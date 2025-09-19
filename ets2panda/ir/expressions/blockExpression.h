@@ -46,6 +46,15 @@ public:
         return statements_;
     }
 
+    void SetStatements(ArenaVector<Statement *> &&statementList)
+    {
+        statements_ = std::move(statementList);
+
+        for (auto *statement : statements_) {
+            statement->SetParent(this);
+        }
+    }
+
     void AddStatements(ArenaVector<ir::Statement *> const &statements)
     {
         std::copy_if(statements.begin(), statements.end(), std::back_inserter(statements_),

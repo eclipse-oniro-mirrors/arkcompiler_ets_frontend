@@ -53,6 +53,15 @@ public:
         return properties_;
     }
 
+    void SetProperties(ArenaVector<Expression *> &&propertiesList)
+    {
+        properties_ = std::move(propertiesList);
+
+        for (auto &property : properties_) {
+            property->SetParent(this);
+        }
+    }
+
     [[nodiscard]] bool IsDeclaration() const noexcept
     {
         return isDeclaration_;

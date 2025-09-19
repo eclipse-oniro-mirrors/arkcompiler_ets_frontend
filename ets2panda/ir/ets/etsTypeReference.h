@@ -48,6 +48,8 @@ public:
         return GetHistoryNodeAs<ETSTypeReference>()->part_;
     }
 
+    void SetPart(ETSTypeReferencePart *part);
+
     ir::Identifier *BaseName() const;
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -72,7 +74,6 @@ public:
 
 private:
     friend class SizeOfNodeTest;
-    void SetPart(ETSTypeReferencePart *part);
 
     ir::ETSTypeReferencePart *part_;
 };

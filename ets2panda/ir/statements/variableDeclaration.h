@@ -64,6 +64,17 @@ public:
         return GetHistoryNodeAs<VariableDeclaration>()->declarators_;
     }
 
+    void SetDeclarators(ArenaVector<VariableDeclarator *> &&declaratorsList)
+    {
+        auto newNode = this->GetOrCreateHistoryNodeAs<VariableDeclaration>();
+        auto &declarators = newNode->declarators_;
+        declarators = std::move(declaratorsList);
+
+        for (auto *declarator : declarators) {
+            declarator->SetParent(newNode);
+        }
+    }
+
     [[nodiscard]] const ArenaVector<VariableDeclarator *> &Declarators();
 
     [[nodiscard]] ArenaVector<VariableDeclarator *> &DeclaratorsForUpdate();

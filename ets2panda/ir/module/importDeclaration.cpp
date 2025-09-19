@@ -26,7 +26,12 @@ namespace ark::es2panda::ir {
 
 void ImportDeclaration::SetSource(StringLiteral *source)
 {
-    this->GetOrCreateHistoryNodeAs<ImportDeclaration>()->source_ = source;
+    auto newNode = this->GetOrCreateHistoryNodeAs<ImportDeclaration>();
+    newNode->source_ = source;
+
+    if (source) {
+        source->SetParent(newNode);
+    }
 }
 
 void ImportDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)

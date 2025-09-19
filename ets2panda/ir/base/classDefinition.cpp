@@ -126,6 +126,17 @@ void ClassDefinition::SetValueImplements(TSClassImplements *implements, size_t i
     arenaVector[index] = implements;
 }
 
+void ClassDefinition::SetImplements(ArenaVector<TSClassImplements *> &&implementsList)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassDefinition>();
+    auto &implements = newNode->implements_;
+    implements = std::move(implementsList);
+
+    for (auto *implement : implements) {
+        implement->SetParent(newNode);
+    }
+}
+
 [[nodiscard]] const ArenaVector<TSClassImplements *> &ClassDefinition::Implements()
 {
     auto newNode = this->GetHistoryNodeAs<ClassDefinition>();

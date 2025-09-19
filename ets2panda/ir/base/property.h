@@ -62,6 +62,15 @@ public:
         return key_;
     }
 
+    void SetKey(Expression *key)
+    {
+        key_ = key;
+
+        if (key) {
+            key->SetParent(this);
+        }
+    }
+
     [[nodiscard]] const Expression *Value() const noexcept
     {
         return value_;
