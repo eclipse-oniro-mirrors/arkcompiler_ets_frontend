@@ -805,6 +805,12 @@ bool ETSChecker::IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *t
         return true;
     };
 
+    if (typeAliasNode->TypeAnnotation()->IsETSFunctionType() &&
+        typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->IsETSTypeReference()) {
+        isAllowedRerursiveType &= typeAliasDeclarationCheck(
+            typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->AsETSTypeReference()->Part());
+    }
+
     if (typeAliasNode->TypeAnnotation()->IsETSTypeReference()) {
         isAllowedRerursiveType &=
             typeAliasDeclarationCheck(typeAliasNode->TypeAnnotation()->AsETSTypeReference()->Part());
