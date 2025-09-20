@@ -17,3 +17,8 @@ export declare class PersistentStorage {
   static persistProp(): void;
   static PersistProps(): void;
 }
+
+export declare class LocalStorage {
+  static GetShared(): LocalStorage;
+  static getShared(): LocalStorage;
+}
