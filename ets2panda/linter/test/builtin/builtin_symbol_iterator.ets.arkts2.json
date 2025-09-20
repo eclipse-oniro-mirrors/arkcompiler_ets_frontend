@@ -16,16 +16,6 @@
     "result": [
         {
             "line": 17,
-            "column": 5,
-            "endLine": 17,
-            "endColumn": 56,
-            "problem": "InteropCallReflect",
-            "suggest": "",
-            "rule": "Reflect API usage is not allowed in interop calls when an \"Object\" parameter receives a class instance (arkts-interop-d2s-static-reflect-on-dynamic-instance)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 17,
             "column": 40,
             "endLine": 17,
             "endColumn": 55,
