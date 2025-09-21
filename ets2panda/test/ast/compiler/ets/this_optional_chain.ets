@@ -13,13 +13,11 @@
  * limitations under the License.
  */
 
-export class XXX {
-    bar: (()=>void)|undefined = undefined
-    foo() {
-        if (1) {
-            17;
-        } else
-            this
-        this.bar()
+class A{
+    private _x?:int = undefined;
+    get x(): int |undefined{
+        return this?._x;
     }
 }
+
+/* @@? 19:20 Error SyntaxError: 'this?.' optional chaining is not supported. */
