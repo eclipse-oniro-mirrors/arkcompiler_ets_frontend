@@ -35,4 +35,5 @@ export interface CommandLineOptions {
   scanWholeProjectInHomecheck?: boolean;
   ruleConfig?: string;
   autofixCheck?: boolean;
+  isCommandConfig?: boolean;
 }

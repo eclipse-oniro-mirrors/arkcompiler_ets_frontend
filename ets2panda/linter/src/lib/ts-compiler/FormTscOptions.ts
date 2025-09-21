@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,11 +34,23 @@ export function formTscOptions(
 ): ts.CreateProgramOptions {
   if (cmdOptions.parsedConfigFile) {
     const options: ts.CreateProgramOptions = {
-      rootNames: cmdOptions.parsedConfigFile.fileNames,
+      rootNames: cmdOptions.inputFiles.concat(readDeclareFiles(cmdOptions.sdkDefaultApiPath ?? '')),
       options: cmdOptions.parsedConfigFile.options,
       projectReferences: cmdOptions.parsedConfigFile.projectReferences,
       configFileParsingDiagnostics: ts.getConfigFileParsingDiagnostics(cmdOptions.parsedConfigFile)
     };
+    Object.assign(options.options, {
+      allowJs: true,
+      checkJs: false,
+      emitNodeModulesFiles: true,
+      importsNotUsedAsValues: ts.ImportsNotUsedAsValues.Preserve,
+      module: ts.ModuleKind.CommonJS,
+      moduleResolution: ts.ModuleResolutionKind.NodeJs,
+      noEmit: true,
+      maxFlowDepth: 2000,
+      types: [],
+      incremental: true
+    });
     options.options = Object.assign(options.options, overrideCompilerOptions);
     return options;
   }
