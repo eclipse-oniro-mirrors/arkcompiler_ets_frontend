@@ -60,7 +60,7 @@ function prepareInputFilesList(cmdOptions: CommandLineOptions): string[] {
   let inputFiles = cmdOptions.inputFiles.map((x) => {
     return path.normalize(x);
   });
-  if (!cmdOptions.parsedConfigFile) {
+  if (!cmdOptions.isCommandConfig || !cmdOptions.parsedConfigFile) {
     return inputFiles;
   }
 

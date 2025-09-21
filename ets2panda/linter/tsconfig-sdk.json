@@ -12,6 +12,10 @@
           "emitParameters" : false
         },
         {
+          "name":"Reusable",
+          "emitParameters" : false
+        },
+        {
           "name":"CustomDialog",
           "emitParameters" : false
         },
@@ -60,12 +64,76 @@
           "emitParameters" : false
         },
         {
+          "name":"LocalBuilder",
+          "emitParameters" : false
+        },
+        {
           "name":"BuilderParam",
           "emitParameters" : false
         },
         {
           "name":"Observed",
           "emitParameters" : false
+        },
+        {
+          "name": "Require",
+          "emitParameters" : false
+        },
+        {
+          "name": "Sendable",
+          "emitParameters" : false
+        },
+        {
+          "name": "Track",
+          "emitParameters": false
+        },
+        {
+          "name": "ComponentV2",
+          "emitParameters": true
+        },
+        {
+          "name": "ObservedV2",
+          "emitParameters": false
+        },
+        {
+          "name": "Trace",
+          "emitParameters": false
+        },
+        {
+          "name": "Local",
+          "emitParameters" : false
+        },
+        {
+          "name": "Param",
+          "emitParameters" : false
+        },
+        {
+          "name": "Once",
+          "emitParameters" : false
+        },
+        {
+          "name": "Event",
+          "emitParameters" : false
+        },
+        {
+          "name": "Monitor",
+          "emitParameters" : true
+        },
+        {
+          "name": "Provider",
+          "emitParameters" : true
+        },
+        {
+          "name": "Consumer",
+          "emitParameters" : true
+        },
+        {
+          "name": "Computed",
+          "emitParameters" : false
+        },
+        {
+          "name": "Type",
+          "emitParameters" : true
         }
       ],
       "propertyDecorators": [
@@ -88,12 +156,15 @@
       ],
       "render": {
         "method": ["build", "pageTransition"],
-        "decorator": "Builder"
+        "decorator": ["LocalBuilder", "Builder"]
       },
       "components": [
         "AbilityComponent",
         "AlphabetIndexer",
+        "AnalogClock",
         "Animator",
+        "ArcList",
+        "ArcListItem",
         "Badge",
         "Blank",
         "Button",
@@ -108,13 +179,16 @@
         "ColorPickerDialog",
         "Column",
         "ColumnSplit",
+        "ContentSlot",
         "Counter",
         "DataPanel",
         "DatePicker",
         "Divider",
         "EffectComponent",
         "Ellipse",
+        "EmbeddedComponent",
         "Flex",
+        "FolderStack",
         "FormComponent",
         "FormLink",
         "Gauge",
@@ -125,19 +199,24 @@
         "Hyperlink",
         "Image",
         "ImageAnimator",
+        "IndicatorComponent",
+        "LazyVGridLayout",
         "Line",
         "List",
         "ListItem",
         "ListItemGroup",
         "LoadingProgress",
         "Marquee",
+        "MediaCachedImage",
         "Menu",
         "MenuItem",
         "MenuItemGroup",
+        "MovingPhotoView",
         "NavDestination",
         "NavRouter",
         "Navigation",
         "Navigator",
+        "NodeContainer",
         "Option",
         "PageTransitionEnter",
         "PageTransitionExit",
@@ -146,6 +225,7 @@
         "Path",
         "PatternLock",
         "Piece",
+        "PlatformView",
         "PluginComponent",
         "Polygon",
         "Polyline",
@@ -176,6 +256,8 @@
         "Stepper",
         "StepperItem",
         "Swiper",
+        "SymbolGlyph",
+        "SymbolSpan",
         "TabContent",
         "Tabs",
         "Text",
@@ -186,9 +268,11 @@
         "TextTimer",
         "TimePicker",
         "Toggle",
+        "ToolBarItem",
         "Video",
         "Web",
         "WindowScene",
+        "WithTheme",
         "XComponent",
         "GridRow",
         "GridCol",
@@ -199,7 +283,13 @@
         "PasteButton",
         "SaveButton",
         "UIExtensionComponent",
-        "RichEditor"
+        "IsolatedComponent",
+        "RichEditor",
+        "Component3D",
+        "ContainerSpan",
+        "ArcAlphabetIndexer",
+        "ArcSwiper",
+        "ArcScrollBar",
       ],
       "extend": {
         "decorator": ["Extend", "AnimatableExtend"],
@@ -215,9 +305,24 @@
             "instance": "AlphabetIndexerInstance"
           },
           {
+            "name": "AnalogClock",
+            "type": "AnalogClockAttribute",
+            "instance": "AnalogClockInstance"
+          },
+          {
             "name": "Animator",
             "type": "AnimatorAttribute",
             "instance": "AnimatorInstance"
+          },
+          {
+            "name": "ArcList",
+            "type": "ArcListAttribute",
+            "instance": "ArcListInstance"
+          },
+          {
+            "name": "ArcListItem",
+            "type": "ArcListItemAttribute",
+            "instance": "ArcListItemInstance"
           },
           {
             "name": "Badge",
@@ -320,9 +425,19 @@
             "instance": "EllipseInstance"
           },
           {
+            "name": "EmbeddedComponent",
+            "type": "EmbeddedComponentAttribute",
+            "instance": "EmbeddedComponentInstance"
+          },
+          {
             "name": "Flex",
             "type": "FlexAttribute",
             "instance": "FlexInstance"
+          },
+          {
+            "name": "FolderStack",
+            "type": "FolderStackAttribute",
+            "instance": "FolderStackInstance"
           },
           {
             "name": "FormComponent",
@@ -375,6 +490,16 @@
             "instance": "ImageAnimatorInstance"
           },
           {
+            "name": "IndicatorComponent",
+            "type": "IndicatorComponentAttribute",
+            "instance": "IndicatorComponentInstance"
+          },
+          {
+            "name": "LazyVGridLayout",
+            "type": "LazyVGridLayoutAttribute",
+            "instance": "LazyVGridLayoutInstance"
+          },
+          {
             "name": "Line",
             "type": "LineAttribute",
             "instance": "LineInstance"
@@ -405,6 +530,11 @@
             "instance": "MarqueeInstance"
           },
           {
+            "name": "MediaCachedImage",
+            "type": "MediaCachedImageAttribute",
+            "instance": "MediaCachedImageInstance"
+          },
+          {
             "name": "Menu",
             "type": "MenuAttribute",
             "instance": "MenuInstance"
@@ -418,6 +548,11 @@
             "name": "MenuItemGroup",
             "type": "MenuItemGroupAttribute",
             "instance": "MenuItemGroupInstance"
+          },
+          {
+            "name": "MovingPhotoView",
+            "type": "MovingPhotoViewAttribute",
+            "instance": "MovingPhotoViewInstance"
           },
           {
             "name": "NavDestination",
@@ -438,6 +573,11 @@
             "name": "Navigator",
             "type": "NavigatorAttribute",
             "instance": "NavigatorInstance"
+          },
+          {
+            "name": "NodeContainer",
+            "type": "NodeContainerAttribute",
+            "instance": "NodeContainerInstance"
           },
           {
             "name": "Option",
@@ -478,6 +618,11 @@
             "name": "Piece",
             "type": "PieceAttribute",
             "instance": "PieceInstance"
+          },
+          {
+            "name": "PlatformView",
+            "type": "PlatformViewAttribute",
+            "instance": "PlatformViewInstance"
           },
           {
             "name": "PluginComponent",
@@ -630,6 +775,16 @@
             "instance": "SwiperInstance"
           },
           {
+            "name": "SymbolGlyph",
+            "type": "SymbolGlyphAttribute",
+            "instance": "SymbolGlyphInstance"
+          },
+          {
+            "name": "SymbolSpan",
+            "type": "SymbolSpanAttribute",
+            "instance": "SymbolSpanInstance"
+          },
+          {
             "name": "TabContent",
             "type": "TabContentAttribute",
             "instance": "TabContentInstance"
@@ -678,6 +833,11 @@
             "name": "Toggle",
             "type": "ToggleAttribute",
             "instance": "ToggleInstance"
+          },
+          {
+            "name": "ToolBarItem",
+            "type": "ToolBarItemAttribute",
+            "instance": "ToolBarItemInterface"
           },
           {
             "name": "Video",
@@ -745,10 +905,40 @@
             "instance": "UIExtensionComponentInstance"
           },
           {
+            "name": "IsolatedComponent",
+            "type": "IsolatedComponentAttribute",
+            "instance": "IsolatedComponentInstance"
+          },
+          {
             "name": "RichEditor",
             "type": "RichEditorAttribute",
             "instance": "RichEditorInstance"
-          }
+          },
+          {
+            "name": "Component3D",
+            "type": "Component3DAttribute",
+            "instance": "Component3DInstance"
+          },
+          {
+            "name": "ContainerSpan",
+            "type": "ContainerSpanAttribute",
+            "instance": "ContainerSpanInstance"
+          },
+          {
+            "name": "ArcAlphabetIndexer",
+            "type": "ArcAlphabetIndexerAttribute",
+            "instance": "ArcAlphabetIndexerInstance"
+          },
+          {
+            "name": "ArcSwiper",
+            "type": "ArcSwiperAttribute",
+            "instance": "ArcSwiperInstance"
+          },
+          {
+            "name": "ArcScrollBar",
+            "type": "ArcScrollBarAttribute",
+            "instance": "ArcScrollBarInstance"
+          },
         ]
       },
       "styles": {
@@ -764,7 +954,20 @@
         "decorator": "Concurrent"
       },
       "customComponent": "CustomComponent",
+      "syntaxComponents": {
+        "paramsUICallback": [
+          "ForEach",
+          "LazyForEach"
+        ],
+        "attrUICallback": [
+          {
+            "name": "Repeat",
+            "attributes": ["each", "template"]
+          }
+        ]
+      }
     },
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     // "importsNotUsedAsValues": "preserve",
