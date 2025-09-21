@@ -20,6 +20,6 @@
     "ets2panda/linter/src/lib/autofixes/QuasiEditor.ts": "*",
     "ets2panda/linter/src/lib/statistics/scan/ProblemStatisticsCommonFunction.ts": "*",
     "ets2panda/linter/src/lib/utils/functions/ConfiguredRulesProcess.ts": "*",
-    "*": ["G.CMT.03", "G.FMT.11", "G.NAM.03", "huge_headerfile", "huge_non_headerfile", "bc-30001"]
+    "*": ["G.CMT.03", "G.FMT.11", "G.FMT.16", "G.NAM.03", "huge_headerfile", "huge_non_headerfile", "bc-30001"]
 }
 
