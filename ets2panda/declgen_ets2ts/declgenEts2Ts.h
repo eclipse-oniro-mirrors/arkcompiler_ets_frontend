@@ -198,6 +198,7 @@ private:
     void PrepareClassDeclaration(const ir::ClassDefinition *classDef);
     bool ShouldSkipMethodDeclaration(const ir::MethodDefinition *methodDef);
     bool ShouldSkipClassDeclaration(const std::string_view &className) const;
+    bool HasUIAnnotation(const ir::ClassProperty *classProp) const;
     void HandleClassDeclarationTypeInfo(const ir::ClassDefinition *classDef, const std::string_view &className);
     void HandleClassInherit(const ir::Expression *expr);
     void ProcessClassBody(const ir::ClassDefinition *classDef);

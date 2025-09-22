@@ -19,7 +19,7 @@ set(COMMON_SOURCE_FILES
     "util.cpp"
 )
 
-set(DECLGEN_PLUGIN_TESTS
+set(DECLGEN_PLUGIN_TESTS_ISOLATED
     "test_ets2ts_isolated_declgen cpp"
 )
 
@@ -33,6 +33,34 @@ set(ETS2TS_ISOLATED_TESTS
     "./ets2ts_isolated/test_ets2ts_infer_function_return_type_with_import_symbol.ets"
     "./ets2ts_isolated/test_ets2ts_isolated_annotation.ets"
 )
+
+set(DECLGEN_PLUGIN_TESTS
+    "test_ets2ts_declgen cpp"
+)
+
+set(ETS2TS_TESTS
+    "./ets2ts/test_ets2ts_ui_decorator.ets"
+)
+
+foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS_ISOLATED})
+    string(REPLACE " " ";" TEST_DATA_ELEM "${TEST_DATA}")
+    list(GET TEST_DATA_ELEM 0 TEST_NAME)
+    list(GET TEST_DATA_ELEM 1 EXTENSION)
+
+    panda_frontend_add_executable(${TEST_NAME} ${TEST_NAME}.${EXTENSION} ${COMMON_SOURCE_FILES} OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    panda_add_sanitizers(TARGET ${TEST_NAME} SANITIZERS ${PANDA_SANITIZERS_LIST})
+
+    panda_target_include_directories(${TEST_NAME}
+        PRIVATE ${ES2PANDA_PATH}
+        PRIVATE ${PANDA_ROOT}/assembler
+        PRIVATE ${OUTPUT_DIR}
+        PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+        PUBLIC ${CMAKE_SOURCE_DIR}/runtime
+        ${CMAKE_BINARY_DIR}
+    )
+    panda_target_link_libraries(${TEST_NAME} es2panda-public arkassembler arkbase arkfile)
+endforeach()
 
 foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
     string(REPLACE " " ";" TEST_DATA_ELEM "${TEST_DATA}")
@@ -57,11 +85,38 @@ endforeach()
 add_custom_target(declgen-ets2ts-plugin-test)
 
 set(ETS2TS "ets2ts_isolated")
-foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
+foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS_ISOLATED})
     string(REPLACE " " ";" TEST_DATA_ELEM "${TEST_DATA}")
     list(GET TEST_DATA_ELEM 0 TEST_NAME)
     list(GET TEST_DATA_ELEM 1 EXTENSION)
     foreach(TEST_ETS_FILE IN ITEMS ${ETS2TS_ISOLATED_TESTS})
+        cmake_path(SET PATH_ITEM "${TEST_ETS_FILE}")
+        cmake_path(GET PATH_ITEM STEM FILE_NAME)
+        add_custom_target(declgen-ets2ts-plugin-test-compile-isolated-${FILE_NAME}
+            COMMAND ${CMAKE_COMMAND} -E env
+                LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
+                ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} $<TARGET_FILE:es2panda>
+                --extension=ets --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.abc"
+                "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_ETS_FILE}" > "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.out" 2>&1
+        )
+        add_dependencies(declgen-ets2ts-plugin-test-compile-isolated-${FILE_NAME} es2panda ${TEST_NAME} es2panda-lib)
+        add_dependencies(declgen-ets2ts-plugin-test declgen-ets2ts-plugin-test-compile-isolated-${FILE_NAME})
+
+        add_custom_target(declgen-ets2ts-plugin-test-expected-isolated-${FILE_NAME}
+            COMMAND ${CMAKE_COMMAND} -E compare_files
+                "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.d.ets" "${CMAKE_CURRENT_SOURCE_DIR}/${ETS2TS}/${FILE_NAME}-expected.txt"
+        )
+        add_dependencies(declgen-ets2ts-plugin-test-expected-isolated-${FILE_NAME} declgen-ets2ts-plugin-test-compile-isolated-${FILE_NAME} es2panda-lib)
+        add_dependencies(declgen-ets2ts-plugin-test declgen-ets2ts-plugin-test-expected-isolated-${FILE_NAME})
+    endforeach()
+endforeach()
+
+set(ETS2TS "ets2ts")
+foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
+    string(REPLACE " " ";" TEST_DATA_ELEM "${TEST_DATA}")
+    list(GET TEST_DATA_ELEM 0 TEST_NAME)
+    list(GET TEST_DATA_ELEM 1 EXTENSION)
+    foreach(TEST_ETS_FILE IN ITEMS ${ETS2TS_TESTS})
         cmake_path(SET PATH_ITEM "${TEST_ETS_FILE}")
         cmake_path(GET PATH_ITEM STEM FILE_NAME)
         add_custom_target(declgen-ets2ts-plugin-test-compile-${FILE_NAME}
