@@ -17,7 +17,7 @@ class B {
     name_: string
 }
 
-function name(b: B) {}
+function /* @@ label1 */name(b: B) {}
 function name(b: B, n: string) {}
 
 get name(this: B): string {
@@ -28,5 +28,5 @@ set name/* @@ label */(this: B, n: string) {
     this.name_ = n;
 }
 
-/* @@@ label Error TypeError: Function name with this assembly signature already declared.  */
+/* @@@ label1 Error TypeError: Method cannot use the same name as name accessor property  */
 /* @@@ label Error TypeError: Function name with this assembly signature already declared.  */

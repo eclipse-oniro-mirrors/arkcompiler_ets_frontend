@@ -15,8 +15,7 @@
 
 set a '1;'
 
-/* @@? 16:1 Error SyntaxError: Extension Setter can only have 2 parameters.  */
-/* @@? 16:5 Error TypeError: Only abstract or native methods can't have body.  */
+/* @@? 16:1 Error SyntaxError: Setter must have exactly one formal parameter. */
+/* @@? 16:5 Error TypeError: Only abstract or native methods can't have body. */
 /* @@? 16:7 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 22:77 Error SyntaxError: Expected ')', got 'end of stream'.  */
-/* @@? 22:77 Error SyntaxError: Extension Accessor must have a receiver.  */
+/* @@? 22:1 Error SyntaxError: Expected ')', got 'end of stream'. */

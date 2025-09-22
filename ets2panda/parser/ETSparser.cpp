@@ -2394,7 +2394,7 @@ ir::FunctionDeclaration *ETSParser::ParseFunctionDeclaration(bool canBeAnonymous
     return funcDecl;
 }
 
-ir::FunctionDeclaration *ETSParser::ParseAccessorWithReceiver(ir::ModifierFlags modifiers)
+ir::FunctionDeclaration *ETSParser::ParseTopLevelAccessor(ir::ModifierFlags modifiers)
 {
     ES2PANDA_ASSERT(Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_GET ||
                     Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_SET);
@@ -2403,8 +2403,7 @@ ir::FunctionDeclaration *ETSParser::ParseAccessorWithReceiver(ir::ModifierFlags 
     lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
 
     Lexer()->NextToken();
-    auto newStatus = ParserStatus::ALLOW_SUPER | ParserStatus::FUNCTION_DECLARATION | ParserStatus::ALLOW_RECEIVER |
-                     ParserStatus::EXTENSION_ACCESSOR;
+    auto newStatus = ParserStatus::ALLOW_SUPER | ParserStatus::FUNCTION_DECLARATION | ParserStatus::ALLOW_RECEIVER;
 
     ir::Identifier *funcIdentNode = ExpectIdentifier();
     ES2PANDA_ASSERT(funcIdentNode != nullptr);
@@ -2413,17 +2412,29 @@ ir::FunctionDeclaration *ETSParser::ParseAccessorWithReceiver(ir::ModifierFlags 
     ir::ScriptFunction *func =
         isGetter ? ParseFunction(newStatus | ParserStatus::NEED_RETURN_TYPE) : ParseFunction(newStatus);
     ES2PANDA_ASSERT(func != nullptr);
-    size_t paramCount = func->Params().size();
-    size_t getterValidParamCount = 1;
-    size_t setterValidParamCount = 2;
+
+    auto params = func->Params();
+    bool hasReceiver = !params.empty() && params[0]->IsETSParameterExpression() &&
+                       params[0]->AsETSParameterExpression()->Ident()->IsReceiver();
+    const size_t paramCount = params.size();
+    const size_t getterValidParamCount = hasReceiver ? 1 : 0;
+    const size_t setterValidParamCount = hasReceiver ? 2 : 1;
     if (isGetter) {
         func->AddFlag(ir::ScriptFunctionFlags::GETTER);
-        if (getterValidParamCount != paramCount) {
+        if (!hasReceiver && getterValidParamCount != paramCount) {
+            LogError(diagnostic::GETTER_FORMAL_PARAMS, {}, startLoc);
+        }
+        // Check for extension accessor
+        if (hasReceiver && getterValidParamCount != paramCount) {
             LogError(diagnostic::EXTENSION_GETTER_WRONG_PARAM, {}, startLoc);
         }
     } else {
         func->AddFlag(ir::ScriptFunctionFlags::SETTER);
-        if (setterValidParamCount != paramCount) {
+        if (!hasReceiver && setterValidParamCount != paramCount) {
+            LogError(diagnostic::SETTER_FORMAL_PARAMS, {}, startLoc);
+        }
+        // Check for extension accessor
+        if (hasReceiver && setterValidParamCount != paramCount) {
             LogError(diagnostic::EXTENSION_SETTER_WRONG_PARAM, {}, startLoc);
         }
         if (func->ReturnTypeAnnotation() != nullptr) {

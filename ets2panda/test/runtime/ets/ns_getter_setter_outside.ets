@@ -13,16 +13,19 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
+namespace NS {
+    export get name(): string {return 'hello'; }
+    export set name(arg: string) { 
+        if (arg == '111') {
+            arktest.assertTrue(true);
+        } else {
+            throw Error('Not correct name');
+        }
+     }
 }
 
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
+function main() {
+    arktest.assertEQ(NS.name, 'hello');
+    NS.name = '111'
+    arktest.expectError((): void => {NS.name = '222'}, Error('Not correct name'))
 }
-
-/* @@ label2 */set field() {}
-
-
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */

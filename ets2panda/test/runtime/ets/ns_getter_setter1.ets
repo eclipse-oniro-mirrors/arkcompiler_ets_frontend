@@ -13,16 +13,23 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
+namespace NS {
+    let _name = 'hello'
+    get name(): string {return _name; }
+    set name(arg: string) { 
+        _name = arg;
+    }
+    export function foo() {
+        arktest.assertEQ(name, 'hello');
+        name = '111'
+        arktest.assertEQ(name, '111');
+        name = '222'
+        arktest.assertEQ(name, '222');
+        name = 'hello'
+        arktest.assertEQ(name, 'hello');
+    }
 }
 
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
+function main() {
+    NS.foo();
 }
-
-/* @@ label2 */set field() {}
-
-
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */

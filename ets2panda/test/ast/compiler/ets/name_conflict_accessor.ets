@@ -13,16 +13,7 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
-}
+let name = "Bob"
+get name(): string { return "Alice" }
 
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
-}
-
-/* @@ label2 */set field() {}
-
-
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */
+/* @@? 17:5 Error TypeError: Variable 'name' has already been declared. */

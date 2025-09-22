@@ -13,16 +13,12 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
-}
+get duplicateGetter(): number { return 1 }
+get duplicateGetter(): string { return "2" }
 
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
-}
+set duplicateSetter(x: number){}
+set duplicateSetter(x: string) {}
 
-/* @@ label2 */set field() {}
-
-
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */
+/* @@? 17:5 Error TypeError: Duplicate accessor definition */
+/* @@? 17:20 Error TypeError: Function duplicateGetter is already declared. */
+/* @@? 20:5 Error TypeError: Duplicate accessor definition */

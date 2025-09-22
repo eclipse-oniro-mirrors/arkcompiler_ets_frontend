@@ -815,6 +815,22 @@ void ETSCompiler::Compile(const ir::ConditionalExpression *expr) const
     etsg->SetAccumulatorType(expr->TsType());
 }
 
+bool ETSCompiler::HandleTopLevelGetter(const ir::Identifier *expr, ETSGen *etsg) const
+{
+    if (auto const *const variable = expr->Variable(); checker::ETSChecker::IsVariableStatic(variable)) {
+        if (auto const *const varType = variable->TsType(); varType->HasTypeFlag(checker::TypeFlag::GETTER_SETTER)) {
+            checker::Signature *sig = varType->AsETSFunctionType()->FindGetter();
+            ES2PANDA_ASSERT(sig != nullptr);
+            etsg->CallExact(expr, sig->InternalName());
+            etsg->SetAccumulatorType(expr->TsType());
+
+            ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
+            return true;
+        }
+    }
+    return false;
+}
+
 void ETSCompiler::Compile(const ir::Identifier *expr) const
 {
     ETSGen *etsg = GetETSGen();
@@ -827,6 +843,11 @@ void ETSCompiler::Compile(const ir::Identifier *expr) const
     auto ttctx = compiler::TargetTypeContext(etsg, smartType);
 
     ES2PANDA_ASSERT(expr->Variable() != nullptr);
+
+    // Top-level accessor
+    if (HandleTopLevelGetter(expr, etsg)) {
+        return;
+    }
     if (!expr->Variable()->HasFlag(varbinder::VariableFlags::TYPE_ALIAS)) {
         etsg->LoadVar(expr, expr->Variable());
     }

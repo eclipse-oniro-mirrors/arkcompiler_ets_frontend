@@ -13,16 +13,9 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
+get callable(): number { return 1 }
+function testCallExpression() {
+    callable()
 }
 
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
-}
-
-/* @@ label2 */set field() {}
-
-
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */
+/* @@? 18:5 Error TypeError: This expression is not callable. */

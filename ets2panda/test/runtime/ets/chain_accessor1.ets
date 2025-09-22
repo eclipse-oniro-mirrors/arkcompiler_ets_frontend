@@ -13,16 +13,13 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
+let _chain : number = 0
+get chain(): number { return _chain }
+set chain(v: number) { _chain = v }
+
+function main() {
+    // For jit purpose
+    _chain = 0
+    chain = chain + 1
+    arktest.assertEQ(chain, 1)
 }
-
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
-}
-
-/* @@ label2 */set field() {}
-
-
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */

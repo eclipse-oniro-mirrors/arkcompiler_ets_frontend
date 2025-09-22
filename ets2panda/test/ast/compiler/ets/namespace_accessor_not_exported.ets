@@ -13,16 +13,18 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
+namespace NS {
+    get name() {return '1'}
 }
 
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
+namespace NS1 {
+    set name(a:string) {}
 }
 
-/* @@ label2 */set field() {}
+function main() {
+    NS.name
+    NS1.name = '1'
+}
 
-
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */
+/* @@? 25:8 Error TypeError: 'name' is not exported in 'NS' */
+/* @@? 26:9 Error TypeError: 'name' is not exported in 'NS1' */

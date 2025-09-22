@@ -58,7 +58,13 @@ void GlobalDeclTransformer::VisitFunctionDeclaration(ir::FunctionDeclaration *fu
             methodKind = ir::MethodDefinitionKind::EXTENSION_METHOD;
         }
     } else {
-        methodKind = ir::MethodDefinitionKind::METHOD;
+        if (funcDecl->Function()->IsGetter()) {
+            methodKind = ir::MethodDefinitionKind::GET;
+        } else if (funcDecl->Function()->IsSetter()) {
+            methodKind = ir::MethodDefinitionKind::SET;
+        } else {
+            methodKind = ir::MethodDefinitionKind::METHOD;
+        }
     }
 
     auto *method = util::NodeAllocator::ForceSetParent<ir::MethodDefinition>(
