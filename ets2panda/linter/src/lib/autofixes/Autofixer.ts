@@ -5394,14 +5394,16 @@ export class Autofixer {
 
   private static createUIContextAccess(methodName: string): ts.PropertyAccessExpression {
     return ts.factory.createPropertyAccessExpression(
-      ts.factory.createNonNullExpression(ts.factory.createCallExpression(
-        ts.factory.createPropertyAccessExpression(
-          ts.factory.createIdentifier(UI_CONTEXT),
-          ts.factory.createIdentifier(GET_FOCUSED_UI_CONTEXT)
-        ),
-        undefined,
-        []
-      )),
+      ts.factory.createNonNullExpression(
+        ts.factory.createCallExpression(
+          ts.factory.createPropertyAccessExpression(
+            ts.factory.createIdentifier(UI_CONTEXT),
+            ts.factory.createIdentifier(GET_FOCUSED_UI_CONTEXT)
+          ),
+          undefined,
+          []
+        )
+      ),
       ts.factory.createIdentifier(methodName)
     );
   }

@@ -5907,10 +5907,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return false;
     }
     // check if the first argument of the callExpression is declared in old arkts
-    return !this.isIdentifierFromArkTs2(callExpr.arguments[0]);
+    return this.isLegacyArkTsInitializedValue(callExpr.arguments[0]);
   }
 
-  private isIdentifierFromArkTs2(node: ts.Node | undefined): boolean {
+  private isLegacyArkTsInitializedValue(node: ts.Node | undefined): boolean {
     if (!node) {
       return false;
     }
@@ -5948,7 +5948,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return false;
     }
 
-    return this.tsUtils.isArkts12File(sourceFile);
+    if (sourceFile.fileName.endsWith(EXTNAME_JS)) {
+      return false;
+    }
+
+    if (sourceFile.fileName.endsWith(EXTNAME_TS)) {
+      return false;
+    }
+    return !this.tsUtils.isArkts12File(sourceFile);
   }
 
   private shouldCheckForForbiddenAPI(declaration: ts.SignatureDeclaration | ts.JSDocSignature): boolean {
