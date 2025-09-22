@@ -373,6 +373,9 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
         !Check(ark::os::file::File::IsDirectory(rootDir_), diagnostic::NOT_A_DIR, {"rootDir " + rootDir_})) {
         return false;
     }
+    if (rootDir_.empty()) {
+        rootDir_ = ".";
+    }
     cacheDir_ = ValueOrEmptyString(compilerOptions, CACHE_DIR);
     if (!cacheDir_.empty() &&
         !Check(ark::os::file::File::IsDirectory(cacheDir_), diagnostic::NOT_A_DIR, {"cacheDir " + cacheDir_})) {
