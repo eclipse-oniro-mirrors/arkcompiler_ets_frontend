@@ -36,19 +36,21 @@ namespace ark::es2panda::compiler {
 // x = c.x = y
 static bool IsSetterCallOrSetExpression(const ir::Expression *const expr)
 {
-    if (!expr->IsMemberExpression()) {
+    if (!expr->IsMemberExpression() && !expr->IsIdentifier()) {
         return false;
     }
 
-    const auto *memberExpr = expr->AsMemberExpression();
-    const auto *property = memberExpr->Property();
-    auto *const variable = property->Variable();
-
+    auto *const variable = expr->IsMemberExpression() ? expr->AsMemberExpression()->Property()->Variable()
+                                                      : expr->AsIdentifier()->Variable();
     if (checker::ETSChecker::IsVariableGetterSetter(variable)) {
         ES2PANDA_ASSERT(variable != nullptr && variable->TsType() != nullptr);
         return variable->TsType()->HasTypeFlag(checker::TypeFlag::SETTER);
     }
 
+    if (expr->IsIdentifier()) {
+        return false;
+    }
+    const auto *memberExpr = expr->AsMemberExpression();
     // We are already checking the left side of an assignment expression, so the condition below will only match for
     // set expressions, but not get expressions
     const auto isSetExpression = [](const ir::MemberExpression *const possibleSetExpr) {

@@ -13,9 +13,18 @@
  * limitations under the License.
  */
 
-set a '1;'
+let _complex: Complex = { x: 1, y: "test" }
+interface Complex { x: number; y: string }
+get complexObj(): Complex { return _complex }
+set complexObj(v: Complex) { _complex = v }
 
-/* @@? 16:1 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
-/* @@? 16:5 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@? 16:7 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 22:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+function main() {
+    // For passing JIT test purpose 
+    _complex = { x: 1, y: "test" }
+    arktest.assertEQ(complexObj.x, 1)
+    arktest.assertEQ(complexObj.y, "test")
+
+    complexObj = { x: 2, y: "updated" }
+    arktest.assertEQ(complexObj.x, 2)
+    arktest.assertEQ(complexObj.y, "updated")
+}

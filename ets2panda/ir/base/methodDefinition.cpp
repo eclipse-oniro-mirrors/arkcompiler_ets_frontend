@@ -260,7 +260,13 @@ static void DumpPrefix(const ir::MethodDefinition *m, ir::SrcDumper *dumper)
                 dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
             }
         }
-        dumper->Add("function ");
+        if (m->IsGetter()) {
+            dumper->Add("get ");
+        } else if (m->IsSetter()) {
+            dumper->Add("set ");
+        } else {
+            dumper->Add("function ");
+        }
         return;
     }
 

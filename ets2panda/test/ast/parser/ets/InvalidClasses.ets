@@ -120,14 +120,12 @@ interface I1 {
 /* @@? 66:9 Error Syntax error ESY0030: Local class or interface declaration members can not have access modifies. */
 /* @@? 66:18 Error Syntax error ESY0032: Private interface methods must have body. */
 /* @@? 67:9 Error Syntax error ESY0224: Identifier expected, got 'static'. */
-/* @@? 67:16 Error Syntax error ESY0228: Unexpected token, expected ','. */
 /* @@? 67:16 Error Syntax error ESY0224: Identifier expected, got 'static'. */
+/* @@? 67:16 Error Syntax error ESY0228: Unexpected token, expected ','. */
 /* @@? 67:16 Error Syntax error ESY0122: Identifier expected. */
 /* @@? 72:5 Error Syntax error ESY0224: Identifier expected, got 'class'. */
 /* @@? 72:13 Error Syntax error ESY0119: Interface fields must have type annotation. */
 /* @@? 72:14 Error Syntax error ESY0138: Invalid Type. */
-/* @@? 74:5 Error Syntax error ESY0022: Extension Getter can only have 1 parameter. */
-/* @@? 74:25 Error Syntax error ESY0146: Extension Accessor must have a receiver. */
 /* @@? 78:8 Error Syntax error ESY0038: Label must be followed by a loop statement. */
 /* @@? 78:8 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 79:1 Error Syntax error ESY0227: Unexpected token '}'. */

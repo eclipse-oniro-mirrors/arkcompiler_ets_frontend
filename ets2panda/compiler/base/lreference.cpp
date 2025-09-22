@@ -336,7 +336,17 @@ void ETSLReference::SetValueGetterSetter(const ir::MemberExpression *memberExpr)
 void ETSLReference::SetValue() const
 {
     if (Kind() != ReferenceKind::MEMBER) {
-        etsg_->StoreVar(Node()->AsIdentifier(), Result());
+        auto ident = Node()->AsIdentifier();
+        // Top-level accessor
+        if (ident->Variable()->TsType()->HasTypeFlag(checker::TypeFlag::GETTER_SETTER)) {
+            const auto *sig = ident->Variable()->TsType()->AsETSFunctionType()->FindSetter();
+            ES2PANDA_ASSERT(sig->Function() != nullptr);
+            auto argReg = etsg_->AllocReg();
+            etsg_->StoreAccumulator(Node(), argReg);
+            etsg_->CallExact(Node(), sig->InternalName(), argReg);
+        } else {
+            etsg_->StoreVar(Node()->AsIdentifier(), Result());
+        }
         return;
     }
 

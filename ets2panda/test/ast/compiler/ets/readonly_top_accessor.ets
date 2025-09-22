@@ -13,16 +13,19 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
+let _name = "hello"
+
+get name() {return "1"};
+namespace NS {
+    get name() {return "1"}
+}
+function main() {
+    name = "world"
+    NS.name = "world";
 }
 
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
-}
-
-/* @@ label2 */set field() {}
-
-
-/* @@@ label1 Error Syntax error ESY0058: Getter must not have formal parameters. */
-/* @@@ label2 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
+/* @@? 23:5 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 24:8 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 24:8 Error Semantic error ESE0206: 'name' is not exported in 'NS' */
+/* @@? 24:8 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 24:8 Error Semantic error ESE0206: 'name' is not exported in 'NS' */

@@ -39,6 +39,7 @@ private:
     void CompileCast(const ir::TSAsExpression *expr, checker::Type const *targetType) const;
     void EmitCall(const ir::CallExpression *expr, compiler::VReg &calleeReg, checker::Signature *signature) const;
     bool HandleArrayTypeLengthProperty(const ir::MemberExpression *expr, ETSGen *etsg) const;
+    bool HandleTopLevelGetter(const ir::Identifier *expr, ETSGen *etsg) const;
     bool HandleStaticProperties(const ir::MemberExpression *expr, ETSGen *etsg) const;
     void CompileArrayCreation(const ir::ArrayExpression *expr) const;
     void CompileTupleCreation(const ir::ArrayExpression *tupleInitializer) const;

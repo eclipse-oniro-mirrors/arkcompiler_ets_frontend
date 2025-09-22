@@ -163,14 +163,22 @@ void ETSChecker::ValidateMemberIdentifier(ir::Identifier *const ident)
 void ETSChecker::ValidateAssignmentIdentifier(ir::Identifier *const ident, Type *const type)
 {
     auto const resolved = ident->Variable();
+    auto const resovledType = resolved->TsType();
     const auto *const assignmentExpr = ident->Parent()->AsAssignmentExpression();
-    if (assignmentExpr->Left() == ident && (resolved != nullptr) && !resolved->Declaration()->PossibleTDZ()) {
+    if (assignmentExpr->Left() == ident && resovledType != nullptr &&
+        resovledType->HasTypeFlag(checker::TypeFlag::GETTER) && !resovledType->HasTypeFlag(checker::TypeFlag::SETTER)) {
+        LogError(diagnostic::ASSIGN_TO_READONLY_PROP, {}, ident->Start());
+        return;
+    }
+    if (assignmentExpr->Left() == ident && (resolved != nullptr) && !resolved->Declaration()->PossibleTDZ() &&
+        resovledType != nullptr && !resovledType->HasTypeFlag(checker::TypeFlag::GETTER_SETTER)) {
         WrongContextErrorClassifyByType(ident);
         return;
     }
 
-    if (assignmentExpr->Right() == ident && (resolved != nullptr) &&
-        (!resolved->Declaration()->PossibleTDZ() && !type->IsETSFunctionType())) {
+    if (assignmentExpr->Right() == ident && (resolved != nullptr) && !resolved->Declaration()->PossibleTDZ() &&
+        !type->IsETSFunctionType() && resovledType != nullptr &&
+        !resovledType->HasTypeFlag(checker::TypeFlag::GETTER_SETTER)) {
         WrongContextErrorClassifyByType(ident);
         return;
     }
@@ -217,7 +225,7 @@ void ETSChecker::ValidateResolvedIdentifier(ir::Identifier *const ident)
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *const resolvedType = GetApparentType(smartType != nullptr ? smartType : GetTypeOfVariable(resolved));
     bool isValidResolved =
-        resolved != nullptr && !resolved->Declaration()->PossibleTDZ() &&
+        resolved != nullptr && !resolved->Declaration()->PossibleTDZ() && !IsVariableGetterSetter(resolved) &&
         !(resolvedType->IsETSFunctionType() && !resolved->Declaration()->Node()->IsTSTypeAliasDeclaration());
     switch (ident->Parent()->Type()) {
         case ir::AstNodeType::CALL_EXPRESSION:

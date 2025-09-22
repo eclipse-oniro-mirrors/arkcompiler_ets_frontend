@@ -904,6 +904,7 @@ private:
     std::vector<ResolveResult *> ValidateAccessor(ir::MemberExpression *const memberExpr,
                                                   varbinder::LocalVariable *const oAcc, varbinder::Variable *const eAcc,
                                                   PropertySearchFlags searchFlag);
+    void ValidateAccessorIdentifier(ir::Identifier *ident);
     ir::ClassProperty *FindClassProperty(const ETSObjectType *objectType, const ETSFunctionType *propType);
     bool IsInitializedProperty(const ir::ClassDefinition *classDefinition, const ir::ClassProperty *prop);
     bool FindPropertyInAssignment(const ir::AstNode *it, const std::string &targetName);
@@ -911,7 +912,7 @@ private:
                                   lexer::SourcePosition sourcePos);
     std::tuple<bool, bool> IsResolvedAndValue(const ir::Expression *expr, Type *type) const;
     PropertySearchFlags GetSearchFlags(const ir::MemberExpression *memberExpr, const varbinder::Variable *targetRef);
-    PropertySearchFlags GetInitialSearchFlags(const ir::MemberExpression *memberExpr);
+    PropertySearchFlags GetInitialSearchFlags(const ir::Expression *memberExpr);
     Type *GetTypeOfSetterGetter([[maybe_unused]] varbinder::Variable *var);
     SavedCheckerContext CreateSavedCheckerContext(varbinder::Variable *const var);
     bool CheckInit(ir::Identifier *ident, ir::TypeNode *typeAnnotation, ir::Expression *init,

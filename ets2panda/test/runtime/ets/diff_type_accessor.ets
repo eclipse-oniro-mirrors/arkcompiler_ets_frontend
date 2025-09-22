@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 
-set a '1;'
+get name(): string { return 'Alice' }
+set name(a: long) { arktest.assertEQ(a, 111); }
 
-/* @@? 16:1 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
-/* @@? 16:5 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@? 16:7 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 22:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+function main() {
+    arktest.assertEQ(name, 'Alice');
+    name = 111
+}

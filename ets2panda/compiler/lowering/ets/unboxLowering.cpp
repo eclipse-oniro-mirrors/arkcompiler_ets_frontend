@@ -1159,11 +1159,11 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         ES2PANDA_UNREACHABLE();
     }
 
-    checker::Type *GetHandledGetterSetterType(ir::MemberExpression *mexpr, checker::Type *propType)
+    checker::Type *GetHandledGetterSetterType(ir::Expression *expr, checker::Type *propType)
     {
         if (propType->IsETSMethodType()) {
             bool needSetter =
-                mexpr->Parent()->IsAssignmentExpression() && mexpr == mexpr->Parent()->AsAssignmentExpression()->Left();
+                expr->Parent()->IsAssignmentExpression() && expr == expr->Parent()->AsAssignmentExpression()->Left();
             if (needSetter) {  // CC-OFF(G.FUN.01-CPP, C_RULE_ID_FUNCTION_NESTING_LEVEL) solid logic
                 if (auto *setterSig = propType->AsETSFunctionType()->FindSetter(); setterSig != nullptr) {
                     HandleDeclarationNode(uctx_, setterSig->Function());
@@ -1173,9 +1173,9 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
                 HandleDeclarationNode(uctx_, getterSig->Function());
                 propType = getterSig->ReturnType();
             }
-        } else if (mexpr->Property()->Variable() != nullptr) {
+        } else if (expr->IsMemberExpression() && expr->AsMemberExpression()->Property()->Variable() != nullptr) {
             /* Adjustment needed for Readonly<T> types and possibly some other cases */
-            mexpr->Property()->Variable()->SetTsType(propType);
+            expr->AsMemberExpression()->Property()->Variable()->SetTsType(propType);
         }
         return propType;
     }
@@ -1364,6 +1364,8 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
             expr->SetTsType(expr->Variable()->TsType());
         } else if (expr->TsType()->IsETSPrimitiveType()) {
             expr->SetTsType(uctx_->checker->MaybeBoxType(expr->TsType()));
+        } else if (expr->Variable()->TsType()->IsETSMethodType()) {
+            expr->SetTsType(GetHandledGetterSetterType(expr, expr->Variable()->TsType()));
         } else {
             expr->SetTsType(NormalizeType(uctx_, expr->TsType()));
         }

@@ -13,9 +13,18 @@
  * limitations under the License.
  */
 
-set a '1;'
+namespace NS {
+    get name() {return '1'}
+}
 
-/* @@? 16:1 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
-/* @@? 16:5 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@? 16:7 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 22:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+namespace NS1 {
+    set name(a:string) {}
+}
+
+function main() {
+    NS.name
+    NS1.name = '1'
+}
+
+/* @@? 25:8 Error Semantic error ESE0206: 'name' is not exported in 'NS' */
+/* @@? 26:9 Error Semantic error ESE0206: 'name' is not exported in 'NS1' */
