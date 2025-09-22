@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/config/components/ets_frontend/ets2abc_config.gni")
 import("//build/ohos.gni")
 if ((defined(ark_standalone_build) && ark_standalone_build) ||
     (defined(ark_static_standalone_build) && ark_static_standalone_build)) {
@@ -70,6 +71,23 @@ ohos_executable("dependency_analyzer") {
   }
 
   install_enable = true
+  part_name = "ets_frontend"
+  subsystem_name = "arkcompiler"
+}
+
+ohos_copy("ohos_ets_dependency_analyzer") {
+  if (is_mingw) {
+    sources =
+        [ "$root_out_dir/arkcompiler/ets_frontend/dependency_analyzer.exe" ]
+  } else {
+    sources = [ "$root_out_dir/arkcompiler/ets_frontend/dependency_analyzer" ]
+  }
+  if (is_linux || is_mac) {
+    outputs = [ ohos_ets_dependency_analyzer_path ]
+  } else {
+    outputs = [ "$target_out_dir/$target_name/dependency_analyzer" ]
+  }
+  deps = [ ":dependency_analyzer" ]
   part_name = "ets_frontend"
   subsystem_name = "arkcompiler"
 }
