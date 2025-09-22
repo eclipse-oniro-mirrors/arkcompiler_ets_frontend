@@ -822,6 +822,8 @@ public:
         varbinder::FunctionScope *scope);
     ir::MethodDefinition *CreateNonStaticClassInitializer(varbinder::ClassScope *classScope,
                                                           varbinder::RecordTable *recordTable);
+    bool SetPreferredTypeForExpression(ir::Expression *expr, ir::TypeNode *typeAnnotation, ir::Expression *init,
+                                       checker::Type *annotationType);
     // Readonly
     Type *GetReadonlyType(Type *type);
     void MakePropertiesReadonly(ETSObjectType *classType);
