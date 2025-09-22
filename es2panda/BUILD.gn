@@ -555,7 +555,6 @@ ohos_executable("es2panda") {
   if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
     external_deps += [
       "abseil-cpp:absl_base_static",
-      "icu:shared_icuuc",
       "runtime_core:libarkassembler_static",
     ]
     cflags = [
