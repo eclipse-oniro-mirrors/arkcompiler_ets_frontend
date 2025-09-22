@@ -15,6 +15,7 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { runWithIOLimit, mapWithLimit, PROJECTS_PER_DIR_CONCURRENCY } from './IoLimiter';
 import type { LintRunResult } from '../../LintRunResult';
 import { Logger } from '../../Logger';
 import type { ProblemInfo } from '../../ProblemInfo';
@@ -108,8 +109,12 @@ export async function generateReportFile(reportName: string, reportData, reportP
     reportFilePath = path.join(path.normalize(reportPath), reportName);
   }
   try {
-    await fs.promises.mkdir(path.dirname(reportFilePath), { recursive: true });
-    await fs.promises.writeFile(reportFilePath, JSON.stringify(reportData, null, 2));
+    await runWithIOLimit(() => {
+      return fs.promises.mkdir(path.dirname(reportFilePath), { recursive: true });
+    });
+    await runWithIOLimit(() => {
+      return fs.promises.writeFile(reportFilePath, JSON.stringify(reportData, null, 2));
+    });
   } catch (error) {
     Logger.error(`Error generating report file:${error}`);
   }
@@ -226,30 +231,26 @@ export function generateMigrationStatisicsReport(
 
 export async function getWorkLoadInfo(projectPathList: string[]): Promise<WorkLoadInfo> {
   const workloadInfo = new WorkLoadInfo();
-  const projectResults = await Promise.all(
-    projectPathList.map(async(projectPath) => {
-      const normalizedPath = path.normalize(projectPath);
-      const [countFilesResults, countNapiFileResults] = await Promise.all([
-        countFiles(normalizedPath),
-        countNapiFiles(normalizedPath)
-      ]);
+  const projectResults = await mapWithLimit(projectPathList, PROJECTS_PER_DIR_CONCURRENCY, async(projectPath) => {
+    const normalizedPath = path.normalize(projectPath);
+    const countFilesResults = await countFiles(normalizedPath);
+    const countNapiFileResults = await countNapiFiles(normalizedPath);
 
-      const getLines = (lang: keyof typeof countFilesResults): number => {
-        return countFilesResults[lang]?.lineCount || 0;
-      };
+    const getLines = (lang: keyof typeof countFilesResults): number => {
+      return countFilesResults[lang]?.lineCount || 0;
+    };
 
-      return {
-        normalizedPath,
-        arkTSCodeLines: getLines('ArkTS') + getLines('ArkTS Test'),
-        cAndCPPCodeLines: getLines('C/C++'),
-        napiCodeLines: countNapiFileResults.napiLines,
-        jsCodeLines: getLines('JavaScript'),
-        tsCodeLines: getLines('TypeScript'),
-        jsonCodeLines: getLines('JSON'),
-        xmlCodeLines: getLines('XML')
-      };
-    })
-  );
+    return {
+      normalizedPath,
+      arkTSCodeLines: getLines('ArkTS') + getLines('ArkTS Test'),
+      cAndCPPCodeLines: getLines('C/C++'),
+      napiCodeLines: countNapiFileResults.napiLines,
+      jsCodeLines: getLines('JavaScript'),
+      tsCodeLines: getLines('TypeScript'),
+      jsonCodeLines: getLines('JSON'),
+      xmlCodeLines: getLines('XML')
+    };
+  });
 
   projectResults.forEach((result) => {
     workloadInfo.addFloderResult(result);
