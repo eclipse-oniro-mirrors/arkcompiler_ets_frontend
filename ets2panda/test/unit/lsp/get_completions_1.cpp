@@ -66,14 +66,14 @@ namespace space {
     public  c: number = 2;
   }
 }
-let numOfSpace: space._WILDCARD)delimiter"};
+let numOfSpace: space.)delimiter"};
     auto filePaths = CreateTempFile(files, texts);
     int const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     LSPAPI const *lspApi = GetImpl();
-    const size_t offset = 113;
+    const size_t offset = 104;
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
     std::string propertyName1 = "classInSpace";

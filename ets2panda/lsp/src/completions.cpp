@@ -139,7 +139,7 @@ std::vector<CompletionEntry> GetSystemInterfaceCompletions(const std::string &in
 
 bool IsPointValid(const std::string &str)
 {
-    std::regex pattern(R"(^[a-zA-Z_$][a-zA-Z0-9_$\-]*(\?)?\.$)");
+    std::regex pattern(R"(^[a-zA-Z_$][a-zA-Z0-9_$().\-]*(\?)?\.$)");
     return std::regex_match(str, pattern);
 }
 
@@ -150,16 +150,10 @@ bool IsEndWithValidPoint(std::string str)
 
 bool IsEndWithToken(ir::AstNode *preNode, std::string str)
 {
-    return str.back() != '.' && preNode->IsIdentifier() && preNode->AsIdentifier()->Name() != "*ERROR_LITERAL*";
-}
-
-bool IsEndWithWildcard(ir::AstNode *preNode, const std::string &str)
-{
-    const std::string wildcardStr = "_WILDCARD";
-    if (str == wildcardStr) {
-        return preNode->IsIdentifier() && preNode->AsIdentifier()->Name() != "*ERROR_LITERAL*";
+    if (str.empty()) {
+        return preNode->IsIdentifier();
     }
-    return false;
+    return str.back() != '.' && preNode->IsIdentifier();
 }
 
 size_t GetPrecedingTokenPosition(std::string sourceCode, size_t pos)
@@ -860,6 +854,40 @@ CompletionEntry ProcessAutoImportForEntry(CompletionEntry &entry)
                            autoImportData);
 }
 
+bool IsTokenAfterPoint(ir::AstNode *precedingToken)
+{
+    return precedingToken->IsMemberExpression() || precedingToken->IsTSQualifiedName();
+}
+
+ir::AstNode *GetMemberExprOfIdentifier(ir::AstNode *memberExp)
+{
+    while (memberExp->Parent() != nullptr && !IsTokenAfterPoint(memberExp)) {
+        memberExp = memberExp->Parent();
+    }
+    return memberExp;
+}
+
+std::vector<CompletionEntry> GetPropertyCompletionsWithValidPoint(ir::AstNode *precedingToken,
+                                                                  const std::string &triggerWord)
+{
+    auto memberExp = precedingToken;
+    while (memberExp->Parent() != nullptr && !IsTokenAfterPoint(memberExp)) {
+        memberExp = memberExp->Parent();
+    }
+    if (!IsTokenAfterPoint(memberExp)) {
+        return {};
+    }
+    if (memberExp->IsMemberExpression()) {
+        precedingToken = memberExp->AsMemberExpression()->Object();
+        return GetPropertyCompletions(precedingToken, triggerWord);
+    }
+    if (memberExp->IsTSQualifiedName()) {
+        precedingToken = memberExp->AsTSQualifiedName()->Left();
+        return GetPropertyCompletions(precedingToken, triggerWord);
+    }
+    return {};
+}
+
 std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *context, size_t pos)
 {
     if (context == nullptr) {
@@ -883,31 +911,12 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
         return GetAnnotationCompletions(context, pos, precedingToken);  // need to filter annotation
     }
     auto triggerValue = GetCurrentTokenValueImpl(context, pos);
-    // Unsupported yet because of ast parsing problem
     if (IsEndWithValidPoint(triggerValue)) {
-        return GetPropertyCompletions(precedingToken, "");
+        return GetPropertyCompletionsWithValidPoint(precedingToken, "");
     }
-    auto memberExpr = precedingToken->Parent();
-    // This is a temporary solution to support "obj." with wildcard for better solution in internal issue.
-    if (IsEndWithWildcard(precedingToken, triggerValue) && memberExpr != nullptr) {
-        if (memberExpr->IsMemberExpression()) {
-            precedingToken = memberExpr->AsMemberExpression()->Object();
-            return GetPropertyCompletions(precedingToken, "");
-        }
-        if (memberExpr->IsTSQualifiedName()) {
-            precedingToken = memberExpr->AsTSQualifiedName()->Left();
-            return GetPropertyCompletions(precedingToken, "");
-        }
-    }
-    if (IsEndWithToken(precedingToken, triggerValue) && memberExpr != nullptr) {
-        if (memberExpr->IsMemberExpression()) {
-            precedingToken = memberExpr->AsMemberExpression()->Object();
-            return GetPropertyCompletions(precedingToken, triggerValue);
-        }
-        if (memberExpr->IsTSQualifiedName()) {
-            precedingToken = memberExpr->AsTSQualifiedName()->Left();
-            return GetPropertyCompletions(precedingToken, triggerValue);
-        }
+    auto memberExpr = GetMemberExprOfIdentifier(precedingToken);
+    if (IsEndWithToken(precedingToken, triggerValue) && IsTokenAfterPoint(memberExpr)) {
+        return GetPropertyCompletionsWithValidPoint(precedingToken, triggerValue);
     }
     return GetGlobalCompletions(context, pos);
 }

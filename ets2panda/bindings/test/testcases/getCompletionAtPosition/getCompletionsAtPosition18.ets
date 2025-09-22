@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,12 +13,17 @@
  * limitations under the License.
  */
 
-class MyTest {
-    @Consume.
-    private property1;
-}
+ class Person {
+    name: string = '';
+    age: number = 0;
 
-/* @@? 17:6 Error SyntaxError: Invalid annotation name.  */
-/* @@? 17:6 Error TypeError: Cannot find type 'Consume'.  */
-/* @@? 18:5 Error SyntaxError: Identifier expected.  */
-/* @@? 18:22 Error SyntaxError: Field type annotation expected.  */
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+
+    introduce(name: string, age: number): void {}
+ }
+
+ let p: Person = new Person("张三", 18);
+ p.

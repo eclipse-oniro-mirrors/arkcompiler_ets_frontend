@@ -1254,7 +1254,12 @@ ir::Expression *TypedParser::ParseQualifiedReference(ir::Expression *typeName, E
         } else if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_FORMAT) {
             propName = ParseIdentifierFormatPlaceholder(std::nullopt);
         } else if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
-            return ParseLiteralIndent(typeName, flags, startLoc);
+            if ((flags & ExpressionParseFlags::POTENTIAL_CLASS_LITERAL) != 0 &&
+                Lexer()->GetToken().Type() == lexer::TokenType::KEYW_CLASS) {
+                return ParseLiteralIndent(typeName, flags, startLoc);
+            }
+            LogError(diagnostic::ID_EXPECTED);
+            propName = AllocBrokenExpression(Lexer()->GetToken().Loc());
         } else {
             propName = AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator());
         }
