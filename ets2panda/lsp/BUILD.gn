@@ -85,6 +85,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/refactors/convert_chain.cpp",
     "src/refactors/convert_export.cpp",
     "src/refactors/convert_function.cpp",
+    "src/refactors/convert_function_to_class.cpp",
     "src/refactors/convert_import.cpp",
     "src/refactors/convert_template.cpp",
     "src/refactors/refactor_types.cpp",
