@@ -230,6 +230,7 @@ static void RemoveInvalidTypeMarkers(ir::AstNode *node) noexcept
 static void ResetInferredTypeInArrowBody(ir::AstNode *body, ETSChecker *checker,
                                          std::unordered_set<varbinder::Variable *> &inferredVarSet)
 {
+    checker::ScopeContext scopeCtx(checker, body->Parent()->Scope());
     std::function<void(ir::AstNode *)> doNode = [&](ir::AstNode *node) {
         if (node->IsIdentifier()) {
             auto *id = node->AsIdentifier();
@@ -237,10 +238,12 @@ static void ResetInferredTypeInArrowBody(ir::AstNode *body, ETSChecker *checker,
                 return;
             }
 
-            id->Check(checker);
-            if (auto *parent = id->Parent(); parent->IsMemberExpression()) {
-                parent->AsMemberExpression()->Check(checker);
+            ir::AstNode *checkNode = id;
+            while (checkNode->Parent()->IsTyped() && checkNode->Parent()->AsTyped()->TsType() == nullptr &&
+                   checkNode->Parent() != body) {
+                checkNode = checkNode->Parent();
             }
+            checkNode->Check(checker);
         }
         if (node->IsVariableDeclarator()) {
             auto *id = node->AsVariableDeclarator()->Id();
