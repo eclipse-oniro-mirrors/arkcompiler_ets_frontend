@@ -64,6 +64,7 @@ export enum FaultID {
   NonDeclarationInNamespace,
   GeneratorFunction,
   FunctionContainsThis,
+  ForbiddenSdkApiKeyword,
   PropertyAccessByIndex,
   JsxElement,
   EnumMemberNonConstInit,

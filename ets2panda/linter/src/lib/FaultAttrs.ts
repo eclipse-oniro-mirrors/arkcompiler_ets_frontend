@@ -49,6 +49,7 @@ faultsAttrs[FaultID.GenericCallNoTypeArgs] = new FaultAttributes(34);
 faultsAttrs[FaultID.RegularExpressionLiteral] = new FaultAttributes(37);
 faultsAttrs[FaultID.ObjectLiteralNoContextType] = new FaultAttributes(38);
 faultsAttrs[FaultID.ObjectTypeLiteral] = new FaultAttributes(40);
+faultsAttrs[FaultID.ForbiddenSdkApiKeyword] = new FaultAttributes(42);
 faultsAttrs[FaultID.ArrayLiteralNoContextType] = new FaultAttributes(43);
 faultsAttrs[FaultID.FunctionExpression] = new FaultAttributes(46);
 faultsAttrs[FaultID.ClassExpression] = new FaultAttributes(50);

@@ -1,0 +1,294 @@
+{
+    "api_list": [
+        {
+            "file_path": "@ohos.arkui.advanced.ComposeListItem.d.ets",
+            "api_info": {
+                "line": 835,
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_name": "switch",
+                "api_type": "PropertyDeclaration",
+                "api_auto_fix": true,
+                "api_auto_fix_content": "toggle",
+                "api_optional": true,
+                "parent_api": [
+                    {
+                        "api_name": "OperateItem",
+                        "api_type": "ClassDeclaration"
+                    }
+                ],
+                "code_kind": 171
+            },
+            "import_path": [
+                "@ohos.arkui.advanced.ComposeListItem"
+            ],
+            "is_global": false
+        },
+        {
+            "file_path": "api/@ohos.telephony.observer.d.ts",
+            "api_info": {
+                "line": 815,
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_name": "number",
+                "api_type": "PropertySignature",
+                "api_optional": false,
+                "api_auto_fix": true,
+                "api_auto_fix_content": "teleNumber",
+                "parent_api": [
+                    {
+                        "api_name": "CallStateInfo",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": 170
+            },
+            "import_path": [
+                "@ohos.telephony.observer"
+            ],
+            "is_global": false
+        },
+        {
+            "file_path": "api/@ohos.data.relationalStore.d.ts",
+            "api_info": {
+                "line": 2864,
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_name": "in",
+                "api_type": "MethodDeclaration",
+                "api_optional": false,
+                "api_auto_fix": true,
+                "api_auto_fix_content": "inValues",
+                "api_func_args": [
+                    {
+                        "name": "field",
+                        "type": "string",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "value",
+                        "type": "Array",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "RdbPredicates",
+                        "api_type": "ClassDeclaration"
+                    }
+                ],
+                "method_return_type": "RdbPredicates",
+                "code_kind": 174
+            },
+            "import_path": [
+                "@ohos.data.relationalStore"
+            ],
+            "is_global": false
+        },
+        {
+            "file_path": "api/@ohos.data.relationalStore.d.ts",
+            "api_info": {
+                "line": 2906,
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_name": "notIn",
+                "api_type": "MethodDeclaration",
+                "api_optional": false,
+                "api_auto_fix": true,
+                "api_auto_fix_content": "notInValues",
+                "api_func_args": [
+                    {
+                        "name": "field",
+                        "type": "string",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "value",
+                        "type": "Array",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "RdbPredicates",
+                        "api_type": "ClassDeclaration"
+                    }
+                ],
+                "method_return_type": "RdbPredicates",
+                "code_kind": 174
+            },
+            "import_path": [
+                "@ohos.data.relationalStore"
+            ],
+            "is_global": false
+        },
+        {
+            "file_path": "@ohos.data.unifiedDataChannel.d.ts",
+            "api_info": {
+                "line": 900,
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_name": "abstract",
+                "api_type": "PropertyDeclaration",
+                "api_optional": true,
+                "api_auto_fix": true,
+                "api_auto_fix_content": "textAbstract",
+                "parent_api": [
+                    {
+                        "api_name": "PlainText",
+                        "api_type": "ClassDeclaration"
+                    }
+                ],
+                "code_kind": 171
+            },
+            "import_path": [
+                "@ohos.data.unifiedDataChannel"
+            ],
+            "is_global": false
+        },
+        {
+            "file_path": "@ohos.data.uniformDataStruct.d.ts",
+            "api_info": {
+                "line": 63,
+                "api_name": "abstract",
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_type": "PropertySignature",
+                "api_optional": true,
+                "api_auto_fix": true,
+                "api_auto_fix_content": "textAbstract",
+                "parent_api": [
+                    {
+                        "api_name": "PlainText",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": 170
+            },
+            "import_path": [
+                "@ohos.data.uniformDataStruct"
+            ],
+            "is_global": false
+        },
+        {
+            "file_path": "api/@ohos.data.dataSharePredicates.d.ts",
+            "api_info": {
+                "line": 634,
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_name": "in",
+                "api_type": "MethodDeclaration",
+                "api_optional": false,
+                "api_auto_fix": true,
+                "api_auto_fix_content": "inValues",
+                "api_func_args": [
+                    {
+                        "name": "field",
+                        "type": "string",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "value",
+                        "type": "Array",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "DataSharePredicates",
+                        "api_type": "ClassDeclaration"
+                    }
+                ],
+                "method_return_type": "DataSharePredicates",
+                "code_kind": 174
+            },
+            "import_path": [
+                "@ohos.data.dataSharePredicates"
+            ],
+            "is_global": false
+        },
+        {
+            "file_path": "api/@ohos.data.dataSharePredicates.d.ts",
+            "api_info": {
+                "line": 663,
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_name": "notIn",
+                "api_type": "MethodDeclaration",
+                "api_optional": false,
+                "api_auto_fix": true,
+                "api_auto_fix_content": "notInValues",
+                "api_func_args": [
+                    {
+                        "name": "field",
+                        "type": "string",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "value",
+                        "type": "Array",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "DataSharePredicates",
+                        "api_type": "ClassDeclaration"
+                    }
+                ],
+                "method_return_type": "DataSharePredicates",
+                "code_kind": 174
+            },
+            "import_path": [
+                "@ohos.data.dataSharePredicates"
+            ],
+            "is_global": false
+        },
+        {
+            "file_path": "@ohos.net.connection.d.ts",
+            "api_info": {
+                "line": 2056,
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_name": "interface",
+                "api_type": "PropertySignature",
+                "api_optional": false,
+                "api_auto_fix": true,
+                "api_auto_fix_content": "iface",
+                "parent_api": [
+                    {
+                        "api_name": "RouteInfo",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": 170
+            },
+            "import_path": [
+                "@ohos.net.connection"
+            ],
+            "is_global": false
+        },
+        {
+            "file_path": "api/@internal/component/ets/web.d.ts",
+            "api_info": {
+                "line": 7263,
+                "problem": "ForbiddenSdkApiKeyword",
+                "api_name": "object",
+                "api_type": "PropertySignature",
+                "api_optional": false,
+                "api_auto_fix": true,
+                "api_auto_fix_content": "jsObject",
+                "parent_api": [
+                    {
+                        "api_name": "JavaScriptProxy",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": 170
+            },
+            "import_path": [
+                "web.d.ts"
+            ],
+            "is_global": true
+        }
+    ]
+}

@@ -149,7 +149,7 @@ import {
   ENTRY_USE_SHARED_STORAGE
 } from './utils/consts/ArkuiConstants';
 import { arkuiImportList } from './utils/consts/ArkuiImportList';
-import type { IdentifierAndArguments, ForbidenAPICheckResult } from './utils/consts/InteropAPI';
+import type { IdentifierAndArguments, ForbiddenAPICheckResult } from './utils/consts/InteropAPI';
 import {
   NONE,
   OBJECT_LITERAL,
@@ -230,6 +230,8 @@ import { cookBookMsg } from './CookBookMsg';
 import { getCommonApiInfoMap } from './utils/functions/CommonApiInfo';
 import { arkuiDecoratorSet } from './utils/consts/ArkuiDecorator';
 import { ABILITY_LIFECYCLE, ABILITY_LIFECYCLE_CALLBACK } from './utils/consts/LifecycleMonitor';
+import type { ForbiddenSdkApiKeywordMap } from './utils/consts/ForbiddenSdkApiKeywords';
+import { initForbiddenSdkApiKeywordsMap } from './utils/consts/ForbiddenSdkApiKeywords';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
   supportedStdCallApiChecker: SupportedStdCallApiChecker;
@@ -248,6 +250,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   static sdkCommonFuncMap: Map<string, Map<string, Set<ApiInfo>>>;
   private interfaceMap: Map<string, Set<ApiInfo>> = new Map<string, Set<ApiInfo>>();
   static pathMap: Map<string, Set<ApiInfo>>;
+  static forbiddenSdkApiBlackList: ForbiddenSdkApiKeywordMap;
   static indexedTypeSet: Set<ApiListItem>;
   static globalApiInfo: Map<string, Set<ApiListItem>>;
   static builtApiInfo: Set<ApiListItem>;
@@ -287,6 +290,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     TypeScriptLinter.initBuiltinlist();
     TypeScriptLinter.initDeprecatedApiList();
     TypeScriptLinter.initSdkCommonApilist();
+    TypeScriptLinter.initForbiddenSdkApiBlackList();
   }
 
   initSdkInfo(): void {
@@ -378,6 +382,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (item.api_info.problem === SdkProblem.ConstructorIface) {
       TypeScriptLinter.ConstructorIfaceSet.add(item);
     }
+  }
+
+  private static initForbiddenSdkApiBlackList(): void {
+    TypeScriptLinter.forbiddenSdkApiBlackList = initForbiddenSdkApiKeywordsMap();
   }
 
   private static initSdkWhitelist(): void {
@@ -4767,14 +4775,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.reportThisKeywordsInScope(classStaticBlockDecl.body);
   }
 
-  private handleIdentifier(node: ts.Node): void {
-    if (!ts.isIdentifier(node)) {
-      return;
-    }
-    this.checkCollectionsSymbol(node);
-    this.handleInterfaceImport(node);
-    this.checkAsonSymbol(node);
-    const tsIdentifier = node;
+  private handleIdentifier(tsIdentifier: ts.Identifier): void {
+    this.checkCollectionsSymbol(tsIdentifier);
+    this.handleInterfaceImport(tsIdentifier);
+    this.checkAsonSymbol(tsIdentifier);
     this.handleTsInterop(tsIdentifier, () => {
       const parent = tsIdentifier.parent;
       if (ts.isImportSpecifier(parent)) {
@@ -4784,6 +4788,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.checkUsageOfTsTypes(type, tsIdentifier);
     });
 
+    this.handleForbiddenSdkApiKeywords(tsIdentifier);
+
     const tsIdentSym = this.tsUtils.trueSymbolAtLocation(tsIdentifier);
     if (!tsIdentSym) {
       return;
@@ -4791,8 +4797,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const isNewArkTS = this.options.arkts2;
     if (isNewArkTS) {
-      this.checkWorkerSymbol(tsIdentSym, node);
-      this.checkConcurrencySymbol(tsIdentSym, node);
+      this.checkWorkerSymbol(tsIdentSym, tsIdentifier);
+      this.checkConcurrencySymbol(tsIdentSym, tsIdentifier);
     }
 
     const isGlobalThis = tsIdentifier.text === 'globalThis';
@@ -4810,9 +4816,74 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     if (isNewArkTS && this.tsTypeChecker.isArgumentsSymbol(tsIdentSym)) {
-      this.incrementCounters(node, FaultID.ArgumentsObject);
+      this.incrementCounters(tsIdentifier, FaultID.ArgumentsObject);
     }
-    this.checkInvalidNamespaceUsage(node);
+    this.checkInvalidNamespaceUsage(tsIdentifier);
+  }
+
+  private handleForbiddenSdkApiKeywords(ident: ts.Identifier): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+
+    const { text } = ident;
+    const keywordInfos = TypeScriptLinter.forbiddenSdkApiBlackList.get(text);
+    if (!keywordInfos) {
+      return;
+    }
+
+    const symbol = this.getSymbolOfForbidden(ident, text);
+    if (!symbol) {
+      return;
+    }
+
+    const declaration = TsUtils.getDeclaration(symbol);
+    if (!declaration) {
+      return;
+    }
+
+    const parentDecl = declaration.parent;
+
+    let replacementText: undefined | string;
+    for (const info of keywordInfos) {
+      const { replacement, sdkFile, parentType } = info;
+      if (!declaration.getSourceFile().fileName.includes(sdkFile)) {
+        continue;
+      }
+
+      if (ts.isClassDeclaration(parentDecl) || ts.isInterfaceDeclaration(parentDecl)) {
+        if (!parentDecl.name) {
+          continue;
+        }
+        if (parentDecl.name.text !== parentType) {
+          continue;
+        }
+        replacementText = replacement;
+      }
+    }
+
+    if (!replacementText) {
+      return;
+    }
+
+    this.incrementCounters(ident, FaultID.ForbiddenSdkApiKeyword, this.autofixer?.replaceNode(ident, replacementText));
+  }
+
+  private getSymbolOfForbidden(ident: ts.Identifier, text: string): ts.Symbol | undefined {
+    if (ts.isPropertyAssignment(ident.parent)) {
+      const objLiteralParent = ts.findAncestor(ident, ts.isObjectLiteralExpression);
+      if (!objLiteralParent) {
+        return undefined;
+      }
+      const context = this.tsTypeChecker.getContextualType(objLiteralParent);
+      if (!context) {
+        return undefined;
+      }
+      const targetType = this.tsUtils.getNonNullableType(context);
+
+      return targetType?.getProperty(text);
+    }
+    return this.tsUtils.trueSymbolAtLocation(ident);
   }
 
   private handlePropertyDescriptorInScenarios(node: ts.Node): void {
@@ -9718,16 +9789,16 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private static containsForbiddenAPI(
     node: ts.FunctionDeclaration | ts.MethodDeclaration | ts.FunctionExpression
-  ): ForbidenAPICheckResult {
+  ): ForbiddenAPICheckResult {
     if (!node.body) {
       return NONE;
     }
     return TypeScriptLinter.isForbiddenUsed(node.body);
   }
 
-  private static isForbiddenUsed(currentNode: ts.Node): ForbidenAPICheckResult {
+  private static isForbiddenUsed(currentNode: ts.Node): ForbiddenAPICheckResult {
     if (!ts.isCallExpression(currentNode)) {
-      let found: ForbidenAPICheckResult = NONE;
+      let found: ForbiddenAPICheckResult = NONE;
       ts.forEachChild(currentNode, (child) => {
         if (found === NONE) {
           found = TypeScriptLinter.isForbiddenUsed(child);

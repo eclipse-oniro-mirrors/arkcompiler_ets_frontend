@@ -50,6 +50,7 @@ faultDesc[FaultID.DestructuringDeclaration] = 'Destructuring variable declaratio
 faultDesc[FaultID.VarDeclaration] = '"var" declarations';
 faultDesc[FaultID.CatchWithUnsupportedType] = '"catch" clause with unsupported exception type';
 faultDesc[FaultID.DeleteOperator] = '"delete" operations';
+faultDesc[FaultID.ForbiddenSdkApiKeyword] = 'Forbidden SDK API keyword';
 faultDesc[FaultID.DeclWithDuplicateName] = 'Declarations with duplicate name';
 faultDesc[FaultID.UnaryArithmNotNumber] = 'Unary arithmetics with not-numeric values';
 faultDesc[FaultID.ConstructorType] = 'Constructor type';
