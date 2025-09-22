@@ -158,23 +158,23 @@
                         "statements": [],
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 1
+                            "line": 20,
+                            "column": 9
                           },
                           "end": {
-                            "line": 1,
-                            "column": 1
+                            "line": 20,
+                            "column": 9
                           }
                         }
                       },
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1
+                          "line": 20,
+                          "column": 9
                         },
                         "end": {
-                          "line": 1,
-                          "column": 1
+                          "line": 20,
+                          "column": 9
                         }
                       }
                     },

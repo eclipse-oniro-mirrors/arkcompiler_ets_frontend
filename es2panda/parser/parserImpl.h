@@ -335,7 +335,8 @@ private:
                                      std::pair<binder::FunctionScope *, binder::FunctionScope *> implicitScopes);
     ir::Identifier *GetKeyByFuncFlag(ir::ScriptFunctionFlags funcFlag);
     ir::MethodDefinition *CreateImplicitMethod(ir::Expression *superClass, bool hasSuperClass,
-                                               ir::ScriptFunctionFlags funcFlag, bool isDeclare = false);
+                                               ir::ScriptFunctionFlags funcFlag, bool isDeclare = false,
+                                               lexer::SourceRange range = lexer::SourceRange{});
     ir::MethodDefinition *CheckClassMethodOverload(ir::Statement *property, ir::MethodDefinition **ctor, bool isDeclare,
                                                    lexer::SourcePosition errorInfo, ir::MethodDefinition *lastOverload,
                                                    bool implExists, bool isAbstract = false);
