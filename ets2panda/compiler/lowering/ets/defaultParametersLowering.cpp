@@ -43,8 +43,7 @@ static ir::Statement *TransformInitializer(ArenaAllocator *allocator, parser::ET
 }
 
 static void TransformDefaultParameters(public_lib::Context *ctx, ir::ScriptFunction *function,
-                                       const std::vector<ir::ETSParameterExpression *> &params,
-                                       bool isInterfaceFunction)
+                                       const std::vector<ir::ETSParameterExpression *> &params)
 {
     auto validateDefaultParamInDeclare = [ctx, function, &params]() {
         for (auto param : params) {
@@ -55,13 +54,6 @@ static void TransformDefaultParameters(public_lib::Context *ctx, ir::ScriptFunct
             }
         }
     };
-
-    if (isInterfaceFunction) {
-        for (const auto param : params) {
-            TransformInitializer(ctx->allocator, ctx->parser->AsETSParser(), param);
-        }
-        return;
-    }
 
     if (!function->HasBody()) {  // #23134
         validateDefaultParamInDeclare();
@@ -111,19 +103,7 @@ static void TransformFunction(public_lib::Context *ctx, ir::ScriptFunction *func
         return;
     }
 
-    bool isInterfaceFunction = function->IsTSInterfaceDeclaration();
-    if (!isInterfaceFunction) {
-        ir::AstNode *node = function->Parent();
-        while (node != nullptr) {
-            if (node->IsTSInterfaceDeclaration()) {
-                isInterfaceFunction = true;
-                break;
-            }
-            node = node->Parent();
-        }
-    }
-
-    TransformDefaultParameters(ctx, function, defaultParams, isInterfaceFunction);
+    TransformDefaultParameters(ctx, function, defaultParams);
 }
 
 bool DefaultParametersLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
