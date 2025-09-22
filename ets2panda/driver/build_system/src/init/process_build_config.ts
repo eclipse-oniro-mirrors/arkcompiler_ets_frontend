@@ -179,9 +179,9 @@ function initAliasConfig(buildConfig: BuildConfig): void {
 function initInteropSDKInfo(buildConfig: BuildConfig): void {
     buildConfig.interopSDKPaths = new Set<string>();
 
-    const basePaths = buildConfig.interopApiPaths?.length
-        ? buildConfig.interopApiPaths
-        : [path.resolve(buildConfig.buildSdkPath as string, '../ets1.1/build-tools/interop')];
+  const basePaths = buildConfig.interopApiPaths?.length
+    ? buildConfig.interopApiPaths
+    : [path.resolve(buildConfig.buildSdkPath as string, '../dynamic/build-tools/interop')];
 
     for (const basePath of basePaths) {
         /**

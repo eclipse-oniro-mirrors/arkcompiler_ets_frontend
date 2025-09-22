@@ -161,7 +161,7 @@ E2E 测试前的配置步骤如下：
   - 执行mock_sdk操作，保证本地可以编译 build_system 本身和利用 build_system 编译 hap 包:
     * SDK可以从[每日构建](https://ci.openharmony.cn/workbench/cicd/dailybuild/dailylist)下载，或者自行编译。
     * 下载`ohos-sdk-pulib_0328`，解压获得`ohos-sdk`目录，进入`ohos-sdk/Linux`解压`ets-linux-x64-6.0.0.36-Canary1.zip`获得`ets`目录。
-    * `ets/ets1.2`即为SDK目录,将其中的内容复制进 `build_system/test/mock_sdk`即可。
+    * `ets/static`即为SDK目录,将其中的内容复制进 `build_system/test/mock_sdk`即可。
     * 复制完成后mock_sdk目录下应存在`api`，`arkts`，`build-tools`，`kits`四个文件夹。
 
    - 为mock_sdk/build-tools/ets2panda/bin下的几个可执行文件提供执行权限。

@@ -166,7 +166,7 @@ The configuration steps before E2E testing are as follows:
     * You can get the SDK for Linux from the [DailyBuild](https://ci.openharmony.cn/workbench/cicd/dailybuild/dailylist).
     [*Build the SDK from scratch is also an option.*]
     * Download the `ohos-sdk-public_0328` package and extract it, get `ohos-sdk`.
-    * Extract `ohos-sdk/linux/ets-linux-x64-6.0.0.36-Canary1.zip`, get `ets` and move `ets/ets1.2` to the `build_system/test/mock_sdk` directory.
+    * Extract `ohos-sdk/linux/ets-linux-x64-6.0.0.36-Canary1.zip`, get `ets` and move `ets/static` to the `build_system/test/mock_sdk` directory.
     * After that, the mock_sdk directory should contain the folders `api`, `arkts`, `build-tools`, and `kits`.
 
   - Grant execute permissions to the executables under `mock_sdk/build-tools/ets2panda/bin`:
