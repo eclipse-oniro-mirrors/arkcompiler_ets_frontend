@@ -527,6 +527,9 @@ std::map<lexer::TokenType, std::string_view> &GetBigintSignatures()
         {lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL,
          compiler::Signatures::BUILTIN_BIGINT_OPERATOR_GREATER_THAN_EQUAL},
         {lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL, compiler::Signatures::BUILTIN_BIGINT_OPERATOR_LESS_THAN_EQUAL},
+        {lexer::TokenType::PUNCTUATOR_EXPONENTIATION, compiler::Signatures::BUILTIN_BIGINT_OPERATOR_EXPONENTIATION},
+        {lexer::TokenType::PUNCTUATOR_EXPONENTIATION_EQUAL,
+         compiler::Signatures::BUILTIN_BIGINT_OPERATOR_EXPONENTIATION_EQUAL},
     };
 
     return bigintSignatures;

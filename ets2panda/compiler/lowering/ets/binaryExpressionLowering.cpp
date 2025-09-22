@@ -50,7 +50,10 @@ bool BinaryExpressionLowering::PerformForModule(public_lib::Context *ctx, parser
         [ctx](ir::AstNode *ast) -> AstNodePtr {
             if (ast->IsBinaryExpression()) {
                 ir::BinaryExpression *binaryExpr = ast->AsBinaryExpression();
-                if (binaryExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_EXPONENTIATION) {
+                auto *left = binaryExpr->Left();
+                bool leftIsBigInt =
+                    (left->TsType() != nullptr && left->TsType()->IsETSBigIntType()) || left->IsBigIntLiteral();
+                if (binaryExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_EXPONENTIATION && !leftIsBigInt) {
                     return ConvertExponentiation(binaryExpr, ctx);
                 }
             }
