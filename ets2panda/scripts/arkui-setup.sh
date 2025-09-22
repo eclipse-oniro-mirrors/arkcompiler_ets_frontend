@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -174,8 +174,10 @@ ES2PANDA_LIB_IDL="incremental/tools/panda/node_modules/@panda/sdk/ohos_arm64/inc
 npm i @idlizer/idlinter
 npx @idlizer/idlinter check "${ES2PANDA_LIB_IDL}" || exit 1
 
+run_script "sdk:all"
+
 # Compile libarkts
-pushd ui2abc/libarkts || exit 1
+pushd libarkts || exit 1
 run_script "regenerate"
 run_script "compile --prefix ../fast-arktsc"
 run_script "run"
@@ -199,7 +201,7 @@ case "${DEMO}" in
         run_script "run:node --prefix arkoala-arkts/shopping/user"
         ;;
     "trivial")
-        skip_linker_verification_error "run --prefix arkoala-arkts/trivial/user"
+        run_script "run --prefix arkoala-arkts/trivial/user"
         ;;
     "empty")
         ;;
