@@ -698,7 +698,7 @@ void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *c
             accessor->SetParent(*it);
             accessor->Function()->AddFlag(ir::ScriptFunctionFlags::OVERLOAD);
         } else {
-            ERROR_SANITY_CHECK(this, (*it)->AsMethodDefinition()->Function()->IsSetter(), return );
+            ERROR_SANITY_CHECK(this, (*it)->AsMethodDefinition()->Function()->IsSetter(), return void());
             auto setter = (*it)->AsMethodDefinition();
             accessor->AddOverload(setter);
             setter->SetParent(accessor);
