@@ -13,33 +13,35 @@
  * limitations under the License.
  */
 
-@Entry({ routeName: "Index", storage: new LocalStorage() })
-@ComponentV2
+import {
+  Entry,
+  LocalStorage,
+  Component,
+  Text,
+} from '@kit.ArkUI';
+
+const __get_local_storage__ = (): LocalStorage => new LocalStorage();
+@Entry({ storage: "__get_local_storage__", useSharedStorage: true })
+@Component
 struct MyPage1 {
   build() {
     Text("Hello World")
   }
 }
 
-@Entry({ routeName: "Index", useSharedStorage: true })
-@ComponentV2
+const __get_local_storage__ = (): LocalStorage => new LocalStorage();
+@Entry({ storage: "__get_local_storage__", routeName: '' })
+@Component
 struct MyPage2 {
   build() {
     Text("Hello World")
   }
 }
 
-@Entry({ routeName: "Index", storage: new LocalStorage(), useSharedStorage: true })
-@ComponentV2
+const __get_local_storage__ = (): LocalStorage => new LocalStorage();
+@Entry({ storage: "__get_local_storage__", useSharedStorage: true, routeName: '' })
+@Component
 struct MyPage3 {
-  build() {
-    Text("Hello World")
-  }
-}
-
-@Entry({ routeName: "Index" })
-@ComponentV2
-struct MyPage4 {
   build() {
     Text("Hello World")
   }

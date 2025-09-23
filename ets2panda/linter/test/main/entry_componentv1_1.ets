@@ -13,33 +13,25 @@
  * limitations under the License.
  */
 
-@Entry({ routeName: "Index", storage: new LocalStorage() })
-@ComponentV2
+@Entry({ storage: new LocalStorage(), useSharedStorage: true })
+@Component
 struct MyPage1 {
   build() {
     Text("Hello World")
   }
 }
 
-@Entry({ routeName: "Index", useSharedStorage: true })
-@ComponentV2
+@Entry({ storage: new LocalStorage(), routeName: '' })
+@Component
 struct MyPage2 {
   build() {
     Text("Hello World")
   }
 }
 
-@Entry({ routeName: "Index", storage: new LocalStorage(), useSharedStorage: true })
-@ComponentV2
+@Entry({ storage: new LocalStorage(), useSharedStorage: true, routeName: '' })
+@Component
 struct MyPage3 {
-  build() {
-    Text("Hello World")
-  }
-}
-
-@Entry({ routeName: "Index" })
-@ComponentV2
-struct MyPage4 {
   build() {
     Text("Hello World")
   }

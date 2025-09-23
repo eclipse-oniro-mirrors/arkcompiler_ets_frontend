@@ -121,7 +121,8 @@
     "arkui-persistent-prop-serialization",
     "arkui-persistent-props-serialization",
     "arkui-persistencev2-connect-serialization",
-    "arkui-entry-invalid-params"
+    "arkui-entry-invalid-params",
+    "arkui-entry-invalid-localstorage"
   ],
   "builtin": [
     "arkts-builtin-thisArgs",

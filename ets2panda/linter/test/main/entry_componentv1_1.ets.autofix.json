@@ -18,28 +18,28 @@
             "line": 16,
             "column": 1,
             "endLine": 16,
-            "endColumn": 60,
-            "problem": "EntryHasInvalidParamsWithV2",
+            "endColumn": 64,
+            "problem": "EntryAnnotation",
             "autofix": [
                 {
                     "start": 605,
-                    "end": 664,
-                    "replacementText": "@Entry({ routeName: \"Index\" })",
+                    "end": 668,
+                    "replacementText": "const __get_local_storage__ = (): LocalStorage => new LocalStorage();\n@Entry({ storage: \"__get_local_storage__\", useSharedStorage: true })",
                     "line": 16,
                     "column": 1,
                     "endLine": 16,
-                    "endColumn": 60
+                    "endColumn": 64
                 }
             ],
             "suggest": "",
-            "rule": "The \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters cannot be used together with the \"@ComponentV2\" decorator (arkui-entry-invalid-params)",
+            "rule": "The \"@Entry\" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)",
             "severity": "ERROR"
         },
         {
             "line": 16,
-            "column": 43,
+            "column": 23,
             "endLine": 16,
-            "endColumn": 55,
+            "endColumn": 35,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
@@ -50,12 +50,12 @@
             "column": 1,
             "endLine": 24,
             "endColumn": 55,
-            "problem": "EntryHasInvalidParamsWithV2",
+            "problem": "EntryAnnotation",
             "autofix": [
                 {
-                    "start": 738,
-                    "end": 792,
-                    "replacementText": "@Entry({ routeName: \"Index\" })",
+                    "start": 740,
+                    "end": 794,
+                    "replacementText": "const __get_local_storage__ = (): LocalStorage => new LocalStorage();\n@Entry({ storage: \"__get_local_storage__\", routeName: '' })",
                     "line": 24,
                     "column": 1,
                     "endLine": 24,
@@ -63,35 +63,45 @@
                 }
             ],
             "suggest": "",
-            "rule": "The \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters cannot be used together with the \"@ComponentV2\" decorator (arkui-entry-invalid-params)",
+            "rule": "The \"@Entry\" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 23,
+            "endLine": 24,
+            "endColumn": 35,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
             "severity": "ERROR"
         },
         {
             "line": 32,
             "column": 1,
             "endLine": 32,
-            "endColumn": 84,
-            "problem": "EntryHasInvalidParamsWithV2",
+            "endColumn": 79,
+            "problem": "EntryAnnotation",
             "autofix": [
                 {
                     "start": 866,
-                    "end": 949,
-                    "replacementText": "@Entry({ routeName: \"Index\" })",
+                    "end": 944,
+                    "replacementText": "const __get_local_storage__ = (): LocalStorage => new LocalStorage();\n@Entry({ storage: \"__get_local_storage__\", useSharedStorage: true, routeName: '' })",
                     "line": 32,
                     "column": 1,
                     "endLine": 32,
-                    "endColumn": 84
+                    "endColumn": 79
                 }
             ],
             "suggest": "",
-            "rule": "The \"@Entry\" decorator that has \"storage\" or \"useSharedStorage\" parameters cannot be used together with the \"@ComponentV2\" decorator (arkui-entry-invalid-params)",
+            "rule": "The \"@Entry\" annotation does not support dynamic parameters (arkui-entry-annotation-parameters)",
             "severity": "ERROR"
         },
         {
             "line": 32,
-            "column": 43,
+            "column": 23,
             "endLine": 32,
-            "endColumn": 55,
+            "endColumn": 35,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
@@ -107,10 +117,10 @@
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
@@ -120,18 +130,18 @@
         },
         {
             "line": 16,
-            "column": 43,
+            "column": 23,
             "endLine": 16,
-            "endColumn": 55,
+            "endColumn": 35,
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
@@ -143,21 +153,21 @@
             "line": 17,
             "column": 2,
             "endLine": 17,
-            "endColumn": 13,
+            "endColumn": 11,
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
             "suggest": "",
-            "rule": "The ArkUI interface \"ComponentV2\" should be imported before it is used (arkui-modular-interface)",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         },
         {
@@ -170,10 +180,10 @@
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
@@ -191,10 +201,10 @@
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
@@ -203,24 +213,45 @@
             "severity": "ERROR"
         },
         {
-            "line": 25,
-            "column": 2,
-            "endLine": 25,
-            "endColumn": 13,
+            "line": 24,
+            "column": 23,
+            "endLine": 24,
+            "endColumn": 35,
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
             "suggest": "",
-            "rule": "The ArkUI interface \"ComponentV2\" should be imported before it is used (arkui-modular-interface)",
+            "rule": "The ArkUI interface \"LocalStorage\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 2,
+            "endLine": 25,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
+                    "column": 5,
+                    "endLine": 36,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         },
         {
@@ -233,10 +264,10 @@
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
@@ -254,10 +285,10 @@
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
@@ -267,18 +298,18 @@
         },
         {
             "line": 32,
-            "column": 43,
+            "column": 23,
             "endLine": 32,
-            "endColumn": 55,
+            "endColumn": 35,
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
@@ -290,21 +321,21 @@
             "line": 33,
             "column": 2,
             "endLine": 33,
-            "endColumn": 13,
+            "endColumn": 11,
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],
             "suggest": "",
-            "rule": "The ArkUI interface \"ComponentV2\" should be imported before it is used (arkui-modular-interface)",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         },
         {
@@ -317,73 +348,10 @@
                 {
                     "start": 603,
                     "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
+                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  Component,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 36,
                     "column": 5,
-                    "endLine": 44,
-                    "endColumn": 9
-                }
-            ],
-            "suggest": "",
-            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
-            "column": 2,
-            "endLine": 40,
-            "endColumn": 7,
-            "problem": "UIInterfaceImport",
-            "autofix": [
-                {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
-                    "column": 5,
-                    "endLine": 44,
-                    "endColumn": 9
-                }
-            ],
-            "suggest": "",
-            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 2,
-            "endLine": 41,
-            "endColumn": 13,
-            "problem": "UIInterfaceImport",
-            "autofix": [
-                {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
-                    "column": 5,
-                    "endLine": 44,
-                    "endColumn": 9
-                }
-            ],
-            "suggest": "",
-            "rule": "The ArkUI interface \"ComponentV2\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 44,
-            "column": 5,
-            "endLine": 44,
-            "endColumn": 9,
-            "problem": "UIInterfaceImport",
-            "autofix": [
-                {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  LocalStorage,\n  ComponentV2,\n  Text,\n} from '@kit.ArkUI';",
-                    "line": 44,
-                    "column": 5,
-                    "endLine": 44,
+                    "endLine": 36,
                     "endColumn": 9
                 }
             ],

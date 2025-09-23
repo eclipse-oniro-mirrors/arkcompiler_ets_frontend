@@ -13,33 +13,49 @@
  * limitations under the License.
  */
 
-@Entry({ routeName: "Index", storage: new LocalStorage() })
-@ComponentV2
+import {
+  Entry,
+  Component,
+  Text,
+} from '@kit.ArkUI';
+
+import { LocalStorage } from './ui_modules/common_ts_ets_api';
+
+@Entry({ useSharedStorage: true })
+@Component
 struct MyPage1 {
   build() {
     Text("Hello World")
   }
 }
 
-@Entry({ routeName: "Index", useSharedStorage: true })
-@ComponentV2
+@Entry({ useSharedStorage: true })
+@Component
 struct MyPage2 {
   build() {
     Text("Hello World")
   }
 }
 
-@Entry({ routeName: "Index", storage: new LocalStorage(), useSharedStorage: true })
-@ComponentV2
+@Entry({ useSharedStorage: true })
+@Component
 struct MyPage3 {
   build() {
     Text("Hello World")
   }
 }
 
-@Entry({ routeName: "Index" })
-@ComponentV2
+@Entry({ useSharedStorage: true, routeName: '' })
+@Component
 struct MyPage4 {
+  build() {
+    Text("Hello World")
+  }
+}
+
+@Entry({ useSharedStorage: true, routeName: '' })
+@Component
+struct MyPage5 {
   build() {
     Text("Hello World")
   }
