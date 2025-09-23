@@ -4,7 +4,7 @@
   "main": "dist/tslinter.js",
   "bin": "bin/tslinter.js",
   "files": [
-    "dist/*","rule-config.json","docs/rules-cn/*"
+    "dist/*","rule-config.json","docs/rules-cn/*","tsconfig-sdk.json"
   ],
   "private": true,
   "license": "Apache-2.0",

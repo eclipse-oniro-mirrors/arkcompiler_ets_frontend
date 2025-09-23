@@ -189,7 +189,11 @@ function formCommandLineOptions(parsedCmd: ParsedCommand): CommandLineOptions {
     opts.linterOptions.projectFolderList = options.projectFolder;
   }
   if (options.project) {
+    opts.isCommandConfig = true;
     doProjectArg(options.project, opts);
+  } else {
+    const defaultSdkConfigPath = path.join(process.cwd(), 'tsconfig-sdk.json');
+    doProjectArg(defaultSdkConfigPath, opts);
   }
   if (options.autofix) {
     opts.linterOptions.enableAutofix = true;
