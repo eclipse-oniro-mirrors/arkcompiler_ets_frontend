@@ -2409,9 +2409,26 @@ void TSDeclGen::GenPropDeclaration(const ir::ClassProperty *classProp)
     }
 }
 
+bool TSDeclGen::HasUIAnnotation(const ir::ClassProperty *classProp) const
+{
+    if (!declgenOptions_.genAnnotations || classProp == nullptr) {
+        return false;
+    }
+
+    if (!classProp->HasAnnotations() && classProp->Annotations().empty()) {
+        return false;
+    }
+
+    const auto &annotations = classProp->Annotations();
+    return std::any_of(annotations.begin(), annotations.end(), [this](const auto &annotation) {
+        return annotationList_.count(annotation->GetBaseName()->Name().Mutf8()) > 0;
+    });
+}
+
 void TSDeclGen::ProcessClassPropDeclaration(const ir::ClassProperty *classProp)
 {
-    if (!state_.inInterface && (!state_.inNamespace || state_.isClassInNamespace) && !classNode_.isStruct) {
+    if (!state_.inInterface && (!state_.inNamespace || state_.isClassInNamespace) && !classNode_.isStruct &&
+        !HasUIAnnotation(classProp)) {
         GenPropAccessor(classProp, "get ");
         if (!classProp->IsReadonly()) {
             GenPropAccessor(classProp, "set ");
