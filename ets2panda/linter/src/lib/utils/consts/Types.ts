@@ -35,3 +35,10 @@ export type ConstructorParameter = {
 export type ParameterName = string;
 
 export type BaseClassConstructorInfo = Set<ConstructorParameter[]> | undefined;
+
+type TupleOrArray = 'tuple' | 'array';
+export type AliasedArrayTypeCore = {
+  type: TupleOrArray;
+  isUnion: boolean;
+  types: string[];
+};

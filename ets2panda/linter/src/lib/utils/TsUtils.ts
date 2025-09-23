@@ -3245,7 +3245,7 @@ export class TsUtils {
   }
 
   isSendableTypeAlias(type: ts.Type): boolean {
-    const decl = this.getTypsAliasOriginalDecl(type);
+    const decl = this.getTypeAliasOriginalDecl(type);
     return !!decl && TsUtils.hasSendableDecorator(decl);
   }
 
@@ -3259,12 +3259,12 @@ export class TsUtils {
   }
 
   isNonSendableFunctionTypeAlias(type: ts.Type): boolean {
-    const decl = this.getTypsAliasOriginalDecl(type);
+    const decl = this.getTypeAliasOriginalDecl(type);
     return !!decl && ts.isFunctionTypeNode(decl.type) && !TsUtils.hasSendableDecorator(decl);
   }
 
   // If the alias refers to another alias, the search continues
-  private getTypsAliasOriginalDecl(type: ts.Type): ts.TypeAliasDeclaration | undefined {
+  getTypeAliasOriginalDecl(type: ts.Type): ts.TypeAliasDeclaration | undefined {
     if (!type.aliasSymbol) {
       return undefined;
     }
@@ -3275,7 +3275,7 @@ export class TsUtils {
     if (ts.isTypeReferenceNode(decl.type)) {
       const targetType = this.tsTypeChecker.getTypeAtLocation(decl.type.typeName);
       if (targetType.aliasSymbol && targetType.aliasSymbol.getFlags() & ts.SymbolFlags.TypeAlias) {
-        return this.getTypsAliasOriginalDecl(targetType);
+        return this.getTypeAliasOriginalDecl(targetType);
       }
     }
     return decl;

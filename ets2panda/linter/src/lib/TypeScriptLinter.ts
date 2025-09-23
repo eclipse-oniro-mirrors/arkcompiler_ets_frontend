@@ -7709,6 +7709,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     this.handleNoTuplesArrays(contextNode, lhsType, rhsType);
     this.handleArrayTypeImmutable(contextNode, lhsType, rhsType, rhsExpr);
+
     // check that 'sendable typeAlias' is assigned correctly
     if (this.tsUtils.isWrongSendableFunctionAssignment(lhsType, rhsType)) {
       this.incrementCounters(contextNode, FaultID.SendableFunctionAssignment);
@@ -8437,8 +8438,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!((isArray || isTuple) && lhsType !== rhsType)) {
       return;
     }
-    const rhsTypeStr = this.tsTypeChecker.typeToString(rhsType);
-    let lhsTypeStr = this.tsTypeChecker.typeToString(lhsType);
+
+    const aliasedTypes = this.checkForAliasedTypes(lhsType, rhsType);
+    const rhsTypeStr = aliasedTypes[1];
+    let lhsTypeStr = aliasedTypes[0];
+
     if (rhsExpr && (this.isNullOrEmptyArray(rhsExpr) || ts.isArrayLiteralExpression(rhsExpr))) {
       return;
     }
@@ -8451,6 +8455,26 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (lhsTypeStr !== rhsTypeStr) {
       this.incrementCounters(node, FaultID.ArrayTypeImmutable);
     }
+  }
+
+  private checkForAliasedTypes(lhs: ts.Type, rhs: ts.Type): [string, string] {
+    const lhsString = this.getTypeString(lhs);
+    const rhsString = this.getTypeString(rhs);
+
+    return [lhsString, rhsString];
+  }
+
+  private getTypeString(type: ts.Type): string {
+    let typeString = '';
+    const lhsTypeDecl = this.tsUtils.getTypeAliasOriginalDecl(type);
+    if (lhsTypeDecl) {
+      typeString = lhsTypeDecl.type.getText().replace('(', '').
+        replace(')', '');
+    } else {
+      typeString = this.tsTypeChecker.typeToString(type);
+    }
+
+    return typeString.split(' ').join('');
   }
 
   private checkLhsTypeString(node: ts.Node, rhsTypeStr: string): string | undefined {
