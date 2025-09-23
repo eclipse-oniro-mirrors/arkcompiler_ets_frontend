@@ -2974,24 +2974,35 @@ checker::Type *ETSAnalyzer::Check(ir::ThisExpression *expr) const
     return expr->TsType();
 }
 
+static checker::Type *checkUnboxedTypeKind(TypeFlag unboxedFlag, ETSChecker *checker)
+{
+    switch (unboxedFlag) {
+        case TypeFlag::ETS_BOOLEAN:
+            return checker->CreateETSStringLiteralType("boolean");
+        case TypeFlag::BYTE:
+            return checker->CreateETSStringLiteralType("byte");
+        case TypeFlag::CHAR:
+            return checker->CreateETSStringLiteralType("char");
+        case TypeFlag::SHORT:
+            return checker->CreateETSStringLiteralType("short");
+        case TypeFlag::INT:
+            return checker->CreateETSStringLiteralType("int");
+        case TypeFlag::LONG:
+            return checker->CreateETSStringLiteralType("long");
+        case TypeFlag::FLOAT:
+            return checker->CreateETSStringLiteralType("float");
+        case TypeFlag::DOUBLE:
+            return checker->CreateETSStringLiteralType("number");
+        default:
+            ES2PANDA_UNREACHABLE();
+    }
+}
+
 // Get string literal type as potential typeof result type with respect to spec p.7.17
 static checker::Type *GetTypeOfStringType(checker::Type *argType, ETSChecker *checker)
 {
     if (auto unboxed = checker->MaybeUnboxType(argType); unboxed->IsETSPrimitiveType()) {
-        switch (checker->TypeKind(unboxed)) {
-            case TypeFlag::ETS_BOOLEAN:
-                return checker->CreateETSStringLiteralType("boolean");
-            case TypeFlag::BYTE:
-            case TypeFlag::CHAR:
-            case TypeFlag::SHORT:
-            case TypeFlag::INT:
-            case TypeFlag::LONG:
-            case TypeFlag::FLOAT:
-            case TypeFlag::DOUBLE:
-                return checker->CreateETSStringLiteralType("number");
-            default:
-                ES2PANDA_UNREACHABLE();
-        }
+        return checkUnboxedTypeKind(checker->TypeKind(unboxed), checker);
     }
     if (argType->IsETSUndefinedType()) {
         return checker->CreateETSStringLiteralType("undefined");
