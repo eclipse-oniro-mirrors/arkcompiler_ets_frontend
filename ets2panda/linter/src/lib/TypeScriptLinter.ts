@@ -4018,9 +4018,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.incrementCounters(tsMethodDecl.questionToken, FaultID.OptionalMethod);
     }
     this.handleInvalidIdentifier(tsMethodDecl);
-    if (!this.tsUtils.isAbstractMethodInAbstractClass(node)) {
-      this.handleTSOverload(tsMethodDecl);
-    }
+    this.handleTSOverload(tsMethodDecl);
     this.checkDefaultParamBeforeRequired(tsMethodDecl);
     this.handleMethodInherit(tsMethodDecl);
     this.handleSdkGlobalApi(tsMethodDecl);
@@ -8060,7 +8058,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       });
       const isInternalFunction = decl.name && ts.isIdentifier(decl.name) && interanlFunction.includes(decl.name.text);
       if (isInternalFunction && filterDecl.length > 2 || !isInternalFunction && filterDecl.length > 1) {
-        this.incrementCounters(decl, FaultID.TsOverload);
+        if (!decl.body) {
+          const autofix = this.autofixer?.removeNode(decl);
+          this.incrementCounters(decl, FaultID.TsOverload, autofix);
+        } else {
+          this.incrementCounters(decl, FaultID.TsOverload);
+        }
       }
     } else if (ts.isConstructorDeclaration(decl) && decl.getText()) {
       this.handleTSOverloadUnderConstructorDeclaration(decl);
@@ -8072,7 +8075,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const constructors = parent.members.filter(ts.isConstructorDeclaration);
     const isStruct = decl.getText() && ts.isStructDeclaration(parent);
     if ((isStruct ? --constructors.length : constructors.length) > 1) {
-      this.incrementCounters(decl, FaultID.TsOverload);
+      if (!decl.body) {
+        const autofix = this.autofixer?.removeNode(decl);
+        this.incrementCounters(decl, FaultID.TsOverload, autofix);
+      } else {
+        this.incrementCounters(decl, FaultID.TsOverload);
+      }
     }
   }
 

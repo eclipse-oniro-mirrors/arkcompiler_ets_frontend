@@ -13,5 +13,26 @@
       "See the License for the specific language governing permissions and",
       "limitations under the License."
     ],
-    "result": []
+    "result": [
+        {
+            "line": 22,
+            "column": 16,
+            "endLine": 22,
+            "endColumn": 20,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 1,
+            "endLine": 64,
+            "endColumn": 5,
+            "problem": "PropertyDeclOnFunction",
+            "suggest": "",
+            "rule": "Declaring properties on functions is not supported (arkts-no-func-props)",
+            "severity": "ERROR"
+        }
+    ]
 }
