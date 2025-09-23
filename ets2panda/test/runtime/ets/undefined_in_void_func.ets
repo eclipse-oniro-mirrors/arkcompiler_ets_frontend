@@ -13,14 +13,10 @@
  * limitations under the License.
  */
 
-function f(c: ()=>void) {
-    c();
+function foo(): void {
+    return undefined;
 }
 
 function main() {
-    f() {
-        return /* @@ label */1
-    }
+    foo() // cannot use arktest since void cannot be used as a value, but there should be no errors.
 }
-
-/* @@@ label Error TypeError: Type 'Int' is not compatible with the enclosing method's return type 'void' */

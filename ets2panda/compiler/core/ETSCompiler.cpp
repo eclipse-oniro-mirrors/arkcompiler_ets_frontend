@@ -1306,36 +1306,37 @@ void ETSCompiler::Compile(const ir::LabelledStatement *st) const
     CompileImpl(st, etsg);
 }
 
+static void CheckVoidReturnType(const ir::ReturnStatement *st, const ir::Expression *const argument, ETSGen *etsg)
+{
+    if (st->ReturnType()->IsETSVoidType() &&
+        etsg->Checker()->Relation()->IsSupertypeOf(etsg->Checker()->GlobalVoidType(), argument->TsType())) {
+        etsg->EmitReturnVoid(st);
+    }
+}
+
 void ETSCompiler::Compile(const ir::ReturnStatement *st) const
 {
     ETSGen *etsg = GetETSGen();
-
     bool isAsyncImpl = st->IsAsyncImplReturn();
     auto *const argument = st->Argument();
-
     if (argument == nullptr) {
         if (etsg->ExtendWithFinalizer(st->Parent(), st)) {
             return;
         }
-
         if (etsg->CheckControlFlowChange()) {
             etsg->ControlFlowChangeBreak();
         }
-
         if (isAsyncImpl) {
             etsg->LoadAccumulatorUndefined(st);
             etsg->ReturnAcc(st);
             return;
         }
-
         etsg->EmitReturnVoid(st);
-
         return;
     }
 
     if (argument->IsCallExpression() && argument->AsCallExpression()->Signature()->ReturnType()->IsETSVoidType()) {
         argument->Compile(etsg);
-
         if (etsg->ReturnType()->IsETSVoidType()) {
             if (isAsyncImpl) {
                 etsg->LoadAccumulatorUndefined(st);
@@ -1349,15 +1350,12 @@ void ETSCompiler::Compile(const ir::ReturnStatement *st) const
         }
         return;
     }
-
     auto ttctx = compiler::TargetTypeContext(etsg, st->ReturnType());
     argument->Compile(etsg);
     etsg->ApplyConversion(argument, st->ReturnType());
-
     if (etsg->ExtendWithFinalizer(st->Parent(), st)) {
         return;
     }
-
     if (etsg->CheckControlFlowChange()) {
         compiler::RegScope rs(etsg);
         compiler::VReg res = etsg->AllocReg();
@@ -1366,7 +1364,7 @@ void ETSCompiler::Compile(const ir::ReturnStatement *st) const
         etsg->ControlFlowChangeBreak();
         etsg->LoadAccumulator(st, res);
     }
-
+    CheckVoidReturnType(st, argument, etsg);
     etsg->ReturnAcc(st);
 }
 

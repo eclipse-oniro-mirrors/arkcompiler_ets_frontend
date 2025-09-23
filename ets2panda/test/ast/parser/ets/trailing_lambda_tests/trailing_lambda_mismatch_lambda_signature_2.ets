@@ -23,4 +23,4 @@ function main() {
     }
 }
 
-/* @@@ label Error TypeError: Unexpected return value, enclosing method return type is void.  */
+/* @@@ label Error TypeError: Type 'Int' is not compatible with the enclosing method's return type 'void' */

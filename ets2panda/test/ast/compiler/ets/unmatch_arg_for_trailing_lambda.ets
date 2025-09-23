@@ -23,4 +23,4 @@ foo(1, () => { return "1" })
 /* @@? 18:8 Error TypeError: Type '"2"' is not compatible with type '((() => void))|undefined' at index 2 */
 /* @@? 19:1 Error TypeError: No matching call signature for foo(Double, Int) */
 /* @@? 19:8 Error TypeError: Type 'Int' is not compatible with type '((() => void))|undefined' at index 2 */
-/* @@? 20:23 Error TypeError: Unexpected return value, enclosing method return type is void. */
+/* @@? 20:23 Error TypeError: Type '"1"' is not compatible with the enclosing method's return type 'void' */

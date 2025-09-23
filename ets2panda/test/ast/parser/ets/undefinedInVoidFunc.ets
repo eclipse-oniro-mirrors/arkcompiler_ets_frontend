@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,14 +13,28 @@
  * limitations under the License.
  */
 
-function f(c: ()=>void) {
-    c();
+
+function foo(): void {
+    return undefined;
 }
 
-function main() {
-    f() {
-        return /* @@ label */1
+foo()
+
+function unFoo(): undefined {
+    return undefined;
+}
+
+function voFoo(): void {
+    return unFoo();
+}
+
+voFoo()
+
+class FOO {
+    metFoo(): void {
+        return undefined;
     }
 }
 
-/* @@@ label Error TypeError: Type 'Int' is not compatible with the enclosing method's return type 'void' */
+let obj = new FOO()
+obj.metFoo()
