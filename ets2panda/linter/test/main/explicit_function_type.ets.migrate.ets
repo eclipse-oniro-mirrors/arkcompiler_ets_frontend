@@ -118,8 +118,8 @@ function foo33(par1: number, par2: boolean, par3: string, par4: [string, Array<F
 let array34 = [Function, 1, 2, 3];
 
 class L36 {
-  foo1();
-  foo1(par:Function, par1:string);
+  
+  
   foo1(par?:Function, par1?:string){
     console.log('arkts36')
   }
