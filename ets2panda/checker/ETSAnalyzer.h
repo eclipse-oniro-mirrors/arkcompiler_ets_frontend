@@ -41,6 +41,8 @@ public:
     void GetUnionPreferredType(ir::Expression *expr, Type *originalType) const;
     void CollectNonOptionalProperty(const ETSObjectType *objType,
                                     std::unordered_map<util::StringView, ETSObjectType *> &props) const;
+    bool IsPropertyAssignable(ir::Expression *propExpr, ir::Expression *key, ir::Expression *value,
+                              varbinder::LocalVariable *lv, const util::StringView &pname) const;
     void CheckObjectExprPropsHelper(const ir::ObjectExpression *expr, checker::ETSObjectType *objType,
                                     checker::PropertySearchFlags searchFlags,
                                     std::unordered_map<util::StringView, ETSObjectType *> &properties) const;

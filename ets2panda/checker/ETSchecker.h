@@ -518,7 +518,7 @@ public:
     Signature *ResolvePotentialTrailingLambda(ir::CallExpression *callExpr, ArenaVector<Signature *> const &signatures,
                                               ArenaVector<ir::Expression *> &arguments);
     bool SetPreferredTypeBeforeValidate(Signature *substitutedSig, ir::Expression *argument, size_t index,
-                                        TypeRelationFlag flags, const std::vector<bool> &argTypeInferenceRequired);
+                                        const std::vector<bool> &argTypeInferenceRequired);
 
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
     Signature *ValidateSignatures(ArenaVector<Signature *> &signatures,
@@ -753,6 +753,7 @@ public:
     util::StringView GetHashFromFunctionType(ir::ETSFunctionType *type);
     static ETSObjectType *GetOriginalBaseType(Type *object);
     void SetArrayPreferredTypeForNestedMemberExpressions(ir::MemberExpression *expr, Type *annotationType);
+    bool CheckIfPreferredTypeIsValidForArrayExpression(ir::ArrayExpression *arrayExpr);
     bool IsExtensionETSFunctionType(const checker::Type *type);
     bool IsExtensionAccessorFunctionType(const checker::Type *type);
     bool IsArrayExprSizeValidForTuple(const ir::ArrayExpression *arrayExpr, const ETSTupleType *tuple);

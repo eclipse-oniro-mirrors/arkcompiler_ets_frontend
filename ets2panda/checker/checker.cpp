@@ -49,6 +49,23 @@ void Checker::LogError(const diagnostic::DiagnosticKind &diagnostic, const lexer
     LogError(diagnostic, {}, pos);
 }
 
+// NOTE (smartin): these 'PossiblyLogError' logging functions will be removed when the overload resolution is reworked
+void Checker::PossiblyLogError(const ir::AstNode *expr, const diagnostic::DiagnosticKind &diagnostic,
+                               const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos)
+{
+    if (expr->HasAstNodeFlags(ir::AstNodeFlags::NO_THROW)) {
+        return;
+    }
+
+    diagnosticEngine_.LogDiagnostic(diagnostic, diagnosticParams, pos);
+}
+
+void Checker::PossiblyLogError(const ir::AstNode *expr, const diagnostic::DiagnosticKind &diagnostic,
+                               const lexer::SourcePosition &pos)
+{
+    PossiblyLogError(expr, diagnostic, {}, pos);
+}
+
 void Checker::LogTypeError(std::string_view message, const lexer::SourcePosition &pos)
 {
     diagnosticEngine_.LogSemanticError(message, pos);

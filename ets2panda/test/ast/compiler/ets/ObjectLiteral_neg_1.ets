@@ -38,3 +38,4 @@ const router:RouterT = {
 
 
 /* @@? 32:5 Error TypeError: Class or interface methods cannot be initialized within an object literal. */
+/* @@? 33:5 Error TypeError: Class or interface methods cannot be initialized within an object literal. */
