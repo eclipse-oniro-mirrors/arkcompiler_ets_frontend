@@ -4371,6 +4371,51 @@ checker::Type *ETSAnalyzer::Check(ir::TSTypeAliasDeclaration *st) const
     return ReturnTypeForStatement(st);
 }
 
+checker::Type *ETSAnalyzer::Check(ir::ETSGenericInstantiatedNode *expr) const
+{
+    ES2PANDA_ASSERT(expr->GetExpression()->IsIdentifier() || expr->GetExpression()->IsMemberExpression());
+
+    ETSChecker *checker = GetETSChecker();
+
+    auto exprType = expr->GetExpression()->Check(checker);
+    if (!exprType->IsETSFunctionType()) {
+        return exprType;
+    }
+
+    // NOTE (smartin): If there more than 1 call signature exist for a function type, then the reference is ambiguous,
+    // as inference from the context of a function reference is not implemented yet. This will need to be changed when
+    // the selection of the overloaded target signature is implemented based on the type inference from the context.
+
+    auto *funcType = exprType->AsETSFunctionType();
+    if (funcType->CallSignaturesOfMethodOrArrow().size() != 1) {
+        checker->LogError(diagnostic::OVERLOADED_METHOD_AS_VALUE, expr->Start());
+        return checker->GlobalBuiltinErrorType();
+    }
+
+    auto *callSig = funcType->CallSignaturesOfMethodOrArrow().front();
+
+    if (funcType->CallSignaturesOfMethodOrArrow().front()->TypeParams().empty()) {
+        checker->LogError(diagnostic::TYPE_ARGS_FOR_NON_GENERIC_SIGNATURE, {callSig, expr->TypeParams()->DumpEtsSrc()},
+                          expr->Start());
+        return checker->GlobalBuiltinErrorType();
+    }
+
+    const auto newSub = checker->CheckTypeParamsAndBuildSubstitutionIfValid(callSig, expr->TypeParams()->Params(),
+                                                                            expr->TypeParams()->Start());
+    if (!newSub.has_value()) {
+        return checker->GlobalBuiltinErrorType();
+    }
+
+    auto *const substitutedType = exprType->Substitute(checker->Relation(), &newSub.value());
+    auto *const substitutedSig = substitutedType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow().front();
+
+    // After substituted the actual type arguments into the signatures, they are not generic anymore, remove the
+    // type params
+    substitutedSig->TypeParams().clear();
+
+    return expr->SetTsType(substitutedType);
+}
+
 checker::Type *ETSAnalyzer::ReturnTypeForStatement([[maybe_unused]] const ir::Statement *const st) const
 {
     ES2PANDA_ASSERT(st->IsStatement());

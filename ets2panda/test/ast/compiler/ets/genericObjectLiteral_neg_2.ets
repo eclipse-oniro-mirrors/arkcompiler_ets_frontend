@@ -22,4 +22,4 @@ function main(): void {
   let b : Person/* @@ label */<string> ={name: "John", age:25}
 }
 
-/* @@@ label Error TypeError: Type argument 'String' should be a subtype of 'Double'-constraint */
+/* @@@ label Error TypeError: Type argument 'String' should be a subtype of 'Double' constraint */

@@ -26,4 +26,5 @@ function main(){
     /* @@ label */a_obj.foo<E>(x)
 }
 
+/* @@@ label Error TypeError: Type argument 'E' should be a subtype of 'A<E>' constraint  */
 /* @@@ label Error TypeError: No matching call signature for foo(C)  */

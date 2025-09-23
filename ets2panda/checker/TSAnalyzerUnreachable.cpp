@@ -119,6 +119,11 @@ checker::Type *TSAnalyzer::Check([[maybe_unused]] ir::ETSPackageDeclaration *st)
     ES2PANDA_UNREACHABLE();
 }
 
+checker::Type *TSAnalyzer::Check([[maybe_unused]] ir::ETSGenericInstantiatedNode *node) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
 checker::Type *TSAnalyzer::Check([[maybe_unused]] ir::ETSParameterExpression *expr) const
 {
     ES2PANDA_UNREACHABLE();

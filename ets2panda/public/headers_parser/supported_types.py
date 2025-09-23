@@ -85,6 +85,7 @@ ast_nodes_supported = [
     "ETSFunctionType",
     "ETSWildcardType",
     "ETSPrimitiveType",
+    "ETSGenericInstantiatedNode",
     "ETSPackageDeclaration",
     "ETSClassLiteral",
     "ETSTypeReference",

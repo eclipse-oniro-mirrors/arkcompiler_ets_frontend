@@ -2137,28 +2137,22 @@ bool ETSParser::ParsePotentialGenericFunctionCall(ir::Expression *primaryExpr, i
         return true;
     }
 
-    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SEMI_COLON) {
-        Lexer()->NextToken();
-        return true;
-    }
-
-    if (Lexer()->GetToken().Type() == lexer::TokenType::EOS || Lexer()->GetToken().NewLine()) {
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD) {
+        Lexer()->Rewind(savedPos);
         return true;
     }
 
     // unexpected_token_49,ets, 50, 51
-    if (!Lexer()->GetToken().NewLine() && Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
-        LogExpectedToken(lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS);
+    if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
+        *returnExpression = AllocNode<ir::ETSGenericInstantiatedNode>(primaryExpr, typeParams);
+        (*returnExpression)->SetRange({startLoc, Lexer()->GetToken().Start()});
+        return false;
     }
 
-    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
-        if (!ignoreCallExpression) {
-            *returnExpression = ParseCallExpression(*returnExpression, false, false);
-            (*returnExpression)->AsCallExpression()->SetTypeParams(typeParams);
-            return false;
-        }
-
-        return true;
+    if (!ignoreCallExpression) {
+        *returnExpression = ParseCallExpression(*returnExpression, false, false);
+        (*returnExpression)->AsCallExpression()->SetTypeParams(typeParams);
+        return false;
     }
 
     Lexer()->Rewind(savedPos);

@@ -1362,11 +1362,15 @@ semantic:
 
 - name: TYPEARG_TYPEPARAM_SUBTYPING
   id: 228
-  message: "Type argument '{}' should be a subtype of '{}'-constraint"
+  message: "Type argument '{}' should be a subtype of '{}' constraint"
 
 - name: TYPES_CANNOT_BE_MODIFIED_AT_RUNTIME
   id: 55815
   message: "Types cannot be modified at runtime with '{}'."
+
+- name: TYPE_ARGS_FOR_NON_GENERIC_SIGNATURE
+  id: 72257
+  message: "Signature '{}' is not generic, but type arguments '{}' were passed"
 
 - name: TYPE_CANNOT_BE_USED_IN_FROM
   id: 53205

@@ -129,6 +129,7 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/checker/types/typeMapping.h
     ${ES2PANDA_ROOT}/checker/types/ets/etsBigIntType.h
     ${ES2PANDA_ROOT}/ir/expressions/arrayExpression.h
+    ${ES2PANDA_ROOT}/ir/ets/etsGenericInstantiatedNode.h
     ${ES2PANDA_ROOT}/ir/ets/etsUnionType.h
     ${ES2PANDA_ROOT}/ir/ets/etsKeyofType.h
     ${ES2PANDA_ROOT}/ir/ts/tsTypeParameter.h
@@ -442,6 +443,7 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/checker/types/typeFlag.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ets/etsIntrinsicNode.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ets/etsPackageDeclaration.yaml
+    ${LIBGEN_DIR}/gen/headers/ir/ets/etsGenericInstantiatedNode.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ets/etsImportDeclaration.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ets/etsStructDeclaration.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsModuleBlock.yaml

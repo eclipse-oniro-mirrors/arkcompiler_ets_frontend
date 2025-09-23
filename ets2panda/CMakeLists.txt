@@ -113,7 +113,7 @@ if(PANDA_WITH_ETS)
                 "}\n"
             )
         endfunction()
-    
+
         if (IS_CONFIG_FOR_SDK_ARTIFACTS)
             # Generate specific arktsconfig for SDK-build, which is expected to be used from unpacked artifacts,
             # but not directly from the build tree.
@@ -145,7 +145,7 @@ if(PANDA_WITH_ETS)
 
     if (PANDA_SDK_BUILD)
         # SDK build requires default 'bin/arktsconfig' to be present in the build tree as it runs ninja etssdk,
-        # so arktsconfig that should be delivered is separated: 
+        # so arktsconfig that should be delivered is separated:
         gen_arktsconfig(${CMAKE_BINARY_DIR}/bin/arktsconfig_to_deliver.json TRUE)
     endif()
     gen_arktsconfig(${CMAKE_BINARY_DIR}/bin/arktsconfig.json FALSE)
@@ -487,6 +487,7 @@ set(ES2PANDA_LIB_SRC
   ir/ets/etsClassLiteral.cpp
   ir/ets/etsIntrinsicNode.cpp
   ir/ets/etsFunctionType.cpp
+  ir/ets/etsGenericInstantiatedNode.cpp
   ir/ets/etsIntrinsicNode.cpp
   ir/ets/etsKeyofType.cpp
   ir/ets/etsNewArrayInstanceExpression.cpp

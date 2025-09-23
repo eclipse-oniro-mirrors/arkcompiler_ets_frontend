@@ -69,6 +69,11 @@ public:
         return GetOrCreateHistoryNodeAs<OverloadDeclaration>()->overloadedList_;
     }
 
+    [[nodiscard]] const ArenaVector<ir::Expression *> &OverloadedList() const noexcept
+    {
+        return GetOrCreateHistoryNodeAs<OverloadDeclaration>()->overloadedList_;
+    }
+
     void SetOverloadedList(ArenaVector<Expression *> overloadedList)
     {
         auto newNode = GetOrCreateHistoryNodeAs<OverloadDeclaration>();

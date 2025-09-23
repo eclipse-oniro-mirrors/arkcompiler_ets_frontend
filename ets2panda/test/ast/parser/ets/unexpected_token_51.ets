@@ -18,12 +18,16 @@ function identity<Type>(arg: Type): Type {
 }
 let output = identity<string>
 let output1 = identity<number>
-console.log(/* @@ label */output(/* @@ label1 */"hehehe"))
-console.log(/* @@ label2 */output(/* @@ label3 */4))
+console.log(output("hehehe"))
+/* @@ label1 */console.log(/* @@ label2 */output(/* @@ label3 */4))
 
-// bug with type error is here
-/* @@@ label1 Error TypeError: Type '"hehehe"' is not compatible with type 'Type' at index 1  */
-/* @@@ label Error TypeError: No matching call signature for invoke0("hehehe")  */
-/* @@@ label3 Error TypeError: Type 'int' is not compatible with type 'Type' at index 1  */
-/* @@@ label2 Error TypeError: No matching call signature for invoke0(int)  */
-
+/* @@@ label1 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Boolean): void` */
+/* @@@ label1 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Byte): void` */
+/* @@@ label1 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Short): void` */
+/* @@@ label1 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Char): void` */
+/* @@@ label1 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Int): void` */
+/* @@@ label1 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Long): void` */
+/* @@@ label1 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Float): void` */
+/* @@@ label1 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Double): void` */
+/* @@@ label2 Error TypeError: No matching call signature for (Int) */
+/* @@@ label3 Error TypeError: Type 'Int' is not compatible with type 'String' at index 1 */

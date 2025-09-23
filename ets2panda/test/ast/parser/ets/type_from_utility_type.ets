@@ -31,12 +31,12 @@
    let recordarrA  = Type.from<Record<Array<string>,Array<string>>>();
    let recordarrT  = Type.from<Record<Array<T>,Array<T>>>();
  }
- 
+
   /* @@? 30:19 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 17:37 Error TypeError: T in Partial<T> must be a class or an interface type. */
 /* @@? 21:39 Error TypeError: T in Required<T> must be a class or an interface type. */
 /* @@? 30:19 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 /* @@? 30:29 Error TypeError: No static $_invoke method and static $_instantiate method in Record. Record() is not allowed. */
 /* @@? 30:29 Error TypeError: Type 'Record<K,V>' has no call signatures. */
-/* @@? 31:38 Error TypeError: Type argument 'Array<String>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>'-constraint */
-/* @@? 32:38 Error TypeError: Type argument 'Array<T>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>'-constraint */
+/* @@? 31:38 Error TypeError: Type argument 'Array<String>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */
+/* @@? 32:38 Error TypeError: Type argument 'Array<T>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,9 @@
  * limitations under the License.
  */
 
-class A{}
+function foo<T>(a0: T): T { return a0; }
+function bar(a0: (a0: Int) => Int): int { return a0(2); }
 
-function main(){
-    let a: Record/* @@ label */<A | double, number> = {
-        1: 1,
-        2: 2
-    }
+function main() {
+    bar(foo<Int>) + bar(foo<Int>)
 }
-/* @@@ label Error TypeError: Type argument 'A|Double' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */

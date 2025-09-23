@@ -18,4 +18,4 @@ class A{}
 function main(){
     let a: Record/* @@ label */<BigInt, number>
 }
-/* @@@ label Error TypeError: Type argument 'BigInt' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>'-constraint */
+/* @@@ label Error TypeError: Type argument 'BigInt' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */

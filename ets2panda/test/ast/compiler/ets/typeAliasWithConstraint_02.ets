@@ -20,4 +20,5 @@ declare function value<U extends Integral>(): ValueAlias<U>;
 /* @@ label */value<number>();
 
 
+/* @@@ label Error TypeError: Type argument 'Double' should be a subtype of 'Integral' constraint */
 /* @@@ label Error TypeError: No matching call signature */
