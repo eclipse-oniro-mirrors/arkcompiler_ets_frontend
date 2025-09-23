@@ -21,6 +21,7 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/typeError.h"
 #include "compiler/lowering/util.h"
+#include "ir/expression.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "util/helpers.h"
@@ -149,6 +150,37 @@ static bool TestLiteral(const ir::Literal *lit)
         return !lit->AsNumberLiteral()->Number().IsZero();
     }
     ES2PANDA_UNREACHABLE();
+}
+// NOTE(recep) To avoid bad accumulator verifier
+static void HandleUndefinedInLogicalExpression(public_lib::Context *context_, ir::Expression *node,
+                                               ir::Expression *init)
+{
+    if (init == nullptr || !init->IsUndefinedLiteral()) {
+        return;
+    }
+
+    auto parent = node->Parent();
+    if (parent == nullptr || !parent->IsBinaryExpression()) {
+        return;
+    }
+
+    auto *bexpr = parent->AsBinaryExpression();
+
+    if (!IsLogicalExpression(bexpr)) {
+        return;
+    }
+
+    if (bexpr->Left() == node || bexpr->Right() == node) {
+        auto *undef = util::NodeAllocator::Alloc<ir::UndefinedLiteral>(context_->allocator);
+        undef->SetTsType(context_->GetChecker()->AsETSChecker()->GlobalETSUndefinedType());
+        undef->SetParent(parent);
+
+        if (bexpr->Left() == node) {
+            bexpr->SetLeft(undef);
+        } else {
+            bexpr->SetRight(undef);
+        }
+    }
 }
 
 class NodeCalculator {
@@ -1243,6 +1275,7 @@ void ConstantExpressionLoweringImpl::PopulateDAGs(ir::Expression *node)
                 init = vardecl->Init();
             }
             if (init != nullptr) {
+                HandleUndefinedInLogicalExpression(context_, node, init);
                 AddDNode(identOrMExp, init);
             }
         }
