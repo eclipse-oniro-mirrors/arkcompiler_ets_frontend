@@ -457,6 +457,10 @@ private:
     ir::Statement *ParseTopLevelDeclStatement(StatementParsingFlags flags);
     ir::Statement *ParseTopLevelStatement();
     void ParseTrailingBlock([[maybe_unused]] ir::CallExpression *callExpr) override;
+    bool IsInOperatorTypeSupported() const override
+    {
+        return false;
+    }
     void CheckDeclare();
 
     friend class ExternalSourceParser;

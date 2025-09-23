@@ -1518,6 +1518,13 @@ ir::Expression *ParserImpl::ParseBinaryExpression(ir::Expression *left, Expressi
     }
 
     ir::Expression *rightExpr = ParseExpressionOrTypeAnnotation(operatorType, ExpressionParseFlags::DISALLOW_YIELD);
+
+    // NOTE(rsipka): 'in' operator is not supported but parsed the expression above for more detailed error reporting
+    if (operatorType == lexer::TokenType::KEYW_IN && !IsInOperatorTypeSupported()) {
+        LogError(diagnostic::UNSUPPORTED_IN_OPERATOR_TYPE);
+        return AllocBrokenExpression(lexer::SourceRange {left->Start(), rightExpr->End()});
+    }
+
     ir::ConditionalExpression *conditionalExpr = nullptr;
     if (rightExpr->IsConditionalExpression() && !rightExpr->IsGrouped()) {
         conditionalExpr = rightExpr->AsConditionalExpression();

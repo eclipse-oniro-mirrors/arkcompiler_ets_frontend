@@ -89,7 +89,7 @@ declare const test3: ComplexType<'b'>;
 /* @@? 38:39 Error SyntaxError: Unexpected token ']'. */
 /* @@? 41:19 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 41:22 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 41:26 Error SyntaxError: Field type annotation expected. */
+/* @@? 41:24 Error SyntaxError: Unexpected token 'in'. */
 /* @@? 41:32 Error SyntaxError: Field type annotation expected. */
 /* @@? 41:43 Error SyntaxError: Unexpected token ']'. */
 /* @@? 41:43 Error SyntaxError: Field type annotation expected. */
@@ -115,7 +115,7 @@ declare const test3: ComplexType<'b'>;
 /* @@? 61:30 Error SyntaxError: Unexpected token ','. */
 /* @@? 62:13 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 62:16 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 62:20 Error SyntaxError: Field type annotation expected. */
+/* @@? 62:18 Error SyntaxError: Unexpected token 'in'. */
 /* @@? 62:22 Error SyntaxError: Unexpected token ']'. */
 /* @@? 62:22 Error SyntaxError: Field type annotation expected. */
 /* @@? 62:23 Error SyntaxError: Unexpected token ':'. */
