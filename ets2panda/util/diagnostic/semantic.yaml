@@ -1102,6 +1102,14 @@ semantic:
   message: "Method {}{} in {} not overriding any method"
   code_fix_ids: [RemoveOverrideModifier]
 
+- name: OVERRIDE_NOT_EXTENDS
+  id: 46316
+  message: "The 'override' modifier is invalid here because class '{}' does not extends another class."
+
+- name: OVERRIDE_NOT_IN_BASE
+  id: 49702
+  message: "The 'override' modifier is invalid here because the base class '{}' does not declare this member."
+
 - name: PARAM_COUNT_MISMATCH
   id: 124
   message: "Expected {} arguments, got {}."
