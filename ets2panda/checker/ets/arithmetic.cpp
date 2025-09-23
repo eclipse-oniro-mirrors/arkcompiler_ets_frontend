@@ -231,6 +231,8 @@ bool ETSChecker::CheckBinaryOperatorForBigInt(Type *left, Type *right, lexer::To
             case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL:
             case lexer::TokenType::PUNCTUATOR_EQUAL:
             case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
+            case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
+            case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
                 return true;
             default:
                 break;
@@ -242,10 +244,6 @@ bool ETSChecker::CheckBinaryOperatorForBigInt(Type *left, Type *right, lexer::To
     }
 
     switch (op) {
-        case lexer::TokenType::PUNCTUATOR_EQUAL:
-        case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
-        case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
-        case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
         case lexer::TokenType::KEYW_INSTANCEOF:
         case lexer::TokenType::PUNCTUATOR_UNSIGNED_RIGHT_SHIFT:
             // This is handled in the main CheckBinaryOperator function
@@ -1157,6 +1155,8 @@ static std::tuple<Type *, Type *> ResolveCheckBinaryOperatorForBigInt(ETSChecker
         case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL:
         case lexer::TokenType::PUNCTUATOR_EQUAL:
         case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
+        case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
+        case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
             return {checker->GlobalETSBooleanType(), checker->GlobalETSBooleanType()};
         default:
             return {leftType, rightType};
