@@ -21,6 +21,20 @@
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
     "dependentModuleList": [
         {
+            "packageName": "entry",
+            "moduleName": "entry",
+            "moduleType": "feature",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/entry1_2_external_har1_1/entry",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/entry1_2_external_har1_1/entry",
+            "language": "1.2",
+            "dependencies": [
+                "har1_1"
+            ]
+        },
+        {
             "packageName": "har1_1",
             "moduleName": "har1_1",
             "moduleType": "har",

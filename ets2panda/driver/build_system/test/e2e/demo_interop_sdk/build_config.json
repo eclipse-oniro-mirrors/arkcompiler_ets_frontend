@@ -1,6 +1,6 @@
 {
   "compileFiles": [
-      "${absolute_path_to_build_system}/test/e2e/demo_interop_sdk/entry/index.ets"
+    "${absolute_path_to_build_system}/test/e2e/demo_interop_sdk/entry/index.ets"
   ],
   "packageName": "entry",
   "moduleType": "shared",
@@ -8,8 +8,8 @@
   "buildMode": "Debug",
   "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_interop_sdk/entry/",
   "sourceRoots": [
-      "./",
-      "src/main1/ets"
+    "./",
+    "src/main1/ets"
   ],
   "loaderOutPath": "./dist",
   "cachePath": "./dist/cache",
@@ -20,10 +20,10 @@
   "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
   "dependentModuleList": [],
   "hasMainModule": true,
-  "interopApiPaths":[
+  "interopApiPaths": [
     "${absolute_path_to_build_system}/test/mock_interop_sdk"
   ],
-  "sdkAliasMap":{
-    "entry":"${absolute_path_to_build_system}/test/e2e/demo_interop_sdk/sdk-alias-config.json"
+  "sdkAliasMap": {
+    "entry": "${absolute_path_to_build_system}/test/e2e/demo_interop_sdk/sdk-alias-config.json"
   }
 }
