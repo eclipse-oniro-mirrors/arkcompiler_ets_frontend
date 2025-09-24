@@ -26,6 +26,7 @@
 #include "ir/statements/annotationUsage.h"
 #include "ir/statements/classDeclaration.h"
 #include "util/language.h"
+#include "util/nameMangler.h"
 
 namespace ark::es2panda::ir {
 class ClassElement;
@@ -295,6 +296,11 @@ public:
     [[nodiscard]] bool IsModule() const noexcept
     {
         return IsGlobal() || IsNamespaceTransformed();
+    }
+
+    [[nodiscard]] bool IsFromLambda() const noexcept
+    {
+        return Ident()->Name().StartsWith(util::LAMBDA_CLASS_PREFIX);
     }
 
     [[nodiscard]] es2panda::Language Language() const noexcept

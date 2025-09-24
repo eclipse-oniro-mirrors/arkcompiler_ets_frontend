@@ -58,7 +58,38 @@ namespace ark::es2panda::checker {
 
 static constexpr std::string_view SET_PROTOTYPE_OF = "setPrototypeOf";
 
-static bool CheckGetterSetterDecl(varbinder::LocalVariable const *child, varbinder::LocalVariable const *parent)
+static void CheckGetterSetterOverride(varbinder::LocalVariable const *child, varbinder::LocalVariable const *parent,
+                                      ETSChecker *checker)
+{
+    auto childDeclNode = child->Declaration()->Node();
+    auto parentDeclNode = parent->Declaration()->Node();
+    if (!childDeclNode->Parent()->IsClassDefinition() || !parentDeclNode->Parent()->IsClassDefinition()) {
+        return;
+    }
+
+    auto *subClass = childDeclNode->Parent()->AsClassDefinition();
+    auto *superClass = parentDeclNode->Parent()->AsClassDefinition();
+    // Because in the LambdaConversion Phase, lambda expressions are converted into classes,
+    // this results in conflicts between the generated fields and the custom fields.
+    if (subClass->IsFromLambda()) {
+        return;
+    }
+    auto pos = child->Declaration()->Node()->Start();
+    // If the getter or setter methods are generated due to "class implements interface", then skip the check.
+    if (checker->IsVariableGetterSetter(parent) && parentDeclNode->OriginalNode() == nullptr) {
+        checker->LogError(diagnostic::PROP_OVERRIDE_ACCESSOR,
+                          {child->Name(), superClass->Ident()->Name(), subClass->Ident()->Name()}, pos);
+        return;
+    }
+
+    if (checker->IsVariableGetterSetter(child) && childDeclNode->OriginalNode() == nullptr) {
+        checker->LogError(diagnostic::ACCESSOR_OVERRIDE_PROP,
+                          {child->Name(), superClass->Ident()->Name(), subClass->Ident()->Name()}, pos);
+    }
+}
+
+static bool CheckGetterSetterDecl(varbinder::LocalVariable const *child, varbinder::LocalVariable const *parent,
+                                  ETSChecker *checker)
 {
     auto readonlyCheck = [](varbinder::LocalVariable const *var, bool isParent, bool isReadonly) {
         if (!var->TsType()->IsETSMethodType()) {
@@ -83,6 +114,7 @@ static bool CheckGetterSetterDecl(varbinder::LocalVariable const *child, varbind
         return true;
     };
 
+    CheckGetterSetterOverride(child, parent, checker);
     bool checkChild = readonlyCheck(child, false, parent->Declaration()->Type() == varbinder::DeclType::READONLY);
     bool checkParent = readonlyCheck(parent, true, child->Declaration()->Type() == varbinder::DeclType::READONLY);
     return checkChild && checkParent && (child->TsType()->IsETSFunctionType() || parent->TsType()->IsETSFunctionType());
@@ -2673,7 +2705,7 @@ void ETSChecker::CheckProperties(ETSObjectType *classType, ir::ClassDefinition *
             return;
         }
 
-        if (CheckGetterSetterDecl(it, found)) {
+        if (CheckGetterSetterDecl(it, found, this)) {
             return;
         }
     } else if (CheckOverloadDecl(it, found)) {

@@ -21,6 +21,9 @@
 #include <mutex>
 
 namespace ark::es2panda::util {
+
+inline constexpr auto *LAMBDA_CLASS_PREFIX = "%%lambda-";
+
 class NameMangler {
 public:
     enum LangFeatureType {

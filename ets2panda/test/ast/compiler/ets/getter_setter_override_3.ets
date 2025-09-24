@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+interface C {
+    AAA : number
+}
+
+class A  {
+    AAA : number = 2
+}
+
+class B extends A implements C{
+    AAA = 2
+}
+
+/* @@? 25:5 Error TypeError: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
+/* @@? 25:5 Error TypeError: Method AAA(): Int in B not overriding any method */
+/* @@? 25:5 Error TypeError: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
+/* @@? 25:5 Error TypeError: Method AAA(): Int in B not overriding any method */
+/* @@? 25:5 Error TypeError: Method AAA(<property>AAA: Int): void in B not overriding any method */
+/* @@? 25:5 Error TypeError: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
+/* @@? 25:5 Error TypeError: Method AAA(): Int in B not overriding any method */
+/* @@? 25:5 Error TypeError: Method AAA(<property>AAA: Int): void in B not overriding any method */

@@ -2997,6 +2997,7 @@ void ETSChecker::GenerateGetterSetterPropertyAndMethod(ir::ClassProperty *origin
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ir::MethodDefinition *getter = GenerateDefaultGetterSetter(interfaceProp, classProp, scope, false, this);
+    getter->SetOriginalNode(interfaceProp);
     classDef->EmplaceBody(getter);
 
     const auto &name = getter->Key()->AsIdentifier()->Name();
@@ -3007,6 +3008,7 @@ void ETSChecker::GenerateGetterSetterPropertyAndMethod(ir::ClassProperty *origin
             ? GenerateDefaultGetterSetter(interfaceProp, classProp, Scope()->AsClassScope(), true, this)
             : nullptr;
 
+    setter->SetOriginalNode(interfaceProp);
     auto *const methodScope = scope->InstanceMethodScope();
     auto *const decl = ProgramAllocator()->New<varbinder::FunctionDecl>(ProgramAllocator(), name, getter);
 
