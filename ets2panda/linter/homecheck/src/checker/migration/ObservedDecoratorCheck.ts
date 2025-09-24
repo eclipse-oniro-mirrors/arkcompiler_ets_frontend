@@ -36,6 +36,7 @@ import { IssueReport } from '../../model/Defects';
 import { RuleFix } from '../../model/Fix';
 import { FixUtils } from '../../utils/common/FixUtils';
 import { WarnInfo } from '../../utils/common/Utils';
+import { ArkCastExpr, UnionType } from 'arkanalyzer/lib';
 
 const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'ObservedDecoratorCheck');
 const gMetaData: BaseMetaData = {
@@ -62,6 +63,7 @@ export class ObservedDecoratorCheck implements BaseChecker {
     public rule: Rule;
     public defects: Defects[] = [];
     public issues: IssueReport[] = [];
+    private scene: Scene;
 
     private clsMatcher: ClassMatcher = {
         matcherType: MatcherTypes.CLASS,
@@ -78,6 +80,7 @@ export class ObservedDecoratorCheck implements BaseChecker {
 
     public check = (arkClass: ArkClass): void => {
         const scene = arkClass.getDeclaringArkFile().getScene();
+        this.scene = scene;
         const projectName = arkClass.getDeclaringArkFile().getProjectName();
         for (const field of arkClass.getFields()) {
             if (!field.getDecorators().some(d => DECORATOR_SET.has(d.getKind()))) {
@@ -88,18 +91,14 @@ export class ObservedDecoratorCheck implements BaseChecker {
             // ArkAnalyzer此处有问题，若field的类型注解为unclear type，会用右边的替换左边的。
             const fieldType = field.getType();
             // 此处仅对field为class类型进行检查，包含class和interface，非class类型不在本规则检查范围之内
-            if (!(fieldType instanceof ClassType)) {
+            if (!(fieldType instanceof ClassType) && !(fieldType instanceof UnionType)) {
                 continue;
             }
             const initializers = field.getInitializer();
 
             // field无初始化的场景，对field的类型进行检查
             if (initializers.length === 0) {
-                const fieldTypeClass = scene.getClass(fieldType.getClassSignature());
-                if (fieldTypeClass === null || fieldTypeClass.getCategory() !== ClassCategory.CLASS) {
-                    continue;
-                }
-                usedClasses.add(fieldTypeClass);
+                this.getClassByType(fieldType, usedClasses);
                 this.handleAllUsedClasses(field, usedClasses);
                 continue;
             }
@@ -137,6 +136,11 @@ export class ObservedDecoratorCheck implements BaseChecker {
                     canFindAllTargets = canFindAllTargets && this.handleNewExpr(scene, fieldType, rightOp, usedClasses, projectName);
                 } else if (rightOp instanceof AbstractInvokeExpr) {
                     canFindAllTargets = canFindAllTargets && this.handleInvokeExpr(scene, fieldType, rightOp, usedClasses, projectName);
+                } else if (rightOp instanceof ArkCastExpr) {
+                    const castOp = rightOp.getOp();
+                    if (castOp instanceof Local) {
+                        locals.add(castOp);
+                    }
                 } else {
                     // 对应场景为使用条件表达式cond ? 123 : 456赋值时
                     continue;
@@ -152,6 +156,27 @@ export class ObservedDecoratorCheck implements BaseChecker {
             }
         }
     };
+
+    private getClassByType(targetType: Type, usedClasses: Set<ArkClass> = new Set<ArkClass>(), checked: Set<Type> = new Set<Type>()): void {
+        if (checked.has(targetType)) {
+            return;
+        }
+        checked.add(targetType);
+        if (targetType instanceof ClassType) {
+            const fieldTypeClass = this.scene.getClass(targetType.getClassSignature());
+            if (fieldTypeClass && fieldTypeClass.getCategory() === ClassCategory.CLASS) {
+                usedClasses.add(fieldTypeClass);
+            }
+            return;
+        }
+        if (targetType instanceof UnionType) {
+            for (const t of targetType.getTypes()) {
+                this.getClassByType(t, usedClasses, checked);
+            }
+            return;
+        }
+        return;
+    }
 
     private handleAllUsedClasses(field: ArkField, usedClasses: Set<ArkClass>): void {
         // issueClasses用于记录usedClasses以及他们的所有父类
