@@ -209,9 +209,6 @@ std::string Signature::ToString() const
 static bool MethodSignaturesAreCompatible(TypeRelation *relation, bool checkIdentical, Signature *const super,
                                           Signature *const sub)
 {
-    ES2PANDA_ASSERT(!sub->HasRestParameter() || (sub->ArgCount() == sub->MinArgCount()));
-    ES2PANDA_ASSERT(!super->HasRestParameter() || (super->ArgCount() == super->MinArgCount()));
-
     if (sub->ArgCount() != super->ArgCount()) {
         return false;
     }
