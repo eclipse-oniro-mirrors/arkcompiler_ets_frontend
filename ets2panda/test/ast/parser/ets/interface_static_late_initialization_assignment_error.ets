@@ -18,3 +18,4 @@ interface A{
 }
 
 /* @@? 17:5 Error SyntaxError: Identifier expected, got 'static'. */
+/* @@? 17:13 Error SyntaxError: Definite assignment assertions '!' are not allowed in interface properties. */

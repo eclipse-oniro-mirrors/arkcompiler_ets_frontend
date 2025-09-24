@@ -545,6 +545,10 @@ syntax:
   id: 177
   message: "Interface declaration cannot have 'implements' clause."
 
+- name: INTERFACE_DEFINITE_ASSIGNMENT_NOT_ALLOWED
+  id: 162966
+  message: "Definite assignment assertions '!' are not allowed in interface properties."
+
 - name: INTERFACE_FIELDS_TYPE_ANNOTATION
   id: 119
   message: "Interface fields must have type annotation."
