@@ -1132,6 +1132,10 @@ syntax:
   id: 44
   message: "A 'this' type is available only as return type in a non-static method of a class or struct and extension functions."
 
+- name: THIS_OPTIONAL_CHAIN_NOT_SUPPORTED
+  id: 115549
+  message: "'this?.' optional chaining is not supported."
+
 - name: TOO_LARGE_NUM
   id: 262
   message: "Number is too large."
