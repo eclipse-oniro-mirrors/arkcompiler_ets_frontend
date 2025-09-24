@@ -135,9 +135,10 @@ void HandleGenerateDecl(const parser::Program &program, public_lib::Context *con
     ir::SrcDumper dumper {&dg};
     program.Ast()->Dump(&dumper);
     dumper.GetDeclgen()->Run();
+    dumper.DumpExports();
 
     std::string res = "'use static'\n";
-    res += dg.DumpImports();
+    dg.DumpImports(res);
     res += dumper.Str();
     WriteStringToFile(std::move(res), *context->diagnosticEngine, outputPath);
 }
@@ -177,6 +178,8 @@ static void GenDeclsForStdlib(public_lib::Context &context, const util::Options 
             extProg->Ast()->Dump(&dumper);
         }
         dumper.GetDeclgen()->Run();
+        dumper.DumpExports();
+
         std::string path = moduleName.Mutf8() + ".d.ets";
         if (options.WasSetGenerateDeclPath()) {
             // NOTE: "/" at the end needed because of bug in GetParentDir
@@ -186,7 +189,7 @@ static void GenDeclsForStdlib(public_lib::Context &context, const util::Options 
         }
 
         std::string res = "'use static'\n";
-        res += dg.DumpImports();
+        dg.DumpImports(res);
         res += dumper.Str();
         WriteStringToFile(std::move(res), *context.diagnosticEngine, path);
     }

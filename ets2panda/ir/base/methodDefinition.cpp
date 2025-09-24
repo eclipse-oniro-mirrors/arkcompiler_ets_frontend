@@ -251,6 +251,7 @@ static void DumpPrefix(const ir::MethodDefinition *m, ir::SrcDumper *dumper)
         }
         if (m->IsDefaultExported()) {
             dumper->Add("export default ");
+            dumper->SetDefaultExport();
         }
         if (dumper->IsDeclgen()) {
             if (global) {

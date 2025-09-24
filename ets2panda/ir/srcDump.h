@@ -16,14 +16,7 @@
 #ifndef ES2PANDA_IR_SRCDUMP_H
 #define ES2PANDA_IR_SRCDUMP_H
 
-#include <ir/astNode.h>
-#include <lexer/token/sourceLocation.h>
-#include "generated/tokenType.h"
-#include <util/ustring.h>
-
-#include <sstream>
-#include <variant>
-#include <future>
+#include "ir/astNode.h"
 
 namespace ark::es2panda::ir {
 
@@ -118,7 +111,7 @@ public:
 
     void TryDeclareAmbientContext(SrcDumper *srcDumper);
 
-    std::string DumpImports();
+    void DumpImports(std::string &res);
 
     // Postdump
     auto BuildPostDumpIndirectDepsPhaseLockGuard()
@@ -187,7 +180,8 @@ public:
 
     explicit SrcDumper(Declgen *dg = nullptr);
 
-    void Add(const std::string &str);
+    void Add(std::string_view str);
+    void Add(char ch);
     void Add(int8_t i);
     void Add(int16_t i);
     void Add(int32_t i);
@@ -212,12 +206,19 @@ public:
         return Declgen::Lock::BuildEmptyReleaser();
     }
 
+    void DumpExports();
+
+    void SetDefaultExport() noexcept;
+    [[nodiscard]] bool HasDefaultExport() const noexcept;
+
 private:
     std::stringstream ss_;
     std::string indent_;
 
     /* declgen-specific: */
     Declgen *dg_;
+    // Flag to avoid duplicate default export declarations
+    bool hasDefaultExport_ = false;
 };
 
 }  // namespace ark::es2panda::ir

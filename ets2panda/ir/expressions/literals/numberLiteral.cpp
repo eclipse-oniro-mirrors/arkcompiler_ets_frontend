@@ -75,13 +75,13 @@ void NumberLiteral::Dump(ir::SrcDumper *dumper) const
     }
 
     if (IsGrouped()) {
-        dumper->Add("(");
-        dumper->Add(std::string(number_.Str()));
-        dumper->Add(")");
+        dumper->Add('(');
+        dumper->Add(number_.Str().Utf8());
+        dumper->Add(')');
         return;
     }
 
-    dumper->Add(std::string(number_.Str()));
+    dumper->Add(number_.Str().Utf8());
 }
 
 void NumberLiteral::Compile(compiler::PandaGen *pg) const

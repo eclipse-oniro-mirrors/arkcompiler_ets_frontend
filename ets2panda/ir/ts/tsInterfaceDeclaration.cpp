@@ -177,31 +177,36 @@ void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
 {
     auto guard = dumper->BuildAmbientContextGuard();
     ES2PANDA_ASSERT(id_);
+
     if (!id_->Parent()->IsDefaultExported() && !id_->Parent()->IsExported() && dumper->IsDeclgen() &&
         !dumper->GetDeclgen()->IsPostDumpIndirectDepsPhase()) {
-        auto name = id_->Name().Mutf8();
-        dumper->GetDeclgen()->AddNode(name, this);
+        dumper->GetDeclgen()->AddNode(id_->Name().Mutf8(), this);
         return;
     }
+
     DumpAnnotations(dumper);
+
     if (id_->Parent()->IsExported()) {
         dumper->Add("export ");
     } else if (id_->Parent()->IsDefaultExported()) {
         dumper->Add("export default ");
+        dumper->SetDefaultExport();
     }
+
     if (dumper->IsDeclgen()) {
         dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
     } else if (IsDeclare()) {
         dumper->Add("declare ");
     }
+
     dumper->Add("interface ");
     Id()->Dump(dumper);
 
     auto const typeParams = TypeParams();
     if (typeParams != nullptr) {
-        dumper->Add("<");
+        dumper->Add('<');
         typeParams->Dump(dumper);
-        dumper->Add(">");
+        dumper->Add('>');
     }
 
     auto const extends = Extends();
@@ -215,16 +220,15 @@ void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
         }
     }
 
-    auto body = Body();
     dumper->Add(" {");
-    if (body != nullptr) {
+    if (auto body = Body(); body != nullptr) {
         dumper->IncrIndent();
         dumper->Endl();
         body->Dump(dumper);
         dumper->DecrIndent();
         dumper->Endl();
     }
-    dumper->Add("}");
+    dumper->Add('}');
     dumper->Endl();
 }
 

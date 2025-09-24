@@ -379,6 +379,7 @@ void ClassDefinition::DumpPrefix(ir::SrcDumper *dumper) const
         dumper->Add("export ");
     } else if (IsDefaultExported()) {
         dumper->Add("export default ");
+        dumper->SetDefaultExport();
     }
 
     if (dumper->IsDeclgen()) {

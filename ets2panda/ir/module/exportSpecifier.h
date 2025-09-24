@@ -72,6 +72,11 @@ public:
         v->Accept(this);
     }
 
+    [[nodiscard]] bool IsDefaultExport() const noexcept
+    {
+        return IsDefault() || IsDefaultExported();
+    }
+
 private:
     Identifier *local_;
     Identifier *exported_;

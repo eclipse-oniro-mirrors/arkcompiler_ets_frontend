@@ -143,6 +143,8 @@ add_custom_target(declgen-ets-test)
 set(ETS_TESTS
     pckg/test
     annotation
+    export_directives_1
+    export_directives_2
     func_union
     global
     namespace_ret
@@ -157,7 +159,7 @@ file(MAKE_DIRECTORY ${WORKING_DIR})
 
 foreach(test_file IN LISTS ETS_TESTS)
     set(INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/ets/${test_file}.ets)
-    set(EXPECTED_FILE ${CMAKE_CURRENT_SOURCE_DIR}/ets/expected/${test_file}.d.ets)
+    set(EXPECTED_FILE ${CMAKE_CURRENT_SOURCE_DIR}/ets/expected/${test_file}.txt)
     set(OUTPUT_FILE ${WORKING_DIR}/${test_file}.d.ets)
     set(STAMP_FILE ${WORKING_DIR}/${test_file}.stamp)
     string(REPLACE "/" "_" TARGET_NAME ${test_file})
