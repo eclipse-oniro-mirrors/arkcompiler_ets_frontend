@@ -16,7 +16,7 @@
 const mycolor: string = "#ffff00"
 
 @Styles
-function cardStyle1() 
+function cardStyle1()
 {
     .backgroundColor(mycolor)
     .borderColor(Color.Red)
@@ -64,4 +64,21 @@ struct MyButton {
             pressed: PressedStyles
         })
     }
+}
+
+@Styles
+function StyleWithComment() {
+    // dummy comment
+    .backgroundColor("#ffffff")
+}
+
+@Styles
+function StyleWithComment2() {
+    // dummy comment
+    .backgroundColor("#ffffff")
+    // another comment
+    .borderColor(Color.Red)
+    // one more really important comment
+    .borderRadius(8)
+    .padding(8)
 }

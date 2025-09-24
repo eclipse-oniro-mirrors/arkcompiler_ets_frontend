@@ -45,6 +45,26 @@
             "severity": "ERROR"
         },
         {
+            "line": 69,
+            "column": 1,
+            "endLine": 73,
+            "endColumn": 2,
+            "problem": "StylesDecoratorNotSupported",
+            "suggest": "",
+            "rule": "\"@Styles\" decorator is not supported (arkui-no-styles-decorator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 75,
+            "column": 1,
+            "endLine": 84,
+            "endColumn": 2,
+            "problem": "StylesDecoratorNotSupported",
+            "suggest": "",
+            "rule": "\"@Styles\" decorator is not supported (arkui-no-styles-decorator)",
+            "severity": "ERROR"
+        },
+        {
             "line": 22,
             "column": 18,
             "endLine": 22,
@@ -132,6 +152,16 @@
             "problem": "UIInterfaceImport",
             "suggest": "",
             "rule": "The ArkUI interface \"Button\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 80,
+            "column": 18,
+            "endLine": 80,
+            "endColumn": 23,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Color\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         }
     ]
