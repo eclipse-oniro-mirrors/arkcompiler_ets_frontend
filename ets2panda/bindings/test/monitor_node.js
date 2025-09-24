@@ -22,15 +22,7 @@ const child = spawn(process.argv[2], process.argv.slice(3), {
     windowsHide: true
 });
 
-const timeout = setTimeout(() => {
-    console.error('process timeout');
-    child.kill('SIGKILL');
-    process.exit(124);
-}, 1200000);
-
 child.on('exit', (code, signal) => {
-    clearTimeout(timeout);
-
     if (signal === 'SIGSEGV' || signal === 'SIGABRT') {
         console.error(`process crashe: ${signal}`);
         process.exit(128 + signal);
@@ -40,7 +32,6 @@ child.on('exit', (code, signal) => {
 });
 
 child.on('error', (err) => {
-    clearTimeout(timeout);
     console.error(`Promoter process failure: ${err.message}`);
     process.exit(127);
 });
