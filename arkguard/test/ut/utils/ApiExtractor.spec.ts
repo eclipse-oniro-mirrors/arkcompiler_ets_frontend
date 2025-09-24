@@ -42,6 +42,14 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
+    it('export Annotation', function () {
+      let exportDeclarationAst: string = 'test/ut/utils/apiTest_visitExport/exportAnnotation.d.ets';
+      collectApi(exportDeclarationAst, ApiExtractor.ApiType.API);
+      assert.strictEqual(ApiExtractor.mSystemExportSet.has('Available1'), true);
+      assert.strictEqual(ApiExtractor.mSystemExportSet.has('Available2'), true);
+      clearAll();
+    });
+
     it('export {ExportDeclarationClass1 as class1, ExportDeclarationClass2} from `./exportDeclarationFrom`',
      function () {
       let exportDeclarationFromAst: string = 'test/ut/utils/apiTest_visitExport/exportDeclarationFrom.d.ts';
