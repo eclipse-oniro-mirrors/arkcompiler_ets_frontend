@@ -73,6 +73,14 @@ void NumberLiteral::Dump(ir::SrcDumper *dumper) const
             return;
         }
     }
+
+    if (IsGrouped()) {
+        dumper->Add("(");
+        dumper->Add(std::string(number_.Str()));
+        dumper->Add(")");
+        return;
+    }
+
     dumper->Add(std::string(number_.Str()));
 }
 
