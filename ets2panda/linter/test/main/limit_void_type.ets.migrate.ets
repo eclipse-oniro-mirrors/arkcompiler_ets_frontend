@@ -59,8 +59,8 @@ let l: void = exportedFunc();
 function genericFunc<T>(): void { }
 let m: void = genericFunc();
 // Example 14: Function overloading
-function overloadFunc(): void;
-function overloadFunc(n: number): number;
+
+
 function overloadFunc(n?: number) { return n; }
 let n: void = overloadFunc();
 // Example 15: Type alias

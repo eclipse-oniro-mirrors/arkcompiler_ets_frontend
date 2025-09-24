@@ -1,17 +1,17 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
-        "Licensed under the Apache License, Version 2.0 (the 'License');",
-        "you may not use this file except in compliance with the License.",
-        "You may obtain a copy of the License at",
-        "",
-        "http://www.apache.org/licenses/LICENSE-2.0",
-        "",
-        "Unless required by applicable law or agreed to in writing, software",
-        "distributed under the License is distributed on an 'AS IS' BASIS,",
-        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
-        "See the License for the specific language governing permissions and",
-        "limitations under the License."
+      "Copyright (c) 2025 Huawei Device Co., Ltd.",
+      "Licensed under the Apache License, Version 2.0 (the 'License');",
+      "you may not use this file except in compliance with the License.",
+      "You may obtain a copy of the License at",
+      "",
+      "http://www.apache.org/licenses/LICENSE-2.0",
+      "",
+      "Unless required by applicable law or agreed to in writing, software",
+      "distributed under the License is distributed on an 'AS IS' BASIS,",
+      "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+      "See the License for the specific language governing permissions and",
+      "limitations under the License."
     ],
     "result": [
         {
@@ -20,6 +20,17 @@
             "endLine": 16,
             "endColumn": 44,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 620,
+                    "end": 663,
+                    "replacementText": "",
+                    "line": 16,
+                    "column": 1,
+                    "endLine": 16,
+                    "endColumn": 44
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -30,6 +41,17 @@
             "endLine": 17,
             "endColumn": 58,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 674,
+                    "end": 731,
+                    "replacementText": "",
+                    "line": 17,
+                    "column": 1,
+                    "endLine": 17,
+                    "endColumn": 58
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -60,6 +82,17 @@
             "endLine": 30,
             "endColumn": 23,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1078,
+                    "end": 1098,
+                    "replacementText": "",
+                    "line": 30,
+                    "column": 3,
+                    "endLine": 30,
+                    "endColumn": 23
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -70,6 +103,17 @@
             "endLine": 31,
             "endColumn": 32,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1111,
+                    "end": 1140,
+                    "replacementText": "",
+                    "line": 31,
+                    "column": 3,
+                    "endLine": 31,
+                    "endColumn": 32
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -90,6 +134,17 @@
             "endLine": 33,
             "endColumn": 11,
             "problem": "RegularExpressionLiteral",
+            "autofix": [
+                {
+                    "start": 1200,
+                    "end": 1206,
+                    "replacementText": "new RegExp(\"body\")",
+                    "line": 33,
+                    "column": 5,
+                    "endLine": 33,
+                    "endColumn": 11
+                }
+            ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
             "severity": "ERROR"
@@ -100,6 +155,17 @@
             "endLine": 36,
             "endColumn": 21,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1217,
+                    "end": 1235,
+                    "replacementText": "",
+                    "line": 36,
+                    "column": 3,
+                    "endLine": 36,
+                    "endColumn": 21
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -110,6 +176,17 @@
             "endLine": 37,
             "endColumn": 30,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1248,
+                    "end": 1275,
+                    "replacementText": "",
+                    "line": 37,
+                    "column": 3,
+                    "endLine": 37,
+                    "endColumn": 30
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -130,6 +207,17 @@
             "endLine": 39,
             "endColumn": 11,
             "problem": "RegularExpressionLiteral",
+            "autofix": [
+                {
+                    "start": 1333,
+                    "end": 1339,
+                    "replacementText": "new RegExp(\"body\")",
+                    "line": 39,
+                    "column": 5,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
             "severity": "ERROR"
@@ -140,6 +228,17 @@
             "endLine": 44,
             "endColumn": 23,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1380,
+                    "end": 1400,
+                    "replacementText": "",
+                    "line": 44,
+                    "column": 3,
+                    "endLine": 44,
+                    "endColumn": 23
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -150,6 +249,17 @@
             "endLine": 45,
             "endColumn": 32,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1404,
+                    "end": 1433,
+                    "replacementText": "",
+                    "line": 45,
+                    "column": 3,
+                    "endLine": 45,
+                    "endColumn": 32
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -170,6 +280,17 @@
             "endLine": 47,
             "endColumn": 11,
             "problem": "RegularExpressionLiteral",
+            "autofix": [
+                {
+                    "start": 1475,
+                    "end": 1481,
+                    "replacementText": "new RegExp(\"body\")",
+                    "line": 47,
+                    "column": 5,
+                    "endLine": 47,
+                    "endColumn": 11
+                }
+            ],
             "suggest": "",
             "rule": "RegExp literals are not supported (arkts-no-regexp-literals)",
             "severity": "ERROR"
@@ -180,6 +301,17 @@
             "endLine": 50,
             "endColumn": 37,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1492,
+                    "end": 1526,
+                    "replacementText": "",
+                    "line": 50,
+                    "column": 3,
+                    "endLine": 50,
+                    "endColumn": 37
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -190,6 +322,17 @@
             "endLine": 52,
             "endColumn": 34,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1541,
+                    "end": 1572,
+                    "replacementText": "",
+                    "line": 52,
+                    "column": 3,
+                    "endLine": 52,
+                    "endColumn": 34
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -230,6 +373,17 @@
             "endLine": 77,
             "endColumn": 24,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1873,
+                    "end": 1894,
+                    "replacementText": "",
+                    "line": 77,
+                    "column": 3,
+                    "endLine": 77,
+                    "endColumn": 24
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -250,6 +404,17 @@
             "endLine": 87,
             "endColumn": 24,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1992,
+                    "end": 2013,
+                    "replacementText": "",
+                    "line": 87,
+                    "column": 3,
+                    "endLine": 87,
+                    "endColumn": 24
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -260,6 +425,17 @@
             "endLine": 64,
             "endColumn": 11,
             "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 616,
+                    "end": 616,
+                    "replacementText": "\r\n\r\nimport { Component } from '@kit.ArkUI';",
+                    "line": 64,
+                    "column": 2,
+                    "endLine": 64,
+                    "endColumn": 11
+                }
+            ],
             "suggest": "",
             "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
