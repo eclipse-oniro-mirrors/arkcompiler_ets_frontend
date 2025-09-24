@@ -145,7 +145,8 @@
     "sdk-no-decl-with-duplicate-name",
     "sdk-type-query",
     "sdk-ability-asynchronous-lifecycle",
-    "sdk-ability-lifecycle-monitor"
+    "sdk-ability-lifecycle-monitor",
+    "sdk-api-keywords-avoid"
   ],
   "concurrent": [
     "arkts-no-need-stdlib-ason",
