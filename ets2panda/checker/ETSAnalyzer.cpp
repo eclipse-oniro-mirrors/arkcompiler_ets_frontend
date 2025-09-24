@@ -16,17 +16,29 @@
 #include "ETSAnalyzer.h"
 
 #include "checker/ETSchecker.h"
+#include "checker/types/typeFlag.h"
 #include "compiler/lowering/util.h"
 #include "generated/diagnostic.h"
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
+#include "ir/astNode.h"
+#include "ir/ets/etsUnionType.h"
+#include "ir/expression.h"
+#include "ir/expressions/assignmentExpression.h"
+#include "ir/statements/variableDeclarator.h"
+#include "lexer/token/number.h"
+#include "libarkbase/utils/logger.h"
 #include "types/signature.h"
 #include "compiler/lowering/ets/setJumpTarget.h"
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "types/type.h"
 #include "checker/types/typeError.h"
+#include "util/es2pandaMacros.h"
 
+#include <algorithm>
+#include <limits>
+#include <string>
 #include <unordered_set>
 
 namespace ark::es2panda::checker {
@@ -1433,6 +1445,106 @@ bool ETSAnalyzer::SetAssignmentExpressionTarget(ir::AssignmentExpression *const 
     return true;
 }
 
+static bool TryExtractNumberFromIdentifier(ir::Expression *expr, lexer::Number &outNum, std::string &outStr)
+{
+    auto *id = expr->AsIdentifier();
+    auto *var = id->Variable();
+    if (var == nullptr || var->Declaration() == nullptr || var->Declaration()->Node() == nullptr) {
+        return false;
+    }
+
+    auto *declNode = var->Declaration()->Node();
+    auto *parent = declNode->Parent();
+    if (parent->IsClassProperty() || parent->IsVariableDeclarator()) {
+        declNode = parent;
+    }
+
+    auto getNumberFromLiteral = [&](ir::Expression *literal) -> bool {
+        if (literal == nullptr || !literal->IsNumberLiteral()) {
+            return false;
+        }
+        outNum = literal->AsNumberLiteral()->Number();
+        outStr = literal->DumpEtsSrc();
+        return true;
+    };
+
+    if (declNode->IsClassProperty()) {
+        auto *prop = declNode->AsClassProperty();
+        return prop->IsConst() && getNumberFromLiteral(prop->Value());
+    }
+
+    if (declNode->IsVariableDeclarator()) {
+        auto *decl = declNode->AsVariableDeclarator();
+        bool isConst = decl->Flag() == ir::VariableDeclaratorFlag::CONST;
+        return isConst && getNumberFromLiteral(decl->Init());
+    }
+
+    return false;
+}
+
+static bool TryExtractNumber(ir::Expression *expr, lexer::Number &outNum, std::string &outStr)
+{
+    if (expr->IsNumberLiteral()) {
+        outNum = expr->AsNumberLiteral()->Number();
+        outStr = expr->DumpEtsSrc();
+        return true;
+    }
+    if (expr->IsIdentifier()) {
+        return TryExtractNumberFromIdentifier(expr, outNum, outStr);
+    }
+    return false;
+}
+
+static bool FitsNumericType(Type *ctype, const lexer::Number &number)
+{
+    if (!ctype->IsETSObjectType()) {
+        return false;
+    }
+
+    auto *obj = ctype->AsETSObjectType();
+
+    struct FitCase {
+        ETSObjectFlags flag;
+        bool isInteger;
+        std::function<bool()> canFit;
+    };
+
+    const std::vector<FitCase> fitCases = {
+        {ETSObjectFlags::BUILTIN_BYTE, true, [&] { return number.CanGetValue<int8_t>(); }},
+        {ETSObjectFlags::BUILTIN_SHORT, true, [&] { return number.CanGetValue<int16_t>(); }},
+        {ETSObjectFlags::BUILTIN_INT, true, [&] { return number.CanGetValue<int32_t>(); }},
+        {ETSObjectFlags::BUILTIN_LONG, true, [&] { return number.CanGetValue<int64_t>(); }},
+        {ETSObjectFlags::BUILTIN_FLOAT, false, [&] { return number.CanGetValue<float>(); }},
+        {ETSObjectFlags::BUILTIN_DOUBLE, false, [&] { return number.CanGetValue<double>(); }},
+    };
+
+    for (const auto &f : fitCases) {
+        if (obj->HasObjectFlag(f.flag) && ((f.isInteger && number.IsInteger()) || (!f.isInteger && number.IsReal())) &&
+            f.canFit()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void IsAmbiguousUnionInit(checker::ETSUnionType *unionType, ir::Expression *initExpr, ETSChecker *checker)
+{
+    lexer::Number initNumber;
+    std::string str;
+    // CC-OFFNXT(G.FMT.17-CPP) false positive
+    if (!TryExtractNumber(initExpr, initNumber, str)) {
+        return;
+    }
+    lexer::Number number = initNumber.IsReal() ? lexer::Number {initNumber.GetValueAndCastTo<double>()}
+                                               : lexer::Number {initNumber.GetValueAndCastTo<int64_t>()};
+    int fits = std::count_if(unionType->ConstituentTypes().begin(), unionType->ConstituentTypes().end(),
+                             [&](Type *t) { return FitsNumericType(t, number); });
+    if (fits > 1) {
+        checker->LogError(diagnostic::AMBIGUOUS_UNION_VALUE, {str}, initExpr->Start());
+    }
+}
+
 checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
 {
     if (expr->TsType() != nullptr) {
@@ -1486,6 +1598,10 @@ checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
             ctx.IsAssignable()) {
             smartType = GetSmartType(expr, leftType, rightType);
         }
+    }
+
+    if (leftType->IsETSUnionType()) {
+        IsAmbiguousUnionInit(leftType->AsETSUnionType(), expr->Right(), checker);
     }
 
     return expr->SetTsType(smartType);
@@ -4045,6 +4161,10 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
             ident->SetTsType(smartType);
             checker->Context().SetSmartCast(ident->Variable(), smartType);
         }
+    }
+
+    if (variableType != nullptr && variableType->IsETSUnionType() && st->Init() != nullptr) {
+        IsAmbiguousUnionInit(variableType->AsETSUnionType(), st->Init(), checker);
     }
 
     return st->SetTsType(smartType);
