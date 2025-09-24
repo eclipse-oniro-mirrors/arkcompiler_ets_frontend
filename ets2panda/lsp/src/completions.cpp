@@ -39,11 +39,12 @@ std::string ToLowerCase(const std::string &str)
 std::vector<CompletionEntry> AllKeywordsCompletions()
 {
     std::vector<CompletionEntry> keywords;
+    std::string name;
     for (int i = static_cast<int>(lexer::TokenType::FIRST_KEYW); i <= static_cast<int>(lexer::TokenType::KEYW_YIELD);
          i++) {
-        keywords.emplace_back(lsp::CompletionEntry(TokenToString(static_cast<lexer::TokenType>(i)),
-                                                   CompletionEntryKind::KEYWORD,
-                                                   std::string(sort_text::GLOBALS_OR_KEYWORDS)));
+        name = TokenToString(static_cast<lexer::TokenType>(i));
+        keywords.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::KEYWORD,
+                                                   std::string(sort_text::GLOBALS_OR_KEYWORDS), name));
     }
     return keywords;
 }
@@ -66,25 +67,27 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node)
     if (node == nullptr) {
         return CompletionEntry();
     }
+    std::string name;
     // GetClassPropertyName function could get name of ClassDeclaration
     if (node->IsClassDeclaration()) {
-        return CompletionEntry(GetClassPropertyName(node), CompletionEntryKind::CLASS,
-                               std::string(sort_text::GLOBALS_OR_KEYWORDS));
+        name = GetClassPropertyName(node);
+        return CompletionEntry(name, CompletionEntryKind::CLASS, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
     }
     if (node->IsTSInterfaceDeclaration()) {
         if (node->AsTSInterfaceDeclaration()->Id() == nullptr) {
             return CompletionEntry();
         }
-        return CompletionEntry(std::string(node->AsTSInterfaceDeclaration()->Id()->Name()),
-                               CompletionEntryKind::INTERFACE, std::string(sort_text::GLOBALS_OR_KEYWORDS));
+        name = std::string(node->AsTSInterfaceDeclaration()->Id()->Name());
+        return CompletionEntry(name, CompletionEntryKind::INTERFACE, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
     }
     if (node->IsMethodDefinition()) {
-        return CompletionEntry(std::string(node->AsMethodDefinition()->Key()->AsIdentifier()->Name()),
-                               CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS));
+        name = std::string(node->AsMethodDefinition()->Key()->AsIdentifier()->Name());
+        return CompletionEntry(name, CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS),
+                               name + "()");
     }
     if (node->IsClassProperty()) {
-        return CompletionEntry(GetClassPropertyName(node), CompletionEntryKind::PROPERTY,
-                               std::string(sort_text::GLOBALS_OR_KEYWORDS));
+        name = GetClassPropertyName(node);
+        return CompletionEntry(name, CompletionEntryKind::PROPERTY, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
     }
     if (node->IsETSStructDeclaration()) {
         if (node->AsETSStructDeclaration()->Definition() == nullptr) {
@@ -93,8 +96,8 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node)
         if (node->AsETSStructDeclaration()->Definition()->Ident() == nullptr) {
             return CompletionEntry();
         }
-        return CompletionEntry(std::string(node->AsETSStructDeclaration()->Definition()->Ident()->Name()),
-                               CompletionEntryKind::STRUCT, std::string(sort_text::GLOBALS_OR_KEYWORDS));
+        name = std::string(node->AsETSStructDeclaration()->Definition()->Ident()->Name());
+        return CompletionEntry(name, CompletionEntryKind::STRUCT, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
     }
     return CompletionEntry();
 }
@@ -320,19 +323,22 @@ std::vector<CompletionEntry> GetEntriesForClassDeclaration(
     }
     std::vector<CompletionEntry> completions;
     completions.reserve(propertyNodes.size());
+    std::string name;
     for (auto node : propertyNodes) {
         if (node->IsClassProperty()) {
-            completions.emplace_back(lsp::CompletionEntry(GetClassPropertyName(node), CompletionEntryKind::PROPERTY,
-                                                          std::string(sort_text::SUGGESTED_CLASS_MEMBERS)));
+            name = GetClassPropertyName(node);
+            completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::PROPERTY,
+                                                          std::string(sort_text::SUGGESTED_CLASS_MEMBERS), name));
         }
         if (node->IsClassDeclaration()) {
-            completions.emplace_back(
-                lsp::CompletionEntry(GetClassPropertyName(node), CompletionEntryKind::CLASS,
-                                     std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT)));
+            name = GetClassPropertyName(node);
+            completions.emplace_back(lsp::CompletionEntry(
+                name, CompletionEntryKind::CLASS, std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), name));
         }
         if (node->IsMethodDefinition()) {
-            completions.emplace_back(lsp::CompletionEntry(GetMethodDefinitionName(node), CompletionEntryKind::METHOD,
-                                                          std::string(sort_text::CLASS_MEMBER_SNIPPETS)));
+            name = GetMethodDefinitionName(node);
+            completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::METHOD,
+                                                          std::string(sort_text::CLASS_MEMBER_SNIPPETS), name + "()"));
         }
     }
     return completions;
@@ -346,10 +352,19 @@ std::vector<CompletionEntry> GetEntriesForTSInterfaceDeclaration(
     }
     std::vector<CompletionEntry> completions;
     completions.reserve(propertyNodes.size());
+    std::string name;
     for (auto node : propertyNodes) {
-        if (node->IsMethodDefinition()) {
-            completions.emplace_back(lsp::CompletionEntry(GetMethodDefinitionName(node), CompletionEntryKind::METHOD,
-                                                          std::string(sort_text::CLASS_MEMBER_SNIPPETS)));
+        if (!node->IsMethodDefinition()) {
+            continue;
+        }
+        name = GetMethodDefinitionName(node);
+        if (node->AsMethodDefinition()->IsGetter() || node->AsMethodDefinition()->IsSetter()) {
+            // Each of properties in interface no need to add '()'
+            completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::METHOD,
+                                                          std::string(sort_text::CLASS_MEMBER_SNIPPETS), name));
+        } else {
+            completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::METHOD,
+                                                          std::string(sort_text::CLASS_MEMBER_SNIPPETS), name + "()"));
         }
     }
     return completions;
@@ -363,9 +378,12 @@ std::vector<CompletionEntry> GetEntriesForEnumDeclaration(
     }
     std::vector<CompletionEntry> completions;
     completions.reserve(qualifiedMembers.size());
+    std::string name;
     for (auto member : qualifiedMembers) {
-        completions.emplace_back(lsp::CompletionEntry(GetEnumMemberName(member), CompletionEntryKind::ENUM_MEMBER,
-                                                      std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT)));
+        name = GetEnumMemberName(member);
+        completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::ENUM_MEMBER,
+                                                      std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT),
+                                                      name));
     }
 
     return completions;
@@ -673,6 +691,7 @@ CompletionEntry InitEntry(const ir::AstNode *decl)
     auto name = GetDeclName(decl);
     auto sortText = sort_text::GLOBALS_OR_KEYWORDS;
     auto kind = CompletionEntryKind::KEYWORD;
+    auto insertText = name;
     if (IsLetVar(decl)) {
         kind = CompletionEntryKind::VARIABLE;
     } else if (IsConstVar(decl)) {
@@ -684,7 +703,7 @@ CompletionEntry InitEntry(const ir::AstNode *decl)
                    child->Parent()->AsClassDefinition() == globalDefinition;
         });
         if (cctor == nullptr) {
-            return CompletionEntry(name, CompletionEntryKind::CONSTANT, std::string(sortText));
+            return CompletionEntry(name, CompletionEntryKind::CONSTANT, std::string(sortText), name);
         }
         auto found = cctor->FindChild([&name](ir::AstNode *child) {
             return child->IsAssignmentExpression() && child->AsAssignmentExpression()->Left()->IsIdentifier() &&
@@ -698,8 +717,9 @@ CompletionEntry InitEntry(const ir::AstNode *decl)
         }
     } else if (decl->IsMethodDefinition()) {
         kind = CompletionEntryKind::FUNCTION;
+        insertText = name + "()";
     }
-    return CompletionEntry(name, kind, std::string(sortText));
+    return CompletionEntry(name, kind, std::string(sortText), insertText);
 }
 
 bool IsAnnotationBeginning(std::string sourceCode, size_t pos)
@@ -726,8 +746,8 @@ std::vector<CompletionEntry> GetAnnotationCompletions(es2panda_Context *context,
     auto addAnnotationCompletion = [&completions, &node](const std::string &name) {
         if (node == nullptr ||
             (node->IsIdentifier() && name.find(node->AsIdentifier()->Name().Utf8()) != std::string::npos)) {
-            completions.emplace_back(name, CompletionEntryKind::ANNOTATION,
-                                     std::string(sort_text::GLOBALS_OR_KEYWORDS));
+            completions.emplace_back(name, CompletionEntryKind::ANNOTATION, std::string(sort_text::GLOBALS_OR_KEYWORDS),
+                                     name);
         }
     };
     for (auto &import : importStatements) {

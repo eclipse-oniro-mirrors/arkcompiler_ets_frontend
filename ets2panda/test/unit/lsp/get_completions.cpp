@@ -38,7 +38,8 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
         bool found = false;
         for (const auto &entry : entries) {
             if (entry.GetName() == expectedEntry.GetName() &&
-                entry.GetCompletionKind() == expectedEntry.GetCompletionKind()) {
+                entry.GetCompletionKind() == expectedEntry.GetCompletionKind() &&
+                entry.GetInsertText() == expectedEntry.GetInsertText()) {
                 found = true;
                 break;
             }
@@ -50,7 +51,8 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
         bool found = false;
         for (const auto &entry : entries) {
             if (entry.GetName() == unexpectedEntry.GetName() &&
-                entry.GetCompletionKind() == unexpectedEntry.GetCompletionKind()) {
+                entry.GetCompletionKind() == unexpectedEntry.GetCompletionKind() &&
+                entry.GetInsertText() == unexpectedEntry.GetInsertText()) {
                 found = true;
                 break;
             }
@@ -77,8 +79,8 @@ deep
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("deepcopy", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS))};
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "deepcopy", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS), "deepcopy()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -99,8 +101,9 @@ Readonl
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
-        "ReadonlyArray", ark::es2panda::lsp::CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS))};
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("ReadonlyArray", ark::es2panda::lsp::CompletionEntryKind::INTERFACE,
+                        std::string(GLOBALS_OR_KEYWORDS), "ReadonlyArray")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -122,10 +125,12 @@ con
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("console", ark::es2panda::lsp::CompletionEntryKind::PROPERTY, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("Console", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS)),
+        CompletionEntry("console", ark::es2panda::lsp::CompletionEntryKind::PROPERTY, std::string(GLOBALS_OR_KEYWORDS),
+                        "console"),
+        CompletionEntry("Console", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS),
+                        "Console"),
         CompletionEntry("ConcurrentHashMap", ark::es2panda::lsp::CompletionEntryKind::CLASS,
-                        std::string(GLOBALS_OR_KEYWORDS))};
+                        std::string(GLOBALS_OR_KEYWORDS), "ConcurrentHashMap")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -151,10 +156,11 @@ struct MyClass {
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("property", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
-                        std::string(SUGGESTED_CLASS_MEMBERS)),
-        CompletionEntry("get", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS))};
+    auto expectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("property", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                                                      std::string(SUGGESTED_CLASS_MEMBERS), "property"),
+                                      CompletionEntry("get", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "get()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -190,12 +196,15 @@ Text("Hello").font().
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("font", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS)),
-        CompletionEntry("fontColor", ark::es2panda::lsp::CompletionEntryKind::METHOD,
-                        std::string(CLASS_MEMBER_SNIPPETS)),
-        CompletionEntry("width", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS)),
-        CompletionEntry("height", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS))};
+    auto expectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("font", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "font()"),
+                                      CompletionEntry("fontColor", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "fontColor()"),
+                                      CompletionEntry("width", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "width()"),
+                                      CompletionEntry("height", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "height()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -228,15 +237,17 @@ let p = c.
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("property", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
-                        std::string(SUGGESTED_CLASS_MEMBERS)),
-        CompletionEntry("property", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
-                        std::string(SUGGESTED_CLASS_MEMBERS)),
-        CompletionEntry("property2", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
-                        std::string(SUGGESTED_CLASS_MEMBERS)),
-        CompletionEntry("get", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS)),
-        CompletionEntry("get0", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS))};
+    auto expectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("property", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                                                      std::string(SUGGESTED_CLASS_MEMBERS), "property"),
+                                      CompletionEntry("property0", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                                                      std::string(SUGGESTED_CLASS_MEMBERS), "property0"),
+                                      CompletionEntry("property2", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                                                      std::string(SUGGESTED_CLASS_MEMBERS), "property2"),
+                                      CompletionEntry("get", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "get()"),
+                                      CompletionEntry("get0", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "get0()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -272,12 +283,15 @@ Text("Hello").
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("font", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS)),
-        CompletionEntry("fontColor", ark::es2panda::lsp::CompletionEntryKind::METHOD,
-                        std::string(CLASS_MEMBER_SNIPPETS)),
-        CompletionEntry("width", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS)),
-        CompletionEntry("height", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS))};
+    auto expectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("font", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "font()"),
+                                      CompletionEntry("fontColor", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "fontColor()"),
+                                      CompletionEntry("width", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "width()"),
+                                      CompletionEntry("height", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "height()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -303,8 +317,9 @@ let res = j.
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
-        "stringify", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS))};
+    auto expectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("stringify", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "stringify()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -326,8 +341,8 @@ let a = 1;)delimiter"};
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("key", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS))};
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "key", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS), "key")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -349,8 +364,8 @@ let a = 1;)delimiter"};
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("key", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS))};
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "key", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS), "key")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -377,9 +392,9 @@ let a = 1;)delimiter"};
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto expectedEntries =
         std::vector<CompletionEntry> {CompletionEntry("myProp", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
-                                                      std::string(SUGGESTED_CLASS_MEMBERS)),
+                                                      std::string(SUGGESTED_CLASS_MEMBERS), "myProp"),
                                       CompletionEntry("prop", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
-                                                      std::string(SUGGESTED_CLASS_MEMBERS))};
+                                                      std::string(SUGGESTED_CLASS_MEMBERS), "prop")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -402,9 +417,11 @@ let myColor: Color = Color.)delimiter"};
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("Red", CompletionEntryKind::ENUM_MEMBER, std::string(MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT)),
-        CompletionEntry("Blue", CompletionEntryKind::ENUM_MEMBER, std::string(MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT))};
+    auto expectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("Red", CompletionEntryKind::ENUM_MEMBER,
+                                                      std::string(MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), "Red"),
+                                      CompletionEntry("Blue", CompletionEntryKind::ENUM_MEMBER,
+                                                      std::string(MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), "Blue")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
