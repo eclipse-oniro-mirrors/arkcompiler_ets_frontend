@@ -104,6 +104,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/register_code_fix/fix_import_non_exported_member.cpp",
     "src/register_code_fix/fix_missing_call_parantheses.cpp",
     "src/register_code_fix/fix_nan_equality.cpp",
+    "src/register_code_fix/fix_property_assignment.cpp",
     "src/register_code_fix/fix_remove_override_modifier.cpp",
     "src/register_code_fix/fix_return_type_in_async_function.cpp",
     "src/register_code_fix/fix_unreachable_code.cpp",
