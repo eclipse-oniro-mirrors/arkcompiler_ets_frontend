@@ -5674,6 +5674,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
       this.handleNotsLikeSmartTypeOnCallExpression(callExpr, callSignature);
     }
+    this.checkOnClickCallback(callExpr);
     this.handleInteropForCallExpression(callExpr);
     this.handleLibraryTypeCall(callExpr);
     if (
@@ -6409,7 +6410,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         this.checkAssignmentMatching(tsArg, tsParamType, tsArg);
       }
     }
-    this.checkOnClickCallback(tsCallOrNewExpr);
   }
 
   private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpression): void {
@@ -6423,46 +6423,18 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    const objType = this.tsTypeChecker.getTypeAtLocation(tsCallOrNewExpr.expression.expression);
-    const declNode = TsUtils.getDeclaration(objType.getSymbol());
-    if (declNode) {
-      const fileName = declNode.getSourceFile().fileName;
-      if (!fileName.includes('@ohos/')) {
-        return;
-      }
-    }
-
-    const callback = tsCallOrNewExpr.arguments[0];
-    if (!ts.isArrowFunction(callback)) {
+    const objType = this.tsTypeChecker.getTypeAtLocation(tsCallOrNewExpr.expression.name);
+    const symbol = objType.getSymbol();
+    const declNode = TsUtils.getDeclaration(symbol);
+    if (!declNode || !ts.isMethodDeclaration(declNode)) {
       return;
     }
 
-    this.checkAsyncOrPromiseFunction(callback);
-  }
-
-  private checkAsyncOrPromiseFunction(callback: ts.ArrowFunction): void {
-    const returnsPromise = this.checkReturnsPromise(callback);
-    const isAsync = callback.modifiers?.some((m) => {
-      return m.kind === ts.SyntaxKind.AsyncKeyword;
-    });
-
-    if (isAsync || returnsPromise) {
-      const startPos = callback.modifiers?.[0]?.getStart() ?? callback.getStart();
-      const endPos = callback.body.getEnd();
-
-      const errorNode = {
-        getStart: () => {
-          return startPos;
-        },
-        getEnd: () => {
-          return endPos;
-        },
-        getSourceFile: () => {
-          return callback.getSourceFile();
-        }
-      } as ts.Node;
-
-      this.incrementCounters(errorNode, FaultID.IncompationbleFunctionType);
+    const paramCount = Math.min(tsCallOrNewExpr.arguments.length, declNode.parameters.length);
+    for (let i = 0; i < paramCount; i++) {
+      const callbackType = this.tsTypeChecker.getTypeAtLocation(tsCallOrNewExpr.arguments[i]);
+      const targetType = this.tsTypeChecker.getTypeAtLocation(declNode.parameters[i]);
+      this.checkFunctionalTypeCompatibility(targetType, callbackType, tsCallOrNewExpr.arguments[i]);
     }
   }
 
