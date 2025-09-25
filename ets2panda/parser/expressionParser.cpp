@@ -1134,9 +1134,6 @@ ir::ThisExpression *ParserImpl::ParseThisExpression()
     thisExprNode->SetRange(lexer_->GetToken().Loc());
 
     lexer_->NextToken();
-    if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_QUESTION_DOT) {
-        LogError(diagnostic::THIS_OPTIONAL_CHAIN_NOT_SUPPORTED);
-    }
     return thisExprNode;
 }
 
