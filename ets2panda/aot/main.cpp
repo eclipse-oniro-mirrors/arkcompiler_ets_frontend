@@ -171,6 +171,22 @@ static std::optional<std::vector<util::Plugin>> InitializePlugins(std::vector<st
     return {std::move(res)};
 }
 
+static int checkDoubleOutput(util::Options *options, util::DiagnosticEngine &diagnosticEngine)
+{
+    if (!options->WasSetArktsconfig()) {
+        return 0;
+    }
+    std::string outdir = ParentPath(ark::os::GetAbsolutePath(options->ArkTSConfig()->ConfigPath()));
+    std::string output =
+        ark::os::RemoveExtension(ark::es2panda::util::BaseName(options->SourceFileName())).append(".abc");
+    if (options->ArkTSConfig()->OutDir() != outdir && options->GetOutput() != output) {
+        diagnosticEngine.LogDiagnostic(diagnostic::REWRITE_OUTPUT_IN_CLI,
+                                       ark::es2panda::util::DiagnosticMessageParams());
+        return 1;
+    }
+    return 0;
+}
+
 static int Run(Span<const char *const> args)
 {
     auto diagnosticEngine = util::DiagnosticEngine();
@@ -193,8 +209,7 @@ static int Run(Span<const char *const> args)
 
     es2panda::Compiler compiler(options->GetExtension(), options->GetThread(), std::move(pluginsOpt.value()));
     if (options->IsListPhases()) {
-        std::cerr << "Available phases:" << std::endl;
-        std::cerr << compiler.GetPhasesList();
+        std::cerr << "Available phases:" << std::endl << compiler.GetPhasesList();
         diagnosticEngine.FlushDiagnostic();
         return 1;
     }
@@ -213,6 +228,7 @@ static int Run(Span<const char *const> args)
             auto [buf, size] = options->CStrParserInputContents();
             parserInput = std::string_view(buf, size);
         }
+        checkDoubleOutput(options.get(), diagnosticEngine);
         es2panda::SourceFile input(sourceFile, parserInput, options->IsModule(), options->GetOutput());
         res = CompileFromSource(compiler, input, *options.get(), diagnosticEngine);
     }
