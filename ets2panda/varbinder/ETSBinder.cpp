@@ -1092,6 +1092,14 @@ void ETSBinder::AddImportDefaultSpecifiersToTopBindings(Span<parser::Program *co
 
     if (auto var = FindStaticBinding(records, import->Source()); var != nullptr) {
         importDefaultSpecifier->Local()->SetVariable(var);
+        const ir::StringLiteral *const importPath = import->Source();
+        const auto localName = importDefaultSpecifier->Local()->Name();
+        auto varInGlobalClassScope = Program()->GlobalClassScope()->FindLocal(localName, ResolveBindingOptions::ALL);
+        auto previouslyImportedVariable = TopScope()->FindLocal(localName, ResolveBindingOptions::ALL);
+        if (DetectNameConflict(localName, var, varInGlobalClassScope, importPath) ||
+            DetectNameConflict(localName, var, previouslyImportedVariable, importPath)) {
+            return;
+        }
         InsertForeignBinding(importDefaultSpecifier->Local()->Name(), var);
         return;
     }

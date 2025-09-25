@@ -1665,7 +1665,7 @@ bool ETSChecker::CheckIdenticalOverloads(ETSFunctionType *func, ETSFunctionType 
     Relation()->SignatureIsIdenticalTo(func->CallSignatures()[0], overload->CallSignatures()[0]);
     if (Relation()->IsTrue() && func->CallSignatures()[0]->GetSignatureInfo()->restVar ==
                                     overload->CallSignatures()[0]->GetSignatureInfo()->restVar) {
-        LogError(diagnostic::FUNCTION_REDECL_BY_TYPE_SIG, {func->Name().Mutf8()}, currentFunc->Start());
+        LogError(diagnostic::FUNCTION_REDECL_BY_TYPE_SIG, {overload->Name().Mutf8()}, currentFunc->Start());
         return false;
     }
 
