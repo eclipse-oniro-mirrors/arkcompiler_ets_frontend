@@ -28,6 +28,7 @@ inline constexpr std::string_view const DUMMY_ID = "_";
 ir::AstNode *RefineSourceRanges(ir::AstNode *node);
 bool HasGlobalClassParent(const ir::AstNode *node);
 varbinder::Scope *NearestScope(const ir::AstNode *ast);
+std::vector<varbinder::ClassScope *> DiffClassScopes(varbinder::Scope *base, varbinder::Scope *findFrom);
 checker::ETSObjectType const *ContainingClass(const ir::AstNode *ast);
 ir::Identifier *Gensym(ArenaAllocator *allocator);
 util::UString GenName(ArenaAllocator *allocator);
