@@ -14,5 +14,3 @@ deltablue
 #18740
 splay
 
-#28078
-cdjs
