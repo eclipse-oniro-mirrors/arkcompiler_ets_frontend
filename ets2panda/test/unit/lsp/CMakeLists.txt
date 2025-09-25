@@ -485,7 +485,9 @@ ets2panda_add_gtest(lsp_api_get_node_ts_nonnull_expression CPP_SOURCES
 ets2panda_add_gtest(lsp_api_convert_function_test CPP_SOURCES
     convert_function_test.cpp
 )
-
+ets2panda_add_gtest(lsp_api_infer_function_test CPP_SOURCES
+    infer_function_return_type_test.cpp
+)
 ets2panda_add_gtest(lsp_api_get_node_function_declaration_test CPP_SOURCES
     get_node_function_declaration_test.cpp
 )
