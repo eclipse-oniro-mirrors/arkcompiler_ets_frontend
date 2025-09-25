@@ -1057,10 +1057,6 @@ semantic:
   id: 107
   message: "Bad operand type, the types of the operands must be numeric type."
 
-- name: OVERFLOW_ARITHMETIC
-  id: 4101
-  message: "Arithmetic operation causes an overflow."
-
 - name: OVERLOADED_MAIN
   id: 373
   message: "Main overload is not enabled"
@@ -1567,5 +1563,6 @@ graveyard:
 - 354
 - 383
 - 390
+- 4101
 
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.
