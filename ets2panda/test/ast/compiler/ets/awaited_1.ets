@@ -22,7 +22,7 @@ class Myuser implements User {
 const delay = (value: number): Promise<number> => { 
     return Promise.resolve(value) 
 } 
-async function identity<Type>(arg: Type): Promise<Type> {
+async function identity<Type>(arg: Type): Promise<Awaited<Type>> {
   return Promise.resolve(arg);
 }
 
