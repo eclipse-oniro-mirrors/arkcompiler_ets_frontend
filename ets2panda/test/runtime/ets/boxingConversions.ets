@@ -16,5 +16,5 @@
 function main() {
     let s: long = 1
     let d: Double = s
-    arktest.assertEQ(d.unboxed(), 1.0)
+    arktest.assertEQ(d, 1.0)
 }

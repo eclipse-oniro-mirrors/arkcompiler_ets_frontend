@@ -19,7 +19,7 @@ function main() {
     let f: Float = i
     let d: Double = i
 
-    arktest.assertEQ(l.unboxed(), 1)
-    arktest.assertEQ(f.unboxed(), 1.0)
-    arktest.assertEQ(d.unboxed(), 1.0)
+    arktest.assertEQ(l, 1)
+    arktest.assertEQ(f, 1.0)
+    arktest.assertEQ(d, 1.0)
 }

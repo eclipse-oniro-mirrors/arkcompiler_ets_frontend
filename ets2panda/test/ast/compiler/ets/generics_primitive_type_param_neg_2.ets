@@ -17,7 +17,7 @@ class A<T> {
     public value: T;
 }
 
-class B {}
+class B { }
 
 function main(): void {
     let a_B: A<B> = new A<B>();

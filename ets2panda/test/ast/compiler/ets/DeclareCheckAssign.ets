@@ -16,7 +16,7 @@
 export declare const byte_1: byte = -127 as byte, byte_2: byte = 126 as byte;
 export declare const byte_12: byte = -127 + 1, byte_22: byte = 126 - 1;
 export declare const byte_13: byte = Byte.MIN_VALUE, byte_23: byte = 126;
-export declare const byte_14: byte = new Byte().unboxed()
+export declare const byte_14: byte = new Byte().toByte()
 export declare const int_1 = 1 + 2 + 3 + 4
 const v = 42
 export declare const int_12 = v
