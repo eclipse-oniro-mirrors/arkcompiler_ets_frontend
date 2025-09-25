@@ -3677,7 +3677,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     const methodName = node.name.getText();
     const declaration = sym.declarations?.[0];
-    if (declaration && ts.isClassDeclaration(declaration.parent)) {
+    if (declaration?.parent && ts.isClassDeclaration(declaration.parent)) {
       if (this.processLimitedVoidTypeFromSdkOnClassDeclaration(declaration.parent, methodName)) {
         this.incrementCounters(node, FaultID.LimitedVoidTypeFromSdk);
       }
@@ -3962,11 +3962,37 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (tsImportClause.name) {
       this.countDeclarationsWithDuplicateName(tsImportClause.name, tsImportClause);
     }
+    this.checkPromptNameSpace(tsImportClause.name, tsImportClause);
+  }
+
+  private checkPromptNameSpace(
+    node: ts.Identifier | undefined,
+    tsDeclNode: ts.ImportClause | ts.ImportSpecifier
+  ): void {
+    if (!this.options.arkts2 || !node) {
+      return;
+    }
+
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    if (symbol?.name !== 'prompt') {
+      return;
+    }
+
+    const fileName = path.basename(symbol?.declarations?.[0]?.getSourceFile()?.fileName || '');
+    if (fileName === '@ohos.prompt.d.ts') {
+      this.incrementCounters(
+        tsDeclNode,
+        FaultID.NoDeprecatedApi,
+        undefined,
+        TypeScriptLinter.getErrorMsgForSdkCommonApi(symbol?.name, FaultID.NoDeprecatedApi)
+      );
+    }
   }
 
   private handleImportSpecifier(node: ts.Node): void {
     const importSpec = node as ts.ImportSpecifier;
     this.countDeclarationsWithDuplicateName(importSpec.name, importSpec);
+    this.checkPromptNameSpace(importSpec.name, importSpec);
   }
 
   private handleNamespaceImport(node: ts.Node): void {
@@ -5657,6 +5683,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
       this.handleNotsLikeSmartTypeOnCallExpression(callExpr, callSignature);
     }
+    this.checkOnClickCallback(callExpr);
     this.handleInteropForCallExpression(callExpr);
     this.handleLibraryTypeCall(callExpr);
     if (
@@ -5960,6 +5987,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     // for all the checks we make EtsComponentExpression is compatible with the CallExpression
     const etsComponentExpression = node as ts.CallExpression;
     this.handleLibraryTypeCall(etsComponentExpression);
+    this.handleNoDeprecatedApi(etsComponentExpression);
+    this.checkOnClickCallback(etsComponentExpression);
   }
 
   private handleImportCall(tsCallExpr: ts.CallExpression): void {
@@ -6342,11 +6371,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         this.checkAssignmentMatching(tsArg, tsParamType, tsArg);
       }
     }
-    this.checkOnClickCallback(tsCallOrNewExpr);
   }
 
   private checkOnClickCallback(tsCallOrNewExpr: ts.CallExpression | ts.NewExpression): void {
-    if (!tsCallOrNewExpr.arguments || tsCallOrNewExpr.arguments.length === 0 && this.options.arkts2) {
+    if (!this.options.arkts2 || !tsCallOrNewExpr.arguments || tsCallOrNewExpr.arguments.length === 0) {
       return;
     }
 
@@ -6356,58 +6384,19 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    const objType = this.tsTypeChecker.getTypeAtLocation(tsCallOrNewExpr.expression.expression);
-    const declNode = TsUtils.getDeclaration(objType.getSymbol());
-    if (declNode) {
-      const fileName = declNode.getSourceFile().fileName;
-      if (!fileName.includes('@ohos/')) {
-        return;
-      }
-    }
-
-    const callback = tsCallOrNewExpr.arguments[0];
-    if (!ts.isArrowFunction(callback)) {
+    const objType = this.tsTypeChecker.getTypeAtLocation(tsCallOrNewExpr.expression.name);
+    const symbol = objType.getSymbol();
+    const declNode = TsUtils.getDeclaration(symbol);
+    if (!declNode || !ts.isMethodDeclaration(declNode)) {
       return;
     }
 
-    this.checkAsyncOrPromiseFunction(callback);
-  }
-
-  private checkAsyncOrPromiseFunction(callback: ts.ArrowFunction): void {
-    const returnsPromise = this.checkReturnsPromise(callback);
-    const isAsync = callback.modifiers?.some((m) => {
-      return m.kind === ts.SyntaxKind.AsyncKeyword;
-    });
-
-    if (isAsync || returnsPromise) {
-      const startPos = callback.modifiers?.[0]?.getStart() ?? callback.getStart();
-      const endPos = callback.body.getEnd();
-
-      const errorNode = {
-        getStart: () => {
-          return startPos;
-        },
-        getEnd: () => {
-          return endPos;
-        },
-        getSourceFile: () => {
-          return callback.getSourceFile();
-        }
-      } as ts.Node;
-
-      this.incrementCounters(errorNode, FaultID.IncompationbleFunctionType);
+    const paramCount = Math.min(tsCallOrNewExpr.arguments.length, declNode.parameters.length);
+    for (let i = 0; i < paramCount; i++) {
+      const callbackType = this.tsTypeChecker.getTypeAtLocation(tsCallOrNewExpr.arguments[i]);
+      const targetType = this.tsTypeChecker.getTypeAtLocation(declNode.parameters[i]);
+      this.checkFunctionalTypeCompatibility(targetType, callbackType, tsCallOrNewExpr.arguments[i]);
     }
-  }
-
-  private checkReturnsPromise(callback: ts.ArrowFunction): boolean {
-    const callbackType = this.tsTypeChecker.getTypeAtLocation(callback);
-    const signatures = this.tsTypeChecker.getSignaturesOfType(callbackType, ts.SignatureKind.Call);
-    if (signatures.length === 0) {
-      return false;
-    }
-
-    const returnType = this.tsTypeChecker.getReturnTypeOfSignature(signatures[0]);
-    return !!returnType.getProperty('then');
   }
 
   private static readonly LimitedApis = new Map<string, { arr: Array<string> | null; fault: FaultID }>([
@@ -14083,10 +14072,33 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       | ts.ElementAccessExpression
       | ts.HeritageClause
       | ts.TaggedTemplateExpression
+      | ts.EtsComponentExpression
   ): void {
     if (!this.options.arkts2) {
       return;
     }
+    this.doHandleNoDeprecatedApi(node);
+  }
+
+  doHandleNoDeprecatedApi(
+    node:
+      | ts.TypeReferenceNode
+      | ts.NewExpression
+      | ts.VariableDeclaration
+      | ts.PropertyDeclaration
+      | ts.ParameterDeclaration
+      | ts.CallExpression
+      | ts.BinaryExpression
+      | ts.ExpressionWithTypeArguments
+      | ts.Identifier
+      | ts.MethodDeclaration
+      | ts.PropertyAssignment
+      | ts.PropertyAccessExpression
+      | ts.ElementAccessExpression
+      | ts.HeritageClause
+      | ts.TaggedTemplateExpression
+      | ts.EtsComponentExpression
+  ): void {
     switch (node.kind) {
       case ts.SyntaxKind.TypeReference:
         this.checkTypeReferenceForDeprecatedApi(node);
@@ -14111,6 +14123,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       case ts.SyntaxKind.BinaryExpression:
       case ts.SyntaxKind.PropertyAccessExpression:
       case ts.SyntaxKind.ElementAccessExpression:
+      case ts.SyntaxKind.EtsComponentExpression:
         this.handleNoDeprecatedApiForExpression(node);
         break;
       default:
@@ -14126,12 +14139,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       | ts.ElementAccessExpression
       | ts.TaggedTemplateExpression
       | ts.PropertyAssignment
+      | ts.EtsComponentExpression
   ): void {
     switch (node.kind) {
       case ts.SyntaxKind.NewExpression:
         this.checkNewExpressionForDeprecatedApi(node);
         break;
       case ts.SyntaxKind.CallExpression:
+      case ts.SyntaxKind.EtsComponentExpression:
         this.checkCallExpressionForDeprecatedApi(node);
         break;
       case ts.SyntaxKind.BinaryExpression:
@@ -14450,7 +14465,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
   }
 
-  private checkCallExpressionForDeprecatedApi(node: ts.CallExpression): void {
+  private checkCallExpressionForDeprecatedApi(node: ts.CallExpression | ts.EtsComponentExpression): void {
     let name: ts.Identifier | undefined;
     if (ts.isIdentifier(node.expression)) {
       name = node.expression;
@@ -14492,7 +14507,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private checkCallExpressionForSdkApi(
-    node: ts.CallExpression,
+    node: ts.CallExpression | ts.EtsComponentExpression,
     name: ts.Identifier,
     parName: string | undefined,
     isNeedGetResolvedSignature: boolean,
@@ -14507,7 +14522,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private checkCallExpressionForSdkApiWithSignature(
-    node: ts.CallExpression,
+    node: ts.CallExpression | ts.EtsComponentExpression,
     name: ts.Identifier,
     parName: string | undefined
   ): void {
@@ -14552,14 +14567,17 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private reportDeprecatedApi(
-    node: ts.CallExpression,
+    node: ts.CallExpression | ts.EtsComponentExpression,
     name: ts.Identifier,
     deprecatedApiCheckMap?: Map<string, string | ts.NodeArray<ts.ParameterDeclaration>>,
     apiType?: string
   ): void {
     const problemStr = this.getFaultIdWithMatchedDeprecatedApi(name.text, deprecatedApiCheckMap, apiType);
     if (problemStr.length > 0) {
-      const autofix = this.autofixer?.fixDeprecatedApiForCallExpression(node);
+      const autofix = this.autofixer?.fixDeprecatedApiForCallExpression(
+        node,
+        deprecatedApiCheckMap?.get(DEPRECATE_CHECK_KEY.PARENT_NAME)?.toString()
+      );
       const isSdkCommon = apiType === SDK_COMMON_TYPE;
       const faultID = TypeScriptLinter.getFinalSdkFaultIdByProblem(problemStr, apiType);
       if (!faultID) {
@@ -14588,7 +14606,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return sdkFaultId;
   }
 
-  private checkSpecialApiForDeprecatedApi(node: ts.CallExpression, name: ts.Identifier): void {
+  private checkSpecialApiForDeprecatedApi(
+    node: ts.CallExpression | ts.EtsComponentExpression,
+    name: ts.Identifier
+  ): void {
     if (('mask' === name.getText() || 'clip' === name.getText()) && node.arguments.length === 1) {
       const types = ['CircleAttribute', 'EllipseAttribute', ' PathAttribute', 'RectAttribute'];
       const arg = node.arguments[0];
@@ -14793,7 +14814,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private handleCallExpressionBufferIndexOf(
-    callExpr: ts.CallExpression,
+    callExpr: ts.CallExpression | ts.EtsComponentExpression,
     node: ts.Node,
     parentName: string,
     symbol?: ts.Symbol,
@@ -14822,7 +14843,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
   }
 
-  private static checkIsIndexOfWithEmptyString(callExpr: ts.CallExpression): boolean {
+  private static checkIsIndexOfWithEmptyString(callExpr: ts.CallExpression | ts.EtsComponentExpression): boolean {
     const isIndexOfCall =
       ts.isPropertyAccessExpression(callExpr.expression) &&
       SDK_COMMON_BUFFER_API.indexof === callExpr.expression.name.text;

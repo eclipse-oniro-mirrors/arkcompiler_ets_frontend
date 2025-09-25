@@ -165,16 +165,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 159,
-            "column": 18,
-            "endLine": 165,
-            "endColumn": 10,
-            "problem": "IncompationbleFunctionType",
-            "suggest": "",
-            "rule": "Stricter assignments into variables of function type (arkts-incompatible-function-types)",
-            "severity": "ERROR"
-        },
-        {
             "line": 162,
             "column": 15,
             "endLine": 162,
