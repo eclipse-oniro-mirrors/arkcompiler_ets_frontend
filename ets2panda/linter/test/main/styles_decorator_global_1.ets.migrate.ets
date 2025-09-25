@@ -28,7 +28,8 @@ import {
 
 const mycolor: string = "#ffff00"
 
-function cardStyle1(instance: CommonMethod): void {
+function cardStyle1(instance: CommonMethod): void
+{
     instance.backgroundColor(mycolor);
     instance.borderColor(Color.Red);
     instance.borderRadius(8);
@@ -73,4 +74,19 @@ struct MyButton {
             pressed: PressedStyles
         })
     }
+}
+
+function StyleWithComment(instance: CommonMethod): void {
+    // dummy comment
+    instance.backgroundColor("#ffffff");
+}
+
+function StyleWithComment2(instance: CommonMethod): void {
+    // dummy comment
+    instance.backgroundColor("#ffffff");
+    // another comment
+    instance.borderColor(Color.Red);
+    // one more really important comment
+    instance.borderRadius(8);
+    instance.padding(8);
 }
