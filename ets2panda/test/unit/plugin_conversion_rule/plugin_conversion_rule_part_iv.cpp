@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -319,24 +319,6 @@ TEST_F(PluginConversionRuleUnitTest, NodeTransformerInputParameter)
         {return reinterpret_cast<ir::AstNode *>(cb(reinterpret_cast<es2panda_AstNode *>(traverserLambdaNode)));};
         std::string_view transformationNameE2p {transformationName};
         ((reinterpret_cast< ir::AstNode *>(classInstance))->TransformChildren(cbE2p, transformationNameE2p));
-    })"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
-// apiName: ETSObjectTypeUpdateTypeProperties
-TEST_F(PluginConversionRuleUnitTest, PropertyProcessorInputParameter)
-{
-    std::string targetCAPI {R"(
-    extern "C" void ETSObjectTypeUpdateTypeProperties([[maybe_unused]] es2panda_Context *context,
-    es2panda_Type *classInstance, [[maybe_unused]] PropertyProcessor func/*return_args:*/)
-    {
-        std::function<varbinder::LocalVariable *(varbinder::LocalVariable *, checker::Type *)> funcE2p =
-        [func](varbinder::LocalVariable *propertyProcessorLambdaVariable, checker::Type *propertyProcessorLambdaType) {
-        return reinterpret_cast<varbinder::LocalVariable *>(func(reinterpret_cast<es2panda_Variable *>
-        (propertyProcessorLambdaVariable), reinterpret_cast<es2panda_Type *>(propertyProcessorLambdaType)));};
-        ((reinterpret_cast< checker::ETSObjectType *>(classInstance))->UpdateTypeProperties(funcE2p));
     })"};
 
     std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);

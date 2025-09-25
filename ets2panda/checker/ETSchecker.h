@@ -956,6 +956,10 @@ private:
     void CreateConstructorForPartialType(ir::ClassDefinition *partialClassDef, checker::ETSObjectType *partialType,
                                          varbinder::RecordTable *recordTable);
 
+    // Readonly
+    template <PropertyType PROP_TYPE>
+    void MakePropertyReadonly(ETSObjectType *const classType, varbinder::LocalVariable *const prop);
+
     // Check type alias for recursive cases
     bool IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,
                                      std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases);

@@ -3322,6 +3322,7 @@ Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importD
     auto *moduleObjectType =
         ProgramAllocator()->New<ETSObjectType>(ProgramAllocator(), moduleName, internalName,
                                                std::make_tuple(ident, checker::ETSObjectFlags::CLASS, Relation()));
+    moduleObjectType->SetSuperType(GlobalETSObjectType());
 
     auto *rootDecl = ProgramAllocator()->New<varbinder::ClassDecl>(moduleName);
     varbinder::LocalVariable *rootVar =

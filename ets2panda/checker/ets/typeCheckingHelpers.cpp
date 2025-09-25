@@ -291,30 +291,6 @@ bool Type::PossiblyETSUndefined() const
         [](const Type *t) { return !t->IsETSNonNullishType(); });
 }
 
-static bool ObjectPossiblyInForeignDomain(ETSObjectType const *type)
-{
-    if (type->IsGlobalETSObjectType()) {
-        return true;
-    }
-    auto dnode = type->GetDeclNode();
-    if (dnode == nullptr) {
-        return false;
-    }
-    auto lang = dnode->IsClassDefinition() ? dnode->AsClassDefinition()->Language()
-                                           : dnode->AsTSInterfaceDeclaration()->Language();
-    return lang != Language::Id::ETS;
-}
-
-bool Type::PossiblyInForeignDomain() const
-{
-    return MatchConstituentOrConstraint(
-        this,
-        [](const Type *t) {
-            return t->IsETSAnyType() || (t->IsETSObjectType() && ObjectPossiblyInForeignDomain(t->AsETSObjectType()));
-        },
-        []([[maybe_unused]] const Type *t) { return true; });
-}
-
 bool Type::PossiblyETSNullish() const
 {
     return MatchConstituentOrConstraint(

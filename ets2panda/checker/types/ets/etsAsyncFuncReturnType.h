@@ -60,6 +60,9 @@ public:
         return promiseType_;
     }
 
+    void ToAssemblerType(std::stringstream &ss) const override;
+    void ToDebugInfoType(std::stringstream &ss) const override;
+
 private:
     ETSObjectType *promiseType_;
 };

@@ -263,8 +263,9 @@ TEST_F(UnionAsmTest, union_test_as)
         function test1(v: string): void { v as string | number }
     )");
 
-    CheckInsInFunction("dummy.ETSGLOBAL.test1:std.core.String;void;",
-                       "checkcast.nonnull {Ustd.core.Double,std.core.String}", true);
+    // Non-nullish type is casted, hence "checkcast" is expected
+    CheckInsInFunction("dummy.ETSGLOBAL.test1:std.core.String;void;", "checkcast {Ustd.core.Double,std.core.String}",
+                       true);
 }
 
 TEST_F(UnionAsmTest, union_null_object)

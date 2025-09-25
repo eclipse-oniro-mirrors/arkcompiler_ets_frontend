@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -64,7 +64,7 @@ TEST_F(NameManglingAsmTest, asyncFunctionNameGen)
 
     SetCurrentProgram(input);
 
-    std::string_view expectedGeneratedName = "dummy.ETSGLOBAL.%%async-TestFunc:std.core.Object;";
+    std::string_view expectedGeneratedName = "dummy.ETSGLOBAL.%%async-TestFunc:Y;";
 
     auto result = GetFunction(expectedGeneratedName, program_->functionStaticTable);
     ASSERT_NE(result, nullptr);
@@ -78,7 +78,7 @@ TEST_F(NameManglingAsmTest, asyncMethodNameGen)
         }
     )";
 
-    std::string_view expectedGeneratedName = "dummy.TestClass.%%async-testMethod:std.core.Object;";
+    std::string_view expectedGeneratedName = "dummy.TestClass.%%async-testMethod:Y;";
 
     CheckUsingFunctionInstanceTable(input, expectedGeneratedName);
 }

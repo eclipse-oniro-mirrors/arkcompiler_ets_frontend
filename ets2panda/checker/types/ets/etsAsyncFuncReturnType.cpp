@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 #include "etsAsyncFuncReturnType.h"
 
 namespace ark::es2panda::checker {
+
 void ETSAsyncFuncReturnType::ToString(std::stringstream &ss, bool precise) const
 {
     promiseType_->ToString(ss, precise);
@@ -64,6 +65,16 @@ void ETSAsyncFuncReturnType::CheckVarianceRecursively(TypeRelation *relation, Va
 void ETSAsyncFuncReturnType::Iterate(const TypeTraverser &func) const
 {
     func(promiseType_);
+}
+
+void ETSAsyncFuncReturnType::ToAssemblerType(std::stringstream &ss) const
+{
+    ss << compiler::Signatures::ANY_ASSEMBLY_TYPE;
+}
+
+void ETSAsyncFuncReturnType::ToDebugInfoType(std::stringstream &ss) const
+{
+    ss << compiler::Signatures::TYPE_DESCRIPTOR_ANY;
 }
 
 }  // namespace ark::es2panda::checker

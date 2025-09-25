@@ -189,7 +189,7 @@ static bool CheckObjectTypeAndSuperType(ETSChecker *checker, ETSObjectType *type
 
     if (classDef->Super() == nullptr || !classDef->Super()->IsTypeNode()) {
         type->AddObjectFlag(ETSObjectFlags::RESOLVED_SUPER);
-        if (type != checker->GlobalETSObjectType() && !type->IsGradual()) {
+        if (type != checker->GlobalETSObjectType() && !type->IsGradual() && !type->IsNotBaseObject()) {
             type->SetSuperType(checker->GlobalETSObjectType());
         }
         return true;
