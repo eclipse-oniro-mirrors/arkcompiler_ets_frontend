@@ -4811,6 +4811,12 @@ export class Autofixer {
       return undefined;
     }
 
+    const contextualTypeString = this.typeChecker.typeToString(contextualType);
+    if (contextualTypeString.startsWith('Hash')) {
+      const identifier = node.expression;
+      return this.replaceNode(identifier, contextualTypeString);
+    }
+
     const typeArgs = this.getTypeArgumentsFromType(contextualType);
     if (typeArgs.length === 0) {
       return undefined;
