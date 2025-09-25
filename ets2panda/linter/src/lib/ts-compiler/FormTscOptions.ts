@@ -32,8 +32,9 @@ export function formTscOptions(
   cmdOptions: CommandLineOptions,
   overrideCompilerOptions: ts.CompilerOptions
 ): ts.CreateProgramOptions {
+  let options: ts.CreateProgramOptions;
   if (cmdOptions.parsedConfigFile) {
-    const options: ts.CreateProgramOptions = {
+    options = {
       rootNames: cmdOptions.inputFiles.concat(readDeclareFiles(cmdOptions.sdkDefaultApiPath ?? '')),
       options: cmdOptions.parsedConfigFile.options,
       projectReferences: cmdOptions.parsedConfigFile.projectReferences,
@@ -51,30 +52,29 @@ export function formTscOptions(
       types: [],
       incremental: true
     });
-    options.options = Object.assign(options.options, overrideCompilerOptions);
-    return options;
+  } else {
+    const rootNames = cmdOptions.inputFiles.concat(readDeclareFiles(cmdOptions.sdkDefaultApiPath ?? ''));
+    const ESVersion = cmdOptions.followSdkSettings ? ts.ScriptTarget.ES2021 : ts.ScriptTarget.Latest;
+    const ESVersionLib = cmdOptions.followSdkSettings ? getTargetESVersionLib(ESVersion) : undefined;
+    options = {
+      rootNames: rootNames,
+      options: {
+        target: ESVersion,
+        module: ts.ModuleKind.CommonJS,
+        allowJs: true,
+        checkJs: !cmdOptions.followSdkSettings,
+        lib: ESVersionLib
+      }
+    };
   }
-  const rootNames = cmdOptions.inputFiles.concat(readDeclareFiles(cmdOptions.sdkDefaultApiPath ?? ''));
-  const ESVersion = cmdOptions.followSdkSettings ? ts.ScriptTarget.ES2021 : ts.ScriptTarget.Latest;
-  const ESVersionLib = cmdOptions.followSdkSettings ? getTargetESVersionLib(ESVersion) : undefined;
-  const isCheckJs = !cmdOptions.followSdkSettings;
-  const options: ts.CreateProgramOptions = {
-    rootNames: rootNames,
-    options: {
-      target: ESVersion,
-      module: ts.ModuleKind.CommonJS,
-      allowJs: true,
-      checkJs: isCheckJs,
-      lib: ESVersionLib
-    }
-  };
+  options.options = Object.assign(options.options, overrideCompilerOptions);
   if (cmdOptions.sdkDefaultApiPath && cmdOptions.arktsWholeProjectPath && cmdOptions.sdkExternalApiPath) {
     options.host = createCompilerHost(
       cmdOptions.sdkDefaultApiPath,
       cmdOptions.sdkExternalApiPath,
-      cmdOptions.arktsWholeProjectPath
+      cmdOptions.arktsWholeProjectPath,
+      options.options
     );
   }
-  options.options = Object.assign(options.options, overrideCompilerOptions);
   return options;
 }
