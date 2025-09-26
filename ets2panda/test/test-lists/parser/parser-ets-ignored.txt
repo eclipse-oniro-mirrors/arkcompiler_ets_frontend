@@ -1,3 +1,6 @@
+#30349
+compiler/ets/lambdaFunctionArrayDeclaration.ets
+
 # Issue: ##21522
 compiler/ts/interfaceAssignment.ts
 compiler/ts/memberExpTests.ts
