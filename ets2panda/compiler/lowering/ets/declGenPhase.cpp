@@ -24,18 +24,14 @@ namespace ark::es2panda::compiler {
 
 constexpr std::string_view MODULE_DECLARATION_NAME {"ModuleDeclaration"};
 
-bool DeclGenPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+static bool EmitDecl(public_lib::Context *ctx, parser::Program *program, std::string decls)
 {
-    if (!ctx->config->options->IsEmitDeclaration()) {
-        return true;
-    }
-
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *phaseManager = ctx->phaseManager;
     auto *allocator = ctx->Allocator();
 
     // Arena cause we want declaration be life until codegen happens
-    auto *declaration = allocator->New<ArenaString>(program->Ast()->DumpDecl(ctx), allocator->Adapter());
+    auto *declaration = allocator->New<ArenaString>(decls, allocator->Adapter());
     ES2PANDA_ASSERT(declaration != nullptr);
 
     auto *const annoUsageIdent = checker->AllocNode<ir::Identifier>(MODULE_DECLARATION_NAME, checker->Allocator());
@@ -56,6 +52,43 @@ bool DeclGenPhase::PerformForModule(public_lib::Context *ctx, parser::Program *p
 
     program->GlobalClass()->EmplaceAnnotation(annotationUsage);
     Recheck(phaseManager, checker->VarBinder()->AsETSBinder(), checker, annotationUsage);
+    return true;
+}
+
+static bool HandleGenStdlib(public_lib::Context *ctx, parser::Program *program)
+{
+    if (!program->FileName().Is("etsstdlib")) {
+        // Generation is handled only for main program for all modules at once:
+        return true;
+    }
+
+    for (const auto &[moduleName, extPrograms] : program->ExternalSources()) {
+        ir::Declgen dg {ctx};
+        ir::SrcDumper dumper {&dg};
+        for (const auto *extProg : extPrograms) {
+            extProg->Ast()->Dump(&dumper);
+        }
+        dumper.GetDeclgen()->Run();
+
+        std::string res = "'use static'\n";
+        res += dg.DumpImports();
+        res += dumper.Str();
+        EmitDecl(ctx, extPrograms[0], res);
+    }
+    return true;
+}
+
+bool DeclGenPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+{
+    if (ctx->config->options->IsGenStdlib()) {
+        return HandleGenStdlib(ctx, program);
+    }
+
+    if (!ctx->config->options->IsEmitDeclaration()) {
+        return true;
+    }
+
+    EmitDecl(ctx, program, program->Ast()->DumpDecl(ctx));
 
     return true;
 }

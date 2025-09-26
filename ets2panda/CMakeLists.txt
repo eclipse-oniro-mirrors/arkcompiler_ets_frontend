@@ -53,6 +53,8 @@ else()
     set(DEFAULT_ARKTSCONFIG "${CMAKE_BINARY_DIR}/bin")
 endif()
 file(MAKE_DIRECTORY "${GENERATED_DIR}")
+set(DEFAULT_CACHE_DIR "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls")
+file(MAKE_DIRECTORY "${DEFAULT_CACHE_DIR}")
 if(PANDA_WITH_ETS)
     function(gen_arktsconfig DST_CONFIG_FILE IS_CONFIG_FOR_SDK_ARTIFACTS)
         function (write_cfg DST_PATH BASE_URL STDLIB_DECL_DIR SDK_SRC_DIR)
@@ -63,6 +65,7 @@ if(PANDA_WITH_ETS)
                 "\n"
                 "  \"compilerOptions\": {\n"
                 "    \"baseUrl\": \"${BASE_URL}\",\n"
+                "    \"cacheDir\": \"${DEFAULT_CACHE_DIR}\",\n"
                 "    \"paths\": {\n"
                 "      \"@ohos.buffer\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.buffer.ets\"],\n"
                 "      \"@ohos.util.ArrayList\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.ArrayList.ets\"],\n"
@@ -89,19 +92,19 @@ if(PANDA_WITH_ETS)
                 "      \"import_tests\": [\"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/import_tests\"]\n"
                 "    },\n"
                 "    \"dependencies\": {\n"
-                "      \"std/core\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.core.d.ets\" },\n"
-                "      \"std/math\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.math.d.ets\" },\n"
-                "      \"std/math/consts\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.math.consts.d.ets\" },\n"
-                "      \"std/containers\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.containers.d.ets\" },\n"
-                "      \"std/interop/js\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.interop.js.d.ets\" },\n"
-                "      \"std/time\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.time.d.ets\" },\n"
-                "      \"std/debug\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.debug.d.ets\" },\n"
-                "      \"std/debug/concurrency\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.debug.concurrency.d.ets\" },\n"
-                "      \"std/testing\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.testing.d.ets\" },\n"
-                "      \"std/concurrency\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.concurrency.d.ets\" },\n"
-                "      \"std/annotations\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.annotations.d.ets\" },\n"
-                "      \"std/interop\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}std.interop.d.ets\" },\n"
-                "      \"escompat\": { \"path\": \"${STDLIB_DECL_DIR}${DELIM}escompat.d.ets\" },\n"
+                "      \"std/core\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/math\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/math/consts\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/containers\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/interop/js\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/time\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/debug\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/debug/concurrency\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/testing\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/concurrency\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/annotations\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/interop\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"escompat\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"dynamic_import_tests\": {\"language\": \"js\", \"ohmUrl\": \"dynamic_import_tests\"},\n"
                 "      \"dynamic_import_tests/modules/instanceof\": {\"language\": \"js\", \"path\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\", \"ohmUrl\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\"},\n"
                 "      \"dynamic_import_tests/modules/module\": {\"language\": \"js\", \"path\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/module.ets\", \"ohmUrl\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/module.ets\"}\n"
