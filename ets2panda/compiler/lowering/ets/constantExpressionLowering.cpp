@@ -447,8 +447,7 @@ private:
                     LogError(diagnostic::EXPONENTIATION_BASE_LESS_ZERO, {}, expr->Start());
                     resNum = std::numeric_limits<TargetType>::quiet_NaN();
                 }
-                resNum = std::pow(leftNum, rightNum);
-                break;
+                return CreateNumberLiteral(std::pow(leftNum, rightNum));
             }
             default:
                 ES2PANDA_UNREACHABLE();
