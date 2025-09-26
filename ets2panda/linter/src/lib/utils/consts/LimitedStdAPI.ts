@@ -162,6 +162,8 @@ export const MODULE_IMPORTS: Record<string, string[]> = {
 
 export const ARKTSUTILS_MODULES = ['@arkts.utils', '@ohos.process', '@kit.ArkTS'];
 export const ARKTSUTILS_LOCKS_MEMBER = 'locks';
+export const ARKTSUTILS_LITERAL = 'ArkTSUtils';
+export const LRU_SENDABLE_CACHE_LITERAL = 'SendableLruCache'
 
 export const OBJECT_PUBLIC_API_METHOD_SIGNATURES = new Map<string, string>([
   ['toString', '(): string'],
