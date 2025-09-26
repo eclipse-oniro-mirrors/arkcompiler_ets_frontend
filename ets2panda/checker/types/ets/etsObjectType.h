@@ -405,6 +405,7 @@ public:
     bool CastNumericObject(TypeRelation *relation, Type *target);
     void IsSupertypeOf(TypeRelation *relation, Type *source) override;
     void IsSubtypeOf(TypeRelation *relation, Type *target) override;
+    ETSObjectType *ProcessInterfaceBaseType(std::unordered_set<Type *> *extendsSet);
     Type *AsSuper(Checker *checker, varbinder::Variable *sourceVar) override;
     void ToAssemblerType([[maybe_unused]] std::stringstream &ss) const override;
     static std::string NameToDescriptor(util::StringView name);

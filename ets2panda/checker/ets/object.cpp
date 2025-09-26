@@ -221,6 +221,60 @@ bool ETSChecker::ComputeSuperType(ETSObjectType *type)
     return true;
 }
 
+static bool ProcessTypeArguments(ETSObjectType *currentInterface, std::unordered_set<Type *> *extendsSet)
+{
+    bool isTypeArgumentsDiff = false;
+    for (auto *typeArgument : currentInterface->TypeArguments()) {
+        if (!typeArgument->IsETSAnyType()) {
+            isTypeArgumentsDiff = extendsSet->insert(typeArgument).second || isTypeArgumentsDiff;
+        }
+    }
+    return isTypeArgumentsDiff;
+}
+
+static bool ProcessInterfaceBaseTypesRecursively(ETSObjectType *currentInterface,
+                                                 std::unordered_set<Type *> *extendsSet, ETSObjectType *&baseType,
+                                                 bool isBaseTypeSame)
+{
+    auto const interfaceList = currentInterface->AsETSObjectType()->Interfaces();
+    if (!interfaceList.empty()) {
+        for (auto *interface : interfaceList) {
+            auto *originalBaseType = interface->GetOriginalBaseType();
+            bool flag = !extendsSet->insert(originalBaseType).second;
+            if (baseType == nullptr && flag) {
+                baseType = originalBaseType;
+            }
+            isBaseTypeSame = ProcessInterfaceBaseTypesRecursively(interface, extendsSet, baseType, isBaseTypeSame) &&
+                             isBaseTypeSame && flag;
+        }
+    }
+    return isBaseTypeSame;
+}
+
+ETSObjectType *ETSObjectType::ProcessInterfaceBaseType(std::unordered_set<Type *> *extendsSet)
+{
+    auto const interfaceList = this->AsETSObjectType()->Interfaces();
+    bool isBaseTypeSame = true;
+    bool isTypeArgumentsDiff = false;
+    ETSObjectType *baseType = nullptr;
+    if (interfaceList.empty()) {
+        auto *originalBaseType = this->GetOriginalBaseType();
+        isBaseTypeSame = isBaseTypeSame && !extendsSet->insert(originalBaseType).second;
+        baseType = originalBaseType->AsETSObjectType();
+    } else {
+        isBaseTypeSame = ProcessInterfaceBaseTypesRecursively(this, extendsSet, baseType, isBaseTypeSame);
+    }
+    extendsSet->insert(this);
+    if (this->GetBaseType() != nullptr) {
+        isTypeArgumentsDiff = ProcessTypeArguments(this, extendsSet) || isTypeArgumentsDiff;
+    }
+    for (auto *interface : interfaceList) {
+        isTypeArgumentsDiff = ProcessTypeArguments(interface, extendsSet) || isTypeArgumentsDiff;
+    }
+    extendsSet->erase(this);
+    return isTypeArgumentsDiff && isBaseTypeSame ? baseType : nullptr;
+}
+
 void ETSChecker::ValidateImplementedInterface(ETSObjectType *type, Type *interface,
                                               std::unordered_set<Type *> *extendsSet, const lexer::SourcePosition &pos)
 {
@@ -233,10 +287,10 @@ void ETSChecker::ValidateImplementedInterface(ETSObjectType *type, Type *interfa
         LogError(diagnostic::NOT_INTERFACE, {}, pos);
         return;
     }
-
-    auto *baseType = GetOriginalBaseType(interface);
-    if (baseType != interface && !extendsSet->insert(baseType).second) {
+    ETSObjectType *baseType = interface->AsETSObjectType()->ProcessInterfaceBaseType(extendsSet);
+    if (baseType != nullptr) {
         LogError(diagnostic::CONFLICTING_GENERIC_INTERFACE_IMPLS, {baseType}, pos);
+        return;
     }
 
     GetInterfaces(interface->AsETSObjectType());
