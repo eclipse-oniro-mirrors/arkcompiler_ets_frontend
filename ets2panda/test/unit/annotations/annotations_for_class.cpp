@@ -35,17 +35,17 @@ public:
         CheckAnnotations(program.get());
         CheckClassAnnotations(program.get());
         CheckFunctionAnnotations(program.get());
+        CheckLiteralArrayTable(program.get());
     }
 
     void CheckAnnotations(pandasm::Program *program)
     {
         const std::string annoName = "Anno";
         const std::vector<std::pair<std::string, std::string>> expectedAnnotations = {
-            {
-                {"authorName", ""},
-                {"authorAge", "0"},
-                {"testBool", "0"},
-            },
+            {{"authorName", ""},
+             {"authorAge", "0"},
+             {"testBool", "0"},
+             {"annoStrArr", "ETSGLOBAL%%annotation-Anno-annoStrArr-1"}},
         };
         AnnotationEmitTest::CheckAnnoDecl(program, annoName, expectedAnnotations);
     }
@@ -59,6 +59,7 @@ public:
                  {"authorName", "Mike"},
                  {"authorAge", "18"},
                  {"testBool", "1"},
+                 {"annoStrArr", "A%%annotation-Anno-annoStrArr-3"},
              }},
         };
         AnnotationEmitTest::CheckRecordAnnotations(program, recordName, expectedClassAnnotations);
@@ -73,6 +74,7 @@ public:
                  {"authorName", "John"},
                  {"authorAge", "23"},
                  {"testBool", "0"},
+                 {"annoStrArr", "A.foo:void;%%annotation-Anno-annoStrArr-0"},
              }},
         };
         AnnotationEmitTest::CheckFunctionAnnotations(program, funcName, false, expectedFuncAnnotations);
@@ -88,9 +90,21 @@ public:
                  {"authorName", ""},
                  {"authorAge", "0"},
                  {"testBool", "0"},
+                 {"annoStrArr", "x%%annotation-Anno-annoStrArr-2"},
              }},
         };
         AnnotationEmitTest::CheckClassFieldAnnotations(program, record, fieldName, expectedFuncAnnotations);
+    }
+
+    void CheckLiteralArrayTable(pandasm::Program *program)
+    {
+        ExpectedLiteralArrayTable const expectedLiteralArrayTable = {
+            {"A.foo:void;%%annotation-Anno-annoStrArr-0", {"Anno-foo"}},
+            {"ETSGLOBAL%%annotation-Anno-annoStrArr-1", {"Anno"}},
+            {"x%%annotation-Anno-annoStrArr-2", {"Anno"}},
+            {"A%%annotation-Anno-annoStrArr-3", {"Anno-Klass"}},
+        };
+        AnnotationEmitTest::CheckLiteralArrayTable(program, expectedLiteralArrayTable);
     }
 
 private:
@@ -101,16 +115,19 @@ private:
 TEST_F(AnnotationsforClass, annotations_for_class)
 {
     std::string_view text = R"(
+    const b: string = 'Anno'
     @interface Anno {
         authorName: string = ""
         authorAge: int = 0
         testBool: boolean = false
+        annoStrArr: string[] = [b]
     }
 
     @Anno({
         authorName: "Mike",
         authorAge: 18,
-        testBool: true
+        testBool: true,
+        annoStrArr: [b + '-Klass']
     })
     class A {
         @Anno
@@ -119,7 +136,8 @@ TEST_F(AnnotationsforClass, annotations_for_class)
         @Anno({
             authorName: "John",
             authorAge: 23,
-            testBool: false
+            testBool: false,
+            annoStrArr: [b + '-foo']
         })
         foo() {}
     })";

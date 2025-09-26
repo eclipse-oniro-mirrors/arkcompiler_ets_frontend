@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <gtest/gtest.h>
 #include <algorithm>
 #include <cstdint>
 #include <iomanip>
@@ -171,6 +172,9 @@ void AsmTest::CheckAnnoDecl(ark::pandasm::Program *program, const std::string &a
     ASSERT_NE(found, recordTable.end());
 
     for (size_t i = 0; i < expectedAnnotations.size(); i++) {
+        ASSERT_EQ(expectedAnnotations[i].first, found->second.fieldList[i].name)
+            << "missing expected annotation name: " << found->second.fieldList[i].name;
+        ;
         auto scalarValue = found->second.fieldList[i].metadata->GetValue();
         if (scalarValue) {
             CompareActualWithExpected(expectedAnnotations[i].second, &*scalarValue, found->second.fieldList[i].name);
@@ -211,6 +215,8 @@ void AsmTest::CheckAnnotation(const std::vector<std::pair<std::string, std::stri
                                [&element](const auto &pair) { return pair.first == element.GetName(); });
         if (it != expectedValues.end()) {
             CompareActualWithExpected(it->second, element.GetValue()->GetAsScalar(), element.GetName());
+        } else {
+            ASSERT_TRUE(false) << "missing expected annotation name: " << element.GetName();
         }
     }
 }
