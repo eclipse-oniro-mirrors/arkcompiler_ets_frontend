@@ -367,10 +367,6 @@ static void HandleInterfaceLowering(public_lib::Context *ctx, ir::ObjectExpressi
         return;
     }
 
-    if (etsTargetType->IsPartial()) {
-        resultType->AsETSObjectType()->SetBaseType(etsTargetType->GetBaseType());
-    }
-
     if (!etsTargetType->TypeArguments().empty()) {
         ArenaVector<checker::Type *> typeArgTypes(etsTargetType->TypeArguments());
         checker::InstantiationContext instantiationCtx(checker, resultType->AsETSObjectType(), std::move(typeArgTypes),
