@@ -1016,6 +1016,10 @@ void ETSParser::ParseInterfaceModifiers(ir::ModifierFlags &fieldModifiers, bool 
 
     processDefinite();
 
+    if ((fieldModifiers & ir::ModifierFlags::DEFINITE) != 0) {
+        LogError(diagnostic::INTERFACE_DEFINITE_ASSIGNMENT_NOT_ALLOWED, {}, start);
+    }
+
     if ((fieldModifiers & ir::ModifierFlags::DEFINITE) != 0 && optionalField) {
         LogError(diagnostic::CONFLICTING_FIELD_MODIFIERS, {}, start);
     }

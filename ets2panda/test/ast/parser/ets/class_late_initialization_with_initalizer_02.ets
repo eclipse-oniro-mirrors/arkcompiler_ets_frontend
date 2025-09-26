@@ -16,7 +16,7 @@
 interface A {
     f!: string = "abc"
 }
-
+/* @@? 17:6 Error SyntaxError: Definite assignment assertions '!' are not allowed in interface properties. */
 /* @@? 17:16 Error SyntaxError: Interface member initialization is prohibited. */
 /* @@? 17:18 Error SyntaxError: Unexpected token, expected ','. */
 /* @@? 17:18 Error SyntaxError: Identifier expected, got 'string literal'. */

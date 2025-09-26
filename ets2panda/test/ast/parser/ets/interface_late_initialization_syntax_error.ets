@@ -13,18 +13,8 @@
  * limitations under the License.
  */
 
-
-class A {
-    f!:string
+interface A {
+    f1!:number
 }
 
-function main(): void {
-  let a = new A()
-  try {
-    console.log(a.f);
-  } catch (e) {
-    arktest.assertTrue(e instanceof NullPointerError)
-  }
-  a.f = "1"
-  arktest.assertEQ(a.f, "1")
-}
+/* @@? 17:7 Error SyntaxError: Definite assignment assertions '!' are not allowed in interface properties. */
