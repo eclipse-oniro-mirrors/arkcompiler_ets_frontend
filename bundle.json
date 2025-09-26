@@ -51,6 +51,9 @@
                 },
                 {
                     "name": "//arkcompiler/ets_frontend/arkguard:build_arkguard_etc"
+                },                
+                {
+                    "name": "//arkcompiler/ets_frontend/ets2panda/driver/dependency_analyzer:ohos_ets_dependency_analyzer"
                 }
             ],
             "test": [
