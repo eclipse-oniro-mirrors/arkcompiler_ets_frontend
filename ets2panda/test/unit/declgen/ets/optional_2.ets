@@ -13,14 +13,19 @@
  * limitations under the License.
  */
 
-const val = 100;
-export { val as default };
+export class C {
 
-export { default } from '.';
+    constructor c1(b: Boolean = true) {
+    }
 
-/* @@? 19:8 Error TypeError: Only one default export is allowed in a module  */
-/* @@? 19:18 Error SyntaxError: Unexpected token, expected 'as'.  */
-/* @@? 19:18 Error SyntaxError: Unexpected token '}'.  */
-/* @@? 19:20 Error SyntaxError: Cannot find name 'from' to export.  */
-/* @@? 19:20 Error SyntaxError: Cannot find name 'gensym%%_anonymous_const' to export.  */
-/* @@? 19:25 Error SyntaxError: Unexpected token, expected ',' or '}'.  */
+    constructor c2(s: string = "7") {
+    }
+
+    overload constructor { c1, c2 }
+
+    foo1(s: string = "7") {
+    }
+
+    foo2(b: Boolean = false) {
+    }
+}

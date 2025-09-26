@@ -1,0 +1,14 @@
+'use static'
+
+export declare class C {
+  constructor c1(b: Boolean = true);
+
+  constructor c2(s?: string);
+
+  public overload constructor {c1, c2};
+  foo1(s?: string): void;
+
+  foo2(b?: Boolean): void;
+
+}
+

@@ -51,7 +51,12 @@ public:
         return source_;
     }
 
-    const ArenaVector<ExportSpecifier *> &Specifiers() const
+    [[nodiscard]] const ArenaVector<ExportSpecifier *> &Specifiers() const noexcept
+    {
+        return specifiers_;
+    }
+
+    [[nodiscard]] ArenaVector<ExportSpecifier *> &Specifiers() noexcept
     {
         return specifiers_;
     }

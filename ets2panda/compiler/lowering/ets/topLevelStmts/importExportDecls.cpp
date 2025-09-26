@@ -215,12 +215,27 @@ void ImportExportDecls::VisitETSModule(ir::ETSModule *etsModule)
 
 void ImportExportDecls::VisitExportNamedDeclaration(ir::ExportNamedDeclaration *exportDecl)
 {
+    if (exportDecl->Specifiers().empty()) {
+        parser_->LogError(diagnostic::EMPTY_EXPORT_SPECIFIER_LIST, {}, exportDecl->Start());
+        return;
+    }
+
+    // Lambda function to avoid extra nested level.
+    auto const logError = [this, exportDecl](ir::Identifier const *const local) -> void {
+        if (!exportDefaultName_.Is(local->Name().Utf8())) {
+            parser_->LogError(diagnostic::EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER, {}, exportDecl->Start());
+        }
+    };
+
+    bool const isDefault = (exportDecl->Modifiers() & ir::ModifierFlags::DEFAULT_EXPORT) !=
+                           static_cast<std::underlying_type_t<ir::ModifierFlags>>(0U);
+
     for (auto spec : exportDecl->Specifiers()) {
-        auto local = spec->Local();
+        auto const *const local = spec->Local();
         // If this was enterred more than once, CTE must has been logged in parser.
-        if ((exportDecl->Modifiers() & ir::ModifierFlags::DEFAULT_EXPORT) != 0) {
+        if (isDefault) {
             if (exportDefaultName_ != nullptr) {
-                parser_->LogError(diagnostic::EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER, {}, local->Start());
+                logError(local);
                 continue;
             }
             exportDefaultName_ = local->Name();

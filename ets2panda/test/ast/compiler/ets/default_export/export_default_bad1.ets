@@ -24,6 +24,6 @@ class B {
     }
 }
 
-export default {A, B}
+export default /* @@ label */{A, B}
 
-/* @@? 27:20 Error SyntaxError: export default is not allowed to export multiple specifiers.  */
+/* @@@ label Error SyntaxError: export default is not allowed to export multiple specifiers.  */

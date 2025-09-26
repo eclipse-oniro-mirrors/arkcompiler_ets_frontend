@@ -150,6 +150,7 @@ set(ETS_TESTS
     namespace_ret
     nested
     optional
+    optional_2
     overload
     test
 )
