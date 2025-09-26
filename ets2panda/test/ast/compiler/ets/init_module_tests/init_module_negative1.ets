@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-function foo() {
-    /* @@ label */initModule('./module_to_init.ets')
-}
+/* @@ label */initModule(1)
 
-/* @@@ label Error SyntaxError: initModule() must only be called immediately after the import statement, and before any other declarations or statements.  */
+/* @@@ label Error SyntaxError: initModule() only accept string literal as argument.  */

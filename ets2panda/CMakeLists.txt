@@ -341,6 +341,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/spreadLowering.cpp
   compiler/lowering/ets/objectIndexAccess.cpp
   compiler/lowering/ets/objectIterator.cpp
+  compiler/lowering/ets/initModuleLowering.cpp
   compiler/lowering/ets/insertOptionalParametersAnnotation.cpp
   compiler/lowering/ets/interfacePropertyDeclarations.cpp
   compiler/lowering/ets/opAssignment.cpp

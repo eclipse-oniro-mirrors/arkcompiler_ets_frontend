@@ -414,10 +414,12 @@ parser::Program *SearchExternalProgramInImport(const parser::Program::DirectExte
 {
     parser::Program *extProg = nullptr;
     const auto importPath = importMetadata.resolvedSource;
+    const auto declPath = importMetadata.declPath;
     // Search Correct external program by comparing importPath and absolutePath
     for (auto &[_, progs] : extSource) {
-        auto it = std::find_if(progs.begin(), progs.end(),
-                               [&](const auto *prog) { return prog->AbsoluteName() == importPath; });
+        auto it = std::find_if(progs.begin(), progs.end(), [&](const auto *prog) {
+            return prog->AbsoluteName() == importPath || prog->AbsoluteName() == declPath;
+        });
         if (it != progs.end()) {
             extProg = *it;
             break;

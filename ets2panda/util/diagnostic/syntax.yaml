@@ -528,11 +528,6 @@ syntax:
   id: 125
   message: "Initializers are not allowed in ambient contexts."
 
-- name: INIT_MODULE_DECLARATION_POSITION
-  id: 322
-  message: "initModule() must only be called immediately after the import statement, and before any other declarations or
-    statements."
-
 - name: INSERT_NODE_ABSENT
   id: 10
   message: "There is no any node to insert at the placeholder position."
@@ -1374,4 +1369,5 @@ graveyard:
 - 292
 - 293
 - 317
+- 322
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-let b = 1
-/* @@ label */initModule('./module_to_init.ets')
+initModule)
 
-/* @@@ label Error SyntaxError: initModule() must only be called immediately after the import statement, and before any other declarations or statements.  */
+/* @@? 16:11 Error SyntaxError: Unexpected token, expected '('. */
+/* @@? 21:1 Error SyntaxError: Unexpected token 'end of stream'. */
+/* @@? 21:1 Error SyntaxError: Unexpected token, expected ')'. */
