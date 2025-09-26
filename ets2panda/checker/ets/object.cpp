@@ -2035,7 +2035,7 @@ bool IsExpressionInClassProperty(ir::Expression const *expr)
 
 }  // namespace
 
-ETSObjectType *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *classType, std::string_view msg)
+Type *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *classType, std::string_view msg)
 {
     if ((Context().Status() & CheckerStatus::IGNORE_VISIBILITY) != 0U) {
         return classType;
@@ -2045,7 +2045,7 @@ ETSObjectType *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjec
         !node->Parent()->HasAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST)) {
         if (Context().ContainingSignature() == nullptr) {
             LogError(diagnostic::CTOR_CLASS_NOT_FIRST, {msg}, node->Start());
-            return classType;
+            return GlobalTypeError();
         }
 
         auto *sig = Context().ContainingSignature();
@@ -2053,12 +2053,12 @@ ETSObjectType *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjec
 
         if (!sig->HasSignatureFlag(SignatureFlags::CONSTRUCT)) {
             LogError(diagnostic::CTOR_CLASS_NOT_FIRST, {msg}, node->Start());
-            return classType;
+            return GlobalTypeError();
         }
 
         if (sig->Function()->Body()->AsBlockStatement()->Statements().front() != node->Parent()->Parent()) {
             LogError(diagnostic::CTOR_CLASS_NOT_FIRST, {msg}, node->Start());
-            return classType;
+            return GlobalTypeError();
         }
     }
 
@@ -2071,7 +2071,7 @@ ETSObjectType *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjec
         }
 
         LogError(diagnostic::CTOR_REF_IN_STATIC_CTX, {msg}, node->Start());
-        return classType;
+        return GlobalTypeError();
     }
 
     if (node->IsThisExpression() && IsExpressionInClassProperty(node)) {
@@ -2087,7 +2087,7 @@ ETSObjectType *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjec
         }
 
         LogError(diagnostic::CTOR_REF_INVALID_CTX_GLOBAL, {msg}, node->Start());
-        return GlobalBuiltinErrorType();
+        return GlobalTypeError();
     }
 
     return classType;

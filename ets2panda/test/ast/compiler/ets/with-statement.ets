@@ -22,7 +22,6 @@ function main(): void {
   }
 }
 
-/* @@@ label1 Error Syntax error ESY116901: 'with' statement is not supported, please use fully qualified names! */
-/* @@@ label1 Error Semantic error ESE0124: Expected 3 arguments, got 1. */
-/* @@@ label1 Error Semantic error ESE0127: No matching call signature for with(Math) */
-/* @@@ label2 Error Semantic error ESE132307: Class 'Math' cannot be used as object */
+/* @@? 19:18 Error Syntax error ESY116901: 'with' statement is not supported, please use fully qualified names! */
+/* @@? 19:18 Error Semantic error ESE0127: No matching call signature for with(Math) */
+/* @@? 19:38 Error Semantic error ESE132307: Class 'Math' cannot be used as object */

@@ -78,6 +78,7 @@ static void TryHandleExtensionAccessor(checker::ETSChecker *checker, ir::MemberE
             auto *copyedRight = rightExpr->Clone(checker->ProgramAllocator(), nullptr);
             copyedRight->AsMemberExpression()->SetTsType(tsType);
             copyedRight->AsMemberExpression()->SetExtensionAccessorType(eAccType);
+            copyedRight->AsMemberExpression()->Object()->SetTsType(rightExpr->AsMemberExpression()->Object()->TsType());
             rightExpr = checker->CreateExtensionAccessorCall(
                 checker, copyedRight->AsMemberExpression(),
                 ArenaVector<ir::Expression *>(checker->ProgramAllocator()->Adapter()));

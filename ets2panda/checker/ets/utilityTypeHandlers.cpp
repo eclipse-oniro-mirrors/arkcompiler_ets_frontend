@@ -483,7 +483,17 @@ ir::ClassProperty *ETSChecker::CreateNullishProperty(ir::ClassProperty *const pr
     prop->SetValue(nullptr);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *const propClone = prop->Clone(ProgramAllocator(), newClassDefinition)->AsClassProperty();
-    propClone->CleanCheckInformation();
+
+    std::function<void(ir::AstNode *)> cleanNode = [&](ir::AstNode *node) {
+        if (node->IsOpaqueTypeNode()) {
+            return;
+        }
+        if (node->IsTyped() && !(node->IsExpression() && node->AsExpression()->IsTypeNode())) {
+            node->AsTyped()->SetTsType(nullptr);
+        }
+        node->Iterate([&](auto *childNode) { cleanNode(childNode); });
+    };
+    cleanNode(propClone);
 
     // Revert original property value
     prop->SetValue(propSavedValue);
@@ -1360,8 +1370,8 @@ void ETSChecker::ValidateObjectLiteralForRequiredType(const ETSObjectType *const
 
             auto fieldname = method->AsMethodDefinition()->Key()->AsIdentifier()->Name();
             if (!initObjExprContainsField(fieldname)) {
-                PossiblyLogError(initObjExpr, diagnostic::REQUIRED_PROP_MISSING_INIT, {fieldname, requiredType->Name()},
-                                 initObjExpr->Start());
+                LogError(diagnostic::REQUIRED_PROP_MISSING_INIT, {fieldname, requiredType->Name()},
+                         initObjExpr->Start());
             }
         }
 
@@ -1370,8 +1380,7 @@ void ETSChecker::ValidateObjectLiteralForRequiredType(const ETSObjectType *const
 
     for (const auto &[propName, _] : requiredType->InstanceFields()) {
         if (!initObjExprContainsField(propName)) {
-            PossiblyLogError(initObjExpr, diagnostic::REQUIRED_PROP_MISSING_INIT, {propName, requiredType->Name()},
-                             initObjExpr->Start());
+            LogError(diagnostic::REQUIRED_PROP_MISSING_INIT, {propName, requiredType->Name()}, initObjExpr->Start());
         }
     }
 }

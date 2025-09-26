@@ -162,7 +162,12 @@ ast/compiler/ets/import_tests/export_multi_error.ets
 ast/parser/ts/test_decorator5.ts
 ast/parser/ts/InvalidStatements.ts
 
-ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.ets
+ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.eets
 
 #29727
 ast/compiler/ets/first_match/override.ets
+
+#31069
+ast/parser/ets/overload_function_match_neg.ets
+ast/compiler/type_error_test.ets
+ast/parser/ets/super_field.ets

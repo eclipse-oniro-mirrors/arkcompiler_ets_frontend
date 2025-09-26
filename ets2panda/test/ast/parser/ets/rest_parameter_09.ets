@@ -22,6 +22,4 @@ class C {
 
 /* @@ label */(new C()).foo()
 
-
-/* @@@ label Error Semantic error ESE0124: Expected 2 arguments, got 0. */
-/* @@@ label Error Semantic error ESE0128: No matching call signature */
+/* @@? 23:15 Error Semantic error ESE0127: No matching call signature for foo() */

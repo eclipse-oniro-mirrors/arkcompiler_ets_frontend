@@ -182,10 +182,6 @@ public:
     void LogError(const diagnostic::DiagnosticKind &diagnostic, const util::DiagnosticMessageParams &diagnosticParams,
                   const lexer::SourcePosition &pos);
     void LogError(const diagnostic::DiagnosticKind &diagnostic, const lexer::SourcePosition &pos);
-    void PossiblyLogError(const ir::AstNode *expr, const diagnostic::DiagnosticKind &diagnostic,
-                          const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos);
-    void PossiblyLogError(const ir::AstNode *expr, const diagnostic::DiagnosticKind &diagnostic,
-                          const lexer::SourcePosition &pos);
     void LogTypeError(std::string_view message, const lexer::SourcePosition &pos);
     void LogTypeError(const util::DiagnosticMessageParams &list, const lexer::SourcePosition &pos);
     void LogDiagnostic(const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &list,
@@ -485,6 +481,42 @@ public:
 
 private:
     Type *type_ {};
+};
+
+class SignatureMatchContext {
+public:
+    explicit SignatureMatchContext(Checker *checker, util::DiagnosticType diagnosticKind, bool isLogError = true)
+        : diagnosticEngine_(checker->DiagnosticEngine()),
+          diagnosticCheckpoint_(),
+          diagnosticKind_(diagnosticKind),
+          isLogError_(isLogError)
+    {
+        diagnosticCheckpoint_ = diagnosticEngine_.Save();
+    }
+
+    bool ValidSignatureMatchStatus()
+    {
+        std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint = diagnosticEngine_.Save();
+        return diagnosticCheckpoint_[diagnosticKind_] == diagnosticCheckpoint[diagnosticKind_];
+    }
+
+    ~SignatureMatchContext()
+    {
+        if (isLogError_) {
+            return;
+        }
+
+        diagnosticEngine_.Rollback(diagnosticCheckpoint_);
+    }
+
+    NO_COPY_SEMANTIC(SignatureMatchContext);
+    NO_MOVE_SEMANTIC(SignatureMatchContext);
+
+private:
+    util::DiagnosticEngine &diagnosticEngine_;
+    std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint_;
+    util::DiagnosticType diagnosticKind_;
+    bool isLogError_;
 };
 
 class SignatureCollectContext {

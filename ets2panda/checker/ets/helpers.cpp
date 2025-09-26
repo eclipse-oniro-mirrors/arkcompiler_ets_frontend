@@ -198,7 +198,7 @@ varbinder::Variable *ETSChecker::ExtraCheckForResolvedError(ir::Identifier *cons
         }
     }
     NotResolvedError(ident, class_var, class_type);
-    return class_var;
+    return nullptr;
 }
 
 bool ETSChecker::SaveCapturedVariableInLocalClass(varbinder::Variable *const var, ir::Identifier *ident)
@@ -1059,7 +1059,7 @@ checker::Type *ETSChecker::CheckVariableDeclaration(ir::Identifier *ident, ir::T
             AssignmentContext(Relation(), init, initType, annotationType, init->Start(),
                               {{diagnostic::INVALID_ASSIGNMNENT, {initType, annotationType}}});
             if (!Relation()->IsTrue()) {
-                return annotationType;
+                return GlobalTypeError();
             }
         }
 
@@ -1132,9 +1132,9 @@ Signature *ETSChecker::FindRelativeExtensionGetter(ir::MemberExpression *const e
 
     ArenaVector<ir::Expression *> arguments(ProgramAllocator()->Adapter());
     arguments.insert(arguments.begin(), expr->Object());
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    Signature *signature = ValidateSignatures(funcType->GetExtensionAccessorSigs(), nullptr, arguments, expr->Start(),
-                                              "call", TypeRelationFlag::NO_THROW);
+    Signature *signature =
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        MatchOrderSignatures(funcType->GetExtensionAccessorSigs(), arguments, expr, TypeRelationFlag::NO_THROW);
     if (signature != nullptr) {
         InsertExtensionGetterToMap(funcType->Name(), expr->ObjType(), signature);
     }
@@ -1156,17 +1156,18 @@ Signature *ETSChecker::FindRelativeExtensionSetter(ir::MemberExpression *expr, E
     arguments.insert(arguments.begin(), expr->Object());
     if (expr->Parent()->IsAssignmentExpression()) {
         arguments.emplace_back(expr->Parent()->AsAssignmentExpression()->Right());
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        signature = ValidateSignatures(funcType->GetExtensionAccessorSigs(), nullptr, arguments, expr->Start(), "call",
-                                       TypeRelationFlag::NO_THROW);
+        signature =
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            MatchOrderSignatures(funcType->GetExtensionAccessorSigs(), arguments, expr, TypeRelationFlag::NO_THROW);
     } else {
         // When handle ++a.m, a.m++, is mean to check whether a.m(xx, 1) existed.
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         Type *getterReturnType = ResolveGetter(this, expr, funcType);
         expr->SetTsType(getterReturnType);
         arguments.emplace_back(expr);
-        signature = ValidateSignatures(funcType->GetExtensionAccessorSigs(), nullptr, arguments, expr->Start(), "call",
-                                       TypeRelationFlag::NO_THROW);
+        signature =
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            MatchOrderSignatures(funcType->GetExtensionAccessorSigs(), arguments, expr, TypeRelationFlag::NO_THROW);
     }
 
     if (signature == nullptr) {
@@ -1204,7 +1205,7 @@ checker::Type *ETSChecker::GetExtensionAccessorReturnType(ir::MemberExpression *
             arguments.emplace_back(expr->Parent()->AsAssignmentExpression()->Right());
             signature =
                 // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-                ValidateSignatures(candidateSig, nullptr, arguments, expr->Start(), "call", TypeRelationFlag::NO_THROW);
+                MatchOrderSignatures(candidateSig, arguments, expr, TypeRelationFlag::NO_THROW);
         }
 
         if (signature == nullptr) {

@@ -20,5 +20,5 @@ function main(){
     /* @@ label */foo<D>()
 }
 
-/* @@@ label Error Semantic error ESE0228: Type argument 'D' should be a subtype of 'A<D>' constraint */
-/* @@@ label Error Semantic error ESE0128: No matching call signature */
+/* @@? 20:19 Error Semantic error ESE0228: Type argument 'D' should be a subtype of 'A<D>' constraint */
+/* @@? 20:19 Error Semantic error ESE0127: No matching call signature for foo() */

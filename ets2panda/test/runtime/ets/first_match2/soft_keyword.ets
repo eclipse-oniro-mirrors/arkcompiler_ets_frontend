@@ -13,18 +13,25 @@
  * limitations under the License.
  */
 
-function main() : void
-{
-    arktest.assertEQ(foo(5), 5);
+
+function type(a: number) { return "invoke1" }
+function type(a: string) { return "invoke2" }
+
+class A {
+    type(a: number) { return "invoke1" }
+    type(a: string) { return "invoke2" }
 }
 
-function foo(a : int, b : int = 10) : int
-{
-    return a + b;
+interface I {
+    type(a: number): string
+    type(a: string): string
 }
 
-function foo(a : int) : int
-{
-    return a;
-}
+function main(): void {
+    arktest.assertEQ(type(123), "invoke1")
+    arktest.assertEQ(type("abc"), "invoke2")
 
+    let a = new A();
+    arktest.assertEQ(a.type(123), "invoke1")
+    arktest.assertEQ(a.type("abc"), "invoke2")
+}

@@ -34,8 +34,3 @@ function main(): int {
     let c : string = foo(new C());
     return 0;
 }
-
-
-
-/* @@? 34:22 Error Semantic error ESE0142: Call to `foo` is ambiguous as `2` versions of `foo` are available: `foo(x: A): String` and `foo(x: I): String` */
-/* @@? 34:22 Error Semantic error ESE0142: Call to `foo` is ambiguous as `2` versions of `foo` are available: `foo(x: A): String` and `foo(x: J): String` */

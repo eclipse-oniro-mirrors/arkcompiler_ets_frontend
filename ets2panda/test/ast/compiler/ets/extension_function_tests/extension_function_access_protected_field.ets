@@ -28,6 +28,5 @@ function main() {
     console.println(banana.name());
 }
 
-
-/* @@@ label Error Semantic error ESE0139: Signature price(): Int is not visible here. */
-/* @@@ label Error Semantic error ESE0128: No matching call signature */
+/* @@? 23:30 Error Semantic error ESE0139: Signature price(): Int is not visible here. */
+/* @@? 23:30 Error Semantic error ESE0127: No matching call signature for price() */

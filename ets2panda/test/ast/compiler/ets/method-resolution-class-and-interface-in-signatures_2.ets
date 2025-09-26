@@ -37,7 +37,3 @@ function main(): int {
     let d : string = /* @@ label */foo(new D());
     return 0;
 }
-
-
-
-/* @@@ label Error Semantic error ESE0142: Call to `foo` is ambiguous as `2` versions of `foo` are available: `foo(x: B): String` and `foo(x: I): String` */

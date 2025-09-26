@@ -29,7 +29,6 @@ class A {
     }
 }
 
-
 /* @@? 23:23 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 24:9 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 24:9 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
@@ -43,12 +42,10 @@ class A {
 /* @@? 24:34 Error Syntax error ESY0227: Unexpected token '='. */
 /* @@? 24:36 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 24:38 Error Semantic error ESE0143: Unresolved reference caches */
-/* @@? 25:21 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
 /* @@? 25:21 Error Semantic error ESE0127: No matching construct signature for class_cyclic_constructor.A(...tuple) */
 /* @@? 25:30 Error Semantic error ESE0143: Unresolved reference tuple */
 /* @@? 26:31 Error Semantic error ESE0087: Property 'bar' does not exist on type 'A' */
 /* @@? 27:5 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 27:7 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 28:9 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
-/* @@? 28:14 Error Semantic error ESE0087: Property 'x' does not exist on type 'ETSGLOBAL' */
 /* @@? 30:1 Error Syntax error ESY0227: Unexpected token '}'. */

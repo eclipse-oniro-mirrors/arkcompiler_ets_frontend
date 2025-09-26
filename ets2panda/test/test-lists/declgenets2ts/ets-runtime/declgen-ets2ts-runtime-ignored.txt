@@ -67,3 +67,10 @@ ns_getter_setter_outside.ets
 ns_getter_setter_outside1.ets
 primitive_accessor.ets
 top_level_getter_setter.ets
+
+#31069
+first_match2/same_name.ets
+first_match2/same_name3.ets
+first_match2/same_name4.ets
+first_match2/static_same_name.ets
+first_match2/static_same_name3.ets

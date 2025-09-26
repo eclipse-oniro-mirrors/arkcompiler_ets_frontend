@@ -751,7 +751,7 @@ static void HandleForOfStatement(UnboxContext *uctx, ir::ForOfStatement *forOf)
         elemTp = uctx->checker->GlobalCharType();
     } else {
         ES2PANDA_ASSERT(tp->IsETSUnionType());
-        ES2PANDA_ASSERT(id->Variable()->TsType()->IsETSUnionType());
+        ES2PANDA_ASSERT(id->Variable()->TsType()->IsETSUnionType() || id->Variable()->TsType()->IsETSAnyType());
         // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
         elemTp = id->Variable()->TsType();  // always a union type, no need to change
     }

@@ -27,11 +27,8 @@ arr[0 && ""]
 arr[0 && 0.0]
 
 /* @@? 20:1 Error Semantic error ESE0127: No matching indexing signature for $_get("") */
-/* @@? 20:5 Error Semantic error ESE0046: Type '""' is not compatible with type 'Int' at index 1 */
 /* @@? 20:5 Error Semantic error ESE0251: Cannot find index access method with the required signature. */
 /* @@? 21:1 Error Semantic error ESE0127: No matching indexing signature for $_get(Boolean) */
-/* @@? 21:5 Error Semantic error ESE0046: Type 'Boolean' is not compatible with type 'Int' at index 1 */
 /* @@? 21:5 Error Semantic error ESE0251: Cannot find index access method with the required signature. */
 /* @@? 22:1 Error Semantic error ESE0127: No matching indexing signature for $_get(Double) */
-/* @@? 22:5 Error Semantic error ESE0046: Type 'Double' is not compatible with type 'Int' at index 1 */
 /* @@? 22:5 Error Semantic error ESE0251: Cannot find index access method with the required signature. */

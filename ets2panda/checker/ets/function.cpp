@@ -15,6 +15,9 @@
 
 #include <cstddef>
 
+#include "checker/types/typeRelation.h"
+#include "lexer/token/sourceLocation.h"
+#include "util/ustring.h"
 #include "checker/ETSAnalyzerHelpers.h"
 #include "checker/ETSchecker.h"
 #include "checker/ets/typeRelationContext.h"
@@ -62,6 +65,18 @@
 #include "varbinder/ETSBinder.h"
 
 namespace ark::es2panda::checker {
+
+bool ETSChecker::IsOverloadDeclaration(ir::Expression *expr)
+{
+    while (expr->IsMemberExpression()) {
+        expr = expr->AsMemberExpression()->Property();
+    }
+
+    if (expr->IsIdentifier() && expr->AsIdentifier()->Variable() != nullptr) {
+        return expr->AsIdentifier()->Variable()->HasFlag(varbinder::VariableFlags::OVERLOAD);
+    }
+    return false;
+}
 
 static Type *MaybeBoxedType(ETSChecker *checker, Type *type, ir::Expression *expr)
 {
@@ -773,12 +788,12 @@ static bool CheckLambdaAssignable(ETSChecker *checker, ir::Expression *param, ir
 static bool CheckOptionalLambdaFunction(ETSChecker *checker, ir::Expression *argument, Signature *substitutedSig,
                                         size_t index)
 {
+    auto param = substitutedSig->Params()[index]->Declaration()->Node()->AsETSParameterExpression();
     if (argument->IsArrowFunctionExpression()) {
         auto *const arrowFuncExpr = argument->AsArrowFunctionExpression();
 
-        if (ir::ScriptFunction *const lambda = arrowFuncExpr->Function(); CheckLambdaAssignable(
-                // CC-OFFNXT(G.FMT.06-CPP) project code style
-                checker, substitutedSig->Params()[index]->Declaration()->Node()->AsExpression(), lambda)) {
+        if (ir::ScriptFunction *const lambda = arrowFuncExpr->Function();
+            CheckLambdaAssignable(checker, param, lambda)) {
             return true;
         }
     }
@@ -799,13 +814,13 @@ static void ClearPreferredTypeForArray(checker::ETSChecker *checker, ir::Express
 {
     if (argument->IsArrayExpression()) {
         // fixed array and resizeable array will cause problem here, so clear it.
-        argument->CleanCheckInformation();
+        argument->AsArrayExpression()->CleanCheckInformation();
         argument->AsArrayExpression()->SetPreferredTypeBasedOnFuncParam(checker, paramType, flags);
     } else if (argument->IsETSNewArrayInstanceExpression()) {
-        argument->CleanCheckInformation();
+        argument->AsETSNewArrayInstanceExpression()->CleanCheckInformation();
         argument->AsETSNewArrayInstanceExpression()->SetPreferredTypeBasedOnFuncParam(checker, paramType, flags);
     } else if (argument->IsETSNewMultiDimArrayInstanceExpression()) {
-        argument->CleanCheckInformation();
+        argument->AsETSNewMultiDimArrayInstanceExpression()->CleanCheckInformation();
         argument->AsETSNewMultiDimArrayInstanceExpression()->SetPreferredTypeBasedOnFuncParam(checker, paramType,
                                                                                               flags);
     } else {
@@ -968,14 +983,7 @@ static bool ValidateSignatureInvocationContext(ETSChecker *checker, Signature *s
 {
     Type *targetType = substitutedSig->Params()[index]->TsType();
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    // NOTE (smartin): remove these flag hacks after the overload resolution is completely reworked
-    if ((flags & TypeRelationFlag::NO_THROW) != 0) {
-        argument->IterateRecursively([](ir::AstNode *node) { node->AddAstNodeFlags(ir::AstNodeFlags::NO_THROW); });
-    }
     Type *argumentType = argument->Check(checker);
-    if ((flags & TypeRelationFlag::NO_THROW) != 0) {
-        argument->IterateRecursively([](ir::AstNode *node) { node->RemoveAstNodeFlags(ir::AstNodeFlags::NO_THROW); });
-    }
 
     flags |= (TypeRelationFlag::ONLY_CHECK_WIDENING);
 
@@ -1934,10 +1942,10 @@ static Signature *ResolvePotentialTrailingLambdaWithReceiver(ETSChecker *checker
         auto *currentReceiver = candidateFunctionType->Params()[0];
         trailingLambda->Function()->EmplaceParams(currentReceiver);
         sigContainLambdaWithReceiverAsParam.emplace_back(sig);
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        signature = checker->ValidateSignatures(
-            sigContainLambdaWithReceiverAsParam, callExpr->TypeParams(), arguments, callExpr->Start(), "call",
-            TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
+        signature =
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            checker->MatchOrderSignatures(sigContainLambdaWithReceiverAsParam, arguments, callExpr,
+                                          TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
         if (signature != nullptr) {
             return signature;
         }
@@ -1945,8 +1953,8 @@ static Signature *ResolvePotentialTrailingLambdaWithReceiver(ETSChecker *checker
         trailingLambda->Function()->ClearParams();
     }
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return checker->ValidateSignatures(normalSig, callExpr->TypeParams(), arguments, callExpr->Start(), "call",
-                                       TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
+    return checker->MatchOrderSignatures(normalSig, arguments, callExpr,
+                                         TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
 }
 
 static Signature *MakeSignatureInvocable(ETSChecker *checker, Signature *sig, ir::CallExpression *callExpr)
@@ -2031,30 +2039,20 @@ Signature *ETSChecker::ResolveCallExpressionAndTrailingLambda(ArenaVector<Signat
     return sig;
 }
 
-static Signature *MatchOrderSignatures(
-    ETSChecker *checker,
-    std::tuple<ArenaVector<Signature *> &, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
-    const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos);
-
-static void ThrowOverloadMismatch(ETSChecker *checker, util::StringView callName,
-                                  const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-                                  std::string_view signatureKind);
-
-Signature *ETSChecker::ResolveConstructExpression(ETSObjectType *type, const ArenaVector<ir::Expression *> &arguments,
-                                                  const lexer::SourcePosition &pos)
+Signature *ETSChecker::ResolveConstructExpression(ETSObjectType *type, ir::ETSNewClassInstanceExpression *expr)
 {
+    const ArenaVector<ir::Expression *> &arguments = expr->GetArguments();
     auto *var = type->GetProperty(compiler::Signatures::CONSTRUCTOR_NAME, PropertySearchFlags::SEARCH_STATIC_METHOD);
+    Signature *sig = nullptr;
     if (var != nullptr && var->TsType()->IsETSFunctionType()) {
-        auto sig = MatchOrderSignatures(
-            this, {var->TsType()->AsETSFunctionType()->CallSignatures(), nullptr, TypeRelationFlag::NONE}, arguments,
-            pos);
-        if (sig == nullptr) {
-            ThrowOverloadMismatch(this, type->Name(), arguments, pos, "construct");
-        }
-        return sig;
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        sig = MatchOrderSignatures(var->TsType()->AsETSFunctionType()->CallSignatures(), arguments, expr,
+                                   TypeRelationFlag::NONE, "construct");
+    } else {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        sig = MatchOrderSignatures(type->ConstructSignatures(), arguments, expr, TypeRelationFlag::NONE, "construct");
     }
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return ValidateSignatures(type->ConstructSignatures(), nullptr, arguments, pos, "construct");
+    return sig;
 }
 
 // Note: this function is extracted to reduce the size of `BuildMethodSignature`
@@ -3136,35 +3134,26 @@ bool ETSChecker::HasSameAssemblySignatures(ETSFunctionType const *const func1,
 }
 
 static Signature *ResolveTrailingLambda(ETSChecker *checker, ArenaVector<Signature *> &signatures,
-                                        ir::CallExpression *callExpr, const lexer::SourcePosition &pos,
-                                        const TypeRelationFlag reportFlag = TypeRelationFlag::NONE);
+                                        ir::CallExpression *callExpr);
 
-Signature *ETSChecker::FirstMatchSignatures(ir::CallExpression *expr, checker::Type *calleeType)
+Signature *ETSChecker::FirstMatchSignatures(ArenaVector<Signature *> &signatures, ir::CallExpression *expr)
 {
+    auto typeRelationFlag =
+        IsOverloadDeclaration(expr->Callee()) ? TypeRelationFlag::OVERLOADING_CONTEXT : TypeRelationFlag::NONE;
+
     if (expr->TrailingBlock() == nullptr) {
-        auto *signature = MatchOrderSignatures(this,
-                                               {calleeType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow(),
-                                                expr->TypeParams(), TypeRelationFlag::NONE},
-                                               expr->Arguments(), expr->Start());
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        auto *signature = MatchOrderSignatures(signatures, expr->Arguments(), expr, typeRelationFlag);
         if (signature == nullptr) {
-            ThrowOverloadMismatch(this, calleeType->AsETSFunctionType()->Name(), expr->Arguments(), expr->Start(),
-                                  "call");
             return nullptr;
         }
         UpdateDeclarationFromSignature(this, expr, signature);
         return signature;
     }
 
-    auto &signatures = expr->IsETSConstructorCall() ? calleeType->AsETSObjectType()->ConstructSignatures()
-                                                    : calleeType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return ResolveTrailingLambda(this, signatures, expr, expr->Start());
+    return ResolveTrailingLambda(this, signatures, expr);
 }
-
-static Signature *ValidateOrderSignature(
-    ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
-    const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-    const std::vector<bool> &argTypeInferenceRequired);
 
 static void CleanArgumentsInformation(const ArenaVector<ir::Expression *> &arguments)
 {
@@ -3176,12 +3165,32 @@ static void CleanArgumentsInformation(const ArenaVector<ir::Expression *> &argum
     }
 }
 
-static Signature *MatchOrderSignatures(
-    ETSChecker *checker,
-    std::tuple<ArenaVector<Signature *> &, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
-    const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos)
+static void ThrowOverloadMismatch(ETSChecker *checker, util::StringView callName,
+                                  const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
+                                  std::string_view signatureKind);
+
+static Signature *ValidateOrderSignature(
+    ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
+    const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
+    const std::vector<bool> &argTypeInferenceRequired);
+
+static util::StringView GetInvocationTargetName(const ir::Expression *expr)
 {
-    auto [signatures, typeArguments, resolveFlags] = info;
+    if (expr->IsCallExpression() && expr->AsCallExpression()->Callee()->TsType()->IsETSFunctionType() &&
+        !expr->AsCallExpression()->Callee()->TsType()->IsETSArrowType()) {
+        return expr->AsCallExpression()->Callee()->TsType()->AsETSFunctionType()->Name();
+    }
+    if (expr->IsETSNewClassInstanceExpression() &&
+        expr->AsETSNewClassInstanceExpression()->TsType()->IsETSObjectType()) {
+        return expr->AsETSNewClassInstanceExpression()->TsType()->AsETSObjectType()->AssemblerName();
+    }
+    return util::StringView("");
+}
+
+Signature *ETSChecker::MatchOrderSignatures(ArenaVector<Signature *> &signatures,
+                                            const ArenaVector<ir::Expression *> &arguments, const ir::Expression *expr,
+                                            TypeRelationFlag resolveFlags, std::string_view signatureKind)
+{
     Signature *notVisibleSignature = nullptr;
     std::vector<bool> argTypeInferenceRequired = FindTypeInferenceArguments(arguments);
 
@@ -3189,30 +3198,41 @@ static Signature *MatchOrderSignatures(
                                    ? TypeRelationFlag::WIDENING | resolveFlags
                                    : TypeRelationFlag::WIDENING | TypeRelationFlag::NO_THROW | resolveFlags;
 
+    const ir::TSTypeParameterInstantiation *typeArguments =
+        expr->IsCallExpression() ? expr->AsCallExpression()->TypeParams() : nullptr;
+
+    const lexer::SourcePosition &pos = expr->Start();
+
     for (auto *sig : signatures) {
-        if (notVisibleSignature != nullptr &&
-            !IsSignatureAccessible(sig, checker->Context().ContainingClass(), checker->Relation())) {
+        if (notVisibleSignature != nullptr && !IsSignatureAccessible(sig, Context().ContainingClass(), Relation())) {
             continue;
         }
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        auto *concreteSig = ValidateOrderSignature(checker, std::make_tuple(sig, typeArguments, validateFlags),
-                                                   arguments, pos, argTypeInferenceRequired);
+        auto *concreteSig = ValidateOrderSignature(this, std::make_tuple(sig, typeArguments, validateFlags), arguments,
+                                                   pos, argTypeInferenceRequired);
         if (concreteSig == nullptr) {
             CleanArgumentsInformation(arguments);
             continue;
         }
-        if (notVisibleSignature == nullptr &&
-            !IsSignatureAccessible(sig, checker->Context().ContainingClass(), checker->Relation())) {
+        if (notVisibleSignature == nullptr && !IsSignatureAccessible(sig, Context().ContainingClass(), Relation())) {
             CleanArgumentsInformation(arguments);
             notVisibleSignature = concreteSig;
         } else {
             return concreteSig;
         }
-    }
+    };
 
     if (notVisibleSignature != nullptr && ((resolveFlags & TypeRelationFlag::NO_THROW) == 0)) {
-        checker->LogError(diagnostic::SIG_INVISIBLE,
-                          {notVisibleSignature->Function()->Id()->Name(), notVisibleSignature}, pos);
+        LogError(diagnostic::SIG_INVISIBLE, {notVisibleSignature->Function()->Id()->Name(), notVisibleSignature}, pos);
+    }
+
+    if ((resolveFlags & TypeRelationFlag::NO_THROW) == 0 && !signatureKind.empty()) {
+        util::StringView name = GetInvocationTargetName(expr);
+        if (!name.Empty()) {
+            ThrowOverloadMismatch(this, name, arguments, pos, signatureKind);
+        } else {
+            ThrowSignatureMismatch(signatures, arguments, pos, signatureKind);
+        }
     }
 
     return nullptr;
@@ -3236,30 +3256,22 @@ static Signature *ValidateOrderSignature(
         return nullptr;
     }
 
+    // When process first match, if current signature is not matched, do not log TypeError
+    SignatureMatchContext signatureMatchContext(checker, util::DiagnosticType::SEMANTIC,
+                                                (flags & TypeRelationFlag::NO_THROW) == 0);
+
     size_t const argCount = arguments.size();
     auto const hasRestParameter = signature->RestVar() != nullptr;
-    size_t compareCount = argCount;
-    if ((flags & TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA) != 0 && !signature->Params().empty() &&
-        signature->Params().back()->Declaration()->Node()->AsETSParameterExpression()->IsOptional()) {
-        compareCount = compareCount - 1;
-    }
 
-    const bool throwError = (flags & TypeRelationFlag::NO_THROW) == 0;
-    if (compareCount < signature->MinArgCount() || (argCount > signature->ArgCount() && !hasRestParameter)) {
-        if (throwError) {
-            checker->LogError(diagnostic::PARAM_COUNT_MISMATCH, {signature->MinArgCount(), argCount}, pos);
-        }
-        return nullptr;
-    }
-
-    if (argCount > signature->ArgCount() && hasRestParameter && (flags & TypeRelationFlag::IGNORE_REST_PARAM) != 0) {
+    if (!ValidateRestParameter(checker, signature, arguments, pos, flags)) {
         return nullptr;
     }
 
     auto count = std::min(signature->ArgCount(), argCount);
     // Check all required formal parameter(s) first
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    if (!ValidateOrderSignatureRequiredParams(checker, signature, arguments, flags, argTypeInferenceRequired)) {
+    if (!ValidateOrderSignatureRequiredParams(checker, signature, arguments, flags, argTypeInferenceRequired) ||
+        !signatureMatchContext.ValidSignatureMatchStatus()) {
         return nullptr;
     }
 
@@ -3267,8 +3279,8 @@ static Signature *ValidateOrderSignature(
     if (!hasRestParameter || (count >= argCount && !signature->RestVar()->TsType()->IsETSTupleType())) {
         return signature;
     }
-
-    if (!ValidateSignatureRestParams(checker, signature, arguments, flags, true)) {
+    if (!ValidateSignatureRestParams(checker, signature, arguments, flags, true) ||
+        !signatureMatchContext.ValidSignatureMatchStatus()) {
         return nullptr;
     }
 
@@ -3276,35 +3288,33 @@ static Signature *ValidateOrderSignature(
 }
 
 static bool SetPreferredTypeBeforeValidate(ETSChecker *checker, Signature *substitutedSig, ir::Expression *argument,
-                                           size_t index, const std::vector<bool> &argTypeInferenceRequired)
+                                           size_t index, TypeRelationFlag flags)
 {
     auto const paramType = checker->GetNonNullishType(substitutedSig->Params()[index]->TsType());
     if (argument->IsObjectExpression()) {
-        if (!paramType->IsETSObjectType()) {
-            return false;
-        }
-        if (paramType->AsETSObjectType()->IsBoxedPrimitive()) {
-            return false;
-        }
-        argument->SetPreferredType(paramType);
+        argument->AsObjectExpression()->SetPreferredType(paramType);
     }
 
     if (argument->IsMemberExpression()) {
         checker->SetArrayPreferredTypeForNestedMemberExpressions(argument->AsMemberExpression(), paramType);
+    } else if (argument->IsSpreadElement()) {
+        checker->LogError(diagnostic::SPREAD_ONTO_SINGLE_PARAM, {}, argument->Start());
+        return false;
+    } else if (argument->IsNumberLiteral()) {
+        InferTypeForNumberLiteral(checker, argument->AsNumberLiteral(), paramType);
     }
 
-    if (argTypeInferenceRequired[index]) {
-        if (!paramType->IsETSFunctionType()) {
-            return false;
-        }
-        ES2PANDA_ASSERT(argument->IsArrowFunctionExpression());
-        auto *param = substitutedSig->Params()[index]->Declaration()->Node()->AsETSParameterExpression();
-        auto *lambda = argument->AsArrowFunctionExpression();
-        if (lambda->Function()->Params().size() >
-            paramType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow().front()->Params().size()) {
-            return false;
-        }
-        return CheckLambdaInfer(checker, param->TypeAnnotation(), argument->AsArrowFunctionExpression(), paramType);
+    if (argument->IsArrayExpression()) {
+        argument->AsArrayExpression()->SetPreferredTypeBasedOnFuncParam(checker, paramType, flags);
+    }
+
+    if (argument->IsETSNewArrayInstanceExpression()) {
+        argument->AsETSNewArrayInstanceExpression()->SetPreferredTypeBasedOnFuncParam(checker, paramType, flags);
+    }
+
+    if (argument->IsETSNewMultiDimArrayInstanceExpression()) {
+        argument->AsETSNewMultiDimArrayInstanceExpression()->SetPreferredTypeBasedOnFuncParam(checker, paramType,
+                                                                                              flags);
     }
 
     return true;
@@ -3326,27 +3336,27 @@ static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature 
         }
         commonArity = commonArity - 1;
     }
-    bool throwError = (flags & TypeRelationFlag::NO_THROW) == 0;
     for (size_t index = 0; index < commonArity; ++index) {
-        const auto &argument = arguments[index];
-        auto *const paramType = checker->GetNonNullishType(substitutedSig->Params()[index]->TsType());
-        if (!SetPreferredTypeBeforeValidate(checker, substitutedSig, argument, index, argTypeInferenceRequired)) {
+        auto &argument = arguments[index];
+        if (!SetPreferredTypeBeforeValidate(checker, substitutedSig, argument, index, flags)) {
             return false;
         }
 
-        if (argument->IsSpreadElement()) {
-            if (throwError) {
-                checker->LogError(diagnostic::SPREAD_ONTO_SINGLE_PARAM, {}, argument->Start());
+        if (argTypeInferenceRequired[index]) {
+            ES2PANDA_ASSERT(argument->IsArrowFunctionExpression());
+            // Note: If the signatures are from lambdas, then they have no `Function`.
+            ir::ScriptFunction *const lambda = argument->AsArrowFunctionExpression()->Function();
+            auto targetParm = substitutedSig->GetSignatureInfo()->params[index]->Declaration()->Node();
+            ERROR_SANITY_CHECK(checker, targetParm->IsETSParameterExpression(), return false);
+            if (CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), lambda) &&
+                TypeInference(checker, substitutedSig, arguments, flags)) {
+                continue;
             }
             return false;
         }
-
-        ClearPreferredTypeForArray(checker, argument, paramType, flags, false);
 
         if (argument->IsIdentifier() && IsInvalidArgumentAsIdentifier(checker->Scope(), argument->AsIdentifier())) {
-            if (throwError) {
-                checker->LogError(diagnostic::ARG_IS_CLASS_ID, {}, argument->Start());
-            }
+            checker->LogError(diagnostic::ARG_IS_CLASS_ID, {}, argument->Start());
             return false;
         }
 
@@ -3356,56 +3366,15 @@ static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature 
         }
     }
 
-    if ((flags & TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA) != 0 && arguments.back()->IsArrowFunctionExpression()) {
-        ir::ScriptFunction *const lambda = arguments.back()->AsArrowFunctionExpression()->Function();
-        auto targetParm = substitutedSig->GetSignatureInfo()->params.back()->Declaration()->Node();
-        if (!CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), lambda)) {
-            return false;
-        }
-    }
-    return true;
+    return CheckArrowFunctionParamIfNeeded(checker, substitutedSig, arguments, flags);
 }
 
 static bool ValidateOrderSignatureInvocationContext(ETSChecker *checker, Signature *substitutedSig,
                                                     ir::Expression *argument, std::size_t index, TypeRelationFlag flags)
 {
     Type *targetType = substitutedSig->Params()[index]->TsType();
-    // NOTE (smartin): remove these flag hacks after the overload resolution is completely reworked
-    if ((flags & TypeRelationFlag::NO_THROW) != 0) {
-        argument->AddAstNodeFlags(ir::AstNodeFlags::NO_THROW);
-        argument->IterateRecursively([](ir::AstNode *node) { node->AddAstNodeFlags(ir::AstNodeFlags::NO_THROW); });
-    }
-
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     Type *argumentType = argument->Check(checker);
-
-    if ((flags & TypeRelationFlag::NO_THROW) != 0) {
-        argument->RemoveAstNodeFlags(ir::AstNodeFlags::NO_THROW);
-        argument->IterateRecursively([](ir::AstNode *node) { node->RemoveAstNodeFlags(ir::AstNodeFlags::NO_THROW); });
-    }
-
-    bool isAnyErroneousNodeInArgument = false;
-    argument->IterateRecursively([checker, &isAnyErroneousNodeInArgument](ir::AstNode *node) {
-        if (node->IsExpression() && node->AsExpression()->TsType() == checker->GlobalTypeError()) {
-            isAnyErroneousNodeInArgument = true;
-            return;
-        }
-    });
-    if (isAnyErroneousNodeInArgument || argument->TsType()->IsTypeError()) {
-        // Some checks invalidate the type of argument node (if the type is erroneous), but won't log an error into
-        // diagnostics. This is needed as overload signatures try to match a signature one after another, and a not
-        // matching signature doesn't necessarily indicate wrong code (as an overload later in the overload list may
-        // match with the argument type). This can happen with expressions that needs their type inferred (eg. array
-        // expressions, object literals ...). When we set a 'preferred type' to a non-matching type to the expression
-        // (eg. we set wrong arity tuple), we don't want to throw an error during the check of the expression (as said,
-        // because another overload may set the correct 'preferred type' for it). Type error type is assignable to
-        // anything (so the invocation ctx check on next line will pass), but we don't want to allow a call with
-        // incorrect arguments. In this case a signature with bad parameter type and argument with 'ErrorType' will be
-        // chosen, which may cause errors in later phases (as a phase terminates if an error happened).
-        // This solution is brittle (but better than deleting all diagnostics thrown during argument check), so when
-        // overload resolution will be reworked, it'll need to be deleted.
-        return false;
-    }
 
     flags |= TypeRelationFlag::ONLY_CHECK_WIDENING;
 
@@ -3413,7 +3382,10 @@ static bool ValidateOrderSignatureInvocationContext(ETSChecker *checker, Signatu
         checker::InvocationContext(checker->Relation(), argument, argumentType, targetType, argument->Start(),
                                    {{diagnostic::TYPE_MISMATCH_AT_IDX, {argumentType, targetType, index + 1}}}, flags);
 
-    return invocationCtx.IsInvocable();
+    if ((flags & TypeRelationFlag::OVERLOADING_CONTEXT) != 0) {
+        return invocationCtx.IsInvocable();
+    }
+    return invocationCtx.IsInvocable() || CheckOptionalLambdaFunction(checker, argument, substitutedSig, index);
 }
 
 static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallExpression *callExpr,
@@ -3421,8 +3393,7 @@ static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallEx
                                                  ArenaVector<ir::Expression *> &arguments);
 
 static Signature *ResolveTrailingLambda(ETSChecker *checker, ArenaVector<Signature *> &signatures,
-                                        ir::CallExpression *callExpr, const lexer::SourcePosition &pos,
-                                        const TypeRelationFlag reportFlag)
+                                        ir::CallExpression *callExpr)
 {
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto arguments = ExtendArgumentsWithFakeLamda(checker, callExpr);
@@ -3439,7 +3410,7 @@ static Signature *ResolveTrailingLambda(ETSChecker *checker, ArenaVector<Signatu
     }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    sig = MatchOrderSignatures(checker, {signatures, callExpr->TypeParams(), reportFlag}, callExpr->Arguments(), pos);
+    sig = checker->MatchOrderSignatures(signatures, callExpr->Arguments(), callExpr, TypeRelationFlag::NONE);
     if (sig != nullptr) {
         EnsureValidCurlyBrace(checker, callExpr);
     }
@@ -3456,6 +3427,9 @@ static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallEx
     ArenaVector<Signature *> normalSig(checker->ProgramAllocator()->Adapter());
     ArenaVector<Signature *> sigContainLambdaWithReceiverAsParam(checker->ProgramAllocator()->Adapter());
     for (auto sig : signatures) {
+        if (!sig->HasFunction()) {
+            continue;
+        }
         if (!IsLastParameterLambdaWithReceiver(sig)) {
             normalSig.emplace_back(sig);
             continue;
@@ -3466,11 +3440,10 @@ static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallEx
         auto *currentReceiver = candidateFunctionType->Params()[0];
         trailingLambda->Function()->EmplaceParams(currentReceiver);
         sigContainLambdaWithReceiverAsParam.emplace_back(sig);
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        auto signature = MatchOrderSignatures(checker,
-                                              {sigContainLambdaWithReceiverAsParam, callExpr->TypeParams(),
-                                               TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA},
-                                              arguments, callExpr->Start());
+        auto signature =
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            checker->MatchOrderSignatures(sigContainLambdaWithReceiverAsParam, arguments, callExpr,
+                                          TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
         if (signature != nullptr) {
             return signature;
         }
@@ -3478,10 +3451,8 @@ static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallEx
         trailingLambda->Function()->ClearParams();
     }
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return MatchOrderSignatures(
-        checker,
-        {normalSig, callExpr->TypeParams(), TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA},
-        arguments, callExpr->Start());
+    return checker->MatchOrderSignatures(normalSig, arguments, callExpr,
+                                         TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
 }
 
 std::optional<Substitution> ETSChecker::CheckTypeParamsAndBuildSubstitutionIfValid(

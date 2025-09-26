@@ -26,7 +26,3 @@ class X implements I3, I2, I5, I1, I4 {}
 function main (): void {
     goo (0, new X(), "ambiguous")
 }
-
-
-/* @@? 27:5 Error Semantic error ESE0142: Call to `goo` is ambiguous as `2` versions of `goo` are available: `goo(i: Int, p1: I1, s: String): void` and `goo(i: Int, p2: I5, s: String): void` */
-/* @@? 27:5 Error Semantic error ESE0142: Call to `goo` is ambiguous as `2` versions of `goo` are available: `goo(i: Int, p1: I1, s: String): void` and `goo(i: Int, p2: I2, s: String): void` */

@@ -781,5 +781,3 @@
   }
 }
 [functions_with_ambiguous_rest_parameter.ets:20:1] Semantic error ESE0131: Function foo with this assembly signature already declared.
-[functions_with_ambiguous_rest_parameter.ets:25:5] Semantic error ESE0129: Call to `foo` is ambiguous 
-[functions_with_ambiguous_rest_parameter.ets:25:5] Semantic error ESE0126: Reference to foo is ambiguous

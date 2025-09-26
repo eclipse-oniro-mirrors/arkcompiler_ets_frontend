@@ -210,6 +210,7 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
 
         if (memberType == nullptr) {
             checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
+            commonPropType = checker->GlobalTypeError();
             return;
         }
 
@@ -236,6 +237,7 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
         if (!commonPropType->IsETSMethodType() && !memberType->IsETSMethodType()) {
             if (!checker->IsTypeIdenticalTo(commonPropType, memberType)) {
                 checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
+                commonPropType = checker->GlobalTypeError();
             }
             return;
         }
@@ -250,6 +252,7 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
             checker->IntersectSignatureSets(commonPropType->AsETSFunctionType(), memberType->AsETSFunctionType());
         if (newType->AsETSFunctionType()->CallSignatures().empty()) {
             checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
+            commonPropType = checker->GlobalTypeError();
         }
 
         commonPropType = newType;
@@ -403,8 +406,8 @@ checker::Type *MemberExpression::ResolveReturnTypeFromSignature(checker::ETSChec
                                                                 std::string_view const methodName)
 {
     auto flags = checker::TypeRelationFlag::NONE;
-    checker::Signature *signature =
-        checker->ValidateSignatures(signatures, nullptr, arguments, Start(), "indexing", flags);
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    checker::Signature *signature = checker->MatchOrderSignatures(signatures, arguments, this, flags, "indexing");
     if (signature == nullptr) {
         if (isSetter) {
             Parent()->AsAssignmentExpression()->Right()->SetParent(Parent());

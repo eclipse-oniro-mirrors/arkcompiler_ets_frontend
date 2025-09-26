@@ -31,6 +31,5 @@ function foo<T extends AAA>(a: T) {
     return /* @@ label1 */a.foo()
 }
 
-
-/* @@@ label1 Error Semantic error ESE0244: Member type must be the same for all union objects. */
-/* @@@ label1 Error Semantic error ESE0128: No matching call signature */
+/* @@? 31:27 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@? 31:27 Error Semantic error ESE0127: No matching call signature for foo() */

@@ -17,5 +17,4 @@ function foo() {
     let s = "2".concat(s).concat("4");
 }
 
-/* @@? 17:13 Error Semantic error ESE0381: Circular call function */
 /* @@? 17:24 Error Semantic error ESE0365: Variable 's' is accessed before it's initialization. */

@@ -25,6 +25,5 @@ function main(): void {
     let klass: Klass = new Klass();
 }
 
-
 /* @@? 25:24 Error Semantic error ESE0139: Signature constructor(): void is not visible here. */
-/* @@? 25:24 Error Semantic error ESE0128: No matching construct signature */
+/* @@? 25:24 Error Semantic error ESE0127: No matching construct signature for invalidPrivateAccess2.Klass() */

@@ -18,13 +18,5 @@ function main() {
     console.log(/* @@ label */a[0])
 }
 
-
-/* @@? 18:5 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Boolean): void` */
-/* @@? 18:5 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Byte): void` */
-/* @@? 18:5 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Short): void` */
-/* @@? 18:5 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Char): void` */
-/* @@? 18:5 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Int): void` */
-/* @@? 18:5 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Long): void` */
-/* @@? 18:5 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Float): void` */
-/* @@? 18:5 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Double): void` */
-/* @@@ label Error Semantic error ESE0250: Object type doesn't have proper index access method. */
+/* @@? 18:5 Error Semantic error ESE0127: No matching call signature for log(a[0]) */
+/* @@? 18:31 Error Semantic error ESE0250: Object type doesn't have proper index access method. */

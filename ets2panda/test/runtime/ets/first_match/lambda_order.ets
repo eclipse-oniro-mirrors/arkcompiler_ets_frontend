@@ -21,31 +21,24 @@ class Test {
         lambda("invoke2", 123456);
         return "invoke2";
     }
-    foo3(lambda: (p1: number, p2: string) => void): string {
-        lambda(123456, "invoke3");
-        return "invoke3";
-    }
-    foo4(lambda: (p1: number, p2: string, p3: boolean) => void): string {
+    foo3(lambda: (p1: number, p2: string, p3: boolean) => void): string {
         lambda(123, "123", true);
-        return "invoke4"
+        return "invoke3"
     }
 
-    overload foo{ foo1, foo2, foo3, foo4 }
+    overload foo{ foo1, foo2, foo3 }
 }
 
 function main() {
     let a: Test = new Test();
     arktest.assertEQ(a.foo((): void => { }), "invoke1");
     arktest.assertEQ(a.foo((p1: string, p2: number): void => { }), "invoke2");
-    arktest.assertEQ(a.foo((p1: number, p2: string): void => { }), "invoke3");
-    arktest.assertEQ(a.foo((p1: number, p2: string, p3: boolean): void => { }), "invoke4");
+    arktest.assertEQ(a.foo((p1: number, p2: string, p3: boolean): void => { }), "invoke3");
 
     let param1 = (): void => { };
     let param2 = (p1: string, p2: number): void => { };
-    let param3 = (p1: number, p2: string): void => { };
     let param4 = (p1: number, p2: string, p3: boolean): void => { };
     arktest.assertEQ(a.foo(param1), "invoke1");
     arktest.assertEQ(a.foo(param2), "invoke2");
-    arktest.assertEQ(a.foo(param3), "invoke3");
-    arktest.assertEQ(a.foo(param4), "invoke4");
+    arktest.assertEQ(a.foo(param4), "invoke3");
 }

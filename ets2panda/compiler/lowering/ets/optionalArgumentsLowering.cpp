@@ -15,6 +15,7 @@
 
 #include "optionalArgumentsLowering.h"
 #include "compiler/lowering/util.h"
+#include "generated/diagnostic.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "checker/ETSchecker.h"
 
@@ -76,6 +77,10 @@ bool OptionalArgumentsLowering::PerformForModule(public_lib::Context *ctx, parse
                     : TransformArguments(ctx, callExpr, callExpr->Signature(), callExpr->Arguments());
             } else if (node->IsETSNewClassInstanceExpression()) {
                 auto newExpr = node->AsETSNewClassInstanceExpression();
+                if (newExpr->GetSignature() == nullptr) {
+                    ctx->parser->LogError(diagnostic::NO_MATCHING_SIG_2, {"constructor"}, node->Start());
+                    return node;
+                }
                 TransformArguments(ctx, newExpr, newExpr->GetSignature(), newExpr->GetArguments());
             }
             return node;

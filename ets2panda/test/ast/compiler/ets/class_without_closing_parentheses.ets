@@ -36,5 +36,6 @@ export default class TreeMap<K, V> implements ReadonlyTreeMap<K, V> {
 /* @@? 19:24 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
 /* @@? 21:15 Error Semantic error ESE0351: Variable 'buffer' has already been declared. */
 /* @@? 21:15 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
-/* @@? 21:24 Error Semantic error ESE0127: No matching construct signature for ArrayBuffer(length) */
-/* @@? 21:40 Error Semantic error ESE0143: Unresolved reference length */
+/* @@? 24:13 Error Semantic error ESE0127: No matching call signature for set(Int, length[i]) */
+/* @@? 24:32 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 26:20 Error Semantic error ESE0158: Namespace 'buffer' cannot be used as a type. */

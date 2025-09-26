@@ -25,9 +25,11 @@
 #include "checker/types/ets/etsResizableArrayType.h"
 #include "checker/types/ets/types.h"
 #include "checker/resolveResult.h"
+#include "ir/expressions/callExpression.h"
 #include "ir/visitor/AstVisitor.h"
 #include "types/type.h"
 #include "util/helpers.h"
+#include "util/ustring.h"
 
 namespace ark::es2panda::varbinder {
 class VarBinder;
@@ -213,7 +215,7 @@ public:
     bool ValidateArrayIndex(ir::Expression *expr, bool relaxed = false);
     bool ValidateTupleIndex(const ETSTupleType *tuple, ir::MemberExpression *expr, bool reportError = true);
     bool ValidateTupleIndexFromEtsObject(const ETSTupleType *const tuple, ir::MemberExpression *expr);
-    ETSObjectType *CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *classType, std::string_view msg);
+    Type *CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *classType, std::string_view msg);
     void CreateTypeForClassOrInterfaceTypeParameters(ETSObjectType *type);
     ETSTypeParameter *SetUpParameterType(ir::TSTypeParameter *param);
     void GetInterfacesOfClass(ETSObjectType *type, ArenaVector<ETSObjectType *> &interfaces);
@@ -436,7 +438,10 @@ public:
     void ThrowSignatureMismatch(ArenaVector<Signature *> const &signatures,
                                 const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
                                 std::string_view signatureKind);
-    Signature *FirstMatchSignatures(ir::CallExpression *expr, checker::Type *calleeType);
+    Signature *FirstMatchSignatures(ArenaVector<Signature *> &signatures, ir::CallExpression *expr);
+    Signature *MatchOrderSignatures(ArenaVector<Signature *> &signatures,
+                                    const ArenaVector<ir::Expression *> &arguments, const ir::Expression *expr,
+                                    TypeRelationFlag resolveFlags, std::string_view signatureKind = "call");
 
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
     Signature *ValidateSignatures(ArenaVector<Signature *> &signatures,
@@ -447,8 +452,7 @@ public:
     Signature *ResolveCallExpressionAndTrailingLambda(ArenaVector<Signature *> &signatures,
                                                       ir::CallExpression *callExpr, const lexer::SourcePosition &pos,
                                                       TypeRelationFlag reportFlag = TypeRelationFlag::NONE);
-    Signature *ResolveConstructExpression(ETSObjectType *type, const ArenaVector<ir::Expression *> &arguments,
-                                          const lexer::SourcePosition &pos);
+    Signature *ResolveConstructExpression(ETSObjectType *type, ir::ETSNewClassInstanceExpression *expr);
     Signature *ComposeSignature(ir::ScriptFunction *func, SignatureInfo *signatureInfo, Type *returnType,
                                 varbinder::Variable *nameVar);
     Type *ComposeReturnType(ir::TypeNode *typeAnnotation, bool isAsync);
@@ -602,6 +606,7 @@ public:
     static bool IsVariableGetterSetter(const varbinder::Variable *var);
     static bool IsVariableExtensionAccessor(const varbinder::Variable *var);
     static bool IsVariableOverloadDeclaration(const varbinder::Variable *var);
+    bool IsOverloadDeclaration(ir::Expression *expr);
     bool IsSameDeclarationType(varbinder::LocalVariable *target, varbinder::LocalVariable *compare);
     void SaveCapturedVariable(varbinder::Variable *var, ir::Identifier *ident);
     bool SaveCapturedVariableInLocalClass(varbinder::Variable *var, ir::Identifier *ident);
@@ -631,7 +636,6 @@ public:
     util::StringView GetHashFromFunctionType(ir::ETSFunctionType *type);
     static ETSObjectType *GetOriginalBaseType(Type *object);
     void SetArrayPreferredTypeForNestedMemberExpressions(ir::MemberExpression *expr, Type *annotationType);
-    bool CheckIfPreferredTypeIsValidForArrayExpression(ir::ArrayExpression *arrayExpr);
     bool IsExtensionETSFunctionType(const checker::Type *type);
     bool IsExtensionAccessorFunctionType(const checker::Type *type);
     bool IsArrayExprSizeValidForTuple(const ir::ArrayExpression *arrayExpr, const ETSTupleType *tuple);

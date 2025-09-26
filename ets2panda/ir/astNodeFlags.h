@@ -36,8 +36,6 @@ enum class AstNodeFlags : uint16_t {
     TMP_CONVERT_PRIMITIVE_CAST_METHOD_CALL = 1U << 8U,
     // Moved out of the ir::Expression
     IS_GROUPED = 1U << 9U,
-    // Used for overload resolution. Remove after its rework.
-    NO_THROW = 1U << 10U,
     /* do not introduce new flags. all the existing to be removed */
 };
 

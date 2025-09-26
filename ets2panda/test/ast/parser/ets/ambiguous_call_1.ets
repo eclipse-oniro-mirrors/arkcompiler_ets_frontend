@@ -22,6 +22,3 @@ class X implements I1, I2 {}
 function main (): void {
     /* @@ label */goo (new X())
 }
-
-
-/* @@@ label Error Semantic error ESE0142: Call to `goo` is ambiguous as `2` versions of `goo` are available: `goo(p1: I1): void` and `goo(p2: I2): void` */

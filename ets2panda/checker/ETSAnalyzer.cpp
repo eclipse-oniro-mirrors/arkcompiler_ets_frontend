@@ -17,6 +17,7 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/types/typeFlag.h"
+#include "checker/checker.h"
 #include "checker/types/typeRelation.h"
 #include "compiler/lowering/util.h"
 #include "checker/types/ets/etsTupleType.h"
@@ -797,7 +798,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
     auto calleeObj = calleeType->AsETSObjectType();
     expr->SetTsType(calleeType);
 
-    auto *signature = checker->ResolveConstructExpression(calleeObj, expr->GetArguments(), expr->Start());
+    auto *signature = checker->ResolveConstructExpression(calleeObj, expr);
 
     if (signature == nullptr) {
         return checker->InvalidateType(expr);
@@ -1036,17 +1037,14 @@ static bool CheckElement(ETSChecker *checker, Type *const preferredType,
 
         auto *const compareType = tupleType->GetTypeAtIndex(idx);
         if (compareType == nullptr) {
-            checker->PossiblyLogError(currentElement, diagnostic::TUPLE_SIZE_MISMATCH, {tupleType->GetTupleSize()},
-                                      currentElement->Start());
-
+            checker->LogError(diagnostic::TUPLE_SIZE_MISMATCH, {tupleType->GetTupleSize()}, currentElement->Start());
             return false;
         }
 
         auto ctx = AssignmentContext(checker->Relation(), currentElement, elementType, compareType,
                                      currentElement->Start(), std::nullopt, TypeRelationFlag::NO_THROW);
         if (!ctx.IsAssignable()) {
-            checker->PossiblyLogError(currentElement, diagnostic::TUPLE_UNASSIGNABLE_ARRAY, {idx},
-                                      currentElement->Start());
+            checker->LogError(diagnostic::TUPLE_UNASSIGNABLE_ARRAY, {idx}, currentElement->Start());
             return false;
         }
 
@@ -1063,8 +1061,8 @@ static bool CheckElement(ETSChecker *checker, Type *const preferredType,
     auto ctx = AssignmentContext(checker->Relation(), currentElement, elementType, targetType, currentElement->Start(),
                                  {}, TypeRelationFlag::NO_THROW);
     if (!ctx.IsAssignable()) {
-        checker->PossiblyLogError(currentElement, diagnostic::ARRAY_ELEMENT_INIT_TYPE_INCOMPAT,
-                                  {idx, elementType, targetType}, currentElement->Start());
+        checker->LogError(diagnostic::ARRAY_ELEMENT_INIT_TYPE_INCOMPAT, {idx, elementType, targetType},
+                          currentElement->Start());
         return false;
     }
 
@@ -1258,7 +1256,7 @@ checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
     }
 
     if (!IsArrayExpressionValidInitializerForType(checker, preferredType)) {
-        checker->PossiblyLogError(expr, diagnostic::UNEXPECTED_ARRAY, {expr->PreferredType()}, expr->Start());
+        checker->LogError(diagnostic::UNEXPECTED_ARRAY, {expr->PreferredType()}, expr->Start());
         return checker->InvalidateType(expr);
     }
 
@@ -1271,8 +1269,7 @@ checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
     }
 
     if (preferredType == nullptr) {
-        checker->PossiblyLogError(expr, diagnostic::UNRESOLVABLE_ARRAY, expr->Start());
-        return checker->InvalidateType(expr);
+        return checker->TypeError(expr, diagnostic::UNRESOLVABLE_ARRAY, expr->Start());
     }
 
     if (!ValidArrayExprSizeForTupleSize(checker, preferredType, expr) ||
@@ -1872,18 +1869,6 @@ static bool LambdaIsField(ir::CallExpression *expr)
     return me->PropVar() != nullptr;
 }
 
-static bool OverloadDeclaration(ir::Expression *expr)
-{
-    while (expr->IsMemberExpression()) {
-        expr = expr->AsMemberExpression()->Property();
-    }
-
-    if (expr->IsIdentifier() && expr->AsIdentifier()->Variable() != nullptr) {
-        return expr->AsIdentifier()->Variable()->HasFlag(varbinder::VariableFlags::OVERLOAD);
-    }
-    return false;
-}
-
 static Signature *CreateRelaxedAnySyntheticCallSignature(ETSChecker *checker)
 {
     auto *info = checker->CreateSignatureInfo();
@@ -1907,11 +1892,7 @@ static checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpress
         checker->LogDiagnostic(diagnostic::DUPLICATE_SIGS, {helperSignature->Function()->Id()->Name(), helperSignature},
                                expr->Start());
         checker->CreateOverloadSigContainer(helperSignature);
-        return checker->ResolveCallExpressionAndTrailingLambda(checker->GetOverloadSigContainer(), expr, expr->Start());
-    }
-
-    if (calleeType->IsETSFunctionType() && OverloadDeclaration(expr->Callee())) {
-        return checker->FirstMatchSignatures(expr, calleeType);
+        return checker->FirstMatchSignatures(checker->GetOverloadSigContainer(), expr);
     }
 
     if (calleeType->IsETSExtensionFuncHelperType()) {
@@ -1942,7 +1923,7 @@ static checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpress
                            ? noSignatures
                            : calleeType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
 
-    return checker->ResolveCallExpressionAndTrailingLambda(signatures, expr, expr->Start());
+    return checker->FirstMatchSignatures(signatures, expr);
 }
 
 static ETSObjectType *GetCallExpressionCalleeObject(ETSChecker *checker, ir::CallExpression *expr, Type *calleeType)
@@ -2096,7 +2077,7 @@ static checker::Type *GetCallExpressionReturnType(ETSChecker *checker, ir::CallE
 
 static void CheckOverloadCall(ETSChecker *checker, ir::CallExpression *expr)
 {
-    if (!expr->Callee()->IsMemberExpression() || !OverloadDeclaration(expr->Callee())) {
+    if (!expr->Callee()->IsMemberExpression() || !checker->IsOverloadDeclaration(expr->Callee())) {
         return;
     }
 
@@ -2486,7 +2467,7 @@ static bool ValidatePreferredType(ETSChecker *checker, ir::ObjectExpression *exp
 {
     auto preferredType = expr->PreferredType();
     if (preferredType == nullptr) {
-        checker->PossiblyLogError(expr, diagnostic::CLASS_COMPOSITE_UNKNOWN_TYPE, {}, expr->Start());
+        checker->LogError(diagnostic::CLASS_COMPOSITE_UNKNOWN_TYPE, {}, expr->Start());
         return false;
     }
 
@@ -2496,7 +2477,7 @@ static bool ValidatePreferredType(ETSChecker *checker, ir::ObjectExpression *exp
     }
 
     if (!preferredType->IsETSObjectType()) {
-        checker->PossiblyLogError(expr, diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {preferredType}, expr->Start());
+        checker->LogError(diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {preferredType}, expr->Start());
         return false;
     }
 
@@ -2828,13 +2809,11 @@ checker::ETSObjectType *ResolveUnionObjectTypeForObjectLiteral(ETSChecker *check
     }
     if (matchingObjectTypes.empty()) {
         // No candidate ETSObjectType from the union matched all properties
-        checker->PossiblyLogError(expr, diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {expr->PreferredType()},
-                                  expr->Start());
+        checker->LogError(diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {expr->PreferredType()}, expr->Start());
         return nullptr;
     }
     // Ambiguous
-    checker->PossiblyLogError(expr, diagnostic::AMBIGUOUS_REFERENCE, {expr->PreferredType()->ToString()},
-                              expr->Start());
+    checker->LogError(diagnostic::AMBIGUOUS_REFERENCE, {expr->PreferredType()->ToString()}, expr->Start());
     return nullptr;
 }
 
@@ -2888,7 +2867,7 @@ checker::Type *ETSAnalyzer::Check(ir::ObjectExpression *expr) const
     }
 
     if (expr->PreferredType() == nullptr) {
-        checker->PossiblyLogError(expr, diagnostic::CLASS_COMPOSITE_UNKNOWN_TYPE, {}, expr->Start());
+        checker->LogError(diagnostic::CLASS_COMPOSITE_UNKNOWN_TYPE, {}, expr->Start());
         expr->SetTsType(checker->GlobalTypeError());
         return expr->TsType();
     }
@@ -2902,8 +2881,7 @@ checker::Type *ETSAnalyzer::Check(ir::ObjectExpression *expr) const
 
     if (objType == nullptr) {
         if (!expr->PreferredType()->IsETSUnionType()) {
-            checker->PossiblyLogError(expr, diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {expr->PreferredType()},
-                                      expr->Start());
+            checker->LogError(diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {expr->PreferredType()}, expr->Start());
         }
         expr->SetTsType(checker->GlobalTypeError());
         return expr->TsType();
@@ -2922,8 +2900,8 @@ checker::Type *ETSAnalyzer::Check(ir::ObjectExpression *expr) const
 
     // If we reach here, objType is a class. It must have a parameterless constructor
     if (!HasParameterlessConstructor(objType, checker, expr->Start())) {
-        checker->PossiblyLogError(expr, diagnostic::NO_PARAMLESS_CTOR, {objType->Name()}, expr->Start());
-        return checker->InvalidateType(expr);
+        expr->SetTsType(checker->TypeError(expr, diagnostic::NO_PARAMLESS_CTOR, {objType->Name()}, expr->Start()));
+        return expr->TsType();
     }
 
     CheckObjectExprProps(expr, objType,
@@ -2976,7 +2954,7 @@ static std::optional<util::StringView> GetNameForProperty(ETSChecker *checker, i
         return std::make_optional(key->AsIdentifier()->Name());
     }
 
-    checker->PossiblyLogError(propExpr, diagnostic::CLASS_COMPOSITE_INVALID_KEY, {}, propExpr->Start());
+    checker->LogError(diagnostic::CLASS_COMPOSITE_INVALID_KEY, {}, propExpr->Start());
     propExpr->SetTsType(checker->GlobalTypeError());
 
     return std::nullopt;
@@ -3044,27 +3022,24 @@ static bool IsPropertyAssignable(ETSChecker *const checker, ir::Expression *cons
 
     // NOTE (DZ): now method re-definition is allowed only in interface object literals!
     if (propType->IsETSMethodType() && !objectType->HasObjectFlag(checker::ETSObjectFlags::INTERFACE)) {
-        checker->PossiblyLogError(propExpr, diagnostic::OBJECT_LITERAL_METHOD_KEY, {}, propExpr->Start());
+        checker->LogError(diagnostic::OBJECT_LITERAL_METHOD_KEY, {}, propExpr->Start());
         propExpr->SetTsType(checker->GlobalTypeError());
         return false;
     }
 
     Type *const valueType = value->Check(checker);
-
-    auto const skipError = propExpr->HasAstNodeFlags(ir::AstNodeFlags::NO_THROW);
-    TypeRelationFlag const flags = skipError ? TypeRelationFlag::NO_THROW : TypeRelationFlag::NONE;
-
     bool assignable;
     if (!propType->IsETSMethodType()) {
         assignable = checker::AssignmentContext(checker->Relation(), value, valueType, propType, value->Start(),
-                                                {{diagnostic::PROP_INCOMPAT, {valueType, propType, pname}}}, flags)
+                                                {{diagnostic::PROP_INCOMPAT, {valueType, propType, pname}}},
+                                                TypeRelationFlag::NONE)
                          // CC-OFFNXT(G.FMT.06-CPP) project code style
                          .IsAssignable();
     } else {
-        assignable = IsMethodPropertyAssignable(checker, pname.Utf8(), propType, value, flags);
+        assignable = IsMethodPropertyAssignable(checker, pname.Utf8(), propType, value, TypeRelationFlag::NONE);
     }
 
-    if (!assignable && skipError) {
+    if (!assignable) {
         propExpr->SetTsType(checker->GlobalTypeError());
         return false;
     }
@@ -3078,7 +3053,7 @@ static void CheckObjectExprPropsHelper(ETSChecker *const checker, const ir::Obje
 {
     for (ir::Expression *propExpr : expr->Properties()) {
         if (!propExpr->IsProperty()) {
-            checker->PossiblyLogError(propExpr, diagnostic::OBJECT_LITERAL_NOT_KV, {}, expr->Start());
+            checker->LogError(diagnostic::OBJECT_LITERAL_NOT_KV, {}, expr->Start());
             propExpr->SetTsType(checker->GlobalTypeError());
             continue;
         }
@@ -3090,8 +3065,7 @@ static void CheckObjectExprPropsHelper(ETSChecker *const checker, const ir::Obje
 
         varbinder::LocalVariable *lv = objType->GetProperty(*propertyName, searchFlags);
         if (lv == nullptr) {
-            checker->PossiblyLogError(propExpr, diagnostic::UNDEFINED_PROPERTY, {objType->Name(), *propertyName},
-                                      propExpr->Start());
+            checker->LogError(diagnostic::UNDEFINED_PROPERTY, {objType->Name(), *propertyName}, propExpr->Start());
             propExpr->SetTsType(checker->GlobalTypeError());
             continue;
         }
@@ -3121,7 +3095,7 @@ void ETSAnalyzer::CheckObjectExprProps(const ir::ObjectExpression *expr,
     ETSChecker *checker = GetETSChecker();
     checker::ETSObjectType *objType = objectTypeForProperties;
     if (objType->IsGlobalETSObjectType() && !expr->Properties().empty()) {
-        checker->PossiblyLogError(expr, diagnostic::ERROR_ARKTS_NO_UNTYPED_OBJ_LITERALS, expr->Start());
+        checker->LogError(diagnostic::ERROR_ARKTS_NO_UNTYPED_OBJ_LITERALS, expr->Start());
     }
 
     std::unordered_map<util::StringView, ETSObjectType *> propertyWithNonOptionalType;
@@ -3133,11 +3107,10 @@ void ETSAnalyzer::CheckObjectExprProps(const ir::ObjectExpression *expr,
 
     for (const auto &[propName, ownerType] : propertyWithNonOptionalType) {
         if (objType == ownerType) {
-            checker->PossiblyLogError(expr, diagnostic::OBJECT_LITERAL_NON_OPTIONAL_PROP_LOST, {propName, objType},
-                                      expr->Start());
+            checker->LogError(diagnostic::OBJECT_LITERAL_NON_OPTIONAL_PROP_LOST, {propName, objType}, expr->Start());
         } else {
-            checker->PossiblyLogError(expr, diagnostic::OBJECT_LITERAL_NON_OPTIONAL_PROP_OF_SUPER_LOST,
-                                      {propName, ownerType, objType}, expr->Start());
+            checker->LogError(diagnostic::OBJECT_LITERAL_NON_OPTIONAL_PROP_OF_SUPER_LOST,
+                              {propName, ownerType, objType}, expr->Start());
         }
     }
 
@@ -4307,6 +4280,9 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
         ident->Check(checker);
     }
     auto *const variableType = checker->CheckVariableDeclaration(ident, ident->TypeAnnotation(), st->Init(), flags);
+    if (variableType != nullptr && variableType->IsTypeError()) {
+        return st->SetTsType(variableType);
+    }
 
     //  Now try to define the actual type of Identifier so that smart cast can be used in further checker processing
     //  NOTE: T_S and K_o_t_l_i_n don't act in such way, but we can try - why not? :)

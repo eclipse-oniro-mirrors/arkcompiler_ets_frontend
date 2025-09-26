@@ -19,8 +19,5 @@ function foo<T extends Record<string, A>>(record: Record<string, Partial<T>>){
 
 foo({})
 
-
 /* @@? 16:39 Error Semantic error ESE0371: Cannot find type 'A'. */
 /* @@? 16:73 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
-/* @@? 20:1 Error Semantic error ESE0127: No matching call signature for foo(...) */
-/* @@? 20:5 Error Semantic error ESE0062: need to specify target type for class composite */

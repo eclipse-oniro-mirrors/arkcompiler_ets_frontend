@@ -29,14 +29,10 @@ arr[1.0 && 1]
 arr[8237549235487923 && 1]
 
 /* @@? 20:1 Error Semantic error ESE0127: No matching indexing signature for $_get("a") */
-/* @@? 20:5 Error Semantic error ESE0046: Type '"a"' is not compatible with type 'Int' at index 1 */
 /* @@? 20:5 Error Semantic error ESE0251: Cannot find index access method with the required signature. */
 /* @@? 21:1 Error Semantic error ESE0127: No matching indexing signature for $_get(Boolean) */
-/* @@? 21:5 Error Semantic error ESE0046: Type 'Boolean' is not compatible with type 'Int' at index 1 */
 /* @@? 21:5 Error Semantic error ESE0251: Cannot find index access method with the required signature. */
 /* @@? 22:1 Error Semantic error ESE0127: No matching indexing signature for $_get(Double) */
-/* @@? 22:5 Error Semantic error ESE0046: Type 'Double' is not compatible with type 'Int' at index 1 */
 /* @@? 22:5 Error Semantic error ESE0251: Cannot find index access method with the required signature. */
 /* @@? 23:1 Error Semantic error ESE0127: No matching indexing signature for $_get(Long) */
-/* @@? 23:5 Error Semantic error ESE0046: Type 'Long' is not compatible with type 'Int' at index 1 */
 /* @@? 23:5 Error Semantic error ESE0251: Cannot find index access method with the required signature. */

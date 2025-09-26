@@ -20,7 +20,6 @@ let bad1 : TEST.CallBack = () => {
 }
 let bad2 : TEST.A = new TEST.A()
 
-
 /* @@? 19:12 Error Semantic error ESE0091: Type '"A"' is not compatible with the enclosing method's return type 'Int' */
 /* @@? 21:21 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
-/* @@? 21:21 Error Semantic error ESE0128: No matching construct signature */
+/* @@? 21:21 Error Semantic error ESE0127: No matching construct signature for export.A() */

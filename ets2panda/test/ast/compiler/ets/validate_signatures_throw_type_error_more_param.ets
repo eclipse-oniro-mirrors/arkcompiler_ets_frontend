@@ -17,7 +17,4 @@ function main() : void {
     let e: Float = /* @@ label */new Float(6,"3");
 }
 
-
-/* @@@ label Error Semantic error ESE0124: Expected 0 arguments, got 2. */
-/* @@@ label Error Semantic error ESE0124: Expected 1 arguments, got 2. */
-/* @@@ label Error Semantic error ESE0127: No matching construct signature for std.core.Float(Int, "3") */
+/* @@? 17:34 Error Semantic error ESE0127: No matching construct signature for std.core.Float(Int, "3") */

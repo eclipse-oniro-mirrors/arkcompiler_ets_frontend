@@ -35,6 +35,5 @@ function main() {
   // Test case: only 'i' is provided, 'j' is omitted
   foo<I>({ i: 5 });
 }
+
 /* @@? 21:37 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
-/* @@? 36:3 Error Semantic error ESE0127: No matching call signature for foo(...) */
-/* @@? 36:10 Error Semantic error ESE0062: need to specify target type for class composite */
