@@ -50,7 +50,7 @@ import {
   LspRenameInfoFailure,
   LspSourceLocation,
   LspNodeInfo,
-  LspNode,
+  LspNode
 } from './lspNode';
 import { passStringArray, unpackString } from '../common/private';
 import { Es2pandaContextState } from '../generated/Es2pandaEnums';

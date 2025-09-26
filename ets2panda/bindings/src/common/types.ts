@@ -280,7 +280,7 @@ export enum AstNodeType {
   VARIABLE_DECLARATION = 152,
   VARIABLE_DECLARATOR = 153,
   SPREAD_ELEMENT = 165,
-  UNKNOWN,
+  UNKNOWN
 }
 
 export const astNodeTypeMap = new Map<string, AstNodeType>([

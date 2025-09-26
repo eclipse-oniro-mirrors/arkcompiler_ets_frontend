@@ -105,11 +105,11 @@ export class ArkTSConfigGenerator {
         const key = isExcludedDir ? basename : relativePath ? `${relativePath}${separator}${basename}` : basename;
         pathSection[prefix + key] = isInteropSdk
           ? {
-            language: 'js',
-            path: itemPath,
-            ohmUrl: '',
-            alias: aliasConfigObj ? this.processAlias(basename, aliasConfigObj) : undefined
-          }
+              language: 'js',
+              path: itemPath,
+              ohmUrl: '',
+              alias: aliasConfigObj ? this.processAlias(basename, aliasConfigObj) : undefined
+            }
           : [changeFileExtension(itemPath, '', '.d.ets')];
       }
       if (stat.isDirectory()) {
