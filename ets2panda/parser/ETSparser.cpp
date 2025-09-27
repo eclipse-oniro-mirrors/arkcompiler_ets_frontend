@@ -886,7 +886,7 @@ ir::TSTypeAliasDeclaration *ETSParser::ParseTypeAliasDeclaration()
         typeAliasDecl->SetTsTypeAnnotation(typeAnnotation);
     }
     typeAnnotation->SetParent(typeAliasDecl);
-    typeAliasDecl->SetRange({typeStart, Lexer()->GetToken().End()});
+    typeAliasDecl->SetRange({typeStart, typeAnnotation->End()});
     return typeAliasDecl;
 }
 

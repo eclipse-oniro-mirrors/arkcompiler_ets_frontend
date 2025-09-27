@@ -42,7 +42,7 @@
         },
         "end": {
           "line": 16,
-          "column": 14,
+          "column": 13,
           "program": "test_type_alias6.ets"
         }
       }

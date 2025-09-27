@@ -167,8 +167,8 @@
           "program": "type_alias_1.ets"
         },
         "end": {
-          "line": 18,
-          "column": 4,
+          "line": 16,
+          "column": 22,
           "program": "type_alias_1.ets"
         }
       }

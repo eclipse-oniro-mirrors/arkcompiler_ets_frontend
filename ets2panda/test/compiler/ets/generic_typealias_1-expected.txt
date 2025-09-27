@@ -72,8 +72,8 @@
           "program": "generic_typealias_1.ets"
         },
         "end": {
-          "line": 17,
-          "column": 5,
+          "line": 16,
+          "column": 18,
           "program": "generic_typealias_1.ets"
         }
       }
@@ -198,7 +198,7 @@
         },
         "end": {
           "line": 17,
-          "column": 21,
+          "column": 20,
           "program": "generic_typealias_1.ets"
         }
       }
@@ -386,7 +386,7 @@
         },
         "end": {
           "line": 18,
-          "column": 20,
+          "column": 19,
           "program": "generic_typealias_1.ets"
         }
       }

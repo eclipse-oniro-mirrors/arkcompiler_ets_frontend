@@ -105,7 +105,7 @@
         },
         "end": {
           "line": 16,
-          "column": 30,
+          "column": 29,
           "program": "test-type-alias-call5.ets"
         }
       }
@@ -181,8 +181,8 @@
           "program": "test-type-alias-call5.ets"
         },
         "end": {
-          "line": 18,
-          "column": 5,
+          "line": 17,
+          "column": 20,
           "program": "test-type-alias-call5.ets"
         }
       }
@@ -322,7 +322,7 @@
         },
         "end": {
           "line": 18,
-          "column": 32,
+          "column": 31,
           "program": "test-type-alias-call5.ets"
         }
       }

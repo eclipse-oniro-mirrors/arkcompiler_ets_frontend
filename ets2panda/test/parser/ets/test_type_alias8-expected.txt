@@ -73,7 +73,7 @@
         },
         "end": {
           "line": 16,
-          "column": 20,
+          "column": 19,
           "program": "test_type_alias8.ets"
         }
       }
