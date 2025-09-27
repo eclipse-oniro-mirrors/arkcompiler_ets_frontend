@@ -139,7 +139,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewArrayExprToRefArray(ir::ETSNew
     auto *genSymIdent = Gensym(Allocator());
 
     std::stringstream ss;
-    ss << "let @@I1 = new Array<@@T2>(@@E3.toDouble());";
+    ss << "let @@I1 = new Array<@@T2>(@@E3.toInt());";
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     auto *dimension = newExpr->Dimension()->Clone(Allocator(), nullptr);
     newStmts.emplace_back(genSymIdent);
@@ -177,7 +177,7 @@ ir::Statement *ArrayLiteralLowering::CreateNestedArrayCreationStatement(ArenaVec
         ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
 
     std::string creationTemplate =
-        "for (let @@I1 = 0; @@I2 < @@I3; @@I4 = @@I5 + 1) { let @@I6 = new Array<@@T7>(@@E8.toDouble()); @@E9 = @@I10}";
+        "for (let @@I1 = 0; @@I2 < @@I3; @@I4 = @@I5 + 1) { let @@I6 = new Array<@@T7>(@@E8.toInt()); @@E9 = @@I10}";
     ir::Statement *forUpdateStmt = parser_->CreateFormattedStatement(
         creationTemplate, genSymIdent, genSymIdent->Clone(Allocator(), nullptr),
         lastDimIdent->Clone(Allocator(), nullptr), genSymIdent->Clone(Allocator(), nullptr),
@@ -227,7 +227,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewMultiDimArrayToRefArray(
     auto arrayType = newExpr->TsType()->AsETSResizableArrayType()->ElementType();
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     auto *genSymIdent = Gensym(Allocator());
-    std::string newArray = "let @@I1 = new Array<@@T2>(@@I3.toDouble())";
+    std::string newArray = "let @@I1 = new Array<@@T2>(@@I3.toInt())";
     auto idents = TransformDimVectorToIdentVector(newExpr->Dimensions(), statements);
     auto newArraystatement =
         parser_->CreateFormattedStatements(newArray, genSymIdent, type, idents[0]->Clone(Allocator(), nullptr));
