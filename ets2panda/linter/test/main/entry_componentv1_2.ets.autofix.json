@@ -45,7 +45,7 @@
                 {
                     "start": 676,
                     "end": 698,
-                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "replacementText": "UIContext.getFocusedUIContext()!.getSharedLocalStorage",
                     "line": 18,
                     "column": 21,
                     "endLine": 18,
@@ -87,7 +87,7 @@
                 {
                     "start": 791,
                     "end": 813,
-                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "replacementText": "UIContext.getFocusedUIContext()!.getSharedLocalStorage",
                     "line": 26,
                     "column": 32,
                     "endLine": 26,
@@ -129,7 +129,7 @@
                 {
                     "start": 908,
                     "end": 930,
-                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "replacementText": "UIContext.getFocusedUIContext()!.getSharedLocalStorage",
                     "line": 34,
                     "column": 32,
                     "endLine": 34,
@@ -171,7 +171,7 @@
                 {
                     "start": 1049,
                     "end": 1071,
-                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "replacementText": "UIContext.getFocusedUIContext()!.getSharedLocalStorage",
                     "line": 42,
                     "column": 32,
                     "endLine": 42,
@@ -213,7 +213,7 @@
                 {
                     "start": 1181,
                     "end": 1203,
-                    "replacementText": "UIContext.getFocusedUIContext()?.getSharedLocalStorage",
+                    "replacementText": "UIContext.getFocusedUIContext()!.getSharedLocalStorage",
                     "line": 50,
                     "column": 32,
                     "endLine": 50,

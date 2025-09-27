@@ -40,7 +40,7 @@ struct Index {
           .fontSize(50)
           .fontWeight(FontWeight.Bold)
           .onClick(() => {
-            let context: Context = UIContext.getFocusedUIContext()?.getHostContext() as Context;
+            let context: Context = UIContext.getFocusedUIContext()!.getHostContext() as Context;
             console.info("CacheDir:" + context.cacheDir);
           })
       }
