@@ -1558,7 +1558,7 @@ static ir::AstNode *TransformTupleSpread(public_lib::Context *ctx, ir::CallExpre
         auto typeNode = util::NodeAllocator::ForceSetParent<ir::OpaqueTypeNode>(allocator, arg->TsType(), allocator);
 
         auto *blockExpression = ctx->parser->AsETSParser()->CreateFormattedExpression(
-            ss.str(), genSymIdent, typeNode, arg->AsSpreadElement()->Argument()->Clone(allocator, nullptr), arrayExpr);
+            ss.str(), genSymIdent, typeNode, arg->AsSpreadElement()->Argument(), arrayExpr);
 
         auto *spreadElement = util::NodeAllocator::ForceSetParent<ir::SpreadElement>(
             allocator, ir::AstNodeType::SPREAD_ELEMENT, allocator, blockExpression);
