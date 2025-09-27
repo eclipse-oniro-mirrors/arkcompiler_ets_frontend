@@ -1376,6 +1376,9 @@ bool ConstantExpressionLoweringImpl::PerformForModule(parser::Program *program, 
             auto folded = replacements_[expr];
             folded->SetParent(expr->Parent());
             folded->SetRange(expr->Range());
+            if (folded->IsNumberLiteral()) {
+                folded->AsNumberLiteral()->SetFolded();
+            }
             return folded;
         },
         name);
