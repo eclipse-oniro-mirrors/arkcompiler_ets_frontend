@@ -152,7 +152,7 @@ export class TaskManager<PayloadT> {
         }
     }
 
-    private handleWorkerMessage(workerInfo: WorkerInfo, message: WorkerMessage) {
+    private handleWorkerMessage(workerInfo: WorkerInfo, message: WorkerMessage): void {
         const { job, success } = message;
         if (!success) {
             this.logErrorMessage(message);
@@ -163,7 +163,7 @@ export class TaskManager<PayloadT> {
         this.dispatchNext();
     }
 
-    private handleWorkerExit(workerInfo: WorkerInfo, code: number | null, signal: NodeJS.Signals | null) {
+    private handleWorkerExit(workerInfo: WorkerInfo, code: number | null, signal: NodeJS.Signals | null): void {
         const taskId: string | undefined = workerInfo.currentTaskId;
         if (taskId) {
             const success = code === 0 && !signal;
@@ -223,7 +223,7 @@ export class TaskManager<PayloadT> {
         }
     }
 
-    private settleTask(taskId: string, success: boolean, error?: string) {
+    private settleTask(taskId: string, success: boolean, error?: string): void {
         const task = this.runningTasks.get(taskId);
         if (!task) {
             return;
@@ -241,14 +241,14 @@ export class TaskManager<PayloadT> {
         this.runningTasks.delete(taskId);
     }
 
-    private handleSignals(workerInfo: WorkerInfo, signal: NodeJS.Signals | null) {
+    private handleSignals(workerInfo: WorkerInfo, signal: NodeJS.Signals | null): void {
         if (!signal) {
             return;
         }
         switch (signal) {
-            case "SIGTERM":
+            case 'SIGTERM':
                 break;
-            case "SIGSEGV":
+            case 'SIGSEGV':
                 this.reconfigureWorker(workerInfo);
                 break;
             default:
@@ -256,7 +256,7 @@ export class TaskManager<PayloadT> {
         }
     }
 
-    private reconfigureWorker(workerInfo: WorkerInfo) {
+    private reconfigureWorker(workerInfo: WorkerInfo): void {
         const worker = workerInfo.worker
         worker.createNewInstance(worker.getWorkerPath(), {
             stdio: ['inherit', 'inherit', 'inherit', 'ipc']
