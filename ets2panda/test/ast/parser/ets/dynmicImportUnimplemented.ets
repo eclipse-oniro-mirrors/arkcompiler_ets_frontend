@@ -29,4 +29,3 @@ async function foo() {
 
 /* @@? 18:15 Error SyntaxError: Unexpected token 'import'. */
 /* @@? 18:9 Error TypeError: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
-/* @@? 25:15 Error TypeError: Unresolved reference undefined */
