@@ -139,7 +139,7 @@ void ObjectExpression::Iterate(const NodeTraverser &cb) const
 
 void ObjectExpression::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", (type_ == AstNodeType::OBJECT_EXPRESSION) ? "ObjectExpression" : "ObjectPattern"},
+    dumper->Add({{"type", (Type() == AstNodeType::OBJECT_EXPRESSION) ? "ObjectExpression" : "ObjectPattern"},
                  {"properties", properties_},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"optional", AstDumper::Optional(optional_)}});

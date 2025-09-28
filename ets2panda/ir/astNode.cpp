@@ -26,12 +26,16 @@ AstNode::AstNode(AstNode const &other)
 {
     auto otherHistoryNode = other.GetHistoryNode();
     range_ = otherHistoryNode->range_;
+#ifndef NDEBUG
     type_ = otherHistoryNode->type_;
+    flags_ = otherHistoryNode->flags_;
+    astNodeFlags_ = otherHistoryNode->astNodeFlags_;
+#else
+    bitFields_ = otherHistoryNode->bitFields_;
+#endif
     if (otherHistoryNode->variable_ != nullptr) {
         variable_ = otherHistoryNode->variable_;
     }
-    flags_ = otherHistoryNode->flags_;
-    astNodeFlags_ = otherHistoryNode->astNodeFlags_;
     // boxing_unboxing_flags_ {};  leave default value!
 }
 
@@ -67,8 +71,11 @@ AstNode::AstNode(AstNode const &other)
     if (UNLIKELY(IsClassDefinition())) {
         return GetHistoryNode()->parent_->HasExportAlias();
     }
-
+#ifndef NDEBUG
     return (GetHistoryNode()->astNodeFlags_ & AstNodeFlags::HAS_EXPORT_ALIAS) != 0;
+#else
+    return (Flags() & AstNodeFlags::HAS_EXPORT_ALIAS) != 0;
+#endif
 }
 
 bool AstNode::IsScopeBearer() const noexcept
@@ -227,12 +234,21 @@ AstNode *AstNode::ShallowClone(ArenaAllocator *allocator)
 
 void AstNode::CopyTo(AstNode *other) const
 {
+#ifndef NDEBUG
     ES2PANDA_ASSERT(other->type_ == type_);
+#else
+    ES2PANDA_ASSERT(TypeField::Decode(other->bitFields_) == TypeField::Decode(bitFields_));
+#endif
 
     other->parent_ = parent_;
     other->range_ = range_;
+#ifndef NDEBUG
     other->flags_ = flags_;
     other->astNodeFlags_ = astNodeFlags_;
+#else
+    FlagsField::Set(FlagsField::Decode(bitFields_), &(other->bitFields_));
+    AstNodeFlagsField::Set(AstNodeFlagsField::Decode(bitFields_), &(other->bitFields_));
+#endif
     other->history_ = history_;
     other->variable_ = variable_;
     other->originalNode_ = originalNode_;
@@ -290,14 +306,24 @@ AstNode *AstNode::GetOrCreateHistoryNode() const
 void AstNode::AddModifier(ModifierFlags const flags) noexcept
 {
     if (!All(Modifiers(), flags)) {
+#ifndef NDEBUG
         GetOrCreateHistoryNode()->flags_ |= flags;
+#else
+        FlagsField::Set(FlagsField::Decode(GetOrCreateHistoryNode()->bitFields_) | static_cast<uint64_t>(flags),
+                        &(GetOrCreateHistoryNode()->bitFields_));
+#endif
     }
 }
 
 void AstNode::ClearModifier(ModifierFlags const flags) noexcept
 {
     if (Any(Modifiers(), flags)) {
+#ifndef NDEBUG
         GetOrCreateHistoryNode()->flags_ &= ~flags;
+#else
+        FlagsField::Set(FlagsField::Decode(GetOrCreateHistoryNode()->bitFields_) & ~static_cast<uint64_t>(flags),
+                        &(GetOrCreateHistoryNode()->bitFields_));
+#endif
     }
 }
 

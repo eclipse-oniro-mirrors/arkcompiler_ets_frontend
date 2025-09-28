@@ -54,7 +54,7 @@ public:
           lang_(lang),
           program_(program)
     {
-        type_ = AstNodeType::ETS_MODULE;
+        SetType(AstNodeType::ETS_MODULE);
         InitHistory();
     }
 
@@ -67,7 +67,7 @@ public:
           lang_(lang),
           program_(program)
     {
-        type_ = AstNodeType::ETS_MODULE;
+        SetType(AstNodeType::ETS_MODULE);
         if (history != nullptr) {
             history_ = history;
         } else {

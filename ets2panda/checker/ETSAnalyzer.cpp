@@ -322,7 +322,7 @@ void ETSAnalyzer::CheckMethodModifiers(ir::MethodDefinition *node) const
     auto const notValidInAbstract = ir::ModifierFlags::NATIVE | ir::ModifierFlags::PRIVATE |
                                     ir::ModifierFlags::OVERRIDE | ir::ModifierFlags::FINAL | ir::ModifierFlags::STATIC;
 
-    if (node->IsAbstract() && (node->flags_ & notValidInAbstract) != 0U) {
+    if (node->IsAbstract() && (node->Modifiers() & notValidInAbstract) != 0U) {
         checker->LogError(diagnostic::ABSTRACT_METHOD_INVALID_MODIFIER, {}, node->Start());
         node->SetTsType(checker->GlobalTypeError());
         return;
@@ -337,14 +337,14 @@ void ETSAnalyzer::CheckMethodModifiers(ir::MethodDefinition *node) const
 
     auto const notValidInFinal = ir::ModifierFlags::ABSTRACT | ir::ModifierFlags::STATIC;
 
-    if (node->IsFinal() && (node->flags_ & notValidInFinal) != 0U) {
+    if (node->IsFinal() && (node->Modifiers() & notValidInFinal) != 0U) {
         checker->LogError(diagnostic::FINAL_METHOD_INVALID_MODIFIER, {}, node->Start());
         node->SetTsType(checker->GlobalTypeError());
     }
 
     auto const notValidInStatic = ir::ModifierFlags::ABSTRACT | ir::ModifierFlags::FINAL | ir::ModifierFlags::OVERRIDE;
 
-    if (node->IsStatic() && (node->flags_ & notValidInStatic) != 0U) {
+    if (node->IsStatic() && (node->Modifiers() & notValidInStatic) != 0U) {
         checker->LogError(diagnostic::STATIC_METHOD_INVALID_MODIFIER, {}, node->Start());
         node->SetTsType(checker->GlobalTypeError());
     }

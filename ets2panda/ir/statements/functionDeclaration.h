@@ -34,7 +34,7 @@ public:
     {
         InitHistory();
         if (func != nullptr) {
-            flags_ = func->Modifiers();
+            AddModifier(func->Modifiers());
         }
     }
 
@@ -46,7 +46,7 @@ public:
     {
         InitHistory();
         if (func != nullptr) {
-            flags_ = func->Modifiers();
+            AddModifier(func->Modifiers());
         }
     }
 

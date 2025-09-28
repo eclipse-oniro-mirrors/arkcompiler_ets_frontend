@@ -97,7 +97,7 @@ void SpreadElement::Iterate(const NodeTraverser &cb) const
 
 void SpreadElement::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", (type_ == AstNodeType::SPREAD_ELEMENT) ? "SpreadElement" : "RestElement"},
+    dumper->Add({{"type", (Type() == AstNodeType::SPREAD_ELEMENT) ? "SpreadElement" : "RestElement"},
                  {"argument", argument_},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())}});
 }

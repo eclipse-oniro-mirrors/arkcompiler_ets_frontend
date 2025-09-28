@@ -137,7 +137,7 @@ ETSTuple *ETSTuple::Clone(ArenaAllocator *const allocator, AstNode *const parent
     auto *const clone = allocator->New<ETSTuple>(allocator, size_);
     ES2PANDA_ASSERT(clone != nullptr);
 
-    clone->AddModifier(flags_);
+    clone->AddModifier(Modifiers());
 
     if (parent != nullptr) {
         clone->SetParent(parent);
