@@ -8525,7 +8525,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       typeString = this.tsTypeChecker.typeToString(type);
     }
 
-    return typeString.split(' ').join('');
+    /*
+     * at this point we already now that these types match, we need to know if they match exactly
+     * to this point we checked if they are tuples? or arrays etc. so sorting this should be fine
+     */
+    return typeString.split('').sort().
+      join('').
+      trim();
   }
 
   private checkLhsTypeString(node: ts.Node, rhsTypeStr: string): string | undefined {
