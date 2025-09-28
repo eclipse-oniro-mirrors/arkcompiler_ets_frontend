@@ -869,6 +869,7 @@ ArenaVector<ir::TSInterfaceHeritage *> ParserImpl::ParseTsInterfaceExtends()
         ir::TSTypeParameterInstantiation *typeParamInst = nullptr;
         if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LESS_THAN) {
             typeParamInst = ParseTsTypeParameterInstantiation();
+            CHECK_NOT_NULL(typeParamInst);
             heritageEnd = typeParamInst->End();
         }
         auto *typeReference = AllocNode<ir::TSTypeReference>(expr, typeParamInst);

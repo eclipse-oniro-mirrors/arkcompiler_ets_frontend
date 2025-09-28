@@ -1958,6 +1958,7 @@ ir::CallExpression *Transformer::CreateCallExpressionForTsModule(ir::TSModuleDec
                 blockNode = AllocNode<ir::BlockStatement>(funcScope, std::move(statements));
             } else {
                 auto body = VisitTSNodes(node->Body());
+                CHECK_NOT_NULL(body);
                 blockNode = AllocNode<ir::BlockStatement>(funcScope,
                     std::move(body->AsTSModuleBlock()->Statements()));
             }
