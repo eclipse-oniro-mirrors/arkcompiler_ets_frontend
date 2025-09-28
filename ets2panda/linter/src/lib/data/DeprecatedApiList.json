@@ -3822,7 +3822,7 @@
         "api_func_args": [
           {
             "name": "value",
-            "type": "{ next: boolean; direction: Axis }",
+            "type": "ScrollPageOptions",
             "is_optional": true,
             "has_default": false
           }
@@ -8787,7 +8787,7 @@
         "api_func_args": [
           {
             "name": "event",
-            "type": "(width: number)",
+            "type": "(/***Widthofcontentarea.**@syscapSystemCapability.ArkUI.ArkUI.Full*@since7*//***Widthofcontentarea.**@syscapSystemCapability.ArkUI.ArkUI.Full*@atomicservice*@since11*@deprecatedsince12*/width:number,/***Heightofcontentarea.**@syscapSystemCapability.ArkUI.ArkUI.Full*@since7*//***Heightofcontentarea.**@syscapSystemCapability.ArkUI.ArkUI.Full*@atomicservice*@since11*@deprecatedsince12*/height:number,/***Initialstate.**@syscapSystemCapability.ArkUI.ArkUI.Full*@since7*//***Initialstate.**@syscapSystemCapability.ArkUI.ArkUI.Full*@atomicservice*@since11*@deprecatedsince12*/mode:PanelMode)=>void",
             "is_optional": false,
             "has_default": false
           }
@@ -8855,7 +8855,7 @@
         "api_func_args": [
           {
             "name": "callback",
-            "type": "(value: number)",
+            "type": "(value:number)=>void",
             "is_optional": false,
             "has_default": true
           }
