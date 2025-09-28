@@ -262,7 +262,6 @@ private:
             }
         }
 
-        LogError(diagnostic::OVERFLOW_ARITHMETIC, {}, lit->Start());
         return {};
     }
 
@@ -360,14 +359,12 @@ private:
     {
         using Limits = std::numeric_limits<OperandType>;
         static_assert(std::is_integral_v<OperandType> && std::is_signed_v<OperandType>);
-        bool overflowOccurred = false;
         if constexpr (std::is_same_v<OperatorType, std::divides<>> || std::is_same_v<OperatorType, std::modulus<>>) {
             if (rhs == 0) {
                 LogError(diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
                 *res = Limits::max();
             } else if ((lhs == Limits::min()) && rhs == -1) {
                 // Note: Handle corner cases
-                overflowOccurred = true;
                 *res = std::is_same_v<OperatorType, std::divides<>> ? Limits::min() : 0;
             } else {
                 *res = OperatorType {}(lhs, rhs);
@@ -375,21 +372,16 @@ private:
         } else {
             if constexpr (sizeof(OperandType) >= sizeof(int32_t)) {
                 if constexpr (std::is_same_v<OperatorType, std::multiplies<>>) {
-                    overflowOccurred = __builtin_mul_overflow(lhs, rhs, res);
+                    __builtin_mul_overflow(lhs, rhs, res);
                 } else if constexpr (std::is_same_v<OperatorType, std::plus<>>) {
-                    overflowOccurred = __builtin_add_overflow(lhs, rhs, res);
+                    __builtin_add_overflow(lhs, rhs, res);
                 } else if constexpr (std::is_same_v<OperatorType, std::minus<>>) {
-                    overflowOccurred = __builtin_sub_overflow(lhs, rhs, res);
+                    __builtin_sub_overflow(lhs, rhs, res);
                 }
             } else {
                 auto tmpRes = OperatorType {}(static_cast<int32_t>(lhs), static_cast<int32_t>(rhs));
                 *res = static_cast<OperandType>(tmpRes);
-                overflowOccurred = tmpRes < Limits::min() || Limits::max() < tmpRes;
             }
-        }
-
-        if (overflowOccurred) {
-            LogError(diagnostic::OVERFLOW_ARITHMETIC, {}, expr->Start());
         }
     }
 
