@@ -1402,6 +1402,12 @@ void ETSChecker::CheckClassDefinition(ir::ClassDefinition *classDef)
         classDef->SetTsType(GlobalTypeError());
     }
 
+    auto ident = classDef->Ident();
+    if (ident != nullptr && !classDef->IsGlobal() && ident->Name().Is(compiler::Signatures::ETS_GLOBAL)) {
+        classDef->SetTsType(GlobalTypeError());
+        LogError(diagnostic::CONFLICTS_WITH_GLOBAL_IDENTIFIER, {ident->Name()}, ident->Start());
+    }
+
     if (classDef->TsType()->IsTypeError()) {
         return;
     }

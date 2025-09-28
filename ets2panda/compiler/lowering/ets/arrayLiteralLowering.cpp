@@ -98,8 +98,6 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
     auto *genSymIdent = Gensym(Allocator());
     auto *genSymIdent2 = Gensym(Allocator());
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
-    // ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-    // ss << "Array.from<@@T4>(@@I5);";
     ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
     ss << "let @@I4 : Array<@@T5> = new Array<@@T6>(@@I7.length);";
     ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";

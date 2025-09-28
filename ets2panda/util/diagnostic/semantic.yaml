@@ -288,6 +288,10 @@ semantic:
   id: 181
   message: "Implements generic interface '{}' with different instantiations."
 
+- name: CONFLICTS_WITH_GLOBAL_IDENTIFIER
+  id: 121810
+  message: "Declaration name conflicts with built-in global identifier '{}'."
+
 - name: CONSTANT_FLOATING_POINT_COVERSION
   id: 344
   message: "Invalid destination type for floating-point constant value"
