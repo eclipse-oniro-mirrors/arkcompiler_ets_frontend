@@ -54,7 +54,8 @@ export function readDeclareFiles(SdkPath: string): string[] {
 export function createCompilerHost(
   sdkDefaultApiPath: string,
   sdkExternalApiPath: string[],
-  arktsWholeProjectPath: string
+  arktsWholeProjectPath: string,
+  options: ts.CompilerOptions
 ): ts.CompilerHost {
   const sdkContext: SdkContext = setSdkContext(sdkDefaultApiPath, sdkExternalApiPath);
   const resolutionContext = createResolutionContext(sdkContext, arktsWholeProjectPath);
@@ -65,7 +66,8 @@ export function createCompilerHost(
         this.readFile(fileName) || '',
         languageVersionOrOptions,
         true,
-        ts.ScriptKind.Unknown
+        ts.ScriptKind.Unknown,
+        options
       );
     },
     getDefaultLibFileName: (option: ts.CompilerOptions) => {
