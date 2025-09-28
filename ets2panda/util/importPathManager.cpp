@@ -136,6 +136,20 @@ void RemoveEscapedNewlines(std::string &s)
     }
 }
 
+ImportPathManager::ImportPathManager(ark::ArenaAllocator *allocator, const util::Options &options,
+                                     parser::Program *globalProgram, util::DiagnosticEngine &diagnosticEngine)
+    : allocator_(allocator),
+      arktsConfig_(options.ArkTSConfig()),
+      absoluteEtsPath_(options.GetEtsPath().empty() ? ""
+                                                    : util::Path(options.GetEtsPath(), allocator_).GetAbsolutePath()),
+      stdLib_(options.GetStdlib()),
+      parseList_(allocator->Adapter()),
+      globalProgram_(globalProgram),
+      diagnosticEngine_ {diagnosticEngine}
+{
+    arktsConfig_->GenerateSourcePathMap();
+}
+
 std::string ExtractModuleName(const panda_file::File &pf, const panda_file::File::EntityId &classId)
 {
     // processing name to get ohmUrl
@@ -523,6 +537,24 @@ util::StringView ImportPathManager::ResolvePathAPI(StringView curModulePath, ir:
     return ResolvePath(curModulePath.Utf8(), importPath).resolvedPath;
 }
 
+void ImportPathManager::TryMatchStaticResolvedPath(ImportPathManager::ResolvedPathRes &result) const
+{
+    auto paths = arktsConfig_->Paths().find(result.resolvedPath.data());
+    if (paths != arktsConfig_->Paths().cend()) {
+        result.resolvedPath = *paths->second.begin();
+        result.resolvedIsExternalModule = false;
+    }
+}
+
+void ImportPathManager::TryMatchDynamicResolvedPath(ImportPathManager::ResolvedPathRes &result) const
+{
+    auto packagePathPair = arktsConfig_->SourcePathMap().find(result.resolvedPath);
+    if (packagePathPair != arktsConfig_->SourcePathMap().cend()) {
+        result.resolvedPath = packagePathPair->second;
+        result.resolvedIsExternalModule = true;
+    }
+}
+
 ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_view curModulePath,
                                                                   ir::StringLiteral *importPath) const
 {
@@ -540,6 +572,11 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_vi
         resolvedPath.Append(*importPath);
 
         result = AppendExtensionOrIndexFileIfOmitted(resolvedPath.View());
+        if (result.resolvedIsExternalModule) {
+            TryMatchStaticResolvedPath(result);
+        } else {
+            TryMatchDynamicResolvedPath(result);
+        }
     } else {
         result = ResolveAbsolutePath(*importPath);
     }
@@ -726,18 +763,18 @@ std::string ImportPathManager::TryMatchDependencies(std::string_view fixedPath) 
     return {};
 }
 
-std::string ImportPathManager::TryResolvePath(std::string_view fixedPath) const
+ImportPathManager::ResolvedPathRes ImportPathManager::TryResolvePath(std::string_view fixedPath) const
 {
     auto normalizedPath = ark::os::NormalizePath(std::string(fixedPath));
     std::replace_if(
         normalizedPath.begin(), normalizedPath.end(), [&](auto &c) { return c == pathDelimiter_[0]; }, '/');
     if (arktsConfig_->Dependencies().find(normalizedPath) != arktsConfig_->Dependencies().cend()) {
-        return normalizedPath;
+        return {UString(normalizedPath, allocator_).View().Utf8(), true};
     }
     if (arktsConfig_->Paths().find(normalizedPath) != arktsConfig_->Paths().cend()) {
-        return normalizedPath;
+        return {UString(normalizedPath, allocator_).View().Utf8(), false};
     }
-    return {};
+    return {{}, false};
 }
 
 std::string_view ImportPathManager::DirOrDirWithIndexFile(StringView dir) const
@@ -763,8 +800,8 @@ ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFile
     std::replace_if(
         fixedPath.begin(), fixedPath.end(), [&](auto &c) { return ((delim != c) && ((c == '\\') || (c == '/'))); },
         delim);
-    if (auto resolvedPath = TryResolvePath(fixedPath); !resolvedPath.empty()) {
-        return {UString(resolvedPath, allocator_).View().Utf8(), true};
+    if (auto metaData = TryResolvePath(fixedPath); !metaData.resolvedPath.empty()) {
+        return metaData;
     }
 
     auto path = UString(fixedPath, allocator_).View();
