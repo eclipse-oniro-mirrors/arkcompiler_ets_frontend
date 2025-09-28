@@ -87,7 +87,7 @@ const testMap: Map<string, number> = new Map<string, number>([
 ]);
 let a : Array<string> = new Array<string>();
 function foo(arr:Array<string>) { }
-foo(new Array<string>()); 
+foo(new Array<string>());
 @Observed
 export class AppIconCloneBadgeVm {
   @Track public cloneBadgeModifier: AttributeUpdater<CommonAttribute> = new AttributeUpdater<CommonAttribute>();
@@ -144,4 +144,12 @@ function fun(a?:Map<string,string>){
   if(c === undefined){
     c = new Map<string, string>()
   }
+}
+
+class Foo {
+    private foo: Map<string, HashSet<string>> = new Map<string, HashSet<string>>(); // this should be fixed
+
+    private fooMethod() {
+        this.foo.set("foo", new HashSet<string>())// HashSet should be HashSet<string>
+    }
 }
