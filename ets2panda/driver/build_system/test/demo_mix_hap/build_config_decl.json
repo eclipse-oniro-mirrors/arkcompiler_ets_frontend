@@ -1,27 +1,23 @@
 {
-    "plugins": {
-        "ArkUI": "${absolute_path_to_build_system}/node_modules/libarkts/arkoala-arkts/libarkts/build/src/koala-plugin"
-    },
 
     "compileFiles": [
         "${absolute_path_to_build_system}/test/demo_mix_hap/static_har/index.ets"
     ],
 
     "packageName" : "static_har",
-
+    "moduleType": "har",
     "buildType": "build",
     "buildMode": "Debug",
     "moduleRootPath": "${absolute_path_to_build_system}/test/demo_mix_hap/static_har",
     "sourceRoots": ["./"],
 
-    "loaderOutPath": "./dist/cache/demo_mix_hap",
-    "cachePath": "./dist/cache/demo_mix_hap",
-
-    "buildSdkPath": ".",
-
+    "loaderOutPath": "./dist/out/",
+    "cachePath": "./dist/cache",
     "enableDeclgenEts2Ts": true,
-    "declgenDtsOutPath": "./dist/cache/demo_mix_hap/decl",
-    "declgenTsOutPath": "./dist/cache/demo_mix_hap/ts",
-
-    "dependentModuleList": []
+    "declgenV1OutPath": "./dist/declgen/decl_ets",
+    "declgenV2OutPath": "./dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "dependentModuleList": [],
+    "hasMainModule": true
 }

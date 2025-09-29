@@ -1,6 +1,6 @@
 {
-  "alias.dynamic@ohos.import":{
-    "originalAPIName":"@ohos.import",
-    "isStatic":false
+  "alias.dynamic@ohos.import": {
+    "originalAPIName": "@ohos.import",
+    "isStatic": false
   }
 }

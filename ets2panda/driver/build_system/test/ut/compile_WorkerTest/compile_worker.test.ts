@@ -58,9 +58,33 @@ const fakeArkts = {
     generateStaticDeclarationsFromContext: jest.fn(),
     destroyConfig: jest.fn()
 };
+
 const fakeArktsGlobal = {
-    es2panda: { _DestroyContext: jest.fn() }
+    es2panda: {
+        _SetUpSoPath: jest.fn(),
+        _DestroyContext: jest.fn((pandaSDKPath: string) => {
+            return;
+        }),
+    },
+    filePath: '',
+    config: '',
+    compilerContext: { program: {}, peer: 'peer' }
 };
+
+jest.mock('../../../src/init/init_koala_modules', () => ({
+    initKoalaModules: jest.fn((buildConfig) => {
+    const fakeKoala = {
+      arkts: fakeArkts,
+      arktsGlobal: fakeArktsGlobal
+    };
+    fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+    
+    buildConfig.arkts = fakeKoala.arkts;
+    buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
+    return fakeKoala;
+  })
+}));
+
 jest.mock('path', () => ({
     ...jest.requireActual('path'),
     resolve: jest.fn((...args) => args.join('/')),

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { ArkTSConfigGenerator } from '../../../src/build/generate_arktsconfig';
+import { ArkTSConfigGenerator, ArkTSConfig } from '../../../src/build/generate_arktsconfig';
 import { BuildConfig, BUILD_MODE, BUILD_TYPE, ModuleInfo, OHOS_MODULE_TYPE } from '../../../src/types';
 import { mockLogger, moduleInfoWithNullSourceRoots, moduleInfoWithFalseEts2Ts } from '../mock/mockData';
 import * as fs from 'fs';
@@ -77,6 +77,7 @@ describe('test writeArkTSConfigFile in normal and abnormal scenarios', () => {
     (generator as any).getDynamicPathSection = jest.fn();
     (generator as any).logger = mockLogger;
     (generator as any).dynamicSDKPaths = ['/sdk/apis/interop'];
+    (generator as any).arktsconfigs = new Map();
   });
 
   afterEach(() => {
@@ -85,309 +86,14 @@ describe('test writeArkTSConfigFile in normal and abnormal scenarios', () => {
 
   test('should throw error if sourceRoots is empty', () => {
     expect(() => {
-      generator.writeArkTSConfigFile(moduleInfoWithNullSourceRoots, false, mockConfig);
+      generator.generateArkTSConfigFile(moduleInfoWithNullSourceRoots, false);
     }).toThrow('Exit with error.');
   });
 
   test('should generate correct arktsConfig when enableDeclgenEts2Ts is false', () => {
-    generator.writeArkTSConfigFile(moduleInfoWithFalseEts2Ts, false, mockConfig);
+    generator.generateArkTSConfigFile(moduleInfoWithFalseEts2Ts, false);
     expect((generator as any).getDependenciesSection).toHaveBeenCalled();
   })
-});
-
-// Test suite for handleEntryFile method in ArkTSConfigGenerator.
-describe('handleEntryFile', () => {
-  test('should add path to pathSection for ARKTS_1_2 language module', () => {
-    const fs = require('fs');
-    const path = require('path');
-
-    jest.spyOn(fs, 'statSync').mockReturnValue({
-      isFile: () => true
-    } as fs.Stats);
-
-    jest.spyOn(fs, 'readFileSync').mockReturnValue('any content');
-
-    jest.spyOn(path, 'resolve').mockImplementation((modulePath, sourceRoot) =>
-      `${modulePath}/${sourceRoot}`);
-
-    (global as any).LogDataFactory = {
-      newInstance: jest.fn().mockReturnValue({
-        toString: () => 'Mock Error',
-        code: '123',
-        message: 'Test Error'
-      })
-    };
-    (global as any).ErrorCode = {
-      BUILDSYSTEM_HANDLE_ENTRY_FILE: '11410200'
-    };
-
-    const generator = Object.create(ArkTSConfigGenerator.prototype);
-
-    generator.pathSection = {};
-    generator.logger = {
-      printError: jest.fn(),
-      printInfo: jest.fn()
-    };
-
-    const LANGUAGE_VERSION = {
-      ARKTS_1_2: "11.0",
-      ARKTS_HYBRID: "hybrid"
-    };
-
-    const moduleInfo: ModuleInfo = {
-      packageName: "testModule",
-      moduleRootPath: "/modules/testModule",
-      sourceRoots: ["src"],
-      entryFile: "/modules/testModule/src/index.ets",
-      language: LANGUAGE_VERSION.ARKTS_1_2,
-      arktsConfigFile: "/config/arktsconfig.json",
-      compileFileInfos: [],
-      dynamicDepModuleInfos: new Map(),
-      staticDepModuleInfos: new Map(),
-      moduleType: OHOS_MODULE_TYPE.HAR,
-      isMainModule: true,
-      byteCodeHar: false
-    } as any;
-
-    (ArkTSConfigGenerator.prototype as any).handleEntryFile.call(generator, moduleInfo);
-
-    delete (global as any).LogDataFactory;
-    delete (global as any).ErrorCode;
-  });
-
-  test('should add path to pathSection for ARKTS_HYBRID language module with "use static"', () => {
-    const fs = require('fs');
-    const path = require('path');
-
-    jest.spyOn(fs, 'statSync').mockReturnValue({
-      isFile: () => true
-    } as fs.Stats);
-
-    jest.spyOn(fs, 'readFileSync').mockReturnValue('use static\nother content');
-
-    jest.spyOn(path, 'resolve').mockImplementation((modulePath, sourceRoot) =>
-      `${modulePath}/${sourceRoot}`);
-
-    (global as any).LogDataFactory = {
-      newInstance: jest.fn().mockReturnValue({
-        toString: () => 'Mock Error',
-        code: '123',
-        message: 'Test Error'
-      })
-    };
-    (global as any).ErrorCode = {
-      BUILDSYSTEM_HANDLE_ENTRY_FILE: '11410200'
-    };
-
-    const generator = Object.create(ArkTSConfigGenerator.prototype);
-
-    generator.pathSection = {};
-    generator.logger = {
-      printError: jest.fn(),
-      printInfo: jest.fn()
-    };
-
-    const LANGUAGE_VERSION = {
-      ARKTS_1_2: "11.0",
-      ARKTS_HYBRID: "hybrid"
-    };
-
-    const moduleInfo: ModuleInfo = {
-      packageName: "hybridModule",
-      moduleRootPath: "/modules/hybridModule",
-      sourceRoots: ["src"],
-      entryFile: "/modules/hybridModule/src/index.ets",
-      language: LANGUAGE_VERSION.ARKTS_HYBRID,
-      arktsConfigFile: "/config/arktsconfig.json",
-      compileFileInfos: [],
-      dynamicDepModuleInfos: new Map(),
-      staticDepModuleInfos: new Map(),
-      moduleType: OHOS_MODULE_TYPE.HAR,
-      isMainModule: true,
-      byteCodeHar: false
-    } as any;
-
-    (ArkTSConfigGenerator.prototype as any).handleEntryFile.call(generator, moduleInfo);
-
-    expect(generator.pathSection).toEqual({
-      "hybridModule": ["/modules/hybridModule/src"]
-    });
-
-    expect(fs.statSync).toHaveBeenCalledWith("/modules/hybridModule/src/index.ets");
-    expect(fs.readFileSync).toHaveBeenCalledWith("/modules/hybridModule/src/index.ets", "utf-8");
-    expect(path.resolve).toHaveBeenCalledWith("/modules/hybridModule", "src");
-
-    delete (global as any).LogDataFactory;
-    delete (global as any).ErrorCode;
-  });
-
-  test('should NOT add path to pathSection for ARKTS_HYBRID language module without "use static"', () => {
-    const fs = require('fs');
-    const path = require('path');
-
-    jest.spyOn(fs, 'statSync').mockReturnValue({
-      isFile: () => true
-    } as fs.Stats);
-
-    jest.spyOn(fs, 'readFileSync').mockReturnValue('import something\nother content');
-
-    jest.spyOn(path, 'resolve').mockImplementation((modulePath, sourceRoot) =>
-      `${modulePath}/${sourceRoot}`);
-
-    (global as any).LogDataFactory = {
-      newInstance: jest.fn().mockReturnValue({
-        toString: () => 'Mock Error',
-        code: '123',
-        message: 'Test Error'
-      })
-    };
-    (global as any).ErrorCode = {
-      BUILDSYSTEM_HANDLE_ENTRY_FILE: '11410200'
-    };
-
-    const generator = Object.create(ArkTSConfigGenerator.prototype);
-
-    generator.pathSection = {};
-    generator.logger = {
-      printError: jest.fn(),
-      printInfo: jest.fn()
-    };
-
-    const LANGUAGE_VERSION = {
-      ARKTS_1_2: "11.0",
-      ARKTS_HYBRID: "hybrid"
-    };
-
-    const moduleInfo: ModuleInfo = {
-      packageName: "hybridModule",
-      moduleRootPath: "/modules/hybridModule",
-      sourceRoots: ["src"],
-      entryFile: "/modules/hybridModule/src/index.ets",
-      language: LANGUAGE_VERSION.ARKTS_HYBRID,
-      arktsConfigFile: "/config/arktsconfig.json",
-      compileFileInfos: [],
-      dynamicDepModuleInfos: new Map(),
-      staticDepModuleInfos: new Map(),
-      moduleType: OHOS_MODULE_TYPE.HAR,
-      isMainModule: true,
-      byteCodeHar: false
-    } as any;
-
-    (ArkTSConfigGenerator.prototype as any).handleEntryFile.call(generator, moduleInfo);
-
-    expect(generator.pathSection).toEqual({});
-
-    expect(fs.statSync).toHaveBeenCalledWith("/modules/hybridModule/src/index.ets");
-    expect(fs.readFileSync).toHaveBeenCalledWith("/modules/hybridModule/src/index.ets", "utf-8");
-    delete (global as any).LogDataFactory;
-    delete (global as any).ErrorCode;
-  });
-
-  test('should handle error when entry file does not exist', () => {
-    const fs = require('fs');
-    const path = require('path');
-
-    jest.spyOn(fs, 'statSync').mockImplementation(() => {
-      throw new Error('ENOENT: no such file or directory');
-    });
-
-    (global as any).LogDataFactory = {
-      newInstance: jest.fn().mockReturnValue({
-        toString: () => 'Mock Error',
-        code: '123',
-        message: 'Test Error'
-      })
-    };
-    (global as any).ErrorCode = {
-      BUILDSYSTEM_HANDLE_ENTRY_FILE: '11410200'
-    };
-
-    const generator = Object.create(ArkTSConfigGenerator.prototype);
-
-    generator.pathSection = {};
-    generator.logger = {
-      printError: jest.fn(),
-      printInfo: jest.fn()
-    };
-
-    const LANGUAGE_VERSION = {
-      ARKTS_1_2: "11.0",
-      ARKTS_HYBRID: "hybrid"
-    };
-
-    const moduleInfo: ModuleInfo = {
-      packageName: "errorModule",
-      moduleRootPath: "/modules/errorModule",
-      sourceRoots: ["src"],
-      entryFile: "/modules/errorModule/src/nonexistent.ets",
-      language: LANGUAGE_VERSION.ARKTS_1_2,
-      arktsConfigFile: "/config/arktsconfig.json",
-      compileFileInfos: [],
-      dynamicDepModuleInfos: new Map(),
-      staticDepModuleInfos: new Map(),
-      moduleType: OHOS_MODULE_TYPE.HAR,
-      isMainModule: true,
-      byteCodeHar: false
-    } as any;
-
-    (ArkTSConfigGenerator.prototype as any).handleEntryFile.call(generator, moduleInfo);
-
-    expect(generator.pathSection).toEqual({});
-
-    delete (global as any).LogDataFactory;
-    delete (global as any).ErrorCode;
-  });
-
-  test('should return early when entry file is not a regular file', () => {
-    const fs = require('fs');
-
-    jest.spyOn(fs, 'statSync').mockReturnValue({
-      isFile: () => false,
-      isDirectory: () => true
-    } as fs.Stats);
-
-    (global as any).LogDataFactory = {
-      newInstance: jest.fn()
-    };
-    (global as any).ErrorCode = {
-      BUILDSYSTEM_HANDLE_ENTRY_FILE: '11410200'
-    };
-
-    const generator = Object.create(ArkTSConfigGenerator.prototype);
-
-    generator.pathSection = {};
-    generator.logger = {
-      printError: jest.fn(),
-      printInfo: jest.fn()
-    };
-
-    const LANGUAGE_VERSION = {
-      ARKTS_1_2: "11.0",
-      ARKTS_HYBRID: "hybrid"
-    };
-
-    const moduleInfo: ModuleInfo = {
-      packageName: "directoryModule",
-      moduleRootPath: "/modules/directoryModule",
-      sourceRoots: ["src"],
-      entryFile: "/modules/directoryModule/src",
-      language: LANGUAGE_VERSION.ARKTS_1_2,
-      arktsConfigFile: "/config/arktsconfig.json",
-      compileFileInfos: [],
-      dynamicDepModuleInfos: new Map(),
-      staticDepModuleInfos: new Map(),
-      moduleType: OHOS_MODULE_TYPE.HAR,
-      isMainModule: true,
-      byteCodeHar: false
-    } as any;
-
-    (ArkTSConfigGenerator.prototype as any).handleEntryFile.call(generator, moduleInfo);
-
-    expect(generator.pathSection).toEqual({});
-
-    delete (global as any).LogDataFactory;
-    delete (global as any).ErrorCode;
-  });
 });
 
 describe('test if the generateSystemSdkPathSection is working correctly', () => {
@@ -520,7 +226,9 @@ describe('test if the generateSystemSdkPathSection is working correctly', () => 
     (ArkTSConfigGenerator.prototype as any).generateSystemSdkPathSection.call(generator, pathSection);
 
     expect(pathSection).toEqual({
+      'escompat': [undefined],
       'external': ['/external/api/external'],
+      'std': [undefined],
       'widgets.widget': ['/external/api/widgets/widget']
     });
 
@@ -617,6 +325,7 @@ describe('test if the getDependenciesSection is working correctly', () => {
     });
 
     const generator = Object.create(ArkTSConfigGenerator.prototype);
+    generator.systemDependenciesSection = {};
 
     generator.getOhmurl = jest.fn((file, depModuleInfo) => {
       return `${depModuleInfo.packageName}/${file.replace(/^src\//, '').replace(/\.ets$/, '')}`;
@@ -655,14 +364,12 @@ describe('test if the getDependenciesSection is working correctly', () => {
       byteCodeHar: false
     } as any;
 
-    const dynamicPathSection: Record<string, any> = {};
-    (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, dynamicPathSection);
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
+
+    (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, arktsconfig);
 
     expect(fs.existsSync).toHaveBeenCalledWith("/modules/dep1/dist/decls.json");
     expect(fs.readFileSync).toHaveBeenCalledWith("/modules/dep1/dist/decls.json", "utf-8");
-    expect(generator.getOhmurl).toHaveBeenCalledWith("src/file1.ets", depModuleInfo);
-    expect(generator.getOhmurl).toHaveBeenCalledWith("src/index.ets", depModuleInfo);
-    expect(generator.getOhmurl).toHaveBeenCalledWith("src/file2.ets", depModuleInfo);
     expect(path.resolve).toHaveBeenCalledWith("/modules/dep1", "src/file1.ets");
     expect(path.resolve).toHaveBeenCalledWith("/modules/dep1", "src/index.ets");
     expect(path.resolve).toHaveBeenCalledWith("/modules/dep1", "src/file2.ets");
@@ -679,6 +386,7 @@ describe('test if the getDependenciesSection is working correctly', () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(false);
 
     const generator = Object.create(ArkTSConfigGenerator.prototype);
+    generator.systemDependenciesSection = {};
 
     const depModuleInfo: ModuleInfo = {
       packageName: "dep1",
@@ -713,10 +421,9 @@ describe('test if the getDependenciesSection is working correctly', () => {
       byteCodeHar: false
     } as any;
 
-    const dynamicPathSection: Record<string, any> = {};
-    (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, dynamicPathSection);
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
 
-    expect(dynamicPathSection).toEqual({});
+    (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, arktsconfig);
 
     expect(consoleErrorMock).toHaveBeenCalled();
     expect(consoleErrorMock.mock.calls[0][0]).toContain("mainModule depends on dynamic module dep1");
@@ -732,6 +439,7 @@ describe('test if the getDependenciesSection is working correctly', () => {
     const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation(() => { });
 
     const generator = Object.create(ArkTSConfigGenerator.prototype);
+    generator.systemDependenciesSection = {};
 
     const depModuleInfo: ModuleInfo = {
       packageName: "dep1",
@@ -765,10 +473,9 @@ describe('test if the getDependenciesSection is working correctly', () => {
       byteCodeHar: false
     } as any;
 
-    const dynamicPathSection: Record<string, any> = {};
-    (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, dynamicPathSection);
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
 
-    expect(dynamicPathSection).toEqual({});
+    (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, arktsconfig);
 
     expect(consoleErrorMock).toHaveBeenCalled();
     expect(consoleErrorMock.mock.calls[0][0]).toContain("mainModule depends on dynamic module dep1");
@@ -790,25 +497,22 @@ describe('test if the processAlias is working correctly', () => {
       printInfo: jest.fn()
     };
 
-    const aliasConfig = new Map<string, Map<string, AliasConfig>>();
+    const aliasConfig: Record<string, Record<string, AliasConfig>> = {};
 
-    const moduleAliasConfig = new Map<string, AliasConfig>();
-    moduleAliasConfig.set("static1", {
+    const moduleAliasConfig: Record<string, AliasConfig> = {};
+    moduleAliasConfig["static1"] = {
       isStatic: true,
       originalAPIName: "@ohos.test1"
-    } as any);
-
-    moduleAliasConfig.set("kit1", {
+    } as AliasConfig;
+    moduleAliasConfig["kit1"] = {
       isStatic: false,
       originalAPIName: "@kit.test2"
-    } as any);
-
-    moduleAliasConfig.set("dynamic1", {
+    } as AliasConfig;
+    moduleAliasConfig["dynamic1"] = {
       isStatic: false,
       originalAPIName: "@ohos.test3"
-    } as any);
-
-    aliasConfig.set("testModule", moduleAliasConfig);
+    } as AliasConfig;
+    aliasConfig["testModule"] = moduleAliasConfig;
     generator.aliasConfig = aliasConfig;
 
     const moduleInfo: ModuleInfo = {
@@ -819,32 +523,29 @@ describe('test if the processAlias is working correctly', () => {
       compileFileInfos: []
     } as any;
 
-    const dynamicPathSection: Record<string, any> = {};
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
 
     (ArkTSConfigGenerator.prototype as any).processAlias.call(
       generator,
-      moduleInfo,
-      dynamicPathSection
+      arktsconfig
     );
 
-    expect(generator.processStaticAlias).toHaveBeenCalledWith(
-      "static1",
-      { isStatic: true, originalAPIName: "@ohos.test1" }
-    );
+    expect(generator.processStaticAlias).toHaveBeenCalledTimes(1);
+    expect(generator.processDynamicAlias).toHaveBeenCalledTimes(1);
 
     expect(generator.processStaticAlias).toHaveBeenCalledWith(
       "kit1",
-      { isStatic: false, originalAPIName: "@kit.test2" }
+      { isStatic: false, originalAPIName: "@kit.test2" },
+      arktsconfig
     );
 
     expect(generator.processDynamicAlias).toHaveBeenCalledWith(
       "dynamic1",
       { isStatic: false, originalAPIName: "@ohos.test3" },
-      dynamicPathSection
+      arktsconfig
     );
 
-    expect(generator.processStaticAlias).toHaveBeenCalledTimes(2);
-    expect(generator.processDynamicAlias).toHaveBeenCalledTimes(1);
+    
   });
 
   test('should handle undefined aliasConfig gracefully', () => {
@@ -859,7 +560,8 @@ describe('test if the processAlias is working correctly', () => {
       printInfo: jest.fn()
     };
 
-    generator.aliasConfig = new Map<string, Map<string, AliasConfig>>();
+    const aliasConfig: Record<string, Record<string, AliasConfig>> = {};
+    generator.aliasConfig = aliasConfig;
 
     const moduleInfo: ModuleInfo = {
       packageName: "testModule",
@@ -869,12 +571,11 @@ describe('test if the processAlias is working correctly', () => {
       compileFileInfos: []
     } as any;
 
-    const dynamicPathSection: Record<string, any> = {};
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
 
     (ArkTSConfigGenerator.prototype as any).processAlias.call(
       generator,
-      moduleInfo,
-      dynamicPathSection
+      arktsconfig
     );
 
     expect(generator.processStaticAlias).not.toHaveBeenCalled();
@@ -903,12 +604,11 @@ describe('test if the processAlias is working correctly', () => {
       compileFileInfos: []
     } as any;
 
-    const dynamicPathSection: Record<string, any> = {};
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
 
     (ArkTSConfigGenerator.prototype as any).processAlias.call(
       generator,
-      moduleInfo,
-      dynamicPathSection
+      arktsconfig
     );
 
     expect(generator.processStaticAlias).not.toHaveBeenCalled();

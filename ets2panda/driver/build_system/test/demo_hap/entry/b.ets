@@ -16,13 +16,8 @@
 import {str, strd} from './c'
 import {strA} from 'harA'
 import {strB} from 'harB'
-import {UIAbility, Lang, Hilog} from '@kit.AbilityKit'
 
 function main() {
-  let ui = new UIAbility();
-  let lan = new Lang();
-  let hilog = new Hilog();
-
   let hello_str = str;
 
   console.log(hello_str);

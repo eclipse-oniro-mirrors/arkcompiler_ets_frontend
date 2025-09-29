@@ -45,12 +45,43 @@ jest.mock('../../../src/utils', () => ({
     isWindows: jest.fn(() => false)
 }));
 
-const fakeArkts = {};
+const fakeArkts = {
+    Config: { create: jest.fn(() => ({ peer: 'peer' })) },
+    Context: { 
+        createFromString: jest.fn(() => ({ program: {}, peer: 'peer' })),
+        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' })) 
+    },
+    proceedToState: jest.fn(),
+    Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2 },
+    generateTsDeclarationsFromContext: jest.fn(),
+    destroyConfig: jest.fn(),
+    EtsScript: { fromContext: jest.fn(() => ({})) }
+};
 const fakeArktsGlobal = {
     es2panda: {
-        _SetUpSoPath: jest.fn()
-    }
+        _SetUpSoPath: jest.fn(),
+        _DestroyContext: jest.fn((pandaSDKPath: string) => {
+            return;
+        }),
+    },
+    filePath: '',
+    config: '',
+    compilerContext: { program: {}, peer: 'peer' }
 };
+
+jest.mock('../../../src/init/init_koala_modules', () => ({
+    initKoalaModules: jest.fn((buildConfig) => {
+    const fakeKoala = {
+      arkts: fakeArkts,
+      arktsGlobal: fakeArktsGlobal
+    };
+    fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+    
+    buildConfig.arkts = fakeKoala.arkts;
+    buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
+    return fakeKoala;
+  })
+}));
 
 beforeEach(() => {
     jest.resetModules();
@@ -187,10 +218,15 @@ describe('test processBuildConfig in different scenarios', () => {
     });
 
     test('throw if koala wrapper require fails', () => {
+        jest.unmock('../../../src/init/init_koala_modules'); 
+        jest.resetModules(); 
+
         process.env.KOALA_WRAPPER_PATH = '/bad/koala';
         jest.doMock('/bad/koala', () => { throw new Error('fail'); }, { virtual: true });
         const { processBuildConfig } = require('../../../src/init/process_build_config');
         expect(() => processBuildConfig({ ...buildConfigBase })).toThrow();
         delete process.env.KOALA_WRAPPER_PATH;
-    });
+});
+
+
 });

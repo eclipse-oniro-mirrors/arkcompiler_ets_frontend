@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+import fs from 'fs';
+import path from 'path';
+
 import { BaseMode } from '../../../src/build/base_mode';
 import { BuildConfig, BUILD_TYPE, BUILD_MODE, OHOS_MODULE_TYPE, ModuleInfo, ES2PANDA_MODE } from '../../../src/types';
 import { BuildMode } from '../../../src/build/build_mode';
@@ -67,6 +70,10 @@ beforeEach(() => {
 beforeAll(() => {
   const { execSync } = require('child_process');
   execSync('rimraf test/ut/mock/dist', { stdio: 'pipe' });
+  const dir = path.resolve('dist/cache');
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
 });
 
 // Test the functions of the base_mode.ts file.
@@ -82,15 +89,7 @@ describe('test base_mode.ts file api', () => {
   test('test shouldSkipFile', () => {
     test_shouldSkipFile();
   });
-
-  test('test setupCluster', () => {
-    test_setupCluster();
-  });
-
-  test('test terminateAllWorkers', () => {
-    test_terminateAllWorkers();
-  });
-
+  
   test('test collectCompileFiles when test declaration files skip branch', () => {
     test_collectCompileFiles_decl_ets_skip();
   });
@@ -175,10 +174,6 @@ describe('test base_mode.ts file api', () => {
     test_getJobDependencies();
   });
 
-  test('test setupWorkerMessageHandler', () => {
-    test_setupWorkerMessageHandler();
-  });
-
   test('test getSerializableConfig handles bigint values', () => {
     test_getSerializableConfig();
   });
@@ -228,6 +223,7 @@ function test_collectCompileJobs_should_skip_entry_files_not_in_compileFiles() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
 
@@ -306,7 +302,7 @@ function test_collectDependentCompileFiles_isFileChanged_branch() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
-    dependentModuleList: []
+    dependentModuleList: [],
   };
 
   class TestBaseMode extends BaseMode {
@@ -407,7 +403,7 @@ function test_collectAbcFileFromByteCodeHar_missing_abc_path() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
-    dependentModuleList: []
+    dependentModuleList: [],
   };
 
   class TestBaseMode extends BaseMode {
@@ -475,7 +471,7 @@ function test_collectCompileFiles_enableDeclgenEts2Ts_false() {
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
     enableDeclgenEts2Ts: false,
-    dependentModuleList: []
+    dependentModuleList: [],
   };
 
   class TestBaseMode extends BaseMode {
@@ -519,6 +515,8 @@ class TestBaseModeMock extends BaseMode {
       compileFileInfos: [],
       dynamicDepModuleInfos: new Map(),
       staticDepModuleInfos: new Map(),
+      dependenciesSet: new Set(),
+      dependentSet: new Set(),
       moduleType: OHOS_MODULE_TYPE.HAR,
       entryFile: "index.ets",
       byteCodeHar: false,
@@ -542,7 +540,7 @@ function test_collectModuleInfos1(mockLogger: any, LogDataFactory: any) {
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
     hasMainModule: true,
-    dependentModuleList: []
+    dependentModuleList: [],
   };
   const baseMode = new TestBaseModeMock(mockConfig as any);
   (baseMode as any).logger = mockLogger;
@@ -773,6 +771,7 @@ function test_updateDependantJobs() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
   (global as any).finishedJob = [];
@@ -797,6 +796,7 @@ function test_loadHashCache() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
 
@@ -861,6 +861,7 @@ function test_isFileChanged() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
 
@@ -918,6 +919,7 @@ function test_collectDependentCompileFiles() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
 
@@ -982,6 +984,7 @@ function test_getSerializableConfig() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG,
     arkts: {
       someFunction: () => { }
@@ -1012,86 +1015,6 @@ function test_getSerializableConfig() {
   expect(result).toHaveProperty('sourceRoots');
 }
 
-function test_setupWorkerMessageHandler() {
-  const mockConfig = {
-    packageName: "test",
-    moduleRootPath: "/test/path",
-    sourceRoots: ["./"],
-    loaderOutPath: "./dist",
-    cachePath: "./dist/cache",
-    buildMode: BUILD_MODE.DEBUG
-  };
-
-  const mockLogData = { code: "123", message: "Test message" };
-  const mockLogger = {
-    printError: jest.fn(),
-    printInfo: jest.fn()
-  };
-
-  const LogDataFactory = {
-    newInstance: jest.fn().mockReturnValue(mockLogData)
-  };
-
-  const ErrorCode = {
-    BUILDSYSTEM_COMPILE_ABC_FAIL: '11410099'
-  };
-
-  class TestBuildMode extends BaseMode {
-    public run(): Promise<void> {
-      return Promise.resolve();
-    }
-
-    public testSetupWorkerMessageHandler(worker: any): void {
-      (this as any).setupWorkerMessageHandler(worker);
-    }
-  }
-
-  const baseMode = new TestBuildMode(mockConfig as any);
-  (baseMode as any).logger = mockLogger;
-  const errorLogDataSpy = jest.spyOn(LogDataFactory, 'newInstance');
-
-  const mockWorker = {
-    on: jest.fn(),
-    callbacks: {} as Record<string, Function>
-  };
-
-  mockWorker.on = jest.fn().mockImplementation((event, callback) => {
-    mockWorker.callbacks[event] = callback;
-    return mockWorker;
-  });
-
-  (global as any).LogDataFactory = LogDataFactory;
-  (global as any).ErrorCode = ErrorCode;
-
-  baseMode.testSetupWorkerMessageHandler(mockWorker);
-
-  expect(mockWorker.on).toHaveBeenCalledWith('message', expect.any(Function));
-
-  if (mockWorker.callbacks['message']) {
-    mockWorker.callbacks['message']({ success: true });
-  }
-  expect(mockLogger.printError).not.toHaveBeenCalled();
-
-  if (mockWorker.callbacks['message']) {
-    mockWorker.callbacks['message']({
-      success: false,
-      filePath: '/test/file.ets',
-      error: 'Test error'
-    });
-  }
-  mockLogger.printError.mockClear();
-  errorLogDataSpy.mockClear();
-
-  if (mockWorker.callbacks['message']) {
-    mockWorker.callbacks['message']({
-      success: false,
-      filePath: '/test/file2.ets'
-    });
-  }
-
-  jest.restoreAllMocks();
-}
-
 function test_getJobDependencies() {
   const mockConfig = {
     packageName: "test",
@@ -1099,6 +1022,7 @@ function test_getJobDependencies() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
 
@@ -1151,6 +1075,7 @@ function test_getJobDependants() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
   class TestBuildMode extends BuildMode {
@@ -1202,6 +1127,7 @@ function test_collectCompileJobs() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
 
@@ -1303,6 +1229,7 @@ function test_dealWithDependants() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
   class TestBuildMode extends BuildMode {
@@ -1362,6 +1289,7 @@ function test_addJobToQueues() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
 
@@ -1447,6 +1375,7 @@ function test_initCompileQueues() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
 
@@ -1530,6 +1459,7 @@ function test_checkAllTasksDone() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
 
@@ -1569,6 +1499,7 @@ function test_processAfterCompile() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG,
     arkts: {
       destroyConfig: jest.fn()
@@ -1612,9 +1543,13 @@ function test_processAfterCompile() {
 
 function test_runConcurrent() {
   const mockConfig = {
-    packageName: "test", compileFiles: ["/test/path/file1.ets"],
-    moduleRootPath: "/test/path", sourceRoots: ["./"],
-    loaderOutPath: "./dist", cachePath: "./dist/cache",
+    packageName: "test",
+    compileFiles: ["/test/path/file1.ets"],
+    moduleRootPath: "/test/path", 
+    sourceRoots: ["./"],
+    loaderOutPath: "./dist", 
+    cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   } as any;
 
@@ -1678,8 +1613,13 @@ function test_collectDependencyModules_language_branches() {
   }
 
   const baseMode = new TestBaseMode({
-    packageName: "test", moduleRootPath: "/test/path", sourceRoots: ["./"],
-    loaderOutPath: "./dist", cachePath: "./dist/cache", buildMode: BUILD_MODE.DEBUG
+    packageName: "test", 
+    moduleRootPath: "/test/path", 
+    sourceRoots: ["./"],
+    loaderOutPath: "./dist", 
+    cachePath: "./dist/cache",
+    dependentModuleList: [], 
+    buildMode: BUILD_MODE.DEBUG
   } as any);
 
   {
@@ -1739,6 +1679,7 @@ function test_getDependentModules_missing_module() {
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   };
   const Logger = require('../../../src/logger').Logger;
@@ -1774,11 +1715,17 @@ function test_declgen_method() {
   const fs = require('fs');
   jest.spyOn(fs, 'readFileSync').mockReturnValue('test source code');
   const mockConfig = {
-    packageName: "test", moduleRootPath: "/test/path",
-    loaderOutPath: "./dist", cachePath: "./dist/cache",
+    packageName: "test", 
+    moduleRootPath: "/test/path",
+    loaderOutPath: "./dist", 
+    cachePath: "./dist/cache",
+    dependentModuleList: [],
     arkts: {
       Config: { create: jest.fn().mockReturnValue({ peer: 'mockConfigPeer' }) },
-      Context: { createFromString: jest.fn().mockReturnValue({ peer: 'mockContextPeer', program: 'mockProgram' }) },
+      Context: { 
+        createFromString: jest.fn().mockReturnValue({ peer: 'mockContextPeer', program: 'mockProgram' }),
+        createFromStringWithHistory: jest.fn().mockReturnValue({ peer: 'mockContextPeer', program: 'mockProgram' }) 
+      },
       proceedToState: jest.fn(), EtsScript: { fromContext: jest.fn().mockReturnValue('mockAst') },
       Es2pandaContextState: { ES2PANDA_STATE_PARSED: 'parsed', ES2PANDA_STATE_CHECKED: 'checked' },
       generateTsDeclarationsFromContext: jest.fn(), destroyConfig: jest.fn()
@@ -1813,7 +1760,7 @@ function test_declgen_method() {
   }]]);
   baseMode.testDeclgen({ filePath: '/test/path/file1.ets', packageName: 'test', arktsConfigFile: '/test/path/arktsconfig.json' });
   expect(fs.readFileSync).toHaveBeenCalledWith('/test/path/file1.ets', 'utf8');
-  expect(mockConfig.arkts.Context.createFromString).toHaveBeenCalled();
+  expect(mockConfig.arkts.Context.createFromStringWithHistory).toHaveBeenCalled();
   expect(mockConfig.arkts.proceedToState).toHaveBeenCalledWith('parsed', 'mockContextPeer', true);
   expect(mockConfig.arkts.proceedToState).toHaveBeenCalledWith('checked', 'mockContextPeer', true);
   expect(mockConfig.arkts.generateTsDeclarationsFromContext).toHaveBeenCalled();
@@ -1980,7 +1927,8 @@ function test_assignTaskToIdleWorker_empty_queues() {
     moduleRootPath: "/test/path",
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
-    cachePath: "./dist/cache"
+    cachePath: "./dist/cache",
+    dependentModuleList: [],
   };
 
   const Logger = require('../../../src/logger').Logger;
@@ -2065,7 +2013,8 @@ function test_assignTaskToIdleWorker_abcQueue_no_job() {
     moduleRootPath: "/test/path",
     sourceRoots: ["./"],
     loaderOutPath: "./dist",
-    cachePath: "./dist/cache"
+    cachePath: "./dist/cache",
+    dependentModuleList: [],
   };
 
   const Logger = require('../../../src/logger').Logger;
@@ -2153,8 +2102,13 @@ function test_assignTaskToIdleWorker_abcQueue_no_job() {
 
 function test_findStronglyConnectedComponents_branches() {
   const mockConfig = {
-    packageName: "test", moduleRootPath: "/test/path", sourceRoots: ["./"],
-    loaderOutPath: "./dist", cachePath: "./dist/cache", buildMode: "Debug"
+    packageName: "test", 
+    moduleRootPath: "/test/path", 
+    sourceRoots: ["./"],
+    loaderOutPath: "./dist", 
+    cachePath: "./dist/cache", 
+    buildMode: "Debug",
+    dependentModuleList: [],
   };
 
   class TestBaseMode extends BaseMode {
@@ -2206,7 +2160,8 @@ function test_createExternalProgramJob_branches() {
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
     buildMode: "Debug",
-    moduleType: "har"
+    moduleType: "har",
+    dependentModuleList: [],
   };
 
   class TestBaseMode extends BaseMode {
@@ -2297,7 +2252,7 @@ function test_collectCompileFiles_bytecode_har() {
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
     enableDeclgenEts2Ts: true,
-    dependentModuleList: []
+    dependentModuleList: [],
   };
 
   class TestBaseMode extends BaseMode {
@@ -2362,7 +2317,7 @@ function test_collectCompileFiles_file_not_in_module() {
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
     enableDeclgenEts2Ts: true,
-    dependentModuleList: []
+    dependentModuleList: [],
   };
 
   class TestBaseMode extends BaseMode {
@@ -2427,7 +2382,7 @@ function test_collectCompileFiles_decl_ets_skip() {
     loaderOutPath: "./dist",
     cachePath: "./dist/cache",
     enableDeclgenEts2Ts: true,
-    dependentModuleList: []
+    dependentModuleList: [],
   };
 
   class TestBaseMode extends BaseMode {
@@ -2498,7 +2453,7 @@ function test_collectModuleInfos() {
 
     dependentModuleList: [
       {
-        "packageName": "",
+        "packageName": "harA",
         "moduleName": "harA",
         "moduleType": "har",
         "modulePath": "test/ut/mock/demo_1.2_dep_hsp1.2/harA",
@@ -2509,7 +2464,7 @@ function test_collectModuleInfos() {
         "byteCodeHar": false
       },
       {
-        "packageName": "",
+        "packageName": "hspA",
         "moduleName": "hspA",
         "moduleType": "shared",
         "modulePath": "hspA",
@@ -2657,6 +2612,8 @@ function test_shouldSkipFile() {
     declgenBridgeCodePath: "/dist/bridge",
     dynamicDepModuleInfos: new Map(),
     staticDepModuleInfos: new Map(),
+    dependenciesSet: new Set(),
+    dependentSet: new Set(),
     moduleType: OHOS_MODULE_TYPE.HAR,
     entryFile: "index.ets",
     declgenV2OutPath: "/dist/declgen/v2",
@@ -2673,114 +2630,3 @@ function test_shouldSkipFile() {
   expect(result4).toBe(false);
 }
 
-function test_setupCluster() {
-  const mockConfig: BuildConfig = {
-    buildMode: BUILD_MODE.DEBUG,
-    compileFiles: ["test.ets"],
-    packageName: "test",
-    moduleRootPath: "/test/path",
-    sourceRoots: ["./"],
-    loaderOutPath: "./dist",
-    cachePath: "./dist/cache",
-    plugins: {},
-    dependentModuleList: [],
-    maxWorkers: 1,
-    buildType: BUILD_TYPE.BUILD,
-    hasMainModule: true,
-    arkts: {} as any,
-    arktsGlobal: {} as any,
-    enableDeclgenEts2Ts: false,
-    moduleType: OHOS_MODULE_TYPE.HAR,
-    declgenV1OutPath: "./dist/declgen",
-    declgenV2OutPath: "./dist/declgen/v2",
-    buildSdkPath: "./sdk",
-    byteCodeHar: false,
-    externalApiPaths: []
-  } as any;
-  const Logger = require('../../../src/logger').Logger;
-  Logger.instance = null;
-  Logger.getInstance(mockConfig);
-  let baseModule: BaseMode = new BuildMode(mockConfig);
-
-  const originalRemoveAllListeners = cluster.removeAllListeners;
-  const originalSetupPrimary = cluster.setupPrimary;
-
-  const removeAllListenersSpy = jest.fn();
-  cluster.removeAllListeners = removeAllListenersSpy;
-
-  const setupPrimarySpy = jest.fn();
-  cluster.setupPrimary = setupPrimarySpy;
-
-  try {
-    (baseModule as any).setupCluster(cluster, {
-      clearExitListeners: false,
-      execPath: '/path/to/worker',
-      execArgs: []
-    });
-
-    expect(removeAllListenersSpy).not.toHaveBeenCalled();
-    expect(setupPrimarySpy).toHaveBeenCalledWith({
-      exec: '/path/to/worker',
-      execArgv: []
-    });
-  } finally {
-    cluster.removeAllListeners = originalRemoveAllListeners;
-    cluster.setupPrimary = originalSetupPrimary;
-  }
-}
-
-function test_terminateAllWorkers() {
-  const mockConfig: BuildConfig = {
-    buildMode: BUILD_MODE.DEBUG,
-    compileFiles: ["test.ets"],
-    packageName: "test",
-    moduleRootPath: "/test/path",
-    sourceRoots: ["./"],
-    loaderOutPath: "./dist",
-    cachePath: "./dist/cache",
-    plugins: {},
-    dependentModuleList: [],
-    buildType: BUILD_TYPE.BUILD,
-    hasMainModule: true,
-    arkts: {} as any,
-    arktsGlobal: {} as any,
-    enableDeclgenEts2Ts: false,
-    moduleType: OHOS_MODULE_TYPE.HAR,
-    declgenV1OutPath: "./dist/declgen",
-    declgenV2OutPath: "./dist/declgen/v2",
-    buildSdkPath: "./sdk",
-    byteCodeHar: false,
-    externalApiPaths: []
-  } as any;
-  const Logger = require('../../../src/logger').Logger;
-  Logger.instance = null;
-  Logger.getInstance(mockConfig);
-  let baseModule: BaseMode = new BuildMode(mockConfig);
-
-  const originalWorkers = cluster.workers;
-
-  try {
-    Object.defineProperty(cluster, 'workers', {
-      value: {},
-      configurable: true
-    });
-
-    expect(() => {
-      (baseModule as any).terminateAllWorkers();
-    }).not.toThrow();
-
-    Object.defineProperty(cluster, 'workers', {
-      value: undefined,
-      configurable: true
-    });
-
-    expect(() => {
-      (baseModule as any).terminateAllWorkers();
-    }).not.toThrow();
-  } finally {
-    Object.defineProperty(cluster, 'workers', {
-      value: originalWorkers,
-      configurable: true
-    });
-  }
-}

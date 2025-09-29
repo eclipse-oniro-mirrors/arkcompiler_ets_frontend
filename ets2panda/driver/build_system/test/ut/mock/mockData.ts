@@ -29,7 +29,9 @@ export const moduleInfoWithNullSourceRoots: ModuleInfo = {
     declgenBridgeCodePath: undefined,
     byteCodeHar: false,
     staticDepModuleInfos: new Map(),
-    dynamicDepModuleInfos: new Map()
+    dynamicDepModuleInfos: new Map(),
+    dependenciesSet: new Set(),
+    dependentSet: new Set(),
 };
 
 export const moduleInfoWithFalseEts2Ts: ModuleInfo = {
@@ -47,6 +49,8 @@ export const moduleInfoWithFalseEts2Ts: ModuleInfo = {
     byteCodeHar: false,
     staticDepModuleInfos: new Map(),
     dynamicDepModuleInfos: new Map(),
+    dependenciesSet: new Set(),
+    dependentSet: new Set(),
 };
 
 export const moduleInfo: ModuleInfo = {
@@ -60,6 +64,8 @@ export const moduleInfo: ModuleInfo = {
     compileFileInfos: [],
     dynamicDepModuleInfos: new Map<string, ModuleInfo>(),
     staticDepModuleInfos: new Map<string, ModuleInfo>(),
+    dependenciesSet: new Set(),
+    dependentSet: new Set(),
     declgenV1OutPath: '/path/to/moduleA/declgen/v1',
     declgenV2OutPath: '/path/to/moduleA/declgen/v2',
     declgenBridgeCodePath: '/path/to/moduleA/bridge/code',
@@ -87,3 +93,10 @@ interface mockLogger {
     printErrorAndExit: jest.Mock;
     printWarn: jest.Mock;
 }
+
+describe('mockData', () => {
+  it('should load correctly', () => {
+    const mock = require('./mockData');
+    expect(mock).toBeDefined();
+  });
+});

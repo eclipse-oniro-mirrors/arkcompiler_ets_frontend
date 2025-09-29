@@ -4,44 +4,60 @@
         "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/harA/index.ets",
         "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/harA/sub.ets"
     ],
-
     "packageName": "entry",
     "moduleType": "entry",
     "bundleName": "com.example.demo_entry1.2_har1.2_hsp1.1",
-
     "buildType": "build",
     "buildMode": "Debug",
     "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/entry/",
-    "sourceRoots": ["./"],
-
+    "sourceRoots": [
+        "./"
+    ],
     "loaderOutPath": "./dist/out",
     "cachePath": "./dist/cache",
-
     "enableDeclgenEts2Ts": false,
     "declgenV1OutPath": "./dist/declgen/decl_ets1",
     "declgenV2OutPath": "./dist/declgen/decl_ets2",
     "declgenBridgeCodePath": "./dist/declgen/ets",
-
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
     "useNormalizedOHMUrl": true,
-
     "dependentModuleList": [
+        {
+            "packageName": "entry",
+            "moduleName": "entry",
+            "moduleType": "feature",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/entry",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/entry/index.ets",
+            "dependencies": [
+                "harA"
+            ],
+            "language": "1.2"
+        },
         {
             "packageName": "harA",
             "moduleName": "harA",
             "moduleType": "har",
             "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/harA",
-            "sourceRoots": ["./"],
+            "sourceRoots": [
+                "./"
+            ],
             "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/harA/index.ets",
-            "dependencies": [ "hspA" ],
-			"language": "1.2"
+            "dependencies": [
+                "hspA"
+            ],
+            "language": "1.2"
         },
         {
             "packageName": "hspA",
             "moduleName": "hspA",
             "moduleType": "shared",
             "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/hspA",
-            "sourceRoots": ["./"],
+            "sourceRoots": [
+                "./"
+            ],
             "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/hspA/index.ets",
             "declFilesPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.2_hsp1.1/hspA/decl-fileInfo.json",
             "language": "1.1"

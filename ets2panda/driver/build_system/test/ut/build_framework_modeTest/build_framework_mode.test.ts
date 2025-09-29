@@ -161,6 +161,8 @@ describe('test build_framework_mode.ts file api', () => {
           compileFileInfos: [],
           dynamicDepModuleInfos: new Map(),
           staticDepModuleInfos: new Map(),
+          dependenciesSet: new Set(),
+          dependentSet: new Set(),
           moduleType: OHOS_MODULE_TYPE.HAR,
           entryFile: 'index.ets',
           byteCodeHar: false,
