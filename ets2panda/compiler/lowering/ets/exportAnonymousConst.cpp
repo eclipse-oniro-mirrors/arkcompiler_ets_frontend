@@ -27,6 +27,7 @@ static ir::AstNode *CreateAnonymousVariableDecl(public_lib::Context *ctx, ir::Ex
 
     auto *anonymousIdentifier =
         allocator->New<ir::Identifier>(exportDecl->Specifiers().front()->Exported()->Name(), allocator);
+    anonymousIdentifier->SetRange(exportDecl->Specifiers().front()->GetConstantExpression()->Range());
     ES2PANDA_ASSERT(exportDecl->Specifiers().size() == exportDefaultMaxSize);
     auto *anonymousConstant = parser->CreateFormattedExpression(
         "const @@I1 = @@E2;", anonymousIdentifier, exportDecl->Specifiers().front()->GetConstantExpression());
