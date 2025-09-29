@@ -969,26 +969,27 @@ pandasm::AnnotationElement ETSEmitter::ProcessArrayType(const ir::ClassProperty 
         std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::STRING>(value))};
 }
 
-static pandasm::AnnotationElement ProcessETSEnumType(std::string &baseName, const ir::Expression *init,
+static pandasm::AnnotationElement ProcessETSEnumType(const ir::ClassProperty *prop, const ir::Expression *init,
                                                      const checker::Type *type)
 {
     ES2PANDA_ASSERT(init->AsMemberExpression()->PropVar() != nullptr);
+    auto propName = prop->Id()->Name().Mutf8();
     auto declNode = init->AsMemberExpression()->PropVar()->Declaration()->Node();
     auto *initValue = declNode->AsClassProperty()->OriginEnumMember()->Init();
     if (type->IsETSIntEnumType()) {
         auto enumValue = static_cast<uint32_t>(initValue->AsNumberLiteral()->Number().GetInt());
         auto intEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::I32>(enumValue);
-        return pandasm::AnnotationElement {baseName, std::make_unique<pandasm::ScalarValue>(intEnumValue)};
+        return pandasm::AnnotationElement {propName, std::make_unique<pandasm::ScalarValue>(intEnumValue)};
     }
     if (type->IsETSDoubleEnumType()) {
         auto enumValue = initValue->AsNumberLiteral()->Number().GetDouble();
         auto doubleEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::F64>(enumValue);
-        return pandasm::AnnotationElement {baseName, std::make_unique<pandasm::ScalarValue>(doubleEnumValue)};
+        return pandasm::AnnotationElement {propName, std::make_unique<pandasm::ScalarValue>(doubleEnumValue)};
     }
     ES2PANDA_ASSERT(type->IsETSStringEnumType());
     auto enumValue = initValue->AsStringLiteral()->Str().Mutf8();
     auto stringValue = pandasm::ScalarValue::Create<pandasm::Value::Type::STRING>(enumValue);
-    return pandasm::AnnotationElement {baseName, std::make_unique<pandasm::ScalarValue>(stringValue)};
+    return pandasm::AnnotationElement {propName, std::make_unique<pandasm::ScalarValue>(stringValue)};
 }
 
 pandasm::AnnotationElement ETSEmitter::GenCustomAnnotationElement(const ir::ClassProperty *prop, std::string &baseName)
@@ -999,7 +1000,7 @@ pandasm::AnnotationElement ETSEmitter::GenCustomAnnotationElement(const ir::Clas
         return ProcessArrayType(prop, baseName, init);
     }
     if (type->IsETSEnumType()) {
-        return ProcessETSEnumType(baseName, init, type);
+        return ProcessETSEnumType(prop, init, type);
     }
     if (init->IsLiteral()) {
         auto typeKind = checker::ETSChecker::TypeKind(type);

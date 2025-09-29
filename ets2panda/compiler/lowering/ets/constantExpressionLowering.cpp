@@ -1128,6 +1128,9 @@ static ir::Expression *AsRValue(ir::Identifier *ident)
     if (auto callexp = Cast<ir::CallExpression>(parent); (callexp != nullptr) && isIn(callexp->Arguments())) {
         return rvnode;
     }
+    if (auto arrexp = Cast<ir::ArrayExpression>(parent); (arrexp != nullptr) && isIn(arrexp->Elements())) {
+        return rvnode;
+    }
     if (auto newarr = Cast<ir::ETSNewArrayInstanceExpression>(parent);
         (newarr != nullptr) && (newarr->Dimension() == rvnode)) {
         return rvnode;
