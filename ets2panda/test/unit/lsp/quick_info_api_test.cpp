@@ -472,10 +472,9 @@ TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionClass)
     auto context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     const ark::es2panda::ir::AstNode *ast = context->parserProgram->Ast();
     auto *structDefNode = ast->FindChild(
-        [](const auto *node) { return node->IsClassDefinition() && node->Parent()->IsETSStructDeclaration(); });
-    initializer.ClassDefinitionSetFromStructModifier(ctx, reinterpret_cast<es2panda_AstNode *>(structDefNode));
-    auto isFromStruct =
-        initializer.ClassDefinitionIsFromStructConst(ctx, reinterpret_cast<es2panda_AstNode *>(structDefNode));
+        [](auto *node) { return node->IsClassDefinition() && node->Parent()->IsETSStructDeclaration(); });
+    structDefNode->AsClassDefinition()->SetFromStructModifier();
+    auto isFromStruct = structDefNode->AsClassDefinition()->IsFromStruct();
     ASSERT_EQ(isFromStruct, true);
     auto quickInfo3 = lspApi->getQuickInfoAtPosition("GetQuickInfoAtPositionClass.ets", ctx, offset1);
     AssertQuickInfo(expectedQuickInfo1, quickInfo3);
