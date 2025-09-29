@@ -629,7 +629,8 @@ void ETSObjectType::SubstitutePartialTypes(TypeRelation *relation, Type *other)
     if ((baseType_->IsGeneric() || baseType_->IsETSTypeParameter()) && effectiveSubstitution_ != nullptr) {
         auto subst = ETSChecker::ArenaSubstitutionToSubstitution(effectiveSubstitution_);
         if (auto *newBaseType = baseType_->Substitute(relation, &subst);
-            newBaseType->IsETSObjectType() && !relation->IsIdenticalTo(newBaseType, baseType_)) {
+            newBaseType->IsETSObjectType() && !relation->IsIdenticalTo(newBaseType, this) &&
+            !relation->IsIdenticalTo(newBaseType, baseType_)) {
             baseType_ = newBaseType->AsETSObjectType();
         }
     }
