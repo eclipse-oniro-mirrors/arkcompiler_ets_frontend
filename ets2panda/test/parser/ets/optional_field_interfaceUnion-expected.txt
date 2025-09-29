@@ -240,6 +240,54 @@
                     }
                   }
                 },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "UndefinedLiteral",
+                        "value": "undefined",
+                        "loc": {
+                          "start": {
+                            "line": 1,
+                            "column": 1,
+                            "program": null
+                          },
+                          "end": {
+                            "line": 1,
+                            "column": 1,
+                            "program": null
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    }
+                  }
+                },
                 "loc": {
                   "start": {
                     "line": 18,
@@ -533,6 +581,100 @@
                         }
                       }
                     ],
+                    "body": {
+                      "type": "BlockStatement",
+                      "statements": [
+                        {
+                          "type": "ThrowStatement",
+                          "argument": {
+                            "type": "ETSNewClassInstanceExpression",
+                            "typeReference": {
+                              "type": "ETSTypeReference",
+                              "part": {
+                                "type": "ETSTypeReferencePart",
+                                "name": {
+                                  "type": "Identifier",
+                                  "name": "InvalidStoreAccessError",
+                                  "loc": {
+                                    "start": {
+                                      "line": 1,
+                                      "column": 3,
+                                      "program": "optional_field_interfaceUnion.ets"
+                                    },
+                                    "end": {
+                                      "line": 1,
+                                      "column": 3,
+                                      "program": "optional_field_interfaceUnion.ets"
+                                    }
+                                  }
+                                },
+                                "loc": {
+                                  "start": {
+                                    "line": 1,
+                                    "column": 3,
+                                    "program": "optional_field_interfaceUnion.ets"
+                                  },
+                                  "end": {
+                                    "line": 1,
+                                    "column": 3,
+                                    "program": "optional_field_interfaceUnion.ets"
+                                  }
+                                }
+                              },
+                              "loc": {
+                                "start": {
+                                  "line": 1,
+                                  "column": 3,
+                                  "program": "optional_field_interfaceUnion.ets"
+                                },
+                                "end": {
+                                  "line": 1,
+                                  "column": 3,
+                                  "program": "optional_field_interfaceUnion.ets"
+                                }
+                              }
+                            },
+                            "arguments": [],
+                            "loc": {
+                              "start": {
+                                "line": 1,
+                                "column": 3,
+                                "program": "optional_field_interfaceUnion.ets"
+                              },
+                              "end": {
+                                "line": 1,
+                                "column": 3,
+                                "program": "optional_field_interfaceUnion.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 1,
+                              "column": 1,
+                              "program": "optional_field_interfaceUnion.ets"
+                            },
+                            "end": {
+                              "line": 1,
+                              "column": 3,
+                              "program": "optional_field_interfaceUnion.ets"
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        }
+                      }
+                    },
                     "loc": {
                       "start": {
                         "line": 18,
