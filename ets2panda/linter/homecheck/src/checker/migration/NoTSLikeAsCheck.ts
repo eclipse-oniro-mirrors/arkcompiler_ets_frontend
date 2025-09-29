@@ -42,7 +42,9 @@ import {
     RelationalBinaryOperator,
     Scene,
     Stmt,
+    Type,
     UnaryOperator,
+    UnionType,
     Value,
 } from 'arkanalyzer/lib';
 import Logger, { LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
@@ -147,6 +149,8 @@ export class NoTSLikeAsCheck implements BaseChecker {
             if (castExpr === null) {
                 continue;
             }
+            const castType = castExpr.getType();
+            const opType = castExpr.getOp().getType();
 
             // 判断是否为cast表达式的算数运算，属于告警场景之一
             if (this.isCastExprWithNumericOperation(stmt)) {
@@ -172,11 +176,24 @@ export class NoTSLikeAsCheck implements BaseChecker {
             if (result !== null) {
                 this.addIssueReport(stmt, castExpr, result);
             } else {
-                if (!checkAll.value) {
+                if (!checkAll.value && !this.checkTypesMatch(opType, castType)) {
                     this.addIssueReport(stmt, castExpr);
                 }
             }
         }
+    }
+
+    private checkTypesMatch(opType: Type, castType: Type): boolean {
+        if (opType instanceof UnionType) {
+            return opType.getTypes().some(type => type.toString() === castType.toString())
+        }
+
+        if (opType instanceof ClassType) {
+            // we know that the cast type is a class type already
+            return opType.toString() === castType.toString()
+        }
+
+        return false;
     }
 
     private isCastExprWithNumericOperation(stmt: Stmt): boolean {
