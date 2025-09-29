@@ -383,108 +383,23 @@ export const basicCases: TestCases = {
         }
       ] as NodeInfo[]
     ],
-    '39': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      631
-    ],
-    '40': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      638
-    ],
-    '41': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      650
-    ],
-    '42': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      656
-    ],
-    '43': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      678
-    ],
-    '44': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      690
-    ],
-    '45': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      698
-    ],
-    '46': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      738
-    ],
-    '47': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      749
-    ],
-    '48': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      794
-    ],
-    '49': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      833
-    ],
-    '50': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      862
-    ],
-    '51': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      874
-    ],
-    '52': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      985
-    ],
-    '53': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      1025
-    ],
-    '54': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      1211
-    ],
-    '55': [
-      resolveTestPath(
-        'test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'
-      ),
-      1284
-    ]
+    '39': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 631],
+    '40': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 638],
+    '41': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 650],
+    '42': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 656],
+    '43': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 678],
+    '44': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 690],
+    '45': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 698],
+    '46': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 738],
+    '47': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 749],
+    '48': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 794],
+    '49': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 833],
+    '50': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 862],
+    '51': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 874],
+    '52': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 985],
+    '53': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 1025],
+    '54': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 1211],
+    '55': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition43.ets'), 1284]
   },
   getSemanticDiagnostics: {
     expectedFilePath: resolveTestPath('test/expected/getSemanticDiagnostics.json'),
@@ -893,7 +808,7 @@ export const basicCases: TestCases = {
     '15': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition15.ets'), 722],
     '16': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition17.ets'), 764],
     '17': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition17.ets'), 782],
-    '18': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition18.ets'), 872],
+    '18': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition18.ets'), 872]
   },
   toLineColumnOffset: {
     expectedFilePath: resolveTestPath('test/expected/toLineColumnOffset.json'),
@@ -937,9 +852,7 @@ export const basicCases: TestCases = {
     '7': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations1.ets'), 720],
     '8': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations3.ets'), 627],
     '9': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -953,9 +866,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '10': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -969,9 +880,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '11': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -981,9 +890,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '12': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -993,9 +900,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '13': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1005,9 +910,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '14': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1017,9 +920,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '15': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1029,9 +930,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '16': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1041,9 +940,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '17': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1053,9 +950,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '18': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1065,9 +960,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '19': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1077,9 +970,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '20': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1089,9 +980,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '21': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1101,9 +990,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '22': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1113,9 +1000,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '23': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1125,9 +1010,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '24': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1137,9 +1020,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '25': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1149,9 +1030,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '26': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1161,9 +1040,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '27': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1173,9 +1050,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '28': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1185,9 +1060,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '29': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1197,9 +1070,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '30': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1209,9 +1080,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '31': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {
@@ -1229,9 +1098,7 @@ export const basicCases: TestCases = {
       ] as NodeInfo[]
     ],
     '32': [
-      resolveTestPath(
-        'test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'
-      ),
+      resolveTestPath('test/testcases/.idea/.deveco/findRenameLocations/declgen/static/findRenameLocations4.d.ets'),
       0,
       [
         {

@@ -497,7 +497,7 @@ async function runWithAstCache(testDir: string, pathConfig: PathConfig): Promise
       name: '1.1',
       moduleType: 'entry',
       srcPath: path.join(pathConfig.projectPath, '1.1')
-    },
+    }
   ];
 
   const basicModules = getModules(pathConfig.projectPath, basicCases);
