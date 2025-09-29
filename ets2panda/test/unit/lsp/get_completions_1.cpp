@@ -35,7 +35,8 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
         bool found = false;
         for (const auto &entry : entries) {
             if (entry.GetName() == expectedEntry.GetName() &&
-                entry.GetCompletionKind() == expectedEntry.GetCompletionKind()) {
+                entry.GetCompletionKind() == expectedEntry.GetCompletionKind() &&
+                entry.GetInsertText() == expectedEntry.GetInsertText()) {
                 found = true;
                 break;
             }
@@ -47,7 +48,8 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
         bool found = false;
         for (const auto &entry : entries) {
             if (entry.GetName() == unexpectedEntry.GetName() &&
-                entry.GetCompletionKind() == unexpectedEntry.GetCompletionKind()) {
+                entry.GetCompletionKind() == unexpectedEntry.GetCompletionKind() &&
+                entry.GetInsertText() == unexpectedEntry.GetInsertText()) {
                 found = true;
                 break;
             }
@@ -78,9 +80,9 @@ let numOfSpace: space.)delimiter"};
     auto entries = res.GetEntries();
     std::string propertyName1 = "classInSpace";
     ASSERT_TRUE(entries.size() == 1);
-    CompletionEntry entry1 =
-        CompletionEntry(propertyName1, CompletionEntryKind::CLASS,
-                        std::string(ark::es2panda::lsp::sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT));
+    CompletionEntry entry1 = CompletionEntry(
+        propertyName1, CompletionEntryKind::CLASS,
+        std::string(ark::es2panda::lsp::sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), propertyName1);
     initializer.DestroyContext(ctx);
     ASSERT_EQ(entry1, entries[0]);
 }
@@ -100,8 +102,8 @@ let a: num
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("number", ark::es2panda::lsp::CompletionEntryKind::KEYWORD, std::string(GLOBALS_OR_KEYWORDS))};
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "number", ark::es2panda::lsp::CompletionEntryKind::KEYWORD, std::string(GLOBALS_OR_KEYWORDS), "number")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -152,8 +154,10 @@ let a = n
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("num1", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("num2", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS)),
+        CompletionEntry("num1", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS),
+                        "num1()"),
+        CompletionEntry("num2", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS),
+                        "num2()"),
     };
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
@@ -182,8 +186,10 @@ let a = n
     size_t const offset = 80;  // after 'n' in 'let a = n'
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("num1", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("num2", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS)),
+        CompletionEntry("num1", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS),
+                        "num1()"),
+        CompletionEntry("num2", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS),
+                        "num2()"),
     };
     initializer.DestroyContext(ctx);
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
@@ -215,9 +221,12 @@ function foo() {
     size_t const offset = 127;  // after 'a' in 'let ccc = bbb + a'
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("aaa", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("abb", ark::es2panda::lsp::CompletionEntryKind::CONSTANT, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("axx", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS)),
+        CompletionEntry("aaa", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS),
+                        "aaa"),
+        CompletionEntry("abb", ark::es2panda::lsp::CompletionEntryKind::CONSTANT, std::string(GLOBALS_OR_KEYWORDS),
+                        "abb"),
+        CompletionEntry("axx", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS),
+                        "axx()"),
     };
     initializer.DestroyContext(ctx);
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
@@ -254,13 +263,18 @@ function fxx() {
     size_t const offset = 181;  // after 'b' in 'let axx = b'
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("baa", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("bbb", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("bcc", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("bxx", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS)),
+        CompletionEntry("baa", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS),
+                        "baa"),
+        CompletionEntry("bbb", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS),
+                        "bbb"),
+        CompletionEntry("bcc", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS),
+                        "bcc"),
+        CompletionEntry("bxx", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS),
+                        "bxx()"),
     };
     auto unexpectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("bar", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS)),
+        CompletionEntry("bar", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS),
+                        "bar"),
     };
     initializer.DestroyContext(ctx);
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, unexpectedEntries);
@@ -294,13 +308,18 @@ let axx = b
     size_t const offset = 159;  // after 'b' in 'let axx = b'
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("baa", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("bbb", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("bxx", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS)),
+        CompletionEntry("baa", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS),
+                        "baa"),
+        CompletionEntry("bbb", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS),
+                        "bbb"),
+        CompletionEntry("bxx", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS),
+                        "bxx()"),
     };
     auto unexpectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("bar", ark::es2panda::lsp::CompletionEntryKind::PROPERTY, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("bcc", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS)),
+        CompletionEntry("bar", ark::es2panda::lsp::CompletionEntryKind::PROPERTY, std::string(GLOBALS_OR_KEYWORDS),
+                        "bar"),
+        CompletionEntry("bcc", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS),
+                        "bcc"),
     };
     initializer.DestroyContext(ctx);
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, unexpectedEntries);
@@ -328,8 +347,9 @@ let prop = obj1.yp)delimiter"};
     ASSERT_TRUE(entries.size() == 1);
 
     std::string propertyName1 = "myProp";
-    CompletionEntry entry1 = CompletionEntry(propertyName1, CompletionEntryKind::PROPERTY,
-                                             std::string(ark::es2panda::lsp::sort_text::SUGGESTED_CLASS_MEMBERS));
+    CompletionEntry entry1 =
+        CompletionEntry(propertyName1, CompletionEntryKind::PROPERTY,
+                        std::string(ark::es2panda::lsp::sort_text::SUGGESTED_CLASS_MEMBERS), propertyName1);
     initializer.DestroyContext(ctx);
     ASSERT_EQ(entry1, entries[0]);
 }
@@ -355,9 +375,9 @@ let numOfSpace: space.classi)delimiter"};
     auto entries = res.GetEntries();
     std::string propertyName1 = "classInSpace";
     ASSERT_TRUE(entries.size() == 1);
-    CompletionEntry entry1 =
-        CompletionEntry(propertyName1, CompletionEntryKind::CLASS,
-                        std::string(ark::es2panda::lsp::sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT));
+    CompletionEntry entry1 = CompletionEntry(
+        propertyName1, CompletionEntryKind::CLASS,
+        std::string(ark::es2panda::lsp::sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), propertyName1);
     initializer.DestroyContext(ctx);
     ASSERT_EQ(entry1, entries[0]);
 }
@@ -383,17 +403,14 @@ let myColor: Color = Color.R)delimiter"};
     ASSERT_TRUE(entries.size() == 1);
 
     std::string propertyName1 = "Red";
-    CompletionEntry entry1 =
-        CompletionEntry(propertyName1, CompletionEntryKind::ENUM_MEMBER,
-                        std::string(ark::es2panda::lsp::sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT));
+    CompletionEntry entry1 = CompletionEntry(
+        propertyName1, CompletionEntryKind::ENUM_MEMBER,
+        std::string(ark::es2panda::lsp::sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), propertyName1);
     initializer.DestroyContext(ctx);
     ASSERT_EQ(entry1, entries[0]);
 }
 
-TEST_F(LSPCompletionsTests, getCompletionsAtPositionAnnotation1)
-{
-    std::vector<std::string> files = {"CompletionAnnotation1.ets", "CompletionAnnotation2.ets"};
-    std::vector<std::string> texts = {R"(
+const std::vector<std::string> getCompletionsAtPositionAnnotationText1 = {R"(
 export @interface Entry {
     routeName: string = "";
     storage: string = "";
@@ -403,7 +420,7 @@ export @interface TestAnnotation {
     storage: string = "";
 }
 )",
-                                      R"(
+                                                                          R"(
 import { Entry, TestAnnotation } from './CompletionAnnotation1';
 export @interface Entry2 {
     routeName: string = "";
@@ -414,6 +431,11 @@ struct Index {}
 @
 struct Index1 {}
 )"};
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPositionAnnotation1)
+{
+    std::vector<std::string> files = {"CompletionAnnotation1.ets", "CompletionAnnotation2.ets"};
+    std::vector<std::string> texts = getCompletionsAtPositionAnnotationText1;
     auto filePaths = CreateTempFile(files, texts);
 
     int const expectedFileCount = 2;
@@ -426,18 +448,21 @@ struct Index1 {}
     auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
     auto res1 = lspApi->getCompletionsAtPosition(ctx, offset1);
     auto res2 = lspApi->getCompletionsAtPosition(ctx, offset2);
-    auto firstExpectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("Entry", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("Entry2", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION,
-                        std::string(GLOBALS_OR_KEYWORDS))};
-    auto firstUnexpectedEntries = std::vector<CompletionEntry> {CompletionEntry(
-        "TestAnnotation", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION, std::string(GLOBALS_OR_KEYWORDS))};
-    auto secondExpectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("Entry", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION, std::string(GLOBALS_OR_KEYWORDS)),
-        CompletionEntry("Entry2", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION,
-                        std::string(GLOBALS_OR_KEYWORDS)),
+    auto firstExpectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("Entry", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION,
+                                                      std::string(GLOBALS_OR_KEYWORDS), "Entry"),
+                                      CompletionEntry("Entry2", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION,
+                                                      std::string(GLOBALS_OR_KEYWORDS), "Entry2")};
+    auto firstUnexpectedEntries = std::vector<CompletionEntry> {
         CompletionEntry("TestAnnotation", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION,
-                        std::string(GLOBALS_OR_KEYWORDS))};
+                        std::string(GLOBALS_OR_KEYWORDS), "TestAnnotation")};
+    auto secondExpectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Entry", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION, std::string(GLOBALS_OR_KEYWORDS),
+                        "Entry"),
+        CompletionEntry("Entry2", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION, std::string(GLOBALS_OR_KEYWORDS),
+                        "Entry2"),
+        CompletionEntry("TestAnnotation", ark::es2panda::lsp::CompletionEntryKind::ANNOTATION,
+                        std::string(GLOBALS_OR_KEYWORDS), "TestAnnotation")};
     AssertCompletionsContainAndNotContainEntries(res1.GetEntries(), firstExpectedEntries, firstUnexpectedEntries);
     AssertCompletionsContainAndNotContainEntries(res2.GetEntries(), secondExpectedEntries, {});
     initializer.DestroyContext(ctx);
