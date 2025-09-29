@@ -146,7 +146,8 @@ void HandleGenerateDecl(const parser::Program &program, public_lib::Context *con
 std::string ResolveDeclsOutputPath(const util::Options &options)
 {
     if (!options.WasSetGenerateDeclPath()) {
-        return ark::os::RemoveExtension(util::BaseName(options.SourceFileName())).append(".d.ets");
+        return ark::os::RemoveExtension(util::BaseName(options.SourceFileName()))
+            .append(util::ImportPathManager::cacheSuffix);
     } else {
         return options.GetGenerateDeclPath();
     }
@@ -180,7 +181,7 @@ static void GenDeclsForStdlib(public_lib::Context &context, const util::Options 
         dumper.GetDeclgen()->Run();
         dumper.DumpExports();
 
-        std::string path = moduleName.Mutf8() + ".d.ets";
+        std::string path = moduleName.Mutf8() + std::string(util::ImportPathManager::cacheSuffix);
         if (options.WasSetGenerateDeclPath()) {
             // NOTE: "/" at the end needed because of bug in GetParentDir
             auto parentDir = ark::os::GetParentDir(options.GetGenerateDeclPath() + "/");

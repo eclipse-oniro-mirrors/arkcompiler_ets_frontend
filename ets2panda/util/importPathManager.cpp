@@ -65,12 +65,10 @@ namespace fs = std::experimental::filesystem;
 namespace ark::es2panda::util {
 
 constexpr size_t SUPPORTED_INDEX_FILES_SIZE = 4;
-constexpr size_t SUPPORTED_EXTENSIONS_SIZE = 6;
-constexpr size_t ALLOWED_EXTENSIONS_SIZE = 8;
 
 static bool IsCompatibleExtension(const std::string &extension)
 {
-    return extension == ".ets" || extension == ".ts" || extension == ".sts";
+    return extension == ImportPathManager::etsSuffix || extension == ".ts" || extension == ".sts";
 }
 
 static bool IsAbsolute(const std::string &path)
@@ -174,7 +172,7 @@ bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &im
     ES2PANDA_ASSERT(it != arktsConfig_->Dependencies().cend());
     const auto &externalModuleImportData = it->second;
     std::replace(resSource.begin(), resSource.end(), '/', '.');
-    auto fileNameToCheck = arktsConfig_->CacheDir() + "/" + resSource + dEtsSuffix.data();
+    auto fileNameToCheck = arktsConfig_->CacheDir() + "/" + resSource + cacheSuffix.data();
     // memory cache checking
     if (parser::DeclarationCache::GetFromCache(fileNameToCheck) != parser::DeclarationCache::ABSENT) {
         importData.declPath = util::UString(fileNameToCheck, allocator_).View().Utf8();
@@ -264,7 +262,7 @@ std::wstring s2ws(const std::string &str)
     return wstrTo;
 }
 
-void CreateDeclarationFileWindows(const std::string &processed, const std::string &absDecl)
+static void CreateDeclarationFileWindows(const std::string &processed, const std::string &absDecl)
 {
     std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
     std::wstring semNameWide = s2ws(semName);
@@ -297,20 +295,9 @@ void CreateDeclarationFileWindows(const std::string &processed, const std::strin
     ReleaseSemaphore(sem, 1, nullptr);
     CloseHandle(sem);
 }
-#endif
-
-void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
-                           [[maybe_unused]] const std::string &processed)
+#else
+static void CreateDeclarationFileLinux(const std::string &processed, const std::string &absDecl)
 {
-    // hack for builds when no filesystem is included
-#ifdef USE_UNIX_SYSCALL
-    return;
-#else
-    const std::string absDecl = fs::absolute(declFileName).string();
-    fs::create_directories(fs::path(absDecl).parent_path());
-#ifdef PANDA_TARGET_WINDOWS
-    CreateDeclarationFileWindows(processed, absDecl);
-#else
     std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
     sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
     if (sem == SEM_FAILED) {
@@ -322,6 +309,7 @@ void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
     if (fd == -1) {
         sem_post(sem);
         sem_close(sem);
+        sem_unlink(semName.c_str());
         return;
     }
 
@@ -333,7 +321,22 @@ void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
     close(fd);
     sem_post(sem);
     sem_close(sem);
+    sem_unlink(semName.c_str());
+}
 #endif
+
+void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
+                           [[maybe_unused]] const std::string &processed)
+{
+#ifdef USE_UNIX_SYSCALL
+    return;
+#endif
+    const std::string absDecl = fs::absolute(declFileName).string();
+    fs::create_directories(fs::path(absDecl).parent_path());
+#ifdef PANDA_TARGET_WINDOWS
+    CreateDeclarationFileWindows(processed, absDecl);
+#else
+    CreateDeclarationFileLinux(processed, absDecl);
 #endif
 }
 
@@ -354,8 +357,7 @@ void ImportPathManager::ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata
         auto ohmUrl = moduleName;
 
         // create a name for d.ets file - related on module name and cache dir
-        auto declFileName = arktsConfig_->CacheDir() + "/" + moduleName + dEtsSuffix.data();
-
+        auto declFileName = arktsConfig_->CacheDir() + "/" + moduleName + cacheSuffix.data();
         // the module name`s separators are '.' now, but for resolvedSource we have '/'
         std::replace(moduleName.begin(), moduleName.end(), '.', '/');
         if (importData.resolvedSource != moduleName) {
@@ -459,7 +461,7 @@ std::string_view ImportPathManager::TryImportFromDeclarationCache(std::string_vi
         resolvedImportPath.substr(rootDir.size(), resolvedImportPath.size() - rootDir.size());
     const auto &declarationCacheFile =
         cacheDir + std::string(relativeFilePath.substr(0, relativeFilePath.size() - etsSuffix.size())) +
-        dEtsSuffix.data();
+        cacheSuffix.data();
 
     if (!ark::os::file::File::IsRegularFile(declarationCacheFile)) {
         return resolvedImportPath;
@@ -777,11 +779,8 @@ ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFile
         return {DirOrDirWithIndexFile(realPath)};
     }
 
-    // Supported extensions: keep this checking order, and header files should follow source files
-    std::array<std::string, SUPPORTED_EXTENSIONS_SIZE> supportedExtensions = {".ets",   ".d.ets", ".sts",
-                                                                              ".d.sts", ".ts",    ".d.ts"};
     for (const auto &extension : supportedExtensions) {
-        if (ark::os::file::File::IsRegularFile(path.Mutf8() + extension)) {
+        if (ark::os::file::File::IsRegularFile(path.Mutf8() + std::string(extension))) {
             return {GetRealPath(UString(path.Mutf8().append(extension), allocator_).View()).Utf8()};
         }
     }
@@ -801,10 +800,7 @@ static std::string FormUnitName(std::string_view name)
 static std::string FormRelativeModuleName(std::string relPath)
 {
     bool isMatched = false;
-    // Supported extensions: keep this checking order, and source files should follow header files
-    std::array<std::string, ALLOWED_EXTENSIONS_SIZE> supportedExtensionsDesc = {".d.ets", ".ets", ".d.sts", ".sts",
-                                                                                ".d.ts",  ".ts",  ".js",    ".abc"};
-    for (const auto &ext : supportedExtensionsDesc) {
+    for (const auto &ext : ImportPathManager::supportedExtensionsInversed) {
         if (relPath.size() >= ext.size() && relPath.compare(relPath.size() - ext.size(), ext.size(), ext) == 0) {
             relPath = relPath.substr(0, relPath.size() - ext.size());
             isMatched = true;
