@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -31,7 +31,7 @@ function(launch_with_reletaive_path_single_file filename)
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${filename_without_ext}
         COMMAND ${CMAKE_COMMAND} -E env
             LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
-            $<TARGET_FILE:es2panda> --extension=ets --ets-unnamed --output=${filename_abc}
+            $<TARGET_FILE:es2panda> --extension=ets --output=${filename_abc}
             ${filename}
     )
     add_custom_target(es2panda_relative_path_to_file_${filename_without_ext} DEPENDS ${filename_abc})

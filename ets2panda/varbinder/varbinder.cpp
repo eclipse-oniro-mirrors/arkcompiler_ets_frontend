@@ -18,9 +18,15 @@
 #include "ir/ets/etsDestructuring.h"
 
 namespace ark::es2panda::varbinder {
+
+VarBinder::VarBinder(public_lib::Context *context)
+    : context_(context), allocator_(context->Allocator()), functionScopes_(allocator_->Adapter())
+{
+}
+
 void VarBinder::InitTopScope()
 {
-    if (program_->Kind() == parser::ScriptKind::MODULE) {
+    if (GetContext()->config->options->IsModule()) {
         topScope_ = Allocator()->New<ModuleScope>(Allocator());
     } else {
         topScope_ = Allocator()->New<GlobalScope>(Allocator());
@@ -97,6 +103,7 @@ bool VarBinder::IsGlobalIdentifier(const util::StringView &str) const
 
 void VarBinder::IdentifierAnalysis()
 {
+    program_ = context_->parserProgram;
     ES2PANDA_ASSERT(program_->Ast());
     ES2PANDA_ASSERT(scope_ == topScope_);
     ES2PANDA_ASSERT(varScope_ == topScope_);
@@ -471,7 +478,10 @@ void VarBinder::VisitScriptFunction(ir::ScriptFunction *func)
 {
     auto *funcScope = func->Scope();
     {
-        ES2PANDA_ASSERT(funcScope != nullptr);
+        if (funcScope == nullptr) {
+            ES2PANDA_ASSERT(GetContext()->diagnosticEngine->IsAnyError());
+            return;
+        }
         auto paramScopeCtx = LexicalScope<FunctionParamScope>::Enter(this, funcScope->ParamScope());
 
         for (auto *param : func->Params()) {

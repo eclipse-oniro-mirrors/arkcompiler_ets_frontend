@@ -1148,7 +1148,7 @@ static ir::AstNode *FindClassBreakPosition(ir::AstNode *target)
 size_t FindPreviousNonCommentLine(const public_lib::Context *context, size_t startLine /* 0-based */)
 {
     lexer::LineIndex lineIndex(context->parserProgram->SourceCode());
-    const auto &sourceCode = context->parserProgram->SourceCode().Mutf8();
+    std::string_view sourceCode = context->parserProgram->SourceCode();
     size_t currentLine = startLine;
     bool lookingForBlockStart = false;
 

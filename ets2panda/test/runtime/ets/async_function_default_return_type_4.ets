@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,14 @@
  * limitations under the License.
  */
 
-import * as all from /* @@ label */"./folderWithoutIndexOrPackage"
+const fn = async ()=>{
+ return Promise.resolve()
+};
 
+function  foo(p:()=>Promise<void>):number{
+    return 2;
+}
 
-/* @@@ label Error Semantic error ESE0359: Cannot find index.[ets|ts] or package module in folder: ./folderWithoutIndexOrPackage */
+function main(){
+    arktest.assertTrue(foo(fn) == 2);
+}

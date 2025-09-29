@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -167,8 +167,8 @@ bool CheckEnumStringConversion(es2panda_Context *ctx)
 
 bool CheckExternalSource(es2panda_Context *ctx)
 {
-    auto *program = g_impl->ContextProgram(ctx);
     g_impl->ProceedToState(ctx, ES2PANDA_STATE_BOUND);
+    auto *program = g_impl->ContextProgram(ctx);
 
     size_t externalSourceCnt {0};
     auto **externalSourceList = g_impl->ProgramExternalSources(ctx, program, &externalSourceCnt);

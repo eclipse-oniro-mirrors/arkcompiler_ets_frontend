@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,9 +19,8 @@
 
 namespace ark::es2panda::compiler {
 
-void SetJumpTargetPhase::LogError(const public_lib::Context *ctx, const diagnostic::DiagnosticKind &diagnostic,
-                                  const util::DiagnosticMessageParams &diagnosticParams,
-                                  const lexer::SourcePosition &pos)
+static void LogError(const public_lib::Context *ctx, const diagnostic::DiagnosticKind &diagnostic,
+                     const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos)
 {
     ctx->diagnosticEngine->LogDiagnostic(diagnostic, diagnosticParams, pos);
 }
@@ -36,7 +35,7 @@ static void SetTarget(ir::AstNode *const node, ir::AstNode *const target)
     }
 }
 
-void SetJumpTargetPhase::FindJumpTarget(const public_lib::Context *ctx, ir::AstNode *const node)
+void SetJumpTargetPhase::FindJumpTarget(ir::AstNode *const node) const
 {
     // Look for label
     bool isContinue = node->IsContinueStatement();
@@ -44,14 +43,14 @@ void SetJumpTargetPhase::FindJumpTarget(const public_lib::Context *ctx, ir::AstN
     if (label != nullptr) {
         if (auto var = label->Variable(); var == nullptr) {
             varbinder::LetDecl *decl;
-            auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
+            auto *varbinder = Context()->parserProgram->VarBinder()->AsETSBinder();
             std::tie(decl, var) = varbinder->NewVarDecl<varbinder::LetDecl>(
                 label->Start(),
-                !label->IsErrorPlaceHolder() ? label->Name() : compiler::GenName(ctx->allocator).View());
+                !label->IsErrorPlaceHolder() ? label->Name() : compiler::GenName(Context()->allocator).View());
             var->SetScope(varbinder->GetScope());
             label->SetVariable(var);
             decl->BindNode(label);
-            label->SetTsType(var->SetTsType(ctx->GetChecker()->GetGlobalTypesHolder()->GlobalTypeError()));
+            label->SetTsType(var->SetTsType(Context()->GetChecker()->GetGlobalTypesHolder()->GlobalTypeError()));
         } else if (var->Declaration()->IsLabelDecl()) {
             SetTarget(node, var->Declaration()->Node());
             return;
@@ -59,7 +58,7 @@ void SetJumpTargetPhase::FindJumpTarget(const public_lib::Context *ctx, ir::AstN
 
         // Failed to resolve variable for label
         if (!label->IsErrorPlaceHolder()) {
-            LogError(ctx, diagnostic::UNRESOLVED_REF, {label->Name()}, label->Start());
+            LogError(Context(), diagnostic::UNRESOLVED_REF, {label->Name()}, label->Start());
         }
 
         SetTarget(node, nullptr);
@@ -91,15 +90,15 @@ void SetJumpTargetPhase::FindJumpTarget(const public_lib::Context *ctx, ir::AstN
         target = target->Parent();
     }
 
-    LogError(ctx, diagnostic::FLOW_REDIRECTION_INVALID_CTX, {}, node->Start());
+    LogError(Context(), diagnostic::FLOW_REDIRECTION_INVALID_CTX, {}, node->Start());
     SetTarget(node, nullptr);
 }
 
-bool SetJumpTargetPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool SetJumpTargetPhase::PerformForProgram(parser::Program *program)
 {
-    program->Ast()->IterateRecursivelyPostorder([&](ir::AstNode *const node) -> void {
+    program->Ast()->IterateRecursivelyPostorder([this](ir::AstNode *const node) -> void {
         if (node->IsBreakStatement() || node->IsContinueStatement()) {
-            FindJumpTarget(ctx, node);
+            FindJumpTarget(node);
         }
     });
     return true;

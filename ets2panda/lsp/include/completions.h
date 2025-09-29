@@ -206,19 +206,17 @@ ArenaVector<varbinder::Scope *> BuildScopePath(varbinder::Scope *startScope, Are
 CompletionEntry ProcessAutoImportForEntry(CompletionEntry &entry);
 
 std::optional<CompletionEntryData> GetAutoImportCompletionEntry(ark::es2panda::lsp::CompletionEntryData *data,
-                                                                const std::shared_ptr<ArkTsConfig> &config,
-                                                                const std::string &name);
+                                                                const ArkTsConfig *config, const std::string &name);
 std::optional<CompletionEntryData> CompletionEntryDataToOriginInfo(ark::es2panda::lsp::CompletionEntryData *data,
-                                                                   const std::shared_ptr<ArkTsConfig> &config,
-                                                                   const std::string &name);
+                                                                   const ArkTsConfig *config, const std::string &name);
 std::optional<bool> IsCompletionEntryDataResolved(ark::es2panda::lsp::CompletionEntryData *data,
-                                                  const std::shared_ptr<ArkTsConfig> &config);
+                                                  const ArkTsConfig *config);
 std::vector<ir::AstNode *> FilterFromBody(const ArenaVector<ir::AstNode *> &bodyNodes, const std::string &triggerWord,
                                           bool isStatic = false);
 
 bool StartsWith(const std::string &str, const std::string &prefix);
 bool IsDefinedClassOrStruct(ir::AstNode *preNode);
-std::shared_ptr<ArkTsConfig> GetArkTsConfigFromFile(const char *fileName);
+
 std::vector<CompletionEntry> GetPropertyCompletions(ir::AstNode *preNode, const std::string &triggerWord);
 std::string GetClassPropertyName(ir::AstNode *node);
 ir::AstNode *GetIdentifierFromTSInterfaceHeritage(ir::AstNode *node);

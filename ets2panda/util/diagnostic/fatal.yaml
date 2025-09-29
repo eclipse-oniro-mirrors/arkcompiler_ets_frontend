@@ -37,6 +37,10 @@ fatal:
   id: 5
   message: "When compiling with --debugger-eval-mode single input file must be provided"
 
+- name: FILE_RUNTIME_NAME_CLASH
+  id: 18
+  message: "Files '{}' and '{}' have the same runtime name '{}'"
+
 - name: GENERATE_DYNAMIC_DECLARATIONS
   id: 24
   message: "Genate dynamic declarations, outputDeclEts and outputEts must be set together."
@@ -105,10 +109,6 @@ fatal:
   id: 1
   message: .
 
-- name: UNAVAILABLE_SRC_PATH
-  id: 18
-  message: "Not an available source path: {}"
-
 - name: UNKNOWN_EXT
   id: 10
   message: "Unknown extension of sourcefile, set the '--extension' option or change the file extension (available options:
@@ -116,11 +116,11 @@ fatal:
 
 - name: UNRESOLVED_MODULE
   id: 14
-  message: "Unresolved module name {}"
+  message: "Unresolved module name for path: '{}'"
 
 - name: UNSUPPORTED_FILE_NAME
   id: 44
-  message: "File name '{}' contains invalid characters: ':'"
+  message: "Module name '{}' contains invalid characters: ':'"
 
 - name: UNSUPPORTED_PATH
   id: 19

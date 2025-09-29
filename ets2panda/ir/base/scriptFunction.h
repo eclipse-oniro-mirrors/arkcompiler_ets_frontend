@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -388,7 +388,17 @@ public:
         AstNode::CleanUp();
         SetSignature(nullptr);
         SetPreferredReturnType(nullptr);
+        SetWasChecked(false);
     }
+    bool WasChecked() const
+    {
+        return wasChecked_;
+    }
+    void SetWasChecked(bool wasChecked = true)
+    {
+        wasChecked_ = wasChecked;
+    }
+
     void EmplaceReturnStatements(ReturnStatement *returnStatements);
     void ClearReturnStatements();
     void SetValueReturnStatements(ReturnStatement *returnStatements, size_t index);
@@ -417,6 +427,8 @@ private:
     es2panda::Language lang_;
     ArenaVector<ReturnStatement *> returnStatements_;
     EPtr<ScriptFunction> asyncPairFunction_;
+
+    bool wasChecked_ {false};
 };
 }  // namespace ark::es2panda::ir
 

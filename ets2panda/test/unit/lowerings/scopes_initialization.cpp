@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,93 +14,89 @@
  */
 
 #include <gtest/gtest.h>
-#include <algorithm>
+
 #include "libarkbase/macros.h"
 
-#include "test/utils/node_creator.h"
-#include "test/utils/scope_init_test.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "varbinder/tsBinding.h"
 #include "varbinder/ETSBinder.h"
+#include "ir/astNode.h"
+
+#include "lowering_test.h"
 
 namespace ark::es2panda {
 
-class ScopesInitPhaseTest : public test::utils::ScopeInitTest {
-public:
-    ~ScopesInitPhaseTest() override = default;
+using ScopesInitPhaseTest = LoweringTest;
 
-    ScopesInitPhaseTest() : allocator_(EHeap::NewAllocator()), nodeGen_(allocator_.get()) {}
-
-    ArenaAllocator *Allocator()
-    {
-        return allocator_.get();
-    }
-
-    gtests::NodeGenerator &NodeGen()
-    {
-        return nodeGen_;
-    }
-
-    NO_COPY_SEMANTIC(ScopesInitPhaseTest);
-    NO_MOVE_SEMANTIC(ScopesInitPhaseTest);
-
-private:
-    std::unique_ptr<ArenaAllocator> allocator_;
-    gtests::NodeGenerator nodeGen_;
-};
+static ir::Identifier *BodyToFirstName(ir::Statement *body)
+{
+    return body->AsBlockStatement()
+        ->Statements()
+        .front()
+        ->AsVariableDeclaration()
+        ->Declarators()
+        .front()
+        ->Id()
+        ->AsIdentifier();
+}
 
 TEST_F(ScopesInitPhaseTest, TestForUpdateLoop)
 {
-    /*
-     * for (int x = 0; x < 10; x++ ) { let x; }
-     */
-    auto varbinder = varbinder::VarBinder(Allocator());
-    auto program = parser::Program(varbinder.Allocator(), &varbinder);
-    varbinder.SetProgram(&program);
-    auto forNode = NodeGen().CreateForUpdate();
-    compiler::InitScopesPhaseETS::RunExternalNode(forNode, &varbinder);
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    char const *text = R"(
+        for (let x: int = 0; x < 10; x++) {
+            let x: int;
+        }
+    )";
 
-    auto blockScope = forNode->Body()->AsBlockStatement()->Scope();
-    auto loopScope = forNode->Scope();
-    auto parScope = loopScope->Parent();
-    ASSERT_EQ(blockScope->Parent(), loopScope);
+    CONTEXT(ES2PANDA_STATE_PARSED, text)
+    {
+        auto *const forNode = GetAst()->AsETSModule()->Statements()[0]->AsForUpdateStatement();
+        compiler::InitScopesPhaseETS::RunExternalNode(forNode, GetAst()->AsETSModule()->Program());
 
-    const auto &scopeBindings = blockScope->Bindings();
-    const auto &parBindings = parScope->Bindings();
+        auto blockScope = forNode->Body()->AsBlockStatement()->Scope();
+        auto loopScope = forNode->Scope();
+        auto parScope = loopScope->Parent();
+        ASSERT_EQ(blockScope->Parent(), loopScope);
 
-    ASSERT_EQ(scopeBindings.size(), 1);
-    ASSERT_EQ(parBindings.size(), 1);
+        const auto &scopeBindings = blockScope->Bindings();
+        const auto &parBindings = parScope->Bindings();
 
-    auto parName = forNode->Init()->AsVariableDeclaration()->Declarators()[0]->Id()->AsIdentifier();
-    auto name = BodyToFirstName(forNode->Body());
-    ASSERT_EQ(scopeBindings.begin()->first, name->Name());
-    ASSERT_EQ(parBindings.begin()->first, parName->Name());
-    ASSERT_EQ(scopeBindings.begin()->second, name->Variable());
-    ASSERT_EQ(parBindings.begin()->second, parName->Variable());
-    ASSERT_NE(parName->Variable(), name->Variable());
+        ASSERT_EQ(scopeBindings.size(), 1);
+        ASSERT_EQ(parBindings.size(), 1);
+
+        auto parName = forNode->Init()->AsVariableDeclaration()->Declarators()[0]->Id()->AsIdentifier();
+        auto name = BodyToFirstName(forNode->Body());
+        ASSERT_EQ(scopeBindings.begin()->first, name->Name());
+        ASSERT_EQ(parBindings.begin()->first, parName->Name());
+        ASSERT_EQ(scopeBindings.begin()->second, name->Variable());
+        ASSERT_EQ(parBindings.begin()->second, parName->Variable());
+        ASSERT_NE(parName->Variable(), name->Variable());
+    }
 }
 
 TEST_F(ScopesInitPhaseTest, CreateWhile)
 {
-    /*
-     * while (x < 10) { let x; }
-     */
-    auto varbinder = varbinder::VarBinder(Allocator());
-    auto program = parser::Program(varbinder.Allocator(), &varbinder);
-    varbinder.SetProgram(&program);
-    auto whileNode = NodeGen().CreateWhile();
+    char const *text = R"(
+        let x: int;
+        while (x < 10) { let x:int; }
+    )";
 
-    compiler::InitScopesPhaseETS::RunExternalNode(whileNode, &varbinder);
+    CONTEXT(ES2PANDA_STATE_PARSED, text)
+    {
+        auto *const whileNode = GetAst()->AsETSModule()->Statements()[1]->AsWhileStatement();
+        compiler::InitScopesPhaseETS::RunExternalNode(whileNode, GetAst()->AsETSModule()->Program());
 
-    auto whileScope = whileNode->Scope();
-    auto bodyScope = whileNode->Body()->AsBlockStatement()->Scope();
-    ASSERT_EQ(bodyScope->Parent(), whileScope);
+        auto whileScope = whileNode->Scope();
+        auto bodyScope = whileNode->Body()->AsBlockStatement()->Scope();
+        ASSERT_EQ(bodyScope->Parent(), whileScope);
 
-    const auto &bodyBindings = bodyScope->Bindings();
-    auto name = BodyToFirstName(whileNode->Body());
-    ASSERT_EQ(bodyBindings.size(), 1);
-    ASSERT_EQ(bodyBindings.begin()->first, name->Name());
-    ASSERT_EQ(bodyBindings.begin()->second, name->Variable());
+        const auto &bodyBindings = bodyScope->Bindings();
+        auto name = BodyToFirstName(whileNode->Body());
+        ASSERT_EQ(bodyBindings.size(), 1);
+        ASSERT_EQ(bodyBindings.begin()->first, name->Name());
+        ASSERT_EQ(bodyBindings.begin()->second, name->Variable());
+    }
 }
 
 }  // namespace ark::es2panda

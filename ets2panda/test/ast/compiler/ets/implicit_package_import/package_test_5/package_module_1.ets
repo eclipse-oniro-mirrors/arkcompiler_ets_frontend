@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,6 @@
  * limitations under the License.
  */
 
-package mypack;
+let myvar: number = /* @@ label */wont_exist;
 
-let myvar: number = wont_exist;
-
-
-/* @@? package_module_2_neg.ets:22:1 Error Syntax error ESY0291: Invalid package toplevel statement */
-/* @@? package_module_2_neg.ets:22:1 Error Semantic error ESE0143: Unresolved reference syntax */
-/* @@? package_module_2_neg.ets:22:8 Error Syntax error ESY0227: Unexpected token 'error'. */
-/* @@? package_module_2_neg.ets:22:8 Error Syntax error ESY0291: Invalid package toplevel statement */
-/* @@? package_module_2_neg.ets:22:8 Error Semantic error ESE0143: Unresolved reference error */
+/* @@@ label Error Semantic error ESE0143: Unresolved reference wont_exist */

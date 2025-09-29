@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,12 +41,12 @@ TEST_F(LSPAICTests, GetAutoImportCompletionEntryUnresolved1)
 
     auto importDecl = targetImportDeclaration->AsETSImportDeclaration()->Source()->ToString();
     auto importSpec = targetImportSpecifier->AsImportSpecifier()->Imported()->ToString();
-    auto config = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->config->options->ArkTSConfig();
-    initializer.DestroyContext(ctx);
+    const auto &config = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->config->options->ArkTSConfig();
 
     auto data = ark::es2panda::lsp::CompletionEntryData(fileName, importSpec, importDecl, "");
-    auto result = ark::es2panda::lsp::GetAutoImportCompletionEntry(&data, config, "");
+    auto result = ark::es2panda::lsp::GetAutoImportCompletionEntry(&data, &config, "");
     ASSERT_EQ(ark::es2panda::lsp::ResolutionStatus::UNRESOLVED, result->GetStatus());
+    initializer.DestroyContext(ctx);
 }
 
 TEST_F(LSPAICTests, GetAutoImportCompletionEntryNotExistInConfigPath)
@@ -64,12 +64,12 @@ TEST_F(LSPAICTests, GetAutoImportCompletionEntryNotExistInConfigPath)
 
     auto importDecl = targetImportDeclaration->AsETSImportDeclaration()->Source()->ToString();
     auto importSpec = targetImportSpecifier->AsImportSpecifier()->Imported()->ToString();
-    auto config = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->config->options->ArkTSConfig();
-    initializer.DestroyContext(ctx);
+    const auto &config = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->config->options->ArkTSConfig();
 
     auto data = ark::es2panda::lsp::CompletionEntryData(fileName, importSpec, importDecl, "");
-    auto result = ark::es2panda::lsp::GetAutoImportCompletionEntry(&data, config, "");
+    auto result = ark::es2panda::lsp::GetAutoImportCompletionEntry(&data, &config, "");
     ASSERT_EQ(std::nullopt, result);
+    initializer.DestroyContext(ctx);
 }
 
 TEST_F(LSPAICTests, GetAutoImportCompletionEntryResolved)
@@ -105,12 +105,12 @@ TEST_F(LSPAICTests, GetAutoImportCompletionEntryResolved)
 
     auto importDecl = targetImportDeclaration->AsETSImportDeclaration()->Source()->ToString();
     auto importSpec = targetImportSpecifier->AsImportSpecifier()->Imported()->ToString();
-    auto config = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->config->options->ArkTSConfig();
-    initializer.DestroyContext(ctx);
+    const auto &config = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->config->options->ArkTSConfig();
 
     auto data = ark::es2panda::lsp::CompletionEntryData(fileName, importSpec, importDecl, "");
-    auto result = ark::es2panda::lsp::GetAutoImportCompletionEntry(&data, config, "");
+    auto result = ark::es2panda::lsp::GetAutoImportCompletionEntry(&data, &config, "");
     ASSERT_EQ(ark::es2panda::lsp::ResolutionStatus::RESOLVED, result->GetStatus());
+    initializer.DestroyContext(ctx);
 }
 
 TEST_F(LSPAICTests, GetAutoImportCompletionEntryEmptyFile)
@@ -148,10 +148,10 @@ TEST_F(LSPAICTests, GetAutoImportCompletionEntryEmptyImportDeclaration)
 
     const char *fileName = "file.ets";
     auto ctx = initializer.CreateContext(fileName, ES2PANDA_STATE_CHECKED, "");
-    auto config = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->config->options->ArkTSConfig();
-    initializer.DestroyContext(ctx);
+    const auto &config = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->config->options->ArkTSConfig();
 
     auto data = ark::es2panda::lsp::CompletionEntryData(fileName, "", "", "");
-    auto result = ark::es2panda::lsp::GetAutoImportCompletionEntry(&data, config, "");
+    auto result = ark::es2panda::lsp::GetAutoImportCompletionEntry(&data, &config, "");
     ASSERT_EQ(std::nullopt, result);
+    initializer.DestroyContext(ctx);
 }

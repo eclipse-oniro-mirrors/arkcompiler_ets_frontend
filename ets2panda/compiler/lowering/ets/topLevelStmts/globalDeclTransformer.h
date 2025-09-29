@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,8 +59,12 @@ public:
     };
 
     explicit GlobalDeclTransformer(ArenaAllocator *allocator, ir::Statement const *currentModule,
-                                   parser::ETSParser *const parser)
-        : allocator_(allocator), result_(allocator), currentModule_(currentModule), parser_(parser)
+                                   bool isPackageFraction, parser::ETSParser *const parser)
+        : allocator_(allocator),
+          result_(allocator),
+          currentModule_(currentModule),
+          isPackageFraction_(isPackageFraction),
+          parser_(parser)
     {
     }
 
@@ -100,6 +104,7 @@ private:
     ArenaAllocator *allocator_;
     ResultT result_;
     ir::Statement const *currentModule_;
+    bool isPackageFraction_;
     parser::ETSParser *const parser_;
     size_t initializerBlockCount_ = 0;
 };

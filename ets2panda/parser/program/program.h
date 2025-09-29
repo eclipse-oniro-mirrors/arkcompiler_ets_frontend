@@ -17,15 +17,20 @@
 #define ES2PANDA_PARSER_INCLUDE_PROGRAM_H
 
 #include "util/es2pandaMacros.h"
-#include "libarkbase/os/filesystem.h"
 #include "util/ustring.h"
 #include "util/path.h"
 #include "util/importPathManager.h"
+#include "util/enumbitops.h"
+#include "ir/statements/blockStatement.h"
+
+#include "lexer/token/sourceLocation.h"
 #include "varbinder/varbinder.h"
-#include <lexer/token/sourceLocation.h>
+#include "varbinder/recordTable.h"
+
+#include "libarkbase/mem/pool_manager.h"
+#include "libarkbase/os/filesystem.h"
 
 #include <set>
-#include <ir/statements/blockStatement.h>
 
 namespace ark::es2panda::ir {
 class BlockStatement;
@@ -45,38 +50,168 @@ class Checker;
 }  // namespace ark::es2panda::checker
 
 namespace ark::es2panda::parser {
-enum class ScriptKind { SCRIPT, MODULE, STDLIB, GENEXTERNAL };
 
 #ifndef NDEBUG
 constexpr uint32_t POISON_VALUE {0x12346789};
 #endif
 
-class Program {
+template <util::ModuleKind KIND>
+class ProgramAdapter;
+
+class RecordTableHolder {
 public:
-    using ExternalSource = ArenaUnorderedMap<util::StringView, ArenaVector<Program *>>;
-    using DirectExternalSource = ArenaUnorderedMap<util::StringView, ArenaVector<Program *>>;
-    using FileDependenciesMap = ArenaUnorderedMap<util::StringView, ArenaSet<util::StringView>>;
+    void SetRecordTable(varbinder::RecordTable *recordTable)
+    {
+        recordTable_ = recordTable;
+    }
+
+    auto *GetRecordTable() const
+    {
+        return recordTable_;
+    }
+
+private:
+    varbinder::RecordTable *recordTable_ {};
+};
+
+class Program : public RecordTableHolder {
+    // To be moved from 'Program'.
+    template <util::ModuleKind... KINDS>
+    class ExternalSourcesImpl {
+    public:
+        template <util::ModuleKind KIND>
+        using ProgramsSubmap = ArenaVector<ProgramAdapter<KIND> *>;
+        using TransitiveExternals = std::tuple<ProgramsSubmap<KINDS>...>;
+
+        explicit ExternalSourcesImpl() : transitiveExternals_(ProgramsSubmap<KINDS>()...), direct_ {} {}
+
+        template <typename SubmapT>
+        static constexpr auto GetModuleKindFromSubmapType()
+        {
+            using SubmapProgramT = std::remove_pointer_t<typename std::remove_reference_t<SubmapT>::value_type>;
+            return SubmapProgramT::MODULE_KIND;
+        }
+
+        bool Empty() const
+        {
+            bool emptyTransitive = (std::get<ProgramsSubmap<KINDS>>(transitiveExternals_).empty() && ...);
+            bool emptyDirect = direct_.empty();
+            return emptyTransitive && emptyDirect;
+        }
+
+        template <util::ModuleKind KIND>
+        const auto &Get() const
+        {
+            return std::get<ProgramsSubmap<KIND>>(transitiveExternals_);
+        }
+
+        template <util::ModuleKind KIND>
+        auto &Get()
+        {
+            return std::get<ProgramsSubmap<KIND>>(transitiveExternals_);
+        }
+
+        template <typename ProgVisitor, util::ModuleKind SUBMAP_KIND>
+        static constexpr bool INVOCABLE = std::is_invocable_v<ProgVisitor, ProgramAdapter<SUBMAP_KIND> *>;
+
+        // Visits submaps selected by the following constraints:
+        // - explicitly specified 'KINDS_TO_VISIT';
+        // - callback parameter type.
+        // NOTE(dkofanov): 'SHOULD_UNPACK_PACKAGE' should be removed when packages are merged.
+        template <bool SHOULD_UNPACK_PACKAGE = true, util::ModuleKind... KINDS_TO_VISIT, typename ProgramVisitor>
+        void Visit(const ProgramVisitor &cb)
+        {
+            static_assert(((INVOCABLE<ProgramVisitor, KINDS>) || ...),
+                          "Visitor isn't invocable for any kind of programs");
+            auto submapVisitor = [&cb](const auto &submap) {
+                // CC-OFFNXT(G.NAM.03-CPP) project codestyle
+                constexpr auto CUR_SUBMAP_KIND = GetModuleKindFromSubmapType<decltype(submap)>();
+                // NOTE(dkofanov): Packages are to be removed from common externals.
+                if constexpr (SHOULD_UNPACK_PACKAGE && (CUR_SUBMAP_KIND == util::ModuleKind::PACKAGE) &&
+                              std::is_invocable_v<ProgramVisitor, SourceProgram *>) {
+                    // "Unpack" package and iterate contents:
+                    for (auto *pkg : submap) {
+                        // As this is to be removed, do not handle variant with passing a key.
+                        pkg->MaybeIteratePackage(cb);
+                    }
+                    return;
+                }
+
+                for (auto *prog : submap) {
+                    ES2PANDA_ASSERT(prog->GetModuleKind() == CUR_SUBMAP_KIND);
+                    if constexpr (INVOCABLE<ProgramVisitor, CUR_SUBMAP_KIND>) {
+                        cb(prog);
+                    }
+                }
+            };
+            VisitSubmaps<KINDS_TO_VISIT...>(submapVisitor);
+        }
+
+        // This shouldn't try insert package fractions to packages.
+        void Add(Program *progToInsert)
+        {
+            auto inserter = [progToInsert](auto &submap) {
+                // CC-OFFNXT(G.NAM.03-CPP) project code style
+                constexpr auto SUBMAP_KIND = GetModuleKindFromSubmapType<decltype(submap)>();
+                if (progToInsert->Is<SUBMAP_KIND>()) {
+                    submap.push_back(progToInsert->As<SUBMAP_KIND>());
+                }
+            };
+
+            VisitSubmaps(inserter);
+        }
+
+        auto &Direct()
+        {
+            return direct_;
+        }
+
+        const auto &Direct() const
+        {
+            return direct_;
+        }
+
+    private:
+        template <util::ModuleKind... KINDS_TO_VISIT, typename SubmapVisitor>
+        void VisitSubmaps(SubmapVisitor &cb)
+        {
+            if constexpr (sizeof...(KINDS_TO_VISIT) == 0) {
+                ((cb(std::get<ProgramsSubmap<KINDS>>(transitiveExternals_))), ...);
+            } else {
+                ((cb(std::get<ProgramsSubmap<KINDS_TO_VISIT>>(transitiveExternals_))), ...);
+            }
+        }
+
+    private:
+        TransitiveExternals transitiveExternals_;
+
+        using DirectExternalPrograms = ArenaUnorderedMap<ArenaString, Program *>;
+        DirectExternalPrograms direct_;
+
+        friend Program;
+    };
+
+protected:
+    Program(const util::ImportMetadata &importMetadata, ArenaAllocator *allocator, varbinder::VarBinder *varbinder);
+    friend ArenaAllocator;
+
+public:
+    using ModuleKind = util::ModuleKind;
+
+    // NOTE(dkofanov): 'ModuleKind::PACKAGE' should be replaced from here and stored there implicitly. They should be
+    // merged at 'PackageImplicitImport' phase and added as just a 'ModuleKind::MODULE' with a single AST-tree.
+    using ExternalSources = ExternalSourcesImpl<ModuleKind::MODULE, ModuleKind::SOURCE_DECL, ModuleKind::PACKAGE,
+                                                ModuleKind::ETSCACHE_DECL>;
 
     using ETSNolintsCollectionMap = ArenaUnorderedMap<const ir::AstNode *, ArenaSet<ETSWarnings>>;
 
-    template <typename T>
-    static Program NewProgram(ArenaAllocator *allocator, varbinder::VarBinder *varBinder)
-    {
-        ES2PANDA_ASSERT(varBinder != nullptr);
-        return Program(allocator, varBinder);
-    }
+    template <util::ModuleKind KIND = util::ModuleKind::MODULE, typename VarBinderT = void>
+    static ProgramAdapter<KIND> *New(const util::ImportMetadata &importMetadata, public_lib::Context *context);
 
-    Program(ArenaAllocator *allocator, varbinder::VarBinder *varbinder);
-
-    ~Program();
-
-    void SetKind(ScriptKind kind)
-    {
-        kind_ = kind;
-    }
+    virtual ~Program();
 
     NO_COPY_SEMANTIC(Program);
-    DEFAULT_MOVE_SEMANTIC(Program);
+    NO_MOVE_SEMANTIC(Program);
 
     ArenaAllocator *Allocator() const
     {
@@ -94,22 +229,27 @@ public:
 
     void PushChecker(checker::Checker *checker);
 
+    const util::ImportMetadata &GetImportMetadata() const
+    {
+        return importMetadata_;
+    }
+
+    // NOTE(dkofanov): this function is not needed as soon as packages are merged.
+    // They should be merged at PackageImplicitImport stage, but for now it handles only main-program.
+    template <typename CB>
+    void MaybeIteratePackage(const CB &cb);
+
     ScriptExtension Extension() const
     {
         return extension_;
     }
 
-    ScriptKind Kind() const
-    {
-        return kind_;
-    }
-
-    util::StringView SourceCode() const
+    std::string_view SourceCode() const
     {
         return sourceCode_;
     }
 
-    const util::StringView &SourceFilePath() const
+    util::StringView SourceFilePath() const
     {
         return sourceFile_.GetPath();
     }
@@ -117,11 +257,6 @@ public:
     const util::Path &SourceFile() const
     {
         return sourceFile_;
-    }
-
-    util::StringView SourceFileFolder() const
-    {
-        return sourceFileFolder_;
     }
 
     util::StringView FileName() const
@@ -139,21 +274,7 @@ public:
         return sourceFile_.GetAbsolutePath();
     }
 
-    util::StringView ResolvedFilePath() const
-    {
-        return resolvedFilePath_;
-    }
-
-    util::StringView RelativeFilePath() const
-    {
-        // for js source files, just return file name.
-        return relativeFilePath_.Empty() ? FileNameWithExtension() : relativeFilePath_;
-    }
-
-    void SetRelativeFilePath(const util::StringView &relPath)
-    {
-        relativeFilePath_ = relPath;
-    }
+    std::string RelativeFilePath(const public_lib::Context *context) const;
 
     ir::BlockStatement *Ast()
     {
@@ -168,7 +289,7 @@ public:
     void SetAst(ir::BlockStatement *ast)
     {
         ast_ = ast;
-        MaybeTransformToDeclarationModule();
+        VerifyDeclarationModule();
     }
 
     ir::ClassDefinition *GlobalClass();
@@ -177,25 +298,19 @@ public:
 
     void SetGlobalClass(ir::ClassDefinition *globalClass);
 
-    ExternalSource &ExternalSources()
+    ExternalSources *GetExternalSources()
     {
-        return externalSources_;
+        return &externalSources_;
     }
 
-    const ExternalSource &ExternalSources() const
+    const ExternalSources *GetExternalSources() const
     {
-        return externalSources_;
+        return &externalSources_;
     }
 
-    DirectExternalSource &DirectExternalSources()
-    {
-        return directExternalSources_;
-    }
-
-    const DirectExternalSource &DirectExternalSources() const
-    {
-        return directExternalSources_;
-    }
+    // NOTE(dkofanov): this should be called exactly once. It is needed as soon as there is a special "main"-program and
+    // others are "external-sources".
+    void PromoteToMainProgram(public_lib::Context *ctx);
 
     const lexer::SourcePosition &PackageStart() const
     {
@@ -207,66 +322,58 @@ public:
         packageStartPosition_ = start;
     }
 
-    void SetSource(const util::StringView &sourceCode, const util::Path &sourceFilePath,
-                   const util::StringView &sourceFileFolder)
-    {
-        sourceCode_ = sourceCode;
-        sourceFile_ = sourceFilePath;
-        sourceFileFolder_ = sourceFileFolder;
-    }
-
-    void SetSource(const util::StringView &sourceCode, const util::StringView &sourceFilePath,
-                   const util::StringView &sourceFileFolder)
-    {
-        sourceCode_ = sourceCode;
-        sourceFile_ = util::Path(sourceFilePath, Allocator());
-        sourceFileFolder_ = sourceFileFolder;
-    }
-
     void SetSource(const ark::es2panda::SourceFile &sourceFile)
     {
         sourceCode_ = sourceFile.source;
         sourceFile_ = util::Path(sourceFile.filePath, Allocator());
-        sourceFileFolder_ = util::UString(sourceFile.fileFolder, Allocator()).View();
-        resolvedFilePath_ = util::UString(sourceFile.resolvedPath, Allocator()).View();
         moduleInfo_.isDeclForDynamicStaticInterop = sourceFile.isDeclForDynamicStaticInterop;
     }
 
-    void SetPackageInfo(const util::StringView &name, util::ModuleKind kind);
+    void SetPackageInfo(std::string_view mname, util::ModuleKind kind);
 
-    const auto &ModuleInfo() const
+    const util::ModuleInfo &ModuleInfo() const
     {
         return moduleInfo_;
     }
 
-    util::StringView ModuleName() const
+    std::string_view ModuleName() const
     {
         return moduleInfo_.moduleName;
     }
 
-    util::StringView ModulePrefix() const
+    std::string_view ModulePrefix() const
     {
         return moduleInfo_.modulePrefix;
     }
 
-    bool IsSeparateModule() const
+    virtual util::ModuleKind GetModuleKind() const
     {
-        return moduleInfo_.kind == util::ModuleKind::MODULE;
+        // NOTE(dkofanov): this should be pure virtual, but now Program is exposed to the C-API
+        // Result of this method is different from ModuleInfo::kind_, and tries to replace it in future.
+        return util::ModuleKind::UNKNOWN;
     }
 
-    bool IsPackage() const
+    template <util::ModuleKind KIND>
+    bool Is() const
     {
-        return moduleInfo_.kind == util::ModuleKind::PACKAGE;
+        return GetModuleKind() == KIND;
     }
 
-    bool IsDeclarationModule() const
+    template <util::ModuleKind KIND>
+    ProgramAdapter<KIND> *As()
     {
-        return moduleInfo_.isDeclarationModule;
+        ES2PANDA_ASSERT(Is<KIND>());
+        return static_cast<ProgramAdapter<KIND> *>(this);
     }
 
     bool IsDeclForDynamicStaticInterop() const
     {
         return moduleInfo_.isDeclForDynamicStaticInterop;
+    }
+
+    bool IsDeclarationModule() const
+    {
+        return Is<util::ModuleKind::SOURCE_DECL>() || Is<util::ModuleKind::ETSCACHE_DECL>();
     }
 
     void SetASTChecked();
@@ -296,7 +403,7 @@ public:
     bool IsStdLib() const
     {
         // NOTE (hurton): temporary solution, needs rework when std sources are renamed
-        return (ModuleName().Mutf8().rfind("std.", 0) == 0) || (ModuleName().Mutf8().rfind("escompat", 0) == 0) ||
+        return (ModuleName().rfind("std.", 0) == 0) || (ModuleName().rfind("escompat", 0) == 0) ||
                (FileName().Is("etsstdlib"));
     }
 
@@ -320,8 +427,6 @@ public:
     void AddNodeToETSNolintCollection(const ir::AstNode *node, const std::set<ETSWarnings> &warningsCollection);
     bool NodeContainsETSNolint(const ir::AstNode *node, ETSWarnings warning);
 
-    bool MergeExternalSource(const ExternalSource *externalSource);
-
     // The name "IsDied", because correct value of canary is a necessary condition for the life of "Program", but
     // not sufficient
     bool IsDied() const
@@ -338,17 +443,15 @@ public:
     compiler::CFG *GetCFG();
     const compiler::CFG *GetCFG() const;
 
-    const FileDependenciesMap &GetFileDependencies() const
+    auto &GetFileDependencies()
     {
         return fileDependencies_;
     }
 
-    FileDependenciesMap &GetFileDependencies()
+    void AddFileDependencies(std::string_view file, std::string_view depFile)
     {
-        return fileDependencies_;
+        fileDependencies_[ArenaString {file}].emplace(depFile);
     }
-
-    void AddFileDependencies(const util::StringView &file, const util::StringView &depFile);
 
     ArenaMap<int32_t, varbinder::VarBinder *> &VarBinders()
     {
@@ -356,29 +459,32 @@ public:
     }
 
 private:
-    void MaybeTransformToDeclarationModule();
+    void VerifyDeclarationModule();
+
+public:
+    using FileDependenciesMap = ArenaUnorderedMap<ArenaString, ArenaUnorderedSet<ArenaString>>;
 
 private:
+    util::ImportMetadata importMetadata_;
     ArenaAllocator *allocator_ {};
     ir::BlockStatement *ast_ {};
-    util::StringView sourceCode_ {};
-    util::Path sourceFile_ {};
-    util::StringView sourceFileFolder_ {};
-    util::StringView resolvedFilePath_ {};
-    util::StringView relativeFilePath_ {};
-    ExternalSource externalSources_;
-    DirectExternalSource directExternalSources_;
-    ScriptKind kind_ {};
+    util::Path sourceFile_;
+    std::string_view sourceCode_ {};
+
     bool isASTlowered_ {};
     bool isModified_ {true};
     bool genAbcForExternalSource_ {false};
     ScriptExtension extension_ {};
     ETSNolintsCollectionMap etsnolintCollection_;
     util::ModuleInfo moduleInfo_;
-
     lexer::SourcePosition packageStartPosition_ {};
     compiler::CFG *cfg_;
+
     FileDependenciesMap fileDependencies_;
+
+    // NOTE(dkofanov): externalSources_ are stored only in main program. This field should be moved to
+    // 'public_lib::Context'.
+    ExternalSources externalSources_;
 
 private:
     ArenaMap<int32_t, varbinder::VarBinder *> varbinders_;
@@ -388,6 +494,81 @@ private:
 #endif
     bool isAstChecked_ {false};
 };
+
+class NonPackageProgram : public Program {
+public:
+    using Program::Program;
+};
+
+template <util::ModuleKind KIND>
+class ProgramAdapter final : public NonPackageProgram {
+public:
+    // CC-OFFNXT(G.NAM.03-CPP) project codestyle
+    static constexpr auto MODULE_KIND = KIND;
+    util::ModuleKind GetModuleKind() const override
+    {
+        return MODULE_KIND;
+    }
+
+    using NonPackageProgram::NonPackageProgram;
+};
+
+template <>
+class ProgramAdapter<util::ModuleKind::PACKAGE> final : public Program {
+public:
+    static constexpr auto MODULE_KIND = util::ModuleKind::PACKAGE;
+    using Program::Program;
+
+    util::ModuleKind GetModuleKind() const override
+    {
+        return MODULE_KIND;
+    }
+
+    void AppendFraction(SourceProgram *fraction)
+    {
+        fractions_.push_back(fraction);
+    }
+
+    auto &GetUnmergedPackagePrograms()
+    {
+        return fractions_;
+    }
+
+private:
+    ArenaVector<SourceProgram *> fractions_;
+};
+
+// NOTE(dkofanov): this function is not needed as soon as packages are merged.
+// They should be merged at PackageImplicitImport stage, but for now it handles only main-program.
+template <typename CB>
+void Program::MaybeIteratePackage(const CB &cb)
+{
+    auto invokeMaybePassFlag = [&cb](auto *program, bool isPackageFraction) {
+        // CC-OFFNXT(G.NAM.03-CPP) project codestyle
+        constexpr bool SHOULD_INFORM_OF_PACKAGE_FRACTION = std::is_invocable_v<CB, Program *, bool>;
+        if constexpr (SHOULD_INFORM_OF_PACKAGE_FRACTION) {
+            cb(program, isPackageFraction);
+        } else {
+            cb(program);
+        }
+    };
+
+    if (Is<util::ModuleKind::PACKAGE>()) {
+        if (!As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms().empty()) {
+            for (auto *fraction : As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms()) {
+                ES2PANDA_ASSERT(fraction->Is<util::ModuleKind::MODULE>());
+                invokeMaybePassFlag(fraction, true);
+            }
+        } else {
+            // NOTE(dkofanov): merged packages are fractions too. They should be explicitly "depromoted" to
+            // 'MODULE' in 'PackageImplicitImport'. As soon as this happens, the whole method should be deleted.
+            invokeMaybePassFlag(this, true);
+        }
+    } else {
+        invokeMaybePassFlag(this, false);
+    }
+}
+
 }  // namespace ark::es2panda::parser
 
 #endif

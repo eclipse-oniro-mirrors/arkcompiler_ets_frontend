@@ -1,0 +1,8 @@
+
+ark_tests/ast/parser/js/modules/test-export-double-default-1.js
+# Issue: #20326
+ast/parser/ts/test-func-param2.ts
+ast/parser/ts/test-func-param3.ts
+ast/parser/ts/unexpected_token_1.ts
+
+ark_tests/ast/parser/js/modules/test-export-double-default-1.js

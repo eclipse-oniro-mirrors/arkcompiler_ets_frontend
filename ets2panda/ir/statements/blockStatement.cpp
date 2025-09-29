@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,22 @@
 #include "ir/srcDump.h"
 
 namespace ark::es2panda::ir {
+
+BlockStatement::BlockStatement(ArenaAllocator *allocator, ArenaVector<Statement *> &&statementList)
+    : Statement(AstNodeType::BLOCK_STATEMENT),
+      statements_(std::move(statementList)),
+      trailingBlocks_(allocator->Adapter())
+{
+    InitHistory();
+
+    // NOTE(dkofanov): Some approximation to new node range.
+    // There should be a generalized way to initialize node range from childs.
+    if (!statements_.empty()) {
+        SetStart(statements_.front()->Start());
+        SetEnd(statements_.back()->End());
+    }
+}
+
 void BlockStatement::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
     // This will survive pushing element to the back of statements_ in the process

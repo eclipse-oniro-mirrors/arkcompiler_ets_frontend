@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -710,15 +710,12 @@ checker::AstNodePtr EnumLoweringPhase::TransformEnumChildrenRecursively(checker:
     return ast;
 }
 
-bool EnumLoweringPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool EnumLoweringPhase::PerformForProgram(parser::Program *program)
 {
     if (program->Extension() != ScriptExtension::ETS) {
         return true;
     }
 
-    context_ = ctx;
-    checker_ = ctx->GetChecker()->AsETSChecker();
-    varbinder_ = ctx->parserProgram->VarBinder()->AsETSBinder();
     program_ = program;
 
     program->Ast()->TransformChildrenRecursively(

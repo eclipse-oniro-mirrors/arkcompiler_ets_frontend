@@ -127,10 +127,10 @@ static ir::AstNode *ProcessVariableDeclaration(public_lib::Context *ctx, ir::Var
     return varDecl;
 }
 
-bool DestructuringPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool DestructuringPhase::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursivelyPreorder(
-        [ctx](ir::AstNode *node) {
+        [ctx = Context()](ir::AstNode *node) {
             if (node->IsAssignmentExpression()) {
                 return ProcessAssignmentExpression(ctx, node->AsAssignmentExpression());
             }

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,8 +40,7 @@ namespace ark::es2panda::evaluate {
 /// @brief Context-dependent debug info plugin. Must be created before parsing phase.
 class ScopedDebugInfoPlugin final {
 public:
-    explicit ScopedDebugInfoPlugin(parser::Program *globalProgram, checker::ETSChecker *checker,
-                                   const util::Options &options);
+    explicit ScopedDebugInfoPlugin(public_lib::Context *ctx);
 
     NO_COPY_SEMANTIC(ScopedDebugInfoPlugin);
     NO_MOVE_SEMANTIC(ScopedDebugInfoPlugin);
@@ -147,6 +146,11 @@ public:
 
     varbinder::ETSBinder *GetETSBinder();
 
+    auto *E2PContext()
+    {
+        return e2pctx_;
+    }
+
 private:
     using PrologueEpiloguePair = std::pair<ArenaVector<ir::Statement *>, ArenaVector<ir::Statement *>>;
     using PrologueEpilogueMap = ArenaUnorderedMap<ir::BlockStatement *, PrologueEpiloguePair>;
@@ -188,7 +192,7 @@ private:
     ArenaAllocator *Allocator();
 
 private:
-    parser::Program *globalProgram_ {nullptr};
+    public_lib::Context *e2pctx_ {};
     checker::ETSChecker *checker_ {nullptr};
 
     EvaluateContext context_;

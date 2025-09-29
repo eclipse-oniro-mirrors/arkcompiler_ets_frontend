@@ -78,9 +78,9 @@
 #include "ir/ts/tsTypeParameterInstantiation.h"
 
 namespace ark::es2panda::parser {
-std::unique_ptr<lexer::Lexer> ASParser::InitLexer(const SourceFile &sourceFile)
+std::unique_ptr<lexer::Lexer> ASParser::InitLexer()
 {
-    GetProgram()->SetSource(sourceFile);
+    ES2PANDA_ASSERT(GetContext().GetProgram() == GetProgram());
     auto lexer = std::make_unique<lexer::ASLexer>(&GetContext(), DiagnosticEngine());
     SetLexer(lexer.get());
     return lexer;

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,7 +49,7 @@ class ConstantExpressionLoweringImpl {
 public:
     explicit ConstantExpressionLoweringImpl(public_lib::Context *context) : context_(context) {}
 
-    bool PerformForModule(parser::Program *program, std::string_view name);
+    bool PerformForProgram(parser::Program *program, std::string_view name);
 
     using Variable = varbinder::Variable;
 
@@ -259,16 +259,16 @@ private:
     friend NodeCalculator;
 };
 
-class ConstantExpressionLowering : public PhaseForDeclarations {
+class ConstantExpressionLowering : public PhaseForSourcePrograms {
     std::string_view Name() const override
     {
         return "ConstantExpressionLowering";
     }
 
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override
+    bool PerformForProgram(parser::Program *program) override
     {
-        ConstantExpressionLoweringImpl cf {ctx};
-        return cf.PerformForModule(program, Name());
+        ConstantExpressionLoweringImpl cf {Context()};
+        return cf.PerformForProgram(program, Name());
     }
 };
 

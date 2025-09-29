@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,9 +44,8 @@ static es2panda_AstNode *CreateImportDecl(es2panda_Context *context, es2panda_Pr
     g_impl->AstNodeSetParent(context, importAlias, importSpecifier);
     specifiersArray.push_back(importSpecifier);
 
-    auto *importDecl =
-        g_impl->ETSParserBuildImportDeclaration(context, Es2pandaImportKinds::IMPORT_KINDS_ALL, specifiersArray.data(),
-                                                1, importPath, program, Es2pandaImportFlags::IMPORT_FLAGS_NONE);
+    auto *importDecl = g_impl->ETSParserBuildImportDeclaration(context, Es2pandaImportKinds::IMPORT_KINDS_ALL,
+                                                               specifiersArray.data(), 1, importPath, program);
     return importDecl;
 }
 
@@ -161,11 +160,9 @@ bool Find(es2panda_AstNode *ast)
         auto source = g_impl->ImportDeclarationSource(g_ctx, ast);
         auto importDeclaration =
             g_impl->UpdateETSImportDeclaration(g_ctx, ast, source, specifiers, len, IMPORT_KINDS_ALL);
-        auto declPath = g_impl->ETSImportDeclarationDeclPathConst(g_ctx, ast);
-        auto ohmUrl = g_impl->ETSImportDeclarationOhmUrlConst(g_ctx, ast);
-        auto resolvedSource = g_impl->ETSImportDeclarationResolvedSourceConst(g_ctx, ast);
-        g_impl->ETSImportDeclarationSetImportMetadata(g_ctx, importDeclaration, IMPORT_FLAGS_NONE, ID_ETS,
-                                                      resolvedSource, declPath, ohmUrl);
+
+        g_impl->ETSImportDeclarationCopyImportMetadataFrom(g_ctx, importDeclaration, ast);
+
         for (size_t i = 0; i < len; i++) {
             g_impl->AstNodeSetParent(g_ctx, specifiers[i], importDeclaration);
         }

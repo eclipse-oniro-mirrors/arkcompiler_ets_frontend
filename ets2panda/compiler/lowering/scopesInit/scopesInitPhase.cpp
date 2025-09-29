@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,11 +46,11 @@ T *AddOrGetDecl(varbinder::VarBinder *varBinder, util::StringView name, ir::AstN
     return varBinder->AddDecl<T>(pos, args...);
 }
 
-bool ScopesInitPhase::Perform(PhaseContext *ctx, parser::Program *program)
+bool ScopesInitPhase::Perform()
 {
-    Prepare(ctx, program);
-    program->VarBinder()->InitTopScope();
-    HandleBlockStmt(program->Ast(), GetScope());
+    Prepare(Context()->parserProgram);
+    GetProgram()->VarBinder()->InitTopScope();
+    HandleBlockStmt(GetProgram()->Ast(), GetScope());
     Finalize();
     return true;
 }
@@ -414,11 +414,6 @@ void ScopesInitPhase::VisitTSFunctionType(ir::TSFunctionType *funcType)
     Iterate(funcType);
 }
 
-void ScopesInitPhase::SetProgram(parser::Program *program) noexcept
-{
-    program_ = program;
-}
-
 void ScopesInitPhase::CallFuncParams(const ArenaVector<ir::Expression *> &params)
 {
     // NOTE: extract params to separate class
@@ -455,7 +450,7 @@ void ScopesInitPhase::IterateNoTParams(ir::ClassDefinition *classDef)
 void ScopesInitPhase::LogDiagnostic(const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params,
                                     const lexer::SourcePosition &pos) const
 {
-    ctx_->diagnosticEngine->LogDiagnostic(kind, params, pos);
+    DE()->LogDiagnostic(kind, params, pos);
 }
 
 void ScopesInitPhase::CreateFuncDecl(ir::ScriptFunction *func)
@@ -521,7 +516,7 @@ std::tuple<varbinder::Decl *, varbinder::Variable *> ScopesInitPhase::AddOrGetVa
         name = compiler::GenName(Allocator()).View();
     } else if (VarBinder()->IsETSBinder()) {
         if (auto var = scope->FindLocal(name, varbinder::ResolveBindingOptions::ALL_VARIABLES); var != nullptr) {
-            ES2PANDA_ASSERT(ctx_->diagnosticEngine->IsAnyError());
+            ES2PANDA_ASSERT(DE()->IsAnyError());
             return {var->Declaration(), var};
         }
     }
@@ -561,10 +556,9 @@ void ScopesInitPhase::VisitFunctionExpression(ir::FunctionExpression *funcExpr)
     }
 }
 
-void ScopesInitPhase::Prepare(ScopesInitPhase::PhaseContext *ctx, parser::Program *program)
+void ScopesInitPhase::Prepare(parser::Program *program)
 {
-    ctx_ = ctx;
-    program_ = program;
+    SetProgram(program);
 }
 
 void ScopesInitPhase::Finalize()
@@ -597,7 +591,7 @@ void ScopesInitPhase::Finalize()
 
 void ScopesInitPhase::AnalyzeExports()
 {
-    if (Program()->Kind() == parser::ScriptKind::MODULE && VarBinder()->TopScope()->IsModuleScope() &&
+    if (Options()->IsModule() && VarBinder()->TopScope()->IsModuleScope() &&
         !VarBinder()->TopScope()->AsModuleScope()->ExportAnalysis()) {
         LogDiagnostic(diagnostic::INVALID_EXPORT, Program()->Ast()->End());
     }
@@ -845,61 +839,100 @@ void InitScopesPhaseTs::VisitTSMethodSignature(ir::TSMethodSignature *methodSign
     BindScopeNode(funcParamScope, methodSign);
 }
 
+static auto *DeduceContainingProgramForRunExternalNode(ir::AstNode *node, varbinder::VarBinder *varbinder)
+{
+    const auto *program = varbinder->Program();
+    if (program != nullptr) {
+        return program;
+    }
+    auto parent = node->Parent();
+    if (parent == nullptr) {
+        auto *scope = varbinder->GetScope();
+
+        ES2PANDA_ASSERT(scope != nullptr);
+        while ((scope->Node() == nullptr) && (scope->Parent() != nullptr)) {
+            scope = scope->Parent();
+        }
+        ES2PANDA_ASSERT(scope != nullptr);
+
+        parent = scope->Node();
+    }
+
+    ES2PANDA_ASSERT(parent != nullptr);
+    while ((parent->Program() == nullptr) && (parent->Parent() != nullptr)) {
+        parent = parent->Parent();
+    }
+    ES2PANDA_ASSERT(parent != nullptr);
+    return (parent->Program() != nullptr) ? parent->Program() : parent->AsETSModule()->Program();
+}
+
 void InitScopesPhaseETS::RunExternalNode(ir::AstNode *node, varbinder::VarBinder *varbinder)
 {
-    RunExternalNode(node, varbinder->Program());
+    // NOTE(dkofanov): node shouldn't be nullptr.
+    if (node == nullptr) {
+        return;
+    }
+    // NOTE(dkofanov): enforce assert node->Program()->VarBinder() equals to varbinder
+    auto program = node->Program();
+    if (program == nullptr) {
+        program = DeduceContainingProgramForRunExternalNode(node, varbinder);
+    }
+    ES2PANDA_ASSERT(program != nullptr);
+    RunExternalNode(node, const_cast<parser::Program *>(program));
 }
 
 void InitScopesPhaseETS::RunExternalNode(ir::AstNode *node, parser::Program *ctx)
 {
+    // NOTE(dkofanov): enforce assert node->Program() equals to ctx
     auto scopesPhase = InitScopesPhaseETS();
     scopesPhase.SetProgram(ctx);
     scopesPhase.CallNode(node);
 }
 
-bool InitScopesPhaseETS::Perform(PhaseContext *ctx, parser::Program *program)
+bool InitScopesPhaseETS::Perform()
 {
-    Prepare(ctx, program);
+    ES2PANDA_ASSERT(Context()->parserProgram->VarBinder()->TopScope() == nullptr);
 
-    if (program->VarBinder()->TopScope() == nullptr) {
+    auto runIfNecessary = [this](auto *program) {
+        if (program->IsASTLowered() || !program->IsProgramModified()) {
+            return;
+        }
         program->VarBinder()->InitTopScope();
-        BindScopeNode(GetScope(), program->Ast());
         AddGlobalToBinder(program);
+        BindScopeNode(program->VarBinder()->GetScope(), program->Ast());
+        ES2PANDA_ASSERT(program->GlobalClass() != nullptr);
+        Prepare(program);
+        ES2PANDA_ASSERT(program->Ast() != nullptr);
+        HandleETSModule(program->Ast());
+        Finalize();
+    };
+
+    using Kind = util::ModuleKind;
+    Context()->parserProgram->GetExternalSources()->Visit<true, Kind::MODULE, Kind::SOURCE_DECL, Kind::ETSCACHE_DECL>(
+        runIfNecessary);
+
+    // NOTE(dkofanov): remove this when packages merge at PackageImplicitImport.
+    for (auto *packageProg : Context()->parserProgram->GetExternalSources()->Get<Kind::PACKAGE>()) {
+        if (!packageProg->IsProgramModified()) {
+            continue;
+        }
+        packageProg->VarBinder()->InitTopScope();
+        AddGlobalToBinder(packageProg);
+        BindScopeNode(packageProg->VarBinder()->GetScope(), packageProg->Ast());
+        auto globalScope = packageProg->GlobalScope();
+        for (auto fraction : packageProg->GetUnmergedPackagePrograms()) {
+            ES2PANDA_ASSERT(fraction->GlobalClass() == packageProg->GlobalClass());
+            ES2PANDA_ASSERT(fraction->Ast() != nullptr);
+            fraction->VarBinder()->ResetTopScope(globalScope);
+            BindScopeNode(fraction->VarBinder()->GetScope(), fraction->Ast());
+            Prepare(fraction);
+            HandleETSModule(fraction->Ast());
+            Finalize();
+        }
     }
-    HandleProgram(program);
-    Finalize();
+
+    runIfNecessary(Context()->parserProgram);
     return true;
-}
-
-void InitScopesPhaseETS::HandleProgram(parser::Program *program)
-{
-    for (auto &[_, progList] : program->ExternalSources()) {
-        (void)_;
-        auto savedTopScope(program->VarBinder()->TopScope());
-        auto mainProg = progList.front();
-        if (!mainProg->IsASTLowered() && mainProg->IsProgramModified()) {
-            mainProg->VarBinder()->InitTopScope();
-            AddGlobalToBinder(mainProg);
-            BindScopeNode(mainProg->VarBinder()->GetScope(), mainProg->Ast());
-        }
-        auto globalClass = mainProg->GlobalClass();
-        auto globalScope = mainProg->GlobalScope();
-        for (auto &prog : progList) {
-            if (prog->IsASTLowered() || !prog->IsProgramModified()) {
-                continue;
-            }
-            prog->SetGlobalClass(globalClass);
-            BindScopeNode(prog->VarBinder()->GetScope(), prog->Ast());
-            prog->VarBinder()->ResetTopScope(globalScope);
-            if (mainProg->Ast() != nullptr) {
-                InitScopesPhaseETS().Perform(Context(), prog);
-            }
-        }
-        program->VarBinder()->ResetTopScope(savedTopScope);
-    }
-    ES2PANDA_ASSERT(program->Ast() != nullptr);
-
-    HandleETSModule(program->Ast());
 }
 
 void InitScopesPhaseETS::BindVarDecl(ir::Identifier *binding, ir::Expression *init, varbinder::Decl *decl,
@@ -1310,6 +1343,7 @@ void InitScopesPhaseETS::VisitTSTypeAliasDeclaration(ir::TSTypeAliasDeclaration 
 
 void InitScopesPhaseETS::AddGlobalToBinder(parser::Program *program)
 {
+    ES2PANDA_ASSERT(program->GlobalClass() != nullptr);
     auto globalId = program->GlobalClass()->Ident();
     if (globalId->Variable() != nullptr) {
         return;

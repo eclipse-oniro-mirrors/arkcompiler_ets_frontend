@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -192,13 +192,11 @@ bool RemoveConst(ir::BinaryExpression *expr)
     return isRemoved;
 }
 
-bool BigIntLowering::PerformForModule(public_lib::Context *const ctx, parser::Program *const program)
+bool BigIntLowering::PerformForProgram(parser::Program *const program)
 {
-    auto checker = ctx->GetChecker()->AsETSChecker();
-
     program->Ast()->TransformChildrenRecursivelyPostorder(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx, checker](ir::AstNode *ast) -> ir::AstNode * {
+        [ctx = Context()](ir::AstNode *ast) -> ir::AstNode * {
             if (ast->IsBigIntLiteral() && ast->Parent() != nullptr && ast->Parent()->IsClassProperty()) {
                 return CreateBigInt(ctx, ast->AsBigIntLiteral());
             }
@@ -211,7 +209,7 @@ bool BigIntLowering::PerformForModule(public_lib::Context *const ctx, parser::Pr
                 if (doCheck) {
                     // Clear the type to force recalculation of the correct result type
                     expr->SetTsType(nullptr);
-                    expr->Check(checker);
+                    expr->Check(ctx->GetChecker()->AsETSChecker());
                 }
             }
 

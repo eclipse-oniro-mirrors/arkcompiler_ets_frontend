@@ -2,134 +2,31 @@
   "type": "Program",
   "statements": [
     {
-      "type": "ETSPackageDeclaration",
-      "name": {
-        "type": "Identifier",
-        "name": "mypackage",
-        "loc": {
-          "start": {
-            "line": 16,
-            "column": 9,
-            "program": "package_module_2.ets"
-          },
-          "end": {
-            "line": 16,
-            "column": 18,
-            "program": "package_module_2.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 1,
-          "program": "package_module_2.ets"
-        },
-        "end": {
-          "line": 16,
-          "column": 19,
-          "program": "package_module_2.ets"
-        }
-      }
-    },
-    {
       "type": "ImportDeclaration",
       "source": {
         "type": "StringLiteral",
-        "value": "./../subpackage_2/separate_module_1",
-        "loc": {
-          "start": {
-            "line": 17,
-            "column": 21,
-            "program": "package_module_2.ets"
-          },
-          "end": {
-            "line": 17,
-            "column": 58,
-            "program": "package_module_2.ets"
-          }
-        }
+        "value": "./../subpackage_2/separate_module_1"
       },
       "specifiers": [
         {
           "type": "ImportSpecifier",
           "local": {
             "type": "Identifier",
-            "name": "myvar",
-            "loc": {
-              "start": {
-                "line": 17,
-                "column": 9,
-                "program": "package_module_2.ets"
-              },
-              "end": {
-                "line": 17,
-                "column": 14,
-                "program": "package_module_2.ets"
-              }
-            }
+            "name": "myvar"
           },
           "imported": {
             "type": "Identifier",
-            "name": "myvar",
-            "loc": {
-              "start": {
-                "line": 17,
-                "column": 9,
-                "program": "package_module_2.ets"
-              },
-              "end": {
-                "line": 17,
-                "column": 14,
-                "program": "package_module_2.ets"
-              }
-            }
-          },
-          "loc": {
-            "start": {
-              "line": 17,
-              "column": 9,
-              "program": "package_module_2.ets"
-            },
-            "end": {
-              "line": 17,
-              "column": 14,
-              "program": "package_module_2.ets"
-            }
+            "name": "myvar"
           }
         }
-      ],
-      "loc": {
-        "start": {
-          "line": 17,
-          "column": 1,
-          "program": "package_module_2.ets"
-        },
-        "end": {
-          "line": 17,
-          "column": 58,
-          "program": "package_module_2.ets"
-        }
-      }
+      ]
     },
     {
       "type": "ClassDeclaration",
       "definition": {
         "id": {
           "type": "Identifier",
-          "name": "ETSGLOBAL",
-          "loc": {
-            "start": {
-              "line": 1,
-              "column": 1,
-              "program": "package_module_2.ets"
-            },
-            "end": {
-              "line": 1,
-              "column": 1,
-              "program": "package_module_2.ets"
-            }
-          }
+          "name": "ETSGLOBAL"
         },
         "superClass": null,
         "implements": [],
@@ -138,19 +35,7 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "_$initializerBlockInit$_mypackage",
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
+              "name": "_$initializerBlockInit$_mypackage"
             },
             "kind": "method",
             "accessibility": "public",
@@ -163,19 +48,7 @@
                 "type": "ScriptFunction",
                 "id": {
                   "type": "Identifier",
-                  "name": "_$initializerBlockInit$_mypackage",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
+                  "name": "_$initializerBlockInit$_mypackage"
                 },
                 "generator": false,
                 "async": false,
@@ -194,19 +67,7 @@
                             "operator": "=",
                             "left": {
                               "type": "Identifier",
-                              "name": "foo",
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 5,
-                                  "program": "package_module_2.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 8,
-                                  "program": "package_module_2.ets"
-                                }
-                              }
+                              "name": "foo"
                             },
                             "right": {
                               "type": "ArrowFunctionExpression",
@@ -223,43 +84,7 @@
                                     "type": "ETSTypeReferencePart",
                                     "name": {
                                       "type": "Identifier",
-                                      "name": "number",
-                                      "loc": {
-                                        "start": {
-                                          "line": 21,
-                                          "column": 15,
-                                          "program": "package_module_2.ets"
-                                        },
-                                        "end": {
-                                          "line": 21,
-                                          "column": 21,
-                                          "program": "package_module_2.ets"
-                                        }
-                                      }
-                                    },
-                                    "loc": {
-                                      "start": {
-                                        "line": 21,
-                                        "column": 15,
-                                        "program": "package_module_2.ets"
-                                      },
-                                      "end": {
-                                        "line": 21,
-                                        "column": 21,
-                                        "program": "package_module_2.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 21,
-                                      "column": 15,
-                                      "program": "package_module_2.ets"
-                                    },
-                                    "end": {
-                                      "line": 21,
-                                      "column": 21,
-                                      "program": "package_module_2.ets"
+                                      "name": "number"
                                     }
                                   }
                                 },
@@ -270,184 +95,28 @@
                                       "type": "ReturnStatement",
                                       "argument": {
                                         "type": "Identifier",
-                                        "name": "myvar",
-                                        "loc": {
-                                          "start": {
-                                            "line": 21,
-                                            "column": 34,
-                                            "program": "package_module_2.ets"
-                                          },
-                                          "end": {
-                                            "line": 21,
-                                            "column": 39,
-                                            "program": "package_module_2.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 21,
-                                          "column": 27,
-                                          "program": "package_module_2.ets"
-                                        },
-                                        "end": {
-                                          "line": 21,
-                                          "column": 40,
-                                          "program": "package_module_2.ets"
-                                        }
+                                        "name": "myvar"
                                       }
                                     }
-                                  ],
-                                  "loc": {
-                                    "start": {
-                                      "line": 21,
-                                      "column": 25,
-                                      "program": "package_module_2.ets"
-                                    },
-                                    "end": {
-                                      "line": 21,
-                                      "column": 42,
-                                      "program": "package_module_2.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 21,
-                                    "column": 11,
-                                    "program": "package_module_2.ets"
-                                  },
-                                  "end": {
-                                    "line": 21,
-                                    "column": 42,
-                                    "program": "package_module_2.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 11,
-                                  "program": "package_module_2.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 42,
-                                  "program": "package_module_2.ets"
+                                  ]
                                 }
                               }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 21,
-                                "column": 5,
-                                "program": "package_module_2.ets"
-                              },
-                              "end": {
-                                "line": 21,
-                                "column": 42,
-                                "program": "package_module_2.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 21,
-                              "column": 5,
-                              "program": "package_module_2.ets"
-                            },
-                            "end": {
-                              "line": 21,
-                              "column": 43,
-                              "program": "package_module_2.ets"
                             }
                           }
                         }
-                      ],
-                      "loc": {
-                        "start": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
-                        },
-                        "end": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
-                        }
-                      }
+                      ]
                     }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  ]
                 }
               }
             },
-            "overloads": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "package_module_2.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "package_module_2.ets"
-              }
-            }
+            "overloads": []
           },
           {
             "type": "ClassProperty",
             "key": {
               "type": "Identifier",
-              "name": "foo",
-              "loc": {
-                "start": {
-                  "line": 19,
-                  "column": 5,
-                  "program": "package_module_2.ets"
-                },
-                "end": {
-                  "line": 19,
-                  "column": 8,
-                  "program": "package_module_2.ets"
-                }
-              }
+              "name": "foo"
             },
             "accessibility": "public",
             "static": true,
@@ -464,454 +133,15 @@
                   "type": "ETSTypeReferencePart",
                   "name": {
                     "type": "Identifier",
-                    "name": "number",
-                    "loc": {
-                      "start": {
-                        "line": 19,
-                        "column": 16,
-                        "program": "package_module_2.ets"
-                      },
-                      "end": {
-                        "line": 19,
-                        "column": 22,
-                        "program": "package_module_2.ets"
-                      }
-                    }
-                  },
-                  "loc": {
-                    "start": {
-                      "line": 19,
-                      "column": 16,
-                      "program": "package_module_2.ets"
-                    },
-                    "end": {
-                      "line": 19,
-                      "column": 22,
-                      "program": "package_module_2.ets"
-                    }
+                    "name": "number"
                   }
-                },
-                "loc": {
-                  "start": {
-                    "line": 19,
-                    "column": 16,
-                    "program": "package_module_2.ets"
-                  },
-                  "end": {
-                    "line": 19,
-                    "column": 22,
-                    "program": "package_module_2.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 19,
-                  "column": 10,
-                  "program": "package_module_2.ets"
-                },
-                "end": {
-                  "line": 19,
-                  "column": 22,
-                  "program": "package_module_2.ets"
                 }
               }
             },
-            "definite": false,
-            "loc": {
-              "start": {
-                "line": 19,
-                "column": 5,
-                "program": "package_module_2.ets"
-              },
-              "end": {
-                "line": 19,
-                "column": 8,
-                "program": "package_module_2.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "bar",
-              "loc": {
-                "start": {
-                  "line": 18,
-                  "column": 1,
-                  "program": "package_module_1.ets"
-                },
-                "end": {
-                  "line": 18,
-                  "column": 1,
-                  "program": "package_module_1.ets"
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "bar",
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 1,
-                      "program": "package_module_1.ets"
-                    },
-                    "end": {
-                      "line": 18,
-                      "column": 1,
-                      "program": "package_module_1.ets"
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "VariableDeclaration",
-                      "declarations": [
-                        {
-                          "type": "VariableDeclarator",
-                          "id": {
-                            "type": "Identifier",
-                            "name": "a",
-                            "typeAnnotation": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "number",
-                                  "loc": {
-                                    "start": {
-                                      "line": 19,
-                                      "column": 24,
-                                      "program": "package_module_1.ets"
-                                    },
-                                    "end": {
-                                      "line": 19,
-                                      "column": 24,
-                                      "program": "package_module_1.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 19,
-                                    "column": 24,
-                                    "program": "package_module_1.ets"
-                                  },
-                                  "end": {
-                                    "line": 19,
-                                    "column": 24,
-                                    "program": "package_module_1.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 19,
-                                  "column": 24,
-                                  "program": "package_module_1.ets"
-                                },
-                                "end": {
-                                  "line": 19,
-                                  "column": 24,
-                                  "program": "package_module_1.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 19,
-                                "column": 24,
-                                "program": "package_module_1.ets"
-                              },
-                              "end": {
-                                "line": 19,
-                                "column": 24,
-                                "program": "package_module_1.ets"
-                              }
-                            }
-                          },
-                          "init": {
-                            "type": "CallExpression",
-                            "callee": {
-                              "type": "Identifier",
-                              "name": "foo",
-                              "loc": {
-                                "start": {
-                                  "line": 19,
-                                  "column": 24,
-                                  "program": "package_module_1.ets"
-                                },
-                                "end": {
-                                  "line": 19,
-                                  "column": 24,
-                                  "program": "package_module_1.ets"
-                                }
-                              }
-                            },
-                            "arguments": [],
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 19,
-                                "column": 24,
-                                "program": "package_module_1.ets"
-                              },
-                              "end": {
-                                "line": 19,
-                                "column": 24,
-                                "program": "package_module_1.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 19,
-                              "column": 24,
-                              "program": "package_module_1.ets"
-                            },
-                            "end": {
-                              "line": 19,
-                              "column": 24,
-                              "program": "package_module_1.ets"
-                            }
-                          }
-                        }
-                      ],
-                      "kind": "let",
-                      "loc": {
-                        "start": {
-                          "line": 19,
-                          "column": 24,
-                          "program": "package_module_1.ets"
-                        },
-                        "end": {
-                          "line": 19,
-                          "column": 24,
-                          "program": "package_module_1.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "VariableDeclaration",
-                      "declarations": [
-                        {
-                          "type": "VariableDeclarator",
-                          "id": {
-                            "type": "Identifier",
-                            "name": "b",
-                            "typeAnnotation": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "number",
-                                  "loc": {
-                                    "start": {
-                                      "line": 20,
-                                      "column": 9,
-                                      "program": "package_module_1.ets"
-                                    },
-                                    "end": {
-                                      "line": 20,
-                                      "column": 9,
-                                      "program": "package_module_1.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 20,
-                                    "column": 9,
-                                    "program": "package_module_1.ets"
-                                  },
-                                  "end": {
-                                    "line": 20,
-                                    "column": 9,
-                                    "program": "package_module_1.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 20,
-                                  "column": 9,
-                                  "program": "package_module_1.ets"
-                                },
-                                "end": {
-                                  "line": 20,
-                                  "column": 9,
-                                  "program": "package_module_1.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 9,
-                                "program": "package_module_1.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 9,
-                                "program": "package_module_1.ets"
-                              }
-                            }
-                          },
-                          "init": {
-                            "type": "Identifier",
-                            "name": "myvar",
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 9,
-                                "program": "package_module_1.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 9,
-                                "program": "package_module_1.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 20,
-                              "column": 9,
-                              "program": "package_module_1.ets"
-                            },
-                            "end": {
-                              "line": 20,
-                              "column": 9,
-                              "program": "package_module_1.ets"
-                            }
-                          }
-                        }
-                      ],
-                      "kind": "let",
-                      "loc": {
-                        "start": {
-                          "line": 20,
-                          "column": 9,
-                          "program": "package_module_1.ets"
-                        },
-                        "end": {
-                          "line": 20,
-                          "column": 9,
-                          "program": "package_module_1.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 1,
-                      "program": "package_module_1.ets"
-                    },
-                    "end": {
-                      "line": 21,
-                      "column": 43,
-                      "program": "package_module_1.ets"
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 18,
-                    "column": 1,
-                    "program": "package_module_1.ets"
-                  },
-                  "end": {
-                    "line": 21,
-                    "column": 43,
-                    "program": "package_module_1.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 18,
-                  "column": 1,
-                  "program": "package_module_1.ets"
-                },
-                "end": {
-                  "line": 21,
-                  "column": 43,
-                  "program": "package_module_1.ets"
-                }
-              }
-            },
-            "overloads": [],
-            "loc": {
-              "start": {
-                "line": 18,
-                "column": 1,
-                "program": "package_module_1.ets"
-              },
-              "end": {
-                "line": 21,
-                "column": 43,
-                "program": "package_module_1.ets"
-              }
-            }
+            "definite": false
           }
-        ],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 1,
-            "program": "package_module_2.ets"
-          },
-          "end": {
-            "line": 1,
-            "column": 1,
-            "program": "package_module_2.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 1,
-          "program": "package_module_2.ets"
-        },
-        "end": {
-          "line": 1,
-          "column": 1,
-          "program": "package_module_2.ets"
-        }
+        ]
       }
     }
-  ],
-  "loc": {
-    "start": {
-      "line": 1,
-      "column": 1,
-      "program": "package_module_2.ets"
-    },
-    "end": {
-      "line": 24,
-      "column": 1,
-      "program": "package_module_2.ets"
-    }
-  }
+  ]
 }

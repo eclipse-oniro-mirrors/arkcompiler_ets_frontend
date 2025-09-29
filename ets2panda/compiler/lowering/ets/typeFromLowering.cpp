@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,13 +22,6 @@
 #include "ir/astNode.h"
 
 namespace ark::es2panda::compiler {
-
-using AstNodePtr = ir::AstNode *;
-
-std::string_view TypeFromLowering::Name() const
-{
-    return "TypeFromLowering";
-}
 
 static std::string TypeToString(const std::string &name)
 {
@@ -113,7 +106,7 @@ std::string HandleTypeParameter(ir::Expression *param, checker::ETSChecker *chec
     return HandleSpecialTypes(source);
 }
 
-ir::Expression *ReplaceTypeFrom(public_lib::Context *ctx, ir::CallExpression *ast)
+static ir::Expression *ReplaceTypeFrom(public_lib::Context *ctx, ir::CallExpression *ast)
 {
     auto parser = ctx->parser->AsETSParser();
     auto checker = ctx->GetChecker()->AsETSChecker();
@@ -152,11 +145,12 @@ ir::Expression *ReplaceTypeFrom(public_lib::Context *ctx, ir::CallExpression *as
     return loweringResult;
 }
 
-bool TypeFromLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool TypeFromLowering::PerformForProgram(parser::Program *program)
 {
+    using AstNodePtr = ir::AstNode *;
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *ast) -> AstNodePtr {
+        [ctx = Context()](ir::AstNode *ast) -> AstNodePtr {
             if (ast->IsCallExpression() && IsTypeFrom(ast->AsCallExpression()->Callee())) {
                 return ReplaceTypeFrom(ctx, ast->AsCallExpression());
             }

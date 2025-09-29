@@ -1469,6 +1469,9 @@ std::pair<ir::ModifierFlags, lexer::SourcePosition> ETSParser::ParseMemberModifi
 
     lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
 
+    if (InAmbientContext()) {
+        memberModifiers |= ir::ModifierFlags::DECLARE;
+    }
     if (DeclareIsModifier(Lexer())) {
         CheckDeclare();
         memberModifiers |= ir::ModifierFlags::DECLARE;

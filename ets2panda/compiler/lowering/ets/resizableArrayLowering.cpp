@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,11 +43,11 @@ static ir::AstNode *ConvertToResizableArrayType(ir::TSArrayType *node, public_li
     return typeAnnotation;
 }
 
-bool ResizableArrayConvert::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool ResizableArrayConvert::PerformForProgram(parser::Program *program)
 {
     bool insideAnnotdecl = false;
     program->Ast()->PreTransformChildrenRecursively(
-        [&insideAnnotdecl, ctx](ir::AstNode *node) -> AstNodePtr {
+        [&insideAnnotdecl, ctx = Context()](ir::AstNode *node) -> AstNodePtr {
             if (node->IsAnnotationDeclaration()) {
                 ES2PANDA_ASSERT(!insideAnnotdecl);
                 insideAnnotdecl = true;

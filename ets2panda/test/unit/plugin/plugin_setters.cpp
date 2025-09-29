@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,7 +62,9 @@ int TestClassDefinitionSetImplements()
 
 int TestClassStaticBlockSetFunction()
 {
-    auto *block = impl->CreateClassStaticBlock(context, impl->CreateFunctionExpression(context, nullptr));
+    auto prevSig = reinterpret_cast<es2panda_AstNode *>(
+        impl->CreateFunctionSignature(context, nullptr, nullptr, 0, nullptr, false));
+    auto *block = impl->CreateClassStaticBlock(context, impl->CreateFunctionExpression(context, prevSig));
     auto *func = impl->CreateScriptFunction(
         context, nullptr, impl->CreateFunctionSignature(context, nullptr, nullptr, 0, nullptr, false), 0, 0);
 
@@ -431,7 +433,9 @@ int TestChainExpressionSetExpression()
 
 int TestFunctionExpressionSetFunction()
 {
-    auto *expr = impl->CreateFunctionExpression(context, nullptr);
+    auto prevSig = reinterpret_cast<es2panda_AstNode *>(
+        impl->CreateFunctionSignature(context, nullptr, nullptr, 0, nullptr, false));
+    auto *expr = impl->CreateFunctionExpression(context, prevSig);
     auto *func = impl->CreateScriptFunction(
         context, nullptr, impl->CreateFunctionSignature(context, nullptr, nullptr, 0, nullptr, false), 0, 0);
 
@@ -448,7 +452,9 @@ int TestFunctionExpressionSetFunction()
 
 int TestFunctionExpressionSetId()
 {
-    auto *expr = impl->CreateFunctionExpression(context, nullptr);
+    auto prevSig = reinterpret_cast<es2panda_AstNode *>(
+        impl->CreateFunctionSignature(context, nullptr, nullptr, 0, nullptr, false));
+    auto *expr = impl->CreateFunctionExpression(context, prevSig);
     auto *id = impl->CreateIdentifier(context);
 
     impl->FunctionExpressionSetId(context, expr, id);

@@ -167,7 +167,7 @@ declare namespace JsdocNS {
   * @param1 {} behindStr
   * @param2 preStr { p }
   */
-  declare class JsDocClass {
+  class JsDocClass {
     /**
     * ==== classFoo ====
     * @param1 {} behindStr
@@ -204,7 +204,7 @@ declare namespace JsdocNS {
   * @param1 {} behindStr
   * @param2 preStr { p }
   */
-  declare struct JsDocStruct {
+  struct JsDocStruct {
     /**
     * ==== private Prop ====
     * @param1 {} behindStr
@@ -220,7 +220,7 @@ declare namespace JsdocNS {
   * @param1 {} behindStr
   * @param2 preStr { p }
   */
-  declare enum E1 {
+  enum E1 {
     A1 = 0,
     B1 = 1,
     C1 = 2,
@@ -232,7 +232,7 @@ declare namespace JsdocNS {
   * @param1 {} behindStr
   * @param2 preStr { p }
   */
-  declare enum E2 {
+  enum E2 {
     A2 = 1,
     B2 = 2,
     C2 = 3,
@@ -244,7 +244,7 @@ declare namespace JsdocNS {
   * @param1 {} behindStr
   * @param2 preStr { p }
   */
-  declare enum E3 {
+  enum E3 {
     A3 = ((1) << (0)),
     B3 = ((1) << (1)),
     C3 = ((1) << (2)),

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,19 +35,16 @@ public:
     {
         ES2PANDA_ASSERT(varBinder);
         ES2PANDA_ASSERT(program);
+        ES2PANDA_ASSERT(varBinder_->CheckRecordTablesConsistency(program));
 
         varBinder_->SetProgram(program);
-
-        auto &extTables = varBinder_->GetExternalRecordTable();
-        auto iter = extTables.find(program);
-        ES2PANDA_ASSERT(iter != extTables.end());
-        varBinder_->SetRecordTable(iter->second);
-
+        varBinder_->SetRecordTable(program->GetRecordTable());
         varBinder_->ResetAllScopes(program->GlobalScope(), program->GlobalScope(), program->GlobalScope());
     }
 
     ~ProgramScope() noexcept
     {
+        ES2PANDA_ASSERT(prevProgram_->GetRecordTable() == prevRecordTable_);
         varBinder_->SetProgram(prevProgram_);
         varBinder_->SetRecordTable(prevRecordTable_);
         varBinder_->ResetAllScopes(prevTopScope_, prevVarScope_, prevScope_);

@@ -22,6 +22,7 @@
 #include "checker/checker.h"
 #include "checker/ETSAnalyzer.h"
 #include "parser/JsdocHelper.h"
+#include "parser/program/program.h"
 #include "util/ustring.h"
 #include "varbinder/varbinder.h"
 
@@ -229,21 +230,19 @@ varbinder::Scope *Rebind(PhaseManager *phaseManager, varbinder::ETSBinder *varBi
 {
     if (node->IsProgram()) {
         auto program = node->AsETSModule()->Program();
-        if (program->IsPackage()) {
+        ES2PANDA_ASSERT(program == phaseManager->Context()->parserProgram);
+
+        if (program->Is<util::ModuleKind::PACKAGE>()) {
             return nullptr;
         }
 
-        for (auto [_, program_list] : program->ExternalSources()) {
-            for (auto prog : program_list) {
-                ClearHelper(prog);
-            }
-        }
+        program->GetExternalSources()->Visit([](auto *extProg) { ClearHelper(extProg); });
 
         ClearHelper(program);
 
         varBinder->CleanUp();
         for (auto *phase : phaseManager->RebindPhases()) {
-            phase->Apply(varBinder->GetContext(), program);
+            phase->Apply(phaseManager->Context());
         }
 
         return varBinder->TopScope();
@@ -260,23 +259,15 @@ varbinder::Scope *Rebind(PhaseManager *phaseManager, varbinder::ETSBinder *varBi
 }
 
 static void CollectDirectExtSources(parser::Program *globalProg, parser::Program *program,
-                                    std::map<std::string, parser::Program *> &progsFromPath)
+                                    std::map<ArenaString, parser::Program *> &progsFromPath)
 {
-    auto &directSources = program->DirectExternalSources();
-    for (const auto &fileDepends : globalProg->GetFileDependencies()[program->SourceFilePath()]) {
-        if (progsFromPath.find(std::string {fileDepends}) == progsFromPath.end()) {
+    auto &directSources = program->GetExternalSources()->Direct();
+    for (const auto &fileDepends : globalProg->GetFileDependencies()[ArenaString {program->SourceFilePath().Utf8()}]) {
+        if (progsFromPath.find(fileDepends) == progsFromPath.end()) {
             continue;
         }
-
-        ArenaVector<parser::Program *> extSources;
-
-        if (const auto &it = directSources.find(fileDepends); it != directSources.end()) {
-            extSources = it->second;
-        } else {
-            extSources = ArenaVector<parser::Program *>(program->Allocator()->Adapter());
-        }
-        extSources.emplace_back(progsFromPath[std::string {fileDepends}]);
-        directSources.try_emplace(fileDepends, extSources);
+        ES2PANDA_ASSERT(directSources.find(fileDepends) == directSources.end());
+        directSources[fileDepends] = progsFromPath[fileDepends];
     }
 }
 
@@ -320,35 +311,34 @@ private:
 };
 
 static RecheckGraph::Node *RecheckGraphCreatorHelper(parser::Program *globalProg, parser::Program *program,
-                                                     std::map<std::string, parser::Program *> &progsFromPath,
+                                                     std::map<ArenaString, parser::Program *> &progsFromPath,
                                                      RecheckGraph *graph)
 {
     if (graph->Programs().find(program) != graph->Programs().end()) {
         return &graph->Programs().at(program);
     }
     graph->Programs().emplace(program, RecheckGraph::Node(program));
-    auto node = &graph->Programs().at(program);
-    if (program->DirectExternalSources().empty()) {
+    auto *node = &graph->Programs().at(program);
+    if (program->GetExternalSources()->Empty()) {
         CollectDirectExtSources(globalProg, program, progsFromPath);
     }
 
-    auto runOnSources = [&](auto &sources) {
-        for (auto [_, program_list] : sources) {
-            for (auto prog : program_list) {
-                RecheckGraph::Node *importedNode = nullptr;
-                importedNode = RecheckGraphCreatorHelper(globalProg, prog, progsFromPath, graph);
-                node->ImportedNodes().emplace(importedNode);
-                importedNode->NodesImportedBy().emplace(node);
-            }
-        }
+    auto runOnSource = [&progsFromPath, globalProg, graph, node](auto *prog) {
+        RecheckGraph::Node *importedNode = nullptr;
+        importedNode = RecheckGraphCreatorHelper(globalProg, prog, progsFromPath, graph);
+        node->ImportedNodes().emplace(importedNode);
+        importedNode->NodesImportedBy().emplace(node);
     };
-    runOnSources(program->DirectExternalSources());
-    runOnSources(program->ExternalSources());
+    for (auto [_, source] : program->GetExternalSources()->Direct()) {
+        (void)_;
+        runOnSource(source);
+    }
+    program->GetExternalSources()->Visit(runOnSource);
 
     if (program->IsProgramModified()) {
         graph->FoundModifiedProgs().emplace(node);
     }
-    program->DirectExternalSources().clear();
+    program->GetExternalSources()->Direct().clear();
     return node;
 }
 
@@ -363,16 +353,42 @@ static void MarkModifiedRecursively(RecheckGraph::Node *node)
     }
 }
 
-static bool ExtendModifiedFlagOnDependentPrograms(parser::Program *globalProg, parser::Program *program)
+// If any of package fractions is modified, whole package modified
+static void ExtendModifiedFlagOnPackagePrograms(parser::Program *globalProg)
 {
-    std::map<std::string, parser::Program *> progsFromPath;
-    progsFromPath[program->SourceFilePath().Mutf8()] = program;
+    std::unordered_set<parser::ProgramAdapter<util::ModuleKind::PACKAGE> *> modifiedPackagePrograms {};
 
-    for (auto [_, program_list] : program->ExternalSources()) {
-        for (auto prog : program_list) {
-            progsFromPath.emplace(prog->SourceFilePath().Mutf8(), prog);
+    for (auto *packageProg : globalProg->GetExternalSources()->Get<util::ModuleKind::PACKAGE>()) {
+        if (packageProg->GetUnmergedPackagePrograms().empty()) {
+            continue;
+        }
+        packageProg->SetProgramModified(false);
+        for (auto fraction : packageProg->GetUnmergedPackagePrograms()) {
+            if (fraction->IsProgramModified()) {
+                modifiedPackagePrograms.insert(packageProg);
+                break;
+            }
         }
     }
+
+    for (auto *packageProg : modifiedPackagePrograms) {
+        packageProg->SetProgramModified(true);
+        for (auto fraction : packageProg->GetUnmergedPackagePrograms()) {
+            fraction->SetProgramModified(true);
+        }
+    }
+}
+
+static bool ExtendModifiedFlagOnDependentPrograms(parser::Program *globalProg, parser::Program *program)
+{
+    ExtendModifiedFlagOnPackagePrograms(globalProg);
+
+    std::map<ArenaString, parser::Program *> progsFromPath;
+    progsFromPath[ArenaString {program->SourceFilePath().Utf8()}] = program;
+
+    program->GetExternalSources()->Visit(
+        [&progsFromPath](auto *prog) { progsFromPath.emplace(ArenaString {prog->SourceFilePath().Utf8()}, prog); });
+
     RecheckGraph graph;
     RecheckGraphCreatorHelper(globalProg, program, progsFromPath, &graph);
 
@@ -386,77 +402,89 @@ static bool ExtendModifiedFlagOnDependentPrograms(parser::Program *globalProg, p
     return program->IsProgramModified();
 }
 
-using SavedVarbindersAndCheckers = std::map<parser::Program *, std::pair<varbinder::VarBinder *, checker::Checker *>>;
-static SavedVarbindersAndCheckers SaveExternalVarbindersAndCheckers(parser::Program *program,
-                                                                    std::set<varbinder::VarBinder *> &savedVarBinders)
+template <typename CB>
+static void IterateExternalProgramsForBinderAndCheckerPushing(parser::Program *program, const CB &cb)
 {
-    std::map<parser::Program *, std::pair<varbinder::VarBinder *, checker::Checker *>> varbindersCheckers;
-    for (auto [_, program_list] : program->ExternalSources()) {
-        for (auto prog : program_list) {
-            if (!prog->IsASTLowered() && prog->IsProgramModified()) {
-                continue;
-            }
-            savedVarBinders.insert(prog->VarBinder());
-            varbindersCheckers[prog].first = prog->VarBinder();
-            varbindersCheckers[prog].second = prog->Checker();
-        }
+    program->GetExternalSources()->Visit(cb);
+    // push binders to package-top-programs since in the call above only package fractions were iterated:
+    for (auto *packageProg : program->GetExternalSources()->Get<util::ModuleKind::PACKAGE>()) {
+        cb(packageProg);
     }
-    return varbindersCheckers;
 }
 
-static void HandleExternalProgram(
-    varbinder::ETSBinder *newVarbinder, parser::Program *program,
-    std::map<parser::Program *, std::pair<varbinder::VarBinder *, checker::Checker *>> varbinders)
+static void RestoreGlobalTypesHolder(checker::ETSChecker *newChecker, parser::Program *program)
 {
-    for (auto [_, program_list] : program->ExternalSources()) {
-        for (auto prog : program_list) {
-            if (!prog->IsASTLowered() && prog->IsProgramModified()) {
-                ClearHelper(prog);
-                prog->PushVarBinder(newVarbinder);
-                continue;
-            }
-            prog->PushVarBinder(varbinders.at(prog).first);
-            prog->PushChecker(varbinders.at(prog).second);
+    checker::GlobalTypesHolder *globalTypesHolder = nullptr;
+    program->GetExternalSources()->Visit([&globalTypesHolder](auto *extProg) {
+        if ((globalTypesHolder == nullptr) && (!extProg->IsProgramModified() || extProg->IsASTLowered())) {
+            globalTypesHolder = extProg->Checker()->GetGlobalTypesHolder();
         }
+    });
+    if (globalTypesHolder != nullptr) {
+        newChecker->SetGlobalTypesHolder(globalTypesHolder);
     }
+}
+
+using SavedVarbindersAndCheckers = std::map<parser::Program *, std::pair<varbinder::VarBinder *, checker::Checker *>>;
+static varbinder::ETSBinder *SetupNewVarBinderHierarchy(public_lib::Context *ctx, parser::Program *program,
+                                                        SavedVarbindersAndCheckers varbindersCheckers,
+                                                        varbinder::ETSBinder *varBinder)
+{
+    auto newVarbinder = new varbinder::ETSBinder(ctx);
+    newVarbinder->SetProgram(program);
+    program->PushVarBinder(newVarbinder);
+    varBinder->CopyTo(newVarbinder);
+
+    auto visitor = [newVarbinder, &varbindersCheckers](parser::Program *prog) {
+        if (!prog->IsASTLowered() && prog->IsProgramModified()) {
+            ClearHelper(prog);
+            prog->PushVarBinder(newVarbinder);
+            return;
+        }
+        prog->PushVarBinder(varbindersCheckers.at(prog).first);
+        if (prog->Is<util::ModuleKind::PACKAGE>()) {
+            return;
+        }
+        prog->PushChecker(varbindersCheckers.at(prog).second);
+    };
+    IterateExternalProgramsForBinderAndCheckerPushing(program, visitor);
+    return newVarbinder;
 }
 
 static void RecheckProgram(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, parser::Program *program)
 {
-    auto ctx = varBinder->GetContext();
+    auto ctx = phaseManager->Context();
     if (!ExtendModifiedFlagOnDependentPrograms(ctx->parserProgram, program)) {
         return;
     }
-    checker::GlobalTypesHolder *globalTypesHolder = nullptr;
-    for (auto [_, program_list] : program->ExternalSources()) {
-        if (auto prog = program_list.front(); !prog->IsProgramModified() || prog->IsASTLowered()) {
-            globalTypesHolder = prog->Checker()->GetGlobalTypesHolder();
-            break;
-        }
-    }
-    std::set<varbinder::VarBinder *> savedVarBinders {};
-    auto varbindersCheckers = SaveExternalVarbindersAndCheckers(program, savedVarBinders);
-    phaseManager->SetCurrentPhaseId(0);
-
-    auto newVarbinder = new varbinder::ETSBinder(ctx->allocator);
-    newVarbinder->SetProgram(program);
-    newVarbinder->SetContext(ctx);
-    program->PushVarBinder(newVarbinder);
-    varBinder->CopyTo(newVarbinder);
-    HandleExternalProgram(newVarbinder, program, varbindersCheckers);
-
-    ClearHelper(program);
 
     auto newChecker = ctx->allocator->New<checker::ETSChecker>(ctx->allocator, *ctx->diagnosticEngine);
     auto analyzer = ctx->allocator->New<checker::ETSAnalyzer>(newChecker);
+
+    RestoreGlobalTypesHolder(newChecker, program);
+
+    std::set<varbinder::VarBinder *> savedVarBinders {};
+    SavedVarbindersAndCheckers varbindersCheckers {};
+    IterateExternalProgramsForBinderAndCheckerPushing(
+        program, [&savedVarBinders, &varbindersCheckers](parser::Program *prog) {
+            if (!prog->IsASTLowered() && prog->IsProgramModified()) {
+                return;
+            }
+            savedVarBinders.insert(prog->VarBinder());
+            varbindersCheckers[prog].first = prog->VarBinder();
+            varbindersCheckers[prog].second = prog->Is<util::ModuleKind::PACKAGE>() ? nullptr : prog->Checker();
+        });
+
+    phaseManager->SetCurrentPhaseId(0);
+
+    auto newVarbinder = SetupNewVarBinderHierarchy(ctx, program, varbindersCheckers, varBinder);
+
+    ClearHelper(program);
 
     ctx->PushAnalyzer(analyzer);
     newChecker->SetAnalyzer(analyzer);
     newChecker->Initialize(newVarbinder);
     ctx->PushChecker(newChecker);
-    if (globalTypesHolder != nullptr) {
-        newChecker->SetGlobalTypesHolder(globalTypesHolder);
-    }
 
     for (auto *savedVarBinder : savedVarBinders) {
         for (auto func : savedVarBinder->Functions()) {
@@ -467,15 +495,16 @@ static void RecheckProgram(PhaseManager *phaseManager, varbinder::ETSBinder *var
     }
 
     for (auto *phase : phaseManager->RecheckPhases()) {
-        phase->Apply(ctx, program);
+        phase->Apply(ctx);
     }
     phaseManager->SetCurrentPhaseIdToAfterCheck();
-    for (auto [_, program_list] : program->ExternalSources()) {
-        for (auto prog : program_list) {
-            prog->PushVarBinder(newVarbinder);
-            prog->PushChecker(newChecker);
+    IterateExternalProgramsForBinderAndCheckerPushing(program, [newVarbinder, newChecker](parser::Program *prog) {
+        prog->PushVarBinder(newVarbinder);
+        if (prog->Is<util::ModuleKind::PACKAGE>()) {
+            return;
         }
-    }
+        prog->PushChecker(newChecker);
+    });
 }
 
 // Rerun varbinder and checker on the node.
@@ -604,25 +633,6 @@ void CheckLoweredNode(varbinder::ETSBinder *varBinder, checker::ETSChecker *chec
     auto scopeCtx = checker::ScopeContext(checker, scope);
 
     node->Check(checker);
-}
-
-parser::Program *SearchExternalProgramInImport(const parser::Program::DirectExternalSource &extSource,
-                                               const util::ImportPathManager::ImportMetadata &importMetadata)
-{
-    parser::Program *extProg = nullptr;
-    const auto importPath = importMetadata.resolvedSource;
-    const auto declPath = importMetadata.declPath;
-    // Search Correct external program by comparing importPath and absolutePath
-    for (auto &[_, progs] : extSource) {
-        auto it = std::find_if(progs.begin(), progs.end(), [&](const auto *prog) {
-            return prog->AbsoluteName() == importPath || prog->AbsoluteName() == declPath;
-        });
-        if (it != progs.end()) {
-            extProg = *it;
-            break;
-        }
-    }
-    return extProg;
 }
 
 bool IsAnonymousClassType(const checker::Type *type)

@@ -2254,8 +2254,10 @@ static checker::Type *GetCallExpressionReturnType(ETSChecker *checker, ir::CallE
         checker->VarBinder()->AsETSBinder()->ResolveReferencesForScopeWithContext(signature->Function()->Body(),
                                                                                   signature->Function()->Scope());
     }
+
     checker::ScopeContext scopeCtx(checker, signature->Function()->Body()->Scope());
     checker->CollectReturnStatements(signature->Function());
+
     return signature->ReturnType();
     // NOTE(vpukhov): #14902 substituted signature is not updated
 }
@@ -3972,7 +3974,7 @@ checker::Type *ETSAnalyzer::Check(ir::BlockStatement *st) const
     }
 
     // Note: Guarantee all the const property need to be initialized in initializer block is initialized.
-    if (st->IsETSModule() && st->AsETSModule()->Program()->IsPackage() &&
+    if (st->IsETSModule() && st->AsETSModule()->Program()->Is<util::ModuleKind::PACKAGE>() &&
         (checker->Context().Status() & checker::CheckerStatus::IN_EXTERNAL) == 0) {
         CheckAllConstPropertyInitialized(checker, st->AsETSModule());
     }
@@ -4011,7 +4013,7 @@ checker::Type *ETSAnalyzer::Check(ir::BreakStatement *st) const
 
     if (!st->HasTarget()) {
         compiler::SetJumpTargetPhase setJumpTarget;
-        setJumpTarget.FindJumpTarget(checker->VarBinder()->GetContext(), st);
+        setJumpTarget.FindJumpTarget(st);
     }
 
     if (st->Target() == nullptr) {
@@ -4135,7 +4137,7 @@ checker::Type *ETSAnalyzer::Check(ir::ContinueStatement *st) const
 
     if (!st->HasTarget()) {
         compiler::SetJumpTargetPhase setJumpTarget;
-        setJumpTarget.FindJumpTarget(checker->VarBinder()->GetContext(), st);
+        setJumpTarget.FindJumpTarget(st);
     }
 
     if (st->Target() == nullptr) {
@@ -4985,16 +4987,14 @@ static varbinder::Variable *FindNameForImportNamespace(ETSChecker *checker, util
 
     auto importDecl = importDeclNode->AsETSImportDeclaration();
 
-    parser::Program *program = checker->SelectEntryOrExternalProgram(
-        static_cast<varbinder::ETSBinder *>(checker->VarBinder()), importDecl->ImportMetadata().resolvedSource);
-
+    parser::Program *program = checker->VarBinder()->AsETSBinder()->GetExternalProgram(importDecl);
     auto &bindings = program->Ast()->Scope()->Bindings();
 
     if (auto result = bindings.find(searchName); result != bindings.end()) {
         auto &sMap = checker->VarBinder()
                          ->AsETSBinder()
                          ->GetSelectiveExportAliasMultimap()
-                         .find(importDecl->ImportMetadata().resolvedSource)
+                         .find(importDecl->ImportMetadata().ResolvedSource())
                          ->second;
         if (auto it = sMap.find(searchName); it != sMap.end()) {
             return result->second;

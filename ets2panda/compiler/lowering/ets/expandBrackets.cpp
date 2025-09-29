@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,11 +38,11 @@ static constexpr char const CAST_OLD_DIMENSION_EXPRESSION[] = "(@@E1).toInt()";
 // NOLINTEND(modernize-avoid-c-arrays)
 
 ir::Expression *ExpandBracketsPhase::ProcessNewArrayInstanceExpression(
-    public_lib::Context *ctx, ir::ETSNewArrayInstanceExpression *newInstanceExpression) const
+    ir::ETSNewArrayInstanceExpression *newInstanceExpression) const
 {
-    auto *const parser = ctx->parser->AsETSParser();
+    auto *const parser = Context()->parser->AsETSParser();
     ES2PANDA_ASSERT(parser != nullptr);
-    auto *const checker = ctx->GetChecker()->AsETSChecker();
+    auto *const checker = Context()->GetChecker()->AsETSChecker();
     ES2PANDA_ASSERT(checker != nullptr);
     auto *dimension = newInstanceExpression->Dimension();
     auto *dimType = dimension->TsType();
@@ -59,8 +59,8 @@ ir::Expression *ExpandBracketsPhase::ProcessNewArrayInstanceExpression(
     }
     auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
 
-    auto const identName = GenName(ctx->Allocator());
-    auto *exprType = ctx->AllocNode<ir::OpaqueTypeNode>(dimType, ctx->Allocator());
+    auto const identName = GenName(Context()->Allocator());
+    auto *exprType = Context()->AllocNode<ir::OpaqueTypeNode>(dimType, Context()->Allocator());
     auto *const newInstanceParent = newInstanceExpression->Parent();
 
     auto *blockExpression = parser->CreateFormattedExpression(FORMAT_NEW_ARRAY_EXPRESSION, identName, exprType,
@@ -79,11 +79,11 @@ ir::Expression *ExpandBracketsPhase::ProcessNewArrayInstanceExpression(
 }
 
 ir::Expression *ExpandBracketsPhase::ProcessNewMultiDimArrayInstanceExpression(
-    public_lib::Context *ctx, ir::ETSNewMultiDimArrayInstanceExpression *newInstanceExpression) const
+    ir::ETSNewMultiDimArrayInstanceExpression *newInstanceExpression) const
 {
-    auto *const parser = ctx->parser->AsETSParser();
+    auto *const parser = Context()->parser->AsETSParser();
     ES2PANDA_ASSERT(parser != nullptr);
-    auto *const checker = ctx->GetChecker()->AsETSChecker();
+    auto *const checker = Context()->GetChecker()->AsETSChecker();
     ES2PANDA_ASSERT(checker != nullptr);
     ir::BlockExpression *returnExpression = nullptr;
 
@@ -107,8 +107,8 @@ ir::Expression *ExpandBracketsPhase::ProcessNewMultiDimArrayInstanceExpression(
             castedDimension->SetParent(newInstanceExpression);
             newInstanceExpression->Dimensions()[i] = castedDimension;
         } else {
-            auto const identName = GenName(ctx->Allocator());
-            auto *exprType = ctx->AllocNode<ir::OpaqueTypeNode>(dimType, ctx->Allocator());
+            auto const identName = GenName(Context()->Allocator());
+            auto *exprType = Context()->AllocNode<ir::OpaqueTypeNode>(dimType, Context()->Allocator());
 
             auto *blockExpression = parser
                                         ->CreateFormattedExpression(FORMAT_NEW_MULTI_DIM_ARRAY_EXPRESSION, identName,
@@ -128,7 +128,7 @@ ir::Expression *ExpandBracketsPhase::ProcessNewMultiDimArrayInstanceExpression(
     }
 
     if (returnExpression != nullptr) {
-        return CreateNewMultiDimArrayInstanceExpression(ctx, newInstanceExpression, returnExpression);
+        return CreateNewMultiDimArrayInstanceExpression(newInstanceExpression, returnExpression);
     }
 
     return newInstanceExpression;
@@ -136,14 +136,13 @@ ir::Expression *ExpandBracketsPhase::ProcessNewMultiDimArrayInstanceExpression(
 
 //  NOTE: Just to reduce the size of 'ProcessNewMultiDimArrayInstanceExpression' method
 ir::Expression *ExpandBracketsPhase::CreateNewMultiDimArrayInstanceExpression(
-    public_lib::Context *ctx, ir::ETSNewMultiDimArrayInstanceExpression *newInstanceExpression,
-    ir::BlockExpression *blockExpression) const
+    ir::ETSNewMultiDimArrayInstanceExpression *newInstanceExpression, ir::BlockExpression *blockExpression) const
 {
     blockExpression->SetParent(newInstanceExpression->Parent());
     newInstanceExpression->SetTsType(nullptr);
-    blockExpression->AddStatement(ctx->AllocNode<ir::ExpressionStatement>(newInstanceExpression));
+    blockExpression->AddStatement(Context()->AllocNode<ir::ExpressionStatement>(newInstanceExpression));
 
-    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *checker = Context()->GetChecker()->AsETSChecker();
     InitScopesPhaseETS::RunExternalNode(blockExpression, checker->VarBinder());
     checker->VarBinder()->AsETSBinder()->ResolveReferencesForScope(blockExpression, NearestScope(blockExpression));
     blockExpression->Check(checker);
@@ -151,16 +150,16 @@ ir::Expression *ExpandBracketsPhase::CreateNewMultiDimArrayInstanceExpression(
     return blockExpression;
 }
 
-bool ExpandBracketsPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool ExpandBracketsPhase::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
-        [this, ctx](checker::AstNodePtr const ast) -> checker::AstNodePtr {
+        [this](checker::AstNodePtr const ast) -> checker::AstNodePtr {
             if (ast->IsETSNewArrayInstanceExpression()) {
-                return ProcessNewArrayInstanceExpression(ctx, ast->AsETSNewArrayInstanceExpression());
+                return ProcessNewArrayInstanceExpression(ast->AsETSNewArrayInstanceExpression());
             }
 
             if (ast->IsETSNewMultiDimArrayInstanceExpression()) {
-                return ProcessNewMultiDimArrayInstanceExpression(ctx, ast->AsETSNewMultiDimArrayInstanceExpression());
+                return ProcessNewMultiDimArrayInstanceExpression(ast->AsETSNewMultiDimArrayInstanceExpression());
             }
 
             return ast;

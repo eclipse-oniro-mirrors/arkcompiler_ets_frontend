@@ -14,9 +14,11 @@
  */
 
 #include "arktsconfig.h"
+#include "importPathManager.h"
 #include "libarkbase/os/filesystem.h"
 #include "util/language.h"
 #include "util/diagnosticEngine.h"
+#include "util/path.h"
 #include "generated/signatures.h"
 #include "util/helpers.h"
 #include "importPathManager.h"
@@ -29,7 +31,8 @@
 
 namespace ark::es2panda {
 
-bool ArkTsConfig::Check(bool cond, const diagnostic::DiagnosticKind &diag, const util::DiagnosticMessageParams &params)
+bool ArkTsConfig::Check(bool cond, const diagnostic::DiagnosticKind &diag,
+                        const util::DiagnosticMessageParams &params) const
 {
     if (!cond) {
         diagnosticEngine_.LogDiagnostic(diag, params);
@@ -198,8 +201,7 @@ std::optional<ArkTsConfig> ArkTsConfig::ParseExtends(const std::string &configPa
 }
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
 
-std::optional<std::pair<const std::string &, const ArkTsConfig::ExternalModuleData &>> ArkTsConfig::FindInDependencies(
-    const std::string &importString)
+ArkTsConfig::DependenciesLookupResult ArkTsConfig::FindInDependencies(std::string_view importString) const
 {
     auto res = std::find_if(dependencies_.begin(), dependencies_.end(), [importString](auto &dep) {
         if (dep.first == importString) {
@@ -212,7 +214,7 @@ std::optional<std::pair<const std::string &, const ArkTsConfig::ExternalModuleDa
         return false;
     });
     if (res != dependencies_.end()) {
-        return std::pair<const std::string &, const ArkTsConfig::ExternalModuleData &>(res->first, res->second);
+        return ArkTsConfig::DependenciesLookupResult {{res->first, res->second}};
     }
     return std::nullopt;
 }
@@ -402,17 +404,40 @@ static std::string ValueOrEmptyString(const JsonObject::JsonObjPointer *json, co
     return (res != nullptr) ? *res : "";
 }
 
-static void ResolvePathInDependenciesImpl(ArkTsConfig *arktsConfig,
-                                          std::map<std::string, std::vector<std::string>, CompareByLength> &paths)
+void ArkTsConfig::FixupWithStdlibOption(const std::string &stdlib)
 {
-    for (const auto &dependencyPath : arktsConfig->Paths()) {
-        paths.emplace(dependencyPath.first, dependencyPath.second);
+    for (std::string prefix : {"std", "escompat"}) {
+        std::string path = stdlib + util::PATH_DELIMITER + prefix;
+        auto stdlibRealpath = ark::os::GetAbsolutePath(path);
+        ES2PANDA_ASSERT(!stdlibRealpath.empty());
+        paths_[prefix] = {stdlibRealpath};
     }
 }
 
 void ArkTsConfig::ResolveAllDependenciesInArkTsConfig()
 {
-    ResolvePathInDependenciesImpl(this, paths_);
+    // NOTE(dkofanov): 'paths' are misused in almost any arktsconfigs because of the following:
+    // 1. They may point outside of 'baseUrl';
+    // 2. They may point to a middle of a file path (to nonexisting file).
+    for (auto &dependencyPath : paths_) {
+        for (auto &path : dependencyPath.second) {
+            auto normalized = ark::os::NormalizePath(path);
+            if (auto real = ark::os::GetAbsolutePath(normalized); !real.empty()) {
+                path = real;
+            } else {
+                path = normalized;
+            }
+        }
+    }
+}
+
+static void CreateDirectoriesWithParents(const std::string &path)
+{
+    auto parent = ark::os::GetParentDir(path);
+    if (!parent.empty() && !ark::os::IsDirExists(parent)) {
+        CreateDirectoriesWithParents(parent);
+    }
+    ark::os::CreateDirectories(path);
 }
 
 bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonObject *arktsConfig)
@@ -433,10 +458,7 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
         rootDir_ = ".";
     }
     cacheDir_ = ValueOrEmptyString(compilerOptions, CACHE_DIR);
-    if (!cacheDir_.empty() && !ark::os::IsDirExists(cacheDir_)) {
-        ark::os::CreateDirectories(cacheDir_);
-    }
-
+    CreateDirectoriesWithParents(cacheDir_);
     declgenV2OutPath_ = MakeAbsolute(ValueOrEmptyString(compilerOptions, declgenV2OutPath), arktsConfigDir);
 
     // Parse "useUrl"
@@ -651,26 +673,26 @@ static bool MatchExcludes(const fs::path &path, const std::vector<ArkTsConfig::P
     return false;
 }
 
-std::vector<fs::path> GetSourceList(const std::shared_ptr<ArkTsConfig> &arktsConfig)
+std::vector<fs::path> GetSourceList(const ArkTsConfig &arktsConfig)
 {
-    auto includes = arktsConfig->Include();
-    auto excludes = arktsConfig->Exclude();
-    auto files = arktsConfig->Files();
+    auto includes = arktsConfig.Include();
+    auto excludes = arktsConfig.Exclude();
+    auto files = arktsConfig.Files();
 
     // If "files" and "includes" are empty - include everything from tsconfig root
-    auto configDir = fs::absolute(fs::path(arktsConfig->ConfigPath())).parent_path();
+    auto configDir = fs::absolute(fs::path(arktsConfig.ConfigPath())).parent_path();
     if (files.empty() && includes.empty()) {
         includes = {ArkTsConfig::Pattern("**/*", configDir.string())};
     }
     // If outDir in not default add it into exclude
-    if (fs::exists(arktsConfig->OutDir()) && !fs::equivalent(arktsConfig->OutDir(), configDir)) {
-        excludes.emplace_back("**/*", arktsConfig->OutDir());
+    if (fs::exists(arktsConfig.OutDir()) && !fs::equivalent(arktsConfig.OutDir(), configDir)) {
+        excludes.emplace_back("**/*", arktsConfig.OutDir());
     }
 
     // Collect "files"
     std::vector<fs::path> sourceList;
     for (auto &f : files) {
-        if (!arktsConfig->Check(fs::exists(f) && fs::path(f).has_filename(), diagnostic::NO_FILE, {f})) {
+        if (!arktsConfig.Check(fs::exists(f) && fs::path(f).has_filename(), diagnostic::NO_FILE, {f})) {
             return {};
         }
 
@@ -717,7 +739,7 @@ static fs::path Relative(const fs::path &src, const fs::path &base)
 }
 
 // Compute path to destination file and create subfolders
-fs::path ArkTsConfig::ComputeDestination(const fs::path &src, const fs::path &rootDir, const fs::path &outDir)
+fs::path ArkTsConfig::ComputeDestination(const fs::path &src, const fs::path &rootDir, const fs::path &outDir) const
 {
     auto rel = Relative(src, rootDir);
     std::stringstream sRootDir;
@@ -734,13 +756,13 @@ fs::path ArkTsConfig::ComputeDestination(const fs::path &src, const fs::path &ro
     return dst.replace_extension("abc");
 }
 
-std::vector<std::pair<std::string, std::string>> FindProjectSources(const std::shared_ptr<ArkTsConfig> &arktsConfig)
+std::vector<std::pair<std::string, std::string>> FindProjectSources(const ArkTsConfig &arktsConfig)
 {
     auto sourceFiles = GetSourceList(arktsConfig);
     std::vector<std::pair<std::string, std::string>> compilationList;
     for (auto &src : sourceFiles) {
-        auto dst = arktsConfig->ComputeDestination(src, arktsConfig->RootDir(), arktsConfig->OutDir());
-        if (!arktsConfig->Check(!dst.empty(), diagnostic::INVALID_DESTINATION_FILE, {})) {
+        auto dst = arktsConfig.ComputeDestination(src, arktsConfig.RootDir(), arktsConfig.OutDir());
+        if (!arktsConfig.Check(!dst.empty(), diagnostic::INVALID_DESTINATION_FILE, {})) {
             return {};
         }
 
@@ -750,9 +772,7 @@ std::vector<std::pair<std::string, std::string>> FindProjectSources(const std::s
     return compilationList;
 }
 #else
-std::vector<std::pair<std::string, std::string>> FindProjectSources(
-    // CC-OFFNXT(G.FMT.06-CPP) project code style
-    [[maybe_unused]] const std::shared_ptr<ArkTsConfig> &arkts_config)
+std::vector<std::pair<std::string, std::string>> FindProjectSources([[maybe_unused]] const ArkTsConfig &arktsConfig)
 {
     ES2PANDA_ASSERT(false);
     return {};

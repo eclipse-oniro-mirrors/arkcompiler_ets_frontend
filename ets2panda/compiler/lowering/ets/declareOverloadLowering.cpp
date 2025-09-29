@@ -129,10 +129,10 @@ static void UpdateCallSignature(public_lib::Context *ctx, ir::CallExpression *ex
     expr->Check(checker);
 }
 
-bool DeclareOverloadLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool DeclareOverloadLowering::PerformForProgram(parser::Program *program)
 {
     // Note: Generate helper overload method
-    auto const transformMethodDef = [ctx](ir::AstNode *ast) {
+    auto const transformMethodDef = [ctx = Context()](ir::AstNode *ast) {
         if (ast->IsMethodDefinition() && ast->AsMethodDefinition()->GetOverloadInfo().needHelperOverload) {
             BuildOverloadHelperFunction(ctx, ast->AsMethodDefinition());
         }
@@ -140,7 +140,7 @@ bool DeclareOverloadLowering::PerformForModule(public_lib::Context *ctx, parser:
     };
 
     // Note: Update signature for call expression
-    auto const transformCallExpr = [ctx](ir::AstNode *ast) {
+    auto const transformCallExpr = [ctx = Context()](ir::AstNode *ast) {
         if (!ast->IsCallExpression() || ast->AsCallExpression()->Signature() == nullptr) {
             return ast;
         }

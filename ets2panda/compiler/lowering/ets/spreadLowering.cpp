@@ -365,13 +365,12 @@ static ir::BlockExpression *CreateLoweredExpressionForTuple(public_lib::Context 
     return checker->AllocNode<ir::BlockExpression>(std::move(statements));
 }
 
-bool SpreadConstructionPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool SpreadConstructionPhase::PerformForProgram(parser::Program *program)
 {
-    checker::ETSChecker *const checker = ctx->GetChecker()->AsETSChecker();
-    varbinder::ETSBinder *const varbinder = checker->VarBinder()->AsETSBinder();
-
     program->Ast()->TransformChildrenRecursively(
-        [&checker, &varbinder, &ctx](ir::AstNode *const node) -> AstNodePtr {
+        [ctx = Context()](ir::AstNode *const node) -> AstNodePtr {
+            checker::ETSChecker *const checker = ctx->GetChecker()->AsETSChecker();
+
             if (node->IsArrayExpression() &&
                 std::any_of(node->AsArrayExpression()->Elements().begin(), node->AsArrayExpression()->Elements().end(),
                             [](const auto *param) { return param->Type() == ir::AstNodeType::SPREAD_ELEMENT; })) {
@@ -388,7 +387,8 @@ bool SpreadConstructionPhase::PerformForModule(public_lib::Context *ctx, parser:
                 // NOTE: this blockExpression is a kind of formatted-dummy code, which is invisible to users,
                 //       so, its source range should be same as the original code([element1, element2, ...spreadExpr])
                 blockExpression->SetRange(node->Range());
-                Recheck(ctx->phaseManager, varbinder, checker, blockExpression);
+
+                Recheck(ctx->phaseManager, checker->VarBinder()->AsETSBinder(), checker, blockExpression);
                 for (auto st : blockExpression->Statements()) {
                     SetSourceRangesRecursively(st, node->Range());
                 }

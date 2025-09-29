@@ -43,16 +43,13 @@ LocationId GetLocationId(ark::es2panda::ir::AstNode *node, ark::es2panda::parser
     if (program->Ast() == node->GetTopStatement()) {
         absPath = std::string {program->AbsoluteName()};
     }
-    auto externals = program->DirectExternalSources();
     auto top = node->GetTopStatement();
-    for (const auto &entry : externals) {
-        for (const auto &p : entry.second) {
-            auto programAbsPath = std::string {p->AbsoluteName()};
-            auto ast = p->Ast();
-            if (ast == top) {
-                absPath = programAbsPath;
-                break;
-            }
+    for (auto [_, p] : program->GetExternalSources()->Direct()) {
+        auto programAbsPath = std::string {p->AbsoluteName()};
+        auto ast = p->Ast();
+        if (ast == top) {
+            absPath = programAbsPath;
+            break;
         }
     }
     // Should uniquely identify a token using it's sourceFile path, start and end positions

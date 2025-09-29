@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -206,8 +206,8 @@ CFG::BasicBlock *CFG::Build(ir::ScriptFunction *scriptFunctionNode)
     entryBB->SetFlag(BasicBlockFlags::ENTRY);
     functionNodeBBMap_[scriptFunctionNode] = entryBB;
     if (scriptFunctionNode->Id() != nullptr) {
-        bbAnnotationMap_[entryBB] =
-            util::Helpers::EscapeHTMLString(allocator_, scriptFunctionNode->Id()->Name().Mutf8());
+        bbAnnotationMap_.insert_or_assign(
+            entryBB, util::Helpers::EscapeHTMLString(allocator_, scriptFunctionNode->Id()->Name().Utf8()));
     }
     ES2PANDA_ASSERT(scriptFunctionNode->Body()->IsBlockStatement());
     auto exitBB = Build(scriptFunctionNode->Body()->AsBlockStatement(), entryBB);
@@ -771,7 +771,7 @@ void CFG::DumpSuccessorEdges(std::ofstream &ofs, BasicBlock *const bb) const
         if (auto labelsMapIt = bbSuccLabelMap_.find(bb); labelsMapIt != bbSuccLabelMap_.end()) {
             if (auto indexMapIt = labelsMapIt->second.find(index); indexMapIt != labelsMapIt->second.end()) {
                 ofs << " label=\""
-                    << util::Helpers::EscapeHTMLString(allocator_, indexMapIt->second->DumpEtsSrc()).View().Mutf8()
+                    << util::Helpers::EscapeHTMLString(allocator_, indexMapIt->second->DumpEtsSrc()).View().Utf8()
                     << "\"";
             }
         }
@@ -786,7 +786,7 @@ void CFG::DumpPredecessorEdges(std::ofstream &ofs, BasicBlock *const bb) const
         if (auto labelsMapIt = bbPredLabelMap_.find(bb); labelsMapIt != bbPredLabelMap_.end()) {
             if (auto indexMapIt = labelsMapIt->second.find(index); indexMapIt != labelsMapIt->second.end()) {
                 ofs << " label=\""
-                    << util::Helpers::EscapeHTMLString(allocator_, indexMapIt->second->DumpEtsSrc()).View().Mutf8()
+                    << util::Helpers::EscapeHTMLString(allocator_, indexMapIt->second->DumpEtsSrc()).View().Utf8()
                     << "\"";
             }
         }
@@ -818,8 +818,7 @@ bool CFG::DumpDot(const char *filename) const
         out << "</TD></TR>";
         for (size_t i = 0; i < bb->nodes_.size(); ++i) {
             out << "<TR><TD PORT=\"f" << i << "\">" << i << "</TD><TD>" << ToString(bb->nodes_[i]->Type())
-                << "</TD><TD>"
-                << util::Helpers::EscapeHTMLString(allocator_, bb->nodes_[i]->DumpEtsSrc()).View().Mutf8()
+                << "</TD><TD>" << util::Helpers::EscapeHTMLString(allocator_, bb->nodes_[i]->DumpEtsSrc()).View().Utf8()
                 << "</TD></TR>";
         }
         out << "</TABLE>>];\n";

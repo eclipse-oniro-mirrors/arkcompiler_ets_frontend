@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,7 @@ namespace ark::es2panda::compiler {
 
 using AstNodePtr = ir::AstNode *;
 
-bool MethodDefinitionHasRestTuple(const ir::AstNode *def)
+static bool MethodDefinitionHasRestTuple(const ir::AstNode *def)
 {
     auto pred = [](const auto *param) {
         return param->IsETSParameterExpression() && param->AsETSParameterExpression()->IsRestParameter() &&
@@ -44,7 +44,7 @@ bool MethodDefinitionHasRestTuple(const ir::AstNode *def)
     return false;
 }
 
-bool IsClassDefinitionWithTupleRest(ir::AstNode *node)
+static bool IsClassDefinitionWithTupleRest(ir::AstNode *node)
 {
     bool isClassDefinition = node->IsClassDefinition();
     if (isClassDefinition) {
@@ -56,8 +56,8 @@ bool IsClassDefinitionWithTupleRest(ir::AstNode *node)
     return false;
 }
 
-ir::Expression *CreateMemberOrThisExpression(public_lib::Context *ctx, ir::Expression *funcExpr,
-                                             ir::AstNode *definition)
+static ir::Expression *CreateMemberOrThisExpression(public_lib::Context *ctx, ir::Expression *funcExpr,
+                                                    ir::AstNode *definition)
 {
     auto *allocator = ctx->allocator;
 
@@ -84,8 +84,8 @@ ir::Expression *CreateMemberOrThisExpression(public_lib::Context *ctx, ir::Expre
     return memberExpr;
 }
 
-ir::TSTypeParameterInstantiation *CreateTypeParameterInstantiation(public_lib::Context *ctx,
-                                                                   ir::TSTypeParameterDeclaration *paramDeclaration)
+static ir::TSTypeParameterInstantiation *CreateTypeParameterInstantiation(
+    public_lib::Context *ctx, ir::TSTypeParameterDeclaration *paramDeclaration)
 {
     auto const allocator = ctx->allocator;
 
@@ -111,8 +111,8 @@ ir::TSTypeParameterInstantiation *CreateTypeParameterInstantiation(public_lib::C
     return util::NodeAllocator::ForceSetParent<ir::TSTypeParameterInstantiation>(allocator, std::move(selfParams));
 }
 
-ir::CallExpression *CreateNewCallExpression(public_lib::Context *ctx, ir::Expression *funcExpr, ir::AstNode *definition,
-                                            ir::TSAsExpression *asExpression)
+static ir::CallExpression *CreateNewCallExpression(public_lib::Context *ctx, ir::Expression *funcExpr,
+                                                   ir::AstNode *definition, ir::TSAsExpression *asExpression)
 {
     auto *allocator = ctx->allocator;
 
@@ -151,7 +151,7 @@ ir::CallExpression *CreateNewCallExpression(public_lib::Context *ctx, ir::Expres
     return newCallExpr;
 }
 
-ArenaVector<ir::Expression *> CreateFunctionRestParams(public_lib::Context *ctx, ir::AstNode *funcExpr)
+static ArenaVector<ir::Expression *> CreateFunctionRestParams(public_lib::Context *ctx, ir::AstNode *funcExpr)
 {
     auto *allocator = ctx->allocator;
 
@@ -171,7 +171,7 @@ ArenaVector<ir::Expression *> CreateFunctionRestParams(public_lib::Context *ctx,
     return params;
 }
 
-ArenaVector<ir::Expression *> CreateFunctionNormalParams(public_lib::Context *ctx, ir::AstNode *funcExpr)
+static ArenaVector<ir::Expression *> CreateFunctionNormalParams(public_lib::Context *ctx, ir::AstNode *funcExpr)
 {
     auto *allocator = ctx->allocator;
 
@@ -185,9 +185,9 @@ ArenaVector<ir::Expression *> CreateFunctionNormalParams(public_lib::Context *ct
     return params;
 }
 
-ArenaVector<ir::Expression *> MergeParams(public_lib::Context *ctx,
-                                          const ArenaVector<ir::Expression *> &newNormalParams,
-                                          const ArenaVector<ir::Expression *> &newRestParams)
+static ArenaVector<ir::Expression *> MergeParams(public_lib::Context *ctx,
+                                                 const ArenaVector<ir::Expression *> &newNormalParams,
+                                                 const ArenaVector<ir::Expression *> &newRestParams)
 {
     auto *allocator = ctx->allocator;
 
@@ -201,7 +201,8 @@ ArenaVector<ir::Expression *> MergeParams(public_lib::Context *ctx,
     return params;
 }
 
-ir::ArrayExpression *CreateArrayExpression(public_lib::Context *ctx, const ArenaVector<ir::Expression *> &newRestParams)
+static ir::ArrayExpression *CreateArrayExpression(public_lib::Context *ctx,
+                                                  const ArenaVector<ir::Expression *> &newRestParams)
 {
     auto *allocator = ctx->allocator;
 
@@ -221,8 +222,8 @@ ir::ArrayExpression *CreateArrayExpression(public_lib::Context *ctx, const Arena
     return arrayExpr;
 }
 
-ir::TSTypeParameterDeclaration *CreateNewParameterDeclaration(public_lib::Context *ctx,
-                                                              ir::TSTypeParameterDeclaration *paramDeclaration)
+static ir::TSTypeParameterDeclaration *CreateNewParameterDeclaration(public_lib::Context *ctx,
+                                                                     ir::TSTypeParameterDeclaration *paramDeclaration)
 {
     auto const allocator = ctx->allocator;
     if (paramDeclaration == nullptr || paramDeclaration->Params().empty()) {
@@ -247,8 +248,8 @@ ir::TSTypeParameterDeclaration *CreateNewParameterDeclaration(public_lib::Contex
                                                                                paramsSize);
 }
 
-ir::ScriptFunction *CreateNewScriptFunction(public_lib::Context *ctx, ir::ScriptFunction *scriptFunc,
-                                            ArenaVector<ir::Expression *> newParams)
+static ir::ScriptFunction *CreateNewScriptFunction(public_lib::Context *ctx, ir::ScriptFunction *scriptFunc,
+                                                   ArenaVector<ir::Expression *> newParams)
 {
     auto *allocator = ctx->allocator;
 
@@ -277,29 +278,9 @@ ir::ScriptFunction *CreateNewScriptFunction(public_lib::Context *ctx, ir::Script
     return newScriptFunc;
 }
 
-ir::VariableDeclaration *CreateNewVariableDeclaration(public_lib::Context *ctx, ir::ETSParameterExpression *restParam,
-                                                      ir::ArrayExpression *newTuple)
-{
-    auto *allocator = ctx->allocator;
-
-    util::StringView tupleIdentName = restParam->Ident()->Name();
-    auto *newId = ctx->AllocNode<ir::Identifier>(tupleIdentName, allocator);
-    ES2PANDA_ASSERT(newId != nullptr);
-    ir::TypeNode *typeAnnotation = restParam->TypeAnnotation()->Clone(allocator, newId);
-    newId->SetTsTypeAnnotation(typeAnnotation);
-    newTuple->SetParent(typeAnnotation);
-
-    auto *const declarator = ctx->AllocNode<ir::VariableDeclarator>(ir::VariableDeclaratorFlag::LET, newId, newTuple);
-    ArenaVector<ir::VariableDeclarator *> declarators(ctx->Allocator()->Adapter());
-    declarators.push_back(declarator);
-
-    auto *const declaration = ctx->AllocNode<ir::VariableDeclaration>(
-        ir::VariableDeclaration::VariableDeclarationKind::LET, ctx->Allocator(), std::move(declarators));
-    return declaration;
-}
-
-ArenaVector<ir::Statement *> CreateReturnOrExpressionStatement(public_lib::Context *ctx, ir::ScriptFunction *scriptFunc,
-                                                               ir::CallExpression *callExpr)
+static ArenaVector<ir::Statement *> CreateReturnOrExpressionStatement(public_lib::Context *ctx,
+                                                                      ir::ScriptFunction *scriptFunc,
+                                                                      ir::CallExpression *callExpr)
 {
     ArenaVector<ir::Statement *> statements(ctx->Allocator()->Adapter());
 
@@ -314,8 +295,8 @@ ArenaVector<ir::Statement *> CreateReturnOrExpressionStatement(public_lib::Conte
     return statements;
 }
 
-ir::MethodDefinition *CreateNewMethodDefinition(public_lib::Context *ctx, ir::MethodDefinition *definition,
-                                                ir::FunctionExpression *function)
+static ir::MethodDefinition *CreateNewMethodDefinition(public_lib::Context *ctx, ir::MethodDefinition *definition,
+                                                       ir::FunctionExpression *function)
 {
     auto *allocator = ctx->allocator;
 
@@ -329,7 +310,7 @@ ir::MethodDefinition *CreateNewMethodDefinition(public_lib::Context *ctx, ir::Me
     return methodDef;
 }
 
-void CreateNewMethod(public_lib::Context *ctx, ir::AstNode *node)
+static void CreateNewMethod(public_lib::Context *ctx, ir::AstNode *node)
 {
     auto *allocator = ctx->allocator;
 
@@ -376,10 +357,10 @@ void CreateNewMethod(public_lib::Context *ctx, ir::AstNode *node)
     }
 }
 
-bool RestTupleConstructionPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool RestTupleConstructionPhase::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
-        [ctx](ir::AstNode *const node) -> AstNodePtr {
+        [ctx = Context()](ir::AstNode *const node) -> AstNodePtr {
             if (IsClassDefinitionWithTupleRest(node)) {
                 CreateNewMethod(ctx, node);
             }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,9 +48,9 @@ int main(int argc, char **argv)
     impl->ProceedToState(context, ES2PANDA_STATE_PARSED);
     CheckForErrors("PARSE", context);
 
+    auto options = const_cast<es2panda_Options *>(impl->ConfigGetOptions(config));
     auto outDir = impl->ArkTsConfigOutDirConst(
-        context,
-        impl->OptionsUtilArkTSConfigConst(context, const_cast<es2panda_Options *>(impl->ConfigGetOptions(config))));
+        context, const_cast<es2panda_ArkTsConfig *>(impl->OptionsUtilArkTSConfigConst(context, options)));
     if (strstr(outDir, "bin") == nullptr) {
         return TEST_ERROR_CODE;
     }

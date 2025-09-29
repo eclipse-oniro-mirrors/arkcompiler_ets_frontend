@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,14 +13,12 @@
  * limitations under the License.
  */
 
-package escompat;
-
 class ArrayKeysIterator<T> {
     private a: Array<T>
 }
 
-export class Array<T> {
+export class Array<T> /* @@ label */{
     a: T
 }
 
-/* @@? 1:3 Error Semantic error ESE0349: Class 'Array' is already defined. */
+/* @@@ label Error Semantic error ESE0349: Class 'Array' is already defined. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,15 +13,7 @@
  * limitations under the License.
  */
 
-package subpackage_a;
-
 import {myvar} from "./package_module"
 import {myvar2} from "./package_module"
 
 export let a: String = "SubpackageA";
-
-
-/* @@? 18:1 Error Syntax error ESY0003: Package module cannot import from a file in it's own package. */
-/* @@? 18:21 Error Semantic error ESE0360: Cannot find import: ./package_module */
-/* @@? 19:1 Error Syntax error ESY0003: Package module cannot import from a file in it's own package. */
-/* @@? 19:22 Error Semantic error ESE0360: Cannot find import: ./package_module */

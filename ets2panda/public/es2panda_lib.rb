@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -1025,8 +1025,9 @@ module Es2pandaLibApi
       methods = dig(:methods)
       return res unless methods
 
-      template_extends.each do |template_extend|
-        methods += Es2pandaLibApi.classes['ir'][template_extend]['methods']
+      template_extends&.each do |template_extend|
+        add_methods = Es2pandaLibApi.classes&.[](class_base_namespace)&.[](template_extend)&.[]('methods')
+        methods += add_methods if add_methods
       end
       methods_with_optional = []
       [methods, methods_with_optional].each do |methods_list|
@@ -1330,6 +1331,7 @@ module Es2pandaLibApi
       ETSParser
       ASTVerifier
       CheckMessage
+      RecordTableHolder
       Program
       ImportPathManager
       Options
@@ -1359,7 +1361,11 @@ module Es2pandaLibApi
   end
 
   def template_extends_classes
-    %w[Annotated Typed AnnotationAllowed]
+    %w[Annotated Typed AnnotationAllowed RecordTableHolder]
+  end
+
+  def idl_remove_extends
+    %w[RecordTableHolder]
   end
 
   def primitive_types
@@ -1384,6 +1390,7 @@ module Es2pandaLibApi
       int32_t
       int64_t
       es2panda_Program
+      es2panda_RecordTableHolder
       es2panda_ExternalSource
       es2panda_AstNode
       es2panda_FunctionSignature
@@ -1493,7 +1500,7 @@ module Es2pandaLibApi
         class_data = ClassData.new(class_definition&.public)
         class_data.class_base_namespace = namespace_name
         class_data.extends_classname = extends_to_idl(class_definition.extends)
-        class_data.template_extends = []
+        class_data.template_extends = template_extends(class_definition.extends) || []
         @classes[namespace_name][class_definition.name] = class_data
       end
     end
@@ -1588,7 +1595,8 @@ module Es2pandaLibApi
                   :additional_classes_to_generate, :ast_type_additional_children, :scopes, :ast_variables, :deep_to_h,
                   :no_usings_replace_info, :declarations, :check_template_type_presents, :structs,
                   :additional_containers, :stat_add_constructor_type, :stat_add_method_type, :check_class_type,
-                  :extends_to_idl, :template_extends, :template_extends_classes, :extract_classes_in_namespace
+                  :extends_to_idl, :template_extends, :template_extends_classes, :extract_classes_in_namespace,
+                  :idl_remove_extends
 end
 
 def Gen.on_require(data)

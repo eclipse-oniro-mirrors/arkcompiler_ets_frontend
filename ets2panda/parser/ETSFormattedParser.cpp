@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -561,8 +561,7 @@ ir::Expression *ETSParser::CreateFormattedExpression(std::string_view const sour
     [[maybe_unused]] std::string_view formattedName, std::string_view sourceCode)
 {
     util::UString source {sourceCode, Allocator()};
-    GetProgram()->SetSource(source.View().Utf8(), util::Path(), "");
-    auto lexer = std::make_unique<lexer::ETSLexer>(&GetContext(), DiagnosticEngine());
+    auto lexer = std::make_unique<lexer::ETSLexer>(&GetContext(), source.View().Utf8(), DiagnosticEngine());
     SetLexer(lexer.get());
     return lexer;
 }

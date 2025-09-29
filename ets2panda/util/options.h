@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -64,9 +64,9 @@ public:
         return std::pair<const char *, size_t> {parserInputContents_.c_str(), parserInputContents_.size()};
     }
 
-    const std::shared_ptr<ArkTsConfig> &ArkTSConfig() const
+    const ArkTsConfig &ArkTSConfig() const
     {
-        return arktsConfig_;
+        return *arktsConfig_;
     }
 
     Logger::Level LogLevel() const
@@ -87,8 +87,11 @@ public:
         return compilationMode_;
     }
 
+    void InitForEval();
+
     void SetEvalMode(std::string_view evalModeStr)
     {
+        InitForEval();
         ES2PANDA_ASSERT(eval_mode::FromString(evalModeStr) != eval_mode::INVALID);
         gen::Options::SetEvalMode(std::string(evalModeStr));
         evalMode_ = eval_mode::FromString(evalModeStr);
@@ -178,14 +181,14 @@ private:
     bool ParseInputOutput();
     bool DetermineExtension();
     bool ProcessEtsSpecificOptions();
-    std::optional<ArkTsConfig> ParseArktsConfig();
+    std::optional<std::unique_ptr<ArkTsConfig>> ParseArktsConfig();
     void InitCompilerOptions();
     void InitAstVerifierOptions();
     void InitializeWarnings();
 
 private:
     ark::PandArg<std::string> inputFile_ {"input", "", "input file"};
-    std::shared_ptr<ArkTsConfig> arktsConfig_ {};
+    std::unique_ptr<ArkTsConfig> arktsConfig_ {};
     ScriptExtension extension_ {ScriptExtension::INVALID};
     CompilationMode compilationMode_ {};
     std::set<std::string> skipPhases_ {};

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,23 +29,23 @@ std::string_view AmbientLowering::Name() const
     return NAME;
 }
 
-bool AmbientLowering::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx, const parser::Program *program)
+bool AmbientLowering::PostconditionForProgram(const parser::Program *program)
 {
     return !program->Ast()->IsAnyChild(
         [](const ir::AstNode *node) -> bool { return node->IsDummyNode() && node->AsDummyNode()->IsDeclareIndexer(); });
 }
 
-bool AmbientLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool AmbientLowering::PerformForProgram(parser::Program *program)
 {
     // Generate $_get and $_set for ambient Indexer
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [this, ctx](ir::AstNode *ast) -> ir::AstNode * {
+        [this](ir::AstNode *ast) -> ir::AstNode * {
             if (ast->IsClassDefinition()) {
-                return CreateIndexerMethodIfNeeded(ast->AsClassDefinition(), ctx);
+                return CreateIndexerMethodIfNeeded(ast->AsClassDefinition());
             }
             if (ast->IsTSInterfaceBody()) {
-                return CreateIndexerMethodIfNeeded(ast->AsTSInterfaceBody(), ctx);
+                return CreateIndexerMethodIfNeeded(ast->AsTSInterfaceBody());
             }
             return ast;
         },
@@ -54,8 +54,8 @@ bool AmbientLowering::PerformForModule(public_lib::Context *ctx, parser::Program
     return true;
 }
 
-ir::MethodDefinition *CreateMethodFunctionDefinition(ir::DummyNode *node, public_lib::Context *ctx,
-                                                     ir::MethodDefinitionKind funcKind)
+template <ir::MethodDefinitionKind KIND>
+ir::MethodDefinition *CreateMethodFunctionDefinition(ir::DummyNode *node, public_lib::Context *ctx)
 {
     auto parser = ctx->parser->AsETSParser();
     auto allocator = ctx->allocator;
@@ -69,9 +69,9 @@ ir::MethodDefinition *CreateMethodFunctionDefinition(ir::DummyNode *node, public
     }
     std::string sourceCode;
 
-    if (funcKind == ir::MethodDefinitionKind::GET) {
+    if constexpr (KIND == ir::MethodDefinitionKind::GET) {
         sourceCode = "$_get (" + std::string(indexName) + " : @@T1) : @@T2 ";
-    } else if (funcKind == ir::MethodDefinitionKind::SET) {
+    } else if constexpr (KIND == ir::MethodDefinitionKind::SET) {
         sourceCode = "$_set (" + std::string(indexName) + " : @@T1, value : @@T2) : void";
     } else {
         ES2PANDA_UNREACHABLE();
@@ -91,7 +91,7 @@ ir::MethodDefinition *CreateMethodFunctionDefinition(ir::DummyNode *node, public
     return methodDefinition->AsMethodDefinition();
 }
 
-ir::AstNode *AmbientLowering::CreateIndexerMethodIfNeeded(ir::AstNode *ast, public_lib::Context *ctx)
+ir::AstNode *AmbientLowering::CreateIndexerMethodIfNeeded(ir::AstNode *ast)
 {
     if (!ast->IsClassDefinition() && !ast->IsTSInterfaceBody()) {
         return ast;
@@ -102,8 +102,7 @@ ir::AstNode *AmbientLowering::CreateIndexerMethodIfNeeded(ir::AstNode *ast, publ
     size_t dummyCount = std::count_if(classBodyConst.cbegin(), classBodyConst.cend(),
                                       [](const ir::AstNode *node) { return node->IsDummyNode(); });
     if (dummyCount > MAX_ALLOWED_INDEXERS) {
-        ctx->diagnosticEngine->LogSemanticError("Only one index signature is allowed in a class or interface.",
-                                                ast->Start());
+        DE()->LogSemanticError("Only one index signature is allowed in a class or interface.", ast->Start());
         RemoveRedundantIndexerDeclarations(ast);
         return ast;
     }
@@ -122,9 +121,9 @@ ir::AstNode *AmbientLowering::CreateIndexerMethodIfNeeded(ir::AstNode *ast, publ
     while (it != classBody.end()) {
         if ((*it)->IsDummyNode() && (*it)->AsDummyNode()->IsDeclareIndexer()) {
             auto setDefinition =
-                CreateMethodFunctionDefinition((*it)->AsDummyNode(), ctx, ir::MethodDefinitionKind::SET);
+                CreateMethodFunctionDefinition<ir::MethodDefinitionKind::SET>((*it)->AsDummyNode(), Context());
             auto getDefinition =
-                CreateMethodFunctionDefinition((*it)->AsDummyNode(), ctx, ir::MethodDefinitionKind::GET);
+                CreateMethodFunctionDefinition<ir::MethodDefinitionKind::GET>((*it)->AsDummyNode(), Context());
 
             classBody.erase(it);
             if (setDefinition != nullptr && getDefinition != nullptr) {

@@ -197,10 +197,6 @@ syntax:
   id: 70
   message: "Private fields can not be deleted."
 
-- name: DIFFERENT_PACKAGE_NAME
-  id: 2
-  message: "Files '{}' and '{}' are in the same folder, but have different package names."
-
 - name: DIVISION_BY_ZERO
   id: 273
   message: "Division by zero is not allowed in integer arithmetic."
@@ -349,10 +345,6 @@ syntax:
 - name: EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER
   id: 5
   message: "export default is not allowed to export multiple specifiers."
-
-- name: EXPORT_IN_NAMESPACE
-  id: 111
-  message: "Export declarations are not permitted in a namespace."
 
 - name: EXPORT_NON_DECLARATION
   id: 43
@@ -538,10 +530,6 @@ syntax:
 - name: INDEX_TYPE_NOT_NUMBER
   id: 18
   message: "Invalid index type '{}' in index signature."
-
-- name: INITIALIZERS_IN_AMBIENT_CONTEXTS
-  id: 125
-  message: "Initializers are not allowed in ambient contexts."
 
 - name: INSERT_NODE_ABSENT
   id: 10
@@ -1387,6 +1375,7 @@ syntax:
   message: "Yield is not allowed in generator parameters."
 
 graveyard:
+- 2
 - 29
 - 37
 - 41
@@ -1394,6 +1383,7 @@ graveyard:
 - 103
 - 109
 - 110
+- 111
 - 123
 - 124
 - 139

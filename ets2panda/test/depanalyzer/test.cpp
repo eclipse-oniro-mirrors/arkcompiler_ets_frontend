@@ -35,20 +35,17 @@ public:
         depAnalyzer_.AnalyzeDeps(binPath, "", {testPath});
     }
 
-    const std::unordered_set<std::string> &GetTestSourcePaths() const
-    {
-        return depAnalyzer_.GetAlreadyProcessedFiles();
-    }
-
-    const std::unordered_map<std::string, std::unordered_set<std::string>> &GetTestFileDirectDependencies() const
+    const auto &GetTestFileDirectDependencies() const
     {
         return depAnalyzer_.GetDirectDependencies();
     }
 
-    const std::unordered_map<std::string, std::unordered_set<std::string>> &GetTestFileDirectDependants() const
+    const auto &GetTestFileDirectDependants() const
     {
         return depAnalyzer_.GetDirectDependants();
     }
+
+    using DirectDepsMap = DepAnalyzer::FileDependenciesMap;
 
 private:
     DepAnalyzer depAnalyzer_;
@@ -58,8 +55,8 @@ TEST_F(DepAnalyzerTest, Subtestv1)
 {
     size_t testFolderNum = 1;
     RunDepAnalyzer(testFolderNum);
-    std::unordered_map<std::string, std::unordered_set<std::string>> dependenciesExpected;
-    std::unordered_map<std::string, std::unordered_set<std::string>> dependentsExpected;
+    DirectDepsMap dependenciesExpected;
+    DirectDepsMap dependentsExpected;
     std::string file1 = test::utils::DepAnalyzerTestsPathGet(1, 1);
     ASSERT(GetTestFileDirectDependencies() == dependenciesExpected);
     ASSERT(GetTestFileDirectDependants() == dependentsExpected);
@@ -69,8 +66,8 @@ TEST_F(DepAnalyzerTest, Subtestv2)
 {
     size_t testFolderNum = 2;
     RunDepAnalyzer(testFolderNum);
-    std::unordered_map<std::string, std::unordered_set<std::string>> dependenciesExpected;
-    std::unordered_map<std::string, std::unordered_set<std::string>> dependentsExpected;
+    DirectDepsMap dependenciesExpected;
+    DirectDepsMap dependentsExpected;
     std::string file1 = test::utils::DepAnalyzerTestsPathGet(2, 1);
     std::string file2 = test::utils::DepAnalyzerTestsPathGet(2, 2);
     std::string file3 = test::utils::DepAnalyzerTestsPathGet(2, 3);
@@ -90,8 +87,8 @@ TEST_F(DepAnalyzerTest, Subtestv3)
 {
     size_t testFolderNum = 3;
     RunDepAnalyzer(testFolderNum);
-    std::unordered_map<std::string, std::unordered_set<std::string>> dependenciesExpected;
-    std::unordered_map<std::string, std::unordered_set<std::string>> dependentsExpected;
+    DirectDepsMap dependenciesExpected;
+    DirectDepsMap dependentsExpected;
     std::string file1 = test::utils::DepAnalyzerTestsPathGet(3, 1);
     std::string file2 = test::utils::DepAnalyzerTestsPathGet(3, 2);
     dependenciesExpected[file1] = {file2};
@@ -104,8 +101,8 @@ TEST_F(DepAnalyzerTest, Subtestv4)
 {
     size_t testFolderNum = 4;
     RunDepAnalyzer(testFolderNum);
-    std::unordered_map<std::string, std::unordered_set<std::string>> dependenciesExpected;
-    std::unordered_map<std::string, std::unordered_set<std::string>> dependentsExpected;
+    DirectDepsMap dependenciesExpected;
+    DirectDepsMap dependentsExpected;
     std::string file1 = test::utils::DepAnalyzerTestsPathGet(4, 1);
     std::string file2 = test::utils::DepAnalyzerTestsPathGet(4, 2);
     dependenciesExpected[file1] = {file2};

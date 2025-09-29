@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,8 +34,8 @@ public:
     {
         Initializer initializer = Initializer();
         auto context = initializer.CreateContext(fileName, ES2PANDA_STATE_CHECKED);
-        bool isPackageModule =
-            reinterpret_cast<ark::es2panda::public_lib::Context *>(context)->parserProgram->IsPackage();
+        bool isPackageModule = reinterpret_cast<ark::es2panda::public_lib::Context *>(context)
+                                   ->parserProgram->Is<ark::es2panda::util::ModuleKind::PACKAGE>();
         initializer.DestroyContext(context);
         References result {};
         for (auto const &file : filePaths) {

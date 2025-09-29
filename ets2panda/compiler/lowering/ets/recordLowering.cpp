@@ -23,20 +23,10 @@
 
 namespace ark::es2panda::compiler {
 
-std::string_view RecordLowering::Name() const
-{
-    static std::string const NAME = "RecordLowering";
-    return NAME;
-}
+using KeyType = std::variant<int32_t, int64_t, float, double, util::StringView>;
+using KeySetType = std::unordered_set<KeyType>;
 
-std::string RecordLowering::TypeToString(checker::Type *type) const
-{
-    std::stringstream ss;
-    type->ToString(ss);
-    return ss.str();
-}
-
-RecordLowering::KeyType RecordLowering::TypeToKey(checker::Type *type) const
+static KeyType TypeToKey(checker::Type *type)
 {
     if (type->IsByteType()) {
         return type->AsByteType()->GetValue();
@@ -63,12 +53,14 @@ RecordLowering::KeyType RecordLowering::TypeToKey(checker::Type *type) const
     return {};
 }
 
-bool RecordLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+static ir::Expression *UpdateObjectExpression(ir::ObjectExpression *expr, public_lib::Context *ctx);
+
+bool RecordLowering::PerformForProgram(parser::Program *program)
 {
     // Replace Record Object Expressions with Block Expressions
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [this, ctx](ir::AstNode *ast) -> ir::AstNode * {
+        [ctx = Context()](ir::AstNode *ast) -> ir::AstNode * {
             if (ast->IsObjectExpression()) {
                 return UpdateObjectExpression(ast->AsObjectExpression(), ctx);
             }
@@ -80,7 +72,7 @@ bool RecordLowering::PerformForModule(public_lib::Context *ctx, parser::Program 
     return true;
 }
 
-void RecordLowering::CheckDuplicateKey(KeySetType &keySet, ir::ObjectExpression *expr, public_lib::Context *ctx)
+static void CheckDuplicateKey(KeySetType &keySet, ir::ObjectExpression *expr, public_lib::Context *ctx)
 {
     for (auto *it : expr->Properties()) {
         if (it->IsSpreadElement()) {
@@ -116,7 +108,7 @@ void RecordLowering::CheckDuplicateKey(KeySetType &keySet, ir::ObjectExpression 
     }
 }
 
-void RecordLowering::CheckLiteralsCompleteness(KeySetType &keySet, ir::ObjectExpression *expr, public_lib::Context *ctx)
+static void CheckLiteralsCompleteness(KeySetType &keySet, ir::ObjectExpression *expr, public_lib::Context *ctx)
 {
     auto *keyType = expr->TsType()->AsETSObjectType()->TypeArguments().front();
     if (!keyType->IsETSUnionType()) {
@@ -129,33 +121,8 @@ void RecordLowering::CheckLiteralsCompleteness(KeySetType &keySet, ir::ObjectExp
     }
 }
 
-ir::Statement *RecordLowering::CreateStatement(const std::string &src, ir::Expression *ident, ir::Expression *key,
-                                               ir::Expression *value, public_lib::Context *ctx)
-{
-    std::vector<ir::AstNode *> nodes;
-    if (ident != nullptr) {
-        nodes.push_back(ident);
-    }
-
-    if (key != nullptr) {
-        nodes.push_back(key);
-    }
-
-    if (value != nullptr) {
-        nodes.push_back(value);
-    }
-
-    auto parser = ctx->parser->AsETSParser();
-    auto statements = parser->CreateFormattedStatements(src, nodes);
-    if (!statements.empty()) {
-        return *statements.begin();
-    }
-
-    return nullptr;
-}
-
-void RecordLowering::CheckKeyType(checker::ETSChecker *checker, checker::Type const *const keyType,
-                                  ir::ObjectExpression const *const expr, public_lib::Context *ctx) const noexcept
+static void CheckKeyType(checker::ETSChecker *checker, checker::Type const *const keyType,
+                         ir::ObjectExpression const *const expr, public_lib::Context *ctx)
 {
     if (keyType->IsETSObjectType()) {
         if (keyType->IsETSStringType() || keyType->IsBuiltinNumeric() ||
@@ -168,7 +135,10 @@ void RecordLowering::CheckKeyType(checker::ETSChecker *checker, checker::Type co
     ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::OBJ_LIT_UNKNOWN_PROP, {}, expr->Start());
 }
 
-ir::Expression *RecordLowering::UpdateObjectExpression(ir::ObjectExpression *expr, public_lib::Context *ctx)
+static ir::Expression *CreateBlockExpression(ir::ObjectExpression *expr, checker::Type *keyType,
+                                             checker::Type *valueType, public_lib::Context *ctx);
+
+static ir::Expression *UpdateObjectExpression(ir::ObjectExpression *expr, public_lib::Context *ctx)
 {
     auto checker = ctx->GetChecker()->AsETSChecker();
     if (expr->PreferredType()->IsETSAsyncFuncReturnType()) {
@@ -232,8 +202,15 @@ ir::Expression *RecordLowering::UpdateObjectExpression(ir::ObjectExpression *exp
     return block;
 }
 
-ir::Expression *RecordLowering::CreateBlockExpression(ir::ObjectExpression *expr, checker::Type *keyType,
-                                                      checker::Type *valueType, public_lib::Context *ctx)
+static std::string TypeToString(checker::Type *type)
+{
+    std::stringstream ss;
+    type->ToString(ss);
+    return ss.str();
+}
+
+static ir::Expression *CreateBlockExpression(ir::ObjectExpression *expr, checker::Type *keyType,
+                                             checker::Type *valueType, public_lib::Context *ctx)
 {
     /* This function will create block expression in the following format
      *

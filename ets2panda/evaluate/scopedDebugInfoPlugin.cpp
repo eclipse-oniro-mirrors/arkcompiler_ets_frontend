@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,21 +82,19 @@ std::pair<ir::VariableDeclaration *, ir::ReturnStatement *> BreakLastStatement(c
 
 }  // namespace
 
-ScopedDebugInfoPlugin::ScopedDebugInfoPlugin(parser::Program *globalProgram, checker::ETSChecker *checker,
-                                             const util::Options &options)
-    : globalProgram_(globalProgram),
-      checker_(checker),
-      context_(options),
-      irCheckHelper_(checker, globalProgram->VarBinder()->AsETSBinder()),
-      debugInfoStorage_(options, checker->Allocator()),
+ScopedDebugInfoPlugin::ScopedDebugInfoPlugin(public_lib::Context *ctx)
+    : e2pctx_(ctx),
+      checker_(e2pctx_->GetChecker()->AsETSChecker()),
+      context_(*e2pctx_->config->options),
+      irCheckHelper_(checker_, e2pctx_->parserProgram->VarBinder()->AsETSBinder()),
+      debugInfoStorage_(*e2pctx_->config->options, checker_->Allocator()),
       debugInfoDeserializer_(*this),
       pathResolver_(debugInfoStorage_),
-      prologueEpilogueMap_(checker->Allocator()->Adapter()),
-      proxyProgramsCache_(checker->Allocator()),
+      prologueEpilogueMap_(checker_->Allocator()->Adapter()),
+      proxyProgramsCache_(checker_->Allocator()),
       entityDeclarator_(*this)
 {
-    ES2PANDA_ASSERT(globalProgram_);
-    ES2PANDA_ASSERT(checker_);
+    ES2PANDA_ASSERT(e2pctx_->parserProgram);
 
     auto isContextValid = debugInfoStorage_.FillEvaluateContext(context_);
     if (!isContextValid) {
@@ -401,20 +399,9 @@ void ScopedDebugInfoPlugin::CreateContextPrograms()
 
 parser::Program *ScopedDebugInfoPlugin::CreateEmptyProgram(std::string_view sourceFilePath, std::string_view moduleName)
 {
-    auto *allocator = Allocator();
+    parser::Program *program =
+        e2pctx_->parser->GetImportPathManager()->SetupProgramForDebugInfoPlugin(sourceFilePath, moduleName);
 
-    // Checker doesn't yet have `VarBinder`, must retrieve it from `globalProgram_`.
-    parser::Program *program = allocator->New<parser::Program>(allocator, GetETSBinder());
-    ES2PANDA_ASSERT(program != nullptr);
-    program->SetSource({sourceFilePath, "", globalProgram_->SourceFileFolder().Utf8(), true, false});
-    program->SetPackageInfo(moduleName, util::ModuleKind::MODULE);
-    auto *emptyIdent = allocator->New<ir::Identifier>("", allocator);
-    auto lang = program->IsDeclForDynamicStaticInterop() ? Language(Language::Id::JS) : Language(Language::Id::ETS);
-    auto *etsModule = allocator->New<ir::ETSModule>(allocator, ArenaVector<ir::Statement *>(allocator->Adapter()),
-                                                    emptyIdent, ir::ModuleFlag::ETSSCRIPT, lang, program);
-    program->SetAst(etsModule);
-
-    helpers::AddExternalProgram(globalProgram_, program, moduleName);
     proxyProgramsCache_.AddProgram(program);
 
     return program;
@@ -436,7 +423,7 @@ parser::Program *ScopedDebugInfoPlugin::GetEvaluatedExpressionProgram()
 
 varbinder::ETSBinder *ScopedDebugInfoPlugin::GetETSBinder()
 {
-    return globalProgram_->VarBinder()->AsETSBinder();
+    return e2pctx_->parserProgram->VarBinder()->AsETSBinder();
 }
 
 ArenaAllocator *ScopedDebugInfoPlugin::Allocator()

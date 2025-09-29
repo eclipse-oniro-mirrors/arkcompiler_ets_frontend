@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,21 +19,8 @@
 
 namespace ark::es2panda::compiler {
 
-bool CFGBuilderPhase::Perform(public_lib::Context *ctx, parser::Program *program)
+static void DumpCFG(parser::Program *program)
 {
-    if (!ctx->config->options->IsDumpCfg() || ctx->config->options->IsGenStdlib()) {
-        return true;
-    }
-
-    for (auto &[_, ext_programs] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : ext_programs) {
-            if (!extProg->IsASTLowered()) {
-                Perform(ctx, extProg);
-            }
-        }
-    }
-
     compiler::CFG *cfg = program->GetCFG();
 
     program->Ast()->IterateRecursively([&](ir::AstNode *node) -> void {
@@ -46,6 +33,21 @@ bool CFGBuilderPhase::Perform(public_lib::Context *ctx, parser::Program *program
 
     std::string filename = program->AbsoluteName().Mutf8();
     cfg->DumpDot((filename + ".dot").c_str());
+}
+
+bool CFGBuilderPhase::PerformForProgram(parser::Program *program)
+{
+    auto ctx = Context();
+    if (!ctx->config->options->IsDumpCfg() || ctx->config->options->IsGenStdlib()) {
+        return true;
+    }
+
+    if (program->IsASTLowered()) {
+        return true;
+    }
+
+    DumpCFG(program);
+
     return true;
 }
 

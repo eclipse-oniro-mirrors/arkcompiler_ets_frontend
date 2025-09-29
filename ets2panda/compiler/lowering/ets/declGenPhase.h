@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,14 +22,14 @@ namespace ark::es2panda::compiler {
 
 // 1. Generate declaration for checked AST
 // 2. Store declaration to annotation to ETSGLOBAL class
-class DeclGenPhase : public PhaseForBodies {
+class DeclGenPhase : public Phase {
 public:
     std::string_view Name() const override
     {
         return "DeclGenPhase";
     }
 
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+    bool Perform() override;
 };
 
 }  // namespace ark::es2panda::compiler

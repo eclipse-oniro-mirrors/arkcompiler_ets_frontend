@@ -46,8 +46,6 @@ warning:
   id: 73
   message: "Duplicated export aliases for '{}'."
 
-
-
 - name: DUPLICATE_IMPORT
   id: 125428
   message: "'{}' has already imported"
@@ -109,6 +107,16 @@ warning:
 - name: INCOMPATIBLE_TYPE_FOR_OVERRIDE
   id: 52491
   message: "{}{} in {} cannot override {}{} in {} because overriding type is not compatible with the base type."
+  strict: true
+
+- name: INITIALIZERS_IN_AMBIENT_CONTEXTS
+  id: 125
+  message: "Initializers are not allowed in ambient contexts."
+  strict: true
+
+- name: INIT_IN_AMBIENT
+  id: 153
+  message: "Initializers are not allowed in ambient contexts: {}"
   strict: true
 
 - name: Lambda_MISSING_RETURN_STMT

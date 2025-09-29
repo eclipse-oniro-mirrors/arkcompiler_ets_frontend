@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -113,7 +113,7 @@ void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Add("export ");
     }
     if (dumper->IsDeclgen()) {
-        dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
+        dumper->TryDeclareAmbientContext();
     }
     dumper->Add("@interface ");
     Expr()->Dump(dumper);

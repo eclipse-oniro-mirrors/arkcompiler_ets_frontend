@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -73,8 +73,8 @@ int main(int argc, char **argv)
     const char **args = const_cast<const char **>(&(argv[1]));
     auto config = impl->CreateConfig(argc - 1, args);
     auto context = impl->CreateContextFromString(config, g_source.data(), argv[argc - 1]);
-    auto *program = impl->ContextProgram(context);
     impl->ProceedToState(context, ES2PANDA_STATE_CHECKED);
+    auto *program = impl->ContextProgram(context);
     auto *entryAst = impl->ProgramAst(context, program);
     FindTargetAstAfterChecker(context, entryAst);
     [[maybe_unused]] std::string declOfProp = impl->AstNodeDumpDeclConst(context, prop);

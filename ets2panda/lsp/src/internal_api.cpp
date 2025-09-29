@@ -551,7 +551,9 @@ std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position,
     } else {
         node = FindPrecedingToken(position, ast, ctx->allocator);
     }
-    return node != nullptr ? ReplaceQuotation(program->SourceCode().Substr(node->Start().index, position)) : "";
+    return node != nullptr
+               ? ReplaceQuotation(program->SourceCode().substr(node->Start().index, position - node->Start().index))
+               : "";
 }
 
 ir::AstNode *FindLeftToken(const size_t pos, const std::vector<ir::AstNode *> &nodes)
@@ -909,7 +911,7 @@ std::string GetImportFilePath(es2panda_Context *context, size_t pos)
     }
     auto parent = node->Parent();
     if (parent != nullptr && parent->IsETSImportDeclaration() && parent->AsETSImportDeclaration()->Source() == node) {
-        res = std::string(parent->AsETSImportDeclaration()->ImportMetadata().resolvedSource);
+        res = std::string(parent->AsETSImportDeclaration()->ImportMetadata().ResolvedSource());
     }
     return res;
 }

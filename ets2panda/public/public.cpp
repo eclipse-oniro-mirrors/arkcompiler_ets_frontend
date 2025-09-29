@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,36 +26,6 @@ checker::Checker *Context::GetChecker() const
 checker::SemanticAnalyzer *Context::GetAnalyzer() const
 {
     return analyzers_[compiler::GetPhaseManager()->GetCurrentMajor()];
-}
-
-void Context::MarkGenAbcForExternal(std::unordered_set<std::string> &genAbcList, public_lib::ExternalSource &extSources)
-{
-    size_t genCount = 0;
-    std::unordered_set<std::string> genAbcListAbsolute;
-
-    for (auto &path : genAbcList) {
-        genAbcListAbsolute.insert(os::GetAbsolutePath(path));
-    }
-    for (auto &[_, extPrograms] : extSources) {
-        (void)_;
-        bool setFlag = false;
-        for (auto *prog : extPrograms) {
-            if (auto it = genAbcListAbsolute.find(prog->AbsoluteName().Mutf8()); it != genAbcListAbsolute.end()) {
-                ++genCount;
-                setFlag = true;
-            }
-        }
-        if (!setFlag) {
-            continue;
-        }
-        for (auto *prog : extPrograms) {
-            prog->SetGenAbcForExternalSources();
-        }
-    }
-
-    if (genCount != genAbcListAbsolute.size()) {
-        diagnosticEngine->LogFatalError(diagnostic::SIMULTANEOUSLY_MARK_FAILED.Message());
-    }
 }
 
 }  // namespace ark::es2panda::public_lib

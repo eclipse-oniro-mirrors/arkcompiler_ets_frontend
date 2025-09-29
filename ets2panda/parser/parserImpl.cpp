@@ -40,43 +40,55 @@
 #include "ir/statements/blockStatement.h"
 #include "ir/statements/expressionStatement.h"
 #include "util/errorRecovery.h"
+#include "public/public.h"
 
 using namespace std::literals::string_literals;
 
 namespace ark::es2panda::parser {
-ParserImpl::ParserImpl(Program *program, const util::Options *options, util::DiagnosticEngine &diagnosticEngine,
-                       ParserStatus status)
-    : program_(program), context_(program_, status), options_(options), diagnosticEngine_(diagnosticEngine)
+ParserImpl::ParserImpl(public_lib::Context *ctx, ParserStatus status)
+    : context_(ctx->parserProgram, status),
+      options_(ctx->config->options),
+      ctx_(ctx),
+      importPathManager_(std::make_unique<util::ImportPathManager>(ctx))
 {
 }
 
-std::unique_ptr<lexer::Lexer> ParserImpl::InitLexer(const SourceFile &sourceFile)
+util::DiagnosticEngine &ParserImpl::DiagnosticEngine() const
 {
-    program_->SetSource(sourceFile);
-    std::unique_ptr<lexer::Lexer> lexer = std::make_unique<lexer::Lexer>(&context_, diagnosticEngine_);
+    return *Context()->diagnosticEngine;
+}
+
+std::unique_ptr<lexer::Lexer> ParserImpl::InitLexer()
+{
+    ES2PANDA_ASSERT(GetProgram() == GetContext().GetProgram());
+    std::unique_ptr<lexer::Lexer> lexer = std::make_unique<lexer::Lexer>(&context_, DiagnosticEngine());
     lexer_ = lexer.get();
     return lexer;
 }
 
-void ParserImpl::ParseScript(const SourceFile &sourceFile, bool genStdLib)
+void ParserImpl::ParseGlobal()
 {
-    auto lexer = InitLexer(sourceFile);
+    ES2PANDA_ASSERT(Context()->parserProgram == nullptr);
+    importPathManager_->SetupGlobalProgram();
+    ES2PANDA_ASSERT(Context()->parserProgram != nullptr);
+    SetProgram(Context()->parserProgram);
+    GetContext().SetProgram(Context()->parserProgram);
+    GetContext().SetLanguage(ToLanguage(Context()->parserProgram->Extension()));
 
-    if (sourceFile.isModule) {
+    ES2PANDA_ASSERT(Context()->parserProgram == GetProgram());
+    auto lexer = InitLexer();
+
+    if (Context()->sourceFile->isModule) {
         context_.Status() |= (ParserStatus::MODULE);
-        ParseProgram(ScriptKind::MODULE);
-    } else if (genStdLib) {
-        ParseProgram(ScriptKind::STDLIB);
-    } else {
-        ParseProgram(ScriptKind::SCRIPT);
     }
+
+    ParseGlobalImpl();
 }
 
-void ParserImpl::ParseProgram(ScriptKind kind)
+void ParserImpl::ParseGlobalImpl()
 {
     lexer::SourcePosition startLoc = lexer_->GetToken().Start();
     lexer_->NextToken();
-    program_->SetKind(kind);
 
     auto statements = ParseStatementList(StatementParsingFlags::STMT_GLOBAL_LEXICAL);
 
@@ -1449,28 +1461,28 @@ void ParserImpl::LogExpectedToken(lexer::TokenType tokenType)
 
 void ParserImpl::LogSyntaxError(std::string_view errorMessage, const lexer::SourcePosition &pos)
 {
-    diagnosticEngine_.LogSyntaxError(errorMessage, pos);
+    DiagnosticEngine().LogSyntaxError(errorMessage, pos);
 }
 
 void ParserImpl::LogSyntaxError(std::string_view const errorMessage)
 {
-    diagnosticEngine_.LogSyntaxError(errorMessage, lexer_->GetToken().Start());
+    DiagnosticEngine().LogSyntaxError(errorMessage, lexer_->GetToken().Start());
 }
 
 void ParserImpl::LogSyntaxError(const util::DiagnosticMessageParams &list)
 {
-    diagnosticEngine_.LogSyntaxError(list, lexer_->GetToken().Start());
+    DiagnosticEngine().LogSyntaxError(list, lexer_->GetToken().Start());
 }
 
 void ParserImpl::LogSyntaxError(const util::DiagnosticMessageParams &list, const lexer::SourcePosition &pos)
 {
-    diagnosticEngine_.LogSyntaxError(list, pos);
+    DiagnosticEngine().LogSyntaxError(list, pos);
 }
 
 void ParserImpl::LogError(const diagnostic::DiagnosticKind &diagnostic,
                           const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos)
 {
-    diagnosticEngine_.LogDiagnostic(diagnostic, diagnosticParams, pos);
+    DiagnosticEngine().LogDiagnostic(diagnostic, diagnosticParams, pos);
 }
 
 void ParserImpl::LogError(const diagnostic::DiagnosticKind &diagnostic,
@@ -1604,6 +1616,11 @@ ir::TypeNode *ParserImpl::AllocBrokenType(const lexer::SourceRange &range)
     ES2PANDA_ASSERT(node != nullptr);
     node->SetRange(range);
     return node;
+}
+
+ArenaAllocator *ParserImpl::Allocator() const
+{
+    return ctx_->Allocator();
 }
 
 }  // namespace ark::es2panda::parser

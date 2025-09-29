@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,10 @@
 #define ES2PANDA_UTIL_ES2PANDA_MACROS_H
 
 #include "libarkbase/macros.h"
+#include "libarkbase/mem/arena_allocator.h"
 #include "lexer/token/sourceLocation.h"
+
+#include "libarkbase/mem/arena_allocator.h"
 
 namespace ark::es2panda::parser {
 class Program;

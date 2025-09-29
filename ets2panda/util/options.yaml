@@ -1,5 +1,5 @@
 
-# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -389,10 +389,12 @@ options:
   default: false
   description: compile all the files to abc in once.
 
-- name: use-declaration-cache
+- name: store-declaration-cache-directly-in-memory
   type: bool
   default: false
-  description: Activate and use common internal cache for generated declarations.
+  description: |
+    If some of the cache-decls are generated, besides generating a file,
+    directly emplace them in global memory.
 
 #26986
 - name: ets-strings-concat

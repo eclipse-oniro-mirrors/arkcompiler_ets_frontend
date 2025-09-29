@@ -109,6 +109,9 @@ export class Es2pandaNativeModule {
   _ContextProgram(context: KPtr): KPtr {
     throw new Error('Not implemented');
   }
+  _ProgramExternalSources(context: KPtr, program: KPtr, len: KPtr) : KPtr {
+    throw new Error('Not implemented');
+  }
   _ProgramAst(context: KPtr, program: KPtr): KPtr {
     throw new Error('Not implemented');
   }

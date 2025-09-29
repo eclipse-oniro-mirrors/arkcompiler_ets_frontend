@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -161,10 +161,10 @@ static void HandleExportDefaultInExportNamedDecl(public_lib::Context *const ctx,
     }
 }
 
-bool ExportAnonymousConstPhase::PerformForModule(public_lib::Context *const ctx, parser::Program *const program)
+bool ExportAnonymousConstPhase::PerformForProgram(parser::Program *const program)
 {
-    HandleExportDefaultInExportNamedDecl(ctx, program);
-    HandleAnonymousConst(ctx, program);
+    HandleExportDefaultInExportNamedDecl(Context(), program);
+    HandleAnonymousConst(Context(), program);
     return true;
 }
 

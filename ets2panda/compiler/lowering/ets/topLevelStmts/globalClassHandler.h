@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,31 +24,44 @@
 
 namespace ark::es2panda::compiler {
 
+inline void EjectNamespacesFromStatementsVector(ArenaVector<ir::Statement *> *stmts, ArenaVector<ir::ETSModule *> *dst)
+{
+    auto end = std::remove_if(stmts->begin(), stmts->end(), [dst](ir::AstNode *node) {
+        if (node->IsETSModule()) {
+            ES2PANDA_ASSERT(node->AsETSModule()->IsNamespace());
+            dst->emplace_back(node->AsETSModule());
+            return true;
+        }
+        return false;
+    });
+    stmts->erase(end, stmts->end());
+}
+
 class GlobalClassHandler {
 public:
-    using ModuleDependencies = ArenaUnorderedSet<parser::Program *>;
-
     struct GlobalStmts {
         parser::Program *program;
         ArenaVector<ir::Statement *> statements;
     };
-    explicit GlobalClassHandler(parser::ETSParser *parser, ArenaAllocator *allocator, parser::Program *program)
-        : parser_(parser),
-          allocator_(allocator),
-          globalProgram_(program),
-          packageInitializerBlockCount_(allocator->Adapter()) {};
+    explicit GlobalClassHandler(public_lib::Context *context)
+        : context_(context),
+          parser_(context->parser->AsETSParser()),
+          allocator_(context->Allocator()),
+          globalProgram_(nullptr),
+          packageInitializerBlockCount_(context->Allocator()->Adapter()) {};
 
-    static void MergeNamespace(ArenaVector<ir::ETSModule *> &namespaces, parser::Program *program);
+    static void MergeNamespace(ArenaVector<ir::ETSModule *> &namespaces, public_lib::Context *ctx);
 
     /**
      * Each "Module" has it's own global class, which contains all top level statements across "module"
      * Result - creation of global class and _$init$_ method
      * @param programs - vector of files in module
      */
-    void SetupGlobalClass(const ArenaVector<parser::Program *> &programs, const ModuleDependencies *moduleDependencies);
+    void SetupGlobalClass(parser::Program *programs);
 
     void CheckPackageMultiInitializerBlock(util::StringView packageName,
                                            const ArenaVector<ArenaVector<ir::Statement *>> &initializerBlocks);
+
     void SetGlobalProgram(parser::Program *program)
     {
         globalProgram_ = program;
@@ -63,7 +76,7 @@ private:
     void SetupGlobalMethods(ArenaVector<ir::Statement *> &&statements);
     void AddStaticBlockToClass(ir::ClassDefinition *classDef);
     void SetupClassStaticBlocksInModule(ir::ETSModule *module);
-    void CollectProgramGlobalClasses(ArenaVector<ir::ETSModule *> namespaces);
+    void CollectProgramGlobalClasses(ArenaVector<ir::ETSModule *> &namespaces);
     ir::ClassDeclaration *TransformNamespace(ir::ETSModule *ns);
     ir::ClassDeclaration *CreateTransformedClass(ir::ETSModule *ns);
     template <class Node>
@@ -76,10 +89,11 @@ private:
                             bool isDeclare);
     void SetupInitializerBlock(ArenaVector<ArenaVector<ir::Statement *>> &&initializerBlock,
                                ir::ClassDefinition *globalClass);
+    void MaybeAddMainFunction();
     void SetupInitializationMethodIfNeeded(ir::ClassDefinition *classDef);
     ArenaVector<ir::Statement *> TransformNamespaces(ArenaVector<ir::ETSModule *> &namespaces);
 
-    ir::ClassDeclaration *CreateGlobalClass(const parser::Program *globalProgram);
+    ir::ClassDeclaration *CreateGlobalClass();
     ir::ClassStaticBlock *CreateStaticBlock(ir::ClassDefinition *classDef);
     ir::MethodDefinition *CreateGlobalMethod(std::string_view name, ArenaVector<ir::Statement *> &&statements);
     void AddInitStatementsToStaticBlock(ir::ClassDefinition *globalClass,
@@ -94,12 +108,12 @@ private:
 
     ArenaVector<ir::Statement *> FormInitMethodStatements(ArenaVector<GlobalStmts> &&initStatements);
 
-    GlobalDeclTransformer::ResultT CollectProgramGlobalStatements(ArenaVector<ir::Statement *> &stmts,
-                                                                  ir::ClassDefinition *classDef,
-                                                                  ir::Statement const *stmt);
+    GlobalDeclTransformer::ResultT CollectProgramGlobalStatements(ir::ClassDefinition *classDef,
+                                                                  ir::BlockStatement *stmt, bool isPackageFraction);
 
     ir::Identifier *RefIdent(const util::StringView &name);
 
+    public_lib::Context *context_;
     parser::ETSParser *const parser_;
     ArenaAllocator *const allocator_;
     parser::Program *globalProgram_;

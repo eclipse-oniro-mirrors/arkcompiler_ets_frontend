@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -301,11 +301,11 @@ static ir::AstNode *HandleObjectLiteralLowering(public_lib::Context *ctx, ir::Ob
     return loweringResult;
 }
 
-bool ObjectLiteralLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool ObjectLiteralLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *ast) -> ir::AstNode * {
+        [ctx = Context()](ir::AstNode *ast) -> ir::AstNode * {
             // Skip processing invalid and dynamic objects
             if (ast->IsObjectExpression()) {
                 auto *exprType = ast->AsObjectExpression()->TsType();
@@ -323,8 +323,7 @@ bool ObjectLiteralLowering::PerformForModule(public_lib::Context *ctx, parser::P
     return true;
 }
 
-bool ObjectLiteralLowering::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx,
-                                                   const parser::Program *program)
+bool ObjectLiteralLowering::PostconditionForProgram(const parser::Program *program)
 {
     // In all object literal contexts (except dynamic) a substitution should take place
     return !program->Ast()->IsAnyChild([](const ir::AstNode *ast) -> bool {

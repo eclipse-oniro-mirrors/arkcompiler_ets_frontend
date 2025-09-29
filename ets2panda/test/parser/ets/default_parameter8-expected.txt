@@ -452,14 +452,14 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 18,
+                      "column": 5,
+                      "program": "default_parameter8.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 18,
+                      "column": 5,
+                      "program": "default_parameter8.ets"
                     }
                   }
                 },
@@ -471,8 +471,8 @@
                     "program": "default_parameter8.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 18,
+                    "column": 5,
                     "program": "default_parameter8.ets"
                   }
                 }

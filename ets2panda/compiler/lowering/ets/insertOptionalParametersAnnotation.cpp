@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -105,14 +105,14 @@ static void TryInsertDefaultAnnotation(public_lib::Context *ctx, ir::AstNode *no
     }
 }
 
-bool InsertOptionalParametersAnnotation::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool InsertOptionalParametersAnnotation::PerformForProgram(parser::Program *program)
 {
     if (program->Extension() != ScriptExtension::ETS) {
         return true;
     }
 
     program->Ast()->IterateRecursivelyPostorder(
-        [ctx](ir::AstNode *node) -> void { TryInsertDefaultAnnotation(ctx, node); });
+        [ctx = Context()](ir::AstNode *node) -> void { TryInsertDefaultAnnotation(ctx, node); });
 
     return true;
 }

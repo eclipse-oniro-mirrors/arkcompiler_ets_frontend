@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -252,7 +252,7 @@ void ProcessComment(es2panda_Context *context, size_t start, size_t end, std::os
     }
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     auto sourceCode = ctx->parserProgram->SourceCode();
-    oss << sourceCode.Substr(start, end);
+    oss << sourceCode.substr(start, end - start);
 }
 
 std::vector<TextChange> GenerateTextChanges([[maybe_unused]] es2panda_Context *context,

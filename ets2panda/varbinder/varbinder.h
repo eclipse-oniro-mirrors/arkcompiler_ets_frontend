@@ -22,7 +22,6 @@
 
 namespace ark::es2panda::parser {
 class Program;
-enum class ScriptKind;
 }  // namespace ark::es2panda::parser
 
 namespace ark::es2panda::ir {
@@ -54,7 +53,7 @@ class ETSBinder;
 
 class VarBinder {
 public:
-    explicit VarBinder(ArenaAllocator *allocator) : allocator_(allocator), functionScopes_(allocator_->Adapter()) {}
+    explicit VarBinder(public_lib::Context *context);
 
     VarBinder() = delete;
     NO_COPY_SEMANTIC(VarBinder);
@@ -89,11 +88,6 @@ public:
     {
         ES2PANDA_ASSERT(program_);
         return program_;
-    }
-
-    void SetContext(public_lib::Context *context)
-    {
-        context_ = context;
     }
 
     [[nodiscard]] public_lib::Context *GetContext() const
@@ -303,9 +297,9 @@ protected:
     }
 
 private:
+    public_lib::Context *context_ {};
     parser::Program *program_ {};
     ArenaAllocator *allocator_ {};
-    public_lib::Context *context_ {};
     GlobalScope *topScope_ {};
     Scope *scope_ {};
     VariableScope *varScope_ {};

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,14 +20,14 @@
 
 namespace ark::es2panda::compiler {
 
-class CFGBuilderPhase : public Phase {
+class CFGBuilderPhase : public PhaseForProgramsWithBodies_LEGACY {
 public:
     std::string_view Name() const override
     {
         return "CFGBuilder";
     }
 
-    bool Perform(public_lib::Context *ctx, parser::Program *program) override;
+    bool PerformForProgram(parser::Program *program) override;
 };
 
 }  // namespace ark::es2panda::compiler

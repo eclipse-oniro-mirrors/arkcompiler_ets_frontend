@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -64,18 +64,17 @@ struct ASTVerifier::SinglePassVerifier {
     }
 };
 
-static auto ExtractAst(const parser::Program &program, bool checkFullProgram)
+static auto ExtractASTs(const public_lib::Context &context)
 {
-    auto *allocator = program.Allocator();
+    auto program = context.parserProgram;
+    auto *allocator = program->Allocator();
     auto astToCheck = AstToCheck {allocator->Adapter()};
-    astToCheck.insert(std::make_pair(program.SourceFilePath().Utf8(), program.Ast()));
-    if (checkFullProgram) {
-        for (const auto &externalSource : program.ExternalSources()) {
-            for (auto *external : externalSource.second) {
-                ES2PANDA_ASSERT(external->Ast() != nullptr);
-                astToCheck.insert(std::make_pair(external->SourceFilePath().Utf8(), external->Ast()));
-            }
-        }
+    astToCheck.insert(std::make_pair(program->SourceFilePath().Utf8(), program->Ast()));
+    if (context.config->options->IsAstVerifierFullProgram()) {
+        program->GetExternalSources()->Visit([&astToCheck](parser::Program *external) {
+            ES2PANDA_ASSERT(external->Ast() != nullptr);
+            astToCheck.insert(std::make_pair(external->SourceFilePath().Utf8(), external->Ast()));
+        });
     }
     return astToCheck;
 }
@@ -90,8 +89,8 @@ void ASTVerifier::Verify(std::string_view phaseName) noexcept
     if (suppressed_) {
         return;
     }
-    auto astToCheck = ExtractAst(program_, Options().IsAstVerifierFullProgram());
-    for (const auto &p : astToCheck) {
+    auto astsToCheck = ExtractASTs(context_);
+    for (const auto &p : astsToCheck) {
         const auto sourceName = p.first;
         const auto *ast = p.second;
         Apply([](auto &&...inv) { ((inv.Init()), ...); });

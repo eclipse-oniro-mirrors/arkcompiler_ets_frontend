@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,10 +58,10 @@ static bool IsCorrectFromCall(public_lib::Context *const ctx, ir::CallExpression
            callee->Property()->AsIdentifier()->Name().Is(compiler::Signatures::FROM);
 }
 
-bool ClassFromExpressionLowering::PerformForModule(public_lib::Context *const ctx, parser::Program *const program)
+bool ClassFromExpressionLowering::PerformForProgram(parser::Program *const program)
 {
     program->Ast()->TransformChildrenRecursively(
-        [ctx](ir::AstNode *ast) {
+        [ctx = Context()](ir::AstNode *ast) {
             if (ast->IsCallExpression() && IsCorrectFromCall(ctx, ast->AsCallExpression())) {
                 return LowerToSyntheticFromNode(ctx, ast->AsCallExpression());
             }

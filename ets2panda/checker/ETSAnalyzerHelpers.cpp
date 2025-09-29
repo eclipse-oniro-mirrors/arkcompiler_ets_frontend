@@ -190,7 +190,8 @@ void DoBodyTypeChecking(ETSChecker *checker, ir::MethodDefinition *node, ir::Scr
         CheckNativeConstructorBody(checker, node, scriptFunc);
     }
 
-    if (!scriptFunc->HasBody() || (scriptFunc->IsExternal() && !scriptFunc->IsExternalOverload())) {
+    if (scriptFunc->WasChecked() || !scriptFunc->HasBody() ||
+        (scriptFunc->IsExternal() && !scriptFunc->IsExternalOverload())) {
         return;
     }
 
@@ -213,6 +214,7 @@ void DoBodyTypeChecking(ETSChecker *checker, ir::MethodDefinition *node, ir::Scr
     }
 
     scriptFunc->Body()->Check(checker);
+    scriptFunc->SetWasChecked();
 
     if (scriptFunc->ReturnTypeAnnotation() == nullptr) {
         if (scriptFunc->IsAsyncFunc()) {
@@ -771,13 +773,14 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
         relation->SetNode(stArgument);
 
         if (!relation->IsIdenticalTo(funcReturnType, argumentType)) {
-            checker->ResolveReturnStatement(checker, funcReturnType, argumentType, containingFunc, st);
+            checker->ResolveReturnStatement(containingFunc, argumentType, st);
         }
 
         relation->SetNode(nullptr);
         relation->SetFlags(checker::TypeRelationFlag::NONE);
     }
-    return funcReturnType;
+
+    return containingFunc->Signature()->ReturnType();
 }
 
 bool CheckReturnTypeNecessity(ir::MethodDefinition *node)

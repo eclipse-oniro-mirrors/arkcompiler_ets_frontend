@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,11 +16,15 @@
 #ifndef ES2PANDA_JSDOC_HELPER_H
 #define ES2PANDA_JSDOC_HELPER_H
 
-#include "parserImpl.h"
-#include "parser/program/program.h"
+#include "util/ustring.h"
 #include "lexer/token/letters.h"
 
+namespace ark::es2panda::ir {
+class AstNode;
+}  // namespace ark::es2panda::ir
 namespace ark::es2panda::parser {
+class Program;
+
 using UStringView = util::StringView;
 class JsdocHelper {
 public:

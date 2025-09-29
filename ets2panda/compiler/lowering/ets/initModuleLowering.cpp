@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,8 +61,9 @@ static bool IsESValueLoadCall(ir::AstNode *node)
 }
 
 static ir::AstNode *CreateModuleCallExpressionForDynamic(public_lib::Context *ctx, ir::CallExpression *callExpr,
-                                                         std::string_view ohmUrl)
+                                                         const util::ImportMetadata &importMetadata)
 {
+    std::string_view ohmUrl {importMetadata.OhmUrl()};
     auto allocator = ctx->allocator;
     auto esvalueIdent = util::NodeAllocator::Alloc<ir::Identifier>(allocator, Signatures::ESVALUE, allocator);
     auto loadOp = util::NodeAllocator::Alloc<ir::Identifier>(allocator, Signatures::LOAD, allocator);
@@ -85,12 +86,13 @@ static ir::AstNode *TransformESValueLoadCallExpression(ir::CallExpression *callE
         return callExpr;
     }
     auto *parser = ctx->parser->AsETSParser();
-    auto metaData = parser->GetImportPathManager()->GatherImportMetadata(program, util::ImportFlags::NONE,
-                                                                         importPath->AsStringLiteral());
-    if (metaData.ohmUrl == util::ImportPathManager::DUMMY_PATH) {
-        return callExpr;
+    auto metaData = parser->GetImportPathManager()
+                        ->GatherImportMetadata(program, importPath->AsStringLiteral())
+                        ->GetImportMetadata();
+    if (!metaData.OhmUrl().empty()) {
+        return CreateModuleCallExpressionForDynamic(ctx, callExpr, metaData);
     }
-    return CreateModuleCallExpressionForDynamic(ctx, callExpr, metaData.ohmUrl);
+    return callExpr;
 }
 
 static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callExpr, public_lib::Context *ctx,
@@ -98,35 +100,24 @@ static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callEx
 {
     auto *parser = ctx->parser->AsETSParser();
     auto *allocator = ctx->allocator;
-    auto metaData = parser->GetImportPathManager()->GatherImportMetadata(
-        program, util::ImportFlags::NONE, callExpr->Arguments().front()->AsStringLiteral());
-
-    bool isSimultaneous = ctx->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE;
-    auto sources = isSimultaneous ? ctx->parserProgram->ExternalSources() : program->DirectExternalSources();
-    auto dependentProg = SearchExternalProgramInImport(sources, metaData);
+    auto dependentProg =
+        parser->GetImportPathManager()->GatherImportMetadata(program, callExpr->Arguments().front()->AsStringLiteral());
     if (dependentProg == nullptr) {
-        dependentProg = SearchExternalProgramInImport(program->ExternalSources(), metaData);
-    }
-    if (dependentProg == nullptr) {
-        if (program->AbsoluteName() == metaData.resolvedSource || program->AbsoluteName() == metaData.declPath) {
-            dependentProg = program;
-        } else {
-            // Replace the broken "InitModule" expression with error node. The error message has been logged in parser.
-            ES2PANDA_ASSERT(ctx->diagnosticEngine->IsAnyError());
-            auto node = util::NodeAllocator::Alloc<ir::Identifier>(allocator, allocator);
-            node->SetRange(callExpr->Range());
-            node->SetParent(callExpr->Parent());
-            return node;
-        }
+        // Replace the broken "InitModule" expression with error node. The error message has been logged in parser.
+        ES2PANDA_ASSERT(ctx->diagnosticEngine->IsAnyError());
+        auto node = util::NodeAllocator::Alloc<ir::Identifier>(allocator, allocator);
+        node->SetRange(callExpr->Range());
+        node->SetParent(callExpr->Parent());
+        return node;
     }
 
     if (dependentProg->IsDeclForDynamicStaticInterop()) {
-        return CreateModuleCallExpressionForDynamic(ctx, callExpr, metaData.ohmUrl);
+        return CreateModuleCallExpressionForDynamic(ctx, callExpr, dependentProg->GetImportMetadata());
     }
 
     ArenaVector<ir::Expression *> params(allocator->Adapter());
     auto moduleStr = util::UString {
-        dependentProg->ModuleInfo().modulePrefix.Mutf8().append(compiler::Signatures::ETS_GLOBAL), allocator};
+        std::string(dependentProg->ModuleInfo().modulePrefix).append(compiler::Signatures::ETS_GLOBAL), allocator};
     auto moduleName = util::NodeAllocator::Alloc<ir::StringLiteral>(allocator, moduleStr.View());
 
     params.emplace_back(moduleName);
@@ -142,10 +133,10 @@ static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callEx
     return newCallExpr;
 }
 
-bool InitModuleLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool InitModuleLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
-        [ctx, program](checker::AstNodePtr node) -> checker::AstNodePtr {
+        [ctx = Context(), program](checker::AstNodePtr node) -> checker::AstNodePtr {
             if (IsInitModuleCall(node)) {
                 return TransformInitModuleCallExpression(node->AsCallExpression(), ctx, program);
             }

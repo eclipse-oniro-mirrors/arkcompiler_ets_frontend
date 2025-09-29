@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,10 +22,11 @@
 #include "assembler/assembly-program.h"
 #include "libarkbase/mem/arena_allocator.h"
 
-#include "compiler/core/compileQueue.h"
 #include "parser/ETSparser.h"
+#include "parser/program/program.h"
 #include "checker/ETSchecker.h"
 #include "compiler/core/emitter.h"
+#include "compiler/core/compileQueue.h"
 
 namespace ark::es2panda::util {
 class Options;
@@ -47,17 +48,16 @@ struct ConfigImpl {
     std::list<diagnostic::DiagnosticKind> diagnosticKindStorage;
 };
 
-using ExternalSources = std::unordered_map<util::StringView, ArenaVector<parser::Program *>>;
-using ExternalSource = ArenaUnorderedMap<util::StringView, ArenaVector<parser::Program *>>;
+using ArenaExternalSources = parser::Program::ExternalSources;
 using ComputedAbstracts =
     ArenaUnorderedMap<checker::ETSObjectType *,
                       std::pair<ArenaVector<checker::ETSFunctionType *>, ArenaUnorderedSet<checker::ETSObjectType *>>>;
 
 struct GlobalContext {
     std::unordered_map<std::string, ArenaAllocator *> externalProgramAllocators;
-    std::unordered_map<std::string, ExternalSource *> cachedExternalPrograms;
+    std::unordered_map<std::string, parser::Program *> cachedExternalPrograms;
     ArenaAllocator *stdLibAllocator = nullptr;
-    ExternalSource *stdLibAstCache = nullptr;
+    ArenaExternalSources *stdLibAstCache = nullptr;
     std::unordered_set<varbinder::ETSBinder *> allocatedVarbinders;
 };
 
@@ -82,7 +82,6 @@ struct Context {
 
     void PushChecker(checker::Checker *checker)
     {
-        parserProgram->PushChecker(checker);
         checkers_.push_back(checker);
     }
 
@@ -105,16 +104,6 @@ struct Context {
         analyzers_.clear();
     }
 
-    util::StringView GetDupProgramOriginalPath(util::StringView oldPath)
-    {
-        if (auto it = dupPrograms.find(oldPath); it != dupPrograms.end()) {
-            return it->second->AbsoluteName();
-        }
-        return oldPath;
-    }
-
-    void MarkGenAbcForExternal(std::unordered_set<std::string> &genAbcList, public_lib::ExternalSource &extSources);
-
     ConfigImpl *config = nullptr;
     EHeap::Scope *eheapScope = nullptr;
 
@@ -129,7 +118,11 @@ struct Context {
     CodeGenCb codeGenCb;
     compiler::PhaseManager *phaseManager = nullptr;
 
+    // NOTE(dkofanov)): The "main" program.
+    // Keeps so called external sources.
+    // Should be renamed or revised completely (taking into account "simultaneous" mode):
     parser::Program *parserProgram = nullptr;
+
     parser::ParserImpl *parser = nullptr;
     compiler::Emitter *emitter = nullptr;
     pandasm::Program *program = nullptr;
@@ -140,13 +133,11 @@ struct Context {
     std::string errorMessage;
     lexer::SourcePosition errorPos;
 
-    ExternalSources externalSources;
     bool isExternal = false;
     bool isLspUsage = false;
     bool compiledByCapi = false;
     bool lazyCheck = true;
     std::vector<std::string> sourceFileNames;
-    std::map<util::StringView, parser::Program *> dupPrograms {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 private:

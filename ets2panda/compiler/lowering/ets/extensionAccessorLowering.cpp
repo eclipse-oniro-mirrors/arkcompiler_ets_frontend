@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -126,13 +126,13 @@ static ir::AstNode *CheckAndReturnNode(checker::ETSChecker *checker, ir::AstNode
 
 using AstNodePtr = ir::AstNode *;
 
-bool ExtensionAccessorPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool ExtensionAccessorPhase::PerformForProgram(parser::Program *program)
 {
     if (program->Extension() != ScriptExtension::ETS) {
         return true;
     }
 
-    checker::ETSChecker *const checker = ctx->GetChecker()->AsETSChecker();
+    checker::ETSChecker *const checker = Context()->GetChecker()->AsETSChecker();
     program->Ast()->TransformChildrenRecursively(
         [&checker](ir::AstNode *const node) -> AstNodePtr { return CheckAndReturnNode(checker, node); }, Name());
     return true;

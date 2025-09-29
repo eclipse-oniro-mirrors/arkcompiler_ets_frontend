@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,14 +24,13 @@ class ETSParser;
 
 namespace ark::es2panda::compiler {
 
-class ObjectIteratorLowering : public PhaseForBodies {
+class ObjectIteratorLowering : public PhaseForProgramsWithBodies_LEGACY {
 public:
     std::string_view Name() const override;
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+    bool PerformForProgram(parser::Program *program) override;
 
 private:
-    [[nodiscard]] ir::Statement *ProcessObjectIterator(public_lib::Context *ctx,
-                                                       ir::ForOfStatement *forOfStatement) const;
+    [[nodiscard]] ir::Statement *ProcessObjectIterator(ir::ForOfStatement *forOfStatement) const;
 
     void TransferForOfLoopBody(ir::Statement *forBody, ir::BlockStatement *whileBody) const noexcept;
 };

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -147,10 +147,10 @@ static int checkDoubleOutput(util::Options *options, util::DiagnosticEngine &dia
     if (!options->WasSetArktsconfig()) {
         return 0;
     }
-    std::string outdir = ParentPath(ark::os::GetAbsolutePath(options->ArkTSConfig()->ConfigPath()));
+    std::string outdir = ParentPath(ark::os::GetAbsolutePath(options->ArkTSConfig().ConfigPath()));
     std::string output =
         ark::os::RemoveExtension(ark::es2panda::util::BaseName(options->SourceFileName())).append(".abc");
-    if (options->ArkTSConfig()->OutDir() != outdir && options->GetOutput() != output) {
+    if (options->ArkTSConfig().OutDir() != outdir && options->GetOutput() != output) {
         diagnosticEngine.LogDiagnostic(diagnostic::REWRITE_OUTPUT_IN_CLI,
                                        ark::es2panda::util::DiagnosticMessageParams());
         return 1;
@@ -191,10 +191,7 @@ static int Run(Span<const char *const> args)
     } else {
         std::string sourceFile;
         std::string_view parserInput;
-        if (options->GetCompilationMode() == CompilationMode::GEN_STD_LIB) {
-            sourceFile = "etsstdlib.ets";
-            parserInput = "";
-        } else {
+        if (options->GetCompilationMode() != CompilationMode::GEN_STD_LIB) {
             sourceFile = options->SourceFileName();
             auto [buf, size] = options->CStrParserInputContents();
             parserInput = std::string_view(buf, size);

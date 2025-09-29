@@ -98,99 +98,93 @@ static public_lib::Context::CodeGenCb MakeCompileJob()
     };
 }
 
-static bool CheckOptionsBeforePhase(const util::Options &options, const parser::Program &program,
-                                    const std::string &name)
+static bool CheckOptionsBeforePhase(const public_lib::Context &context, const std::string &name)
 {
+    const auto &options = *context.config->options;
     if (options.GetDumpBeforePhases().count(name) > 0U) {
         std::cout << "Before phase " << name << ":\n";
-        std::cout << program.Dump() << std::endl;
+        std::cout << context.parserProgram->Dump() << std::endl;
     }
 
     if (options.GetDumpEtsSrcBeforePhases().count(name) > 0U) {
         std::cout << "Before phase " << name << " ets source:\n";
-        std::cout << program.Ast()->DumpEtsSrc() << std::endl;
+        std::cout << context.parserProgram->Ast()->DumpEtsSrc() << std::endl;
     }
 
     return options.GetExitBeforePhase() == name;
 }
 
-static void WriteStringToFile(std::string &&str, util::DiagnosticEngine &diagnosticEngine,
-                              const std::string &outputPath)
+static void WriteStringToFile(public_lib::Context *context, const std::string &outputPath, std::string_view contents)
 {
-    //  Don't generate declarations for source code with errors!
-    if (diagnosticEngine.IsAnyError()) {
-        return;
-    }
-
     std::ofstream outFile(outputPath);
     if (!outFile.is_open()) {
-        diagnosticEngine.LogFatalError(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {outputPath},
-                                       lexer::SourcePosition());
+        context->diagnosticEngine->LogFatalError(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {outputPath},
+                                                 lexer::SourcePosition());
         return;
     }
 
-    outFile << str;
+    outFile << contents;
     outFile.close();
-
-    // Try to add generated declaration to the cache (if it is activated)
-    parser::DeclarationCache::CacheIfPossible(outputPath, std::make_shared<std::string>(std::move(str)));
 }
 
-void HandleGenerateDecl(const parser::Program &program, public_lib::Context *context, const std::string &outputPath)
+void HandleGenerateDecl(public_lib::Context *context, const parser::Program *program, const std::string &outputPath)
 {
     ir::Declgen dg {context};
     ir::SrcDumper dumper {&dg};
-    program.Ast()->Dump(&dumper);
+    program->Ast()->Dump(&dumper);
     dumper.GetDeclgen()->Run();
     dumper.DumpExports();
 
     std::string res = "'use static'\n";
     dg.DumpImports(res);
     res += dumper.Str();
-    WriteStringToFile(std::move(res), *context->diagnosticEngine, outputPath);
-}
 
-std::string ResolveDeclsOutputPath(const util::Options &options)
-{
-    if (!options.WasSetGenerateDeclPath()) {
-        return ark::os::RemoveExtension(util::BaseName(options.SourceFileName()))
-            .append(util::ImportPathManager::CACHE_SUFFIX);
+    std::string_view textToWrite;
+    if (context->config->options->IsStoreDeclarationCacheDirectlyInMemory()) {
+        using DC = parser::DeclarationCache;
+        textToWrite = DC::PromoteExistingEntryToLowdeclaration(program->GetImportMetadata(), std::move(res));
+    } else {
+        textToWrite = res;
     }
-    return options.GetGenerateDeclPath();
+
+    WriteStringToFile(context, outputPath, textToWrite);
 }
 
-static bool CheckOptionsAfterPhase(const util::Options &options, const parser::Program &program,
-                                   const std::string &name)
+static bool CheckOptionsAfterPhase(const public_lib::Context &context, const std::string &name)
 {
+    const auto &options = *context.config->options;
     if (options.GetDumpAfterPhases().count(name) > 0U) {
         std::cout << "After phase " << name << ":\n";
-        std::cout << program.Dump() << std::endl;
+        std::cout << context.parserProgram->Dump() << std::endl;
     }
 
     if (options.GetDumpEtsSrcAfterPhases().count(name) > 0U) {
         std::cout << "After phase " << name << " ets source:\n";
-        std::cout << program.Ast()->DumpEtsSrc() << std::endl;
+        std::cout << context.parserProgram->Ast()->DumpEtsSrc() << std::endl;
     }
 
     return options.GetExitAfterPhase() == name;
 }
 
-static void GenDeclsForStdlib(public_lib::Context &context, const util::Options &options,
-                              const parser::Program &program)
+static void GenDeclsForStdlib(public_lib::Context *context)
 {
-    for (const auto &[moduleName, extPrograms] : program.ExternalSources()) {
-        ir::Declgen dg {&context};
+    ES2PANDA_ASSERT(context->config->options->IsGenStdlib());
+    context->parserProgram->GetExternalSources()->Visit([context](parser::PackageProgram *extProgram) {
+        ir::Declgen dg {context};
         ir::SrcDumper dumper {&dg};
-        for (const auto *extProg : extPrograms) {
-            extProg->Ast()->Dump(&dumper);
+        ES2PANDA_ASSERT(!extProgram->GetUnmergedPackagePrograms().empty());
+        // NOTE(dkofanov): stdlib is not merged yet, but should be in 'PackageImplicitImport' lowering.
+        for (const auto *fraction : extProgram->GetUnmergedPackagePrograms()) {
+            fraction->Ast()->Dump(&dumper);
         }
         dumper.GetDeclgen()->Run();
         dumper.DumpExports();
 
-        std::string path = moduleName.Mutf8() + std::string(util::ImportPathManager::CACHE_SUFFIX);
-        if (options.WasSetGenerateDeclPath()) {
+        // NOTE(dkofanov): #32416 'ImportPathManager::FormEtscacheFilePath' should be used instead.
+        std::string path = std::string(extProgram->ModuleName()) + std::string(util::ImportPathManager::CACHE_SUFFIX);
+        if (context->config->options->WasSetGenerateDeclPath()) {
             // NOTE: "/" at the end needed because of bug in GetParentDir
-            auto parentDir = ark::os::GetParentDir(options.GetGenerateDeclPath() + "/");
+            auto parentDir = ark::os::GetParentDir(context->config->options->GetGenerateDeclPath() + "/");
             ark::os::CreateDirectories(parentDir);
             path = parentDir.append("/").append(path);
         }
@@ -198,21 +192,32 @@ static void GenDeclsForStdlib(public_lib::Context &context, const util::Options 
         std::string res = "'use static'\n";
         dg.DumpImports(res);
         res += dumper.Str();
-        WriteStringToFile(std::move(res), *context.diagnosticEngine, path);
+
+        WriteStringToFile(context, path, std::move(res));
+    });
+}
+
+// NOTE(dkofanov): #32416 'ImportPathManager::FormEtscacheFilePath' should be used instead.
+static std::string ResolveDeclsOutputPath(const public_lib::Context &context)
+{
+    if (!context.config->options->WasSetGenerateDeclPath()) {
+        return ark::os::RemoveExtension(util::BaseName(context.config->options->SourceFileName()))
+            .append(util::ImportPathManager::CACHE_SUFFIX);
     }
+    return context.config->options->GetGenerateDeclPath();
 }
 
 // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
-static bool RunVerifierAndPhases(public_lib::Context &context, parser::Program &program)
+static bool RunVerifierAndPhases(public_lib::Context *context)
 {
-    const auto &options = *context.config->options;
+    const auto &options = *context->config->options;
     const auto verifierEachPhase = options.IsAstVerifierEachPhase();
 
-    ast_verifier::ASTVerifier verifier(context, program);
+    ast_verifier::ASTVerifier verifier(*context);
     verifier.Before();
 
     bool afterCheckerPhase = false;
-    while (auto phase = context.phaseManager->NextPhase()) {
+    while (auto phase = context->phaseManager->NextPhase()) {
         const auto name = std::string {phase->Name()};
         if (name == "plugins-after-check") {
             afterCheckerPhase = true;
@@ -223,8 +228,8 @@ static bool RunVerifierAndPhases(public_lib::Context &context, parser::Program &
             continue;
         }
 
-        if (CheckOptionsBeforePhase(options, program, name) || !phase->Apply(&context, &program) ||
-            CheckOptionsAfterPhase(options, program, name)) {
+        if (CheckOptionsBeforePhase(*context, name) || !phase->Apply(context) ||
+            CheckOptionsAfterPhase(*context, name)) {
             return false;
         }
 
@@ -234,15 +239,16 @@ static bool RunVerifierAndPhases(public_lib::Context &context, parser::Program &
         }
 
         // Stop lowerings processing after Checker phase if any error happened.
-        if (afterCheckerPhase && context.diagnosticEngine->IsAnyError()) {
+        if (afterCheckerPhase && context->diagnosticEngine->IsAnyError()) {
             return false;
         }
 
-        if (options.IsGenerateDeclEnabled() && name == compiler::CheckerPhase::NAME) {
+        if (options.IsGenerateDeclEnabled() && name == compiler::CheckerPhase::NAME &&
+            !context->diagnosticEngine->IsAnyError()) {
             if (options.IsGenStdlib()) {
-                GenDeclsForStdlib(context, options, program);
+                GenDeclsForStdlib(context);
             } else {
-                HandleGenerateDecl(program, &context, ResolveDeclsOutputPath(options));
+                HandleGenerateDecl(context, context->parserProgram, ResolveDeclsOutputPath(*context));
             }
         }
     }
@@ -251,25 +257,25 @@ static bool RunVerifierAndPhases(public_lib::Context &context, parser::Program &
     return true;
 }
 
-static bool RunPhases(public_lib::Context &context, parser::Program &program)
+static bool RunPhases(public_lib::Context *context)
 {
-    const auto &options = *context.config->options;
+    const auto &options = *context->config->options;
 
-    while (auto phase = context.phaseManager->NextPhase()) {
+    while (auto phase = context->phaseManager->NextPhase()) {
         const auto name = std::string {phase->Name()};
         if (options.GetSkipPhases().count(name) > 0) {
             continue;
         }
 
-        if (CheckOptionsBeforePhase(options, program, name)) {
+        if (CheckOptionsBeforePhase(*context, name)) {
             return false;
         }
 
-        if (!phase->Apply(&context, &program)) {
+        if (!phase->Apply(context)) {
             return false;
         }
 
-        if (CheckOptionsAfterPhase(options, program, name)) {
+        if (CheckOptionsAfterPhase(*context, name)) {
             return false;
         }
     }
@@ -277,29 +283,16 @@ static bool RunPhases(public_lib::Context &context, parser::Program &program)
     return true;
 }
 
-static void CreateDebuggerEvaluationPlugin(checker::ETSChecker &checker, ArenaAllocator &allocator,
-                                           parser::Program *program, const util::Options &options)
-{
-    // Sometimes evaluation mode might work without project context.
-    // In this case, users might omit context files.
-    if (options.IsDebuggerEval() && !options.GetDebuggerEvalPandaFiles().empty()) {
-        auto *plugin = allocator.New<evaluate::ScopedDebugInfoPlugin>(program, &checker, options);
-        checker.SetDebugInfoPlugin(plugin);
-    }
-}
-
 using EmitCb = std::function<pandasm::Program *(public_lib::Context *)>;
 using PhaseListGetter = std::function<std::vector<compiler::Phase *>(ScriptExtension)>;
 
-[[maybe_unused]] static void MarkAsLowered(parser::Program &program)
+static void MarkAsLowered(public_lib::Context *ctx)
 {
-    for (auto &[name, extPrograms] : program.ExternalSources()) {
-        for (auto &extProgram : extPrograms) {
-            if (!extProgram->IsASTLowered()) {
-                extProgram->MarkASTAsLowered();
-            }
+    ctx->parserProgram->GetExternalSources()->Visit([](auto *extProg) {
+        if (!extProg->IsASTLowered()) {
+            extProg->MarkASTAsLowered();
         }
-    }
+    });
 }
 
 static pandasm::Program *EmitProgram(CompilerImpl *compilerImpl, public_lib::Context *context)
@@ -312,13 +305,8 @@ static pandasm::Program *EmitProgram(CompilerImpl *compilerImpl, public_lib::Con
 
 static bool ParseAndRunPhases(const CompilationUnit &unit, public_lib::Context *context)
 {
+    ES2PANDA_ASSERT(context->parserProgram == nullptr);
     ES2PANDA_PERF_SCOPE("@phases");
-    parser::Program *program = context->parserProgram;
-    if (unit.ext == ScriptExtension::ETS) {
-        if (context->config->options->IsUseDeclarationCache()) {
-            parser::DeclarationCache::ActivateCache();
-        }
-    }
 
     if (context->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE &&
         context->config->options->GetExtension() == ScriptExtension::ETS) {
@@ -335,27 +323,24 @@ static bool ParseAndRunPhases(const CompilationUnit &unit, public_lib::Context *
             context->diagnosticEngine->LogDiagnostic(diagnostic::NO_INPUT, util::DiagnosticMessageParams {});
             return false;
         }
-
-        parser::ETSParser::AddGenExtenralSourceToParseList(context);
-        std::unordered_set<std::string> sourceFileNamesSet {context->sourceFileNames.begin(),
-                                                            context->sourceFileNames.end()};
-        context->MarkGenAbcForExternal(sourceFileNamesSet, context->parserProgram->ExternalSources());
+        context->parser->AsETSParser()->ParseInSimultMode();
     } else {
-        context->parser->ParseScript(unit.input, unit.options.GetCompilationMode() == CompilationMode::GEN_STD_LIB);
+        context->parser->ParseGlobal();
     }
+    ES2PANDA_ASSERT(context->parserProgram != nullptr);
 
     //  We have to check the return status of 'RunVerifierAndPhase` and 'RunPhases` separately because there can be
     //  some internal errors (say, in Post-Conditional check) or terminate options (say in 'CheckOptionsAfterPhase')
     //  that were not reported to the log.
     if (unit.ext == ScriptExtension::ETS) {
-        if (!RunVerifierAndPhases(*context, *program)) {
+        if (!RunVerifierAndPhases(context)) {
             return false;
         }
     } else if (context->diagnosticEngine->IsAnyError()) {
-        if (unit.options.IsDumpAst()) {
-            std::cout << program->Dump() << std::endl;
+        if (context->config->options->IsDumpAst()) {
+            std::cout << context->parserProgram->Dump() << std::endl;
         }
-    } else if (!RunPhases(*context, *program)) {
+    } else if (!RunPhases(context)) {
         return false;
     }
 
@@ -374,27 +359,29 @@ static pandasm::Program *ClearContextAndReturnProgam(public_lib::Context *contex
     return program;
 }
 
-template <typename Parser, typename VarBinder, typename Checker, typename Analyzer, typename AstCompiler,
-          typename CodeGen, typename RegSpiller, typename FunctionEmitter, typename Emitter>
+// NOTE(dkofanov): should be alligned with the public-lib context initialization and processing.
+template <typename Parser, typename Checker, typename Analyzer, typename AstCompiler, typename CodeGen,
+          typename RegSpiller, typename FunctionEmitter, typename Emitter>
 static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *compilerImpl, public_lib::Context *context)
 {
     ir::DisableContextHistory();
+    parser::DeclarationCache::ActivateCache();
+
     auto config = public_lib::ConfigImpl {};
     auto phaseManager = compiler::PhaseManager(context, unit.ext, context->allocator);
     context->config = &config;
     context->config->options = &unit.options;
-    context->sourceFile = &unit.input;
     context->queue = compilerImpl->Queue();
     context->plugins = &compilerImpl->Plugins();
-    auto varBinder = VarBinder(context->allocator);
-    auto program = parser::Program::NewProgram<VarBinder>(context->allocator, &varBinder);
-    auto parser =
-        Parser(&program, unit.options, unit.diagnosticEngine, static_cast<parser::ParserStatus>(unit.rawParserStatus));
-    parser.SetContext(context);
+
+    // NOTE(dkofanov): #32416 eliminate 'SourceFile' and 'CompilationUnit'
+    context->input = unit.input.source;
+    context->sourceFileName = unit.input.filePath;
+    context->sourceFile = &unit.input;
+    auto parser = Parser(context, static_cast<parser::ParserStatus>(unit.rawParserStatus));
     context->parser = &parser;
-    parser.SetContext(context);
+
     auto checker = Checker(context->allocator, unit.diagnosticEngine);
-    context->parserProgram = &program;
     context->PushChecker(&checker);
     auto analyzer = Analyzer(&checker);
     checker.SetAnalyzer(&analyzer);
@@ -403,21 +390,14 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
     context->diagnosticEngine = &unit.diagnosticEngine;
     context->phaseManager = &phaseManager;
 
-    if constexpr (std::is_same_v<Checker, checker::ETSChecker>) {
-        CreateDebuggerEvaluationPlugin(checker, *context->allocator, &program, unit.options);
-    }
     auto emitter = Emitter(context);
     context->emitter = &emitter;
-    auto *varbinder = program.VarBinder();
-    varbinder->SetProgram(&program);
-    varbinder->SetContext(context);
-    context->GetChecker()->Initialize(varbinder);
 
     if (!ParseAndRunPhases(unit, context)) {
         return ClearContextAndReturnProgam(context, nullptr);
     }
 
-    MarkAsLowered(program);
+    MarkAsLowered(context);
     return ClearContextAndReturnProgam(context, EmitProgram(compilerImpl, context));
 }
 
@@ -425,24 +405,24 @@ pandasm::Program *CompilerImpl::Compile(const CompilationUnit &unit, public_lib:
 {
     switch (unit.ext) {
         case ScriptExtension::TS: {
-            return compiler::Compile<parser::TSParser, varbinder::TSBinder, checker::TSChecker, checker::TSAnalyzer,
-                                     compiler::JSCompiler, compiler::PandaGen, compiler::DynamicRegSpiller,
-                                     compiler::JSFunctionEmitter, compiler::JSEmitter>(unit, this, context);
+            return compiler::Compile<parser::TSParser, checker::TSChecker, checker::TSAnalyzer, compiler::JSCompiler,
+                                     compiler::PandaGen, compiler::DynamicRegSpiller, compiler::JSFunctionEmitter,
+                                     compiler::JSEmitter>(unit, this, context);
         }
         case ScriptExtension::AS: {
-            return compiler::Compile<parser::ASParser, varbinder::ASBinder, checker::ASChecker, checker::TSAnalyzer,
-                                     compiler::JSCompiler, compiler::PandaGen, compiler::DynamicRegSpiller,
-                                     compiler::JSFunctionEmitter, compiler::JSEmitter>(unit, this, context);
+            return compiler::Compile<parser::ASParser, checker::ASChecker, checker::TSAnalyzer, compiler::JSCompiler,
+                                     compiler::PandaGen, compiler::DynamicRegSpiller, compiler::JSFunctionEmitter,
+                                     compiler::JSEmitter>(unit, this, context);
         }
         case ScriptExtension::ETS: {
-            return compiler::Compile<parser::ETSParser, varbinder::ETSBinder, checker::ETSChecker, checker::ETSAnalyzer,
+            return compiler::Compile<parser::ETSParser, checker::ETSChecker, checker::ETSAnalyzer,
                                      compiler::ETSCompiler, compiler::ETSGen, compiler::StaticRegSpiller,
                                      compiler::ETSFunctionEmitter, compiler::ETSEmitter>(unit, this, context);
         }
         case ScriptExtension::JS: {
-            return compiler::Compile<parser::JSParser, varbinder::JSBinder, checker::JSChecker, checker::TSAnalyzer,
-                                     compiler::JSCompiler, compiler::PandaGen, compiler::DynamicRegSpiller,
-                                     compiler::JSFunctionEmitter, compiler::JSEmitter>(unit, this, context);
+            return compiler::Compile<parser::JSParser, checker::JSChecker, checker::TSAnalyzer, compiler::JSCompiler,
+                                     compiler::PandaGen, compiler::DynamicRegSpiller, compiler::JSFunctionEmitter,
+                                     compiler::JSEmitter>(unit, this, context);
         }
         default: {
             ES2PANDA_UNREACHABLE();

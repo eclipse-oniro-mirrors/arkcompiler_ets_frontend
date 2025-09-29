@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -181,8 +181,8 @@ SignatureHelpItems GetSignature(es2panda_Context *context, size_t position)
     }
 
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto sourceCode = ctx->parserProgram->SourceCode();
-    if (position >= sourceCode.Length()) {
+    const auto sourceCode = ctx->parserProgram->SourceCode();
+    if (position >= sourceCode.length()) {
         return res;
     }
 

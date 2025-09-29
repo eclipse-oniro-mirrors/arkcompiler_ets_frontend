@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,11 +19,17 @@
 #include <atomic>
 #include <limits>
 #include <memory>
+#include <mutex>
 #include <shared_mutex>
 #include <string>
 #include <unordered_map>
 
-#include "libarkbase/macros.h"
+#include "util/es2pandaMacros.h"
+
+namespace ark::es2panda::util {
+class ImportMetadata;
+enum class ModuleKind : uint8_t;
+}  // namespace ark::es2panda::util
 
 namespace ark::es2panda::parser {
 
@@ -78,53 +84,138 @@ public:
     bool try_lock_shared();  // CC-OFF(G.NAM.03-CPP) project code style // NOLINT(readability-identifier-naming)
 };
 
-using DeclarationType = std::shared_ptr<std::string>;
-
 class DeclarationCache final {
-    struct Tag {};
+private:
+    DeclarationCache();
 
 public:
-    inline static DeclarationType const ABSENT {};  // NOLINT(fuchsia-statically-constructed-objects)
+    struct CacheReference {
+    public:
+        std::string_view Text() const
+        {
+            return text_;
+        }
 
-    DeclarationCache() = delete;
+        std::string_view TextSource() const
+        {
+            return textSource_;
+        }
+
+        std::string_view Key() const
+        {
+            return key_;
+        }
+
+        auto Kind() const
+        {
+            return kind_;
+        }
+
+    protected:
+        template <util::ModuleKind KIND, bool SHOULD_CACHE>
+        void Set(std::string textSource, std::string &&contents)
+        {
+            Set(DeclarationCache::StoreContents<KIND, SHOULD_CACHE>(*this, textSource, std::move(contents)));
+            ES2PANDA_ASSERT(KIND == Kind());
+        }
+
+        void Set(CacheReference ref)
+        {
+            ES2PANDA_ASSERT(Key() == ref.Key());
+            kind_ = ref.kind_;
+            textSource_ = ref.textSource_;
+            text_ = ref.text_;
+        }
+
+        // NOTE(dkofanov): 'key_' should be immutable after packages are eliminated.
+        void SetKey(std::string_view key)
+        {
+            key_ = key;
+        }
+
+        bool CanBePromoted() const;
+
+        bool Absent() const;
+
+    private:
+        // CC-OFFNXT(G.NAM.03-CPP) project codestyle
+        std::string_view key_ {};
+        // CC-OFFNXT(G.NAM.03-CPP) project codestyle
+        util::ModuleKind kind_ {};
+        // CC-OFFNXT(G.NAM.03-CPP) project codestyle
+        std::string_view text_ {};
+        // CC-OFFNXT(G.NAM.03-CPP) project codestyle
+        std::string_view textSource_ {};
+
+        friend DeclarationCache;
+    };
+
     ~DeclarationCache();
 
     NO_COPY_SEMANTIC(DeclarationCache);
     NO_MOVE_SEMANTIC(DeclarationCache);
 
-    explicit DeclarationCache(Tag &&tag);
-
     static void ActivateCache();
 
-    [[nodiscard]] static bool IsCacheActivated() noexcept;
+    static bool IsCacheActivated() noexcept;
 
     static void ClearAll() noexcept;
 
-    static void RemoveFromCache(std::string const &fileName) noexcept;
+    static void GetFromCache(CacheReference *importData) noexcept;
 
-    [[nodiscard]] static DeclarationType GetFromCache(std::string const &fileName) noexcept;
+    template <util::ModuleKind KIND, bool SHOULD_CACHE>
+    static CacheReference StoreContents(const CacheReference &importData, std::string textSource, std::string &&text)
+    {
+        auto cache = DeclarationCache::Instance();
+        ES2PANDA_ASSERT(cache != nullptr);
+        return cache->Add<KIND, SHOULD_CACHE>(importData, textSource, std::move(text));
+    }
 
-    static DeclarationType CacheIfPossible(std::string fileName, DeclarationType decl);
+    static std::string_view PromoteExistingEntryToLowdeclaration(const CacheReference &importData, std::string &&text);
 
 private:
-    static std::shared_ptr<DeclarationCache> Instance() noexcept;
+    static DeclarationCache *Instance() noexcept;
 
     void Clear() noexcept;
-    void Remove(std::string const &fileName) noexcept;
 
-    DeclarationType Get(std::string const &fileName) const noexcept;
-    DeclarationType Add(std::string fileName, DeclarationType decl);
+    void Get(CacheReference *importData) const noexcept;
+
+    template <util::ModuleKind KIND, bool SHOULD_CACHE>
+    CacheReference Add(const CacheReference &importData, std::string textSource, std::string &&text)
+    {
+        std::scoped_lock lock(dataGuard_);
+        const auto &newElem = textsStorage_.emplace_back(
+            std::make_unique<NamedText>(std::string(importData.Key()), textSource, std::move(text)));
+        DeclarationCache::CacheReference ref {};
+        std::tie(ref.key_, ref.textSource_, ref.text_) = *newElem;
+        ref.kind_ = KIND;
+
+        if constexpr (SHOULD_CACHE) {
+            if (auto it = declarations_.find(std::string(importData.Key())); it != declarations_.end()) {
+                if (!it->second.CanBePromoted() || ref.CanBePromoted()) {
+                    return ref;
+                }
+                if (ref.TextSource().empty()) {
+                    ref.textSource_ = it->second.textSource_;
+                }
+            }
+            declarations_[std::string(ref.Key())] = ref;
+        }
+        return ref;
+    }
 
 private:
-private:
-    inline static std::shared_mutex globalGuard_ {};
+    static std::shared_mutex globalGuard_;
     // NOLINTNEXTLINE(fuchsia-statically-constructed-objects)
-    inline static std::shared_ptr<DeclarationCache> globalDeclarationCache_ = nullptr;
+    static DeclarationCache *globalDeclarationCache_;
 
 private:
     //  Synchronization object to control access to cached data:
-    mutable ReadWriteSpinMutex dataGuard_ {};
-    std::unordered_map<std::string, DeclarationType> declarations_ {};
+    mutable std::shared_mutex dataGuard_ {};
+    using NamedText = std::tuple<std::string, std::string, std::string>;
+    std::vector<std::unique_ptr<NamedText>> textsStorage_ {};
+    // mapping from importMetadata
+    std::unordered_map<std::string, CacheReference> declarations_ {};
 };
 
 }  // namespace ark::es2panda::parser

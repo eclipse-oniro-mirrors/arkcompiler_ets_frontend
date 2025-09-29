@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -306,12 +306,11 @@ static void ProcessGlobalFunctionDefinition(ir::MethodDefinition *method, public
     ClearOptionalParameters(ctx, method->Function());
 }
 
-bool DefaultParametersInConstructorLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool DefaultParametersInConstructorLowering::PerformForProgram(parser::Program *program)
 {
-    util::DiagnosticEngine *logger = ctx->diagnosticEngine;
     std::vector<ir::MethodDefinition *> foundNodes {};
 
-    program->Ast()->IterateRecursively([&foundNodes, logger](ir::AstNode *ast) {
+    program->Ast()->IterateRecursively([&foundNodes, logger = DE()](ir::AstNode *ast) {
         if (ast->IsMethodDefinition() && ast->AsMethodDefinition()->IsConstructor()) {
             if (HasDefaultParameters(ast->AsMethodDefinition()->Function(), *logger)) {
                 // store all nodes (which is function definition with default/optional parameters)
@@ -323,13 +322,12 @@ bool DefaultParametersInConstructorLowering::PerformForModule(public_lib::Contex
     });
 
     for (auto *it : foundNodes) {
-        ProcessGlobalFunctionDefinition(it, ctx);
+        ProcessGlobalFunctionDefinition(it, Context());
     }
     return true;
 }
 
-bool DefaultParametersInConstructorLowering::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx,
-                                                                    parser::Program const *program)
+bool DefaultParametersInConstructorLowering::PostconditionForProgram(parser::Program const *program)
 {
     return !program->Ast()->IsAnyChild([](ir::AstNode const *node) {
         if (!node->IsMethodDefinition() || !node->AsMethodDefinition()->IsConstructor()) {

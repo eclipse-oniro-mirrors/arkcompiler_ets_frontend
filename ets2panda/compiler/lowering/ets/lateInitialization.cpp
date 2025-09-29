@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,7 @@ namespace ark::es2panda::compiler {
 
 using AstNodePtr = ir::AstNode *;
 
-ir::ClassProperty *TransformerClassProperty(public_lib::Context *ctx, ir::ClassProperty *property)
+static ir::ClassProperty *TransformerClassProperty(public_lib::Context *ctx, ir::ClassProperty *property)
 {
     auto checker = ctx->GetChecker()->AsETSChecker();
     auto allocator = ctx->allocator;
@@ -84,10 +84,10 @@ static ir::AstNode *TransformerMemberExpression(ir::MemberExpression *memberExpr
     return res;
 }
 
-bool LateInitializationConvert::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool LateInitializationConvert::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
-        [ctx](ir::AstNode *node) -> AstNodePtr {
+        [ctx = Context()](ir::AstNode *node) -> AstNodePtr {
             if (node->IsMemberExpression()) {
                 auto property = node->AsMemberExpression()->Property();
                 if (!(property->IsIdentifier() && property->AsIdentifier()->Variable() != nullptr)) {
@@ -104,7 +104,7 @@ bool LateInitializationConvert::PerformForModule(public_lib::Context *ctx, parse
         Name());
 
     program->Ast()->TransformChildrenRecursively(
-        [ctx](ir::AstNode *node) -> AstNodePtr {
+        [ctx = Context()](ir::AstNode *node) -> AstNodePtr {
             if (node->IsClassProperty() && node->IsDefinite()) {
                 return TransformerClassProperty(ctx, node->AsClassProperty());
             }

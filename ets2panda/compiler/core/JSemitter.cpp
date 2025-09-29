@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,7 +53,7 @@ void JSFunctionEmitter::GenVariableSignature(pandasm::debuginfo::LocalVariable &
 
 void JSFunctionEmitter::GenSourceFileDebugInfo(pandasm::Function *func)
 {
-    func->sourceFile = std::string {Cg()->VarBinder()->Program()->RelativeFilePath()};
+    func->sourceFile = std::string {Cg()->VarBinder()->Program()->RelativeFilePath(Cg()->Context())};
 
     if (!Cg()->IsDebug()) {
         return;
@@ -90,7 +90,7 @@ void JSEmitter::GenAnnotation()
 #ifdef PANDA_WITH_ECMASCRIPT
     Program()->lang = panda_file::SourceLang::ECMASCRIPT;
     GenESAnnotationRecord();
-    GenESModuleModeRecord(Context()->parserProgram->Kind() == parser::ScriptKind::MODULE);
+    GenESModuleModeRecord(Context()->config->options->IsModule());
 #else
     ES2PANDA_UNREACHABLE();
 #endif

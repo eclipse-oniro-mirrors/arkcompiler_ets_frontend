@@ -363,21 +363,16 @@ extern "C" __attribute__((unused)) void InvalidateFileCache(es2panda_GlobalConte
 
 static void InitializeContext(Context *res)
 {
+    parser::DeclarationCache::ActivateCache();
     res->phaseManager = new compiler::PhaseManager(res, ScriptExtension::ETS, res->allocator);
     res->queue = new compiler::CompileQueue(res->config->options->GetThread());
 
-    auto *varbinder = new varbinder::ETSBinder(res->allocator);
-    res->parserProgram = res->allocator->New<parser::Program>(res->allocator, varbinder);
-    res->parser = new parser::ETSParser(res->parserProgram, *res->config->options, *res->diagnosticEngine,
-                                        parser::ParserStatus::NO_OPTS);
-    res->parser->SetContext(res);
+    res->parser = new parser::ETSParser(res, parser::ParserStatus::NO_OPTS);
 
     res->PushChecker(res->allocator->New<checker::ETSChecker>(res->allocator, *res->diagnosticEngine));
     res->PushAnalyzer(res->allocator->New<checker::ETSAnalyzer>(res->GetChecker()));
     res->GetChecker()->SetAnalyzer(res->GetAnalyzer());
 
-    varbinder->SetProgram(res->parserProgram);
-    varbinder->SetContext(res);
     res->codeGenCb = CompileJob;
     res->emitter = new compiler::ETSEmitter(res);
     res->program = nullptr;
@@ -485,7 +480,6 @@ extern "C" __attribute__((unused)) es2panda_Context *CreateContextFromFile(es2pa
     auto ss = ReadFile(sourceFileName, res);
     if (res != nullptr) {
         return reinterpret_cast<es2panda_Context *>(res);
-        ;
     }
 
     return CreateContext(config, ss.str(), sourceFileName, nullptr, false, false);
@@ -561,36 +555,20 @@ __attribute__((unused)) static Context *Parse(Context *ctx)
     ctx->phaseManager->Reset();
     ES2PANDA_PERF_SCOPE("@Parser");
 
+    ES2PANDA_ASSERT(ctx->parserProgram == nullptr);
     if (ctx->isExternal && ctx->allocator != ctx->globalContext->stdLibAllocator) {
         ctx->sourceFileNames.emplace_back(ctx->sourceFileName);
-        parser::ETSParser::AddGenExtenralSourceToParseList(ctx);
+        ctx->parser->AsETSParser()->ParseInSimultMode();
     } else if (ctx->config->options->IsSimultaneous()) {
-        parser::ETSParser::AddGenExtenralSourceToParseList(ctx);
-        std::unordered_set<std::string> sourceFileNamesSet(ctx->sourceFileNames.begin(), ctx->sourceFileNames.end());
-        ctx->MarkGenAbcForExternal(sourceFileNamesSet, ctx->parserProgram->ExternalSources());
+        ctx->parser->AsETSParser()->ParseInSimultMode();
     } else {
-        ctx->parser->ParseScript(*ctx->sourceFile,
-                                 ctx->config->options->GetCompilationMode() == CompilationMode::GEN_STD_LIB);
+        ctx->parser->ParseGlobal();
     }
+    ES2PANDA_ASSERT(ctx->parserProgram != nullptr);
+
     ctx->state = ES2PANDA_STATE_PARSED;
     ctx->phaseManager->SetCurrentPhaseIdToAfterParse();
     return ctx;
-}
-
-__attribute__((unused)) static bool SetProgramGenAbc(Context *ctx, const char *path)
-{
-    util::StringView pathView(path);
-    public_lib::Context *context = reinterpret_cast<public_lib::Context *>(ctx);
-    for (auto &[_, extPrograms] : context->externalSources) {
-        (void)_;
-        for (auto *prog : extPrograms) {
-            if (prog->AbsoluteName() == pathView) {
-                prog->SetGenAbcForExternalSources();
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 __attribute__((unused)) static Context *Bind(Context *ctx)
@@ -607,7 +585,7 @@ __attribute__((unused)) static Context *Bind(Context *ctx)
         if (phase->Name() == "plugins-after-bind") {
             break;
         }
-        phase->Apply(ctx, ctx->parserProgram);
+        phase->Apply(ctx);
     }
     ctx->state = ES2PANDA_STATE_BOUND;
     return ctx;
@@ -618,32 +596,28 @@ __attribute__((unused)) static void SaveCache(Context *ctx)
     if (ctx->allocator == ctx->globalContext->stdLibAllocator) {
         return;
     }
-    ES2PANDA_ASSERT(ctx->globalContext != nullptr &&
-                    ctx->globalContext->cachedExternalPrograms.count(ctx->sourceFileName) != 0);
-    ctx->globalContext->cachedExternalPrograms[ctx->sourceFileName] = &(ctx->parserProgram->ExternalSources());
+
+    ES2PANDA_ASSERT(ctx->globalContext != nullptr);
+    auto &cacheMap = ctx->globalContext->cachedExternalPrograms;
+    ES2PANDA_ASSERT(cacheMap.count(ctx->sourceFileName) != 0);
+    cacheMap[ctx->sourceFileName] = ctx->parserProgram;
 
     // cycle dependencies
-    for (auto &[_, extPrograms] : ctx->parserProgram->ExternalSources()) {
-        for (auto extProgram : extPrograms) {
-            auto absPath = std::string {extProgram->AbsoluteName()};
-            auto &cacheMap = ctx->globalContext->cachedExternalPrograms;
-            if (cacheMap.count(absPath) == 1 && cacheMap[absPath] == nullptr) {
-                cacheMap[absPath] = &(ctx->parserProgram->ExternalSources());
-            }
+    ctx->parserProgram->GetExternalSources()->Visit([&cacheMap](auto *extProgram) {
+        auto absPath = std::string {extProgram->AbsoluteName()};
+        if (cacheMap.count(absPath) == 1 && cacheMap[absPath] == nullptr) {
+            cacheMap[absPath] = extProgram;
         }
-    }
+    });
 }
 
 __attribute__((unused)) static void MarkAndSaveCache(Context *ctx)
 {
-    auto &externalSource = ctx->parserProgram->ExternalSources();
-    for (auto &[_, extPrograms] : externalSource) {
-        for (auto extProgram : extPrograms) {
-            if (!extProgram->IsASTLowered()) {
-                extProgram->MarkASTAsLowered();
-            }
+    ctx->parserProgram->GetExternalSources()->Visit([](auto *extProgram) {
+        if (!extProgram->IsASTLowered()) {
+            extProgram->MarkASTAsLowered();
         }
-    }
+    });
     SaveCache(ctx);
 }
 
@@ -663,7 +637,7 @@ __attribute__((unused)) static Context *Check(Context *ctx)
             break;
         }
         ES2PANDA_PERF_EVENT_SCOPE("@phases/" + std::string(phase->Name()));
-        phase->Apply(ctx, ctx->parserProgram);
+        phase->Apply(ctx);
     }
     ctx->phaseManager->SetCurrentPhaseIdToAfterCheck();
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_CHECKED : ES2PANDA_STATE_ERROR;
@@ -686,9 +660,6 @@ extern "C" void FreeCompilerPartMemory(es2panda_Context *context)
     ctx->sourceFile = nullptr;
     delete ctx->phaseManager;
     if (!ctx->isExternal) {
-        for (auto [_, varbinder] : ctx->parserProgram->VarBinders()) {
-            delete varbinder;
-        }
         delete ctx->allocator;
         ctx->allocator = nullptr;
         delete ctx->eheapScope;
@@ -714,20 +685,18 @@ __attribute__((unused)) static Context *Lower(Context *ctx)
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_CHECKED);
     while (auto phase = ctx->phaseManager->NextPhase()) {
         ES2PANDA_PERF_EVENT_SCOPE("@phases/" + std::string(phase->Name()));
-        phase->Apply(ctx, ctx->parserProgram);
+        phase->Apply(ctx);
         if (ctx->diagnosticEngine->IsAnyError()) {
             ctx->state = ES2PANDA_STATE_ERROR;
             return ctx;
         }
     }
 
-    for (auto &[_, extPrograms] : ctx->parserProgram->ExternalSources()) {
-        for (auto &extProgram : extPrograms) {
-            if (!extProgram->IsASTLowered()) {
-                extProgram->MarkASTAsLowered();
-            }
+    ctx->parserProgram->GetExternalSources()->Visit([](auto *extProgram) {
+        if (!extProgram->IsASTLowered()) {
+            extProgram->MarkASTAsLowered();
         }
-    }
+    });
     if (ctx->isExternal) {
         SaveCache(ctx);
     }
@@ -838,9 +807,6 @@ extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context
 extern "C" __attribute__((unused)) void DestroyGlobalContext(es2panda_GlobalContext *globalContext)
 {
     auto *globalCtx = reinterpret_cast<GlobalContext *>(globalContext);
-    for (auto varbinder : globalCtx->allocatedVarbinders) {
-        delete varbinder;
-    }
     for (auto [_, alloctor] : globalCtx->externalProgramAllocators) {
         delete alloctor;
     }
@@ -867,16 +833,41 @@ extern "C" __attribute__((unused)) es2panda_Program *ContextProgram(es2panda_Con
     return reinterpret_cast<es2panda_Program *>(ctx->parserProgram);
 }
 
-using ExternalSourceEntry = std::pair<char *, ArenaVector<parser::Program *> *>;
+// NOTE(dkofanov): 'Program **' should be 'Program *'.
+using ExternalSourceEntry = std::pair<char *, parser::Program *>;
 
-__attribute__((unused)) static es2panda_ExternalSource **ExternalSourcesToE2p(
-    ArenaAllocator *allocator, const parser::Program::ExternalSource &externalSources, size_t *lenP)
+extern "C" __attribute__((unused)) es2panda_ExternalSource **ProgramExternalSources(es2panda_Context *context,
+                                                                                    es2panda_Program *program,
+                                                                                    size_t *lenP)
 {
+    auto *ctx = reinterpret_cast<Context *>(context);
+    auto *allocator = ctx->allocator;
     auto *vec = allocator->New<ArenaVector<ExternalSourceEntry *>>(allocator->Adapter());
 
-    for (auto &[e_name, e_programs] : externalSources) {
-        vec->push_back(allocator->New<ExternalSourceEntry>(StringViewToCString(allocator, e_name),
-                                                           const_cast<ArenaVector<parser::Program *> *>(&e_programs)));
+    // NOTE(dkofanov): only ctx->parserProgram has non-empty externalSources.
+    auto programE2p = reinterpret_cast<parser::Program *>(program);
+    programE2p->GetExternalSources()->Visit([vec, allocator](auto *extProgram) {
+        auto key = StringViewToCString(allocator, extProgram->GetImportMetadata().ModuleName());
+        vec->emplace_back(allocator->New<ExternalSourceEntry>(key, extProgram));
+    });
+
+    *lenP = vec->size();
+    return reinterpret_cast<es2panda_ExternalSource **>(vec->data());
+}
+
+extern "C" __attribute__((unused)) es2panda_ExternalSource **ProgramDirectExternalSources(es2panda_Context *context,
+                                                                                          es2panda_Program *program,
+                                                                                          size_t *lenP)
+{
+    auto *ctx = reinterpret_cast<Context *>(context);
+    auto *allocator = ctx->allocator;
+    auto *vec = allocator->New<ArenaVector<ExternalSourceEntry *>>(allocator->Adapter());
+
+    auto programE2p = reinterpret_cast<parser::Program *>(program);
+    // NOTE(dkofanov): only ctx->parserProgram has non-empty externalSources.
+    for (auto &[name, extProgram] : programE2p->GetExternalSources()->Direct()) {
+        auto key = StringViewToCString(allocator, name);
+        vec->emplace_back(allocator->New<ExternalSourceEntry>(key, extProgram));
     }
 
     *lenP = vec->size();
@@ -893,8 +884,8 @@ extern "C" __attribute__((unused)) es2panda_Program **ExternalSourcePrograms(es2
                                                                              size_t *lenP)
 {
     auto *entry = reinterpret_cast<ExternalSourceEntry *>(eSource);
-    *lenP = entry->second->size();
-    return reinterpret_cast<es2panda_Program **>(entry->second->data());
+    *lenP = 1;
+    return reinterpret_cast<es2panda_Program **>(&entry->second);
 }
 
 extern "C" void AstNodeForEach(es2panda_AstNode *ast, void (*func)(es2panda_AstNode *, void *), void *arg)
@@ -1290,15 +1281,18 @@ extern "C" es2panda_AstNode *FirstDeclarationByNameFromProgram([[maybe_unused]] 
         return res;
     }
 
-    for (const auto &ext_source : programE2p->DirectExternalSources()) {
-        for (const auto *ext_program : ext_source.second) {
-            if (ext_program != nullptr) {
-                res = FirstDeclarationByNameFromNode(
-                    ctx, reinterpret_cast<const es2panda_AstNode *>(ext_program->Ast()), name);
-            }
-            if (res != nullptr) {
-                return res;
-            }
+    // NOTE(dkofanov): broken logic.
+    // "direct" external sources are filled only for main program.
+    // packages are not supported since order of their fractions is not determined.
+    for (const auto &ext_source : programE2p->GetExternalSources()->Direct()) {
+        const auto *ext_program = ext_source.second;
+        if (ext_program != nullptr) {
+            ES2PANDA_ASSERT(!ext_program->Is<util::ModuleKind::PACKAGE>());
+            res = FirstDeclarationByNameFromNode(ctx, reinterpret_cast<const es2panda_AstNode *>(ext_program->Ast()),
+                                                 name);
+        }
+        if (res != nullptr) {
+            return res;
         }
     }
 
@@ -1361,12 +1355,10 @@ extern "C" es2panda_AstNode **AllDeclarationsByNameFromProgram([[maybe_unused]] 
     ArenaSet<ir::AstNode *> res = AllDeclarationsByNameFromNodeHelper(allocator, programE2p->Ast(), nameE2p);
     result.insert(res.begin(), res.end());
 
-    for (const auto &ext_source : programE2p->DirectExternalSources()) {
-        for (const auto *ext_program : ext_source.second) {
-            if (ext_program != nullptr) {
-                res = AllDeclarationsByNameFromNodeHelper(allocator, ext_program->Ast(), nameE2p);
-                result.insert(res.begin(), res.end());
-            }
+    for (auto [_, ext_program] : programE2p->GetExternalSources()->Direct()) {
+        if (ext_program != nullptr) {
+            res = AllDeclarationsByNameFromNodeHelper(allocator, ext_program->Ast(), nameE2p);
+            result.insert(res.begin(), res.end());
         }
     }
 
@@ -1412,18 +1404,16 @@ static bool HandleMultiFileModeTemplate(
         return false;
     }
 
-    auto &externalSources = ctxImpl->parserProgram->DirectExternalSources();
-    for (const auto &entry : externalSources) {
-        for (auto *prog : entry.second) {
-            if (prog == nullptr || !prog->IsGenAbcForExternal()) {
-                continue;
-            }
+    for (auto [_, prog] : ctxImpl->parserProgram->GetExternalSources()->Direct()) {
+        if (prog == nullptr || !prog->IsGenAbcForExternal()) {
+            continue;
+        }
 
-            std::string inputRelativeDir = ark::os::RemoveExtension(prog->RelativeFilePath().Mutf8());
-            if (compare(pair.second, inputRelativeDir)) {
-                compiler::HandleGenerateDecl(*prog, ctxImpl, outputPath);
-                return !ctxImpl->diagnosticEngine->IsAnyError();
-            }
+        // 'ImportPathManager::FormEtscacheFilePath' should be used instead:
+        std::string inputRelativeDir = ark::os::RemoveExtension(prog->RelativeFilePath(ctxImpl));
+        if (compare(pair.second, inputRelativeDir)) {
+            compiler::HandleGenerateDecl(ctxImpl, prog, outputPath);
+            return !ctxImpl->diagnosticEngine->IsAnyError();
         }
     }
     return false;
@@ -1453,14 +1443,14 @@ __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const 
              * relativePath = package/direct1/direct2/file
              */
             const util::Options &options = *ctxImpl->config->options;
-            auto arktsConfig = options.ArkTSConfig();
-            const std::string &declgenV2OutPath = arktsConfig->DeclgenV2OutPath();
+            const auto &arktsConfig = options.ArkTSConfig();
+            const std::string &declgenV2OutPath = arktsConfig.DeclgenV2OutPath();
             if (!util::StringView(path).StartsWith(declgenV2OutPath)) {
                 return std::pair<bool, const std::string>(false, path);
             }
 
             std::string relativePath = path.substr(declgenV2OutPath.length());
-            relativePath = arktsConfig->Package() + relativePath;
+            relativePath = arktsConfig.Package() + relativePath;
             relativePath = ark::os::RemoveExtension(relativePath);
             relativePath = ark::os::RemoveExtension(relativePath);
 
@@ -1490,7 +1480,7 @@ extern "C" __attribute__((unused)) int GenerateStaticDeclarationsFromContext(es2
     }
 
     // Single file mode
-    compiler::HandleGenerateDecl(*ctxImpl->parserProgram, ctxImpl, outputPath);
+    compiler::HandleGenerateDecl(ctxImpl, ctxImpl->parserProgram, outputPath);
     return ctxImpl->diagnosticEngine->IsAnyError() ? 1 : 0;
 }
 
@@ -1514,7 +1504,7 @@ extern "C" void InsertETSImportDeclarationAndParse(es2panda_Context *context, es
     stmt.insert(stmt.begin() + insertIndex, importDeclE2p);
     importDeclE2p->SetParent(parserProgram->Ast());
 
-    ctx->parser->AsETSParser()->AddExternalSource(ctx->parser->AsETSParser()->ParseSources());
+    ctx->parser->AsETSParser()->ParseSources();
 
     for ([[maybe_unused]] auto *specific : importDeclE2p->Specifiers()) {
         ES2PANDA_ASSERT(specific->Parent() != nullptr);
@@ -1536,7 +1526,7 @@ __attribute__((unused)) static void GenerateStdLibCache(es2panda_Config *config,
                        reinterpret_cast<es2panda_AstNode *>(reinterpret_cast<Context *>(ctx)->parserProgram->Ast()));
         ProceedToState(ctx, es2panda_ContextState::ES2PANDA_STATE_LOWERED);
     }
-    globalContext->stdLibAstCache = &(reinterpret_cast<Context *>(ctx)->parserProgram->ExternalSources());
+    globalContext->stdLibAstCache = reinterpret_cast<Context *>(ctx)->parserProgram->GetExternalSources();
     DestroyContext(ctx);
 }
 
@@ -1563,6 +1553,8 @@ es2panda_Impl g_impl = {
     ContextState,
     ContextErrorMessage,
     ContextProgram,
+    ProgramExternalSources,
+    ProgramDirectExternalSources,
     ExternalSourceName,
     ExternalSourcePrograms,
     AstNodeForEach,

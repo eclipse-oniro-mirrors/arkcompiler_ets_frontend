@@ -561,8 +561,8 @@ static ir::ETSNewClassInstanceExpression *RebuildNewClassInstanceExpression(
     return newCall;
 }
 
-ir::ETSNewClassInstanceExpression *RestArgsLowering::TransformCallConstructWithRestArgs(
-    ir::ETSNewClassInstanceExpression *expr, public_lib::Context *context)
+static ir::ETSNewClassInstanceExpression *TransformCallConstructWithRestArgs(ir::ETSNewClassInstanceExpression *expr,
+                                                                             public_lib::Context *context)
 {
     checker::Signature *signature = expr->Signature();
     if (!ShouldProcessRestParameters(signature, expr->GetTypeRef()->TsType(), expr->GetArguments())) {
@@ -579,8 +579,8 @@ ir::ETSNewClassInstanceExpression *RestArgsLowering::TransformCallConstructWithR
     return RebuildNewClassInstanceExpression(context, expr, signature, arg);
 }
 
-ir::CallExpression *RestArgsLowering::TransformCallExpressionWithRestArgs(ir::CallExpression *callExpr,
-                                                                          public_lib::Context *context)
+static ir::CallExpression *TransformCallExpressionWithRestArgs(ir::CallExpression *callExpr,
+                                                               public_lib::Context *context)
 {
     checker::Type *calleeType = context->GetChecker()->AsETSChecker()->GetNormalizedType(callExpr->Callee()->TsType());
     if (calleeType == nullptr) {
@@ -721,10 +721,10 @@ static ir::CallExpression *TransformCallWithSpreadTuple(public_lib::Context *ctx
     return newCall;
 }
 
-bool RestArgsLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool RestArgsLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
-        [this, ctx](ir::AstNode *node) -> AstNodePtr {
+        [ctx = Context()](ir::AstNode *node) -> AstNodePtr {
             if (node->IsCallExpression()) {
                 auto *callExpr = node->AsCallExpression();
                 if (ShouldTransformCallWithSpreadTuple(callExpr)) {

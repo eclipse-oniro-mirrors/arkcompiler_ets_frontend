@@ -105,11 +105,11 @@ static void TransformFunction(public_lib::Context *ctx, ir::ScriptFunction *func
     TransformDefaultParameters(ctx, function, defaultParams);
 }
 
-bool DefaultParametersLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool DefaultParametersLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursivelyPreorder(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *const node) -> ir::AstNode * {
+        [ctx = Context()](ir::AstNode *const node) -> ir::AstNode * {
             if (node->IsScriptFunction()) {
                 TransformFunction(ctx, node->AsScriptFunction());
             }
@@ -120,10 +120,9 @@ bool DefaultParametersLowering::PerformForModule(public_lib::Context *ctx, parse
     return true;
 }
 
-bool DefaultParametersLowering::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx,
-                                                       parser::Program const *program)
+bool DefaultParametersLowering::PostconditionForProgram(parser::Program const *program)
 {
-    return !program->Ast()->IsAnyChild([ctx](ir::AstNode const *node) {
+    return !program->Ast()->IsAnyChild([ctx = Context()](ir::AstNode const *node) {
         if (!node->IsScriptFunction()) {
             return false;
         }

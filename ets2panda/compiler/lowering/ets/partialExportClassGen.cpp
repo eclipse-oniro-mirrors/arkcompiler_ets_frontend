@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,12 +56,9 @@ static void CreatePartialDecls(public_lib::Context *ctx, parser::Program *progra
         phaseName);
 }
 
-bool PartialExportClassGen::Perform(public_lib::Context *const ctx, parser::Program *const program)
+bool PartialExportClassGen::PerformForProgram(parser::Program *program)
 {
-    (void)program;
-
-    ForEachCompiledProgram(ctx, [this, ctx](parser::Program *prog) { CreatePartialDecls(ctx, prog, Name()); });
-
+    CreatePartialDecls(Context(), program, Name());
     return true;
 }
 

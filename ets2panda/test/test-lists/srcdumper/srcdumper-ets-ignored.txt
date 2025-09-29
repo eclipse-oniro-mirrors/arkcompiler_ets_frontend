@@ -135,6 +135,12 @@ ast/compiler/ets/interfaceObjectLiteral_02.ets
 ast/compiler/ets/interfaceObjectLiteral_04.ets
 ast/compiler/ets/interfaceObjectLiteral_05.ets
 
+runtime/ets/declareExport.ets
+parser/ets/import_tests/enum/import.ets
+parser/ets/import_tests/enum/xml/export.ets
+parser/ets/import_tests/import_relative_path.ets
+parser/ets/import_tests/packages/import_package_with_alias/import_package_with_alias.ets
+
 #AST comparison Failed
 runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ets
 

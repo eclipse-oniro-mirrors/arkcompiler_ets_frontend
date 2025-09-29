@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
                           impl->CreateSourceRange(context, impl->CreateSourcePosition(context, 0, 0),
                                                   impl->CreateSourcePosition(context, 0, 0)));
     auto resolved_path = impl->ImportPathManagerResolvePathAPIConst(
-        context, impl->ETSParserGetImportPathManager(context), argv[argc - 1], import_path_literal);
+        context, impl->ETSParserGetImportPathManager(context), impl->ContextProgram(context), import_path_literal);
     if (strstr(resolved_path, "export.ets") == nullptr) {
         return TEST_ERROR_CODE;
     }

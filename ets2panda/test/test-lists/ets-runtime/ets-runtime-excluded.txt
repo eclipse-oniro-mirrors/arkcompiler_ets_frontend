@@ -12,3 +12,7 @@ fieldImplicitCasting.ets
 implicit_cast_boxed_expressions.ets
 non-const-capture.ets
 string-builder.ets
+
+# TODO(dkofanov): deprecated package import
+mypackage/implicit_package_import_1.ets
+mypackage/implicit_package_import_2.ets

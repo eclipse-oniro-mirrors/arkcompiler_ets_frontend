@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,19 @@
  * limitations under the License.
  */
 
-package P2
-
-export namespace NS {
-    static {
-        a = 3
-    }
+class SameName {
+    static a: int = 42;
+    a: int = 32;
 }
 
+class DiffTypes {
+    a: int = 7;
+    static a: string = "a";
+}
 
-/* @@? 21:5 Error Syntax error ESY0034: Only one static block is allowed in one namespace or class. */
+function main(): void { 
+    arktest.assertEQ(SameName.a, 42);
+    arktest.assertEQ((new SameName()).a, 32);
+    arktest.assertEQ(DiffTypes.a, "a");
+    arktest.assertEQ((new DiffTypes()).a, 7);
+}

@@ -1,6 +1,5 @@
-"use static"
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
+/*
+ * Can not moved into ast/parser while #19557 isn't resolved
+ */ 
 
-package usestaticpackage2;
+package xml
 
-
-/* @@? flag_package.ets:18:1 Error Syntax error ESY0291: Invalid package toplevel statement */
+export enum EventType {
+    START_DOCUMENT =0,
+    END_DOCUMENT = 1,
+};

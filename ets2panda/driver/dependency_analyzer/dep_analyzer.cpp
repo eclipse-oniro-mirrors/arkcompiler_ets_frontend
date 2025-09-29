@@ -28,15 +28,15 @@ void DepAnalyzer::DumpJson(std::string &outFilePath)
     outFile << ss.rdbuf();
 }
 
-std::string ConvertBackslash(const std::string &path)
+std::string ConvertBackslash(std::string_view path)
 {
 #if defined(_WIN32)
-    std::string res = path;
+    std::string res {path};
     std::replace_if(
         res.begin(), res.end(), [](const auto &c) { return c == '\\'; }, '/');
     return res;
 #else
-    return path;
+    return std::string {path};
 #endif
 }
 
@@ -102,11 +102,11 @@ void DepAnalyzer::DumpJson(std::ostream &ostr)
 void DepAnalyzer::CollectDependencies(const ark::es2panda::parser::Program::FileDependenciesMap &dependencies)
 {
     for (const auto &[prgPath, depPaths] : dependencies) {
-        GetAlreadyProcessedFiles().insert(prgPath.Mutf8());
+        GetAlreadyProcessedFiles().insert(std::string {prgPath});
         for (const auto &depPath : depPaths) {
-            GetAlreadyProcessedFiles().insert(depPath.Mutf8());
-            directDependencies_[prgPath.Mutf8()].insert(depPath.Mutf8());
-            directDependants_[depPath.Mutf8()].insert(prgPath.Mutf8());
+            GetAlreadyProcessedFiles().insert(std::string {depPath});
+            directDependencies_[std::string {prgPath}].insert(std::string {depPath});
+            directDependants_[std::string {depPath}].insert(std::string {prgPath});
         }
     }
 }

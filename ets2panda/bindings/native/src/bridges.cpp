@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,6 +42,15 @@ KNativePointer impl_ContextProgram(KNativePointer contextPtr)
     return GetPublicImpl()->ContextProgram(context);
 }
 TS_INTEROP_1(ContextProgram, KNativePointer, KNativePointer)
+
+KNativePointer impl_ProgramExternalSources(KNativePointer contextPtr, [[maybe_unused]] KNativePointer programPtr,
+                                           KNativePointer lenPtr)
+{
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    auto lenP = reinterpret_cast<std::size_t *>(lenPtr);
+    return GetPublicImpl()->ProgramExternalSources(context, nullptr, lenP);
+}
+TS_INTEROP_3(ProgramExternalSources, KNativePointer, KNativePointer, KNativePointer, KNativePointer)
 
 KNativePointer impl_CreateCacheContextFromFile(KNativePointer configPtr, KStringPtr &sourceFileName,
                                                KNativePointer globalContext, KBoolean isExternal)

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -223,9 +223,6 @@ ir::ModifierFlags GetModifierFlags(AccessorType &da, bool forceAddPublicFlag)
 }
 
 ir::ModifierFlags GetModifierFlags(panda_file::ClassDataAccessor &da);
-
-// Adds `extProgram` into external programs list of the given `program`.
-void AddExternalProgram(parser::Program *program, parser::Program *extProgram, std::string_view moduleName);
 
 ir::ETSTypeReference *CreateETSTypeReference(checker::ETSChecker *checker, util::StringView name);
 

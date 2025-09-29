@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,8 +31,6 @@ namespace ark::es2panda::compiler {
 // NOLINTNEXTLINE(fuchsia-multiple-inheritance)
 class ScopesInitPhase : public Phase, public ir::visitor::IterateAstVisitor {
 public:
-    using PhaseContext = public_lib::Context;
-
     static constexpr std::string_view NAME = "ScopesInitPhase";
 
     std::string_view Name() const override
@@ -40,12 +38,20 @@ public:
         return NAME;
     }
 
-    bool Perform(PhaseContext *ctx, parser::Program *program) override;
+    bool Perform() override;
 
 protected:
-    void SetProgram(parser::Program *program) noexcept;
+    parser::Program *GetProgram() const
+    {
+        return program_;
+    }
 
-    void Prepare(PhaseContext *ctx, parser::Program *program);
+    void SetProgram(parser::Program *program)
+    {
+        program_ = program;
+    }
+
+    void Prepare(parser::Program *program);
 
     /**
      * Should be called at the end of each program perform
@@ -147,11 +153,6 @@ protected:
         return program_;
     }
 
-    PhaseContext *Context()
-    {
-        return ctx_;
-    }
-
     [[nodiscard]] varbinder::VarBinder *VarBinder() const
     {
         return program_->VarBinder();
@@ -202,7 +203,6 @@ protected:
     virtual void AttachLabelToScope(ir::AstNode *node);
 
 private:
-    PhaseContext *ctx_ {};
     parser::Program *program_ {};
 };
 
@@ -323,7 +323,7 @@ public:
      * @param program - program you want to set scopes on.
      * @return true if successful.
      */
-    bool Perform(PhaseContext *ctx, parser::Program *program) override;
+    bool Perform() override;
 
     ~InitScopesPhaseETS() override = default;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,8 +34,7 @@
 
 namespace ark::es2panda::compiler {
 
-void InterfacePropertyDeclarationsPhase::TransformOptionalFieldTypeAnnotation(public_lib::Context *ctx,
-                                                                              ir::ClassProperty *const field,
+void InterfacePropertyDeclarationsPhase::TransformOptionalFieldTypeAnnotation(ir::ClassProperty *const field,
                                                                               bool isInterface)
 {
     if (!field->IsOptionalDeclaration()) {
@@ -52,16 +51,16 @@ void InterfacePropertyDeclarationsPhase::TransformOptionalFieldTypeAnnotation(pu
             }
         }
         if (!alreadyHasUndefined) {
-            ArenaVector<ir::TypeNode *> types(field->AsETSUnionType()->Types(), ctx->Allocator()->Adapter());
-            types.push_back(ctx->AllocNode<ir::ETSUndefinedType>(ctx->Allocator()));
-            auto *const unionType = ctx->AllocNode<ir::ETSUnionType>(std::move(types), ctx->Allocator());
+            ArenaVector<ir::TypeNode *> types(field->AsETSUnionType()->Types(), Context()->Allocator()->Adapter());
+            types.push_back(Context()->AllocNode<ir::ETSUndefinedType>(Context()->Allocator()));
+            auto *const unionType = Context()->AllocNode<ir::ETSUnionType>(std::move(types), Context()->Allocator());
             field->SetTypeAnnotation(unionType);
         }
     } else {
-        ArenaVector<ir::TypeNode *> types(ctx->Allocator()->Adapter());
+        ArenaVector<ir::TypeNode *> types(Context()->Allocator()->Adapter());
         types.push_back(field->TypeAnnotation());
-        types.push_back(ctx->AllocNode<ir::ETSUndefinedType>(ctx->Allocator()));
-        auto *const unionType = ctx->AllocNode<ir::ETSUnionType>(std::move(types), ctx->Allocator());
+        types.push_back(Context()->AllocNode<ir::ETSUndefinedType>(Context()->Allocator()));
+        auto *const unionType = Context()->AllocNode<ir::ETSUnionType>(std::move(types), Context()->Allocator());
         field->SetTypeAnnotation(unionType);
         unionType->SetParent(field);
     }
@@ -72,28 +71,28 @@ void InterfacePropertyDeclarationsPhase::TransformOptionalFieldTypeAnnotation(pu
     }
 }
 
-// CC-OFFNXT(huge_method[C++], G.FUD.05) solid logic
 ir::FunctionSignature InterfacePropertyDeclarationsPhase::GenerateGetterOrSetterSignature(
-    public_lib::Context *ctx, ir::ClassProperty *const field, bool isSetter, varbinder::FunctionParamScope *paramScope)
+    ir::ClassProperty *const field, bool isSetter, varbinder::FunctionParamScope *paramScope)
 {
-    TransformOptionalFieldTypeAnnotation(ctx, field, true);
-    ArenaVector<ir::Expression *> params(ctx->Allocator()->Adapter());
-    auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
+    TransformOptionalFieldTypeAnnotation(field, true);
+    ArenaVector<ir::Expression *> params(Context()->Allocator()->Adapter());
+    auto *varbinder = Context()->parserProgram->VarBinder()->AsETSBinder();
 
     if (isSetter) {
-        auto paramIdent = field->Key()->AsIdentifier()->Clone(ctx->Allocator(), nullptr);
+        auto paramIdent = field->Key()->AsIdentifier()->Clone(Context()->Allocator(), nullptr);
         ES2PANDA_ASSERT(paramIdent != nullptr);
-        paramIdent->SetTsTypeAnnotation(field->TypeAnnotation()->Clone(ctx->Allocator(), nullptr));
+        paramIdent->SetTsTypeAnnotation(field->TypeAnnotation()->Clone(Context()->Allocator(), nullptr));
         paramIdent->TypeAnnotation()->SetParent(paramIdent);
 
         ClearTypesVariablesAndScopes(paramIdent);
         auto classCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, paramScope);
         InitScopesPhaseETS::RunExternalNode(paramIdent, varbinder);
 
-        auto *const paramExpression = ctx->AllocNode<ir::ETSParameterExpression>(paramIdent, false, ctx->Allocator());
+        auto *const paramExpression =
+            Context()->AllocNode<ir::ETSParameterExpression>(paramIdent, false, Context()->Allocator());
         ES2PANDA_ASSERT(paramExpression != nullptr);
         paramExpression->SetRange(paramIdent->Range());
-        auto [paramVar, node] = paramScope->AddParamDecl(ctx->Allocator(), varbinder, paramExpression);
+        auto [paramVar, node] = paramScope->AddParamDecl(Context()->Allocator(), varbinder, paramExpression);
         if (node != nullptr) {
             varbinder->ThrowRedeclaration(node->Start(), paramVar->Name(), paramVar->Declaration()->Type());
         }
@@ -107,20 +106,8 @@ ir::FunctionSignature InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     return ir::FunctionSignature(nullptr, std::move(params), isSetter ? nullptr : field->TypeAnnotation());
 }
 
-ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter(public_lib::Context *ctx,
-                                                                                 ir::ClassProperty *const field,
-                                                                                 bool isSetter, bool isOptional,
-                                                                                 bool isDeclare)
+static ir::ModifierFlags GetFlags(bool isOptional, bool isDeclare)
 {
-    auto classScope = NearestScope(field);
-    auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
-    auto *paramScope = ctx->Allocator()->New<varbinder::FunctionParamScope>(ctx->Allocator(), classScope);
-    auto *functionScope = ctx->Allocator()->New<varbinder::FunctionScope>(ctx->Allocator(), paramScope);
-    ES2PANDA_ASSERT(functionScope != nullptr);
-
-    functionScope->BindParamScope(paramScope);
-    paramScope->BindFunctionScope(functionScope);
-
     auto flags = ir::ModifierFlags::PUBLIC;
 
     if (!isOptional || isDeclare) {
@@ -132,21 +119,64 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     if (isDeclare && isOptional) {
         flags |= ir::ModifierFlags::DEFAULT;
     }
+    return flags;
+}
 
-    ir::FunctionSignature signature = GenerateGetterOrSetterSignature(ctx, field, isSetter, paramScope);
+ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GetMethodDefinition(bool isSetter, ir::ModifierFlags flags,
+                                                                              ir::Identifier *methodIdent,
+                                                                              ir::FunctionExpression *funcExpr,
+                                                                              ir::ClassProperty *const field)
+{
+    auto *method = Context()->AllocNode<ir::MethodDefinition>(
+        isSetter ? ir::MethodDefinitionKind::SET : ir::MethodDefinitionKind::GET, methodIdent, funcExpr, flags,
+        Context()->Allocator(), false);
 
-    auto scriptFunctionFlags = ir::ScriptFunctionFlags::INTERFACE_PROPERTY;
+    method->Id()->SetMutator();
+    method->SetRange(field->Range());
+    method->SetParent(field->Parent());
+    method->Function()->SetIdent(method->Id()->Clone(Context()->Allocator(), nullptr));
+    method->Function()->AddModifier(method->Modifiers());
+    return method;
+}
+
+static ir::ScriptFunctionFlags GetScriptFunctionFlags(bool isSetter)
+{
+    auto flags = ir::ScriptFunctionFlags::INTERFACE_PROPERTY | ir::ScriptFunctionFlags::METHOD;
     if (isSetter) {
-        scriptFunctionFlags |= ir::ScriptFunctionFlags::SETTER;
+        flags |= ir::ScriptFunctionFlags::SETTER;
     } else {
-        scriptFunctionFlags |= ir::ScriptFunctionFlags::GETTER;
+        flags |= ir::ScriptFunctionFlags::GETTER;
     }
+    return flags;
+}
+
+ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter(ir::ClassProperty *const field,
+                                                                                 bool isSetter, bool isOptional,
+                                                                                 bool isDeclare)
+{
+    auto ctx = Context();
+    auto classScope = NearestScope(field);
+    auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
+    auto *paramScope = ctx->Allocator()->New<varbinder::FunctionParamScope>(ctx->Allocator(), classScope);
+    auto *functionScope = ctx->Allocator()->New<varbinder::FunctionScope>(ctx->Allocator(), paramScope);
+    ES2PANDA_ASSERT(functionScope != nullptr);
+
+    functionScope->BindParamScope(paramScope);
+    paramScope->BindFunctionScope(functionScope);
+
+    auto flags = GetFlags(isOptional, isDeclare);
+
+    ir::FunctionSignature signature = GenerateGetterOrSetterSignature(field, isSetter, paramScope);
+
+    auto scriptFunctionFlags = GetScriptFunctionFlags(isSetter);
     auto *func = ctx->AllocNode<ir::ScriptFunction>(
         ctx->Allocator(),
         ir::ScriptFunction::ScriptFunctionData {
             ctx->GetChecker()->AsETSChecker()->CreateGetterOrSetterBodyForOptional(isSetter, isOptional && !isDeclare),
             std::move(signature), scriptFunctionFlags, flags,
             classScope->Node()->AsTSInterfaceDeclaration()->Language()});
+
+    func->SetRange(field->Range());
 
     // Since optional prop has default body, need to set scope.
     if (isOptional && !isDeclare) {
@@ -155,38 +185,26 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     } else {
         func->SetScope(functionScope);
     }
-
-    func->SetRange(field->Range());
+    paramScope->BindNode(func);
+    functionScope->BindNode(func);
+    auto *funcExpr = Context()->AllocNode<ir::FunctionExpression>(func);
+    funcExpr->SetRange(func->Range());
 
     auto const &name = field->Key()->AsIdentifier()->Name();
-    auto methodIdent = ctx->AllocNode<ir::Identifier>(name, ctx->Allocator());
-
-    auto *decl = ctx->Allocator()->New<varbinder::VarDecl>(name);
-    auto var = functionScope->AddDecl(ctx->Allocator(), decl, ScriptExtension::ETS);
+    auto methodIdent = Context()->AllocNode<ir::Identifier>(name, Context()->Allocator());
+    auto *decl = Context()->Allocator()->New<varbinder::VarDecl>(name);
+    auto var = functionScope->AddDecl(Context()->Allocator(), decl, ScriptExtension::ETS);
     ES2PANDA_ASSERT(var != nullptr);
     methodIdent->SetVariable(var);
     methodIdent->SetRange(field->Key()->Range());
 
-    auto *funcExpr = ctx->AllocNode<ir::FunctionExpression>(func);
-    funcExpr->SetRange(func->Range());
-    func->AddFlag(ir::ScriptFunctionFlags::METHOD);
-
-    auto *method =
-        ctx->AllocNode<ir::MethodDefinition>(isSetter ? ir::MethodDefinitionKind::SET : ir::MethodDefinitionKind::GET,
-                                             methodIdent, funcExpr, flags, ctx->Allocator(), false);
-
-    method->Id()->SetMutator();
-    method->SetRange(field->Range());
-    method->Function()->SetIdent(method->Id()->Clone(ctx->Allocator(), nullptr));
-    method->Function()->AddModifier(method->Modifiers());
-    paramScope->BindNode(func);
-    functionScope->BindNode(func);
+    auto method = GetMethodDefinition(isSetter, flags, methodIdent, funcExpr, field);
     decl->BindNode(method);
 
     if (field->HasAnnotations()) {
-        ArenaVector<ir::AnnotationUsage *> functionAnnotations(ctx->Allocator()->Adapter());
+        ArenaVector<ir::AnnotationUsage *> functionAnnotations(Context()->Allocator()->Adapter());
         for (auto *annotationUsage : field->Annotations()) {
-            auto annoClone = annotationUsage->Clone(ctx->Allocator(), method)->AsAnnotationUsage();
+            auto annoClone = annotationUsage->Clone(Context()->Allocator(), method)->AsAnnotationUsage();
             InitScopesPhaseETS::RunExternalNode(annoClone, varbinder);
             functionAnnotations.emplace_back(annoClone);
         }
@@ -232,8 +250,17 @@ static void AddOverload(ir::MethodDefinition *method, ir::MethodDefinition *over
     overload->Function()->Id()->SetVariable(variable);
 }
 
-ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(public_lib::Context *ctx,
-                                                                              ir::TSInterfaceBody *const interface)
+static void UpdateNewInterface(ir::TSInterfaceBody *newInterface, ir::TSInterfaceBody *const interface)
+{
+    ES2PANDA_ASSERT(newInterface != nullptr);
+    newInterface->SetRange(interface->Range());
+    newInterface->SetParent(interface->Parent());
+    for (const auto &child : newInterface->Body()) {
+        child->SetParent(newInterface);
+    }
+}
+
+ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(ir::TSInterfaceBody *const interface)
 {
     if (interface->Body().empty()) {
         return interface;
@@ -241,30 +268,28 @@ ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(pu
 
     CollectPropertiesAndSuperInterfaces(interface);
 
-    auto propertyList = interface->Body();
-    ArenaVector<ir::AstNode *> newPropertyList(ctx->Allocator()->Adapter());
+    ArenaVector<ir::AstNode *> newPropertyList(Context()->Allocator()->Adapter());
 
     auto scope = NearestScope(interface);
     ES2PANDA_ASSERT(scope->IsClassScope());
 
-    for (const auto &prop : propertyList) {
+    for (const auto &prop : interface->Body()) {
         if (!prop->IsClassProperty()) {
             newPropertyList.emplace_back(prop);
             HandleInternalGetterOrSetterMethod(prop);
             continue;
         }
-        auto *originProp = prop->Clone(ctx->allocator, nullptr);
+        auto *originProp = prop->Clone(Context()->allocator, nullptr);
         bool isOptional = prop->AsClassProperty()->IsOptionalDeclaration();
         bool isDeclare = interface->Parent()->IsDeclare();
-        ir::MethodDefinition *getter =
-            GenerateGetterOrSetter(ctx, prop->AsClassProperty(), false, isOptional, isDeclare);
+        ir::MethodDefinition *getter = GenerateGetterOrSetter(prop->AsClassProperty(), false, isOptional, isDeclare);
         getter->SetOriginalNode(originProp);
 
         auto methodScope = scope->AsClassScope()->InstanceMethodScope();
         auto name = getter->Key()->AsIdentifier()->Name();
 
-        auto *decl = ctx->Allocator()->New<varbinder::FunctionDecl>(ctx->Allocator(), name, getter);
-        auto *variable = methodScope->AddDecl(ctx->Allocator(), decl, ScriptExtension::ETS);
+        auto *decl = Context()->Allocator()->New<varbinder::FunctionDecl>(Context()->Allocator(), name, getter);
+        auto *variable = methodScope->AddDecl(Context()->Allocator(), decl, ScriptExtension::ETS);
 
         if (variable == nullptr) {
             auto prevDecl = methodScope->FindDecl(name);
@@ -276,7 +301,7 @@ ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(pu
             AddOverload(method, getter, var);
 
             if (!prop->AsClassProperty()->IsReadonly()) {
-                auto setter = GenerateGetterOrSetter(ctx, prop->AsClassProperty(), true, isOptional, isDeclare);
+                auto setter = GenerateGetterOrSetter(prop->AsClassProperty(), true, isOptional, isDeclare);
                 AddOverload(method, setter, var);
             }
             continue;
@@ -286,17 +311,14 @@ ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(pu
         newPropertyList.emplace_back(getter);
 
         if (!prop->AsClassProperty()->IsReadonly()) {
-            auto setter = GenerateGetterOrSetter(ctx, prop->AsClassProperty(), true, isOptional, isDeclare);
+            auto setter = GenerateGetterOrSetter(prop->AsClassProperty(), true, isOptional, isDeclare);
             AddOverload(getter, setter, variable);
         }
         scope->AsClassScope()->InstanceFieldScope()->EraseBinding(name);
     }
 
-    auto newInterface = ctx->AllocNode<ir::TSInterfaceBody>(std::move(newPropertyList));
-    ES2PANDA_ASSERT(newInterface != nullptr);
-    newInterface->SetRange(interface->Range());
-    newInterface->SetParent(interface->Parent());
-
+    auto newInterface = Context()->AllocNode<ir::TSInterfaceBody>(std::move(newPropertyList));
+    UpdateNewInterface(newInterface, interface);
     return newInterface;
 }
 
@@ -318,8 +340,7 @@ void InterfacePropertyDeclarationsPhase::CollectSuperInterfaceProperties(Interfa
     }
 }
 
-void InterfacePropertyDeclarationsPhase::UpdateClassProperties(public_lib::Context *ctx,
-                                                               ir::ClassDefinition *const klass)
+void InterfacePropertyDeclarationsPhase::UpdateClassProperties(ir::ClassDefinition *const klass)
 {
     if (klass->Body().empty()) {
         return;
@@ -338,20 +359,20 @@ void InterfacePropertyDeclarationsPhase::UpdateClassProperties(public_lib::Conte
     for (auto *elem : klass->Body()) {
         if (elem->IsClassProperty() &&
             (implInterfaceProperties.count(elem->AsClassProperty()->Key()->ToString()) != 0U)) {
-            TransformOptionalFieldTypeAnnotation(ctx, elem->AsClassProperty());
+            TransformOptionalFieldTypeAnnotation(elem->AsClassProperty());
         }
     }
 }
 
-bool InterfacePropertyDeclarationsPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool InterfacePropertyDeclarationsPhase::PerformForProgram(parser::Program *program)
 {
-    ir::NodeTransformer handleInterfacePropertyDecl = [this, ctx](ir::AstNode *const ast) {
-        return ast->IsTSInterfaceBody() ? UpdateInterfaceProperties(ctx, ast->AsTSInterfaceBody()) : ast;
+    ir::NodeTransformer handleInterfacePropertyDecl = [this](ir::AstNode *const ast) {
+        return ast->IsTSInterfaceBody() ? UpdateInterfaceProperties(ast->AsTSInterfaceBody()) : ast;
     };
 
-    ir::NodeTransformer handleClassPropertyDecl = [this, ctx](ir::AstNode *const ast) {
+    ir::NodeTransformer handleClassPropertyDecl = [this](ir::AstNode *const ast) {
         if (ast->IsClassDefinition() && !ast->AsClassDefinition()->Implements().empty()) {
-            UpdateClassProperties(ctx, ast->AsClassDefinition());
+            UpdateClassProperties(ast->AsClassDefinition());
         }
         return ast;
     };

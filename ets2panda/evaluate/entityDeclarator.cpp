@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,8 @@
 #include "ir/expressions/identifier.h"
 #include "ir/ets/etsImportDeclaration.h"
 #include "ir/expressions/literals/stringLiteral.h"
+
+#include "public/public.h"
 #include "util/importPathManager.h"
 
 namespace ark::es2panda::evaluate {
@@ -77,16 +79,15 @@ ir::ETSImportDeclaration *EntityDeclarator::CreateIrImport(util::StringView path
     auto moduleName = debugInfoPlugin_.GetDebugInfoStorage()->GetModuleName(pathToDeclSourceFile.Utf8());
     auto *source = checker->AllocNode<ir::StringLiteral>(moduleName);
     auto importLanguage = ToLanguage(debugInfoPlugin_.GetETSBinder()->Extension());
-    util::ImportPathManager::ImportMetadata importMetadata {
-        util::ImportFlags::NONE, importLanguage.GetId(), pathToDeclSourceFile.Utf8(),
-        util::ImportPathManager::DUMMY_PATH, util::ImportPathManager::DUMMY_PATH};
+    util::ImportMetadata importMetadata {*debugInfoPlugin_.E2PContext()->parser->GetImportPathManager(),
+                                         pathToDeclSourceFile.Mutf8(), importLanguage.GetId()};
 
     auto *local = checker->AllocNode<ir::Identifier>(classDeclName, allocator);
     auto *imported = checker->AllocNode<ir::Identifier>(classImportedName, allocator);
     auto *spec = checker->AllocNode<ir::ImportSpecifier>(imported, local);
     ArenaVector<ir::AstNode *> specifiers(1, spec, allocator->Adapter());
     // NOLINTNEXTLINE (performance-move-const-arg)
-    return checker->AllocNode<ir::ETSImportDeclaration>(source, std::move(importMetadata), std::move(specifiers));
+    return checker->AllocNode<ir::ETSImportDeclaration>(source, importMetadata, std::move(specifiers));
 }
 
 void EntityDeclarator::InsertImportStatement(ir::Statement *importStatement, parser::Program *importerProgram)

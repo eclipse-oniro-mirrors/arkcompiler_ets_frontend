@@ -20,14 +20,14 @@
 
 namespace ark::es2panda::compiler {
 
-class DestructuringPhase : public PhaseForBodies {
+class DestructuringPhase : public PhaseForProgramsWithBodies_LEGACY {
 public:
     std::string_view Name() const override
     {
         return "Destructuring";
     }
 
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+    bool PerformForProgram(parser::Program *program) override;
 };
 
 }  // namespace ark::es2panda::compiler

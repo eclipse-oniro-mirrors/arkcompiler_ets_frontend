@@ -23,9 +23,9 @@
 #include "parser/context/classPrivateContext.h"
 #include "parser/context/parserContext.h"
 #include "parser/parserFlags.h"
-#include "parser/program/program.h"
 #include "util/diagnosticEngine.h"
 #include "util/helpers.h"
+#include "util/importPathManager.h"
 #include "util/recursiveGuard.h"
 
 namespace ark::es2panda::lexer {
@@ -44,6 +44,9 @@ struct Context;
 }  // namespace ark::es2panda::public_lib
 
 namespace ark::es2panda::parser {
+
+class Program;
+
 using ENUMBITOPS_OPERATORS;
 
 enum class TypeAnnotationParsingOptions : uint32_t {
@@ -79,13 +82,12 @@ enum class ParseListOptions : uint32_t {
 
 class ParserImpl {
 public:
-    explicit ParserImpl(Program *program, const util::Options *options, util::DiagnosticEngine &diagnosticEngine,
-                        ParserStatus status = ParserStatus::NO_OPTS);
+    explicit ParserImpl(public_lib::Context *ctx, ParserStatus status = ParserStatus::NO_OPTS);
     NO_COPY_SEMANTIC(ParserImpl);
     NO_MOVE_SEMANTIC(ParserImpl);
     virtual ~ParserImpl() = default;
 
-    void ParseScript(const SourceFile &sourceFile, bool genStdLib);
+    void ParseGlobal();
 
     [[nodiscard]] virtual bool IsETSParser() const noexcept
     {
@@ -109,10 +111,7 @@ public:
         return reinterpret_cast<const ETSParser *>(this);
     }
 
-    util::DiagnosticEngine &DiagnosticEngine() const
-    {
-        return diagnosticEngine_;
-    }
+    util::DiagnosticEngine &DiagnosticEngine() const;
 
     void SetParserStatus(ParserStatus status)
     {
@@ -126,18 +125,18 @@ public:
 
     lexer::SourcePosition GetPositionForDiagnostic() const;
 
-    void SetContext(public_lib::Context *ctx)
-    {
-        ctx_ = ctx;
-    }
-
     public_lib::Context *Context() const
     {
         return ctx_;
     }
 
+    util::ImportPathManager *GetImportPathManager()
+    {
+        return importPathManager_.get();
+    }
+
 protected:
-    virtual void ParseProgram(ScriptKind kind);
+    virtual void ParseGlobalImpl();
     static ExpressionParseFlags CarryExpressionParserFlag(ExpressionParseFlags origin, ExpressionParseFlags carry);
     static ExpressionParseFlags CarryPatternFlags(ExpressionParseFlags flags);
 
@@ -256,10 +255,7 @@ protected:
     ir::TypeNode *AllocBrokenType(const lexer::SourcePosition &pos);
     ir::TypeNode *AllocBrokenType(const lexer::SourceRange &range);
 
-    ArenaAllocator *Allocator() const
-    {
-        return program_->Allocator();
-    }
+    ArenaAllocator *Allocator() const;
 
     bool CheckModuleAsModifier();
 
@@ -390,7 +386,7 @@ protected:
                                          ir::ModifierFlags flags = ir::ModifierFlags::NONE);
     FunctionSignature ParseFunctionSignature(ParserStatus status);
 
-    [[nodiscard]] virtual std::unique_ptr<lexer::Lexer> InitLexer(const SourceFile &sourceFile);
+    [[nodiscard]] virtual std::unique_ptr<lexer::Lexer> InitLexer();
     // NOLINTNEXTLINE(google-default-arguments)
     ir::Statement *ParseStatementLiteralIdentHelper(StatementParsingFlags flags = StatementParsingFlags::NONE);
     // NOLINTNEXTLINE(google-default-arguments)
@@ -621,8 +617,8 @@ private:
     uint32_t classId_ {};
     lexer::Lexer *lexer_ {};
     const util::Options *options_;
-    util::DiagnosticEngine &diagnosticEngine_;
     public_lib::Context *ctx_ {nullptr};
+    std::unique_ptr<util::ImportPathManager> importPathManager_;
     RecursiveContext recursiveCtx_;
 };
 }  // namespace ark::es2panda::parser

@@ -876,8 +876,6 @@
     }
   }
 }
-[dynamicJsImport.ets:20:25] Semantic error ESE0360: Cannot find import: dynamic_import_tests
-[dynamicJsImport.ets:21:19] Semantic error ESE0360: Cannot find import: dynamic_import_tests
 [dynamicJsImport.ets:24:12] Semantic error ESE0371: Cannot find type 'B'.
 [dynamicJsImport.ets:24:20] Semantic error ESE0371: Cannot find type 'B'.
 [dynamicJsImport.ets:26:13] Semantic error ESE0252: Indexed access is not supported for such expression type.

@@ -1138,7 +1138,8 @@ import { A } from './get'
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(LSPCompletionsTests, importStatementCompletionPath1Conflict)
+// NOTE(dkofanov): deprecated './' package-import functionality, disabled.
+TEST_F(LSPCompletionsTests, DISABLED_importStatementCompletionPath1Conflict)
 {
     std::vector<std::string> files = {"exportFile4.ets", "importStatementCompletionPath1Conflict.ets"};
     std::vector<std::string> texts = {R"(
@@ -1172,7 +1173,8 @@ import { A } from './'
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(LSPCompletionsTests, importStatementCompletionPath1Conflict1)
+// NOTE(dkofanov): deprecated './' package-import functionality, disabled.
+TEST_F(LSPCompletionsTests, DISABLED_importStatementCompletionPath1Conflict1)
 {
     std::vector<std::string> files = {"exportFileEmpty.ets", "importStatementCompletionPath1Conflict1.ets"};
     std::vector<std::string> texts = {R"(
@@ -1206,7 +1208,8 @@ import { A } from './'
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(LSPCompletionsTests, importStatementCompletionPath1)
+// NOTE(dkofanov): deprecated './' package-import functionality, disabled.
+TEST_F(LSPCompletionsTests, DISABLED_importStatementCompletionPath1)
 {
     std::vector<std::string> files = {"exportFile4.ets", "importStatementCompletionPath1.ets"};
     std::vector<std::string> texts = {R"(
