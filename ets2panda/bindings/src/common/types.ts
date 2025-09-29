@@ -109,7 +109,11 @@ export class Context extends ArktsObject {
       throwError(`Config not initialized`);
     }
     return new Context(
-      global.es2panda._CreateContextFromStringWithHistory(global.config, passString(source), passString(global.filePath))
+      global.es2panda._CreateContextFromStringWithHistory(
+        global.config,
+        passString(source),
+        passString(global.filePath)
+      )
     );
   }
 

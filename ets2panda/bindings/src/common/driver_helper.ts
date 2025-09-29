@@ -77,10 +77,23 @@ export class DriverHelper {
     global.destroyCfg();
   }
 
-  public generateTsDecl(declOutPath: string, etsOutPath: string, exportAll: boolean, isolated: boolean, recordFile: string): void {
+  public generateTsDecl(
+    declOutPath: string,
+    etsOutPath: string,
+    exportAll: boolean,
+    isolated: boolean,
+    recordFile: string
+  ): void {
     let exportAll_: KBoolean = exportAll ? 1 : 0;
     let isolated_: KBoolean = isolated ? 1 : 0;
-    global.es2panda._GenerateTsDeclarationsFromContext(this._cfg.peer, declOutPath, etsOutPath, exportAll_, isolated_, recordFile);
+    global.es2panda._GenerateTsDeclarationsFromContext(
+      this._cfg.peer,
+      declOutPath,
+      etsOutPath,
+      exportAll_,
+      isolated_,
+      recordFile
+    );
   }
 }
 
