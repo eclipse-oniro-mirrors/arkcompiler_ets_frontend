@@ -328,6 +328,7 @@ private:
     ir::ETSParameterExpression *ParseFunctionParameterTail(ir::AnnotatedExpression *paramIdent, bool defaultUndefined);
     ir::Expression *ParseFunctionParameterAnnotations();
     ir::Expression *ParseFunctionParameter() override;
+    ir::ThisExpression *ParseThisExpression() override;
     ir::Expression *ParseFunctionReceiver();
     ir::AnnotatedExpression *GetAnnotatedExpressionFromParam();
     ir::Expression *ResolveArgumentUnaryExpr(ExpressionParseFlags flags);

@@ -1796,6 +1796,21 @@ bool ETSParser::IsFixedArrayTypeNode(ir::AstNode *node)
            node->AsETSTypeReference()->BaseName()->Name() == compiler::Signatures::FIXED_ARRAY_TYPE_NAME;
 }
 
+ir::ThisExpression *ETSParser::ParseThisExpression()
+{
+    ES2PANDA_ASSERT(Lexer()->GetToken().Type() == lexer::TokenType::KEYW_THIS);
+
+    auto *thisExprNode = AllocNode<ir::ThisExpression>();
+    ES2PANDA_ASSERT(thisExprNode != nullptr);
+    thisExprNode->SetRange(Lexer()->GetToken().Loc());
+
+    Lexer()->NextToken();
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_QUESTION_DOT) {
+        LogError(diagnostic::THIS_OPTIONAL_CHAIN_NOT_SUPPORTED);
+    }
+    return thisExprNode;
+}
+
 ir::Expression *ETSParser::ParseFunctionParameter()
 {
     switch (Lexer()->GetToken().Type()) {
