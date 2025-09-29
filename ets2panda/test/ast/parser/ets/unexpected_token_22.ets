@@ -19,7 +19,7 @@ async function asyncFunc(): Promise<boolean> {
     return true;
 }
 
-function callAsyncLambda(): void {
+async function callAsyncLambda() {
     let is_call_async_lambda: boolean = false;
 
     let async_lambda: asyncLambda = async ): Promise<void> => {

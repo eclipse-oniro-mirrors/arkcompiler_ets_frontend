@@ -2994,3 +2994,8 @@
     }
   }
 }
+Warning: Await in non-aysnc function is deprecated, please move it to async function. [await_complex_promise.ets:17:32]
+Warning: Await in non-aysnc function is deprecated, please move it to async function. [await_complex_promise.ets:21:39]
+Warning: Await in non-aysnc function is deprecated, please move it to async function. [await_complex_promise.ets:25:39]
+Warning: Await in non-aysnc function is deprecated, please move it to async function. [await_complex_promise.ets:29:37]
+Warning: Await in non-aysnc function is deprecated, please move it to async function. [await_complex_promise.ets:34:39]

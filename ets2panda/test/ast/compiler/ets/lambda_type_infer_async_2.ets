@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-function main() {
+async function foo() {
     const p = Promise.resolve(null);
 
     const result = await p.then(obj => {

@@ -1537,3 +1537,4 @@
     }
   }
 }
+Warning: Await in non-aysnc function is deprecated, please move it to async function. [asyncfunc_lambda_main.ets:24:11]

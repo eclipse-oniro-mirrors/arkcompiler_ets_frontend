@@ -12,21 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*---
+    tags: [compile-only, negative]
+---*/
 
-async function foo() {
-    try {
-        await import("hello")
-            .then((m: JSValue): null => null)
-            .catch((a: object | null | undefined): never => {
-                throw a as Error
-            })
-    } catch (e) {
-        arktest.assertEQ((e as Error).message, "Dynamic import is not supported")
-        return
-    }
-    arktest.assertTrue(!"nothing was thrown")
+async WeakMap => ...delete const { Intl } = [ { opt } = [({} ? 4 : Array[-=])];
+, ... || new ({.: 0}[])(,{: 88}["-1"]), ...opt, (7 ?  : null)][true[( ? 5 : {}.arity.E)]];
+ >>>= sub(await delete await ArrayBuffer ^= await delete )<missing '
+'> __a:be
 }
-
-/* @@? 18:15 Error SyntaxError: Unexpected token 'import'. */
-/* @@? 18:9 Error TypeError: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
-/* @@? 25:15 Error TypeError: Unresolved reference undefined */

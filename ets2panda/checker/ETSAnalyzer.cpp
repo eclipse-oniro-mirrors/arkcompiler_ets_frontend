@@ -1514,11 +1514,29 @@ std::tuple<Type *, ir::Expression *> ETSAnalyzer::CheckAssignmentExprOperatorTyp
     return {sourceType, relationNode};
 }
 
+static bool CheckAwaitExpressionInAsyncFunc(ir::AwaitExpression *expr)
+{
+    ir::AstNode *node = expr;
+    while (node != nullptr) {
+        if (node->IsScriptFunction() &&
+            (node->AsScriptFunction()->IsAsyncFunc() || node->AsScriptFunction()->IsAsyncImplFunc())) {
+            return true;
+        } else {
+            node = node->Parent();
+        }
+    }
+    return false;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::AwaitExpression *expr) const
 {
     ETSChecker *checker = GetETSChecker();
     if (expr->TsType() != nullptr) {
         return expr->TsType();
+    }
+
+    if (!CheckAwaitExpressionInAsyncFunc(expr)) {
+        checker->LogError(diagnostic::AWAIT_IN_NON_ASYNC_DEPRECATED, {}, expr->Argument()->Start());
     }
 
     expr->SetTsType(checker->HandleAwaitExpression(expr->argument_->Check(checker), expr));
