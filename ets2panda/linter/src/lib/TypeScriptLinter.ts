@@ -8085,6 +8085,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
+    if (ts.findAncestor(unionType, ts.isFunctionDeclaration) ||
+      ts.findAncestor(unionType, ts.isMethodDeclaration) ||
+      ts.findAncestor(unionType, ts.isArrowFunction)) {
+      return;
+    }
     const types = unionType.types;
     for (const type of types) {
       if (type.kind === ts.SyntaxKind.VoidKeyword) {
