@@ -62,8 +62,8 @@ export class CompileSingleData {
         this.recordType = recordType ?? RECORD_TYPE.DEFAULT_TYPE;
     }
 
-    public record(startKey: string, lastEndKey: string = '') {
-        if (this.recordType == RECORD_TYPE.DEFAULT_TYPE) {
+    public record(startKey: string, lastEndKey: string = ''): void {
+        if (this.recordType === RECORD_TYPE.DEFAULT_TYPE) {
             return;
         }
         let currentTime = new Date().getTime();
@@ -75,7 +75,7 @@ export class CompileSingleData {
             this.timeMemMap.set(lastEndKey, tmp);
         }
 
-        if (startKey == '') {
+        if (startKey === '') {
             return;
         }
 
@@ -90,12 +90,12 @@ export class CompileSingleData {
         this.timeMemMap.set(startKey, data);
     }
 
-    writeSumSingle(cachePath: string, deputyName: string = '') {
-        if (this.recordType == RECORD_TYPE.DEFAULT_TYPE) {
+    writeSumSingle(cachePath: string, deputyName: string = ''): void {
+        if (this.recordType === RECORD_TYPE.DEFAULT_TYPE) {
             return;
         }
         const csvData: string[] = [
-            "timeKey, time(ms), mem(M)"
+            'timeKey, time(ms), mem(M)'
         ];
         this.timeMemMap.forEach((v: SingleData, k: string) => {
             let element = `${k}` + ', ' + `${v.time}` + 'ms' + ', ' + `${Math.round(v.mem / 1024 / 1024)}` + 'M';

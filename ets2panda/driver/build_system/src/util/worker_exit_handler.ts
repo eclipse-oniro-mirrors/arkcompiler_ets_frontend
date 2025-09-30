@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-import { ErrorCode, DriverError } from "../util/error";
-import { getEs2pandaPath } from "../init/process_build_config";
-import { LogData, LogDataFactory, Logger } from "../logger";
-import { ProcessCompileTask } from "../types";
-import { Task, WorkerInfo } from "./TaskManager";
+import { ErrorCode, DriverError } from '../util/error';
+import { getEs2pandaPath } from '../init/process_build_config';
+import { LogData, LogDataFactory, Logger } from '../logger';
+import { ProcessCompileTask } from '../types';
+import { Task, WorkerInfo } from './TaskManager';
 
 export function handleCompileProcessWorkerExit(
     workerInfo: WorkerInfo,
@@ -45,8 +45,8 @@ export function handleCompileProcessWorkerExit(
         LogDataFactory.newInstance(
             ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
             `Compile file ${payload.job.compileFileInfo.inputFilePath} crashed (exit code ${code})`,
-            "",
-            "",
+            '',
+            '',
             [`Please try to run command locally : ${cmd.join(' ')}`]
         )
     );
@@ -63,11 +63,11 @@ export function handleDeclgenWorkerExit(
             LogDataFactory.newInstance(
                 ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
                 `Declgen crashed (exit code ${code})`,
-                "This error is likely caused internally from compiler.",
+                'This error is likely caused internally from compiler.',
             )
         );
     }
-    if (signal !== "SIGTERM") {
+    if (signal !== 'SIGTERM') {
         throw new DriverError(
             LogDataFactory.newInstance(
                 ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
