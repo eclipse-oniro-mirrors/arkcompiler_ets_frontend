@@ -195,8 +195,8 @@ ohos_source_set("assembly_proto_static") {
     include_dirs += [
       "$ark_root/abc2program",
       "$ark_root/assembler",
-      "$ark_root/libpandabase",
-      "$ark_root/libpandabase/mem",
+      "$ark_root/libpandabase/include/libpandabase",
+      "$ark_root/libpandabase/include/libpandabase/mem",
       "$ark_root/libpandafile",
     ]
   }
@@ -255,8 +255,8 @@ ohos_executable("merge_abc") {
     include_dirs += [
       "$ark_root/abc2program",
       "$ark_root/assembler",
-      "$ark_root/libpandabase",
-      "$ark_root/libpandabase/mem",
+      "$ark_root/libpandabase/include/libpandabase",
+      "$ark_root/libpandabase/include/libpandabase/mem",
     ]
   } else {
     configs = [ "//arkcompiler/ets_frontend:ark_config" ]
