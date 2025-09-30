@@ -33,8 +33,9 @@ import {
 @Component
 struct MyCard1 {
   cardStyle1: CustomStyles = (instance: CommonMethod): void => {
-    instance.backgroundColor('#ffffff');
-    instance.borderRadius(8);
+    // comment here
+    instance.backgroundColor('#ffffff')
+    instance.borderRadius(8)
   };
 
   build() {
@@ -50,16 +51,17 @@ struct MyCard1 {
 struct MyCard2 {
   cardStyle2: CustomStyles = (instance: CommonMethod): void => {
     instance.border({
-        color: this.getColor(),
-        width: this.getWidth()
-    });
-    instance.backgroundColor('#ffffff');
+      color: this.getColor(),
+      width: this.getWidth()
+    })
+    // comment here
+    instance.backgroundColor('#ffffff')
   };
-  
+
   private getColor(): Color {
     return Color.Red
   }
-  
+
   private getWidth(): number {
     return 10
   }
@@ -80,11 +82,11 @@ struct MyButton {
   content: () => void;
 
   NormalStyles: CustomStyles = (instance: CommonMethod): void => {
-    instance.backgroundColor(Color.Red);
+    instance.backgroundColor(Color.Red)
   };
 
   PressedStyles: CustomStyles = (instance: CommonMethod): void => {
-    instance.backgroundColor(Color.Green);
+    instance.backgroundColor(Color.Green)
   };
 
   build() {
@@ -116,17 +118,17 @@ struct imageTest {
   private DragBuilder: CustomBuilder | undefined;
 
   imageStyle: CustomStyles = (instance: CommonMethod): void => {
-    instance.draggable(this.isShowLongPressMenu() && this.isPC());
+    instance.draggable(this.isShowLongPressMenu() && this.isPC())
     instance.onDragStart(() => {
-        console.info(TAG, 'onDragStart');
-        this.touchVibrate(VibrateType.DRAG);
-        if (this.mediaItem?.path) {
-            this.previewUri =
-                this.getPreviewUri(this.mediaItem?.path, this.mediaItem?.getDateModified?.(), false, true);
-        }
-        return this.DragBuilder;
-    });
-    instance.accessibilityText(this.isOpenTouchGuide ? this.getImageItemGridAccessibilityText() : '');
+      console.info(TAG, 'onDragStart')
+      this.touchVibrate(VibrateType.DRAG);
+      if (this.mediaItem?.path) {
+        this.previewUri =
+          this.getPreviewUri(this.mediaItem?.path, this.mediaItem?.getDateModified?.(), false, true);
+      }
+      return this.DragBuilder;
+    })
+    instance.accessibilityText(this.isOpenTouchGuide ? this.getImageItemGridAccessibilityText() : '')
   };
 
   private isShowLongPressMenu(): boolean {

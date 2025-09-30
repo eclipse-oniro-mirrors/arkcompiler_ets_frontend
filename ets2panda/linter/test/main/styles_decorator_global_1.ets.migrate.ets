@@ -30,14 +30,14 @@ const mycolor: string = "#ffff00"
 
 function cardStyle1(instance: CommonMethod): void
 {
-    instance.backgroundColor(mycolor);
-    instance.borderColor(Color.Red);
-    instance.borderRadius(8);
-    instance.padding(8);
+    instance.backgroundColor(mycolor)
+    instance.borderColor(Color.Red)
+    instance.borderRadius(8)
+    instance.padding(8)
     instance.backgroundImagePosition({
         x: 0,
         y: 0
-    });
+    })
 }
 
 @Component
@@ -52,11 +52,11 @@ struct MyCard1 {
 }
 
 function NormalStyles(instance: CommonMethod): void {
-    instance.backgroundColor("#ffffff");
+    instance.backgroundColor("#ffffff")
 }
 
 function PressedStyles(instance: CommonMethod): void {
-    instance.backgroundColor("#ffffff");
+    instance.backgroundColor("#ffffff")
 }
 
 @Component
@@ -78,15 +78,15 @@ struct MyButton {
 
 function StyleWithComment(instance: CommonMethod): void {
     // dummy comment
-    instance.backgroundColor("#ffffff");
+    instance.backgroundColor("#ffffff")
 }
 
 function StyleWithComment2(instance: CommonMethod): void {
     // dummy comment
-    instance.backgroundColor("#ffffff");
+    instance.backgroundColor("#ffffff")
     // another comment
-    instance.borderColor(Color.Red);
+    instance.borderColor(Color.Red)
     // one more really important comment
-    instance.borderRadius(8);
-    instance.padding(8);
+    instance.borderRadius(8)
+    instance.padding(8)
 }

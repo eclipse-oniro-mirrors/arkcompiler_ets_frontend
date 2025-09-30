@@ -24,7 +24,7 @@
                 {
                     "start": 605,
                     "end": 673,
-                    "replacementText": "function NormalStyles(instance: CommonMethod): void {\n    instance.backgroundColor(Color.Blue);\n}",
+                    "replacementText": "function NormalStyles(instance: CommonMethod): void {\n    instance.backgroundColor(Color.Blue)\n}",
                     "line": 16,
                     "column": 1,
                     "endLine": 19,
@@ -45,7 +45,7 @@
                 {
                     "start": 765,
                     "end": 830,
-                    "replacementText": "PressedStyles: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor(Color.Green);\n  };",
+                    "replacementText": "PressedStyles: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor(Color.Green)\n  };",
                     "line": 28,
                     "column": 3,
                     "endLine": 31,
