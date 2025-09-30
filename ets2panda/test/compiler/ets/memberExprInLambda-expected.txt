@@ -57,8 +57,8 @@
           "program": "memberExprInLambda.ets"
         },
         "end": {
-          "line": 18,
-          "column": 9,
+          "line": 16,
+          "column": 32,
           "program": "memberExprInLambda.ets"
         }
       }

@@ -104,8 +104,8 @@
           "program": "test-type-alias-call2.ets"
         },
         "end": {
-          "line": 17,
-          "column": 5,
+          "line": 16,
+          "column": 29,
           "program": "test-type-alias-call2.ets"
         }
       }
@@ -181,8 +181,8 @@
           "program": "test-type-alias-call2.ets"
         },
         "end": {
-          "line": 18,
-          "column": 5,
+          "line": 17,
+          "column": 20,
           "program": "test-type-alias-call2.ets"
         }
       }
@@ -258,8 +258,8 @@
           "program": "test-type-alias-call2.ets"
         },
         "end": {
-          "line": 19,
-          "column": 6,
+          "line": 18,
+          "column": 23,
           "program": "test-type-alias-call2.ets"
         }
       }

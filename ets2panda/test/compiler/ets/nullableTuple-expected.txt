@@ -136,7 +136,7 @@
         },
         "end": {
           "line": 16,
-          "column": 43,
+          "column": 42,
           "program": "nullableTuple.ets"
         }
       }
@@ -245,7 +245,7 @@
         },
         "end": {
           "line": 17,
-          "column": 48,
+          "column": 47,
           "program": "nullableTuple.ets"
         }
       }

@@ -104,8 +104,8 @@
           "program": "lambda_capturing.ets"
         },
         "end": {
-          "line": 18,
-          "column": 9,
+          "line": 16,
+          "column": 50,
           "program": "lambda_capturing.ets"
         }
       }
