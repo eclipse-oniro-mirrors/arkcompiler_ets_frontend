@@ -99,29 +99,30 @@ void ClassProperty::Dump(ir::AstDumper *dumper) const
 void ClassProperty::DumpModifiers(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(key_);
+    if (Parent() != nullptr) {
+        if (compiler::HasGlobalClassParent(this)) {
+            if (IsExported()) {
+                dumper->Add("export ");
+            }
+            if (dumper->IsDeclgen()) {
+                dumper->Add("declare ");
+            }
+            if (IsConst()) {
+                dumper->Add("const ");
+            } else {
+                dumper->Add("let ");
+            }
+            return;
+        }
 
-    if (compiler::HasGlobalClassParent(this)) {
-        if (IsExported()) {
-            dumper->Add("export ");
-        }
-        if (dumper->IsDeclgen()) {
-            dumper->Add("declare ");
-        }
-        if (IsConst()) {
-            dumper->Add("const ");
-        } else {
-            dumper->Add("let ");
-        }
-        return;
-    }
-
-    if (Parent() != nullptr && Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal()) {
-        if (IsPrivate()) {
-            dumper->Add("private ");
-        } else if (IsProtected()) {
-            dumper->Add("protected ");
-        } else {
-            dumper->Add("public ");
+        if (Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal()) {
+            if (IsPrivate()) {
+                dumper->Add("private ");
+            } else if (IsProtected()) {
+                dumper->Add("protected ");
+            } else {
+                dumper->Add("public ");
+            }
         }
     }
 
@@ -229,6 +230,12 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
     if (dumper->IsDeclgen() && RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
+    ForceDump(dumper);
+}
+
+// Dump the node without any precondition in declgen
+void ClassProperty::ForceDump(ir::SrcDumper *dumper) const
+{
     DumpPrefix(dumper);
 
     if (Key() != nullptr) {
@@ -251,7 +258,7 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
     }
 
     if (value_ != nullptr) {
-        if (!dumper->IsDeclgen() || Parent()->IsAnnotationDeclaration()) {
+        if (!dumper->IsDeclgen() || (Parent() != nullptr && Parent()->IsAnnotationDeclaration())) {
             dumper->Add(" = ");
             Value()->Dump(dumper);
         }

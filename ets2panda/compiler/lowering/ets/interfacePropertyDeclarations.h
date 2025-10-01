@@ -123,19 +123,17 @@ private:
     void TransformOptionalFieldTypeAnnotation(public_lib::Context *ctx, ir::ClassProperty *const field,
                                               bool isInterface = false);
 
-    ir::FunctionSignature GenerateGetterOrSetterSignature(public_lib::Context *ctx, varbinder::ETSBinder *varbinder,
-                                                          ir::ClassProperty *const field, bool isSetter,
-                                                          varbinder::FunctionParamScope *paramScope);
+    ir::FunctionSignature GenerateGetterOrSetterSignature(public_lib::Context *ctx, ir::ClassProperty *const field,
+                                                          bool isSetter, varbinder::FunctionParamScope *paramScope);
 
-    ir::MethodDefinition *GenerateGetterOrSetter(public_lib::Context *ctx, varbinder::ETSBinder *varbinder,
-                                                 ir::ClassProperty *const field, bool isSetter, bool isOptional);
+    ir::MethodDefinition *GenerateGetterOrSetter(public_lib::Context *ctx, ir::ClassProperty *const field,
+                                                 bool isSetter, bool isOptional, bool genBody);
 
     void CollectPropertiesAndSuperInterfaces(ir::TSInterfaceBody *const interface);
 
     void HandleInternalGetterOrSetterMethod(ir::AstNode *const ast);
 
-    ir::Expression *UpdateInterfaceProperties(public_lib::Context *ctx, varbinder::ETSBinder *varbinder,
-                                              ir::TSInterfaceBody *const interface);
+    ir::Expression *UpdateInterfaceProperties(public_lib::Context *ctx, ir::TSInterfaceBody *const interface);
 
     void CollectSuperInterfaceProperties(InterfacePropertyType &implInterfaceProperties, const std::string &interId);
 

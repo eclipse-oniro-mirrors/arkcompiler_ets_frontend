@@ -2729,7 +2729,7 @@ void ETSAnalyzer::CollectNonOptionalProperty(const ETSObjectType *objType,
             continue;
         }
 
-        if (checker->Relation()->IsSupertypeOf(propertyType, checker->GlobalETSUndefinedType())) {
+        if (var->Declaration()->Node()->IsOptionalDeclaration()) {
             // non-optional properties
             continue;
         }
