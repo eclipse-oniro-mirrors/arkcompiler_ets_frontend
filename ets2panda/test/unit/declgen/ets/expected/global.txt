@@ -1,6 +1,6 @@
 'use static'
 
-export const P: Double;
+export declare const P: number;
 
 export declare function foo(): void;
 

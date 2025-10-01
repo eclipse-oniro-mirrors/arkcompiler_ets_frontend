@@ -283,17 +283,13 @@ bool MethodDefinition::FilterForDeclGen() const
     }
 
     ES2PANDA_ASSERT(Id() != nullptr);
-    auto name = Id()->Name().Mutf8();
-    if (name.find("%%async") != std::string::npos || name == compiler::Signatures::INITIALIZER_BLOCK_INIT ||
-        name == compiler::Signatures::INIT_METHOD) {
+    auto const name = Id()->Name().Utf8();
+    if (name.find("%%async") != std::string_view::npos || name == compiler::Signatures::INITIALIZER_BLOCK_INIT ||
+        name == compiler::Signatures::INIT_METHOD || name == compiler::Signatures::CCTOR) {
         return true;
     }
 
-    if (name.rfind('#', 0) == 0) {
-        return true;
-    }
-
-    if (name == compiler::Signatures::CCTOR) {
+    if (name.rfind('#', 0U) == 0U) {
         return true;
     }
 

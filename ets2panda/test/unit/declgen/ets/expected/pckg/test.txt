@@ -2,7 +2,10 @@
 
 export declare class Cl {
 
-  public constructor();
+  public prop: number;
+  foo(): void;
+
+  constructor();
 
 }
 

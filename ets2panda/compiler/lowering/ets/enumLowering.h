@@ -16,10 +16,7 @@
 #ifndef ES2PANDA_COMPILER_ENUM_PRE_CHECK_LOWERING_H
 #define ES2PANDA_COMPILER_ENUM_PRE_CHECK_LOWERING_H
 
-#include <string>
-#include <string_view>
 #include "compiler/lowering/phase.h"
-#include "checker/ETSchecker.h"
 
 namespace ark::es2panda::compiler {
 
@@ -138,8 +135,8 @@ private:
     void SetDefaultPositionInUnfilledClassNodes(const ir::ClassDeclaration *enumClassDecl,
                                                 ir::TSEnumDeclaration const *const enumDecl);
     ir::Expression *CheckEnumTypeForItemFields(EnumType enumType, ir::TSEnumMember *const member);
-    checker::AstNodePtr TransformEnumChildrenRecursively(checker::AstNodePtr &ast);
-    checker::AstNodePtr TransformAnnotedEnumChildrenRecursively(checker::AstNodePtr &ast);
+    ir::AstNode *TransformEnumChildrenRecursively(ir::TSEnumDeclaration *enumDecl);
+    ir::AstNode *TransformAnnotatedEnumChildrenRecursively(ir::TSEnumDeclaration *enumDecl);
     ArenaAllocator *Allocator();
 
     template <typename T, typename... Args>

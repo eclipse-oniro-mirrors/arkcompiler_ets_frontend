@@ -14,15 +14,11 @@
  */
 
 #include "enumLowering.h"
-#include <cmath>
-#include <string>
 
 #include "checker/ETSchecker.h"
-#include "checker/types/ets/etsEnumType.h"
 #include "checker/types/type.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
-#include "varbinder/ETSBinder.h"
 
 namespace ark::es2panda::compiler {
 
@@ -624,12 +620,11 @@ static EnumLoweringPhase::DeclarationFlags GetDeclFlags(ir::TSEnumDeclaration *c
                 enumDecl->Parent()->AsClassDefinition()->IsNamespaceTransformed()};
 }
 
-checker::AstNodePtr EnumLoweringPhase::TransformAnnotedEnumChildrenRecursively(checker::AstNodePtr &ast)
+ir::AstNode *EnumLoweringPhase::TransformAnnotatedEnumChildrenRecursively(ir::TSEnumDeclaration *const enumDecl)
 {
-    auto *enumDecl = ast->AsTSEnumDeclaration();
     auto const flags = GetDeclFlags(enumDecl);
     if (!flags.IsValid() || enumDecl->Members().empty()) {
-        return ast;
+        return enumDecl;
     }
 
     bool hasLoggedError = false;
@@ -654,15 +649,14 @@ checker::AstNodePtr EnumLoweringPhase::TransformAnnotedEnumChildrenRecursively(c
         LogError(diagnostic::UNSUPPORTED_ENUM_TYPE, {}, itemInit->Start());
     }
 
-    return ast;
+    return enumDecl;
 }
 
-checker::AstNodePtr EnumLoweringPhase::TransformEnumChildrenRecursively(checker::AstNodePtr &ast)
+ir::AstNode *EnumLoweringPhase::TransformEnumChildrenRecursively(ir::TSEnumDeclaration *const enumDecl)
 {
-    auto *enumDecl = ast->AsTSEnumDeclaration();
     auto const flags = GetDeclFlags(enumDecl);
     if (!flags.IsValid()) {
-        return ast;
+        return enumDecl;
     }
 
     if (enumDecl->Members().empty()) {
@@ -695,7 +689,7 @@ checker::AstNodePtr EnumLoweringPhase::TransformEnumChildrenRecursively(checker:
         LogError(diagnostic::ERROR_ARKTS_NO_ENUM_MIXED_TYPES, {}, itemInit->Start());
     }
 
-    return ast;
+    return enumDecl;
 }
 
 bool EnumLoweringPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
@@ -716,13 +710,9 @@ bool EnumLoweringPhase::PerformForModule(public_lib::Context *ctx, parser::Progr
     program->Ast()->TransformChildrenRecursively(
         [this](checker::AstNodePtr ast) -> checker::AstNodePtr {
             if (ast->IsTSEnumDeclaration()) {
-                ir::TSEnumDeclaration *enumDecl = ast->AsTSEnumDeclaration();
-
-                if (enumDecl->TypeNodes() != nullptr) {
-                    return TransformAnnotedEnumChildrenRecursively(ast);
-                }
-
-                return TransformEnumChildrenRecursively(ast);
+                auto *const enumDecl = ast->AsTSEnumDeclaration();
+                return enumDecl->TypeNodes() != nullptr ? TransformAnnotatedEnumChildrenRecursively(enumDecl)
+                                                        : TransformEnumChildrenRecursively(enumDecl);
             }
             return ast;
         },

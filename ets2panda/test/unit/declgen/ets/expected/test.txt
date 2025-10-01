@@ -1,11 +1,12 @@
 'use static'
 
+import * as f from "./export";
+
 export declare @interface Anno {
-  prop: Double = 1;
+  prop: Number = 1;
 }
 export declare class C {
-  public prop: Double;
-  public constructor();
+  public prop: Number;
+  constructor();
 
 }
-

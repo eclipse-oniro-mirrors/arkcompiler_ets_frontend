@@ -20,7 +20,6 @@
 #include "compiler/core/pandagen.h"
 #include "ir/astDump.h"
 #include "ir/srcDump.h"
-#include <type_traits>
 
 namespace ark::es2panda::ir {
 
@@ -65,7 +64,9 @@ void ClassDeclaration::Dump(ir::AstDumper *dumper) const
 
 void ClassDeclaration::Dump(ir::SrcDumper *dumper) const
 {
-    if (Definition() != nullptr) {
+    if (dumper->IsDeclgen() && OriginalNode() != nullptr && OriginalNode()->IsTSEnumDeclaration()) {
+        OriginalNode()->Dump(dumper);
+    } else if (Definition() != nullptr) {
         Definition()->Dump(dumper);
     }
 }

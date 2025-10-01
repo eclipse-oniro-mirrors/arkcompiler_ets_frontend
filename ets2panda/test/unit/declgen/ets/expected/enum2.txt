@@ -1,0 +1,4 @@
+'use static'
+
+import { foo as foo, SomeEnum as SomeEnum } from "./expected/enum1.txt";
+

@@ -223,7 +223,7 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
     bool isNamespaceTransformed =
         Parent()->IsClassDefinition() && Parent()->AsClassDefinition()->IsNamespaceTransformed();
     // For declgen dump only if explicitly marked as export or it is public property of class (not namespace or module)
-    if (dumper->IsDeclgen() && !(IsExported() || IsDefaultExported() || (!isNamespaceTransformed && IsPublic()))) {
+    if (dumper->IsDeclgen() && !(IsExported() || IsDefaultExported() || (!isNamespaceTransformed && !IsPrivate()))) {
         return;
     }
     if (dumper->IsDeclgen() && RegisterUnexportedForDeclGen(dumper)) {
