@@ -13,15 +13,22 @@
  * limitations under the License.
  */
 
-enum Color { Red, Green, Blue }
 
-function main(): void {
-	switch (Color.Red) {
-        case /* @@ label */Color.Red: break;
-        case Color.Red: break;
-		default:
-			break;
-	}
+enum Enum {e1 = "A", e2 = "B", e3 = "C"} 
+
+function foo(v: Enum) {
+  let bar = 0;
+
+  switch (v) {
+    case /* @@ label */Enum.e1: {bar++; break};
+    case Enum.e1: {bar++; break};
+    case Enum.e3: break;
+  }
+
+  arktest.assertEQ(bar, 1)
 }
 
-/* @@@ label Error TypeError: Case duplicate  */
+function main() {
+  let v = Enum.e1
+  foo(v);
+}

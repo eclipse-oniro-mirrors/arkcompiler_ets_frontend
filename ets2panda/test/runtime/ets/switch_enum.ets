@@ -13,22 +13,16 @@
  * limitations under the License.
  */
 
-class IndexField {
-  public static readonly TITLE: string = 'title'
+enum Color { Red, Green, Blue }
+
+function main(): void {
+	let foo = 0;
+	switch (Color.Red) {
+        case Color.Red: { foo++; break;}
+        case Color.Red: { foo++; break;}
+		default:
+			break;
+	}
+
+	arktest.assertEQ(foo, 1)
 }
-
-
-class IndexStr {
-  indexField: string = "title"
-  foo() {
-    switch (this.indexField) {
-      case IndexField.TITLE:
-          arktest.assertEQ(this.indexField, IndexField.TITLE)
-          break;
-      /* @@ label */case IndexField.TITLE:
-          arktest.assertEQ(this.indexField, IndexField.TITLE)
-    }
-  }
-}
-
-/* @@@ label Error TypeError: Case duplicate  */

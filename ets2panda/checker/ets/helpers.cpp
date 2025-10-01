@@ -2196,13 +2196,6 @@ Type *ETSChecker::CheckSwitchDiscriminant(ir::Expression *discriminant)
     Type *discriminantType = discriminant->Check(this);
     discriminantType = GetNonConstantType(MaybeUnboxType(discriminantType));
     ES2PANDA_ASSERT(discriminantType != nullptr);
-    if (!discriminantType->HasTypeFlag(TypeFlag::VALID_SWITCH_TYPE)) {
-        if (!(discriminantType->IsETSObjectType() &&
-              discriminantType->AsETSObjectType()->HasObjectFlag(
-                  ETSObjectFlags::BUILTIN_STRING | ETSObjectFlags::STRING | ETSObjectFlags::ENUM_OBJECT))) {
-            LogError(diagnostic::ENUM_INVALID_DISCRIMINANT, {discriminantType}, discriminant->Start());
-        }
-    }
 
     return discriminantType;
 }
@@ -2216,7 +2209,6 @@ Type *ETSChecker::MaybeBoxExpression(ir::Expression *expr)
 void ETSChecker::CheckForSameSwitchCases(ArenaVector<ir::SwitchCaseStatement *> const &cases)
 {
     CheckItemCasesConstant(cases);
-    CheckItemCasesDuplicate(cases);
 }
 
 std::string ETSChecker::GetStringFromIdentifierValue(checker::Type *caseType) const
@@ -2270,12 +2262,6 @@ bool IsConstantMemberOrIdentifierExpression(ir::Expression *expression, bool che
             (var->Declaration()->IsReadonlyDecl() && var->HasFlag(varbinder::VariableFlags::STATIC)));
 }
 
-static bool IsValidSwitchType(checker::Type *caseType)
-{
-    return caseType->HasTypeFlag(checker::TypeFlag::VALID_SWITCH_TYPE) || caseType->IsETSStringType() ||
-           caseType->IsETSEnumType();
-}
-
 void CheckEnumCaseUnqualified(ETSChecker *checker, ir::Expression const *const caseTest)
 {
     if (!caseTest->IsMemberExpression()) {
@@ -2323,82 +2309,6 @@ void ETSChecker::CheckItemCasesConstant(ArenaVector<ir::SwitchCaseStatement *> c
                 LogError(diagnostic::NOT_CONSTANT, {}, it->Start());
                 continue;
             }
-
-            if (!IsValidSwitchType(caseType)) {
-                LogError(diagnostic::SWITCH_CASE_INVALID_TYPE, {caseType}, it->Start());
-            }
-        }
-    }
-}
-
-void CheckItemEnumType(ir::Expression const *const caseTest, ir::Expression const *const compareCaseTest,
-                       ETSChecker *checker, bool &isDup)
-{
-    // These case has logged error before, no need log error.
-    if (!caseTest->IsMemberExpression() || !compareCaseTest->IsMemberExpression()) {
-        return;
-    }
-    if (!caseTest->AsMemberExpression()->Object()->IsIdentifier() ||
-        !compareCaseTest->AsMemberExpression()->Object()->IsIdentifier()) {
-        return;
-    }
-    if (caseTest->AsMemberExpression()->Object()->AsIdentifier()->Name() !=
-        compareCaseTest->AsMemberExpression()->Object()->AsIdentifier()->Name()) {
-        return;
-    }
-
-    if (!caseTest->AsMemberExpression()->Property()->IsIdentifier() ||
-        !compareCaseTest->AsMemberExpression()->Property()->IsIdentifier()) {
-        return;
-    }
-    if (caseTest->AsMemberExpression()->Property()->AsIdentifier()->Name() ==
-        compareCaseTest->AsMemberExpression()->Property()->AsIdentifier()->Name()) {
-        isDup = true;
-        checker->LogError(diagnostic::SWITCH_CASE_DUPLICATE, {}, caseTest->Start());
-    }
-}
-
-void ETSChecker::CheckItemCasesDuplicate(ArenaVector<ir::SwitchCaseStatement *> const &cases)
-{
-    for (size_t caseNum = 0; caseNum < cases.size(); caseNum++) {
-        bool isItemDuplicate = false;
-        for (size_t compareCase = caseNum + 1; compareCase < cases.size(); compareCase++) {
-            auto *caseTest = cases.at(caseNum)->Test();
-            auto *compareCaseTest = cases.at(compareCase)->Test();
-
-            if (caseTest == nullptr || compareCaseTest == nullptr) {
-                continue;
-            }
-
-            if (caseTest->TsType()->IsETSEnumType() && compareCaseTest->TsType()->IsETSEnumType()) {
-                CheckItemEnumType(caseTest, compareCaseTest, this, isItemDuplicate);
-                continue;
-            }
-
-            if (caseTest->IsIdentifier() || caseTest->IsMemberExpression()) {
-                CheckIdentifierSwitchCase(caseTest, compareCaseTest, cases.at(caseNum)->Start());
-                continue;
-            }
-
-            if (compareCaseTest->IsIdentifier() || compareCaseTest->IsMemberExpression()) {
-                CheckIdentifierSwitchCase(compareCaseTest, caseTest, cases.at(compareCase)->Start());
-                continue;
-            }
-
-            if (caseTest->IsLiteral() && compareCaseTest->IsLiteral() &&
-                caseTest->AsLiteral()->ToString() != compareCaseTest->AsLiteral()->ToString()) {
-                continue;
-            }
-
-            if (!(IsConstantExpression(caseTest, caseTest->TsType()) || caseTest->IsLiteral()) ||
-                !(IsConstantExpression(compareCaseTest, compareCaseTest->TsType()) || compareCaseTest->IsLiteral())) {
-                continue;
-            }
-
-            if (!isItemDuplicate) {
-                isItemDuplicate = true;
-                LogError(diagnostic::SWITCH_CASE_DUPLICATE, {}, cases.at(compareCase)->Start());
-            }
         }
     }
 }
@@ -2417,27 +2327,6 @@ bool ETSChecker::CompareIdentifiersValuesAreDifferent(ir::Expression *compareVal
     }
 
     return caseValue != compareValue->ToString();
-}
-
-void ETSChecker::CheckIdentifierSwitchCase(ir::Expression *currentCase, ir::Expression *compareCase,
-                                           const lexer::SourcePosition &pos)
-{
-    currentCase->Check(this);
-
-    if (!IsConstantMemberOrIdentifierExpression(currentCase, true)) {
-        return;
-    }
-
-    checker::Type *caseType = currentCase->TsType();
-
-    if (!IsValidSwitchType(caseType)) {
-        return;
-    }
-
-    if (!CompareIdentifiersValuesAreDifferent(compareCase, GetStringFromIdentifierValue(caseType))) {
-        LogError(diagnostic::SWITCH_CASE_VAR_DUPLICATE_VAL, {}, pos);
-        return;
-    }
 }
 
 bool ETSChecker::IsSameDeclarationType(varbinder::LocalVariable *target, varbinder::LocalVariable *compare)

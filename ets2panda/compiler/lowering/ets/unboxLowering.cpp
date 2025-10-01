@@ -843,7 +843,7 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
     void VisitSwitchStatement(ir::SwitchStatement *swtch) override
     {
         auto *discType = uctx_->checker->MaybeUnboxType(swtch->Discriminant()->TsType());
-        if (!discType->IsETSPrimitiveType()) {  // should be string
+        if (discType->IsETSStringType()) {
             return;
         }
         swtch->SetDiscriminant(AdjustType(uctx_, swtch->Discriminant(), discType));

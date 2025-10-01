@@ -424,11 +424,6 @@ bool Type::IsETSUnboxableObject() const
     return IsETSObjectType() && AsETSObjectType()->HasObjectFlag(ETSObjectFlags::UNBOXABLE_TYPE);
 }
 
-bool ETSChecker::IsConstantExpression(ir::Expression *expr, Type *type)
-{
-    return (type->HasTypeFlag(TypeFlag::CONSTANT) && (expr->IsIdentifier() || expr->IsMemberExpression()));
-}
-
 Type *ETSChecker::GetNonConstantType(Type *type)
 {
     ES2PANDA_ASSERT(type != nullptr);
