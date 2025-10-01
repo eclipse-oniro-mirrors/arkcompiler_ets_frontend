@@ -398,7 +398,7 @@ public:
                                                               lexer::TokenType operationType, lexer::SourcePosition pos,
                                                               bool isEqualOp, checker::Type *leftType,
                                                               checker::Type *rightType, Type *unboxedL, Type *unboxedR);
-    std::tuple<Type *, Type *> CheckBinaryOperatorInstanceOf(lexer::SourcePosition pos, checker::Type *leftType,
+    std::tuple<Type *, Type *> CheckBinaryOperatorInstanceOf(const ir::Expression *right, checker::Type *leftType,
                                                              checker::Type *rightType);
     checker::Type *CheckBinaryOperatorNullishCoalescing(ir::Expression *left, ir::Expression *right,
                                                         lexer::SourcePosition pos);
