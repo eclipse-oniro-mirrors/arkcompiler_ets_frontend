@@ -1,11 +1,9 @@
 # Known failure list for test262 - fastverify-x64-jit
-#19208
+#27184
 test262/data/test/language/module-code/instn-iee-err-circular-as.js
 
-#21423
+#29758
 test262/data/test/built-ins/TypedArray/prototype/slice/results-with-empty-length.js
-
-#21819  #23295
 test262/data/test/built-ins/TypedArray/prototype/slice/BigInt/results-with-different-length.js
 test262/data/test/built-ins/TypedArray/prototype/subarray/results-with-empty-length.js
 test262/data/test/built-ins/TypedArray/prototype/some/callbackfn-not-callable-throws.js

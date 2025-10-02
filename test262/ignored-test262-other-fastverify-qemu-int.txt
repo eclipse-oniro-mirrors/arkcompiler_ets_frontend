@@ -1,4 +1,4 @@
-# Issue #21819
+# Issue #29758
 test262/data/other_tests/built-ins/RegExp/property-escapes/generated/Alphabetic.js
 test262/data/other_tests/built-ins/RegExp/property-escapes/generated/Assigned.js
 test262/data/other_tests/built-ins/RegExp/property-escapes/generated/General_Category_-_Other.js
@@ -21,7 +21,7 @@ test262/data/other_tests/language/identifiers/start-unicode-10.0.0-class-escaped
 test262/data/other_tests/language/identifiers/start-unicode-10.0.0-class.js
 test262/data/other_tests/language/identifiers/start-unicode-15.0.0-escaped.js
 test262/data/other_tests/language/identifiers/start-unicode-15.0.0.js
-# --- end of Issue #21819
+# --- end of Issue #29758
 
 # Issue #19225
 test262/data/other_tests/built-ins/Date/UTC/fp-evaluation-order.js
@@ -54,9 +54,9 @@ test262/data/other_tests/built-ins/Date/prototype/setSeconds/arg-coercion-order.
 test262/data/other_tests/built-ins/Date/prototype/setSeconds/this-value-invalid-date.js
 # --- end of Issue #19228
 
-#21819
+#29758
 test262/data/other_tests/built-ins/parseFloat/S15.1.2.3_A6.js
 test262/data/other_tests/built-ins/parseInt/S15.1.2.2_A8.js
 
-#25907
+#27389
 test262/data/other_tests/language/expressions/class/elements/syntax/valid/grammar-privatename-classelementname-initializer-alt.js

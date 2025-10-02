@@ -1,4 +1,4 @@
 # Known failures list for third_lib_js - release-x64-jit
 
-#23235
+#30387
 pdfview_test
