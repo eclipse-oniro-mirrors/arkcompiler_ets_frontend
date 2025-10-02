@@ -109,7 +109,9 @@ static void CheckOverride(ir::ClassProperty *st, ETSChecker *checker)
         return;
     }
 
-    util::StringView superName = classDef->Super()->AsETSTypeReference()->Part()->GetIdent()->Name();
+    util::StringView superName = classDef->Super()->IsETSTypeReference()
+                                     ? classDef->Super()->AsETSTypeReference()->Part()->GetIdent()->Name()
+                                     : "";  // #30543: Excessive use of AST and wrong assumptions
     while (classDef->Super() != nullptr) {
         auto *superType = classDef->Super()->TsType();
         if (superType == nullptr || !superType->IsETSObjectType()) {

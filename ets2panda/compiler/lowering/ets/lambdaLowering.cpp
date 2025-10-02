@@ -1210,26 +1210,31 @@ static ir::ClassDeclaration *CreateEmptyLambdaClassDeclaration(public_lib::Conte
 {
     auto *allocator = ctx->allocator;
     auto *parser = ctx->parser->AsETSParser();
-    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
 
     auto lambdaClassName = util::UString {
         std::string_view {util::NameMangler::GetInstance()->CreateMangledNameForLambdaObject(info->name)}, allocator};
 
     ES2PANDA_ASSERT(lambdaProviderClass);
-    auto *providerTypeReference = checker->AllocNode<ir::ETSTypeReference>(
-        checker->AllocNode<ir::ETSTypeReferencePart>(
-            checker->AllocNode<ir::Identifier>(lambdaProviderClass->AsETSObjectType()->Name(), checker->Allocator()),
-            nullptr, nullptr, allocator),
-        allocator);
+    auto providerTypeNode = allocator->New<ir::OpaqueTypeNode>(lambdaProviderClass, allocator);
+    auto classIdent = allocator->New<ir::Identifier>(lambdaClassName.View(), allocator);
 
-    std::stringstream stream;
-    stream << "@" << Signatures::NAMED_FUNCTION_OBJECT << "({name: \"" << info->originalFuncName
-           << "\"}) final class @@I1 extends @@T2 implements @@T3 {}";
+    std::stringstream ss;
+    if (!info->originalFuncName.Empty()) {
+        ss << "@" << Signatures::NAMED_FUNCTION_OBJECT << "({name: \"" << info->originalFuncName << "\"})";
+    }
+    std::vector<ir::AstNode *> statementParams;
 
-    auto *classDeclaration =
-        parser->CreateFormattedTopLevelStatement(stream.str(), lambdaClassName, providerTypeReference, fnInterface)
-            ->AsClassDeclaration();
+    if (fnInterface == nullptr) {
+        ss << " final class @@I1 extends @@T2 {}";
+        statementParams = {classIdent, providerTypeNode};
+    } else {
+        ss << " final class @@I1 extends @@T2 implements @@T3 {}";
+        auto fnInterfaceTypeNode = allocator->New<ir::OpaqueTypeNode>(fnInterface, allocator);
+        statementParams = {classIdent, providerTypeNode, fnInterfaceTypeNode};
+    }
+
+    auto *classDeclaration = parser->CreateFormattedTopLevelStatement(ss.str(), statementParams)->AsClassDeclaration();
     auto *classDefinition = classDeclaration->Definition();
 
     // Adjust the class definition compared to what the parser gives.
@@ -1325,20 +1330,21 @@ static ir::ClassDeclaration *CreateLambdaClass(public_lib::Context *ctx, checker
         CloneTypeParamsForClass(ctx, oldTypeParams, info->enclosingFunction, ctx->parserProgram->GlobalClassScope());
     auto &substitution = subst0;  // NOTE(gogabr): needed to capture in a lambda later.
 
-    auto *fnInterface = fntype->Substitute(checker->Relation(), &substitution)->ArrowToFunctionalInterface(checker);
-    auto *lambdaProviderClass = FunctionTypeToLambdaProviderType(checker, fntype->ArrowSignature());
+    auto signature = fntype->ArrowSignature();
+    auto fnInterface = fntype->Substitute(checker->Relation(), &substitution)->ArrowToFunctionalInterface(checker);
+    auto lambdaProviderClass =
+        FunctionTypeToLambdaProviderType(checker, signature)->Substitute(checker->Relation(), &substitution);
 
     auto lexScope = varbinder::LexicalScope<varbinder::Scope>::Enter(varBinder, ctx->parserProgram->GlobalClassScope());
 
-    auto *classDeclaration =
-        CreateEmptyLambdaClassDeclaration(ctx, info, newTypeParams, fnInterface, lambdaProviderClass);
-    auto *classDefinition = classDeclaration->Definition();
+    auto classDeclaration = CreateEmptyLambdaClassDeclaration(
+        ctx, info, newTypeParams, signature->MinArgCount() != signature->ArgCount() ? fnInterface : nullptr,
+        lambdaProviderClass);
+    auto classDefinition = classDeclaration->Definition();
     SetModifiersForFunctionReference(classDefinition, callee, info);
 
     CreateLambdaClassFields(ctx, classDefinition, info, &substitution);
     CreateLambdaClassConstructor(ctx, classDefinition, info, &substitution);
-
-    auto *signature = fntype->ArrowSignature();
 
     LambdaClassInvokeInfo lciInfo;
     lciInfo.callee = callee;
