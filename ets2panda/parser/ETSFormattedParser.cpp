@@ -505,7 +505,7 @@ ir::MethodDefinition *ETSParser::CreateConstructorDefinition(ir::ModifierFlags m
     Lexer()->NextToken();
 
     if (IsClassMethodModifier(Lexer()->GetToken().Type())) {
-        modifiers |= ParseClassMethodModifiers(false);
+        ParseClassMethodModifiers(modifiers);
     }
 
     if (Lexer()->GetToken().Type() != lexer::TokenType::KEYW_CONSTRUCTOR) {

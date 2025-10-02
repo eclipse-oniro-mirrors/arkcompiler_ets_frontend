@@ -240,9 +240,9 @@ private:
     ir::MethodDefinition *ParseInterfaceMethod(ir::ModifierFlags flags, ir::MethodDefinitionKind methodKind);
     void ReportAccessModifierError(const lexer::Token &token);
     std::tuple<ir::ModifierFlags, bool, bool> ParseClassMemberAccessModifiers();
-    ir::ModifierFlags ParseClassFieldModifiers(bool seenStatic);
+    void ParseClassFieldModifiers(ir::ModifierFlags &memberModifiers);
     ir::ModifierFlags ParseClassMethodModifierFlag();
-    ir::ModifierFlags ParseClassMethodModifiers(bool seenStatic);
+    void ParseClassMethodModifiers(ir::ModifierFlags &memberModifiers);
     void ValidateOverloadDeclarationModifiers(ir::ModifierFlags modifiers);
     bool ParseOverloadListElement(ArenaVector<ir::Expression *> &overloads, ir::OverloadDeclaration *overloadDecl);
     void ValidateOverloadList(ArenaVector<ir::Expression *> const &overloadList);

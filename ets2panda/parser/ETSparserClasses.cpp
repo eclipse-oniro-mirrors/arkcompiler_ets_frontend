@@ -248,14 +248,12 @@ static bool IsClassFieldModifier(lexer::TokenType type)
     return type == lexer::TokenType::KEYW_STATIC || type == lexer::TokenType::KEYW_READONLY;
 }
 
-ir::ModifierFlags ETSParser::ParseClassFieldModifiers(bool seenStatic)
+void ETSParser::ParseClassFieldModifiers(ir::ModifierFlags &memberModifiers)
 {
-    ir::ModifierFlags flags = seenStatic ? ir::ModifierFlags::STATIC : ir::ModifierFlags::NONE;
-
     while (IsClassFieldModifier(Lexer()->GetToken().KeywordType())) {
         char32_t nextCp = Lexer()->Lookahead();
         if (!(nextCp != lexer::LEX_CHAR_EQUALS && nextCp != lexer::LEX_CHAR_COLON)) {
-            return flags;
+            return;
         }
 
         ir::ModifierFlags currentFlag;
@@ -274,15 +272,13 @@ ir::ModifierFlags ETSParser::ParseClassFieldModifiers(bool seenStatic)
             }
         }
 
-        if ((flags & currentFlag) != 0) {
+        if ((memberModifiers & currentFlag) != 0) {
             LogError(diagnostic::DUPLICATED_MODIFIER);
         }
 
         Lexer()->NextToken(lexer::NextTokenFlags::KEYWORD_TO_IDENT);
-        flags |= currentFlag;
+        memberModifiers |= currentFlag;
     }
-
-    return flags;
 }
 
 bool ETSParser::IsClassMethodModifier(lexer::TokenType type) noexcept
@@ -380,35 +376,31 @@ ir::ModifierFlags ETSParser::ParseClassMethodModifierFlag()
     return currentFlag;
 }
 
-ir::ModifierFlags ETSParser::ParseClassMethodModifiers(bool seenStatic)
+void ETSParser::ParseClassMethodModifiers(ir::ModifierFlags &memberModifiers)
 {
-    ir::ModifierFlags flags = seenStatic ? ir::ModifierFlags::STATIC : ir::ModifierFlags::NONE;
-
     while (IsClassMethodModifier(Lexer()->GetToken().KeywordType())) {
         char32_t nextCp = Lexer()->Lookahead();
         if (!(nextCp != lexer::LEX_CHAR_LEFT_PAREN)) {
-            return flags;
+            return;
         }
 
         ir::ModifierFlags currentFlag = ir::ModifierFlags::NONE;
 
         currentFlag = ParseClassMethodModifierFlag();
-        if ((flags & currentFlag) != 0) {
+        if ((memberModifiers & currentFlag) != 0) {
             LogError(diagnostic::DUPLICATED_MODIFIER);
         }
 
         Lexer()->NextToken(lexer::NextTokenFlags::KEYWORD_TO_IDENT);
-        flags |= currentFlag;
-        if ((flags & ir::ModifierFlags::ASYNC) != 0) {
-            if ((flags & ir::ModifierFlags::NATIVE) != 0) {
+        memberModifiers |= currentFlag;
+        if ((memberModifiers & ir::ModifierFlags::ASYNC) != 0) {
+            if ((memberModifiers & ir::ModifierFlags::NATIVE) != 0) {
                 LogError(diagnostic::NATIVE_METHOD_ASYNC);
-            } else if ((flags & ir::ModifierFlags::ABSTRACT) != 0) {
+            } else if ((memberModifiers & ir::ModifierFlags::ABSTRACT) != 0) {
                 LogError(diagnostic::ABSTRACT_METHOD_ASYNC);
             }
         }
     }
-
-    return flags;
 }
 
 ir::TypeNode *ETSParser::ConvertToOptionalUnionType(ir::TypeNode *typeAnno)
@@ -662,11 +654,17 @@ void ETSParser::UpdateMemberModifiers(ir::ModifierFlags &memberModifiers, bool &
         seenStatic = false;
     }
 
-    if (IsClassFieldModifier(Lexer()->GetToken().KeywordType())) {
-        memberModifiers |= ParseClassFieldModifiers(seenStatic);
-    } else if (IsClassMethodModifier(Lexer()->GetToken().Type())) {
-        memberModifiers |= ParseClassMethodModifiers(seenStatic);
-    }
+    ir::ModifierFlags previousMemberModifiers;
+    do {
+        previousMemberModifiers = memberModifiers;
+        if (IsClassFieldModifier(Lexer()->GetToken().KeywordType())) {
+            ParseClassFieldModifiers(memberModifiers);
+        } else if (IsClassMethodModifier(Lexer()->GetToken().Type())) {
+            ParseClassMethodModifiers(memberModifiers);
+        }
+
+        // if there is no new modifier among the memberModifiers, we processed everything we could, we can stop
+    } while (previousMemberModifiers != memberModifiers);
 }
 
 std::tuple<bool, bool, bool> ETSParser::HandleClassElementModifiers(ir::ModifierFlags &memberModifiers)
