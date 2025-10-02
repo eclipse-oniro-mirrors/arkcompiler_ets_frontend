@@ -6,8 +6,14 @@ float-mm
 typescript-compiler
 wsl
 
+#27821
+OfflineAssembler
+
 #18740
 splay
 
-#29833
+#27787
+stanford-crypto-pbkdf2
+
+#30387
 json-stringify-inspector

@@ -91,9 +91,6 @@ runtime/ets/class_implements_interface_import.ets
 # #21051 should be log warnings, but there aren't
 ast/compiler/ets/not_initialized_variable/import_types.ets
 
-#Issue 22182
-ast/compiler/ets/implicit_package_import/package_test_5/package_module_1.sts
-
 #import tests, not test cases(path problem)
 ast/compiler/ets/import_export/test1_1.ets
 ast/compiler/ets/import_export/test1_1.ets

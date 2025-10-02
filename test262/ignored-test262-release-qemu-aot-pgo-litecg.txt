@@ -1,5 +1,5 @@
 # Known failures list for test262 - release-qemu-aot-pgo-litecg
-#21819
+#29758
 test262/data/test_es2021/intl402/supportedLocalesOf-consistent-with-resolvedOptions.js
 test262/data/test_es2021/intl402/supportedLocalesOf-unicode-extensions-ignored.js
 
@@ -47,5 +47,5 @@ test262/data/test_es2021/intl402/DateTimeFormat/prototype/formatToParts/dayPerio
 #18902
 test262/data/test_es2021/intl402/fallback-locales-are-supported.js
 
-#21453
+#23670
 test262/data/test_es2021/built-ins/TypedArrayConstructors/ctors/object-arg/conversion-operation.js
