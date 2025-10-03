@@ -67,58 +67,58 @@ declare const test1: ComplexType<'n'>;
 declare const test2: ComplexType<'s'>;
 declare const test3: ComplexType<'b'>;
 
-/* @@? 1:3 Error TypeError: Class 'TupleType' is already defined with different type. */
-/* @@? 1:3 Error TypeError: Class 'UnionType' is already defined with different type. */
-/* @@? 21:19 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 21:30 Error SyntaxError: Unexpected token ','. */
-/* @@? 21:41 Error SyntaxError: Unexpected token ','. */
-/* @@? 32:42 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 35:44 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 35:59 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 35:59 Error SyntaxError: Unexpected token ']'. */
-/* @@? 35:60 Error SyntaxError: Unexpected token ']'. */
-/* @@? 38:19 Error TypeError: Cannot find type 'a'. */
-/* @@? 38:20 Error SyntaxError: Unexpected token ':'. */
-/* @@? 38:20 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 38:22 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 38:22 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 38:28 Error SyntaxError: Unexpected token ','. */
-/* @@? 38:30 Error SyntaxError: Unexpected token 'b'. */
-/* @@? 38:33 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 38:33 Error TypeError: Type name 'string' used in the wrong context */
-/* @@? 38:39 Error SyntaxError: Unexpected token ']'. */
-/* @@? 41:19 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 41:22 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 41:24 Error SyntaxError: Unexpected token 'in'. */
-/* @@? 41:32 Error SyntaxError: Field type annotation expected. */
-/* @@? 41:43 Error SyntaxError: Unexpected token ']'. */
-/* @@? 41:43 Error SyntaxError: Field type annotation expected. */
-/* @@? 41:44 Error SyntaxError: Unexpected token ':'. */
-/* @@? 41:46 Error SyntaxError: string is a predefined type, cannot be used as an identifier  */
-/* @@? 44:41 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 44:60 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 54:34 Error TypeError: Cannot find type 'InvalidMap'. */
-/* @@? 54:44 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 57:45 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 57:63 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 57:67 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 58:12 Error SyntaxError: Unexpected token ','. */
-/* @@? 59:23 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 59:23 Error SyntaxError: Unexpected token ']'. */
-/* @@? 59:24 Error SyntaxError: Unexpected token ']'. */
-/* @@? 59:25 Error SyntaxError: Unexpected token ','. */
-/* @@? 60:29 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 60:40 Error SyntaxError: Unexpected token ','. */
-/* @@? 61:27 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 61:28 Error SyntaxError: Unexpected token ']'. */
-/* @@? 61:29 Error SyntaxError: Unexpected token ']'. */
-/* @@? 61:30 Error SyntaxError: Unexpected token ','. */
-/* @@? 62:13 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 62:16 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 62:18 Error SyntaxError: Unexpected token 'in'. */
-/* @@? 62:22 Error SyntaxError: Unexpected token ']'. */
-/* @@? 62:22 Error SyntaxError: Field type annotation expected. */
-/* @@? 62:23 Error SyntaxError: Unexpected token ':'. */
-/* @@? 62:35 Error SyntaxError: Field type annotation expected. */
-/* @@? 62:36 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 62:37 Error SyntaxError: Unexpected token ']'. */
+/* @@? 1:3 Error Semantic error ESE0350: Class 'TupleType' is already defined with different type. */
+/* @@? 1:3 Error Semantic error ESE0350: Class 'UnionType' is already defined with different type. */
+/* @@? 21:19 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 21:30 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 21:41 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 32:42 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@? 35:44 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@? 35:59 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 35:59 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 35:60 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 38:19 Error Semantic error ESE0371: Cannot find type 'a'. */
+/* @@? 38:20 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 38:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 38:22 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 38:22 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 38:28 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 38:30 Error Syntax error ESY0227: Unexpected token 'b'. */
+/* @@? 38:33 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 38:33 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
+/* @@? 38:39 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 41:19 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 41:22 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 41:24 Error Syntax error ESY0227: Unexpected token 'in'. */
+/* @@? 41:32 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 41:43 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 41:43 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 41:44 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 41:46 Error Syntax error ESY0295: string is a predefined type, cannot be used as an identifier */
+/* @@? 44:41 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@? 44:60 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 54:34 Error Semantic error ESE0371: Cannot find type 'InvalidMap'. */
+/* @@? 54:44 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@? 57:45 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@? 57:63 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@? 57:67 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 58:12 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 59:23 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 59:23 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 59:24 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 59:25 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 60:29 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 60:40 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 61:27 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 61:28 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 61:29 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 61:30 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 62:13 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 62:16 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 62:18 Error Syntax error ESY0227: Unexpected token 'in'. */
+/* @@? 62:22 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 62:22 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 62:23 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 62:35 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 62:36 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 62:37 Error Syntax error ESY0227: Unexpected token ']'. */

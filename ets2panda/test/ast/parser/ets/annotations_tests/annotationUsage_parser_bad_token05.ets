@@ -18,7 +18,8 @@
 
 const invalidUsage1 = @@Log("value") ()=>{}
 
-/* @@? 19:23 Error SyntaxError: Unexpected token '@@'. */
-/* @@? 19:25 Error SyntaxError: Unexpected token 'Log'. */
-/* @@? 19:40 Error SyntaxError: Unexpected token '=>'. */
-/* @@? 19:40 Error SyntaxError: Unexpected token. */
+
+/* @@? 19:23 Error Syntax error ESY0227: Unexpected token '@@'. */
+/* @@? 19:25 Error Syntax error ESY0227: Unexpected token 'Log'. */
+/* @@? 19:40 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 19:40 Error Syntax error ESY0016: Unexpected token. */

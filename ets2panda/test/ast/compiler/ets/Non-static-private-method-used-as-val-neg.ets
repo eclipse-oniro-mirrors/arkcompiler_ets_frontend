@@ -25,4 +25,5 @@ class C {
    }
 }
 
-/* @@@ label Error TypeError: Private method is used as value  */
+
+/* @@@ label Error Semantic error ESE0306: Private method is used as value */

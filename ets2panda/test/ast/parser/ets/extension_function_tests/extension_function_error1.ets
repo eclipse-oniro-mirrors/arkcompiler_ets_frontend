@@ -17,7 +17,8 @@
 function animatableWidth(this: TextAttribute, this { this.width(width); return this;
 }
 
-/* @@? 16:2 Error TypeError: Cannot find type 'AnimatableExtend'.  */
-/* @@? 17:32 Error TypeError: Cannot find type 'TextAttribute'.  */
-/* @@? 17:52 Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation.  */
-/* @@? 17:52 Error SyntaxError: Unexpected token, expected ',' or ')'.  */
+
+/* @@? 16:2 Error Semantic error ESE0371: Cannot find type 'AnimatableExtend'. */
+/* @@? 17:32 Error Semantic error ESE0371: Cannot find type 'TextAttribute'. */
+/* @@? 17:52 Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */
+/* @@? 17:52 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */

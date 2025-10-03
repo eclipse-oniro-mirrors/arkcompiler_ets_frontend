@@ -26,4 +26,5 @@ function main() {
     console.println(banana.name());
 }
 
-/* @@@ label Error TypeError: Property id is not visible here.  */
+
+/* @@@ label Error Semantic error ESE0293: Property id is not visible here. */

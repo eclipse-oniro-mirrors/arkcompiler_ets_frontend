@@ -16,6 +16,6 @@
 
 for () {}
 
-/* @@? 17:6 Error SyntaxError: Unexpected token ')'. */
-/* @@? 17:6 Error SyntaxError: Unexpected token ')'. */
-/* @@? 17:6 Error SyntaxError: Expected ';', got ')'. */
+
+/* @@? 17:6 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 17:6 Error Syntax error ESY0230: Expected ';', got ')'. */

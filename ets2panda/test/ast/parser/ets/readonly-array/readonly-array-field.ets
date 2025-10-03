@@ -32,16 +32,16 @@ class A {
     }
 }
 
-/* @@@ extendTo Error TypeError: Property 'extendTo' does not exist on type 'ReadonlyArray' */
-/* @@@ shrinkTo Error TypeError: Property 'shrinkTo' does not exist on type 'ReadonlyArray' */
-/* @@@ sort Error TypeError: Property 'sort' does not exist on type 'ReadonlyArray' */
-/* @@@ shift Error TypeError: Property 'shift' does not exist on type 'ReadonlyArray' */
-/* @@@ pop Error TypeError: Property 'pop' does not exist on type 'ReadonlyArray' */
-/* @@@ push Error TypeError: Property 'push' does not exist on type 'ReadonlyArray' */
-/* @@@ splice Error TypeError: Property 'splice' does not exist on type 'ReadonlyArray' */
-/* @@@ unshift Error TypeError: Property 'unshift' does not exist on type 'ReadonlyArray' */
-/* @@@ copyWithin Error TypeError: Property 'copyWithin' does not exist on type 'ReadonlyArray' */
-/* @@@ fill Error TypeError: Property 'fill' does not exist on type 'ReadonlyArray' */
-/* @@@ toSpliced Error TypeError: Property 'toSpliced' does not exist on type 'ReadonlyArray' */
-/* @@@ reverse Error TypeError: Property 'reverse' does not exist on type 'ReadonlyArray' */
-/* @@@ with Error TypeError: Property 'with' does not exist on type 'ReadonlyArray' */
+/* @@@ extendTo Error Semantic error ESE0087: Property 'extendTo' does not exist on type 'ReadonlyArray' */
+/* @@@ shrinkTo Error Semantic error ESE0087: Property 'shrinkTo' does not exist on type 'ReadonlyArray' */
+/* @@@ sort Error Semantic error ESE0087: Property 'sort' does not exist on type 'ReadonlyArray' */
+/* @@@ shift Error Semantic error ESE0087: Property 'shift' does not exist on type 'ReadonlyArray' */
+/* @@@ pop Error Semantic error ESE0087: Property 'pop' does not exist on type 'ReadonlyArray' */
+/* @@@ push Error Semantic error ESE0087: Property 'push' does not exist on type 'ReadonlyArray' */
+/* @@@ splice Error Semantic error ESE0087: Property 'splice' does not exist on type 'ReadonlyArray' */
+/* @@@ unshift Error Semantic error ESE0087: Property 'unshift' does not exist on type 'ReadonlyArray' */
+/* @@@ copyWithin Error Semantic error ESE0087: Property 'copyWithin' does not exist on type 'ReadonlyArray' */
+/* @@@ fill Error Semantic error ESE0087: Property 'fill' does not exist on type 'ReadonlyArray' */
+/* @@@ toSpliced Error Semantic error ESE0087: Property 'toSpliced' does not exist on type 'ReadonlyArray' */
+/* @@@ reverse Error Semantic error ESE0087: Property 'reverse' does not exist on type 'ReadonlyArray' */
+/* @@@ with Error Semantic error ESE0087: Property 'with' does not exist on type 'ReadonlyArray' */

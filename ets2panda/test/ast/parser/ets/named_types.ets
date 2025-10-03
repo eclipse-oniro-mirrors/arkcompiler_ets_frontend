@@ -30,9 +30,10 @@ class auxilliary  {
     }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
-/* @@@ label1 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 19:12 Error TypeError: Cannot find type 'ets'. */
-/* @@? 19:16 Error TypeError: 'lang' type does not exist. */
-/* @@? 19:21 Error TypeError: 'String' type does not exist. */
-/* @@? 29:20 Error TypeError: Type 'inner<T>' is generic but type argument were not provided. */
+
+/* @@? 19:12 Error Semantic error ESE0371: Cannot find type 'ets'. */
+/* @@? 19:16 Error Semantic error ESE0070: 'lang' type does not exist. */
+/* @@? 19:21 Error Semantic error ESE0070: 'String' type does not exist. */
+/* @@@ label Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@@ label1 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 29:20 Error Semantic error ESE0170: Type 'inner<T>' is generic but type argument were not provided. */

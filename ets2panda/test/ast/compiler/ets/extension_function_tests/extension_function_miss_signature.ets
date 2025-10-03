@@ -39,6 +39,7 @@ function main() {
     asMethodCall();
 }
 
-/* @@? 30:5 Error TypeError: Expected 2 arguments, got 3.  */
-/* @@? 30:5 Error TypeError: No matching call signature for foo(Fruit, Double, Double)  */
-/* @@? 34:5 Error TypeError: No matching call signature for foo(Double, Double)  */
+
+/* @@? 30:5 Error Semantic error ESE0124: Expected 2 arguments, got 3. */
+/* @@? 30:5 Error Semantic error ESE0127: No matching call signature for foo(Fruit, Double, Double) */
+/* @@? 34:5 Error Semantic error ESE0127: No matching call signature for foo(Double, Double) */

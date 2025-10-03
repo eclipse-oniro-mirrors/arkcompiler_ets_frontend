@@ -19,4 +19,5 @@ class A {
     #a;
 /* @@ label */}
 
-/* @@@ label Error SyntaxError: Private field has already been declared.  */
+
+/* @@@ label Error Syntax error ESY0154: Private field has already been declared. */

@@ -23,5 +23,6 @@ function main(): void {
   }
 }
 
-/* @@@ label Error SyntaxError: Invalid left-hand side in 'for' statement: must have a single binding. */
-/* @@@ label1 Error SyntaxError: Expected ')', got '{'. */
+
+/* @@@ label Error Syntax error ESY0211: Invalid left-hand side in 'for' statement: must have a single binding. */
+/* @@@ label1 Error Syntax error ESY0230: Expected ')', got '{'. */

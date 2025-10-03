@@ -39,8 +39,8 @@ function main(): void {
   /* @@ label4 */foo(/* @@ label5 */"other field");
 }
 
-/* @@@ label1 Error TypeError: Type '"abcd"' cannot be used on the right hand side of an 'instanceof' expression */
-/* @@@ label2 Error TypeError: No matching call signature for foo("field2")  */
-/* @@@ label3 Error TypeError: Type '"field2"' is not compatible with type '"abcd"|A|undefined|"foo"|"field1"' at index 1  */
-/* @@@ label4 Error TypeError: No matching call signature for foo("other field")  */
-/* @@@ label5 Error TypeError: Type '"other field"' is not compatible with type '"abcd"|A|undefined|"foo"|"field1"' at index 1  */
+/* @@@ label1 Error Semantic error ESE38251: Type '"abcd"' cannot be used on the right hand side of an 'instanceof' expression */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for foo("field2") */
+/* @@@ label3 Error Semantic error ESE0046: Type '"field2"' is not compatible with type '"abcd"|A|undefined|"foo"|"field1"' at index 1 */
+/* @@@ label4 Error Semantic error ESE0127: No matching call signature for foo("other field") */
+/* @@@ label5 Error Semantic error ESE0046: Type '"other field"' is not compatible with type '"abcd"|A|undefined|"foo"|"field1"' at index 1 */

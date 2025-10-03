@@ -23,5 +23,6 @@ function main() : void {
     refInt(b);
 }
 
-/* @@@ label1 Error TypeError: Type 'Int' cannot be assigned to type 'Short'  */
-/* @@@ label2 Error TypeError: Type 'Int' cannot be assigned to type 'Short'  */
+
+/* @@@ label1 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Short' */
+/* @@@ label2 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Short' */

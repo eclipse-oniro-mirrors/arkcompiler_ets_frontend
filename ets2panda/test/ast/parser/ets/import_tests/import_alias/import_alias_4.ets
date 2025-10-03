@@ -20,4 +20,5 @@ function main():void{
 }
 
 
-/* @@@ label Error TypeError: Property 'goo1' does not exist on type 'export'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'goo1' does not exist on type 'export' */

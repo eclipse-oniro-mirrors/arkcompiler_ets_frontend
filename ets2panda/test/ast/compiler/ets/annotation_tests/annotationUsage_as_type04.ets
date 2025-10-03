@@ -20,5 +20,6 @@ function foo<T>(a:T){}
 
 foo</* @@ label */MyAnno>(new /* @@ label1 */MyAnno())
 
-/* @@@ label Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label1 Error TypeError: Annotations cannot be used as a type. */
+
+/* @@@ label Error Semantic error ESE0159: Annotations cannot be used as a type. */
+/* @@@ label1 Error Semantic error ESE0159: Annotations cannot be used as a type. */

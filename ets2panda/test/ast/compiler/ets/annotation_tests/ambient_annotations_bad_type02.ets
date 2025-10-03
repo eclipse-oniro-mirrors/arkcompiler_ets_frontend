@@ -18,12 +18,12 @@ import {ClassAuthor, Color} from "./annotation_src"
 @interface ClassAuthor {
 }
 
-/* @@? 18:2 Error TypeError: Field 'mutiArray' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
-/* @@? 18:2 Error TypeError: Field 'color' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
-/* @@? 18:2 Error TypeError: Field 'testBools' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
-/* @@? 18:2 Error TypeError: Field 'reviewers' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
-/* @@? 18:2 Error TypeError: Field 'favorColor' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
-/* @@? 18:2 Error TypeError: Field 'testBool' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
-/* @@? 18:2 Error TypeError: Field 'reviewersAge' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
-/* @@? 18:2 Error TypeError: Field 'authorAge' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
-/* @@? 18:2 Error TypeError: Field 'authorName' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
+/* @@? 18:2 Error Semantic error ESE0040: Field 'mutiArray' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation. */
+/* @@? 18:2 Error Semantic error ESE0040: Field 'color' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation. */
+/* @@? 18:2 Error Semantic error ESE0040: Field 'testBools' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation. */
+/* @@? 18:2 Error Semantic error ESE0040: Field 'reviewers' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation. */
+/* @@? 18:2 Error Semantic error ESE0040: Field 'favorColor' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation. */
+/* @@? 18:2 Error Semantic error ESE0040: Field 'testBool' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation. */
+/* @@? 18:2 Error Semantic error ESE0040: Field 'reviewersAge' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation. */
+/* @@? 18:2 Error Semantic error ESE0040: Field 'authorAge' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation. */
+/* @@? 18:2 Error Semantic error ESE0040: Field 'authorName' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation. */

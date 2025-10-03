@@ -22,5 +22,6 @@ class C {
 
 /* @@ label */(new C()).foo(new A<Long>)
 
-/* @@@ label Error TypeError: Expected 2 arguments, got 1. */
-/* @@@ label Error TypeError: No matching call signature for foo(A<Long>) */
+
+/* @@@ label Error Semantic error ESE0124: Expected 2 arguments, got 1. */
+/* @@@ label Error Semantic error ESE0127: No matching call signature for foo(A<Long>) */

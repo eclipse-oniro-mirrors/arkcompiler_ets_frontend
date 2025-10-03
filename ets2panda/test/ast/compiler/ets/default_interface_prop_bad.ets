@@ -21,9 +21,9 @@ class Klass implements Inter {
     a ?: string
 }
 
-/* @@? 21:5 Error TypeError: a(): undefined|String in Klass cannot override a(): Double|undefined in Inter because overriding return type is not compatible with the other return type. */
-/* @@? 21:5 Error TypeError: Method a(): undefined|String in Klass not overriding any method */
-/* @@? 21:5 Error TypeError: a(): undefined|String in Klass cannot override a(): Double|undefined in Inter because overriding return type is not compatible with the other return type. */
-/* @@? 21:5 Error TypeError: Method a(): undefined|String in Klass not overriding any method */
-/* @@? 21:5 Error TypeError: a(): undefined|String in Klass cannot override a(): Double|undefined in Inter because overriding return type is not compatible with the other return type. */
-/* @@? 21:5 Error TypeError: Method a(): undefined|String in Klass not overriding any method */
+/* @@? 21:5 Error Semantic error ESE0141: a(): undefined|String in Klass cannot override a(): Double|undefined in Inter because overriding return type is not compatible with the other return type. */
+/* @@? 21:5 Error Semantic error ESE0136: Method a(): undefined|String in Klass not overriding any method */
+/* @@? 21:5 Error Semantic error ESE0141: a(): undefined|String in Klass cannot override a(): Double|undefined in Inter because overriding return type is not compatible with the other return type. */
+/* @@? 21:5 Error Semantic error ESE0136: Method a(): undefined|String in Klass not overriding any method */
+/* @@? 21:5 Error Semantic error ESE0141: a(): undefined|String in Klass cannot override a(): Double|undefined in Inter because overriding return type is not compatible with the other return type. */
+/* @@? 21:5 Error Semantic error ESE0136: Method a(): undefined|String in Klass not overriding any method */

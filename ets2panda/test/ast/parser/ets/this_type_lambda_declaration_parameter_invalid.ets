@@ -15,4 +15,5 @@
 
 let x: (i: int, t: /* @@ label */this) => number;
 
-/* @@@ label Error SyntaxError: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions.  */
+
+/* @@@ label Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */

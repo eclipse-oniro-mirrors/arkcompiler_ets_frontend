@@ -24,16 +24,20 @@ namespace ark::es2panda::util {
 
 void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::ostream &out) const
 {
-    out << DiagnosticTypeToString(diagnostic.Type()) << ": " << diagnostic.Message();
+    // Message collected and printed once to avoid spliting printed message in case multithreading execution
+    std::ostringstream stream;
     if (!diagnostic.File().empty()) {
-        out << " [" << util::BaseName(diagnostic.File()) << ":" << diagnostic.Line() << ":" << diagnostic.Offset()
-            << "]";
+        stream << "[" << util::BaseName(diagnostic.File()) << ":" << diagnostic.Line() << ":" << diagnostic.Offset()
+               << "] ";
     }
-    out << std::endl;
+    stream << DiagnosticTypeToString(diagnostic.Type()) << " " << diagnostic.ToStringUniqueNumber() << ": "
+           << diagnostic.Message() << std::endl;
+    out << stream.str();
 }
 
 void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic) const
 {
+    // NOTE(pronai) test harness is not prepared for cerr
     Print(diagnostic, std::cout);
 }
 

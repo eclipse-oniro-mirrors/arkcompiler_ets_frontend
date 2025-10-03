@@ -17,4 +17,4 @@ declare interface A {
     (index :ee ): string
 }
 
-/* @@? 17:13 Error TypeError: Cannot find type 'ee'. */
+/* @@? 17:13 Error Semantic error ESE0371: Cannot find type 'ee'. */

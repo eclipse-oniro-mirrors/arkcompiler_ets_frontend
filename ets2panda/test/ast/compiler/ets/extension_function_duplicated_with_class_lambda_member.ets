@@ -26,4 +26,5 @@ let a = new A;
 a.foo = foo;
 console.log(a.foo())
 
-/* @@@ label Error TypeError: The extension accessor or extension function 'foo' has the same name with field of class A */
+
+/* @@@ label Error Semantic error ESE0079: The extension accessor or extension function 'foo' has the same name with field of class A */

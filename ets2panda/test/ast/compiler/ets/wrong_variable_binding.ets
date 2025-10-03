@@ -26,5 +26,5 @@ class C {
   
   class D extends C{}
 
-/* @@? 19:13 Error SyntaxError: Field type annotation expected. */
-/* @@? 21:12 Error TypeError: Variable 'C' has already been declared. */
+/* @@? 19:13 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 21:12 Error Semantic error ESE0351: Variable 'C' has already been declared. */

@@ -22,4 +22,5 @@ class A<T>{
 
 new A<MySpace>()
 
-/* @@? 23:7 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
+
+/* @@? 23:7 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */

@@ -28,5 +28,5 @@ set name/* @@ label */(this: B, n: string) {
     this.name_ = n;
 }
 
-/* @@@ label Error TypeError: Function name with this assembly signature already declared.  */
-/* @@@ label Error TypeError: Function name with this assembly signature already declared.  */
+
+/* @@@ label Error Semantic error ESE0131: Function name with this assembly signature already declared. */

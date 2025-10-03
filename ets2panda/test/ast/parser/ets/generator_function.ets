@@ -14,4 +14,5 @@
  */
 
 function* f() {}
-/* @@? 16:11 Error SyntaxError: Generator functions are not supported, please use async/await mechanism for multitasking */
+
+/* @@? 16:11 Error Syntax error ESY0314: Generator functions are not supported, please use async/await mechanism for multitasking */

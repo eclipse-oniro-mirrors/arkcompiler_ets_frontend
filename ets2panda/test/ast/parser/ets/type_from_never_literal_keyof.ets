@@ -19,5 +19,5 @@
    let keyOfType = Type.from<keyofType>();
  }
 
-  /* @@? 18:4 Error SyntaxError: Illegal start of Type Alias expression. */
-  /* @@? 19:30 Error TypeError: Cannot find type 'keyofType'. */
+  /* @@? 18:4 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 19:30 Error Semantic error ESE0371: Cannot find type 'keyofType'. */

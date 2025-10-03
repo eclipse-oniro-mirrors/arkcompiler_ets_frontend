@@ -20,4 +20,4 @@ function foo([a = 2, { b: [c = 6, d] = [true, [5n, "foo"]], t = { a: 3, b: { a: 
 
 /* @@ label */foo + 5;
 
-/* @@@ label Error TypeError: operator + cannot be applied to types (p1: [number, { b?: [boolean, (bigint | string)[]]; t?: { a: number; b: { a: number; b: bigint; }; }; }], p2: { r?: [[number, string]]; }) => void and number  */
+/* @@@ label Error Semantic error ESE0000: operator + cannot be applied to types (p1: [number, { b?: [boolean, (bigint | string)[]]; t?: { a: number; b: { a: number; b: bigint; }; }; }], p2: { r?: [[number, string]]; }) => void and number */

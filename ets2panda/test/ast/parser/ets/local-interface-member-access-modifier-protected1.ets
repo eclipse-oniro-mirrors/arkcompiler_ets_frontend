@@ -21,5 +21,6 @@ function foo()
     }
 }
 
-/* @@@ label1 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@@ label2 Error SyntaxError: Identifier expected, got 'protected'. */
+
+/* @@@ label1 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@@ label2 Error Syntax error ESY0224: Identifier expected, got 'protected'. */

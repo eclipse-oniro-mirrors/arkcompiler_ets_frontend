@@ -17,8 +17,9 @@ const e = 123
 @interface Ajno {
     b:e: string[][X (c + d)],%
 
-/* @@? 18:7 Error TypeError: Cannot find type 'e'. */
-/* @@? 18:17 Error SyntaxError: Unexpected token ']'. */
-/* @@? 18:29 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 25:1 Error SyntaxError: Unexpected token 'end of stream'. */
 
+
+/* @@? 18:7 Error Semantic error ESE0371: Cannot find type 'e'. */
+/* @@? 18:17 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 18:29 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 25:78 Error Syntax error ESY0227: Unexpected token 'end of stream'. */

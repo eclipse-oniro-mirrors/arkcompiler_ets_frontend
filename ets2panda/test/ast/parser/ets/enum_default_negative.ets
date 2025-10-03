@@ -26,13 +26,14 @@ enum D {
 }
 
 
-/* @@? 17:9 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 17:10 Error SyntaxError: Unexpected token ')'. */
-/* @@? 18:1 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? 20:1 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 21:9 Error SyntaxError: Unexpected token ')'. */
-/* @@? 21:9 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 25:9 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 26:1 Error SyntaxError: Unexpected token, expected ':'. */
-/* @@? 39:1 Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@? 39:1 Error SyntaxError: Unexpected token, expected ',' or '}'. */
+
+/* @@? 17:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 17:10 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 18:1 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 20:1 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 21:9 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 21:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 25:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 26:1 Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@? 39:83 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 39:83 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */

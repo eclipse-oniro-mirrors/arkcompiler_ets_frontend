@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,4 +21,5 @@ interface A {
 interface B extends A {
     /* @@ label */5: boolean;
 }
-/* @@@ label Error TypeError: Property '5' of type 'boolean' is not assignable to numeric index type 'number'.  */
+
+/* @@@ label Error Semantic error ESE0324: Property '5' of type 'boolean' is not assignable to numeric index type 'number'. */

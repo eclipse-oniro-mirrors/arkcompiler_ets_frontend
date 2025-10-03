@@ -17,6 +17,7 @@ async function asyncFunc): Promise<boolean> {
     return true;
 }
 
-/* @@? 16:25 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 16:26 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 16:45 Error SyntaxError: Unexpected token, expected ',' or ')'. */
+
+/* @@? 16:25 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 16:26 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 16:45 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */

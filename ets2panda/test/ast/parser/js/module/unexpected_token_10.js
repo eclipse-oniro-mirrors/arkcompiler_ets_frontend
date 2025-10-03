@@ -19,6 +19,7 @@ flags: [module]
 
 import(import /* @@ label */)
 
-/* @@@ label Error SyntaxError: Expected '(', got ')'. */
-/* @@@ label Error SyntaxError: Unexpected token ')'. */
-/* @@? 25:1 Error SyntaxError: Expected ')', got 'end of stream'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected '(', got ')'. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 25:79 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */

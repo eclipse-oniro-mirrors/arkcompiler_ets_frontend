@@ -15,4 +15,4 @@
 
 let a = number[][]
 
-/* @@? 16:9 Error SyntaxError: Unexpected token 'number'.  */
+/* @@? 16:9 Error Syntax error ESY0227: Unexpected token 'number'. */

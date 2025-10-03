@@ -15,9 +15,10 @@
 
 do a 
 
-/* @@? 16:4 Error TypeError: Unresolved reference a */
-/* @@? 24:1 Error SyntaxError: Unexpected token, expected 'while'. */
-/* @@? 24:1 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 24:1 Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@? 24:1 Error SyntaxError: Missing condition in do while statement */
-/* @@? 24:1 Error SyntaxError: Expected ')', got 'end of stream'. */
+
+/* @@? 16:4 Error Semantic error ESE0143: Unresolved reference a */
+/* @@? 24:79 Error Syntax error ESY0228: Unexpected token, expected 'while'. */
+/* @@? 24:79 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 24:79 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 24:79 Error Syntax error ESY0301: Missing condition in do while statement */
+/* @@? 24:79 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */

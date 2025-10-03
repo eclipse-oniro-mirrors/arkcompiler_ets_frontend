@@ -27,6 +27,7 @@ enum C {
 }
 
 
-/* @@? 17:9 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 21:9 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 26:9 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+
+/* @@? 17:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 21:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 26:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */

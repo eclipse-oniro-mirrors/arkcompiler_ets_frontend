@@ -24,5 +24,6 @@ function main() : void {
   /* @@ label */fn<A>(/* @@ label1 */b);
 }
 
-/* @@@ label1 Error TypeError: Type 'B' is not compatible with type 'A' at index 1  */
-/* @@@ label Error TypeError: No matching call signature for fn(B)  */
+
+/* @@@ label Error Semantic error ESE0127: No matching call signature for fn(B) */
+/* @@@ label1 Error Semantic error ESE0046: Type 'B' is not compatible with type 'A' at index 1 */

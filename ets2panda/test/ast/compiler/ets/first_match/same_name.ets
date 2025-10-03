@@ -29,4 +29,5 @@ class D{
     overload foo{fooString,fooBoolean}
 }
 
-/* @@? 29:5 Error TypeError: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
+
+/* @@? 29:5 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */

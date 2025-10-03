@@ -25,4 +25,5 @@ export function fooImport() {
 // used to give wrong output:
 // TypeError: Type 'int' cannot be assigned to type 'String' [export_and_import_top_level.ets:21:1]
 
-/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type 'String' */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

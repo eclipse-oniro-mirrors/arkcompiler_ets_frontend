@@ -37,49 +37,52 @@ class Class2 {
 
 let var6: [a0: , a1: ];
 
-/* @@? 18:23 Error SyntaxError: Type annotation isn't allowed for constructor. */
-/* @@? 24:12 Error TypeError: FixedArray<T> must have only one type parameter. */
-/* @@? 24:23 Error SyntaxError: Invalid Type. */
-/* @@? 24:23 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 24:23 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 24:23 Error SyntaxError: Unexpected token '>'. */
-/* @@? 24:26 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 24:26 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 24:33 Error SyntaxError: Unexpected token ','. */
-/* @@? 24:35 Error SyntaxError: Unexpected token 'FixedArray'. */
-/* @@? 24:35 Error TypeError: Unresolved reference FixedArray */
-/* @@? 24:46 Error SyntaxError: Unexpected token '...'. */
-/* @@? 24:49 Error SyntaxError: Unexpected token 'string'. */
-/* @@? 24:49 Error TypeError: Type name 'string' used in the wrong context */
-/* @@? 24:56 Error SyntaxError: Unexpected token ']'. */
-/* @@? 26:12 Error TypeError: FixedArray<T> must have only one type parameter. */
-/* @@? 26:23 Error SyntaxError: Invalid Type. */
-/* @@? 26:23 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 26:23 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 26:23 Error SyntaxError: Unexpected token '>'. */
-/* @@? 26:26 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 26:26 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 26:33 Error SyntaxError: Unexpected token ','. */
-/* @@? 26:35 Error SyntaxError: Unexpected token 'string'. */
-/* @@? 26:35 Error TypeError: Type name 'string' used in the wrong context */
-/* @@? 26:41 Error SyntaxError: Unexpected token ']'. */
-/* @@? 28:18 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 28:18 Error SyntaxError: Unexpected token '?'. */
-/* @@? 28:19 Error SyntaxError: Unexpected token ']'. */
-/* @@? 30:18 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 30:18 Error SyntaxError: Unexpected token ':'. */
-/* @@? 30:20 Error SyntaxError: Unexpected token '...'. */
-/* @@? 30:23 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 30:26 Error SyntaxError: Unexpected token ']'. */
-/* @@? 32:19 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 32:19 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 32:19 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 32:25 Error SyntaxError: Unexpected token ']'. */
-/* @@? 35:21 Error SyntaxError: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
-/* @@? 38:12 Error TypeError: Cannot find type 'a0'. */
-/* @@? 38:14 Error SyntaxError: Unexpected token ':'. */
-/* @@? 38:14 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 38:16 Error SyntaxError: Unexpected token ','. */
-/* @@? 38:18 Error SyntaxError: Unexpected token 'a1'. */
-/* @@? 38:22 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 38:22 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 18:23 Error Syntax error ESY0140: Type annotation isn't allowed for constructor. */
+/* @@? 24:12 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
+/* @@? 24:23 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 24:23 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 24:23 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 24:23 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 24:23 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 24:26 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 24:26 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 24:33 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 24:35 Error Syntax error ESY0227: Unexpected token 'FixedArray'. */
+/* @@? 24:35 Error Semantic error ESE0143: Unresolved reference FixedArray */
+/* @@? 24:46 Error Syntax error ESY0227: Unexpected token '...'. */
+/* @@? 24:49 Error Syntax error ESY0227: Unexpected token 'string'. */
+/* @@? 24:49 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
+/* @@? 24:56 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 26:12 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
+/* @@? 26:23 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 26:23 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 26:23 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 26:23 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 26:26 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 26:26 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 26:33 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 26:35 Error Syntax error ESY0227: Unexpected token 'string'. */
+/* @@? 26:35 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
+/* @@? 26:41 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 28:18 Error Syntax error ESY0227: Unexpected token '?'. */
+/* @@? 28:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 28:19 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 30:18 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 30:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 30:18 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 30:20 Error Syntax error ESY0227: Unexpected token '...'. */
+/* @@? 30:23 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 30:26 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 32:19 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 32:19 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 32:19 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 32:25 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 35:21 Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
+/* @@? 38:12 Error Semantic error ESE0371: Cannot find type 'a0'. */
+/* @@? 38:14 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 38:14 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 38:16 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 38:18 Error Syntax error ESY0227: Unexpected token 'a1'. */
+/* @@? 38:22 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 38:22 Error Syntax error ESY0227: Unexpected token ']'. */

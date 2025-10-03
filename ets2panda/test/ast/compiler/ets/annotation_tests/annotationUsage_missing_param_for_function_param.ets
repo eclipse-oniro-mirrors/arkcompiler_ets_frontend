@@ -25,8 +25,9 @@ function foo0(@MyAnno x: int, @MyAnno({testProperty2: ""}) y: string = "a") {
 function foo1(@MyAnno({testProperty1: ""}) x: int, @MyAnno({testProperty2: ""}) y: string = "a") {
 }
 
-/* @@? 22:16 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
-/* @@? 22:16 Error TypeError: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
-/* @@? 22:32 Error TypeError: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
-/* @@? 25:16 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
-/* @@? 25:53 Error TypeError: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
+
+/* @@? 22:16 Error Semantic error ESE0044: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+/* @@? 22:16 Error Semantic error ESE0044: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
+/* @@? 22:32 Error Semantic error ESE0044: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
+/* @@? 25:16 Error Semantic error ESE0044: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+/* @@? 25:53 Error Semantic error ESE0044: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */

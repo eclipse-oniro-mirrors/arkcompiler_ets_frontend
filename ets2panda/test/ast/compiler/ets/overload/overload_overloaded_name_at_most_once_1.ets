@@ -28,4 +28,5 @@ class Test1 extends Test0 {
     overload foo{foo111, /* @@ label1 */foo111, foo112}
 }
 
-/* @@@ label1 Error TypeError: Duplicate overloaded method. */
+
+/* @@@ label1 Error Semantic error ESE0385: Duplicate overloaded method. */

@@ -20,4 +20,5 @@ let c: C = /* @@ label */{
     33: 44,
 };
 
-/* @@@ label Error TypeError: Key in class composite should be identifier only  */
+
+/* @@@ label Error Semantic error ESE0073: Key in class composite should be identifier only */

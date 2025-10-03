@@ -17,5 +17,6 @@ class SomeClass {
     $_get (index: string, value: SomeClass) { }
 }
 
-/* @@? 17:5 Error SyntaxError: The special predefined method '$_get' should have exactly one required parameter. */
-/* @@? 17:11 Error TypeError: 'The special predefined method '$_get' shouldn't have void return type. */
+
+/* @@? 17:5 Error Syntax error ESY0221: The special predefined method '$_get' should have exactly one required parameter. */
+/* @@? 17:11 Error Semantic error ESE0093: 'The special predefined method '$_get' shouldn't have void return type. */

@@ -17,6 +17,7 @@ interface Document {
   createElement(tagName: "div"):  /* @@ label */HTMLDivElement;
   createElement(tagName: "span"): HTMLSpanElement;
 }
-/* @@@ label Error TypeError: Cannot find type 'HTMLDivElement'. */
-/* @@? 18:35 Error TypeError: Cannot find type 'HTMLSpanElement'. */
-/* @@? 18:3 Error TypeError: Function createElement with this assembly signature already declared. */
+
+/* @@@ label Error Semantic error ESE0371: Cannot find type 'HTMLDivElement'. */
+/* @@? 18:3 Error Semantic error ESE0131: Function createElement with this assembly signature already declared. */
+/* @@? 18:35 Error Semantic error ESE0371: Cannot find type 'HTMLSpanElement'. */

@@ -17,4 +17,5 @@
 declare function foo(a:"str1"):void 
 declare function foo(a:"str2"):void
 
-/* @@? 17:1 Warning Warning: Function foo with this assembly signature already declared.  */
+
+/* @@? 17:1 Warning Warning W0022: Function foo with this assembly signature already declared. */

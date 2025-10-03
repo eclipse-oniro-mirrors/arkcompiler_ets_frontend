@@ -18,4 +18,4 @@ class named_types  {
     }
 }
 
-/* @@@ label  Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
+/* @@? 17:34 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */

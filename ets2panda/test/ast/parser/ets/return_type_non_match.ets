@@ -15,5 +15,6 @@
  function main():undefined {
    return false;
  }
- /* @@? 16:4 Error TypeError: Bad return type, main enable only void or int type. */
-/* @@? 16:11 Error TypeError: Type 'Boolean' is not compatible with the enclosing method's return type 'undefined' */
+ 
+/* @@? 16:4 Error Semantic error ESE0088: Bad return type, main enable only void or int type. */
+/* @@? 16:11 Error Semantic error ESE0091: Type 'Boolean' is not compatible with the enclosing method's return type 'undefined' */

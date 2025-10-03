@@ -18,11 +18,11 @@ const object1: Obj = {};
 
 console.log(Objct.keys(object1));
 
-/* @@? 19:13 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 19:13 Error TypeError: Interface 'Obj' cannot be used as object */
-/* @@? 19:16 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 19:16 Error SyntaxError: Unexpected token 'ct'. */
-/* @@? 19:16 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 19:16 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 19:16 Error TypeError: Unresolved reference ct */
-/* @@? 19:33 Error SyntaxError: Unexpected token ')'. */
+/* @@? 19:13 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 19:13 Error Semantic error ESE165326: Interface 'Obj' cannot be used as object */
+/* @@? 19:16 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 19:16 Error Syntax error ESY0227: Unexpected token 'ct'. */
+/* @@? 19:16 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 19:16 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 19:16 Error Semantic error ESE0143: Unresolved reference ct */
+/* @@? 19:33 Error Syntax error ESY0227: Unexpected token ')'. */

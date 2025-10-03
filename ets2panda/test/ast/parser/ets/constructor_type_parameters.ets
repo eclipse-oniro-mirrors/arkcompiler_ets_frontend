@@ -17,4 +17,5 @@ class C {
   constructor<T>(x: T) {}
 }
 
-/* @@? 17:17 Error SyntaxError: Constructor should not have type parameters. */ 
+ 
+/* @@? 17:17 Error Syntax error ESY0330: Constructor should not have type parameters. */

@@ -46,15 +46,16 @@ declare const num: NumAlias<42>;
 declare const str: StrAlias<"test">;
 declare const bool: BoolAlias<true>;
 
-/* @@? 37:73 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 38:16 Error SyntaxError: Unexpected token ','. */
-/* @@? 39:16 Error SyntaxError: Unexpected token ','. */
-/* @@? 40:17 Error SyntaxError: Unexpected token ','. */
-/* @@? 45:29 Error SyntaxError: Invalid Type. */
-/* @@? 45:29 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 45:29 Error SyntaxError: Unexpected token '>'. */
-/* @@? 45:32 Error SyntaxError: Unexpected token ';'. */
-/* @@? 47:31 Error SyntaxError: Invalid Type. */
-/* @@? 47:31 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 47:31 Error SyntaxError: Unexpected token '>'. */
-/* @@? 47:36 Error SyntaxError: Unexpected token ';'. */
+
+/* @@? 37:73 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 38:16 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 39:16 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 40:17 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 45:29 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 45:29 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 45:29 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 45:32 Error Syntax error ESY0227: Unexpected token ';'. */
+/* @@? 47:31 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 47:31 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 47:31 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 47:36 Error Syntax error ESY0227: Unexpected token ';'. */

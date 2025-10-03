@@ -21,5 +21,6 @@ function main(): void {
   let ab : A<B> = /* @@ label1 */abn; // should not work: nullable B (the type of abn) is not the subtype of non nullable B
 }
 
-/* @@@ label Error TypeError: Type 'A<B>' cannot be assigned to type 'A<B|null>'  */
-/* @@@ label1 Error TypeError: Type 'A<B|null>' cannot be assigned to type 'A<B>'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'A<B>' cannot be assigned to type 'A<B|null>' */
+/* @@@ label1 Error Semantic error ESE0318: Type 'A<B|null>' cannot be assigned to type 'A<B>' */

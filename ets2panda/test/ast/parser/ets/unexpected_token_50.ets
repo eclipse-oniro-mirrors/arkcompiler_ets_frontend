@@ -19,4 +19,4 @@ function identity<Type>(arg: Type): Type {
 let output = identity<string>
 let output1 = identity<number>/* @@ label */"hehe"
 
-/* @@@ label Error SyntaxError: Unexpected token 'hehe'. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'hehe'. */

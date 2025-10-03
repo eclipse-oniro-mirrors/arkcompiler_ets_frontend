@@ -18,16 +18,17 @@ let a = {
     ...a,
 }
 
-/* @@? 16:5 Error TypeError: Cannot infer type for a because class composite needs an explicit target type */
-/* @@? 17:9 Error SyntaxError: Unexpected token. */
-/* @@? 17:10 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 17:10 Error SyntaxError: Object pattern can't contain methods. */
-/* @@? 17:12 Error SyntaxError: Expected '{', got '('. */
-/* @@? 17:12 Error SyntaxError: Unexpected token. */
-/* @@? 17:13 Error SyntaxError: Unexpected token ')'. */
-/* @@? 17:14 Error SyntaxError: Unexpected token '{'. */
-/* @@? 17:16 Error SyntaxError: Unexpected token ','. */
-/* @@? 18:5 Error SyntaxError: Unexpected token '...'. */
-/* @@? 18:8 Error SyntaxError: Unexpected token 'a'. */
-/* @@? 18:9 Error SyntaxError: Unexpected token ','. */
-/* @@? 19:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 16:5 Error Semantic error ESE0174: Cannot infer type for a because class composite needs an explicit target type */
+/* @@? 17:9 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 17:10 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 17:10 Error Syntax error ESY0062: Object pattern can't contain methods. */
+/* @@? 17:12 Error Syntax error ESY0230: Expected '{', got '('. */
+/* @@? 17:12 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 17:13 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 17:14 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 17:16 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 18:5 Error Syntax error ESY0227: Unexpected token '...'. */
+/* @@? 18:8 Error Syntax error ESY0227: Unexpected token 'a'. */
+/* @@? 18:9 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 19:1 Error Syntax error ESY0227: Unexpected token '}'. */

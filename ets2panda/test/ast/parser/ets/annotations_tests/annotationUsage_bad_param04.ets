@@ -21,5 +21,6 @@
 @MyAnno({testProperty1: "1", testProperty2: [1, 2, a]})
 class B{}
 
-/* @@? 21:45 Error TypeError: Invalid value for annotation field, expected a constant literal. */
-/* @@? 21:52 Error TypeError: Unresolved reference a */
+
+/* @@? 21:45 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
+/* @@? 21:52 Error Semantic error ESE0143: Unresolved reference a */

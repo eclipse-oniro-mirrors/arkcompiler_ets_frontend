@@ -18,11 +18,11 @@
 }
 let x = [1, 2, 3].map(identity)[0];
 
-/* @@? 19:9 Error TypeError: No matching call signature for map((<A>(p1: A) => A)) */
-/* @@? 19:9 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 19:9 Error TypeError: No matching call signature for map((<A>(p1: A) => A)) */
-/* @@? 19:9 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 19:23 Error TypeError: Type '(<A>(p1: A) => A)' is not compatible with type '((p1: Int, p2: Int, p3: Array<Int>) => A)' at index 1 */
-/* @@? 19:23 Error TypeError: Type '(<A>(p1: A) => A)' is not compatible with type '((p1: Int, p2: Int, p3: ReadonlyArray<Int>) => A)' at index 1 */
-/* @@? 19:23 Error TypeError: Type '(<A>(p1: A) => A)' is not compatible with type '((p1: Int, p2: Int, p3: Array<Int>) => A)' at index 1 */
-/* @@? 19:23 Error TypeError: Type '(<A>(p1: A) => A)' is not compatible with type '((p1: Int, p2: Int, p3: ReadonlyArray<Int>) => A)' at index 1 */
+/* @@? 19:9 Error Semantic error ESE0127: No matching call signature for map((<A>(p1: A) => A)) */
+/* @@? 19:9 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 19:9 Error Semantic error ESE0127: No matching call signature for map((<A>(p1: A) => A)) */
+/* @@? 19:9 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 19:23 Error Semantic error ESE0046: Type '(<A>(p1: A) => A)' is not compatible with type '((p1: Int, p2: Int, p3: Array<Int>) => A)' at index 1 */
+/* @@? 19:23 Error Semantic error ESE0046: Type '(<A>(p1: A) => A)' is not compatible with type '((p1: Int, p2: Int, p3: ReadonlyArray<Int>) => A)' at index 1 */
+/* @@? 19:23 Error Semantic error ESE0046: Type '(<A>(p1: A) => A)' is not compatible with type '((p1: Int, p2: Int, p3: Array<Int>) => A)' at index 1 */
+/* @@? 19:23 Error Semantic error ESE0046: Type '(<A>(p1: A) => A)' is not compatible with type '((p1: Int, p2: Int, p3: ReadonlyArray<Int>) => A)' at index 1 */

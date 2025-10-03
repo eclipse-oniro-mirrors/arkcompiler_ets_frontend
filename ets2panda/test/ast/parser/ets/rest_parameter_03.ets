@@ -17,4 +17,4 @@ function foo (x: int, y: int = 0, ...r: int[]): int {
   return 4;
 }
 
-/* @@? 16:10 Error SyntaxError: Both optional and rest parameters are not allowed in function's parameter list.  */
+

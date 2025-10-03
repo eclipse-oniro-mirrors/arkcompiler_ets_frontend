@@ -16,5 +16,6 @@
 // the test case is from fuzzer.
 /* @@ label */i ??/* @@ label2 */@@
 
-/* @@@ label Error TypeError: Unresolved reference i */
-/* @@@ label2 Error SyntaxError: Unexpected token '@@'. */
+
+/* @@@ label Error Semantic error ESE0143: Unresolved reference i */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token '@@'. */

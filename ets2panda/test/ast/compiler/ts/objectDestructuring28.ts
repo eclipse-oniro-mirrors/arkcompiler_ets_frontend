@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,4 +19,5 @@ var { a: { b: [c = u, d] = [1, true] } = { b: [2n] } } = { a: { k: 2, b: ["foo",
 /* @@ label */c = e;
 
 
-/* @@@ label Error TypeError: Type 'void' is not assignable to type 'string | bigint | number | { a: number; b: string; }'.  */
+
+/* @@@ label Error Semantic error ESE0000: Type 'void' is not assignable to type 'string | bigint | number | { a: number; b: string; }'. */

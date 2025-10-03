@@ -25,4 +25,4 @@ class Observable {
 
 }
 
-/* @@@ label Error TypeError: Type 'Observable|undefined' cannot be assigned to type '(() => Observable|undefined)' */
+/* @@@ label Error Semantic error ESE0318: Type 'Observable|undefined' cannot be assigned to type '(() => Observable|undefined)' */

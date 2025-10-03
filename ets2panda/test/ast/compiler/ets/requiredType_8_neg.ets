@@ -21,4 +21,5 @@ function main(): void {
     let req_a: Required<A> = new /* @@ label */Required<A>();
 }
 
-/* @@@ label Error TypeError: Required type can be instantiated only with object literal  */
+
+/* @@@ label Error Semantic error ESE0053: Required type can be instantiated only with object literal */

@@ -24,4 +24,4 @@ tags:
 let b: Float | Double = /* @@ label */ 3.14;
 
 
-/* @@@ label Error TypeError: Ambiguous value 3.14, fits into multiple types */
+/* @@? 24:40 Error Semantic error ESE101680: Ambiguous value 3.14, fits into multiple types */

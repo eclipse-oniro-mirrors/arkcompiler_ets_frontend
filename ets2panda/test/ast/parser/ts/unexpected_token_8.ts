@@ -17,6 +17,6 @@
 class B {}
 class A extends B
 
-/* @@@ label Error SyntaxError: Expected '{', got 'end of stream'. */
-/* @@@ label Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@ label */
+
+/* @@ label *//* @@? 22:79 Error Syntax error ESY0230: Expected '{', got 'end of stream'. */
+/* @@? 22:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

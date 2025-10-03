@@ -20,4 +20,5 @@ function main(): void {
   let red: Color = /* @@ label */Color2.Red;
 }
 
-/* @@@ label Error TypeError: Type 'Color2' cannot be assigned to type 'Color'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Color2' cannot be assigned to type 'Color' */

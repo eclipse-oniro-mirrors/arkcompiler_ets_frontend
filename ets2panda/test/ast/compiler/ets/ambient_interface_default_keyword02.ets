@@ -25,7 +25,8 @@ interface YYY {
       default baz(): void {}
 }
 
-/* @@? 17:36 Error TypeError: Native, Abstract and Declare methods cannot have body. */
-/* @@? 20:26 Error TypeError: Native, Abstract and Declare methods cannot have body. */
-/* @@? 24:7 Error SyntaxError: Identifier expected, got 'default'. */
-/* @@? 25:7 Error SyntaxError: Identifier expected, got 'default'. */
+
+/* @@? 17:36 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */
+/* @@? 20:26 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */
+/* @@? 24:7 Error Syntax error ESY0224: Identifier expected, got 'default'. */
+/* @@? 25:7 Error Syntax error ESY0224: Identifier expected, got 'default'. */

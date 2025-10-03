@@ -20,4 +20,5 @@ function main() : void
     /* @@ label */A.foo();
 }
 
-/* @@@ label Error TypeError: Ambiguous reference to 'foo'  */
+
+/* @@@ label Error Semantic error ESE0061: Ambiguous reference to 'foo' */

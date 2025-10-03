@@ -21,4 +21,5 @@ let c: C = {
     /* @@ label */f: 44,
 };
 
-/* @@@ label Error TypeError: Property f is not visible here.  */
+
+/* @@@ label Error Semantic error ESE0293: Property f is not visible here. */

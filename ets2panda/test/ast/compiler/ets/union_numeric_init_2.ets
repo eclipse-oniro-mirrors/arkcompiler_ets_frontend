@@ -28,4 +28,4 @@ function main() {
 }
 
 
-/* @@@ label Error TypeError: Ambiguous value 127, fits into multiple types */
+/* @@? 26:48 Error Semantic error ESE101680: Ambiguous value 127, fits into multiple types */

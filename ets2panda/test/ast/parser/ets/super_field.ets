@@ -23,4 +23,5 @@ class B extends A {
     }
 }
 
-/* @@@ label Error TypeError: Class field 'value' defined by the parent class is not accessible in the child class via super.  */
+
+/* @@@ label Error Semantic error ESE0377: Class field 'value' defined by the parent class is not accessible in the child class via super. */

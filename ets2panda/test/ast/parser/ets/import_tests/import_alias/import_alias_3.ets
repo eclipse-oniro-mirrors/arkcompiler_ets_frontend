@@ -20,4 +20,5 @@ function main():void{
 }
 
 
-/* @@@ label Error TypeError: Property 'foo1' does not exist on type 'export'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'foo1' does not exist on type 'export' */

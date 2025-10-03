@@ -23,7 +23,8 @@ MyAnno({testProperty1: ""})
 class A{
 }
 
-/* @@? 19:1 Error TypeError: Annotation missing '@' symbol before annotation name.  */
-/* @@? 19:1 Error TypeError: This expression is not callable.  */
-/* @@? 22:1 Error TypeError: Annotation missing '@' symbol before annotation name.  */
-/* @@? 22:1 Error TypeError: This expression is not callable.  */
+
+/* @@? 19:1 Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */
+/* @@? 19:1 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 22:1 Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */
+/* @@? 22:1 Error Semantic error ESE0289: This expression is not callable. */

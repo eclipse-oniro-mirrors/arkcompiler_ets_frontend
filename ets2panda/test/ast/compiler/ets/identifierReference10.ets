@@ -25,4 +25,5 @@ class A {
   }
 }
 
-/* @@@ label Error TypeError: Type '"foo"' cannot be assigned to type 'Int'  */
+
+/* @@@ label Error Semantic error ESE0318: Type '"foo"' cannot be assigned to type 'Int' */

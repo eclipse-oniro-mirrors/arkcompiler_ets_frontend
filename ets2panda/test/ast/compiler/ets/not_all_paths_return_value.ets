@@ -41,5 +41,6 @@ async function test3(isError: boolean): Promise<void> { //ok
 }
 
 
-/* @@? 16:16 Error TypeError: Not all code paths return a value. */
-/* @@? 23:16 Error TypeError: Not all code paths return a value. */
+
+/* @@? 16:16 Error Semantic error ESE0104: Not all code paths return a value. */
+/* @@? 23:16 Error Semantic error ESE0104: Not all code paths return a value. */

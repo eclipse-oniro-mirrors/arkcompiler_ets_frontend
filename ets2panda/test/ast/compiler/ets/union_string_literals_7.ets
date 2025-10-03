@@ -20,5 +20,6 @@ function foo(a: "aa"|"bb") {
 let x = ["aa", "bb", "aa"] // type of x is FixedArray<string>
 let y = foo(x)
 
-/* @@? 21:9 Error TypeError: No matching call signature for foo(Array<String>) */
-/* @@? 21:13 Error TypeError: Type 'Array<String>' is not compatible with type '"aa"|"bb"' at index 1 */
+
+/* @@? 21:9 Error Semantic error ESE0127: No matching call signature for foo(Array<String>) */
+/* @@? 21:13 Error Semantic error ESE0046: Type 'Array<String>' is not compatible with type '"aa"|"bb"' at index 1 */

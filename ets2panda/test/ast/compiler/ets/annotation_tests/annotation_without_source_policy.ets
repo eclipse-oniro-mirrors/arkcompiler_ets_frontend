@@ -44,10 +44,10 @@ let b:@MyAnno() string
 
 function foo(@Anno() a:number){} // ok
 
-/* @@? 18:2 Error TypeError: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
-/* @@? 21:2 Error TypeError: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
-/* @@? 25:6 Error TypeError: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
-/* @@? 30:6 Error TypeError: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
-/* @@? 34:2 Error TypeError: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
-/* @@? 37:8 Error TypeError: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
-/* @@? 42:2 Error TypeError: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
+/* @@? 18:2 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
+/* @@? 21:2 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
+/* @@? 25:6 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
+/* @@? 30:6 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
+/* @@? 34:2 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
+/* @@? 37:8 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
+/* @@? 42:2 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */

@@ -20,4 +20,5 @@ function bar(): int {
 }
 
 //Throw error: Function already declared.
-/* @@? check_exported_3.ets:16:8 Error TypeError: Function bar is already declared.  */
+
+/* @@? check_exported_3.ets:16:8 Error Semantic error ESE0130: Function bar is already declared. */

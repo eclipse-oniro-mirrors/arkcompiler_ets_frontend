@@ -16,4 +16,4 @@
 /* @@ label */true
 
 
-/* @@@ label Error SyntaxError: Unexpected token ''.  */
+

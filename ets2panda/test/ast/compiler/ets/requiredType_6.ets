@@ -23,4 +23,5 @@ function main(): void {
     b_class = /* @@ label */req_b;
 }
 
-/* @@@ label Error TypeError: Type 'Required<B>' cannot be assigned to type 'B'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Required<B>' cannot be assigned to type 'B' */

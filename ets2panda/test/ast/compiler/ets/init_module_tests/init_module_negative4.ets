@@ -15,4 +15,4 @@
 
 /* @@ label */initmodule('./module_to_init.ets')
 
-/* @@@ label Error TypeError: Unresolved reference initmodule  */
+/* @@@ label Error Semantic error ESE0143: Unresolved reference initmodule */

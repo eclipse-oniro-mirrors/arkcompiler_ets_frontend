@@ -20,4 +20,5 @@ namespace NS {
   }
 }
 
-/* @@@ label Error TypeError: Property 'ss' is used before being assigned. */
+
+/* @@@ label Error Semantic error ESE0375: Property 'ss' is used before being assigned. */

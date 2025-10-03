@@ -19,7 +19,8 @@ function foo() {
     return b - a
 }
 
-/* @@? 17:11 Error TypeError: Circular dependency detected for identifier: a */
-/* @@? 17:15 Error TypeError: Variable 'a' is accessed before it's initialization. */
-/* @@? 18:11 Error TypeError: Circular dependency detected for identifier: b */
-/* @@? 18:15 Error TypeError: Variable 'b' is accessed before it's initialization. */
+
+/* @@? 17:11 Error Semantic error ESE0308: Circular dependency detected for identifier: a */
+/* @@? 17:15 Error Semantic error ESE0365: Variable 'a' is accessed before it's initialization. */
+/* @@? 18:11 Error Semantic error ESE0308: Circular dependency detected for identifier: b */
+/* @@? 18:15 Error Semantic error ESE0365: Variable 'b' is accessed before it's initialization. */

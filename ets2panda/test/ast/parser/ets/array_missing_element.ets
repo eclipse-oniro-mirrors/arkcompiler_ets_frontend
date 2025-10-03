@@ -17,8 +17,9 @@ function foo(): void {
   let b: (number|undefined)[] = [ 1, 2, 3,  , 4, ]
 }
 
-/* @@? 17:45 Error SyntaxError: Unexpected token ','. */
-/* @@? 17:47 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 17:47 Error SyntaxError: Unexpected token '4'. */
-/* @@? 17:48 Error SyntaxError: Unexpected token ','. */
-/* @@? 17:50 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 17:45 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 17:47 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 17:47 Error Syntax error ESY0227: Unexpected token '4'. */
+/* @@? 17:48 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 17:50 Error Syntax error ESY0227: Unexpected token ']'. */

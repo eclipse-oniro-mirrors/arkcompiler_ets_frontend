@@ -32,4 +32,5 @@ function main() {
     }
 }
 
-/* @@? 27:28 Error TypeError: Switch case type 'int' is not comparable to discriminant type 'char' */
+
+/* @@? 27:28 Error Semantic error ESE0262: Switch case type 'int' is not comparable to discriminant type 'char' */

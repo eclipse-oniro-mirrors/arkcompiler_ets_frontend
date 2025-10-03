@@ -32,4 +32,6 @@ function main(): void {
   }
 }
 
-/* @@@ label Error TypeError: Source element type 'Double' is not assignable to the loop iterator type 'Float'.  */
+
+/* @@? 19:3 Error Semantic error ESE0069: Source element type 'String' is not assignable to the loop iterator type 'Int'. */
+/* @@@ label Error Semantic error ESE0069: Source element type 'Double' is not assignable to the loop iterator type 'Float'. */

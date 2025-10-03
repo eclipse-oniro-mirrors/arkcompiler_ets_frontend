@@ -19,6 +19,7 @@ function foo(){
    let unionTuple  = Type.from<[string|number,byte|short|int|long]>();
  }
 
- /* @@? 17:18 Error TypeError: Acquiring types for union types is not supported.  */
- /* @@? 18:18 Error TypeError: Acquiring types for tuple types is not supported.  */
- /* @@? 19:22 Error TypeError: Acquiring types for tuple types is not supported.  */
+ 
+/* @@? 17:18 Error Semantic error ESE0284: Acquiring types for union types is not supported. */
+/* @@? 18:18 Error Semantic error ESE0286: Acquiring types for tuple types is not supported. */
+/* @@? 19:22 Error Semantic error ESE0286: Acquiring types for tuple types is not supported. */

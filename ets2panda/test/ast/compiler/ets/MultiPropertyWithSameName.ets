@@ -34,7 +34,10 @@ let c: A = {
 }
 
 
-/* @@? 22:5 Error TypeError: An object literal cannot have multiple properties with the same name.  */
-/* @@? 27:5 Error TypeError: An object literal cannot have multiple properties with the same name.  */
-/* @@? 28:5 Error TypeError: An object literal cannot have multiple properties with the same name.  */
-/* @@? 33:5 Error TypeError: An object literal cannot have multiple properties with the same name.  */
+
+/* @@? 20:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
+/* @@? 20:12 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
+/* @@? 25:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
+/* @@? 25:12 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
+/* @@? 31:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
+/* @@? 31:12 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */

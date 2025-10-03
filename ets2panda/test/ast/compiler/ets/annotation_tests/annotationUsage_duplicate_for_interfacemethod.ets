@@ -23,4 +23,5 @@ interface itf {
     foo() : void
 }
 
-/* @@? 22:6 Error TypeError: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element.  */
+
+/* @@? 22:6 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element. */

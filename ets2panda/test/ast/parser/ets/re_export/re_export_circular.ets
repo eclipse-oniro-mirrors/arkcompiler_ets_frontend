@@ -15,4 +15,5 @@
 
 export {foo} from "./re_export_circular.ets"
 
-/* @@? 16:8 Error SyntaxError: Re-exporting local bindings is not allowed */
+
+/* @@? 16:8 Error Syntax error ESY138237: Re-exporting local bindings is not allowed */

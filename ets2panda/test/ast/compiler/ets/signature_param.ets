@@ -29,20 +29,21 @@ function foo3() {
     foo2(() => {});
 }
 
-/* @@? 20:35 Error SyntaxError: Newline is not allowed in strings */
-/* @@? 20:45 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 22:1 Error SyntaxError: Illegal start of CLASS expression. */
-/* @@? 24:1 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? 24:1 Error SyntaxError: Unexpected token '{'. */
-/* @@? 24:1 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? 24:1 Error SyntaxError: Expected '{', got 'let'. */
-/* @@? 24:1 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 24:1 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 24:1 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 24:1 Error SyntaxError: Nested functions are not allowed. */
-/* @@? 24:1 Error TypeError: Variable 'f' has already been declared. */
-/* @@? 24:1 Error TypeError: Unresolved reference x */
-/* @@? 26:1 Error SyntaxError: Nested functions are not allowed. */
-/* @@? 27:18 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 27:18 Error SyntaxError: Unexpected token ')'. */
-/* @@? 28:21 Error TypeError: Unresolved reference foo2 */
+
+/* @@? 20:35 Error Syntax error ESY0265: Newline is not allowed in strings */
+/* @@? 20:45 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 22:1 Error Syntax error ESY0040: Illegal start of CLASS expression. */
+/* @@? 24:1 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 24:1 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 24:1 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 24:1 Error Syntax error ESY0230: Expected '{', got 'let'. */
+/* @@? 24:1 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 24:1 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 24:1 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 24:1 Error Syntax error ESY0135: Nested functions are not allowed. */
+/* @@? 24:1 Error Semantic error ESE0351: Variable 'f' has already been declared. */
+/* @@? 24:1 Error Semantic error ESE0143: Unresolved reference x */
+/* @@? 26:1 Error Syntax error ESY0135: Nested functions are not allowed. */
+/* @@? 27:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 27:18 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 28:21 Error Semantic error ESE0143: Unresolved reference foo2 */

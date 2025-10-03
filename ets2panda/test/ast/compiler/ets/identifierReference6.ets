@@ -23,6 +23,7 @@ class A {
   }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
-/* @@? 21:7 Error TypeError: 'this' cannot be referenced from a static context */
-/* @@? 21:12 Error TypeError: Property 'a' does not exist on type 'B' */
+
+/* @@@ label Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 21:7 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
+/* @@? 21:12 Error Semantic error ESE0087: Property 'a' does not exist on type 'B' */

@@ -19,4 +19,5 @@
     ]
 }
 
-/* @@? 17:28 Error SyntaxError: Invalid value for annotation field, expected a constant literal.  */
+
+/* @@? 17:28 Error Syntax error ESY0027: Invalid value for annotation field, expected a constant literal. */

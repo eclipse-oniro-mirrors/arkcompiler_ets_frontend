@@ -31,5 +31,4 @@ function main() {
     let a = func(new B<String>());
 }
 
-/* @@@ label Error TypeError: No matching call signature for staticFunction(B<String>)  */
-/* @@? 31:13 Error TypeError: Cannot use type 'void' as value.  */
+

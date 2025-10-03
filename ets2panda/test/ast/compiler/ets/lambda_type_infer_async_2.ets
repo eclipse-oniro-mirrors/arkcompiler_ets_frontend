@@ -22,4 +22,5 @@ async function foo() {
     });
 }
 
-/* @@? 20:23 Error TypeError: Value is possibly nullish. */
+
+/* @@? 20:23 Error Semantic error ESE0010: Value is possibly nullish. */

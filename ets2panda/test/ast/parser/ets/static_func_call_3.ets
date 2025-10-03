@@ -20,4 +20,5 @@ class A {
 let a = new A()
 a./* @@ label */bar()
 
-/* @@@ label Error TypeError: 'bar' is a static property of 'A' */
+
+/* @@@ label Error Semantic error ESE0207: 'bar' is a static property of 'A' */

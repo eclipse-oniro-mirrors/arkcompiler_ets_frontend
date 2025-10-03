@@ -15,4 +15,5 @@
 
 import /* @@ label1 */'module'
 
-/* @@@ label1 Error SyntaxError: Importing for side-effect only is prohibited! Please provide objects to be imported explicitly or use * to import all objects declared in the module! */
+
+/* @@@ label1 Error Syntax error ESY73297: Importing for side-effect only is prohibited! Please provide objects to be imported explicitly or use * to import all objects declared in the module! */

@@ -23,4 +23,4 @@ function foo(a : int, b:int, c:int = 10) : string
     return "aaaa";
 }
 
-/* @@? 21:1 Error TypeError: Function foo is already declared. */
+/* @@? 21:1 Error Semantic error ESE0130: Function foo is already declared. */

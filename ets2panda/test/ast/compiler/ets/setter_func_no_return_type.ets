@@ -30,6 +30,6 @@ class Class3 {
     set f(x: string): void {this._f = x}
 /* @@ label2 */}
 
-/* @@@ label Error SyntaxError: Setter must not have return type even if it is void.  */
-/* @@@ label1 Error SyntaxError: Setter must not have return type even if it is void.  */
-/* @@@ label2 Error SyntaxError: Setter must not have return type even if it is void.  */
+/* @@@ label Error Syntax error ESY0241: Setter must not have return type even if it is void. */
+/* @@@ label1 Error Syntax error ESY0241: Setter must not have return type even if it is void. */
+/* @@@ label2 Error Syntax error ESY0241: Setter must not have return type even if it is void. */

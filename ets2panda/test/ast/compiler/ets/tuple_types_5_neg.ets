@@ -18,8 +18,9 @@ function main(): void {
     let a: [number, ...number[]] = [1];
 }
 
-/* @@? 18:21 Error SyntaxError: Invalid Type. */
-/* @@? 18:21 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 18:21 Error SyntaxError: Unexpected token '...'. */
-/* @@? 18:24 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 18:32 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 18:21 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 18:21 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 18:21 Error Syntax error ESY0227: Unexpected token '...'. */
+/* @@? 18:24 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 18:32 Error Syntax error ESY0227: Unexpected token ']'. */

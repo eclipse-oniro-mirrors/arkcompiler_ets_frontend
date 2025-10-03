@@ -17,4 +17,5 @@ function main() {
     let f : (a: string) => void = (/* @@ label */a = "aaa") => {}
 }
 
-/* @@@ label Error SyntaxError: Parameter declaration should have an explicit type annotation. */
+
+/* @@@ label Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */

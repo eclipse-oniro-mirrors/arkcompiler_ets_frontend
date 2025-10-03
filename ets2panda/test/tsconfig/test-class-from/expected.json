@@ -1,5 +1,5 @@
 {
     "returncode": 1,
-    "stdout": "TypeError: Type A cannot be used in the `from` method [main.ets:19:16]\n",
+    "stdout": "[main.ets:19:16] Semantic error ESE53205: Type A cannot be used in the `from` method\n",
     "stderr": ""
 }

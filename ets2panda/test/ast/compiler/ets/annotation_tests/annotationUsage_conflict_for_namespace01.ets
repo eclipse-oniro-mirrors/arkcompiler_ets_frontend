@@ -24,5 +24,5 @@ namespace A{
     namespace B{}
 }
 
-/* @@? 24:5 Error SyntaxError: Unable to merge namespaces 'B', because their modifiers are different.  */
-/* @@? 24:5 Error SyntaxError: Annotation conflict! Multiple namespace declarations for 'B' cannot each have annotations.  */
+/* @@? 24:5 Error Syntax error ESY0006: Unable to merge namespaces 'B', because their modifiers are different. */
+/* @@? 24:5 Error Syntax error ESY0007: Annotation conflict! Multiple namespace declarations for 'B' cannot each have annotations. */

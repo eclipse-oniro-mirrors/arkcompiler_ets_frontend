@@ -25,5 +25,6 @@ function main() {
     let x3: Required<A> = /* @@ label2 */{j :"somestr", j :"somestr"};
 }
 
-/* @@@ label1 Error TypeError: type A has no property named K  */
-/* @@@ label2 Error TypeError: Class property 'i' needs to be initialized for Required<A>.  */
+
+/* @@@ label1 Error Semantic error ESE0065: type A has no property named K */
+/* @@@ label2 Error Semantic error ESE0226: Class property 'i' needs to be initialized for Required<A>. */

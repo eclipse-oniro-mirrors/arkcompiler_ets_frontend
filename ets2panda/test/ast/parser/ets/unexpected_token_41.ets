@@ -17,8 +17,9 @@ for (let i: int = 0; i < d?length/* @@ label */; ++i/* @@ label1 */) {
     arr.push(d[i]);
 }
 
-/* @@? 16:26 Error TypeError: Unresolved reference d */
-/* @@? 16:28 Error TypeError: Unresolved reference length */
-/* @@@ label Error SyntaxError: Unexpected token, expected ':'. */
-/* @@@ label1 Error SyntaxError: Expected ';', got ')'. */
-/* @@? 17:5 Error TypeError: Unresolved reference arr */
+
+/* @@? 16:26 Error Semantic error ESE0143: Unresolved reference d */
+/* @@? 16:28 Error Semantic error ESE0143: Unresolved reference length */
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@@ label1 Error Syntax error ESY0230: Expected ';', got ')'. */
+/* @@? 17:5 Error Semantic error ESE0143: Unresolved reference arr */

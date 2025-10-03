@@ -21,5 +21,5 @@ function fn(ctor: SomeConstructor) {
   return new ctor("hello")
 }
 
-/* @@? 18:7 Error SyntaxError: Constructor signatures in object types are not supported. Use '$_invoke' method instead. */
-/* @@? 21:14 Error TypeError: Cannot find type 'ctor'. */
+/* @@? 18:7 Error Syntax error ESY103145: Constructor signatures in object types are not supported. Use '$_invoke' method instead. */
+/* @@? 21:14 Error Semantic error ESE0371: Cannot find type 'ctor'. */

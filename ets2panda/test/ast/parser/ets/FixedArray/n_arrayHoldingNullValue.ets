@@ -18,5 +18,6 @@ function main(): void {
     let d: FixedArray<char> = /* @@ label1 */null;
 }
 
-/* @@? 17:48 Error TypeError: Type 'null' cannot be assigned to type 'FixedArray<Float>' */
-/* @@? 18:46 Error TypeError: Type 'null' cannot be assigned to type 'FixedArray<Char>' */
+
+/* @@@ label Error Semantic error ESE0318: Type 'null' cannot be assigned to type 'FixedArray<Float>' */
+/* @@@ label1 Error Semantic error ESE0318: Type 'null' cannot be assigned to type 'FixedArray<Char>' */

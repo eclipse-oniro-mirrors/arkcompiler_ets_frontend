@@ -51,10 +51,11 @@ function main() {
     arktest.assertEQ(/* @@ label8 */u.fld8, new Map<string, string>())
 }
 
-/* @@@ label1 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label3 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label4 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label5 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label6 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label7 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label8 Error TypeError: Member type must be the same for all union objects. */
+
+/* @@@ label1 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@@ label3 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@@ label4 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@@ label5 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@@ label6 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@@ label7 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@@ label8 Error Semantic error ESE0244: Member type must be the same for all union objects. */

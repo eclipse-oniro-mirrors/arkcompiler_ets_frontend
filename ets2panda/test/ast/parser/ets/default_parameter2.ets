@@ -28,5 +28,6 @@ function foo(a : int) : int
     return a;
 }
 
-/* @@@ label Error TypeError: Expected 1 arguments, got 0. */              
-/* @@@ label Error TypeError: No matching call signature  */
+
+/* @@@ label Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@@ label Error Semantic error ESE0128: No matching call signature */

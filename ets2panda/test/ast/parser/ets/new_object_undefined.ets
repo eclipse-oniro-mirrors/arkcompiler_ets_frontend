@@ -19,5 +19,6 @@ function main()
     new null();
 }
 
-/* @@? 18:5 Error TypeError: Type 'undefined' is not constructible.  */
-/* @@? 19:5 Error TypeError: Type 'null' is not constructible.  */
+
+/* @@? 18:5 Error Semantic error ESE0290: Type 'undefined' is not constructible. */
+/* @@? 19:5 Error Semantic error ESE0290: Type 'null' is not constructible. */

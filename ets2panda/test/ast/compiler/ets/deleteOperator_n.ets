@@ -20,5 +20,5 @@ class Point {
 let p = new Point()
 delete p.y
 
-/* @@? 21:1 Error TypeError: Types cannot be modified at runtime with 'delete'. */
-/* @@? 21:8 Error SyntaxError: Unexpected token 'p'. */
+/* @@? 21:1 Error Semantic error ESE55815: Types cannot be modified at runtime with 'delete'. */
+/* @@? 21:8 Error Syntax error ESY0227: Unexpected token 'p'. */

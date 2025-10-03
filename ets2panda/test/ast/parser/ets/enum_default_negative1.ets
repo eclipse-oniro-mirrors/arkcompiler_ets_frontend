@@ -23,8 +23,8 @@ enum B {
 }
 
 
-/* @@? 17:9 Error SyntaxError: Unsupported operator for String. */
-/* @@? 17:9 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 22:9 Error SyntaxError: Only constant expression is expected in the field */
-/* @@? 22:9 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
 
+
+/* @@? 17:9 Error Semantic error ESE0346: Wrong type of operands for binary expression */
+/* @@? 17:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 22:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */

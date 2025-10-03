@@ -16,7 +16,8 @@
 import * as Pt from "mod" /* @@ label1 */assert /* @@ label2 */{ type: /* @@ label3 */"json" }
 
 
-/* @@@ label1 Error SyntaxError: Import assertion is not supported, please use the ordinary import syntax instead! */
-/* @@@ label1 Error TypeError: Unresolved reference assert */
-/* @@@ label2 Error SyntaxError: Unexpected token '{'. */
-/* @@@ label3 Error SyntaxError: Label must be followed by a loop statement. */
+
+/* @@@ label1 Error Syntax error ESY0313: Import assertion is not supported, please use the ordinary import syntax instead! */
+/* @@@ label1 Error Semantic error ESE0143: Unresolved reference assert */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@@ label3 Error Syntax error ESY0038: Label must be followed by a loop statement. */

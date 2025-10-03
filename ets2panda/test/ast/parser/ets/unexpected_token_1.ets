@@ -15,6 +15,7 @@
 
 import num from @^&
 
-/* @@? 16:17 Error SyntaxError: Unexpected token, expected string literal. */
-/* @@? 16:17 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 16:19 Error SyntaxError: Unexpected token '&'. */
+
+/* @@? 16:17 Error Syntax error ESY0151: Unexpected token, expected string literal. */
+/* @@? 16:17 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 16:19 Error Syntax error ESY0227: Unexpected token '&'. */

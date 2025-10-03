@@ -17,4 +17,5 @@ function main() {
   let x = -1 ** 1.0;
 }
 
-/* @@? 17:11 Error TypeError: Exponent must be an integer if base is less than 0. */
+
+/* @@? 17:11 Error Semantic error ESE22843: Exponent must be an integer if base is less than 0. */

@@ -21,5 +21,6 @@ namespace ConflictedSpace {
     }
 }
 
-/* @@? 19:22 Error TypeError: Variable 'InnerSpace' has already been declared. */
-/* @@? 19:22 Error TypeError: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+
+/* @@? 19:22 Error Semantic error ESE0351: Variable 'InnerSpace' has already been declared. */
+/* @@? 19:22 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */

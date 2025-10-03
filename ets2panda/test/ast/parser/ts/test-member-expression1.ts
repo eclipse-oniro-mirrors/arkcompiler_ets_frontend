@@ -17,4 +17,5 @@
 var a = {foo : {bar : {baz : 5}}};
 a?.foo?.bar?.baz /* @@ label */= a?.foo?.bar?.baz;
 
-/* @@@ label Error SyntaxError: Invalid left-hand side in assignment expression.  */
+
+/* @@@ label Error Syntax error ESY0072: Invalid left-hand side in assignment expression. */

@@ -15,4 +15,5 @@
 
 V = typeof `m`
 
-/* @@? 16:1 Error TypeError: Unresolved reference V  */
+
+/* @@? 16:1 Error Semantic error ESE0143: Unresolved reference V */

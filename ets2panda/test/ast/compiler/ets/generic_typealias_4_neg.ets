@@ -20,4 +20,5 @@ function main(): void {
     let a: my_type/* @@ label */<Int, Double> = new Int();
 }
 
-/* @@@ label Error TypeError: Expected at least 1 type arguments, but got 2.  */
+
+/* @@@ label Error Semantic error ESE0274: Expected at least 1 type arguments, but got 2. */

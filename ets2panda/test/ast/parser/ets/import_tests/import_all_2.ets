@@ -19,4 +19,5 @@ function main(): void {
     all./* @@ label */DefaultExportedFunc();
 }
 
-/* @@@ label Error TypeError: Property 'DefaultExportedFunc' does not exist on type 'default_export'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'DefaultExportedFunc' does not exist on type 'default_export' */

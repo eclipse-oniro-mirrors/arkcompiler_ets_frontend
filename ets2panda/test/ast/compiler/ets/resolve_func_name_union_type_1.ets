@@ -25,5 +25,5 @@ function main() {
     arktest.assertEQ((v as NumFunc)(), 3.14);
 }
 
-/* @@@ label Error TypeError: Type '(() => Double)' cannot be assigned to type 'String|Double'  */
-/* @@? 25:23 Error TypeError: Cannot cast type 'String|Double' to '(() => Double)'  */
+/* @@@ label Error Semantic error ESE0318: Type '(() => Double)' cannot be assigned to type 'String|Double' */
+/* @@? 25:23 Error Semantic error ESE0326: Cannot cast type 'String|Double' to '(() => Double)' */

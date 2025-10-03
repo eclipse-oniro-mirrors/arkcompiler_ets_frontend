@@ -31,6 +31,6 @@ function main(): void {
     arktest.assertEQ(instance.getX(), true);
 }
 
-/* @@? 16:1 Error TypeError: Cannot inherit from interface A because method x is inherited with a different declaration type */
-/* @@? 23:12 Error TypeError: Method x(<property>x: Boolean): void in B not overriding any method */
-/* @@? 25:15 Error TypeError: Type 'Boolean' has no call signatures. */
+/* @@? 16:1 Error Semantic error ESE0215: Cannot inherit from interface A because method x is inherited with a different declaration type */
+/* @@? 23:12 Error Semantic error ESE0136: Method x(<property>x: Boolean): void in B not overriding any method */
+/* @@? 25:15 Error Semantic error ESE0002: Type 'Boolean' has no call signatures. */

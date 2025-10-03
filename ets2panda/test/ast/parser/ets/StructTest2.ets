@@ -21,4 +21,5 @@ function main(): void {
    let a: CE<Int> = new CE<Int>();
 }
 
-/* @@? 16:1 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase.  */
+
+/* @@? 16:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */

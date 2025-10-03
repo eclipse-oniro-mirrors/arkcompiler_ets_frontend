@@ -76,30 +76,31 @@ function foo(){
 
 }
 
- /* @@? 17:16 Error TypeError: Cannot find type 'a'.  */
- /* @@? 19:5 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 21:13 Error TypeError: Cannot find type 'a'.  */
- /* @@? 30:13 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 31:23 Error TypeError: Cannot find type 'dsa'.  */
- /* @@? 34:22 Error TypeError: Cannot find type 'asd'.  */
- /* @@? 37:13 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 41:19 Error TypeError: Cannot find type 'asd'.  */
- /* @@? 42:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 43:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 44:19 Error TypeError: Cannot find type 'dsa'.  */
- /* @@? 48:19 Error TypeError: Cannot find type 'asd'.  */
- /* @@? 49:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 50:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 51:19 Error TypeError: Cannot find type 'dsa'.  */
- /* @@? 56:19 Error TypeError: Cannot find type 'asd'.  */
- /* @@? 57:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 59:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 60:19 Error TypeError: Cannot find type 'dsa'.  */
- /* @@? 64:19 Error TypeError: Cannot find type 'asd'.  */
- /* @@? 65:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 67:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 68:19 Error TypeError: Cannot find type 'dsa'.  */
- /* @@? 70:19 Error TypeError: Cannot find type 'asd'.  */
- /* @@? 71:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 73:9 Error SyntaxError: Illegal start of Type Alias expression.  */
- /* @@? 74:19 Error TypeError: Cannot find type 'dsa'.  */
+ 
+/* @@? 17:16 Error Semantic error ESE0371: Cannot find type 'a'. */
+/* @@? 19:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 21:13 Error Semantic error ESE0371: Cannot find type 'a'. */
+/* @@? 30:13 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 31:23 Error Semantic error ESE0371: Cannot find type 'dsa'. */
+/* @@? 34:22 Error Semantic error ESE0371: Cannot find type 'asd'. */
+/* @@? 37:13 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 41:19 Error Semantic error ESE0371: Cannot find type 'asd'. */
+/* @@? 42:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 43:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 44:19 Error Semantic error ESE0371: Cannot find type 'dsa'. */
+/* @@? 48:19 Error Semantic error ESE0371: Cannot find type 'asd'. */
+/* @@? 49:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 50:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 51:19 Error Semantic error ESE0371: Cannot find type 'dsa'. */
+/* @@? 56:19 Error Semantic error ESE0371: Cannot find type 'asd'. */
+/* @@? 57:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 59:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 60:19 Error Semantic error ESE0371: Cannot find type 'dsa'. */
+/* @@? 64:19 Error Semantic error ESE0371: Cannot find type 'asd'. */
+/* @@? 65:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 67:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 68:19 Error Semantic error ESE0371: Cannot find type 'dsa'. */
+/* @@? 70:19 Error Semantic error ESE0371: Cannot find type 'asd'. */
+/* @@? 71:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 73:9 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 74:19 Error Semantic error ESE0371: Cannot find type 'dsa'. */

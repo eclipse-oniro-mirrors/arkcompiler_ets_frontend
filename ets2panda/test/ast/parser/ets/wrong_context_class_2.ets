@@ -23,5 +23,6 @@ function main()
     b = a
 }
 
-/* @@? 23:9 Error SyntaxError: Class cannot be used as object. */
-/* @@? 23:9 Error TypeError: Type 'a' cannot be assigned to type 'Int' */
+
+/* @@? 23:9 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 23:9 Error Semantic error ESE0318: Type 'a' cannot be assigned to type 'Int' */

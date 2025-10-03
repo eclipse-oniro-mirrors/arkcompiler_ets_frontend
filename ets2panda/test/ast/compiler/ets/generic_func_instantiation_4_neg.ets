@@ -20,4 +20,4 @@ function main() {
     let fooInt1 = /* @@ label1 */foo<Int>
 }
 
-/* @@@ label1 Error TypeError: Overloaded method is used as value */
+/* @@@ label1 Error Semantic error ESE0307: Overloaded method is used as value */

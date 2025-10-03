@@ -18,4 +18,5 @@ class B extends A {}
 class C extends B {}
 class D extends C {}
 
-/* @@@ label Error TypeError: Cyclic inheritance involving A.  */
+
+/* @@@ label Error Semantic error ESE0310: Cyclic inheritance involving A. */

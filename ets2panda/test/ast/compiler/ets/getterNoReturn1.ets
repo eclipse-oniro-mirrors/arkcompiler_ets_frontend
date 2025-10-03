@@ -34,4 +34,5 @@ function main() {
     let a: A = new A()
 }
 
-/* @@@ label Error TypeError: Not all code paths return a value. */
+
+/* @@@ label Error Semantic error ESE0104: Not all code paths return a value. */

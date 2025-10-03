@@ -20,5 +20,6 @@
 @/* @@ label1 */Retention({policy:"BYTECODE", a:1})
 @interface ClassAuthor {} 
 
-/* @@@ label Error TypeError: The required field 'policy' must be specified. Fields without default values cannot be omitted.  */
-/* @@@ label1 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
+
+/* @@@ label Error Semantic error ESE0044: The required field 'policy' must be specified. Fields without default values cannot be omitted. */
+/* @@@ label1 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */

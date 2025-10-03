@@ -17,7 +17,8 @@ class A {
     bit1: int =< 2
 }
 
-/* @@? 17:18 Error SyntaxError: Number, string or computed value property name '2' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 17:18 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 17:18 Error SyntaxError: Unexpected token '2'. */
-/* @@? 18:1 Error SyntaxError: Unexpected token, expected '>'. */
+
+/* @@? 17:18 Error Syntax error ESY0315: Number, string or computed value property name '2' is not allowed, use classes to access data by property names that are identifiers */
+/* @@? 17:18 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@? 17:18 Error Syntax error ESY0227: Unexpected token '2'. */
+/* @@? 18:1 Error Syntax error ESY0228: Unexpected token, expected '>'. */

@@ -114,3 +114,8 @@ function main(): void {
 }
 
 
+/* @@? 17:36 Error Semantic error ESE0046: Type '((p1: ((p1: PromiseLike<void>) => void)) => Promise<void>)' is not compatible with type '((p1: ((p1: void|PromiseLike<void>) => void), p2: ((p1: Error) => void)) => void)' at index 1 */
+/* @@? 17:36 Warning Warning W49710: No matching signature found for Promise.then/catch: ((p1: ((p1: PromiseLike<void>) => void)) => Promise<void>) */
+/* @@? 30:19 Error Semantic error ESE0124: Expected 0 arguments, got 1. */
+/* @@? 30:19 Error Semantic error ESE0127: No matching construct signature for std.core.Char(String) */
+/* @@? 30:28 Error Semantic error ESE0046: Type 'String' is not compatible with type 'Char' at index 1 */

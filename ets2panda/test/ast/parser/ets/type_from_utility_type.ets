@@ -31,11 +31,11 @@ function foo<T>(){
   let recordarrT  = Type.from<Record<Array<T>,Array<T>>>();
 }
 
-/* @@? 17:36 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 21:38 Error TypeError: T in Required<T> must be a class or an interface type. */
-/* @@? 25:38 Error TypeError: T in Readonly<T> must be a class or an interface type. */
-/* @@? 29:18 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
-/* @@? 29:28 Error TypeError: No static $_invoke method and static $_instantiate method in Record. Record() is not allowed. */
-/* @@? 29:28 Error TypeError: Type 'Record<K,V>' has no call signatures. */
-/* @@? 30:37 Error TypeError: Type argument 'Array<String>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */
-/* @@? 31:37 Error TypeError: Type argument 'Array<T>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */
+/* @@? 17:36 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 21:38 Error Semantic error ESE124644: T in Required<T> must be a class or an interface type. */
+/* @@? 25:38 Error Semantic error ESE124644: T in Readonly<T> must be a class or an interface type. */
+/* @@? 29:18 Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 29:28 Error Semantic error ESE0172: No static $_invoke method and static $_instantiate method in Record. Record() is not allowed. */
+/* @@? 29:28 Error Semantic error ESE0002: Type 'Record<K,V>' has no call signatures. */
+/* @@? 30:37 Error Semantic error ESE0228: Type argument 'Array<String>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */
+/* @@? 31:37 Error Semantic error ESE0228: Type argument 'Array<T>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */

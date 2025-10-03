@@ -23,6 +23,7 @@ function main(): void {
     new A {}; // It is forbidden to extend a class by an anonymous class
 }
 
-/* @@? 23:5 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 23:5 Error TypeError: No matching construct signature */
-/* @@? 23:11 Error SyntaxError: Unexpected token '{'. */
+
+/* @@? 23:5 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? 23:5 Error Semantic error ESE0128: No matching construct signature */
+/* @@? 23:11 Error Syntax error ESY0227: Unexpected token '{'. */

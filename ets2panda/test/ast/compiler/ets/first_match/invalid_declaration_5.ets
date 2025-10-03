@@ -15,9 +15,10 @@
 
 overload foo{ foo.,T,}
 
-/* @@? 16:19 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 16:19 Error TypeError: overloaded name must refer to an accessible method. */
-/* @@? 16:20 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 16:20 Error TypeError: Unresolved reference T */
-/* @@? 16:21 Error SyntaxError: Unexpected token ','. */
-/* @@? 16:22 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 16:19 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 16:19 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
+/* @@? 16:20 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 16:20 Error Semantic error ESE0143: Unresolved reference T */
+/* @@? 16:21 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 16:22 Error Syntax error ESY0227: Unexpected token '}'. */

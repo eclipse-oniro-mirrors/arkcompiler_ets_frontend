@@ -13,6 +13,6 @@
  * limitations under the License.
  */
 
-/* @@? 1:1 Error SyntaxError: Unterminated multi-line comment. */
+/* @@? 1:1 Error Syntax error ESY0245: Unterminated multi-line comment. */
 
 /*

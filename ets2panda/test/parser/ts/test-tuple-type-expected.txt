@@ -1034,4 +1034,3 @@
     }
   }
 }
-TypeError: Cannot find name A [test-tuple-type.ts:21:9]

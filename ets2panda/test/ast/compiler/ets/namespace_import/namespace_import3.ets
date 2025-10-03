@@ -19,5 +19,5 @@ import * as production from './namespace_export2.ets'
 arktest.assertEQ( /* @@ label1 */production, null, 'default specified via identifier');
 arktest.assertEQ( /* @@ label2 */named, null, 'default specified via identifier');
 
-/* @@@ label1 Error TypeError: Namespace 'production' cannot be used as object */
-/* @@@ label2 Error TypeError: Namespace 'named' cannot be used as object */
+/* @@@ label1 Error Semantic error ESE43831: Namespace 'production' cannot be used as object */
+/* @@@ label2 Error Semantic error ESE43831: Namespace 'named' cannot be used as object */

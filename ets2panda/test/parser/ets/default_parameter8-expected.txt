@@ -691,42 +691,12 @@
                               }
                             },
                             "alternate": {
-                              "type": "TSAsExpression",
-                              "expression": {
-                                "type": "NumberLiteral",
-                                "value": 99,
-                                "loc": {
-                                  "start": {
-                                    "line": 21,
-                                    "column": 30,
-                                    "program": "default_parameter8.ets"
-                                  },
-                                  "end": {
-                                    "line": 21,
-                                    "column": 32,
-                                    "program": "default_parameter8.ets"
-                                  }
-                                }
-                              },
-                              "typeAnnotation": {
-                                "type": "ETSPrimitiveType",
-                                "loc": {
-                                  "start": {
-                                    "line": 21,
-                                    "column": 24,
-                                    "program": "default_parameter8.ets"
-                                  },
-                                  "end": {
-                                    "line": 21,
-                                    "column": 27,
-                                    "program": "default_parameter8.ets"
-                                  }
-                                }
-                              },
+                              "type": "NumberLiteral",
+                              "value": 99,
                               "loc": {
                                 "start": {
                                   "line": 21,
-                                  "column": 17,
+                                  "column": 30,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
@@ -1574,46 +1544,29 @@
                               }
                             },
                             "alternate": {
-                              "type": "TSAsExpression",
-                              "expression": {
-                                "type": "MemberExpression",
-                                "object": {
-                                  "type": "ThisExpression",
-                                  "loc": {
-                                    "start": {
-                                      "line": 30,
-                                      "column": 28,
-                                      "program": "default_parameter8.ets"
-                                    },
-                                    "end": {
-                                      "line": 30,
-                                      "column": 32,
-                                      "program": "default_parameter8.ets"
-                                    }
-                                  }
-                                },
-                                "property": {
-                                  "type": "Identifier",
-                                  "name": "fc",
-                                  "loc": {
-                                    "start": {
-                                      "line": 30,
-                                      "column": 33,
-                                      "program": "default_parameter8.ets"
-                                    },
-                                    "end": {
-                                      "line": 30,
-                                      "column": 35,
-                                      "program": "default_parameter8.ets"
-                                    }
-                                  }
-                                },
-                                "computed": false,
-                                "optional": false,
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "ThisExpression",
                                 "loc": {
                                   "start": {
                                     "line": 30,
                                     "column": 28,
+                                    "program": "default_parameter8.ets"
+                                  },
+                                  "end": {
+                                    "line": 30,
+                                    "column": 32,
+                                    "program": "default_parameter8.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "fc",
+                                "loc": {
+                                  "start": {
+                                    "line": 30,
+                                    "column": 33,
                                     "program": "default_parameter8.ets"
                                   },
                                   "end": {
@@ -1623,25 +1576,12 @@
                                   }
                                 }
                               },
-                              "typeAnnotation": {
-                                "type": "ETSPrimitiveType",
-                                "loc": {
-                                  "start": {
-                                    "line": 30,
-                                    "column": 24,
-                                    "program": "default_parameter8.ets"
-                                  },
-                                  "end": {
-                                    "line": 30,
-                                    "column": 27,
-                                    "program": "default_parameter8.ets"
-                                  }
-                                }
-                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 30,
-                                  "column": 18,
+                                  "column": 28,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
@@ -2386,47 +2326,30 @@
                               }
                             },
                             "alternate": {
-                              "type": "TSAsExpression",
-                              "expression": {
-                                "type": "MemberExpression",
-                                "object": {
-                                  "type": "Identifier",
-                                  "name": "C",
-                                  "loc": {
-                                    "start": {
-                                      "line": 36,
-                                      "column": 27,
-                                      "program": "default_parameter8.ets"
-                                    },
-                                    "end": {
-                                      "line": 36,
-                                      "column": 28,
-                                      "program": "default_parameter8.ets"
-                                    }
-                                  }
-                                },
-                                "property": {
-                                  "type": "Identifier",
-                                  "name": "fs",
-                                  "loc": {
-                                    "start": {
-                                      "line": 36,
-                                      "column": 29,
-                                      "program": "default_parameter8.ets"
-                                    },
-                                    "end": {
-                                      "line": 36,
-                                      "column": 31,
-                                      "program": "default_parameter8.ets"
-                                    }
-                                  }
-                                },
-                                "computed": false,
-                                "optional": false,
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "C",
                                 "loc": {
                                   "start": {
                                     "line": 36,
                                     "column": 27,
+                                    "program": "default_parameter8.ets"
+                                  },
+                                  "end": {
+                                    "line": 36,
+                                    "column": 28,
+                                    "program": "default_parameter8.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "fs",
+                                "loc": {
+                                  "start": {
+                                    "line": 36,
+                                    "column": 29,
                                     "program": "default_parameter8.ets"
                                   },
                                   "end": {
@@ -2436,25 +2359,12 @@
                                   }
                                 }
                               },
-                              "typeAnnotation": {
-                                "type": "ETSPrimitiveType",
-                                "loc": {
-                                  "start": {
-                                    "line": 36,
-                                    "column": 23,
-                                    "program": "default_parameter8.ets"
-                                  },
-                                  "end": {
-                                    "line": 36,
-                                    "column": 26,
-                                    "program": "default_parameter8.ets"
-                                  }
-                                }
-                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 36,
-                                  "column": 16,
+                                  "column": 27,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {

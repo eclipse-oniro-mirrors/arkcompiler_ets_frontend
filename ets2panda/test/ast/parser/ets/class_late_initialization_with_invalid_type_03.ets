@@ -33,5 +33,6 @@ class E<T> extends A<T>{
     f1!: T // cte
 }
 
-/* @@? 17:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
-/* @@? 33:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
+
+/* @@? 17:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 33:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */

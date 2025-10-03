@@ -23,4 +23,5 @@ function main(): void {
     foo(/* @@ label */a == b);
 }
 
-/* @@@ label Error TypeError: Operator '==' cannot be applied to types '"alma"' and 'Int'. */
+
+/* @@@ label Error Semantic error ESE0105: Operator '==' cannot be applied to types '"alma"' and 'Int'. */

@@ -20,5 +20,5 @@ function main() {
     let foo2 = foo<Int, String>
 }
 
-/* @@? 19:19 Error TypeError: Type argument 'Double' should be a subtype of 'String' constraint */
-/* @@? 20:19 Error TypeError: Type argument 'Int' should be a subtype of 'String' constraint */
+/* @@? 19:19 Error Semantic error ESE0228: Type argument 'Double' should be a subtype of 'String' constraint */
+/* @@? 20:19 Error Semantic error ESE0228: Type argument 'Int' should be a subtype of 'String' constraint */

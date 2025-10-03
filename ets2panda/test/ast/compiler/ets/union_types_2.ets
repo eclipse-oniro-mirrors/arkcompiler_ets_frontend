@@ -39,4 +39,5 @@ function main() {
     foo(x);
 }
 
-/* @@@ label Error TypeError: Property 'num' does not exist on type 'A'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'num' does not exist on type 'A' */

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,5 +16,5 @@
 
 let b: ((a: i32, b?: void, c: u8) => i32) |
 
-/* @@@ label Error SyntaxError: 'null' expected  */
-/* @@ label */
+
+/* @@ label *//* @@? 20:74 Error Syntax error ESY0000: 'null' expected */

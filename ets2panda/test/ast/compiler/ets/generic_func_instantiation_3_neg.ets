@@ -27,7 +27,7 @@ function main() {
     let fooInt7: (a0: Int) => Int = /* @@ label4 */fooInt6<Double>
 }
 
-/* @@@ label1 Error TypeError: Type '((p1: Double) => Double)' cannot be assigned to type '((p1: Int) => Int)' */
-/* @@@ label2 Error TypeError: Type '((p1: Double) => Double)' cannot be assigned to type '((p1: Int) => Int)' */
-/* @@@ label3 Error TypeError: Type '((p1: Double) => Double)' cannot be assigned to type '((p1: Int) => Int)' */
-/* @@@ label4 Error TypeError: Type '((p1: Double) => Double)' cannot be assigned to type '((p1: Int) => Int)' */
+/* @@@ label1 Error Semantic error ESE0318: Type '((p1: Double) => Double)' cannot be assigned to type '((p1: Int) => Int)' */
+/* @@@ label2 Error Semantic error ESE0318: Type '((p1: Double) => Double)' cannot be assigned to type '((p1: Int) => Int)' */
+/* @@@ label3 Error Semantic error ESE0318: Type '((p1: Double) => Double)' cannot be assigned to type '((p1: Int) => Int)' */
+/* @@@ label4 Error Semantic error ESE0318: Type '((p1: Double) => Double)' cannot be assigned to type '((p1: Int) => Int)' */

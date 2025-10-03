@@ -20,4 +20,4 @@ function main() {
     let fooerr = /* @@ label1 */fooInt1<Double>
 }
 
-/* @@@ label1 Error TypeError: Signature '(p1: Int): Int' is not generic, but type arguments '<Double>' were passed */
+/* @@@ label1 Error Semantic error ESE72257: Signature '(p1: Int): Int' is not generic, but type arguments '<Double>' were passed */

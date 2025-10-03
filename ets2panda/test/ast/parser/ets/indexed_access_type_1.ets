@@ -16,5 +16,6 @@
 type Point = /* @@ label1 */{x: number = 0; y: number = 0}
 type N = Point/* @@ label2 */["x"]
 
-/* @@@ label1 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly!  */
-/* @@@ label2 Error SyntaxError: Indexed access types are not supported, use type name instead!  */
+
+/* @@@ label1 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@@ label2 Error Syntax error ESY49888: Indexed access types are not supported, use type name instead! */

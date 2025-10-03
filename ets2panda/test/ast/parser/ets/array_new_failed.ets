@@ -17,4 +17,5 @@ function foo(): void {
   let a = new int[/* @@ label */5.1]
 }
 
-/* @@@ label Error TypeError: Index fractional part should be zero.  */
+
+/* @@@ label Error Semantic error ESE0197: Index fractional part should be zero. */

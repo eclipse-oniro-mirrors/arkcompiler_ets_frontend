@@ -17,16 +17,17 @@ function foo(...^number: int[]): int {
     return number[0]
 }
 
-/* @@? 16:10 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 16:14 Error SyntaxError: Rest parameter should be either array or tuple type. */
-/* @@? 16:17 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 16:18 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 16:18 Error SyntaxError: Rest parameter must be the last formal parameter. */
-/* @@? 16:31 Error SyntaxError: Unexpected token ')'. */
-/* @@? 16:32 Error SyntaxError: Unexpected token ':'. */
-/* @@? 16:34 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 16:38 Error SyntaxError: Unexpected token '{'. */
-/* @@? 17:5 Error SyntaxError: return keyword should be used in function body. */
-/* @@? 17:12 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 17:12 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 17:12 Error TypeError: All return statements in the function should be empty or have a value. */
+
+/* @@? 16:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 16:14 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@? 16:17 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 16:18 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 16:18 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
+/* @@? 16:31 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 16:32 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 16:34 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 16:38 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 17:5 Error Syntax error ESY0163: return keyword should be used in function body. */
+/* @@? 17:12 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 17:12 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 17:12 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */

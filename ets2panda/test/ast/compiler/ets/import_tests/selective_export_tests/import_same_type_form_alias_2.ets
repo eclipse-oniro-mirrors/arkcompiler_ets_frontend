@@ -20,4 +20,6 @@ f2()
 let c1: a1 = new a1()
 let c2: a2 = new a2()
 c1 = a3
-c2 = a4
+c2 = a4/* @@? export_type_several_times_2.ets:22:3 Warning Warning W32596: 'foo' is explicitly used with alias several times */
+/* @@? export_type_several_times_2.ets:24:3 Warning Warning W32596: 'A' is explicitly used with alias several times */
+/* @@? export_type_several_times_2.ets:26:3 Warning Warning W32596: 'a' is explicitly used with alias several times */

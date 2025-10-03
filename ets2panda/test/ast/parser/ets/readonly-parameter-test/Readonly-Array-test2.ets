@@ -18,4 +18,5 @@ function foo (x: readonly Array<int>) {
     /* @@ label */x[0] = 1
 }
 
-/* @@@ label Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
+
+/* @@@ label Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */

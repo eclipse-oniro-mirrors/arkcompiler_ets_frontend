@@ -21,4 +21,5 @@ class AA implements A {
     /* @@ label */prop2 = new Int();
 }
 
-/* @@@ label Error TypeError: Method prop2(<property>prop2: Int): void in AA not overriding any method  */
+
+/* @@@ label Error Semantic error ESE0136: Method prop2(<property>prop2: Int): void in AA not overriding any method */

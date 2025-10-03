@@ -16,4 +16,5 @@
 
 let fn: (i: int) => int = () => {/* @@ label */return; };
 
-/* @@@ label Error TypeError: Missing return value. */
+
+/* @@@ label Error Semantic error ESE0032: Missing return value. */

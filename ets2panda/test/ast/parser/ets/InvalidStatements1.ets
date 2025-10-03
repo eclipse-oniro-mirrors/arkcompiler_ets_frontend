@@ -51,21 +51,22 @@ class A {
 throw
 "abc"
 // there were more errors
-/* @@? 22:1 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 22:5 Error TypeError: Variable 'x' has already been declared. */
-/* @@? 25:5 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 28:1 Error TypeError: Function f is already declared. */
-/* @@? 29:5 Error SyntaxError: Illegal start of STRUCT expression. */
-/* @@? 30:9 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 32:5 Error SyntaxError: Nested functions are not allowed. */
-/* @@? 36:5 Error SyntaxError: Expected '{', got 'let'. */
-/* @@? 40:1 Error SyntaxError: A try statement should contain either finally clause or at least one catch clause. */
-/* @@? 40:5 Error SyntaxError: Expected '{', got 'identification literal'. */
-/* @@? 40:8 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 42:1 Error SyntaxError: A try statement should contain either finally clause or at least one catch clause. */
-/* @@? 43:5 Error SyntaxError: Expected '{', got 'let'. */
-/* @@? 45:9 Error SyntaxError: Unexpected token '{'. */
-/* @@? 47:1 Error SyntaxError: Illegal start of CLASS expression. */
-/* @@? 48:5 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 52:1 Error SyntaxError: Illegal newline after throw. */
-/* @@? 72:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@? 22:1 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 22:5 Error Semantic error ESE0351: Variable 'x' has already been declared. */
+/* @@? 25:5 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 28:1 Error Semantic error ESE0130: Function f is already declared. */
+/* @@? 29:5 Error Syntax error ESY0040: Illegal start of STRUCT expression. */
+/* @@? 30:9 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 32:5 Error Syntax error ESY0135: Nested functions are not allowed. */
+/* @@? 36:5 Error Syntax error ESY0230: Expected '{', got 'let'. */
+/* @@? 40:1 Error Syntax error ESY0039: A try statement should contain either finally clause or at least one catch clause. */
+/* @@? 40:5 Error Syntax error ESY0230: Expected '{', got 'identification literal'. */
+/* @@? 40:8 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 42:1 Error Syntax error ESY0039: A try statement should contain either finally clause or at least one catch clause. */
+/* @@? 43:5 Error Syntax error ESY0230: Expected '{', got 'let'. */
+/* @@? 45:9 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 47:1 Error Syntax error ESY0040: Illegal start of CLASS expression. */
+/* @@? 48:5 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 52:1 Error Syntax error ESY0172: Illegal newline after throw. */
+/* @@? 72:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

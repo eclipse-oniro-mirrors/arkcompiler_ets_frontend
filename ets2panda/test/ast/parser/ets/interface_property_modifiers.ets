@@ -25,8 +25,9 @@ interface I {
     default f_def: number;
 }
 
-/* @@? 21:5 Error SyntaxError: Identifier expected, got 'private'. */
-/* @@? 22:5 Error SyntaxError: Identifier expected, got 'protected'. */
-/* @@? 23:5 Error SyntaxError: Identifier expected, got 'public'. */
-/* @@? 24:5 Error SyntaxError: Identifier expected, got 'static'. */
-/* @@? 25:5 Error SyntaxError: Identifier expected, got 'default'. */
+
+/* @@? 21:5 Error Syntax error ESY0224: Identifier expected, got 'private'. */
+/* @@? 22:5 Error Syntax error ESY0224: Identifier expected, got 'protected'. */
+/* @@? 23:5 Error Syntax error ESY0224: Identifier expected, got 'public'. */
+/* @@? 24:5 Error Syntax error ESY0224: Identifier expected, got 'static'. */
+/* @@? 25:5 Error Syntax error ESY0224: Identifier expected, got 'default'. */

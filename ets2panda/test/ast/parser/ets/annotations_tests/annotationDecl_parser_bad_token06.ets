@@ -19,7 +19,8 @@ import * as Src from "./annotation_export"
 Src.@MyAnno()
 class A{}
 
-/* @@? 19:5 Error SyntaxError: Identifier expected. */
-/* @@? 19:5 Error SyntaxError: Identifier expected, got '@'. */
-/* @@? 19:6 Error SyntaxError: Unexpected token 'MyAnno'. */
-/* @@? 19:6 Error TypeError: Unresolved reference MyAnno */
+
+/* @@? 19:5 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 19:5 Error Syntax error ESY0224: Identifier expected, got '@'. */
+/* @@? 19:6 Error Syntax error ESY0227: Unexpected token 'MyAnno'. */
+/* @@? 19:6 Error Semantic error ESE0143: Unresolved reference MyAnno */

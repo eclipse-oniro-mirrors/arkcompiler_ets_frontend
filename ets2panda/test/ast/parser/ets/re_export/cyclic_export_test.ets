@@ -16,5 +16,5 @@
 import * as a from './cyclic_export_file1.ets'
 import * as b from './cyclic_export_file2.ets'
 
-/* @@? 16:13 Error TypeError: Cyclic export detected re-exports */
-/* @@? 17:13 Error TypeError: Cyclic export detected re-exports */
+/* @@? 16:13 Error Semantic error ESE67633: Cyclic export detected re-exports */
+/* @@? 17:13 Error Semantic error ESE67633: Cyclic export detected re-exports */

@@ -21,7 +21,8 @@ let args_tuple: [number, number] = [0, 1]
 let args_array: number[] = [2, 3]
 /* @@ label2 */foo(4, ...args_array)
 
-/* @@@ label1 Error TypeError: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
-/* @@@ label1 Error TypeError: No matching call signature for foo(Int, [Double, Double]) */
-/* @@@ label2 Error TypeError: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
-/* @@@ label2 Error TypeError: No matching call signature for foo(Int, Double) */
+
+/* @@@ label1 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for foo(Int, [Double, Double]) */
+/* @@@ label2 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for foo(Int, Double) */

@@ -19,5 +19,6 @@ class Foo {
     /* @@ label */constructor/* @@ label1 */?() { };
 }
 
-/* @@@ label Error SyntaxError: Classes may not have a field named 'constructor'. */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected '('. */
+
+/* @@@ label Error Syntax error ESY0144: Classes may not have a field named 'constructor'. */
+/* @@@ label1 Error Syntax error ESY0228: Unexpected token, expected '('. */

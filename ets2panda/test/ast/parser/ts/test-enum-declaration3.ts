@@ -18,5 +18,6 @@ const enum Foo {
     G = 1, /* @@ label */2, /* @@ label1 */3
 }
 
-/* @@@ label Error SyntaxError: Unexpected token in enum member.  */
-/* @@@ label1 Error SyntaxError: Unexpected token in enum member.  */
+
+/* @@@ label Error Syntax error ESY0178: Unexpected token in enum member. */
+/* @@@ label1 Error Syntax error ESY0178: Unexpected token in enum member. */

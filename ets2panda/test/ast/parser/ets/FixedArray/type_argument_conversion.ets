@@ -30,8 +30,9 @@ function main(): int {
     return 0;
 }
 
-/* @@? 29:34 Error TypeError: No matching construct signature for type_argument_conversion.A(Array<A<Y>>) */
-/* @@? 29:58 Error TypeError: No Matching Parameterless Constructor, parameter count 1 */
-/* @@? 29:58 Error TypeError: No matching parameterless constructor */
-/* @@? 29:58 Error TypeError: Signature is not available here. */
-/* @@? 29:58 Error TypeError: Type 'Array<A<Y>>' is not compatible with type 'FixedArray<A<X>>' at index 1 */
+
+/* @@? 29:34 Error Semantic error ESE0127: No matching construct signature for type_argument_conversion.A(Array<A<Y>>) */
+/* @@? 29:58 Error Semantic error ESE0270: No Matching Parameterless Constructor, parameter count 1 */
+/* @@? 29:58 Error Semantic error ESE0125: No matching parameterless constructor */
+/* @@? 29:58 Error Semantic error ESE0137: Signature is not available here. */
+/* @@? 29:58 Error Semantic error ESE0046: Type 'Array<A<Y>>' is not compatible with type 'FixedArray<A<X>>' at index 1 */

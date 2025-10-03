@@ -54,7 +54,7 @@ function main() : int
    return 0;
 }
 
-/* @@? 27:4 Error TypeError: Function method with this assembly signature already declared. */
-/* @@? 41:14 Error SyntaxError: Optional variable is deprecated and no longer supported. */
-/* @@? 42:14 Error SyntaxError: Optional variable is deprecated and no longer supported. */
-/* @@? 43:14 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+/* @@? 27:4 Error Semantic error ESE0131: Function method with this assembly signature already declared. */
+/* @@? 41:14 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 42:14 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 43:14 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */

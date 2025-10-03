@@ -29,6 +29,7 @@ function main() {
     i.age = 124
 }
 
-/* @@? 24:5 Error TypeError: The 'Readonly' property cannot be reassigned. */
-/* @@? 24:5 Error TypeError: Cannot assign to a readonly variable s */
-/* @@? 29:5 Error TypeError: The 'Readonly' property cannot be reassigned. */
+
+/* @@? 24:5 Error Semantic error ESE0338: The 'Readonly' property cannot be reassigned. */
+/* @@? 24:5 Error Semantic error ESE4002: Cannot assign to a readonly field s */
+/* @@? 29:5 Error Semantic error ESE0338: The 'Readonly' property cannot be reassigned. */

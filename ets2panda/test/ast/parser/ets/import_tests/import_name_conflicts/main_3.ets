@@ -19,4 +19,5 @@ import {C as B} from /* @@ label */"./imported_module_2.ets";
 
 function main() : void {}
 
-/* @@@ label Error TypeError: Class 'B' is already defined.  */
+
+/* @@@ label Error Semantic error ESE0349: Class 'B' is already defined. */

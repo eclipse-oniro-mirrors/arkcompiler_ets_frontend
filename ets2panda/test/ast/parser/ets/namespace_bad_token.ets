@@ -17,5 +17,5 @@ declare namespace uiObserver {
     function on(options: { a: number }, callback: ): void;
 }
   
-/* @@? 17:26 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 17:51 Error SyntaxError: Invalid Type. */
+/* @@? 17:26 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 17:51 Error Syntax error ESY0138: Invalid Type. */

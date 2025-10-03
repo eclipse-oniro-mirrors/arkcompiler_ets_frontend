@@ -18,4 +18,4 @@ async function aw<T>(p: Promise<T>, cb: (v: T) => void) {
     cb(x)
 }
 
-/* @@? 17:16 Error TypeError: Type 'Awaited<T>' cannot be assigned to type 'T' */
+/* @@? 17:16 Error Semantic error ESE0318: Type 'Awaited<T>' cannot be assigned to type 'T' */

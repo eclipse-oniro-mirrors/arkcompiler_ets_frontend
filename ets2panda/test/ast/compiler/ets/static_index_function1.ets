@@ -27,7 +27,8 @@ function main() {
     let e = /* @@ label2 */A[/* @@ label3 */'a']
 }
 
-/* @@@ label Error TypeError: '$_get' is a static property of 'A' */
-/* @@@ label1 Error TypeError: '$_get' is a static property of 'A' */
-/* @@@ label2 Error SyntaxError: Class cannot be used as object. */
-/* @@@ label3 Error TypeError: '$_get' is a static property of 'A' */
+
+/* @@@ label Error Semantic error ESE0207: '$_get' is a static property of 'A' */
+/* @@@ label1 Error Semantic error ESE0207: '$_get' is a static property of 'A' */
+/* @@@ label2 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@@ label3 Error Semantic error ESE0207: '$_get' is a static property of 'A' */

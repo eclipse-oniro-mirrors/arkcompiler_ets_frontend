@@ -18,4 +18,4 @@ class Person {
     async get age(): number { return this._age }
 }
 
-/*  @@? 18:11 Error SyntaxError: Modifiers of getter and setter are limited to ('abstract', 'static', 'final', 'override', 'native'). */
+/* @@? 18:11 Error Syntax error ESY0107: Modifiers of getter and setter are limited to ('abstract', 'static', 'final', 'override', 'native'). */

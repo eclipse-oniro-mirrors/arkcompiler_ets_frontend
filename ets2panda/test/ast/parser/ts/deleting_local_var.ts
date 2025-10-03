@@ -16,4 +16,4 @@
 let x = 42;
 delete x;
 
-/* @@? 17:9 Error SyntaxError: Deleting local variable in strict mode. */
+/* @@? 17:9 Error Syntax error ESY0050: Deleting local variable in strict mode. */

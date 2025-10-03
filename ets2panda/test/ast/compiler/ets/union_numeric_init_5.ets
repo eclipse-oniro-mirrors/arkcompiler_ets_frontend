@@ -25,4 +25,4 @@ const a = 32767;
 let b: Short | Int = /* @@ label */ a;
 
 
-/* @@@ label Error TypeError: Ambiguous value 32767, fits into multiple types */
+/* @@? 25:37 Error Semantic error ESE101680: Ambiguous value 32767, fits into multiple types */

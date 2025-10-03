@@ -20,7 +20,8 @@
 @MyAnno({testProperty1: "123", testProperty2: 123/* @@ label */;/* @@ label1 */})
 class A{}
 
-/* @@? 20:2 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined. */
-/* @@? 20:64 Error SyntaxError: Expected ',', got ';'. */
-/* @@? 20:64 Error SyntaxError: Identifier expected, got ';'. */
-/* @@? 20:80 Error SyntaxError: Identifier expected, got '}'. */
+
+/* @@? 20:2 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */
+/* @@@ label Error Syntax error ESY0230: Expected ',', got ';'. */
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got ';'. */
+/* @@@ label1 Error Syntax error ESY0224: Identifier expected, got '}'. */

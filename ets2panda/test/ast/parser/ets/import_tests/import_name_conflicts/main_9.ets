@@ -20,4 +20,4 @@ function main() {
   A()
 }
 
-/* @@? imported_module_4.ets:16:16 Error TypeError: Function boo is already declared. */
+/* @@? imported_module_4.ets:16:16 Error Semantic error ESE0130: Function boo is already declared. */

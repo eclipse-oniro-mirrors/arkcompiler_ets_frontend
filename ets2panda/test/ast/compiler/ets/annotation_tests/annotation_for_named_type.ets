@@ -34,7 +34,8 @@ let color: (@Anno @Anno Color)
 // annotations for aliases
 let c: (@Anno @Anno() C)
 
-/* @@? 26:22 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
-/* @@? 29:26 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
-/* @@? 32:20 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
-/* @@? 35:16 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
+
+/* @@? 26:22 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 29:26 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 32:20 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 35:16 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */

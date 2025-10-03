@@ -25,4 +25,4 @@ interface Contact {
 
 type Employee = Identity & Contact
 
-/* @@? 26:28 Error SyntaxError: Intersection types are not supported, use inheritance instead!  */
+/* @@? 26:28 Error Syntax error ESY145527: Intersection types are not supported, use inheritance instead! */

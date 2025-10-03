@@ -22,5 +22,6 @@ const invalidUsage2 = @AddMetadata("array") [1, 2, 3];
 
 
 
-/* @@? 20:45 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 21:45 Error SyntaxError: Annotations are not allowed on this type of declaration. */
+
+/* @@? 20:45 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
+/* @@? 21:45 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */

@@ -19,5 +19,5 @@ function main(): int {
    return 0;
 }
 
-/* @@@ label1 Error TypeError: No matching call signature for assertEQ(Int, Int, Int)  */
-/* @@@ label2 Error TypeError: Type 'Int' is not compatible with type 'String|undefined' at index 3  */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for assertEQ(Int, Int, Int) */
+/* @@@ label2 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'String|undefined' at index 3 */

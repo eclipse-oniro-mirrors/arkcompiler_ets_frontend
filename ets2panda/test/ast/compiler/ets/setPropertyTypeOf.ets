@@ -23,6 +23,7 @@ class CustomError extends Error {
   }
 }
 
-/* @@@ label1 Error SyntaxError: Runtime prototype inheritance is not supported because of static typing. */
-/* @@@ label2 Error SyntaxError: Invalid Type. */
-/* @@@ label3 Error SyntaxError: Runtime prototype assignment is not supported because of static typing */
+
+/* @@@ label1 Error Syntax error ESY167923: Runtime prototype inheritance is not supported because of static typing. */
+/* @@@ label2 Error Syntax error ESY0138: Invalid Type. */
+/* @@@ label3 Error Syntax error ESY30818: Runtime prototype assignment is not supported because of static typing */

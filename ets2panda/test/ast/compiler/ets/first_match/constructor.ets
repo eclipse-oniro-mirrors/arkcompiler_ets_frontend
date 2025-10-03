@@ -46,7 +46,8 @@ class Test5{
     /* @@ label3 */overload constructor{con1}
 }
 
-/* @@@ label1 Error TypeError: Function con1 is already declared. */
-/* @@@ label2 Error TypeError: The overloaded name 'constructor' can't refer to a function with overload signatures. */
-/* @@@ label2 Error TypeError: The overloaded name 'con1' can't refer to a function with overload signatures. */
-/* @@@ label3 Error TypeError: The overloaded name 'constructor' can't refer to a function with overload signatures. */
+
+/* @@@ label1 Error Semantic error ESE0130: Function con1 is already declared. */
+/* @@@ label2 Error Semantic error ESE0389: The overloaded name 'constructor' can't refer to a function with overload signatures. */
+/* @@@ label2 Error Semantic error ESE0389: The overloaded name 'con1' can't refer to a function with overload signatures. */
+/* @@@ label3 Error Semantic error ESE0389: The overloaded name 'constructor' can't refer to a function with overload signatures. */

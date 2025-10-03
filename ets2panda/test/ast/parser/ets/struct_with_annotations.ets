@@ -31,4 +31,5 @@ struct A {
 }
 
 
-/* @@? 28:1 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase.  */
+
+/* @@? 28:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */

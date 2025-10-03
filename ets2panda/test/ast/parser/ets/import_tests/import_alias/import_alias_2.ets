@@ -20,4 +20,5 @@ function main():void{
 }
 
 
-/* @@@ label Error TypeError: 'bar1' type does not exist.  */
+
+/* @@@ label Error Semantic error ESE0070: 'bar1' type does not exist. */

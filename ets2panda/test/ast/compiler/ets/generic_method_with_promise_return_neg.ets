@@ -26,5 +26,6 @@ function main(): void {
     });   
 }
 
-/* @@? 18:15 Error TypeError: Type 'Promise<*ERROR_TYPE*>' is not compatible with the enclosing method's return type 'Promise<X>'  */
-/* @@? 18:31 Error TypeError: Cannot cast type 'Int' to 'X'  */
+
+/* @@? 18:15 Error Semantic error ESE0091: Type 'Promise<*ERROR_TYPE*>' is not compatible with the enclosing method's return type 'Promise<X>' */
+/* @@? 18:31 Error Semantic error ESE0326: Cannot cast type 'Int' to 'X' */

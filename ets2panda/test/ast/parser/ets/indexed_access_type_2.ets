@@ -16,4 +16,5 @@
 class Point {x: number = 0; y: number = 0}
 type N = Point/* @@ label */["x"]
 
-/* @@@ label Error SyntaxError: Indexed access types are not supported, use type name instead!  */
+
+/* @@@ label Error Syntax error ESY49888: Indexed access types are not supported, use type name instead! */

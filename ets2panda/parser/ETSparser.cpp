@@ -1524,8 +1524,7 @@ void ETSParser::ParseNamedSpecifiersDefaultExport(ArenaVector<ir::ImportSpecifie
 }
 
 bool ETSParser::ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *result,
-                                          ArenaVector<ir::ExportSpecifier *> *resultExportDefault,
-                                          const std::string &fileName)
+                                          ArenaVector<ir::ExportSpecifier *> *resultExportDefault)
 {
     if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
         ir::Expression *constantExpression = ParseUnaryOrPrefixUpdateExpression();
@@ -1563,7 +1562,7 @@ bool ETSParser::ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *re
     ES2PANDA_ASSERT(specifier != nullptr);
     specifier->SetRange({imported->Start(), local->End()});
 
-    util::Helpers::CheckImportedName(*result, specifier, fileName);
+    util::Helpers::CheckImportedName(*result, specifier, DiagnosticEngine());
 
     result->emplace_back(specifier);
     return true;
@@ -1604,7 +1603,7 @@ SpecifiersInfo ETSParser::ParseNamedSpecifiers(const ir::ImportKinds importKind)
 
             if (!IsDefaultImport()) {
                 typeKeywordOnSpecifier = false;
-                return ParseNamedSpecifiesImport(&result, &resultExportDefault, fileName);
+                return ParseNamedSpecifiesImport(&result, &resultExportDefault);
             }
             ParseNamedSpecifiesDefaultImport(&resultDefault, fileName);
             typeKeywordOnSpecifier = false;
@@ -1639,7 +1638,7 @@ SpecifiersInfo ETSParser::ParseExportNamedSpecifiers(const ir::ExportKinds expor
 
             if (!IsDefaultExport()) {
                 typeKeywordOnSpecifier = false;
-                return ParseNamedSpecifiesImport(&result, &resultExportDefault, fileName);
+                return ParseNamedSpecifiesImport(&result, &resultExportDefault);
             }
             ParseNamedSpecifiersDefaultExport(&result, &resultDefault, fileName);
             typeKeywordOnSpecifier = false;

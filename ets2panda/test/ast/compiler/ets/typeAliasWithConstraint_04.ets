@@ -18,5 +18,5 @@ type A<T extends string, U extends Numeric> = T;
 let v: A</* @@ label1 */int, /* @@ label2 */string>;
 
 
-/* @@@ label1 Error TypeError: Type argument 'Int' should be a subtype of 'String' constraint */
-/* @@@ label2 Error TypeError: Type argument 'String' should be a subtype of 'Numeric' constraint */
+/* @@@ label1 Error Semantic error ESE0228: Type argument 'Int' should be a subtype of 'String' constraint */
+/* @@@ label2 Error Semantic error ESE0228: Type argument 'String' should be a subtype of 'Numeric' constraint */

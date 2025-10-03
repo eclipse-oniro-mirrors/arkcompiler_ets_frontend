@@ -21,4 +21,5 @@ interface C extends B {}
 
 interface D extends C {}
 
-/* @@? 16:11 Error TypeError: Cyclic inheritance involving A.  */
+
+/* @@? 16:11 Error Semantic error ESE0310: Cyclic inheritance involving A. */

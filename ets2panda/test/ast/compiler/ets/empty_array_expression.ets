@@ -30,11 +30,12 @@ class A{
    }
 }
 
-/* @@@ label1 Error TypeError: Can't resolve array type */
-/* @@@ label2 Error TypeError: Can't resolve array type */
-/* @@@ label3 Error TypeError: Can't resolve array type */
-/* @@@ label4 Error TypeError: Can't resolve array type */
-/* @@@ label5 Error TypeError: Can't resolve array type */
-/* @@@ label6 Error TypeError: Can't resolve array type */
-/* @@@ label7 Error TypeError: Can't resolve array type */
-/* @@@ label8 Error TypeError: Can't resolve array type */
+
+/* @@@ label1 Error Semantic error ESE0301: Can't resolve array type */
+/* @@@ label2 Error Semantic error ESE0301: Can't resolve array type */
+/* @@@ label3 Error Semantic error ESE0301: Can't resolve array type */
+/* @@@ label4 Error Semantic error ESE0301: Can't resolve array type */
+/* @@@ label5 Error Semantic error ESE0301: Can't resolve array type */
+/* @@@ label6 Error Semantic error ESE0301: Can't resolve array type */
+/* @@@ label7 Error Semantic error ESE0301: Can't resolve array type */
+/* @@@ label8 Error Semantic error ESE0301: Can't resolve array type */

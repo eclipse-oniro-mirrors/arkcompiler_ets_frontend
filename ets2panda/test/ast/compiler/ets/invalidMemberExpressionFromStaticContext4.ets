@@ -24,4 +24,5 @@ final class B {
     }
 }
 
-/* @@@ label Error TypeError: 'foo_in_A' is an instance property of 'A'  */
+
+/* @@@ label Error Semantic error ESE0208: 'foo_in_A' is an instance property of 'A' */

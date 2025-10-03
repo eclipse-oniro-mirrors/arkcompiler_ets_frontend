@@ -18,11 +18,12 @@ let obj: Record<string, number> = {
     [this.viewModel.ads] : 123
 }
 
-/* @@? 18:5 Error SyntaxError: Unexpected token. */
-/* @@? 18:6 Error SyntaxError: Unexpected token. */
-/* @@? 18:6 Error TypeError: 'this' cannot be referenced from a static context */
-/* @@? 18:11 Error TypeError: Property 'viewModel' does not exist on type 'ETSGLOBAL' */
-/* @@? 18:24 Error SyntaxError: Unexpected token. */
-/* @@? 18:26 Error SyntaxError: Unexpected token ':'. */
-/* @@? 18:28 Error SyntaxError: Unexpected token '123'. */
-/* @@? 19:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 18:5 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:6 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:6 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
+/* @@? 18:11 Error Semantic error ESE0087: Property 'viewModel' does not exist on type 'ETSGLOBAL' */
+/* @@? 18:24 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:26 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 18:28 Error Syntax error ESY0227: Unexpected token '123'. */
+/* @@? 19:1 Error Syntax error ESY0227: Unexpected token '}'. */

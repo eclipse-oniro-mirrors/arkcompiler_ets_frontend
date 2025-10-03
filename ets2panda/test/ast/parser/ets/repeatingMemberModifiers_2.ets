@@ -28,4 +28,4 @@ function main(): void {
 }
 
 
-/* @@@ label Error SyntaxError: Duplicated modifier is not allowed. */
+/* @@@ label Error Syntax error ESY0115: Duplicated modifier is not allowed. */

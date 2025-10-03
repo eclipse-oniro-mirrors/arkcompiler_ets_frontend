@@ -29,5 +29,6 @@ function bar(a:Readonly<A>){
 bar(changeAbleVar)
 
 
-/* @@@ label Error TypeError: Cannot assign to a readonly field x  */
-/* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned.  */
+
+/* @@@ label Error Semantic error ESE0338: The 'Readonly' property cannot be reassigned. */
+/* @@@ label Error Semantic error ESE4002: Cannot assign to a readonly field x */

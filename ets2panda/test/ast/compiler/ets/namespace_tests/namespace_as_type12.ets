@@ -19,5 +19,6 @@ namespace MySpace{
 
 function foo(a: MySpace) {}
 
-/* @@? 20:17 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
-/* @@? 17:12 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
+
+/* @@? 17:12 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 20:17 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */

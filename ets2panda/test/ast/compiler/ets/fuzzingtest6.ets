@@ -21,5 +21,6 @@ class B<T> extends A<T> implements inter<T> {
 function foo1(b: Partial<B<string>>) {
 }
 
-/* @@? 18:20 Error TypeError: Cannot find type 'A'. */
-/* @@? 18:20 Error TypeError: The super type of 'B' class is not extensible. */
+
+/* @@? 18:20 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@? 18:20 Error Semantic error ESE0176: The super type of 'B' class is not extensible. */

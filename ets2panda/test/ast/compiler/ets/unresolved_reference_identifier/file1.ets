@@ -23,5 +23,6 @@ export function atomicTask() {
     return Atomics.load(shareArray, 0);
 }
 
-/* @@? 21:17 Error TypeError: Unresolved reference shareArray */
-/* @@? 23:12 Error TypeError: Call to `load` is ambiguous as `2` versions of `load` are available: `load(typedArray: BigInt64Array, index: Double): BigInt` and `load(typedArray: BigUint64Array, index: Double): BigInt` */
+
+/* @@? 21:17 Error Semantic error ESE0143: Unresolved reference shareArray */
+/* @@? 23:12 Error Semantic error ESE0142: Call to `load` is ambiguous as `2` versions of `load` are available: `load(typedArray: BigInt64Array, index: Double): BigInt` and `load(typedArray: BigUint64Array, index: Double): BigInt` */

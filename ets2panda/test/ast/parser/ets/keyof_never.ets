@@ -21,6 +21,7 @@ function main():void{
     let a3:keyof A = /* @@ label3 */"method1"
 }
 
-/* @@@ label1 Error TypeError: Type '""' cannot be assigned to type 'never'  */
-/* @@@ label2 Error TypeError: Type '"field1"' cannot be assigned to type 'never'  */
-/* @@@ label3 Error TypeError: Type '"method1"' cannot be assigned to type 'never'  */
+
+/* @@@ label1 Error Semantic error ESE0318: Type '""' cannot be assigned to type 'never' */
+/* @@@ label2 Error Semantic error ESE0318: Type '"field1"' cannot be assigned to type 'never' */
+/* @@@ label3 Error Semantic error ESE0318: Type '"method1"' cannot be assigned to type 'never' */

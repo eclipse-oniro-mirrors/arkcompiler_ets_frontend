@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,4 +16,5 @@
 
 var /* @@ label */{ a: { b: [{ r, k } = { er: 5 }] = ["foo", true] } = { z: 5, b: [2, "foo"] } } = { a: { k: 2, b: [true, 2n] }, k: 5 };
 
-/* @@@ label Error TypeError: Object literal may only specify known properties, and property 'k' does not exist in the pattern.  */
+
+/* @@@ label Error Semantic error ESE0000: Object literal may only specify known properties, and property 'k' does not exist in the pattern. */

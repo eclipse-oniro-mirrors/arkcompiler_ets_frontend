@@ -23,5 +23,6 @@ function foo(entry: I) {
     });
 }
 
-/* @@@ label1 Error TypeError: Invalid lambda parameter. Expected: 'identifier(: type)?', 'identifier?(: type)?' or '...identifier(: type)?'. */
-/* @@@ label2 Error SyntaxError: Unexpected token '=>'. */
+
+/* @@@ label1 Error Semantic error ESE0395: Invalid lambda parameter. Expected: 'identifier(: type)?', 'identifier?(: type)?' or '...identifier(: type)?'. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token '=>'. */

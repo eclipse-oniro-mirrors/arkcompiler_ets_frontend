@@ -22,4 +22,3 @@ function f(x: string, y?: A, z?: B) {}
 
 f("1")
 
-/* @@? 23:1 Error TypeError: Reference to f is ambiguous  */

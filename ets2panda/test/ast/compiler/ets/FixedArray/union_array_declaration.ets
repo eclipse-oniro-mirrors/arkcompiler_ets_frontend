@@ -21,4 +21,4 @@ function main(): int {
   return 0;
 }
 
-/* @@@ label Error TypeError: Can't resolve array type  */
+/* @@@ label Error Semantic error ESE0301: Can't resolve array type */

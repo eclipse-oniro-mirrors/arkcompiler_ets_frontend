@@ -19,4 +19,5 @@ function foo(x : readonly Array<int>)
     let x1 : Array<int>
     x1 = /* @@ label */x
 }
-/* @@@ label Error TypeError: Type 'readonly Array<Int>' cannot be assigned to type 'Array<Int>' */
+
+/* @@@ label Error Semantic error ESE0318: Type 'readonly Array<Int>' cannot be assigned to type 'Array<Int>' */

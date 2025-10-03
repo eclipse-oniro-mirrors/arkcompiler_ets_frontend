@@ -20,4 +20,4 @@ let z: A<Int> = /* @@ label */(): A<Int> => {
     return b;
 }
 
-/* @@@ label Error TypeError: Type '(() => A<Int>)' cannot be assigned to type 'A<Int>'  */
+/* @@@ label Error Semantic error ESE0318: Type '(() => A<Int>)' cannot be assigned to type 'A<Int>' */

@@ -36,5 +36,6 @@ function main() {
 }
 
 
-/* @@@ label1 Error TypeError: Variable 'a2' is used before being assigned. */
-/* @@@ label2 Error TypeError: Variable 'a2' is used before being assigned. */
+
+/* @@@ label1 Error Semantic error ESE0375: Variable 'a2' is used before being assigned. */
+/* @@@ label2 Error Semantic error ESE0375: Variable 'a2' is used before being assigned. */

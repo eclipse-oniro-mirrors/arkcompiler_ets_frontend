@@ -24,5 +24,6 @@ function main(): void {
     foo(void_function());
 }
 
-/* @@? 24:9 Error TypeError: Cannot use type 'void' as value.  */
 
+
+/* @@? 24:9 Error Semantic error ESE0078: Cannot use type 'void' as value. */

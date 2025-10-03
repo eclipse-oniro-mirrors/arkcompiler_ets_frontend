@@ -17,4 +17,4 @@ declare class A {
     [index: boolean]: string
 }
 
-/* @@? 17:13 Error SyntaxError: Invalid index type 'boolean' in index signature. */
+/* @@? 17:13 Error Syntax error ESY0018: Invalid index type 'boolean' in index signature. */

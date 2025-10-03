@@ -20,5 +20,6 @@ interface Y {
     interfaceMethod?/* @@ label2 */(): void
 }
 
-/* @@@ label1 Error SyntaxError: Optional methods are not supported.  */
-/* @@@ label2 Error SyntaxError: Optional methods are not supported.  */
+
+/* @@@ label1 Error Syntax error ESY129375: Optional methods are not supported. */
+/* @@@ label2 Error Syntax error ESY129375: Optional methods are not supported. */

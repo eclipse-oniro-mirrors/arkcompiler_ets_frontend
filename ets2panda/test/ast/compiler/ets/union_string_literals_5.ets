@@ -17,4 +17,5 @@ function f1(x: number|string, y: boolean|null): boolean {
     return /* @@ label */x == y
 }
 
-/* @@@ label Error TypeError: Operator '==' cannot be applied to types 'Double|String' and 'Boolean|null'.  */
+
+/* @@@ label Error Semantic error ESE0105: Operator '==' cannot be applied to types 'Double|String' and 'Boolean|null'. */

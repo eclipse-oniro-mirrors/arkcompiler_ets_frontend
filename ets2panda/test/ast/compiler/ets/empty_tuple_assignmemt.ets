@@ -16,4 +16,5 @@
 
 let tuple: [string,number] = /* @@ label */[]
 
-/* @@@ label Error TypeError: Initializer has 0 elements, but tuple requires 2 */
+
+/* @@@ label Error Semantic error ESE0231: Initializer has 0 elements, but tuple requires 2 */

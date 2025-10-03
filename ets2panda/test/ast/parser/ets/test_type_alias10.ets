@@ -16,4 +16,5 @@
 type firstType = secondType;
 /* @@ label */type secondType = firstType;
 
-/* @@@ label Error TypeError: Circular type alias reference  */
+
+/* @@@ label Error Semantic error ESE0311: Circular type alias reference */

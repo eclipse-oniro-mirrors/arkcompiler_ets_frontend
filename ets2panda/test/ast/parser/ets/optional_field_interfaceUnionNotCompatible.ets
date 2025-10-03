@@ -31,5 +31,6 @@ abstract class C implements I
    }
 }
 
-/* @@? 25:13 Error TypeError: field(): Object|undefined in C cannot override field(): undefined|String|Double in I because overriding return type is not compatible with the other return type.  */
-/* @@? 25:13 Error TypeError: Method field(): Object|undefined in C not overriding any method  */
+
+/* @@? 25:13 Error Semantic error ESE0141: field(): Object|undefined in C cannot override field(): undefined|String|Double in I because overriding return type is not compatible with the other return type. */
+/* @@? 25:13 Error Semantic error ESE0136: Method field(): Object|undefined in C not overriding any method */

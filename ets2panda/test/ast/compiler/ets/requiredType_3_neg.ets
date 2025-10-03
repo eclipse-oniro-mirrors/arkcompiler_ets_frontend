@@ -21,4 +21,5 @@ function main(): void {
     let req_b: Required<B> = /* @@ label */new B();
 }
 
-/* @@@ label Error TypeError: Type 'B' cannot be assigned to type 'Required<B>'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'B' cannot be assigned to type 'Required<B>' */

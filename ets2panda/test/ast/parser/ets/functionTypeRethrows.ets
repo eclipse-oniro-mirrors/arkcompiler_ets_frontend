@@ -16,5 +16,6 @@
 let a: (c: int, b: int) => char /* @@ label */rethrows;
 
 
-/* @@@ label Error SyntaxError: Unexpected token 'rethrows'. */
-/* @@@ label Error TypeError: Unresolved reference rethrows */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'rethrows'. */
+/* @@@ label Error Semantic error ESE0143: Unresolved reference rethrows */

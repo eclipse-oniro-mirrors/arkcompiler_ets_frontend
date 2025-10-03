@@ -47,6 +47,7 @@ function main(): void {
     arktest.assertEQ(res, "abc");
 }
 
-/* @@? 46:19 Error TypeError: Iterator method must return an object which implements Iterator<T> */
-/* @@? 46:19 Error TypeError: 'For-of' statement source expression is not of iterable type. */
-/* @@? 18:15 Error TypeError: The return type of '$_iterator' must be a type that implements Iterator interface. */
+
+/* @@? 18:15 Error Semantic error ESE0096: The return type of '$_iterator' must be a type that implements Iterator interface. */
+/* @@? 46:19 Error Semantic error ESE0261: Iterator method must return an object which implements Iterator<T> */
+/* @@? 46:19 Error Semantic error ESE0076: 'For-of' statement source expression is not of iterable type. */

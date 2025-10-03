@@ -15,15 +15,16 @@
 
 interface"actual : " + actual.result[i]
 
-/* @@? 16:10 Error SyntaxError: Number, string or computed value property name 'actual : ' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 16:10 Error SyntaxError: Identifier expected, got 'string literal'. */
-/* @@? 16:22 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 16:30 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 16:38 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 16:38 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 16:38 Error SyntaxError: Identifier expected, got 'identification literal'. */
-/* @@? 16:39 Error SyntaxError: Identifier expected. */
-/* @@? 16:39 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 16:39 Error SyntaxError: Identifier expected, got 'end of stream'. */
-/* @@? 30:1 Error SyntaxError: Identifier expected. */
-/* @@? 30:1 Error SyntaxError: Unexpected token, expected '}'. */
+
+/* @@? 16:10 Error Syntax error ESY0315: Number, string or computed value property name 'actual : ' is not allowed, use classes to access data by property names that are identifiers */
+/* @@? 16:10 Error Syntax error ESY0224: Identifier expected, got 'string literal'. */
+/* @@? 16:22 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 16:30 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 16:38 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 16:38 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 16:38 Error Syntax error ESY0224: Identifier expected, got 'identification literal'. */
+/* @@? 16:39 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 16:39 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 16:39 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 30:76 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 30:76 Error Syntax error ESY0228: Unexpected token, expected '}'. */

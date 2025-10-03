@@ -27,6 +27,7 @@ function main(): void {
 }
 
 
-/* @@? 20:13 Error TypeError: Function foo with this assembly signature already declared. */
-/* @@? 26:5 Error TypeError: Signature foo(a: Double|undefined): Int is not visible here. */
-/* @@? 26:5 Error TypeError: No matching call signature for foo(Double) */
+
+/* @@? 20:13 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
+/* @@? 26:5 Error Semantic error ESE0139: Signature foo(a: Double|undefined): Int is not visible here. */
+/* @@? 26:5 Error Semantic error ESE0127: No matching call signature for foo(Double) */

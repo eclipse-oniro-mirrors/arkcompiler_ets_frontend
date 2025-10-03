@@ -44,5 +44,6 @@ function main(): int {
     return 0;
 }
 
-/* @@? 40:19 Error TypeError: Cannot find iterator method with the required signature. */
-/* @@? 40:19 Error TypeError: 'For-of' statement source expression is not of iterable type. */
+
+/* @@? 40:19 Error Semantic error ESE0259: Cannot find iterator method with the required signature. */
+/* @@? 40:19 Error Semantic error ESE0076: 'For-of' statement source expression is not of iterable type. */

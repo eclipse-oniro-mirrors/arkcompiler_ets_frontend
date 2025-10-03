@@ -18,6 +18,7 @@ function func(fn:(x:int)=>void) {
 }
 func(x)=>console.log(1))
 
-/* @@? 19:8 Error SyntaxError: Unexpected token '=>'. */
-/* @@? 19:8 Error SyntaxError: Unexpected token. */
-/* @@? 19:24 Error SyntaxError: Unexpected token ')'. */
+
+/* @@? 19:8 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 19:8 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 19:24 Error Syntax error ESY0227: Unexpected token ')'. */

@@ -19,5 +19,6 @@ class A {
     }
 /* @@ label1 */}
 
-/* @@@ label Error SyntaxError: Unexpected token, expected ';'.  */
-/* @@@ label1 Error SyntaxError: Unexpected token '}'.  */
+
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '}'. */

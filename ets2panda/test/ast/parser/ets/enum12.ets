@@ -24,4 +24,5 @@ function main(): void {
   test(Color.Red);
 }
 
-/* @@@ label Error TypeError: 'toString' is an instance property of 'Color'  */
+
+/* @@@ label Error Semantic error ESE0208: 'toString' is an instance property of 'Color' */

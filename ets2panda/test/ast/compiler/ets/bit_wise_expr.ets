@@ -15,10 +15,11 @@
 
 let tup : [['arkTs' | boolean, 1 | true]] = [['arkTs', 1]];
 
-/* @@? 16:32 Error SyntaxError: Invalid Type. */
-/* @@? 16:32 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 16:32 Error SyntaxError: Unexpected token '1'. */
-/* @@? 16:32 Error TypeError: Wrong type of operands for binary expression */
-/* @@? 16:32 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 16:40 Error SyntaxError: Unexpected token ']'. */
-/* @@? 16:41 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 16:32 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 16:32 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 16:32 Error Syntax error ESY0227: Unexpected token '1'. */
+/* @@? 16:32 Error Semantic error ESE0346: Wrong type of operands for binary expression */
+/* @@? 16:32 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 16:40 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 16:41 Error Syntax error ESY0227: Unexpected token ']'. */

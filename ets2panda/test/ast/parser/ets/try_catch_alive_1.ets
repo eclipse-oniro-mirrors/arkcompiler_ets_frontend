@@ -66,4 +66,5 @@ function foo5(): int {
         return 2;
     }
 }
-/* @@@ label Warning Warning: Finally clause cannot complete normally  */
+
+/* @@@ label Warning Warning W0021: Finally clause cannot complete normally */

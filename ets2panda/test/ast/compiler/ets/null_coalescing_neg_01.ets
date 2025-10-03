@@ -44,9 +44,10 @@ function foo6(z: float|undefined) {
 }
 
 
-/* @@@ label1 Error TypeError: Value is out of range */
-/* @@@ label2 Error TypeError: Value is out of range */
-/* @@@ label3 Error TypeError: Value is out of range */
-/* @@@ label4 Error TypeError: Type 'Double' cannot be assigned to type 'Int' */
-/* @@@ label5 Error TypeError: Type 'Float' cannot be assigned to type 'Long' */
-/* @@@ label6 Error TypeError: Type 'Double' cannot be assigned to type 'Float' */
+
+/* @@@ label1 Error Semantic error ESE0345: Value is out of range */
+/* @@@ label2 Error Semantic error ESE0345: Value is out of range */
+/* @@@ label3 Error Semantic error ESE0345: Value is out of range */
+/* @@@ label4 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Int' */
+/* @@@ label5 Error Semantic error ESE0318: Type 'Float' cannot be assigned to type 'Long' */
+/* @@@ label6 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */

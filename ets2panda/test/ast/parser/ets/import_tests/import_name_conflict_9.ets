@@ -18,4 +18,5 @@ import {Point} from /* @@ label */"import_tests/relative_import/Point";
 let Point: int = 1;
 
 //Throw error: Class already declared.
-/* @@@ label Error TypeError: Class 'Point' is already defined with different type.  */
+
+/* @@@ label Error Semantic error ESE0350: Class 'Point' is already defined with different type. */

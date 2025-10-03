@@ -15,6 +15,6 @@
 
 initModule)
 
-/* @@? 16:11 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 21:1 Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@? 21:1 Error SyntaxError: Unexpected token, expected ')'. */
+/* @@? 16:11 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 21:1 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 21:1 Error Syntax error ESY0228: Unexpected token, expected ')'. */

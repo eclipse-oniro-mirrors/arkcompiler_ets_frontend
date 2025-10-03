@@ -25,5 +25,3 @@ class Derived extends Base {
     }
 }
 
-/* @@? 23:17 Error TypeError: foo(i: double): Double in Derived cannot override foo(i: double): double in Base because overriding return type is not compatible with the other return type.  */
-/* @@? 23:17 Error TypeError: Method foo(i: double): Double in Derived not overriding any method  */

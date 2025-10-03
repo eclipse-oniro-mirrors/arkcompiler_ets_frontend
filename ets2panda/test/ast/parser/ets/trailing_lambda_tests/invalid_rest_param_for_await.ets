@@ -15,8 +15,9 @@
 
 async WeakMap => ...delete const { }
 
-/* @@? 16:7 Error SyntaxError: 'async' flags must be used for functions only at top-level. */
-/* @@? 16:15 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 16:15 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 16:28 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 16:28 Error SyntaxError: Rest parameter must be the last formal parameter. */
+
+/* @@? 16:7 Error Syntax error ESY0202: 'async' flags must be used for functions only at top-level. */
+/* @@? 16:15 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 16:15 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 16:28 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 16:28 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */

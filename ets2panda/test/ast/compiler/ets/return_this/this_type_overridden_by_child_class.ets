@@ -23,5 +23,6 @@ abstract class A implements I {
     }
 }
 
-/* @@@ label Error TypeError: foo(): A in A cannot override foo(): I in I because overriding return type is not compatible with the other return type. */
-/* @@@ label Error TypeError: Method foo(): A in A not overriding any method */
+
+/* @@@ label Error Semantic error ESE0141: foo(): A in A cannot override foo(): I in I because overriding return type is not compatible with the other return type. */
+/* @@@ label Error Semantic error ESE0136: Method foo(): A in A not overriding any method */

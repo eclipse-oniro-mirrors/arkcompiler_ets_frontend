@@ -38,24 +38,24 @@ function main() {
   } catch (e) { }
 }
 
-/* @@? 28:3 Error TypeError: No matching call signature for foo1(Double) */
-/* @@? 28:10 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 29:3 Error TypeError: No matching call signature for foo2(Double) */
-/* @@? 29:10 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 30:3 Error TypeError: No matching call signature for foo3(Int) */
-/* @@? 30:10 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 30:10 Error TypeError: Class 'Int' cannot be used as object */
-/* @@? 31:3 Error TypeError: No matching call signature for foo4(String) */
-/* @@? 31:10 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 31:10 Error TypeError: Class 'String' cannot be used as object */
-/* @@? 32:3 Error TypeError: No matching call signature for foo5(Boolean) */
-/* @@? 32:10 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 32:10 Error TypeError: Class 'Boolean' cannot be used as object */
-/* @@? 33:3 Error TypeError: No matching call signature for foo6(Double) */
-/* @@? 33:10 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 34:3 Error TypeError: No matching call signature for foo7(Double) */
-/* @@? 34:8 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 35:14 Error TypeError: No matching call signature for isSafeInteger(Double) */
-/* @@? 35:35 Error TypeError: Class name can't be the argument of function or method. */
-/* @@? 37:16 Error TypeError: No matching call signature for isSafeInteger(Double) */
-/* @@? 37:37 Error TypeError: Class name can't be the argument of function or method. */
+/* @@? 28:3 Error Semantic error ESE0127: No matching call signature for foo1(Double) */
+/* @@? 28:10 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 29:3 Error Semantic error ESE0127: No matching call signature for foo2(Double) */
+/* @@? 29:10 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 30:3 Error Semantic error ESE0127: No matching call signature for foo3(Int) */
+/* @@? 30:10 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 30:10 Error Semantic error ESE132307: Class 'Int' cannot be used as object */
+/* @@? 31:3 Error Semantic error ESE0127: No matching call signature for foo4(String) */
+/* @@? 31:10 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 31:10 Error Semantic error ESE132307: Class 'String' cannot be used as object */
+/* @@? 32:3 Error Semantic error ESE0127: No matching call signature for foo5(Boolean) */
+/* @@? 32:10 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 32:10 Error Semantic error ESE132307: Class 'Boolean' cannot be used as object */
+/* @@? 33:3 Error Semantic error ESE0127: No matching call signature for foo6(Double) */
+/* @@? 33:10 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 34:3 Error Semantic error ESE0127: No matching call signature for foo7(Double) */
+/* @@? 34:8 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 35:14 Error Semantic error ESE0127: No matching call signature for isSafeInteger(Double) */
+/* @@? 35:35 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 37:16 Error Semantic error ESE0127: No matching call signature for isSafeInteger(Double) */
+/* @@? 37:37 Error Semantic error ESE0122: Class name can't be the argument of function or method. */

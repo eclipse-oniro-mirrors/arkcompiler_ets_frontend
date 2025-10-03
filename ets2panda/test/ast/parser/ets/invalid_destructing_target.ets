@@ -15,5 +15,6 @@
 
 const f = ({a: 1}) => {} 
 
-/* @@? 16:20 Error SyntaxError: Unexpected token '=>'. */
-/* @@? 16:20 Error SyntaxError: Invalid destructuring assignment target. */
+
+/* @@? 16:20 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 16:20 Error Syntax error ESY0049: Invalid destructuring assignment target. */

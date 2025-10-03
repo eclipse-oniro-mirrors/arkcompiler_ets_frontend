@@ -17,11 +17,12 @@ class A{
     private \\\\foo(){}
 }
 
-/* @@? 17:13 Error SyntaxError: Invalid character. */
-/* @@? 17:13 Error SyntaxError: Access modifier must precede field and method modifiers. */
-/* @@? 17:14 Error SyntaxError: Invalid character. */
-/* @@? 17:14 Error SyntaxError: Access modifier must precede field and method modifiers. */
-/* @@? 17:15 Error SyntaxError: Invalid character. */
-/* @@? 17:15 Error SyntaxError: Access modifier must precede field and method modifiers. */
-/* @@? 17:16 Error SyntaxError: Invalid character. */
-/* @@? 17:16 Error SyntaxError: Access modifier must precede field and method modifiers. */
+
+/* @@? 17:13 Error Syntax error ESY0077: Invalid character. */
+/* @@? 17:13 Error Syntax error ESY0120: Access modifier must precede field and method modifiers. */
+/* @@? 17:14 Error Syntax error ESY0077: Invalid character. */
+/* @@? 17:14 Error Syntax error ESY0120: Access modifier must precede field and method modifiers. */
+/* @@? 17:15 Error Syntax error ESY0077: Invalid character. */
+/* @@? 17:15 Error Syntax error ESY0120: Access modifier must precede field and method modifiers. */
+/* @@? 17:16 Error Syntax error ESY0077: Invalid character. */
+/* @@? 17:16 Error Syntax error ESY0120: Access modifier must precede field and method modifiers. */

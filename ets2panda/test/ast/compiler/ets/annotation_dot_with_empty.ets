@@ -18,7 +18,7 @@ class MyTest {
     private property1;
 }
 
-/* @@? 17:6 Error SyntaxError: Invalid annotation name.  */
-/* @@? 17:6 Error TypeError: Cannot find type 'Consume'.  */
-/* @@? 18:5 Error SyntaxError: Identifier expected.  */
-/* @@? 18:22 Error SyntaxError: Field type annotation expected.  */
+/* @@? 17:6 Error Syntax error ESY0329: Invalid annotation name. */
+/* @@? 17:6 Error Semantic error ESE0371: Cannot find type 'Consume'. */
+/* @@? 18:5 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 18:22 Error Syntax error ESY0121: Field type annotation expected. */

@@ -15,4 +15,5 @@
 
 /* @@ label */package pack1;
 
-/* @@? 1:1 Error SyntaxError: Files 'package_module_1_neg' and 'package_module_2_neg' are in the same folder, but have different package names.  */
+
+/* @@? 1:1 Error Syntax error ESY0002: Files 'package_module_1_neg' and 'package_module_2_neg' are in the same folder, but have different package names. */

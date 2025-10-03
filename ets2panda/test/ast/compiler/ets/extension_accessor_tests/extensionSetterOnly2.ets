@@ -35,7 +35,8 @@ new A()./* @@ label2 */field += 1;
 new A().field = 1;
 /* @@ label4 */new A().field = 1.23
 
-/* @@@ label1 Error TypeError: Cannot read from this property because it is writeonly. */
-/* @@@ label2 Error TypeError: Cannot read from this property because it is writeonly. */
-/* @@@ label3 Error TypeError: Cannot read from this property because it is writeonly. */
-/* @@@ label4 Error TypeError: Can't find the extension accessor. */
+
+/* @@@ label1 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@@ label2 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@@ label3 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@@ label4 Error Semantic error ESE0246: Can't find the extension accessor. */

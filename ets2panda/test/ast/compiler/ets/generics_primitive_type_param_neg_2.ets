@@ -25,4 +25,5 @@ function main(): void {
     a_B.value./* @@ label */unboxed();
 }
 
-/* @@@ label Error TypeError: Property 'unboxed' does not exist on type 'B'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'unboxed' does not exist on type 'B' */

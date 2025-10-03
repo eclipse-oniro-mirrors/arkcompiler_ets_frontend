@@ -17,7 +17,7 @@ interface /* @@ label1 */type {
   type: number /* @@ label2 */= /* @@ label3 */0
 /* @@ label4 */}
 
-/* @@@ label2 Error SyntaxError: Interface member initialization is prohibited. */
-/* @@@ label3 Error SyntaxError: Unexpected token, expected ','. */
-/* @@@ label3 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@@ label4 Error SyntaxError: Identifier expected. */
+/* @@@ label2 Error Syntax error ESY0180: Interface member initialization is prohibited. */
+/* @@@ label3 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@@ label3 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@@ label4 Error Syntax error ESY0122: Identifier expected. */

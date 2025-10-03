@@ -15,4 +15,4 @@
 
 const regex = /(?:abc/;
 
-/* @@? 16:16 Error SyntaxError: Invalid non-capturing group. */
+/* @@? 16:16 Error Syntax error ESY0090: Invalid non-capturing group. */

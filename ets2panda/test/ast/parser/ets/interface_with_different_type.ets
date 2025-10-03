@@ -34,5 +34,5 @@ function main() {
     let d = new Derived
 }
 
-/* @@? 16:1 Error TypeError: Cannot inherit from interface Interface because method instance_field is inherited with a different declaration type */
-/* @@? 30:5 Error TypeError: Method instance_field(<property>instance_field: Double): void in Derived not overriding any method */
+/* @@? 16:1 Error Semantic error ESE0215: Cannot inherit from interface Interface because method instance_field is inherited with a different declaration type */
+/* @@? 30:5 Error Semantic error ESE0136: Method instance_field(<property>instance_field: Double): void in Derived not overriding any method */

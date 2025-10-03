@@ -20,5 +20,5 @@ function baz() : bar {
   return baz;
 }
 
-/* @@? 17:1 Error TypeError: Circular type alias reference */
-/* @@? 20:10 Error TypeError: Type '(() => (() => (() => *ERROR_TYPE*)))' is not compatible with the enclosing method's return type '(() => (() => *ERROR_TYPE*))' */
+/* @@? 17:1 Error Semantic error ESE0311: Circular type alias reference */
+/* @@? 20:10 Error Semantic error ESE0091: Type '(() => (() => (() => *ERROR_TYPE*)))' is not compatible with the enclosing method's return type '(() => (() => *ERROR_TYPE*))' */

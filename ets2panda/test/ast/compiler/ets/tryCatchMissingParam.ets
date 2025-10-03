@@ -21,4 +21,5 @@ function main(): void {
     }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token, expected an identifier. */
+
+/* @@@ label Error Syntax error ESY0112: Unexpected token, expected an identifier. */

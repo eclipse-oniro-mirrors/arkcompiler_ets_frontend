@@ -19,6 +19,6 @@ function main(){
   let c = $$1;
 }
 
-/* @@? 17:11 Error TypeError: Unresolved reference $$true */
-/* @@? 18:11 Error TypeError: Unresolved reference $$false */
-/* @@? 19:11 Error TypeError: Unresolved reference $$1 */
+/* @@? 17:11 Error Semantic error ESE0143: Unresolved reference $$true */
+/* @@? 18:11 Error Semantic error ESE0143: Unresolved reference $$false */
+/* @@? 19:11 Error Semantic error ESE0143: Unresolved reference $$1 */

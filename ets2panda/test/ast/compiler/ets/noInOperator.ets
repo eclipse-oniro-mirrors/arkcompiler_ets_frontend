@@ -21,6 +21,7 @@ let b = "name" /* @@ label1 */in p
 let c = "name" /* @@ label2 */in {name: 1, some: 2}
 let d = 2 /* @@ label3 */in [44, 55]
 
-/* @@@ label1 Error SyntaxError: 'in' operator is not supported. Use 'instanceof' operator to check whether an object is the instance of a class that contains the necessary class member. */
-/* @@@ label2 Error SyntaxError: 'in' operator is not supported. Use 'instanceof' operator to check whether an object is the instance of a class that contains the necessary class member. */
-/* @@@ label3 Error SyntaxError: 'in' operator is not supported. Use 'instanceof' operator to check whether an object is the instance of a class that contains the necessary class member. */
+
+/* @@@ label1 Error Syntax error ESY105822: 'in' operator is not supported. Use 'instanceof' operator to check whether an object is the instance of a class that contains the necessary class member. */
+/* @@@ label2 Error Syntax error ESY105822: 'in' operator is not supported. Use 'instanceof' operator to check whether an object is the instance of a class that contains the necessary class member. */
+/* @@@ label3 Error Syntax error ESY105822: 'in' operator is not supported. Use 'instanceof' operator to check whether an object is the instance of a class that contains the necessary class member. */

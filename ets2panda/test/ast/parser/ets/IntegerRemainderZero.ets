@@ -15,4 +15,4 @@
 
 let a = /* @@ label */1 % 0;
 
-/* @@@ label Error SyntaxError: Division by zero is not allowed in integer arithmetic.  */
+/* @@@ label Error Syntax error ESY0273: Division by zero is not allowed in integer arithmetic. */

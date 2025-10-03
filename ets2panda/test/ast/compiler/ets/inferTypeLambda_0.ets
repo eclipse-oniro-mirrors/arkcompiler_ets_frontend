@@ -24,5 +24,6 @@ function bar(arr:number[]){
     })
 }
 
-/* @@? 17:12 Error TypeError: No matching call signature for (T) */
-/* @@? 17:14 Error TypeError: Type 'T' is not compatible with type 'Array<T>' at index 1 */
+
+/* @@? 17:12 Error Semantic error ESE0127: No matching call signature for (T) */
+/* @@? 17:14 Error Semantic error ESE0046: Type 'T' is not compatible with type 'Array<T>' at index 1 */

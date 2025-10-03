@@ -17,5 +17,6 @@ enum CCCCCCCCC {}
 
 CCCCCCCCC[foo()].foo();
 
-/* @@? 18:11 Error TypeError: Unresolved reference foo */
-/* @@? 18:18 Error TypeError: Property 'foo' does not exist on type 'String' */
+
+/* @@? 18:11 Error Semantic error ESE0143: Unresolved reference foo */
+/* @@? 18:18 Error Semantic error ESE0087: Property 'foo' does not exist on type 'String' */

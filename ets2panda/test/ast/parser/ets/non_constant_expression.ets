@@ -22,4 +22,5 @@ let cc = 1
 function foo() {}
 
 
-/* @@? 21:14 Error TypeError: Invalid value for annotation field, expected a constant literal. */
+
+/* @@? 21:14 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */

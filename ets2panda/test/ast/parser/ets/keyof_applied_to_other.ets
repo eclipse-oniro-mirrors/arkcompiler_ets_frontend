@@ -32,9 +32,10 @@ function main():void{
    /* @@ label5 */ type keyofVoid = keyof void;
 }
 
-/* @@@ label1 Error SyntaxError: Illegal start of Type Alias expression.  */
-/* @@@ label2 Error SyntaxError: Illegal start of Type Alias expression.  */
-/* @@@ label3 Error SyntaxError: Illegal start of Type Alias expression.  */
-/* @@@ label4 Error SyntaxError: Illegal start of Type Alias expression.  */
-/* @@@ label5 Error SyntaxError: Illegal start of Type Alias expression.  */
 
+
+/* @@@ label1 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@@ label2 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@@ label3 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@@ label4 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 32:20 Error Syntax error ESY0040: Illegal start of Type Alias expression. */

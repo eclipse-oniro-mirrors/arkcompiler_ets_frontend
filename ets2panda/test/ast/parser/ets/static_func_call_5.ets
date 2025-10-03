@@ -24,4 +24,5 @@ function main() {
   bb./* @@ label */foo()
 }
 
-/* @@@ label Error TypeError: 'foo' is a static property of 'B' */
+
+/* @@@ label Error Semantic error ESE0207: 'foo' is a static property of 'B' */

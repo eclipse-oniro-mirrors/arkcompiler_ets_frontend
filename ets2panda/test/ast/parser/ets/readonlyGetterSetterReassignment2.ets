@@ -30,5 +30,6 @@ function main() {
     arktest.assertEQ(a.a, false);
 }
 
-/* @@@ warn Warning Warning: The instance field initializer expression cannot use the this. */
-/* @@@ label Error TypeError: Readonly field already initialized at declaration. */
+
+/* @@@ warn Warning Warning W0010: The instance field initializer expression cannot use the this. */
+/* @@@ label Error Semantic error ESE0210: Readonly field already initialized at declaration. */

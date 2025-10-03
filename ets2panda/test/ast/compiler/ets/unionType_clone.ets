@@ -22,16 +22,17 @@ function castValueKoBoolean(value ?: boolect) {
     if (value instanceof String) {
         value += "Hello Smar/*
 
-/* @@? 16:38 Error TypeError: Cannot find type 'boolect'. */
-/* @@? 17:26 Error TypeError: Cannot find type 'Sean'. */
-/* @@? 21:3 Error SyntaxError: Unexpected token ':'. */
-/* @@? 21:5 Error SyntaxError: Unexpected token 'xml'. */
-/* @@? 21:5 Error TypeError: Unresolved reference xml */
-/* @@? 21:36 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 21:36 Error SyntaxError: Unexpected token ':'. */
-/* @@? 21:38 Error SyntaxError: Unexpected token 'Object'. */
-/* @@? 21:38 Error SyntaxError: Class cannot be used as object. */
-/* @@? 21:44 Error SyntaxError: Unexpected token ')'. */
-/* @@? 21:46 Error SyntaxError: Unexpected token '{'. */
-/* @@? 23:18 Error SyntaxError: Newline is not allowed in strings */
-/* @@? 37:70 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@? 16:38 Error Semantic error ESE0371: Cannot find type 'boolect'. */
+/* @@? 17:26 Error Semantic error ESE0371: Cannot find type 'Sean'. */
+/* @@? 21:3 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 21:5 Error Syntax error ESY0227: Unexpected token 'xml'. */
+/* @@? 21:5 Error Semantic error ESE0143: Unresolved reference xml */
+/* @@? 21:36 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 21:36 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 21:38 Error Syntax error ESY0227: Unexpected token 'Object'. */
+/* @@? 21:38 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 21:44 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 21:46 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 23:18 Error Syntax error ESY0265: Newline is not allowed in strings */
+/* @@? 37:78 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

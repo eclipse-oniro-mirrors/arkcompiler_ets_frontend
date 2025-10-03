@@ -16,5 +16,6 @@
 // arkts-no-untyped-obj-literals
 let o: Object = /* @@ label1 */{/* @@ label2 */n: 42, s: "foo"}
 
-/* @@@ label1 Error TypeError: 'Object', 'object', 'any' types cannot be initialized with object literals. */
-/* @@@ label2 Error TypeError: type Object has no property named n */
+
+/* @@@ label1 Error Semantic error ESE115343: 'Object', 'object', 'any' types cannot be initialized with object literals. */
+/* @@@ label2 Error Semantic error ESE0065: type Object has no property named n */

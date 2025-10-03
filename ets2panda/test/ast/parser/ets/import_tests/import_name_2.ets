@@ -18,5 +18,6 @@ import {foo, flt} from "import_tests/packages";
 // Throw error: "dbl" is not visible.
 let x = foo(dbl);
 
-/* @@? 19:13 Error TypeError: Unresolved reference dbl  */
 
+
+/* @@? 19:13 Error Semantic error ESE0143: Unresolved reference dbl */

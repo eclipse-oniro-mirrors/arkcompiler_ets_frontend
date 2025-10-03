@@ -32,5 +32,6 @@ function main() {
     container.returnThisMember();
 }
 
-/* @@? 16:33 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 28:23 Error TypeError: Function name 'returnThisMember' used in the wrong context */
+
+/* @@? 16:33 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 28:23 Error Semantic error ESE0144: Function name 'returnThisMember' used in the wrong context */

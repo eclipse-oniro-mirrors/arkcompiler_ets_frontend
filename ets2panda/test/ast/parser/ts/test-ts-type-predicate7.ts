@@ -16,6 +16,7 @@
 
 function function1(is: number | string): (number | string) is /* @@ label */number /* @@ label1 */{ /* @@ label2 */return };
 
-/* @@@ label Error SyntaxError: Unexpected token 'number'. */
-/* @@@ label1 Error SyntaxError: Unexpected token '{'. */
-/* @@@ label2 Error SyntaxError: return keyword should be used in function body. */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@@ label2 Error Syntax error ESY0163: return keyword should be used in function body. */

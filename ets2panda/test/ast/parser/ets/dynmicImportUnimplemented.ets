@@ -27,5 +27,5 @@ async function foo() {
     arktest.assertTrue(!"nothing was thrown")
 }
 
-/* @@? 18:15 Error SyntaxError: Unexpected token 'import'. */
-/* @@? 18:9 Error TypeError: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
+/* @@? 18:9 Error Semantic error ESE0303: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
+/* @@? 18:15 Error Syntax error ESY0227: Unexpected token 'import'. */

@@ -19,4 +19,5 @@ function main(): void {
     a[/* @@ label */2];
 }
 
-/* @@@ label Error TypeError: Element accessor value is out of tuple size bounds.  */
+
+/* @@@ label Error Semantic error ESE0198: Element accessor value is out of tuple size bounds. */

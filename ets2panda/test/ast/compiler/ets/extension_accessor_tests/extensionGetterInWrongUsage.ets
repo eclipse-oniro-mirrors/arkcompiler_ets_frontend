@@ -32,6 +32,6 @@ function main() {
     console.log(/* @@ label3 */a.idx = 1)
 }
 
-/* @@@ label1 Error TypeError: Extension getter in wrong usage  */
-/* @@@ label2 Error TypeError: Extension getter in wrong usage  */
-/* @@@ label3 Error TypeError: Extension getter in wrong usage  */
+/* @@@ label1 Error Semantic error ESE0269: Extension getter in wrong usage */
+/* @@@ label2 Error Semantic error ESE0269: Extension getter in wrong usage */
+/* @@@ label3 Error Semantic error ESE0269: Extension getter in wrong usage */

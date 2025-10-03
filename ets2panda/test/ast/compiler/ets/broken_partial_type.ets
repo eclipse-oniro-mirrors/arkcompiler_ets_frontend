@@ -38,11 +38,11 @@ function createEntityA(): EntityUnion {
 }
 
 
-/* @@? 26:3 Error TypeError: kind(): ((() => *ERROR_TYPE*))|undefined in Partial<EntityA> cannot override kind(): ((() => Kind))|undefined in Partial<Entity> because overriding return type is not compatible with the other return type. */
-/* @@? 26:3 Error TypeError: Method kind(): ((() => *ERROR_TYPE*))|undefined in Partial<EntityA> not overriding any method */
-/* @@? 26:3 Error TypeError: kind(): (() => *ERROR_TYPE*) in EntityA cannot override kind(): (() => Kind) in Entity because overriding return type is not compatible with the other return type. */
-/* @@? 26:3 Error TypeError: Method kind(): (() => *ERROR_TYPE*) in EntityA not overriding any method */
-/* @@? 26:20 Error TypeError: 'A' type does not exist. */
-/* @@? 30:3 Error TypeError: kind(): (() => *ERROR_TYPE*) in EntityB cannot override kind(): (() => Kind) in Entity because overriding return type is not compatible with the other return type. */
-/* @@? 30:3 Error TypeError: Method kind(): (() => *ERROR_TYPE*) in EntityB not overriding any method */
-/* @@? 30:20 Error TypeError: 'B' type does not exist. */
+/* @@? 26:3 Error Semantic error ESE0141: kind(): ((() => *ERROR_TYPE*))|undefined in Partial<EntityA> cannot override kind(): ((() => Kind))|undefined in Partial<Entity> because overriding return type is not compatible with the other return type. */
+/* @@? 26:3 Error Semantic error ESE0136: Method kind(): ((() => *ERROR_TYPE*))|undefined in Partial<EntityA> not overriding any method */
+/* @@? 26:3 Error Semantic error ESE0141: kind(): (() => *ERROR_TYPE*) in EntityA cannot override kind(): (() => Kind) in Entity because overriding return type is not compatible with the other return type. */
+/* @@? 26:3 Error Semantic error ESE0136: Method kind(): (() => *ERROR_TYPE*) in EntityA not overriding any method */
+/* @@? 26:20 Error Semantic error ESE0070: 'A' type does not exist. */
+/* @@? 30:3 Error Semantic error ESE0141: kind(): (() => *ERROR_TYPE*) in EntityB cannot override kind(): (() => Kind) in Entity because overriding return type is not compatible with the other return type. */
+/* @@? 30:3 Error Semantic error ESE0136: Method kind(): (() => *ERROR_TYPE*) in EntityB not overriding any method */
+/* @@? 30:20 Error Semantic error ESE0070: 'B' type does not exist. */

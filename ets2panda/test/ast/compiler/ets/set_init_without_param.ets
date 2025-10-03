@@ -15,8 +15,8 @@
 
 set a '1;'
 
-/* @@? 16:1 Error SyntaxError: Extension Setter can only have 2 parameters.  */
-/* @@? 16:5 Error TypeError: Only abstract or native methods can't have body.  */
-/* @@? 16:7 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 22:77 Error SyntaxError: Expected ')', got 'end of stream'.  */
-/* @@? 22:77 Error SyntaxError: Extension Accessor must have a receiver.  */
+/* @@? 16:1 Error Syntax error ESY0023: Extension Setter can only have 2 parameters. */
+/* @@? 16:5 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 16:7 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 22:85 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+/* @@? 22:85 Error Syntax error ESY0146: Extension Accessor must have a receiver. */

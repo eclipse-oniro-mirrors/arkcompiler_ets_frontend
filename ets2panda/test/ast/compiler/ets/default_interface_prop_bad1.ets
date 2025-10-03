@@ -34,4 +34,4 @@ function testMixedProperties() {
     obj./* @@ label */readOnlyOptional = false;
 }
 
-/* @@@ label Error TypeError: Cannot assign to this property because it is readonly.  */
+/* @@@ label Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

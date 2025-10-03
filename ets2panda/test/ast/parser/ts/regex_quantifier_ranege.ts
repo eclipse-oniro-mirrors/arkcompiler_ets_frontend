@@ -15,4 +15,4 @@
 
 const regex = /a{3,2}/; 
 
-/* @@? 16:16 Error SyntaxError: Quantifier range out of order. */
+/* @@? 16:16 Error Syntax error ESY0078: Quantifier range out of order. */

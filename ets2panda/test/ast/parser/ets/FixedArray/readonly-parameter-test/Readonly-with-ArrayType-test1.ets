@@ -17,5 +17,5 @@ function foo (p: FixedArray<int>) {}
 let x: Readonly<FixedArray<int>> = []
 foo(x)
 
-/* @@? 17:16 Error TypeError: T in Readonly<T> must be a class or an interface type. */
-/* @@? 17:36 Error TypeError: Can't resolve array type */
+/* @@? 17:16 Error Semantic error ESE124644: T in Readonly<T> must be a class or an interface type. */
+/* @@? 17:36 Error Semantic error ESE0301: Can't resolve array type */

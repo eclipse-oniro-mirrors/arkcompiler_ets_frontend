@@ -16,5 +16,6 @@ import typeA from './declareType_neg_export'
 let a : typeA<int> = new Array<string>()
 
 
-/* @@? 16:22 Error TypeError: Type 'Array<String>' cannot be assigned to type 'Array<Int>'  */
 
+
+/* @@? 16:22 Error Semantic error ESE0318: Type 'Array<String>' cannot be assigned to type 'Array<Int>' */

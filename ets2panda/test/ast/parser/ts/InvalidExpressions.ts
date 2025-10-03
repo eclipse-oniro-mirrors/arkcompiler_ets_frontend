@@ -30,27 +30,23 @@ let x = new Type(a, ...);
 let x = new Type(1, 2, ;
 // This expression should be the last to test EOS.
 
-/* @@? 17:1 Error SyntaxError: expected '=>' on the same line after an argument list, got line terminator. */
-/* @@? 20:10 Error SyntaxError: Expected expression, got '=>'. */
-/* @@? 20:10 Error SyntaxError: expected '=>' on the same line after an argument list, got line terminator. */
-/* @@? 22:13 Error SyntaxError: Unexpected token. */
-/* @@? 22:20 Error SyntaxError: Unexpected token. */
-/* @@? 22:24 Error SyntaxError: Unexpected token ':'. */
-/* @@? 22:24 Error SyntaxError: Unexpected token ':'. */
-/* @@? 22:24 Error SyntaxError: Unexpected token ':'. */
-/* @@? 22:30 Error SyntaxError: Unexpected token ')'. */
-/* @@? 22:30 Error SyntaxError: Unexpected token ')'. */
-/* @@? 22:30 Error SyntaxError: Unexpected token ')'. */
-/* @@? 22:30 Error SyntaxError: Unexpected token ')'. */
-/* @@? 22:32 Error SyntaxError: Unexpected token '=>'. */
-/* @@? 24:3 Error SyntaxError: Unexpected token '#'. */
-/* @@? 24:5 Error SyntaxError: Unexpected token in private field. */
-/* @@? 24:5 Error SyntaxError: Unexpected token '19'. */
-/* @@? 25:2 Error SyntaxError: Unexpected token '#'. */
-/* @@? 25:7 Error SyntaxError: Unexpected private identifier. */
-/* @@? 27:1 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 27:13 Error SyntaxError: 'new.Target' is not allowed here. */
-/* @@? 28:30 Error SyntaxError: Cannot use new with import(...). */
-/* @@? 29:24 Error SyntaxError: Unexpected token ')'. */
-/* @@? 30:24 Error SyntaxError: Unexpected token ';'. */
-/* @@? 30:24 Error SyntaxError: Unexpected token, expected ',' or ')'. */
+
+/* @@? 17:1 Error Syntax error ESY0195: expected '=>' on the same line after an argument list, got line terminator. */
+/* @@? 20:10 Error Syntax error ESY0052: Expected expression, got '=>'. */
+/* @@? 20:10 Error Syntax error ESY0195: expected '=>' on the same line after an argument list, got line terminator. */
+/* @@? 22:13 Error Syntax error ESY0000: Unexpected token. */
+/* @@? 22:20 Error Syntax error ESY0000: Unexpected token. */
+/* @@? 22:24 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 22:30 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 22:32 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 24:3 Error Syntax error ESY0227: Unexpected token '#'. */
+/* @@? 24:5 Error Syntax error ESY0160: Unexpected token in private field. */
+/* @@? 24:5 Error Syntax error ESY0227: Unexpected token '19'. */
+/* @@? 25:2 Error Syntax error ESY0227: Unexpected token '#'. */
+/* @@? 25:7 Error Syntax error ESY0047: Unexpected private identifier. */
+/* @@? 27:1 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 27:13 Error Syntax error ESY0073: 'new.Target' is not allowed here. */
+/* @@? 28:30 Error Syntax error ESY0060: Cannot use new with import(...). */
+/* @@? 29:24 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 30:24 Error Syntax error ESY0227: Unexpected token ';'. */
+/* @@? 30:24 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */

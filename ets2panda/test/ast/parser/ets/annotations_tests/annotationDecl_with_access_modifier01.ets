@@ -16,6 +16,7 @@ public @interface MyAnno {
     testProperty1: string
 }
 
-/* @@? 15:1 Error SyntaxError: Annotation declaration can not have access modifier. */
-/* @@? 15:1 Error SyntaxError: Unexpected token 'public'. */
-/* @@? 15:8 Error SyntaxError: Unexpected token '@'. */
+
+/* @@? 15:1 Error Syntax error ESY0210: Annotation declaration can not have access modifier. */
+/* @@? 15:1 Error Syntax error ESY0227: Unexpected token 'public'. */
+/* @@? 15:8 Error Syntax error ESY0227: Unexpected token '@'. */

@@ -19,8 +19,9 @@
 @MyAnno("123"/* @@ label */, "1"/* @@ label1 */)
 class A{}
 
-/* @@@ label Error SyntaxError: Expected ')', got ','. */
-/* @@@ label Error SyntaxError: Unexpected token ','. */
-/* @@@ label Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 19:30 Error SyntaxError: Unexpected token '1'. */
-/* @@@ label1 Error SyntaxError: Unexpected token ')'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected ')', got ','. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token ','. */
+/* @@@ label Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
+/* @@? 19:30 Error Syntax error ESY0227: Unexpected token '1'. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token ')'. */

@@ -17,4 +17,5 @@ interface Foo {
     /* @@ label */async foo(): Promise<Object>;
 }
 
-/* @@@ label Error SyntaxError: Identifier expected, got 'async'. */
+
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got 'async'. */

@@ -6,6 +6,54 @@
       "definition": {
         "id": {
           "type": "Identifier",
+          "name": "ETSGLOBAL",
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 1,
+              "program": "instanceof.ets"
+            },
+            "end": {
+              "line": 1,
+              "column": 1,
+              "program": "instanceof.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 1,
+            "program": "instanceof.ets"
+          },
+          "end": {
+            "line": 1,
+            "column": 1,
+            "program": "instanceof.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 1,
+          "program": "instanceof.ets"
+        },
+        "end": {
+          "line": 1,
+          "column": 1,
+          "program": "instanceof.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
           "name": "ADeclared",
           "loc": {
             "start": {
@@ -298,54 +346,6 @@
         },
         "end": {
           "line": 25,
-          "column": 1,
-          "program": "instanceof.ets"
-        }
-      }
-    },
-    {
-      "type": "ClassDeclaration",
-      "definition": {
-        "id": {
-          "type": "Identifier",
-          "name": "ETSGLOBAL",
-          "loc": {
-            "start": {
-              "line": 1,
-              "column": 1,
-              "program": "instanceof.ets"
-            },
-            "end": {
-              "line": 1,
-              "column": 1,
-              "program": "instanceof.ets"
-            }
-          }
-        },
-        "superClass": null,
-        "implements": [],
-        "body": [],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 1,
-            "program": "instanceof.ets"
-          },
-          "end": {
-            "line": 1,
-            "column": 1,
-            "program": "instanceof.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 1,
-          "program": "instanceof.ets"
-        },
-        "end": {
-          "line": 1,
           "column": 1,
           "program": "instanceof.ets"
         }

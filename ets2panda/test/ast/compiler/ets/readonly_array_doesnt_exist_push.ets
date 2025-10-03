@@ -19,4 +19,4 @@ function main() {
         console.log(arr)
 }
 
-/* @@? 18:13 Error TypeError: Property 'push' does not exist on type 'ReadonlyArray' */
+/* @@? 18:13 Error Semantic error ESE0087: Property 'push' does not exist on type 'ReadonlyArray' */

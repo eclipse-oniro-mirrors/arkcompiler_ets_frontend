@@ -22,4 +22,5 @@ class A {
   }
 }
 
-/* @@@ label Error SyntaxError: Type annotation isn't allowed for constructor.  */
+
+/* @@@ label Error Syntax error ESY0140: Type annotation isn't allowed for constructor. */

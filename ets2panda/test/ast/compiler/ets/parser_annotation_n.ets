@@ -15,5 +15,6 @@
 
 @interface /* @@ label1 */�
 
-/* @@@ label1 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 20:1 Error SyntaxError: Expected '{', got 'end of stream'.  */
+
+/* @@@ label1 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 20:79 Error Syntax error ESY0230: Expected '{', got 'end of stream'. */

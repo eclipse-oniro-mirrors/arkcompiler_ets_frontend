@@ -17,4 +17,4 @@ import * as ns from './namespace_export3.ets'
 
 arktest.assertEQ(/* @@ label1 */ns, 1)
 
-/* @@@ label1 Error TypeError: Namespace 'ns' cannot be used as object */
+/* @@@ label1 Error Semantic error ESE43831: Namespace 'ns' cannot be used as object */

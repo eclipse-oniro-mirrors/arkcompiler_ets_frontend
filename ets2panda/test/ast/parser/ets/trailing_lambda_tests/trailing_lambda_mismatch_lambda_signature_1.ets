@@ -23,4 +23,4 @@ function main() {
     }
 }
 
-/* @@@ label Error TypeError: Type 'Int' is not compatible with the enclosing method's return type 'void' */
+/* @@@ label Error Semantic error ESE0091: Type 'Int' is not compatible with the enclosing method's return type 'void' */

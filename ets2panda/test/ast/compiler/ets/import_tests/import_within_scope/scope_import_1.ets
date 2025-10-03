@@ -17,4 +17,5 @@ namespace ns {
     import * as nsi from './export_file';
 }
 
-/* @@? 17:5 Error SyntaxError: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
+
+/* @@? 17:5 Error Syntax error ESY0226: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */

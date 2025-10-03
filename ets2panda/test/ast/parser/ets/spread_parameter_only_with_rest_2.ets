@@ -29,11 +29,12 @@ args_tuple = [0, 1]
 args_array = [2, 3]
 /* @@ label4 */moo(2, ...args_array)
 
-/* @@@ label1 Error TypeError: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
-/* @@@ label1 Error TypeError: No matching call signature for foo([Double, Double]) */
-/* @@@ label2 Error TypeError: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
-/* @@@ label2 Error TypeError: No matching call signature for foo(Double) */
-/* @@@ label3 Error TypeError: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
-/* @@@ label3 Error TypeError: No matching call signature for moo(Int, [Double, Double]) */
-/* @@@ label4 Error TypeError: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
-/* @@@ label4 Error TypeError: No matching call signature for moo(Int, Double) */
+
+/* @@@ label1 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for foo([Double, Double]) */
+/* @@@ label2 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for foo(Double) */
+/* @@@ label3 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
+/* @@@ label3 Error Semantic error ESE0127: No matching call signature for moo(Int, [Double, Double]) */
+/* @@@ label4 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
+/* @@@ label4 Error Semantic error ESE0127: No matching call signature for moo(Int, Double) */

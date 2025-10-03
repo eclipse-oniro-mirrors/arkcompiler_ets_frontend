@@ -20,4 +20,4 @@ namespace X {
 }
 
 
-/* @@? 19:12 Error SyntaxError: Export declarations are not permitted in a namespace.  */
+/* @@? 19:12 Error Syntax error ESY0111: Export declarations are not permitted in a namespace. */

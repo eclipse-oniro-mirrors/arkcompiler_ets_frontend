@@ -25,4 +25,4 @@ const a = 3.14;
 let b: Float | Double = /* @@ label */ a;
 
 
-/* @@@ label Error TypeError: Ambiguous value 3.14, fits into multiple types */
+/* @@? 25:40 Error Semantic error ESE101680: Ambiguous value 3.14, fits into multiple types */

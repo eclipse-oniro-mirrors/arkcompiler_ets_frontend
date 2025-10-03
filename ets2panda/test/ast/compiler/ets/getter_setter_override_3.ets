@@ -25,11 +25,11 @@ class B extends A implements C{
     AAA = 2
 }
 
-/* @@? 25:5 Error TypeError: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
-/* @@? 25:5 Error TypeError: Method AAA(): Int in B not overriding any method */
-/* @@? 25:5 Error TypeError: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
-/* @@? 25:5 Error TypeError: Method AAA(): Int in B not overriding any method */
-/* @@? 25:5 Error TypeError: Method AAA(<property>AAA: Int): void in B not overriding any method */
-/* @@? 25:5 Error TypeError: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
-/* @@? 25:5 Error TypeError: Method AAA(): Int in B not overriding any method */
-/* @@? 25:5 Error TypeError: Method AAA(<property>AAA: Int): void in B not overriding any method */
+/* @@? 25:5 Error Semantic error ESE0141: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
+/* @@? 25:5 Error Semantic error ESE0136: Method AAA(): Int in B not overriding any method */
+/* @@? 25:5 Error Semantic error ESE0141: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
+/* @@? 25:5 Error Semantic error ESE0136: Method AAA(): Int in B not overriding any method */
+/* @@? 25:5 Error Semantic error ESE0136: Method AAA(<property>AAA: Int): void in B not overriding any method */
+/* @@? 25:5 Error Semantic error ESE0141: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
+/* @@? 25:5 Error Semantic error ESE0136: Method AAA(): Int in B not overriding any method */
+/* @@? 25:5 Error Semantic error ESE0136: Method AAA(<property>AAA: Int): void in B not overriding any method */

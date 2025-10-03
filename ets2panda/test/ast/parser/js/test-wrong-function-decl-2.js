@@ -16,6 +16,6 @@
 
 function f(a,b,c)/* @@ label */;
 
-/* @@@ label Error SyntaxError: Unexpected token, expected '{'. */
-/* @@@ label1 Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@ label1 */
+
+/* @@ label1 *//* @@@ label Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 21:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

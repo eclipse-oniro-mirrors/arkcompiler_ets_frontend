@@ -29,5 +29,6 @@ let f2: F2 = (this: A): boolean => { return this.value }
 a./* @@ label1 */f1();
 a./* @@ label2 */f2();
 
-/* @@@ label1 Error TypeError: Property 'f1' does not exist on type 'A'  */
-/* @@@ label2 Error TypeError: Property 'f2' does not exist on type 'A'  */
+
+/* @@@ label1 Error Semantic error ESE0087: Property 'f1' does not exist on type 'A' */
+/* @@@ label2 Error Semantic error ESE0087: Property 'f2' does not exist on type 'A' */

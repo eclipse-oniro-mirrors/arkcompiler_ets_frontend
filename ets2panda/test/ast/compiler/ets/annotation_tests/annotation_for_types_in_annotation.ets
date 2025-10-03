@@ -25,4 +25,4 @@
    a: @Message({id:1}) @Message({id:1}) @TestAnno string = "1"
 }
 
-/* @@? 25:25 Error TypeError: Duplicate annotations are not allowed. The annotation 'Message' has already been applied to this element.  */
+/* @@? 25:25 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Message' has already been applied to this element. */

@@ -17,4 +17,5 @@ class Fruit {}
 
 function price(a: number, this: Fruit/* @@label */) {}
 
-/* @@@ label Error SyntaxError: Function Parameter 'this' must be the first.  */
+
+/* @@@ label Error Syntax error ESY0158: Function Parameter 'this' must be the first. */

@@ -24,10 +24,10 @@ function main(){
     let v4 = long[] || false
 }
 
-/* @@? 19:15 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 20:23 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 21:8 Error SyntaxError: Unexpected token 'Int'. */
-/* @@? 22:11 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 23:5 Error SyntaxError: Missing condition in while statement */
-/* @@? 23:14 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 24:14 Error SyntaxError: Unexpected token 'long'. */
+/* @@? 19:15 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 20:23 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 21:8 Error Syntax error ESY0227: Unexpected token 'Int'. */
+/* @@? 22:11 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 23:5 Error Syntax error ESY0301: Missing condition in while statement */
+/* @@? 23:14 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 24:14 Error Syntax error ESY0227: Unexpected token 'long'. */

@@ -16,5 +16,6 @@
 class Integral {}
 class Numeric {}
 
-/* @@? 1:3 Error TypeError: Class 'Integral' is already defined. */
-/* @@? 1:3 Error TypeError: Class 'Numeric' is already defined. */
+
+/* @@? 1:3 Error Semantic error ESE0349: Class 'Numeric' is already defined. */
+/* @@? 1:3 Error Semantic error ESE0349: Class 'Integral' is already defined. */

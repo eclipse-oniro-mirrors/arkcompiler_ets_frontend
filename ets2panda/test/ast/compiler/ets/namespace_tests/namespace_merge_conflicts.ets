@@ -33,4 +33,4 @@ namespace A.C {
     function moo() { too(); }
 }
 
-/* @@? 29:5 Error TypeError: Function foo is already declared.  */
+/* @@? 29:5 Error Semantic error ESE0130: Function foo is already declared. */

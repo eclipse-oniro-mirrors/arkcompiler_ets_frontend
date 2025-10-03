@@ -44,6 +44,7 @@ function main() {
     assertEQ(u2.meth()['b'], 22.0)
 }
 
-/* @@? 26:17 Error SyntaxError: Object pattern can't contain methods. */
-/* @@? 43:5 Error TypeError: Unresolved reference assertEQ */
-/* @@? 44:5 Error TypeError: This expression is not callable. */
+
+/* @@? 26:17 Error Syntax error ESY0062: Object pattern can't contain methods. */
+/* @@? 43:5 Error Semantic error ESE0143: Unresolved reference assertEQ */
+/* @@? 44:5 Error Semantic error ESE0289: This expression is not callable. */

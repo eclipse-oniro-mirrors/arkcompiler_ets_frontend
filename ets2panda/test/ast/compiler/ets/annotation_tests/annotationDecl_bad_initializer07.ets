@@ -23,5 +23,6 @@ class A{
     testProperty2: string = /* @@ label1 */A.b
 }
 
-/* @@@ label Error TypeError: Invalid value for annotation field, expected a constant literal.  */
-/* @@@ label1 Error TypeError: Invalid value for annotation field, expected a constant literal.  */
+
+/* @@@ label Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
+/* @@@ label1 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */

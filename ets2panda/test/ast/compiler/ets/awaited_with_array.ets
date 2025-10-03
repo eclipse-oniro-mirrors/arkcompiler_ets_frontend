@@ -18,4 +18,5 @@ type AwaitedArray = Awaited<PromisesArray>
 
 const results: AwaitedArray = ["hello"]
 
-/* @@? 19:32 Error TypeError: Array element at index 0 with type '"hello"' is not compatible with the target array element type 'Promise<String>' */
+
+/* @@? 19:32 Error Semantic error ESE0227: Array element at index 0 with type '"hello"' is not compatible with the target array element type 'Promise<String>' */

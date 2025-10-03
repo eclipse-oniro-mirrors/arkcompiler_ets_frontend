@@ -16,6 +16,7 @@
    let a = 1;
    a/* @@ label */~/* @@ label2 */!/* @@ label3 */;
   }
-/* @@@ label Error SyntaxError: Unexpected token '~'. */
-/* @@@ label2 Error TypeError: Bad operand type, the type of the operand must be numeric type. */
-/* @@@ label3 Error SyntaxError: Unexpected token ';'. */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token '~'. */
+/* @@@ label2 Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token ';'. */

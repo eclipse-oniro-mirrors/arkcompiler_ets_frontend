@@ -16,9 +16,10 @@
 // (arkts-no-conditional-types)
 type X<T> = T extends number ? T : string
 
-/* @@? 17:15 Error SyntaxError: Unexpected token 'extends'. */
-/* @@? 17:15 Error TypeError: Conditional type aliases are not supported. Introduce a new type with constraints explicitly, or rewrite logic using Object! */
-/* @@? 17:23 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 17:23 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 17:32 Error TypeError: Unresolved reference T */
-/* @@? 17:36 Error TypeError: Type name 'string' used in the wrong context */
+
+/* @@? 17:15 Error Syntax error ESY0227: Unexpected token 'extends'. */
+/* @@? 17:15 Error Semantic error ESE136365: Conditional type aliases are not supported. Introduce a new type with constraints explicitly, or rewrite logic using Object! */
+/* @@? 17:23 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:23 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 17:32 Error Semantic error ESE0143: Unresolved reference T */
+/* @@? 17:36 Error Semantic error ESE0144: Type name 'string' used in the wrong context */

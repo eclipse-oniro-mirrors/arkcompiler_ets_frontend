@@ -19,4 +19,5 @@ export class Test {
   }
 }
 
-/* @@@ label Error TypeError: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index.  */
+
+/* @@@ label Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */

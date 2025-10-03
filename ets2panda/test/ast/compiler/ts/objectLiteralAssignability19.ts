@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,4 +17,5 @@
 var a: { a: number, b: { a: number, b: string }, c: { b: boolean, a: null, } };
 var b: { a: number | string, b: { a: number, b: number }, c: { a: { a: number, b: string }, d: boolean } };
 /* @@ label */a = b;
-/* @@@ label Error TypeError: Type '{ a: number | string; b: { a: number; b: number; }; c: { a: { a: number; b: string; }; d: boolean; }; }' is not assignable to type '{ a: number; b: { a: number; b: string; }; c: { b: boolean; a: null; }; }'.  */
+
+/* @@@ label Error Semantic error ESE0000: Type '{ a: number | string; b: { a: number; b: number; }; c: { a: { a: number; b: string; }; d: boolean; }; }' is not assignable to type '{ a: number; b: { a: number; b: string; }; c: { b: boolean; a: null; }; }'. */

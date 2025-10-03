@@ -23,4 +23,5 @@ class B extends A {
     }
 }
 
-/* @@@ label Error TypeError: Method foo(): void in B not overriding any method  */
+
+/* @@@ label Error Semantic error ESE0136: Method foo(): void in B not overriding any method */

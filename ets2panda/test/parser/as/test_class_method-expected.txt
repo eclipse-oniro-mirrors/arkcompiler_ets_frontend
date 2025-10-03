@@ -145,8 +145,8 @@
                     "type": "Identifier",
                     "name": "a",
                     "typeAnnotation": {
-                      "type": "TSTypeReference",
-                      "typeName": {
+                      "type": "NamedType",
+                      "name": {
                         "type": "Identifier",
                         "name": "i32",
                         "loc": {
@@ -162,6 +162,7 @@
                           }
                         }
                       },
+                      "isNullable": false,
                       "loc": {
                         "start": {
                           "line": 18,
@@ -190,8 +191,8 @@
                   }
                 ],
                 "returnType": {
-                  "type": "TSTypeReference",
-                  "typeName": {
+                  "type": "NamedType",
+                  "name": {
                     "type": "Identifier",
                     "name": "i32",
                     "loc": {
@@ -207,6 +208,7 @@
                       }
                     }
                   },
+                  "isNullable": false,
                   "loc": {
                     "start": {
                       "line": 18,
@@ -317,3 +319,4 @@
     }
   }
 }
+Warning W0025: Not matching extensions! Sourcefile: ts, Manual(used): as

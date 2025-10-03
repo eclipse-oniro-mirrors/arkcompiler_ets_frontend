@@ -22,3 +22,4 @@ export class InExport {
 let y = new InImport().y
 
 // ignored because used only in import
+/* @@? import_type_error_in_class.ets:21:28 Error Semantic error ESE0318: Type '"InImport"' cannot be assigned to type 'Int' */

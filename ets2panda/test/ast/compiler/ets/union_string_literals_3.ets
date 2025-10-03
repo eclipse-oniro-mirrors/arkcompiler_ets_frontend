@@ -16,4 +16,5 @@
 type UT = "abc" | "bcd" | "cde"
 let a: UT = /* @@ label */"abcde"
 
-/* @@@ label Error TypeError: Type '"abcde"' cannot be assigned to type '"abc"|"bcd"|"cde"'  */
+
+/* @@@ label Error Semantic error ESE0318: Type '"abcde"' cannot be assigned to type '"abc"|"bcd"|"cde"' */

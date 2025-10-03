@@ -15,4 +15,5 @@
 
 export /* @@ label */(a: int) => { return a }
 
-/* @@@ label Error SyntaxError: Export is allowed only for declarations. */
+
+/* @@@ label Error Syntax error ESY0043: Export is allowed only for declarations. */

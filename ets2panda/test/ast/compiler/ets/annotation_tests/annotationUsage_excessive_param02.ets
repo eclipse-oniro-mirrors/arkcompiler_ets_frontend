@@ -23,5 +23,6 @@ class B{
     foo(){}
 }
 
-/* @@@ label Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
-/* @@@ label1 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
+
+/* @@@ label Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */
+/* @@@ label1 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */

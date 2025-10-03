@@ -20,8 +20,9 @@ class A {
 
 let a: readonly<A> = new A();
 
-/* @@? 21:16 Error SyntaxError: Invalid Type. */
-/* @@? 21:16 Error SyntaxError: Unexpected token '<'. */
-/* @@? 21:16 Error SyntaxError: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
-/* @@? 21:20 Error SyntaxError: Unexpected token '='. */
-/* @@? 21:22 Error SyntaxError: Unexpected token 'new'. */
+
+/* @@? 21:16 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 21:16 Error Syntax error ESY0227: Unexpected token '<'. */
+/* @@? 21:16 Error Syntax error ESY178094: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
+/* @@? 21:20 Error Syntax error ESY0227: Unexpected token '='. */
+/* @@? 21:22 Error Syntax error ESY0227: Unexpected token 'new'. */

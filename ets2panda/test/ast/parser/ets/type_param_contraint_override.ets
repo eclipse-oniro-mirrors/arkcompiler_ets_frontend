@@ -32,5 +32,6 @@ function main() {
     arktest.assertEQ(res, 2);
 }
 
-/* @@? 25:17 Error TypeError: foo<T>(x: T): void in B cannot override foo<T>(x: T): void in A because overriding type parameter's conatraints are not compatible with type parameter constraints of the overridden method.  */
-/* @@? 25:17 Error TypeError: Method foo<T>(x: T): void in B not overriding any method  */
+
+/* @@? 25:17 Error Semantic error ESE0141: foo<T>(x: T): void in B cannot override foo<T>(x: T): void in A because overriding type parameter's conatraints are not compatible with type parameter constraints of the overridden method. */
+/* @@? 25:17 Error Semantic error ESE0136: Method foo<T>(x: T): void in B not overriding any method */

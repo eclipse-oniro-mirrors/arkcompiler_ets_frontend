@@ -51,8 +51,8 @@ function main() {
     console.log("Main...");
 }
 
-/* @@? 23:9 Error SyntaxError: return keyword should be used in function body. */
-/* @@? 27:8 Error SyntaxError: return keyword should be used in function body. */
-/* @@? 32:9 Error SyntaxError: return keyword should be used in function body. */
-/* @@? 39:5 Error SyntaxError: return keyword should be used in function body. */
-/* @@? 45:5 Error SyntaxError: return keyword should be used in function body. */
+/* @@? 23:9 Error Syntax error ESY0163: return keyword should be used in function body. */
+/* @@? 27:8 Error Syntax error ESY0163: return keyword should be used in function body. */
+/* @@? 32:9 Error Syntax error ESY0163: return keyword should be used in function body. */
+/* @@? 39:5 Error Syntax error ESY0163: return keyword should be used in function body. */
+/* @@? 45:5 Error Syntax error ESY0163: return keyword should be used in function body. */

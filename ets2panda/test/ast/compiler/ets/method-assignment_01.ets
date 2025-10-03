@@ -38,4 +38,5 @@ function main() {
   } 
 }
 
-/* @@@ label Error TypeError: Class methods cannot be overwritten. */
+
+/* @@@ label Error Semantic error ESE0394: Class methods cannot be overwritten. */

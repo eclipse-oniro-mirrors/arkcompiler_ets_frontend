@@ -23,6 +23,7 @@ let a = 1 as @Anno @Anno() Int
 class C1<@Anno @Anno() T>{}
 new C1<Int>() instanceof @Anno @Anno() C1
 
-/* @@? 20:28 Error SyntaxError: Annotations are not allowed on this type of declaration.  */
-/* @@? 24:40 Error SyntaxError: Annotations are not allowed on this type of declaration.  */
-/* @@? 23:17 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+
+/* @@? 20:28 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
+/* @@? 23:17 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 24:40 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */

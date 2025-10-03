@@ -17,5 +17,5 @@ function main(): void {
   let result = c'a' >> 1
 }
 
-/* @@? 17:16 Error TypeError: Wrong type of operands for binary expression */
-/* @@? 17:16 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 17:16 Error Semantic error ESE0346: Wrong type of operands for binary expression */
+/* @@? 17:16 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */

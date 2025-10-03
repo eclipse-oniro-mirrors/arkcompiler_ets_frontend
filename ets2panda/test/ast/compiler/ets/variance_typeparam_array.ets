@@ -42,17 +42,18 @@ class A<in T1,out T2,T3>{
     paramsFunc7(a:T1/* @@ label13 */[], b:T2/* @@ label14 */[], c:T3[]){}   //CTE
 }
 
-/* @@@ label1 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label2 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
-/* @@@ label3 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label4 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
-/* @@@ label5 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label6 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
-/* @@@ label7 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label8 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
-/* @@@ label9 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label10 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
-/* @@@ label11 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label12 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
-/* @@@ label13 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label14 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position.  */
+
+/* @@@ label1 Error Semantic error ESE0331: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position. */
+/* @@@ label2 Error Semantic error ESE0331: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position. */
+/* @@@ label3 Error Semantic error ESE0331: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position. */
+/* @@@ label4 Error Semantic error ESE0331: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position. */
+/* @@@ label5 Error Semantic error ESE0331: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position. */
+/* @@@ label6 Error Semantic error ESE0331: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position. */
+/* @@@ label7 Error Semantic error ESE0331: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position. */
+/* @@@ label8 Error Semantic error ESE0331: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position. */
+/* @@@ label9 Error Semantic error ESE0331: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position. */
+/* @@@ label10 Error Semantic error ESE0331: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position. */
+/* @@@ label11 Error Semantic error ESE0331: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position. */
+/* @@@ label12 Error Semantic error ESE0331: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position. */
+/* @@@ label13 Error Semantic error ESE0331: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position. */
+/* @@@ label14 Error Semantic error ESE0331: Type Parameter 'T2' is declared as 'out' but occurs in 'invariant' position. */

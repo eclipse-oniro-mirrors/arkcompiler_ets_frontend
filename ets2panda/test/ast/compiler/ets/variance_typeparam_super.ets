@@ -29,7 +29,7 @@ class B8<in T1, out T2, T3> extends A2<T1,T2>{}
 class B9<in T1, out T2, T3> extends A2<T1,T3>{}
 class B10<in T1, out T2, T3> extends /* @@ label4 */A2<T2,T3>{}
 
-/* @@@ label1 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label2 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */
-/* @@@ label3 Error TypeError: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position.  */
-/* @@@ label4 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */
+/* @@@ label1 Error Semantic error ESE0331: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position. */
+/* @@@ label2 Error Semantic error ESE0333: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position. */
+/* @@@ label3 Error Semantic error ESE0331: Type Parameter 'T1' is declared as 'in' but occurs in 'invariant' position. */
+/* @@@ label4 Error Semantic error ESE0333: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position. */

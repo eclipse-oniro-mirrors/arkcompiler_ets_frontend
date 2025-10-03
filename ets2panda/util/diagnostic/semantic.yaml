@@ -1515,7 +1515,7 @@ semantic:
 
 - name: VOID_VALUE
   id: 78
-  message: "Cannot use type 'void' as value. "
+  message: "Cannot use type 'void' as value."
 
 - name: WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION
   id: 346

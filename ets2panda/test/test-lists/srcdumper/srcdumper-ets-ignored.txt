@@ -31,6 +31,8 @@ runtime/ets/labeledStatement.ets
 runtime/ets/namespace_tests/namespace_import_type_test/namespace_export.ets
 runtime/ets/newArrayCreationUnionType.ets
 parser/ets/dynamic_import_tests/modules/module.ets
+parser/ets/import_tests/import_several_2.ets
+parser/ets/import_tests/import_several_7.ets
 
 ast/parser/ets/export_empty_block.ets
 

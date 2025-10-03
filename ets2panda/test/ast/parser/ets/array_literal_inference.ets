@@ -17,4 +17,4 @@ function foo(): void {
   let b: [] = /* @@ label */[ 1 ]
 }
 
-/* @@@ label Error TypeError: Initializer has 1 elements, but tuple requires 0 */
+/* @@@ label Error Semantic error ESE0231: Initializer has 1 elements, but tuple requires 0 */

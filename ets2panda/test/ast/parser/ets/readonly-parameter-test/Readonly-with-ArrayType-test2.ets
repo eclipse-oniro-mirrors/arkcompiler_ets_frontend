@@ -18,6 +18,6 @@ function foo (p: [int, string]) {}
 let x: readonly [int, string] = /* @@ label2 */[]
 /* @@ label */foo(/* @@ label1 */x)
 
-/* @@@ label1 Error TypeError: Type 'readonly [Int, String]' is not compatible with type '[Int, String]' at index 1 */
-/* @@@ label Error TypeError: No matching call signature for foo(readonly [Int, String]) */
-/* @@@ label2 Error TypeError: Initializer has 0 elements, but tuple requires 2 */
+/* @@@ label2 Error Semantic error ESE0231: Initializer has 0 elements, but tuple requires 2 */
+/* @@@ label Error Semantic error ESE0127: No matching call signature for foo(readonly [Int, String]) */
+/* @@@ label1 Error Semantic error ESE0046: Type 'readonly [Int, String]' is not compatible with type '[Int, String]' at index 1 */

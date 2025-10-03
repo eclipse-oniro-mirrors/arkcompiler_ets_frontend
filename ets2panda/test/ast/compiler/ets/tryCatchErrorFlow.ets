@@ -23,4 +23,5 @@ function main(): void {
   }
 }
 
-/* @@@ label Error TypeError: Default catch clause should be the last in the try statement  */
+
+/* @@@ label Error Semantic error ESE0034: Default catch clause should be the last in the try statement */

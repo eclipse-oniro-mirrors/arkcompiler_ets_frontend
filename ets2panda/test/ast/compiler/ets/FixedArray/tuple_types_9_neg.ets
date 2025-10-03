@@ -18,12 +18,13 @@ function main(): void {
     let a: [number, string, FixedArray<...Int>] = [2, "a", 3];
 }
 
-/* @@? 18:29 Error TypeError: FixedArray<T> must have only one type parameter. */
-/* @@? 18:40 Error SyntaxError: Invalid Type. */
-/* @@? 18:40 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 18:40 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 18:40 Error SyntaxError: Unexpected token '>'. */
-/* @@? 18:43 Error SyntaxError: Unexpected token 'Int'. */
-/* @@? 18:43 Error SyntaxError: Class cannot be used as object. */
-/* @@? 18:43 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
-/* @@? 18:47 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 18:29 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
+/* @@? 18:40 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 18:40 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 18:40 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 18:40 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 18:43 Error Syntax error ESY0227: Unexpected token 'Int'. */
+/* @@? 18:43 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 18:43 Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 18:47 Error Syntax error ESY0227: Unexpected token ']'. */

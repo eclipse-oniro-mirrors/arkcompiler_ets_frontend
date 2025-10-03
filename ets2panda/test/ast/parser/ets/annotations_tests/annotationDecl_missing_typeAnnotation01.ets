@@ -19,4 +19,5 @@ class A{}
     testProperty1 /* @@ label */= 1
 }
 
-/* @@@ label Error SyntaxError: Missing type annotation for property 'testProperty1'.  */
+
+/* @@@ label Error Syntax error ESY0001: Missing type annotation for property 'testProperty1'. */

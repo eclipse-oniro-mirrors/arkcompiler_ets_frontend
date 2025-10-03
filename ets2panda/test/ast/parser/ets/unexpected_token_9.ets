@@ -15,5 +15,6 @@
 
 console.log("aaaaaaaa"}
 
-/* @@? 16:23 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 16:23 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 16:23 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 16:23 Error Syntax error ESY0227: Unexpected token '}'. */

@@ -21,7 +21,8 @@
 @MyAnno({a: 1, b: ""})
 class B{}
 
-/* @@? 21:10 Error TypeError: The parameter 'a' does not match any declared property in the annotation 'MyAnno'.  */
-/* @@? 21:16 Error TypeError: The parameter 'b' does not match any declared property in the annotation 'MyAnno'.  */
-/* @@? 21:2 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted.  */
-/* @@? 21:2 Error TypeError: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted.  */
+
+/* @@? 21:2 Error Semantic error ESE0044: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+/* @@? 21:2 Error Semantic error ESE0044: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
+/* @@? 21:10 Error Semantic error ESE0045: The parameter 'a' does not match any declared property in the annotation 'MyAnno'. */
+/* @@? 21:16 Error Semantic error ESE0045: The parameter 'b' does not match any declared property in the annotation 'MyAnno'. */

@@ -19,4 +19,4 @@ class A{
     }
 }
 
-/* @@? 17:15 Error SyntaxError: Unexpected 'this' keyword in non-receiver context.  */
+/* @@? 17:15 Error Syntax error ESY0240: Unexpected 'this' keyword in non-receiver context. */

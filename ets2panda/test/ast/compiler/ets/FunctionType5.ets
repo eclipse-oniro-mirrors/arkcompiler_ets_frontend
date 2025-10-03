@@ -18,4 +18,5 @@ function foo (p: number){}
 
 let cb = foo;
 
-/* @@? 19:10 Error TypeError: Overloaded method is used as value */
+
+/* @@? 19:10 Error Semantic error ESE0307: Overloaded method is used as value */

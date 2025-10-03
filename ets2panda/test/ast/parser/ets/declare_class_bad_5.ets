@@ -50,15 +50,15 @@ declare class E {
   internal [index: number]: number
 }
 
-/* @@? 17:3 Error SyntaxError: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 18:3 Error SyntaxError: Methods or fields should not be decorated with internal in ambient class. */
-/* @@? 19:3 Error SyntaxError: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 20:3 Error SyntaxError: Methods or fields should not be decorated with internal in ambient class. */
-/* @@? 21:3 Error SyntaxError: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 22:3 Error SyntaxError: Methods or fields should not be decorated with internal in ambient class. */
-/* @@? 23:3 Error SyntaxError: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 24:3 Error SyntaxError: Methods or fields should not be decorated with internal in ambient class. */
-/* @@? 38:3 Error SyntaxError: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 42:3 Error SyntaxError: Methods or fields should not be decorated with internal in ambient class. */
-/* @@? 46:3 Error SyntaxError: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 50:3 Error SyntaxError: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 17:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
+/* @@? 18:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 19:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
+/* @@? 20:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 21:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
+/* @@? 22:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 23:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
+/* @@? 24:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 38:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
+/* @@? 42:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 46:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
+/* @@? 50:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */

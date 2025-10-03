@@ -21,5 +21,6 @@ function main() {
     v[0] = [1.0,3.0]  // CTE, readonly array
 }
 
-/* @@? 21:5 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter  */
 
+
+/* @@? 21:5 Error Semantic error ESE0250: Object type doesn't have proper index access method. */

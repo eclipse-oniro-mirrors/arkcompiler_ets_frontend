@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,4 +23,5 @@ function /* @@ label */foo(a: number, b: string) {
 var b: any;
 var b = foo(2, "bar");
 
-/* @@@ label Error TypeError: foo implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.  */
+
+/* @@@ label Error Semantic error ESE0000: foo implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions. */

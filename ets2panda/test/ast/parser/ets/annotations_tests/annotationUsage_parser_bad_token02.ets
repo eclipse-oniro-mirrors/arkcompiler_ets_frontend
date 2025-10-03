@@ -20,5 +20,6 @@
 @MyAnno({testProperty1: "123"/* @@ label */; /* @@ label1 */testProperty2: 123})
 class A{}
 
-/* @@? 20:44 Error SyntaxError: Expected ',', got ';'. */
-/* @@? 20:44 Error SyntaxError: Identifier expected, got ';'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected ',', got ';'. */
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got ';'. */

@@ -22,5 +22,5 @@ function main(){
     foo(number[])
 }
 
-/* @@? 21:16 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 22:9 Error SyntaxError: Unexpected token 'number'. */
+/* @@? 21:16 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 22:9 Error Syntax error ESY0227: Unexpected token 'number'. */

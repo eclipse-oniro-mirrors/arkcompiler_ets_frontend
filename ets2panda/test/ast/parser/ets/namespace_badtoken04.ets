@@ -16,5 +16,6 @@
 declare namespace MySpace{
     foo():void
 }
-/* @@? 17:10 Error SyntaxError: Unexpected token ':'. */
-/* @@? 17:11 Error SyntaxError: Unexpected token 'void'. */
+
+/* @@? 17:10 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:11 Error Syntax error ESY0227: Unexpected token 'void'. */

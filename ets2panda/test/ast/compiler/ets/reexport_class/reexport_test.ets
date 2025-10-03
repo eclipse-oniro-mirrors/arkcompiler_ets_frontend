@@ -17,4 +17,4 @@ export { ClassA } from './export.ets'
 export /* @@ label */{ ClassA as ClassB } from './export.ets'
 export { ClassB } from './export.ets'
 
-/* @@@ label Error TypeError: Ambiguous export 'ClassB' */
+/* @@@ label Error Semantic error ESE0362: Ambiguous export 'ClassB' */

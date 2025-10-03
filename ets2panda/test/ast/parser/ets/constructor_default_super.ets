@@ -20,4 +20,5 @@ class Base {
 class Derived extends Base { }
 
 // Discussion about change that phrase #23218
-/* @@? 20:29 Error TypeError: Must call super constructor */
+
+/* @@? 20:29 Error Semantic error ESE0192: Must call super constructor */

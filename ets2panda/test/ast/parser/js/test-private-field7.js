@@ -18,6 +18,7 @@ class A {
 }
 
 
-/* @@? 17:6 Error SyntaxError: Unexpected token in private field. */
-/* @@? 17:6 Error SyntaxError: Unexpected token. */
-/* @@? 17:7 Error SyntaxError: Unexpected token, expected ';'. */
+
+/* @@? 17:6 Error Syntax error ESY0160: Unexpected token in private field. */
+/* @@? 17:6 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 17:7 Error Syntax error ESY0228: Unexpected token, expected ';'. */

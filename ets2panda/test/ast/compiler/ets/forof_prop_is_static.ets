@@ -43,5 +43,6 @@ function main(): int {
   return 0
 }
 
-/* @@? 39:17 Error TypeError: '$_iterator' is a static property of 'C' */
-/* @@? 39:17 Error TypeError: 'For-of' statement source expression is not of iterable type. */
+
+/* @@? 39:17 Error Semantic error ESE0207: '$_iterator' is a static property of 'C' */
+/* @@? 39:17 Error Semantic error ESE0076: 'For-of' statement source expression is not of iterable type. */

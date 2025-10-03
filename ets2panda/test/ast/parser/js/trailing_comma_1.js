@@ -36,15 +36,15 @@ foo(a[0] /* @@ label6 */a[1]/* @@ label7 */)
 foo(/* @@ label8 */,)
 
 
-/* @@@ label Error SyntaxError: Rest parameter must be the last formal parameter. */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@@ label2 Error SyntaxError: Unexpected token. */
-/* @@@ label3 Error SyntaxError: Unexpected token ','. */
-/* @@@ label4 Error SyntaxError: Unexpected token ','. */
-/* @@@ label5 Error SyntaxError: Unexpected token ','. */
-/* @@@ label6 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@@ label6 Error SyntaxError: Unexpected token 'a'. */
-/* @@@ label7 Error SyntaxError: Unexpected token ')'. */
-/* @@@ label8 Error SyntaxError: Unexpected token ','. */
-/* @@@ label9 Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@ label9 */
+
+/* @@ label9 *//* @@@ label Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
+/* @@@ label1 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@@ label2 Error Syntax error ESY0016: Unexpected token. */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@@ label4 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@@ label5 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@@ label6 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@@ label6 Error Syntax error ESY0227: Unexpected token 'a'. */
+/* @@@ label7 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@@ label8 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 50:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

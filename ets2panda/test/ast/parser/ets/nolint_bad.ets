@@ -17,6 +17,7 @@
 // ETSNOLINT(definitely-not-a-real-etsnolint-argument)
 // ETSNOLINT(@)
 function main() {}
-/* @@? 1:3 Error SyntaxError: Invalid argument for ETSNOLINT! */
-/* @@? 1:3 Error SyntaxError: Unexpected character for ETSNOLINT argument! [VALID ONLY: a-z, '-']. */
-/* @@? 1:3 Error SyntaxError: Invalid argument for ETSNOLINT! */
+
+/* @@? 1:3 Error Syntax error ESY0278: Invalid argument for ETSNOLINT! */
+/* @@? 1:3 Error Syntax error ESY0277: Unexpected character for ETSNOLINT argument! [VALID ONLY: a-z, '-']. */
+/* @@? 1:3 Error Syntax error ESY0278: Invalid argument for ETSNOLINT! */

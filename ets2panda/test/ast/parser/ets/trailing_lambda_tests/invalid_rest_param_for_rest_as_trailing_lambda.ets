@@ -18,4 +18,5 @@ class A {
 }
 new A().foo( ()=>{} ){}
 
-/* @@? 19:1 Error TypeError: No matching call signature with trailing lambda */
+
+/* @@? 19:1 Error Semantic error ESE0140: No matching call signature with trailing lambda */

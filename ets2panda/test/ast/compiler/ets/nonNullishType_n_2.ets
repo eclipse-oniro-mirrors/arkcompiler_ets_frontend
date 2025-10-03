@@ -24,6 +24,7 @@ function main(){
   a = undefined;
 }
 
-/* @@? 23:7 Error TypeError: Type 'null' cannot be assigned to type 'Int|A' */
-/* @@? 24:7 Error TypeError: Type 'undefined' cannot be assigned to type 'Int|A' */
 
+
+/* @@? 23:7 Error Semantic error ESE0318: Type 'null' cannot be assigned to type 'Int|A' */
+/* @@? 24:7 Error Semantic error ESE0318: Type 'undefined' cannot be assigned to type 'Int|A' */

@@ -15,4 +15,4 @@
 
 const regex = /[z-a]/
 
-/* @@? 16:16 Error SyntaxError: Class range out of order. */
+/* @@? 16:16 Error Syntax error ESY0080: Class range out of order. */

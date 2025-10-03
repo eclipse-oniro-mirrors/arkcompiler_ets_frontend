@@ -35,4 +35,5 @@ fn6("123","456","321")
 function fn7<T extends D, D extends /* @@ label */T>(x:T, y:D){}
 fn7("123","456")
 
-/* @@@ label Error TypeError: Type parameter 'D' has circular constraint dependency.  */
+
+/* @@@ label Error Semantic error ESE0184: Type parameter 'D' has circular constraint dependency. */

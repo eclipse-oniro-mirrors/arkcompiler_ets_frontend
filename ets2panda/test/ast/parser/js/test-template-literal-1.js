@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-/* @@? 21:1 Error SyntaxError: Unexpected token, expected '`'. */
-/* @@? 21:2 Error SyntaxError: Unterminated string. */
-/* @@? 21:2 Error SyntaxError: Unexpected token, expected '${' or '`'  */
-/* @@? 21:2 Error SyntaxError: Unexpected token, expected '`'.  */
-
+/* @@? 20:1 Error Syntax error ESY0228: Unexpected token, expected '`'. */
+/* @@? 20:2 Error Syntax error ESY0253: Unterminated string. */
+/* @@? 20:2 Error Syntax error ESY0259: Unexpected token, expected '${' or '`' */
+/* @@? 20:2 Error Syntax error ESY0228: Unexpected token, expected '`'. */
 `

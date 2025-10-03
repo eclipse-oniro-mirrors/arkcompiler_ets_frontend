@@ -1346,4 +1346,4 @@
     }
   }
 }
-TypeError: 'nopnop' is an instance property of 'I0' [interfaces.ets:22:28]
+[interfaces.ets:22:28] Semantic error ESE0208: 'nopnop' is an instance property of 'I0'

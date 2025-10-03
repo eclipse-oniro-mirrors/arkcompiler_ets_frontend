@@ -18,4 +18,4 @@ var a: { new(a: number, b: string): number, (a: number, b: string): string };
 var b: { new(a: number, b: string): number, (a: string, b: string): string }
 /* @@ label */a = b;
 
-/* @@@ label Error TypeError: Type '{ (p1: string, p2: string): string; new (p1: number, p2: string): number; }' is not assignable to type '{ (p1: number, p2: string): string; new (p1: number, p2: string): number; }'.  */
+/* @@@ label Error Semantic error ESE0000: Type '{ (p1: string, p2: string): string; new (p1: number, p2: string): number; }' is not assignable to type '{ (p1: number, p2: string): string; new (p1: number, p2: string): number; }'. */

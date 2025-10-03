@@ -15,4 +15,4 @@
 
 const regex = /?abc/; 
 
-/* @@? 16:16 Error SyntaxError: Invalid character. */
+/* @@? 16:16 Error Syntax error ESY0077: Invalid character. */

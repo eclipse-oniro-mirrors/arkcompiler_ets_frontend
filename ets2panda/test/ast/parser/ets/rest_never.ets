@@ -20,5 +20,5 @@ function main() {
     sum(...null!)
 }
 
-/* @@? 20:9 Error TypeError: Spread expression can be applied only to array or tuple type, but 'never' is provided */
-/* @@? 20:12 Warning Warning: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */
+/* @@? 20:9 Error Semantic error ESE0049: Spread expression can be applied only to array or tuple type, but 'never' is provided */
+/* @@? 20:12 Warning Warning W0014: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */

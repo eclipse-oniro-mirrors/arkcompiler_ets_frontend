@@ -19,7 +19,8 @@ interface IEmployee {
   sdskdsopd?: string;
 }
 
-/* @@? 17:7 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 17:7 Error SyntaxError: Expected 'method name', got '^'. */
-/* @@? 17:7 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 17:25 Error SyntaxError: Unexpected token, expected ',' or ')'. */
+
+/* @@? 17:7 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 17:7 Error Syntax error ESY0230: Expected 'method name', got '^'. */
+/* @@? 17:7 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 17:25 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */

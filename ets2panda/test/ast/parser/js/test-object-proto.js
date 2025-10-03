@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,4 +24,5 @@ var a = {
   *__proto__(){},
   /* @@ label */__proto__: 8,
 }
-/* @@@ label Error SyntaxError: Duplicate __proto__ fields are not allowed in object literals  */
+
+/* @@@ label Error Syntax error ESY0000: Duplicate __proto__ fields are not allowed in object literals */

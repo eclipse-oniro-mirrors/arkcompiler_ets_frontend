@@ -37,14 +37,13 @@ type T13 = Required<A, A>
 type T14 = Required<A, int>
 type T15 = Required<int>
 
-/* @@? 22:18 Error TypeError: Invalid number of type parameters for Partial type, should be 1. */
-/* @@? 24:18 Error TypeError: Invalid number of type parameters for Partial type, should be 1. */
-/* @@? 25:18 Error TypeError: Invalid number of type parameters for Partial type, should be 1. */
 
-/* @@? 28:19 Error TypeError: Invalid number of type parameters for Readonly type, should be 1. */
-/* @@? 30:19 Error TypeError: Invalid number of type parameters for Readonly type, should be 1. */
-/* @@? 31:19 Error TypeError: Invalid number of type parameters for Readonly type, should be 1. */
-
-/* @@? 34:20 Error TypeError: Invalid number of type parameters for Required type, should be 1. */
-/* @@? 36:20 Error TypeError: Invalid number of type parameters for Required type, should be 1. */
-/* @@? 37:20 Error TypeError: Invalid number of type parameters for Required type, should be 1. */
+/* @@? 22:18 Error Semantic error ESE0223: Invalid number of type parameters for Partial type, should be 1. */
+/* @@? 24:18 Error Semantic error ESE0223: Invalid number of type parameters for Partial type, should be 1. */
+/* @@? 25:18 Error Semantic error ESE0223: Invalid number of type parameters for Partial type, should be 1. */
+/* @@? 28:19 Error Semantic error ESE0223: Invalid number of type parameters for Readonly type, should be 1. */
+/* @@? 30:19 Error Semantic error ESE0223: Invalid number of type parameters for Readonly type, should be 1. */
+/* @@? 31:19 Error Semantic error ESE0223: Invalid number of type parameters for Readonly type, should be 1. */
+/* @@? 34:20 Error Semantic error ESE0223: Invalid number of type parameters for Required type, should be 1. */
+/* @@? 36:20 Error Semantic error ESE0223: Invalid number of type parameters for Required type, should be 1. */
+/* @@? 37:20 Error Semantic error ESE0223: Invalid number of type parameters for Required type, should be 1. */

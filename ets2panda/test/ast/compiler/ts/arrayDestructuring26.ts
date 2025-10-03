@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,4 +15,5 @@
 
 
 var [a = 5, /* @@ label */{ b, c }] = [, { b: 5 }]
-/* @@@ label Error TypeError: Property c does not exist on type { b: number; }.  */
+
+/* @@@ label Error Semantic error ESE0000: Property c does not exist on type { b: number; }. */

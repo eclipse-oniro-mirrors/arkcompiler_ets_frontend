@@ -26,5 +26,6 @@ function main() {
   f()!./* @@ label2 */foo()
 }
 
-/* @@@ label1 Error TypeError: 'foo' is a static property of 'A' */
-/* @@@ label2 Error TypeError: 'foo' is a static property of 'A' */
+
+/* @@@ label1 Error Semantic error ESE0207: 'foo' is a static property of 'A' */
+/* @@@ label2 Error Semantic error ESE0207: 'foo' is a static property of 'A' */

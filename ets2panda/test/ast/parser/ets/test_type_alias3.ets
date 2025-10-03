@@ -15,4 +15,5 @@
 
 type foo = /* @@ label */;
 
-/* @@@ label Error SyntaxError: Invalid Type.  */
+
+/* @@@ label Error Syntax error ESY0138: Invalid Type. */

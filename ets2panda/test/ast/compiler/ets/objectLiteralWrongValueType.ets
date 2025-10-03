@@ -21,4 +21,5 @@ let c: C = {
     f: /* @@ label */"ouch"
 };
 
-/* @@@ label Error TypeError: Type '"ouch"' is not compatible with type 'Int' at property 'f'  */
+
+/* @@@ label Error Semantic error ESE0319: Type '"ouch"' is not compatible with type 'Int' at property 'f' */

@@ -19,5 +19,6 @@ function main(): void {
 
 let outA : /* @@ label2 */a;
 
-/* @@@ label1 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@@ label2 Error TypeError: Cannot find type 'a'. */
+
+/* @@@ label1 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@@ label2 Error Semantic error ESE0371: Cannot find type 'a'. */

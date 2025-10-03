@@ -24,4 +24,5 @@ function main()
     b instanceof /* @@ label */a
 }
 
-/* @@@ label Error TypeError: Cannot find type 'a'. */
+
+/* @@@ label Error Semantic error ESE0371: Cannot find type 'a'. */

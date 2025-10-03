@@ -22,4 +22,4 @@ function main(): void {
   let b: I = {}
 }
 
-/* @@? 22:14 Error TypeError: Non-optional property 'field' in type 'I' is missing in object literal. */
+/* @@? 22:14 Error Semantic error ESE0400: Non-optional property 'field' in type 'I' is missing in object literal. */

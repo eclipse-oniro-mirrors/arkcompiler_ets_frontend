@@ -16,8 +16,5 @@
 
 function 8274()
 
-/* @@? 17:10 Error SyntaxError: Unexpected token, expected function identifier.  */
-/* @@? 1:1 Node {
-    "type": "Program"
-}  */
-/* @@? 17:10 Error SyntaxError: Unexpected token, expected function identifier. */
+
+/* @@? 17:10 Error Syntax error ESY0147: Unexpected token, expected function identifier. */

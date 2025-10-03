@@ -41,5 +41,5 @@ function test() {
 
 test()
 
-/* @@? 23:19 Warning Warning: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */
-/* @@? 23:20 Warning Warning: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */
+/* @@? 23:19 Warning Warning W0014: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */
+/* @@? 23:20 Warning Warning W0014: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */

@@ -31,11 +31,11 @@ import {ClassAuthor, Color} from "./annotation_src"
     ]
 }
 
-/* @@@ label1 Error TypeError: Field 'authorAge' has a type mismatch with the ambient annotation 'ClassAuthor'.  */
-/* @@@ label2 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label Error TypeError: Initializer for field 'authorAge' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label4 Error TypeError: Field 'testBool' has a type mismatch with the ambient annotation 'ClassAuthor'.  */
-/* @@@ label3 Error TypeError: Initializer for field 'testBool' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label5 Error TypeError: Initializer for field 'favorColor' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label6 Error TypeError: Initializer for field 'color' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label7 Error TypeError: Field 'reviewersAge' has a type mismatch with the ambient annotation 'ClassAuthor'.  */
+/* @@@ label Error Semantic error ESE0039: Initializer for field 'authorAge' does not match the expected definition in the ambient annotation 'ClassAuthor'. */
+/* @@@ label1 Error Semantic error ESE0038: Field 'authorAge' has a type mismatch with the ambient annotation 'ClassAuthor'. */
+/* @@@ label2 Error Semantic error ESE0036: The initial value does not match the expected value. */
+/* @@@ label3 Error Semantic error ESE0039: Initializer for field 'testBool' does not match the expected definition in the ambient annotation 'ClassAuthor'. */
+/* @@@ label4 Error Semantic error ESE0038: Field 'testBool' has a type mismatch with the ambient annotation 'ClassAuthor'. */
+/* @@@ label5 Error Semantic error ESE0039: Initializer for field 'favorColor' does not match the expected definition in the ambient annotation 'ClassAuthor'. */
+/* @@@ label6 Error Semantic error ESE0039: Initializer for field 'color' does not match the expected definition in the ambient annotation 'ClassAuthor'. */
+/* @@@ label7 Error Semantic error ESE0038: Field 'reviewersAge' has a type mismatch with the ambient annotation 'ClassAuthor'. */

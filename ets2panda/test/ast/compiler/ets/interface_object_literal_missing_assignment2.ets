@@ -32,5 +32,6 @@ interface X extends Y, Z {
 function foo(x: X) {}
 foo(/* @@ label */{})
 
-/* @@@ label Error TypeError: Non-optional property 'c' in super type 'Z' of type 'X' is missing in object literal. */
-/* @@@ label Error TypeError: Non-optional property 'b' in super type 'Y' of type 'X' is missing in object literal. */
+
+/* @@@ label Error Semantic error ESE0401: Non-optional property 'c' in super type 'Z' of type 'X' is missing in object literal. */
+/* @@@ label Error Semantic error ESE0401: Non-optional property 'b' in super type 'Y' of type 'X' is missing in object literal. */

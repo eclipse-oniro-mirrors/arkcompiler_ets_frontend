@@ -16,12 +16,13 @@
 let x: int[ = [1,2,3]
 let y: int = x [0]
 
-/* @@? 16:13 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 16:13 Error SyntaxError: Unexpected token ']'. */
-/* @@? 16:13 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 16:17 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 16:18 Error SyntaxError: Unexpected token '2'. */
-/* @@? 16:19 Error SyntaxError: Unexpected token ','. */
-/* @@? 16:20 Error SyntaxError: Unexpected token '3'. */
-/* @@? 16:21 Error SyntaxError: Unexpected token ']'. */
-/* @@? 17:14 Error TypeError: Indexed access is not supported for such expression type. */
+
+/* @@? 16:13 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 16:13 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 16:13 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 16:17 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 16:18 Error Syntax error ESY0227: Unexpected token '2'. */
+/* @@? 16:19 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 16:20 Error Syntax error ESY0227: Unexpected token '3'. */
+/* @@? 16:21 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 17:14 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

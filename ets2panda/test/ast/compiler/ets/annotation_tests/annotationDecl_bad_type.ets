@@ -20,5 +20,5 @@ class OtherType{}
     /* @@ label1 */testProperty3: [int ,number, string]
 }
 
-/* @@@ label Error TypeError: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields.  */
-/* @@@ label1 Error TypeError: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields.  */
+/* @@@ label Error Semantic error ESE0042: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */
+/* @@@ label1 Error Semantic error ESE0042: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */

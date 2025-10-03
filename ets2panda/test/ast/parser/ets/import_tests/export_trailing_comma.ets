@@ -19,4 +19,5 @@ function foo3(): void {}
 export {foo2,}
 export {/* @@ label */, foo3}
 
-/* @@@ label Error SyntaxError: Unexpected token ','. */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token ','. */

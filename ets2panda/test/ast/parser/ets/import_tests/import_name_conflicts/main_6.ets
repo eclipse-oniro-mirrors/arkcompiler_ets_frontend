@@ -20,13 +20,13 @@ import * as c from "./imported_module_2.ets";
 function main() {
     /* @@ label2 */console.log(/* @@ label3 */c);
 }
-/* @@@ label1 Error TypeError: Variable 'c' is already defined with different type.  */
-/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Boolean): void`  */
-/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Byte): void`  */
-/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Short): void`  */
-/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Char): void`  */
-/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Int): void`  */
-/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Long): void`  */
-/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Float): void`  */
-/* @@@ label2 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Double): void`  */
-/* @@@ label3 Error TypeError: Namespace 'c' cannot be used as object  */
+/* @@@ label1 Error Semantic error ESE0350: Variable 'c' is already defined with different type. */
+/* @@@ label2 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Boolean): void` */
+/* @@@ label2 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Byte): void` */
+/* @@@ label2 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Short): void` */
+/* @@@ label2 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Char): void` */
+/* @@@ label2 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Int): void` */
+/* @@@ label2 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Long): void` */
+/* @@@ label2 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Float): void` */
+/* @@@ label2 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Double): void` */
+/* @@@ label3 Error Semantic error ESE43831: Namespace 'c' cannot be used as object */

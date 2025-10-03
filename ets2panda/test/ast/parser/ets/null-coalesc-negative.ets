@@ -37,5 +37,6 @@ function main(): void {
   /* @@ label */a./* @@ label1 */increment();
 }
 
-/* @@@ label1 Error TypeError: Property 'increment' does not exist on type 'C'  */
-/* @@@ label Error TypeError: Member type must be the same for all union objects.  */
+
+/* @@@ label Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@@ label1 Error Semantic error ESE0087: Property 'increment' does not exist on type 'C' */

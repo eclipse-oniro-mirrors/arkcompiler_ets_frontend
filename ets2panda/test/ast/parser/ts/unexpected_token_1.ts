@@ -16,4 +16,5 @@
 
 try {} catch (e /* @@ label */{} finally {}
 
-/* @@@ label Error SyntaxError: Unexpected token '{', expected ')'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected ')', got '{'. */

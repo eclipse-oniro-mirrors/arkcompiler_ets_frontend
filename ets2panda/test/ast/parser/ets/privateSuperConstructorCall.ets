@@ -31,5 +31,6 @@ function main(): void {
   arktest.assertEQ(instance.x, 5);
 }
 
-/* @@? 25:5 Error TypeError: Signature constructor(alma: Int): void is not visible here. */
-/* @@? 25:5 Error TypeError: No matching call signature for privateSuperConstructorCall.Alma(Int) */
+
+/* @@? 25:5 Error Semantic error ESE0139: Signature constructor(alma: Int): void is not visible here. */
+/* @@? 25:5 Error Semantic error ESE0127: No matching call signature for privateSuperConstructorCall.Alma(Int) */

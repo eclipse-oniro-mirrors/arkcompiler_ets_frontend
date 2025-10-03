@@ -22,4 +22,4 @@ class B extends A {
     aaa = 2
 }
 
-/* @@? 22:5 Error TypeError: 'aaa' is defined as an accessor in class 'A', but is overridden here in 'B' as an instance property. */
+/* @@? 22:5 Error Semantic error ESE129829: 'aaa' is defined as an accessor in class 'A', but is overridden here in 'B' as an instance property. */

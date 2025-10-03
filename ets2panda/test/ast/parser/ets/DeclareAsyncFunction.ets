@@ -15,5 +15,5 @@
 
 declare async function foo(): Promise<void>
 
-/* @@@ label Error SyntaxError: The modifier async cannot be used in an ambient context.  */
-/* @@ label */
+
+/* @@ label *//* @@? 19:116 Error Syntax error ESY0106: The modifier async cannot be used in an ambient context. */

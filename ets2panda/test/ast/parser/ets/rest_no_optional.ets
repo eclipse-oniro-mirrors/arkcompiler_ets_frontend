@@ -16,4 +16,5 @@
 
 function sum(...numbers?: number[]): number {}
 
-/* @@? 17:24 Error SyntaxError: Rest parameter cannot have the default value. */
+
+/* @@? 17:24 Error Syntax error ESY0192: Rest parameter cannot have the default value. */

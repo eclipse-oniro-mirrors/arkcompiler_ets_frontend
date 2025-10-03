@@ -22,4 +22,5 @@ import { C } from "dynamic_import_tests/modules/module"
 class A extends C /* @@ label */{
 }
 
-/* @@@ label Error TypeError: class A can not extends class C which is from dynamic declaration file.  */
+
+/* @@@ label Error Semantic error ESE24143: class A can not extends class C which is from dynamic declaration file. */

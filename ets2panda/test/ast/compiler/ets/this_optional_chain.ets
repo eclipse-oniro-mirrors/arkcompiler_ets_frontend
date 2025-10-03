@@ -20,4 +20,4 @@ class A{
     }
 }
 
-/* @@? 19:20 Error SyntaxError: 'this?.' optional chaining is not supported. */
+/* @@? 19:20 Error Syntax error ESY115549: 'this?.' optional chaining is not supported. */

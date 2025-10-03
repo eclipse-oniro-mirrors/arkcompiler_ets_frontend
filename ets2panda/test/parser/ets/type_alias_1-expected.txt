@@ -423,4 +423,4 @@
     }
   }
 }
-TypeError: Variable 'Matrix' has already been declared. [type_alias_1.ets:18:5]
+[type_alias_1.ets:18:5] Semantic error ESE0351: Variable 'Matrix' has already been declared.

@@ -17,9 +17,10 @@
 a = {
   get a[b](){},
 }
-/* @@? 18:8 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 18:10 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 18:10 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 18:13 Error SyntaxError: Unexpected token, expected '=>'. */
-/* @@? 18:14 Error SyntaxError: Unexpected token '}'. */
-/* @@? 18:15 Error SyntaxError: Getter must not have formal parameters. */
+
+/* @@? 18:8 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 18:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 18:10 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 18:13 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@? 18:14 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 18:15 Error Syntax error ESY0058: Getter must not have formal parameters. */

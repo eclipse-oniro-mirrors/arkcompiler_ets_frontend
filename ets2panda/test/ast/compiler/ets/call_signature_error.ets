@@ -17,5 +17,6 @@ type DescribableFunction = /* @@ label1 */{
     /* @@ label2 */(someArg: number): string
 }
 
-/* @@@ label1 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly!  */
-/* @@@ label2 Error SyntaxError: Call signatures in object types are not supported. Use '$_invoke' method instead.  */
+
+/* @@@ label1 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@@ label2 Error Syntax error ESY103145: Call signatures in object types are not supported. Use '$_invoke' method instead. */

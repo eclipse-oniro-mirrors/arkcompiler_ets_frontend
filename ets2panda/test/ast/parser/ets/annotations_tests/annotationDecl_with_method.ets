@@ -18,10 +18,11 @@
 }
 
 
-/* @@? 17:8 Error SyntaxError: Annotation can not have method as property. */
-/* @@? 17:8 Error SyntaxError: Missing type annotation for property 'foo'. */
-/* @@? 17:8 Error SyntaxError: Identifier expected, got '('. */
-/* @@? 17:9 Error SyntaxError: Identifier expected, got ')'. */
-/* @@? 17:10 Error SyntaxError: Identifier expected, got '{'. */
-/* @@? 17:11 Error SyntaxError: Identifier expected, got '}'. */
-/* @@? 18:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 17:8 Error Syntax error ESY0025: Annotation can not have method as property. */
+/* @@? 17:8 Error Syntax error ESY0001: Missing type annotation for property 'foo'. */
+/* @@? 17:8 Error Syntax error ESY0224: Identifier expected, got '('. */
+/* @@? 17:9 Error Syntax error ESY0224: Identifier expected, got ')'. */
+/* @@? 17:10 Error Syntax error ESY0224: Identifier expected, got '{'. */
+/* @@? 17:11 Error Syntax error ESY0224: Identifier expected, got '}'. */
+/* @@? 18:1 Error Syntax error ESY0227: Unexpected token '}'. */

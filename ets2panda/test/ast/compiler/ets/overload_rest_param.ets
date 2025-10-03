@@ -22,5 +22,5 @@ class A {
 function foo(a: int, b: Array<Object>) {}
 function foo(a: int, ...b: Array<Object>) {}
 
-/* @@? 19:5 Error TypeError: Function constructor is already declared. */
-/* @@? 23:1 Error TypeError: Function foo is already declared. */
+/* @@? 19:5 Error Semantic error ESE0130: Function constructor is already declared. */
+/* @@? 23:1 Error Semantic error ESE0130: Function foo is already declared. */

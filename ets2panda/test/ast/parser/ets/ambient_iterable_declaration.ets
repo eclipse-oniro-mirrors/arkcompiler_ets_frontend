@@ -18,4 +18,5 @@ declare class C {
     [Symbol.iterator]/* @@ label */(): A;
 }
 
-/* @@@ label Error TypeError: The return type of '$_iterator' must be a type that implements Iterator interface.  */
+
+/* @@@ label Error Semantic error ESE0096: The return type of '$_iterator' must be a type that implements Iterator interface. */

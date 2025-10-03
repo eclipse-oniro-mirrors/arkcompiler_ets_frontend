@@ -23,9 +23,8 @@ let fecthResult = await checkAsyncDelay(async (): Promise< AA.B<string> > => {
     return await this.photoAccessHelper.getAssets(options);
 }, 'getPhotoAssetByUri --> getAssets');
 
-/* @@? 19:25 Error TypeError: Unresolved reference checkAsyncDelay  */
-/* @@? 19:25 Error TypeError: 'await' expressions require Promise object as argument.  */
-/* @@? 20:10 Error TypeError: Bad operand type, the type of the operand must be boolean type.  */
-/* @@? 21:16 Error TypeError: Type 'undefined' is not compatible with the enclosing method's return type 'Promise<B<String>>'  */
-/* @@? 23:18 Error TypeError: 'await' expressions require Promise object as argument.  */
-/* @@? 1:1 Error TypeError: Cannot reference 'this' in this context.  */
+
+/* @@? 19:19 Error Semantic error ESE0303: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
+/* @@? 19:25 Error Semantic error ESE0143: Unresolved reference checkAsyncDelay */
+/* @@? 19:25 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 19:25 Warning Warning W173979: Await in non-aysnc function is deprecated, please move it to async function. */

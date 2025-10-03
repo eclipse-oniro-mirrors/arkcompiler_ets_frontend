@@ -25,8 +25,9 @@ function main() : void {
 }
 
 
-/* @@? 19:1 Error TypeError: Annotation missing '@' symbol before annotation name.  */
-/* @@? 19:1 Error TypeError: This expression is not callable.  */
-/* @@? 23:5 Error TypeError: Annotation missing '@' symbol before annotation name.  */
-/* @@? 23:5 Error TypeError: This expression is not callable.  */
-/* @@? 24:5 Error SyntaxError: Illegal start of Type Alias expression.  */
+
+/* @@? 19:1 Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */
+/* @@? 19:1 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 23:5 Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */
+/* @@? 23:5 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 24:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */

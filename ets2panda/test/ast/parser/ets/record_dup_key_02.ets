@@ -20,4 +20,5 @@ function main(){
         "key2": 3
     } 
 }
-/* @@@ label Error TypeError: An object literal cannot multiple properties with same name  */
+
+/* @@@ label Error Semantic error ESE0263: An object literal cannot multiple properties with same name */

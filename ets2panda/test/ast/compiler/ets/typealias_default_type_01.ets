@@ -23,4 +23,4 @@ function test2(call: ErrorCallBack2) { } // should be error because typeParam ha
 
 function test3(call: ErrorCallBack2<Error>) { } // should be ok because we have explicitly provided a type.
 
-/* @@? 22:22 Error TypeError: Type alias declaration is generic, but too few type arguments were provided */
+/* @@? 22:22 Error Semantic error ESE0155: Type alias declaration is generic, but too few type arguments were provided */

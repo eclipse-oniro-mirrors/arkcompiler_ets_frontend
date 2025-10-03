@@ -23,7 +23,8 @@ if (Space1.variable == Space1.constant) { // CTE
 Space1.foo(); // CTE
 Space1.foo(1234); //ok
 
-/* @@? 19:31 Error TypeError: Property 'constant' does not exist on type 'Space2'  */
-/* @@? 20:23 Error TypeError: Type 'Int' cannot be assigned to type 'String'  */
-/* @@? 23:1 Error TypeError: Expected 1 arguments, got 0.  */
-/* @@? 23:1 Error TypeError: No matching call signature  */
+
+/* @@? 19:31 Error Semantic error ESE0087: Property 'constant' does not exist on type 'Space2' */
+/* @@? 20:23 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 23:1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? 23:1 Error Semantic error ESE0128: No matching call signature */

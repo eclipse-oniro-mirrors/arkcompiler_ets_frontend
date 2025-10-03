@@ -23,10 +23,11 @@ switch (arg){
         break;
 }
 
-/* @@? 17:7 Error SyntaxError: Variable must be initialized or it's type must be declared. */
-/* @@? 17:7 Error SyntaxError: Unexpected token 'null'. */
-/* @@? 17:7 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 17:12 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 22:5 Error TypeError: Constant expression required */
-/* @@? 22:10 Error SyntaxError: Class cannot be used as object. */
-/* @@? 22:10 Error TypeError: Switch case type 'A' is not comparable to discriminant type 'String' */
+
+/* @@? 17:7 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+/* @@? 17:7 Error Syntax error ESY0227: Unexpected token 'null'. */
+/* @@? 17:7 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 17:12 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 22:5 Error Semantic error ESE0163: Constant expression required */
+/* @@? 22:10 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 22:10 Error Semantic error ESE0262: Switch case type 'A' is not comparable to discriminant type 'String' */
