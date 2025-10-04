@@ -940,6 +940,18 @@ signatures:
     return_type: BUILTIN_BIGINT
     ref: BUILTIN_BIGINT_OPERATOR_BITWISE_NOT
 
+  - callee: BUILTIN_BIGINT
+    method_name: pow
+    params: [BUILTIN_BIGINT]
+    return_type: BUILTIN_BIGINT
+    ref: BUILTIN_BIGINT_OPERATOR_EXPONENTIATION
+
+  - callee: BUILTIN_BIGINT
+    method_name: pow
+    params: [BUILTIN_BIGINT]
+    return_type: BUILTIN_BIGINT
+    ref: BUILTIN_BIGINT_OPERATOR_EXPONENTIATION_EQUAL
+
   - callee: BUILTIN_THROWABLE
     method_name: $CTOR
     params: []
