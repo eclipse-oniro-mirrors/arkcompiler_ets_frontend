@@ -123,9 +123,6 @@ first_match/namespace.ets
 first_match/namespace2.ets
 first_match/namespace3.ets
 
-#29458
-spreadExprInNewExpr.ets
-
 # Issue #28914
 non_null_number_as_index.ets
 
