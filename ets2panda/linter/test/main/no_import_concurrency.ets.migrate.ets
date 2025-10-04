@@ -44,3 +44,22 @@ fooAs.getFoo();
 
 let lock1: AsyncLock = AsyncLock.request('lock1');
 let lock2 = new AsyncLock();
+
+let aa:AsyncLock= new AsyncLock()
+let lock_: AsyncLock = new AsyncLock();
+let lock: AsyncLock = AsyncLock.request("lock_1");
+let state: AsyncLockState = AsyncLock.query('queryTestLock');
+let held: AsyncLockInfo[] = state.held
+let state2 = AsyncLock.queryAll();
+lock.lockAsync(async () => {
+}, AsyncLockMode.SHARED);
+lock.lockAsync(async () => {
+}, AsyncLockMode.EXCLUSIVE);
+let s: AbortSignal<string> = { aborted: false, reason: 'Aborted' };
+let options = new AsyncLockOptions<string>();
+options.isAvailable = false;
+options.signal = s;
+let conditionVariable = new ConditionVariable();
+let conditionVariable1 = ConditionVariable.request("conditionName");
+
+let pro = new SendableLruCache<number, number>();

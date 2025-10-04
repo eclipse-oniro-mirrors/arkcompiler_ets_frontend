@@ -99,7 +99,9 @@ import {
   ARKTSUTILS_LOCKS_MEMBER,
   OBJECT_PUBLIC_API_METHOD_SIGNATURES,
   ARKTSUTILS_PROCESS_MEMBER,
-  PROCESS_DEPRECATED_INTERFACES
+  PROCESS_DEPRECATED_INTERFACES,
+  ARKTSUTILS_LITERAL,
+  LRU_SENDABLE_CACHE_LITERAL
 } from './utils/consts/LimitedStdAPI';
 import { SupportedStdCallApiChecker } from './utils/functions/SupportedStdCallAPI';
 import { identiferUseInValueContext } from './utils/functions/identiferUseInValueContext';
@@ -4823,6 +4825,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (isNewArkTS) {
       this.checkWorkerSymbol(tsIdentSym, tsIdentifier);
       this.checkConcurrencySymbol(tsIdentSym, tsIdentifier);
+      this.checkArkTSUtilsUsage(tsIdentifier);
     }
 
     const isGlobalThis = tsIdentifier.text === 'globalThis';
@@ -9260,7 +9263,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.checkSymbolAndExecute(symbol, [WORKER_TEXT], WORKER_MODULES, cb);
   }
 
-  private checkConcurrencySymbol(symbol: ts.Symbol, node: ts.Node): void {
+  private checkConcurrencySymbol(symbol: ts.Symbol, node: ts.Identifier): void {
     const cb = (): void => {
       const parent = node.parent;
 
@@ -9268,17 +9271,95 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         return;
       }
 
-      if (parent.name.text === ARKTSUTILS_LOCKS_MEMBER) {
-        const autofix = this.autofixer?.fixConcurrencyLock(parent);
-        this.incrementCounters(node, FaultID.LimitedStdLibNoImportConcurrency, autofix);
-      }
-
       if (PROCESS_DEPRECATED_INTERFACES.includes(parent.name.text)) {
         this.incrementCounters(node, FaultID.DeprecatedProcessApi);
       }
     };
 
-    this.checkSymbolAndExecute(symbol, [ARKTSUTILS_LOCKS_MEMBER, ARKTSUTILS_PROCESS_MEMBER], ARKTSUTILS_MODULES, cb);
+    this.checkSymbolAndExecute(symbol, [ARKTSUTILS_PROCESS_MEMBER], ARKTSUTILS_MODULES, cb);
+  }
+
+  // pae -> property Access Expression
+  private paeHandleForArkTsUtils(ident: ts.Identifier, pae: ts.PropertyAccessExpression): void {
+    const { name, parent: gp } = pae;
+    switch (name.text) {
+      case ARKTSUTILS_LOCKS_MEMBER: {
+        if (!ts.isPropertyAccessExpression(gp)) {
+          return;
+        }
+        const autofix = this.autofixer?.replaceNode(gp, gp.name.text);
+        this.incrementCounters(ident, FaultID.LimitedStdLibNoImportConcurrency, autofix);
+
+        break;
+      }
+      case LRU_SENDABLE_CACHE_LITERAL: {
+        const autofix = this.autofixer?.replaceNode(pae, name.text);
+        this.incrementCounters(ident, FaultID.LimitedStdLibNoImportConcurrency, autofix);
+
+        break;
+      }
+      default:
+    }
+  }
+
+  // qn -> QualifiedName
+  private qnHandleForArkTsUtils(ident: ts.Identifier, qn: ts.QualifiedName): void {
+    const { right, parent } = qn;
+    switch (right.text) {
+      case ARKTSUTILS_LOCKS_MEMBER: {
+        // go one more up
+        if (!ts.isQualifiedName(parent)) {
+          return;
+        }
+        const autofix = this.autofixer?.replaceNode(parent, parent.right.text);
+        this.incrementCounters(ident, FaultID.LimitedStdLibNoImportConcurrency, autofix);
+
+        break;
+      }
+      case LRU_SENDABLE_CACHE_LITERAL: {
+        const autofix = this.autofixer?.replaceNode(qn, right.text);
+        this.incrementCounters(ident, FaultID.LimitedStdLibNoImportConcurrency, autofix);
+
+        break;
+      }
+      default:
+    }
+  }
+
+  private checkArkTSUtilsUsage(ident: ts.Identifier): void {
+    const cb = (): void => {
+      const { parent } = ident;
+      if (ts.isPropertyAccessExpression(parent)) {
+        this.paeHandleForArkTsUtils(ident, parent);
+      }
+
+      if (ts.isQualifiedName(parent)) {
+        this.qnHandleForArkTsUtils(ident, parent);
+      }
+    };
+
+    this.checkIdentifierForArkTSUtilsUsage(ident, [ARKTSUTILS_LITERAL, 'utils'], ARKTSUTILS_MODULES, cb);
+  }
+
+  private checkIdentifierForArkTSUtilsUsage(
+    ident: ts.Identifier,
+    symbolNames: string[],
+    modules: string[],
+    cb: () => void
+  ): void {
+    const symbol = this.tsUtils.trueSymbolAtLocation(ident);
+
+    if (!symbol) {
+      return;
+    }
+
+    if (symbol.name === 'unknown' && symbolNames.includes(ident.text)) {
+      cb();
+
+      return;
+    }
+
+    this.checkSymbolAndExecute(symbol, symbolNames, modules, cb);
   }
 
   private checkSymbolAndExecute(symbol: ts.Symbol, symbolNames: string[], modules: string[], cb: () => void): void {
