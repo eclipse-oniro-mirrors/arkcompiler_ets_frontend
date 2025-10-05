@@ -3385,8 +3385,8 @@ checker::ETSFunctionType *ETSChecker::IntersectSignatureSets(const checker::ETSF
 {
     auto sameSig = [this](checker::Signature *leftSig, checker::Signature *rightSig) {
         auto relation = Relation();
-        if ((leftSig->Flags() & ~checker::SignatureFlags::FINAL) !=
-            (rightSig->Flags() & ~checker::SignatureFlags::FINAL)) {
+        auto mask = ~(checker::SignatureFlags::FINAL | checker::SignatureFlags::ABSTRACT);
+        if ((leftSig->Flags() & mask) != (rightSig->Flags() & mask)) {
             return false;
         }
         return relation->SignatureIsIdenticalTo(rightSig, leftSig);
