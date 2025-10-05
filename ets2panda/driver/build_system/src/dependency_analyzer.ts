@@ -50,6 +50,12 @@ import {
     LogDataFactory
 } from './logger';
 
+import {
+    BS_PERF_FILE_NAME,
+    StatisticsRecorder,
+    RecordEvent
+} from './util/statsRecorder'
+
 import { ErrorCode, DriverError } from './util/error';
 
 import { ArkTSConfigGenerator, ArkTSConfig } from './build/generate_arktsconfig';
@@ -67,6 +73,19 @@ export interface DependencyFileMap {
     }
 }
 
+enum DepAnalyzerEvent {
+    GEN_DEPENDENCY_MAP = 'Generate dependency map (spawn exec tool)',
+    FIND_CYCLES = 'Find cycles in graph',
+    CREATE_CYCLE_JOBS = 'Create cycle jobs',
+    CREATE_JOBS = 'Create jobs',
+    FILTER_GRAPH = 'Compute jobs to build',
+    SAVE_HASH = "Save source files' hashes"
+}
+
+function formEvent(event: DepAnalyzerEvent) {
+    return '[Dependency analyzer] ' + event;
+}
+
 export class DependencyAnalyzer {
 
     private readonly logger: Logger;
@@ -74,6 +93,7 @@ export class DependencyAnalyzer {
     private readonly outputDir: string;
     private readonly cacheDir: string;
     private readonly hashCacheFile: string;
+    private readonly statsRecorder: StatisticsRecorder;
     private entryFiles: Set<string>;
     private filesHashCache: Record<string, string>;
 
@@ -89,6 +109,12 @@ export class DependencyAnalyzer {
 
         this.hashCacheFile = path.resolve(buildConfig.cachePath, FILE_HASH_CACHE);
         this.filesHashCache = this.loadHashCache();
+
+        this.statsRecorder = new StatisticsRecorder(
+            path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
+            buildConfig.recordType,
+            `Dependency analyzer`
+        );
     }
 
     private loadHashCache(): Record<string, string> {
@@ -453,9 +479,11 @@ export class DependencyAnalyzer {
     ): Record<string, CompileJobInfo> {
         let jobs: Record<string, CompileJobInfo> = {};
 
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.GEN_DEPENDENCY_MAP));
         const dependencyMap: DependencyFileMap =
             this.generateDependencyMap(entryFiles, Array.from(moduleInfos.values()));
 
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.FIND_CYCLES));
         const stronglyConnectedComponents: Map<string, Set<string>> = this.findStronglyConnectedComponents(dependencyMap);
         const fileToCycleMap: Map<string, string> = new Map<string, string>();
 
@@ -469,11 +497,13 @@ export class DependencyAnalyzer {
         this.logger.printDebug(`Found stronglyConnectedComponents: ${JSON.stringify([...stronglyConnectedComponents], null, 1)}`)
         this.logger.printDebug(`fileToCycleMap: ${JSON.stringify([...fileToCycleMap], null, 1)}`)
 
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.CREATE_CYCLE_JOBS));
         // Second iterate to create jobs to compile cycles
         stronglyConnectedComponents.forEach((component: Set<string>, componentId: string) => {
             this.createCycleJob(jobs, component, componentId, dependencyMap, fileToCycleMap, fileToModule)
         });
 
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.CREATE_JOBS));
         entryFiles.forEach((file: string) => {
             const isInCycle: boolean = fileToCycleMap.has(file)
             if (isInCycle) {
@@ -514,10 +544,14 @@ export class DependencyAnalyzer {
             this.logger.printDebug(`Created job: ${JSON.stringify(jobs[jobId], null, 1)}`)
         });
 
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.FILTER_GRAPH));
         jobs = this.filterCollectedJobs(jobs);
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.SAVE_HASH));
         this.saveHashCache();
         this.logger.printDebug(`Collected jobs: ${JSON.stringify(jobs, null, 1)}`)
 
+        this.statsRecorder.record(RecordEvent.END);
+        this.statsRecorder.writeSumSingle();
         return jobs;
     }
 
