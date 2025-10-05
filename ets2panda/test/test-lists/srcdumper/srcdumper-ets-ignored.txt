@@ -32,6 +32,7 @@ runtime/ets/namespace_tests/namespace_import_type_test/namespace_export.ets
 runtime/ets/newArrayCreationUnionType.ets
 parser/ets/dynamic_import_tests/modules/module.ets
 
+ast/parser/ets/export_empty_block.ets
 
 # FailKind.ES2PANDA_FAIL
 compiler/ets/abstractNewClassInstanceExpression.ets

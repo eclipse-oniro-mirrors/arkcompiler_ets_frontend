@@ -71,7 +71,7 @@ static bool HandleGenStdlib(public_lib::Context *ctx, parser::Program *program)
         dumper.GetDeclgen()->Run();
 
         std::string res = "'use static'\n";
-        res += dg.DumpImports();
+        dg.DumpImports(res);
         res += dumper.Str();
         EmitDecl(ctx, extPrograms[0], res);
     }

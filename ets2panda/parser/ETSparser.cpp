@@ -14,7 +14,6 @@
  */
 
 #include "ETSparser.h"
-#include <string_view>
 #include "ETSNolintParser.h"
 #include "program/program.h"
 #include "program/DeclarationCache.h"
@@ -1437,19 +1436,20 @@ ir::ExportNamedDeclaration *ETSParser::ParseSingleExport(ir::ModifierFlags modif
         return nullptr;
     }
     auto *exported = AllocNode<ir::Identifier>(token.Ident(), Allocator());
-    ES2PANDA_ASSERT(exported != nullptr);
     exported->SetRange(Lexer()->GetToken().Loc());
 
     Lexer()->NextToken();  // eat exported variable name
 
-    ArenaVector<ir::ExportSpecifier *> exports(Allocator()->Adapter());
+    auto *specifier = AllocNode<ir::ExportSpecifier>(exported, ParseNamedExport(&token));
+    specifier->SetRange(exported->Range());
+    specifier->AddModifier(modifiers);
 
-    exports.emplace_back(AllocNode<ir::ExportSpecifier>(exported, ParseNamedExport(&token)));
-    exports.back()->SetRange(exported->Range());
+    ArenaVector<ir::ExportSpecifier *> exports(Allocator()->Adapter());
+    exports.emplace_back(specifier);
+
     auto result = AllocNode<ir::ExportNamedDeclaration>(Allocator(), static_cast<ir::StringLiteral *>(nullptr),
                                                         std::move(exports));
     result->SetRange(exported->Range());
-    ES2PANDA_ASSERT(result != nullptr);
     result->AddModifier(modifiers);
     ConsumeSemicolon(result);
 

@@ -75,6 +75,8 @@ public:
         v->Accept(this);
     }
 
+    [[nodiscard]] bool HasDumpData(bool hasDefaultExport) const noexcept;
+
 private:
     StringLiteral *source_ {};
     AstNode *decl_ {};

@@ -1,0 +1,20 @@
+'use static'
+
+export declare function foo78(x: A1): A3;
+
+export declare class A1 {
+  constructor();
+
+}
+
+export default declare class A2 {
+  foo77(): A1;
+
+  public y: A1;
+  constructor();
+
+}
+
+type A3 = A1;
+
+export { A1 as A1 };
