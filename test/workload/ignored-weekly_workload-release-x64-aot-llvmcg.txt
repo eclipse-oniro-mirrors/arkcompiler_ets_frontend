@@ -1,7 +1,7 @@
 # Known failures list for weekly workload - release-x64-aot-llvmcg
 
-#19216
+#29011
 wsl
 
-#21456
+#26556
 typescript-compiler
