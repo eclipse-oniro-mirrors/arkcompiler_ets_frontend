@@ -1210,7 +1210,7 @@ ir::ExportNamedDeclaration *ETSParser::CreateExportNamedDeclaration(const Specif
     }
 
     if (specs.resultExportDefault.size() > exportDefaultMaxSize) {
-        LogError(diagnostic::EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER);
+        LogError(diagnostic::EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER, {}, startLoc);
     }
     for (auto spec : specs.resultExportDefault) {
         exports.emplace_back(spec);

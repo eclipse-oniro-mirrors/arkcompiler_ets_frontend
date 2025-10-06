@@ -38,6 +38,10 @@ warning:
   id: 12
   message: "Detect duplicate signatures, use '{}{}' to replace"
 
+- name: EMPTY_EXPORT_SPECIFIER_LIST
+  id: 3614
+  message: "Nothing is exported."
+
 - name: ENUM_DEPRECATED_CAST
   id: 30
   message: "Enum cast is deprecated. Cast support from '{}' to '{}' will be removed."

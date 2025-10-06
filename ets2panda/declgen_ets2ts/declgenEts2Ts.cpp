@@ -2483,7 +2483,7 @@ void TSDeclGen::GenGlobalVarDeclaration(const ir::ClassProperty *globalVar)
     const auto symbol = GetKeyIdent(globalVar->Key());
     auto varName = symbol->Name().Mutf8();
     const std::string prefix = "gensym%%_";
-    if (varName.rfind(prefix, 0) == 0) {
+    if (varName.find(prefix, 0U) == 0U) {
         varName = varName.substr(prefix.size());
     }
     const bool isConst = globalVar->IsConst();

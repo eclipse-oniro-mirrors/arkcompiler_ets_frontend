@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-while (false) export {
+while (false) export /* @@ label */{
 }
 
 /* @@? 16:15 Error SyntaxError: Unexpected token 'export'. */
 /* @@? 16:15 Error SyntaxError: Missing body in while statement */
+/* @@@ label Warning Warning: Nothing is exported. */
