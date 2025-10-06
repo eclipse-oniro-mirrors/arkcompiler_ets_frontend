@@ -722,7 +722,8 @@ static ArenaVector<ark::es2panda::ir::Statement *> CreateRestArgumentsArrayReall
             restParameterLen, lciInfo->restArgumentIdentifier, tmpArray, elementType, restParameterLen,
             lciInfo->restArgumentIdentifier, lciInfo->restParameterIdentifier, elementType);
     } else {
-        ES2PANDA_ASSERT(restParameterSubstituteType->IsETSResizableArrayType());
+        ES2PANDA_ASSERT(restParameterSubstituteType->IsETSResizableArrayType() ||
+                        restParameterSubstituteType->IsETSReadonlyArrayType());
         auto *typeNode = allocator->New<ir::OpaqueTypeNode>(
             checker->GetElementTypeOfArray(lciInfo->lambdaSignature->RestVar()->TsType()), allocator);
         args = parser->CreateFormattedStatement(
@@ -793,8 +794,7 @@ static ir::Expression *SetRestIdentOfCallArguments(public_lib::Context *ctx, Lam
         restIdent->SetParent(spread);
         return spread;
     }
-
-    ES2PANDA_ASSERT(restType->IsETSResizableArrayType());
+    ES2PANDA_ASSERT(restType->IsETSResizableArrayType() || restType->IsETSReadonlyArrayType());
     restIdent->AddAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST);
     return restIdent;
 }
