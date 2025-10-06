@@ -407,6 +407,28 @@ bool PhaseForBodies::Postcondition(public_lib::Context *ctx, const parser::Progr
     return PostconditionForModule(ctx, program);
 }
 
+void ForEachCompiledProgram(public_lib::Context *context, std::function<void(parser::Program *)> cb)
+{
+    auto mode = context->config->options->GetCompilationMode();
+
+    parser::Program *program = context->parserProgram;
+
+    for (auto &[_, extPrograms] : program->ExternalSources()) {
+        (void)_;
+        for (auto *extProg : extPrograms) {
+            if (extProg->IsASTLowered()) {
+                continue;
+            }
+            if (mode == CompilationMode::GEN_STD_LIB ||
+                (mode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE && extProg->IsGenAbcForExternal())) {
+                cb(extProg);
+            }
+        }
+    }
+
+    cb(program);
+}
+
 PhaseManager::~PhaseManager()
 {
     if (ScriptExtension::ETS == ext_) {

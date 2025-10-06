@@ -98,6 +98,9 @@ class PhaseForBodies : public Phase {
     }
 };
 
+// A helper for phases relying on "stdlib" and "simultaneous" compilation modes
+void ForEachCompiledProgram(public_lib::Context *context, std::function<void(parser::Program *)> cb);
+
 class PhaseManager {
 public:
     PhaseManager(ScriptExtension ext, ArenaAllocator *allocator) : allocator_ {allocator}, ext_ {ext}
