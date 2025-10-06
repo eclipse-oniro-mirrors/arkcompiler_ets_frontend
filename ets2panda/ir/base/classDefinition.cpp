@@ -328,7 +328,7 @@ void ClassDefinition::DumpGlobalClass(ir::SrcDumper *dumper) const
         }
     }
     for (auto elem : Body()) {
-        if (elem->IsMethodDefinition()) {
+        if (elem->IsMethodDefinition() || elem->IsOverloadDeclaration()) {
             elem->Dump(dumper);
             dumper->Endl();
         }

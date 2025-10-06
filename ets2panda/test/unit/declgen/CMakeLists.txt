@@ -151,6 +151,8 @@ set(ETS_TESTS
     nested
     optional
     optional_2
+    overload_1
+    overload_2
     overload
     test
 )

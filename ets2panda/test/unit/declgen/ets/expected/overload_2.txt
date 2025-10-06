@@ -1,0 +1,4 @@
+'use static'
+
+import { C as C, fun as fun } from "./expected/overload_1.txt";
+
