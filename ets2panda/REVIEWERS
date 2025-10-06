@@ -45,8 +45,8 @@
 /ets2panda/ir/ @ziziziiziziz @csabaosztrogonac ^igelhaus ^Prof
 /ets2panda/linter/ @cy917474985 @rosinskiyigor @eokolnov1 ^utkugursel ^fouckttt
 /ets2panda/parser/ @ziziziiziziz @robertsipka @shimenkovmikhail ^igelhaus ^csabaosztrogonac ^Prof ^zelentsovdmitry ^xuxjeeee
-/ets2panda/scripts/*-build.sh @titovatatiana ^igelhaus ^Prof
-/ets2panda/scripts/arkui* @titovatatiana ^igelhaus ^Prof
+/ets2panda/scripts/*-build.sh @titova_tatiana ^igelhaus ^Prof
+/ets2panda/scripts/arkui* @titova_tatiana ^igelhaus ^Prof
 /ets2panda/scripts/normalize_yaml @peterpronai ^igelhaus ^Prof
 /ets2panda/test/ast @ozerovnikita ^igelhaus ^Prof
 /ets2panda/test/benchmarks @pishin
