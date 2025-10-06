@@ -818,28 +818,31 @@ private:
         return CreateBooleanLiteral(res);
     }
 
-    ir::Literal *HandleLogicalExpression(const ir::BinaryExpression *expr, const ir::Literal *left,
-                                         const ir::Literal *right)
+    ir::Literal *HandleLogicalExpression(const ir::BinaryExpression *expr, ir::Literal *left, ir::Literal *right)
     {
+        auto allocator = context_->allocator;
+        auto parent = const_cast<ir::BinaryExpression *>(expr)->Parent();
         bool lhs = TestLiteral(left);
-        bool rhs = TestLiteral(right);
 
-        bool res {};
         auto opType = expr->OperatorType();
         switch (opType) {
             case lexer::TokenType::PUNCTUATOR_LOGICAL_AND: {
-                res = lhs && rhs;
-                break;
+                if (lhs) {
+                    return right->Clone(allocator, parent)->AsExpression()->AsLiteral();
+                }
+                return left->Clone(allocator, parent)->AsExpression()->AsLiteral();
             }
             case lexer::TokenType::PUNCTUATOR_LOGICAL_OR: {
-                res = lhs || rhs;
-                break;
+                if (lhs) {
+                    return left->Clone(allocator, parent)->AsExpression()->AsLiteral();
+                }
+                return right->Clone(allocator, parent)->AsExpression()->AsLiteral();
             }
             default: {
                 ES2PANDA_UNREACHABLE();
             }
         }
-        return CreateBooleanLiteral(res);
+        ES2PANDA_UNREACHABLE();
     }
 
     ir::Literal *Calculate(const ir::BinaryExpression *expr)
