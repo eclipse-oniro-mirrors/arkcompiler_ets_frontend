@@ -5538,4 +5538,39 @@ export class Autofixer {
     const text = this.printer.printNode(ts.EmitHint.Unspecified, newDecorator, entryDecorator.getSourceFile());
     return [{ start: entryDecorator.getStart(), end: entryDecorator.getEnd(), replacementText: text }];
   }
+
+  fixSdkOverloadMethods(
+    callExpr: ts.CallExpression,
+    replacementName: string,
+    decl: readonly ts.ParameterDeclaration[],
+    removeParams: string[]
+  ): Autofix[] | undefined {
+    if (!ts.isPropertyAccessExpression(callExpr.expression)) {
+      return undefined;
+    }
+    const propAccess = callExpr.expression;
+
+    let removeIndex: number | undefined;
+    decl.forEach((param, index) => {
+      const name = param.name.getText();
+      if (removeParams.includes(name)) {
+        removeIndex = index;
+      }
+    });
+
+    const newArgs =
+      removeIndex !== undefined ?
+        callExpr.arguments.filter((_, i) => {
+          return i !== removeIndex;
+        }) :
+        callExpr.arguments;
+    const newPropAccess = ts.factory.createPropertyAccessExpression(
+      propAccess.expression,
+      ts.factory.createIdentifier(replacementName)
+    );
+
+    const newCall = ts.factory.createCallExpression(newPropAccess, callExpr.typeArguments, newArgs);
+    const replacementText = this.printer.printNode(ts.EmitHint.Unspecified, newCall, callExpr.getSourceFile());
+    return [{ start: callExpr.getStart(), end: callExpr.getEnd(), replacementText: replacementText }];
+  }
 }

@@ -1,0 +1,196 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 22,
+            "column": 25,
+            "endLine": 22,
+            "endColumn": 35,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 897,
+                    "end": 935,
+                    "replacementText": "typeNode.createTextNode(uiContext)",
+                    "line": 22,
+                    "column": 25,
+                    "endLine": 22,
+                    "endColumn": 35
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 31,
+            "endLine": 25,
+            "endColumn": 41,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1017,
+                    "end": 1070,
+                    "replacementText": "typeNode.createXComponentNodeWithOptions(uiContext, options)",
+                    "line": 25,
+                    "column": 31,
+                    "endLine": 25,
+                    "endColumn": 41
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 27,
+            "endLine": 27,
+            "endColumn": 37,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1124,
+                    "end": 1162,
+                    "replacementText": "typeNode.createGridNode(uiContext)",
+                    "line": 27,
+                    "column": 27,
+                    "endLine": 27,
+                    "endColumn": 37
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 14,
+            "endLine": 29,
+            "endColumn": 26,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1169,
+                    "end": 1209,
+                    "replacementText": "typeNode.getTextAttribute(uiContext)",
+                    "line": 29,
+                    "column": 14,
+                    "endLine": 29,
+                    "endColumn": 26
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 34,
+            "endLine": 36,
+            "endColumn": 44,
+            "problem": "LongNumeric",
+            "suggest": "",
+            "rule": "Numeric value literals outside of integer range require long representation (arkts-use-long-for-large-numeric-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 31,
+            "endLine": 37,
+            "endColumn": 49,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1401,
+                    "end": 1419,
+                    "replacementText": "createImageLatticeWithArrayInt",
+                    "line": 37,
+                    "column": 31,
+                    "endLine": 37,
+                    "endColumn": 49
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 26,
+            "endLine": 41,
+            "endColumn": 28,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1542,
+                    "end": 1601,
+                    "replacementText": "appManager.onApplicationStateChange(applicationStateObserver)",
+                    "line": 41,
+                    "column": 26,
+                    "endLine": 41,
+                    "endColumn": 28
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 45,
+            "column": 28,
+            "endLine": 45,
+            "endColumn": 30,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1741,
+                    "end": 1816,
+                    "replacementText": "appManager.onApplicationStateChange(applicationStateObserver, bundleNameList)",
+                    "line": 45,
+                    "column": 28,
+                    "endLine": 45,
+                    "endColumn": 30
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 32,
+            "endLine": 20,
+            "endColumn": 46,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport { NodeController } from '@kit.ArkUI';",
+                    "line": 20,
+                    "column": 32,
+                    "endLine": 20,
+                    "endColumn": 46
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"NodeController\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        }
+    ]
+}
