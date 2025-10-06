@@ -25,12 +25,6 @@ export class BuildMode extends BaseMode {
     }
 
     public async run(): Promise<void> {
-        if (this.entryFiles.size === 0) {
-            // Nothing to compile
-            this.logger.printWarn("Nothing to compile. Exiting...")
-            return;
-        }
-
         let buildMode = this.es2pandaMode
         if (buildMode === ES2PANDA_MODE.RUN_PARALLEL) {
             this.logger.printInfo("Run parallel")

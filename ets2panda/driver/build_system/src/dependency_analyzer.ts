@@ -89,7 +89,6 @@ export class DependencyAnalyzer {
 
         this.hashCacheFile = path.resolve(buildConfig.cachePath, FILE_HASH_CACHE);
         this.filesHashCache = this.loadHashCache();
-
     }
 
     private loadHashCache(): Record<string, string> {
@@ -232,11 +231,11 @@ export class DependencyAnalyzer {
             }
         });
 
-        this.logger.printDebug(`fill dependency map: ${JSON.stringify(fullDependencyMap, null, 1)}`)
+        this.logger.printDebug(`full dependency map: ${JSON.stringify(fullDependencyMap, null, 1)}`)
         return this.filterDependencyMap(fullDependencyMap, entryFiles);
     }
 
-    public findStronglyConnectedComponents(fileMap: DependencyFileMap): Map<string, Set<string>> {
+    private findStronglyConnectedComponents(fileMap: DependencyFileMap): Map<string, Set<string>> {
         const adjacencyList: Record<string, string[]> = {};
         const reverseAdjacencyList: Record<string, string[]> = {};
         const allNodes = new Set<string>();
@@ -357,10 +356,15 @@ export class DependencyAnalyzer {
             fileList: cycleFileList,
             jobDependencies: Array.from(cycleDependencies),
             jobDependants: Array.from(cycleDependants),
-            compileFileInfo: {
-                inputFilePath: inputFile,
-                outputFilePath: outputFile,
-                arktsConfigFile: arktsConfigFile
+            fileInfo: {
+                input: inputFile,
+                output: outputFile,
+                arktsConfig: arktsConfigFile,
+                moduleName: module.packageName,
+                moduleRoot: module.moduleRootPath,
+            },
+            declgenConfig: {
+                output: module.declgenV2OutPath!
             },
             type: CompileJobType.DECL_ABC
         }
@@ -406,11 +410,11 @@ export class DependencyAnalyzer {
                     continue;
                 }
 
-                // For now compile do not generate decl files for cycles
+                // For now no decl files are generated for cycles
                 jobInfo.type &= CompileJobType.ABC;
             } else {
-                const inputFilePath = jobInfo.compileFileInfo.inputFilePath;
-                const outputFilePath = jobInfo.compileFileInfo.outputFilePath;
+                const inputFilePath = jobInfo.fileInfo.input;
+                const outputFilePath = jobInfo.fileInfo.output;
                 const outputDeclFilePath = changeFileExtension(outputFilePath, DECL_ETS_SUFFIX)
                 ensurePathExists(outputDeclFilePath);
 
@@ -472,9 +476,6 @@ export class DependencyAnalyzer {
 
         entryFiles.forEach((file: string) => {
             const isInCycle: boolean = fileToCycleMap.has(file)
-            const jobDependencies: Set<string> = this.collectJobDependencies(file, dependencyMap, fileToCycleMap);
-            const jobDependants: Set<string> = this.collectJobDependants(file, dependencyMap, fileToCycleMap);
-
             if (isInCycle) {
                 return;
             }
@@ -491,19 +492,26 @@ export class DependencyAnalyzer {
             ensurePathExists(outputFile);
             const arktsConfigFile: string = module.arktsConfigFile
 
+            const jobDependencies: Set<string> = this.collectJobDependencies(file, dependencyMap, fileToCycleMap);
+            const jobDependants: Set<string> = this.collectJobDependants(file, dependencyMap, fileToCycleMap);
             jobs[jobId] = {
                 id: jobId,
                 fileList: [file],
                 jobDependencies: [...jobDependencies],
                 jobDependants: [...jobDependants],
-                compileFileInfo: {
-                    inputFilePath: file,
-                    outputFilePath: outputFile,
-                    arktsConfigFile: arktsConfigFile
+                fileInfo: {
+                    input: file,
+                    output: outputFile,
+                    arktsConfig: arktsConfigFile,
+                    moduleName: module.packageName,
+                    moduleRoot: module.moduleRootPath,
+                },
+                declgenConfig: {
+                    output: module.declgenV2OutPath!
                 },
                 type: CompileJobType.DECL_ABC
             }
-            this.logger.printDebug(`Created Abc job: ${JSON.stringify(jobs[jobId], null, 1)}`)
+            this.logger.printDebug(`Created job: ${JSON.stringify(jobs[jobId], null, 1)}`)
         });
 
         jobs = this.filterCollectedJobs(jobs);

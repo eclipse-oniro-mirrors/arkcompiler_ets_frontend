@@ -17,90 +17,67 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
-import { initKoalaModules } from '../init/init_koala_modules';
 
+import { Ets2panda } from '../util/ets2panda'
 import {
     ABC_SUFFIX,
     ARKTSCONFIG_JSON_FILE,
-    DECL_ETS_SUFFIX,
-    DECL_TS_SUFFIX,
     LANGUAGE_VERSION,
     LINKER_INPUT_FILE,
     MERGED_ABC_FILE,
-    STATIC_RECORD_FILE,
-    STATIC_RECORD_FILE_CONTENT,
-    TS_SUFFIX
 } from '../pre_define';
 import {
-    changeDeclgenFileExtension,
-    changeFileExtension,
-    createFileIfNotExists,
     ensurePathExists,
     isMac,
-    isMixCompileProject,
     checkDependencyModuleInfoCorrectness,
-    formEts2pandaCmd,
 } from '../util/utils';
 import {
-    PluginDriver,
-    PluginHook
-} from '../plugins/plugins_driver';
-import {
     Logger,
-    LogDataFactory
+    LogDataFactory,
 } from '../logger';
 import { DependencyAnalyzer } from '../dependency_analyzer';
 import { ErrorCode, DriverError } from '../util/error';
 import {
     BuildConfig,
     BUILD_MODE,
-    CompileFileInfo,
     DependencyModuleConfig,
     ModuleInfo,
     ProcessCompileTask,
+    ProcessDeclgenV1Task,
     CompileJobInfo,
     CompileJobType,
+    DeclgenV1JobInfo,
     JobInfo
 } from '../types';
 import {
     ArkTSConfigGenerator
 } from './generate_arktsconfig';
-import { KitImportTransformer } from '../plugins/KitImportTransformer';
 import {
     BS_PERF_FILE_NAME,
     CompileSingleData,
-    RECORDE_COMPILE_NODE,
     RECORDE_MODULE_NODE,
-    RECORDE_RUN_NODE
 } from '../util/record_time_mem';
 import {
     handleCompileProcessWorkerExit,
     handleDeclgenWorkerExit
 } from '../util/worker_exit_handler';
 import {
-    WorkerInfo,
+    DriverProcessFactory,
     TaskManager,
-    DriverProcess,
-    DriverThread
 } from '../util/TaskManager';
 
 import { dotGraphDump } from '../util/dotGraphDump'
 
 export abstract class BaseMode {
     private buildConfig: BuildConfig;
-    public entryFiles: Set<string>;
-    public fileToModule: Map<string, ModuleInfo>;
-    public moduleInfos: Map<string, ModuleInfo>;
-    public mergedAbcFile: string;
-    public logger: Logger;
-    public depAnalyzer: DependencyAnalyzer;
-    public abcFiles: Set<string>;
-    public jobs: Record<string, CompileJobInfo>;
-    public jobQueue: CompileJobInfo[];
-    public completedJobQueue: CompileJobInfo[];
-    // NOTE: should be Ets2panda Wrapper Module
-    // NOTE: to be refactored
-    public koalaModule: any;
+    private entryFiles: Set<string>;
+    private fileToModule: Map<string, ModuleInfo>;
+    private moduleInfos: Map<string, ModuleInfo>;
+    protected mergedAbcFile: string;
+    protected logger: Logger;
+    private jobs: Record<string, CompileJobInfo>;
+    private jobQueue: CompileJobInfo[];
+    private completedJobQueue: CompileJobInfo[];
 
     constructor(buildConfig: BuildConfig) {
         this.buildConfig = buildConfig;
@@ -109,12 +86,9 @@ export abstract class BaseMode {
         this.moduleInfos = new Map<string, ModuleInfo>();
         this.mergedAbcFile = path.resolve(this.outputDir, MERGED_ABC_FILE);
         this.logger = Logger.getInstance();
-        this.depAnalyzer = new DependencyAnalyzer(this.buildConfig);
-        this.abcFiles = new Set<string>();
         this.jobs = {};
         this.jobQueue = [];
         this.completedJobQueue = [];
-        this.koalaModule = initKoalaModules(buildConfig)
 
         this.processBuildConfig();
         this.backwardCompatibilityWorkaroundStub()
@@ -148,8 +122,8 @@ export abstract class BaseMode {
         return this.buildConfig.es2pandaMode
     }
 
-    public get es2pandaDepGraphDotDump() {
-        return this.buildConfig.es2pandaDepGraphDotDump
+    public get dumpDependencyGraph() {
+        return this.buildConfig.dumpDependencyGraph
     }
 
     public get entryFile() {
@@ -217,88 +191,34 @@ export abstract class BaseMode {
     }
 
     private compile(job: CompileJobInfo) {
-        this.logger.printDebug("compile START")
-        this.logger.printDebug(`job ${JSON.stringify(job, null, 1)}`)
-
-        const { inputFilePath, outputFilePath }: CompileFileInfo = job.compileFileInfo;
-        const outputDeclFilePath = changeFileExtension(outputFilePath, DECL_ETS_SUFFIX)
-        ensurePathExists(outputDeclFilePath);
-
-        const source = fs.readFileSync(inputFilePath, 'utf-8');
-
-        const ets2pandaCmd: string[] = formEts2pandaCmd(job, this.isDebug)
-        this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
-
-        const { arkts, arktsGlobal } = this.koalaModule;
-
+        const ets2panda = Ets2panda.getInstance();
+        ets2panda.initalize();
         try {
-            arktsGlobal.filePath = inputFilePath;
-            arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-            arktsGlobal.compilerContext = arkts.Context.createFromString(source);
-            PluginDriver.getInstance().getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
-            this.logger.printDebug('es2panda proceedToState parsed');
-            let ast = arkts.EtsScript.fromContext();
-            if (this.buildConfig.aliasConfig && Object.keys(this.buildConfig.aliasConfig).length > 0) {
-                // if aliasConfig is set, transform aliasName@kit.xxx to default@ohos.xxx through the plugin
-                this.logger.printDebug('Transforming import statements with alias config');
-                let transformAst = new KitImportTransformer(
-                    arkts,
-                    arktsGlobal.compilerContext.program,
-                    this.buildConfig.buildSdkPath,
-                    this.buildConfig.aliasConfig
-                ).transform(ast);
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(transformAst);
-            } else {
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            }
-            PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-            this.logger.printInfo('plugin parsed finished');
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda proceedToState checked');
-
-            if (job.type & CompileJobType.DECL) {
-                // Generate 1.2 declaration files(a temporary solution while binary import not pushed)
-                arkts.generateStaticDeclarationsFromContext(outputDeclFilePath);
-                this.logger.printDebug("compile FINISH [DECL]")
-            }
-            if (job.type & CompileJobType.ABC) {
-                ast = arkts.EtsScript.fromContext();
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-                PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-                this.logger.printInfo('plugin checked finished');
-
-                arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
-                this.logger.printInfo('es2panda bin generated');
-                this.logger.printDebug("compile FINISH [ABC]")
-            }
+            ets2panda.compile(job, this.isDebug)
         } catch (error) {
-            if (error instanceof Error) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-                        'Compile abc files failed.',
-                        error.message,
-                        inputFilePath
-                    )
-                );
-            }
+            const err = error as DriverError
+            this.logger.printError(err.logData)
         } finally {
-            PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
-            arkts.destroyConfig(arktsGlobal.config);
+            ets2panda.finalize()
         }
     }
 
     public async run(): Promise<void> {
-        this.jobs = this.depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
-        if (this.es2pandaDepGraphDotDump) {
-            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs), 'utf-8')
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
+
+        if (Object.entries(this.jobs).length == 0) {
+            this.logger.printWarn("Nothing to compile. Exiting...")
+            return;
+        }
+
+        if (this.dumpDependencyGraph) {
+            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs, this.fileToModule), 'utf-8')
         }
 
         this.initCompileQueues();
+        // Just to init
+        Ets2panda.getInstance(this.buildConfig)
 
         while (this.haveQueuedJobs()) {
             let job: CompileJobInfo = this.consumeJob()!
@@ -312,101 +232,20 @@ export abstract class BaseMode {
             }
             this.dispatchNextJob(job)
         }
-        if (this.completedJobQueue.length > 0) {
-            this.mergeAbcFiles();
-        }
+        this.mergeAbcFiles();
+        Ets2panda.destroyInstance();
     }
 
-    public compileSimultaneous(job: CompileJobInfo): void {
-        let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
-        compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_PARSE);
-
-        this.logger.printDebug(`job ${JSON.stringify(job, null, 1)}`)
-
-        const ets2pandaCmd: string[] = formEts2pandaCmd(job, this.isDebug, true)
-        this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
-
-        let { arkts, arktsGlobal } = this.koalaModule;
+    private compileSimultaneous(job: CompileJobInfo): void {
+        const ets2panda = Ets2panda.getInstance(this.buildConfig);
+        ets2panda.initalize();
         try {
-            arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-            arktsGlobal.compilerContext = arkts.Context.createContextGenerateAbcForExternalSourceFiles(job.fileList);
-            PluginDriver.getInstance().getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda proceedToState parsed');
-            compileSingleData.record(RECORDE_COMPILE_NODE.PLUGIN_PARSE, RECORDE_COMPILE_NODE.PROCEED_PARSE);
-
-            let ast = arkts.EtsScript.fromContext();
-
-            if (this.buildConfig.aliasConfig && Object.keys(this.buildConfig.aliasConfig).length > 0) {
-                // if aliasConfig is set, transform aliasName@kit.xxx to default@ohos.xxx through the plugin
-                this.logger.printInfo('Transforming import statements with alias config');
-                let transformAst = new KitImportTransformer(
-                    arkts,
-                    arktsGlobal.compilerContext.program,
-                    this.buildConfig.buildSdkPath,
-                    this.buildConfig.aliasConfig
-                ).transform(ast);
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(transformAst);
-            } else {
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            }
-
-            PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-            this.logger.printInfo('plugin parsed finished');
-            compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_CHECK, RECORDE_COMPILE_NODE.PLUGIN_PARSE);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda proceedToState checked');
-            compileSingleData.record(RECORDE_COMPILE_NODE.PLUGIN_CHECK, RECORDE_COMPILE_NODE.PROCEED_CHECK);
-
-            // NOTE: workaround to build arkoala arkui
-            // NOTE: to be refactored
-            if (job.type & CompileJobType.DECL) {
-                for (const file of job.fileList) {
-                    const module = this.fileToModule.get(file)!
-                    const declEtsOutputPath: string = changeFileExtension(
-                        path.resolve(this.cacheDir, module.packageName,
-                            path.relative(module.moduleRootPath, file)
-                        ),
-                        DECL_ETS_SUFFIX
-                    )
-
-                    ensurePathExists(declEtsOutputPath);
-
-                    arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
-                }
-            }
-
-            if (job.type & CompileJobType.ABC) {
-                ast = arkts.EtsScript.fromContext();
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-                PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-                this.logger.printInfo('plugin checked finished');
-                compileSingleData.record(RECORDE_COMPILE_NODE.BIN_GENERATE, RECORDE_COMPILE_NODE.PLUGIN_CHECK);
-
-                arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
-                this.logger.printInfo('es2panda bin generated');
-                compileSingleData.record(RECORDE_COMPILE_NODE.CFG_DESTROY, RECORDE_COMPILE_NODE.BIN_GENERATE);
-            }
+            ets2panda.compileSimultaneous(job, this.isDebug)
         } catch (error) {
-            if (error instanceof Error) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-                        'Compile abc files failed.',
-                        error.message,
-                        job.compileFileInfo.inputFilePath
-                    )
-                );
-            }
+            const err = error as DriverError
+            this.logger.printError(err.logData)
         } finally {
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
-            PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-            arkts.destroyConfig(arktsGlobal.config);
-            compileSingleData.record(RECORDE_COMPILE_NODE.END, RECORDE_COMPILE_NODE.CFG_DESTROY);
-            compileSingleData.writeSumSingle(path.resolve());
+            ets2panda.finalize()
         }
     }
 
@@ -414,8 +253,8 @@ export abstract class BaseMode {
         let linkerInputFile: string = path.join(this.cacheDir, LINKER_INPUT_FILE);
         let linkerInputContent: string = '';
         this.completedJobQueue.forEach((job: CompileJobInfo) => {
-            if (job.compileFileInfo.outputFilePath.endsWith(ABC_SUFFIX)) {
-                linkerInputContent += job.compileFileInfo.outputFilePath + os.EOL;
+            if (job.fileInfo.output.endsWith(ABC_SUFFIX)) {
+                linkerInputContent += job.fileInfo.output + os.EOL;
             }
         })
 
@@ -667,9 +506,6 @@ export abstract class BaseMode {
     }
 
     public async runSimultaneous(): Promise<void> {
-        let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
-        compileSingleData.record(RECORDE_RUN_NODE.GEN_MODULE);
-
         const mainModule: ModuleInfo | undefined = this.moduleInfos.get(this.mainPackageName)
 
         // NOTE: workaround (main module entry file problem)
@@ -693,6 +529,8 @@ export abstract class BaseMode {
         this.logger.printDebug(`module: ${JSON.stringify(module, null, 1)}`)
         this.logger.printDebug(`arktsConfigFile: ${arktsConfigFile}`)
 
+        // Just to init
+        Ets2panda.getInstance(this.buildConfig)
         // We do not need any queues just compile a bunch of files
         // Ets2panda will build it simultaneous
         this.compileSimultaneous({
@@ -700,25 +538,52 @@ export abstract class BaseMode {
             fileList: [...this.entryFiles],
             jobDependencies: [],
             jobDependants: [],
-            compileFileInfo: {
-                inputFilePath: entryFile,
-                outputFilePath: outputFile,
-                arktsConfigFile: arktsConfigFile
+            fileInfo: {
+                input: entryFile,
+                output: outputFile,
+                arktsConfig: arktsConfigFile,
+                moduleName: module.packageName,
+                moduleRoot: module.moduleRootPath
+            },
+            declgenConfig: {
+                output: module.declgenV2OutPath!
             },
             type: CompileJobType.ABC
         });
-        compileSingleData.record(RECORDE_RUN_NODE.END, RECORDE_RUN_NODE.COMPILE_FILES);
-        compileSingleData.writeSumSingle(path.resolve());
+        Ets2panda.destroyInstance()
     }
 
     public async runParallel(): Promise<void> {
-        // NOTE: TBD
-        throw new DriverError(
-            LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-                'Parallel mode is currently unavailable.'
-            )
-        )
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
+
+        if (Object.entries(this.jobs).length == 0) {
+            this.logger.printWarn("Nothing to compile. Exiting...")
+            return;
+        }
+
+        if (this.dumpDependencyGraph) {
+            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs, this.fileToModule), 'utf-8')
+        }
+
+        const taskManager = new TaskManager<ProcessCompileTask>(handleCompileProcessWorkerExit);
+        const workerFactory = new DriverProcessFactory(
+            path.resolve(__dirname, 'compile_process_worker.js'),
+            ['process child:' + __filename],
+            {
+                stdio: ['inherit', 'inherit', 'inherit', 'ipc']
+            }
+        );
+        taskManager.startWorkers(workerFactory);
+
+        for (const job of Object.values(this.jobs)) {
+            taskManager.submitTask(job.id, { ...job, buildConfig: this.buildConfig });
+        }
+        taskManager.initTaskQueue();
+        await taskManager.finish();
+
+        this.completedJobQueue = Object.values(this.jobs)
+        this.mergeAbcFiles()
     }
 
     private addJobToQueue(job: CompileJobInfo): void {
@@ -780,267 +645,84 @@ export abstract class BaseMode {
         )
     }
 
-    public async generateDeclaration(): Promise<void> {
-        this.jobs = this.depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
+    private declgenV1(job: CompileJobInfo): void {
+        let module = this.fileToModule.get(job.fileInfo.input)!;
+        let declgenV1OutPath: string = module.declgenV1OutPath!;
+        let declgenBridgeCodePath: string = module.declgenBridgeCodePath!;
+        let declgenJob: DeclgenV1JobInfo = { ...job, declgenConfig: { otuput: declgenV1OutPath, bridgeCode: declgenBridgeCodePath } }
+
+        const ets2panda = Ets2panda.getInstance();
+        ets2panda.initalize();
+        try {
+            ets2panda.declgenV1(declgenJob, this.skipDeclCheck, this.genDeclAnnotations)
+        } catch (error) {
+            const err = error as DriverError
+            this.logger.printError(err.logData)
+        } finally {
+            ets2panda.finalize()
+        }
+    }
+
+
+    public async generateDeclarationV1(): Promise<void> {
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
+
+        if (Object.entries(this.jobs).length == 0) {
+            this.logger.printWarn("Nothing to compile. Exiting...")
+            return;
+        }
+
+        if (this.dumpDependencyGraph) {
+            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs, this.fileToModule), 'utf-8')
+        }
+
         this.initCompileQueues();
 
         while (this.haveQueuedJobs()) {
             let job: CompileJobInfo = this.consumeJob()!
-            this.declgen(job)
+            this.declgenV1(job)
             this.dispatchNextJob(job)
         }
     }
 
-    private declgen(jobInfo: CompileJobInfo): void {
-        const inputFilePath = jobInfo.compileFileInfo.inputFilePath;
-        const source = fs.readFileSync(inputFilePath, 'utf8');
-        const moduleInfo: ModuleInfo = this.fileToModule.get(inputFilePath)!;
-        const filePathFromModuleRoot: string = path.relative(moduleInfo.moduleRootPath, inputFilePath);
-        const declEtsOutputPath: string = changeDeclgenFileExtension(
-            path.join(moduleInfo.declgenV1OutPath as string, moduleInfo.packageName, filePathFromModuleRoot),
-            DECL_ETS_SUFFIX
-        );
-        const etsOutputPath: string = changeDeclgenFileExtension(
-            path.join(moduleInfo.declgenBridgeCodePath as string, moduleInfo.packageName, filePathFromModuleRoot),
-            TS_SUFFIX
-        );
-        ensurePathExists(declEtsOutputPath);
-        ensurePathExists(etsOutputPath);
+    public async generateDeclarationV1Parallel(): Promise<void> {
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
 
-        let { arkts, arktsGlobal } = this.koalaModule;
-
-        try {
-            const staticRecordPath = path.join(
-                moduleInfo.declgenV1OutPath as string,
-                STATIC_RECORD_FILE
-            )
-            const declEtsOutputDir = path.dirname(declEtsOutputPath);
-            const staticRecordRelativePath = changeFileExtension(
-                path.relative(declEtsOutputDir, staticRecordPath).replace(/\\/g, '\/'),
-                '',
-                DECL_TS_SUFFIX
-            );
-            createFileIfNotExists(staticRecordPath, STATIC_RECORD_FILE_CONTENT);
-
-            let ets2pandaCmd = formEts2pandaCmd(jobInfo)
-            this.logger.printDebug(`ets2panda cmd: ${ets2pandaCmd.join(' ')}`)
-
-            arktsGlobal.filePath = inputFilePath;
-            arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-            arktsGlobal.compilerContext = arkts.Context.createFromStringWithHistory(source);
-            PluginDriver.getInstance().getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer, this.skipDeclCheck);
-
-            let ast = arkts.EtsScript.fromContext();
-            PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer, this.skipDeclCheck);
-
-            ast = arkts.EtsScript.fromContext();
-            PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-
-            arkts.generateTsDeclarationsFromContext(
-                declEtsOutputPath,
-                etsOutputPath,
-                false,
-                false,
-                staticRecordRelativePath,
-                this.genDeclAnnotations
-            ); // Generate 1.0 declaration files & 1.0 glue code
-            this.logger.printInfo('declaration files generated');
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_DECLGEN_FAIL,
-                        'Generate declaration files failed.',
-                        error.message,
-                        inputFilePath
-                    )
-                );
-            }
-        } finally {
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
-            arkts.destroyConfig(arktsGlobal.config);
-        }
-    }
-
-    // NOTE: to be refactored
-    /*
-    protected collectAbcFileFromByteCodeHar(): void {
-        // the abc of the dependent bytecode har needs to be included When compiling hsp/hap
-        // but it's not required when compiling har
-        if (this.buildConfig.moduleType === OHOS_MODULE_TYPE.HAR) {
-            return;
-        }
-        for (const [packageName, moduleInfo] of this.moduleInfos) {
-            if (!(moduleInfo.moduleType === OHOS_MODULE_TYPE.HAR && moduleInfo.byteCodeHar)) {
-                continue;
-            }
-            if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1) {
-                continue;
-            }
-            if (!moduleInfo.abcPath) {
-                const logData: LogData = LogDataFactory.newInstance(
-                    ErrorCode.BUILDSYSTEM_ABC_FILE_MISSING_IN_BCHAR,
-                    `abc file not found in bytecode har ${packageName}. `
-                );
-                this.logger.printError(logData);
-                continue;
-            }
-            if (!fs.existsSync(moduleInfo.abcPath)) {
-                const logData: LogData = LogDataFactory.newInstance(
-                    ErrorCode.BUILDSYSTEM_ABC_FILE_NOT_EXIST_IN_BCHAR,
-                    `${moduleInfo.abcPath} does not exist. `
-                );
-                this.logger.printErrorAndExit(logData);
-            }
-            this.abcFiles.add(moduleInfo.abcPath);
-        }
-    }
-
-    public async generateDeclarationParallell(): Promise<void> {
-        this.processBuildConfig();
-
-        const taskManager = new TaskManager<CompileTask>(handleCompileWorkerExit);
-
-        try {
-            taskManager.startWorkers(DriverProcess, path.resolve(__dirname, 'declgen_worker.js'));
-
-            const taskPromises = Array.from(this.fileToModule.values()).map(task =>
-                taskManager.submitTask({
-                    fileInfo: task,
-                    buildConfig: this.getSerializableConfig() as BuildConfig,
-                    moduleInfos: Array.from(this.moduleInfos.entries())
-                })
-            );
-
-            await Promise.all(taskPromises);
-
-            this.logger.printInfo('All declaration generation tasks complete.');
-        } catch (error) {
-            this.logger.printError(LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_DECLGEN_FAIL,
-                `Generate declaration files failed.\n${(error as Error)?.message || error}`
-            ));
-        } finally {
-            await taskManager.shutdown();
-        }
-    }
-
-    private assignTaskToIdleWorker(workerInfo: WorkerInfo, processingJobs: Set<string>, serializableConfig: Object, globalContextPtr: KPointer): void {
-
-        let jobInfo = this.consumeJob();
-        if (!jobInfo) {
+        if (Object.entries(this.jobs).length == 0) {
+            this.logger.printWarn("Nothing to compile. Exiting...")
             return;
         }
 
-        processingJobs.add(jobInfo.id);
-        workerInfo.worker.send('ASSIGN_TASK', jobInfo);
-        workerInfo.isIdle = false;
-    }
-
-    private checkAllTasksDone(workerPool: WorkerInfo[]): boolean {
-        if (this.jobQueue.length === 0) {
-            for (let i = 0; i < workerPool.length; i++) {
-                if (!workerPool[i].isIdle) {
-                    return false;
-                }
-            }
-            return true;
+        if (this.dumpDependencyGraph) {
+            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs, this.fileToModule), 'utf-8')
         }
-        return false;
-    }
 
-    private processAfterCompile(config: KPointer, globalContext: KPointer): void {
-
-        let arktsGlobal = this.koalaModule.arktsGlobal;
-        let arkts = this.koalaModule.arkts;
-
-        arktsGlobal.es2panda._DestroyGlobalContext(globalContext);
-        arkts.destroyConfig(config);
-        arktsGlobal.es2panda._MemFinalize();
-
-        this.mergeAbcFiles();
-    }
-
-    CC-OFFNXT(huge_depth)
-    private async invokeWorkers(processingJobs: Set<string>, workers: DriverThread[]): Promise<void> {
-      return new Promise<void>((resolve) => {
-        const numWorkers = 1;
-
-        let files: string[] = [];
-
-        Object.entries(this.jobs).forEach(([key, job]) => {
-          for (let i = 0; i < job.fileList.length; i++) {
-            files.push(job.fileList[i]);
-          }
-        });
-
-        let arkts = this.buildConfig.arkts;
-        let fileInfo = this.fileToModule.values().next().value!;
-
-        let ets2pandaCmd: string[] = [
-          '_',
-          '--extension',
-          'ets',
-          '--arktsconfig',
-          fileInfo.arktsConfigFile,
-          '--output',
-          fileInfo.inputFilePath,
-        ];
-
-        if (this.isDebug) {
-          ets2pandaCmd.push('--debug-info');
-          ets2pandaCmd.push('--opt-level=0');
-        }
-        ets2pandaCmd.push(fileInfo.inputFilePath);
-
-        arkts.MemInitialize();
-
-        let config = arkts.Config.create(ets2pandaCmd).peer;
-
-        let globalContextPtr = arkts.CreateGlobalContext(config, files, files.length, false);
-        const serializableConfig = this.getSerializableConfig();
-
-        const workerPool: WorkerInfo[] = [];
-        for (let i = 0; i < numWorkers; i++) {
-          const worker = new DriverThread(
-            path.resolve(__dirname, 'compile_thread_worker.js'),
-            { workerData: { workerId: i } }
-          );
-
-          workers.push(worker);
-          workerPool.push({ worker, id: i, isIdle: true, isKilled: false  });
-          this.assignTaskToIdleWorker(workerPool[i], processingJobs, serializableConfig, globalContextPtr);
-          worker.on('message', (msg) => {
-            if (msg.type === 'TASK_FINISH') {
-              const workerInfo = workerPool.find(w => w.worker === worker);
-              if (workerInfo) {
-                workerInfo.isIdle = true;
-              }
-              const jobId = msg.jobId;
-              finishedJob.push(jobId);
-              processingJobs.delete(jobId);
-              const completedJob = this.jobs[jobId];
-              this.completeJob(completedJob);
-              for (let j = 0; j < workerPool.length; j++) {
-                if (workerPool[j].isIdle) {
-                  this.assignTaskToIdleWorker(workerPool[j], processingJobs, serializableConfig, globalContextPtr);
-                }
-              }
+        const taskManager = new TaskManager<ProcessDeclgenV1Task>(handleDeclgenWorkerExit, true);
+        const workerFactory = new DriverProcessFactory(
+            path.resolve(__dirname, 'declgen_process_worker.js'),
+            ['process child:' + __filename],
+            {
+                stdio: ['inherit', 'inherit', 'inherit', 'ipc']
             }
-            if (this.checkAllTasksDone(workerPool)) {
-              workers.forEach(worker => worker.send('EXIT'));
-              this.processAfterCompile(config, globalContextPtr);
-              resolve();
-            }
-          });
+        );
+        taskManager.startWorkers(workerFactory);
+
+        for (const job of Object.values(this.jobs)) {
+            const module = this.fileToModule.get(job.fileList[0]!)!
+            const declgenV1OutPath: string = module.declgenV1OutPath!
+            const declgenBridgeCodePath: string = module.declgenBridgeCodePath!
+            taskManager.submitTask(job.id, {
+                ...job,
+                declgenConfig: {
+                    otuput: declgenV1OutPath,
+                    bridgeCode: declgenBridgeCodePath
+                },
+                buildConfig: this.buildConfig
+            });
         }
-      });
+        taskManager.initTaskQueue();
+        await taskManager.finish();
     }
-    */
 }

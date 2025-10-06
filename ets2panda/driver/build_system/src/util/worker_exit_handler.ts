@@ -13,40 +13,35 @@
  * limitations under the License.
  */
 
-import { ErrorCode, DriverError } from '../util/error';
-import { getEs2pandaPath } from '../init/process_build_config';
-import { LogData, LogDataFactory, Logger } from '../logger';
-import { ProcessCompileTask } from '../types';
-import { Task, WorkerInfo } from './TaskManager';
+import { ErrorCode, DriverError } from "../util/error";
+import { getEs2pandaPath } from "../init/process_build_config";
+import { Logger, LogDataFactory } from "../logger";
+import { ProcessCompileTask, ProcessDeclgenV1Task } from "../types";
+import { Task, WorkerInfo } from "./TaskManager";
 
 export function handleCompileProcessWorkerExit(
     workerInfo: WorkerInfo,
+    task: Task<ProcessCompileTask>,
     code: number | null,
-    signal: NodeJS.Signals | null,
-    runningTasks: Map<string, Task<ProcessCompileTask>>
+    signal: NodeJS.Signals | null
 ): void {
     if (!code || code === 0) {
         return
     }
-    const taskId: string | undefined = workerInfo.currentTaskId;
-    const payload: ProcessCompileTask | undefined = runningTasks.get(taskId!)?.payload;
-    if (!payload) {
-        return;
-    }
-    const es2pandPath = getEs2pandaPath(payload.buildConfig);
+    const es2pandPath = getEs2pandaPath(task.payload.buildConfig);
     const cmd = [
         es2pandPath,
-        '--arktsconfig', payload.job.compileFileInfo.arktsConfigFile,
-        '--output', payload.job.compileFileInfo.outputFilePath,
-        payload.job.compileFileInfo.inputFilePath
+        '--arktsconfig', task.payload.fileInfo.arktsConfig,
+        '--output', task.payload.fileInfo.output,
+        task.payload.fileInfo.input
     ];
 
     throw new DriverError(
         LogDataFactory.newInstance(
             ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
-            `Compile file ${payload.job.compileFileInfo.inputFilePath} crashed (exit code ${code})`,
-            '',
-            '',
+            `Compile file ${task.payload.fileInfo.input} crashed (exit code ${code})`,
+            "",
+            "",
             [`Please try to run command locally : ${cmd.join(' ')}`]
         )
     );
@@ -54,26 +49,24 @@ export function handleCompileProcessWorkerExit(
 
 export function handleDeclgenWorkerExit(
     workerInfo: WorkerInfo,
+    task: Task<ProcessDeclgenV1Task>,
     code: number | null,
-    signal: NodeJS.Signals | null,
+    signal: NodeJS.Signals | null
 ): void {
-
-    if (code !== 0) {
-        throw new DriverError(
-            LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
-                `Declgen crashed (exit code ${code})`,
-                'This error is likely caused internally from compiler.',
-            )
-        );
+    if (code && code !== 0) {
+        const error = LogDataFactory.newInstance(
+            ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
+            `Declgen crashed (exit code ${code})`,
+            "This error is likely caused internally from compiler.",
+        )
+        Logger.getInstance().printError(error)
     }
-    if (signal !== 'SIGTERM') {
-        throw new DriverError(
-            LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
-                `Declgen crashed (exit signal ${signal})`,
-                "This error is likely caused internally from compiler.",
-            )
-        );
+    if (signal && signal !== "SIGTERM") {
+        const error = LogDataFactory.newInstance(
+            ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
+            `Declgen crashed (exit signal ${signal})`,
+            "This error is likely caused internally from compiler.",
+        )
+        Logger.getInstance().printError(error)
     }
 }

@@ -54,7 +54,7 @@ export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGet
             let buildMode: BuildMode = new BuildMode(buildConfig);
             if (projectConfig.enableDeclgenEts2Ts === true) {
                 logger.printInfo("generate Declaration")
-                await buildMode.generateDeclaration();
+                await buildMode.generateDeclarationV1Parallel();
             } else if (projectConfig.buildType === BUILD_TYPE.BUILD) {
                 logger.printInfo("just build")
                 await buildMode.run();

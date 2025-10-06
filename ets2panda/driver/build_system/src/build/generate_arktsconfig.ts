@@ -323,8 +323,8 @@ export class ArkTSConfigGenerator {
 
         this.processAlias(arktsConfig);
 
-        if (moduleInfo.frameworkMode) {
-            arktsConfig.useEmptyPackage = moduleInfo.useEmptyPackage ?? false;
+        if (this.buildConfig.frameworkMode) {
+            arktsConfig.useEmptyPackage = this.buildConfig.useEmptyPackage ?? false;
         }
 
         ensurePathExists(moduleInfo.arktsConfigFile);

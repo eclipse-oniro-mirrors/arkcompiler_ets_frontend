@@ -30,7 +30,7 @@ export interface ILogger {
 
 export type LoggerGetter = (code: SubsystemCode) => ILogger;
 
-export class Logger {
+export class Logger implements ILogger {
     private static instance?: Logger;
     private loggerMap: { [key in SubsystemCode]?: ILogger };
     private hasErrorOccurred: boolean = false;
@@ -44,7 +44,7 @@ export class Logger {
     public static getInstance(loggerGetter?: LoggerGetter): Logger {
         if (!Logger.instance) {
             if (!loggerGetter) {
-                throw new Error('loggerGetter is required for the first instantiation.');
+                throw new Error('loggerGetter is required for the first Logger instantiation.');
             }
             Logger.instance = new Logger(loggerGetter);
         }
@@ -57,28 +57,30 @@ export class Logger {
 
     public printInfo(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
         const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
-        logger.printInfo(message);
+        logger.printInfo(`[PID:${process.pid}] [time:${Date.now()}] ${message}`);
     }
 
     public printWarn(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
         const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
-        logger.printWarn(message);
+        logger.printWarn(`[PID:${process.pid}] [time:${Date.now()}] ${message}`);
     }
 
     public printDebug(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
         const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
-        logger.printDebug(message);
+        logger.printDebug(`[PID:${process.pid}] [time:${Date.now()}] ${message}`);
     }
 
     public printError(error: LogData): void {
         this.hasErrorOccurred = true;
         const logger: ILogger = this.getLoggerFromErrorCode(error.code);
+        error.description = `[PID:${process.pid}] [time:${Date.now()}] ${error.description}`
         logger.printError(error);
     }
 
     public printErrorAndExit(error: LogData): void {
         this.hasErrorOccurred = true;
         const logger: ILogger = this.getLoggerFromErrorCode(error.code);
+        error.description = `[PID:${process.pid}] [time:${Date.now()}] ${error.description}`
         logger.printErrorAndExit(error);
     }
 
@@ -175,7 +177,7 @@ export class LogData {
     }
 }
 
-class ConsoleLogger {
+class ConsoleLogger implements ILogger {
     private static instances: { [key: string]: ConsoleLogger } = {};
 
     private constructor() { }
@@ -197,7 +199,7 @@ class ConsoleLogger {
     }
 
     public printErrorAndExit(error: LogData): void {
-        console.error(error.toString());
+        this.printError(error);
         process.exit(1);
     }
 

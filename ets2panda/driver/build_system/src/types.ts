@@ -35,6 +35,13 @@ export enum OHOS_MODULE_TYPE {
     HAR = 'har',
 }
 
+export enum WorkerMessageType {
+    DECL_GENERATED = 'DECL_GENERATED',
+    ABC_COMPILED = 'ABC_COMPILED',
+    ERROR_OCCURED = 'ERROR_OCCURED',
+    ASSIGN_TASK = 'ASSIGN_TASK'
+}
+
 // ProjectConfig begins
 export interface PluginsConfig {
     [pluginName: string]: string;
@@ -51,7 +58,7 @@ export interface BuildBaseConfig {
     hasMainModule: boolean;
     isBuildConfigModified?: boolean;
     recordType?: RECORD_TYPE;
-    es2pandaDepGraphDotDump?: boolean;
+    dumpDependencyGraph?: boolean;
 }
 
 export interface ArkTSGlobal {
@@ -209,12 +216,6 @@ export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfi
 }
 // ProjectConfig ends
 
-export interface CompileFileInfo {
-    inputFilePath: string;
-    outputFilePath: string;
-    arktsConfigFile: string;
-};
-
 export interface ModuleInfo {
     isMainModule: boolean;
     packageName: string;
@@ -318,14 +319,6 @@ export interface ArkTSConfigObject {
     }
 };
 
-export interface CompileTask {
-    job: CompileJobInfo;
-}
-
-export interface ProcessCompileTask extends CompileTask {
-    buildConfig: BuildConfig;
-}
-
 export interface JobInfo {
     id: string;
     fileList: string[];
@@ -333,14 +326,45 @@ export interface JobInfo {
     jobDependants: string[];
 }
 
+export interface FileInfo {
+    input: string;
+    output: string;
+    arktsConfig: string;
+    moduleName: string;
+    moduleRoot: string;
+};
+
 export enum CompileJobType {
-    NONE        = 0x00,
-    DECL        = 0x01,
-    ABC         = 0x10,
-    DECL_ABC    = 0x11
+    NONE        = 0b00,
+    DECL        = 0b01,
+    ABC         = 0b10,
+    DECL_ABC    = 0b11
 }
 
 export interface CompileJobInfo extends JobInfo {
-    compileFileInfo: CompileFileInfo,
+    fileInfo: FileInfo,
+    declgenConfig: DeclgenV2JobConfig;
     type: CompileJobType
+}
+
+export interface ProcessCompileTask extends CompileJobInfo {
+    buildConfig: BuildConfig;
+}
+
+export interface DeclgenV1JobConfig {
+    otuput: string;
+    bridgeCode: string;
+}
+
+export interface DeclgenV2JobConfig {
+    output: string;
+}
+
+export interface DeclgenV1JobInfo extends  JobInfo {
+    fileInfo: FileInfo,
+    declgenConfig: DeclgenV1JobConfig
+}
+
+export interface ProcessDeclgenV1Task extends DeclgenV1JobInfo {
+    buildConfig: BuildConfig;
 }
