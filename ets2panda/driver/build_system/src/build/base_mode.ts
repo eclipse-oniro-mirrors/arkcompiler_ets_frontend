@@ -190,17 +190,21 @@ export abstract class BaseMode {
         return this.buildConfig.buildMode === BUILD_MODE.DEBUG;
     }
 
-    private compile(job: CompileJobInfo) {
+    private compile(job: CompileJobInfo): boolean {
         const ets2panda = Ets2panda.getInstance();
+        let errOccurred = false;
         ets2panda.initalize();
         try {
             ets2panda.compile(job, this.isDebug)
         } catch (error) {
             const err = error as DriverError
-            this.logger.printError(err.logData)
+            this.logger.printError(err.logData);
+            errOccurred = true;
         } finally {
             ets2panda.finalize()
         }
+
+        return !errOccurred;
     }
 
     public async run(): Promise<void> {
@@ -220,33 +224,50 @@ export abstract class BaseMode {
         // Just to init
         Ets2panda.getInstance(this.buildConfig)
 
+        let success: boolean = true;
         while (this.haveQueuedJobs()) {
             let job: CompileJobInfo = this.consumeJob()!
             if (job.fileList.length > 1) {
                 // Compile cycle simultaneous
                 this.logger.printDebug("Compiling cycle....")
                 this.logger.printDebug(`file list: \n${job.fileList.join('\n')}`)
-                this.compileSimultaneous(job)
+                const res = this.compileSimultaneous(job)
+                success = res && success;
             } else {
-                this.compile(job)
+                const res = this.compile(job)
+                success = res && success;
             }
             this.dispatchNextJob(job)
         }
+        if (!success) {
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                    'One or more errors occured.'
+                )
+            );
+        }
+
         this.mergeAbcFiles();
         Ets2panda.destroyInstance();
+
     }
 
-    private compileSimultaneous(job: CompileJobInfo): void {
+    private compileSimultaneous(job: CompileJobInfo): boolean {
         const ets2panda = Ets2panda.getInstance(this.buildConfig);
         ets2panda.initalize();
+        let errOccurred = false;
         try {
             ets2panda.compileSimultaneous(job, this.isDebug)
         } catch (error) {
             const err = error as DriverError
-            this.logger.printError(err.logData)
+            this.logger.printError(err.logData);
+            errOccurred = true;
         } finally {
             ets2panda.finalize()
         }
+
+        return !errOccurred;
     }
 
     private mergeAbcFiles(): void {
@@ -580,7 +601,16 @@ export abstract class BaseMode {
             taskManager.submitTask(job.id, { ...job, buildConfig: this.buildConfig });
         }
         taskManager.initTaskQueue();
-        await taskManager.finish();
+        const res = await taskManager.finish();
+
+        if (!res) {
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                    'One or more errors occured.'
+                )
+            );
+        }
 
         this.completedJobQueue = Object.values(this.jobs)
         this.mergeAbcFiles()
@@ -656,6 +686,7 @@ export abstract class BaseMode {
         try {
             ets2panda.declgenV1(declgenJob, this.skipDeclCheck, this.genDeclAnnotations)
         } catch (error) {
+            // Report the error, do not crash the declgen process
             const err = error as DriverError
             this.logger.printError(err.logData)
         } finally {
@@ -723,6 +754,7 @@ export abstract class BaseMode {
             });
         }
         taskManager.initTaskQueue();
+        // Ignore the result
         await taskManager.finish();
     }
 }
