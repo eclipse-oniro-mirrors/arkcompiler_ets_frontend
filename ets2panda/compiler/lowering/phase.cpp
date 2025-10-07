@@ -33,6 +33,7 @@
 #include "compiler/lowering/ets/declGenPhase.h"
 #include "compiler/lowering/ets/defaultParametersInConstructorLowering.h"
 #include "compiler/lowering/ets/defaultParametersLowering.h"
+#include "compiler/lowering/ets/destructuringPhase.h"
 #include "compiler/lowering/ets/enumLowering.h"
 #include "compiler/lowering/ets/enumPostCheckLowering.h"
 #include "compiler/lowering/ets/enumPropertiesInAnnotationsLowering.h"
@@ -143,6 +144,7 @@ std::vector<Phase *> GetETSPhaseList()
         new EnumPostCheckLoweringPhase,
         new SpreadConstructionPhase,
         new RestArgsLowering,
+        new DestructuringPhase,
         new ArrayLiteralLowering,
         new BigIntLowering,
         new OpAssignmentLowering,

@@ -13,9 +13,13 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+function main() {
+  let a: number;
+  let b: string;
 
+  let x = [1, "str"]; // type: (number|string)[]
+  [a,b] = x; // CTE
+}
 
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+/* @@? 21:4 Error Semantic error ESE0318: Type 'Int|String' cannot be assigned to type 'Double' */
+/* @@? 21:6 Error Semantic error ESE0318: Type 'Int|String' cannot be assigned to type 'String' */

@@ -330,6 +330,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/boxingForLocals.cpp
   compiler/lowering/ets/capturedVariables.cpp
   compiler/lowering/ets/cfgBuilderPhase.cpp
+  compiler/lowering/ets/destructuringPhase.cpp
   compiler/lowering/ets/constantExpressionLowering.cpp
   compiler/lowering/ets/classFromExpressionLowering.cpp
   compiler/lowering/ets/convertPrimitiveCastMethodCall.cpp
@@ -484,6 +485,7 @@ set(ES2PANDA_LIB_SRC
   ir/as/namedType.cpp
   ir/as/prefixAssertionExpression.cpp
   ir/ets/etsClassLiteral.cpp
+  ir/ets/etsDestructuring.cpp
   ir/ets/etsIntrinsicNode.cpp
   ir/ets/etsFunctionType.cpp
   ir/ets/etsGenericInstantiatedNode.cpp

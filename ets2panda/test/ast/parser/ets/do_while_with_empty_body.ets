@@ -22,6 +22,7 @@ do export  Boolean [1] = delete
 /* @@? 16:4 Error Syntax error ESY0228: Unexpected token, expected 'while'. */
 /* @@? 16:12 Error Syntax error ESY0228: Unexpected token, expected '('. */
 /* @@? 16:20 Error Syntax error ESY0204: Invalid left-hand side in array destructuring pattern. */
-/* @@? 16:20 Error Semantic error ESE0025: Invalid left-hand side of assignment expression */
+/* @@? 16:26 Error Syntax error ESY0049: Invalid destructuring assignment target. */
+/* @@? 16:26 Error Semantic error ESE55815: Types cannot be modified at runtime with 'delete'. */
 /* @@? 17:4 Error Syntax error ESY0230: Expected ')', got 'while'. */
-/* @@? 27:78 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 29:1 Error Syntax error ESY0227: Unexpected token 'end of stream'. */

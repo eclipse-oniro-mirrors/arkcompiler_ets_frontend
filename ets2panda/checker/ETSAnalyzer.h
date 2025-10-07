@@ -52,6 +52,8 @@ private:
     void CheckMethodModifiers(ir::MethodDefinition *node) const;
     checker::Type *GetFunctionReturnType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc) const;
     checker::Type *UnwrapPromiseType(checker::Type *type) const;
+    checker::Type *GetSmartTypeForAssignment(ir::AssignmentExpression *const expr, checker::Type *const leftType,
+                                             checker::Type *const rightType, ir::Expression *const relationNode) const;
     checker::Type *GetSmartType(ir::AssignmentExpression *expr, checker::Type *leftType,
                                 checker::Type *rightType) const;
     bool SetAssignmentExpressionTarget(ir::AssignmentExpression *const expr, ETSChecker *checker) const;

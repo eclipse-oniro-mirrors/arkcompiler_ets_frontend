@@ -13,9 +13,21 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+function test_array_rest() {
+  let a: number, b: number, rest: number[];
+  [a,b, ...rest] = [1,2,3,4,5,6];
+}
 
+function test_tuple_rest() {
+  let x: number, y: string, rest: number[];
+  let tuple: [number, string, number, number] = [1, "a", 2, 3];
+  [x, y, ...rest] = tuple;
+}
 
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+function main() {
+  test_array_rest();
+  test_tuple_rest();
+}
+
+/* @@? 18:9 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+/* @@? 24:10 Error Syntax error ESY165518: Rest is not supported in destructuring. */

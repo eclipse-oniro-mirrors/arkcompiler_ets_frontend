@@ -185,6 +185,10 @@ syntax:
   id: 132
   message: "Not enable default value with default undefined."
 
+- name: DEFAULT_UNSUPPORTED_IN_DESTRUCTURING
+  id: 125256
+  message: "Default is not supported in destructuring."
+
 - name: DELETING_LOCAL_VAR
   id: 50
   message: "Deleting local variable in strict mode."
@@ -625,6 +629,10 @@ syntax:
   message: "The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and
     'native' modifiers."
 
+- name: INVALID_DESTRUCTURING_INIT_SIZE
+  id: 82935
+  message: "Initializer of length '{}' provides no value for every element in destructuring of length '{}'."
+
 - name: INVALID_DESTRUCTURING_TARGET
   id: 49
   message: "Invalid destructuring assignment target."
@@ -935,6 +943,10 @@ syntax:
   id: 247
   message: "Octal escape sequences are not allowed in template strings."
 
+- name: OMITTED_ELEMENTS_NOT_SUPPORTED_IN_ARRAYS
+  id: 167720
+  message: "Omitted elements are not supported in arrays."
+
 - name: ONLY_AMBIENT_MODULES_QUOTED_NAMES
   id: 181
   message: "Only ambient modules can use quoted names."
@@ -1074,6 +1086,10 @@ syntax:
 - name: REST_PARAM_NOT_LAST
   id: 67
   message: "Rest parameter must be the last formal parameter."
+
+- name: REST_UNSUPPORTED_IN_DESTRUCTURING
+  id: 165518
+  message: "Rest is not supported in destructuring."
 
 - name: RETURN_IN_FUN_BODY
   id: 163

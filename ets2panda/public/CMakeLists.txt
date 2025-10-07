@@ -239,6 +239,7 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/ir/base/decorator.h
     ${ES2PANDA_ROOT}/checker/types/globalTypesHolder.h
     ${ES2PANDA_ROOT}/ir/ets/etsClassLiteral.h
+    ${ES2PANDA_ROOT}/ir/ets/etsDestructuring.h
     ${ES2PANDA_ROOT}/ir/ts/tsTypeAliasDeclaration.h
     ${ES2PANDA_ROOT}/ir/ts/tsNonNullExpression.h
     ${ES2PANDA_ROOT}/ir/ts/tsTypeLiteral.h
@@ -509,6 +510,7 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/checker/types/ts/types.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ets/floatType.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ets/etsClassLiteral.yaml
+    ${LIBGEN_DIR}/gen/headers/ir/ets/etsDestructuring.yaml
     ${LIBGEN_DIR}/gen/headers/ir/irnode.yaml
     ${LIBGEN_DIR}/gen/headers/ir/statements/breakStatement.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ets/byteType.yaml

@@ -13,9 +13,23 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+#ifndef ES2PANDA_COMPILER_LOWERING_DESTRUCTURING_PHASE_H
+#define ES2PANDA_COMPILER_LOWERING_DESTRUCTURING_PHASE_H
 
+#include "compiler/lowering/phase.h"
 
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+namespace ark::es2panda::compiler {
+
+class DestructuringPhase : public PhaseForBodies {
+public:
+    std::string_view Name() const override
+    {
+        return "Destructuring";
+    }
+
+    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+};
+
+}  // namespace ark::es2panda::compiler
+
+#endif

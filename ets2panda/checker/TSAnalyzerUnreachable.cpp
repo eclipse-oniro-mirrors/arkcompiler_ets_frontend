@@ -129,6 +129,11 @@ checker::Type *TSAnalyzer::Check([[maybe_unused]] ir::ETSParameterExpression *ex
     ES2PANDA_UNREACHABLE();
 }
 
+checker::Type *TSAnalyzer::Check([[maybe_unused]] ir::ETSDestructuring *expr) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
 checker::Type *TSAnalyzer::Check([[maybe_unused]] ir::ETSPrimitiveType *node) const
 {
     ES2PANDA_UNREACHABLE();

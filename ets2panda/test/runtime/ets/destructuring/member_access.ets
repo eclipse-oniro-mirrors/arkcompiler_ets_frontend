@@ -13,9 +13,19 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+class A {
+  array: Array<number> = [1, 2, 3];
+  tuple: [number, string] = [42, "abc"];
+}
 
+function main() {
+  let a: number, b: number, c: number, d: number, str: string;
+  [a, b, c] = new A().array;
+  arktest.assertEQ(a, 1);
+  arktest.assertEQ(b, 2);
+  arktest.assertEQ(c, 3);
 
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+  [d, str] = new A().tuple;
+  arktest.assertEQ(d, 42);
+  arktest.assertEQ(str, "abc");
+}

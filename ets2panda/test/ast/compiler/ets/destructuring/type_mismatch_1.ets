@@ -13,9 +13,15 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+function main() {
+  let tuple1: [number, string] = [1, "a"];
 
+  let x: number;
+  let y: string;
 
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+  [y,] = tuple1; // CTE
+  [,x] = tuple1; // CTE
+}
+
+/* @@? 22:4 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'String' */
+/* @@? 23:5 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Double' */

@@ -96,6 +96,7 @@
     _(ETS_CLASS_LITERAL, ETSClassLiteral)                                                 \
     _(ETS_TYPE_REFERENCE, ETSTypeReference)                                               \
     _(ETS_TYPE_REFERENCE_PART, ETSTypeReferencePart)                                      \
+    _(ETS_DESTRUCTURING, ETSDestructuring)                                                \
     _(ETS_UNION_TYPE, ETSUnionType)                                                       \
     _(ETS_KEYOF_TYPE, ETSKeyofType)                                                       \
     _(ETS_NEW_ARRAY_INSTANCE_EXPRESSION, ETSNewArrayInstanceExpression)                   \

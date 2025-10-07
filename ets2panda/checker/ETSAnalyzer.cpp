@@ -26,6 +26,7 @@
 #include "compiler/lowering/ets/setJumpTarget.h"
 #include "compiler/lowering/util.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
+#include "ir/ets/etsDestructuring.h"
 
 namespace ark::es2panda::checker {
 
@@ -1431,6 +1432,25 @@ static bool IsInvalidArrayMemberAssignment(const ir::AssignmentExpression *const
     return false;
 }
 
+checker::Type *ETSAnalyzer::GetSmartTypeForAssignment(ir::AssignmentExpression *const expr,
+                                                      checker::Type *const leftType, checker::Type *const rightType,
+                                                      ir::Expression *const relationNode) const
+{
+    auto *smartType = rightType;
+    auto isLazyImportObject =
+        leftType->IsETSObjectType() && leftType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::LAZY_IMPORT_OBJECT);
+    if (!leftType->IsTypeError() && !isLazyImportObject) {
+        ETSChecker *checker = GetETSChecker();
+        if (const auto ctx = checker::AssignmentContext(checker->Relation(), relationNode, rightType, leftType,
+                                                        expr->Right()->Start(),
+                                                        {{diagnostic::INVALID_ASSIGNMNENT, {rightType, leftType}}});
+            ctx.IsAssignable()) {
+            smartType = GetSmartType(expr, leftType, rightType);
+        }
+    }
+    return smartType;
+}
+
 checker::Type *ETSAnalyzer::GetSmartType(ir::AssignmentExpression *expr, checker::Type *leftType,
                                          checker::Type *rightType) const
 {
@@ -1542,9 +1562,19 @@ bool ETSAnalyzer::SetAssignmentExpressionTarget(ir::AssignmentExpression *const 
             checker->LogError(diagnostic::READONLY_PROPERTY_REASSIGN, {}, expr->Left()->Start());
         }
         expr->target_ = expr->Left()->AsMemberExpression()->PropVar();
+    } else if (expr->Left()->IsETSDestructuring()) {
+        for (auto dstrElement : expr->Left()->AsETSDestructuring()->Elements()) {
+            if (!(dstrElement->IsIdentifier() || dstrElement->IsMemberExpression() ||
+                  dstrElement->IsOmittedExpression())) {
+                return false;
+            }
+        }
+
+        return true;
     } else {
         return false;
     }
+
     return true;
 }
 
@@ -1648,6 +1678,108 @@ static void IsAmbiguousUnionInit(checker::ETSUnionType *unionType, ir::Expressio
     }
 }
 
+checker::Type *ETSAnalyzer::Check(ir::ETSDestructuring *const expr) const
+{
+    ETSChecker *checker = GetETSChecker();
+
+    ArenaVector<checker::Type *> tupleTypeList(checker->Allocator()->Adapter());
+
+    for (auto *elem : expr->Elements()) {
+        if (elem->IsOmittedExpression()) {
+            continue;
+        } else if (elem->IsRestElement()) {
+            checker->LogError(diagnostic::REST_UNSUPPORTED_IN_DESTRUCTURING, {}, elem->Start());
+            continue;
+        } else if (elem->IsAssignmentPattern()) {
+            checker->LogError(diagnostic::DEFAULT_UNSUPPORTED_IN_DESTRUCTURING, {}, elem->Start());
+            continue;
+        }
+        elem->Check(checker);
+        tupleTypeList.emplace_back(elem->TsType());
+    }
+
+    return expr->SetTsType(checker->Allocator()->New<checker::ETSTupleType>(checker, tupleTypeList));
+}
+
+static checker::Type *ValidateETSArrayOrTupleTypeInDestructuring(ETSChecker *checker, ir::ETSDestructuring *dstrNode,
+                                                                 ir::Expression *initializer)
+{
+    auto initType = initializer->Check(checker);
+    if (initType->IsAnyETSArrayOrTupleType()) {
+        bool isTuple = initType->IsETSTupleType();
+        auto *initArrayElementType = !isTuple ? GetArrayElementType(checker, initType) : nullptr;
+
+        for (uint32_t idx = 0; idx < dstrNode->Size(); idx++) {
+            auto *initElementType =
+                isTuple ? initType->AsETSTupleType()->GetTupleTypesList().at(idx) : initArrayElementType;
+            auto *dstrElement = dstrNode->GetExpressionAtPos(idx);
+
+            if (dstrElement->IsOmittedExpression() || dstrElement->IsRestElement() ||
+                dstrElement->IsAssignmentPattern()) {
+                continue;
+            }
+
+            if (!checker->Relation()->IsAssignableTo(initElementType, dstrElement->TsType())) {
+                checker->LogError(diagnostic::INVALID_ASSIGNMNENT, {initElementType, dstrElement->TsType()},
+                                  dstrElement->Start());
+            }
+        }
+
+        if (isTuple && initType->AsETSTupleType()->GetTupleSize() < dstrNode->Size()) {
+            checker->LogError(diagnostic::INVALID_DESTRUCTURING_INIT_SIZE,
+                              {initType->AsETSTupleType()->GetTupleSize(), dstrNode->Size()}, initializer->Start());
+        }
+    } else {
+        checker->LogError(diagnostic::INVALID_DESTRUCTURING_TARGET, {}, initializer->Start());
+    }
+
+    return initType;
+}
+
+checker::Type *ValidateDestructuringExpression(ETSChecker *checker, ir::ETSDestructuring *dstrNode,
+                                               ir::Expression *initializer)
+{
+    dstrNode->Check(checker);
+
+    if (initializer->IsArrayExpression()) {
+        ArenaVector<checker::Type *> tupleTypeList(checker->Allocator()->Adapter());
+        auto arrayElements = initializer->AsArrayExpression()->Elements();
+        for (uint32_t idx = 0; idx < dstrNode->Size() && idx < arrayElements.size(); idx++) {
+            auto *arrayElement = arrayElements.at(idx);
+            auto *dstrElement = dstrNode->GetExpressionAtPos(idx);
+
+            if (dstrElement->IsOmittedExpression() || dstrElement->IsRestElement() ||
+                dstrElement->IsAssignmentPattern()) {
+                tupleTypeList.emplace_back(arrayElements.at(idx)->Check(checker));
+                continue;
+            }
+
+            auto dstrType = dstrElement->TsType();
+            checker->SetPreferredTypeForExpression(arrayElement, nullptr, arrayElement, dstrType);
+            auto initElementType = arrayElement->Check(checker);
+            if (checker->Relation()->IsAssignableTo(initElementType, dstrType)) {
+                tupleTypeList.emplace_back(initElementType);
+            } else {
+                checker->LogError(diagnostic::INVALID_ASSIGNMNENT, {initElementType, dstrType}, arrayElement->Start());
+                tupleTypeList.emplace_back(checker->GlobalTypeError());
+            }
+        }
+
+        if (arrayElements.size() < dstrNode->Size()) {
+            checker->LogError(diagnostic::INVALID_DESTRUCTURING_INIT_SIZE, {tupleTypeList.size(), dstrNode->Size()},
+                              initializer->Start());
+        } else {
+            for (uint32_t idx = dstrNode->Size(); idx < arrayElements.size(); idx++) {
+                tupleTypeList.emplace_back(arrayElements.at(idx)->Check(checker));
+            }
+        }
+
+        return initializer->SetTsType(checker->Allocator()->New<checker::ETSTupleType>(checker, tupleTypeList));
+    }
+
+    return ValidateETSArrayOrTupleTypeInDestructuring(checker, dstrNode, initializer);
+}
+
 checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
 {
     if (expr->TsType() != nullptr) {
@@ -1658,6 +1790,11 @@ checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
 
     if (checker->HasStatus(CheckerStatus::IN_SETTER) && expr->Left()->IsMemberExpression()) {
         checker->WarnForEndlessLoopInGetterSetter(expr->Left()->AsMemberExpression());
+    }
+
+    if (expr->Left()->IsETSDestructuring()) {
+        return expr->SetTsType(
+            ValidateDestructuringExpression(checker, expr->Left()->AsETSDestructuring(), expr->Right()));
     }
 
     checker::Type *leftType = expr->Left()->Check(checker);
@@ -1691,23 +1828,11 @@ checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
 
     CastPossibleTupleOnRHS(checker, expr);
 
-    checker::Type *smartType = rightType;
-    auto isLazyImportObject =
-        leftType->IsETSObjectType() && leftType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::LAZY_IMPORT_OBJECT);
-    if (!leftType->IsTypeError() && !isLazyImportObject) {
-        if (const auto ctx = checker::AssignmentContext(checker->Relation(), relationNode, rightType, leftType,
-                                                        expr->Right()->Start(),
-                                                        {{diagnostic::INVALID_ASSIGNMNENT, {rightType, leftType}}});
-            ctx.IsAssignable()) {
-            smartType = GetSmartType(expr, leftType, rightType);
-        }
-    }
-
     if (leftType->IsETSUnionType()) {
         IsAmbiguousUnionInit(leftType->AsETSUnionType(), expr->Right(), checker);
     }
 
-    return expr->SetTsType(smartType);
+    return expr->SetTsType(GetSmartTypeForAssignment(expr, leftType, rightType, relationNode));
 }
 
 static checker::Type *HandleSubstitution(ETSChecker *checker, ir::AssignmentExpression *expr, Type *const leftType)
@@ -2300,8 +2425,9 @@ checker::Type *ETSAnalyzer::Check(ir::Identifier *expr) const
         return expr->TsType();
     }
     ES2PANDA_ASSERT(expr->Variable() != nullptr);
-    if (expr->Parent() == nullptr || !expr->Parent()->IsAssignmentExpression() ||
-        expr != expr->Parent()->AsAssignmentExpression()->Left()) {
+    if (expr->Parent() != nullptr &&
+        !(expr->Parent()->IsAssignmentExpression() && expr == expr->Parent()->AsAssignmentExpression()->Left()) &&
+        !expr->Parent()->IsETSDestructuring()) {
         auto *const smartType = checker->Context().GetSmartCast(expr->Variable());
         if (smartType != nullptr) {
             identType = smartType;

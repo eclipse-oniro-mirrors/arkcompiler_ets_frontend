@@ -13,9 +13,16 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+class A {
+  num: number = 42;
+  str: string = "abc";
+}
 
+function main() {
+  let a: number, b: number, c: number, d: number, str: string;
+  [a, b, c] = new A().num;
+  [d, str] = new A().str;
+}
 
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+/* @@? 23:15 Error Syntax error ESY0049: Invalid destructuring assignment target. */
+/* @@? 24:14 Error Syntax error ESY0049: Invalid destructuring assignment target. */

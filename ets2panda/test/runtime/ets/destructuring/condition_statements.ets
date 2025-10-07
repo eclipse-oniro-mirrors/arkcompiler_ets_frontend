@@ -13,9 +13,26 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+function test_if() {
+    let a: number, b: number, c: number;
+    if ([a,b,c] = [1,2,3]) {
+        arktest.assertEQ(a, 1);
+        arktest.assertEQ(b, 2);
+        arktest.assertEQ(c, 3);
+    } else {
+        arktest.assertTrue(false);
+    }
+}
 
+function test_while() {
+    let a: number;
+    while ([a,,] = [1,2,3]) {
+        break;
+    }
+    arktest.assertEQ(a, 1);
+}
 
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+function main() {
+    test_if();
+    test_while();
+}

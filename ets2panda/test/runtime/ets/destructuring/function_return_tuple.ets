@@ -13,9 +13,22 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+function foo() : Array<number> {
+    return [1,2,3];
+}
 
+function bar() : [number, string] {
+    return [42, "abc"];
+}
 
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+function main() {
+  let a: number, b: number, c: number, d: number, str: string;
+  [a, b, c] = foo();
+  arktest.assertEQ(a, 1);
+  arktest.assertEQ(b, 2);
+  arktest.assertEQ(c, 3);
+
+  [d, str] = bar();
+  arktest.assertEQ(d, 42);
+  arktest.assertEQ(str, "abc");
+}
