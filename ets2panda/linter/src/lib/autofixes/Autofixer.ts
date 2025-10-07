@@ -5431,7 +5431,10 @@ export class Autofixer {
     );
   }
 
-  fixSpecialDeprecatedApiForCallExpression(callExpr: ts.CallExpression | ts.EtsComponentExpression, name: ts.Identifier): Autofix[] | undefined {
+  fixSpecialDeprecatedApiForCallExpression(
+    callExpr: ts.CallExpression | ts.EtsComponentExpression,
+    name: ts.Identifier
+  ): Autofix[] | undefined {
     if (name.getText() !== 'clip' || !ts.isNewExpression(callExpr.arguments[0])) {
       return undefined;
     }

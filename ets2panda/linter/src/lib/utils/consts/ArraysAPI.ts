@@ -47,3 +47,9 @@ export const ARRAY_API_LIST = [
   'unshift',
   'values'
 ];
+
+export enum ArrayAsCastResult {
+  IGNORE,
+  REPORT,
+  MATCH
+}
