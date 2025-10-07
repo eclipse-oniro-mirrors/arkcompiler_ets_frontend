@@ -186,7 +186,7 @@ static bool CheckObjectTypeAndSuperType(ETSChecker *checker, ETSObjectType *type
     auto cName = classDef->Ident()->Name();
     if (cName == compiler::Signatures::PARTIAL_TYPE_NAME || cName == compiler::Signatures::READONLY_TYPE_NAME ||
         cName == compiler::Signatures::REQUIRED_TYPE_NAME || cName == compiler::Signatures::FIXED_ARRAY_TYPE_NAME ||
-        cName == compiler::Signatures::AWAITED_TYPE_NAME) {
+        cName == compiler::Signatures::AWAITED_TYPE_NAME || cName == compiler::Signatures::RETURN_TYPE_TYPE_NAME) {
         checker->LogError(diagnostic::USING_RESERVED_NAME_AS_VARIABLE_OR_TYPE_NAME, {cName},
                           type->GetDeclNode()->Start());
         type->SetSuperType(checker->GlobalETSObjectType());
@@ -221,7 +221,9 @@ bool ETSChecker::ComputeSuperType(ETSObjectType *type)
         auto superName = classDef->Super()->AsETSTypeReference()->Part()->GetIdent()->Name();
         if (superName == compiler::Signatures::PARTIAL_TYPE_NAME ||
             superName == compiler::Signatures::READONLY_TYPE_NAME ||
-            superName == compiler::Signatures::REQUIRED_TYPE_NAME) {
+            superName == compiler::Signatures::REQUIRED_TYPE_NAME ||
+            superName == compiler::Signatures::RETURN_TYPE_TYPE_NAME ||
+            superName == compiler::Signatures::AWAITED_TYPE_NAME) {
             LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()}, classDef->Super()->Start());
             return false;
         }
@@ -2951,6 +2953,11 @@ static Type *GetApparentTypeUtilityTypes(checker::ETSChecker *checker, Type *typ
     if (type->IsETSAwaitedType()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         return checker->GetApparentType(type->AsETSAwaitedType()->GetUnderlying()->GetConstraintType());
+    }
+    if (type->IsETSReturnTypeUtilityType()) {
+        // When a ReturnType<T> was created for a type parameter, we don't know the return type of it when emitting the
+        // functions. Using any type makes it possible to accept every possible type here in the bytecode.
+        return checker->GlobalETSAnyType();
     }
     if (type->IsETSPartialTypeParameter()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)

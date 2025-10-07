@@ -129,6 +129,7 @@ libes2panda_sources = [
   "checker/types/ets/etsPartialTypeParameter.cpp",
   "checker/types/ets/etsReadonlyType.cpp",
   "checker/types/ets/etsResizableArrayType.cpp",
+  "checker/types/ets/etsReturnTypeUtilityType.cpp",
   "checker/types/ets/etsStringType.cpp",
   "checker/types/ets/etsTupleType.cpp",
   "checker/types/ets/etsTypeAliasType.cpp",

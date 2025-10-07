@@ -662,6 +662,7 @@ set(ES2PANDA_LIB_SRC
   checker/types/ets/etsTypeAliasType.cpp
   checker/types/ets/etsTypeParameter.cpp
   checker/types/ets/etsPartialTypeParameter.cpp
+  checker/types/ets/etsReturnTypeUtilityType.cpp
   checker/types/ets/etsAwaitedType.cpp
   checker/types/ets/etsUnionType.cpp
   checker/types/ets/etsVoidType.cpp

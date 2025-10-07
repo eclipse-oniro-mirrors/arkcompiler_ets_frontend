@@ -84,7 +84,7 @@ private:
         return name.Is(Signatures::PARTIAL_TYPE_NAME) || name.Is(Signatures::REQUIRED_TYPE_NAME) ||
                name.Is(Signatures::READONLY_TYPE_NAME) || name.Is(Signatures::FIXED_ARRAY_TYPE_NAME) ||
                name.Is(compiler::Signatures::ANY_TYPE_NAME) || name.Is(Signatures::ANY) ||
-               name.Is(compiler::Signatures::AWAITED_TYPE_NAME);
+               name.Is(compiler::Signatures::AWAITED_TYPE_NAME) || name.Is(compiler::Signatures::RETURN_TYPE_TYPE_NAME);
     }
 
     bool IsUnionMemberAccess()

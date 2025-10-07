@@ -382,7 +382,7 @@ bool Type::IsETSRelaxedAnyType() const
         TypeFlag::ETS_TYPE_PARAMETER | TypeFlag::WILDCARD | TypeFlag::ETS_NONNULLISH |
         TypeFlag::ETS_REQUIRED_TYPE_PARAMETER | TypeFlag::ETS_ANY | TypeFlag::ETS_NEVER | TypeFlag::ETS_UNION |
         TypeFlag::ETS_ARRAY | TypeFlag::FUNCTION | TypeFlag::ETS_PARTIAL_TYPE_PARAMETER | TypeFlag::ETS_TUPLE |
-        TypeFlag::ETS_ENUM | TypeFlag::ETS_READONLY | TypeFlag::ETS_AWAITED;
+        TypeFlag::ETS_ENUM | TypeFlag::ETS_READONLY | TypeFlag::ETS_AWAITED | TypeFlag::ETS_RETURN_TYPE_UTILITY;
 
     // Issues
     if (type->IsETSVoidType()) {  // NOTE(vpukhov): #19701 void refactoring
