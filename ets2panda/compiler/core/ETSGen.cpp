@@ -693,8 +693,8 @@ void ETSGen::IsInstance(const ir::AstNode *const node, const VReg srcReg, const 
         LoadAccumulatorBoolean(node, true);
         return;
     }
-    if (target->IsETSArrayType() ||
-        (target->IsETSObjectType() && !(IsNullUnsafeObjectType(target) && GetAccumulatorType()->PossiblyETSNull()))) {
+    if (target->IsETSArrayType() || (target->IsETSObjectType() &&
+                                     !(IsNullUnsafeObjectType(target) && GetAccumulatorType()->PossiblyETSNullish()))) {
         InternalIsInstance(node, target);
         return;
     }
