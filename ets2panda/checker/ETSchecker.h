@@ -634,7 +634,6 @@ public:
     checker::Type *GetElementTypeOfArray(checker::Type *type) const;
     const checker::Type *GetElementTypeOfArray(const checker::Type *type) const;
     bool IsNullLikeOrVoidExpression(const ir::Expression *expr) const;
-    bool IsConstantExpression(ir::Expression *expr, Type *type);
     void ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir::Expression *expr);
     void CheckFunctionSignatureAnnotations(const ArenaVector<ir::Expression *> &params,
                                            ir::TSTypeParameterDeclaration *typeParams,
@@ -709,8 +708,6 @@ public:
     void CheckForSameSwitchCases(ArenaVector<ir::SwitchCaseStatement *> const &cases);
     std::string GetStringFromIdentifierValue(checker::Type *caseType) const;
     bool CompareIdentifiersValuesAreDifferent(ir::Expression *compareValue, const std::string &caseValue);
-    void CheckIdentifierSwitchCase(ir::Expression *currentCase, ir::Expression *compareCase,
-                                   const lexer::SourcePosition &pos);
     varbinder::Variable *FindVariableInFunctionScope(
         util::StringView name, const varbinder::ResolveBindingOptions options = varbinder::ResolveBindingOptions::ALL);
     std::pair<varbinder::Variable *, const ETSObjectType *> FindVariableInClassOrEnclosing(
@@ -1038,7 +1035,6 @@ private:
     bool CheckInit(ir::Identifier *ident, ir::TypeNode *typeAnnotation, ir::Expression *init,
                    checker::Type *annotationType, varbinder::Variable *const bindingVar);
     void CheckItemCasesConstant(ArenaVector<ir::SwitchCaseStatement *> const &cases);
-    void CheckItemCasesDuplicate(ArenaVector<ir::SwitchCaseStatement *> const &cases);
 
     void CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotations);
 

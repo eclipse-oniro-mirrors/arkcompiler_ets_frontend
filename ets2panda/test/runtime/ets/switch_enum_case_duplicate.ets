@@ -19,14 +19,17 @@ enum B {
 
 function main() {
     let m: B = B.E
+    let foo = 0;
     switch (m) {
         case B.C:
-            break;
-        case /* @@ label */B.D:
+            foo++;
             break;
         case B.D:
+            foo++;
+            break;
+        case B.D:
+            foo++;
             break;
     }
+    arktest.assertEQ(foo, 0)
 }
-
-/* @@@ label Error TypeError: Case duplicate  */

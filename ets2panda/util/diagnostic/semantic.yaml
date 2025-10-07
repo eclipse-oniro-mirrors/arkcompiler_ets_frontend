@@ -396,11 +396,6 @@ semantic:
   id: 154289
   message: "Enum '{}' cannot be used as object"
 
-- name: ENUM_INVALID_DISCRIMINANT
-  id: 162
-  message: "Incompatible types. Found: {}, required: char , byte , short , int, long , Char , Byte , Short , Int, Long , String
-    or an enum type"
-
 - name: ERROR_ARKTS_NO_CONDITIONAL_TYPES
   id: 136365
   message: "Conditional type aliases are not supported. Introduce a new type with constraints explicitly, or rewrite logic
@@ -1293,21 +1288,9 @@ semantic:
   id: 377
   message: "Class field '{}' defined by the parent class is not accessible in the child class via super."
 
-- name: SWITCH_CASE_DUPLICATE
-  id: 165
-  message: "Case duplicate"
-
-- name: SWITCH_CASE_INVALID_TYPE
-  id: 164
-  message: "Unexpected type {}"
-
 - name: SWITCH_CASE_TYPE_INCOMPARABLE
   id: 262
   message: "Switch case type '{}' is not comparable to discriminant type '{}'"
-
-- name: SWITCH_CASE_VAR_DUPLICATE_VAL
-  id: 166
-  message: "Variable has same value with another switch case"
 
 - name: SWITCH_ENUM_NOT_UNQUALIFIED_ENUM_CONST
   id: 334
@@ -1530,6 +1513,10 @@ graveyard:
 - 138
 - 154
 - 157
+- 162
+- 164
+- 165
+- 166
 - 167
 - 180
 - 185

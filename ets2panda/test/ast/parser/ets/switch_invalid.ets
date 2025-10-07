@@ -19,10 +19,9 @@ switch:[11](q): [12]{: [13]case: [14]1:: [15]{: [16]q: [17] +=: [18]2;:
 /* @@? 16:7 Error SyntaxError: Unexpected token ':'. */
 /* @@? 16:7 Error SyntaxError: Expected '(', got ':'. */
 /* @@? 16:7 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 16:7 Error TypeError: Incompatible types. Found: *ERROR_TYPE*, required: char , byte , short , int, long , Char , Byte , Short , Int, Long , String or an enum type */
-/* @@? 16:15 Error SyntaxError: Expected '{', got ':'. */
-/* @@? 16:15 Error SyntaxError: Expected ')', got ':'. */
 /* @@? 16:15 Error SyntaxError: Unexpected token ':', expected 'case' or 'default'. */
+/* @@? 16:15 Error SyntaxError: Expected ')', got ':'. */
+/* @@? 16:15 Error SyntaxError: Expected '{', got ':'. */
 /* @@? 16:21 Error SyntaxError: Unexpected token '{'. */
 /* @@? 16:22 Error SyntaxError: Unexpected token ':'. */
 /* @@? 16:22 Error TypeError: Indexed access is not supported for such expression type. */
@@ -64,4 +63,4 @@ switch:[11](q): [12]{: [13]case: [14]1:: [15]{: [16]q: [17] +=: [18]2;:
 /* @@? 17:67 Error SyntaxError: Unexpected token ':'. */
 /* @@? 17:73 Error SyntaxError: Unexpected token 'throw'. */
 /* @@? 17:78 Error SyntaxError: Unexpected token ':'. */
-/* @@? 68:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 67:1 Error SyntaxError: Expected '}', got 'end of stream'. */
