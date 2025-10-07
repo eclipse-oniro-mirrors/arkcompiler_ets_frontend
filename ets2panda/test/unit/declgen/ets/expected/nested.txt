@@ -7,7 +7,7 @@ export declare namespace ns {
   }
 
   export class Cl {
-    public constructor();
+    constructor();
 
   }
 

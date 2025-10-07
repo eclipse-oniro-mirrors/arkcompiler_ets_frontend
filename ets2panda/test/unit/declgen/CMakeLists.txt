@@ -143,6 +143,8 @@ add_custom_target(declgen-ets-test)
 set(ETS_TESTS
     pckg/test
     annotation
+    enum1
+    enum2
     export_directives_1
     export_directives_2
     func_union
@@ -152,6 +154,7 @@ set(ETS_TESTS
     optional
     optional_2
     overload
+    protected_field
     test
 )
 

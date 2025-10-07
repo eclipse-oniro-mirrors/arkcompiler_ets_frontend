@@ -1,9 +1,9 @@
 'use static'
 
 export declare class C {
-  public constructor(b: (boolean | undefined));
+  constructor(b?: boolean);
 
-  public foo(b?: boolean): void;
+  foo(b?: boolean): void;
 
 }
 

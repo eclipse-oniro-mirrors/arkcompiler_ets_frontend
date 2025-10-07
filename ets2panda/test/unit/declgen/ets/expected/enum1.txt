@@ -1,0 +1,9 @@
+'use static'
+
+export declare function foo(x: number): void;
+
+export declare enum SomeEnum {
+  NONE = 0,
+  SOME_VALUE = 7
+}
+

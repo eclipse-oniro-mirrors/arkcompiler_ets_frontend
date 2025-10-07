@@ -1,0 +1,14 @@
+'use static'
+
+export declare class C {
+  public x: int;
+  protected s: string;
+
+  foo(): void;
+
+  protected bar(x?: int): String;
+
+  constructor();
+
+}
+
