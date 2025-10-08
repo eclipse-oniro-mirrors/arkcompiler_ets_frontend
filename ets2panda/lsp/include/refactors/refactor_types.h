@@ -84,6 +84,7 @@ constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_NAME = "Convert to template
 constexpr std::string_view CONVERT_CHAIN_REFACTOR_NAME = "Convert to optional chain expression";
 constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_NAME = "Convert to Class";
 constexpr std::string_view INFER_FUNCTION_RETURN_TYPE = "Infer function return type";
+constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_NAME = "Convert overload list to single signature";
 }  // namespace refactor_name
 
 namespace refactor_description {
@@ -93,6 +94,8 @@ constexpr std::string_view CONVERT_CHAIN_REFACTOR_DESC = "Convert to optional ch
 constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_DESC =
     "Convert a standalone function, arrow function, or function expression into a class declaration";
 constexpr std::string_view INFER_FUNCTION_RETURN_TYPE_DESC = "Infer function return type";
+constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_DESC =
+    "Convert multiple function overloads to a single signature with union types";
 }  // namespace refactor_description
 
 class Refactor {
