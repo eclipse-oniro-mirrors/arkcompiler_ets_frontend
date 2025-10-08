@@ -24,7 +24,7 @@
                 {
                     "start": 640,
                     "end": 834,
-                    "replacementText": "function cardStyle1(instance: CommonMethod): void\n{\n    instance.backgroundColor(mycolor);\n    instance.borderColor(Color.Red);\n    instance.borderRadius(8);\n    instance.padding(8);\n    instance.backgroundImagePosition({\n        x: 0,\n        y: 0\n    });\n}",
+                    "replacementText": "function cardStyle1(instance: CommonMethod): void\n{\n    instance.backgroundColor(mycolor)\n    instance.borderColor(Color.Red)\n    instance.borderRadius(8)\n    instance.padding(8)\n    instance.backgroundImagePosition({\n        x: 0,\n        y: 0\n    })\n}",
                     "line": 18,
                     "column": 1,
                     "endLine": 29,
@@ -63,7 +63,7 @@
                 {
                     "start": 1018,
                     "end": 1085,
-                    "replacementText": "function NormalStyles(instance: CommonMethod): void {\n    instance.backgroundColor(\"#ffffff\");\n}",
+                    "replacementText": "function NormalStyles(instance: CommonMethod): void {\n    instance.backgroundColor(\"#ffffff\")\n}",
                     "line": 42,
                     "column": 1,
                     "endLine": 45,
@@ -84,7 +84,7 @@
                 {
                     "start": 1087,
                     "end": 1155,
-                    "replacementText": "function PressedStyles(instance: CommonMethod): void {\n    instance.backgroundColor(\"#ffffff\");\n}",
+                    "replacementText": "function PressedStyles(instance: CommonMethod): void {\n    instance.backgroundColor(\"#ffffff\")\n}",
                     "line": 47,
                     "column": 1,
                     "endLine": 50,
@@ -105,7 +105,7 @@
                 {
                     "start": 1425,
                     "end": 1517,
-                    "replacementText": "function StyleWithComment(instance: CommonMethod): void {\n    // dummy comment\n    instance.backgroundColor(\"#ffffff\");\n}",
+                    "replacementText": "function StyleWithComment(instance: CommonMethod): void {\n    // dummy comment\n    instance.backgroundColor(\"#ffffff\")\n}",
                     "line": 69,
                     "column": 1,
                     "endLine": 73,
@@ -126,7 +126,7 @@
                 {
                     "start": 1519,
                     "end": 1741,
-                    "replacementText": "function StyleWithComment2(instance: CommonMethod): void {\n    // dummy comment\n    instance.backgroundColor(\"#ffffff\");\n    // another comment\n    instance.borderColor(Color.Red);\n    // one more really important comment\n    instance.borderRadius(8);\n    instance.padding(8);\n}",
+                    "replacementText": "function StyleWithComment2(instance: CommonMethod): void {\n    // dummy comment\n    instance.backgroundColor(\"#ffffff\")\n    // another comment\n    instance.borderColor(Color.Red)\n    // one more really important comment\n    instance.borderRadius(8)\n    instance.padding(8)\n}",
                     "line": 75,
                     "column": 1,
                     "endLine": 84,

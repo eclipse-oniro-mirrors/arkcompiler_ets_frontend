@@ -3831,17 +3831,7 @@ export class Autofixer {
     needImport: Set<string>
   ): Autofix[] | undefined {
     const block = funcDecl.body;
-    if (!block) {
-      return undefined;
-    }
 
-    const accessExpression = / \./gi;
-    const closedParenthesis = /\)/gi;
-    const updatedBlockText = block.
-      getFullText().
-      replace(accessExpression, ` ${INSTANCE_IDENTIFIER}.`).
-      replace(');', ')').
-      replace(closedParenthesis, ');');
     const parameDecl = ts.factory.createParameterDeclaration(
       undefined,
       undefined,
@@ -3850,6 +3840,8 @@ export class Autofixer {
       ts.factory.createTypeReferenceNode(ts.factory.createIdentifier(COMMON_METHOD_IDENTIFIER), undefined),
       undefined
     );
+    const updatedBlockText = Autofixer.getUpdatedBlock(block);
+
     const returnType = ts.factory.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
     const newFuncDecl = Autofixer.createFunctionDeclaration(funcDecl, undefined, parameDecl, returnType);
     needImport.add(COMMON_METHOD_IDENTIFIER);
@@ -3869,15 +3861,14 @@ export class Autofixer {
     needImport: Set<string>
   ): Autofix[] | undefined {
     const block = methodDecl.body;
-    const parameters: ts.MemberName[] = [];
-    const values: ts.Expression[][] = [];
-    const statements = block?.statements;
     const type = ts.factory.createTypeReferenceNode(
       ts.factory.createIdentifier(CustomInterfaceName.CustomStyles),
       undefined
     );
-    Autofixer.getParamsAndValues(statements, parameters, values);
-    const newBlock = Autofixer.createBlock(parameters, values, ts.factory.createIdentifier(INSTANCE_IDENTIFIER), block);
+
+    const updatedBlockText = Autofixer.getUpdatedBlock(block);
+
+    const newBlock = ts.factory.createBlock([]);
     const parameDecl = ts.factory.createParameterDeclaration(
       undefined,
       undefined,
@@ -3902,6 +3893,8 @@ export class Autofixer {
     let text = this.printer.printNode(ts.EmitHint.Unspecified, expr, methodDecl.getSourceFile());
     const startPos = this.sourceFile.getLineAndCharacterOfPosition(methodDecl.getStart()).character;
     text = this.adjustIndentation(text, startPos);
+    text = text.replace(' { }', updatedBlockText);
+
     const autofix = [{ start: methodDecl.getStart(), end: methodDecl.getEnd(), replacementText: text }];
     const argument = ts.factory.createPropertyAccessExpression(
       ts.factory.createThis(),
@@ -3909,6 +3902,18 @@ export class Autofixer {
     );
     this.addAutofixFromCalls(calls, autofix, argument);
     return autofix;
+  }
+
+  private static getUpdatedBlock(block: ts.Block | undefined): string {
+    if (!block) {
+      return '';
+    }
+
+    const accessExpression = / \./gi;
+    return block.
+      getFullText().
+      replace(accessExpression, ` ${INSTANCE_IDENTIFIER}.`).
+      replace(');', ')')
   }
 
   private adjustIndentation(text: string, startPos: number, indentLastLine = false): string {
@@ -5431,7 +5436,10 @@ export class Autofixer {
     );
   }
 
-  fixSpecialDeprecatedApiForCallExpression(callExpr: ts.CallExpression | ts.EtsComponentExpression, name: ts.Identifier): Autofix[] | undefined {
+  fixSpecialDeprecatedApiForCallExpression(
+    callExpr: ts.CallExpression | ts.EtsComponentExpression,
+    name: ts.Identifier
+  ): Autofix[] | undefined {
     if (name.getText() !== 'clip' || !ts.isNewExpression(callExpr.arguments[0])) {
       return undefined;
     }
