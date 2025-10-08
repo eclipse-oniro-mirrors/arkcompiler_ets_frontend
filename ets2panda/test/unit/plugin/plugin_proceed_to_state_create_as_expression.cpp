@@ -105,7 +105,7 @@ static void FindVariableDeclarator(es2panda_AstNode *ast)
     variableDeclarator = ast;
 }
 
-void CreateAsExpression()
+static void CreateAsExpression()
 {
     impl->AstNodeIterateConst(context, program, FindFuncDef);
     if (scriptFunc == nullptr) {
@@ -131,6 +131,15 @@ void CreateAsExpression()
     impl->AstNodeSetParent(context, variableDeclarator, letStatement);
 }
 
+static void CreateAsExpressionAndClone()
+{
+    auto numberLiteral = impl->CreateNumberLiteral(context, 1);
+    Es2pandaPrimitiveType primitiveType = PRIMITIVE_TYPE_SHORT;
+    auto typeAnnotation = impl->CreateETSPrimitiveType(context, primitiveType);
+    auto *asExpr = impl->CreateTSAsExpression(context, numberLiteral, typeAnnotation, true);
+    [[maybe_unused]] auto *asExprClone = impl->AstNodeClone(context, asExpr, nullptr);
+}
+
 int main(int argc, char **argv)
 {
     if (argc < MIN_ARGC) {
@@ -151,6 +160,7 @@ int main(int argc, char **argv)
     program = impl->ProgramAst(context, impl->ContextProgram(context));
 
     CreateAsExpression();
+    CreateAsExpressionAndClone();
 
     const char *src = impl->AstNodeDumpEtsSrcConst(context, program);
     const char *expected = "1 as short";
