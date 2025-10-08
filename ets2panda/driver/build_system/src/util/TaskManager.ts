@@ -166,7 +166,7 @@ export class TaskManager<PayloadT extends JobInfo> {
         this.isDeclgen = declgen
         this.onWorkerExit = onWorkerExit;
         this.taskTimeoutMs = taskTimeoutMs;
-        this.maxWorkers = maxWorkers ?? os.availableParallelism();
+        this.maxWorkers = maxWorkers ?? os.cpus().length;
 
         this.logger.printInfo(`Available workers: ${this.maxWorkers}`)
     }
