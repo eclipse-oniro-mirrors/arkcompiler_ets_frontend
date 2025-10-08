@@ -5,7 +5,8 @@ export declare class C {
 
   constructor c2(s?: string);
 
-  public overload constructor {c1, c2};
+  public overload constructor { c1, c2 };
+
   foo1(s?: string): void;
 
   foo2(b?: Boolean): void;
