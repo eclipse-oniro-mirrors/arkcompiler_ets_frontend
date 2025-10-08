@@ -1496,6 +1496,33 @@ bool ParserImpl::CheckModuleAsModifier()
     return true;
 }
 
+bool ParserImpl::TryEatTypeKeyword()
+{
+    bool res = false;
+    auto posBeforeType = Lexer()->Save();
+    lexer::LexerPosition posAfterType = posBeforeType;
+    if (Lexer()->TryEatTokenKeyword(lexer::TokenType::KEYW_TYPE)) {
+        posAfterType = Lexer()->Save();
+        res = (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT ||
+               Lexer()->GetToken().Type() == lexer::TokenType::KEYW_DEFAULT ||
+               Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_MULTIPLY ||
+               Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
+        if (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_FROM) {
+            Lexer()->NextToken();
+            if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_STRING) {
+                res = false;
+            }
+        }
+    }
+
+    if (res) {
+        Lexer()->Rewind(posAfterType);
+    } else {
+        Lexer()->Rewind(posBeforeType);
+    }
+    return res;
+}
+
 bool ParserImpl::ParseList(std::optional<lexer::TokenType> termToken, lexer::NextTokenFlags flags,
                            const std::function<bool(bool &typeKeywordOnSpecifier)> &parseElement,
                            lexer::SourcePosition *sourceEnd, ParseListOptions parseListOptions)
@@ -1506,8 +1533,7 @@ bool ParserImpl::ParseList(std::optional<lexer::TokenType> termToken, lexer::Nex
     bool typeKeywordOnSpecifier = false;
     while (Lexer()->GetToken().Type() != termToken && Lexer()->GetToken().Type() != lexer::TokenType::EOS) {
         // ErrorRecursionGuard is not feasible because we can break without consuming any tokens
-        if (allowTypeKeyword && Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_TYPE) {
-            Lexer()->NextToken(flags);  // eat 'type'
+        if (allowTypeKeyword && TryEatTypeKeyword()) {
             typeKeywordOnSpecifier = true;
             continue;
         }

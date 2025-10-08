@@ -592,6 +592,7 @@ protected:
         return classId_;
     }
 
+    bool TryEatTypeKeyword();
     bool ParseList(std::optional<lexer::TokenType> termToken, lexer::NextTokenFlags flags,
                    const std::function<bool(bool &typeKeywordOnSpecifier)> &parseElement,
                    lexer::SourcePosition *sourceEnd = nullptr,

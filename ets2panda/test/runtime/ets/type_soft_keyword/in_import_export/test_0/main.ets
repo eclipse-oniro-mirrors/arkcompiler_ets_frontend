@@ -13,11 +13,13 @@
  * limitations under the License.
  */
 
-interface /* @@ label1 */type {
-  type: number /* @@ label2 */= /* @@ label3 */0
-/* @@ label4 */}
+/*---
+files: ['./source.ets']
+---*/
 
-/* @@@ label2 Error SyntaxError: Interface member initialization is prohibited. */
-/* @@@ label3 Error SyntaxError: Unexpected token, expected ','. */
-/* @@@ label3 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@@ label4 Error SyntaxError: Identifier expected. */
+import type type from "./source"
+
+function main() {
+    let t = new type()
+    arktest.assertEQ(t.a, 0)
+}
