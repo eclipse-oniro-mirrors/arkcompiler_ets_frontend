@@ -208,7 +208,7 @@ import { BaseTypeScriptLinter } from './BaseTypeScriptLinter';
 import type { ArrayAccess, UncheckedIdentifier } from './utils/consts/RuntimeCheckAPI';
 import { NUMBER_LITERAL, LENGTH_IDENTIFIER } from './utils/consts/RuntimeCheckAPI';
 import { globalApiAssociatedInfo } from './utils/consts/AssociatedInfo';
-import { ARRAY_API_LIST } from './utils/consts/ArraysAPI';
+import { ArrayAsCastResult, ARRAY_API_LIST } from './utils/consts/ArraysAPI';
 import {
   ABILITY_KIT,
   ASYNC_LIFECYCLE_SDK_LIST,
@@ -6862,7 +6862,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleAsExpressionImport(tsAsExpr);
     this.handleNoTuplesArrays(node, targetType, exprType);
     this.handleObjectLiteralAssignmentToClass(tsAsExpr);
-    this.handleArrayTypeImmutable(tsAsExpr, exprType, targetType);
+    this.handleArrayTypeImmutableForAsExpr(tsAsExpr, exprType, targetType);
     this.handleNotsLikeSmartTypeOnAsExpression(tsAsExpr);
     this.handleLimitedVoidTypeOnAsExpression(tsAsExpr);
   }
@@ -8492,6 +8492,59 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return undefined;
     }
     return lhsPromiseLikeType.typeArguments[0];
+  }
+
+  private isMatchingCastForPropertyAssign(asExpr: ts.AsExpression, castedType: ts.Type): ArrayAsCastResult {
+    const propertyAssign = ts.findAncestor(asExpr, ts.isPropertyAssignment);
+    if (!propertyAssign) {
+      return ArrayAsCastResult.IGNORE;
+    }
+
+    const type = this.tsTypeChecker.getTypeAtLocation(propertyAssign.name).getNonNullableType();
+
+    if (this.isTypeAssignable(type, castedType)) {
+      return ArrayAsCastResult.MATCH;
+    }
+
+    return ArrayAsCastResult.REPORT;
+  }
+
+  private handleArrayTypeImmutableForAsExpr(asExpr: ts.AsExpression, exprType: ts.Type, asType: ts.Type): void {
+    if (!this.options.arkts2 || TsUtils.isAnyType(exprType) || TsUtils.isAnyType(asType)) {
+      return;
+    }
+
+    const isArray = this.tsUtils.isArray(exprType) || this.tsUtils.isArray(asType);
+    const isTuple =
+      this.tsUtils.isOrDerivedFrom(exprType, TsUtils.isTuple) || this.tsUtils.isOrDerivedFrom(asType, TsUtils.isTuple);
+    if (!isArray && !isTuple) {
+      return;
+    }
+
+    if (ts.isArrayLiteralExpression(asExpr.expression)) {
+      return;
+    }
+
+    const isMatch = this.isMatchingCastForPropertyAssign(asExpr, asType);
+    switch (isMatch) {
+      case ArrayAsCastResult.REPORT: {
+        this.incrementCounters(asExpr, FaultID.ArrayTypeImmutable);
+
+        return;
+      }
+      case ArrayAsCastResult.IGNORE: {
+        break;
+      }
+      case ArrayAsCastResult.MATCH: {
+        if (this.isTypeAssignable(exprType, asType)) {
+          return;
+        }
+        break;
+      }
+      default:
+    }
+
+    this.incrementCounters(asExpr, FaultID.ArrayTypeImmutable);
   }
 
   private handleArrayTypeImmutable(node: ts.Node, lhsType: ts.Type, rhsType: ts.Type, rhsExpr?: ts.Expression): void {

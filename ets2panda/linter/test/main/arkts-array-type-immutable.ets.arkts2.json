@@ -125,16 +125,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 67,
-            "column": 6,
-            "endLine": 67,
-            "endColumn": 63,
-            "problem": "ArrayTypeImmutable",
-            "suggest": "",
-            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
             "line": 74,
             "column": 3,
             "endLine": 74,
@@ -235,6 +225,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 131,
+            "column": 42,
+            "endLine": 131,
+            "endColumn": 83,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
             "line": 132,
             "column": 5,
             "endLine": 132,
@@ -252,6 +252,16 @@
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 132,
+            "column": 36,
+            "endLine": 132,
+            "endColumn": 70,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
             "severity": "ERROR"
         },
         {
@@ -302,6 +312,16 @@
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 138,
+            "column": 34,
+            "endLine": 138,
+            "endColumn": 62,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
             "severity": "ERROR"
         },
         {
