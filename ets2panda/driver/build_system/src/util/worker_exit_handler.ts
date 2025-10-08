@@ -32,7 +32,7 @@ function getErrorMessage<PayloadT extends JobInfo>(
             case "SIGKILL":
                 return `Worker [ID:${workerInfo.id}] was killed by signal ${signal}`;
             default:
-                return `Signal  ${signal} was sent to the worker [${workerInfo.id}]`;
+                return `Signal ${signal} was sent to the worker [${workerInfo.id}]`;
         }
     }
 

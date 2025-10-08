@@ -166,7 +166,7 @@ export class PluginDriver {
                 if (typeof initFunction !== 'function') {
                     throw ('Failed to load plugin: plugin in wrong format');
                 }
-                this.logger.printInfo(`Loaded plugin: ', ${key}, ${pluginObject}`);
+                this.logger.printInfo(`[Plugin Driver] Loaded plugin: ', ${key}, ${value}`);
 
                 pluginResults.push({
                     name: key,
@@ -245,7 +245,7 @@ export class PluginDriver {
             return;
         }
         plugins.forEach((executor: PluginExecutor) => {
-            this.logger.printInfo(`executing plugin: ${executor.name}`);
+            this.logger.printInfo(`[Plugin Driver] executing plugin: ${executor.name}`);
             return (executor.handler as Function).apply(this.context);
         });
     }

@@ -16,47 +16,46 @@
 
 import * as dot from 'ts-graphviz';
 import * as path from 'path';
-import { JobInfo, ModuleInfo } from '../types';
+import { Graph, GraphNode } from '../util/graph';
+import { JobInfo } from '../types';
 
-function formLabelForNode(job: JobInfo, fileToModule: Map<string, ModuleInfo>): string {
-    let res: string = `{ id: ${job.id.slice(0, 5)}`
+function formLabelForNode(node: GraphNode<JobInfo>): string {
+    const job = node.data;
+    let res: string = `{ id: ${node.id.slice(0, 5)}`
     for (const file of job.fileList) {
-        const module = fileToModule.get(file)!
-        res += ` | ${path.join(module.packageName, path.relative(module.moduleRootPath, file))}`
+        res += ` | ${path.join(job.fileInfo.moduleName, path.relative(job.fileInfo.moduleRoot, file))}`
     }
     res += '}'
     return res;
 }
 
-function createNodes(graph: dot.Digraph, jobs: Record<string, JobInfo>, fileToModule: Map<string, ModuleInfo>) {
-    for (const [jobId, jobInfo] of Object.entries(jobs)) {
-        const node = new dot.Node(jobId, {
+function createNodes(dorGraph: dot.Digraph, graph: Graph<JobInfo>) {
+    for (const node of graph.nodes) {
+        const dotNode = new dot.Node(node.id, {
             [dot.attribute.shape]: 'record',
-            [dot.attribute.label]: formLabelForNode(jobInfo, fileToModule),
+            [dot.attribute.label]: formLabelForNode(node),
             [dot.attribute.style]: 'filled',
-            [dot.attribute.fillcolor]: jobInfo.fileList.length > 1 ? 'lightcoral' : undefined
+            [dot.attribute.fillcolor]: node.data.fileList.length > 1 ? 'lightcoral' : undefined
         })
-        node
-        graph.addNode(node)
+        dorGraph.addNode(dotNode)
     }
 }
 
-function connectNodes(graph: dot.Digraph, jobs: Record<string, JobInfo>) {
-    for (const [job, jobInfo] of Object.entries(jobs)) {
-        const node = graph.getNode(job)!
-        for (const dependant of jobInfo.jobDependants) {
-            const dependantNode = graph.getNode(dependant)!
-            const edge = new dot.Edge([dependantNode, node], {})
-            graph.addEdge(edge)
+function connectNodes(dotGraph: dot.Digraph, graph: Graph<JobInfo>) {
+    for (const node of graph.nodes) {
+        for (const dependant of node.descendants) {
+            const dependantNode = dotGraph.getNode(dependant)!
+            const edge = new dot.Edge([node , dependantNode], {})
+            dotGraph.addEdge(edge)
         }
     }
 }
 
-export function dotGraphDump(jobs: Record<string, JobInfo>, fileToModule: Map<string, ModuleInfo>): string {
+export function dotGraphDump(graph: Graph<JobInfo>): string {
     const G = new dot.Digraph({ rankdir : 'TB' })
 
-    createNodes(G, jobs, fileToModule);
-    connectNodes(G, jobs);
+    createNodes(G, graph);
+    connectNodes(G, graph);
 
     return dot.toDot(G);
 }

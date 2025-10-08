@@ -35,7 +35,6 @@ import {
     OHOS_MODULE_TYPE,
     BuildConfig,
     DependencyModuleConfig,
-    CompileJobInfo,
     FileInfo
 } from '../types';
 
@@ -276,7 +275,7 @@ export function updateFileHash(file: string, hashCache: Record<string, string>):
 
 }
 
-export function shouldBeCompiled(source: string, target: string): boolean {
+export function shouldBeUpdated(source: string, target: string): boolean {
     if (fs.existsSync(target)) {
         const sourceModified: number = fs.statSync(source).mtimeMs;
         const targetModified: number = fs.statSync(target).mtimeMs;

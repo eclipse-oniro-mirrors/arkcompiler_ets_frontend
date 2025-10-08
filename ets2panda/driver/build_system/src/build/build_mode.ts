@@ -18,6 +18,7 @@ import {
     BuildConfig,
     ES2PANDA_MODE
 } from '../types';
+import { RecordEvent } from '../util/statsRecorder';
 
 export class BuildMode extends BaseMode {
     constructor(buildConfig: BuildConfig) {
@@ -47,5 +48,8 @@ export class BuildMode extends BaseMode {
             // Default fallback: same as RUN_SIMULTANEOUS
             await super.runSimultaneous();
         }
+
+        this.statsRecorder.record(RecordEvent.END);
+        this.statsRecorder.writeSumSingle();
     }
 }

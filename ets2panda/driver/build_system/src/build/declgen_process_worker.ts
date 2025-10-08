@@ -21,7 +21,7 @@ import { Ets2panda } from '../util/ets2panda';
 
 const logger = Logger.getInstance(getConsoleLogger)
 
-function declgen(task: ProcessDeclgenV1Task) {
+function declgen(id: string, task: ProcessDeclgenV1Task) {
     const ets2panda = Ets2panda.getInstance(task.buildConfig);
 
     try {
@@ -30,7 +30,7 @@ function declgen(task: ProcessDeclgenV1Task) {
         process.send!({
             type: WorkerMessageType.DECL_GENERATED,
             data: {
-                taskId: task.id,
+                taskId: id,
             }
         });
     } catch (error) {
@@ -38,7 +38,7 @@ function declgen(task: ProcessDeclgenV1Task) {
             process.send!({
                 type: WorkerMessageType.ERROR_OCCURED,
                 data: {
-                    taskId: task.id,
+                    taskId: id,
                     error: error.logData
                 }
             });
@@ -61,7 +61,7 @@ process.on("message", (message: {
     try {
         switch (type) {
             case WorkerMessageType.ASSIGN_TASK:
-                    declgen(data.payload);
+                    declgen(data.taskId, data.payload);
                 break;
             default:
                 break;

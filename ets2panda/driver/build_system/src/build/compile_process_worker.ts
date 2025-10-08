@@ -25,7 +25,7 @@ import { Ets2panda } from '../util/ets2panda';
 
 const logger = Logger.getInstance(getConsoleLogger)
 
-function compileSimultaneous(task: ProcessCompileTask): void {
+function compile(id: string, task: ProcessCompileTask): void {
 
     const ets2panda = Ets2panda.getInstance(task.buildConfig);
 
@@ -33,54 +33,7 @@ function compileSimultaneous(task: ProcessCompileTask): void {
         process.send!({
             type: WorkerMessageType.DECL_GENERATED,
             data: {
-                taskId: task.id,
-            }
-        });
-    }
-    // For now no decl files are generated for cycles
-    declGeneratedCb();
-
-    const abcCompiledCb = (): void => {
-        process.send!({
-            type: WorkerMessageType.ABC_COMPILED,
-            data: {
-                taskId: task.id,
-            }
-        });
-    }
-
-    try {
-        ets2panda.initalize();
-        ets2panda.compileSimultaneous(
-            task,
-            task.buildConfig.buildMode == BUILD_MODE.DEBUG,
-            declGeneratedCb,
-            abcCompiledCb
-        )
-
-    } catch (error) {
-        if (error instanceof DriverError) {
-            process.send!({
-                type: WorkerMessageType.ERROR_OCCURED,
-                data: {
-                    taskId: task.id,
-                    error: error.logData
-                }
-            });
-        }
-    } finally {
-        ets2panda.finalize();
-    }
-}
-
-function compile(task: ProcessCompileTask) {
-    const ets2panda = Ets2panda.getInstance(task.buildConfig);
-
-    const declGeneratedCb = (): void => {
-        process.send!({
-            type: WorkerMessageType.DECL_GENERATED,
-            data: {
-                taskId: task.id,
+                taskId: id,
             }
         });
     }
@@ -89,25 +42,36 @@ function compile(task: ProcessCompileTask) {
         process.send!({
             type: WorkerMessageType.ABC_COMPILED,
             data: {
-                taskId: task.id,
+                taskId: id,
             }
         });
     }
 
     try {
         ets2panda.initalize();
-        ets2panda.compile(
-            task,
-            task.buildConfig.buildMode == BUILD_MODE.DEBUG,
-            declGeneratedCb,
-            abcCompiledCb)
-
+        if (task.fileList.length > 1) {
+            ets2panda.compileSimultaneous(
+                id,
+                task,
+                task.buildConfig.buildMode == BUILD_MODE.DEBUG,
+                declGeneratedCb,
+                abcCompiledCb
+            )
+        } else {
+            ets2panda.compile(
+                id,
+                task,
+                task.buildConfig.buildMode == BUILD_MODE.DEBUG,
+                declGeneratedCb,
+                abcCompiledCb
+            )
+        }
     } catch (error) {
         if (error instanceof DriverError) {
             process.send!({
                 type: WorkerMessageType.ERROR_OCCURED,
                 data: {
-                    taskId: task.id,
+                    taskId: id,
                     error: error.logData
                 }
             });
@@ -115,6 +79,8 @@ function compile(task: ProcessCompileTask) {
     } finally {
         ets2panda.finalize();
     }
+
+    Ets2panda.destroyInstance();
 }
 
 process.on("message", (message: {
@@ -130,11 +96,7 @@ process.on("message", (message: {
     try {
         switch (type) {
             case WorkerMessageType.ASSIGN_TASK:
-                if (data.payload.fileList.length > 1) {
-                    compileSimultaneous(data.payload);
-                } else {
-                    compile(data.payload);
-                }
+                compile(data.taskId, data.payload);
                 break;
             default:
                 break;

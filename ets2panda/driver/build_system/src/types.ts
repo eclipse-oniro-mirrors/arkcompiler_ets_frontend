@@ -54,6 +54,7 @@ export interface BuildBaseConfig {
     isBuildConfigModified?: boolean;
     recordType?: 'OFF' | 'ON';
     dumpDependencyGraph?: boolean;
+    clusteredBuild?: boolean;
 }
 
 export interface ArkTSGlobal {
@@ -316,10 +317,9 @@ export interface ArkTSConfigObject {
 };
 
 export interface JobInfo {
-    id: string;
+    fileInfo: FileInfo,
+    // In case of simultaneous mode
     fileList: string[];
-    jobDependencies: string[];
-    jobDependants: string[];
 }
 
 export interface FileInfo {
@@ -338,7 +338,6 @@ export enum CompileJobType {
 }
 
 export interface CompileJobInfo extends JobInfo {
-    fileInfo: FileInfo,
     declgenConfig: DeclgenV2JobConfig;
     type: CompileJobType
 }
@@ -357,7 +356,6 @@ export interface DeclgenV2JobConfig {
 }
 
 export interface DeclgenV1JobInfo extends JobInfo {
-    fileInfo: FileInfo,
     declgenConfig: DeclgenV1JobConfig
 }
 

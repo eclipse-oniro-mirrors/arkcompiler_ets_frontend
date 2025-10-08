@@ -21,6 +21,7 @@ import { Logger, LogDataFactory, LogData } from '../logger';
 import { Worker as Thread } from 'worker_threads';
 import { WorkerMessageType, JobInfo } from '../types';
 import { ErrorCode } from './error'
+import { Graph, GraphNode } from './graph';
 
 export interface Task<PayloadT> {
     id: string;
@@ -149,7 +150,6 @@ export class DriverProcessFactory implements WorkerFactory {
 export class TaskManager<PayloadT extends JobInfo> {
     private workers: WorkerInfo[] = [];
     private idleWorkers: WorkerInfo[] = [];
-    private tasks: Record<string, Task<PayloadT>> = {};
     private taskQueue: Task<PayloadT>[] = [];
     private completedTasks: Task<PayloadT>[] = [];
     private runningTasks = new Map<string, Task<PayloadT>>();
@@ -158,6 +158,7 @@ export class TaskManager<PayloadT extends JobInfo> {
     private taskTimeoutMs: number;
     private logger: Logger;
     private isDeclgen: boolean;
+    public buildGraph: Graph<PayloadT> = new Graph<PayloadT>();
 
     constructor(onWorkerExit: OnWorkerExitCallback<PayloadT>, declgen: boolean = false,
         maxWorkers?: number, taskTimeoutMs: number = 180000) {
@@ -207,6 +208,7 @@ export class TaskManager<PayloadT extends JobInfo> {
             case WorkerMessageType.ABC_COMPILED:
                 // Abc file was compiled, now worker is idle and can take next task
                 // Or if no tasks are left and other workers are idle then shutdown all workers
+                this.settleTask(message.data.taskId);
                 workerInfo.currentTaskId = undefined;
                 this.idleWorkers.push(workerInfo);
                 this.dispatchNextOrShutdownWorkers();
@@ -273,9 +275,12 @@ export class TaskManager<PayloadT extends JobInfo> {
     }
 
     public initTaskQueue() {
-        Object.values(this.tasks).forEach((task: Task<PayloadT>) => {
-            if (task.payload.jobDependencies.length === 0) {
-                this.taskQueue.push(task);
+        this.buildGraph.nodes.forEach((node: GraphNode<PayloadT>) => {
+            if (node.predecessors.size == 0) {
+                this.taskQueue.push({
+                    id: node.id,
+                    payload: node.data
+                });
             }
         });
     }
@@ -348,16 +353,18 @@ export class TaskManager<PayloadT extends JobInfo> {
 
         this.logger.printDebug(`Removed task [${completedTaskId}] from the queue`)
 
-        task.payload.jobDependants.forEach((dependantJobId: string) => {
-            const depTask: Task<PayloadT> = this.tasks[dependantJobId];
-            const depIndex = depTask.payload.jobDependencies.indexOf(completedTaskId);
-            if (depIndex !== -1) {
-                depTask.payload.jobDependencies.splice(depIndex, 1);
-                if (depTask.payload.jobDependencies.length === 0) {
-                    this.taskQueue.push(depTask);
-                } else {
-                    this.logger.printDebug(`Job ${depTask.id} still have dependencies ${JSON.stringify(depTask.payload.jobDependencies, null, 1)}`)
-                }
+        const graphNode: GraphNode<PayloadT> = this.buildGraph.getNodeById(completedTaskId);
+        graphNode.descendants.forEach((descendant: string) => {
+            const descendantNode = this.buildGraph.getNodeById(descendant);
+            descendantNode.predecessors.delete(completedTaskId);
+            if (descendantNode.predecessors.size == 0) {
+                this.taskQueue.push({
+                    id: descendantNode.id,
+                    payload: descendantNode.data
+                });
+                this.logger.printDebug(`Added job ${descendant} to the queue`);
+            } else {
+                this.logger.printDebug(`Job ${descendant} still has dependencies ${descendantNode.predecessors}`)
             }
         });
         this.logger.printDebug(`Task [${completedTaskId}] is completed`)
@@ -366,9 +373,10 @@ export class TaskManager<PayloadT extends JobInfo> {
     }
 
     private reconfigureWorker(workerInfo: WorkerInfo): void {
-        const worker = workerInfo.worker
         this.settleTask(workerInfo.currentTaskId!, true)
         workerInfo.currentTaskId = undefined;
+
+        const worker = workerInfo.worker;
         worker.stop();
 
         const newWorker = worker.spawnNewInstance();
@@ -410,14 +418,6 @@ export class TaskManager<PayloadT extends JobInfo> {
         );
 
         this.logger.printError(logData);
-    }
-
-    public submitTask(id: string, payload: PayloadT): void {
-        const task: Task<PayloadT> = {
-            id,
-            payload,
-        };
-        this.tasks[id] = task;
     }
 
     public async shutdownWorkers(): Promise<void> {

@@ -14,7 +14,7 @@
  */
 
 export const ARKTSCONFIG_JSON_FILE: string = 'arktsconfig.json';
-export const MERGED_CYCLE_FILE: string = 'cycle.abc';
+export const MERGED_CLUSTER_FILE: string = 'cluster.abc';
 export const MERGED_ABC_FILE: string = 'modules_static.abc';
 export const LINKER_INPUT_FILE: string = 'fileInfo.txt';
 export const DEP_ANALYZER_INPUT_FILE: string = 'dependencyFileInfo.txt';
@@ -67,3 +67,5 @@ export type Record<K extends keyof any, T> = {
 export const KOALA_WRAPPER_PATH_FROM_SDK: string = process.env.USE_KOALA_LIBARKTS ? './build-tools/ui2abc/libarkts/lib/libarkts.js' : './build-tools/koala-wrapper/build/lib/es2panda'
 export const UI_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/ui-plugin/lib/entry.js'
 export const MEMO_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/memo-plugin/lib/entry.js'
+
+export const CLUSTER_FILES_TRESHOLD: number = 100;
