@@ -19,7 +19,7 @@ import * as path from 'path';
 import {
   changeFileExtension,
   ensurePathExists
-} from '../utils';
+} from '../util/utils';
 import {
   DECL_ETS_SUFFIX,
   KOALA_WRAPPER_PATH_FROM_SDK

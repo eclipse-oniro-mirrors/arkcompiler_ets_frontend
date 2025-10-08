@@ -31,9 +31,10 @@ import {
   getOhmurlByApi,
   hasEntry,
   isSubPathOf,
+  readFirstLineSync,
   safeRealpath,
   toUnixPath
-} from '../utils';
+} from '../util/utils';
 import {
   AliasConfig,
   ArkTSConfigObject,
@@ -54,13 +55,15 @@ import {
 export class ArkTSConfig {
   config: ArkTSConfigObject;
 
-  constructor(moduleInfo: ModuleInfo) {
+  constructor(moduleInfo: ModuleInfo, cacheDir: string) {
     this.config = {
       compilerOptions: {
         package: moduleInfo.packageName,
         baseUrl: path.resolve(moduleInfo.moduleRootPath, moduleInfo.sourceRoots[0]),
         paths: {},
-        dependencies: {}
+        dependencies: {},
+        rootDir: path.resolve(moduleInfo.moduleRootPath),
+        cacheDir: path.resolve(cacheDir, moduleInfo.packageName),
       }
     };
   }
@@ -237,11 +240,21 @@ export class ArkTSConfigGenerator {
     if (!hasEntry(moduleInfo)) {
       return;
     }
-  
+
     if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1) {
       return;
     }
-  
+
+    if (!moduleInfo.entryFile || !fs.existsSync(moduleInfo.entryFile)) {
+      return;
+    }
+    if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_HYBRID) {
+      const firstLine = readFirstLineSync(moduleInfo.entryFile);
+      if (!firstLine?.includes('use static')) {
+        return;
+      }
+    }
+
     arktsconfig.addPathMappings({
       [moduleInfo.packageName]: [moduleInfo.moduleRootPath]
     });
@@ -304,7 +317,7 @@ export class ArkTSConfigGenerator {
       );
       this.logger.printErrorAndExit(logData);
     }
-    let arktsConfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
+    let arktsConfig: ArkTSConfig = new ArkTSConfig(moduleInfo, this.buildConfig.cachePath);
     this.arktsconfigs.set(moduleInfo.packageName, arktsConfig);
     this.getPathSection(moduleInfo, arktsConfig);
 

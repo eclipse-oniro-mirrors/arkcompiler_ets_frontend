@@ -18,17 +18,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
 import * as crypto from 'crypto';
-
-
-import cluster, {
-  Cluster,
-  Worker,
-} from 'cluster';
 import { Worker as ThreadWorker } from 'worker_threads';
+
 import {
   ABC_SUFFIX,
   ARKTSCONFIG_JSON_FILE,
-  DEFAULT_WOKER_NUMS,
   DECL_ETS_SUFFIX,
   DECL_TS_SUFFIX,
   DEPENDENCY_INPUT_FILE,
@@ -48,8 +42,9 @@ import {
   ensurePathExists,
   getFileHash,
   isMac,
-  isMixCompileProject
-} from '../utils';
+  isMixCompileProject,
+  serializeWithIgnore
+} from '../util/utils';
 import {
   PluginDriver,
   PluginHook
@@ -72,15 +67,26 @@ import {
   JobInfo,
   KPointer,
   ModuleInfo,
-  ES2PANDA_MODE
+  ES2PANDA_MODE,
+  CompilePayload
 } from '../types';
 import {
   ArkTSConfig,
   ArkTSConfigGenerator
 } from './generate_arktsconfig';
-import { SetupClusterOptions } from '../types';
 import { KitImportTransformer } from '../plugins/KitImportTransformer';
-
+import { 
+  BS_PERF_FILE_NAME,
+  CompileSingleData,
+  RECORDE_COMPILE_NODE,
+  RECORDE_MODULE_NODE,
+  RECORDE_RUN_NODE
+} from '../utils/record_time_mem';
+import { TaskManager } from '../util/TaskManager';
+import {
+  handleCompileWorkerExit,
+  handleDeclgenWorkerExit
+} from '../util/worker_exit_handler';
 import { initKoalaModules } from '../init/init_koala_modules';
 
 export abstract class BaseMode {
@@ -119,6 +125,7 @@ export abstract class BaseMode {
   public byteCodeHar: boolean;
   public es2pandaMode: number;
   public skipDeclCheck: boolean;
+  public genDeclAnnotations: boolean;
 
   constructor(buildConfig: BuildConfig) {
     this.buildConfig = buildConfig;
@@ -160,6 +167,7 @@ export abstract class BaseMode {
         : ES2PANDA_MODE.RUN
     );
     this.skipDeclCheck = buildConfig?.skipDeclCheck as boolean ?? true;
+    this.genDeclAnnotations = buildConfig?.genDeclAnnotations as boolean ?? true;
   }
 
   public declgen(fileInfo: CompileFileInfo): void {
@@ -221,7 +229,8 @@ export abstract class BaseMode {
         etsOutputPath,
         false,
         false,
-        staticRecordRelativePath
+        staticRecordRelativePath,
+        this.genDeclAnnotations
       ); // Generate 1.0 declaration files & 1.0 glue code
       this.logger.printInfo('declaration files generated');
     } catch (error) {
@@ -335,7 +344,10 @@ export abstract class BaseMode {
     }
   }
 
-  public compileMultiFiles(filePaths: string[], moduleInfo: ModuleInfo): void {
+  public compileMultiFiles(moduleInfo: ModuleInfo): void {
+    let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
+    compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_PARSE);
+
     const intermediateFilePath = path.resolve(this.cacheDir, MERGED_INTERMEDIATE_FILE);
     this.abcFiles.clear();
     this.abcFiles.add(intermediateFilePath);
@@ -368,6 +380,8 @@ export abstract class BaseMode {
 
       arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
       this.logger.printInfo('es2panda proceedToState parsed');
+      compileSingleData.record(RECORDE_COMPILE_NODE.PLUGIN_PARSE, RECORDE_COMPILE_NODE.PROCEED_PARSE);
+
       let ast = arkts.EtsScript.fromContext();
 
       if (this.buildConfig.aliasConfig && Object.keys(this.buildConfig.aliasConfig).length > 0) {
@@ -387,9 +401,11 @@ export abstract class BaseMode {
       PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
       PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
       this.logger.printInfo('plugin parsed finished');
+      compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_CHECK, RECORDE_COMPILE_NODE.PLUGIN_PARSE);
 
       arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
       this.logger.printInfo('es2panda proceedToState checked');
+      compileSingleData.record(RECORDE_COMPILE_NODE.PLUGIN_CHECK, RECORDE_COMPILE_NODE.PROCEED_CHECK);
 
       if (this.hasMainModule && (this.byteCodeHar || this.moduleType === OHOS_MODULE_TYPE.SHARED)) {
         for (const sourceFilePath of this.buildConfig.compileFiles) {
@@ -409,9 +425,11 @@ export abstract class BaseMode {
       PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
       PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
       this.logger.printInfo('plugin checked finished');
+      compileSingleData.record(RECORDE_COMPILE_NODE.BIN_GENERATE, RECORDE_COMPILE_NODE.PLUGIN_CHECK);
 
       arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
       this.logger.printInfo('es2panda bin generated');
+      compileSingleData.record(RECORDE_COMPILE_NODE.CFG_DESTROY, RECORDE_COMPILE_NODE.BIN_GENERATE);
     } catch (error) {
       errorStatus = true;
       throw error;
@@ -422,6 +440,8 @@ export abstract class BaseMode {
       }
       PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
       arkts.destroyConfig(arktsGlobal.config);
+      compileSingleData.record(RECORDE_COMPILE_NODE.END, RECORDE_COMPILE_NODE.CFG_DESTROY);
+      compileSingleData.writeSumSingle(path.resolve());
     }
   }
 
@@ -432,7 +452,7 @@ export abstract class BaseMode {
       linkerInputContent += abcFile + os.EOL;
     });
     fs.writeFileSync(linkerInputFile, linkerInputContent);
-
+    this.abcLinkerCmd.push('--strip-unused');
     this.abcLinkerCmd.push('--output');
     this.abcLinkerCmd.push('"' + this.mergedAbcFile + '"');
     this.abcLinkerCmd.push('--');
@@ -848,10 +868,17 @@ export abstract class BaseMode {
   }
 
   protected generateModuleInfos(): void {
+    let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
+    compileSingleData.record(RECORDE_MODULE_NODE.COLLECT_INFO);
     this.collectModuleInfos();
+    compileSingleData.record(RECORDE_MODULE_NODE.GEN_CONFIG, RECORDE_MODULE_NODE.COLLECT_INFO);
     this.generateArkTSConfigForModules();
+    compileSingleData.record(RECORDE_MODULE_NODE.CLT_FILES, RECORDE_MODULE_NODE.GEN_CONFIG);
     this.collectCompileFiles();
+    compileSingleData.record(RECORDE_MODULE_NODE.SAVE_CACHE, RECORDE_MODULE_NODE.CLT_FILES);
     this.saveHashCache();
+    compileSingleData.record(RECORDE_MODULE_NODE.END, RECORDE_MODULE_NODE.SAVE_CACHE);
+    compileSingleData.writeSumSingle(path.resolve());
   }
 
   public async generateDeclaration(): Promise<void> {
@@ -868,6 +895,8 @@ export abstract class BaseMode {
   }
 
   public async run(): Promise<void> {
+    let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
+    compileSingleData.record(RECORDE_RUN_NODE.GEN_MODULE);
     this.generateModuleInfos();
 
     const compilePromises: Promise<void>[] = [];
@@ -878,9 +907,11 @@ export abstract class BaseMode {
       }
       moduleToFile.get(fileInfo.packageName)?.push(fileInfo.filePath);
     });
+    compileSingleData.record(RECORDE_RUN_NODE.COMPILE_FILES, RECORDE_RUN_NODE.GEN_MODULE);
     try {
       //@ts-ignore
-      this.compileMultiFiles([], this.moduleInfos.get(this.packageName));
+      this.compileMultiFiles(this.moduleInfos.get(this.packageName));
+      compileSingleData.record(RECORDE_RUN_NODE.END, RECORDE_RUN_NODE.COMPILE_FILES);
     } catch (error) {
       if (error instanceof Error) {
         const logData: LogData = LogDataFactory.newInstance(
@@ -891,16 +922,12 @@ export abstract class BaseMode {
         this.logger.printErrorAndExit(logData);
       }
     }
-    
+
     this.mergeAbcFiles();
+    compileSingleData.writeSumSingle(path.resolve());
   }
 
   // -- runParallell code begins --
-  private terminateAllWorkers(): void {
-    Object.values(cluster.workers || {}).forEach(worker => {
-      worker?.kill();
-    });
-  };
 
   public generatedependencyFileMap(): void {
     if (this.enableDeclgenEts2Ts) {
@@ -968,18 +995,21 @@ export abstract class BaseMode {
   public async runParallel(): Promise<void> {
     this.generateModuleInfos();
 
-    const isPrimary = cluster.isPrimary ?? cluster.isMaster; // Adapt to node-v14
-    if (!isPrimary) {
-      return;
-    }
+    const taskManager = new TaskManager<CompilePayload>(path.resolve(__dirname, 'compile_worker.js'), handleCompileWorkerExit);
 
     try {
-      this.setupCluster(cluster, {
-        clearExitListeners: true,
-        execPath: path.resolve(__dirname, 'compile_worker.js'),
-      });
-      await this.dispatchTasks();
-      this.logger.printInfo('All tasks complete, merging...');
+      taskManager.startWorkers();
+
+      const taskPromises = Array.from(this.compileFiles.values()).map(task =>
+        taskManager.submitTask({
+          fileInfo: task,
+          buildConfig: this.getSerializableConfig() as BuildConfig,
+          moduleInfos: Array.from(this.moduleInfos.entries())
+        })
+      );
+
+      await Promise.all(taskPromises);
+
       this.mergeAbcFiles();
     } catch (error) {
       this.logger.printError(LogDataFactory.newInstance(
@@ -987,137 +1017,46 @@ export abstract class BaseMode {
         'Compile abc files failed.'
       ));
     } finally {
-      this.terminateAllWorkers();
+      await taskManager.shutdown();
     }
   }
 
   public async generateDeclarationParallell(): Promise<void> {
     this.generateModuleInfos();
-    this.generateArkTSConfigForModules();
 
-    const isPrimary = cluster.isPrimary ?? cluster.isMaster;
-    if (!isPrimary) {
-      return;
-    }
+    const taskManager = new TaskManager<CompilePayload>(
+      path.resolve(__dirname, 'declgen_worker.js'),
+      handleDeclgenWorkerExit
+    );
 
     try {
-      this.setupCluster(cluster, {
-        clearExitListeners: true,
-        execPath: path.resolve(__dirname, 'declgen_worker.js'),
-      });
-      await this.dispatchTasks();
+      taskManager.startWorkers();
+
+      const taskPromises = Array.from(this.compileFiles.values()).map(task =>
+        taskManager.submitTask({
+          fileInfo: task,
+          buildConfig: this.getSerializableConfig() as BuildConfig,
+          moduleInfos: Array.from(this.moduleInfos.entries())
+        })
+      );
+
+      await Promise.allSettled(taskPromises);
+
       this.logger.printInfo('All declaration generation tasks complete.');
     } catch (error) {
       this.logger.printError(LogDataFactory.newInstance(
         ErrorCode.BUILDSYSTEM_DECLGEN_FAIL,
-        'Generate declaration files failed.'
+        `Generate declaration files failed.\n${(error as Error)?.message || error}`
       ));
     } finally {
-      this.terminateAllWorkers();
+      await taskManager.shutdown();
     }
-  }
-
-  private async dispatchTasks(): Promise<void> {
-    const numCPUs = os.cpus().length;
-    const taskQueue = Array.from(this.compileFiles.values());
-
-    const configuredWorkers = this.buildConfig?.maxWorkers;
-    const defaultWorkers = DEFAULT_WOKER_NUMS;
-
-    let effectiveWorkers: number;
-
-    if (configuredWorkers) {
-      effectiveWorkers = Math.min(configuredWorkers, numCPUs - 1);
-    } else {
-      effectiveWorkers = Math.min(defaultWorkers, numCPUs - 1);
-    }
-
-    const maxWorkers = Math.min(taskQueue.length, effectiveWorkers);
-
-    const chunkSize = Math.ceil(taskQueue.length / maxWorkers);
-    const serializableConfig = this.getSerializableConfig();
-    const workerExitPromises: Promise<void>[] = [];
-
-    const moduleInfosArray = Array.from(this.moduleInfos.entries());
-
-    for (let i = 0; i < maxWorkers; i++) {
-      const taskChunk = taskQueue.slice(i * chunkSize, (i + 1) * chunkSize);
-      const worker = cluster.fork();
-
-      this.setupWorkerMessageHandler(worker);
-      worker.send({ taskList: taskChunk, buildConfig: serializableConfig, moduleInfos: moduleInfosArray });
-
-      const exitPromise = new Promise<void>((resolve, reject) => {
-        worker.on('exit', (status) => status === 0 ? resolve() : reject());
-      });
-
-      workerExitPromises.push(exitPromise);
-    }
-
-    await Promise.all(workerExitPromises);
-  }
-
-  private setupWorkerMessageHandler(worker: Worker): void {
-    worker.on('message', (message: {
-      success: boolean;
-      filePath?: string;
-      error?: string;
-      isDeclFile?: boolean;
-    }) => {
-      if (message.success) {
-        return;
-      }
-      if (message.isDeclFile) {
-        this.logger.printError(LogDataFactory.newInstance(
-          ErrorCode.BUILDSYSTEM_DECLGEN_FAIL,
-          'Generate declaration files failed in worker.',
-          message.error || 'Unknown error',
-          message.filePath
-        ));
-        return;
-      }
-      this.logger.printError(LogDataFactory.newInstance(
-        ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-        'Compile abc files failed in worker.',
-        message.error || 'Unknown error',
-        message.filePath
-      ));
-    });
   }
 
   private getSerializableConfig(): Object {
-    const ignoreList = [
-      'arkts',
-    ];
-    const jsonStr = JSON.stringify(this.buildConfig, (key, value) => {
-      if (typeof value === 'bigint') {
-        return undefined;
-      }
-      //remove useless data from buildConfig
-      if (ignoreList.includes(key)) {
-        return undefined;
-      }
-      return value;
-    });
-    return JSON.parse(jsonStr);
+    return serializeWithIgnore(this.buildConfig, ['arkts']);
   }
 
-  setupCluster(cluster: Cluster, options: SetupClusterOptions): void {
-    const {
-      clearExitListeners,
-      execPath,
-      execArgs = [],
-    } = options;
-
-    if (clearExitListeners) {
-      cluster.removeAllListeners('exit');
-    }
-    const setupFn = cluster.setupPrimary ?? cluster.setupMaster; // Adapt to node-v14
-    setupFn({
-      exec: execPath,
-      execArgv: execArgs,
-    });
-  }
   // -- runParallell code ends --
 
 

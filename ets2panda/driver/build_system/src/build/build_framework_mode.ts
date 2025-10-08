@@ -16,7 +16,7 @@
 import { BaseMode } from './base_mode';
 import { BuildConfig, CompileFileInfo, ModuleInfo } from '../types';
 import { LogData, LogDataFactory } from '../logger';
-import { changeFileExtension } from '../utils';
+import { changeFileExtension } from '../util/utils';
 import { ABC_SUFFIX } from '../pre_define';
 import path from 'path';
 import { ErrorCode } from '../error_code';

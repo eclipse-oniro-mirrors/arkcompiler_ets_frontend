@@ -15,7 +15,7 @@
 
 import { FileManager } from '../../../src/plugins/FileManager';
 import { LANGUAGE_VERSION } from '../../../src/pre_define';
-import * as utils from '../../../src/utils';
+import * as utils from '../../../src/util/utils';
 
 // This test suite is for the FileManager class, which manages file paths and language versions in the build system.
 describe('class FileManager', () => {

@@ -15,10 +15,10 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+
 import { AliasConfig, ArkTS } from '../types';
 import {
     Logger,
-    LogData,
     LogDataFactory
 } from '../logger';
 import { ErrorCode } from '../error_code';

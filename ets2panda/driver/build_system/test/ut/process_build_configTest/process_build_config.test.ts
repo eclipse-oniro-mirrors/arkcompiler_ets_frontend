@@ -23,8 +23,11 @@ jest.mock('../../../src/logger', () => {
     } as any;
     return {
         Logger: mLogger,
-        LogDataFactory: { newInstance: jest.fn(() => ({
-            code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {} })) }
+        LogDataFactory: {
+            newInstance: jest.fn(() => ({
+                code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {}
+            }))
+        }
     };
 });
 jest.mock('../../../src/plugins/plugins_driver', () => {
@@ -39,7 +42,7 @@ jest.mock('../../../src/pre_define', () => ({
     PANDA_SDK_PATH_FROM_SDK: 'panda',
     PROJECT_BUILD_CONFIG_FILE: 'projectionConfig.json'
 }));
-jest.mock('../../../src/utils', () => ({
+jest.mock('../../../src/util/utils', () => ({
     isLinux: jest.fn(() => false),
     isMac: jest.fn(() => false),
     isWindows: jest.fn(() => false)
@@ -47,9 +50,9 @@ jest.mock('../../../src/utils', () => ({
 
 const fakeArkts = {
     Config: { create: jest.fn(() => ({ peer: 'peer' })) },
-    Context: { 
+    Context: {
         createFromString: jest.fn(() => ({ program: {}, peer: 'peer' })),
-        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' })) 
+        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' }))
     },
     proceedToState: jest.fn(),
     Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2 },
@@ -71,16 +74,16 @@ const fakeArktsGlobal = {
 
 jest.mock('../../../src/init/init_koala_modules', () => ({
     initKoalaModules: jest.fn((buildConfig) => {
-    const fakeKoala = {
-      arkts: fakeArkts,
-      arktsGlobal: fakeArktsGlobal
-    };
-    fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
-    
-    buildConfig.arkts = fakeKoala.arkts;
-    buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
-    return fakeKoala;
-  })
+        const fakeKoala = {
+            arkts: fakeArkts,
+            arktsGlobal: fakeArktsGlobal
+        };
+        fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+
+        buildConfig.arkts = fakeKoala.arkts;
+        buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
+        return fakeKoala;
+    })
 }));
 
 beforeEach(() => {
@@ -194,7 +197,7 @@ describe('test processBuildConfig in different scenarios', () => {
 
     test('set DYLD_LIBRARY_PATH on Mac', () => {
         jest.resetModules();
-        require('../../../src/utils').isMac.mockReturnValue(true);
+        require('../../../src/util/utils').isMac.mockReturnValue(true);
         const { processBuildConfig, initBuildEnv } = require('../../../src/init/process_build_config');
         const config = { ...buildConfigBase, pandaSdkPath: '/sdk/panda' };
         process.env.PATH = '/usr/bin';
@@ -218,15 +221,15 @@ describe('test processBuildConfig in different scenarios', () => {
     });
 
     test('throw if koala wrapper require fails', () => {
-        jest.unmock('../../../src/init/init_koala_modules'); 
-        jest.resetModules(); 
+        jest.unmock('../../../src/init/init_koala_modules');
+        jest.resetModules();
 
         process.env.KOALA_WRAPPER_PATH = '/bad/koala';
         jest.doMock('/bad/koala', () => { throw new Error('fail'); }, { virtual: true });
         const { processBuildConfig } = require('../../../src/init/process_build_config');
         expect(() => processBuildConfig({ ...buildConfigBase })).toThrow();
         delete process.env.KOALA_WRAPPER_PATH;
-});
+    });
 
 
 });

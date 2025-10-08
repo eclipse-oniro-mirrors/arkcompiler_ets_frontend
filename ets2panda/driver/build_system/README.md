@@ -71,3 +71,11 @@ To run tests:
 npm run ut_test
 npm run plugin_test
 ```
+
+## Performance Analysis
+The switch of performance analysis is located in the file arkcompiler/ets_frontend/ets2panda/driver/build_system/src/utils/record_time_mem.ts
+To open the switch, change recordType to ON_TYPE.
+```
+this.recordType = recordType ?? RECORD_TYPE.ON_TYPE
+```
+And the report, named bs_record_perf.csv, is located in the project root directory.
