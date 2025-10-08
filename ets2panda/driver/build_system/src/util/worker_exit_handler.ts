@@ -13,21 +13,42 @@
  * limitations under the License.
  */
 
-import { ErrorCode, DriverError } from "../util/error";
+import { ErrorCode } from "../util/error";
 import { getEs2pandaPath } from "../init/process_build_config";
-import { Logger, LogDataFactory } from "../logger";
-import { ProcessCompileTask, ProcessDeclgenV1Task } from "../types";
+import { LogDataFactory, LogData } from "../logger";
+import { ProcessCompileTask, ProcessDeclgenV1Task, JobInfo } from "../types";
 import { Task, WorkerInfo } from "./TaskManager";
+
+function getErrorMessage<PayloadT extends JobInfo>(
+    workerInfo: WorkerInfo,
+    task: Task<PayloadT>,
+    code: number | null,
+    signal: NodeJS.Signals | null
+): string {
+    if (signal) {
+        switch (signal) {
+            case "SIGSEGV":
+                return `Worker [ID:${workerInfo.id}] caught SIGSEGV signal`;
+            case "SIGKILL":
+                return `Worker [ID:${workerInfo.id}] was killed by signal ${signal}`;
+            default:
+                return `Signal  ${signal} was sent to the worker [${workerInfo.id}]`;
+        }
+    }
+
+    if (code && code != 0) {
+        return `Failed to compile ${task.payload.fileList[0]}. Exit code ${code}`;
+    }
+
+    return 'Worker exited unexpectedly';
+}
 
 export function handleCompileProcessWorkerExit(
     workerInfo: WorkerInfo,
     task: Task<ProcessCompileTask>,
     code: number | null,
     signal: NodeJS.Signals | null
-): void {
-    if (!code || code === 0) {
-        return
-    }
+): LogData {
     const es2pandPath = getEs2pandaPath(task.payload.buildConfig);
     const cmd = [
         es2pandPath,
@@ -36,15 +57,13 @@ export function handleCompileProcessWorkerExit(
         task.payload.fileInfo.input
     ];
 
-    throw new DriverError(
-        LogDataFactory.newInstance(
-            ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
-            `Compile file ${task.payload.fileInfo.input} crashed (exit code ${code})`,
-            "",
-            "",
-            [`Please try to run command locally : ${cmd.join(' ')}`]
-        )
-    );
+    return LogDataFactory.newInstance(
+        ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
+        getErrorMessage(workerInfo, task, code, signal),
+        "This error is likely caused internally from compiler.",
+        task.payload.fileList[0],
+        [`Run locally: ${cmd.join(' ')}`]
+    )
 }
 
 export function handleDeclgenWorkerExit(
@@ -52,21 +71,10 @@ export function handleDeclgenWorkerExit(
     task: Task<ProcessDeclgenV1Task>,
     code: number | null,
     signal: NodeJS.Signals | null
-): void {
-    if (code && code !== 0) {
-        const error = LogDataFactory.newInstance(
-            ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
-            `Declgen crashed (exit code ${code})`,
-            "This error is likely caused internally from compiler.",
-        )
-        Logger.getInstance().printError(error)
-    }
-    if (signal && signal !== "SIGTERM") {
-        const error = LogDataFactory.newInstance(
-            ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
-            `Declgen crashed (exit signal ${signal})`,
-            "This error is likely caused internally from compiler.",
-        )
-        Logger.getInstance().printError(error)
-    }
+): LogData {
+    return LogDataFactory.newInstance(
+        ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
+        getErrorMessage(workerInfo, task, code, signal),
+        "This error is likely caused internally from compiler.",
+    )
 }

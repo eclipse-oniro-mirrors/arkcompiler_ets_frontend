@@ -57,30 +57,28 @@ export class Logger implements ILogger {
 
     public printInfo(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
         const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
-        logger.printInfo(`[PID:${process.pid}] [time:${Date.now()}] ${message}`);
+        logger.printInfo(`[ID:${process.pid}] [time:${Date.now()}] ${message}`);
     }
 
     public printWarn(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
         const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
-        logger.printWarn(`[PID:${process.pid}] [time:${Date.now()}] ${message}`);
+        logger.printWarn(`[ID:${process.pid}] [time:${Date.now()}] ${message}`);
     }
 
     public printDebug(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
         const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
-        logger.printDebug(`[PID:${process.pid}] [time:${Date.now()}] ${message}`);
+        logger.printDebug(`[ID:${process.pid}] [time:${Date.now()}] ${message}`);
     }
 
     public printError(error: LogData): void {
         this.hasErrorOccurred = true;
         const logger: ILogger = this.getLoggerFromErrorCode(error.code);
-        error.description = `[PID:${process.pid}] [time:${Date.now()}] ${error.description}`
         logger.printError(error);
     }
 
     public printErrorAndExit(error: LogData): void {
         this.hasErrorOccurred = true;
         const logger: ILogger = this.getLoggerFromErrorCode(error.code);
-        error.description = `[PID:${process.pid}] [time:${Date.now()}] ${error.description}`
         logger.printErrorAndExit(error);
     }
 
