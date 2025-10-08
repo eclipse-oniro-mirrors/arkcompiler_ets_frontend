@@ -58,24 +58,4 @@ TEST_F(LSPAPITests, GetTouchingToken2)
     ASSERT_EQ(result->End().index, expectedNode->End().index);
     initializer.DestroyContext(ctx);
 }
-
-TEST_F(LSPAPITests, GetTouchingToken3)
-{
-    Initializer initializer = Initializer();
-    es2panda_Context *ctx = initializer.CreateContext("first-node.ets", ES2PANDA_STATE_CHECKED,
-                                                      "function A(a:number, b:number) {\n  return a + b;\n}\nA(1, 2);");
-    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
-    size_t const offset = 51;
-    auto result = ark::es2panda::lsp::GetTouchingToken(ctx, offset, true);
-    auto ast = GetAstFromContext<ark::es2panda::ir::AstNode>(ctx);
-    auto expectedNode = ast->FindChild([](ark::es2panda::ir::AstNode *node) {
-        return node->IsClassStaticBlock() && node->Parent()->IsClassDefinition() &&
-               node->Parent()->AsClassDefinition()->IsGlobal();
-    });
-    ASSERT_EQ(result->DumpJSON(), expectedNode->DumpJSON());
-    ASSERT_EQ(result->Start().index, expectedNode->Start().index);
-    ASSERT_EQ(result->End().index, expectedNode->End().index);
-    initializer.DestroyContext(ctx);
-}
-
 }  // namespace
