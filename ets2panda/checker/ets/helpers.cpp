@@ -1197,6 +1197,10 @@ static checker::Type *MaybeReadonlyType(ETSChecker *checker, checker::Type *sour
         sourceType = sourceType->Clone(checker);
         sourceType->AddTypeFlag(TypeFlag::READONLY);
     }
+
+    if (targetType->IsETSReadonlyArrayType() && !sourceType->IsETSReadonlyArrayType()) {
+        return targetType;
+    }
     return sourceType;
 }
 
