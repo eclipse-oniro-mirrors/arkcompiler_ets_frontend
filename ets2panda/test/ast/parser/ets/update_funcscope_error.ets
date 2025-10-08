@@ -49,5 +49,4 @@ export const updateIfChanged = (t: Record<string, Object>) => {
 /* @@? 30:16 Error TypeError: This expression is not callable. */
 /* @@? 32:5 Error SyntaxError: Unexpected token ')'. */
 /* @@? 33:12 Error TypeError: Unresolved reference reduceResult */
-/* @@? 33:12 Error TypeError: Unexpected return value, enclosing method return type is void. */
 /* @@? 35:1 Error SyntaxError: Unexpected token '}'. */

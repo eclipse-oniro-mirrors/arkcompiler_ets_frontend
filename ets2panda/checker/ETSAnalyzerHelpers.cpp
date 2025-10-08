@@ -609,14 +609,6 @@ bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, c
 bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                      ir::Expression *stArgument, ir::ScriptFunction *containingFunc)
 {
-    if (funcReturnType->IsETSVoidType() || funcReturnType == checker->GlobalVoidType()) {
-        if (argumentType != checker->GlobalVoidType()) {
-            checker->LogError(diagnostic::UNEXPECTED_VALUE_RETURN, {}, stArgument->Start());
-            return false;
-        }
-        return true;
-    }
-
     if (containingFunc->IsAsyncFunc() && funcReturnType->IsETSObjectType() &&
         funcReturnType->AsETSObjectType()->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType()) {
         auto promiseArg = funcReturnType->AsETSObjectType()->TypeArguments()[0];

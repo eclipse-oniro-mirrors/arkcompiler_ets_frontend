@@ -1408,10 +1408,6 @@ semantic:
   id: 364
   message: "Structs are only used to define UI components, it should be translated at 'plugin after parser' phase."
 
-- name: UNEXPECTED_VALUE_RETURN
-  id: 89
-  message: "Unexpected return value, enclosing method return type is void."
-
 - name: UNEXPECTED_VOID
   id: 93
   message: "'{}' shouldn't have void return type."
@@ -1502,6 +1498,7 @@ graveyard:
 - 60
 - 75
 - 85
+- 89
 - 90
 - 95
 - 102

@@ -17,5 +17,4 @@ let f = ()=>int {}
 f()
 
 /* @@? 16:13 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 16:13 Error TypeError: Unexpected return value, enclosing method return type is void. */
 /* @@? 16:17 Error SyntaxError: Unexpected token '{'. */

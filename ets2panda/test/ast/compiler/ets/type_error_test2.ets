@@ -23,7 +23,6 @@ let f:(c:string, ...abe])=>void = (c:be ...abe])=>{}
 /* @@? 16:41 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 16:41 Error SyntaxError: Expected '=>', got '...'. */
 /* @@? 16:41 Error SyntaxError: Unexpected token '...'. */
-/* @@? 16:41 Error TypeError: Unexpected return value, enclosing method return type is void. */
 /* @@? 16:44 Error SyntaxError: Unexpected token 'abe'. */
 /* @@? 16:44 Error TypeError: Unresolved reference abe */
 /* @@? 16:47 Error SyntaxError: Unexpected token ']'. */
