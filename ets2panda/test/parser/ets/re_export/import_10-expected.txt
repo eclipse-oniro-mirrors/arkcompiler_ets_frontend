@@ -1,3 +1,4 @@
+Warning: Duplicated export aliases for 'foo'. [re_export_4.ets:17:8]
 {
   "type": "Program",
   "statements": [
@@ -256,7 +257,7 @@
       "program": "import_10.ets"
     },
     "end": {
-      "line": 23,
+      "line": 24,
       "column": 1,
       "program": "import_10.ets"
     }

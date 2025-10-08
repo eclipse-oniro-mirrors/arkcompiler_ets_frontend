@@ -170,6 +170,8 @@ public:
     void AddImportNamespaceSpecifiersToTopBindings(Span<parser::Program *const> records,
                                                    ir::ImportNamespaceSpecifier *namespaceSpecifier,
                                                    const ir::ETSImportDeclaration *import);
+    util::StringView GetAdjustedImportedName(ir::ImportSpecifier *const importSpecifier,
+                                             const ir::ETSImportDeclaration *const import);
     bool AddImportSpecifiersToTopBindings(Span<parser::Program *const> records, ir::ImportSpecifier *importSpecifier,
                                           const ir::ETSImportDeclaration *import);
     void AddImportDefaultSpecifiersToTopBindings(Span<parser::Program *const> records,

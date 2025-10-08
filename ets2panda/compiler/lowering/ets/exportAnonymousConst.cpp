@@ -14,6 +14,7 @@
  */
 
 #include "compiler/lowering/ets/exportAnonymousConst.h"
+#include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
 
@@ -37,6 +38,25 @@ static ir::AstNode *CreateAnonymousVariableDecl(public_lib::Context *ctx, ir::Ex
     return anonymousVariableDecl;
 }
 
+bool IsDefaultExport(ark::es2panda::ir::Statement *ast)
+{
+    if (ast->IsExportNamedDeclaration()) {
+        return std::any_of(ast->AsExportNamedDeclaration()->Specifiers().begin(),
+                           ast->AsExportNamedDeclaration()->Specifiers().end(),
+                           [](auto *specific) { return specific->IsDefault() || specific->IsDefaultExported(); });
+    }
+    if (ast->IsETSReExportDeclaration()) {
+        return std::any_of(
+            ast->AsETSReExportDeclaration()->GetETSImportDeclarations()->Specifiers().begin(),
+            ast->AsETSReExportDeclaration()->GetETSImportDeclarations()->Specifiers().end(), [](auto *specific) {
+                return specific->IsImportSpecifier() && specific->AsImportSpecifier()->Local()->Name() ==
+                                                            compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY;
+            });
+    }
+
+    return (ast->AsStatement()->Modifiers() & ir::ModifierFlags::DEFAULT_EXPORT) != 0U;
+}
+
 static void HandleAnonymousConst(public_lib::Context *const ctx, parser::Program *const program)
 {
     /* The Single Export Directive can directly export anonymous constant variables
@@ -56,6 +76,15 @@ static void HandleAnonymousConst(public_lib::Context *const ctx, parser::Program
             [](auto *specific) { return specific->IsDefault() && specific->GetConstantExpression() != nullptr; });
     };
     auto module = program->Ast();
+    const size_t exportDefaultMaxSize = 1;
+    std::vector<ark::es2panda::ir::Statement *> defaultExportStatements;
+    std::copy_if(module->Statements().begin(), module->Statements().end(), std::back_inserter(defaultExportStatements),
+                 IsDefaultExport);
+    if (defaultExportStatements.size() > exportDefaultMaxSize) {
+        lexer::SourcePosition multiplePos = defaultExportStatements.back()->AsStatement()->Start();
+        ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::MULTIPLE_DEFAULT_EXPORTS, multiplePos);
+        return;
+    }
     auto iteratorForFind =
         std::find_if(module->Statements().begin(), module->Statements().end(), isExportAnonymousConst);
     if (iteratorForFind == module->Statements().end()) {
@@ -63,8 +92,6 @@ static void HandleAnonymousConst(public_lib::Context *const ctx, parser::Program
     }
     auto &stmt = module->StatementsForUpdates();
     auto iterator = std::find_if(stmt.begin(), stmt.end(), isExportAnonymousConst);
-
-    [[maybe_unused]] const size_t exportDefaultMaxSize = 1;
     if ((*iterator)->AsExportNamedDeclaration()->Specifiers().size() != exportDefaultMaxSize) {
         ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::MULTIPLE_DEFAULT_EXPORTS,
                                                     (*iterator)->AsExportNamedDeclaration()->Start());

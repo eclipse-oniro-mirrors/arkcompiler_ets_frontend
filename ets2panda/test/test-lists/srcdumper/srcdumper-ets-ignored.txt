@@ -148,3 +148,7 @@ runtime/ets/top_level_02.ets
 runtime/ets/try-catch-error.ets
 runtime/ets/try-catch.ets
 runtime/ets/union_type_RTE.ets
+
+#Issue 30577
+runtime/ets/re_export_default/reexport1.ets
+runtime/ets/re_export_default/reexport2.ets

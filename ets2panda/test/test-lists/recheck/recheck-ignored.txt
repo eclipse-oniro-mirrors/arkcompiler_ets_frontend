@@ -93,3 +93,6 @@ ast/parser/ets/InvalidLexer.ets
 #Test that failed with abort before plugins-after-check phase
 compiler/ets/dynamic-equality.ets
 runtime/ets/non_null_number_as_index.ets
+
+#Issue #30577
+runtime/ets/re_export_default/import_reexport3.ets
