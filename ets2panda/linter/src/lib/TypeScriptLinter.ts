@@ -4806,8 +4806,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleInterfaceImport(tsIdentifier);
     this.checkAsonSymbol(tsIdentifier);
     this.handleTsInterop(tsIdentifier, () => {
-      const parent = tsIdentifier.parent;
-      if (ts.isImportSpecifier(parent)) {
+      if (ts.findAncestor(tsIdentifier, ts.isImportDeclaration)) {
         return;
       }
       const type = this.tsTypeChecker.getTypeAtLocation(tsIdentifier);
