@@ -304,6 +304,7 @@ export interface DependencyItem {
     language: string,
     path: string,
     ohmUrl: string,
+    sourceFilePath?: string,
     alias?: string[]
 }
 

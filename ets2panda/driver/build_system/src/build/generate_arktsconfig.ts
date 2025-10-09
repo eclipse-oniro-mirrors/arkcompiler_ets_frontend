@@ -280,6 +280,7 @@ export class ArkTSConfigGenerator {
                 const depItem: DependencyItem = {
                     language: 'js',
                     path: files[file].declPath,
+                    sourceFilePath: files[file].filePath,
                     ohmUrl: files[file].ohmUrl
                 };
 

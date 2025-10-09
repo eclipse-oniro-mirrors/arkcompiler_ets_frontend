@@ -124,17 +124,7 @@ public:
     };
 
     ImportPathManager(ark::ArenaAllocator *allocator, const util::Options &options, parser::Program *globalProgram,
-                      util::DiagnosticEngine &diagnosticEngine)
-        : allocator_(allocator),
-          arktsConfig_(options.ArkTSConfig()),
-          absoluteEtsPath_(
-              options.GetEtsPath().empty() ? "" : util::Path(options.GetEtsPath(), allocator_).GetAbsolutePath()),
-          stdLib_(options.GetStdlib()),
-          parseList_(allocator->Adapter()),
-          globalProgram_(globalProgram),
-          diagnosticEngine_ {diagnosticEngine}
-    {
-    }
+                      util::DiagnosticEngine &diagnosticEngine);
 
     NO_COPY_SEMANTIC(ImportPathManager);
     NO_MOVE_SEMANTIC(ImportPathManager);
@@ -189,7 +179,9 @@ private:
     std::string_view DirOrDirWithIndexFile(StringView dir) const;
     ResolvedPathRes AppendExtensionOrIndexFileIfOmitted(StringView basePath) const;
     std::string TryMatchDependencies(std::string_view fixedPath) const;
-    std::string TryResolvePath(std::string_view fixedPath) const;
+    ResolvedPathRes TryResolvePath(std::string_view fixedPath) const;
+    void TryMatchStaticResolvedPath(ResolvedPathRes &result) const;
+    void TryMatchDynamicResolvedPath(ResolvedPathRes &result) const;
     StringView GetRealPath(StringView path) const;
     bool DeclarationIsInCache(ImportMetadata &importData);
     void ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata &importData,
