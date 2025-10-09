@@ -15,9 +15,11 @@
 
 import * as path from 'path';
 import { BuildConfig, DependentModuleConfig } from '../types';
-import { toUnixPath } from '../utils';
+import {
+  toUnixPath,
+  readFirstLineSync
+} from '../util/utils';
 import { ETS_1_1, ETS_1_1_INTEROP, LANGUAGE_VERSION } from '../pre_define';
-import { readFirstLineSync } from '../utils';
 
 export class FileManager {
   private static instance: FileManager | undefined = undefined;

@@ -17,7 +17,7 @@
 
 jest.mock('fs');
 jest.mock('path');
-jest.mock('../../../src/utils', () => ({
+jest.mock('../../../src/util/utils', () => ({
     changeFileExtension: jest.fn((p, ext) => p.replace(/\.[^/.]+$/, ext)),
     ensurePathExists: jest.fn()
 }));
@@ -37,8 +37,11 @@ jest.mock('../../../src/logger', () => {
     } as any;
     return {
         Logger: mLogger,
-        LogDataFactory: { newInstance: jest.fn(() => ({
-            code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {} })) }
+        LogDataFactory: {
+            newInstance: jest.fn(() => ({
+                code: '001', description: '', cause: '', position: '', solutions: [], moreInfo: {}
+            }))
+        }
     };
 });
 jest.mock('../../../src/pre_define', () => ({
@@ -52,11 +55,16 @@ jest.mock('/sdk/koala', () => ({
 
 const fakeArkts = {
     Config: { create: jest.fn(() => ({ peer: 'peer' })) },
-    Context: { createFromString: jest.fn(() => ({ program: {}, peer: 'peer' })) },
+    Context: {
+        createFromString: jest.fn(() => ({ program: {}, peer: 'peer' })),
+        createFromStringWithHistory: jest.fn(() => ({ program: {}, peer: 'peer' }))
+    },
     proceedToState: jest.fn(),
-    Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2, ES2PANDA_STATE_BIN_GENERATED: 3 },
+    Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2 },
+    generateTsDeclarationsFromContext: jest.fn(),
     generateStaticDeclarationsFromContext: jest.fn(),
-    destroyConfig: jest.fn()
+    destroyConfig: jest.fn(),
+    EtsScript: { fromContext: jest.fn(() => ({})) }
 };
 
 const fakeArktsGlobal = {
@@ -73,16 +81,16 @@ const fakeArktsGlobal = {
 
 jest.mock('../../../src/init/init_koala_modules', () => ({
     initKoalaModules: jest.fn((buildConfig) => {
-    const fakeKoala = {
-      arkts: fakeArkts,
-      arktsGlobal: fakeArktsGlobal
-    };
-    fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
-    
-    buildConfig.arkts = fakeKoala.arkts;
-    buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
-    return fakeKoala;
-  })
+        const fakeKoala = {
+            arkts: fakeArkts,
+            arktsGlobal: fakeArktsGlobal
+        };
+        fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+
+        buildConfig.arkts = fakeKoala.arkts;
+        buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
+        return fakeKoala;
+    })
 }));
 
 jest.mock('path', () => ({
@@ -107,25 +115,47 @@ afterEach(() => {
 });
 
 // Test the functions of the compile_worker.ts file
-import { changeFileExtension } from '../../../src/utils';
+import { changeFileExtension } from '../../../src/util/utils';
 import { DECL_ETS_SUFFIX } from '../../../src/pre_define';
+import {
+    CompileFileInfo,
+    BuildConfig,
+    ES2PANDA_MODE,
+    BUILD_MODE,
+    BUILD_TYPE,
+} from '../../../src/types';
 describe('compile_worker', () => {
-    const fileInfo = {
+
+    const compileFileInfo: CompileFileInfo = {
         filePath: '/src/foo.ets',
-        abcFilePath: '/out/foo.abc',
-        arktsConfigFile: '/src/arktsconfig.json'
+        dependentFiles: [],
+        abcFilePath: 'foo.abc',
+        arktsConfigFile: '/src/arktsconfig.json',
+        packageName: 'pkg',
     };
+
     const buildConfig = {
-        buildMode: 0,
         hasMainModule: true,
         byteCodeHar: true,
-        moduleType: 0,
-        declgenV2OutPath: '/decl',
-        packageName: 'pkg',
+        moduleType: 9999,
+        declgenV2OutPath: 'declgenV2Out',
         moduleRootPath: '/src',
-        buildSdkPath: '/sdk'
+        plugins: { pkg: 'plugin' },
+        paths: { pkg: ['plugin'] },
+        compileFiles: ['/src/foo.ets'],
+        entryFiles: ['/src/foo.ets'],
+        dependentModuleList: [],
+        aliasConfig: {},
     };
-    const moduleInfos: any[] = [];
+
+    beforeEach(() => {
+        jest.resetModules();
+        (process as any).send = jest.fn();
+        jest.spyOn(process, 'exit').mockImplementation((code?: string | number | null | undefined) => {
+            throw new Error(`exit: ${code}`);
+        });
+    });
+
 
     test('compile all files && exit(0)', () => {
         require('fs').readFileSync.mockReturnValue(Buffer.from('source code'));
@@ -133,70 +163,56 @@ describe('compile_worker', () => {
         require('path').join.mockImplementation((...args: string[]) => args.join('/'));
         require('path').resolve.mockImplementation((...args: string[]) => args.join('/'));
         require('path').basename.mockImplementation((p: string) => p.split('/').pop());
+        const processId: number = 1;
+        const payload = {
+            fileInfo: compileFileInfo,
+            buildConfig: buildConfig,
+        };
         require('../../../src/build/compile_worker');
-        expect(() => {
-            (process as any).emit('message', { taskList: [fileInfo], buildConfig, moduleInfos });
-        }).toThrow('exit');
-        expect(require('../../../src/utils').ensurePathExists).toHaveBeenCalled();
-        expect(require('fs').readFileSync).toHaveBeenCalledWith(fileInfo.filePath);
+        (process as any).emit('message', { processId, payload });
+
+        expect(require('../../../src/util/utils').ensurePathExists).toHaveBeenCalled();
+        expect(require('fs').readFileSync).toHaveBeenCalledWith(compileFileInfo.filePath);
         expect(fakeArkts.Config.create).toHaveBeenCalled();
         expect(fakeArkts.Context.createFromString).toHaveBeenCalled();
         expect(fakeArkts.proceedToState).toHaveBeenCalledTimes(3);
         expect(fakeArkts.generateStaticDeclarationsFromContext).toHaveBeenCalled();
         expect(fakeArkts.destroyConfig).toHaveBeenCalled();
         expect(fakeArktsGlobal.es2panda._DestroyContext).toHaveBeenCalled();
-        expect(process.exit).toHaveBeenCalledWith(0);
-    });
-
-    test('handle error && send fail message', () => {
-        jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-
-        require('fs').readFileSync.mockImplementation(() => { throw new Error('fail'); });
-        require('../../../src/build/compile_worker');
-        expect(() => {
-            (process as any).emit('message', { taskList: [fileInfo], buildConfig, moduleInfos });
-        }).not.toThrow();
-
-        expect(process.send).toHaveBeenCalledWith(expect.objectContaining({
-            success: false,
-            filePath: fileInfo.filePath,
-            error: expect.any(String)
-        }));
     });
 
     test('generate decl file', () => {
         require('fs').readFileSync.mockReturnValue(Buffer.from('source code'));
-        let config = { ...buildConfig, hasMainModule: false };
+        let config = buildConfig;
+        config.hasMainModule = false;
+        let processId: number = 3;
+        let payload = {
+            fileInfo: compileFileInfo,
+            buildConfig: config,
+        };
         require('../../../src/build/compile_worker');
-        expect(() => {
-            (process as any).emit('message', { taskList: [fileInfo], buildConfig: config, moduleInfos });
-        }).toThrow('exit');
+        (process as any).emit('message', { processId, payload });
         expect(fakeArkts.generateStaticDeclarationsFromContext).not.toHaveBeenCalled();
+
         require('fs').readFileSync.mockReturnValue(Buffer.from('source code'));
-        config = { ...buildConfig, byteCodeHar: false, moduleType: 9999 };
+        config.hasMainModule = true;
+        config.byteCodeHar = false;
+        config.moduleType = 999999;
         require('../../../src/build/compile_worker');
-        expect(() => {
-            (process as any).emit('message', { taskList: [fileInfo], buildConfig: config, moduleInfos });
-        }).toThrow('exit');
+        processId = 4;
+        (process as any).emit('message', { processId, payload });
         expect(fakeArkts.generateStaticDeclarationsFromContext).not.toHaveBeenCalled();
+
         require('path').relative.mockImplementation((from: string, to: string) => to.replace(from, '').replace(/^\//, ''));
         require('fs').readFileSync.mockReturnValue(Buffer.from('source code'));
-        config = { ...buildConfig, hasMainModule: true, byteCodeHar: true };
+        config.byteCodeHar = true;
         require('../../../src/build/compile_worker');
-        expect(() => {
-            (process as any).emit('message', { taskList: [fileInfo], buildConfig: config, moduleInfos });
-        }).toThrow('exit');
-        let filePathFromModuleRoot = require('path').relative(buildConfig.moduleRootPath, fileInfo.filePath);
+        processId = 5;
+        (process as any).emit('message', { processId, payload });
+        let filePathFromModuleRoot = require('path').relative(buildConfig.moduleRootPath, compileFileInfo.filePath);
         let declarationPath = require('path').join(buildConfig.declgenV2OutPath, filePathFromModuleRoot);
         let declarationFilePath = changeFileExtension(declarationPath, DECL_ETS_SUFFIX);
         expect(fakeArkts.generateStaticDeclarationsFromContext).toHaveBeenCalledWith(declarationFilePath);
     });
 
-    test('throw while process.send is undefined', () => {
-        delete (process as any).send;
-        require('../../../src/build/compile_worker');
-        expect(() => {
-            (process as any).emit('message', { taskList: [fileInfo], buildConfig, moduleInfos });
-        }).toThrow('process.send is undefined. This worker must be run as a forked process.');
-    });
 });

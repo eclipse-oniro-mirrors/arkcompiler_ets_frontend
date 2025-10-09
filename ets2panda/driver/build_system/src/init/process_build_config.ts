@@ -20,7 +20,7 @@ import {
   isLinux,
   isMac,
   isWindows,
-} from '../utils';
+} from '../util/utils';
 import { PluginDriver } from '../plugins/plugins_driver';
 import {
   API,
@@ -222,4 +222,17 @@ function initInteropSDKInfo(buildConfig: BuildConfig): void {
       buildConfig.interopSDKPaths.add(component);
     }
   }
+}
+
+export function getEs2pandaPath(buildConfig:BuildConfig):string{
+  const pandaSdkPath = buildConfig.pandaSdkPath ?? path.resolve(buildConfig.buildSdkPath, PANDA_SDK_PATH_FROM_SDK);
+  let  es2pandaPath = '';
+  if (isWindows()) {
+    es2pandaPath = path.join(pandaSdkPath, 'bin', 'es2panda.exe');
+  }
+
+  if (isMac() || isLinux()) {
+    es2pandaPath = path.join(pandaSdkPath, 'bin', 'es2panda');
+  }
+  return es2pandaPath;
 }

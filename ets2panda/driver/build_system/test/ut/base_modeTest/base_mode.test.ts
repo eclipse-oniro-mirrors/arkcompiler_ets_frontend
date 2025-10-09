@@ -89,7 +89,7 @@ describe('test base_mode.ts file api', () => {
   test('test shouldSkipFile', () => {
     test_shouldSkipFile();
   });
-  
+
   test('test collectCompileFiles when test declaration files skip branch', () => {
     test_collectCompileFiles_decl_ets_skip();
   });
@@ -323,7 +323,7 @@ function test_collectDependentCompileFiles_isFileChanged_branch() {
   jest.spyOn(fs, 'statSync').mockReturnValue({ mtimeMs: Date.now() });
   jest.spyOn(fs, 'readFileSync').mockReturnValue('mocked file content');
 
-  const utils = require('../../../src/utils');
+  const utils = require('../../../src/util/utils');
   jest.spyOn(utils, 'getFileHash').mockReturnValue("test-hash-123");
 
   const Logger = require('../../../src/logger').Logger;
@@ -1545,9 +1545,9 @@ function test_runConcurrent() {
   const mockConfig = {
     packageName: "test",
     compileFiles: ["/test/path/file1.ets"],
-    moduleRootPath: "/test/path", 
+    moduleRootPath: "/test/path",
     sourceRoots: ["./"],
-    loaderOutPath: "./dist", 
+    loaderOutPath: "./dist",
     cachePath: "./dist/cache",
     dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
@@ -1613,12 +1613,12 @@ function test_collectDependencyModules_language_branches() {
   }
 
   const baseMode = new TestBaseMode({
-    packageName: "test", 
-    moduleRootPath: "/test/path", 
+    packageName: "test",
+    moduleRootPath: "/test/path",
     sourceRoots: ["./"],
-    loaderOutPath: "./dist", 
+    loaderOutPath: "./dist",
     cachePath: "./dist/cache",
-    dependentModuleList: [], 
+    dependentModuleList: [],
     buildMode: BUILD_MODE.DEBUG
   } as any);
 
@@ -1715,16 +1715,16 @@ function test_declgen_method() {
   const fs = require('fs');
   jest.spyOn(fs, 'readFileSync').mockReturnValue('test source code');
   const mockConfig = {
-    packageName: "test", 
+    packageName: "test",
     moduleRootPath: "/test/path",
-    loaderOutPath: "./dist", 
+    loaderOutPath: "./dist",
     cachePath: "./dist/cache",
     dependentModuleList: [],
     arkts: {
       Config: { create: jest.fn().mockReturnValue({ peer: 'mockConfigPeer' }) },
-      Context: { 
+      Context: {
         createFromString: jest.fn().mockReturnValue({ peer: 'mockContextPeer', program: 'mockProgram' }),
-        createFromStringWithHistory: jest.fn().mockReturnValue({ peer: 'mockContextPeer', program: 'mockProgram' }) 
+        createFromStringWithHistory: jest.fn().mockReturnValue({ peer: 'mockContextPeer', program: 'mockProgram' })
       },
       proceedToState: jest.fn(), EtsScript: { fromContext: jest.fn().mockReturnValue('mockAst') },
       Es2pandaContextState: { ES2PANDA_STATE_PARSED: 'parsed', ES2PANDA_STATE_CHECKED: 'checked' },
@@ -1734,7 +1734,7 @@ function test_declgen_method() {
   };
   const Logger = require('../../../src/logger').Logger;
   const PluginDriver = require('../../../src/plugins/plugins_driver').PluginDriver;
-  const utils = require('../../../src/utils');
+  const utils = require('../../../src/util/utils');
   const path = require('path');
   Logger.getInstance = jest.fn().mockReturnValue({ printInfo: jest.fn(), printError: jest.fn() });
   PluginDriver.getInstance = jest.fn().mockReturnValue({
@@ -2102,11 +2102,11 @@ function test_assignTaskToIdleWorker_abcQueue_no_job() {
 
 function test_findStronglyConnectedComponents_branches() {
   const mockConfig = {
-    packageName: "test", 
-    moduleRootPath: "/test/path", 
+    packageName: "test",
+    moduleRootPath: "/test/path",
     sourceRoots: ["./"],
-    loaderOutPath: "./dist", 
-    cachePath: "./dist/cache", 
+    loaderOutPath: "./dist",
+    cachePath: "./dist/cache",
     buildMode: "Debug",
     dependentModuleList: [],
   };
@@ -2295,7 +2295,7 @@ function test_collectCompileFiles_bytecode_har() {
   });
 
   (global as any).getFileHash = jest.fn().mockReturnValue("hash123");
-  const utils = require('../../../src/utils');
+  const utils = require('../../../src/util/utils');
 
   jest.spyOn(baseMode, 'testCollectAbcFileFromByteCodeHar').mockImplementation(() => { });
 
@@ -2420,7 +2420,7 @@ function test_collectCompileFiles_decl_ets_skip() {
   });
 
   (global as any).getFileHash = jest.fn().mockReturnValue("hash123");
-  const utils = require('../../../src/utils');
+  const utils = require('../../../src/util/utils');
 
   baseMode.testCollectCompileFiles();
 }

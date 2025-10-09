@@ -76,7 +76,9 @@ describe('test writeArkTSConfigFile in normal and abnormal scenarios', () => {
     (generator as any).getDependenciesSection = jest.fn();
     (generator as any).getDynamicPathSection = jest.fn();
     (generator as any).logger = mockLogger;
+    (generator as any).buildConfig = mockConfig;
     (generator as any).dynamicSDKPaths = ['/sdk/apis/interop'];
+    (generator as any).arktsconfigs = new Map();
     (generator as any).arktsconfigs = new Map();
   });
 
@@ -87,10 +89,12 @@ describe('test writeArkTSConfigFile in normal and abnormal scenarios', () => {
   test('should throw error if sourceRoots is empty', () => {
     expect(() => {
       generator.generateArkTSConfigFile(moduleInfoWithNullSourceRoots, false);
+      generator.generateArkTSConfigFile(moduleInfoWithNullSourceRoots, false);
     }).toThrow('Exit with error.');
   });
 
   test('should generate correct arktsConfig when enableDeclgenEts2Ts is false', () => {
+    generator.generateArkTSConfigFile(moduleInfoWithFalseEts2Ts, false);
     generator.generateArkTSConfigFile(moduleInfoWithFalseEts2Ts, false);
     expect((generator as any).getDependenciesSection).toHaveBeenCalled();
   })
@@ -326,6 +330,7 @@ describe('test if the getDependenciesSection is working correctly', () => {
 
     const generator = Object.create(ArkTSConfigGenerator.prototype);
     generator.systemDependenciesSection = {};
+    generator.systemDependenciesSection = {};
 
     generator.getOhmurl = jest.fn((file, depModuleInfo) => {
       return `${depModuleInfo.packageName}/${file.replace(/^src\//, '').replace(/\.ets$/, '')}`;
@@ -364,7 +369,7 @@ describe('test if the getDependenciesSection is working correctly', () => {
       byteCodeHar: false
     } as any;
 
-    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo, "./dist/cache");
 
     (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, arktsconfig);
 
@@ -386,6 +391,7 @@ describe('test if the getDependenciesSection is working correctly', () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(false);
 
     const generator = Object.create(ArkTSConfigGenerator.prototype);
+    generator.systemDependenciesSection = {};
     generator.systemDependenciesSection = {};
 
     const depModuleInfo: ModuleInfo = {
@@ -421,8 +427,9 @@ describe('test if the getDependenciesSection is working correctly', () => {
       byteCodeHar: false
     } as any;
 
-    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo, "./dist/cache");
 
+    (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, arktsconfig);
     (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, arktsconfig);
 
     expect(consoleErrorMock).toHaveBeenCalled();
@@ -439,6 +446,7 @@ describe('test if the getDependenciesSection is working correctly', () => {
     const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation(() => { });
 
     const generator = Object.create(ArkTSConfigGenerator.prototype);
+    generator.systemDependenciesSection = {};
     generator.systemDependenciesSection = {};
 
     const depModuleInfo: ModuleInfo = {
@@ -473,8 +481,9 @@ describe('test if the getDependenciesSection is working correctly', () => {
       byteCodeHar: false
     } as any;
 
-    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo, "./dist/cache");
 
+    (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, arktsconfig);
     (ArkTSConfigGenerator.prototype as any).getDependenciesSection.call(generator, moduleInfo, arktsconfig);
 
     expect(consoleErrorMock).toHaveBeenCalled();
@@ -523,13 +532,15 @@ describe('test if the processAlias is working correctly', () => {
       compileFileInfos: []
     } as any;
 
-    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo, "./dist/cache");
 
     (ArkTSConfigGenerator.prototype as any).processAlias.call(
       generator,
       arktsconfig
     );
 
+    expect(generator.processStaticAlias).toHaveBeenCalledTimes(1);
+    expect(generator.processDynamicAlias).toHaveBeenCalledTimes(1);
     expect(generator.processStaticAlias).toHaveBeenCalledTimes(1);
     expect(generator.processDynamicAlias).toHaveBeenCalledTimes(1);
 
@@ -544,8 +555,6 @@ describe('test if the processAlias is working correctly', () => {
       { isStatic: false, originalAPIName: "@ohos.test3" },
       arktsconfig
     );
-
-    
   });
 
   test('should handle undefined aliasConfig gracefully', () => {
@@ -571,7 +580,7 @@ describe('test if the processAlias is working correctly', () => {
       compileFileInfos: []
     } as any;
 
-    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo, "./dist/cache");
 
     (ArkTSConfigGenerator.prototype as any).processAlias.call(
       generator,
@@ -604,7 +613,7 @@ describe('test if the processAlias is working correctly', () => {
       compileFileInfos: []
     } as any;
 
-    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo);
+    const arktsconfig: ArkTSConfig = new ArkTSConfig(moduleInfo, "./dist/cache");
 
     (ArkTSConfigGenerator.prototype as any).processAlias.call(
       generator,

@@ -13,6 +13,11 @@
  * limitations under the License.
  */
 
+export enum RECORD_TYPE {
+  DEFAULT_TYPE = 'OFF',
+  ON_TYPE = 'ON',
+}
+
 export enum BUILD_MODE {
   DEBUG = 'Debug',
   RELEASE = 'Release'
@@ -48,6 +53,7 @@ export interface BuildBaseConfig {
   arktsGlobal: ArkTSGlobal;
   maxWorkers?: number;
   isBuildConfigModified?: boolean;
+  recordType?: RECORD_TYPE;
 }
 
 export interface ArkTSGlobal {
@@ -166,6 +172,8 @@ export interface DeclgenConfig {
   declgenV2OutPath?: string;
   declgenBridgeCodePath?: string;
   skipDeclCheck?: boolean;
+  continueOnError?: boolean;
+  genDeclAnnotations?: boolean;
 }
 
 export interface LoggerConfig {
@@ -326,5 +334,13 @@ export interface ArkTSConfigObject {
     paths: Record<string, string[]>;
     dependencies: Record<string, DependencyItem>;
     useEmptyPackage?: boolean;
+    rootDir?: string,
+    cacheDir?: string,
   }
 };
+
+export interface CompilePayload {
+  fileInfo: CompileFileInfo;
+  buildConfig: BuildConfig;
+  moduleInfos: [string, ModuleInfo][];
+}
