@@ -401,9 +401,8 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
         rootDir_ = ".";
     }
     cacheDir_ = ValueOrEmptyString(compilerOptions, CACHE_DIR);
-    if (!cacheDir_.empty() &&
-        !Check(ark::os::file::File::IsDirectory(cacheDir_), diagnostic::NOT_A_DIR, {"cacheDir " + cacheDir_})) {
-        return false;
+    if (!cacheDir_.empty() && !ark::os::IsDirExists(cacheDir_)) {
+        ark::os::CreateDirectories(cacheDir_);
     }
     // Parse "useUrl"
     if (compilerOptions->get()->HasKey(USE_EMPTY_PACKAGE)) {

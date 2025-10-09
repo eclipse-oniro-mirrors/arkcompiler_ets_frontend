@@ -81,8 +81,18 @@ public:
         "Lstd/annotations/ModuleDeclaration;";  // CC-OFF(G.NAM.03-CPP) project code style
     static constexpr std::string_view etsSuffix = ".ets";
     static constexpr std::string_view dEtsSuffix = ".d.ets";
+    static constexpr std::string_view cacheSuffix = ".etscache";
     static constexpr std::string_view abcSuffix = ".abc";
     static constexpr std::string_view etsstdlibAbcSuffix = "etsstdlib.abc";
+
+    static constexpr size_t extensionsSize = 9;
+    // declaration file must follow source file according to spec
+    static constexpr std::array<std::string_view, extensionsSize> supportedExtensions = {
+        etsSuffix, dEtsSuffix, cacheSuffix, abcSuffix, ".sts", ".d.sts", ".ts", ".d.ts", ".js"};
+    // source file must follow declaration file so that extension "best match" will succeed
+    static constexpr std::array<std::string_view, extensionsSize> supportedExtensionsInversed = {
+        dEtsSuffix, etsSuffix, cacheSuffix, abcSuffix, ".d.sts", ".sts", ".d.ts", ".ts", ".js"};
+
     struct ImportMetadata {
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
         ImportFlags importFlags {};
