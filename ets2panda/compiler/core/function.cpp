@@ -278,6 +278,7 @@ void Function::Compile(PandaGen *pg)
         }
     }
 
+    pg->FinalizeRegAllocation();
     pg->SortCatchTables();
 }
 }  // namespace ark::es2panda::compiler

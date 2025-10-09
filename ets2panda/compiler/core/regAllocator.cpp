@@ -17,6 +17,7 @@
 
 #include "compiler/core/codeGen.h"
 #include "checker/types/type.h"
+#include "ir/irnode.h"
 
 #include <algorithm>
 #include <vector>
@@ -84,28 +85,6 @@ const RegSpiller &RegAllocatorBase::Spiller() const noexcept
     return *spiller_;
 }
 
-std::pair<bool, std::size_t> RegAllocatorBase::RegIndicesValid(const IRNode *const ins, const Span<VReg *> &registers)
-{
-    const auto &formats = ins->GetFormats();
-    std::size_t limit = 0;
-
-    for (const auto &format : formats) {
-        for (const auto &formatItem : format.GetFormatItem()) {
-            if (formatItem.IsVReg()) {
-                limit = 1U << formatItem.BitWidth();
-                break;
-            }
-        }
-
-        if (std::all_of(registers.begin(), registers.end(),
-                        [limit](const VReg *const reg) { return reg->IsValid(limit); })) {
-            return {true, limit};
-        }
-    }
-
-    return {false, limit};
-}
-
 VReg RegAllocatorBase::Spill(IRNode *const ins, const VReg reg) const
 {
     const auto [spill_info, origin_type] = spiller_->New();
@@ -142,65 +121,165 @@ void RegAllocatorBase::Restore(const IRNode *const ins) const
 
 RegAllocator::RegAllocator(CodeGen *const cg, RegSpiller *const spiller) noexcept : RegAllocatorBase(cg, spiller) {}
 
-void RegAllocator::Run(IRNode *const ins, const int32_t spillMax)
+static bool IsInsAllRegsValid(IRNode *ins, const Span<VReg *> &registers, uint32_t regsNum)
+{
+    const auto limit = ins->GetRegLimit();
+    return std::all_of(registers.begin(), registers.end(),
+                       [limit, regsNum](const VReg *reg) { return reg->IsRegOrParamValid(limit, regsNum); });
+}
+
+void RegAllocator::Run(IRNode *const ins, uint32_t realRegCount)
 {
     ES2PANDA_ASSERT(Spiller().Restored());
     ES2PANDA_ASSERT(ins != nullptr);
+
     std::array<VReg *, IRNode::MAX_REG_OPERAND> regs {};
     const auto regCnt = ins->Registers(&regs);
-    const auto registers =
-        Span<VReg *>(regs.data(), regs.data() + (spillMax == std::numeric_limits<int32_t>::max() ? regCnt : spillMax));
 
-    std::array<OutVReg, IRNode::MAX_REG_OPERAND> dstRegs {};
-    ins->OutRegisters(&dstRegs);
+    auto realRegCnt = std::min(realRegCount, static_cast<uint32_t>(regCnt));
+    if (realRegCnt > 0) {
+        const auto registers = Span<VReg *>(regs.data(), regs.data() + realRegCnt);
+        Spiller().UpdateSpillRegCount(realRegCnt);
 
-    const auto [indices_valid, limit] = RegIndicesValid(ins, registers);
-    if (indices_valid) {
-        PushBack(ins);
+        if (!Spiller().HasSpill() && !IsInsAllRegsValid(ins, registers, GetCodeGen().GetRegsNum())) {
+            Spiller().SetHasSpill();
+        }
+    }
+
+    ins->SetRealRegCount(realRegCnt);
+    PushBack(ins);
+}
+
+bool RegAllocator::CheckFinalInsNeedSpill()
+{
+    const auto &insns = GetCodeGen().GetInsns();
+    return std::all_of(insns.begin(), insns.end(), [this](IRNode *ins) {
+        uint32_t checkRegCnt = 0;
+        if (!ins->IsRangeInst()) {
+            checkRegCnt = ins->GetRealRegCount();
+        } else {
+            std::array<VReg *, IRNode::MAX_REG_OPERAND> regs {};
+            checkRegCnt = ins->Registers(&regs);
+        }
+        if (checkRegCnt == 0) {
+            return true;
+        }
+        std::array<VReg *, IRNode::MAX_REG_OPERAND> regs {};
+        ins->Registers(&regs);
+        const auto registers = Span<VReg *>(regs.data(), regs.data() + checkRegCnt);
+        return IsInsAllRegsValid(ins, registers, GetCodeGen().TotalRegsNum());
+    });
+}
+
+void RegAllocator::AdjustInsRegWhenHasSpill()
+{
+    const auto spillRegCount = Spiller().GetSpillRegCount();
+    if (spillRegCount == 0 || (!Spiller().HasSpill() && CheckFinalInsNeedSpill())) {
+        Spiller().ResetSpill();
         return;
     }
 
-    const auto rs = Spiller().Start(GetCodeGen());
+    ES2PANDA_ASSERT(spillRegCount + GetCodeGen().GetRegsNum() < VReg::REG_MAX);
+    GetCodeGen().AddSpillRegsToUsedRegs(spillRegCount);
 
-    std::unordered_set<VReg> validRegs;
-    for (auto *const reg : registers) {
-        if (!reg->IsValid(limit)) {
+    ArenaList<IRNode *> newInsns(GetCodeGen().Allocator()->Adapter());
+    auto &insns = GetCodeGen().GetInsns();
+    const auto funcRegsNum = GetCodeGen().GetRegsNum();
+
+    for (auto *ins : insns) {
+        std::array<VReg *, IRNode::MAX_REG_OPERAND> regs {};
+        auto regCnt = ins->Registers(&regs);
+        if (regCnt == 0) {
+            newInsns.push_back(ins);
             continue;
         }
 
-        validRegs.insert(*reg);
-    }
+        auto registersSize = std::min(regCnt, static_cast<size_t>(ins->GetRealRegCount()));
+        auto registers = Span<VReg *>(regs.data(), regs.data() + registersSize);
 
-    std::vector<IRNode *> dstMoves;
-    size_t i = 0;
-    for (auto *const reg : registers) {
-        auto dstInfo = dstRegs[i++];
-        if (reg->IsValid(limit)) {
+        for (auto *reg : registers) {
+            ES2PANDA_ASSERT(reg != nullptr);
+            if (!reg->IsParameter()) {
+                reg->SetIndex(reg->GetIndex() - static_cast<VReg::Index>(spillRegCount));
+            }
+        }
+
+        if (IsInsAllRegsValid(ins, registers, funcRegsNum)) {
+            newInsns.push_back(ins);
             continue;
         }
 
-        Spiller().Adjust(validRegs);
+        if (ins->IsRangeInst()) {
+            AdjustRangeInsSpill(ins, newInsns);
+        } else {
+            AdjustInsSpill(registers, ins, newInsns);
+        }
+    }
 
-        auto r = Spill(ins, *reg);
+    GetCodeGen().SetInsns(newInsns);
+    Spiller().ResetSpill();
+}
 
-        if (dstInfo.reg != nullptr) {
-            dstMoves.push_back(GetCodeGen().AllocMov(ins->Node(), dstInfo, r));
+// NOLINTBEGIN(misc-non-private-member-variables-in-classes)
+class DstRegSpillInfo {
+public:
+    VReg vd;
+    VReg vs;
+    OperandType type;
+
+    DstRegSpillInfo(VReg d, VReg s, OperandType t) : vd(d), vs(s), type(t) {}
+};
+// NOLINTEND(misc-non-private-member-variables-in-classes)
+
+void RegAllocator::AdjustInsSpill(const Span<VReg *> &registers, IRNode *ins, ArenaList<IRNode *> &newInsns)
+{
+    VReg::Index spillIndex = VReg::REG_START;
+    std::vector<DstRegSpillInfo> dstRegSpills;
+    const auto realRegCount = ins->GetRealRegCount();
+    const auto limit = ins->GetRegLimit();
+    const auto funcRegsNum = GetCodeGen().GetRegsNum();
+
+    uint32_t idx = 0;
+    for (auto *reg : registers) {
+        if (idx >= realRegCount) {
+            break;
         }
 
-        *reg = r;
+        if (reg->IsRegOrParamValid(limit, funcRegsNum)) {
+            ++idx;
+            continue;
+        }
+
+        const VReg originReg = *reg;
+        VReg spillReg(spillIndex--);
+
+        OperandType ty;
+        if (idx == 0 && (ins->FirstArgIsThis() || ins->IsDevirtual())) {
+            ty = OperandType::REF;
+        } else {
+            ty = ins->GetOperandRegType(idx);
+        }
+
+        auto kind = ins->GetOperandRegKind(idx);
+        if (kind == OperandKind::SRC_VREG || kind == OperandKind::SRC_DST_VREG) {
+            auto *mov = GetCodeGen().AllocSpillMov(ins->Node(), spillReg, originReg, ty);
+            newInsns.push_back(mov);
+        }
+
+        if (kind == OperandKind::DST_VREG || kind == OperandKind::SRC_DST_VREG) {
+            dstRegSpills.emplace_back(originReg, spillReg, ty);
+        }
+
+        reg->SetIndex(spillReg.GetIndex());
+        ++idx;
     }
 
-    PushBack(ins);
+    newInsns.push_back(ins);
 
-    for (auto *mov : dstMoves) {
-        PushBack(mov);
+    for (auto spill : dstRegSpills) {
+        auto *mov = GetCodeGen().AllocSpillMov(ins->Node(), spill.vd, spill.vs, spill.type);
+        newInsns.push_back(mov);
     }
-
-    while (!Spiller().Restored()) {
-        Restore(ins);
-    }
-
-    Spiller().Finalize();
 }
 
 // RangeRegAllocator
@@ -210,47 +289,74 @@ RangeRegAllocator::RangeRegAllocator(CodeGen *const cg, RegSpiller *const spille
 {
 }
 
-void RangeRegAllocator::Run(IRNode *const ins, VReg rangeStart, const std::size_t argCount)
+void RangeRegAllocator::Run(IRNode *const ins, [[maybe_unused]] VReg rangeStart, const std::size_t argCount)
 {
     ES2PANDA_ASSERT(Spiller().Restored());
     ES2PANDA_ASSERT(ins != nullptr);
 
-    const VReg winBegin = rangeStart;
-    const VReg winEndExclusive = rangeStart - argCount;
     std::array<VReg *, IRNode::MAX_REG_OPERAND> regs {};
     const auto regCnt = ins->Registers(&regs);
+    ES2PANDA_ASSERT(regCnt > 0);
 
-    const auto operands = Span<VReg *>(regs.data(), regs.data() + regCnt);
-    if (RegIndicesValid(ins, operands).first) {
-        PushBack(ins);
-        return;
+    const auto registers = Span<VReg *>(regs.data(), regs.data() + regCnt);
+
+    const auto realRegCount = regCnt + argCount - 1;
+    Spiller().UpdateSpillRegCount(realRegCount);
+
+    if (!Spiller().HasSpill() && !IsInsAllRegsValid(ins, registers, GetCodeGen().GetRegsNum())) {
+        Spiller().SetHasSpill();
     }
 
-    const auto rs = Spiller().Start(GetCodeGen());
-    const auto opRbegin = operands.rbegin();
-    const auto opRend = operands.rend();  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-
-    for (auto it = opRbegin + 1; it != opRend; ++it) {
-        VReg *const vr = *it;
-        *vr = Spill(ins, *vr);
-    }
-
-    VReg *const startOperand = *opRbegin;
-    VReg cur = winBegin;
-    *startOperand = Spill(ins, cur);
-    --cur;
-
-    while (cur != winEndExclusive) {
-        Spill(ins, cur);
-        --cur;
-    }
-
+    ins->SetRealRegCount(realRegCount);
     PushBack(ins);
+}
 
-    while (!Spiller().Restored()) {
-        Restore(ins);
+void RegAllocator::AdjustRangeInsSpill(IRNode *ins, ArenaList<IRNode *> &newInsns)
+{
+    const auto realRegCount = ins->GetRealRegCount();
+
+    std::array<VReg *, IRNode::MAX_REG_OPERAND> regs {};
+    const auto regCnt = ins->Registers(&regs);
+    ES2PANDA_ASSERT(regCnt >= 1);
+
+    const uint32_t insLastRegIdx = regCnt - 1;
+    VReg::Index spillIndex = VReg::REG_START;
+    const auto startRegIndex = regs[insLastRegIdx]->GetIndex();
+    const auto funcRegsNum = GetCodeGen().GetRegsNum();
+    const auto limit = ins->GetRegLimit();
+
+    for (uint32_t idx = 0; idx < realRegCount; ++idx) {
+        VReg::Index regIndex;
+
+        if (idx <= insLastRegIdx) {
+            auto *currentReg = regs[idx];
+            if (!currentReg->IsRegOrParamValid(limit, funcRegsNum)) {
+                regIndex = currentReg->GetIndex();
+                currentReg->SetIndex(spillIndex);
+            } else if (idx < insLastRegIdx) {
+                continue;
+            } else {
+                ES2PANDA_ASSERT(idx == insLastRegIdx);
+                ES2PANDA_ASSERT(currentReg->IsRegOrParamValid(limit, funcRegsNum));
+                break;
+            }
+        } else {
+            regIndex = startRegIndex + (insLastRegIdx - idx);
+        }
+
+        VReg spillReg(spillIndex);
+        const auto originReg = VReg(regIndex);
+        OperandType ty;
+        if (idx == 0 && (ins->FirstArgIsThis() || ins->IsDevirtual())) {
+            ty = OperandType::REF;
+        } else {
+            ty = ins->IsRangeInst() ? ins->GetParamTypeAt(idx) : ins->GetOperandRegType(idx);
+        }
+        auto *mov = GetCodeGen().AllocSpillMov(ins->Node(), spillReg, originReg, ty);
+        newInsns.push_back(mov);
+        spillIndex--;
     }
 
-    Spiller().Finalize();
+    newInsns.push_back(ins);
 }
 }  // namespace ark::es2panda::compiler

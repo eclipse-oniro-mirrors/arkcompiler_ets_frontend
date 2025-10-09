@@ -88,8 +88,6 @@ protected:
     VReg Spill(IRNode *ins, VReg reg) const;
     void Restore(const IRNode *ins) const;
 
-    [[nodiscard]] static std::pair<bool, std::size_t> RegIndicesValid(const IRNode *ins, const Span<VReg *> &registers);
-
 private:
     RegSpiller *spiller_;
 };
@@ -100,13 +98,15 @@ public:
     NO_COPY_SEMANTIC(RegAllocator);
     NO_MOVE_SEMANTIC(RegAllocator);
     ~RegAllocator() = default;
+    const constexpr static auto MAX_SPILL_MAX = std::numeric_limits<uint32_t>::max();
 
-    template <typename T, int32_t VALID_VREGS = std::numeric_limits<int32_t>::max(), typename... Args>
+    template <typename T, uint32_t VALID_VREGS = MAX_SPILL_MAX, typename... Args>
     void Emit(const ir::AstNode *const node, Args &&...args)
     {
         auto *const ins = Alloc<T>(node, std::forward<Args>(args)...);
         Run(ins, VALID_VREGS);
     }
+    void AdjustInsRegWhenHasSpill();
 
     template <typename T, int32_t VALID_VREGS = std::numeric_limits<int32_t>::max(), typename... Args>
     void EmitDevirtual(const ir::AstNode *const node, Args &&...args)
@@ -117,7 +117,10 @@ public:
     }
 
 private:
-    void Run(IRNode *ins, int32_t spillMax);
+    void Run(IRNode *ins, uint32_t realRegCount);
+    void AdjustInsSpill(const Span<VReg *> &registers, IRNode *ins, ArenaList<IRNode *> &newInsns);
+    void AdjustRangeInsSpill(IRNode *ins, ArenaList<IRNode *> &newInsns);
+    bool CheckFinalInsNeedSpill();
 };
 
 class RangeRegAllocator final : public RegAllocatorBase {
@@ -132,6 +135,7 @@ public:
     {
         auto *const ins = Alloc<T>(node, std::forward<Args>(args)...);
         Run(ins, rangeStart, argCount);
+        ins->SetIsRangeInst();
     }
 
     template <typename T, typename... Args>
@@ -139,6 +143,7 @@ public:
     {
         auto *const ins = Alloc<T>(node, std::forward<Args>(args)...);
         Run(ins, rangeStart, argCount);
+        ins->SetIsRangeInst();
         ins->SetDevirtual();
     }
 

@@ -77,6 +77,21 @@ public:
     {
         ES2PANDA_UNREACHABLE();
     }
+
+    OperandType GetOperandRegType([[maybe_unused]] size_t idx) const override
+    {
+        return OperandType::NONE;
+    }
+
+    uint32_t GetRegLimit() const noexcept override
+    {
+        return 0U;
+    }
+
+    OperandKind GetOperandRegKind([[maybe_unused]] size_t idx) const override
+    {
+        return OperandKind::NONE;
+    }
 };
 
 using EcmaLdhole = EcmaDisabled;
@@ -348,6 +363,11 @@ IRNode *PandaGen::AllocMov(const ir::AstNode *node, OutVReg vd, const VReg vs)
 {
     ES2PANDA_ASSERT(vd.type == OperandType::ANY);
     return Allocator()->New<MovDyn>(node, *vd.reg, vs);
+}
+
+IRNode *PandaGen::AllocSpillMov(const ir::AstNode *node, VReg vd, VReg vs, [[maybe_unused]] OperandType type)
+{
+    return Allocator()->New<MovDyn>(node, vd, vs);
 }
 
 void PandaGen::MoveVreg(const ir::AstNode *node, VReg vd, VReg vs)
@@ -1061,7 +1081,7 @@ void PandaGen::CallTagged(const ir::AstNode *node, VReg callee, VReg thisReg,
         if (hasThis) {
             Ra().Emit<EcmaCall1thisdyn>(node, callee, thisReg);
         } else {
-            Sa().Emit<EcmaCall1dyn>(node, callee);
+            Ra().Emit<EcmaCall1dyn>(node, callee);
         }
         return;
     }
@@ -1088,7 +1108,7 @@ void PandaGen::CallTagged(const ir::AstNode *node, VReg callee, VReg thisReg,
 
 void PandaGen::SuperCall(const ir::AstNode *node, VReg startReg, size_t argCount)
 {
-    Rra().Emit<EcmaSupercall>(node, startReg, argCount, static_cast<int64_t>(argCount), startReg);
+    Rra().Emit<EcmaSupercall>(node, startReg, argCount + 1, static_cast<int64_t>(argCount), startReg);
 }
 
 void PandaGen::SuperCallSpread(const ir::AstNode *node, VReg vs)
@@ -1461,7 +1481,7 @@ void PandaGen::CreateObjectWithExcludedKeys(const ir::AstNode *node, VReg obj, V
         argStart = obj;
     }
 
-    Rra().Emit<EcmaCreateobjectwithexcludedkeys>(node, argStart, argCount, static_cast<int64_t>(argCount), obj,
+    Rra().Emit<EcmaCreateobjectwithexcludedkeys>(node, argStart, argCount + 1, static_cast<int64_t>(argCount), obj,
                                                  argStart);
 }
 
@@ -1493,12 +1513,12 @@ void PandaGen::DefineClassWithBuffer(const ir::AstNode *node, const util::String
 
 void PandaGen::LoadClassComputedInstanceFields(const ir::AstNode *node, VReg ctor)
 {
-    Sa().Emit<EcmaLoadclasscomputedinstancefields>(node, ctor);
+    Ra().Emit<EcmaLoadclasscomputedinstancefields>(node, ctor);
 }
 
 void PandaGen::DefineClassPrivateFields(const ir::AstNode *node, uint32_t privateBufIdx)
 {
-    Sa().Emit<EcmaDefineclassprivatefields>(node, util::Helpers::ToStringView(Allocator(), privateBufIdx), LexEnv());
+    Ra().Emit<EcmaDefineclassprivatefields>(node, util::Helpers::ToStringView(Allocator(), privateBufIdx), LexEnv());
 }
 
 void PandaGen::ClassFieldAdd(const ir::AstNode *node, VReg obj, VReg prop)
@@ -1803,7 +1823,7 @@ void PandaGen::DirectEval(const ir::AstNode *node, uint32_t parserStatus)
     LoadAccumulator(node, evalBindings);
     StOwnByIndex(node, bindings, index++);
 
-    Sa().Emit<EcmaDirecteval>(node, static_cast<int64_t>(parserStatus), arg0, bindings);
+    Ra().Emit<EcmaDirecteval>(node, static_cast<int64_t>(parserStatus), arg0, bindings);
 }
 
 void PandaGen::LoadLexicalContext(const ir::AstNode *node)

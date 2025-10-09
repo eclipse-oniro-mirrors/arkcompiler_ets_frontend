@@ -208,23 +208,32 @@ IRNode *ETSGen::AllocMov(const ir::AstNode *const node, const VReg vd, const VRe
 
 IRNode *ETSGen::AllocMov(const ir::AstNode *const node, OutVReg vd, const VReg vs)
 {
-    ES2PANDA_ASSERT(vd.type != OperandType::ANY && vd.type != OperandType::NONE);
-
-    switch (vd.type) {
-        case OperandType::REF:
-            return Allocator()->New<MovObj>(node, *vd.reg, vs);
-        case OperandType::B64:
-            return Allocator()->New<MovWide>(node, *vd.reg, vs);
-        default:
-            break;
-    }
-
-    return Allocator()->New<Mov>(node, *vd.reg, vs);
+    return AllocSpillMov(node, *vd.reg, vs, vd.type);
 }
 
 checker::Type const *ETSGen::TypeForVar(varbinder::Variable const *var) const noexcept
 {
     return var->TsType();
+}
+
+IRNode *ETSGen::AllocSpillMov(const ir::AstNode *node, VReg vd, VReg vs, OperandType type)
+{
+    ES2PANDA_ASSERT(type != OperandType::ANY);
+    ES2PANDA_ASSERT(type != OperandType::NONE);
+
+    switch (type) {
+        case OperandType::REF:
+            return Allocator()->New<MovObj>(node, vd, vs);
+        case OperandType::B64:
+            return Allocator()->New<MovWide>(node, vd, vs);
+        case OperandType::B32:
+            return Allocator()->New<Mov>(node, vd, vs);
+        default:
+            ES2PANDA_UNREACHABLE();
+            break;
+    }
+
+    return Allocator()->New<Mov>(node, vd, vs);
 }
 
 void ETSGen::MoveVreg(const ir::AstNode *const node, const VReg vd, const VReg vs)
@@ -841,17 +850,20 @@ void ETSGen::EmitFailedTypeCastException(const ir::AstNode *node, const VReg src
                                          bool isUndef)
 {
     const RegScope rs(this);
-    const auto errorReg = AllocReg();
+    const auto boolReg = AllocReg();
 
     if (isUndef) {
-        Ra().Emit<Movi>(node, errorReg, 1.0);
+        Ra().Emit<Movi>(node, boolReg, 1.0);
     } else {
-        Ra().Emit<Movi>(node, errorReg, 0.0);
+        Ra().Emit<Movi>(node, boolReg, 0.0);
     }
-    SetVRegType(errorReg, Checker()->GlobalETSBooleanType());
+    SetVRegType(boolReg, Checker()->GlobalETSBooleanType());
+
     LoadAccumulatorString(node, util::UString(target->ToString(), Allocator()).View());
-    Ra().Emit<CallAcc, 2U>(node, AssemblerSignatureReference(Signatures::BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCEPTION),
-                           src, errorReg, dummyReg_, 1);
+    const auto sig = AssemblerSignatureReference(Signatures::BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCEPTION);
+    Ra().Emit<CallAcc, 2U>(node, sig, src, boolReg, dummyReg_, 1);
+
+    const auto errorReg = AllocReg();
     StoreAccumulator(node, errorReg);
     EmitThrow(node, errorReg);
     SetAccumulatorType(nullptr);
@@ -1710,7 +1722,7 @@ void ETSGen::ConditionalFloat(const ir::AstNode *node)
         Ra().Emit<FcmplWide>(node, zeroReg);
     }
     Sa().Emit<Xori>(node, 0);
-    Sa().Emit<And2>(node, isNaNReg);
+    Ra().Emit<And2>(node, isNaNReg);
 }
 
 void ETSGen::BranchConditionalIfFalse(const ir::AstNode *node, Label *endLabel)
@@ -1746,15 +1758,15 @@ void ETSGen::BranchIfNullish(const ir::AstNode *node, Label *ifNullish)
             Sa().Emit<JeqzObj>(node, ifNullish);
         }
 
-        Sa().Emit<StaObj>(node, tmpObj);
+        StoreAccumulator(node, tmpObj);
         EmitIsNull(node);
         Sa().Emit<Jeqz>(node, notTaken);
 
-        Sa().Emit<LdaObj>(node, tmpObj);
+        LoadAccumulator(node, tmpObj);
         Sa().Emit<Jmp>(node, ifNullish);
 
         SetLabel(node, notTaken);
-        Sa().Emit<LdaObj>(node, tmpObj);
+        LoadAccumulator(node, tmpObj);
     }
 }
 
@@ -1780,12 +1792,13 @@ void ETSGen::AssumeNonNullish(const ir::AstNode *node, checker::Type const *targ
 void ETSGen::EmitNullishException(const ir::AstNode *node)
 {
     RegScope ra(this);
-    VReg undef = AllocReg();
-    LoadAccumulatorUndefined(node);
-    StoreAccumulator(node, undef);
     VReg exception = AllocReg();
-    NewObject(node, Signatures::BUILTIN_NULLPOINTER_ERROR, exception);
-    CallExact(node, Signatures::BUILTIN_NULLPOINTER_ERROR_CTOR, exception, undef, undef);
+
+    Ra().Emit<InitobjShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_NULLPOINTER_ERROR_CTOR), dummyReg_,
+                               dummyReg_);
+    SetAccumulatorType(Checker()->GlobalETSObjectType());
+    StoreAccumulator(node, exception);
+
     EmitThrow(node, exception);
     SetAccumulatorType(nullptr);
 }
