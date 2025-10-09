@@ -121,6 +121,11 @@ static void CheckOverride(ir::ClassProperty *st, ETSChecker *checker)
         auto *propVar = superType->AsETSObjectType()->GetProperty(st->Id()->Name(), searchFlags);
         classDef = superType->AsETSObjectType()->GetDeclNode()->AsClassDefinition();
         if (propVar != nullptr) {
+            if ((propVar->Declaration()->Node()->Modifiers() & ir::ModifierFlags::PRIVATE) != 0 &&
+                (st->Modifiers() & ir::ModifierFlags::OVERRIDE) != 0) {
+                checker->LogError(diagnostic::OVERRIDE_NOT_PRIVATE, {propVar->Declaration()->Name(), superName},
+                                  st->Start());
+            }
             return;
         }
     }

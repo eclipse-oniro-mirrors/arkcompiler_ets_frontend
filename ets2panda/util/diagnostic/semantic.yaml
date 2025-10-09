@@ -1101,6 +1101,10 @@ semantic:
   id: 49702
   message: "The 'override' modifier is invalid here because the base class '{}' does not declare this member."
 
+- name: OVERRIDE_NOT_PRIVATE
+  id: 1365480
+  message: "The 'override' modifier is invalid here because the property '{}' is private in class '{}'."
+
 - name: PARAM_COUNT_MISMATCH
   id: 124
   message: "Expected {} arguments, got {}."
