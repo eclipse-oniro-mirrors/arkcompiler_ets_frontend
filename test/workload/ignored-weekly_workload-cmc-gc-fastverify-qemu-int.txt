@@ -17,3 +17,5 @@ stanford-crypto-pbkdf2
 
 #30387
 json-stringify-inspector
+numericalComputation
+crypto
