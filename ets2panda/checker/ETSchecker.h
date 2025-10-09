@@ -799,7 +799,7 @@ public:
     ir::ETSTypeReference *BuildSuperPartialTypeReference(Type *superPartialType,
                                                          ir::TSTypeParameterInstantiation *superPartialRefTypeParams);
     ir::TSInterfaceDeclaration *CreateInterfaceProto(util::StringView name, parser::Program *const interfaceDeclProgram,
-                                                     const bool isStatic, const ir::ModifierFlags flags);
+                                                     const ir::TSInterfaceDeclaration *interfaceDecl);
     ir::TSTypeParameterInstantiation *CreateNewSuperPartialRefTypeParamsDecl(
         ArenaMap<ir::TSTypeParameter *, ir::TSTypeParameter *> *likeSubstitution, const Type *const superPartialType,
         ir::Expression *superRef);
@@ -807,6 +807,7 @@ public:
         ir::TSTypeParameterDeclaration const *const thisTypeParams,
         ArenaMap<ir::TSTypeParameter *, ir::TSTypeParameter *> *likeSubstitution,
         ir::TSTypeParameterDeclaration *newTypeParams);
+    ir::AstNode *CreateGetterOrSetterBodyForOptional(bool isSetter, bool isOptional);
     Type *CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *const interfaceDecl,
                                          ETSObjectType *const typeToBePartial,
                                          ir::TSInterfaceDeclaration *partialInterface);

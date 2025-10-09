@@ -589,48 +589,18 @@
                           "argument": {
                             "type": "ETSNewClassInstanceExpression",
                             "typeReference": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "InvalidStoreAccessError",
-                                  "loc": {
-                                    "start": {
-                                      "line": 1,
-                                      "column": 3,
-                                      "program": "optional_field_interfaceUnion.ets"
-                                    },
-                                    "end": {
-                                      "line": 1,
-                                      "column": 3,
-                                      "program": "optional_field_interfaceUnion.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 1,
-                                    "column": 3,
-                                    "program": "optional_field_interfaceUnion.ets"
-                                  },
-                                  "end": {
-                                    "line": 1,
-                                    "column": 3,
-                                    "program": "optional_field_interfaceUnion.ets"
-                                  }
-                                }
-                              },
+                              "type": "Identifier",
+                              "name": "InvalidStoreAccessError",
                               "loc": {
                                 "start": {
                                   "line": 1,
-                                  "column": 3,
-                                  "program": "optional_field_interfaceUnion.ets"
+                                  "column": 1,
+                                  "program": null
                                 },
                                 "end": {
                                   "line": 1,
-                                  "column": 3,
-                                  "program": "optional_field_interfaceUnion.ets"
+                                  "column": 1,
+                                  "program": null
                                 }
                               }
                             },
@@ -638,13 +608,13 @@
                             "loc": {
                               "start": {
                                 "line": 1,
-                                "column": 3,
-                                "program": "optional_field_interfaceUnion.ets"
+                                "column": 1,
+                                "program": null
                               },
                               "end": {
                                 "line": 1,
-                                "column": 3,
-                                "program": "optional_field_interfaceUnion.ets"
+                                "column": 1,
+                                "program": null
                               }
                             }
                           },
@@ -652,12 +622,12 @@
                             "start": {
                               "line": 1,
                               "column": 1,
-                              "program": "optional_field_interfaceUnion.ets"
+                              "program": null
                             },
                             "end": {
                               "line": 1,
-                              "column": 3,
-                              "program": "optional_field_interfaceUnion.ets"
+                              "column": 1,
+                              "program": null
                             }
                           }
                         }
