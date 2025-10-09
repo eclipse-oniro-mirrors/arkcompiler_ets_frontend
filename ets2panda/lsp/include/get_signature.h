@@ -21,9 +21,9 @@
 #include "lsp/include/types.h"
 #include "public/es2panda_lib.h"
 namespace ark::es2panda::lsp {
-size_t FindFirstNonSpaceLeft(const std::string &str, size_t pos);
-SignatureHelpItems MakeSignatureHelpItem(ir::AstNode *callExpressionNode, ir::AstNode *node, ir::AstNode *declNode,
-                                         checker::Signature *signature, size_t position);
+size_t FindFunctionNameStartNested(const std::string &str, size_t pos);
+size_t FindClassNameStart(const std::string &str, size_t pos);
+void MakeSignatureHelpItem(ir::AstNode *declNode, ir::ScriptFunction *function, SignatureHelpItems &result);
 SignatureHelpItems GetSignature(es2panda_Context *context, size_t position);
 }  // namespace ark::es2panda::lsp
 
