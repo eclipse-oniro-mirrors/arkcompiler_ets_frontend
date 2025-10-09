@@ -55,5 +55,3 @@ Promise.allSettled(thenable).then<void, void>((values: PromiseSettledResult<stri
     console.log('Test failed: ' + e);
 });
 
-/* @@? 19:16 Error TypeError: Type 'Promise<U>' is not compatible with the enclosing method's return type 'PromiseLike<Awaited<U>|Awaited<E>>' */
-/* @@? 27:16 Error TypeError: Type 'Promise<E>' is not compatible with the enclosing method's return type 'PromiseLike<Awaited<U>|Awaited<E>>' */
