@@ -77,6 +77,7 @@ enum class CheckerStatus : uint32_t {
     IN_SETTER = 1U << 27U,
     IN_EXTENSION_ACCESSOR_CHECK = 1U << 28U,
     IN_TYPE_INFER = 1U << 29U,
+    RESTRICTED_RETURN_IN_BLOCK = 1U << 30U
 };
 
 }  // namespace ark::es2panda::checker
