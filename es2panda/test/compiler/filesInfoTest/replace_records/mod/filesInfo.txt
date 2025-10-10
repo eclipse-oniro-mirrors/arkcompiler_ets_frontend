@@ -1,0 +1,3 @@
+bytecodehar1-file2.ts;&bytecodehar1/bytecodehar1-file2&1.0.0;esm;mod/bytecodehar1-file2.ts;bytecodehar1;false;ts
+bytecodehar1-file4.ts;&bytecodehar1/bytecodehar1-file4&1.0.0;esm;mod/bytecodehar1-file3.ts;bytecodehar1;false;ts
+../output/original.abc;;;;bytecodehar1;;

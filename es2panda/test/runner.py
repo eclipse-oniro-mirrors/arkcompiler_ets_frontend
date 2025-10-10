@@ -1251,7 +1251,7 @@ class FilesInfoRunner(Runner):
 
     def add_directory(self, directory, extension, flags):
         projects_path = path.join(self.test_root, directory)
-        test_projects = ["base", "mod"]
+        test_projects = ["original", "base", "mod"]
         for project in test_projects:
             project_dir = path.join(projects_path, project)
             if not path.isdir(project_dir):
@@ -1278,6 +1278,7 @@ class FilesInfoTest(Test):
         self.output_abc_name = path.join(self.output_path, self.project + ".abc")
         self.output_abc_name_of_input_abc = path.join(self.output_path, self.project + "_input.abc")
         self.is_long_path_case = self.LONG_PATH_MARKER in self.path
+        self.compile_context_info_path = path.join(self.path, "compileContextInfo.json")
 
         if not path.exists(self.output_path):
             os.makedirs(self.output_path)
@@ -1299,8 +1300,13 @@ class FilesInfoTest(Test):
         es2abc_cmd.extend(self.flags)
         es2abc_cmd.extend(['%s%s' % ("--output=", output_file)])
         es2abc_cmd.append(input_file)
+        if path.exists(self.compile_context_info_path):
+            es2abc_cmd.extend(["--compile-context-info", self.compile_context_info_path, "--enable-abc-input"])
+            return es2abc_cmd
         if ("base" == self.project):
             es2abc_cmd.extend(['--dump-symbol-table', self.symbol_table_file])
+        elif ("original" == self.project):
+            return es2abc_cmd
         else:
             es2abc_cmd.extend(['--input-symbol-table', self.symbol_table_file])
         return es2abc_cmd
@@ -3066,6 +3072,8 @@ def add_directory_for_compiler(runners, args):
                                                 ["--module", "--merge-abc", "--dump-assembly"]))
     filesinfo_compiler_infos.append(CompilerTestInfo("compiler/filesInfoTest/long_path_filesinfo", "txt",
                                                 ["--module", "--merge-abc"]))
+    filesinfo_compiler_infos.append(CompilerTestInfo("compiler/filesInfoTest/replace_records", "ts",
+                                                ["--module", "--merge-abc", "--dump-assembly"]))
 
     for info in filesinfo_compiler_infos:
         filesinfo_runner.add_directory(info.directory, info.extension, info.flags)

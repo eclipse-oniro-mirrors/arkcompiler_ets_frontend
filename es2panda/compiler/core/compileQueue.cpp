@@ -183,6 +183,21 @@ void CompileFileJob::CompileProgram()
     OptimizeAndCacheProgram(prog);
 }
 
+void CompileFileJob::EraseDuplicateRecordsForAbcFile(
+    std::map<std::string, panda::es2panda::util::ProgramCache *> &abcProgramsInfo)
+{
+    for (const auto &reord : options_->compileContextInfo.replaceRecords[src_->pkgName]) {
+        auto it = std::find_if(abcProgramsInfo.begin(), abcProgramsInfo.end(), [reord](const auto &programPair) {
+            // abcProgramsInfo's keys format is '<abcfilePath>|<recordName>'.
+            return programPair.first.length() >= reord.length() &&
+                programPair.first.substr(programPair.first.length() - reord.length()) == reord;
+        });
+        if (it != abcProgramsInfo.end()) {
+            abcProgramsInfo.erase(it);
+        }
+    }
+}
+
 void CompileFileJob::CompileAbcFileJobInParallel(es2panda::Compiler &compiler)
 {
     std::map<std::string, panda::es2panda::util::ProgramCache *> abcProgramsInfo {};
@@ -190,6 +205,14 @@ void CompileFileJob::CompileAbcFileJobInParallel(es2panda::Compiler &compiler)
     panda::Timer::timerStart(panda::EVENT_COMPILE_ABC_FILE, src_->fileName);
     compiler.CompileAbcFileInParallel(src_, *options_, abcProgramsInfo, allocator_);
     panda::Timer::timerEnd(panda::EVENT_COMPILE_ABC_FILE, src_->fileName);
+    
+    panda::Timer::timerStart(panda::EVENT_REPLACE_ABC_FILE_RECORD, src_->fileName);
+    if (!options_->compileContextInfo.replaceRecords.empty() &&
+        options_->compileContextInfo.replaceRecords.find(src_->pkgName) !=
+        options_->compileContextInfo.replaceRecords.end()) {
+        EraseDuplicateRecordsForAbcFile(abcProgramsInfo);
+    }
+    panda::Timer::timerEnd(panda::EVENT_REPLACE_ABC_FILE_RECORD, src_->fileName);
 
     panda::Timer::timerStart(panda::EVENT_UPDATE_ABC_PROG_CACHE, src_->fileName);
     auto outputCacheIter = options_->cacheFiles.find(src_->fileName);

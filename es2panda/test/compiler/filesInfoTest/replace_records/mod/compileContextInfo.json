@@ -1,0 +1,11 @@
+{
+    "compileEntries": [],
+    "hspPkgNames": [],
+    "updateVersionInfo": {},
+    "replaceRecords": {
+        "bytecodehar1": [
+            "&bytecodehar1/bytecodehar1-file2&1.0.0",
+            "&bytecodehar1/bytecodehar1-file4&1.0.0"
+        ]
+    }
+}
