@@ -156,7 +156,7 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
 
     // Since optional prop has default body, need to set scope.
     if (isOptional) {
-        auto funcCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, functionScope);
+        auto funcCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, classScope);
         InitScopesPhaseETS::RunExternalNode(func, varbinder);
     } else {
         func->SetScope(functionScope);
@@ -259,9 +259,7 @@ ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(pu
             continue;
         }
         auto *originProp = prop->Clone(ctx->allocator, nullptr);
-        // Note (daizihan): #30085 Disable this feature temporary after UI-plugin adapted this change.
-        // Change false to prop->AsClassProperty()->IsOptionalDeclaration() && !interface->Parent()->IsDeclare();
-        bool isOptional = false;
+        bool isOptional = prop->AsClassProperty()->IsOptionalDeclaration() && !interface->Parent()->IsDeclare();
         ir::MethodDefinition *getter =
             GenerateGetterOrSetter(ctx, varbinder, prop->AsClassProperty(), false, isOptional);
         getter->SetOriginalNode(originProp);
