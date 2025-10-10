@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-import systemShare from './sdk/sdk'
-import sharesystem from './sdk/etssdk'
+import systemShare from './sdk/@ohos.accessibility'
+import sharesystem from './sdk/@ohos.data.sendablePreferences'
+import cooperate from './sdk/@ohos.cooperate.d.ts'
 
 //TS File
 let a = new systemShare.A()
@@ -48,3 +49,8 @@ sharesystem.onKnockShare() // fix
 sharesystem.onChange() // fix
 sharesystem.on('test4') // no fix
 sharesystem.once('knockShare') //no fix
+
+
+//should be ignored
+cooperate.on('cooperate', () => {})
+cooperate.off('cooperate', () => {})

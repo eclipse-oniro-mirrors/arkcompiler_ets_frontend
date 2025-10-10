@@ -3910,10 +3910,8 @@ export class Autofixer {
     }
 
     const accessExpression = / \./gi;
-    return block.
-      getFullText().
-      replace(accessExpression, ` ${INSTANCE_IDENTIFIER}.`).
-      replace(');', ')')
+    return block.getFullText().replace(accessExpression, ` ${INSTANCE_IDENTIFIER}.`).
+      replace(');', ')');
   }
 
   private adjustIndentation(text: string, startPos: number, indentLastLine = false): string {
@@ -5545,6 +5543,62 @@ export class Autofixer {
     const newDecorator = ts.factory.createDecorator(ts.factory.createIdentifier(ENTRY_DECORATOR_NAME));
     const text = this.printer.printNode(ts.EmitHint.Unspecified, newDecorator, entryDecorator.getSourceFile());
     return [{ start: entryDecorator.getStart(), end: entryDecorator.getEnd(), replacementText: text }];
+  }
+
+  private static getCallbackBody(callExpr: ts.CallExpression): ts.ArrowFunction | ts.FunctionExpression | undefined {
+    for (const arg of callExpr.arguments) {
+      if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
+        return arg;
+      }
+    }
+    return undefined;
+  }
+
+  fixSdkOverloadApi(callke: ts.CallExpression): Autofix[] | undefined {
+    const fn = Autofixer.getCallbackBody(callke);
+    if (!fn?.body || !ts.isBlock(fn.body)) {
+      return undefined;
+    }
+
+    const statements = fn.body.statements;
+    const newStatements: ts.Statement[] = [];
+    const oldBolck = fn.body;
+    if (statements.length > 0) {
+      const visitor: ts.Visitor = (node): ts.VisitResult<ts.Node> => {
+        if (
+          ts.isArrowFunction(node) ||
+          ts.isFunctionDeclaration(node) ||
+          ts.isMethodDeclaration(node) ||
+          ts.isMethodSignature(node)
+        ) {
+          return node;
+        }
+
+        if (ts.isReturnStatement(node) && !node.expression) {
+          return ts.factory.updateReturnStatement(node, ts.factory.createTrue());
+        }
+        return ts.visitEachChild(node, visitor, ts.nullTransformationContext);
+      };
+
+      const newBlock = ts.visitNode(oldBolck, visitor, ts.isBlock);
+      newBlock.statements.forEach((statement) => {
+        return newStatements.push(statement);
+      });
+      if (!ts.isReturnStatement(statements[statements.length - 1])) {
+        newStatements.push(ts.factory.createReturnStatement(ts.factory.createTrue()));
+      }
+    } else {
+      newStatements.push(ts.factory.createReturnStatement(ts.factory.createTrue()));
+    }
+    const newBlock = ts.factory.createBlock(newStatements, true);
+    const text = this.printer.printNode(ts.EmitHint.Unspecified, newBlock, fn.getSourceFile());
+    return [
+      {
+        start: fn.body.getStart(),
+        end: fn.body.getEnd(),
+        replacementText: text
+      }
+    ];
   }
 
   fixSdkOverloadMethods(
