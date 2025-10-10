@@ -527,6 +527,12 @@ std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool 
             if (path == dynPath) {
                 return dynPath;
             }
+        }
+        return std::nullopt;
+    };
+
+    auto tryResolveWithDependencyAliases = [this, &path]() -> std::optional<std::string> {
+        for (const auto &[dynPath, dependence] : dependencies_) {
             const auto &aliases = dependence.Alias();
             if (std::find(aliases.begin(), aliases.end(), path) != aliases.end()) {
                 return dynPath;
@@ -535,19 +541,19 @@ std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool 
         return std::nullopt;
     };
 
+    std::vector<std::function<std::optional<std::string>()>> resolvers;
     if (isDynamic) {
-        auto result = tryResolveWithDependencies();
-        if (result != std::nullopt) {
+        resolvers = {tryResolveWithDependencies, tryResolveWithDependencyAliases, tryResolveWithPaths};
+    } else {
+        resolvers = {tryResolveWithDependencies, tryResolveWithPaths, tryResolveWithDependencyAliases};
+    }
+
+    for (auto &resolver : resolvers) {
+        if (auto result = resolver()) {
             return result;
         }
-        // NOTE: #26150. we fall to tryResolveWithPaths in this case 1.2->1.0->1.2
-        return tryResolveWithPaths();
     }
-    auto result = tryResolveWithPaths();
-    if (result != std::nullopt) {
-        return result;
-    }
-    return tryResolveWithDependencies();
+    return std::nullopt;
 }
 
 std::vector<std::string> ArkTsConfig::ParseStringArray(const std::unique_ptr<ark::JsonObject> *alias,
