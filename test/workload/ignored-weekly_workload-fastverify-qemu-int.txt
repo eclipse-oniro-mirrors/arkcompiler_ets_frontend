@@ -18,3 +18,4 @@ typescript-compiler
 crypto
 mandreel
 stanford-crypto-pbkdf2
+OfflineAssembler
