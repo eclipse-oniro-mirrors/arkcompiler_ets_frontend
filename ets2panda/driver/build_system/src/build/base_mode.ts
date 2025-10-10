@@ -33,7 +33,8 @@ import {
   MERGED_INTERMEDIATE_FILE,
   STATIC_RECORD_FILE,
   STATIC_RECORD_FILE_CONTENT,
-  TS_SUFFIX
+  TS_SUFFIX,
+  DECL_FILE_MAP_NAME
 } from '../pre_define';
 import {
   changeDeclgenFileExtension,
@@ -68,14 +69,15 @@ import {
   KPointer,
   ModuleInfo,
   ES2PANDA_MODE,
-  CompilePayload
+  CompilePayload,
+  DeclFileInfo
 } from '../types';
 import {
   ArkTSConfig,
   ArkTSConfigGenerator
 } from './generate_arktsconfig';
 import { KitImportTransformer } from '../plugins/KitImportTransformer';
-import { 
+import {
   BS_PERF_FILE_NAME,
   CompileSingleData,
   RECORDE_COMPILE_NODE,
@@ -126,6 +128,7 @@ export abstract class BaseMode {
   public es2pandaMode: number;
   public skipDeclCheck: boolean;
   public genDeclAnnotations: boolean;
+  public declFileMap: Map<string, DeclFileInfo> = new Map<string, DeclFileInfo>();
 
   constructor(buildConfig: BuildConfig) {
     this.buildConfig = buildConfig;
@@ -168,7 +171,145 @@ export abstract class BaseMode {
     );
     this.skipDeclCheck = buildConfig?.skipDeclCheck as boolean ?? true;
     this.genDeclAnnotations = buildConfig?.genDeclAnnotations as boolean ?? true;
+    this.loadDeclFileMap();
   }
+
+  public loadDeclFileMap(): void {
+    const declMapFile = path.join(this.cacheDir, DECL_FILE_MAP_NAME);
+    if (!fs.existsSync(declMapFile)) {
+      return;
+    }
+
+    try {
+      const content = fs.readFileSync(declMapFile, 'utf-8');
+      const data: Record<string, DeclFileInfo> = JSON.parse(content);
+
+      for (const [key, value] of Object.entries(data)) {
+        this.declFileMap.set(key, value);
+      }
+    } catch (error) {
+      this.logger.printInfo('Failed to load decl file map, will create new one.');
+    }
+  }
+
+
+  public saveDeclFileMap(): void {
+    const declMapFile = path.join(this.cacheDir, DECL_FILE_MAP_NAME);
+    const data: Record<string, DeclFileInfo> = {};
+
+    this.declFileMap.forEach((value, key) => {
+      data[key] = value;
+    });
+
+    ensurePathExists(declMapFile);
+    fs.writeFileSync(declMapFile, JSON.stringify(data, null, 2));
+  }
+
+
+  public updateDeclFileMap(fileInfo: CompileFileInfo): void {
+    const { declEtsOutputPath, glueCodeOutputPath } = this.getOutputFilePaths(fileInfo);
+
+    try {
+
+      const declStat = fs.statSync(declEtsOutputPath);
+      const glueCodeStat = fs.statSync(glueCodeOutputPath);
+
+      this.declFileMap.set(fileInfo.filePath, {
+        delFilePath: declEtsOutputPath,
+        declLastModified: declStat.mtimeMs,
+        glueCodeFilePath: glueCodeOutputPath,
+        glueCodeLastModified: glueCodeStat.mtimeMs,
+        sourceFilePath: fileInfo.filePath
+      });
+
+      this.logger.printInfo(`Updated decl file map for ${fileInfo.filePath} with timestamp: ${declStat.mtimeMs}`);
+    } catch (error) {
+      this.logger.printInfo(`Failed to update decl file map for ${fileInfo.filePath}`);
+    }
+  }
+
+
+  public getOutputFilePaths(fileInfo: CompileFileInfo): { declEtsOutputPath: string, glueCodeOutputPath: string } {
+    const moduleInfo: ModuleInfo = this.moduleInfos.get(fileInfo.packageName)!;
+    const filePathFromModuleRoot: string = path.relative(moduleInfo.moduleRootPath, fileInfo.filePath);
+
+    const declEtsOutputPath: string = changeDeclgenFileExtension(
+      path.join(moduleInfo.declgenV1OutPath as string, moduleInfo.packageName, filePathFromModuleRoot),
+      DECL_ETS_SUFFIX
+    );
+    const glueCodeOutputPath: string = changeDeclgenFileExtension(
+      path.join(moduleInfo.declgenBridgeCodePath as string, moduleInfo.packageName, filePathFromModuleRoot),
+      TS_SUFFIX
+    );
+    ensurePathExists(declEtsOutputPath);
+    ensurePathExists(glueCodeOutputPath);
+
+    return { declEtsOutputPath, glueCodeOutputPath };
+  }
+
+  public needsBackup(fileInfo: CompileFileInfo): { needsDeclBackup: boolean; needsGlueCodeBackup: boolean } {
+    const { declEtsOutputPath, glueCodeOutputPath } = this.getOutputFilePaths(fileInfo);
+
+    let needsDeclBackup = false;
+    let needsGlueCodeBackup = false;
+
+    try {
+      const declInfo = this.declFileMap.get(fileInfo.filePath);
+
+      if (declInfo && fs.existsSync(declEtsOutputPath)) {
+        const declModified = fs.statSync(declEtsOutputPath).mtimeMs;
+        if (declModified !== declInfo.declLastModified) {
+          needsDeclBackup = true;
+        }
+      }
+
+      if (declInfo && fs.existsSync(glueCodeOutputPath)) {
+        const glueCodeModified = fs.statSync(glueCodeOutputPath).mtimeMs;
+        if (declInfo.glueCodeLastModified && glueCodeModified !== declInfo.glueCodeLastModified) {
+          needsGlueCodeBackup = true;
+        }
+      }
+    } catch (error) {
+      needsDeclBackup = true;
+      needsGlueCodeBackup = true;
+    }
+
+    return { needsDeclBackup, needsGlueCodeBackup };
+  }
+
+  public backupFiles(fileInfo: CompileFileInfo, backupDecl: boolean = true, backupGlueCode: boolean = true): void {
+    const { declEtsOutputPath, glueCodeOutputPath } = this.getOutputFilePaths(fileInfo);
+
+    if (backupDecl && fs.existsSync(declEtsOutputPath)) {
+      const delEtsbackupPath = `${declEtsOutputPath}.backup`;
+      fs.copyFileSync(declEtsOutputPath, delEtsbackupPath);
+    }
+
+    if (backupGlueCode && fs.existsSync(glueCodeOutputPath)) {
+      const glueCodeBackupPath = `${glueCodeOutputPath}.backup`;
+      fs.copyFileSync(glueCodeOutputPath, glueCodeBackupPath);
+    }
+  }
+
+
+  public preprocessBackupForParallel(): void {
+    this.logger.printInfo('Starting backup preprocessing for parallel generation');
+
+
+    this.compileFiles.forEach((fileInfo: CompileFileInfo, filePath: string) => {
+      try {
+        const backupNeeds = this.needsBackup(fileInfo);
+
+        if (backupNeeds.needsDeclBackup || backupNeeds.needsGlueCodeBackup) {
+          // 使用统一的备份方法
+          this.backupFiles(fileInfo);
+        }
+      } catch (error) {
+        this.logger.printInfo(`Backup preprocessing failed for ${fileInfo.filePath}: ${error}`);
+      }
+    });
+  }
+
 
   public declgen(fileInfo: CompileFileInfo): void {
     const source = fs.readFileSync(fileInfo.filePath, 'utf8');
@@ -1022,13 +1163,13 @@ export abstract class BaseMode {
   }
 
   public async generateDeclarationParallell(): Promise<void> {
+    this.loadDeclFileMap();
     this.generateModuleInfos();
-
     const taskManager = new TaskManager<CompilePayload>(
       path.resolve(__dirname, 'declgen_worker.js'),
       handleDeclgenWorkerExit
     );
-
+    this.preprocessBackupForParallel();
     try {
       taskManager.startWorkers();
 
@@ -1051,6 +1192,11 @@ export abstract class BaseMode {
     } finally {
       await taskManager.shutdown();
     }
+    this.compileFiles.forEach((fileInfo: CompileFileInfo, filePath: string) => {
+      this.updateDeclFileMap(fileInfo);
+    });
+    this.saveDeclFileMap();
+
   }
 
   private getSerializableConfig(): Object {

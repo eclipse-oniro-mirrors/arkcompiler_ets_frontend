@@ -344,3 +344,12 @@ export interface CompilePayload {
   buildConfig: BuildConfig;
   moduleInfos: [string, ModuleInfo][];
 }
+
+//add
+export interface DeclFileInfo {
+  delFilePath: string;
+  declLastModified: number;    
+  glueCodeFilePath: string; 
+  glueCodeLastModified: number;
+  sourceFilePath:string;
+  }
