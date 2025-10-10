@@ -310,8 +310,12 @@ static void CreateDeclarationFileWindows(const std::string &processed, const std
     CloseHandle(sem);
 }
 #else
-static void CreateDeclarationFileLinux(const std::string &processed, const std::string &absDecl)
+static void CreateDeclarationFileLinux([[maybe_unused]] const std::string &processed,
+                                       [[maybe_unused]] const std::string &absDecl)
 {
+#ifdef USE_UNIX_SYSCALL
+    return;
+#else
     std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
     sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
     if (sem == SEM_FAILED) {
@@ -336,6 +340,7 @@ static void CreateDeclarationFileLinux(const std::string &processed, const std::
     sem_post(sem);
     sem_close(sem);
     sem_unlink(semName.c_str());
+#endif
 }
 #endif
 
@@ -344,13 +349,14 @@ void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
 {
 #ifdef USE_UNIX_SYSCALL
     return;
-#endif
+#else
     const std::string absDecl = fs::absolute(declFileName).string();
     fs::create_directories(fs::path(absDecl).parent_path());
 #ifdef PANDA_TARGET_WINDOWS
     CreateDeclarationFileWindows(processed, absDecl);
 #else
     CreateDeclarationFileLinux(processed, absDecl);
+#endif
 #endif
 }
 
