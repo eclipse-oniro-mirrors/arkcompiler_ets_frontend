@@ -698,6 +698,10 @@ void ETSObjectType::Identical(TypeRelation *relation, Type *other)
         return;
     }
 
+    if (relation->IgnoreTypeParameters()) {
+        return;
+    }
+
     auto const otherTypeArguments = other->AsETSObjectType()->TypeArguments();
 
     auto const argsNumber = typeArguments_.size();

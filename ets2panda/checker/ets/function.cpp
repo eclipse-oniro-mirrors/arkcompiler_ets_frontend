@@ -163,13 +163,22 @@ bool ETSChecker::EnhanceSubstitutionForUnion(const ArenaVector<Type *> &typePara
     std::vector<Type *> paramWlist {};
     ArenaVector<Type *> argWlist(ProgramAllocator()->Adapter());
 
+    bool isIdenticalUpToTypeParams = false;
     for (auto *pc : paramUn->ConstituentTypes()) {
         for (auto *ac : argUn->ConstituentTypes()) {
-            if (ETSChecker::GetOriginalBaseType(pc) != ETSChecker::GetOriginalBaseType(ac)) {
+            {
+                // Type parameters are inferred separately, here we check the equality of the base classes
+                SavedTypeRelationFlagsContext savedFlagsCtx(Relation(), Relation()->GetTypeRelationFlags() |
+                                                                            TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+                isIdenticalUpToTypeParams = Relation()->IsIdenticalTo(pc, ac);
+            }
+
+            if (!isIdenticalUpToTypeParams) {
                 paramWlist.push_back(pc);
                 argWlist.push_back(ac);
                 continue;
             }
+
             if (!EnhanceSubstitutionForType(typeParams, pc, ac, substitution)) {
                 return false;
             }
