@@ -97,6 +97,8 @@ const gMetaData: BaseMetaData = {
     description: '',
 };
 
+const INT32_BOUNDARY: number = 0x80000000;
+
 enum NumberCategory {
     int = 'int',
     long = 'long',
@@ -522,6 +524,10 @@ export class NumericSemanticCheck implements BaseChecker {
 
         if (rightOp instanceof NumberConstant && !this.isNumberConstantActuallyFloat(rightOp)) {
             // 整型字面量直接赋值给左值，判断左值在生命周期内是否仅作为int使用，并且判断左值是否继续赋值给其他变量，其他变量是否也可以定义为int
+            if (Number(rightOp.getValue()) >= INT32_BOUNDARY) {
+                // 不考虑int32范围外的情况，此处为int32边界值
+                return;
+            }
             this.checkAllLocalsAroundLocal(stmt, leftOp, res, NumberCategory.int);
         } else if (rightOp instanceof AbstractExpr) {
             // 整型字面量作为表达式的一部分，在赋值语句右边出现
@@ -1191,8 +1197,8 @@ export class NumericSemanticCheck implements BaseChecker {
             return true;
         }
         const num = Number(constant.getValue());
-        if (isNaN(num)) {
-            // 超大数字字面量转换后是NaN，按照number处理
+        if (isNaN(num) || num > INT32_BOUNDARY) {
+            // 超大数字字面量转换后是NaN，或超出Int32范围的，按照number处理
             return true;
         }
         return !Number.isInteger(num);
@@ -1636,6 +1642,7 @@ export class NumericSemanticCheck implements BaseChecker {
         if (!local.getName().startsWith(TEMP_LOCAL_PREFIX)) {
             return;
         }
+
         const decl = local.getDeclaringStmt();
         if (decl === null) {
             return;
@@ -1644,9 +1651,10 @@ export class NumericSemanticCheck implements BaseChecker {
         if (!this.isArkAssignStmt(decl)) {
             return;
         }
-        const assignStmt = decl as ArkAssignStmt;
 
+        const assignStmt = decl as ArkAssignStmt;
         const rightSide = assignStmt.getRightOp();
+
         if (!this.isArkNormalBinopExpr(rightSide)) {
             return;
         }
@@ -2761,7 +2769,7 @@ export class NumericSemanticCheck implements BaseChecker {
                     return null;
                 }
                 const valueStr = value.getValue();
-                ruleFix.text = NumericSemanticCheck.CreateFixTextForIntLiteral(valueStr);;
+                ruleFix.text = NumericSemanticCheck.CreateFixTextForIntLiteral(valueStr);
             } else {
                 // 场景2：对enum.A这样的枚举类型进行自动修复成enum.A.valueOf().toDouble()
                 const valueStr = FixUtils.getSourceWithRange(sourceFile, range);
@@ -2769,7 +2777,7 @@ export class NumericSemanticCheck implements BaseChecker {
                     logger.error('Failed to getting enum source code with range info.');
                     return null;
                 }
-                ruleFix.text = NumericSemanticCheck.CreateFixTextForEnumValue(valueStr);;
+                ruleFix.text = NumericSemanticCheck.CreateFixTextForEnumValue(valueStr);
             }
             return ruleFix;
         }
