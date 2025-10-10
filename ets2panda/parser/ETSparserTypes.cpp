@@ -525,7 +525,17 @@ ir::TypeNode *ETSParser::ParseTypeAnnotationNoPreferParam(TypeAnnotationParsingO
     if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_AT)) {
         annotations = ParseAnnotations(false);
     }
-
+    bool isTypeAliasContext = ((*options) & TypeAnnotationParsingOptions::TYPE_ALIAS_CONTEXT) != 0;
+    if (!isTypeAliasContext && !annotations.empty() &&
+        Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS &&
+        !IsArrowFunctionExpressionStart()) {
+        for (auto *anno : annotations) {
+            if (!anno->HasParameterParen()) {
+                LogError(diagnostic::ANNOTATION_PAREN_REQUIRED, {}, Lexer()->GetToken().Start());
+                return AllocBrokenType({Lexer()->GetToken().Start(), Lexer()->GetToken().End()});
+            }
+        }
+    }
     auto startPos = Lexer()->GetToken().Start();
     auto [typeAnnotation, needFurtherProcessing] = GetTypeAnnotationFromToken(options);
 

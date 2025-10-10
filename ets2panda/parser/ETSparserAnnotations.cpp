@@ -425,7 +425,7 @@ ir::AnnotationUsage *ETSParser::ParseAnnotationUsage()
         auto *annotationUsage = AllocNode<ir::AnnotationUsage>(expr, std::move(properties));
         annotationUsage->AddModifier(flags);
         annotationUsage->SetRange({startLoc, Lexer()->GetToken().End()});
-
+        annotationUsage->SetHasParameterParen(true);
         ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, true);  // eat ')'
 
         return annotationUsage;
