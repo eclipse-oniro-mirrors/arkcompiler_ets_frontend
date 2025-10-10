@@ -68,6 +68,8 @@ set(BINDINGS_NAPI_SRC
   ./src/common-interop.cpp
   ./src/convertors-napi.cpp
   ./src/lsp.cpp
+  ./src/common.cpp
+  ./src/bridges.cpp
 )
 
 # PUBLIC arkbase es2panda-lib es2panda-public

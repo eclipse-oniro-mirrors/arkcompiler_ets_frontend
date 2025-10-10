@@ -239,7 +239,7 @@ export type SetupClusterOptions = {
     execArgs?: string[];
 };
 
-export type KPointer = number | bigint;
+export type KPointer = Uint8Array | number | bigint;
 
 export interface AliasConfig {
     originalAPIName: string;

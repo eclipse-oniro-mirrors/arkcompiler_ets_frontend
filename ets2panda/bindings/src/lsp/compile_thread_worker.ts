@@ -35,9 +35,9 @@ function compileExternalProgram(jobInfo: JobInfo): void {
   PluginDriver.getInstance().getPluginContext().setCodingFilePath(jobInfo.filePath);
   PluginDriver.getInstance().getPluginContext().setProjectConfig(config);
   PluginDriver.getInstance().getPluginContext().setContextPtr(context);
-  lspDriverHelper.proceedToState(context, Es2pandaContextState.ES2PANDA_STATE_PARSED);
+  lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, context);
   PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-  lspDriverHelper.proceedToState(context, Es2pandaContextState.ES2PANDA_STATE_LOWERED);
+  lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_LOWERED, context);
 }
 
 parentPort?.on('message', (msg) => {

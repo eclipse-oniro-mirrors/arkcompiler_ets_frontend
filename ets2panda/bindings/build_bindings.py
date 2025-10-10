@@ -18,7 +18,6 @@ import os
 import shutil
 import subprocess
 import sys
-import tarfile
 
 
 def copy_files(source_path, dest_path, is_file=False):
@@ -63,12 +62,31 @@ def copy_output(options):
                 os.path.join(options.output_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'libpublic.dll'),
                 os.path.join(options.output_path, 'public.node'), True)
+        copy_files(os.path.join(options.root_out_dir, 'libts_bindings.dll'),
+                   os.path.join(options.source_path, 'ts_bindings.node'), True)
+        copy_files(os.path.join(options.root_out_dir, 'libpublic.dll'),
+                   os.path.join(options.source_path, 'public.node'), True)
 
     if options.current_os == "linux" or options.current_os == "mac":
         copy_files(os.path.join(options.root_out_dir, 'ts_bindings.node'),
                 os.path.join(options.output_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'public.node'),
                 os.path.join(options.output_path, 'public.node'), True)
+        copy_files(os.path.join(options.root_out_dir, 'ts_bindings.node'),
+                   os.path.join(options.source_path, 'ts_bindings.node'), True)
+        copy_files(os.path.join(options.root_out_dir, 'public.node'),
+                   os.path.join(options.source_path, 'public.node'), True)
+
+    target_path = os.path.join(options.root_out_dir, '..', 'libes2panda_public.so')
+    link_path = os.path.join(options.root_out_dir, '..', 'libes2panda-public.so')
+    if not os.path.exists(link_path):
+        try:
+            os.symlink(target_path, link_path)
+            print(f"Symlink created: {link_path} -> {target_path}")
+        except OSError as e:
+            print(f"Error creating symlink: {e}")
+    else:
+        print(f"The symlink or file already exists at {link_path}")
 
 
 def parse_args():
@@ -84,11 +102,13 @@ def parse_args():
 
 
 def main():
-    options = parse_args()
+    try:
+        options = parse_args()
 
-    build(options)
-    copy_output(options)
-
+        build(options)
+        copy_output(options)
+    except Exception as err:
+        raise Exception(" Error: " + str(err)) from err
 
 if __name__ == '__main__':
     sys.exit(main())
