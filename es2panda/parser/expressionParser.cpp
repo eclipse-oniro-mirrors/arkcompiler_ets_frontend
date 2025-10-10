@@ -1784,6 +1784,7 @@ ir::Expression *ParserImpl::SetupChainExpr(ir::Expression *const top, lexer::Sou
     while (expr != nullptr && expr->IsTSNonNullExpression()) {
         expr = expr->AsTSNonNullExpression()->Expr();
     }
+    CHECK_NOT_NULL(expr);
     auto chainParent = expr->Parent();
 
     lexer::SourcePosition endLoc = expr->End();

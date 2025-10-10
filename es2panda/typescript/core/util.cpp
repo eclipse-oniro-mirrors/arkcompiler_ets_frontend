@@ -128,13 +128,8 @@ const ir::AstNode *Checker::FindAncestorGivenByType(const ir::AstNode *node, ir:
 
 const ir::AstNode *Checker::FindAncestorUntilGivenType(const ir::AstNode *node, ir::AstNodeType stop)
 {
-    while (node->Parent()->Type() != stop) {
-        if (node->Parent()) {
-            node = node->Parent();
-            continue;
-        }
-
-        return nullptr;
+    while (node->Parent() != nullptr && node->Parent()->Type() != stop) {
+        node = node->Parent();
     }
 
     return node;

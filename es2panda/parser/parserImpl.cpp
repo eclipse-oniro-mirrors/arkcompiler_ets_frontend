@@ -1148,6 +1148,7 @@ ir::Expression *ParserImpl::ParseTsTypeReferenceOrQuery(TypeAnnotationParsingOpt
         lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LESS_THAN) {
         typeParamInst = ParseTsTypeParameterInstantiation(options & TypeAnnotationParsingOptions::THROW_ERROR);
         if (parseQuery) {
+            CHECK_NOT_NULL(typeParamInst);
             typeName = AllocNode<ir::TypeArgumentsExpression>(typeName, typeParamInst);
             lexer::SourcePosition endLoc = typeParamInst->End();
             typeName->SetRange({referenceStartLoc, endLoc});
@@ -3826,7 +3827,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams(bool isDeclare,
 bool ParserImpl::CheckTypeNameIsReserved(const util::StringView &paramName)
 {
     return paramName.Is("number") || paramName.Is("any") || paramName.Is("unknown") || paramName.Is("never") ||
-           paramName.Is("bigint") || paramName.Is("boolean") || paramName.Is("string") || paramName.Is("string") ||
+           paramName.Is("bigint") || paramName.Is("boolean") || paramName.Is("string") ||
            paramName.Is("void") || paramName.Is("object");
 }
 
