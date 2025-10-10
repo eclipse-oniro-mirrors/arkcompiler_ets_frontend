@@ -185,11 +185,14 @@ bool ETSChecker::ComputeSuperType(ETSObjectType *type)
         return false;
     }
 
-    auto superName = classDef->Super()->AsETSTypeReference()->Part()->GetIdent()->Name();
-    if (superName == compiler::Signatures::PARTIAL_TYPE_NAME || superName == compiler::Signatures::READONLY_TYPE_NAME ||
-        superName == compiler::Signatures::REQUIRED_TYPE_NAME) {
-        LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()}, classDef->Super()->Start());
-        return false;
+    if (classDef->Super()->IsETSTypeReference()) {
+        auto superName = classDef->Super()->AsETSTypeReference()->Part()->GetIdent()->Name();
+        if (superName == compiler::Signatures::PARTIAL_TYPE_NAME ||
+            superName == compiler::Signatures::READONLY_TYPE_NAME ||
+            superName == compiler::Signatures::REQUIRED_TYPE_NAME) {
+            LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()}, classDef->Super()->Start());
+            return false;
+        }
     }
 
     auto *superType = classDef->Super()->AsTypeNode()->GetType(this);
