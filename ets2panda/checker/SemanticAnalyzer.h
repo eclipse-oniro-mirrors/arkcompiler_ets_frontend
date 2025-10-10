@@ -64,6 +64,7 @@
 #include "ir/expressions/blockExpression.h"
 #include "ir/expressions/callExpression.h"
 #include "ir/expressions/chainExpression.h"
+#include "ir/expressions/classFromExpression.h"
 #include "ir/expressions/classExpression.h"
 #include "ir/expressions/conditionalExpression.h"
 #include "ir/expressions/directEvalExpression.h"

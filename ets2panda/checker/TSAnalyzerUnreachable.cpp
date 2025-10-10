@@ -194,6 +194,11 @@ checker::Type *TSAnalyzer::Check([[maybe_unused]] ir::BlockExpression *st) const
     ES2PANDA_UNREACHABLE();
 }
 
+checker::Type *TSAnalyzer::Check([[maybe_unused]] ir::ClassFromExpression *expr) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
 checker::Type *TSAnalyzer::Check([[maybe_unused]] ir::ClassExpression *expr) const
 {
     ES2PANDA_UNREACHABLE();

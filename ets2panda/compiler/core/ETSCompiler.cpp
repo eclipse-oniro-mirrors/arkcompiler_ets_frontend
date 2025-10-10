@@ -46,6 +46,15 @@ void ETSCompiler::Compile(const ir::CatchClause *st) const
     st->Body()->Compile(etsg);
 }
 
+void ETSCompiler::Compile(const ir::ClassFromExpression *expr) const
+{
+    ES2PANDA_ASSERT(!expr->TypeAnnotation()->TsType()->IsETSPrimitiveType());
+    ETSGen *etsg = GetETSGen();
+    etsg->SetAccumulatorType(expr->TypeAnnotation()->TsType());
+    etsg->EmitLdaType(expr, etsg->GetAccumulatorType()->ToAssemblerTypeWithRankView(etsg->Allocator()));
+    etsg->SetAccumulatorType(etsg->Checker()->GlobalBuiltinClassType());
+}
+
 void ETSCompiler::Compile(const ir::ClassProperty *st) const
 {
     ETSGen *etsg = GetETSGen();
@@ -300,6 +309,10 @@ void ETSCompiler::Compile(const ir::ETSTypeReferencePart *node) const
 {
     ETSGen *etsg = GetETSGen();
     node->Name()->Compile(etsg);
+    if (node->TypeParams() != nullptr) {
+        // Setting accumulator to exact type
+        etsg->SetAccumulatorType(node->TsType());
+    }
     ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), node->TsType()));
 }
 

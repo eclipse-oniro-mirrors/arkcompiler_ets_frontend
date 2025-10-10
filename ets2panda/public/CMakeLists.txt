@@ -51,6 +51,7 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/ir/statements/forInStatement.h
     ${ES2PANDA_ROOT}/checker/types/ts/voidType.h
     ${ES2PANDA_ROOT}/ir/expressions/classExpression.h
+    ${ES2PANDA_ROOT}/ir/expressions/classFromExpression.h
     ${ES2PANDA_ROOT}/ir/ts/tsConditionalType.h
     ${ES2PANDA_ROOT}/ir/expressions/templateLiteral.h
     ${ES2PANDA_ROOT}/ir/statements/breakStatement.h

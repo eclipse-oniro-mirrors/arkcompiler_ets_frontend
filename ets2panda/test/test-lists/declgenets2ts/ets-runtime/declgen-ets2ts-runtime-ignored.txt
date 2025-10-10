@@ -14,6 +14,7 @@ trailing_lambda_and_optional_parameterets7.ets
 trailing_lambda_and_optional_parameterets8.ets
 trailing_lambda_and_optional_parameterets9.ets
 ClassNewInstance.ets
+classFromCall.ets
 Enum7.ets
 GenericBridges_01.ets
 GenericBridges_02.ets

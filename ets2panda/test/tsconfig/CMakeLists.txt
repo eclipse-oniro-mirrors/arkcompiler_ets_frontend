@@ -15,6 +15,7 @@ if(NOT PANDA_REGRESSION_TESTS)
     return()
 endif()
 
+add_subdirectory(test-class-from)
 add_subdirectory(test-config)
 add_subdirectory(test-name-conflict)
 # 25872

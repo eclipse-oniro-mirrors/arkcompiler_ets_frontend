@@ -74,6 +74,7 @@
 #include "compiler/lowering/ets/unboxLowering.h"
 #include "compiler/lowering/ets/unionLowering.h"
 #include "compiler/lowering/ets/typeFromLowering.h"
+#include "compiler/lowering/ets/classFromExpressionLowering.h"
 #include "compiler/lowering/plugin_phase.h"
 #include "compiler/lowering/resolveIdentifiers.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
@@ -165,6 +166,7 @@ std::vector<Phase *> GetETSPhaseList()
         new InterfaceObjectLiteralLowering,
         new ObjectLiteralLowering,
         new TypeFromLowering,
+        new ClassFromExpressionLowering,
         new PrimitiveConversionPhase,
         new UnboxPhase,
         // pluginsAfterLowerings has to come at the very end, nothing should go after it
