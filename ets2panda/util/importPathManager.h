@@ -56,6 +56,7 @@ class StringLiteral;
 
 namespace ark::es2panda::parser {
 class ParserContext;
+class ETSParser;
 }  // namespace ark::es2panda::parser
 
 namespace ark::es2panda::util {
@@ -123,8 +124,7 @@ public:
         // NOLINTEND(misc-non-private-member-variables-in-classes)
     };
 
-    ImportPathManager(ark::ArenaAllocator *allocator, const util::Options &options, parser::Program *globalProgram,
-                      util::DiagnosticEngine &diagnosticEngine);
+    explicit ImportPathManager(const parser::ETSParser *parser);
 
     NO_COPY_SEMANTIC(ImportPathManager);
     NO_MOVE_SEMANTIC(ImportPathManager);
@@ -197,12 +197,13 @@ public:
 #endif
 
 private:
+    const parser::ETSParser *parser_;
     ark::ArenaAllocator *const allocator_;
-    std::shared_ptr<ArkTsConfig> const arktsConfig_;
-    std::string absoluteEtsPath_;
-    std::string stdLib_;
+    const std::shared_ptr<ArkTsConfig> &arktsConfig_;
+    util::StringView absoluteEtsPath_;
+    const std::string &stdLib_;
     ArenaVector<ParseInfo> parseList_;
-    parser::Program *globalProgram_;
+    parser::Program *const globalProgram_;
     util::DiagnosticEngine &diagnosticEngine_;
     std::string_view pathDelimiter_ {ark::os::file::File::GetPathDelim()};
     mutable lexer::SourcePosition srcPos_ {};

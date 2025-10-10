@@ -136,16 +136,17 @@ void RemoveEscapedNewlines(std::string &s)
     }
 }
 
-ImportPathManager::ImportPathManager(ark::ArenaAllocator *allocator, const util::Options &options,
-                                     parser::Program *globalProgram, util::DiagnosticEngine &diagnosticEngine)
-    : allocator_(allocator),
-      arktsConfig_(options.ArkTSConfig()),
-      absoluteEtsPath_(options.GetEtsPath().empty() ? ""
-                                                    : util::Path(options.GetEtsPath(), allocator_).GetAbsolutePath()),
-      stdLib_(options.GetStdlib()),
-      parseList_(allocator->Adapter()),
-      globalProgram_(globalProgram),
-      diagnosticEngine_ {diagnosticEngine}
+ImportPathManager::ImportPathManager(const parser::ETSParser *parser)
+    : parser_(parser),
+      allocator_(parser->Allocator()),
+      arktsConfig_(parser->GetOptions().ArkTSConfig()),
+      absoluteEtsPath_(parser->GetOptions().GetEtsPath().empty()
+                           ? ""
+                           : util::Path(parser->GetOptions().GetEtsPath(), allocator_).GetAbsolutePath()),
+      stdLib_(parser->GetOptions().GetStdlib()),
+      parseList_(parser->Allocator()->Adapter()),
+      globalProgram_(parser->GetProgram()),
+      diagnosticEngine_ {parser->DiagnosticEngine()}
 {
     arktsConfig_->GenerateSourcePathMap();
 }
@@ -581,7 +582,7 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_vi
         result = ResolveAbsolutePath(*importPath);
     }
 
-    if (!result.resolvedIsExternalModule) {
+    if (!parser_->HasParserStatus(parser::ParserStatus::DEPENDENCY_ANALYZER_MODE) && !result.resolvedIsExternalModule) {
         result.resolvedPath = TryImportFromDeclarationCache(result.resolvedPath);
     }
     return result;
@@ -865,12 +866,12 @@ static std::string FormRelativeModuleName(std::string relPath)
 util::StringView ImportPathManager::FormModuleNameSolelyByAbsolutePath(const util::Path &path)
 {
     std::string filePath(path.GetAbsolutePath());
-    if (filePath.rfind(absoluteEtsPath_, 0) != 0) {
+    if (filePath.rfind(absoluteEtsPath_.Utf8(), 0) != 0) {
         diagnosticEngine_.LogDiagnostic(diagnostic::SOURCE_OUTSIDE_ETS_PATH,
                                         util::DiagnosticMessageParams {util::StringView(filePath)}, srcPos_);
         return "";
     }
-    auto name = FormRelativeModuleName(filePath.substr(absoluteEtsPath_.size()));
+    auto name = FormRelativeModuleName(filePath.substr(absoluteEtsPath_.Length()));
     return util::UString(name, allocator_).View();
 }
 
@@ -919,7 +920,7 @@ util::StringView ImportPathManager::FormModuleName(const util::Path &path, const
 
 util::StringView ImportPathManager::FormModuleName(const util::Path &path)
 {
-    if (!absoluteEtsPath_.empty()) {
+    if (!absoluteEtsPath_.Empty()) {
         return FormModuleNameSolelyByAbsolutePath(path);
     }
 
@@ -985,8 +986,8 @@ util::StringView ImportPathManager::FormRelativePath(const util::Path &path)
         return filePath.replace(0, basePath.size(), prefix);
     };
 
-    if (!absoluteEtsPath_.empty()) {
-        if (auto res = tryFormRelativePath(absoluteEtsPath_ + pathDelimiter_.data(), ""); res) {
+    if (!absoluteEtsPath_.Empty()) {
+        if (auto res = tryFormRelativePath(absoluteEtsPath_.Mutf8() + pathDelimiter_.data(), ""); res) {
             return util::UString(res.value(), allocator_).View();
         }
     }
