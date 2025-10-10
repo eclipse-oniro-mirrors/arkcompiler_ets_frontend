@@ -1526,8 +1526,8 @@ void ETSBinder::ValidateReexportDeclaration(ir::ETSReExportDeclaration *decl)
             local->SetVariable(var);
 
             // Remember reexported name to check for ambiguous reexports
-            if (!reexportedNames_.insert(imported->Name()).second && local->Name() == imported->Name()) {
-                ThrowError(import->Start(), diagnostic::AMBIGUOUS_EXPORT, {imported->Name()});
+            if (!reexportedNames_.insert(local->Name()).second) {
+                ThrowError(import->Start(), diagnostic::AMBIGUOUS_EXPORT, {local->Name()});
                 continue;
             }
         }
