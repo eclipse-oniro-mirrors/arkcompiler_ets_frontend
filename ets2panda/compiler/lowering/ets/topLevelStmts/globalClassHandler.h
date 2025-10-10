@@ -26,8 +26,7 @@ namespace ark::es2panda::compiler {
 
 class GlobalClassHandler {
 public:
-    // Using ArenaVector to ensure the order of the module dependencies;
-    using ModuleDependencies = std::pair<ArenaVector<parser::Program *>, ArenaUnorderedSet<parser::Program *>>;
+    using ModuleDependencies = ArenaUnorderedSet<parser::Program *>;
 
     struct GlobalStmts {
         parser::Program *program;
@@ -53,15 +52,6 @@ public:
     void SetGlobalProgram(parser::Program *program)
     {
         globalProgram_ = program;
-    }
-
-    static void InsertModuleDependencies(ModuleDependencies *moduleDependencies, parser::Program *program)
-    {
-        if (moduleDependencies->second.find(program) != moduleDependencies->second.end()) {
-            return;
-        }
-        moduleDependencies->first.emplace_back(program);
-        moduleDependencies->second.insert(program);
     }
 
 private:
@@ -98,14 +88,10 @@ private:
                                           ArenaVector<ir::Statement *> &&initializerBlocks);
 
     ArenaVector<ArenaVector<ir::Statement *>> FormInitStaticBlockMethodStatements(
-        const ModuleDependencies *moduleDependencies, ArenaVector<GlobalStmts> &&initStatements);
+        ArenaVector<GlobalStmts> &&initStatements);
     void TransformBrokenNamespace(ir::AstNode *node);
 
-    ArenaVector<ir::Statement *> FormInitMethodStatements(const ModuleDependencies *moduleDependencies,
-                                                          ArenaVector<GlobalStmts> &&initStatements);
-
-    void FormDependentInitTriggers(ArenaVector<ir::Statement *> &statements,
-                                   const ModuleDependencies *moduleDependencies);
+    ArenaVector<ir::Statement *> FormInitMethodStatements(ArenaVector<GlobalStmts> &&initStatements);
 
     GlobalDeclTransformer::ResultT CollectProgramGlobalStatements(ArenaVector<ir::Statement *> &stmts,
                                                                   ir::ClassDefinition *classDef,

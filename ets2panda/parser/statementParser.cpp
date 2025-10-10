@@ -210,7 +210,7 @@ ir::Statement *ParserImpl::ParseStatementBasedOnTokenType(StatementParsingFlags 
     }
 }
 
-ir::Statement *ParserImpl::ParseInitModuleStatement([[maybe_unused]] StatementParsingFlags flags)
+ir::Statement *ParserImpl::ParseInitModuleStatement()
 {
     ES2PANDA_UNREACHABLE();
 }
@@ -724,7 +724,7 @@ ir::FunctionDeclaration *ParserImpl::ParseFunctionDeclaration(bool canBeAnonymou
 ir::Statement *ParserImpl::ParseExpressionStatement(StatementParsingFlags flags)
 {
     if (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_INIT_MODULE && IsETSParser()) {
-        return ParseInitModuleStatement(flags);
+        return ParseInitModuleStatement();
     }
     const auto startPos = lexer_->Save();
     ParserStatus savedStatus = context_.Status();

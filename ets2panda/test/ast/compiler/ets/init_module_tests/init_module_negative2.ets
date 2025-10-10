@@ -13,9 +13,7 @@
  * limitations under the License.
  */
 
-class A {
-}
+initModule(
 
-/* @@ label */initModule('./module_to_init.ets')
-
-/* @@@ label Error SyntaxError: initModule() must only be called immediately after the import statement, and before any other declarations or statements.  */
+/* @@? 16:1 Error SyntaxError: initModule() only accept string literal as argument. */
+/* @@? 20:1 Error SyntaxError: Expected ')', got 'end of stream'. */

@@ -249,13 +249,9 @@ ir::Statement *ETSParser::ParseTopLevelStatement()
     return result;
 }
 
-ir::Statement *ETSParser::ParseInitModuleStatement(StatementParsingFlags flags)
+ir::Statement *ETSParser::ParseInitModuleStatement()
 {
     auto startLoc = Lexer()->GetToken().Start();
-    if ((flags & StatementParsingFlags::INIT_MODULE) == 0) {
-        LogError(diagnostic::INIT_MODULE_DECLARATION_POSITION);
-        return AllocBrokenStatement(startLoc);
-    }
 
     auto *callee = AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator());
     Lexer()->NextToken();  // eat initModule

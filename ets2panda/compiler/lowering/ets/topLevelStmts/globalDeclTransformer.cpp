@@ -37,18 +37,6 @@ GlobalDeclTransformer::ResultT GlobalDeclTransformer::TransformStatements(const 
     return std::move(result_);
 }
 
-void GlobalDeclTransformer::VisitExpressionStatement(ir::ExpressionStatement *exprStmt)
-{
-    if (exprStmt->GetExpression()->IsCallExpression()) {
-        auto *callExpr = exprStmt->GetExpression()->AsCallExpression();
-        if (callExpr->Callee()->IsIdentifier() &&
-            callExpr->Callee()->AsIdentifier()->Name() == compiler::Signatures::INIT_MODULE_METHOD) {
-            return;  // skip initModule call
-        }
-    }
-    result_.immediateInit.emplace_back(exprStmt);
-}
-
 void GlobalDeclTransformer::VisitOverloadDeclaration(ir::OverloadDeclaration *overloadDeclaration)
 {
     result_.classProperties.emplace_back(overloadDeclaration);

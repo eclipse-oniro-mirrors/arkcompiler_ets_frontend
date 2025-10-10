@@ -240,6 +240,7 @@ libes2panda_sources = [
   "compiler/lowering/ets/extensionAccessorLowering.cpp",
   "compiler/lowering/ets/genericBridgesLowering.cpp",
   "compiler/lowering/ets/gradualTypeNarrowing.cpp",
+  "compiler/lowering/ets/initModuleLowering.cpp",
   "compiler/lowering/ets/insertOptionalParametersAnnotation.cpp",
   "compiler/lowering/ets/interfaceObjectLiteralLowering.cpp",
   "compiler/lowering/ets/interfacePropertyDeclarations.cpp",

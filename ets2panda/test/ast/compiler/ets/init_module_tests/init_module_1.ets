@@ -13,6 +13,6 @@
  * limitations under the License.
  */
 
-/* @@ label */initmodule('./module_to_init.ets')
-
-/* @@@ label Error TypeError: Unresolved reference initmodule  */
+function foo() {
+    initModule('./module_to_init.ets')
+}

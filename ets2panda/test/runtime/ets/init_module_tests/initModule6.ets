@@ -12,7 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*---
+files: ['./moduleToInit/moduleToInit.ets', './moduleToInit/moduleToInit1.ets', './moduleToInit/moduleToInit3.ets']
+---*/
 
-initModule()
+initModule('./moduleToInit/moduleToInit');
 
-/* @@? 16:1 Error SyntaxError: initModule() only accept string literal as argument. */
+console.log('Some Seperator')
+
+initModule('./moduleToInit/moduleToInit1');
+
+function main() {
+    console.log('Finally in main function')
+}
+
+console.log('Decl position After Main function.')
+
+initModule('./moduleToInit/moduleToInit3');
