@@ -51,9 +51,25 @@ import { KitImportTransformer } from '../plugins/KitImportTransformer';
 import { ErrorCode, DriverError } from '../util/error';
 import {
     BS_PERF_FILE_NAME,
-    CompileSingleData,
-    RECORDE_COMPILE_NODE,
-} from '../util/record_time_mem';
+    RecordEvent,
+    StatisticsRecorder,
+} from '../util/statsRecorder'
+
+
+enum Ets2pandaEvent {
+    CREATE_INSTANCE = 'Create instance',
+    PARSE = 'Parse stage',
+    PLUGIN_PARSE = 'Parse plugins stage',
+    DECLGEN = 'Declgen stage',
+    CHECK = 'Checker stage',
+    PLUGIN_CHECK = 'Checker plugins stage',
+    EMIT = 'Emit binary stage',
+    DESTROY_INSTANCE = 'Destroy instance'
+}
+
+function formEvent(event: Ets2pandaEvent): string {
+    return '[Ets2panda] ' + event;
+}
 
 export class Ets2panda {
     private static instance?: Ets2panda;
@@ -63,6 +79,7 @@ export class Ets2panda {
     private readonly cacheDir: string;
     private readonly declgenV2OutDir?: string;
     private readonly pluginDriver: PluginDriver = PluginDriver.getInstance();
+    private readonly recordType?: 'ON' | 'OFF';
 
     // NOTE: should be Ets2panda Wrapper Module
     // NOTE: to be refactored
@@ -73,7 +90,13 @@ export class Ets2panda {
         this.buildSdkPath = buildConfig.buildSdkPath;
         this.aliasConfig = buildConfig.aliasConfig;
         this.cacheDir = buildConfig.cachePath;
-        this.declgenV2OutDir = buildConfig.declgenV2OutPath;
+        this.recordType = buildConfig.recordType;
+
+        // NOTE: uncomment if you really need this
+        // NOTE: decl files are internal files, not for external usage!!!!!
+        this.declgenV2OutDir = undefined;
+        // this.declgenV2OutDir = buildConfig.declgenV2OutPath;
+
 
         this.pluginDriver.initPlugins(buildConfig)
     }
@@ -125,8 +148,14 @@ export class Ets2panda {
         isDebug: boolean = false,
         declGenCb?: () => void,
         compAbcCb?: () => void
-    ) {
-        this.logger.printDebug(`Ets2panda.init: job = ${JSON.stringify(job, null, 1)}`)
+    ): void {
+        let statsRecorder = new StatisticsRecorder(
+            path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
+            this.recordType,
+            `Compile. Job id: ${job.id.slice(0, 5)}`
+        );
+
+        this.logger.printDebug(`Ets2panda.compile Job = ${JSON.stringify(job, null, 1)}`)
 
         const { input: inputFilePath }: FileInfo = job.fileInfo;
         const source = fs.readFileSync(inputFilePath, 'utf-8');
@@ -136,19 +165,27 @@ export class Ets2panda {
 
         const { arkts, arktsGlobal } = this.koalaModule;
         try {
+            statsRecorder.record(formEvent(Ets2pandaEvent.CREATE_INSTANCE));
             arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
             arktsGlobal.filePath = inputFilePath;
             arktsGlobal.compilerContext = arkts.Context.createFromString(source);
             this.pluginDriver.getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
+            this.logger.printInfo('[Ets2panda] Created instance');
+
+            statsRecorder.record(formEvent(Ets2pandaEvent.PARSE));
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
-            this.logger.printDebug('es2panda proceedToState parsed');
+            this.logger.printInfo('[Ets2panda] Parsed');
+
+            statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_PARSE));
             this.transformImportStatementsWithAliasConfig()
             this.pluginDriver.runPluginHook(PluginHook.PARSED);
-            this.logger.printInfo('plugin parsed finished');
+            this.logger.printInfo('[Ets2panda] Parser plugins finished');
 
+            statsRecorder.record(formEvent(Ets2pandaEvent.CHECK));
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda proceedToState checked');
+            this.logger.printInfo('[Ets2panda] Checked');
 
+            statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
             if (job.type & CompileJobType.DECL) {
                 const outputAbcPath = job.fileInfo.output;
                 const relativeDeclPath = changeFileExtension(
@@ -160,6 +197,7 @@ export class Ets2panda {
 
                 // Generate 1.2 declaration files(a temporary solution while binary import not pushed)
                 arkts.generateStaticDeclarationsFromContext(outputDeclFilePath);
+                this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${inputFilePath}`)
 
                 // Copy file to declgenV2OutDir
                 if (this.declgenV2OutDir) {
@@ -168,20 +206,19 @@ export class Ets2panda {
                     fs.copyFileSync(outputDeclFilePath, newPath)
                 }
                 declGenCb?.();
-                this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${inputFilePath}`)
-
             }
             if (job.type & CompileJobType.ABC) {
+                statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_CHECK));
                 let ast = arkts.EtsScript.fromContext();
                 this.pluginDriver.getPluginContext().setArkTSAst(ast);
                 this.pluginDriver.runPluginHook(PluginHook.CHECKED);
-                this.logger.printInfo('plugin checked finished');
+                this.logger.printInfo('[Ets2panda] Checker plugins finished');
 
+                statsRecorder.record(formEvent(Ets2pandaEvent.EMIT));
                 arkts.proceedToState(
                     arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED,
                     arktsGlobal.compilerContext.peer
                 );
-                this.logger.printInfo('es2panda bin generated');
                 compAbcCb?.();
                 this.logger.printInfo(`[Ets2panda] Compiled abc file for ${inputFilePath}`)
             }
@@ -197,9 +234,12 @@ export class Ets2panda {
                 );
             }
         } finally {
+            statsRecorder.record(formEvent(Ets2pandaEvent.DESTROY_INSTANCE));
             this.pluginDriver.runPluginHook(PluginHook.CLEAN);
             arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
             arkts.destroyConfig(arktsGlobal.config);
+            statsRecorder.record(RecordEvent.END);
+            statsRecorder.writeSumSingle();
         }
     }
 
@@ -209,32 +249,39 @@ export class Ets2panda {
         declGenCb?: () => void,
         compAbcCb?: () => void
     ): void {
-        let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
-        compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_PARSE);
+        let statsRecorder = new StatisticsRecorder(
+            path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
+            this.recordType,
+            `Compile simultaneous. Job id: ${job.id.slice(0, 5)}`
+        );
 
-        this.logger.printDebug(`job ${JSON.stringify(job, null, 1)}`)
+        this.logger.printDebug(`Ets2panda.compileSimultaneous Job = ${JSON.stringify(job, null, 1)}`)
 
         const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, true)
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
         let { arkts, arktsGlobal } = this.koalaModule;
         try {
+            statsRecorder.record(formEvent(Ets2pandaEvent.CREATE_INSTANCE));
             arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
             arktsGlobal.compilerContext = arkts.Context.createContextGenerateAbcForExternalSourceFiles(job.fileList);
             this.pluginDriver.getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
+            this.logger.printInfo('[Ets2panda] Created instance');
 
+            statsRecorder.record(formEvent(Ets2pandaEvent.PARSE));
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda proceedToState parsed');
-            compileSingleData.record(RECORDE_COMPILE_NODE.PLUGIN_PARSE, RECORDE_COMPILE_NODE.PROCEED_PARSE);
+            this.logger.printInfo('[Ets2panda] Parsed');
+
+            statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_PARSE));
             this.transformImportStatementsWithAliasConfig()
             this.pluginDriver.runPluginHook(PluginHook.PARSED);
-            this.logger.printInfo('plugin parsed finished');
-            compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_CHECK, RECORDE_COMPILE_NODE.PLUGIN_PARSE);
+            this.logger.printInfo('[Ets2panda] Parser plugins finished');
 
+            statsRecorder.record(formEvent(Ets2pandaEvent.CHECK));
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda proceedToState checked');
-            compileSingleData.record(RECORDE_COMPILE_NODE.PLUGIN_CHECK, RECORDE_COMPILE_NODE.PROCEED_CHECK);
+            this.logger.printInfo('[Ets2panda] Checked');
 
+            statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
             if (job.type & CompileJobType.DECL) {
                 for (const file of job.fileList) {
                     const relative: string = changeFileExtension(
@@ -242,12 +289,13 @@ export class Ets2panda {
                         DECL_ETS_SUFFIX
                     )
                     const declEtsOutputPath: string = path.resolve(
-                        this.declgenV2OutDir ?? this.cacheDir,
+                        this.cacheDir,
                         job.fileInfo.moduleName,
                         relative
                     )
                     ensurePathExists(declEtsOutputPath);
                     arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
+                    this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${file}`)
 
                     // Copy file to declgenV2OutDir
                     if (this.declgenV2OutDir) {
@@ -264,18 +312,20 @@ export class Ets2panda {
             }
 
             if (job.type & CompileJobType.ABC) {
+                statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_CHECK));
                 let ast = arkts.EtsScript.fromContext();
                 this.pluginDriver.getPluginContext().setArkTSAst(ast);
                 this.pluginDriver.runPluginHook(PluginHook.CHECKED);
-                this.logger.printInfo('plugin checked finished');
-                compileSingleData.record(RECORDE_COMPILE_NODE.BIN_GENERATE, RECORDE_COMPILE_NODE.PLUGIN_CHECK);
+                this.logger.printInfo('[Ets2panda] Checker plugins finished');
 
-                arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
-                this.logger.printInfo('es2panda bin generated');
-                compileSingleData.record(RECORDE_COMPILE_NODE.CFG_DESTROY, RECORDE_COMPILE_NODE.BIN_GENERATE);
+                statsRecorder.record(formEvent(Ets2pandaEvent.EMIT));
+                arkts.proceedToState(
+                    arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED,
+                    arktsGlobal.compilerContext.peer
+                );
                 compAbcCb?.();
+                this.logger.printInfo(`[Ets2panda] Compiled abc file for cycle ${job.id}`)
             }
-            this.logger.printInfo(`[Ets2panda] compiled abc file for cycle ${job.id}`)
         } catch (error) {
             if (error instanceof Error) {
                 throw new DriverError(
@@ -288,11 +338,12 @@ export class Ets2panda {
                 );
             }
         } finally {
+            statsRecorder.record(formEvent(Ets2pandaEvent.DESTROY_INSTANCE));
             this.pluginDriver.runPluginHook(PluginHook.CLEAN);
             arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
             arkts.destroyConfig(arktsGlobal.config);
-            compileSingleData.record(RECORDE_COMPILE_NODE.END, RECORDE_COMPILE_NODE.CFG_DESTROY);
-            compileSingleData.writeSumSingle(path.resolve());
+            statsRecorder.record(RecordEvent.END);
+            statsRecorder.writeSumSingle();
         }
     }
 

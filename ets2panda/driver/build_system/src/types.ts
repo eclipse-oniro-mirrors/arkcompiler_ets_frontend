@@ -13,11 +13,6 @@
  * limitations under the License.
  */
 
-export enum RECORD_TYPE {
-    DEFAULT_TYPE = 'OFF',
-    ON_TYPE = 'ON',
-}
-
 export enum BUILD_MODE {
     DEBUG = 'Debug',
     RELEASE = 'Release'
@@ -57,7 +52,7 @@ export interface BuildBaseConfig {
     es2pandaMode: ES2PANDA_MODE;
     hasMainModule: boolean;
     isBuildConfigModified?: boolean;
-    recordType?: RECORD_TYPE;
+    recordType?: 'OFF' | 'ON';
     dumpDependencyGraph?: boolean;
 }
 
@@ -361,7 +356,7 @@ export interface DeclgenV2JobConfig {
     output: string;
 }
 
-export interface DeclgenV1JobInfo extends  JobInfo {
+export interface DeclgenV1JobInfo extends JobInfo {
     fileInfo: FileInfo,
     declgenConfig: DeclgenV1JobConfig
 }

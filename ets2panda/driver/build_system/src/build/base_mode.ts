@@ -54,9 +54,9 @@ import {
 } from './generate_arktsconfig';
 import {
     BS_PERF_FILE_NAME,
-    CompileSingleData,
-    RECORDE_MODULE_NODE,
-} from '../util/record_time_mem';
+    StatisticsRecorder,
+    RecordEvent
+} from '../util/statsRecorder';
 import {
     handleCompileProcessWorkerExit,
     handleDeclgenWorkerExit
@@ -68,6 +68,23 @@ import {
 
 import { dotGraphDump } from '../util/dotGraphDump'
 
+
+enum BuildSystemEvent {
+    COLLECT_MODULES = 'Collect module infos',
+    GEN_CONFIGS = 'Generate arktsconfigs for modules',
+    PROCESS_ENTRY_FILES = 'Process entry files',
+    BACKWARD_COMPAT = 'Backward compatibility stuff',
+    DEPENDENCY_ANALYZER = 'Dependency analyzer',
+    RUN_SIMULTANEOUS = 'Run simultaneous',
+    RUN_PARALLEL = 'Run parallel',
+    RUN_SEQUENTIAL = 'Run sequential',
+    RUN_LINKER = 'Run linker',
+}
+
+function formEvent(event: BuildSystemEvent) {
+    return '[Build system] ' + event;
+}
+
 export abstract class BaseMode {
     private buildConfig: BuildConfig;
     private entryFiles: Set<string>;
@@ -78,6 +95,7 @@ export abstract class BaseMode {
     private jobs: Record<string, CompileJobInfo>;
     private jobQueue: CompileJobInfo[];
     private completedJobQueue: CompileJobInfo[];
+    private readonly statsRecorder: StatisticsRecorder;
 
     constructor(buildConfig: BuildConfig) {
         this.buildConfig = buildConfig;
@@ -90,7 +108,14 @@ export abstract class BaseMode {
         this.jobQueue = [];
         this.completedJobQueue = [];
 
+        this.statsRecorder = new StatisticsRecorder(
+            path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
+            this.recordType,
+            `Build system with mode: ${this.es2pandaMode}`
+        );
+
         this.processBuildConfig();
+        this.statsRecorder.record(formEvent(BuildSystemEvent.BACKWARD_COMPAT));
         this.backwardCompatibilityWorkaroundStub()
     }
 
@@ -190,6 +215,10 @@ export abstract class BaseMode {
         return this.buildConfig.buildMode === BUILD_MODE.DEBUG;
     }
 
+    public get recordType() {
+        return this.buildConfig.recordType
+    }
+
     private compile(job: CompileJobInfo): boolean {
         const ets2panda = Ets2panda.getInstance();
         let errOccurred = false;
@@ -208,9 +237,11 @@ export abstract class BaseMode {
     }
 
     public async run(): Promise<void> {
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
         this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
 
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SEQUENTIAL));
         if (Object.entries(this.jobs).length == 0) {
             this.logger.printWarn("Nothing to compile. Exiting...")
             return;
@@ -239,7 +270,11 @@ export abstract class BaseMode {
             }
             this.dispatchNextJob(job)
         }
+
+
         if (!success) {
+            this.statsRecorder.record(RecordEvent.END);
+            this.statsRecorder.writeSumSingle();
             throw new DriverError(
                 LogDataFactory.newInstance(
                     ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
@@ -248,9 +283,13 @@ export abstract class BaseMode {
             );
         }
 
-        this.mergeAbcFiles();
         Ets2panda.destroyInstance();
 
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+        this.mergeAbcFiles();
+
+        this.statsRecorder.record(RecordEvent.END);
+        this.statsRecorder.writeSumSingle();
     }
 
     private compileSimultaneous(job: CompileJobInfo): boolean {
@@ -495,18 +534,14 @@ export abstract class BaseMode {
         this.logger.printDebug(`collected fileToModule ${JSON.stringify([...this.fileToModule.entries()], null, 1)}`)
     }
 
-
     protected processBuildConfig(): void {
-        let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
-        compileSingleData.record(RECORDE_MODULE_NODE.COLLECT_INFO);
+        this.statsRecorder.record(formEvent(BuildSystemEvent.COLLECT_MODULES));
         this.collectModuleInfos();
         this.logger.printDebug(`ModuleInfos: ${JSON.stringify([...this.moduleInfos], null, 1)}`)
-        compileSingleData.record(RECORDE_MODULE_NODE.GEN_CONFIG, RECORDE_MODULE_NODE.COLLECT_INFO);
+        this.statsRecorder.record(formEvent(BuildSystemEvent.GEN_CONFIGS));
         this.generateArkTSConfigForModules();
-        compileSingleData.record(RECORDE_MODULE_NODE.CLT_FILES, RECORDE_MODULE_NODE.GEN_CONFIG);
+        this.statsRecorder.record(formEvent(BuildSystemEvent.PROCESS_ENTRY_FILES));
         this.processEntryFiles();
-        compileSingleData.record(RECORDE_MODULE_NODE.END, RECORDE_MODULE_NODE.CLT_FILES);
-        compileSingleData.writeSumSingle(path.resolve());
     }
 
     protected backwardCompatibilityWorkaroundStub() {
@@ -527,6 +562,8 @@ export abstract class BaseMode {
     }
 
     public async runSimultaneous(): Promise<void> {
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SIMULTANEOUS));
+
         const mainModule: ModuleInfo | undefined = this.moduleInfos.get(this.mainPackageName)
 
         // NOTE: workaround (main module entry file problem)
@@ -572,12 +609,17 @@ export abstract class BaseMode {
             type: CompileJobType.ABC
         });
         Ets2panda.destroyInstance()
+
+        this.statsRecorder.record(RecordEvent.END);
+        this.statsRecorder.writeSumSingle();
     }
 
     public async runParallel(): Promise<void> {
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
         this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
 
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_PARALLEL));
         if (Object.entries(this.jobs).length == 0) {
             this.logger.printWarn("Nothing to compile. Exiting...")
             return;
@@ -604,6 +646,8 @@ export abstract class BaseMode {
         const res = await taskManager.finish();
 
         if (!res) {
+            this.statsRecorder.record(RecordEvent.END);
+            this.statsRecorder.writeSumSingle();
             throw new DriverError(
                 LogDataFactory.newInstance(
                     ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
@@ -613,7 +657,12 @@ export abstract class BaseMode {
         }
 
         this.completedJobQueue = Object.values(this.jobs)
+
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
         this.mergeAbcFiles()
+
+        this.statsRecorder.record(RecordEvent.END);
+        this.statsRecorder.writeSumSingle();
     }
 
     private addJobToQueue(job: CompileJobInfo): void {
