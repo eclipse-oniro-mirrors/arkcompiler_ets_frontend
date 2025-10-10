@@ -29,28 +29,6 @@
 
 namespace ark::es2panda::compiler {
 
-static bool IsAbsolute(const std::string &path)
-{
-#ifndef ARKTSCONFIG_USE_FILESYSTEM
-    return !path.empty() && path[0] == '/';
-#else
-    return fs::path(path).is_absolute();
-#endif  // ARKTSCONFIG_USE_FILESYSTEM
-}
-
-static bool IsPath(ir::StringLiteral *importPath)
-{
-    std::string_view path = importPath->Str().Utf8();
-    std::string currentDirReferenceLinux = "./";
-    std::string parentDirReferenceLinux = "../";
-    std::string currentDirReferenceWindows = ".\\";
-    std::string parentDirReferenceWindows = "..\\";
-
-    return ((path.find(currentDirReferenceLinux) == 0) || (path.find(parentDirReferenceLinux) == 0) ||
-            (path.find(currentDirReferenceWindows) == 0) || (path.find(parentDirReferenceWindows) == 0)) ||
-           IsAbsolute(std::string(path));
-}
-
 static bool IsInitModuleCall(ir::AstNode *node)
 {
     if (!node->IsCallExpression()) {
@@ -103,13 +81,27 @@ static ir::AstNode *TransformESValueLoadCallExpression(ir::CallExpression *callE
                                                        parser::Program *program)
 {
     auto importPath = callExpr->Arguments().front();
-    if (!importPath->IsStringLiteral() || IsPath(importPath->AsStringLiteral())) {
+    if (!importPath->IsStringLiteral()) {
         return callExpr;
     }
     auto *parser = ctx->parser->AsETSParser();
+    auto allocator = ctx->allocator;
     auto metaData = parser->GetImportPathManager()->GatherImportMetadata(program, util::ImportFlags::NONE,
                                                                          importPath->AsStringLiteral());
     if (metaData.ohmUrl == util::ImportPathManager::DUMMY_PATH) {
+        // If it has suffix like .ts, .js, .ets etc., we should truncate the suffix
+        bool hasExtension = false;
+        auto truncatedPath = parser->GetImportPathManager()->TruncateFileExtension(
+            importPath->AsStringLiteral()->ToString(), hasExtension);
+        if (!hasExtension) {
+            return callExpr;
+        }
+        auto truncatedArgument =
+            util::NodeAllocator::Alloc<ir::StringLiteral>(allocator, util::UString(truncatedPath, allocator).View());
+        truncatedArgument->SetParent(importPath->Parent());
+        truncatedArgument->SetRange(importPath->Range());
+        importPath->SetParent(nullptr);
+        callExpr->Arguments()[0] = truncatedArgument;
         return callExpr;
     }
     return CreateModuleCallExpressionForDynamic(ctx, callExpr, metaData.ohmUrl);
@@ -130,12 +122,16 @@ static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callEx
         dependentProg = SearchExternalProgramInImport(program->ExternalSources(), metaData);
     }
     if (dependentProg == nullptr) {
-        // Replace the broken "InitModule" expression with error node. The error message has been logged in parser.
-        ES2PANDA_ASSERT(ctx->diagnosticEngine->IsAnyError());
-        auto node = util::NodeAllocator::Alloc<ir::Identifier>(allocator, allocator);
-        node->SetRange(callExpr->Range());
-        node->SetParent(callExpr->Parent());
-        return node;
+        if (program->AbsoluteName() == metaData.resolvedSource || program->AbsoluteName() == metaData.declPath) {
+            dependentProg = program;
+        } else {
+            // Replace the broken "InitModule" expression with error node. The error message has been logged in parser.
+            ES2PANDA_ASSERT(ctx->diagnosticEngine->IsAnyError());
+            auto node = util::NodeAllocator::Alloc<ir::Identifier>(allocator, allocator);
+            node->SetRange(callExpr->Range());
+            node->SetParent(callExpr->Parent());
+            return node;
+        }
     }
 
     if (dependentProg->IsDeclForDynamicStaticInterop()) {

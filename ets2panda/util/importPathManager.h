@@ -159,6 +159,7 @@ public:
     util::StringView ResolvePathAPI(StringView curModulePath, ir::StringLiteral *importPath) const;
 
     void MarkAsParsed(StringView path);
+    std::string TruncateFileExtension(std::string path, bool &hasExtension);
     util::StringView FormRelativePath(const util::Path &path);
     std::shared_ptr<const ArkTsConfig> ArkTSConfig() const
     {
@@ -166,6 +167,7 @@ public:
     }
 
 private:
+    std::string FormRelativeModuleName(std::string relPath);
     util::StringView FormModuleNameSolelyByAbsolutePath(const util::Path &path);
     util::StringView FormModuleName(const util::Path &path);
 
