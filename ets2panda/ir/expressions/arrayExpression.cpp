@@ -361,26 +361,12 @@ std::optional<checker::Type *> ArrayExpression::ExtractPossiblePreferredType(che
         return std::make_optional(type);
     }
 
-    if (type->IsETSUnionType()) {
-        for (checker::Type *const typeOfUnion : type->AsETSUnionType()->ConstituentTypes()) {
-            auto possiblePreferredType = ExtractPossiblePreferredType(typeOfUnion);
-            if (possiblePreferredType.has_value()) {
-                return std::make_optional(possiblePreferredType.value());
-            }
-        }
-    }
-
     return std::nullopt;
 }
 
-void ArrayExpression::SetPreferredTypeBasedOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
-                                                       checker::TypeRelationFlag flags)
+void ArrayExpression::SetPreferredTypeOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
+                                                  checker::TypeRelationFlag flags)
 {
-    // NOTE (mmartin): This needs a complete solution
-    if (PreferredType() != nullptr) {
-        return;
-    }
-
     auto possiblePreferredType = ExtractPossiblePreferredType(param);
     if (!possiblePreferredType.has_value()) {
         return;
@@ -410,6 +396,23 @@ void ArrayExpression::SetPreferredTypeBasedOnFuncParam(checker::ETSChecker *chec
 
     if (isAssignable) {
         SetPreferredType(param);
+    }
+}
+
+void ArrayExpression::SetPreferredTypeBasedOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
+                                                       checker::TypeRelationFlag flags)
+{
+    // NOTE (mmartin): This needs a complete solution
+    if (PreferredType() != nullptr) {
+        return;
+    }
+
+    if (param->IsETSUnionType()) {
+        for (checker::Type *typeOfUnion : param->AsETSUnionType()->ConstituentTypes()) {
+            SetPreferredTypeOnFuncParam(checker, typeOfUnion, flags);
+        }
+    } else {
+        SetPreferredTypeOnFuncParam(checker, param, flags);
     }
 }
 
