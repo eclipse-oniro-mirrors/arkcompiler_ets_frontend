@@ -172,6 +172,7 @@ int DepAnalyzer::AnalyzeDepsForMultiFiles(const char *exec, std::vector<std::str
         es2panda_Context *ctx =
             impl->CreateContextFromString(cfg, parserInputCStr, cfgImpl->options->SourceFileName().c_str());
         auto *ctxImpl = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+        ctxImpl->parser->SetParserStatus(ark::es2panda::parser::ParserStatus::DEPENDENCY_ANALYZER_MODE);
         impl->ProceedToState(ctx, ES2PANDA_STATE_PARSED);
 
         if (ctxImpl->state == ES2PANDA_STATE_ERROR) {

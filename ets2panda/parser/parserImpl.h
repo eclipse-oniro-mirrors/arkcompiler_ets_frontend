@@ -36,6 +36,7 @@ enum class NextTokenFlags : uint32_t;
 namespace ark::es2panda::util {
 class Options;
 class SourcePositionHelper;
+class ImportPathManager;
 }  // namespace ark::es2panda::util
 
 namespace ark::es2panda::public_lib {
@@ -116,6 +117,11 @@ public:
     void SetParserStatus(ParserStatus status)
     {
         GetContext().Status() |= status;
+    }
+
+    bool HasParserStatus(ParserStatus status) const noexcept
+    {
+        return (GetContext().Status() & status) != 0;
     }
 
     lexer::SourcePosition GetPositionForDiagnostic() const;
@@ -211,6 +217,7 @@ protected:
     friend class lexer::RegExpParser;
     friend class util::SourcePositionHelper;
     friend class JsdocHelper;
+    friend class util::ImportPathManager;
 
     void LogExpectedToken(lexer::TokenType tokenType);
     void LogUnexpectedToken(lexer::TokenType tokenType);
