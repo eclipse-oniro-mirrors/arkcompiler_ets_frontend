@@ -311,12 +311,10 @@ static void CreateDeclarationFileWindows(const std::string &processed, const std
     CloseHandle(sem);
 }
 #else
+#ifndef USE_UNIX_SYSCALL
 static void CreateDeclarationFileLinux([[maybe_unused]] const std::string &processed,
                                        [[maybe_unused]] const std::string &absDecl)
 {
-#ifdef USE_UNIX_SYSCALL
-    return;
-#else
     std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
     sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
     if (sem == SEM_FAILED) {
@@ -341,8 +339,8 @@ static void CreateDeclarationFileLinux([[maybe_unused]] const std::string &proce
     sem_post(sem);
     sem_close(sem);
     sem_unlink(semName.c_str());
-#endif
 }
+#endif
 #endif
 
 void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
