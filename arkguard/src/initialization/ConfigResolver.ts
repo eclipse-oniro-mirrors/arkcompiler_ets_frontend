@@ -75,7 +75,8 @@ enum OptionType {
   ENABLE_BYTECODE_OBFUSCATION,
   ENABLE_BYTECODE_OBFUSCATION_DEBUGGING,
   ENABLE_BYTECODE_OBFUSCATION_ENHANCED,
-  ENABLE_BYTECODE_OBFUSCATION_ARKUI
+  ENABLE_BYTECODE_OBFUSCATION_ARKUI,
+  STRIP_NOT_COMPILED_MODULE_NAME
 }
 export { OptionType as OptionTypeForTest };
 
@@ -123,6 +124,7 @@ class ObOptions {
   stripLanguageDefault: boolean = false;
   stripSystemApiArgs: boolean = false;
   keepParameterNames: boolean = false;
+  stripNotCompiledModuleName: boolean = false;
 
   mergeObOptions(other: ObOptions): void {
     this.disableObfuscation = this.disableObfuscation || other.disableObfuscation;
@@ -140,6 +142,7 @@ class ObOptions {
     this.stripSystemApiArgs = this.stripSystemApiArgs || other.stripSystemApiArgs;
     this.keepParameterNames = this.keepParameterNames || other.keepParameterNames;
     this.enableAtKeep = this.enableAtKeep || other.enableAtKeep;
+    this.stripNotCompiledModuleName = this.stripNotCompiledModuleName || other.stripNotCompiledModuleName;
 
     if (other.printNameCache.length > 0) {
       this.printNameCache = other.printNameCache;
@@ -409,6 +412,7 @@ export class ObConfigResolver {
   static readonly STRIP_LANGUAGE_DEFAULT = 'strip-language-default';
   static readonly STRIP_SYSTEM_API_ARGS = 'strip-system-api-args';
   static readonly KEEP_PARAMETER_NAMES = '-keep-parameter-names';
+  static readonly STRIP_NOT_COMPILED_MODULE_NAME = 'strip-not-compiled-module-name';
 
   // renameFileName, printNameCache, applyNameCache, removeComments and keepComments won't be reserved in obfuscation.txt file.
   static exportedSwitchMap: Map<string, string> = new Map([
@@ -477,6 +481,8 @@ export class ObConfigResolver {
         return OptionType.STRIP_SYSTEM_API_ARGS;
       case ObConfigResolver.KEEP_PARAMETER_NAMES:
         return OptionType.KEEP_PARAMETER_NAMES;
+       case ObConfigResolver.STRIP_NOT_COMPILED_MODULE_NAME:
+        return OptionType.STRIP_NOT_COMPILED_MODULE_NAME; 
       default:
         return OptionType.NONE;
     }
@@ -673,6 +679,10 @@ export class ObConfigResolver {
         }
         case OptionType.STRIP_SYSTEM_API_ARGS: {
           configs.options.stripSystemApiArgs = true;
+          return true;
+        }
+        case OptionType.STRIP_NOT_COMPILED_MODULE_NAME: {
+          configs.options.stripNotCompiledModuleName = true;
           return true;
         }
       }

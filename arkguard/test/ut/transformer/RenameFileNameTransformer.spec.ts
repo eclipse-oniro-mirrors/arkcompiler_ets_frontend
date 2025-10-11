@@ -46,6 +46,7 @@ import {
   isLocalDependencyOhmUrlForTest,
   mangleOhmUrl,
   getMangleIncompletePathForTest,
+  addReservedFileNames,
 } from '../../../src/transformers/rename/RenameFileNameTransformer';
 import type { ProjectInfo } from '../../../src/common/type';
 import { OhmUrlStatus } from '../../../src/configs/INameObfuscationOption';
@@ -631,6 +632,52 @@ describe('Tester Cases for <RenameFileNameTransformer>.', function () {
       let mangledPath = getMangleIncompletePathForTest(path1);
       assert.strictEqual(mangledPath, 'a/b/c/d.ts');
       fs.unlinkSync(path);
+    });
+  });
+
+  describe('Tester Cases for <addReservedFileNames>.', function () {
+    let projectInfo;
+
+    beforeEach(() => {
+      options = {
+        mRenameFileName: {
+          mEnable: true,
+          mNameGeneratorType: 1,
+          mReservedFileNames: ["D:", "workplace", "src", "ets"],
+          mUniversalReservedFileNames: [],
+          mOhmUrlStatus: OhmUrlStatus.NONE,
+        }
+      };
+      projectInfo = {
+        packageDir: 'path',
+        projectRootPath: 'rootpath',
+        localPackageSet: new Set<string>(),
+        useNormalized: false,
+        useTsHar: false,
+      };
+    });
+
+    it('should have added file names', () => {
+      let filePath: string[] = [
+        'D:\\OH\\project\\Application\\har1',
+        'D:\\OH\\project\\Application\\har2'
+      ];
+      addReservedFileNames(filePath);
+      assert.strictEqual(renameFileNameModule.reservedFileNames.has('har1'), true);
+      assert.strictEqual(renameFileNameModule.reservedFileNames.has('har2'), true);
+    });
+
+    it('should have added and whitelisted file names', () => {
+      secharmony.transformerPlugin.createTransformerFactory(options)(context);
+      let filePath: string[] = [
+        'D:\\OH\\project\\Application\\har1',
+        'D:\\OH\\project\\Application\\har2'
+      ];
+      addReservedFileNames(filePath);
+      assert.strictEqual(renameFileNameModule.reservedFileNames.has("workplace"), true);
+      assert.strictEqual(renameFileNameModule.reservedFileNames.has("ets"), true);
+      assert.strictEqual(renameFileNameModule.reservedFileNames.has("har1"), true);
+      assert.strictEqual(renameFileNameModule.reservedFileNames.has("har2"), true);
     });
   });
 });
