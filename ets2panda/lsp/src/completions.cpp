@@ -900,7 +900,7 @@ std::optional<bool> IsCompletionEntryDataResolved(ark::es2panda::lsp::Completion
     }
 
     const char slash = static_cast<char>(lexer::LEX_CHAR_SLASH);
-    const int pos = importDecl.find(slash);
+    auto pos = importDecl.find(slash);
     const std::string importSub = importDecl.substr(0, pos);
     auto configPaths = config->Paths();
     if (configPaths.count(importSub) != 0) {

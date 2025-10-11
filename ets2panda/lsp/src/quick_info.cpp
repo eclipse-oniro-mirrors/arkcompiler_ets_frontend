@@ -207,7 +207,9 @@ ir::AstNode *GetNodeAtLocationForQuickInfo(ir::AstNode *node)
         auto object = GetContainingObjectLiteralNode(node);
         if (object != nullptr) {
             auto contextualTypeNode = GetContextualTypeNode(object->Parent());
-            return GetPropertyNodeFromContextualType(object, contextualTypeNode);
+            if (contextualTypeNode != nullptr) {
+                return GetPropertyNodeFromContextualType(object, contextualTypeNode);
+            }
         }
         return GetNodeAtLocation(node);
     }
@@ -1102,14 +1104,17 @@ std::vector<SymbolDisplayPart> CreateDisplayForMethodDefinition(ir::AstNode *nod
     if (node->Type() != ir::AstNodeType::METHOD_DEFINITION) {
         return displayParts;
     }
-    if (kindModifier == "constructor" && node->Parent()->Type() == ir::AstNodeType::CLASS_DEFINITION) {
+    auto parent = node->Parent();
+    if (parent == nullptr) {
+        return CreateDisplayForRegularOrClassMethod(node, checker);
+    }
+    if (kindModifier == "constructor" && parent->Type() == ir::AstNodeType::CLASS_DEFINITION) {
         return CreateDisplayForMethodDefinitionOfConstructor(node, kindModifier);
     }
-    if ((kindModifier == "getter" || kindModifier == "setter") &&
-        node->Parent()->Type() == ir::AstNodeType::CLASS_DEFINITION) {
+    if ((kindModifier == "getter" || kindModifier == "setter") && parent->Type() == ir::AstNodeType::CLASS_DEFINITION) {
         return CreateDisplayForMethodDefinitionOfGetterOrSetter(node, kindModifier);
     }
-    if (node->Parent() != nullptr && node->Parent()->Type() == ir::AstNodeType::TS_INTERFACE_BODY) {
+    if (parent->Type() == ir::AstNodeType::TS_INTERFACE_BODY) {
         return CreateDisplayForMethodDefinitionOfInterfaceBody(node);
     }
 
@@ -1232,7 +1237,9 @@ QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNod
         if (compiler::ClassDefinitionIsEnumTransformed(node->Parent())) {
             auto enumDecl = node->Parent()->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
             auto enumMember = GetEnumMemberByName(enumDecl, node->AsClassProperty()->Key()->AsIdentifier()->Name());
-            displayParts = CreateDisplayForEnumMember(enumMember);
+            if (enumMember) {
+                displayParts = CreateDisplayForEnumMember(enumMember);
+            }
         } else {
             displayParts = CreateDisplayForClassProperty(node);
         }

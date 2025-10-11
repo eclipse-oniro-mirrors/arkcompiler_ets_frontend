@@ -318,7 +318,7 @@ void GetFunctionParameterTypeForHints(const ir::AstNode *node, InlayHintList *re
 bool IsSignatureSupportingReturnAnnotation(const ir::AstNode *node)
 {
     return node->IsArrowFunctionExpression() || node->IsFunctionExpression() || node->IsFunctionDeclaration() ||
-           node->IsMethodDefinition() || (node->IsMethodDefinition());
+           node->IsMethodDefinition();
 }
 
 bool ShouldProcessNode(const ir::AstNode *node, const TextSpan *span)

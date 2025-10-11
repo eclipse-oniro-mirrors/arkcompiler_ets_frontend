@@ -387,6 +387,9 @@ std::optional<AstNode *> GetAdjustedLocation(AstNode *node, bool forRename, Aren
         return std::nullopt;
     }
     node = GetOriginalNode(node);
+    if (node == nullptr) {
+        return std::nullopt;
+    }
     auto *parent = node->Parent();
     if (parent == nullptr) {
         return std::make_optional(node);

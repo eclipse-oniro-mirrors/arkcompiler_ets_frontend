@@ -39,7 +39,7 @@ SignatureHelpItems CreateSignatureHelpItems(std::vector<checker::Signature *> &s
         }
         itemsSeen++;
     }
-
+    ES2PANDA_ASSERT(signatures.size() != 0);
     ES2PANDA_ASSERT(selectedItemIndex != static_cast<size_t>(-1));
 
     for (const auto &helpItem : GetSignatureHelpItem(signatures)) {
