@@ -94,11 +94,17 @@ function initBuildEnv(): void {
   process.env.PATH = `${currentPath}${path.delimiter}${pandaLibPath}`;
 }
 
+interface mainFileCache {
+  fileContent: string;
+  fileConfig: Config;
+  fileContext: KNativePointer;
+}
+
 export class Lsp {
   private pandaLibPath: string;
   private pandaBinPath: string;
   private getFileContent: (filePath: string) => string;
-  private filesMap: Map<string, string>; // Map<fileName, fileContent>
+  private filesMap: Map<string, mainFileCache>; // Map<fileName, fileContent>
   private cacheDir: string;
   private globalContextPtr?: KNativePointer;
   private globalConfig?: Config;
@@ -123,7 +129,7 @@ export class Lsp {
     this.pandaBinPath = process.env.PANDA_BIN_PATH
       ? process.env.PANDA_BIN_PATH
       : path.resolve(__dirname, '../../../ets2panda/bin');
-    this.filesMap = new Map<string, string>();
+    this.filesMap = new Map<string, mainFileCache>();
     this.getFileContent = getContentCallback || ((path: string): string => fs.readFileSync(path, 'utf8'));
     this.buildConfigs = generateBuildConfigs(pathConfig, modules);
     this.moduleInfos = generateArkTsConfigs(this.buildConfigs);
@@ -149,22 +155,38 @@ export class Lsp {
   }
 
   modifyFilesMap(fileName: string, fileContent: TextDocumentChangeInfo): void {
-    this.filesMap.set(fileName, fileContent.newDoc);
+    if (!fs.existsSync(fileName) || fs.statSync(fileName).isDirectory()) {
+      return;
+    }
+    if (this.filesMap.has(fileName)) {
+      this.deleteFromFilesMap(fileName);
+    }
+    const [cfg, ctx] = this.createContext(fileName, true, fileContent.newDoc);
+    this.filesMap.set(fileName, { fileContent: fileContent.newDoc, fileConfig: cfg, fileContext: ctx });
   }
 
   deleteFromFilesMap(fileName: string): void {
-    this.filesMap.delete(fileName);
+    let fileCache = this.filesMap.get(fileName);
+    if (fileCache) {
+      this.destroyContext(fileCache.fileConfig, fileCache.fileContext);
+      this.filesMap.delete(fileName);
+    }
   }
 
   private getFileSource(filePath: string): string {
-    const getSource = this.filesMap.get(filePath) || this.getFileContent(filePath) || fs.readFileSync(filePath, 'utf8');
+    const getSource =
+      this.filesMap.get(filePath)?.fileContent || this.getFileContent(filePath) || fs.readFileSync(filePath, 'utf8');
     if (getSource === undefined) {
       throw new Error(`File content not found for path: ${filePath}`);
     }
     return getSource.replace(/\r\n/g, '\n');
   }
 
-  private createContext(filename: String, processToCheck: boolean = true): [Config, KNativePointer] {
+  private createContext(
+    filename: String,
+    processToCheck: boolean = true,
+    fileSource?: string
+  ): [Config, KNativePointer] {
     const filePath = path.resolve(filename.valueOf());
     const arktsconfig = Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
       ? this.moduleInfos[filePath].arktsConfigFile
@@ -175,7 +197,7 @@ export class Lsp {
 
     const ets2pandaCmd = [...ets2pandaCmdPrefix, arktsconfig];
     const localCfg = this.lspDriverHelper.createCfg(ets2pandaCmd, filePath, this.pandaLibPath);
-    const source = this.getFileSource(filePath);
+    const source = fileSource ? fileSource : this.getFileSource(filePath);
 
     const localCtx = this.lspDriverHelper.createCtx(source, filePath, localCfg, this.globalContextPtr);
     try {
@@ -264,14 +286,19 @@ export class Lsp {
       return this.getAtPositionByNodeInfos(filename, nodeInfos, 'definition') as LspDefinitionData;
     }
     let ptr: KPointer;
-    const [cfg, ctx] = this.createContext(filename);
-    try {
-      ptr = global.es2panda._getDefinitionAtPosition(ctx, offset);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    } finally {
-      this.destroyContext(cfg, ctx);
+    let fileCache = this.filesMap.get(filename.valueOf());
+    if (fileCache) {
+      ptr = global.es2panda._getDefinitionAtPosition(fileCache.fileContext, offset);
+    } else {
+      const [cfg, ctx] = this.createContext(filename);
+      try {
+        ptr = global.es2panda._getDefinitionAtPosition(ctx, offset);
+      } catch (error) {
+        console.error(error);
+        throw error;
+      } finally {
+        this.destroyContext(cfg, ctx);
+      }
     }
     const result = new LspDefinitionData(ptr);
     const nodeInfoTemp: NodeInfo[] = this.getNodeInfos(filename, result.fileName, result.start);
