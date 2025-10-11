@@ -1,0 +1,1462 @@
+{
+    "api_list": [
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "textChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "textChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "identity",
+                        "type": "observer.ObserverOptions",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "windowSizeLayoutBreakpointChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "windowSizeLayoutBreakpointChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "textChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "textChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "identity",
+                        "type": "observer.ObserverOptions",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.continuation.continuationManager.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "deviceDisconnect",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "continuationManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.continuation.continuationManager.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "deviceConnect",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "continuationManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.continuation.continuationManager.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "deviceConnect",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "continuationManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.continuation.continuationManager.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "deviceDisconnect",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "continuationManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.accessibility.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "enableChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "CaptionsManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.accessibility.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "styleChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "CaptionsManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.accessibility.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "enableChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "CaptionsManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.accessibility.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "styleChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "CaptionsManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.observer.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "tabChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "config",
+                        "type": "ObserverOptions",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "uiObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.observer.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "tabChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "config",
+                        "type": "ObserverOptions",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "uiObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.observer.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "tabChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "uiObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.observer.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "tabChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "uiObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.window.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "systemAvoidAreaChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "Window",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.window.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "systemAvoidAreaChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "Window",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.data.distributedDataObject.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "change",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "DistributedObject",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.data.distributedDataObject.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "change",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "DistributedObject",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.data.distributedDataObject.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "status",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "DistributedObject",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.data.distributedDataObject.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "status",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "DistributedObject",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.inputMethodEngine.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "inputStart",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "InputMethodEngine",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.inputMethodEngine.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "inputStart",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "InputMethodEngine",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.inputMethodEngine.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "keyboardShow | keyboardHide",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "InputMethodEngine",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.inputMethodEngine.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "keyboardShow | keyboardHide",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "InputMethodEngine",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.wallpaper.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "colorChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "wallpaper",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.wallpaper.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "colorChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "wallpaper",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@hms.core.gameservice.gameplayer.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "miniGameAddictionPrevented",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "gamePlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@hms.core.gameservice.gameplayer.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "miniGameAddictionPrevented",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "gamePlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.account.appAccount.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "change",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "owners",
+                        "type": "Array<string>",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AppAccountManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.account.appAccount.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "change",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AppAccountManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.application.formHost.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "formUninstall",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "formHost",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.application.formHost.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "formUninstall",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "formHost",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.uiExtension.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "windowRectChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "WindowProxy",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.uiExtension.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "windowRectChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "WindowProxy",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.cooperate.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "cooperate",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "cooperate",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.cooperate.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "cooperate",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "cooperate",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.net.http.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "headerReceive",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "HttpRequest",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.net.http.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "headerReceive",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "HttpRequest",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        }
+    ]
+}
