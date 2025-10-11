@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,6 +54,7 @@ export namespace UnobfuscationCollections {
   export let reservedExportNameAndProp: Set<string> = new Set();
   export let reservedStrProp: Set<string> = new Set();
   export let reservedEnum: Set<string> = new Set();
+  export let reservedObjProp: Set<string> = new Set();
 
   // The mapping between the unobfuscated names and their reasons.
   export let unobfuscatedPropMap: Map<string, Set<string>> = new Map();
@@ -72,6 +73,7 @@ export namespace UnobfuscationCollections {
     reservedExportNameAndProp.clear();
     reservedStrProp.clear();
     reservedEnum.clear();
+    reservedObjProp.clear();
     unobfuscatedPropMap.clear();
     unobfuscatedNamesMap.clear();
     reservedWildcardMap.clear();

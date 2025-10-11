@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,22 +15,14 @@
 
 import {
   forEachChild,
-  getLeadingCommentRangesOfNode,
-  isCallExpression,
-  isExpressionStatement,
   isIdentifier,
-  isStructDeclaration,
-  SyntaxKind,
-  visitEachChild
 } from 'typescript';
 
 import type {
-  CommentRange,
   Identifier,
   Node,
   SourceFile,
   StructDeclaration,
-  TransformationContext
 } from 'typescript';
 import type { IOptions } from '../configs/IOptions';
 import { LocalVariableCollections, PropCollections, UnobfuscationCollections } from './CommonCollections';
@@ -185,6 +177,7 @@ export function isReservedProperty(originalName: string): boolean {
     UnobfuscationCollections.reservedStruct?.has(originalName) ||
     UnobfuscationCollections.reservedExportNameAndProp?.has(originalName) ||
     UnobfuscationCollections.reservedStrProp?.has(originalName) ||
+    UnobfuscationCollections.reservedObjProp?.has(originalName) ||
     UnobfuscationCollections.reservedEnum?.has(originalName) ||
     PropCollections.reservedProperties?.has(originalName) ||
     isMatchWildcard(PropCollections.universalReservedProperties, originalName);
@@ -200,6 +193,7 @@ export enum WhitelistType {
   STRUCT = 'struct',
   EXPORT = 'exported',
   STRPROP = 'strProp',
+  OBJECTPROP = 'objectProp',
   ENUM = 'enum'
 }
 
@@ -287,6 +281,11 @@ export function needToRecordProperty(originalName: string, recordMap?: Map<strin
 
   if (UnobfuscationCollections.reservedExportNameAndProp?.has(originalName)) {
     recordReservedName(recordName, WhitelistType.EXPORT, recordMap);
+    reservedFlag = true;
+  }
+
+  if (UnobfuscationCollections.reservedObjProp?.has(originalName)) {
+    recordReservedName(recordName, WhitelistType.OBJECTPROP, recordMap);
     reservedFlag = true;
   }
 

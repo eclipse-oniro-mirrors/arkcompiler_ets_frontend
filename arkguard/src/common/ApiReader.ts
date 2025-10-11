@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,22 +14,22 @@
  */
 
 import path from 'path';
-import {ApiExtractor} from './ApiExtractor';
-import {ListUtil} from '../utils/ListUtil';
-import type {IOptions} from '../configs/IOptions';
-import { stringPropsSet, structPropsSet, enumPropsSet } from '../utils/OhsUtil';
+import { ApiExtractor } from './ApiExtractor';
+import type { IOptions } from '../configs/IOptions';
+import { stringPropsSet, structPropsSet, enumPropsSet, objectPropsSet } from '../utils/OhsUtil';
 import type { MergedConfig } from '../ArkObfuscator';
 
 // The interface of settings for collect while lists
 export interface ScanProjectConfig {
   mPropertyObfuscation?: boolean,
   mKeepStringProperty?: boolean,
+  mKeepObjectProperty?: boolean,
   mExportObfuscation?: boolean,
   mkeepFilesAndDependencies?: Set<string>,
   isHarCompiled?: boolean,
   mStripSystemApiArgs?: boolean,
   mEnableAtKeep: boolean,
-  scanDecorator?: boolean;
+  scanDecorator?: boolean
 }
 
 // Settings for collect white lists.
@@ -84,6 +84,7 @@ export function initScanProjectConfig(
   scanProjectConfig.isHarCompiled = isHarCompiled;
   scanProjectConfig.mEnableAtKeep = customProfiles.mNameObfuscation?.mEnableAtKeep;
   scanProjectConfig.scanDecorator = scanDecorator;
+  scanProjectConfig.mKeepObjectProperty = customProfiles.mNameObfuscation?.mKeepObjectProperty;
 }
 
 /**
@@ -104,6 +105,7 @@ export function resetScanProjectConfig(): void {
 export interface ReseverdSetForArkguard {
   structPropertySet: Set<string> | undefined;
   stringPropertySet: Set<string> | undefined;
+  objectPropertySet: Set<string> | undefined;
   exportNameAndPropSet: Set<string> | undefined;
   exportNameSet: Set<string> | undefined;
   enumPropertySet: Set<string> | undefined;
@@ -132,11 +134,12 @@ export function readProjectPropertiesByCollectedPaths(filesForCompilation: Set<s
   const exportNamesAndProperties: Set<string> | undefined = exportWhiteList.reservedExportPropertyAndName;
   const exportNames: Set<string> | undefined = exportWhiteList.reservedExportNames;
 
-  // if -enable-property-obfuscation, collect structPropsSet, exportNamesAndProperties and
+  // if -enable-property-obfuscation, collect structPropsSet, exportNamesAndProperties, objectPropertySet and
   // stringPropsSet(if -enable-string-property-obufscation is not enabled) as whitelists.
   let exportNameAndPropSet: Set<string>;
   let structPropertySet: Set<string>;
   let stringPropertySet: Set<string>;
+  let objectPropertySet: Set<string>;
   let enumPropertySet: Set<string>;
   if (isEnabledPropertyObfuscation(customProfiles)) {
     exportNameAndPropSet = new Set(exportNamesAndProperties);
@@ -145,9 +148,13 @@ export function readProjectPropertiesByCollectedPaths(filesForCompilation: Set<s
     if (scanProjectConfig.mKeepStringProperty) {
       stringPropertySet = new Set(stringPropsSet);
     }
+    if (scanProjectConfig.mKeepObjectProperty) {
+      objectPropertySet = new Set(objectPropsSet);
+    }
   }
   structPropsSet.clear();
   stringPropsSet.clear();
+  objectPropsSet.clear();
   enumPropsSet.clear();
 
   let exportNameSet: Set<string>;
@@ -163,6 +170,7 @@ export function readProjectPropertiesByCollectedPaths(filesForCompilation: Set<s
   return {
     structPropertySet: structPropertySet,
     stringPropertySet: stringPropertySet,
+    objectPropertySet: objectPropertySet,
     exportNameAndPropSet: exportNameAndPropSet,
     exportNameSet: exportNameSet,
     enumPropertySet: enumPropertySet,
