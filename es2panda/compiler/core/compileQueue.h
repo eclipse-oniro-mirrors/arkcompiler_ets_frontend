@@ -122,6 +122,7 @@ public:
         hasOhmurlBeenChanged_ = hasOhmurlBeenChanged;
     }
     void UpdatePkgNameOfImportOhmurl(panda::pandasm::Program *prog, const panda::es2panda::CompilerOptions &options);
+    void UpdateAbcImportAndStrings(panda::pandasm::Program *prog, const panda::es2panda::CompilerOptions &options);
 
     NO_COPY_SEMANTIC(CompileAbcClassJob);
     NO_MOVE_SEMANTIC(CompileAbcClassJob);
@@ -132,9 +133,9 @@ public:
 private:
     void UpdateImportOhmurl(panda::pandasm::Program *prog, const CompilerOptions &options);
     void UpdateDynamicImport(panda::pandasm::Program *prog,
-        const std::map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo);
+        const std::unordered_map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo);
     void UpdateStaticImport(panda::pandasm::Program *prog,
-        const std::map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo);
+        const std::unordered_map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo);
     void UpdateBundleNameOfOhmurl(std::string &ohmurl);
 
     es2panda::SourceFile *src_;

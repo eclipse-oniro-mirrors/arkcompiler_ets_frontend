@@ -95,7 +95,7 @@ bool CompileFileJob::RetrieveProgramFromCacheFiles(const std::string &buffer, bo
                 return true;
             }
         } else {
-            std::map<std::string, PkgInfo> updateVersionInfo =
+            std::unordered_map<std::string, PkgInfo> updateVersionInfo =
                 options_->compileContextInfo.updateVersionInfo[src_->pkgName];
             auto abcBufToHash = bufToHash;
             for (auto &[pkgName, pkgInfo]: updateVersionInfo) {
@@ -266,11 +266,27 @@ void CompileAbcClassJob::Run()
     }
     program->isGeneratedFromMergedAbc = true;
 
+    // Update ohmurl according to different scenarios.
+    // NOTE:
+    // 1. modifiedPkgName
+    //    - Triggered by manual command-line invocation (need --src-package-name and --dst-package-name).
+    //    - Used to modify package names manually.
+    //    - Currently, this branch is not used in existing compile scenarios,
+    //      but is kept for potential future or legacy support.
+    // 2. compileOhmurlVersionConfigPath
+    //    - Triggered by manual command-line invocation (need --ohmurl-version-config).
+    //    - Used to update version information according to a JSON config file.
+    // 3. needModifyRecord / updatePkgVersionForAbcInput
+    //    - Triggered automatically during abc merge processes.
+    //    - Used to update ohmurl version for abc input when merging.
+    // These three cases are mutually exclusive:
+    // - (1) and (2) are both manual command-line operations and will not be used together.
+    // - (3) only occurs in end-to-end automated flows.
     if (!options_.modifiedPkgName.empty()) {
         UpdatePkgNameOfImportOhmurl(program, options_);
-    }
-    // Update ohmurl for abc input when needed
-    if (options_.compileContextInfo.needModifyRecord ||
+    } else if (!options_.compileOhmurlVersionConfigPath.empty()) {
+        UpdateAbcImportAndStrings(program, options_);
+    } else if (options_.compileContextInfo.needModifyRecord ||
         (options_.updatePkgVersionForAbcInput && pkgVersionUpdateRequiredInAbc_)) {
         panda::Timer::timerStart(panda::EVENT_UPDATE_ABC_PKG_VERSION, record_name);
         UpdateImportOhmurl(program, options_);
@@ -317,7 +333,7 @@ void CompileAbcClassJob::UpdateBundleNameOfOhmurl(std::string &ohmurl)
 }
 
 void CompileAbcClassJob::UpdateDynamicImport(panda::pandasm::Program *prog,
-    const std::map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo)
+    const std::unordered_map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo)
 {
     for (auto &[name, function] : prog->function_table) {
         util::VisitDyanmicImports<false>(function, [this, &prog, pkgContextInfo](std::string &ohmurl) {
@@ -336,7 +352,7 @@ void CompileAbcClassJob::UpdateDynamicImport(panda::pandasm::Program *prog,
 }
 
 void CompileAbcClassJob::UpdateStaticImport(panda::pandasm::Program *prog,
-    const std::map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo)
+    const std::unordered_map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo)
 {
     for (auto &[recordName, record] : prog->record_table) {
         util::VisitStaticImports<false>(*prog, record, [this, pkgContextInfo](std::string &ohmurl) {
@@ -358,13 +374,14 @@ void CompileAbcClassJob::UpdateImportOhmurl(panda::pandasm::Program *prog,
                                             const panda::es2panda::CompilerOptions &options)
 {
     bool isAccurateUpdateVersion = !options.compileContextInfo.updateVersionInfo.empty();
-    const std::map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo = isAccurateUpdateVersion ?
+    const std::unordered_map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo = isAccurateUpdateVersion ?
         options.compileContextInfo.updateVersionInfo.at(abcPkgName_) : options.compileContextInfo.pkgContextInfo;
     // Replace for esm module static import
     UpdateStaticImport(prog, pkgContextInfo);
     // Replace for dynamic import
     UpdateDynamicImport(prog, pkgContextInfo);
 }
+
 /**
  * Need to modify the package name of the original package to the package name of the target package when
  * you merging two packages.
@@ -397,6 +414,20 @@ void CompileAbcClassJob::UpdatePkgNameOfImportOhmurl(panda::pandasm::Program *pr
         for (const auto &[_, function] : prog->function_table) {
             const auto &funcStringSet = function.CollectStringsFromFunctionInsns();
             prog->strings.insert(funcStringSet.begin(), funcStringSet.end());
+        }
+    }
+}
+
+void CompileAbcClassJob::UpdateAbcImportAndStrings(panda::pandasm::Program *program,
+                                                   const CompilerOptions &options)
+{
+    UpdateStaticImport(program, options.compileOhmurlVersionConfig.updateVersionInfo);
+    UpdateDynamicImport(program, options.compileOhmurlVersionConfig.updateVersionInfo);
+    if (hasOhmurlBeenChanged_) {
+        program->strings.clear();
+        for (const auto &[_, function] : program->function_table) {
+            const auto &funcStringSet = function.CollectStringsFromFunctionInsns();
+            program->strings.insert(funcStringSet.begin(), funcStringSet.end());
         }
     }
 }
@@ -448,7 +479,7 @@ void CompileFileQueue::Schedule()
 
 bool CompileAbcClassQueue::NeedUpdateVersion()
 {
-    std::unordered_map<std::string, std::map<std::string, panda::es2panda::PkgInfo>> updateVersionInfo =
+    std::unordered_map<std::string, std::unordered_map<std::string, panda::es2panda::PkgInfo>> updateVersionInfo =
         options_.compileContextInfo.updateVersionInfo;
     auto iter = updateVersionInfo.find(src_->pkgName);
     return updateVersionInfo.empty() || (iter != updateVersionInfo.end() && !iter->second.empty());

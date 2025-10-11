@@ -100,7 +100,7 @@ bool IsExternalPkgNames(const std::string &ohmurl, const std::set<std::string> &
 }
 
 std::string UpdatePackageVersionIfNeeded(const std::string &ohmurl,
-                                         const std::map<std::string, PkgInfo> &pkgContextInfo)
+                                         const std::unordered_map<std::string, PkgInfo> &pkgContextInfo)
 {
     // Input ohmurl format:
     // @normalized:{N|Y}&[module name]&[bundle name]&{<package name>|<@package/name>}/{import_path}&[version]
