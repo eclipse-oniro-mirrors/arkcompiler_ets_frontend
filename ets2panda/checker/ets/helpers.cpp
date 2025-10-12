@@ -1829,8 +1829,10 @@ void ETSChecker::BindingsModuleObjectAddProperty(checker::ETSObjectType *moduleO
             if (!aliasedName.Empty()) {
                 moduleObjType->AddReExportAlias(var->Declaration()->Name(), aliasedName);
             }
-            moduleObjType->AddProperty<TYPE>(
-                var->AsLocalVariable(), FindPropNameForNamespaceImport(var->AsLocalVariable()->Name(), importPath));
+            auto propNames = FindPropNameForNamespaceImport(var->AsLocalVariable()->Name(), importPath);
+            for (auto &propName : propNames) {
+                moduleObjType->AddProperty<TYPE>(var->AsLocalVariable(), propName);
+            }
         }
     }
 }
@@ -1840,20 +1842,24 @@ template void ETSChecker::BindingsModuleObjectAddProperty<PropertyType::INSTANCE
 template void ETSChecker::BindingsModuleObjectAddProperty<PropertyType::INSTANCE_METHOD>(
     ETSObjectType *, ir::ETSImportDeclaration *, const varbinder::Scope::VariableMap &, const util::StringView &);
 
-util::StringView ETSChecker::FindPropNameForNamespaceImport(const util::StringView &originalName,
-                                                            const util::StringView &importPath)
+std::vector<util::StringView> ETSChecker::FindPropNameForNamespaceImport(const util::StringView &originalName,
+                                                                         const util::StringView &importPath)
 {
+    std::vector<util::StringView> results;
     auto exportAliases = VarBinder()->AsETSBinder()->GetSelectiveExportAliasMultimap();
     auto relatedMapItem = exportAliases.find(importPath);
     if (relatedMapItem != exportAliases.end()) {
-        if (auto result = std::find_if(relatedMapItem->second.begin(), relatedMapItem->second.end(),
-                                       [originalName](const auto &item) { return item.second.first == originalName; });
-            result != relatedMapItem->second.end()) {
-            return result->first;
+        for (auto &item : relatedMapItem->second) {
+            if (item.second.first == originalName) {
+                results.push_back(item.first);
+            }
         }
     }
 
-    return originalName;
+    if (results.empty()) {
+        results.push_back(originalName);
+    }
+    return results;
 }
 
 // Helps to prevent searching for the imported file among external sources if it is the entry program
@@ -3123,6 +3129,21 @@ bool ETSChecker::TryTransformingToStaticInvoke(ir::Identifier *const ident, cons
     return true;
 }
 
+static void AddImportNamespacePropertyToObjectType(ir::ETSReExportDeclaration *reExportDecl,
+                                                   checker::ETSObjectType *lastObjectType)
+{
+    for (auto &import : reExportDecl->GetETSImportDeclarations()->Specifiers()) {
+        if (import->IsImportNamespaceSpecifier()) {
+            auto *local = import->AsImportNamespaceSpecifier()->Local();
+            if (local != nullptr && local->Variable() != nullptr) {
+                auto *var = local->Variable()->AsLocalVariable();
+                lastObjectType->AddProperty<checker::PropertyType::STATIC_FIELD>(var, local->Name());
+                var->SetTsType(lastObjectType);
+            }
+        }
+    }
+}
+
 void ETSChecker::ImportNamespaceObjectTypeAddReExportType(ir::ETSImportDeclaration *importDecl,
                                                           checker::ETSObjectType *lastObjectType, ir::Identifier *ident,
                                                           std::unordered_set<parser::Program *> *moduleStackCache)
@@ -3137,6 +3158,7 @@ void ETSChecker::ImportNamespaceObjectTypeAddReExportType(ir::ETSImportDeclarati
         }
         ES2PANDA_ASSERT(lastObjectType != nullptr);
         lastObjectType->AddReExports(reExportType->AsETSObjectType());
+        AddImportNamespacePropertyToObjectType(item, lastObjectType);
         for (auto node : importDecl->Specifiers()) {
             if (node->IsImportSpecifier()) {
                 auto specifier = node->AsImportSpecifier();
