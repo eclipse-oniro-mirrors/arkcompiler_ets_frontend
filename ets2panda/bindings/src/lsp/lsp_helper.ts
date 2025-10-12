@@ -188,11 +188,11 @@ export class Lsp {
       pluginContext.setProjectConfig(buildConfig);
       pluginContext.setContextPtr(localCtx);
 
-      this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, localCtx);
+      this.lspDriverHelper.proceedToState(localCtx, Es2pandaContextState.ES2PANDA_STATE_PARSED);
       PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
 
       if (processToCheck) {
-        this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, localCtx);
+        this.lspDriverHelper.proceedToState(localCtx, Es2pandaContextState.ES2PANDA_STATE_CHECKED);
       }
       return [localCfg, localCtx];
     } catch (error) {
@@ -1207,7 +1207,7 @@ export class Lsp {
     ];
 
     this.globalLspDriverHelper = new LspDriverHelper();
-    this.globalLspDriverHelper.memInitialize();
+    this.globalLspDriverHelper.memInitialize(this.pandaLibPath);
     this.globalConfig = this.globalLspDriverHelper.createCfg(ets2pandaCmd, files[0], this.pandaLibPath);
     this.globalContextPtr = this.globalLspDriverHelper.createGlobalContext(this.globalConfig.peer, files, files.length);
   }
@@ -1384,9 +1384,9 @@ export class Lsp {
     PluginDriver.getInstance().getPluginContext().setCodingFilePath(jobInfo.filePath);
     PluginDriver.getInstance().getPluginContext().setProjectConfig(config);
     PluginDriver.getInstance().getPluginContext().setContextPtr(context);
-    lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, context);
+    lspDriverHelper.proceedToState(context, Es2pandaContextState.ES2PANDA_STATE_PARSED);
     PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-    lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_LOWERED, context);
+    lspDriverHelper.proceedToState(context, Es2pandaContextState.ES2PANDA_STATE_LOWERED);
   }
 
   public addFileCache(filename: String): void {

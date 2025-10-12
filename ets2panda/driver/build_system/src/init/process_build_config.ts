@@ -99,14 +99,8 @@ function initPlatformSpecificConfig(buildConfig: BuildConfig): void {
     }
 
     if (isMac() || isLinux()) {
-        if (process.env.BUILD_DIR != undefined) {
-            buildConfig.abcLinkerPath = path.join(process.env.BUILD_DIR, 'bin', 'ark_link')
-            buildConfig.dependencyAnalyzerPath = path.join(process.env.BUILD_DIR, 'bin', 'dependency_analyzer');
-
-        } else {
-            buildConfig.abcLinkerPath = path.join(pandaSdkPath, 'bin', 'ark_link');
-            buildConfig.dependencyAnalyzerPath = path.join(pandaSdkPath, 'bin', 'dependency_analyzer');
-        }
+        buildConfig.abcLinkerPath = path.join(pandaSdkPath, 'bin', 'ark_link');
+        buildConfig.dependencyAnalyzerPath = path.join(pandaSdkPath, 'bin', 'dependency_analyzer');
     }
 
     if (!buildConfig.enableDeclgenEts2Ts && !fs.existsSync(buildConfig.abcLinkerPath as string)) {

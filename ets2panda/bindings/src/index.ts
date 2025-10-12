@@ -14,5 +14,3 @@
  */
 
 export * from './lsp/index';
-export * from './common/driver_helper';
-export * from './common/types';
