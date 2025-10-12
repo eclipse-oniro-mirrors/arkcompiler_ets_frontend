@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,4 @@
  * limitations under the License.
  */
 
-import {foo_1 as foo} from "./imported_module_1.ets"
-import {foo_2 as foo} from "./imported_module_2.ets"
-
-
-function main() : void {}
-
-// NOTE(kaskov): Add more precise error, when will be suggestions
-/* @@? imported_module_2.ets:27:8 Error TypeError: Function foo_2 is already declared. */
+export default function foo() { console.log("mod3") }
