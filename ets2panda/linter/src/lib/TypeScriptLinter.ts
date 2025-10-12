@@ -3882,25 +3882,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private static getDeclarationNames(statement: ts.Statement): Set<string> {
     const names = new Set<string>();
-
-    if (
-      ts.isFunctionDeclaration(statement) && statement.name && statement.body ||
-      ts.isClassDeclaration(statement) && statement.name ||
-      ts.isInterfaceDeclaration(statement) && statement.name ||
-      ts.isEnumDeclaration(statement) && statement.name
-    ) {
+    if (ts.isFunctionDeclaration(statement) && statement.name && statement.body) {
       names.add(statement.name.text);
       return names;
     }
-
-    if (ts.isVariableStatement(statement)) {
-      for (const decl of statement.declarationList.declarations) {
-        if (ts.isIdentifier(decl.name)) {
-          names.add(decl.name.text);
-        }
-      }
-    }
-
     return names;
   }
 
@@ -8320,9 +8305,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    if (ts.findAncestor(unionType, ts.isFunctionDeclaration) ||
+    if (
+      ts.findAncestor(unionType, ts.isFunctionDeclaration) ||
       ts.findAncestor(unionType, ts.isMethodDeclaration) ||
-      ts.findAncestor(unionType, ts.isArrowFunction)) {
+      ts.findAncestor(unionType, ts.isArrowFunction)
+    ) {
       return;
     }
     const types = unionType.types;
