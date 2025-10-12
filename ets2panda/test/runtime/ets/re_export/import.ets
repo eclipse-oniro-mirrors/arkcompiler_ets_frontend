@@ -12,6 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*---
+files: ['./export/export_elements.ets']
+---*/
 
 import {ScaleOption,A as ScaleOption2} from "./export/reexport_elements2"
 
