@@ -128,6 +128,10 @@ ets2panda_add_gtest(lsp_api_test_refactors_convert_import CPP_SOURCES
     refactors_convert_import_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_refactors_convert_params_to_object CPP_SOURCES
+    refactors_convert_params_to_object_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_refactors_convert_template CPP_SOURCES
     refactors_convert_template_test.cpp
 )
