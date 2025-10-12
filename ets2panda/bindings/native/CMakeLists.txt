@@ -51,11 +51,15 @@ endfunction()
 set(NODE_VERSION "v18.13.0")
 set(DISTRO "linux-x64")
 
-execute_process(COMMAND ${PANDA_ROOT}/scripts/install-third-party --node
-        WORKING_DIRECTORY ${PANDA_ROOT}
-        RESULT_VARIABLE NODEJS_DOWNLOAD_OK)
-if (NOT NODEJS_DOWNLOAD_OK EQUAL 0)
-    message(FATAL_ERROR "Unable to install required nodejs dependencies")
+set(NODE_INSTALL_DIR ${PANDA_ROOT}/third_party/nodejs/node-${NODE_VERSION}-${DISTRO})
+
+if(NOT EXISTS ${NODE_INSTALL_DIR})
+    execute_process(COMMAND ${PANDA_ROOT}/scripts/install-third-party --node
+            WORKING_DIRECTORY ${PANDA_ROOT}
+            RESULT_VARIABLE NODEJS_DOWNLOAD_OK)
+    if (NOT NODEJS_DOWNLOAD_OK EQUAL 0)
+        message(FATAL_ERROR "Unable to install required nodejs dependencies")
+    endif()
 endif()
 
 set(NODE_THIRD_PARTY_SOURCES_DIR ${PANDA_THIRD_PARTY_SOURCES_DIR}/nodejs)
