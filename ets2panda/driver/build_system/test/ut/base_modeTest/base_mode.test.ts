@@ -17,14 +17,12 @@ import fs from 'fs';
 import path from 'path';
 
 import { BaseMode } from '../../../src/build/base_mode';
-import { BuildConfig, BUILD_TYPE, BUILD_MODE, OHOS_MODULE_TYPE, ModuleInfo, ES2PANDA_MODE } from '../../../src/types';
+import { BuildConfig, BUILD_TYPE, BUILD_MODE, OHOS_MODULE_TYPE, ModuleInfo, ES2PANDA_MODE, DeclFileInfo, CompileFileInfo } from '../../../src/types';
 import { BuildMode } from '../../../src/build/build_mode';
 import {
   ErrorCode,
 } from '../../../src/error_code';
-import cluster, {
-  Cluster,
-} from 'cluster';
+import { Module } from 'module';
 
 interface Job {
   id: string;
@@ -213,8 +211,131 @@ describe('test base_mode.ts file api', () => {
   test('collectCompileJobs should skip entry files not in compileFiles', () => {
     test_collectCompileJobs_should_skip_entry_files_not_in_compileFiles();
   });
+  test('needsBackup should backUp when declgenFile modified', () => {
+    test_needsBackup_declgenfile_should_backUp_when_dclgenFile_modified();
+  });
 
 });
+
+function test_needsBackup_declgenfile_should_backUp_when_dclgenFile_modified() {
+  const fs = require('fs');
+  jest.spyOn(fs, 'existsSync').mockImplementation(function (path) {
+    return path === '/test/path/file1.d.ts' || path === '/test/path/file1.ts';
+  });
+  jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
+    if (path === '/test/path/file1.d.ts') {
+      return { mtimeMs: 456 }
+    } else {
+      return { mtimeMs: 789 }
+    }
+  });
+
+  const mockConfig = {
+    packageName: 'test',
+    moduleRootPath: '/test/path',
+    sourceRoots: ['./'],
+    loaderOutPath: './dist',
+    cachePath: './dist/cache',
+    dependentModuleList: [],
+    buildMode: BUILD_MODE.DEBUG,
+  };
+  const fileInfo = {
+    filePath: '/test/path/file1.ets',
+    dependentFiles: [],
+    abcFilePath: '/test/path/file1.abc',
+    arktsConfigFile: '/test/path/arktsconfig.json',
+    packageName: 'test',
+  };
+  const declFileInfo: DeclFileInfo = {
+    delFilePath: '/test/path/declgen/file1.d.ts',
+    declLastModified: 123,
+    glueCodeFilePath: '/test/path/declgen/file1.ts',
+    glueCodeLastModified: 123,
+    sourceFilePath: '/test/path/file1.ets',
+  };
+
+  class TestBaseMode extends BaseMode {
+    public run(): Promise<void> {
+      return Promise.resolve();
+    }
+  }
+  const baseMode = new TestBaseMode(mockConfig as any);
+
+  jest.spyOn(baseMode as any, 'getOutputFilePaths').mockImplementation(() => ({
+    declEtsOutputPath: '/test/path/file1.d.ts',
+    glueCodeOutputPath: '/test/path/file1.ts',
+  }));
+  let { needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo);
+
+  expect(fs.existsSync).toHaveBeenCalledTimes(3);
+  expect(fs.statSync).toHaveBeenCalledTimes(0);
+  expect(needsDeclBackup).toBe(false);
+  expect(needsGlueCodeBackup).toBe(false);
+
+  baseMode.declFileMap.set(fileInfo.filePath, declFileInfo);
+
+  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+  expect(fs.existsSync).toHaveBeenCalledTimes(5);
+  expect(fs.statSync).toHaveBeenCalledTimes(2);
+  expect(needsDeclBackup).toBe(true);
+  expect(needsGlueCodeBackup).toBe(true);
+
+  jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
+    if (path === '/test/path/file1.d.ts') {
+      return { mtimeMs: 123 }
+    } else {
+      return { mtimeMs: 789 }
+    }
+  });
+
+  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+  expect(fs.existsSync).toHaveBeenCalledTimes(7);
+  expect(fs.statSync).toHaveBeenCalledTimes(4);
+  expect(needsDeclBackup).toBe(false);
+  expect(needsGlueCodeBackup).toBe(true);
+
+  jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
+    if (path === '/test/path/file1.d.ts') {
+      return { mtimeMs: 456 }
+    } else {
+      return { mtimeMs: 123 }
+    }
+  });
+
+  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+  expect(fs.existsSync).toHaveBeenCalledTimes(9);
+  expect(fs.statSync).toHaveBeenCalledTimes(6);
+  expect(needsDeclBackup).toBe(true);
+  expect(needsGlueCodeBackup).toBe(false);
+
+  jest.spyOn(fs, 'statSync').mockImplementation(function (path) {
+    if (path === '/test/path/file1.d.ts') {
+      return { mtimeMs: 123 }
+    } else {
+      return { mtimeMs: 123 }
+    }
+  });
+
+  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+  expect(fs.existsSync).toHaveBeenCalledTimes(11);
+  expect(fs.statSync).toHaveBeenCalledTimes(8);
+  expect(needsDeclBackup).toBe(false);
+  expect(needsGlueCodeBackup).toBe(false);
+
+  baseMode.declFileMap.clear();
+
+  ({ needsDeclBackup, needsGlueCodeBackup } = baseMode.needsBackup(fileInfo));
+
+  expect(fs.existsSync).toHaveBeenCalledTimes(11);
+  expect(fs.statSync).toHaveBeenCalledTimes(8);
+  expect(needsDeclBackup).toBe(false);
+  expect(needsGlueCodeBackup).toBe(false);
+}
+
 
 function test_collectCompileJobs_should_skip_entry_files_not_in_compileFiles() {
   const mockConfig = {

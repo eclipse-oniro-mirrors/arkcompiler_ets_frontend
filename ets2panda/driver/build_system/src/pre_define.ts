@@ -27,6 +27,7 @@ export const DECL_TS_SUFFIX: string = '.d.ts';
 export const ETS_SUFFIX: string = '.ets';
 export const TS_SUFFIX: string = '.ts';
 export const ABC_SUFFIX: string = '.abc';
+export const DECL_FILE_MAP_NAME: string = 'decl_file_map.json';
 
 export enum LANGUAGE_VERSION {
   ARKTS_1_2 = '1.2',
@@ -51,10 +52,10 @@ export const ARKTS_MODULE_NAME: string = 'arkts';
 
 export const KITS: string = 'kits';
 export const API: string = 'api';
-export const ARKTS:string = 'arkts';
-export const COMPONENT:string = 'component';
+export const ARKTS: string = 'arkts';
+export const COMPONENT: string = 'component';
 
-export const DYNAMIC_PREFIX:string = 'dynamic/';
+export const DYNAMIC_PREFIX: string = 'dynamic/';
 
 export const STATIC_RECORD_FILE_CONTENT: string = `// generated for static Record
 export type Record<K extends keyof any, T> = {
