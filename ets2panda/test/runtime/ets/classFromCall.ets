@@ -43,7 +43,7 @@ function InstanceTesting(){
   arktest.assertNE(Class.from<int>(), Class.from<FixedArray<int | undefined>>())
   arktest.assertNE(Class.from<int>(), Class.from<FixedArray<int>>())
   arktest.assertEQ(Class.from<int>(), Class.from<FixedArray<int | undefined>>().getFixedArrayComponentType())
-  arktest.assertEQ(Class.from<int>(), Class.from<FixedArray<int>>().getFixedArrayComponentType())
+  arktest.assertNE(Class.from<int>(), Class.from<FixedArray<int>>().getFixedArrayComponentType())
   arktest.assertEQ(Class.from<G<number>>(), Class.from<G<string>>())
   arktest.assertEQ(Class.from<Array<G<string>>>(), Class.from<Array<int>>())
 }
