@@ -19,3 +19,6 @@ crypto
 mandreel
 stanford-crypto-pbkdf2
 OfflineAssembler
+
+#30652
+numericalComputation
