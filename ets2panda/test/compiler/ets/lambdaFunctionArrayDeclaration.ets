@@ -14,6 +14,6 @@
  */
 
 function main(): int {
-  let src14: ((x: Char) => char)[] = [(p: Char): char => { return p.unboxed(); }];
+  let src14: ((x: Char) => char)[] = [(p: Char): char => { return p; }];
   return 0;
 }
