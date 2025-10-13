@@ -41,6 +41,7 @@
     "test_rules_sdk": "npm run testrunner -- -d test/rules --sdk",
     "test_ts_import_ets": "npm run testrunner -- -d test/ts_import_ets/ts --sdk --interop-mode",
     "test_migration": "npm run testrunner -- -d test/migration",
+    "test_overload": "npm run testrunner -- -d test/ts_overload",
     "test_sdk_keyword": "npm run testrunner -- -d test/forbidden_sdk_api_keywords",
     "testrunner": "npm run compile && node build/testRunner/TestRunner.js",
     "update-tests": "node scripts/update-test-results.mjs test/main test/rules test/regression test/extended_features test/ts_import_ets/ts test/migration test/ohmurl test/interop test/sdkwhite test/concurrent test/builtin test/deprecatedapi test/sdkcommonapi test/taskpool test/forbidden_sdk_api_keywords, test/ts_overload",

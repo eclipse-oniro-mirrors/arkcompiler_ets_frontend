@@ -15,27 +15,6 @@
     ],
     "result": [
         {
-            "line": 22,
-            "column": 3,
-            "endLine": 22,
-            "endColumn": 6,
-            "problem": "TsOverload",
-            "autofix": [
-                {
-                    "start": 773,
-                    "end": 793,
-                    "replacementText": "a.offRemove(234)",
-                    "line": 22,
-                    "column": 3,
-                    "endLine": 22,
-                    "endColumn": 6
-                }
-            ],
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
             "line": 23,
             "column": 3,
             "endLine": 23,
@@ -43,9 +22,9 @@
             "problem": "TsOverload",
             "autofix": [
                 {
-                    "start": 811,
-                    "end": 831,
-                    "replacementText": "a.offChange(234)",
+                    "start": 864,
+                    "end": 884,
+                    "replacementText": "a.offRemove(234)",
                     "line": 23,
                     "column": 3,
                     "endLine": 23,
@@ -57,20 +36,20 @@
             "severity": "ERROR"
         },
         {
-            "line": 30,
-            "column": 13,
-            "endLine": 30,
-            "endColumn": 16,
+            "line": 24,
+            "column": 3,
+            "endLine": 24,
+            "endColumn": 6,
             "problem": "TsOverload",
             "autofix": [
                 {
-                    "start": 1061,
-                    "end": 1108,
-                    "replacementText": "systemShare.offWaterMarkFlagChange('cihat')",
-                    "line": 30,
-                    "column": 13,
-                    "endLine": 30,
-                    "endColumn": 16
+                    "start": 902,
+                    "end": 922,
+                    "replacementText": "a.offChange(234)",
+                    "line": 24,
+                    "column": 3,
+                    "endLine": 24,
+                    "endColumn": 6
                 }
             ],
             "suggest": "",
@@ -81,17 +60,17 @@
             "line": 31,
             "column": 13,
             "endLine": 31,
-            "endColumn": 15,
+            "endColumn": 16,
             "problem": "TsOverload",
             "autofix": [
                 {
-                    "start": 1123,
-                    "end": 1151,
-                    "replacementText": "systemShare.onKnockShare()",
+                    "start": 1152,
+                    "end": 1199,
+                    "replacementText": "systemShare.offWaterMarkFlagChange('cihat')",
                     "line": 31,
                     "column": 13,
                     "endLine": 31,
-                    "endColumn": 15
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -99,20 +78,20 @@
             "severity": "ERROR"
         },
         {
-            "line": 39,
-            "column": 7,
-            "endLine": 39,
-            "endColumn": 11,
+            "line": 32,
+            "column": 13,
+            "endLine": 32,
+            "endColumn": 15,
             "problem": "TsOverload",
             "autofix": [
                 {
-                    "start": 1322,
-                    "end": 1344,
-                    "replacementText": "test2.onceAdd(234)",
-                    "line": 39,
-                    "column": 7,
-                    "endLine": 39,
-                    "endColumn": 11
+                    "start": 1214,
+                    "end": 1242,
+                    "replacementText": "systemShare.onKnockShare()",
+                    "line": 32,
+                    "column": 13,
+                    "endLine": 32,
+                    "endColumn": 15
                 }
             ],
             "suggest": "",
@@ -123,16 +102,37 @@
             "line": 40,
             "column": 7,
             "endLine": 40,
+            "endColumn": 11,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1413,
+                    "end": 1435,
+                    "replacementText": "test2.onceAdd(234)",
+                    "line": 40,
+                    "column": 7,
+                    "endLine": 40,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 7,
+            "endLine": 41,
             "endColumn": 9,
             "problem": "TsOverload",
             "autofix": [
                 {
-                    "start": 1352,
-                    "end": 1374,
+                    "start": 1443,
+                    "end": 1465,
                     "replacementText": "test2.onSlice(234)",
-                    "line": 40,
+                    "line": 41,
                     "column": 7,
-                    "endLine": 40,
+                    "endLine": 41,
                     "endColumn": 9
                 }
             ],
@@ -141,41 +141,20 @@
             "severity": "ERROR"
         },
         {
-            "line": 42,
+            "line": 43,
             "column": 7,
-            "endLine": 42,
+            "endLine": 43,
             "endColumn": 10,
             "problem": "TsOverload",
             "autofix": [
                 {
-                    "start": 1442,
-                    "end": 1463,
-                    "replacementText": "test2.offObj(234)",
-                    "line": 42,
-                    "column": 7,
-                    "endLine": 42,
-                    "endColumn": 10
-                }
-            ],
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 46,
-            "column": 13,
-            "endLine": 46,
-            "endColumn": 16,
-            "problem": "TsOverload",
-            "autofix": [
-                {
                     "start": 1533,
-                    "end": 1580,
-                    "replacementText": "sharesystem.offWaterMarkFlagChange('cihat')",
-                    "line": 46,
-                    "column": 13,
-                    "endLine": 46,
-                    "endColumn": 16
+                    "end": 1554,
+                    "replacementText": "test2.offObj(234)",
+                    "line": 43,
+                    "column": 7,
+                    "endLine": 43,
+                    "endColumn": 10
                 }
             ],
             "suggest": "",
@@ -186,17 +165,17 @@
             "line": 47,
             "column": 13,
             "endLine": 47,
-            "endColumn": 15,
+            "endColumn": 16,
             "problem": "TsOverload",
             "autofix": [
                 {
-                    "start": 1588,
-                    "end": 1616,
-                    "replacementText": "sharesystem.onKnockShare()",
+                    "start": 1624,
+                    "end": 1671,
+                    "replacementText": "sharesystem.offWaterMarkFlagChange('cihat')",
                     "line": 47,
                     "column": 13,
                     "endLine": 47,
-                    "endColumn": 15
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -211,12 +190,33 @@
             "problem": "TsOverload",
             "autofix": [
                 {
-                    "start": 1624,
-                    "end": 1648,
-                    "replacementText": "sharesystem.onChange()",
+                    "start": 1679,
+                    "end": 1707,
+                    "replacementText": "sharesystem.onKnockShare()",
                     "line": 48,
                     "column": 13,
                     "endLine": 48,
+                    "endColumn": 15
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 13,
+            "endLine": 49,
+            "endColumn": 15,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1715,
+                    "end": 1739,
+                    "replacementText": "sharesystem.onChange()",
+                    "line": 49,
+                    "column": 13,
+                    "endLine": 49,
                     "endColumn": 15
                 }
             ],

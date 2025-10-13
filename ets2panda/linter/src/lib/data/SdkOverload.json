@@ -5778,7 +5778,7 @@
                 "api_func_args": [
                     {
                         "name": "event",
-                        "type": "(event: KeyEvent)",
+                        "type": "(event: KeyEvent) => void",
                         "is_optional": false,
                         "has_default": false
                     }

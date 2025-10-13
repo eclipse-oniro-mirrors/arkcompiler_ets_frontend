@@ -55,16 +55,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 50,
-            "column": 42,
-            "endLine": 50,
-            "endColumn": 44,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
             "line": 51,
             "column": 24,
             "endLine": 51,
@@ -72,16 +62,6 @@
             "problem": "SdkAbilityLifecycleMonitor",
             "suggest": "",
             "rule": "The UIAbility of 1.2 needs to be listened by the new StaticAbilityLifecycleCallback. The original AbilityLifecycleCallback can only listen to the UIAbility of 1.1 (sdk-ability-lifecycle-monitor)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 51,
-            "column": 43,
-            "endLine": 51,
-            "endColumn": 45,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
         },
         {
@@ -132,16 +112,6 @@
             "problem": "SdkAbilityLifecycleMonitor",
             "suggest": "",
             "rule": "The UIAbility of 1.2 needs to be listened by the new StaticAbilityLifecycleCallback. The original AbilityLifecycleCallback can only listen to the UIAbility of 1.1 (sdk-ability-lifecycle-monitor)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 86,
-            "column": 42,
-            "endLine": 86,
-            "endColumn": 44,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
         }
     ]

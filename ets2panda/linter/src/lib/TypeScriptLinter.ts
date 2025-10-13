@@ -237,13 +237,17 @@ import { initForbiddenSdkApiKeywordsMap } from './utils/consts/ForbiddenSdkApiKe
 import {
   COMMON_OVERLOAD_METHODS,
   COMMON_OVERLOAD_METHOD_PARAMETERS,
-  SDK_FILE_EXTENSIONS,
+  COMMON_OVERLOAD_METHOD_FILES,
   LIST_OVERLOAD_METHODS,
   LIST_OVERLOAD_METHOD_PARAMETERS,
-  GLOBAL_KEYWORD
+  GLOBAL_KEYWORD,
+  ON_KEY_EVENT
 } from './utils/consts/OverloadCommon';
 import { initOverloadApiFixMap } from './utils/consts/OverloadCommon';
 import type { OverloadApiFixMap, OverloadInfo } from './utils/consts/OverloadCommon';
+import type { OverloadBlacklistMap } from './utils/consts/OverloadBlacklist';
+import { TYPE_LITERAL } from './utils/consts/OverloadBlacklist';
+import { createOverloadMapKey, initializeOverloadBlacklistMap } from './utils/consts/OverloadBlacklist';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
   supportedStdCallApiChecker: SupportedStdCallApiChecker;
@@ -281,6 +285,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   static constructorFuncsSet: Set<ApiListItem>;
   static ConstructorIfaceSet: Set<ApiListItem>;
   static handledSdkOverload: WeakSet<ts.Node> = new WeakSet();
+  static overloadBlackListInfo: OverloadBlacklistMap;
 
   static initGlobals(): void {
     TypeScriptLinter.sharedModulesCache = new Map<string, boolean>();
@@ -306,10 +311,15 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     TypeScriptLinter.initSdkCommonApilist();
     TypeScriptLinter.initForbiddenSdkApiBlackList();
     TypeScriptLinter.initOverloadSdkApiList();
+    TypeScriptLinter.initOveroadBlacklistInfoMap();
   }
 
   initSdkInfo(): void {
     this.interfaceMap = new Map<string, Set<ApiInfo>>();
+  }
+
+  static initOveroadBlacklistInfoMap(): void {
+    TypeScriptLinter.overloadBlackListInfo = initializeOverloadBlacklistMap();
   }
 
   static initSdkBuiltinInfo(): void {
@@ -4928,7 +4938,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const callExp = ts.findAncestor(ident, ts.isCallExpression);
-    if (!callExp?.arguments) {
+    if (!callExp?.arguments || callExp.arguments.length === 0) {
       return;
     }
     const typeParameter = callExp.arguments[0];
@@ -4938,12 +4948,20 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const valDecl = this.getCallDeclaration(callExp);
-    if (!valDecl) {
+    if (!valDecl || !ts.isFunctionLike(valDecl)) {
       return;
     }
-    if (!ts.isFunctionLike(valDecl)) {
+
+    if (
+      TypeScriptLinter.shouldIgnoreOverloadCheck(
+        ident.text,
+        TypeScriptLinter.getSdkOverloadParentName(valDecl) ?? '',
+        valDecl
+      )
+    ) {
       return;
     }
+
     const typeLiteral = TypeScriptLinter.getDeclarationTypeLiteral(valDecl, typeParameter.text);
     if (!typeLiteral) {
       return;
@@ -4963,13 +4981,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!ts.isFunctionLike(declaration)) {
       return undefined;
     }
-    if (
-      !SDK_FILE_EXTENSIONS.some((ext) => {
-        return path.basename(declaration.getSourceFile().fileName).endsWith(ext);
-      })
-    ) {
-      return undefined;
-    }
+
     for (const element of declaration.parameters) {
       const type = element.type;
       if (!type) {
@@ -5039,25 +5051,39 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!ts.isFunctionLike(declaration)) {
       return;
     }
-
     const declParent = TypeScriptLinter.getSdkOverloadParentName(declaration);
     if (!declParent) {
       return;
     }
-    const key = `${ident.text}::${declParent}::${path.basename(declaration.getSourceFile().fileName)}`;
+
+    const key = createOverloadMapKey(ident.text, declParent, path.basename(declaration.getSourceFile().fileName));
     const keywordInfos = TypeScriptLinter.overloadSdkApiList.get(key);
     if (!keywordInfos) {
       return;
     }
-
     const replacement = TypeScriptLinter.getReplacementTextFromOverloadInfo(keywordInfos, declaration);
     if (!replacement) {
       return;
     }
 
-    const [replacementText, isLiteralTypeExist] = replacement;
+    this.fixOverloadRule(callExp, replacement, ident, declaration);
+  }
 
+  private fixOverloadRule(
+    callExp: ts.CallExpression,
+    replacement: [string, boolean],
+    ident: ts.Identifier,
+    declaration: ts.SignatureDeclaration
+  ): void {
+    const [replacementText, isLiteralTypeExist] = replacement;
     if (replacementText) {
+      if (replacementText === ON_KEY_EVENT) {
+        const call = this.getCallbackArgumentBody(callExp);
+        if (call) {
+          this.incrementCounters(ident, FaultID.TsOverload, this.autofixer?.fixSdkOverloadApi(callExp));
+        }
+        return;
+      }
       const autofix = isLiteralTypeExist ?
         this.autofixer?.fixSdkOverloadMethods(
           callExp,
@@ -5069,6 +5095,61 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.incrementCounters(ident, FaultID.TsOverload, autofix);
       TypeScriptLinter.handledSdkOverload.add(ident);
     }
+  }
+
+  private static shouldIgnoreOverloadCheck(
+    apiName: string,
+    parentApi: string,
+    declaration: ts.SignatureDeclaration
+  ): boolean {
+    if (!COMMON_OVERLOAD_METHOD_FILES.has(path.basename(declaration.getSourceFile().fileName))) {
+      return true;
+    }
+
+    const key = createOverloadMapKey(apiName, parentApi, path.basename(declaration.getSourceFile().fileName));
+    const infoArray = TypeScriptLinter.overloadBlackListInfo.get(key);
+    if (!infoArray) {
+      return false;
+    }
+
+    return infoArray.some((info) => {
+      if (declaration.parameters.length !== info.params.length) {
+        return false;
+      }
+
+      const type = declaration.parameters[0].name.getText();
+      if (type === TYPE_LITERAL) {
+        if (declaration.parameters[0].type?.getText() !== info.params[0].type) {
+          return false;
+        }
+      }
+
+      for (let i = 0; i <= declaration.parameters.length; i++) {
+        const declParam = declaration.parameters[i];
+        const infoParam = info.params[i];
+        if (declParam.name.getText() !== infoParam.name) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }
+
+  private getCallbackArgumentBody(callExpr: ts.CallExpression): ts.ArrowFunction | ts.FunctionExpression | undefined {
+    void this;
+    for (const arg of callExpr.arguments) {
+      if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
+        if (arg.body && ts.isBlock(arg.body)) {
+          const lastExpr =
+            arg.body.statements.length > 0 ? arg.body.statements[arg.body.statements.length - 1] : undefined;
+          if (lastExpr && ts.isReturnStatement(lastExpr) && lastExpr.expression) {
+            return undefined;
+          }
+          return arg;
+        }
+      }
+    }
+    return undefined;
   }
 
   private static getSdkOverloadParentName(decl: ts.Declaration): string | undefined {
