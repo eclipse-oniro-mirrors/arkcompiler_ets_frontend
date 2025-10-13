@@ -334,7 +334,7 @@ Type *ETSChecker::ResolveIdentifier(ir::Identifier *ident)
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ValidateResolvedIdentifier(ident);
 
-    ValidatePropertyAccess(resolved, Context().ContainingClass(), ident->Start());
+    ValidatePropertyAccess(resolved, Context().ContainingClass(), ident);
     SaveCapturedVariable(resolved, ident);
 
     return GetTypeOfVariable(resolved);

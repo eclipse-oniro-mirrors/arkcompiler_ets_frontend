@@ -14,23 +14,30 @@
  */
 
 #include "interfaceObjectLiteralLowering.h"
+
 #include "checker/ETSchecker.h"
 #include "checker/ets/typeRelationContext.h"
 #include "compiler/lowering/util.h"
-#include "generated/signatures.h"
-#include "ir/expressions/assignmentExpression.h"
-#include "util/helpers.h"
-#include "util/nameMangler.h"
 
 namespace ark::es2panda::compiler {
 
 static constexpr std::string_view OBJECT_LITERAL_SUFFIX = "$ObjectLiteral";
+
 using ReadonlyFieldHolder =
     std::tuple<util::UString, util::StringView, checker::Type *>;  // anonClassFieldName, paramName, fieldType
 
-std::string_view InterfaceObjectLiteralLowering::Name() const
+using ReadonlyFields = std::vector<ReadonlyFieldHolder>;
+
+using CapturedVariable = std::tuple<varbinder::Variable const *, util::StringView const, ir::Identifier *>;
+
+static std::string_view LoweringName() noexcept
 {
     return "InterfaceObjectLiteralLowering";
+}
+
+std::string_view InterfaceObjectLiteralLowering::Name() const
+{
+    return LoweringName();
 }
 
 static inline bool IsInterfaceType(const checker::Type *type)
@@ -45,7 +52,7 @@ static inline bool IsAbstractClassType(const checker::Type *type)
            type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::ABSTRACT);
 }
 
-static ir::AstNode *CreateAnonClassImplCtor(public_lib::Context *ctx, ArenaVector<ReadonlyFieldHolder> &readonlyFields)
+static ir::AstNode *CreateAnonClassImplCtor(public_lib::Context *ctx, ReadonlyFields &readonlyFields)
 {
     auto *const checker = ctx->GetChecker()->AsETSChecker();
     auto *const parser = ctx->parser->AsETSParser();
@@ -122,9 +129,9 @@ static ir::MethodDefinition *CreateAnonClassFieldGetterSetter(public_lib::Contex
         ->AsMethodDefinition();
 }
 
-static void AddAnonClassFieldAndAccessors(public_lib::Context *ctx, ArenaVector<ir::AstNode *> *classBody,
-                                          ArenaVector<ReadonlyFieldHolder> &readonlyFields,
-                                          ir::MethodDefinition *ifaceMethod, ir::MethodDefinition *copyIfaceMethod)
+static void AddAnonClassFieldAndAccessors(public_lib::Context *ctx, ArenaVector<ir::AstNode *> &classBody,
+                                          ReadonlyFields &readonlyFields, ir::MethodDefinition *ifaceMethod,
+                                          ir::MethodDefinition *copyIfaceMethod)
 {
     bool isSetter = copyIfaceMethod->Function()->IsSetter();
     auto *fieldType = isSetter ? copyIfaceMethod->Function()->Signature()->Params()[0]->TsType()
@@ -136,26 +143,26 @@ static void AddAnonClassFieldAndAccessors(public_lib::Context *ctx, ArenaVector<
 
     auto *field = CreateAnonClassField(ctx, copyIfaceMethod, fieldType, isSetter, anonClassFieldName);
     if (field->IsReadonly()) {
-        readonlyFields.push_back(
+        readonlyFields.emplace_back(
             std::make_tuple(anonClassFieldName, ifaceMethod->Id()->Name(), field->TypeAnnotation()->TsType()));
     }
-    classBody->push_back(field);
+    classBody.emplace_back(field);
     SetSourceRangesRecursively(field, ifaceMethod->Range());
 
     auto *accessor = CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, fieldType, isSetter, anonClassFieldName);
-    classBody->push_back(accessor);
+    classBody.emplace_back(accessor);
     SetSourceRangesRecursively(accessor, ifaceMethod->Range());
 
     if (copyIfaceMethod->Overloads().size() == 1) {
         auto *anotherAccessor =
             CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, fieldType, !isSetter, anonClassFieldName);
-        classBody->push_back(anotherAccessor);
+        classBody.emplace_back(anotherAccessor);
         SetSourceRangesRecursively(anotherAccessor, ifaceMethod->Range());
     }
 }
 
-static void FillClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> *classBody,
-                          const ArenaVector<ir::AstNode *> &ifaceBody, ArenaVector<ReadonlyFieldHolder> &readonlyFields,
+static void FillClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> &classBody,
+                          const ArenaVector<ir::AstNode *> &ifaceBody, ReadonlyFields &readonlyFields,
                           checker::ETSObjectType *currentType = nullptr)
 {
     for (auto *it : ifaceBody) {
@@ -172,11 +179,11 @@ static void FillClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> *
         }
         bool isSetter = ifaceMethod->Function()->IsSetter();
 
-        auto iter = std::find_if(classBody->begin(), classBody->end(), [ifaceMethod](ir::AstNode *ast) -> bool {
+        auto iter = std::find_if(classBody.begin(), classBody.end(), [ifaceMethod](ir::AstNode *ast) -> bool {
             return ast->IsMethodDefinition() && ast->AsMethodDefinition()->Function()->IsGetterOrSetter() &&
                    ast->AsMethodDefinition()->Id()->Name() == ifaceMethod->Id()->Name();
         });
-        if (iter != classBody->end()) {
+        if (iter != classBody.end()) {
             continue;
         }
 
@@ -202,8 +209,8 @@ static void FillClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> *
 }
 
 // CC-OFFNXT(G.FUN.01-CPP) solid logic
-static void FillAnonClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> *classBody,
-                              ir::TSInterfaceDeclaration *ifaceNode, ArenaVector<ReadonlyFieldHolder> &readonlyFields,
+static void FillAnonClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> &classBody,
+                              ir::TSInterfaceDeclaration *ifaceNode, ReadonlyFields &readonlyFields,
                               checker::ETSObjectType *interfaceType = nullptr)
 {
     FillClassBody(ctx, classBody, ifaceNode->Body()->Body(), readonlyFields, interfaceType);
@@ -213,7 +220,18 @@ static void FillAnonClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode 
     }
 }
 
-// Annotate synthetic class so we can determite it's origin in a runtime
+static std::string GenerateAnonClassName(std::string_view const originalName, bool const addUniqueID = false)
+{
+    auto anonClassName = std::string {originalName};
+    std::replace(anonClassName.begin(), anonClassName.end(), '.', '$');
+    anonClassName.append(OBJECT_LITERAL_SUFFIX);
+    if (addUniqueID) {
+        anonClassName.append(GenName());
+    }
+    return anonClassName;
+}
+
+// Annotate synthetic class so we can determine it's origin in a runtime
 // Now implemented for the anon class generated from an interface only
 static void AnnotateGeneratedAnonClass(checker::ETSChecker *checker, ir::ClassDefinition *classDef)
 {
@@ -230,61 +248,86 @@ static void AnnotateGeneratedAnonClass(checker::ETSChecker *checker, ir::ClassDe
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, annoUsage);
 }
 
-static void GenerateAnonClassTypeFromInterface(public_lib::Context *ctx, ir::TSInterfaceDeclaration *ifaceNode)
+ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringView const className,
+                                        ir::AstNode const *const decl,
+                                        const checker::ETSChecker::ClassBuilder &bodyBuilder)
 {
+    ES2PANDA_ASSERT(decl != nullptr && (decl->IsTSInterfaceDeclaration() || decl->IsClassDefinition()));
     auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *allocator = ctx->Allocator();
 
-    if (ifaceNode->GetAnonClass() != nullptr) {
-        return;
-    }
+    auto *scope = compiler::NearestScope(decl);
+    auto scopeCtx = checker::ScopeContext(checker, scope);
+    auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
 
-    auto classBodyBuilder = [ctx, checker, ifaceNode](ArenaVector<ir::AstNode *> *classBody) {
-        if (ifaceNode->TsType() == nullptr) {
-            ifaceNode->Check(checker);
-        }
-        ArenaVector<ReadonlyFieldHolder> readonlyFields(ctx->Allocator()->Adapter());
-        FillAnonClassBody(ctx, classBody, ifaceNode, readonlyFields);
-        classBody->push_back(CreateAnonClassImplCtor(ctx, readonlyFields));
-    };
-
-    auto originalName = std::string {ifaceNode->InternalName()};
-    std::replace(originalName.begin(), originalName.end(), '.', '$');
-    auto anonClassName = util::UString(originalName.append(OBJECT_LITERAL_SUFFIX), checker->ProgramAllocator());
-    auto *classDecl = checker->BuildClass(anonClassName.View(), classBodyBuilder);
+    auto *classDecl = checker->BuildClass(className, bodyBuilder);
     RefineSourceRanges(classDecl);
+
     auto *classDef = classDecl->Definition();
     auto *classType = classDef->TsType()->AsETSObjectType();
+    if (classType->IsGradual()) {
+        return classDecl;
+    }
+
     classDef->SetAnonymousModifier();
 
-    classDecl->SetRange(ifaceNode->Range());
-    classDef->SetRange(ifaceNode->Range());
-
-    AnnotateGeneratedAnonClass(checker, classDef);
+    auto const range = decl->Range();
+    classDecl->SetRange(range);
+    classDef->SetRange(range);
 
     // Class type params
-    if (ifaceNode->TypeParams() != nullptr) {
-        ArenaVector<checker::Type *> typeArgs(ctx->Allocator()->Adapter());
-        for (auto param : ifaceNode->TypeParams()->Params()) {
-            auto *var = param->Name()->Variable();
-            ES2PANDA_ASSERT(var && var->TsType()->IsETSTypeParameter());
-            typeArgs.push_back(var->TsType());
+    auto const *const typeParams = decl->IsTSInterfaceDeclaration() ? decl->AsTSInterfaceDeclaration()->TypeParams()
+                                                                    : decl->AsClassDefinition()->TypeParams();
+    if (typeParams != nullptr) {
+        ArenaVector<checker::Type *> typeArgs(allocator->Adapter());
+        for (auto const *const param : typeParams->Params()) {
+            auto const *const var = param->Name()->Variable();
+            ES2PANDA_ASSERT(var != nullptr && var->TsType()->IsETSTypeParameter());
+            typeArgs.emplace_back(var->TsType());
         }
         classType->SetTypeArguments(std::move(typeArgs));
     }
 
-    // Class implements
-    auto *classImplements = ctx->AllocNode<ir::TSClassImplements>(
-        ctx->AllocNode<ir::OpaqueTypeNode>(ifaceNode->TsType(), ctx->Allocator()));
-    ES2PANDA_ASSERT(classImplements);
-    classImplements->SetParent(classDef);
-    classDef->EmplaceImplements(classImplements);
-    classType->RemoveObjectFlag(checker::ETSObjectFlags::RESOLVED_INTERFACES);
-    checker->GetInterfacesOfClass(classType);
+    if (decl->IsTSInterfaceDeclaration()) {
+        AnnotateGeneratedAnonClass(checker, classDef);
+        // Class implements
+        auto *classImplements = ctx->AllocNode<ir::TSClassImplements>(ctx->AllocNode<ir::OpaqueTypeNode>(
+            const_cast<checker::Type *>(decl->AsTSInterfaceDeclaration()->TsType()), allocator));
+        classImplements->SetParent(classDef);
+        classDef->EmplaceImplements(classImplements);
+        classType->RemoveObjectFlag(checker::ETSObjectFlags::RESOLVED_INTERFACES);
+        checker->GetInterfacesOfClass(classType);
+    } else {
+        classType->SetSuperType(const_cast<checker::Type *>(decl->AsClassDefinition()->TsType())->AsETSObjectType());
+    }
 
-    ifaceNode->SetAnonClass(classDecl);
+    return classDecl;
 }
 
-static void GenerateAnonClassTypeFromAbstractClass(public_lib::Context *ctx, ir::ClassDefinition *abstractClassNode)
+static void GenerateAnonClassFromInterface(public_lib::Context *ctx, ir::TSInterfaceDeclaration *ifaceNode)
+{
+    if (ifaceNode->GetAnonClass() != nullptr) {
+        return;
+    }
+
+    auto const classBodyBuilder = [ctx, ifaceNode](ArenaVector<ir::AstNode *> &classBody) -> void {
+        if (ifaceNode->TsType() == nullptr) {
+            ifaceNode->Check(ctx->GetChecker()->AsETSChecker());
+        }
+        ReadonlyFields readonlyFields {};
+        FillAnonClassBody(ctx, classBody, ifaceNode, readonlyFields);
+        classBody.emplace_back(CreateAnonClassImplCtor(ctx, readonlyFields));
+    };
+
+    auto anonClassName = util::UString(GenerateAnonClassName(ifaceNode->InternalName().Utf8()), ctx->Allocator());
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), ifaceNode, classBodyBuilder);
+
+    if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
+        ifaceNode->SetAnonClass(classDecl);
+    }
+}
+
+static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::ClassDefinition *abstractClassNode)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
 
@@ -292,62 +335,279 @@ static void GenerateAnonClassTypeFromAbstractClass(public_lib::Context *ctx, ir:
         return;
     }
 
-    auto classBodyBuilder = [checker](ArenaVector<ir::AstNode *> *classBody) {
+    auto classBodyBuilder = [checker](ArenaVector<ir::AstNode *> &classBody) -> void {
         checker::ETSChecker::ClassInitializerBuilder initBuilder =
             [checker]([[maybe_unused]] ArenaVector<ir::Statement *> *statements,
                       [[maybe_unused]] ArenaVector<ir::Expression *> *params) {
                 checker->AddParam(varbinder::VarBinder::MANDATORY_PARAM_THIS, nullptr);
             };
 
-        auto ctor = checker->CreateClassInstanceInitializer(initBuilder);
-        classBody->push_back(ctor);
+        auto *ctor = checker->CreateClassInstanceInitializer(initBuilder);
+        classBody.emplace_back(ctor);
     };
 
-    auto originalName = std::string {abstractClassNode->InternalName()};
-    std::replace(originalName.begin(), originalName.end(), '.', '$');
-    auto anonClassName = util::UString(originalName.append(OBJECT_LITERAL_SUFFIX), checker->ProgramAllocator());
-    auto *classDecl = checker->BuildClass(anonClassName.View(), classBodyBuilder);
-    if (abstractClassNode->IsDeclare()) {
-        classDecl->Definition()->AddModifier(ir::ModifierFlags::DECLARE);
-    }
-    RefineSourceRanges(classDecl);
-    auto *classDef = classDecl->Definition();
-    if (classDef->TsType()->AsETSObjectType()->IsGradual()) {
-        return;
-    }
-    auto *classType = classDef->TsType()->AsETSObjectType();
+    auto anonClassName =
+        util::UString(GenerateAnonClassName(abstractClassNode->InternalName().Utf8()), ctx->Allocator());
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder);
 
-    classDecl->SetRange(abstractClassNode->Range());
-    classDef->SetAnonymousModifier();
-    classDef->SetRange(abstractClassNode->Range());
-
-    // Class type params
-    if (abstractClassNode->TypeParams() != nullptr) {
-        ArenaVector<checker::Type *> typeArgs(ctx->Allocator()->Adapter());
-        for (auto param : abstractClassNode->TypeParams()->Params()) {
-            auto *var = param->Name()->Variable();
-            ES2PANDA_ASSERT(var && var->TsType()->IsETSTypeParameter());
-            typeArgs.push_back(var->TsType());
-        }
-        classType->SetTypeArguments(std::move(typeArgs));
+    if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
+        abstractClassNode->SetAnonClass(classDecl);
     }
-
-    abstractClassNode->SetAnonClass(classDecl);
-    classType->SetSuperType(abstractClassNode->TsType()->AsETSObjectType());
 }
 
-static checker::Type *ProcessDeclNode(checker::ETSChecker *checker, checker::ETSObjectType *targetType,
+//==========[ Processing of object interface literals with re-defined methods => begin ]==========//
+
+static ir::AstNode *TransformThisExpression(public_lib::Context *ctx, ir::ThisExpression *thisExpression,
+                                            checker::Type *const objectType)
+{
+    auto *const parent = thisExpression->Parent();
+
+    auto *const typeNode = ctx->AllocNode<ir::OpaqueTypeNode>(objectType, ctx->Allocator());
+    auto *const asExpression = ctx->AllocNode<ir::TSAsExpression>(thisExpression, typeNode, false);
+
+    asExpression->SetParent(parent);
+    asExpression->SetRange(thisExpression->Range());
+
+    return static_cast<ir::AstNode *>(asExpression);
+}
+
+static ir::AstNode *TransformIdentifier(public_lib::Context *ctx, ir::Identifier *ident,
+                                        varbinder::FunctionScope const *const functionScope,
+                                        std::vector<CapturedVariable> &capturedVariables)
+{
+    auto const *const variable = ident->Variable();
+    if (variable->IsLocalVariable() && variable->HasFlag(varbinder::VariableFlags::LOCAL) &&
+        !variable->Name().StartsWith(compiler::GENSYM_CORE) &&
+        functionScope->FindLocal(variable->Name(), varbinder::ResolveBindingOptions::BINDINGS) == nullptr) {
+        auto *const parent = ident->Parent();
+
+        util::StringView newName;
+        auto const it = std::find_if(capturedVariables.cbegin(), capturedVariables.cend(),
+                                     [variable](auto const &item) { return std::get<0U>(item) == variable; });
+        if (it == capturedVariables.cend()) {
+            newName = compiler::GenName(ctx->Allocator()).View();
+            capturedVariables.emplace_back(variable, newName, ident);
+        } else {
+            newName = std::get<1U>(*it);
+        }
+
+        auto *const memberExpression = ctx->AllocNode<ir::MemberExpression>(
+            ctx->AllocNode<ir::ThisExpression>(), ctx->AllocNode<ir::Identifier>(newName, ctx->Allocator()),
+            ir::MemberExpressionKind::PROPERTY_ACCESS, false, false);
+
+        memberExpression->SetParent(parent);
+        memberExpression->SetRange(ident->Range());
+
+        return static_cast<ir::AstNode *>(memberExpression);
+    }
+
+    return ident;
+}
+
+static void AddCapturedVariables(public_lib::Context *ctx, ArenaVector<ir::AstNode *> &classBody,
+                                 ArenaVector<ir::Expression *> &properties,
+                                 std::vector<CapturedVariable> &capturedVariables)
+{
+    for (auto const &[variable, fieldName, ident] : capturedVariables) {
+        constexpr auto const fieldDeclaration = "public @@I1 : @@T2;";
+
+        auto *const field = ctx->parser->AsETSParser()->CreateFormattedClassFieldDefinition(fieldDeclaration, fieldName,
+                                                                                            variable->TsType());
+        classBody.emplace_back(field);
+
+        auto *const property = ctx->AllocNode<ir::Property>(
+            ir::PropertyKind::INIT, ctx->AllocNode<ir::Identifier>(fieldName, ctx->Allocator()), ident, false, false);
+        properties.emplace_back(property);
+    }
+}
+
+static void TransformMethodBody(public_lib::Context *ctx, ir::AstNode *const body, checker::Type *const objectType,
+                                varbinder::FunctionScope const *const functionScope,
+                                std::vector<CapturedVariable> &capturedVariables)
+{
+    ES2PANDA_ASSERT(body != nullptr && functionScope != nullptr);
+
+    body->TransformChildrenRecursively(
+        [=, &capturedVariables](ir::AstNode *node) {
+            // Cast `this` expression to original literal type (otherwise it will refer to the newly generated class)
+            if (node->IsThisExpression()) {
+                return TransformThisExpression(ctx, node->AsThisExpression(), objectType);
+            }
+
+            // Process captured variables.
+            if (node->IsIdentifier() && node->Variable() != nullptr) {
+                return TransformIdentifier(ctx, node->AsIdentifier(), functionScope, capturedVariables);
+            }
+
+            return node;
+        },
+        LoweringName());
+}
+
+static void AddMethodsFromLiteral(public_lib::Context *ctx, ArenaVector<ir::AstNode *> &classBody,
+                                  ir::ObjectExpression *const objectExpr)
+{
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *allocator = ctx->Allocator();
+
+    std::vector<CapturedVariable> capturedVariables {};
+    auto &properties = objectExpr->Properties();
+
+    auto it = properties.begin();
+    while (it != properties.end()) {
+        ES2PANDA_ASSERT((*it)->IsProperty());
+        if (auto *const value = (*it)->AsProperty()->Value(); !value->IsArrowFunctionExpression()) {
+            ++it;
+        } else {
+            auto *const key = (*it)->AsProperty()->Key();
+            ES2PANDA_ASSERT(key->IsIdentifier());
+
+            ir::ScriptFunction *function = value->AsArrowFunctionExpression()->Function();
+            varbinder::FunctionScope const *const scope = function->Scope();
+
+            function = function->Clone(allocator, nullptr);
+            function->ClearFlag(ir::ScriptFunctionFlags::ARROW);
+            function->AddModifier(ir::ModifierFlags::PUBLIC);
+
+            auto *const ident = key->AsIdentifier()->Clone(allocator, function);
+            function->SetIdent(ident);
+
+            TransformMethodBody(ctx, function->Body(), objectExpr->TsType(), scope, capturedVariables);
+
+            auto *const funcExpr = checker->AllocNode<ir::FunctionExpression>(function);
+            funcExpr->SetRange(function->Range());
+
+            auto *const method = checker->AllocNode<ir::MethodDefinition>(
+                ir::MethodDefinitionKind::METHOD, ident->Clone(allocator, nullptr), funcExpr,
+                ir::ModifierFlags::PUBLIC | ir::ModifierFlags::OVERRIDE, allocator, false);
+            method->SetRange((*it)->Range());
+
+            compiler::ClearTypesVariablesAndScopes(method);
+
+            classBody.emplace_back(method);
+
+            it = properties.erase(it);
+        }
+    }
+
+    // Add auxiliary class fields for captured variables and initialize them in literal object
+    AddCapturedVariables(ctx, classBody, properties, capturedVariables);
+}
+
+static checker::Type *GenerateAnonClassFromInterfaceWithMethods(public_lib::Context *ctx,
+                                                                ir::TSInterfaceDeclaration *const interfaceDecl,
+                                                                ir::ObjectExpression *const objectExpr)
+{
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+
+    auto const classBodyBuilder = [=](ArenaVector<ir::AstNode *> &classBody) -> void {
+        if (interfaceDecl->TsType() == nullptr) {
+            interfaceDecl->Check(checker);
+        }
+        ReadonlyFields readonlyFields {};
+        FillAnonClassBody(ctx, classBody, interfaceDecl, readonlyFields);
+        AddMethodsFromLiteral(ctx, classBody, objectExpr);
+        classBody.emplace_back(CreateAnonClassImplCtor(ctx, readonlyFields));
+    };
+
+    auto anonClassName =
+        util::UString(GenerateAnonClassName(interfaceDecl->InternalName().Utf8(), true), ctx->Allocator());
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), interfaceDecl, classBodyBuilder);
+
+    checker::Type *const classType = classDecl->Definition()->Check(checker);
+    return classType->IsETSObjectType() && !classType->AsETSObjectType()->IsGradual() ? classType
+                                                                                      : checker->GlobalTypeError();
+}
+
+static bool CheckInterfaceCanGenerateAnonClass(checker::ETSChecker *checker, ir::TSInterfaceDeclaration *interfaceDecl,
+                                               ir::ObjectExpression *objectExpr)
+{
+    if (interfaceDecl->TsType()->AsETSObjectType()->IsGradual()) {
+        return false;
+    }
+
+    //  Lambda checks if any method defined in object literal overrides empty method declared in interface.
+    auto const checkOverriding = [checker, objectExpr](ir::ScriptFunction *function) -> bool {
+        if (function->HasBody() || function->IsGetter() || function->IsSetter()) {
+            return true;
+        }
+
+        for (ir::Expression *propExpr : objectExpr->Properties()) {
+            if (!propExpr->IsProperty()) {
+                continue;
+            }
+
+            if (auto const *const key = propExpr->AsProperty()->Key();
+                !key->IsIdentifier() || !key->AsIdentifier()->Name().Is(function->Id()->Name().Utf8())) {
+                continue;
+            }
+
+            checker::SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(),
+                                                                 checker::TypeRelationFlag::OVERRIDING_CONTEXT);
+            checker::Type *const valueType = propExpr->AsProperty()->Value()->TsType();
+            if (!valueType->IsETSArrowType() ||
+                !checker->Relation()->SignatureIsSupertypeOf(
+                    function->Signature(), valueType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow()[0U])) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    };
+
+    for (auto it : interfaceDecl->Body()->Body()) {
+        if (it->IsOverloadDeclaration()) {
+            continue;
+        }
+        auto methodDef = it->AsMethodDefinition();
+        if (!checkOverriding(methodDef->Function())) {
+            return false;
+        }
+        for (auto *const overload : methodDef->Overloads()) {
+            if (!checkOverriding(overload->Function())) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+static checker::Type *ProcessInterfaceWithMethods(public_lib::Context *ctx, ir::TSInterfaceDeclaration *interfaceDecl,
+                                                  ir::ObjectExpression *objectExpr)
+{
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+
+    if (auto *const helperClass = interfaceDecl->GetAnonClass(); helperClass != nullptr) {
+        if (!objectExpr->HasMethodDefinition()) {
+            return helperClass->Definition()->TsType();
+        }
+        //  If interface has default implementation for all its methods create helper class with overridden method(s)
+        return GenerateAnonClassFromInterfaceWithMethods(ctx, interfaceDecl, objectExpr);
+    }
+
+    //  If interface has method declarations with empty bodies, check if all of them are defined
+    //  in the object literal and create the corresponding helper class with method implementations.
+    if (CheckInterfaceCanGenerateAnonClass(checker, interfaceDecl, objectExpr)) {
+        return GenerateAnonClassFromInterfaceWithMethods(ctx, interfaceDecl, objectExpr);
+    }
+
+    checker->LogError(diagnostic::INTERFACE_WITH_METHOD, {}, interfaceDecl->Start());
+    return checker->GlobalTypeError();
+}
+
+//==========[ Processing of object interface literals with re-defined methods =>  end  ]==========//
+
+static checker::Type *ProcessDeclNode(public_lib::Context *ctx, checker::ETSObjectType *targetType,
                                       ir::ObjectExpression *objExpr)
 {
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *declNode = targetType->GetDeclNode();
 
     if (declNode->IsTSInterfaceDeclaration()) {
-        auto *ifaceNode = declNode->AsTSInterfaceDeclaration();
-        if (ifaceNode->GetAnonClass() == nullptr) {
-            checker->LogError(diagnostic::INTERFACE_WITH_METHOD, {}, objExpr->Start());
-            return checker->GlobalTypeError();
-        }
-        return ifaceNode->GetAnonClass()->Definition()->TsType();
+        return ProcessInterfaceWithMethods(ctx, declNode->AsTSInterfaceDeclaration(), objExpr);
     }
 
     auto *classDef = declNode->AsClassDefinition();
@@ -375,7 +635,7 @@ static void HandleInterfaceLowering(public_lib::Context *ctx, ir::ObjectExpressi
     auto *targetType = objExpr->TsType()->AsETSObjectType();
     checker->CheckObjectLiteralKeys(objExpr->Properties());
 
-    checker::Type *resultType = ProcessDeclNode(checker, targetType, objExpr);
+    checker::Type *resultType = ProcessDeclNode(ctx, targetType, objExpr);
 
     if (resultType->IsTypeError()) {
         objExpr->SetTsType(resultType);
@@ -412,8 +672,16 @@ static bool CheckInterfaceShouldGenerateAnonClass(ir::TSInterfaceDeclaration *in
         ES2PANDA_ASSERT(it->IsMethodDefinition());
         auto methodDef = it->AsMethodDefinition();
         ES2PANDA_ASSERT(methodDef->Function());
-        if (!methodDef->Function()->IsGetter() && !methodDef->Function()->IsSetter()) {
+        if (!methodDef->Function()->HasBody() && !methodDef->Function()->IsGetter() &&
+            !methodDef->Function()->IsSetter()) {
             return false;
+        }
+        for (auto const *const overload : methodDef->Overloads()) {
+            ES2PANDA_ASSERT(overload->Function());
+            if (!overload->Function()->HasBody() && !overload->Function()->IsGetter() &&
+                !overload->Function()->IsSetter()) {
+                return false;
+            }
         }
     }
 
@@ -455,13 +723,13 @@ static void TransfromInterfaceDecl(public_lib::Context *ctx, parser::Program *pr
         if (ast->IsTSInterfaceDeclaration() &&
             isRequired(ast->AsTSInterfaceDeclaration()->TsType()->AsETSObjectType()) &&
             CheckInterfaceShouldGenerateAnonClass(ast->AsTSInterfaceDeclaration())) {
-            GenerateAnonClassTypeFromInterface(ctx, ast->AsTSInterfaceDeclaration());
+            GenerateAnonClassFromInterface(ctx, ast->AsTSInterfaceDeclaration());
         } else if (ast->IsClassDefinition() && ast != program->GlobalClass() &&
                    ast->AsClassDefinition()->IsAbstract() &&
                    !ast->AsClassDefinition()->TsType()->AsETSObjectType()->IsGradual() &&
                    isRequired(ast->AsClassDefinition()->TsType()->AsETSObjectType()) &&
                    CheckAbstractClassShouldGenerateAnonClass(ast->AsClassDefinition())) {
-            GenerateAnonClassTypeFromAbstractClass(ctx, ast->AsClassDefinition());
+            GenerateAnonClassFromAbstractClass(ctx, ast->AsClassDefinition());
         }
     });
 }

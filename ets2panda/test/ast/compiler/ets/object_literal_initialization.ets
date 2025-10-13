@@ -14,7 +14,7 @@
  */
 
 // arkts-no-untyped-obj-literals
-let o: Object = /* @@ label1 */{/* @@ label2 */n: 42, s: "foo"}
+let o: Object = /* @@ label1 */{/* @@ label2 */n: 42, /* @@ label3 */s: "foo"}
 
 
 /* @@@ label1 Error Semantic error ESE115343: 'Object', 'object', 'any' types cannot be initialized with object literals. */

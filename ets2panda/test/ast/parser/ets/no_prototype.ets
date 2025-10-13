@@ -30,8 +30,3 @@ C.prototype = {
 /* @@? 20:1 Error Syntax error ESY30818: Runtime prototype assignment is not supported because of static typing */
 /* @@? 20:3 Error Semantic error ESE0087: Property 'prototype' does not exist on type 'C' */
 /* @@? 20:13 Error Syntax error ESY30818: Runtime prototype assignment is not supported because of static typing */
-/* @@? 21:4 Error Syntax error ESY0228: Unexpected token, expected ':'. */
-/* @@? 21:5 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@? 21:7 Error Syntax error ESY0016: Unexpected token. */
-/* @@? 22:12 Error Syntax error ESY0228: Unexpected token, expected ':'. */
-/* @@? 24:1 Error Syntax error ESY0227: Unexpected token '}'. */

@@ -2282,13 +2282,13 @@ ir::Expression *ParserImpl::ParsePropertyKey(ExpressionParseFlags flags)
     }
 }
 
-ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind *propertyKind, const ParserStatus *methodStatus,
+ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind propertyKind, const ParserStatus methodStatus,
                                                ExpressionParseFlags flags)
 {
-    bool isMethod = (*methodStatus & ParserStatus::FUNCTION) != 0;
-    bool inPattern = (flags & ExpressionParseFlags::MUST_BE_PATTERN) != 0;
+    bool isMethod = (methodStatus & ParserStatus::FUNCTION) != 0U;
+    bool inPattern = (flags & ExpressionParseFlags::MUST_BE_PATTERN) != 0U;
 
-    if (!isMethod && !ir::Property::IsAccessorKind(*propertyKind)) {
+    if (!isMethod && !ir::Property::IsAccessorKind(propertyKind)) {
         // If the actual property is not getter/setter nor method, the following
         // token must be ':'
         if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COLON) {
@@ -2314,9 +2314,9 @@ ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind *propertyK
         LogError(diagnostic::OBJECT_PATTER_CONTAIN_METHODS);
     }
 
-    ParserStatus newStatus = *methodStatus | ParserStatus::FUNCTION | ParserStatus::ALLOW_SUPER;
+    ParserStatus newStatus = methodStatus | ParserStatus::FUNCTION | ParserStatus::ALLOW_SUPER;
 
-    if (*propertyKind != ir::PropertyKind::SET) {
+    if (propertyKind != ir::PropertyKind::SET) {
         newStatus |= ParserStatus::NEED_RETURN_TYPE;
     }
 
@@ -2330,11 +2330,11 @@ ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind *propertyK
     ES2PANDA_ASSERT(value != nullptr);
     value->SetRange(methodDefinitonNode->Range());
 
-    if (*propertyKind == ir::PropertyKind::SET && paramsSize != 1) {
+    if (propertyKind == ir::PropertyKind::SET && paramsSize != 1) {
         LogError(diagnostic::SETTER_FORMAL_PARAMS);
     }
 
-    if (*propertyKind == ir::PropertyKind::GET && paramsSize != 0) {
+    if (propertyKind == ir::PropertyKind::GET && paramsSize != 0) {
         LogError(diagnostic::GETTER_FORMAL_PARAMS);
     }
 
@@ -2342,7 +2342,7 @@ ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind *propertyK
 }
 
 // NOLINTNEXTLINE(google-default-arguments)
-ir::Expression *ParserImpl::ParsePropertyDefinition([[maybe_unused]] ExpressionParseFlags flags)
+ir::Expression *ParserImpl::ParsePropertyDefinition(ExpressionParseFlags const flags)
 {
     ir::PropertyKind propertyKind = ir::PropertyKind::INIT;
     ParserStatus methodStatus = ParserStatus::NO_OPTS;
@@ -2376,7 +2376,7 @@ ir::Expression *ParserImpl::ParsePropertyDefinition([[maybe_unused]] ExpressionP
         LogError(diagnostic::UNEXPECTED_ID);
     }
 
-    ir::Expression *value = ParsePropertyValue(&propertyKind, &methodStatus, flags);
+    ir::Expression *value = ParsePropertyValue(propertyKind, methodStatus, flags);
     ES2PANDA_ASSERT(value != nullptr);
     lexer::SourcePosition end = value->End();
 

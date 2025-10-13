@@ -13,11 +13,6 @@
  * limitations under the License.
  */
 #include <gtest/gtest.h>
-#include <algorithm>
-#include <cstdint>
-#include <iomanip>
-#include <ios>
-#include <string>
 
 #include "asm_test.h"
 #include "assembly-field.h"
@@ -27,6 +22,7 @@
 #include "generated/signatures.h"
 #include "gmock/gmock.h"
 #include "libarkfile/literal_data_accessor.h"
+#include "libarkbase/mem/pool_manager.h"
 
 // Value printers for tests
 namespace ark::pandasm {

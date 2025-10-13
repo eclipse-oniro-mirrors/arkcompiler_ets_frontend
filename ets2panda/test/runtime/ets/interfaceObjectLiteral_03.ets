@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,24 +13,40 @@
  * limitations under the License.
  */
 
-
-interface RouterOptions {
-    url : string
-    params?: Object
-}
-enum RouterMode {
-    standard,
-    single
+class A {
+  a: string = 'a';
+  foo(b: B): A {
+    return b as A;
+  }
 }
 
-interface RouterT {
-    back (options?: RouterOptions, mode?: RouterMode): void
-    getParams():Object
+class B extends A {
+  b: string = 'b';
+  foo(a: A): B {
+    return new B();
+  }
 }
 
-const router:RouterT = {
-    back: (options?: RouterOptions, mode?: RouterMode): void => {},
-    getParams: (): Object => {
-        throw new Error(`Test`)
-    }
+interface I {
+  c1: A;
+  c2: B;
+  foo (f: B): string | number {
+    return f.b;
+  };
+}
+
+function main() {
+
+  let c: I = {
+    c1: { a: 'aa' },
+    c2: { a: 'aaa', b: 'bb' },
+    foo (f: A): string {
+      return f.a;
+    },
+  };
+
+  arktest.assertEQ(c.c1.a, 'aa');
+  arktest.assertEQ(c.c2.a, 'aaa');
+  arktest.assertEQ(c.c2.b, 'bb');
+  arktest.assertEQ(c.foo(c.c2), 'aaa');
 }

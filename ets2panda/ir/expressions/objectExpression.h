@@ -53,6 +53,11 @@ public:
         return properties_;
     }
 
+    [[nodiscard]] ArenaVector<Expression *> &Properties() noexcept
+    {
+        return properties_;
+    }
+
     void SetProperties(ArenaVector<Expression *> &&propertiesList)
     {
         properties_ = std::move(propertiesList);
@@ -71,6 +76,8 @@ public:
     {
         return optional_;
     }
+
+    [[nodiscard]] bool HasMethodDefinition() const noexcept;
 
     [[nodiscard]] ObjectExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 

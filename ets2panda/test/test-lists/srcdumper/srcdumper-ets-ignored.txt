@@ -124,3 +124,8 @@ ast/compiler/ets/namespace_import/namespace_export2.ets
 #Issue 30577
 runtime/ets/re_export_default/reexport1.ets
 runtime/ets/re_export_default/reexport2.ets
+
+ast/parser/ets/object_literal_withfunc.ets
+runtime/ets/interfaceObjectLiteral_01.ets
+runtime/ets/interfaceObjectLiteral_02.ets
+runtime/ets/interfaceObjectLiteral_03.ets

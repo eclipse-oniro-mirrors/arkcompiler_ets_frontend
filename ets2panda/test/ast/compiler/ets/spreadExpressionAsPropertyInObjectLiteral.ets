@@ -27,7 +27,5 @@ const c1: Child = /* @@ label1 */{ ...b1, a: "a" }
 /* @@@ label Error Semantic error ESE0400: Non-optional property 'n' in type 'Base' is missing in object literal. */
 /* @@@ label1 Error Semantic error ESE0064: The object literal properties must be key-value pairs */
 /* @@@ label1 Error Semantic error ESE0401: Non-optional property 'n' in super type 'Base' of type 'Child' is missing in object literal. */
-/* @@@ label1 Error Semantic error ESE0400: Non-optional property 'a' in type 'Child' is missing in object literal. */
 /* @@@ label1 Error Semantic error ESE0064: The object literal properties must be key-value pairs */
 /* @@@ label1 Error Semantic error ESE0401: Non-optional property 'n' in super type 'Base' of type 'Child' is missing in object literal. */
-/* @@@ label1 Error Semantic error ESE0400: Non-optional property 'a' in type 'Child' is missing in object literal. */

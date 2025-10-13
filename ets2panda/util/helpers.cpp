@@ -422,6 +422,21 @@ compiler::Literal Helpers::ToConstantLiteral(const ir::Expression *expr)
     return compiler::Literal();
 }
 
+bool Helpers::IsErrorPlaceHolder(ir::Identifier const *const ident, bool const isNull) noexcept
+{
+    return !isNull ? ident != nullptr && ident->IsErrorPlaceHolder() : ident == nullptr || ident->IsErrorPlaceHolder();
+}
+
+bool Helpers::IsGlobalClass(ir::AstNode const *node) noexcept
+{
+    return node != nullptr && node->IsClassDefinition() && node->AsClassDefinition()->IsGlobal();
+}
+
+bool Helpers::IsETSMethodType(checker::Type const *type) noexcept
+{
+    return type != nullptr && type->IsETSMethodType();
+}
+
 bool Helpers::IsBindingPattern(const ir::AstNode *node)
 {
     return node->IsArrayPattern() || node->IsObjectPattern();

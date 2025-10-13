@@ -574,7 +574,7 @@ public:
     {
         return type->IsETSReferenceType();
     }
-    void ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType *obj, const lexer::SourcePosition &pos);
+    void ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType *obj, ir::Expression const *expr);
     varbinder::VariableFlags GetAccessFlagFromNode(const ir::AstNode *node);
     Type *CheckSwitchDiscriminant(ir::Expression *discriminant);
     Type *MaybeUnboxInRelation(Type *objectType);
@@ -794,7 +794,7 @@ public:
 
     void SetDebugInfoPlugin(evaluate::ScopedDebugInfoPlugin *debugInfo);
 
-    using ClassBuilder = std::function<void(ArenaVector<ir::AstNode *> *)>;
+    using ClassBuilder = std::function<void(ArenaVector<ir::AstNode *> &)>;
     using ClassInitializerBuilder =
         std::function<void(ArenaVector<ir::Statement *> *, ArenaVector<ir::Expression *> *)>;
     using MethodBuilder = std::function<void(ArenaVector<ir::Statement *> *, ArenaVector<ir::Expression *> *, Type **)>;

@@ -229,17 +229,34 @@ ir::Expression *ETSParser::ParsePropertyDefinition(ExpressionParseFlags flags)
     }
 
     bool isComputed = Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET;
+
     ir::Expression *key = ParsePropertyKey(flags);
 
-    ir::Expression *value = ParsePropertyValue(&propertyKind, &methodStatus, flags);
+    if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COLON) {
+        methodStatus |= ParserStatus::FUNCTION;
+    }
+
+    ir::Expression *value = ParsePropertyValue(propertyKind, methodStatus, flags);
     ES2PANDA_ASSERT(value != nullptr);
     lexer::SourcePosition end = value->End();
 
     ir::Expression *returnProperty = nullptr;
     if (propertyKind == ir::PropertyKind::INIT) {
+        //  Additional processing for method [re-]definition in object literal
+        if (value->IsFunctionExpression()) {
+            ES2PANDA_ASSERT(key->IsIdentifier() && value->AsFunctionExpression()->Function() != nullptr);
+
+            auto *function = value->AsFunctionExpression()->Function();
+            function->AddFlag(ir::ScriptFunctionFlags::ARROW);
+            function->SetRange(value->Range());
+            function->SetIdent(key->AsIdentifier()->Clone(Allocator(), nullptr));
+
+            value = AllocNode<ir::ArrowFunctionExpression>(function, Allocator());
+            value->SetRange(function->Range());
+        }
+
         returnProperty =
             AllocNode<ir::Property>(propertyKind, key, value, methodStatus != ParserStatus::NO_OPTS, isComputed);
-        ES2PANDA_ASSERT(returnProperty != nullptr);
         returnProperty->SetRange({start, end});
     } else {
         returnProperty = AllocBrokenExpression(key->Start());

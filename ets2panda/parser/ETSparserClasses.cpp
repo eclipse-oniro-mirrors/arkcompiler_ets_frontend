@@ -598,9 +598,9 @@ ir::MethodDefinition *ETSParser::ParseClassMethodDefinition(ir::Identifier *meth
     funcExpr->SetRange(func->Range());
     func->AddModifier(modifiers);
 
-    ES2PANDA_ASSERT(methodName->Clone(Allocator(), nullptr) != nullptr);
-    auto *method = AllocNode<ir::MethodDefinition>(methodKind, methodName->Clone(Allocator(), nullptr)->AsExpression(),
-                                                   funcExpr, modifiers, Allocator(), false);
+    auto *id = methodName->Clone(Allocator(), nullptr);
+    ES2PANDA_ASSERT(id != nullptr);
+    auto *method = AllocNode<ir::MethodDefinition>(methodKind, id, funcExpr, modifiers, Allocator(), false);
     ES2PANDA_ASSERT(method != nullptr);
     method->SetDefaultAccessModifier(isDefault);
     method->SetRange(funcExpr->Range());

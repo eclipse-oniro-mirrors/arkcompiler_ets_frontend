@@ -24,20 +24,38 @@ const b: Record<number, (x: string) => number> = {
     [(():number => +("bar"))()]: (y: string):number => y.length
 };
 
-
-/* @@? 16:35 Error Semantic error ESE0062: need to specify target type for class composite */
 /* @@? 17:5 Error Syntax error ESY0016: Unexpected token. */
-/* @@? 17:6 Error Syntax error ESY0228: Unexpected token, expected ':'. */
-/* @@? 17:22 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 17:6 Error Semantic error ESE0046: Type '*ERROR_TYPE*' is not compatible with type 'Double' at index 1 */
+/* @@? 17:7 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 17:7 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 17:7 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 17:7 Error Syntax error ESY0230: Expected '{', got '('. */
+/* @@? 17:7 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 17:8 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 17:9 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:11 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:11 Error Semantic error ESE0132: The type of parameter 'number' cannot be inferred */
+/* @@? 17:22 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 17:22 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 17:25 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 17:26 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 17:28 Error Syntax error ESY0227: Unexpected token '1'. */
 /* @@? 18:1 Error Syntax error ESY0227: Unexpected token '}'. */
-/* @@? 20:50 Error Semantic error ESE0062: need to specify target type for class composite */
 /* @@? 21:5 Error Syntax error ESY0016: Unexpected token. */
-/* @@? 21:6 Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@? 21:6 Error Semantic error ESE0046: Type '*ERROR_TYPE*' is not compatible with type 'Double' at index 1 */
+/* @@? 21:7 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 21:7 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 21:7 Error Syntax error ESY0230: Expected '{', got '('. */
+/* @@? 21:7 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 21:7 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 21:8 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 21:9 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 21:10 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 21:10 Error Semantic error ESE0132: The type of parameter 'number' cannot be inferred */
 /* @@? 21:20 Error Semantic error ESE0347: Wrong operand type for unary expression */
-/* @@? 21:28 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 21:21 Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */
+/* @@? 21:28 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 21:28 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 21:31 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 21:32 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 21:34 Error Syntax error ESY0227: Unexpected token 'function'. */
@@ -47,8 +65,8 @@ const b: Record<number, (x: string) => number> = {
 /* @@? 24:20 Error Semantic error ESE0347: Wrong operand type for unary expression */
 /* @@? 24:32 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 24:32 Error Semantic error ESE0289: This expression is not callable. */
-/* @@? 24:36 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 24:36 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 24:36 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 24:38 Error Syntax error ESY0227: Unexpected token 'string'. */
 /* @@? 24:38 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
 /* @@? 24:44 Error Syntax error ESY0227: Unexpected token ')'. */
