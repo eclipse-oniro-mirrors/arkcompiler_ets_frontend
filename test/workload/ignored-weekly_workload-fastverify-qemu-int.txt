@@ -15,9 +15,6 @@ json-stringify-inspector
 #18863
 json-parse-inspector
 
-##27014
-pdfjs
-
 ##25919
 raytrace
 
