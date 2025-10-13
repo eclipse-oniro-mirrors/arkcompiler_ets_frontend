@@ -88,30 +88,25 @@ export class Es2pandaNativeModule {
   ): KPtr {
     throw new Error('Not implemented');
   }
-  _CreateContextGenerateAbcForExternalSourceFiles(configPtr: KPtr, fileNamesCount: KInt, filenames: string[] | Uint8Array):  KPtr {
-    throw new Error('Not implemented');
-  }
-  _GenerateStaticDeclarationsFromContext(context: KPtr, filename: String): KPtr {
-    throw new Error('Not implemented');
-  }
   _CreateContextFromFile(config: KPtr, filename: String): KPtr {
     throw new Error('Not implemented');
   }
   _DestroyContext(context: KPtr): void {
     throw new Error('Not implemented');
   }
-  _ProceedToState(context: KPtr, state: number): KPtr {
+  _ProceedToState(context: KPtr, state: number): void {
     throw new Error('Not implemented');
   }
   _ContextProgram(context: KPtr): KPtr {
     throw new Error('Not implemented');
   }
-  _ProgramAst(context: KPtr, program: KPtr): KPtr {
+  _ProgramAst(program: KPtr): KPtr {
     throw new Error('Not implemented');
   }
   _CheckerStartChecker(context: KPtr): KBoolean {
     throw new Error('Not implemented');
   }
+
   _IsProgram(context: KPtr, node: KPtr): KBoolean {
     throw new Error('Not implemented');
   }
@@ -982,7 +977,7 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _MemInitialize(): void {
+  _MemInitialize(pandaLibPath: KStringPtr): void {
     throw new Error('Not implemented');
   }
 
@@ -1001,15 +996,6 @@ export class Es2pandaNativeModule {
   _CreateCacheContextFromString(
     config: KPtr,
     source: String,
-    filename: String,
-    globalContext: KPtr,
-    isExternal: boolean
-  ): KPtr {
-      throw new Error('Not implemented');
-  }
-
-  _CreateCacheContextFromFile(
-    config: KPtr,
     filename: String,
     globalContext: KPtr,
     isExternal: boolean

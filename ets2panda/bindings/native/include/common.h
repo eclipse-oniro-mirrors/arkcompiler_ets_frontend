@@ -28,10 +28,7 @@ const es2panda_Impl *GetPublicImpl();
 // CC-OFFNXT(G.NAM.01) false positive
 std::string GetString(KStringPtr ptr);
 
-inline char *GetStringCopy(KStringPtr &ptr)
-{
-    return strdup(ptr.CStr());
-}
+char *GetStringCopy(KStringPtr &ptr);
 
 inline KUInt UnpackUInt(const KByte *bytes);
 

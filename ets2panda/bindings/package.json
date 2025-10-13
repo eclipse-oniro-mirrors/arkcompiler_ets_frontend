@@ -8,12 +8,11 @@
     "prettier": "latest",
     "rimraf": "^6.0.1",
     "typescript": "4.9.5",
-    "json5": "^2.2.3",
     "jest-diff": "latest"
   },
   "main": "dist/index.js",
   "scripts": {
-    "test:clean": "rimraf dist dist-test",
+    "test:clean": "rimraf dist-test",
     "test:compile": "tsc --build --verbose test/tsconfig.json",
     "test:build": "npm run test:clean && npm run test:compile",
     "test": "npm run test:build && node dist-test/test/run_tests.js ./test",
@@ -25,5 +24,7 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "json5": "^2.2.3"
+  }
 }

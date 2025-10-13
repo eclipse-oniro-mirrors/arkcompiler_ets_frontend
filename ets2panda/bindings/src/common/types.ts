@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { KNativePointer as KPtr } from './InteropTypes';
+import { KNativePointer, KNativePointer as KPtr } from './InteropTypes';
 import { global } from './global';
 import { throwError } from './utils';
 import { passString, passStringArray, unpackString } from './private';
@@ -71,7 +71,7 @@ export class Config extends ArktsObject {
     return `Config (peer = ${this.peer}, path = ${this.path})`;
   }
 
-  static create(input: string[], fpath: string = '', pandaLibPath: string = '', isEditingMode: boolean = false): Config {
+  static create(input: string[], fpath: string, pandaLibPath: string = '', isEditingMode: boolean = false): Config {
     if (isEditingMode) {
       let cfg = global.es2pandaPublic._CreateConfig(input.length, passStringArray(input), pandaLibPath);
       return new Config(cfg, fpath);
@@ -95,34 +95,26 @@ export class Context extends ArktsObject {
     return `Context (peer = ${this.peer})`;
   }
 
-  static createFromString(source: string): KPtr {
+  static createFromString(source: string): Context {
     if (!global.configIsInitialized()) {
       throwError(`Config not initialized`);
     }
-    let ctx = global.es2panda._CreateContextFromString(global.config, passString(source), passString(global.filePath));
-    global.context = ctx;
-    return ctx;
-  }
-
-  static createFromStringWithHistory(source: string): KPtr {
-    if (!global.configIsInitialized()) {
-      throwError(`Config not initialized`);
-    }
-    let ctx = global.es2panda._CreateContextFromStringWithHistory(
-      global.config,
-      passString(source),
-      passString(global.filePath)
+    return new Context(
+      global.es2panda._CreateContextFromString(global.config, passString(source), passString(global.filePath))
     );
-     global.context = ctx;
-     return ctx;
   }
 
-  static createContextGenerateAbcForExternalSourceFiles(
-     filenames: string[]
-  ): Context {
-     let ctx = global.es2panda._CreateContextGenerateAbcForExternalSourceFiles(global.config, filenames.length, passStringArray(filenames));
-     global.context = ctx;
-     return new Context(ctx);
+  static createFromStringWithHistory(source: string): Context {
+    if (!global.configIsInitialized()) {
+      throwError(`Config not initialized`);
+    }
+    return new Context(
+      global.es2panda._CreateContextFromStringWithHistory(
+        global.config,
+        passString(source),
+        passString(global.filePath)
+      )
+    );
   }
 
   static lspCreateFromString(source: string, filePath: string, cfg: Config): KPtr {
@@ -136,7 +128,7 @@ export class Context extends ArktsObject {
     source: string,
     filePath: string,
     cfg: Config,
-    globalContextPtr: KPtr,
+    globalContextPtr: KNativePointer,
     isExternal: boolean
   ): KPtr {
     if (cfg === undefined) {
@@ -150,17 +142,8 @@ export class Context extends ArktsObject {
       isExternal
     );
   }
-
-  get program(): Program {
-      return new Program(global.es2panda._ContextProgram(this.peer));
-  }
 }
 
-export class Program extends ArktsObject {
-    constructor(peer: KPtr) {
-        super(peer);
-    }
-}
 // ProjectConfig begins
 export interface PluginsConfig {
   [pluginName: string]: string;
@@ -230,7 +213,7 @@ export interface JobInfo {
   id: string;
   filePath: string;
   arktsConfigFile: string;
-  globalContextPtr: KPtr;
+  globalContextPtr: KNativePointer;
   buildConfig: BuildConfig;
   isValid: boolean;
 }
@@ -356,25 +339,4 @@ export interface NodeInfo {
 export interface AliasConfig {
   originalAPIName: string;
   isStatic: boolean;
-}
-
-export abstract class AstNode extends ArktsObject {
-    protected constructor(peer: KPtr) {
-        if (peer === null) {
-            throwError(`attempted to create AstNode from nullptr`);
-        }
-        super(peer);
-    }
-}
-
-export class EtsScript extends AstNode {
-    constructor(peer: KPtr) {
-        super(peer);
-    }
-
-    static fromContext(): EtsScript {
-        let ctx = global.es2panda._ProgramAst(global.context, global.es2panda._ContextProgram(global.context))
-        let etsScript = new EtsScript(ctx);
-        return etsScript;
-    }
 }
