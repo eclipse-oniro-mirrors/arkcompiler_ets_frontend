@@ -1,4 +1,4 @@
-# Known failures list for jsperf - release-qemu-int
-
-#26559
+#26556
+String_toLocaleLowerCase
+String_toLocaleUpperCase
 Math_abs

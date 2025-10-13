@@ -4,12 +4,10 @@ Proxy.handler_applyProxy
 #19077
 Function_applyFunction
 
-#21663
+#30387
 DisplayNames_constructor
 DisplayNames_of
 DisplayNames_resolvedOptions
 DisplayNames_supportedLocalesOf
-
-#21663
 Math_abs
 String_toLocaleUpperCase

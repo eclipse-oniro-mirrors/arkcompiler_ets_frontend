@@ -29,7 +29,7 @@ test262/data/other_tests/built-ins/Date/prototype/setUTCMonth/arg-coercion-order
 test262/data/other_tests/built-ins/Date/prototype/setUTCSeconds/arg-coercion-order.js
 # --- end of Issue #19223
 
-#21453
+#23670
 test262/data/other_tests/harness/nativeFunctionMatcher.js
 
 #28424

@@ -1,7 +1,7 @@
 #21067
 xml_js_test
 
-#19247
+#25198
 jsDiff_test
 
 #19576
