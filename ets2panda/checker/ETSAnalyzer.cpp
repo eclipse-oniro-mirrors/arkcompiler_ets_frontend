@@ -3314,7 +3314,20 @@ checker::Type *ETSAnalyzer::Check(ir::BlockStatement *st) const
 
         //  NOTE! Processing of trailing blocks was moved here so that smart casts could be applied correctly
         if (auto *const trailingBlock = st->SearchStatementInTrailingBlock(stmt); trailingBlock != nullptr) {
+            // For now, an additional check is needed here to see whether there is a return stmt at top-level.
+            // If there is, it is required to throw a CTE. However, it would be better to move the entire trailing
+            // lambda handling into a lowering step, so this check could run as part of the regular return statement
+            // validations.
+            bool isReturnAllowed = !checker->HasStatus(CheckerStatus::RESTRICTED_RETURN_IN_BLOCK);
+            if (checker->Context().ContainingSignature() == nullptr && isReturnAllowed) {
+                checker->AddStatus(CheckerStatus::RESTRICTED_RETURN_IN_BLOCK);
+            }
+
             trailingBlock->Check(checker);
+            if (isReturnAllowed) {
+                checker->RemoveStatus(CheckerStatus::RESTRICTED_RETURN_IN_BLOCK);
+            }
+
             st->AddStatement(idx, trailingBlock);
             ++idx;
         }
@@ -3829,6 +3842,11 @@ checker::Type *ETSAnalyzer::GetFunctionReturnType(ir::ReturnStatement *st, ir::S
 checker::Type *ETSAnalyzer::Check(ir::ReturnStatement *st) const
 {
     ETSChecker *checker = GetETSChecker();
+
+    if (checker->HasStatus(checker::CheckerStatus::RESTRICTED_RETURN_IN_BLOCK) &&
+        !checker->HasStatus(ark::es2panda::checker::CheckerStatus::IN_LAMBDA)) {
+        checker->LogError(diagnostic::RETURN_IN_FUN_BODY, {}, st->Start());
+    }
 
     ir::AstNode *ancestor = util::Helpers::FindAncestorGivenByType(st, ir::AstNodeType::SCRIPT_FUNCTION);
     ES2PANDA_ASSERT(ancestor && ancestor->IsScriptFunction());
