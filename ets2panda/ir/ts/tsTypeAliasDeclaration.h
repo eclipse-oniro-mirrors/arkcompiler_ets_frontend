@@ -64,6 +64,8 @@ public:
         return GetHistoryNodeAs<TSTypeAliasDeclaration>()->id_;
     }
 
+    void SetId(Identifier *id);
+
     TSTypeParameterDeclaration *TypeParams() const
     {
         return GetHistoryNodeAs<TSTypeAliasDeclaration>()->typeParams_;
@@ -81,6 +83,8 @@ public:
     {
         return GetHistoryNodeAs<TSTypeAliasDeclaration>()->typeParamTypes_;
     }
+
+    void SetTypeAnnotation(TypeNode *typeAnnotation);
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
@@ -113,8 +117,6 @@ public:
 private:
     bool RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const;
     friend class SizeOfNodeTest;
-
-    void SetId(Identifier *id);
 
     Identifier *id_;
     TSTypeParameterDeclaration *typeParams_;

@@ -55,6 +55,8 @@ public:
 
     [[nodiscard]] const Identifier *Id() const noexcept;
 
+    void SetId(Identifier *id);
+
     [[nodiscard]] Expression *Key() noexcept
     {
         return GetHistoryNodeAs<ClassElement>()->key_;
@@ -64,6 +66,8 @@ public:
     {
         return GetHistoryNodeAs<ClassElement>()->key_;
     }
+
+    void SetKey(Expression *key);
 
     [[nodiscard]] Expression *Value() noexcept
     {
@@ -99,8 +103,6 @@ protected:
     friend class SizeOfNodeTest;
 
 protected:
-    void SetKey(Expression *key);
-
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     Expression *key_;
     Expression *value_;

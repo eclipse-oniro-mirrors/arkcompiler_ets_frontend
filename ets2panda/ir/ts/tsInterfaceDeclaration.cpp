@@ -47,17 +47,23 @@ void TSInterfaceDeclaration::SetAnonClass(ClassDeclaration *anonClass)
 
 void TSInterfaceDeclaration::SetId(Identifier *id)
 {
-    this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>()->id_ = id;
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    newNode->id_ = id;
+    id->SetParent(newNode);
 }
 
 void TSInterfaceDeclaration::SetTypeParams(TSTypeParameterDeclaration *typeParams)
 {
-    this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>()->typeParams_ = typeParams;
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    newNode->typeParams_ = typeParams;
+    typeParams->SetParent(newNode);
 }
 
 void TSInterfaceDeclaration::SetBody(TSInterfaceBody *body)
 {
-    this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>()->body_ = body;
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    newNode->body_ = body;
+    body->SetParent(newNode);
 }
 
 void TSInterfaceDeclaration::EmplaceExtends(TSInterfaceHeritage *extends)
@@ -77,6 +83,17 @@ void TSInterfaceDeclaration::SetValueExtends(TSInterfaceHeritage *extends, size_
     auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
     auto &arenaVector = newNode->extends_;
     arenaVector[index] = extends;
+}
+
+void TSInterfaceDeclaration::SetExtends(ArenaVector<TSInterfaceHeritage *> &&extendsList)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSInterfaceDeclaration>();
+    auto &extends = newNode->extends_;
+    extends = std::move(extendsList);
+
+    for (auto *extend : extends) {
+        extend->SetParent(newNode);
+    }
 }
 
 [[nodiscard]] const ArenaVector<TSInterfaceHeritage *> &TSInterfaceDeclaration::Extends()

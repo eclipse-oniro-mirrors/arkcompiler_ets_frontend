@@ -26,6 +26,30 @@
 #include "ir/statements/blockStatement.h"
 
 namespace ark::es2panda::ir {
+void TryStatement::SetFinallyBlock(BlockStatement *finallyBlock)
+{
+    finalizer_ = finallyBlock;
+
+    if (finallyBlock != nullptr) {
+        finallyBlock->SetParent(this);
+    }
+}
+
+void TryStatement::SetBlock(BlockStatement *block)
+{
+    block_ = block;
+    block->SetParent(this);
+}
+
+void TryStatement::SetCatchClauses(ArenaVector<CatchClause *> &&catchClausesList)
+{
+    catchClauses_ = std::move(catchClausesList);
+
+    for (auto *catchClause : catchClauses_) {
+        catchClause->SetParent(this);
+    }
+}
+
 void TryStatement::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
     if (auto *transformedNode = cb(block_); block_ != transformedNode) {

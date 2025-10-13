@@ -45,6 +45,16 @@ void ScriptFunction::SetPreferredReturnType(checker::Type *preferredReturnType)
     this->GetOrCreateHistoryNodeAs<ScriptFunction>()->preferredReturnType_ = preferredReturnType;
 }
 
+void ScriptFunction::SetTypeParams(TSTypeParameterDeclaration *typeParams)
+{
+    auto newNode = GetOrCreateHistoryNodeAs<ScriptFunction>();
+    newNode->irSignature_.SetTypeParams(typeParams);
+
+    if (typeParams != nullptr) {
+        typeParams->SetParent(newNode);
+    }
+}
+
 void ScriptFunction::EmplaceParams(Expression *params)
 {
     auto newNode = this->GetOrCreateHistoryNodeAs<ScriptFunction>();
@@ -186,8 +196,12 @@ std::size_t ScriptFunction::FormalParamsLength() const noexcept
 
 void ScriptFunction::SetIdent(Identifier *id) noexcept
 {
-    this->GetOrCreateHistoryNodeAs<ScriptFunction>()->id_ = id;
-    id->SetParent(this);
+    auto newNode = this->GetOrCreateHistoryNodeAs<ScriptFunction>();
+    newNode->id_ = id;
+
+    if (id != nullptr) {
+        id->SetParent(newNode);
+    }
 }
 
 ScriptFunction *ScriptFunction::Clone(ArenaAllocator *allocator, AstNode *parent)

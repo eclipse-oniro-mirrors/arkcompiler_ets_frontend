@@ -58,6 +58,12 @@ public:
         return typeReference_;
     }
 
+    void SetTypeRef(ir::Expression *typeRef)
+    {
+        typeReference_ = typeRef;
+        typeRef->SetParent(this);
+    }
+
     [[nodiscard]] ArenaVector<ir::Expression *> &GetArguments() noexcept
     {
         return arguments_;
@@ -68,9 +74,13 @@ public:
         return arguments_;
     }
 
-    void SetArguments(ArenaVector<ir::Expression *> &&arguments)
+    void SetArguments(ArenaVector<ir::Expression *> &&argumentsList)
     {
-        arguments_ = std::move(arguments);
+        arguments_ = std::move(argumentsList);
+
+        for (auto *argument : arguments_) {
+            argument->SetParent(this);
+        }
     }
 
     [[nodiscard]] checker::Signature *GetSignature() const noexcept

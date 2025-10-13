@@ -49,10 +49,7 @@ public:
         return test_;
     }
 
-    void SetTest(Expression *test) noexcept
-    {
-        test_ = test;
-    }
+    void SetTest(Expression *test);
 
     [[nodiscard]] const Statement *Consequent() const noexcept
     {
@@ -62,6 +59,12 @@ public:
     [[nodiscard]] Statement *Consequent() noexcept
     {
         return consequent_;
+    }
+
+    void SetConsequent(Statement *consequent) noexcept
+    {
+        consequent_ = consequent;
+        consequent->SetParent(this);
     }
 
     [[nodiscard]] Statement *Alternate() noexcept

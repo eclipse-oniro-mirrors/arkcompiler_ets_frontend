@@ -183,10 +183,15 @@ public:
         newNode->overloadInfo_ = overloadInfo;
     }
 
-    void SetOverloads(OverloadsT &&overloads)
+    void SetOverloads(OverloadsT &&overloadsList)
     {
         auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
-        newNode->overloads_ = std::move(overloads);
+        auto &overloads = newNode->overloads_;
+        overloads = std::move(overloadsList);
+
+        for (auto *overload : overloads) {
+            overload->SetParent(newNode);
+        }
     }
 
     void AddOverload(MethodDefinition *const overload)

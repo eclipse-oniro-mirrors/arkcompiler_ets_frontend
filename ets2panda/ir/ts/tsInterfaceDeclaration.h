@@ -114,6 +114,8 @@ public:
         return GetHistoryNodeAs<TSInterfaceDeclaration>()->body_;
     }
 
+    void SetBody(TSInterfaceBody *body);
+
     Identifier *Id()
     {
         return GetHistoryNodeAs<TSInterfaceDeclaration>()->id_;
@@ -123,6 +125,8 @@ public:
     {
         return GetHistoryNodeAs<TSInterfaceDeclaration>()->id_;
     }
+
+    void SetId(Identifier *id);
 
     const util::StringView &InternalName() const
     {
@@ -150,6 +154,8 @@ public:
     {
         return GetHistoryNodeAs<TSInterfaceDeclaration>()->typeParams_;
     }
+
+    void SetTypeParams(TSTypeParameterDeclaration *typeParams);
 
     [[nodiscard]] const ArenaVector<TSInterfaceHeritage *> &Extends();
     [[nodiscard]] ArenaVector<TSInterfaceHeritage *> &ExtendsForUpdate();
@@ -198,13 +204,11 @@ public:
     void EmplaceExtends(TSInterfaceHeritage *extends);
     void ClearExtends();
     void SetValueExtends(TSInterfaceHeritage *extends, size_t index);
+    void SetExtends(ArenaVector<TSInterfaceHeritage *> &&extendsList);
 
 private:
     bool RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const;
     friend class SizeOfNodeTest;
-    void SetId(Identifier *id);
-    void SetTypeParams(TSTypeParameterDeclaration *typeParams);
-    void SetBody(TSInterfaceBody *body);
 
     varbinder::LocalScope *scope_ {nullptr};
     Identifier *id_;

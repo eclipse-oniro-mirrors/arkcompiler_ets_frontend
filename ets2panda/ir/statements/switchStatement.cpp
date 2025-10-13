@@ -22,6 +22,15 @@
 #include "ir/srcDump.h"
 
 namespace ark::es2panda::ir {
+void SwitchStatement::SetCases(ArenaVector<SwitchCaseStatement *> &&casesList)
+{
+    cases_ = std::move(casesList);
+
+    for (auto *case_ : cases_) {
+        case_->SetParent(this);
+    }
+}
+
 void SwitchStatement::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
     if (auto *transformedNode = cb(discriminant_); discriminant_ != transformedNode) {

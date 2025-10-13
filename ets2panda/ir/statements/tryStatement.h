@@ -79,10 +79,14 @@ public:
         return finalizer_;
     }
 
+    void SetFinallyBlock(BlockStatement *finallyBlock);
+
     BlockStatement *Block() const
     {
         return block_;
     }
+
+    void SetBlock(BlockStatement *block);
 
     std::pair<compiler::LabelPair, const Statement *> AddFinalizerInsertion(compiler::LabelPair insertion,
                                                                             const Statement *insertionStmt)
@@ -102,6 +106,8 @@ public:
     {
         return catchClauses_;
     }
+
+    void SetCatchClauses(ArenaVector<CatchClause *> &&catchClausesList);
 
     bool FinallyCanCompleteNormally() const
     {

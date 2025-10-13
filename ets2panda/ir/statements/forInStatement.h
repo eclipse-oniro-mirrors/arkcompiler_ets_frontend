@@ -42,6 +42,15 @@ public:
         return left_;
     }
 
+    void SetLeft(AstNode *left)
+    {
+        left_ = left;
+
+        if (left) {
+            left->SetParent(this);
+        }
+    }
+
     Expression *Right()
     {
         return right_;
@@ -52,6 +61,15 @@ public:
         return right_;
     }
 
+    void SetRight(Expression *right)
+    {
+        right_ = right;
+
+        if (right) {
+            right->SetParent(this);
+        }
+    }
+
     Statement *Body()
     {
         return body_;
@@ -60,6 +78,15 @@ public:
     const Statement *Body() const
     {
         return body_;
+    }
+
+    void SetBody(Statement *body)
+    {
+        body_ = body;
+
+        if (body) {
+            body->SetParent(this);
+        }
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;

@@ -24,7 +24,12 @@ namespace ark::es2panda::ir {
 
 void ETSTypeReference::SetPart(ETSTypeReferencePart *part)
 {
-    this->GetOrCreateHistoryNodeAs<ETSTypeReference>()->part_ = part;
+    auto newNode = this->GetOrCreateHistoryNodeAs<ETSTypeReference>();
+    newNode->part_ = part;
+
+    if (part != nullptr) {
+        part->SetParent(newNode);
+    }
 }
 
 void ETSTypeReference::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)

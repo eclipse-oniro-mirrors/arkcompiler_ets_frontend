@@ -35,7 +35,17 @@ void TSTypeAliasDeclaration::SetTypeParameters(TSTypeParameterDeclaration *typeP
 
 void TSTypeAliasDeclaration::SetId(Identifier *id)
 {
-    this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>()->id_ = id;
+    auto newNode = this->GetOrCreateHistoryNodeAs<TSTypeAliasDeclaration>();
+    newNode->id_ = id;
+    id->SetParent(newNode);
+}
+
+void TSTypeAliasDeclaration::SetTypeAnnotation(TypeNode *typeAnnotation)
+{
+    this->SetTsTypeAnnotation(typeAnnotation);
+    if (typeAnnotation != nullptr) {
+        typeAnnotation->SetParent(this);
+    }
 }
 
 void TSTypeAliasDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
