@@ -40,7 +40,7 @@ TEST_F(LspConvExpTests, ConvertExportRefactor1)
     size_t const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
-    size_t const position = 26;
+    size_t const position = 27;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     ark::es2panda::lsp::RefactorContext refactorContext;
@@ -63,7 +63,7 @@ TEST_F(LspConvExpTests, ConvertExportRefactor2)
     size_t const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
-    size_t const position = 24;
+    size_t const position = 25;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     ark::es2panda::lsp::RefactorContext refactorContext;
