@@ -5618,7 +5618,7 @@ export class Autofixer {
       newStatements.push(ts.factory.createReturnStatement(ts.factory.createTrue()));
     }
     const newBlock = ts.factory.createBlock(newStatements, true);
-    const text = this.printer.printNode(ts.EmitHint.Unspecified, newBlock, fn.getSourceFile());
+    const text = this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, newBlock, fn.getSourceFile());
     return [
       {
         start: fn.body.getStart(),
@@ -5659,7 +5659,7 @@ export class Autofixer {
     );
 
     const newCall = ts.factory.createCallExpression(newPropAccess, callExpr.typeArguments, newArgs);
-    const replacementText = this.printer.printNode(ts.EmitHint.Unspecified, newCall, callExpr.getSourceFile());
+    const replacementText = this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, newCall, callExpr.getSourceFile());
     return [{ start: callExpr.getStart(), end: callExpr.getEnd(), replacementText: replacementText }];
   }
 }

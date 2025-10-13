@@ -243,7 +243,7 @@ import {
 } from './utils/consts/OverloadCommon';
 import { initOverloadApiFixMap } from './utils/consts/OverloadCommon';
 import type { OverloadApiFixMap, OverloadInfo } from './utils/consts/OverloadCommon';
-import { OverloadBlacklistMap, TYPE_LITERAL } from './utils/consts/OverloadBlacklist';
+import { OverloadBlacklistMap, TYPE_LITERAL, SINGLEQUOTE } from './utils/consts/OverloadBlacklist';
 import { createOverloadMapKey, initializeOverloadBlacklistMap } from './utils/consts/OverloadBlacklist';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
@@ -5135,12 +5135,16 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
       const type = declaration.parameters[0].name.getText();
       if (type === TYPE_LITERAL) {
-        if (declaration.parameters[0].type?.getText() !== info.params[0].type) {
+        let declType = declaration.parameters[0].type?.getText();
+        if (declType && declType.startsWith(SINGLEQUOTE) && declType.endsWith(SINGLEQUOTE)) {
+          declType = declType.slice(1, -1);
+        }
+        if (declType !== info.params[0].type) {
           return false;
         }
       }
 
-      for (let i = 0; i <= declaration.parameters.length; i++) {
+      for (let i = 0; i < declaration.parameters.length; i++) {
         const declParam = declaration.parameters[i];
         const infoParam = info.params[i];
         if (declParam.name.getText() !== infoParam.name) {
