@@ -46,15 +46,6 @@ void ETSCompiler::Compile(const ir::CatchClause *st) const
     st->Body()->Compile(etsg);
 }
 
-void ETSCompiler::Compile(const ir::ClassFromExpression *expr) const
-{
-    ES2PANDA_ASSERT(!expr->TypeAnnotation()->TsType()->IsETSPrimitiveType());
-    ETSGen *etsg = GetETSGen();
-    etsg->SetAccumulatorType(expr->TypeAnnotation()->TsType());
-    etsg->EmitLdaType(expr, etsg->GetAccumulatorType()->ToAssemblerTypeWithRankView(etsg->Allocator()));
-    etsg->SetAccumulatorType(etsg->Checker()->GlobalBuiltinClassType());
-}
-
 void ETSCompiler::Compile(const ir::ClassProperty *st) const
 {
     ETSGen *etsg = GetETSGen();

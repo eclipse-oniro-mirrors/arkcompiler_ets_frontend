@@ -18,20 +18,30 @@
 
 namespace ark::es2panda::compiler {
 
+static constexpr std::string_view TYPE_REFERENCE_NAME = "typereference";
+
 static ir::AstNode *LowerToSyntheticFromNode([[maybe_unused]] public_lib::Context *const ctx, ir::CallExpression *call)
 {
     auto *allocator = ctx->Allocator();
     auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+
+    auto type = call->TypeParams()->Params()[0]->TsType();
+
+    auto typeNode = allocator->New<ir::OpaqueTypeNode>(
+        (type->IsETSVoidType() ? checker->GlobalETSAnyType() : checker->MaybeBoxType(type)), allocator);
+    typeNode->SetRange(call->TypeParams()->Params()[0]->Range());
 
     ES2PANDA_ASSERT(call->TypeParams()->Params().size() == 1U);
-    auto classFromExpr = util::NodeAllocator::ForceSetParent<ir::ClassFromExpression>(
-        allocator, call->TypeParams()->Params()[0]->Clone(allocator, nullptr));
-    classFromExpr->SetParent(call->Parent());
+    auto intrinsicExpr = util::NodeAllocator::ForceSetParent<ir::ETSIntrinsicNode>(
+        allocator, TYPE_REFERENCE_NAME, ArenaVector<ir::Expression *>({typeNode}, ctx->Allocator()->Adapter()));
+    intrinsicExpr->SetParent(call->Parent());
+    intrinsicExpr->SetRange(call->Range());
 
     auto *scope = NearestScope(call);
     auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, scope);
-    CheckLoweredNode(varbinder, ctx->GetChecker()->AsETSChecker(), classFromExpr);
-    return classFromExpr;
+    CheckLoweredNode(varbinder, ctx->GetChecker()->AsETSChecker(), intrinsicExpr);
+    return intrinsicExpr;
 }
 
 static bool IsCorrectFromCall(public_lib::Context *const ctx, ir::CallExpression *call)

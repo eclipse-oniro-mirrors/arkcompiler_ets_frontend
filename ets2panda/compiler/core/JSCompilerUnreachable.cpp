@@ -33,11 +33,6 @@ void JSCompiler::Compile([[maybe_unused]] const ir::ClassProperty *st) const
     ES2PANDA_UNREACHABLE();
 }
 
-void JSCompiler::Compile([[maybe_unused]] const ir::ClassFromExpression *st) const
-{
-    ES2PANDA_UNREACHABLE();
-}
-
 void JSCompiler::Compile([[maybe_unused]] const ir::ClassStaticBlock *st) const
 {
     ES2PANDA_UNREACHABLE();

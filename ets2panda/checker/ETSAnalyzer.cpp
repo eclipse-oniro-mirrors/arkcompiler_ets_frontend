@@ -148,23 +148,6 @@ static void CheckOverride(ir::ClassProperty *st, ETSChecker *checker)
     }
 }
 
-checker::Type *ETSAnalyzer::Check(ir::ClassFromExpression *expr) const
-{
-    if (expr->TsType() != nullptr) {
-        return expr->TsType();
-    }
-
-    ES2PANDA_ASSERT(expr->TypeAnnotation() != nullptr);
-    auto annotationType = expr->TypeAnnotation()->Check(GetETSChecker());
-    if (annotationType->IsETSNeverType() || annotationType->IsETSUndefinedType() ||
-        annotationType->IsETSTypeParameter() || annotationType->IsETSVoidType() ||
-        (annotationType->IsETSObjectType() && annotationType->AsETSObjectType()->IsGradual())) {
-        GetETSChecker()->LogError(diagnostic::TYPE_CANNOT_BE_USED_IN_FROM, {annotationType},
-                                  expr->TypeAnnotation()->Start());
-    }
-    return expr->SetTsType(GetETSChecker()->GlobalBuiltinClassType());
-}
-
 checker::Type *ETSAnalyzer::Check(ir::ClassProperty *st) const
 {
     if (st->TsType() != nullptr) {
