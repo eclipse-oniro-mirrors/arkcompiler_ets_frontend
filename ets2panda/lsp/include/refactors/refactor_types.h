@@ -93,6 +93,7 @@ namespace refactor_description {
 constexpr std::string_view CONVERT_FUNCTION_REFACTOR_DESC = "Convert arrow function or function expression";
 constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_DESC = "Convert to template string";
 constexpr std::string_view CONVERT_CHAIN_REFACTOR_DESC = "Convert to optional chain expression";
+constexpr std::string_view CONVERT_IMPORT_REFACTOR_DESC = "Convert to named import";
 constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_DESC =
     "Convert a standalone function, arrow function, or function expression into a class declaration";
 constexpr std::string_view INFER_FUNCTION_RETURN_TYPE_DESC = "Infer function return type";
