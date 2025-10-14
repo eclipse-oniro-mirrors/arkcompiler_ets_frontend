@@ -16,6 +16,7 @@
 import overloadBlacklist from '../../data/OverloadAPIBlacklist.json';
 
 export const TYPE_LITERAL = 'type';
+export const SINGLEQUOTE = "'";
 
 export type Parameter = {
   name: string;
@@ -42,7 +43,7 @@ export function initializeOverloadBlacklistMap(): OverloadBlacklistMap {
     const params = info.api_info.api_func_args;
     const fileName = info.file_path;
     const parentName = info.api_info.parent_api[0].api_name;
-    const key = createOverloadMapKey(api, fileName, parentName);
+    const key = createOverloadMapKey(api, parentName, fileName);
 
     const newBlacklistInfo = {
       fileName,
