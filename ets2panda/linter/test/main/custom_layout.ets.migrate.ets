@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-import { CustomLayout } from '@kit.ArkUI';
-
 import {
   Entry,
   Component,
@@ -30,6 +28,7 @@ import {
   ConstraintSizeOptions,
   Measurable,
   MeasureResult,
+  CustomLayout,
 } from '@kit.ArkUI';
 
 @Entry

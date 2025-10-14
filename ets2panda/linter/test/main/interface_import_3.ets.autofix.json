@@ -42,9 +42,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n} from '@kit.ArkUI';",
+                    "start": 707,
+                    "end": 742,
+                    "replacementText": "import {\n  window,\n  Entry,\n  Component,\n} from '@kit.ArkUI';",
                     "line": 42,
                     "column": 2,
                     "endLine": 42,
@@ -63,9 +63,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n} from '@kit.ArkUI';",
+                    "start": 707,
+                    "end": 742,
+                    "replacementText": "import {\n  window,\n  Entry,\n  Component,\n} from '@kit.ArkUI';",
                     "line": 42,
                     "column": 2,
                     "endLine": 42,

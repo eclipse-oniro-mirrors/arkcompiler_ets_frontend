@@ -9790,6 +9790,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   interfacesNeedToAlarm: ts.Identifier[] = [];
   interfacesNeedToImport: Set<string> = new Set<string>();
   interfacesAlreadyImported: Set<string> = new Set<string>();
+  firstImportDeclOfUIKit: ts.ImportDeclaration | undefined;
 
   private handleInterfaceImport(identifier: ts.Identifier): void {
     if (!this.options.arkts2) {
@@ -9896,6 +9897,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const autofix = this.autofixer?.fixInterfaceImport(
       this.interfacesNeedToImport,
       this.interfacesAlreadyImported,
+      this.firstImportDeclOfUIKit,
       sourceFile
     );
 
@@ -9908,15 +9910,23 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.interfacesNeedToAlarm = [];
     this.interfacesNeedToImport.clear();
     this.interfacesAlreadyImported.clear();
+    this.firstImportDeclOfUIKit = undefined;
   }
 
   private extractImportedNames(sourceFile: ts.SourceFile): void {
     if (!this.options.arkts2) {
       return;
     }
+
+    let isFirstImportDeclOfUIKit = false;
     for (const statement of sourceFile.statements) {
       if (!ts.isImportDeclaration(statement)) {
         continue;
+      }
+
+      if (TypeScriptLinter.isImportDeclOfUIKit(statement) && !this.firstImportDeclOfUIKit) {
+        this.firstImportDeclOfUIKit = statement;
+        isFirstImportDeclOfUIKit = true;
       }
 
       const importClause = statement.importClause;
@@ -9929,11 +9939,23 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         continue;
       }
 
-      for (const specifier of namedBindings.elements) {
-        const importedName = specifier.name.getText(sourceFile);
-        this.interfacesAlreadyImported.add(importedName);
+      if (this.firstImportDeclOfUIKit && isFirstImportDeclOfUIKit) {
+        for (const specifier of namedBindings.elements) {
+          const importedName = specifier.name.getText(sourceFile);
+          this.interfacesNeedToImport.add(importedName);
+          isFirstImportDeclOfUIKit = false;
+        }
+      } else {
+        for (const specifier of namedBindings.elements) {
+          const importedName = specifier.name.getText(sourceFile);
+          this.interfacesAlreadyImported.add(importedName);
+        }
       }
     }
+  }
+
+  private static isImportDeclOfUIKit(decl: ts.ImportDeclaration): boolean {
+    return ts.isStringLiteral(decl.moduleSpecifier) && decl.moduleSpecifier.text === ARKUI_MODULE;
   }
 
   private handleStylesDecorator(node: ts.Decorator): void {

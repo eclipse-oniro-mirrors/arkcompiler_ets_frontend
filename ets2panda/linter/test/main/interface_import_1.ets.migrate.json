@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 76,
+            "line": 75,
             "column": 5,
-            "endLine": 76,
+            "endLine": 75,
             "endColumn": 9,
             "problem": "FunctionContainsThis",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 77,
+            "line": 76,
             "column": 12,
-            "endLine": 77,
+            "endLine": 76,
             "endColumn": 16,
             "problem": "FunctionContainsThis",
             "suggest": "",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 75,
+            "line": 74,
             "column": 20,
-            "endLine": 75,
+            "endLine": 74,
             "endColumn": 24,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -45,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 75,
+            "line": 74,
             "column": 42,
-            "endLine": 75,
+            "endLine": 74,
             "endColumn": 46,
             "problem": "ThisType",
             "suggest": "",
@@ -55,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 82,
+            "line": 81,
             "column": 5,
-            "endLine": 82,
+            "endLine": 81,
             "endColumn": 9,
             "problem": "FunctionContainsThis",
             "suggest": "",
@@ -65,9 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 83,
+            "line": 82,
             "column": 12,
-            "endLine": 83,
+            "endLine": 82,
             "endColumn": 16,
             "problem": "FunctionContainsThis",
             "suggest": "",
@@ -75,9 +75,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 81,
+            "line": 80,
             "column": 26,
-            "endLine": 81,
+            "endLine": 80,
             "endColumn": 30,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -85,9 +85,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 81,
+            "line": 80,
             "column": 65,
-            "endLine": 81,
+            "endLine": 80,
             "endColumn": 69,
             "problem": "ThisType",
             "suggest": "",

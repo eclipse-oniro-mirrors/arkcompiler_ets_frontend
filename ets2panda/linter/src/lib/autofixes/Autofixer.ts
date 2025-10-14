@@ -3754,6 +3754,7 @@ export class Autofixer {
   fixInterfaceImport(
     interfacesNeedToImport: Set<string>,
     interfacesAlreadyImported: Set<string>,
+    importDecl: ts.ImportDeclaration | undefined,
     file: ts.SourceFile
   ): Autofix[] {
     const importSpecifiers: ts.ImportSpecifier[] = [];
@@ -3770,34 +3771,32 @@ export class Autofixer {
       ts.factory.createStringLiteral(ARKUI_MODULE, true),
       undefined
     );
-
-    const leadingComments = ts.getLeadingCommentRanges(file.getFullText(), 0);
+    let text = Autofixer.formatImportStatement(
+      this.printer.printNode(ts.EmitHint.Unspecified, importDeclaration, file)
+    );
+    if (importDecl) {
+      return [{ start: importDecl.getStart(), end: importDecl.getEnd(), replacementText: text }];
+    }
     let annotationEndLine = 0;
     let annotationEndPos = 0;
+    const leadingComments = ts.getLeadingCommentRanges(file.getFullText(), 0);
     if (leadingComments && leadingComments.length > 0) {
       annotationEndPos = leadingComments[leadingComments.length - 1].end;
       annotationEndLine = file.getLineAndCharacterOfPosition(annotationEndPos).line;
     }
-
     const stmt = file?.statements[0];
     const isUseStaticAtStart = stmt ? Autofixer.checkUseStaticAtStart(stmt) : false;
     annotationEndLine = isUseStaticAtStart ? file.getLineAndCharacterOfPosition(stmt.end).line : annotationEndLine;
     annotationEndPos = isUseStaticAtStart ? stmt.end : annotationEndPos;
-
-    let text = Autofixer.formatImportStatement(
-      this.printer.printNode(ts.EmitHint.Unspecified, importDeclaration, file)
-    );
     if (annotationEndPos !== 0) {
       text = this.getNewLine() + (isUseStaticAtStart ? '' : this.getNewLine()) + text;
     }
-
     const codeStartLine = isUseStaticAtStart ?
       annotationEndLine + 1 :
       file.getLineAndCharacterOfPosition(file.getStart()).line;
     for (let i = 2; i > codeStartLine - annotationEndLine; i--) {
       text = text + this.getNewLine();
     }
-
     return [{ start: annotationEndPos, end: annotationEndPos, replacementText: text }];
   }
 
@@ -3867,7 +3866,6 @@ export class Autofixer {
     );
 
     const updatedBlockText = Autofixer.getUpdatedBlock(block);
-
     const newBlock = ts.factory.createBlock([]);
     const parameDecl = ts.factory.createParameterDeclaration(
       undefined,
@@ -3936,7 +3934,11 @@ export class Autofixer {
     return [firstLine, ...middleLines, lastLine].join(this.getNewLine());
   }
 
-  private addAutofixFromCalls(calls: ts.Identifier[], autofix: Autofix[], argument: ts.Expression): void {
+  private addAutofixFromCalls(
+    calls: ts.Identifier[],
+    autofix: Autofix[],
+    argument: ts.Expression
+  ): void {
     calls.forEach((call) => {
       const callExpr = ts.factory.createCallExpression(
         ts.factory.createIdentifier(APPLY_STYLES_IDENTIFIER),

@@ -13,16 +13,9 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": [
-        {
-            "line": 119,
-            "column": 26,
-            "endLine": 127,
-            "endColumn": 6,
-            "problem": "LimitedReturnTypeInference",
-            "suggest": "",
-            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
-            "severity": "ERROR"
-        }
-    ]
+    "mode": {
+        "arkts2": "",
+        "autofix": "--arkts-2",
+        "migrate": "--arkts-2"
+    }
 }

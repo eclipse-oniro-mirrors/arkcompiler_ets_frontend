@@ -85,9 +85,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -106,9 +106,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -127,9 +127,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -148,9 +148,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -169,9 +169,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -190,9 +190,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -211,9 +211,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -232,9 +232,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -253,9 +253,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -274,9 +274,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -295,9 +295,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -316,9 +316,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -337,9 +337,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -358,9 +358,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,
@@ -379,9 +379,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
+                    "start": 605,
+                    "end": 641,
+                    "replacementText": "import {\n  Slider,\n  Entry,\n  Component,\n  State,\n  Column,\n  Button,\n  Text,\n  Row,\n  TextAttribute,\n  ColumnAttribute,\n  AnimatableExtend,\n  $$,\n  ImageFit,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 36,
                     "endLine": 86,

@@ -13,38 +13,16 @@
  * limitations under the License.
  */
 
-import { A } from './har'
-import { common2D } from '@kit.ArkGraphics2D'
-import Base from '@ohos.base'
-import {
-  window,
-  Entry,
-  Component,
-} from '@kit.ArkUI';
-
-A.getContext()
-
-A.b.getContext()
-
-A.getInstance().getContext()
-
-let a: A = new A()
-a.c.getContext()
-
-let c = a.c
-c.getContext()
-
-const err = (err: Base.BusinessError) => {}
-
-export const DEFAULT_WINDOW_SIZE: window.size = { width: 1280, height: 2580}
-
-function test (aa: common2D.Rect) {
-
-}
+import { Component} from '@kit.ArkUI';
+import { MyComponent } from './MyTest'
+import { UIUtils } from '@kit.ArkUI';
 
 @Entry
 @Component
-struct importTest {
+struct Index {
   build() {
+    Column() {
+      Text('Hello World')
+    }
   }
 }

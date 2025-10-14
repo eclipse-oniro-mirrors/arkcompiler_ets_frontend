@@ -21,6 +21,7 @@ export const ATTRIBUTE_SUFFIX = 'Attribute';
 export const INSTANCE_IDENTIFIER = 'instance';
 export const COMMON_METHOD_IDENTIFIER = 'CommonMethod';
 export const APPLY_STYLES_IDENTIFIER = 'applyStyles';
+export const CUSTOM_STYLES = 'CustomStyles';
 export const STATE_STYLES = 'stateStyles';
 export const VALUE_IDENTIFIER = 'value';
 export const INDENT_STEP = 2;
