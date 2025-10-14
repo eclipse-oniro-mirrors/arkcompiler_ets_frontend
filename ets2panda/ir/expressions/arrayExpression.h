@@ -124,7 +124,6 @@ public:
     {
         v->Accept(this);
     }
-    static std::optional<checker::Type *> ExtractPossiblePreferredType(checker::Type *type);
 
     void SetPreferredTypeOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
                                      checker::TypeRelationFlag flags);

@@ -1050,6 +1050,18 @@ static inline checker::Type *CheckElemUnder(checker::ETSChecker *checker, ir::Ex
     return t;
 }
 
+static bool CheckCandidateCompatibility(ETSChecker *checker, ir::ArrayExpression *arrayLiteral, Type *candElem)
+{
+    for (auto *el : arrayLiteral->Elements()) {
+        Type *elTy = CheckElemUnder(checker, el, candElem);
+        if (elTy == nullptr || !checker->Relation()->IsAssignableTo(elTy, candElem)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 static Type *SelectArrayPreferredTypeForLiteral(ETSChecker *checker, ir::ArrayExpression *arrayLiteral,
                                                 Type *contextualType)
 {
@@ -1066,6 +1078,12 @@ static Type *SelectArrayPreferredTypeForLiteral(ETSChecker *checker, ir::ArrayEx
         }
     }
 
+    std::vector<Type *> initialTypes;
+    initialTypes.reserve(arrayLiteral->Elements().size());
+    for (auto *el : arrayLiteral->Elements()) {
+        initialTypes.push_back(el->TsType());
+    }
+
     Type *selected = nullptr;
     Type *selectedElem = nullptr;
 
@@ -1077,15 +1095,10 @@ static Type *SelectArrayPreferredTypeForLiteral(ETSChecker *checker, ir::ArrayEx
         Type *candElem = checker->GetElementTypeOfArray(candidate);
         ES2PANDA_ASSERT(candElem != nullptr);
 
-        bool ok = true;
-        for (auto *el : arrayLiteral->Elements()) {
-            Type *elTy = CheckElemUnder(checker, el, candElem);
-            if (elTy == nullptr || !checker->Relation()->IsAssignableTo(elTy, candElem)) {
-                ok = false;
-                break;
+        if (!CheckCandidateCompatibility(checker, arrayLiteral, candElem)) {
+            for (size_t i = 0; i < arrayLiteral->Elements().size(); ++i) {
+                arrayLiteral->Elements()[i]->SetTsType(initialTypes[i]);
             }
-        }
-        if (!ok) {
             continue;
         }
 

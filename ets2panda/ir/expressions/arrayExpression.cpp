@@ -354,7 +354,7 @@ checker::VerifiedType ArrayExpression::Check(checker::ETSChecker *checker)
     return {this, checker->GetAnalyzer()->Check(this)};
 }
 
-std::optional<checker::Type *> ArrayExpression::ExtractPossiblePreferredType(checker::Type *type)
+static std::optional<checker::Type *> ExtractPossiblePreferredType(checker::Type *type)
 {
     ES2PANDA_ASSERT(type);
     if (type->IsETSArrayType() || type->IsETSTupleType() || type->IsETSResizableArrayType()) {
