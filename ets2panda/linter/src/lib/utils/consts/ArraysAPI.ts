@@ -53,3 +53,5 @@ export enum ArrayAsCastResult {
   REPORT,
   MATCH
 }
+
+export const NEVER_ARRAY = 'never[]';
