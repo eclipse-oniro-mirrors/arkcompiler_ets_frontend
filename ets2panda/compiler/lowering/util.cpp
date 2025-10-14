@@ -129,7 +129,7 @@ void ClearTypesVariablesAndScopes(ir::AstNode *node) noexcept
         if (nn->IsIdentifier()) {
             nn->AsIdentifier()->SetVariable(nullptr);
         }
-        if (!nn->IsETSTypeReference()) {
+        if (!nn->IsETSTypeReference() && !nn->IsLabelledStatement()) {
             nn->Iterate([&](ir::AstNode *child) { doNode(child); });
         }
     };
