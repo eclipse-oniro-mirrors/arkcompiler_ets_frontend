@@ -51,7 +51,7 @@ struct VariableInfo {
 class ConvertFunctionRefactor : public Refactor {
 public:
     ConvertFunctionRefactor();
-    ApplicableRefactorInfo GetAvailableActions(const RefactorContext &context) const override;
+    std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &context) const override;
     std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
                                                         const std::string &actionName) const override;
 };

@@ -18,7 +18,7 @@
 
 #include "refactor_types.h"
 namespace ark::es2panda::lsp {
-constexpr RefactorActionView TO_OPTIONAL_CHAIN_ACTION {"Convert to optional chain expression",
+constexpr RefactorActionView TO_OPTIONAL_CHAIN_ACTION {"convert_to_optional_chain_expression",
                                                        "Convert logical AND/conditional chains to optional chaining",
                                                        "refactor.rewrite.expression.optionalChain"};
 
@@ -41,7 +41,7 @@ public:
      * @brief Determines whether the `"Convert to optional chain expression"`
      *        action is available at the current selection.
      */
-    ApplicableRefactorInfo GetAvailableActions(const RefactorContext &context) const override;
+    std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &context) const override;
 
     /**
      * @brief Produces edits that replace the original logical/conditional chain

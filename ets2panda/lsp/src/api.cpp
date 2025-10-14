@@ -409,14 +409,22 @@ LineAndCharacter ToLineColumnOffsetWrapper(es2panda_Context *context, size_t pos
 
 // Returns type of refactoring and action that can be performed based
 // on the input kind information and cursor position
-std::vector<ApplicableRefactorInfo> GetApplicableRefactors(es2panda_Context *context, const char *kind, size_t position)
+std::vector<ApplicableRefactorInfo> GetApplicableRefactors(es2panda_Context *context, const char *kind, size_t startPos,
+                                                           size_t endPos)
 {
     RefactorContext refactorContext;
     refactorContext.context = context;
     refactorContext.kind = kind;
-    refactorContext.span.pos = position;
+    refactorContext.span.pos = startPos;
+    refactorContext.span.end = endPos;
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     return result;
+}
+
+std::unique_ptr<ark::es2panda::lsp::RefactorEditInfo> GetEditsForRefactor(
+    const ark::es2panda::lsp::RefactorContext &context, const std::string &refactorName, const std::string &actionName)
+{
+    return ark::es2panda::lsp::GetEditsForRefactorsImpl(context, refactorName, actionName);
 }
 
 std::vector<ark::es2panda::lsp::TodoComment> GetTodoComments(
@@ -608,6 +616,7 @@ ark::es2panda::lsp::RenameLocation FindRenameLocationsFromNode(es2panda_Context 
 
 LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetApplicableRefactors,
+                    GetEditsForRefactor,
                     GetImplementationAtPosition,
                     IsPackageModule,
                     GetAliasScriptElementKind,

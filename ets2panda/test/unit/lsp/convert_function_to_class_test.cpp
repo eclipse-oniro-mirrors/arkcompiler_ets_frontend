@@ -33,7 +33,7 @@ namespace {
 class LSPConvertFunctionToClass : public LSPAPITests {
 public:
     static constexpr std::string_view kKind = "refactor.rewrite.function.to.class";
-    static constexpr std::string_view kActionName = "Convert to Class";
+    static constexpr std::string_view kActionName = "convert_to_class";
     // Named sentinel for "caret at start-of-file" to avoid magic number 0.
     static constexpr size_t kCaretAtStart = 0;
 
@@ -106,7 +106,10 @@ TEST_F(LSPConvertFunctionToClass, DoesNotOfferAction_WhenCursorOutsideIdentifier
 
     ark::es2panda::lsp::ConvertFunctionToClassRefactor refactor;
     auto avail = refactor.GetAvailableActions(refCtx);
-    EXPECT_TRUE(avail.action.kind.empty()) << "No action should be offered outside identifier.";
+    EXPECT_TRUE(avail.empty());
+    if (!avail.empty()) {
+        EXPECT_TRUE(avail[0].action.kind.empty());
+    }
 
     initializer.DestroyContext(ctx);
 }
@@ -157,9 +160,10 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_OnArrowWithParams_WhenSelectingId
 
     ark::es2panda::lsp::ConvertFunctionToClassRefactor refactor;
     auto avail = refactor.GetAvailableActions(rc);
-    ASSERT_FALSE(avail.action.kind.empty());
-    EXPECT_EQ(avail.action.name, std::string(kActionName));
-    EXPECT_EQ(avail.action.kind, std::string(kKind));
+    EXPECT_FALSE(avail.empty());
+    ASSERT_FALSE(avail[0].action.kind.empty());
+    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
+    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
 
     initializer.DestroyContext(ctx);
 }
@@ -186,8 +190,9 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_WithRangeSelectionCoveringIdentif
 
     ark::es2panda::lsp::ConvertFunctionToClassRefactor refactor;
     auto avail = refactor.GetAvailableActions(rc);
-    ASSERT_FALSE(avail.action.kind.empty());
-    EXPECT_EQ(avail.action.name, std::string(kActionName));
+    ASSERT_FALSE(avail.empty());
+    ASSERT_FALSE(avail[0].action.kind.empty());
+    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
 
     initializer.DestroyContext(ctx);
 }
@@ -209,9 +214,10 @@ TEST_F(LSPConvertFunctionToClass, DoesNotOfferAction_OnNonFunctionVariable)
 
     ark::es2panda::lsp::ConvertFunctionToClassRefactor refactor;
     auto avail = refactor.GetAvailableActions(rc);
-
-    EXPECT_TRUE(avail.action.kind.empty()) << "Should not offer on non-function initializer.";
-
+    EXPECT_TRUE(avail.empty());
+    if (!avail.empty()) {
+        EXPECT_TRUE(avail[0].action.kind.empty());
+    }
     initializer.DestroyContext(ctx);
 }
 
@@ -233,9 +239,10 @@ TEST_F(LSPConvertFunctionToClass, DoesNotOfferAction_WhenSelectingInsideInitiali
 
     ark::es2panda::lsp::ConvertFunctionToClassRefactor refactor;
     auto avail = refactor.GetAvailableActions(rc);
-
-    EXPECT_TRUE(avail.action.kind.empty()) << "Should not offer when selection is in the initializer, not the name.";
-
+    EXPECT_TRUE(avail.empty());
+    if (!avail.empty()) {
+        EXPECT_TRUE(avail[0].action.kind.empty());
+    }
     initializer.DestroyContext(ctx);
 }
 
@@ -256,9 +263,10 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_OnTypedFunctionDeclaration_WhenSe
 
     ark::es2panda::lsp::ConvertFunctionToClassRefactor refactor;
     auto avail = refactor.GetAvailableActions(rc);
-    ASSERT_FALSE(avail.action.kind.empty());
-    EXPECT_EQ(avail.action.name, std::string(kActionName));
-    EXPECT_EQ(avail.action.kind, std::string(kKind));
+    ASSERT_FALSE(avail.empty());
+    ASSERT_FALSE(avail[0].action.kind.empty());
+    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
+    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
 
     initializer.DestroyContext(ctx);
 }
@@ -278,8 +286,9 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_OnArrowVar_WhenSelectingIdent)
 
     ConvertFunctionToClassRefactor ref;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, pos));
-    EXPECT_EQ(avail.action.kind, std::string(kKind));
-    EXPECT_EQ(avail.action.name, std::string(kActionName));
+    ASSERT_FALSE(avail.empty());
+    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
+    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
 
     init.DestroyContext(ctx);
 }
@@ -299,8 +308,9 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_OnFunctionDecl_WhenSelectingName)
 
     ConvertFunctionToClassRefactor ref;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, pos));
-    EXPECT_EQ(avail.action.kind, std::string(kKind));
-    EXPECT_EQ(avail.action.name, std::string(kActionName));
+    EXPECT_FALSE(avail.empty());
+    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
+    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
 
     init.DestroyContext(ctx);
 }
@@ -317,7 +327,10 @@ TEST_F(LSPConvertFunctionToClass, NoAction_WhenCursorNotOnIdentifier)
 
     ConvertFunctionToClassRefactor ref;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, LSPConvertFunctionToClass::kCaretAtStart));
-    EXPECT_TRUE(avail.action.kind.empty());
+    EXPECT_TRUE(avail.empty());
+    if (!avail.empty()) {
+        EXPECT_TRUE(avail[0].action.kind.empty());
+    }
 
     init.DestroyContext(ctx);
 }

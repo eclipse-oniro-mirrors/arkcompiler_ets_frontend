@@ -55,6 +55,7 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor1)
     refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
     ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
@@ -86,6 +87,7 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor2)
     refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
     ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
@@ -116,6 +118,7 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor3)
     refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
     ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
@@ -146,6 +149,7 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor4)
     refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
     ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
@@ -175,6 +179,7 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor5)
     refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
     ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
@@ -206,6 +211,7 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor6)
     refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
     ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
@@ -234,6 +240,7 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor7)
     refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
     ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
@@ -262,6 +269,7 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor8)
     refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
     ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
@@ -292,6 +300,7 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor9)
     refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
     ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,

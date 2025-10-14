@@ -58,6 +58,7 @@ function main(): void {
     refactorContext.context = ctx;
     refactorContext.kind = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.kind);
     refactorContext.span.pos = kPositionInFunctionName;
+    refactorContext.span.end = kPositionInFunctionName;
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
@@ -106,10 +107,11 @@ function main(): void {
     refactorContext.context = ctx;
     refactorContext.kind = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.kind);
     refactorContext.span.pos = kPositionInMethodName;
+    refactorContext.span.end = kPositionInMethodName;
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
-    constexpr size_t kExpectedRefactorCount = 1;
+    constexpr size_t kExpectedRefactorCount = 2;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 
     ConvertParamsToObjectRefactor refactor;
@@ -148,6 +150,7 @@ function main(): void {
     refactorContext.context = ctx;
     refactorContext.kind = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.kind);
     refactorContext.span.pos = kPositionInFunctionName;
+    refactorContext.span.end = kPositionInFunctionName;
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
@@ -182,6 +185,7 @@ function greet(name: string): void {
     refactorContext.context = ctx;
     refactorContext.kind = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.kind);
     refactorContext.span.pos = kPositionInFunctionName;
+    refactorContext.span.end = kPositionInFunctionName;
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
@@ -223,7 +227,7 @@ function main(): void {
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
-    constexpr size_t kExpectedRefactorCount = 1;
+    constexpr size_t kExpectedRefactorCount = 2;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 
     initializer.DestroyContext(ctx);

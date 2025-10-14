@@ -52,7 +52,7 @@ export default const Identifier = 42;
     refactorContext.span.pos = pos;
     refactorContext.span.end = pos;
     auto applicable = ref.GetAvailableActions(refactorContext);
-    ASSERT_EQ(applicable.action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
+    ASSERT_EQ(applicable[0].action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
 
     ark::es2panda::lsp::FormatCodeSettings settings;
     TextChangesContext tcc = {{}, ark::es2panda::lsp::GetFormatContext(settings), {}};
@@ -101,7 +101,7 @@ export default function foo() {}
     refactorContext.span.pos = pos;
     refactorContext.span.end = pos;
     auto applicable = ref.GetAvailableActions(refactorContext);
-    ASSERT_EQ(applicable.action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
+    ASSERT_EQ(applicable[0].action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
 
     ark::es2panda::lsp::FormatCodeSettings settings;
     TextChangesContext tcc = {{}, ark::es2panda::lsp::GetFormatContext(settings), {}};
@@ -150,7 +150,7 @@ export default class SomeClass{}
     refactorContext.span.pos = pos;
     refactorContext.span.end = pos;
     auto applicable = refactor.GetAvailableActions(refactorContext);
-    ASSERT_EQ(applicable.action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
+    ASSERT_EQ(applicable[0].action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
 
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
@@ -199,7 +199,7 @@ export default class SomeClass {}
     refactorContext.span.pos = pos;
     refactorContext.span.end = pos;
     auto applicable = refactor.GetAvailableActions(refactorContext);
-    ASSERT_EQ(applicable.action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
+    ASSERT_EQ(applicable[0].action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
 
     ark::es2panda::lsp::FormatCodeSettings settings;
     TextChangesContext tcc = {{}, ark::es2panda::lsp::GetFormatContext(settings), {}};
@@ -251,7 +251,7 @@ export default SomeClass;
     refactorContext.span.pos = pos;
     refactorContext.span.end = pos;
     auto applicable = refactor.GetAvailableActions(refactorContext);
-    ASSERT_EQ(applicable.action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
+    ASSERT_EQ(applicable[0].action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
 
     ark::es2panda::lsp::FormatCodeSettings settings;
     TextChangesContext tcc = {{}, ark::es2panda::lsp::GetFormatContext(settings), {}};
@@ -305,7 +305,7 @@ export const b = 2;
     refactorContext.span.pos = pos;
     refactorContext.span.end = pos;
     auto applicable = refactor.GetAvailableActions(refactorContext);
-    ASSERT_EQ(applicable.action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
+    ASSERT_EQ(applicable[0].action.kind, ark::es2panda::lsp::TO_NAMED_IMPORT_ACTION.kind);
     ark::es2panda::lsp::FormatCodeSettings settings;
     TextChangesContext tcc = {{}, ark::es2panda::lsp::GetFormatContext(settings), {}};
 

@@ -26,7 +26,7 @@ constexpr RefactorActionView TO_GENERATE_CONSTRUCTOR_ACTION = {"Generate constru
 class GenerateConstructorRefactor : public Refactor {
 public:
     GenerateConstructorRefactor();
-    ApplicableRefactorInfo GetAvailableActions(const RefactorContext &context) const override;
+    std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &context) const override;
     std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
                                                         const std::string &actionName) const override;
 };

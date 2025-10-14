@@ -1140,6 +1140,45 @@ export const basicCases: TestCases = {
     return a + b;
 }`}]
   },
+  getEditsForRefactor: {
+    expectedFilePath: resolveTestPath('test/expected/getEditsForRefactor.json'),
+    '1': [
+      resolveTestPath('test/testcases/getEditsForRefactor/ExportFile1.ets'),
+      "ConvertExportRefactor",
+      "toDefaultExport",
+      618,
+      618
+    ],
+    '2': [
+      resolveTestPath('test/testcases/getEditsForRefactor/ExportFile2.ets'),
+      "ConvertExportRefactor",
+      "toNamedExport",
+      625,
+      625
+    ],
+    '3': [
+      resolveTestPath('test/testcases/getEditsForRefactor/ExtractConstant3.ets'),
+      "ExtractSymbolRefactor",
+      "extract_constant_scope_0",
+      675,
+      695
+    ],
+    '4': [
+      resolveTestPath('test/testcases/getEditsForRefactor/ExtractFunction4.ets'),
+      "ExtractSymbolRefactor",
+      "extract_function_scope_0",
+      675,
+      695
+    ],
+    '5': [
+      resolveTestPath('test/testcases/getEditsForRefactor/ExtractInterface.ets'),
+      "ExtractTypeRefactor",
+      "extract_interface",
+      641,
+      664
+
+    ]
+  },
   deleteFromFilesMap: {
     expectedFilePath: '',
     '1': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition1.ets')]

@@ -33,12 +33,13 @@ ConvertTemplateRefactor::ConvertTemplateRefactor()
     AddKind(std::string(TO_NAMED_TEMPLATE_ACTION.kind));
 }
 
-ApplicableRefactorInfo ConvertTemplateRefactor::GetAvailableActions(const RefactorContext &refContext) const
+std::vector<ApplicableRefactorInfo> ConvertTemplateRefactor::GetAvailableActions(
+    const RefactorContext &refContext) const
 {
+    ApplicableRefactorInfo applicableRef;
+    std::vector<ApplicableRefactorInfo> res;
     es2panda_Context *context = refContext.context;
     size_t position = refContext.span.pos;
-
-    ApplicableRefactorInfo res;
 
     if (!IsKind(refContext.kind)) {
         return res;
@@ -50,11 +51,12 @@ ApplicableRefactorInfo ConvertTemplateRefactor::GetAvailableActions(const Refact
 
     if (node != nullptr && node->Parent() != nullptr &&
         (node->Parent()->IsExpression() && node->Parent()->IsBinaryExpression())) {
-        res.name = refactor_name::CONVERT_TEMPLATE_REFACTOR_NAME;
-        res.description = refactor_description::CONVERT_TEMPLATE_REFACTOR_DESC;
-        res.action.kind = std::string(TO_NAMED_TEMPLATE_ACTION.kind);
-        res.action.name = std::string(TO_NAMED_TEMPLATE_ACTION.name);
-        res.action.description = std::string(TO_NAMED_TEMPLATE_ACTION.description);
+        applicableRef.name = refactor_name::CONVERT_TEMPLATE_REFACTOR_NAME;
+        applicableRef.description = refactor_description::CONVERT_TEMPLATE_REFACTOR_DESC;
+        applicableRef.action.kind = std::string(TO_NAMED_TEMPLATE_ACTION.kind);
+        applicableRef.action.name = std::string(TO_NAMED_TEMPLATE_ACTION.name);
+        applicableRef.action.description = std::string(TO_NAMED_TEMPLATE_ACTION.description);
+        res.push_back(applicableRef);
     }
 
     return res;
@@ -130,7 +132,7 @@ RefactorEditInfo ConvertToTemplateString(const ir::AstNode *node)
     FileTextChanges fileTextChanges;
     fileTextChanges.fileName = std::string(node->Range().start.Program()->SourceFile().GetAbsolutePath().Utf8());
     fileTextChanges.textChanges.push_back(textChange);
-    res.GetFileTextChanges().push_back(fileTextChanges);
+    res.AddFileTextChange(fileTextChanges);
     return res;
 }
 

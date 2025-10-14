@@ -54,6 +54,7 @@ protected:
         refactorContext.textChangesContext = &textChangeContext;
         refactorContext.kind = std::string(ark::es2panda::lsp::TO_GENERATE_CONSTRUCTOR_ACTION.kind);
         refactorContext.span.pos = cursorPosition;
+        refactorContext.span.end = refactorContext.span.pos;
 
         ark::es2panda::lsp::ChangeTracker changeTracker =
             ark::es2panda::lsp::ChangeTracker::FromContext(textChangeContext);

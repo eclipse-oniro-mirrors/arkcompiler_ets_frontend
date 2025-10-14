@@ -28,6 +28,7 @@
 #include "lsp/include/refactors/convert_chain.h"
 #include "lsp/include/refactors/refactor_types.h"
 #include "lsp/include/services/text_change/change_tracker.h"
+#include "refactor_provider.h"
 
 /**
  * @file convert_chain.cpp
@@ -78,7 +79,7 @@ inline std::string ToStdString(const Sv &v)
 inline const SourceFile *GetSourceFile(const RefactorContext &ctx)
 {
     auto *pub = reinterpret_cast<public_lib::Context *>(ctx.context);
-    return pub ? pub->sourceFile : nullptr;
+    return (pub != nullptr) ? pub->sourceFile : nullptr;
 }
 
 inline ir::Expression *SkipParens(ir::Expression *e)
@@ -88,7 +89,7 @@ inline ir::Expression *SkipParens(ir::Expression *e)
 
 inline ir::Expression *GetObjectOf(ir::Expression *e)
 {
-    if (!e) {
+    if (e == nullptr) {
         return nullptr;
     }
     if (e->IsMemberExpression()) {
@@ -102,7 +103,7 @@ inline ir::Expression *GetObjectOf(ir::Expression *e)
 
 inline bool IsOptionalChainNode(const ir::Expression *e)
 {
-    if (!e) {
+    if (e == nullptr) {
         return false;
     }
     if (e->IsMemberExpression()) {
@@ -117,7 +118,7 @@ inline bool IsOptionalChainNode(const ir::Expression *e)
 static bool IsLogicalAndBetween(const RefactorContext &ctx, const ir::AstNode *l, const ir::AstNode *r)
 {
     const SourceFile *sf = GetSourceFile(ctx);
-    if (!sf) {
+    if (sf == nullptr) {
         return false;
     }
 
@@ -131,7 +132,7 @@ static bool IsLogicalAndBetween(const RefactorContext &ctx, const ir::AstNode *l
     return mid.find("&&") != std::string_view::npos;
 }
 
-static ir::Expression *OutermostAccessOrCall(ir::Expression *e)
+ir::Expression *OutermostAccessOrCall(ir::Expression *e)
 {
     if (e == nullptr) {
         return nullptr;
@@ -155,9 +156,9 @@ static ir::Expression *OutermostAccessOrCall(ir::Expression *e)
     return n->AsExpression();
 }
 
-static bool IsCandidateRoot(const ir::AstNode *n)
+bool IsCandidateRoot(const ir::AstNode *n)
 {
-    if (!n) {
+    if (n == nullptr) {
         return false;
     }
     if (n->IsBinaryExpression()) {
@@ -169,11 +170,11 @@ static bool IsCandidateRoot(const ir::AstNode *n)
     return false;
 }
 
-static ir::AstNode *LeastAncestorRootCovering(ir::AstNode *tok, const TextRange &span)
+ir::AstNode *LeastAncestorRootCovering(ir::AstNode *tok, const TextRange &span)
 {
     ir::AstNode *nearest = nullptr;
 
-    for (ir::AstNode *cur = tok; cur; cur = cur->Parent()) {
+    for (ir::AstNode *cur = tok; cur != nullptr; cur = cur->Parent()) {
         if (!IsCandidateRoot(cur)) {
             continue;
         }
@@ -188,7 +189,7 @@ static ir::AstNode *LeastAncestorRootCovering(ir::AstNode *tok, const TextRange 
     return nearest;
 }
 
-static ir::BinaryExpression *OutermostAndChain(const RefactorContext &ctx, ir::BinaryExpression *be)
+ir::BinaryExpression *OutermostAndChain(const RefactorContext &ctx, ir::BinaryExpression *be)
 {
     if (be == nullptr) {
         return nullptr;
@@ -213,24 +214,24 @@ static ir::BinaryExpression *OutermostAndChain(const RefactorContext &ctx, ir::B
     return cur;
 }
 
-static bool ChainStartsWith(ir::Expression *chain, ir::Expression *sub)
+bool ChainStartsWith(ir::Expression *chain, ir::Expression *sub)
 {
     ir::Expression *c = chain;
-    while (c && (c->IsCallExpression() || c->IsMemberExpression())) {
+    while (c != nullptr && (c->IsCallExpression() || c->IsMemberExpression())) {
         if (c->DumpEtsSrc() == sub->DumpEtsSrc()) {
             break;
         }
         c = GetObjectOf(c);
     }
     ir::Expression *s = sub;
-    while (c && s && c->IsMemberExpression() && s->IsMemberExpression()) {
+    while (c != nullptr && s != nullptr && c->IsMemberExpression() && s->IsMemberExpression()) {
         if (c->DumpEtsSrc() != s->DumpEtsSrc()) {
             return false;
         }
         c = GetObjectOf(c);
         s = GetObjectOf(s);
     }
-    if (!c || !s) {
+    if (c == nullptr || s == nullptr) {
         return false;
     }
     if (!c->IsIdentifier() || !s->IsIdentifier()) {
@@ -241,7 +242,7 @@ static bool ChainStartsWith(ir::Expression *chain, ir::Expression *sub)
 
 static ir::Expression *GetMatchingStart(ir::Expression *chain, ir::Expression *sub)
 {
-    if (!sub) {
+    if (sub == nullptr) {
         return nullptr;
     }
     if (!(sub->IsIdentifier() || sub->IsMemberExpression())) {
@@ -253,7 +254,7 @@ static ir::Expression *GetMatchingStart(ir::Expression *chain, ir::Expression *s
 static ir::Expression *FinalAccessInChain(ir::Expression *node)
 {
     ir::Expression *cur = SkipParens(node);
-    if (!cur) {
+    if (cur == nullptr) {
         return nullptr;
     }
     if (cur->IsBinaryExpression()) {
@@ -265,12 +266,12 @@ static ir::Expression *FinalAccessInChain(ir::Expression *node)
     return nullptr;
 }
 
-static std::vector<ir::Expression *> CollectOccurrences(const RefactorContext &ctx, ir::Expression *matchTo,
-                                                        ir::Expression *expr)
+std::vector<ir::Expression *> CollectOccurrences(const RefactorContext &ctx, ir::Expression *matchTo,
+                                                 ir::Expression *expr)
 {
     std::vector<ir::Expression *> occ;
     ir::Expression *lhs = expr;
-    while (lhs && lhs->IsBinaryExpression()) {
+    while (lhs != nullptr && lhs->IsBinaryExpression()) {
         auto *be = lhs->AsBinaryExpression();
         if (!IsLogicalAndBetween(ctx, be->Left(), be->Right())) {
             break;
@@ -285,13 +286,13 @@ static std::vector<ir::Expression *> CollectOccurrences(const RefactorContext &c
         lhs = be->Left();
     }
     ir::Expression *finalMatch = GetMatchingStart(matchTo, lhs);
-    if (finalMatch) {
+    if (finalMatch != nullptr) {
         occ.push_back(finalMatch);
     }
     return occ;
 }
 
-static std::string ArgumentsToSrc(const ir::CallExpression *call)
+std::string ArgumentsToSrc(const ir::CallExpression *call)
 {
     std::string s;
     const auto &args = call->Arguments();
@@ -304,7 +305,7 @@ static std::string ArgumentsToSrc(const ir::CallExpression *call)
     return s;
 }
 
-static std::vector<ir::Expression *> BuildChainFromFinal(ir::Expression *finalExpr)
+std::vector<ir::Expression *> BuildChainFromFinal(ir::Expression *finalExpr)
 {
     std::vector<ir::Expression *> chain;
     for (ir::Expression *cur = finalExpr; cur; cur = GetObjectOf(cur)) {
@@ -317,19 +318,19 @@ static std::vector<ir::Expression *> BuildChainFromFinal(ir::Expression *finalEx
     return chain;
 }
 
-static void EmitMemberHop(std::string &out, const ir::MemberExpression *m)
+void EmitMemberHop(std::string &out, const ir::MemberExpression *m)
 {
     if (m->IsComputed()) {
         out += "?[";
-        out += (m->Property() ? m->Property()->DumpEtsSrc() : "?");
+        out += ((m->Property() != nullptr) ? m->Property()->DumpEtsSrc() : "?");
         out += "]";
         return;
     }
     out += "?.";
-    out += (m->Property() ? m->Property()->DumpEtsSrc() : "?");
+    out += ((m->Property() != nullptr) ? m->Property()->DumpEtsSrc() : "?");
 }
 
-static void EmitCallHop(std::string &out, const ir::CallExpression *c)
+void EmitCallHop(std::string &out, const ir::CallExpression *c)
 {
     out += "?.(";
     out += ArgumentsToSrc(c);
@@ -363,7 +364,7 @@ static std::string ConvertChainToOptional(ir::Expression *finalExpr)
 static TargetInfo ResolveBinaryTarget(const RefactorContext &ctx, ir::BinaryExpression *rootBe)
 {
     TargetInfo out {};
-    if (!rootBe) {
+    if (rootBe == nullptr) {
         return out;
     }
     if (!IsLogicalAndBetween(ctx, rootBe->Left(), rootBe->Right())) {
@@ -372,7 +373,7 @@ static TargetInfo ResolveBinaryTarget(const RefactorContext &ctx, ir::BinaryExpr
 
     ir::BinaryExpression *be = OutermostAndChain(ctx, rootBe);
     ir::Expression *finalExpr = FinalAccessInChain(be->Right());
-    if (!finalExpr) {
+    if (finalExpr == nullptr) {
         return out;
     }
 
@@ -390,7 +391,7 @@ static TargetInfo ResolveBinaryTarget(const RefactorContext &ctx, ir::BinaryExpr
 static TargetInfo ResolveConditionalTarget(const RefactorContext &ctx, ir::ConditionalExpression *ce)
 {
     TargetInfo out {};
-    if (!ce) {
+    if (ce == nullptr) {
         return out;
     }
 
@@ -400,7 +401,7 @@ static TargetInfo ResolveConditionalTarget(const RefactorContext &ctx, ir::Condi
     }
 
     ir::Expression *test = ce->Test()->AsExpression();
-    if (test->IsIdentifier() || test->IsMemberExpression()) {
+    if (test != nullptr && (test->IsIdentifier() || test->IsMemberExpression())) {
         if (GetMatchingStart(finalExpr, test)) {
             out.expr = ce->AsExpression();
             out.finalExpr = finalExpr;
@@ -421,16 +422,16 @@ static TargetInfo ResolveConditionalTarget(const RefactorContext &ctx, ir::Condi
     return out;
 }
 
-static TargetInfo ResolveTarget(const RefactorContext &ctx)
+TargetInfo ResolveTarget(const RefactorContext &ctx)
 {
     TargetInfo out {};
     ir::AstNode *tok = GetTouchingToken(ctx.context, ctx.span.pos, false);
-    if (!tok) {
+    if (tok == nullptr) {
         return out;
     }
 
     ir::AstNode *root = LeastAncestorRootCovering(tok, ctx.span);
-    if (!root) {
+    if (root == nullptr) {
         return out;
     }
 
@@ -443,7 +444,7 @@ static TargetInfo ResolveTarget(const RefactorContext &ctx)
     return out;
 }
 
-static std::string BuildReplacement(const RefactorContext &, const TargetInfo &tgt)
+std::string BuildReplacement([[maybe_unused]] const RefactorContext &ctx, const TargetInfo &tgt)
 {
     std::string converted = ConvertChainToOptional(tgt.finalExpr);
     if (tgt.expr->IsBinaryExpression()) {
@@ -451,21 +452,21 @@ static std::string BuildReplacement(const RefactorContext &, const TargetInfo &t
     }
     if (tgt.expr->IsConditionalExpression()) {
         auto *ce = tgt.expr->AsConditionalExpression();
-        std::string rhs = ce->Alternate() ? ce->Alternate()->DumpEtsSrc() : "undefined";
+        std::string rhs = (ce->Alternate() != nullptr) ? ce->Alternate()->DumpEtsSrc() : "undefined";
         return converted + " ?? " + rhs;
     }
     return converted;
 }
 
-static std::vector<FileTextChanges> ReplaceWholeNode(ir::AstNode *node, const std::string &text)
+std::vector<FileTextChanges> ReplaceWholeNode(ir::AstNode *node, const std::string &text)
 {
     std::vector<FileTextChanges> out;
-    if (!node) {
+    if (node == nullptr) {
         return out;
     }
 
     ir::AstNode *boundary = ChangeTracker::ToEditBoundary(node);
-    if (!boundary) {
+    if (boundary == nullptr) {
         boundary = node;
     }
 
@@ -478,11 +479,10 @@ static std::vector<FileTextChanges> ReplaceWholeNode(ir::AstNode *node, const st
     return out;
 }
 
-static std::vector<FileTextChanges> DoConvertToOptionalChainInternal(const RefactorContext &ctx,
-                                                                     const TargetInfo &target)
+std::vector<FileTextChanges> DoConvertToOptionalChainInternal(const RefactorContext &ctx, const TargetInfo &target)
 {
     std::vector<FileTextChanges> empty;
-    if (!target.expr || !target.finalExpr) {
+    if (target.expr == nullptr || target.finalExpr == nullptr) {
         return empty;
     }
     const std::string repl = BuildReplacement(ctx, target);
@@ -495,40 +495,36 @@ ConvertToOptionalChainExpressionRefactor::ConvertToOptionalChainExpressionRefact
     AddKind(std::string(K_ACTIONKIND_CSTR));
 }
 
-ApplicableRefactorInfo ConvertToOptionalChainExpressionRefactor::GetAvailableActions(
+std::vector<ApplicableRefactorInfo> ConvertToOptionalChainExpressionRefactor::GetAvailableActions(
     const RefactorContext &refContext) const
 {
-    ApplicableRefactorInfo res;
-    if (!refContext.kind.empty() && !refContext.kind.empty() && !IsCandidateRoot(nullptr)) {
-        // dummy guard to satisfy some static analyzers about unused inline; real check below
-    }
-
+    ApplicableRefactorInfo applicableRef;
+    std::vector<ApplicableRefactorInfo> res;
     if (!refContext.kind.empty() && !this->IsKind(refContext.kind)) {
         return res;
     }
-
     TargetInfo target = ResolveTarget(refContext);
-    if (!target.expr) {
+    if (target.expr == nullptr) {
         return res;
     }
-
-    res.name = ToStdString(refactor_name::CONVERT_CHAIN_REFACTOR_NAME);
-    res.description = ToStdString(refactor_description::CONVERT_CHAIN_REFACTOR_DESC);
-    res.action.name = ToStdString(refactor_name::CONVERT_CHAIN_REFACTOR_NAME);
-    res.action.description = ToStdString(refactor_description::CONVERT_CHAIN_REFACTOR_DESC);
-    res.action.kind = std::string(K_ACTIONKIND_CSTR);
+    applicableRef.name = ToStdString(refactor_name::CONVERT_CHAIN_REFACTOR_NAME);
+    applicableRef.description = ToStdString(refactor_description::CONVERT_CHAIN_REFACTOR_DESC);
+    applicableRef.action.name = ToStdString(TO_OPTIONAL_CHAIN_ACTION.name);
+    applicableRef.action.description = ToStdString(TO_OPTIONAL_CHAIN_ACTION.description);
+    applicableRef.action.kind = std::string(TO_OPTIONAL_CHAIN_ACTION.kind);
+    res.push_back(applicableRef);
     return res;
 }
 
 std::unique_ptr<RefactorEditInfo> ConvertToOptionalChainExpressionRefactor::GetEditsForAction(
     const RefactorContext &context, const std::string &actionName) const
 {
-    if (!actionName.empty() && actionName != ToStdString(refactor_name::CONVERT_CHAIN_REFACTOR_NAME)) {
+    if (!actionName.empty() && actionName != ToStdString(TO_OPTIONAL_CHAIN_ACTION.name)) {
         return nullptr;
     }
 
     TargetInfo target = ResolveTarget(context);
-    if (!target.expr) {
+    if (target.expr == nullptr) {
         return nullptr;
     }
 
@@ -538,4 +534,7 @@ std::unique_ptr<RefactorEditInfo> ConvertToOptionalChainExpressionRefactor::GetE
     }
     return std::make_unique<RefactorEditInfo>(std::move(edits));
 }
+// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
+AutoRefactorRegister<ConvertToOptionalChainExpressionRefactor> g_convChainRefReg(
+    "ConvertToOptionalChainExpressionRefactor");
 }  // namespace ark::es2panda::lsp

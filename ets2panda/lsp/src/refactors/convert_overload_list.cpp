@@ -167,9 +167,11 @@ ConvertOverloadListRefactor::ConvertOverloadListRefactor()
     AddKind(std::string(CONVERT_OVERLOAD_LIST_ACTION.kind));
 }
 
-ApplicableRefactorInfo ConvertOverloadListRefactor::GetAvailableActions(const RefactorContext &context) const
+std::vector<ApplicableRefactorInfo> ConvertOverloadListRefactor::GetAvailableActions(
+    const RefactorContext &context) const
 {
-    ApplicableRefactorInfo res;
+    ApplicableRefactorInfo applicableRef;
+    std::vector<ApplicableRefactorInfo> res;
 
     if (!context.kind.empty() && !IsKind(context.kind)) {
         return res;
@@ -180,12 +182,12 @@ ApplicableRefactorInfo ConvertOverloadListRefactor::GetAvailableActions(const Re
         return res;
     }
 
-    res.name = refactor_name::CONVERT_OVERLOAD_LIST_REFACTOR_NAME;
-    res.description = std::string(CONVERT_OVERLOAD_LIST_ACTION.description);
-    res.action.name = std::string(CONVERT_OVERLOAD_LIST_ACTION.name);
-    res.action.description = std::string(CONVERT_OVERLOAD_LIST_ACTION.description);
-    res.action.kind = std::string(CONVERT_OVERLOAD_LIST_ACTION.kind);
-
+    applicableRef.name = refactor_name::CONVERT_OVERLOAD_LIST_REFACTOR_NAME;
+    applicableRef.description = std::string(CONVERT_OVERLOAD_LIST_ACTION.description);
+    applicableRef.action.name = std::string(CONVERT_OVERLOAD_LIST_ACTION.name);
+    applicableRef.action.description = std::string(CONVERT_OVERLOAD_LIST_ACTION.description);
+    applicableRef.action.kind = std::string(CONVERT_OVERLOAD_LIST_ACTION.kind);
+    res.push_back(applicableRef);
     return res;
 }
 

@@ -190,12 +190,13 @@ RefactorEditInfo GetRefactorEditsToInferReturnType(const RefactorContext &contex
     return refactorEdits;
 }
 
-ApplicableRefactorInfo InferFunctionRefactor::GetAvailableActions(const RefactorContext &refContext) const
+std::vector<ApplicableRefactorInfo> InferFunctionRefactor::GetAvailableActions(const RefactorContext &refContext) const
 {
+    ApplicableRefactorInfo applicableRef;
+    std::vector<ApplicableRefactorInfo> res;
+
     es2panda_Context *context = refContext.context;
     size_t position = refContext.span.pos;
-
-    ApplicableRefactorInfo res;
 
     if (!IsKind(refContext.kind)) {
         return res;
@@ -206,11 +207,12 @@ ApplicableRefactorInfo InferFunctionRefactor::GetAvailableActions(const Refactor
     }
 
     if (node->Parent() != nullptr && (node->Parent()->IsExpression() && node->Parent()->IsBinaryExpression())) {
-        res.name = refactor_name::INFER_FUNCTION_RETURN_TYPE;
-        res.description = refactor_description::INFER_FUNCTION_RETURN_TYPE_DESC;
-        res.action.kind = std::string(TO_INFER_FUNCTION_RETURN_TYPE.kind);
-        res.action.name = std::string(TO_INFER_FUNCTION_RETURN_TYPE.name);
-        res.action.description = std::string(TO_INFER_FUNCTION_RETURN_TYPE.description);
+        applicableRef.name = refactor_name::INFER_FUNCTION_RETURN_TYPE;
+        applicableRef.description = refactor_description::INFER_FUNCTION_RETURN_TYPE_DESC;
+        applicableRef.action.kind = std::string(TO_INFER_FUNCTION_RETURN_TYPE.kind);
+        applicableRef.action.name = std::string(TO_INFER_FUNCTION_RETURN_TYPE.name);
+        applicableRef.action.description = std::string(TO_INFER_FUNCTION_RETURN_TYPE.description);
+        res.push_back(applicableRef);
     }
     return res;
 }

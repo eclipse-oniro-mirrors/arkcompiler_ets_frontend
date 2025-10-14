@@ -142,12 +142,13 @@ std::optional<VariableInfo> GetVariableInfo(ir::AstNode *func)
     return variableInfo;
 }
 
-ApplicableRefactorInfo ConvertFunctionRefactor::GetAvailableActions(const RefactorContext &refContext) const
+std::vector<ApplicableRefactorInfo> ConvertFunctionRefactor::GetAvailableActions(
+    const RefactorContext &refContext) const
 {
+    ApplicableRefactorInfo applicableRef;
+    std::vector<ApplicableRefactorInfo> res;
     es2panda_Context *context = refContext.context;
     size_t position = refContext.span.pos;
-
-    ApplicableRefactorInfo res;
 
     if (!IsKind(refContext.kind)) {
         return res;
@@ -160,13 +161,13 @@ ApplicableRefactorInfo ConvertFunctionRefactor::GetAvailableActions(const Refact
     auto cb = [](ir::AstNode *ancestorNode) { return HasArrowFunction(ancestorNode); };
     auto ancestor = FindAncestor(node, cb);
     if (ancestor != nullptr && ancestor->IsClassProperty()) {
-        res.name = refactor_name::CONVERT_FUNCTION_REFACTOR_NAME;
-        res.description = refactor_description::CONVERT_FUNCTION_REFACTOR_DESC;
-        res.action.kind = std::string(TO_NAMED_FUNCTION_ACTION.kind);
-        res.action.name = std::string(TO_NAMED_FUNCTION_ACTION.name);
-        res.action.description = std::string(TO_NAMED_FUNCTION_ACTION.description);
+        applicableRef.name = refactor_name::CONVERT_FUNCTION_REFACTOR_NAME;
+        applicableRef.description = refactor_description::CONVERT_FUNCTION_REFACTOR_DESC;
+        applicableRef.action.kind = std::string(TO_NAMED_FUNCTION_ACTION.kind);
+        applicableRef.action.name = std::string(TO_NAMED_FUNCTION_ACTION.name);
+        applicableRef.action.description = std::string(TO_NAMED_FUNCTION_ACTION.description);
+        res.push_back(applicableRef);
     }
-
     return res;
 }
 
