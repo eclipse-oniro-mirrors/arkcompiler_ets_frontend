@@ -37,7 +37,7 @@ export class StatisticsRecorder {
     private readonly enable: boolean = false;
 
     constructor(private readonly output: string, enable?: 'OFF' | 'ON', private readonly title?: string) {
-        this.enable = enable == 'ON';
+        this.enable = enable === 'ON';
     }
 
     // Event is of type string (not enum) to let users to define own events
@@ -46,7 +46,7 @@ export class StatisticsRecorder {
             return;
         }
 
-        if (event == RecordEvent.START) {
+        if (event === RecordEvent.START) {
             return;
         }
 
@@ -59,7 +59,7 @@ export class StatisticsRecorder {
             currEvent.endRss = mem;
         }
 
-        if (event == RecordEvent.END) {
+        if (event === RecordEvent.END) {
             return;
         }
 
