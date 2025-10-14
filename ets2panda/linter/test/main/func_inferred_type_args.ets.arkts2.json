@@ -306,16 +306,6 @@
         },
         {
             "line": 89,
-            "column": 16,
-            "endLine": 89,
-            "endColumn": 21,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 89,
             "column": 12,
             "endLine": 89,
             "endColumn": 23,

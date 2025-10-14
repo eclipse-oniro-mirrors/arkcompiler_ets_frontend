@@ -385,6 +385,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 89,
+            "column": 9,
+            "endLine": 89,
+            "endColumn": 12,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
             "line": 90,
             "column": 9,
             "endLine": 90,
@@ -435,9 +445,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 95,
+            "line": 97,
             "column": 21,
-            "endLine": 95,
+            "endLine": 97,
             "endColumn": 24,
             "problem": "BuiltinNarrowTypes",
             "suggest": "",
@@ -445,9 +455,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 96,
+            "line": 98,
             "column": 21,
-            "endLine": 96,
+            "endLine": 98,
             "endColumn": 24,
             "problem": "BuiltinNarrowTypes",
             "suggest": "",
@@ -459,6 +469,26 @@
             "column": 21,
             "endLine": 99,
             "endColumn": 28,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
+            "column": 9,
+            "endLine": 100,
+            "endColumn": 12,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 9,
+            "endLine": 101,
+            "endColumn": 12,
             "problem": "BuiltinNarrowTypes",
             "suggest": "",
             "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",

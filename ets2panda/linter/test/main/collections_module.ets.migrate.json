@@ -15,46 +15,6 @@
     ],
     "result": [
         {
-            "line": 26,
-            "column": 43,
-            "endLine": 26,
-            "endColumn": 48,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 28,
-            "column": 28,
-            "endLine": 28,
-            "endColumn": 33,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 30,
-            "column": 28,
-            "endLine": 30,
-            "endColumn": 33,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
-            "column": 43,
-            "endLine": 34,
-            "endColumn": 48,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 41,
             "column": 11,
             "endLine": 41,

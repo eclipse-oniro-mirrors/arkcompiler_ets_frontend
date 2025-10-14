@@ -356,16 +356,6 @@
         },
         {
             "line": 149,
-            "column": 40,
-            "endLine": 149,
-            "endColumn": 45,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 149,
             "column": 36,
             "endLine": 149,
             "endColumn": 47,
@@ -412,16 +402,6 @@
             "problem": "LimitedStdLibApi",
             "suggest": "",
             "rule": "Usage of standard library is restricted (arkts-limited-stdlib)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 155,
-            "column": 17,
-            "endLine": 155,
-            "endColumn": 22,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {

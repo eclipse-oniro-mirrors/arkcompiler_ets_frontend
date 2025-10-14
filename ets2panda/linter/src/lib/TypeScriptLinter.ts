@@ -248,6 +248,8 @@ import type { OverloadApiFixMap, OverloadInfo } from './utils/consts/OverloadCom
 import type { OverloadBlacklistMap } from './utils/consts/OverloadBlacklist';
 import { TYPE_LITERAL } from './utils/consts/OverloadBlacklist';
 import { createOverloadMapKey, initializeOverloadBlacklistMap } from './utils/consts/OverloadBlacklist';
+import { IGNORE_NUMBER_CALL_EXPRESSION_LIST } from './utils/consts/NumberCallExpressionIgnored';
+import { PROPERTYKEY, NUMBER, REFLECT, HAS, CONSTRUCTOR, ARRAY, OBJECT } from './utils/consts/Builtins';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
   supportedStdCallApiChecker: SupportedStdCallApiChecker;
@@ -14823,10 +14825,27 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
   }
 
+  private static checkPropertyKeyForDeprecatedApi(typeName: string, node: ts.TypeReferenceNode): boolean {
+    if (typeName !== PROPERTYKEY) {
+      return false;
+    }
+    let parent = node.parent;
+    while (parent && !ts.isVariableDeclaration(parent)) {
+      parent = parent.parent;
+    }
+    return (
+      !!parent && ts.isVariableDeclaration(parent) && !!parent.initializer && ts.isStringLiteral(parent.initializer)
+    );
+  }
+
   private checkTypeReferenceForDeprecatedApi(node: ts.TypeReferenceNode): void {
     let typeName = node.typeName;
     if (ts.isQualifiedName(node.typeName)) {
       typeName = node.typeName.right;
+    }
+    const realName = ts.isQualifiedName(node.typeName) ? node.typeName.right.getText() : node.typeName.getText();
+    if (TypeScriptLinter.checkPropertyKeyForDeprecatedApi(realName, node)) {
+      return;
     }
     const sym = this.tsUtils.trueSymbolAtLocation(typeName);
     const decl = TsUtils.getDeclaration(sym);
@@ -14930,6 +14949,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   ): void {
     if (TypeScriptLinter.builtinNewCtorSet.size === 0 || !deprecatedApiCheckMap) {
       return;
+    }
+    const parent = errorNode.parent;
+    if (ts.isNewExpression(parent) && parent.expression === errorNode) {
+      if (this.checkNewNumberDeprecatedApi(parent)) {
+        return;
+      }
     }
     [...TypeScriptLinter.builtinNewCtorSet].some((item) => {
       if (item.api_info.parent_api?.length <= 0) {
@@ -15185,12 +15210,40 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
   }
 
+  private static checkNumberCallExpressionForDeprecatedApi(
+    node: ts.CallExpression | ts.EtsComponentExpression
+  ): boolean {
+    return (
+      ts.isPropertyAccessExpression(node.expression) &&
+      node.expression.expression.getText() === NUMBER &&
+      IGNORE_NUMBER_CALL_EXPRESSION_LIST.includes(node.expression.name.text) &&
+      node.arguments.length > 0 &&
+      ts.isNumericLiteral(node.arguments[0])
+    );
+  }
+
+  private static checkReflectForDeprecatedApi(node: ts.CallExpression | ts.EtsComponentExpression): boolean {
+    return (
+      ts.isPropertyAccessExpression(node.expression) &&
+      node.expression.expression.getText() === REFLECT &&
+      node.expression.name.text === HAS &&
+      node.arguments.length >= 2 &&
+      ts.isStringLiteral(node.arguments[1])
+    );
+  }
+
   private reportDeprecatedApi(
     node: ts.CallExpression | ts.EtsComponentExpression,
     name: ts.Identifier,
     deprecatedApiCheckMap?: Map<string, string | ts.NodeArray<ts.ParameterDeclaration>>,
     apiType?: string
   ): void {
+    if (TypeScriptLinter.checkNumberCallExpressionForDeprecatedApi(node)) {
+      return;
+    }
+    if (TypeScriptLinter.checkReflectForDeprecatedApi(node)) {
+      return;
+    }
     const problemStr = this.getFaultIdWithMatchedDeprecatedApi(name.text, deprecatedApiCheckMap, apiType);
     if (problemStr.length > 0) {
       const autofix = this.autofixer?.fixDeprecatedApiForCallExpression(
@@ -15565,6 +15618,45 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (ts.isIdentifier(expression)) {
       this.processApiNodeDeprecatedApi(expression.text, expression);
     }
+  }
+
+  private static isNumberConstructor(node: ts.Expression): boolean {
+    if (ts.isIdentifier(node) && node.text === NUMBER) {
+      return true;
+    }
+    if (ts.isPropertyAccessExpression(node)) {
+      const left = node.expression;
+      const right = node.name.text;
+      return ts.isIdentifier(left) && left.text === NUMBER && (right === CONSTRUCTOR || right === NUMBER);
+    }
+    return false;
+  }
+
+  private checkNewNumberDeprecatedApi(node: ts.NewExpression): boolean {
+    if (!node.arguments) {
+      return false;
+    }
+    if (ts.isIdentifier(node.expression) && node.expression.text === ARRAY && node.arguments.length === 0) {
+      return true;
+    }
+
+    if (ts.isIdentifier(node.expression) && node.expression.text === OBJECT && node.arguments.length === 1) {
+      const arg = node.arguments[0];
+      const flags = this.tsTypeChecker.getTypeAtLocation(arg).getFlags();
+      if (flags & (ts.TypeFlags.StringLiteral | ts.TypeFlags.NumberLiteral | ts.TypeFlags.BigIntLiteral)) {
+        return true;
+      }
+    }
+    if (!TypeScriptLinter.isNumberConstructor(node.expression)) {
+      return false;
+    }
+    if (node.arguments.length === 0) {
+      return true;
+    }
+
+    const type = this.tsTypeChecker.getTypeAtLocation(node.arguments[0]);
+    const flags = type.getFlags();
+    return !!(flags & (ts.TypeFlags.StringLiteral | ts.TypeFlags.NumberLiteral | ts.TypeFlags.BigIntLiteral));
   }
 
   private processApiNodeDeprecatedApi(
