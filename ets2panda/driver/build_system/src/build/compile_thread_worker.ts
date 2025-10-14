@@ -20,7 +20,7 @@ import {
     ensurePathExists
 } from '../util/utils';
 import {
-    DECL_ETS_SUFFIX,
+    ETSCACHE_SUFFIX,
 } from '../pre_define';
 import { PluginDriver, PluginHook } from '../plugins/plugins_driver';
 import {
@@ -90,7 +90,7 @@ function compileAbc(jobInfo: CompileJobInfo, globalContextPtr: KPointer, buildCo
             let filePathFromModuleRoot: string = path.relative(buildConfig.moduleRootPath, fileInfo.input);
             let declEtsOutputPath: string = changeFileExtension(
                 path.join(buildConfig.declgenV2OutPath as string, filePathFromModuleRoot),
-                DECL_ETS_SUFFIX
+                ETSCACHE_SUFFIX
             );
             ensurePathExists(declEtsOutputPath);
 
