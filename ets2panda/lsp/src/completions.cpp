@@ -212,6 +212,10 @@ std::vector<ir::AstNode *> FilterFromBody(const ark::ArenaVector<ir::AstNode *> 
         if (node->IsMethodDefinition() && IsWordPartOfIdentifierName(node->AsMethodDefinition()->Key(), triggerWord)) {
             res.emplace_back(node);
         }
+        // add new node to find interface in namespace
+        if (node->IsTSInterfaceDeclaration()) {
+            res.emplace_back(node);
+        }
     }
     return res;
 }
@@ -262,6 +266,12 @@ std::string GetClassPropertyName(ir::AstNode *node)
         if (def != nullptr && def->IsClassDefinition() && def->AsClassDefinition()->Ident() != nullptr &&
             def->AsClassDefinition()->Ident()->IsIdentifier()) {
             return std::string(def->AsClassDefinition()->Ident()->AsIdentifier()->Name());
+        }
+    }
+    if (node->IsTSInterfaceDeclaration()) {
+        auto def = node->AsTSInterfaceDeclaration()->Id();
+        if (def != nullptr) {
+            return std::string(def->Name());
         }
     }
     return "";
@@ -340,6 +350,10 @@ std::vector<CompletionEntry> GetEntriesForClassDeclaration(
             completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::METHOD,
                                                           std::string(sort_text::CLASS_MEMBER_SNIPPETS), name + "()"));
         }
+        if (node->IsTSInterfaceDeclaration()) {
+            completions.emplace_back(lsp::CompletionEntry(GetClassPropertyName(node), CompletionEntryKind::INTERFACE,
+                                                          std::string(sort_text::SUGGESTED_CLASS_MEMBERS)));
+        }
     }
     return completions;
 }
@@ -412,9 +426,9 @@ std::vector<CompletionEntry> GetCompletionFromClassDefinition(ir::ClassDefinitio
         auto qualifiedMembers = FilterFromEnumMember(members, triggerWord);
         return GetEntriesForEnumDeclaration(qualifiedMembers);
     }
-    auto bodyNodes = decl->AsClassDefinition()->Body();
+    auto bodyNodes = decl->Body();
     std::vector<CompletionEntry> extendCompletions;
-    auto super = decl->AsClassDefinition()->Super();
+    auto super = decl->Super();
     if (super != nullptr) {
         auto ident = GetIdentifierFromSuper(super);
         extendCompletions = GetPropertyCompletions(ident, triggerWord);
@@ -637,6 +651,8 @@ std::string GetDeclName(const ir::AstNode *decl)
             return decl->AsMethodDefinition()->Key()->AsIdentifier()->ToString();
         case ir::AstNodeType::CLASS_PROPERTY:
             return decl->AsClassProperty()->Key()->AsIdentifier()->ToString();
+        case ir::AstNodeType::CLASS_DEFINITION:
+            return std::string(decl->AsClassDefinition()->Ident()->Name());
         default:
             return "";
     }
@@ -683,7 +699,8 @@ bool IsLetVar(const ir::AstNode *node)
 bool IsValidDecl(const ir::AstNode *decl)
 {
     return decl != nullptr && NodeHasTokens(decl) &&
-           (decl->IsMethodDefinition() || IsLetVar(decl) || IsConstVar(decl) || IsGlobalVar(decl));
+           (decl->IsMethodDefinition() || IsLetVar(decl) || IsConstVar(decl) || IsGlobalVar(decl) ||
+            decl->IsClassDefinition());
 }
 
 CompletionEntry InitEntry(const ir::AstNode *decl)
@@ -718,6 +735,8 @@ CompletionEntry InitEntry(const ir::AstNode *decl)
     } else if (decl->IsMethodDefinition()) {
         kind = CompletionEntryKind::FUNCTION;
         insertText = name + "()";
+    } else if (decl->IsClassDefinition()) {
+        kind = CompletionEntryKind::MODULE;
     }
     return CompletionEntry(name, kind, std::string(sortText), insertText);
 }

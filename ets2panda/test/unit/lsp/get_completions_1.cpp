@@ -59,6 +59,67 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
 }
 
 namespace {
+TEST_F(LSPCompletionsTests, MemberCompletionsForClassTest8848)
+{
+    // test interface
+    std::vector<std::string> files = {"getCompletionsAtPositionMember8848.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+namespace AA {
+  interface B {}
+  function F(): void {}
+}
+
+AA.
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    const size_t offset = 63;
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    std::string propertyName1 = "F";
+    std::string propertyName2 = "B";
+    int const expectedPropertyCount = 2;
+    ASSERT_TRUE(entries.size() == expectedPropertyCount);
+    CompletionEntry entry1 = CompletionEntry(propertyName1, CompletionEntryKind::METHOD,
+                                             std::string(ark::es2panda::lsp::sort_text::CLASS_MEMBER_SNIPPETS), "F()");
+    CompletionEntry entry2 = CompletionEntry(propertyName2, CompletionEntryKind::INTERFACE,
+                                             std::string(ark::es2panda::lsp::sort_text::SUGGESTED_CLASS_MEMBERS));
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(entry1, entries[0]);
+    ASSERT_EQ(entry2, entries[1]);
+}
+TEST_F(LSPCompletionsTests, getCompletionsAtPositionAnnotation4598)
+{
+    std::vector<std::string> files = {"defaultExport4598.ets", "importCompletion4598.ets"};
+    std::vector<std::string> texts = {R"(
+namespace expName {}
+export default expName
+)",
+                                      R"(
+import expName from './defaultExport4598.ets'
+exp
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 50;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    std::string packetName = "expName";
+    auto expectedEntries = CompletionEntry(packetName, CompletionEntryKind::MODULE,
+                                           std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "expName");
+    ASSERT_EQ(expectedEntries, entries[0]);
+    initializer.DestroyContext(ctx);
+}
 TEST_F(LSPCompletionsTests, MemberCompletionsForClassTest9)
 {
     std::vector<std::string> files = {"getCompletionsAtPositionMember9.ets"};
@@ -410,7 +471,10 @@ let myColor: Color = Color.R)delimiter"};
     ASSERT_EQ(entry1, entries[0]);
 }
 
-const std::vector<std::string> getCompletionsAtPositionAnnotationText1 = {R"(
+std::vector<std::string> MakeCompletionsAtPositionAnnotationTexts()
+{
+    return {
+        R"(
 export @interface Entry {
     routeName: string = "";
     storage: string = "";
@@ -420,7 +484,7 @@ export @interface TestAnnotation {
     storage: string = "";
 }
 )",
-                                                                          R"(
+        R"(
 import { Entry, TestAnnotation } from './CompletionAnnotation1';
 export @interface Entry2 {
     routeName: string = "";
@@ -431,11 +495,12 @@ struct Index {}
 @
 struct Index1 {}
 )"};
+}
 
 TEST_F(LSPCompletionsTests, getCompletionsAtPositionAnnotation1)
 {
     std::vector<std::string> files = {"CompletionAnnotation1.ets", "CompletionAnnotation2.ets"};
-    std::vector<std::string> texts = getCompletionsAtPositionAnnotationText1;
+    std::vector<std::string> texts = MakeCompletionsAtPositionAnnotationTexts();
     auto filePaths = CreateTempFile(files, texts);
 
     int const expectedFileCount = 2;
