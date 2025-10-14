@@ -1350,55 +1350,60 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewClassInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Console",
-                                  "decorators": [],
-                                  "loc": {
-                                    "start": {
-                                      "line": 42,
-                                      "column": 19,
-                                      "program": "function_implicit_return_type9.ets"
-                                    },
-                                    "end": {
-                                      "line": 42,
-                                      "column": 26,
-                                      "program": "function_implicit_return_type9.ets"
-                                    }
-                                  }
-                                },
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Console",
+                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 42,
-                                    "column": 19,
+                                    "column": 15,
                                     "program": "function_implicit_return_type9.ets"
                                   },
                                   "end": {
                                     "line": 42,
-                                    "column": 26,
+                                    "column": 22,
                                     "program": "function_implicit_return_type9.ets"
                                   }
                                 }
                               },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "getInstance",
+                                "decorators": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 42,
+                                    "column": 23,
+                                    "program": "function_implicit_return_type9.ets"
+                                  },
+                                  "end": {
+                                    "line": 42,
+                                    "column": 34,
+                                    "program": "function_implicit_return_type9.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 42,
-                                  "column": 19,
+                                  "column": 15,
                                   "program": "function_implicit_return_type9.ets"
                                 },
                                 "end": {
                                   "line": 42,
-                                  "column": 26,
+                                  "column": 34,
                                   "program": "function_implicit_return_type9.ets"
                                 }
                               }
                             },
                             "arguments": [],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 42,
@@ -1407,7 +1412,7 @@
                               },
                               "end": {
                                 "line": 42,
-                                "column": 27,
+                                "column": 36,
                                 "program": "function_implicit_return_type9.ets"
                               }
                             }
@@ -1420,7 +1425,7 @@
                             },
                             "end": {
                               "line": 42,
-                              "column": 27,
+                              "column": 36,
                               "program": "function_implicit_return_type9.ets"
                             }
                           }
@@ -1435,7 +1440,7 @@
                         },
                         "end": {
                           "line": 42,
-                          "column": 27,
+                          "column": 37,
                           "program": "function_implicit_return_type9.ets"
                         }
                       }
