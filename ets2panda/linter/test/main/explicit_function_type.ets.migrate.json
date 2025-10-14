@@ -35,36 +35,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 121,
-            "column": 3,
-            "endLine": 121,
-            "endColumn": 10,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 122,
-            "column": 3,
-            "endLine": 122,
-            "endColumn": 35,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 123,
-            "column": 3,
-            "endLine": 125,
-            "endColumn": 4,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
             "line": 128,
             "column": 31,
             "endLine": 128,

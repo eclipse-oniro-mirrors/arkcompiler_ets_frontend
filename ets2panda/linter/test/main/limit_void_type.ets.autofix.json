@@ -321,6 +321,17 @@
             "endLine": 62,
             "endColumn": 31,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 1997,
+                    "end": 2027,
+                    "replacementText": "",
+                    "line": 62,
+                    "column": 1,
+                    "endLine": 62,
+                    "endColumn": 31
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
@@ -331,6 +342,17 @@
             "endLine": 63,
             "endColumn": 42,
             "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 2028,
+                    "end": 2069,
+                    "replacementText": "",
+                    "line": 63,
+                    "column": 1,
+                    "endLine": 63,
+                    "endColumn": 42
+                }
+            ],
             "suggest": "",
             "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
