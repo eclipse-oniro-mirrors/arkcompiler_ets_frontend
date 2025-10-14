@@ -38,6 +38,7 @@ import {
 } from '../util/utils';
 import {
     DECL_ETS_SUFFIX,
+    ETSCACHE_SUFFIX,
     DECL_TS_SUFFIX,
     STATIC_RECORD_FILE,
     STATIC_RECORD_FILE_CONTENT,
@@ -79,6 +80,7 @@ export class Ets2panda {
     private readonly cacheDir: string;
     private readonly declgenV2OutDir?: string;
     private readonly pluginDriver: PluginDriver = PluginDriver.getInstance();
+    private readonly projectRootPath: string;
     private readonly recordType?: 'ON' | 'OFF';
 
     // NOTE: should be Ets2panda Wrapper Module
@@ -91,6 +93,7 @@ export class Ets2panda {
         this.aliasConfig = buildConfig.aliasConfig;
         this.cacheDir = buildConfig.cachePath;
         this.recordType = buildConfig.recordType;
+        this.projectRootPath = buildConfig.projectRootPath;
 
         // NOTE: uncomment if you really need this
         // NOTE: decl files are internal files, not for external usage!!!!!
@@ -187,10 +190,11 @@ export class Ets2panda {
 
             statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
             if (job.type & CompileJobType.DECL) {
-                const outputAbcPath = job.fileInfo.output;
+                // emit declarations based on relative location of the file in a project,
+                // since es2panda doesn't know about ohos modules right now
                 const relativeDeclPath = changeFileExtension(
-                    path.relative(this.cacheDir, outputAbcPath),
-                    DECL_ETS_SUFFIX
+                    path.relative(this.projectRootPath, job.fileInfo.output),
+                    ETSCACHE_SUFFIX
                 )
                 const outputDeclFilePath = path.resolve(this.cacheDir, relativeDeclPath);
                 ensurePathExists(outputDeclFilePath)
@@ -284,13 +288,14 @@ export class Ets2panda {
             statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
             if (job.type & CompileJobType.DECL) {
                 for (const file of job.fileList) {
+                    // emit declarations based on relative location of the file in a project,
+                    // since es2panda doesn't know about ohos modules right now
                     const relative: string = changeFileExtension(
-                        path.relative(job.fileInfo.moduleRoot, file),
-                        DECL_ETS_SUFFIX
+                        path.relative(this.projectRootPath, file),
+                        ETSCACHE_SUFFIX
                     )
                     const declEtsOutputPath: string = path.resolve(
                         this.cacheDir,
-                        job.fileInfo.moduleName,
                         relative
                     )
                     ensurePathExists(declEtsOutputPath);

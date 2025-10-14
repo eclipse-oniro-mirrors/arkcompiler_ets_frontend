@@ -469,10 +469,14 @@ std::string_view ImportPathManager::TryImportFromDeclarationCache(std::string_vi
     }
     const auto &rootDir = ArkTSConfig()->RootDir();
     const auto &cacheDir = ArkTSConfig()->CacheDir();
+    // if already in cache, return
+    if (Helpers::StartsWith(resolvedImportPath, cacheDir)) {
+        return resolvedImportPath;
+    }
     if (cacheDir.empty() || rootDir.empty()) {
         return resolvedImportPath;
     }
-    // declaration cache is used only for .ets files, located in the same library as compiling file
+    // declaration cache is used only for .ets files, located in the same application as compiling file
     if (!Helpers::EndsWith(resolvedImportPath, etsSuffix) || !Helpers::StartsWith(resolvedImportPath, rootDir)) {
         return resolvedImportPath;
     }
@@ -514,6 +518,10 @@ ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser
         importData.lang = ToLanguage(program->Extension()).GetId();
         importData.declPath = util::ImportPathManager::DUMMY_PATH;
         importData.ohmUrl = util::ImportPathManager::DUMMY_PATH;
+    }
+
+    if (!parser_->HasParserStatus(parser::ParserStatus::DEPENDENCY_ANALYZER_MODE)) {
+        importData.resolvedSource = TryImportFromDeclarationCache(importData.resolvedSource);
     }
 
     if (globalProgram_->AbsoluteName() != resolvedImportPath) {
@@ -588,9 +596,6 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_vi
         result = ResolveAbsolutePath(*importPath);
     }
 
-    if (!parser_->HasParserStatus(parser::ParserStatus::DEPENDENCY_ANALYZER_MODE) && !result.resolvedIsExternalModule) {
-        result.resolvedPath = TryImportFromDeclarationCache(result.resolvedPath);
-    }
     return result;
 }
 

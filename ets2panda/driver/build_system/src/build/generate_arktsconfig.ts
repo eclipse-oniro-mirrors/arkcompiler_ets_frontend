@@ -54,15 +54,15 @@ import {
 export class ArkTSConfig {
     object: ArkTSConfigObject;
 
-    constructor(moduleInfo: ModuleInfo, cacheDir: string) {
+    constructor(moduleInfo: ModuleInfo, cacheDir: string, projectRootPath: string) {
         this.object = {
             compilerOptions: {
                 package: moduleInfo.packageName,
                 baseUrl: path.resolve(moduleInfo.moduleRootPath, moduleInfo.sourceRoots[0]),
                 paths: {},
                 dependencies: {},
-                cacheDir: path.resolve(cacheDir, moduleInfo.packageName),
-                rootDir: path.resolve(moduleInfo.moduleRootPath),
+                cacheDir: cacheDir,
+                projectRootPath: projectRootPath,
             }
         };
     }
@@ -314,7 +314,7 @@ export class ArkTSConfigGenerator {
                 )
             );
         }
-        let arktsConfig: ArkTSConfig = new ArkTSConfig(moduleInfo, this.buildConfig.cachePath);
+        let arktsConfig: ArkTSConfig = new ArkTSConfig(moduleInfo, this.buildConfig.cachePath, this.buildConfig.projectRootPath);
         this.arktsconfigs.set(moduleInfo.packageName, arktsConfig);
         this.addPathSection(moduleInfo, arktsConfig);
 

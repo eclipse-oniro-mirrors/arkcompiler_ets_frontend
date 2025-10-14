@@ -23,7 +23,7 @@ import {
     DEP_ANALYZER_DIR,
     DEP_ANALYZER_INPUT_FILE,
     DEP_ANALYZER_OUTPUT_FILE,
-    DECL_ETS_SUFFIX,
+    ETSCACHE_SUFFIX,
     ABC_SUFFIX,
     MERGED_CYCLE_FILE,
     FILE_HASH_CACHE
@@ -441,7 +441,7 @@ export class DependencyAnalyzer {
             } else {
                 const inputFilePath = jobInfo.fileInfo.input;
                 const outputFilePath = jobInfo.fileInfo.output;
-                const outputDeclFilePath = changeFileExtension(outputFilePath, DECL_ETS_SUFFIX)
+                const outputDeclFilePath = changeFileExtension(outputFilePath, ETSCACHE_SUFFIX)
                 ensurePathExists(outputDeclFilePath);
 
                 const hashChanged: boolean = updateFileHash(inputFilePath, this.filesHashCache)
