@@ -554,6 +554,9 @@ bool ValidateRestParameter(ETSChecker *checker, Signature *signature, const Aren
 // later in checker and 'CheckCastLiteral' during 'ConstantExpressionLowering'.
 static void InferTypeForNumberLiteral(ETSChecker *checker, ir::NumberLiteral *argumentLiteral, Type *paramType)
 {
+    if (argumentLiteral->IsFolded()) {
+        return;
+    }
     argumentLiteral->SetTsType(nullptr);
     argumentLiteral->SetPreferredType(paramType);
     auto &number = argumentLiteral->AsNumberLiteral()->Number();
