@@ -135,7 +135,6 @@ export const INVALID_IDENTIFIER_KEYWORDS = [
   'Console',
   'ConsoleHelper',
   'Coroutine',
-  'DateTimeFormat',
   'DateTimeFormatTypes',
   'DisplayNames',
   'EAWorker',
