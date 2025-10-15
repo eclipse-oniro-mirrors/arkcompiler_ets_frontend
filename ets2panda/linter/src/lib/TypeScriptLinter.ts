@@ -110,7 +110,7 @@ import { StdClassVarDecls } from './utils/consts/StdClassVariableDeclarations';
 import type { LinterOptions } from './LinterOptions';
 import { BUILTIN_GENERIC_CONSTRUCTORS } from './utils/consts/BuiltinGenericConstructor';
 import { DEFAULT_DECORATOR_WHITE_LIST } from './utils/consts/DefaultDecoratorWhitelist';
-import { INVALID_IDENTIFIER_KEYWORDS } from './utils/consts/InValidIndentifierKeywords';
+import { INVALID_IDENTIFIER_KEYWORDS, INVALID_IDENTIFIER_GETSET } from './utils/consts/InValidIndentifierKeywords';
 import { WORKER_MODULES, WORKER_TEXT } from './utils/consts/WorkerAPI';
 import type { BitVectorUsage } from './utils/consts/CollectionsAPI';
 import { COLLECTIONS_TEXT, COLLECTIONS_MODULES, BIT_VECTOR } from './utils/consts/CollectionsAPI';
@@ -1959,6 +1959,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleDefiniteAssignmentAssertion(node);
     this.handleSendableClassProperty(node);
     this.handleInvalidIdentifier(node);
+    this.handleInvalidGetSetKeyword(node);
     this.handleStructPropertyDecl(node);
     this.handlePropertyDeclarationForProp(node);
     this.handleSdkGlobalApi(node);
@@ -2129,6 +2130,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleLiteralAsPropertyName(node);
     this.handleSendableInterfaceProperty(node);
     this.handleInvalidIdentifier(node);
+    this.handleInvalidGetSetKeyword(node);
     const typeNode = node.type;
     if (this.options.arkts2 && typeNode && typeNode.kind === ts.SyntaxKind.VoidKeyword) {
       this.incrementCounters(typeNode, FaultID.LimitedVoidType);
@@ -4761,6 +4763,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.incrementCounters(tsMethodSign.questionToken, FaultID.OptionalMethod);
     }
     this.handleInvalidIdentifier(tsMethodSign);
+    this.handleInvalidGetSetKeyword(tsMethodSign);
   }
 
   private interfaceExtendsInterface(interDecl: ts.InterfaceDeclaration, interfaceName: string): boolean {
@@ -9241,6 +9244,25 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.checkSymbolAndExecute(symbol, [identifier.text], SYSTEM_MODULES, cb);
     }
     return res;
+  }
+
+  private handleInvalidGetSetKeyword(decl: ts.MethodSignature | ts.PropertySignature | ts.PropertyDeclaration): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+    const nameNode = decl.name;
+
+    if (!nameNode || !ts.isIdentifier(nameNode)) {
+      return;
+    }
+    const text = nameNode.text;
+    const parent = decl.parent;
+    if (!ts.isClassDeclaration(parent) && !ts.isInterfaceDeclaration(parent)) {
+      return;
+    }
+    if (INVALID_IDENTIFIER_GETSET.includes(text)) {
+      this.incrementCounters(nameNode, FaultID.InvalidIdentifier);
+    }
   }
 
   private handleHeritageClause(node: ts.HeritageClause): void {
