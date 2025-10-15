@@ -49,6 +49,10 @@ syntax:
   id: 114
   message: "Annotations can only be declared at the top level."
 
+- name: ANNOTATION_PAREN_REQUIRED
+  id: 150811
+  message: "Annotation usage must have parentheses when used in front of a parenthesized type."
+
 - name: ANNOTATION_PROPERTY_ACCESS_MODIFIERS
   id: 24
   message: "Annotation property can not have access modifiers."
