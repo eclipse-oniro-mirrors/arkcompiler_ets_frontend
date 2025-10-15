@@ -15,8 +15,10 @@
 
 #include "arithmetic.h"
 
+#include "checker/types/ets/etsTupleType.h"
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/typeError.h"
+#include "ir/ets/etsUnionType.h"
 #include "lexer/token/token.h"
 
 namespace ark::es2panda::checker {
@@ -27,6 +29,30 @@ struct BinaryArithmOperands {
     checker::Type *typeR;
     checker::Type *reducedL;
     checker::Type *reducedR;
+};
+
+struct BinaryOperatorParams {
+    ir::Expression *left;
+    ir::Expression *right;
+    ir::Expression *expr;
+    lexer::TokenType operationType;
+    lexer::SourcePosition pos;
+    bool isEqualOp;
+};
+
+struct TypeParams {
+    checker::Type *leftType;
+    checker::Type *rightType;
+    Type *unboxedL;
+    Type *unboxedR;
+};
+
+enum class BinaryExpressionValidity {
+    NO_ERR = 0U,
+    LHS_ERR = 1U << 0U,
+    RHS_ERR = 1U << 1U,
+    EITHER_ERR = 1U << 2U,
+    BOTH_ERR = LHS_ERR | RHS_ERR,
 };
 
 static BinaryArithmOperands GetBinaryOperands(ETSChecker *checker, ir::BinaryExpression *expr)
@@ -793,21 +819,69 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expres
     return {GlobalETSBooleanBuiltinType(), promotedType};
 }
 
-std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorInstanceOf(lexer::SourcePosition pos, checker::Type *leftType,
-                                                                     checker::Type *rightType)
+static bool IsTypeRetainedAfterErasure(const Type *const typeToCheck)
+{
+    // NOTE (smartin): #30480 - Many checks are missing from this function, to be able to merge this patch in time.
+    // These must be added.
+    if (typeToCheck->IsETSTypeParameter() || typeToCheck->IsETSTupleType()) {
+        return false;
+    }
+
+    if (typeToCheck->IsETSFunctionType()) {
+        auto *callSig = typeToCheck->AsETSFunctionType()->CallSignaturesOfMethodOrArrow().front();
+        bool isSigRetained = IsTypeRetainedAfterErasure(callSig->ReturnType());
+        for (const auto *param : callSig->Params()) {
+            isSigRetained &= IsTypeRetainedAfterErasure(param->TsType());
+        }
+
+        return isSigRetained;
+    }
+
+    if (typeToCheck->IsETSUnionType()) {
+        return typeToCheck->AsETSUnionType()->AllOfConstituentTypes(IsTypeRetainedAfterErasure);
+    }
+
+    return true;
+}
+
+static BinaryExpressionValidity AreTypesValidInInstanceofExpression(const ir::Expression *const right,
+                                                                    const Type *const rightType)
+{
+    // NOTE (smartin): #30480 - many checks were removed intentionally, to be able to merge the fix in time, these will
+    // need to be added
+    bool isRightExprStringLiteral = right->IsETSStringLiteralType();
+    if (right->IsETSUnionType()) {
+        const auto &unionTypeTypes = right->AsETSUnionType()->Types();
+        isRightExprStringLiteral |= std::any_of(unionTypeTypes.begin(), unionTypeTypes.end(),
+                                                [](auto *type) { return type->IsETSStringLiteralType(); });
+    }
+    const bool isRightTypeRetained = IsTypeRetainedAfterErasure(rightType) && !isRightExprStringLiteral;
+    return isRightTypeRetained ? BinaryExpressionValidity::NO_ERR : BinaryExpressionValidity::RHS_ERR;
+}
+
+std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorInstanceOf(const ir::Expression *right,
+                                                                     checker::Type *leftType, checker::Type *rightType)
 {
     RepairTypeErrorsInOperands(&leftType, &rightType);
     ERROR_TYPE_CHECK(this, leftType, return std::make_tuple(GlobalETSBooleanBuiltinType(), GlobalTypeError()));
 
-    if (leftType->IsETSPrimitiveType() || rightType->IsETSPrimitiveType()) {
-        LogError(diagnostic::BINOP_NOT_SAME, {}, pos);
-        return {GlobalETSBooleanBuiltinType(), leftType};
+    const BinaryExpressionValidity exprValidity = AreTypesValidInInstanceofExpression(right, rightType);
+    switch (exprValidity) {
+        case BinaryExpressionValidity::NO_ERR: {
+            break;
+        }
+        case BinaryExpressionValidity::RHS_ERR: {
+            LogError(diagnostic::INVALID_INSTANCEOF_RHS_TYPE, {right->DumpEtsSrc()}, right->Start());
+            break;
+        }
+        default:
+            ES2PANDA_UNREACHABLE();
     }
 
-    checker::Type *opType = GlobalETSObjectType();
     RemoveStatus(checker::CheckerStatus::IN_INSTANCEOF_CONTEXT);
 
-    return {GlobalETSBooleanBuiltinType(), opType};
+    return {GlobalETSBooleanBuiltinType(),
+            exprValidity == BinaryExpressionValidity::NO_ERR ? GlobalETSObjectType() : leftType};
 }
 
 template <typename T>
@@ -972,22 +1046,6 @@ std::map<lexer::TokenType, CheckBinaryFunction> &GetCheckMap()
     return checkMap;
 }
 
-struct BinaryOperatorParams {
-    ir::Expression *left;
-    ir::Expression *right;
-    ir::Expression *expr;
-    lexer::TokenType operationType;
-    lexer::SourcePosition pos;
-    bool isEqualOp;
-};
-
-struct TypeParams {
-    checker::Type *leftType;
-    checker::Type *rightType;
-    Type *unboxedL;
-    Type *unboxedR;
-};
-
 // CC-OFFNXT(G.FUN.01, huge_method) solid logic
 static std::tuple<Type *, Type *> CheckBinaryOperatorHelper(ETSChecker *checker,
                                                             const BinaryOperatorParams &binaryParams,
@@ -1028,7 +1086,7 @@ static std::tuple<Type *, Type *> CheckBinaryOperatorHelper(ETSChecker *checker,
                                                            typeParams.unboxedL, typeParams.unboxedR);
         }
         case lexer::TokenType::KEYW_INSTANCEOF: {
-            return checker->CheckBinaryOperatorInstanceOf(pos, leftType, rightType);
+            return checker->CheckBinaryOperatorInstanceOf(right, leftType, rightType);
         }
         case lexer::TokenType::PUNCTUATOR_NULLISH_COALESCING: {
             tsType = checker->CheckBinaryOperatorNullishCoalescing(left, right, pos);

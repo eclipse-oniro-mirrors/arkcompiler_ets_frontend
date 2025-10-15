@@ -723,6 +723,14 @@ semantic:
   id: 236
   message: "Type '{}' cannot be used as an index type. Only primitive or unboxable integral types can be used as index."
 
+- name: INVALID_INSTANCEOF_LHS_TYPE
+  id: 173103
+  message: "Expression with type '{}' is invalid on the left hand side of an 'instanceof' expression"
+
+- name: INVALID_INSTANCEOF_RHS_TYPE
+  id: 38251
+  message: "Type '{}' cannot be used on the right hand side of an 'instanceof' expression"
+
 - name: INVALID_INTRINSIC
   id: 61055
   message: "Invalid internal intrinsic expression"
