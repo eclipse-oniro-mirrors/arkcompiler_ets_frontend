@@ -14,16 +14,13 @@
  */
 
 import {
-  PropRef,
-  StoragePropRef,
-  LocalStoragePropRef,
-} from '@kit.ArkUI';
-
-import {
   Entry,
   Component,
   StorageLink,
   LocalStorageLink,
+  PropRef,
+  StoragePropRef,
+  LocalStoragePropRef,
 } from '@kit.ArkUI';
 
 class User {

@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-import { PropRef } from '@kit.ArkUI';
-
 import {
   Component,
   State,
@@ -23,6 +21,7 @@ import {
   Row,
   Blank,
   Button,
+  PropRef,
 } from '@kit.ArkUI';
 
 interface ChildComponentOptions {

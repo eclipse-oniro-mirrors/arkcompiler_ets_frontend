@@ -14,11 +14,6 @@
  */
 
 import {
-  CustomStyles,
-  applyStyles,
-} from '@kit.ArkUI';
-
-import {
   Component,
   CommonMethod,
   Column,
@@ -28,6 +23,8 @@ import {
   Require,
   Button,
   CustomBuilder,
+  CustomStyles,
+  applyStyles,
 } from '@kit.ArkUI';
 
 @Component

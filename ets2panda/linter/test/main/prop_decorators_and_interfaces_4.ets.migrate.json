@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 70,
+            "line": 69,
             "column": 3,
-            "endLine": 70,
+            "endLine": 69,
             "endColumn": 11,
             "problem": "DecoratorsNotSupported",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 88,
+            "line": 87,
             "column": 3,
-            "endLine": 88,
+            "endLine": 87,
             "endColumn": 11,
             "problem": "DecoratorsNotSupported",
             "suggest": "",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 106,
+            "line": 105,
             "column": 3,
-            "endLine": 106,
+            "endLine": 105,
             "endColumn": 11,
             "problem": "DecoratorsNotSupported",
             "suggest": "",
@@ -45,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 70,
+            "line": 69,
             "column": 12,
-            "endLine": 70,
+            "endLine": 69,
             "endColumn": 20,
             "problem": "StrictDiagnostic",
             "suggest": "Property 'options1' has no initializer and is not definitely assigned in the constructor.",
@@ -55,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 88,
+            "line": 87,
             "column": 12,
-            "endLine": 88,
+            "endLine": 87,
             "endColumn": 20,
             "problem": "StrictDiagnostic",
             "suggest": "Property 'options2' has no initializer and is not definitely assigned in the constructor.",
@@ -65,9 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 106,
+            "line": 105,
             "column": 12,
-            "endLine": 106,
+            "endLine": 105,
             "endColumn": 20,
             "problem": "StrictDiagnostic",
             "suggest": "Property 'options3' has no initializer and is not definitely assigned in the constructor.",
