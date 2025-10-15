@@ -1132,6 +1132,17 @@ export const basicCases: TestCases = {
   },
   generateDeclFile: {
     expectedFilePath: resolveTestPath('test/expected/generateDeclFile.json')
+  },
+  modifyFilesMap: {
+    expectedFilePath: '',
+    '1': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition1.ets'), {
+      newDoc: `export function A(a:number, b:number): number {
+    return a + b;
+}`}]
+  },
+  deleteFromFilesMap: {
+    expectedFilePath: '',
+    '1': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition1.ets')]
   }
 };
 
