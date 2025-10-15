@@ -19,7 +19,7 @@ let testInt: Int = new Int(42 as int);
 let testLong: Long = new Long(42 as long);
 let testFloat: Float = new Float(42 as float);
 let testDouble: Double = new Double(42 as double);
-let testChar: Char = new Char(42 as char);
+let testChar: Char = new Char(Int.toChar(42));
 let testLongValue: Long = 9223372036854775807;
 
 function byte_test(): boolean {
@@ -88,7 +88,7 @@ function short_test(): boolean {
 }
 
 function char_test(): boolean {
-    let Char_: Char = new Char(42 as char);
+    let Char_: Char = new Char(Int.toChar(42));
 
     let char_byte   = Char.toByte(Char_);
     let char_short  = Char.toShort(Char_);

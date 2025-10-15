@@ -19,7 +19,7 @@ let testInt: Int = new Int(42 as int);
 let testLong: Long = new Long(42 as long);
 let testFloat: Float = new Float(42 as float);
 let testDouble: Double = new Double(42 as double);
-let testChar: Char = new Char(42 as char);
+let testChar: Char = new Char(Int.toChar(42));
 let testLongValue: Long = 9223372036854775807;
 
 function byte_test(): boolean {
@@ -30,7 +30,7 @@ function byte_test(): boolean {
     let byte_long   = new Long(42 as long);
     let byte_float  = new Float(42 as float);
     let byte_double = new Double(42 as double);
-    let byte_char   = new Char(42 as char);
+    let byte_char   = new Char(Byte.toChar(42));
 
     byte_byte   = testByte; // Byte -> Byte
     byte_short  = testByte; // Byte -> Short
@@ -70,7 +70,7 @@ function short_test(): boolean {
     let short_long   = new Long(42 as long);
     let short_float  = new Float(42 as float);
     let short_double = new Double(42 as double);
-    let short_char   = new Char(42 as char);
+    let short_char   = new Char(Short.toChar(42));
 
     // short_byte   = testShort; // Short -> Byte is not available according 6.5.2 widening table and CTE happens
     short_short  = testShort; // Short -> Short
@@ -110,7 +110,7 @@ function char_test(): boolean {
     let char_long   = new Long(42 as long);
     let char_float  = new Float(42 as float);
     let char_double = new Double(42 as double);
-    let char_char   = new Char(42 as char);
+    let char_char   = new Char(Int.toChar(42));
 
     // char_byte   = testChar; // Char -> Byte is not available according 6.5.2 widening table and CTE happens
     // char_short  = testChar; // Char -> Short is not available according 6.5.2 widening table and CTE happens
@@ -157,7 +157,7 @@ function int_test(): boolean {
     let int_long   = new Long(42 as long);
     let int_float  = new Float(42 as float);
     let int_double = new Double(42 as double);
-    let int_char   = new Char(42 as char);
+    let int_char   = new Char(Int.toChar(42));
 
     // int_byte   = testInt; // Int -> Byte is not available according 6.5.2 widening table and CTE happens
     // int_short  = testInt; // Int -> Short is not available according 6.5.2 widening table and CTE happens
@@ -196,7 +196,7 @@ function long_test(): boolean {
     let long_long   = new Long(42 as long);
     let long_float  = new Float(42 as float);
     let long_double = new Double(42 as double);
-    let long_char   = new Char(42 as char);
+    let long_char   = new Char(Long.toChar(42));
 
     // long_byte   = testLong; // Long -> Byte is not available according 6.5.2 widening table and CTE happens
     // long_short  = testLong; // Long -> Short is not available according 6.5.2 widening table and CTE happens
@@ -235,7 +235,7 @@ function float_test(): boolean {
     let float_long   = new Long(42 as long);
     let float_float  = new Float(42 as float);
     let float_double = new Double(42 as double);
-    let float_char   = new Char(42 as char);
+    let float_char   = new Char(Int.toChar(42));
 
     // float_byte   = testFloat; // Float -> Byte is not available according 6.5.2 widening table and CTE happens
     // float_short  = testFloat; // Float -> Short is not available according 6.5.2 widening table and CTE happens
@@ -275,7 +275,7 @@ function double_test(): boolean {
     let double_long   = new Long(42 as long);
     let double_float  = new Float(42 as float);
     let double_double = new Double(42 as double);
-    let double_char   = new Char(42 as char);
+    let double_char   = new Char(Int.toChar(42));
 
     // double_byte   = testDouble; // Double -> Byte is not available according 6.5.2 widening table and CTE happens
     // double_short  = testDouble; // Double -> Short is not available according 6.5.2 widening table and CTE happens
