@@ -67,17 +67,16 @@ static ir::AstNode *CreateAnonClassImplCtor(public_lib::Context *ctx, ArenaVecto
 }
 
 static ir::ClassProperty *CreateAnonClassField(public_lib::Context *ctx, ir::MethodDefinition *ifaceMethod,
+                                               checker::Type *fieldType, bool isSetter,
                                                util::UString anonClassFieldName)
 {
     auto *const parser = ctx->parser->AsETSParser();
     // Field type annotation
-    auto *fieldType = ifaceMethod->Function()->Signature()->ReturnType();
-
     std::stringstream sourceCode;
     // Field modifiers flags
     sourceCode << "private ";
-    // No overloads means no setter function with the same name, so the field is readonly
-    if (ifaceMethod->Overloads().empty()) {
+    // No overloads and the method is not setter, means no setter function with the same name so the field is readonly
+    if (ifaceMethod->Overloads().empty() && !isSetter) {
         sourceCode << "readonly ";
     }
     sourceCode << "@@I1 : @@T2;" << std::endl;
@@ -89,13 +88,13 @@ static ir::ClassProperty *CreateAnonClassField(public_lib::Context *ctx, ir::Met
 }
 
 static ir::MethodDefinition *CreateAnonClassFieldGetterSetter(public_lib::Context *ctx,
-                                                              ir::MethodDefinition *ifaceMethod, bool isSetter,
+                                                              ir::MethodDefinition *ifaceMethod,
+                                                              checker::Type *fieldType, bool isSetter,
                                                               util::UString anonClassFieldName)
 {
     auto *const parser = ctx->parser->AsETSParser();
     // Field type annotation
     ES2PANDA_ASSERT(ifaceMethod->Function());
-    auto *fieldType = ifaceMethod->Function()->Signature()->ReturnType();
     ES2PANDA_ASSERT(fieldType != nullptr);
 
     std::stringstream sourceCode;
@@ -123,6 +122,38 @@ static ir::MethodDefinition *CreateAnonClassFieldGetterSetter(public_lib::Contex
         ->AsMethodDefinition();
 }
 
+static void AddAnonClassFieldAndAccessors(public_lib::Context *ctx, ArenaVector<ir::AstNode *> *classBody,
+                                          ArenaVector<ReadonlyFieldHolder> &readonlyFields,
+                                          ir::MethodDefinition *ifaceMethod, ir::MethodDefinition *copyIfaceMethod)
+{
+    bool isSetter = copyIfaceMethod->Function()->IsSetter();
+    auto *fieldType = isSetter ? copyIfaceMethod->Function()->Signature()->Params()[0]->TsType()
+                               : copyIfaceMethod->Function()->Signature()->ReturnType();
+
+    std::string newName = util::NameMangler::GetInstance()->CreateMangledNameByTypeAndName(util::NameMangler::PROPERTY,
+                                                                                           ifaceMethod->Id()->Name());
+    util::UString anonClassFieldName(newName, ctx->allocator);
+
+    auto *field = CreateAnonClassField(ctx, copyIfaceMethod, fieldType, isSetter, anonClassFieldName);
+    if (field->IsReadonly()) {
+        readonlyFields.push_back(
+            std::make_tuple(anonClassFieldName, ifaceMethod->Id()->Name(), field->TypeAnnotation()->TsType()));
+    }
+    classBody->push_back(field);
+    SetSourceRangesRecursively(field, ifaceMethod->Range());
+
+    auto *accessor = CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, fieldType, isSetter, anonClassFieldName);
+    classBody->push_back(accessor);
+    SetSourceRangesRecursively(accessor, ifaceMethod->Range());
+
+    if (copyIfaceMethod->Overloads().size() == 1) {
+        auto *anotherAccessor =
+            CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, fieldType, !isSetter, anonClassFieldName);
+        classBody->push_back(anotherAccessor);
+        SetSourceRangesRecursively(anotherAccessor, ifaceMethod->Range());
+    }
+}
+
 static void FillClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> *classBody,
                           const ArenaVector<ir::AstNode *> &ifaceBody, ArenaVector<ReadonlyFieldHolder> &readonlyFields,
                           checker::ETSObjectType *currentType = nullptr)
@@ -136,12 +167,13 @@ static void FillClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> *
         auto *ifaceMethod = it->AsMethodDefinition();
 
         ES2PANDA_ASSERT(ifaceMethod->Function());
-        if (!ifaceMethod->Function()->IsGetter()) {
+        if (!ifaceMethod->Function()->IsGetterOrSetter()) {
             continue;
         }
+        bool isSetter = ifaceMethod->Function()->IsSetter();
 
         auto iter = std::find_if(classBody->begin(), classBody->end(), [ifaceMethod](ir::AstNode *ast) -> bool {
-            return ast->IsMethodDefinition() && ast->AsMethodDefinition()->Function()->IsGetter() &&
+            return ast->IsMethodDefinition() && ast->AsMethodDefinition()->Function()->IsGetterOrSetter() &&
                    ast->AsMethodDefinition()->Id()->Name() == ifaceMethod->Id()->Name();
         });
         if (iter != classBody->end()) {
@@ -157,32 +189,15 @@ static void FillClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> *
             auto funcType = (prop != nullptr) ? prop->TsType() : nullptr;
             if (funcType != nullptr) {
                 ES2PANDA_ASSERT(funcType->IsETSFunctionType() &&
-                                funcType->AsETSFunctionType()->FindGetter() != nullptr);
-                copyIfaceMethod->Function()->SetSignature(funcType->AsETSFunctionType()->FindGetter());
+                                (funcType->AsETSFunctionType()->FindGetter() != nullptr ||
+                                 funcType->AsETSFunctionType()->FindSetter() != nullptr));
+                auto *sig = isSetter ? funcType->AsETSFunctionType()->FindSetter()
+                                     : funcType->AsETSFunctionType()->FindGetter();
+                copyIfaceMethod->Function()->SetSignature(sig);
             }
         }
 
-        // Field identifier
-        std::string newName = util::NameMangler::GetInstance()->CreateMangledNameByTypeAndName(
-            util::NameMangler::PROPERTY, ifaceMethod->Id()->Name());
-        util::UString anonClassFieldName(newName, ctx->allocator);
-        auto *field = CreateAnonClassField(ctx, copyIfaceMethod, anonClassFieldName);
-        if (field->IsReadonly()) {
-            readonlyFields.push_back(
-                std::make_tuple(anonClassFieldName, ifaceMethod->Id()->Name(), field->TypeAnnotation()->TsType()));
-        }
-        classBody->push_back(field);
-        SetSourceRangesRecursively(field, ifaceMethod->Range());
-
-        auto *getter = CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, false, anonClassFieldName);
-        classBody->push_back(getter);
-        SetSourceRangesRecursively(getter, ifaceMethod->Range());
-
-        if (copyIfaceMethod->Overloads().size() == 1 && copyIfaceMethod->Overloads()[0]->Function()->IsSetter()) {
-            auto *setter = CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, true, anonClassFieldName);
-            classBody->push_back(setter);
-            SetSourceRangesRecursively(setter, ifaceMethod->Range());
-        }
+        AddAnonClassFieldAndAccessors(ctx, classBody, readonlyFields, ifaceMethod, copyIfaceMethod);
     }
 }
 
