@@ -95,25 +95,36 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
     auto *arrayType = literalArrayType->AsETSResizableArrayType()->ElementType();
     std::vector<ir::AstNode *> newStmts;
     std::stringstream ss;
-    auto *genSymIdent = Gensym(Allocator());
-    auto *genSymIdent2 = Gensym(Allocator());
+    ir::Identifier *genSymIdent = Gensym(Allocator());
+    ir::Identifier *genSymIdent2 = nullptr;
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
-    ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-    ss << "let @@I4 : Array<@@T5> = new Array<@@T6>(@@I7.length);";
-    ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";
-    ss << "@@I11;";
-    newStmts.emplace_back(genSymIdent);
-    newStmts.emplace_back(type);
-    newStmts.emplace_back(literalArray);
-    literalArray->SetTsType(nullptr);
-    newStmts.emplace_back(genSymIdent2);
-    newStmts.emplace_back(type->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(type->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
+    // NOTE(frontend):follow-up #30648
+    if (literalArray->Elements().empty()) {
+        ss << "let @@I1: Array<@@T2> = new Array<@@T3>(0);";
+        ss << "@@I4;";
+        newStmts.emplace_back(genSymIdent);
+        newStmts.emplace_back(type);
+        newStmts.emplace_back(type->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+    } else {
+        genSymIdent2 = Gensym(Allocator());
+        ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
+        ss << "let @@I4 : Array<@@T5> = new Array<@@T6>(@@I7.length);";
+        ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";
+        ss << "@@I11;";
+        newStmts.emplace_back(genSymIdent);
+        newStmts.emplace_back(type);
+        newStmts.emplace_back(literalArray);
+        literalArray->SetTsType(nullptr);
+        newStmts.emplace_back(genSymIdent2);
+        newStmts.emplace_back(type->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(type->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
+    }
 
     auto *parent = literalArray->Parent();
     auto *loweringResult = parser_->CreateFormattedExpression(ss.str(), newStmts);
