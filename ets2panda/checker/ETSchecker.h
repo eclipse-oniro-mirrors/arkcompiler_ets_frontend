@@ -609,8 +609,8 @@ public:
     void BindingsModuleObjectAddProperty(checker::ETSObjectType *moduleObjType, ir::ETSImportDeclaration *importDecl,
                                          const varbinder::Scope::VariableMap &bindings,
                                          const util::StringView &importPath);
-    util::StringView FindPropNameForNamespaceImport(const util::StringView &originalName,
-                                                    const util::StringView &importPath);
+    std::vector<util::StringView> FindPropNameForNamespaceImport(const util::StringView &originalName,
+                                                                 const util::StringView &importPath);
     void SetPropertiesForModuleObject(checker::ETSObjectType *moduleObjType, const util::StringView &importPath,
                                       ir::ETSImportDeclaration *importDecl = nullptr);
     parser::Program *SelectEntryOrExternalProgram(varbinder::ETSBinder *etsBinder, const util::StringView &importPath);
