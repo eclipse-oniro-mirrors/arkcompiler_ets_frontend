@@ -5142,10 +5142,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
       }
 
-      for (let i = 0; i < declaration.parameters.length; i++) {
+      for (let i = 1; i < declaration.parameters.length; i++) {
         const declParam = declaration.parameters[i];
         const infoParam = info.params[i];
-        if (declParam.name.getText() !== infoParam.name) {
+        if (declParam.type?.getText() !== infoParam.type) {
           return false;
         }
       }
@@ -5156,16 +5156,20 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private getCallbackArgumentBody(callExpr: ts.CallExpression): ts.ArrowFunction | ts.FunctionExpression | undefined {
     void this;
     for (const arg of callExpr.arguments) {
-      if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
-        if (arg.body && ts.isBlock(arg.body)) {
-          const lastExpr =
-            arg.body.statements.length > 0 ? arg.body.statements[arg.body.statements.length - 1] : undefined;
-          if (lastExpr && ts.isReturnStatement(lastExpr) && lastExpr.expression) {
-            return undefined;
-          }
-          return arg;
-        }
+      if (!(ts.isArrowFunction(arg) || ts.isFunctionExpression(arg))) {
+        continue;
       }
+      if (!arg.body || !ts.isBlock(arg.body)) {
+        continue;
+      }
+      const statements = arg.body.statements;
+      const lastExpr = statements.length > 0 ? statements[statements.length - 1] : undefined;
+      
+      if (lastExpr && ts.isReturnStatement(lastExpr) && lastExpr.expression) {
+        return undefined;
+      }
+      
+      return arg;
     }
     return undefined;
   }

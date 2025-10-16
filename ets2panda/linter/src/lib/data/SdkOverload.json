@@ -275,7 +275,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "()",
+                        "type": "() => void",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -310,7 +310,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "()",
+                        "type": "() => void",
                         "is_optional": true,
                         "has_default": false
                     }
