@@ -327,7 +327,7 @@ static ETSObjectType *InitializeGlobalBuiltinObjectType(ETSChecker *checker, Glo
         return slot;
     };
 
-    auto *const programAllocator = checker->ProgramAllocator();
+    auto *const allocator = checker->Allocator();
 
     switch (globalId) {
         case GlobalTypeId::ETS_OBJECT_BUILTIN: {
@@ -342,14 +342,13 @@ static ETSObjectType *InitializeGlobalBuiltinObjectType(ETSChecker *checker, Glo
             auto *stringObj = setType(GlobalTypeId::ETS_STRING_BUILTIN,
                                       create(ETSObjectFlags::BUILTIN_STRING | ETSObjectFlags::STRING))
                                   ->AsETSObjectType();
-            setType(GlobalTypeId::ETS_STRING,
-                    programAllocator->New<ETSStringType>(programAllocator, stringObj, checker->Relation()));
+            setType(GlobalTypeId::ETS_STRING, allocator->New<ETSStringType>(allocator, stringObj, checker->Relation()));
             return stringObj;
         }
         case GlobalTypeId::ETS_BIG_INT_BUILTIN: {
             auto *bigIntObj =
                 setType(GlobalTypeId::ETS_BIG_INT_BUILTIN, create(ETSObjectFlags::BUILTIN_BIGINT))->AsETSObjectType();
-            setType(GlobalTypeId::ETS_BIG_INT, programAllocator->New<ETSBigIntType>(programAllocator, bigIntObj));
+            setType(GlobalTypeId::ETS_BIG_INT, allocator->New<ETSBigIntType>(allocator, bigIntObj));
             return bigIntObj;
         }
         case GlobalTypeId::ETS_ARRAY_BUILTIN: {
@@ -358,7 +357,7 @@ static ETSObjectType *InitializeGlobalBuiltinObjectType(ETSChecker *checker, Glo
             }
             auto *arrayObj =
                 setType(GlobalTypeId::ETS_ARRAY_BUILTIN, create(ETSObjectFlags::BUILTIN_ARRAY))->AsETSObjectType();
-            setType(GlobalTypeId::ETS_ARRAY, programAllocator->New<ETSResizableArrayType>(programAllocator, arrayObj));
+            setType(GlobalTypeId::ETS_ARRAY, allocator->New<ETSResizableArrayType>(allocator, arrayObj));
             return arrayObj;
         }
         case GlobalTypeId::ETS_READONLY_ARRAY:

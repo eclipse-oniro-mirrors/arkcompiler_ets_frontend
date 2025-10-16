@@ -39,13 +39,6 @@ PhaseManager *GetPhaseManager();
 
 namespace ark::es2panda::public_lib {
 
-enum class CompilingState : unsigned int {
-    NONE_COMPILING = 0,
-    SINGLE_COMPILING = 1,
-    MULTI_COMPILING_INIT = 2,
-    MULTI_COMPILING_FOLLOW = 3,
-};
-
 struct ConfigImpl {
     const util::Options *options = nullptr;
     util::DiagnosticEngine *diagnosticEngine = nullptr;
@@ -57,92 +50,6 @@ using ExternalSource = ArenaUnorderedMap<util::StringView, ArenaVector<parser::P
 using ComputedAbstracts =
     ArenaUnorderedMap<checker::ETSObjectType *,
                       std::pair<ArenaVector<checker::ETSFunctionType *>, ArenaUnorderedSet<checker::ETSObjectType *>>>;
-
-class TransitionMemory {
-public:
-    explicit TransitionMemory(ThreadSafeArenaAllocator *allocator)
-        : permanentAllocator_(allocator), compiledPrograms_(allocator->Adapter())
-    {
-        compiledPrograms_ = {};
-    }
-
-    NO_COPY_SEMANTIC(TransitionMemory);
-    DEFAULT_MOVE_SEMANTIC(TransitionMemory);
-
-    ~TransitionMemory() = default;
-
-    ThreadSafeArenaAllocator *PermanentAllocator() const
-    {
-        return permanentAllocator_.get();
-    }
-
-    const varbinder::VarBinder *VarBinder() const
-    {
-        return varbinder_;
-    }
-
-    varbinder::VarBinder *VarBinder()
-    {
-        return varbinder_;
-    }
-
-    void SetVarBinder(varbinder::VarBinder *varbinder)
-    {
-        varbinder_ = varbinder;
-    }
-
-    const checker::GlobalTypesHolder *GlobalTypes() const
-    {
-        return globalTypes_;
-    }
-
-    checker::GlobalTypesHolder *GlobalTypes()
-    {
-        return globalTypes_;
-    }
-
-    void SetGlobalTypes(checker::GlobalTypesHolder *globalTypes)
-    {
-        globalTypes_ = globalTypes;
-    }
-
-    void AddCompiledProgram(parser::Program *program)
-    {
-        compiledPrograms_.push_back(program);
-    }
-
-    ArenaVector<parser::Program *> &CompiledSources()
-    {
-        return compiledPrograms_;
-    }
-
-    const ArenaVector<parser::Program *> &CompiledPrograms() const
-    {
-        return compiledPrograms_;
-    }
-
-    const ComputedAbstracts *CachedComputedAbstracts() const
-    {
-        return cachedComputedAbstracts_;
-    }
-
-    ComputedAbstracts *CachedComputedAbstracts()
-    {
-        return cachedComputedAbstracts_;
-    }
-
-    void SetCachechedComputedAbstracts(ComputedAbstracts *cachedComputedAbstracts)
-    {
-        cachedComputedAbstracts_ = cachedComputedAbstracts;
-    }
-
-private:
-    std::unique_ptr<ThreadSafeArenaAllocator> permanentAllocator_;
-    ArenaVector<parser::Program *> compiledPrograms_;
-    varbinder::VarBinder *varbinder_ {nullptr};
-    checker::GlobalTypesHolder *globalTypes_ {nullptr};
-    ComputedAbstracts *cachedComputedAbstracts_ {nullptr};
-};
 
 struct GlobalContext {
     std::unordered_map<std::string, ArenaAllocator *> externalProgramAllocators;
@@ -227,9 +134,7 @@ struct Context {
     std::string errorMessage;
     lexer::SourcePosition errorPos;
 
-    CompilingState compilingState {CompilingState::NONE_COMPILING};
     ExternalSources externalSources;
-    TransitionMemory *transitionMemory {nullptr};
     bool isExternal = false;
     bool compiledByCapi = false;
     std::vector<std::string> sourceFileNames;

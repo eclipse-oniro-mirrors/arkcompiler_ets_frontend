@@ -285,39 +285,6 @@ static void CreateDebuggerEvaluationPlugin(checker::ETSChecker &checker, ArenaAl
 using EmitCb = std::function<pandasm::Program *(public_lib::Context *)>;
 using PhaseListGetter = std::function<std::vector<compiler::Phase *>(ScriptExtension)>;
 
-static void AddExternalPrograms(public_lib::Context *ctx, const CompilationUnit &unit, parser::Program *program)
-{
-    auto &extSources = program->ExternalSources();
-    for (const auto &[moduleName, extPrograms] : ctx->externalSources) {
-        for (auto *const extProg : extPrograms) {
-            if (extProg->SourceFilePath() == unit.input.filePath) {
-                continue;
-            }
-            if (extSources.count(moduleName) == 0) {
-                extSources.emplace(moduleName, program->Allocator()->Adapter());
-            }
-            extSources.at(moduleName).emplace_back(extProg);
-        }
-    }
-    auto varbinder = static_cast<varbinder::ETSBinder *>(ctx->transitionMemory->VarBinder());
-    auto externalRecordTable = varbinder->GetExternalRecordTable();
-    for (auto [extProg, recordTable] : externalRecordTable) {
-        if (program->SourceFilePath() == extProg->SourceFilePath()) {
-            externalRecordTable.erase(externalRecordTable.find(extProg));
-            break;
-        }
-    }
-    auto &prevGlobalTypes = ctx->transitionMemory->GlobalTypes()->GlobalTypes();
-    for (auto *gt : prevGlobalTypes) {
-        if (gt != nullptr && gt->IsETSObjectType()) {
-            auto *relation = gt->AsETSObjectType()->GetRelation();
-            if (relation != nullptr) {
-                relation->SetChecker(ctx->GetChecker());
-            }
-        }
-    }
-}
-
 [[maybe_unused]] static void MarkAsLowered(parser::Program &program)
 {
     for (auto &[name, extPrograms] : program.ExternalSources()) {
@@ -329,103 +296,21 @@ static void AddExternalPrograms(public_lib::Context *ctx, const CompilationUnit 
     }
 }
 
-static void EmplaceProgram(public_lib::Context *ctx, util::StringView moduleName, parser::Program *extProg)
-{
-    auto &extSources = ctx->externalSources;
-    if (extSources.count(moduleName) == 0) {
-        extSources.emplace(moduleName, ctx->transitionMemory->PermanentAllocator()->Adapter());
-    }
-    bool found = false;
-    for (auto extSrc : extSources.at(moduleName)) {
-        if (extSrc->SourceFilePath() == extProg->SourceFilePath()) {
-            found = true;
-            break;
-        }
-    }
-    if (!found) {
-        extSources.at(moduleName).emplace_back(extProg);
-    }
-}
-
-static void SavePermanents(public_lib::Context *ctx, parser::Program *program)
-{
-    for (const auto &[moduleName, extPrograms] : program->ExternalSources()) {
-        for (auto *const extProg : extPrograms) {
-            EmplaceProgram(ctx, moduleName, extProg);
-        }
-    }
-    ctx->transitionMemory->SetVarBinder(program->VarBinder());
-    auto *topScope = ctx->transitionMemory->VarBinder()->TopScope();
-    ES2PANDA_ASSERT(topScope->IsGlobalScope());
-    auto decls = topScope->Decls();
-    auto path = program->SourceFilePath();
-    // clang-format off
-    decls.erase(std::remove_if(decls.begin(), decls.end(),
-        [path](varbinder::Decl *d) -> bool {
-            auto *n = d->Node();
-            if (n == nullptr || n->Start().Program() == nullptr) {
-                return true;
-            }
-            auto sourceFile = n->Start().Program()->SourceFilePath();
-            return sourceFile == "" || sourceFile == path;
-        }),
-        decls.end());
-    // clang-format on
-
-    auto res = topScope->Find(util::StringView("ETSGLOBAL"));
-    auto *var = res.variable;
-    var->SetTsType(nullptr);
-    auto moduleName = std::string(program->ModuleName());
-    auto globalClassName = moduleName.substr(moduleName.find_last_of('.') + 1);
-    topScope->EraseBinding(util::StringView(globalClassName));
-
-    std::vector<util::StringView> declaredKeys;
-    for (auto &&it : topScope->Bindings()) {
-        var = it.second;
-        if (var->Declaration() != nullptr && var->Declaration()->Node() != nullptr) {
-            auto *node = var->Declaration()->Node();
-            if (node->Range().start.Program() == program) {
-                declaredKeys.emplace_back(it.first);
-            }
-        }
-    }
-    for (auto &&key : declaredKeys) {
-        topScope->EraseBinding(key);
-    }
-
-    auto *varbinder = static_cast<varbinder::ETSBinder *>(program->VarBinder());
-    varbinder->GetGlobalRecordTable()->CleanUp();
-    varbinder->Functions().clear();
-
-    ctx->transitionMemory->SetGlobalTypes(ctx->GetChecker()->GetGlobalTypesHolder());
-    ctx->transitionMemory->SetCachechedComputedAbstracts(
-        ctx->GetChecker()->AsETSChecker()->GetCachedComputedAbstracts());
-    ctx->transitionMemory->AddCompiledProgram(ctx->parserProgram);
-}
-
-static pandasm::Program *EmitProgram(CompilerImpl *compilerImpl, public_lib::Context *context,
-                                     const CompilationUnit &unit)
+static pandasm::Program *EmitProgram(CompilerImpl *compilerImpl, public_lib::Context *context)
 {
     ES2PANDA_PERF_SCOPE("@EmitProgram");
     compilerImpl->Emit(context);
     context->emitter->GenAnnotation();
-    auto result = context->emitter->Finalize(context->config->options->IsDumpDebugInfo(), Signatures::ETS_GLOBAL);
-    if (unit.ext == ScriptExtension::ETS && context->compilingState != public_lib::CompilingState::SINGLE_COMPILING) {
-        SavePermanents(context, context->parserProgram);
-    }
-    return result;
+    return context->emitter->Finalize(context->config->options->IsDumpDebugInfo(), Signatures::ETS_GLOBAL);
 }
 
-static bool ExecuteParsingAndCompiling(const CompilationUnit &unit, public_lib::Context *context)
+static bool ParseAndRunPhases(const CompilationUnit &unit, public_lib::Context *context)
 {
     ES2PANDA_PERF_SCOPE("@phases");
     parser::Program *program = context->parserProgram;
     if (unit.ext == ScriptExtension::ETS) {
         if (context->config->options->IsUseDeclarationCache()) {
             parser::DeclarationCache::ActivateCache();
-        }
-        if (context->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-            AddExternalPrograms(context, unit, program);
         }
     }
 
@@ -483,15 +368,12 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
     context->sourceFile = &unit.input;
     context->queue = compilerImpl->Queue();
     context->plugins = &compilerImpl->Plugins();
-    auto program = parser::Program::NewProgram<VarBinder>(
-        context->allocator, context->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW
-                                ? context->transitionMemory->VarBinder()
-                                : nullptr);
+    auto program = parser::Program::NewProgram<VarBinder>(context->allocator, nullptr);
     auto parser =
         Parser(&program, unit.options, unit.diagnosticEngine, static_cast<parser::ParserStatus>(unit.rawParserStatus));
     context->parser = &parser;
     parser.SetContext(context);
-    auto checker = Checker(context->allocator, unit.diagnosticEngine, context->allocator);
+    auto checker = Checker(context->allocator, unit.diagnosticEngine);
     context->parserProgram = &program;
     context->PushChecker(&checker);
     auto analyzer = Analyzer(&checker);
@@ -503,13 +385,7 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
 
     if constexpr (std::is_same_v<Checker, checker::ETSChecker>) {
         CreateDebuggerEvaluationPlugin(checker, *context->allocator, &program, unit.options);
-        if (context->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-            checker.SetCachedComputedAbstracts(context->transitionMemory->CachedComputedAbstracts());
-            checker.SetGlobalTypesHolder(context->transitionMemory->GlobalTypes());
-            checker.AddStatus(ark::es2panda::checker::CheckerStatus::BUILTINS_INITIALIZED);
-        } else {
-            checker.InitCachedComputedAbstracts();
-        }
+        checker.InitCachedComputedAbstracts();
     }
     auto emitter = Emitter(context);
     context->emitter = &emitter;
@@ -518,12 +394,12 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
     varbinder->SetContext(context);
     context->GetChecker()->Initialize(varbinder);
 
-    if (!ExecuteParsingAndCompiling(unit, context)) {
+    if (!ParseAndRunPhases(unit, context)) {
         return ClearContextAndReturnProgam(context, nullptr);
     }
 
     MarkAsLowered(program);
-    return ClearContextAndReturnProgam(context, EmitProgram(compilerImpl, context, unit));
+    return ClearContextAndReturnProgam(context, EmitProgram(compilerImpl, context));
 }
 
 pandasm::Program *CompilerImpl::Compile(const CompilationUnit &unit, public_lib::Context *context)

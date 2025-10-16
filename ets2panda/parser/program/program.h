@@ -24,7 +24,6 @@
 #include "util/importPathManager.h"
 #include "varbinder/varbinder.h"
 #include <lexer/token/sourceLocation.h>
-#include "util/enumbitops.h"
 
 #include <set>
 #include <ir/statements/blockStatement.h>
@@ -52,21 +51,6 @@ enum class ScriptKind { SCRIPT, MODULE, STDLIB, GENEXTERNAL };
 #ifndef NDEBUG
 constexpr uint32_t POISON_VALUE {0x12346789};
 #endif
-
-using ENUMBITOPS_OPERATORS;
-
-enum class ProgramFlags : uint32_t {
-    NONE = 0U,
-    AST_CHECKED = 1U << 0U,
-    AST_CHECK_PROCESSED = 1U << 1U,
-    AST_ENUM_LOWERED = 1U << 2U,
-    AST_BOXED_TYPE_LOWERED = 1U << 3U,
-    AST_CONSTANT_EXPRESSION_LOWERED = 1U << 5U,
-    AST_STRING_CONSTANT_LOWERED = 1U << 6U,
-    AST_IDENTIFIER_ANALYZED = 1U << 7U,
-    AST_HAS_SCOPES_INITIALIZED = 1U << 8U,
-    AST_HAS_OPTIONAL_PARAMETER_ANNOTATION = 1U << 9U,
-};
 
 class Program {
 public:
@@ -288,8 +272,6 @@ public:
         return moduleInfo_.isDeclForDynamicStaticInterop;
     }
 
-    void SetFlag(ProgramFlags flag);
-    bool GetFlag(ProgramFlags flag) const;
     void SetASTChecked();
     void RemoveAstChecked();
     bool IsASTChecked();
@@ -349,21 +331,6 @@ public:
     compiler::CFG *GetCFG();
     const compiler::CFG *GetCFG() const;
 
-    [[nodiscard]] const ArenaVector<varbinder::FunctionScope *> &Functions() const noexcept
-    {
-        return functionScopes_;
-    }
-
-    [[nodiscard]] ArenaVector<varbinder::FunctionScope *> &Functions() noexcept
-    {
-        return functionScopes_;
-    }
-
-    void AddToFunctionScopes(varbinder::FunctionScope *funcScope)
-    {
-        functionScopes_.push_back(funcScope);
-    }
-
     std::unordered_map<std::string, std::unordered_set<std::string>> &GetFileDependencies()
     {
         return fileDependencies_;
@@ -399,7 +366,6 @@ private:
 
     lexer::SourcePosition packageStartPosition_ {};
     compiler::CFG *cfg_;
-    ArenaVector<varbinder::FunctionScope *> functionScopes_;
     std::unordered_map<std::string, std::unordered_set<std::string>> fileDependencies_;
 
 private:
@@ -408,16 +374,8 @@ private:
 #ifndef NDEBUG
     uint32_t poisonValue_ {POISON_VALUE};
 #endif
-    ProgramFlags programFlags_ {};
+    bool isAstChecked_ {false};
 };
 }  // namespace ark::es2panda::parser
-
-namespace enumbitops {
-
-template <>
-struct IsAllowedType<ark::es2panda::parser::ProgramFlags> : std::true_type {
-};
-
-}  // namespace enumbitops
 
 #endif

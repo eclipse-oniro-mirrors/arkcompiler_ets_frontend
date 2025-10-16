@@ -698,10 +698,6 @@ bool EnumLoweringPhase::PerformForModule(public_lib::Context *ctx, parser::Progr
         return true;
     }
 
-    if (program->GetFlag(parser::ProgramFlags::AST_ENUM_LOWERED)) {
-        return true;
-    }
-
     context_ = ctx;
     checker_ = ctx->GetChecker()->AsETSChecker();
     varbinder_ = ctx->parserProgram->VarBinder()->AsETSBinder();
@@ -717,8 +713,6 @@ bool EnumLoweringPhase::PerformForModule(public_lib::Context *ctx, parser::Progr
             return ast;
         },
         Name());
-
-    program->SetFlag(parser::ProgramFlags::AST_ENUM_LOWERED);
 
     return true;
 }

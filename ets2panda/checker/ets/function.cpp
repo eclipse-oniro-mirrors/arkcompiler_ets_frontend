@@ -1916,7 +1916,6 @@ void ETSChecker::BuildFunctionSignature(ir::ScriptFunction *func, bool isConstru
     }
 
     VarBinder()->AsETSBinder()->BuildFunctionName(func);
-    Program()->AddToFunctionScopes(func->Scope());
 }
 
 checker::ETSFunctionType *ETSChecker::BuildMethodType(ir::ScriptFunction *func)

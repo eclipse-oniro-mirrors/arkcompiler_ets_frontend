@@ -116,8 +116,6 @@ public:
 
     pandasm::Program *Compile(const SourceFile &input, const util::Options &options,
                               util::DiagnosticEngine &diagnosticEngine, uint32_t parseStatus = 0);
-    unsigned int CompileM(std::vector<SourceFile> &inputs, util::Options &options,
-                          util::DiagnosticEngine &diagnosticEngine, std::vector<pandasm::Program *> &result);
 
     static void DumpAsm(const pandasm::Program *prog);
 
@@ -144,5 +142,10 @@ private:
 // - inside SIGSEGV handler
 extern util::DiagnosticEngine *g_diagnosticEngine;
 }  // namespace ark::es2panda
+
+namespace ark {
+// This is a definition for a legacy type, please don't use it
+using ThreadSafeArenaAllocator = ArenaAllocator;
+}  // namespace ark
 
 #endif

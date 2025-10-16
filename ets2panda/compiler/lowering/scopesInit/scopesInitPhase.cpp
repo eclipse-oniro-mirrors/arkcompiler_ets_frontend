@@ -866,10 +866,6 @@ bool InitScopesPhaseETS::Perform(PhaseContext *ctx, parser::Program *program)
         program->VarBinder()->InitTopScope();
         BindScopeNode(GetScope(), program->Ast());
         AddGlobalToBinder(program);
-    } else if ((ctx->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) &&
-               program->GlobalClass()->Scope() == nullptr) {
-        BindScopeNode(GetScope(), program->Ast());
-        AddGlobalToBinder(program);
     }
     HandleProgram(program);
     Finalize();
@@ -891,23 +887,18 @@ void InitScopesPhaseETS::HandleProgram(parser::Program *program)
         auto globalClass = mainProg->GlobalClass();
         auto globalScope = mainProg->GlobalScope();
         for (auto &prog : progList) {
-            if (prog->GetFlag(parser::ProgramFlags::AST_HAS_SCOPES_INITIALIZED)) {
-                continue;
-            }
             prog->SetGlobalClass(globalClass);
             BindScopeNode(prog->VarBinder()->GetScope(), prog->Ast());
             prog->VarBinder()->ResetTopScope(globalScope);
             if (mainProg->Ast() != nullptr) {
                 InitScopesPhaseETS().Perform(Context(), prog);
-                prog->SetFlag(parser::ProgramFlags::AST_HAS_SCOPES_INITIALIZED);
             }
         }
         program->VarBinder()->ResetTopScope(savedTopScope);
     }
     ES2PANDA_ASSERT(program->Ast() != nullptr);
 
-    auto *ast = program->Ast();
-    HandleETSModule(ast);
+    HandleETSModule(program->Ast());
 }
 
 void InitScopesPhaseETS::BindVarDecl(ir::Identifier *binding, ir::Expression *init, varbinder::Decl *decl,
@@ -1326,20 +1317,6 @@ void InitScopesPhaseETS::AddGlobalToBinder(parser::Program *program)
     auto start = globalId->Start();
     auto name = globalId->Name();
     auto *varBinder = program->VarBinder();
-    auto *ctx = varBinder->GetContext();
-    if (ctx->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-        auto *scope = varBinder->GetScope();
-        auto bindings = scope->Bindings();
-        auto res = bindings.find(name);
-        if (res != bindings.end()) {
-            auto classCtx =
-                LexicalScopeCreateOrEnter<varbinder::ClassScope>(program->VarBinder(), program->GlobalClass());
-            classCtx.GetScope()->BindNode(program->GlobalClass());
-            program->GlobalClass()->SetScope(classCtx.GetScope());
-            globalId->SetVariable(res->second);
-            return;
-        }
-    }
     auto [decl2, var] = varBinder->NewVarDecl<varbinder::ClassDecl>(start, name);
 
     auto classCtx = LexicalScopeCreateOrEnter<varbinder::ClassScope>(program->VarBinder(), program->GlobalClass());
