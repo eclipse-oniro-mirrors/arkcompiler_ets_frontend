@@ -517,10 +517,10 @@ std::string ImportPathManager::TruncateFileExtension(std::string path, bool &has
 }
 
 // Transform /a/b/c.ets to a.b.c
-std::string ImportPathManager::FormRelativeModuleName(std::string relPath)
+static std::string FormRelativeModuleName(std::string relPath)
 {
     bool hasExtension = false;
-    relPath = TruncateFileExtension(relPath, hasExtension);
+    relPath = ImportPathManager::TruncateFileExtension(relPath, hasExtension);
     if (relPath.empty()) {
         return "";
     }

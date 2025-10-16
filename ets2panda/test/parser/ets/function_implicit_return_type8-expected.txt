@@ -943,27 +943,28 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewClassInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Console",
-                                  "loc": {
-                                    "start": {
-                                      "line": 38,
-                                      "column": 19,
-                                      "program": "function_implicit_return_type8.ets"
-                                    },
-                                    "end": {
-                                      "line": 38,
-                                      "column": 26,
-                                      "program": "function_implicit_return_type8.ets"
-                                    }
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Console",
+                                "loc": {
+                                  "start": {
+                                    "line": 38,
+                                    "column": 15,
+                                    "program": "function_implicit_return_type8.ets"
+                                  },
+                                  "end": {
+                                    "line": 38,
+                                    "column": 22,
+                                    "program": "function_implicit_return_type8.ets"
                                   }
-                                },
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "getInstance",
                                 "loc": {
                                   "start": {
                                     "line": 38,

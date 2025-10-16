@@ -91,8 +91,8 @@ static ir::AstNode *TransformESValueLoadCallExpression(ir::CallExpression *callE
     if (metaData.ohmUrl == util::ImportPathManager::DUMMY_PATH) {
         // If it has suffix like .ts, .js, .ets etc., we should truncate the suffix
         bool hasExtension = false;
-        auto truncatedPath = parser->GetImportPathManager()->TruncateFileExtension(
-            importPath->AsStringLiteral()->ToString(), hasExtension);
+        auto truncatedPath =
+            util::ImportPathManager::TruncateFileExtension(importPath->AsStringLiteral()->ToString(), hasExtension);
         if (!hasExtension) {
             return callExpr;
         }

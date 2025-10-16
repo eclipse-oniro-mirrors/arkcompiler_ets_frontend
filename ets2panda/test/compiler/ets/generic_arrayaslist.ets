@@ -112,7 +112,7 @@ class ArrayAsListt<T> implements Listt<T> {
     }
 
     public override popBack(): T {
-        arktest.assertTrue(0, this.curSize, "No data to popBack in ArrayAsList!");
+        arktest.assertLT(0, this.curSize, "No data to popBack in ArrayAsList!");
         --this.curSize;
         return this.data[this.curSize] as T;
     }
