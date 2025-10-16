@@ -333,8 +333,16 @@ static void DumpSingleOverload(const ir::MethodDefinition *m, ir::SrcDumper *dum
 
 void MethodDefinition::Dump(ir::SrcDumper *dumper) const
 {
-    if (dumper->IsDeclgen() && FilterForDeclGen()) {
-        return;
+    if (dumper->IsDeclgen()) {
+        if (FilterForDeclGen()) {
+            return;
+        }
+        if (Parent() != nullptr && (IsGetter() || IsSetter()) && IsOptionalDeclaration() &&
+            Parent()->IsTSInterfaceBody() && OriginalNode() != nullptr && OriginalNode()->IsClassProperty()) {
+            OriginalNode()->AsClassProperty()->ForceDump(dumper);
+            dumper->Endl();
+            return;
+        }
     }
 
     if (!dumper->IsDeclgen() || !IsPrivate()) {

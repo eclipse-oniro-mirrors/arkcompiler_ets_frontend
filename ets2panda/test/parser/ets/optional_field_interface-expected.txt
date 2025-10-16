@@ -27,7 +27,7 @@
             "kind": "get",
             "accessibility": "public",
             "static": false,
-            "optional": false,
+            "optional": true,
             "computed": false,
             "value": {
               "type": "FunctionExpression",
@@ -227,7 +227,7 @@
                 "kind": "set",
                 "accessibility": "public",
                 "static": false,
-                "optional": false,
+                "optional": true,
                 "computed": false,
                 "value": {
                   "type": "FunctionExpression",

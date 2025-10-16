@@ -717,6 +717,7 @@ ir::MethodDefinition *ETSChecker::CreateNullishAccessor(ir::MethodDefinition *co
     }
 
     nullishAccessor->SetOverloads(ArenaVector<ir::MethodDefinition *>(ProgramAllocator()->Adapter()));
+    nullishAccessor->AddModifier(ir::ModifierFlags::OPTIONAL);
 
     return nullishAccessor;
 }
