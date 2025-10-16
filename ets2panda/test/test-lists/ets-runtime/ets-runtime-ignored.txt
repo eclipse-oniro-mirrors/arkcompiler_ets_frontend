@@ -138,3 +138,11 @@ type_error_test.ets
 
 #31442
 import_namespaces.ets
+
+# 74119 fail after tests-u-runner-2 update
+fields_with_late_initialization/class_late_initialization_with_unionType.ets.ets
+finallyExecutedAbruptly.ets
+generic_union.ets
+register_overflow.ets
+spill_fill_virtual_range.ets
+union_call.ets
