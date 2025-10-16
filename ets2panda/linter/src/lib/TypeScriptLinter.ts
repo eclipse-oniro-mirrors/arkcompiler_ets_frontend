@@ -208,7 +208,7 @@ import { BaseTypeScriptLinter } from './BaseTypeScriptLinter';
 import type { ArrayAccess, UncheckedIdentifier } from './utils/consts/RuntimeCheckAPI';
 import { NUMBER_LITERAL, LENGTH_IDENTIFIER } from './utils/consts/RuntimeCheckAPI';
 import { globalApiAssociatedInfo } from './utils/consts/AssociatedInfo';
-import { ArrayAsCastResult, ARRAY_API_LIST } from './utils/consts/ArraysAPI';
+import { ArrayAsCastResult, ARRAY_API_LIST, NEVER_ARRAY } from './utils/consts/ArraysAPI';
 import {
   ABILITY_KIT,
   ASYNC_LIFECYCLE_SDK_LIST,
@@ -863,6 +863,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return false;
     }
     const actualType = this.tsTypeChecker.getTypeAtLocation(varDecl);
+    if (this.tsUtils.isArray(actualType) && this.tsTypeChecker.typeToString(actualType) === NEVER_ARRAY) {
+      return false;
+    }
+
     if (!this.isTypeAssignable(actualType, expectedPropType)) {
       return true;
     }
