@@ -20,7 +20,6 @@ import * as child_process from 'child_process';
 
 import { Ets2panda } from '../util/ets2panda'
 import {
-    ABC_SUFFIX,
     ARKTSCONFIG_JSON_FILE,
     LANGUAGE_VERSION,
     LINKER_INPUT_FILE,
@@ -47,7 +46,6 @@ import {
     CompileJobInfo,
     CompileJobType,
     DeclgenV1JobInfo,
-    JobInfo
 } from '../types';
 import {
     ArkTSConfigGenerator
@@ -55,7 +53,6 @@ import {
 import {
     BS_PERF_FILE_NAME,
     StatisticsRecorder,
-    RecordEvent
 } from '../util/statsRecorder';
 import {
     handleCompileProcessWorkerExit,
@@ -65,9 +62,7 @@ import {
     DriverProcessFactory,
     TaskManager,
 } from '../util/TaskManager';
-
-import { dotGraphDump } from '../util/dotGraphDump'
-
+import { Graph, GraphNode } from '../util/graph';
 
 enum BuildSystemEvent {
     COLLECT_MODULES = 'Collect module infos',
@@ -79,6 +74,8 @@ enum BuildSystemEvent {
     RUN_PARALLEL = 'Run parallel',
     RUN_SEQUENTIAL = 'Run sequential',
     RUN_LINKER = 'Run linker',
+    DECLGEN_V1_SEQUENTIAL = 'Generate v1 declaration files (sequential)',
+    DECLGEN_V1_PARALLEL = 'Generate v1 declaration files (parallel)',
 }
 
 function formEvent(event: BuildSystemEvent) {
@@ -92,10 +89,7 @@ export abstract class BaseMode {
     private moduleInfos: Map<string, ModuleInfo>;
     protected mergedAbcFile: string;
     protected logger: Logger;
-    private jobs: Record<string, CompileJobInfo>;
-    private jobQueue: CompileJobInfo[];
-    private completedJobQueue: CompileJobInfo[];
-    private readonly statsRecorder: StatisticsRecorder;
+    protected readonly statsRecorder: StatisticsRecorder;
 
     constructor(buildConfig: BuildConfig) {
         this.buildConfig = buildConfig;
@@ -104,9 +98,6 @@ export abstract class BaseMode {
         this.moduleInfos = new Map<string, ModuleInfo>();
         this.mergedAbcFile = path.resolve(this.outputDir, MERGED_ABC_FILE);
         this.logger = Logger.getInstance();
-        this.jobs = {};
-        this.jobQueue = [];
-        this.completedJobQueue = [];
 
         this.statsRecorder = new StatisticsRecorder(
             path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
@@ -219,16 +210,17 @@ export abstract class BaseMode {
         return this.buildConfig.recordType
     }
 
-    private compile(job: CompileJobInfo): boolean {
+    private compile(id: string, job: CompileJobInfo): boolean {
         const ets2panda = Ets2panda.getInstance();
         let errOccurred = false;
         ets2panda.initalize();
         try {
-            ets2panda.compile(job, this.isDebug)
+            ets2panda.compile(id, job, this.isDebug)
         } catch (error) {
-            const err = error as DriverError
-            this.logger.printError(err.logData);
-            errOccurred = true;
+            if (error instanceof DriverError) {
+                this.logger.printError(error.logData);
+                errOccurred = true;
+            }
         } finally {
             ets2panda.finalize()
         }
@@ -239,69 +231,65 @@ export abstract class BaseMode {
     public async run(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
-        this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
-
-        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SEQUENTIAL));
-        if (Object.entries(this.jobs).length == 0) {
+        const allOutputs: string[] = [];
+        const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
+        if (!buildGraph.hasNodes()) {
             this.logger.printWarn("Nothing to compile. Exiting...")
             return;
         }
 
-        if (this.dumpDependencyGraph) {
-            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs, this.fileToModule), 'utf-8')
-        }
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SEQUENTIAL));
 
-        this.initCompileQueues();
         // Just to init
         Ets2panda.getInstance(this.buildConfig)
 
         let success: boolean = true;
-        while (this.haveQueuedJobs()) {
-            let job: CompileJobInfo = this.consumeJob()!
+        const tasks: { id: string, job: CompileJobInfo }[] = Graph.topologicalSort(buildGraph)
+            .map((nodeId) => { return buildGraph.getNodeById(nodeId); })
+            .map((node) => { return { id: node.id, job: node.data }; })
+
+        while (tasks.length > 0) {
+            const task = tasks.shift()!;
+            const job = task.job;
+            const id = task.id;
             if (job.fileList.length > 1) {
                 // Compile cycle simultaneous
                 this.logger.printDebug("Compiling cycle....")
                 this.logger.printDebug(`file list: \n${job.fileList.join('\n')}`)
-                const res = this.compileSimultaneous(job)
+                const res = this.compileSimultaneous(id, job)
                 success = res && success;
             } else {
-                const res = this.compile(job)
+                const res = this.compile(id, job)
                 success = res && success;
             }
-            this.dispatchNextJob(job)
-        }
-
-
-        if (!success) {
-            this.statsRecorder.record(RecordEvent.END);
-            this.statsRecorder.writeSumSingle();
-            throw new DriverError(
-                LogDataFactory.newInstance(
-                    ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
-                    'One or more errors occured.'
-                )
-            );
         }
 
         Ets2panda.destroyInstance();
 
-        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
-        this.mergeAbcFiles();
+        if (!success) {
+            const logData = LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                'One or more errors occured.'
+            );
+            this.logger.printError(logData);
+            return;
+        }
 
-        this.statsRecorder.record(RecordEvent.END);
-        this.statsRecorder.writeSumSingle();
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+        this.mergeAbcFiles(allOutputs);
     }
 
-    private compileSimultaneous(job: CompileJobInfo): boolean {
+    private compileSimultaneous(id: string, job: CompileJobInfo): boolean {
         const ets2panda = Ets2panda.getInstance(this.buildConfig);
         ets2panda.initalize();
         let errOccurred = false;
         try {
-            ets2panda.compileSimultaneous(job, this.isDebug)
+            ets2panda.compileSimultaneous(id, job, this.isDebug)
         } catch (error) {
-            const err = error as DriverError
-            this.logger.printError(err.logData);
-            errOccurred = true;
+            if (error instanceof DriverError) {
+                this.logger.printError(error.logData);
+                errOccurred = true;
+            }
         } finally {
             ets2panda.finalize()
         }
@@ -309,14 +297,9 @@ export abstract class BaseMode {
         return !errOccurred;
     }
 
-    private mergeAbcFiles(): void {
+    private mergeAbcFiles(abcFiles: string[]): void {
         let linkerInputFile: string = path.join(this.cacheDir, LINKER_INPUT_FILE);
-        let linkerInputContent: string = '';
-        this.completedJobQueue.forEach((job: CompileJobInfo) => {
-            if (job.fileInfo.output.endsWith(ABC_SUFFIX)) {
-                linkerInputContent += job.fileInfo.output + os.EOL;
-            }
-        })
+        let linkerInputContent: string = abcFiles.join(os.EOL);
 
         fs.writeFileSync(linkerInputFile, linkerInputContent);
         let abcLinkerCmd = ['"' + this.abcLinkerPath + '"']
@@ -332,19 +315,18 @@ export abstract class BaseMode {
             abcLinkerCmdStr = loadLibrary + ' ' + abcLinkerCmdStr;
         }
         this.logger.printDebug(abcLinkerCmdStr);
-
         ensurePathExists(this.mergedAbcFile);
         try {
             child_process.execSync(abcLinkerCmdStr).toString();
         } catch (error) {
             if (error instanceof Error) {
-                throw new DriverError(
+                const logData =
                     LogDataFactory.newInstance(
                         ErrorCode.BUILDSYSTEM_LINK_ABC_FAIL,
                         'Link abc files failed.',
                         error.message
-                    )
-                );
+                    );
+                this.logger.printError(logData);
             }
         }
     }
@@ -548,16 +530,11 @@ export abstract class BaseMode {
         const mainModule: ModuleInfo = this.moduleInfos.get(this.mainPackageName)!
         // NOTE: workaround (just to add entryFile to mainModule)
         // NOTE: to be refactored
-        if (Object.keys(this.jobs).length == 0) {
-            const mainModuleFileList: string[] = [...this.fileToModule.entries()].filter(([_, module]: [string, ModuleInfo]) => {
-                return module.isMainModule
-            }).map(([file, _]: [string, ModuleInfo]) => { return file })
-            mainModule.entryFile = mainModuleFileList[0]
-        } else {
-            mainModule.entryFile = Object.entries(this.jobs).filter(([_, job]: [string, JobInfo]) => {
-                return job.jobDependants.length == 0
-            })[0][1].fileList[0]
-        }
+        const mainModuleFileList: string[] = [...this.fileToModule.entries()].filter(([_, module]: [string, ModuleInfo]) => {
+            return module.isMainModule
+        }).map(([file, _]: [string, ModuleInfo]) => { return file })
+        mainModule.entryFile = mainModuleFileList[0]
+
         this.logger.printDebug(`mainModule entryFile: ${mainModule.entryFile}`)
     }
 
@@ -579,8 +556,6 @@ export abstract class BaseMode {
         }
 
         let outputFile: string = this.mergedAbcFile
-        ensurePathExists(outputFile)
-
         let arktsConfigFile: string = module.arktsConfigFile;
 
         this.logger.printDebug(`entryFile: ${entryFile}`)
@@ -591,11 +566,8 @@ export abstract class BaseMode {
         Ets2panda.getInstance(this.buildConfig)
         // We do not need any queues just compile a bunch of files
         // Ets2panda will build it simultaneous
-        this.compileSimultaneous({
-            id: outputFile,
+        this.compileSimultaneous('SimultaneousBuildId', {
             fileList: [...this.entryFiles],
-            jobDependencies: [],
-            jobDependants: [],
             fileInfo: {
                 input: entryFile,
                 output: outputFile,
@@ -609,25 +581,19 @@ export abstract class BaseMode {
             type: CompileJobType.ABC
         });
         Ets2panda.destroyInstance()
-
-        this.statsRecorder.record(RecordEvent.END);
-        this.statsRecorder.writeSumSingle();
     }
 
     public async runParallel(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
-        this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
-
-        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_PARALLEL));
-        if (Object.entries(this.jobs).length == 0) {
+        const allOutputs: string[] = [];
+        const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
+        if (!buildGraph.hasNodes()) {
             this.logger.printWarn("Nothing to compile. Exiting...")
             return;
         }
 
-        if (this.dumpDependencyGraph) {
-            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs, this.fileToModule), 'utf-8')
-        }
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_PARALLEL));
 
         const taskManager = new TaskManager<ProcessCompileTask>(handleCompileProcessWorkerExit);
         const workerFactory = new DriverProcessFactory(
@@ -639,79 +605,35 @@ export abstract class BaseMode {
         );
         taskManager.startWorkers(workerFactory);
 
-        for (const job of Object.values(this.jobs)) {
-            taskManager.submitTask(job.id, { ...job, buildConfig: this.buildConfig });
+        const newNodes: GraphNode<ProcessCompileTask>[] = [];
+        for (const node of buildGraph.nodes) {
+            newNodes.push({
+                id: node.id,
+                data: {
+                    ...node.data,
+                    buildConfig: this.buildConfig
+                },
+                predecessors: node.predecessors,
+                descendants: node.descendants,
+            })
         }
+        const newGraph: Graph<ProcessCompileTask> = Graph.createGraphFromNodes(newNodes);
+
+        taskManager.buildGraph = newGraph;
         taskManager.initTaskQueue();
         const res = await taskManager.finish();
 
         if (!res) {
-            this.statsRecorder.record(RecordEvent.END);
-            this.statsRecorder.writeSumSingle();
-            throw new DriverError(
-                LogDataFactory.newInstance(
-                    ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
-                    'One or more errors occured.'
-                )
+            const logData = LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                'One or more errors occured.'
             );
-        }
-
-        this.completedJobQueue = Object.values(this.jobs)
-
-        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
-        this.mergeAbcFiles()
-
-        this.statsRecorder.record(RecordEvent.END);
-        this.statsRecorder.writeSumSingle();
-    }
-
-    private addJobToQueue(job: CompileJobInfo): void {
-        if (this.jobQueue.some((queuedJob: JobInfo) => queuedJob.id === job.id)) {
-            this.logger.printWarn(`Detected job duplication: job.id == ${job.id}`)
+            this.logger.printError(logData);
             return;
         }
 
-        this.logger.printDebug(`Added Job ${JSON.stringify(job, null, 1)} to the queue`)
-        this.jobQueue.push(job);
-    }
-
-    private initCompileQueues(): void {
-        Object.values(this.jobs).forEach((job: CompileJobInfo) => {
-            if (job.jobDependencies.length === 0) {
-                this.addJobToQueue(job);
-            }
-        });
-    }
-
-    private dispatchNextJob(completedJob: CompileJobInfo) {
-        let completedJobId = completedJob.id;
-        this.logger.printDebug(`Removed Job ${completedJobId} from the queue`)
-        completedJob.jobDependants.forEach((dependantJobId: string) => {
-            const depJob: CompileJobInfo = this.jobs[dependantJobId];
-            const depIndex = depJob.jobDependencies.indexOf(completedJobId);
-            if (depIndex !== -1) {
-                depJob.jobDependencies.splice(depIndex, 1);
-                if (depJob.jobDependencies.length === 0) {
-                    this.addJobToQueue(depJob);
-                } else {
-                    this.logger.printDebug(`Job ${depJob.id} still have dependencies ${JSON.stringify(depJob.jobDependencies, null, 1)}`)
-                }
-            }
-        });
-        this.completedJobQueue.push(completedJob)
-    }
-
-    private haveQueuedJobs(): boolean {
-        return (this.jobQueue.length > 0);
-    }
-
-    private consumeJob(): CompileJobInfo | null {
-        if (this.jobQueue.length == 0) {
-            this.logger.printDebug("Job queue is empty!")
-            return null;
-        }
-
-        return this.jobQueue.shift()!
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+        this.mergeAbcFiles(allOutputs);
     }
 
     public async runConcurrent(): Promise<void> {
@@ -724,12 +646,13 @@ export abstract class BaseMode {
         )
     }
 
-    private declgenV1(job: CompileJobInfo): void {
+    private declgenV1(job: CompileJobInfo): boolean {
         let module = this.fileToModule.get(job.fileInfo.input)!;
         let declgenV1OutPath: string = module.declgenV1OutPath!;
         let declgenBridgeCodePath: string = module.declgenBridgeCodePath!;
         let declgenJob: DeclgenV1JobInfo = { ...job, declgenConfig: { otuput: declgenV1OutPath, bridgeCode: declgenBridgeCodePath } }
 
+        let result = true;
         const ets2panda = Ets2panda.getInstance();
         ets2panda.initalize();
         try {
@@ -738,46 +661,61 @@ export abstract class BaseMode {
             // Report the error, do not crash the declgen process
             const err = error as DriverError
             this.logger.printError(err.logData)
+            result = false;
         } finally {
             ets2panda.finalize()
         }
+        return result;
     }
 
 
     public async generateDeclarationV1(): Promise<void> {
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
-        this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
-
-        if (Object.entries(this.jobs).length == 0) {
+        const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
+        if (!buildGraph.hasNodes()) {
             this.logger.printWarn("Nothing to compile. Exiting...")
             return;
         }
 
-        if (this.dumpDependencyGraph) {
-            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs, this.fileToModule), 'utf-8')
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DECLGEN_V1_SEQUENTIAL));
+
+        const jobs: CompileJobInfo[] = Graph.topologicalSort(buildGraph)
+            .map((nodeId: string) => { return buildGraph.getNodeById(nodeId); })
+            .map((node) => { return node.data; });
+
+        // Just to init
+        Ets2panda.getInstance(this.buildConfig)
+
+        let success: boolean = false;
+        while (jobs.length > 0) {
+            let job: CompileJobInfo = jobs.shift()!;
+            const res: boolean = this.declgenV1(job)
+            success = res && success;
         }
 
-        this.initCompileQueues();
+        Ets2panda.destroyInstance();
 
-        while (this.haveQueuedJobs()) {
-            let job: CompileJobInfo = this.consumeJob()!
-            this.declgenV1(job)
-            this.dispatchNextJob(job)
+        if (!success) {
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                    'One or more errors occured.'
+                )
+            );
         }
     }
 
     public async generateDeclarationV1Parallel(): Promise<void> {
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
-        this.jobs = depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
-
-        if (Object.entries(this.jobs).length == 0) {
+        const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
+        if (!buildGraph.hasNodes()) {
             this.logger.printWarn("Nothing to compile. Exiting...")
             return;
         }
 
-        if (this.dumpDependencyGraph) {
-            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs, this.fileToModule), 'utf-8')
-        }
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DECLGEN_V1_PARALLEL));
 
         const taskManager = new TaskManager<ProcessDeclgenV1Task>(handleDeclgenWorkerExit, true);
         const workerFactory = new DriverProcessFactory(
@@ -789,19 +727,28 @@ export abstract class BaseMode {
         );
         taskManager.startWorkers(workerFactory);
 
-        for (const job of Object.values(this.jobs)) {
-            const module = this.fileToModule.get(job.fileList[0]!)!
+        const newNodes: GraphNode<ProcessDeclgenV1Task>[] = [];
+        for (const node of buildGraph.nodes) {
+            const module = this.fileToModule.get(node.data.fileList[0]!)!
             const declgenV1OutPath: string = module.declgenV1OutPath!
             const declgenBridgeCodePath: string = module.declgenBridgeCodePath!
-            taskManager.submitTask(job.id, {
-                ...job,
-                declgenConfig: {
-                    otuput: declgenV1OutPath,
-                    bridgeCode: declgenBridgeCodePath
+            newNodes.push({
+                id: node.id,
+                data: {
+                    ...node.data,
+                    declgenConfig: {
+                        otuput: declgenV1OutPath,
+                        bridgeCode: declgenBridgeCodePath
+                    },
+                    buildConfig: this.buildConfig
                 },
-                buildConfig: this.buildConfig
-            });
+                predecessors: node.predecessors,
+                descendants: node.descendants,
+            })
         }
+        const newGraph: Graph<ProcessDeclgenV1Task> = Graph.createGraphFromNodes(newNodes);
+
+        taskManager.buildGraph = newGraph;
         taskManager.initTaskQueue();
         // Ignore the result
         await taskManager.finish();

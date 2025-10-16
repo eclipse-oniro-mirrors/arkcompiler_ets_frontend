@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -144,6 +145,7 @@ export class Ets2panda {
     }
 
     public compile(
+        jobId: string,
         job: CompileJobInfo,
         isDebug: boolean = false,
         declGenCb?: () => void,
@@ -152,12 +154,12 @@ export class Ets2panda {
         let statsRecorder = new StatisticsRecorder(
             path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
             this.recordType,
-            `Compile. Job id: ${job.id.slice(0, 5)}`
+            `Compile. Job id: ${jobId.slice(0, 5)}`
         );
 
         this.logger.printDebug(`Ets2panda.compile Job = ${JSON.stringify(job, null, 1)}`)
 
-        const { input: inputFilePath }: FileInfo = job.fileInfo;
+        const { input: inputFilePath, output: outputFilePath }: FileInfo = job.fileInfo;
         const source = fs.readFileSync(inputFilePath, 'utf-8');
 
         const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug)
@@ -208,6 +210,7 @@ export class Ets2panda {
                 declGenCb?.();
             }
             if (job.type & CompileJobType.ABC) {
+                ensurePathExists(outputFilePath);
                 statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_CHECK));
                 let ast = arkts.EtsScript.fromContext();
                 this.pluginDriver.getPluginContext().setArkTSAst(ast);
@@ -244,6 +247,7 @@ export class Ets2panda {
     }
 
     public compileSimultaneous(
+        jobId: string,
         job: CompileJobInfo,
         isDebug: boolean = false,
         declGenCb?: () => void,
@@ -252,10 +256,12 @@ export class Ets2panda {
         let statsRecorder = new StatisticsRecorder(
             path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
             this.recordType,
-            `Compile simultaneous. Job id: ${job.id.slice(0, 5)}`
+            `Compile simultaneous. Job id: ${jobId.slice(0, 5)}`
         );
 
         this.logger.printDebug(`Ets2panda.compileSimultaneous Job = ${JSON.stringify(job, null, 1)}`)
+
+        const { output: outputFilePath } = job.fileInfo;
 
         const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, true)
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
@@ -313,6 +319,7 @@ export class Ets2panda {
 
             if (job.type & CompileJobType.ABC) {
                 statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_CHECK));
+                ensurePathExists(outputFilePath);
                 let ast = arkts.EtsScript.fromContext();
                 this.pluginDriver.getPluginContext().setArkTSAst(ast);
                 this.pluginDriver.runPluginHook(PluginHook.CHECKED);
@@ -324,7 +331,7 @@ export class Ets2panda {
                     arktsGlobal.compilerContext.peer
                 );
                 compAbcCb?.();
-                this.logger.printInfo(`[Ets2panda] Compiled abc file for cycle ${job.id}`)
+                this.logger.printInfo(`[Ets2panda] Compiled abc file for cycle ${jobId}`)
             }
         } catch (error) {
             if (error instanceof Error) {
