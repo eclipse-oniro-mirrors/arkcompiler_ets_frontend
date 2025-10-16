@@ -45,6 +45,10 @@ semantic:
   id: 220
   message: "Getter and setter methods must have the same accessor modifiers"
 
+- name: ACCESSOR_OVERRIDE_PROP
+  id: 45073
+  message: "'{}' is defined as a property in class '{}', but is overridden here in '{}' as an accessor."
+
 - name: AMBIENT_ANNOT_FIELD_INIT_MISMATCH
   id: 36
   message: "The initial value does not match the expected value."
@@ -1182,6 +1186,10 @@ semantic:
 - name: PROP_NOT_STATIC
   id: 208
   message: "'{}' is an instance property of '{}'"
+
+- name: PROP_OVERRIDE_ACCESSOR
+  id: 129829
+  message: "'{}' is defined as an accessor in class '{}', but is overridden here in '{}' as an instance property."
 
 - name: READONLY_ARRAYLIKE_MODIFICATION
   id: 58

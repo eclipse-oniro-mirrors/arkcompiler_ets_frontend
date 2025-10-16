@@ -63,7 +63,7 @@ std::string NameMangler::CreateMangledNameForLambdaObject(const util::StringView
 {
     ES2PANDA_ASSERT(!lambdaInvokeName.Empty());
 
-    std::string mangledName = "%%lambda-";
+    std::string mangledName = LAMBDA_CLASS_PREFIX;
 
     mangledName += lambdaInvokeName.Mutf8();
 

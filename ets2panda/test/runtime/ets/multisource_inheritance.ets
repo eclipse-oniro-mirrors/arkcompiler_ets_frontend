@@ -33,10 +33,10 @@ class Base extends Abstract {
 }
 
 class Derived extends Base implements Interface {
-    instance_field: number = -1
+    derived_instance_field: number = -1
 
     public method(): number {
-        this.instance_field -= 1
+        this.derived_instance_field -= 1
         super.instance_field += 1
         return super.instance_field
     }
@@ -45,5 +45,5 @@ class Derived extends Base implements Interface {
 function main() {
     let d = new Derived
     arktest.assertEQ(d.method(), 0 )
-    arktest.assertEQ(d.instance_field, -2)
+    arktest.assertEQ(d.derived_instance_field, -2)
 }
