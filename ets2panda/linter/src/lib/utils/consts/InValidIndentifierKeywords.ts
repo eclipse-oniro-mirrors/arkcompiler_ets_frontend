@@ -213,3 +213,5 @@ export const INVALID_IDENTIFIER_KEYWORDS = [
   'arguments',
   'eval'
 ];
+
+export const INVALID_IDENTIFIER_GETSET = ['get', 'set'];
