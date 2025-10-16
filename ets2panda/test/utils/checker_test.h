@@ -45,7 +45,8 @@ public:
               std::make_unique<ark::ThreadSafeArenaAllocator>(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true)),
           publicContext_ {std::make_unique<plib_alias::Context>()},
           phaseManager_ {ark::es2panda::ScriptExtension::ETS, Allocator()},
-          program_ {parser_alias::Program::NewProgram<varbinder_alias::ETSBinder>(allocator_.get())},
+          varbinder_(allocator_.get()),
+          program_ {parser_alias::Program::NewProgram<varbinder_alias::ETSBinder>(allocator_.get(), &varbinder_)},
           es2pandaPath_ {PandaExecutablePathGetter::Get()[0]},
           checker_(allocator_.get(), diagnosticEngine_)
     {
@@ -248,6 +249,7 @@ private:
     std::unique_ptr<ark::ThreadSafeArenaAllocator> allocator_;
     std::unique_ptr<plib_alias::Context> publicContext_;
     ark::es2panda::compiler::PhaseManager phaseManager_;
+    varbinder_alias::ETSBinder varbinder_;
     parser_alias::Program program_;
     std::string es2pandaPath_;
     util_alias::DiagnosticEngine diagnosticEngine_;

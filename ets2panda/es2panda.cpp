@@ -18,6 +18,7 @@
 #include "public/public.h"
 #include "util/diagnostic.h"
 #include "util/generateBin.h"
+#include "varbinder/ETSBinder.h"
 
 #include "es2panda.h"
 

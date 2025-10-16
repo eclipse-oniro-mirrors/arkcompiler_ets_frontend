@@ -48,11 +48,6 @@ export function initBuildConfig(projectConfig: BuildConfig): BuildConfig {
     };
     let buildSdkPath: string = buildConfig.buildSdkPath as string;
     buildConfig.pandaSdkPath = buildConfig.pandaSdkPath ?? path.resolve(buildSdkPath, PANDA_SDK_PATH_FROM_SDK);
-    /**
-     * ets2panda guys require remove debug param
-     * it contain some bugs.
-     */
-    buildConfig.buildMode = BUILD_MODE.RELEASE;
     checkCacheProjectConfig(buildConfig);
     initPlatformSpecificConfig(buildConfig);
     initBuildEnv(buildConfig);

@@ -44,8 +44,8 @@ class ETSNewClassInstanceExpression;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::varbinder {
-using AliasesByExportedNames = ArenaMap<util::StringView, std::pair<util::StringView, ir::AstNode const *>>;
-using ModulesToExportedNamesWithAliases = ArenaMap<util::StringView, AliasesByExportedNames>;
+using AliasesByExportedNames = std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>>;
+using ModulesToExportedNamesWithAliases = std::map<util::StringView, AliasesByExportedNames>;
 
 struct DynamicImportData {
     const ir::ETSImportDeclaration *import;
@@ -65,8 +65,7 @@ public:
           defaultImports_(Allocator()->Adapter()),
           dynamicImports_(Allocator()->Adapter()),
           reExportImports_(Allocator()->Adapter()),
-          reexportedNames_(Allocator()->Adapter()),
-          selectiveExportAliasMultimap_(Allocator()->Adapter())
+          reexportedNames_(Allocator()->Adapter())
     {
         InitImplicitThisParam();
     }
