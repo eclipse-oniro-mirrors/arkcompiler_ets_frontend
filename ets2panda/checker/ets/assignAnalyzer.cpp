@@ -1290,10 +1290,26 @@ static bool IsDefaultValueType(const Type *type, bool isNonReadonlyField)
     if (type == nullptr) {
         return false;
     }
-    return (type->IsETSPrimitiveType() || (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) ||
-            type->IsETSNeverType() || type->IsETSUndefinedType() || type->IsETSNullType() ||
-            (type->PossiblyETSUndefined() && (!type->HasTypeFlag(checker::TypeFlag::GENERIC) ||
-                                              (isNonReadonlyField && !CHECK_GENERIC_NON_READONLY_PROPERTIES))));
+
+    if (type->IsETSPrimitiveType()) {
+        ES2PANDA_UNREACHABLE();
+    }
+
+    bool boxedPrimitive = (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive());
+    bool nullOrUndefined = type->IsETSUndefinedType() || type->IsETSNullType();
+    if (boxedPrimitive || nullOrUndefined) {
+        return true;
+    }
+
+    if (type->PossiblyETSUndefined()) {
+        if (!type->HasTypeFlag(checker::TypeFlag::GENERIC)) {
+            return true;
+        } else if (!CHECK_GENERIC_NON_READONLY_PROPERTIES && isNonReadonlyField) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool AssignAnalyzer::VariableHasDefaultValue(const ir::AstNode *node)
