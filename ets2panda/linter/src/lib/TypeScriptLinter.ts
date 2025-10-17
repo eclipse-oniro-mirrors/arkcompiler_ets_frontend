@@ -4074,6 +4074,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleInvalidIdentifier(tsMethodDecl);
     this.handleTSOverload(tsMethodDecl);
     this.checkDefaultParamBeforeRequired(tsMethodDecl);
+    this.handleMethodOverridingField(tsMethodDecl);
     this.handleMethodInherit(tsMethodDecl);
     this.handleSdkGlobalApi(tsMethodDecl);
     this.handleLimitedVoidFunction(tsMethodDecl);
@@ -4143,6 +4144,87 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         this.incrementCounters(param.name, FaultID.DefaultArgsBehindRequiredArgs);
       }
     }
+  }
+
+  private handleMethodOverridingField(node: ts.MethodDeclaration): void {
+    if (ts.isClassDeclaration(node.parent)) {
+      if (!node.parent.heritageClauses) {
+        return;
+      }
+
+      for (const clause of node.parent.heritageClauses) {
+        if (clause.token !== ts.SyntaxKind.ImplementsKeyword) {
+          continue;
+        }
+
+        for (const typeNode of clause.types) {
+          const sym = this.tsTypeChecker.getSymbolAtLocation(typeNode.expression);
+          if (!sym) {
+            continue;
+          }
+
+          if (!this.validateInterfaceMethodImplementation(node, sym)) {
+            this.incrementCounters(node, FaultID.MethodOverridingField);
+          }
+        }
+      }
+      return;
+    }
+
+    if (ts.isObjectLiteralExpression(node.parent)) {
+      const contextualType = this.tsTypeChecker.getContextualType(node.parent);
+      if (!contextualType) {
+        return;
+      }
+
+      const sym = contextualType.getSymbol();
+      if (!sym) {
+        return;
+      }
+
+      const decls = sym.getDeclarations() || [];
+      const isInterface = decls.some(ts.isInterfaceDeclaration);
+      if (!isInterface) {
+        return;
+      }
+
+      if (!this.validateInterfaceMethodImplementation(node, sym)) {
+        this.incrementCounters(node, FaultID.MethodOverridingField);
+      }
+    }
+  }
+
+  private validateInterfaceMethodImplementation(methodDecl: ts.MethodDeclaration, sym: ts.Symbol): boolean {
+    const node = methodDecl.parent;
+    if (!ts.isIdentifier(methodDecl.name)) {
+      return true;
+    }
+    const methodName = methodDecl.name.text;
+
+    const ifaceType = this.tsTypeChecker.getDeclaredTypeOfSymbol(sym);
+    const ifaceProps = ifaceType.getProperties();
+    const ifaceProp = ifaceProps.find((p) => {
+      return p.getName() === methodName;
+    });
+    if (!ifaceProp) {
+      return true;
+    }
+
+    if (ifaceProp.valueDeclaration && !ts.isPropertySignature(ifaceProp.valueDeclaration)) {
+      return true;
+    }
+    const implType = this.tsTypeChecker.getTypeAtLocation(node);
+    const implProps = implType.getProperties();
+    const implProp = implProps.find((p) => {
+      return p.getName() === methodName;
+    });
+    if (!implProp) {
+      return true;
+    }
+    const ifacePropType = this.tsTypeChecker.getTypeOfSymbolAtLocation(ifaceProp, node);
+    const implPropType = this.tsTypeChecker.getTypeOfSymbolAtLocation(implProp, node);
+
+    return this.isTypeAssignable(implPropType, ifacePropType);
   }
 
   private handleMethodInherit(node: ts.MethodDeclaration): void {
