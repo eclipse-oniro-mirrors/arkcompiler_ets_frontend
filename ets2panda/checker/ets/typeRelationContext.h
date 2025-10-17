@@ -122,6 +122,7 @@ public:
             if ((initialFlags & TypeRelationFlag::NO_THROW) == 0) {
                 relation->RaiseError(diag->kind, diag->params, pos);
             }
+            hasError_ = true;
             return;
         }
 
@@ -133,9 +134,15 @@ public:
         return invocable_;
     }
 
+    bool HasError() const
+    {
+        return hasError_;
+    }
+
 private:
     TypeRelationFlag flags_ = TypeRelationFlag::NONE;
     bool invocable_ {false};
+    bool hasError_ {false};
 };
 
 class ConstraintCheckScope {

@@ -661,9 +661,16 @@ bool ETSChecker::ValidateSignatureInvocationContext(Signature *substitutedSig, i
         checker::InvocationContext(Relation(), argument, argumentType, targetType, argument->Start(),
                                    {{diagnostic::TYPE_MISMATCH_AT_IDX, {argumentType, targetType, index + 1}}}, flags);
 
+    auto sig = substitutedSig;
+    if (invocationCtx.HasError() && sig && sig->HasFunction()) {
+        if ((sig->Function()->IsConstructor() || sig->Function()->Id()->Name().Is("then") ||
+             sig->Function()->Id()->Name().Is("catch")) &&
+            sig->Owner()->Name().Is("Promise")) {
+            LogDiagnostic(diagnostic::PROMISE_NO_MATCHING_SIG, {argumentType}, argument->Start());
+        }
+    }
     return invocationCtx.IsInvocable() || CheckOptionalLambdaFunction(argument, substitutedSig, index);
 }
-
 bool ETSChecker::IsValidRestArgument(ir::Expression *const argument, Signature *const substitutedSig,
                                      const TypeRelationFlag flags, const std::size_t index)
 {
@@ -838,7 +845,8 @@ Signature *ETSChecker::CollectParameterlessConstructor(ArenaVector<Signature *> 
 
 bool IsSignatureAccessible(Signature *sig, ETSObjectType *containingClass, TypeRelation *relation)
 {
-    // NOTE(vivienvoros): this check can be removed if signature is implicitly declared as public according to the spec.
+    // NOTE(vivienvoros): this check can be removed if signature is implicitly declared as public according to the
+    // spec.
     if (!sig->HasSignatureFlag(SignatureFlags::PUBLIC | SignatureFlags::PROTECTED | SignatureFlags::PRIVATE |
                                SignatureFlags::INTERNAL)) {
         return true;
@@ -998,7 +1006,8 @@ void ETSChecker::ThrowSignatureMismatch(ArenaVector<Signature *> const &signatur
             if (!argumentType->IsTypeError()) {
                 msg += argumentType->ToString();
             } else {
-                //  NOTE (DZ): extra cases for some specific nodes can be added here (as for 'ArrowFunctionExpression')
+                //  NOTE (DZ): extra cases for some specific nodes can be added here (as for
+                //  'ArrowFunctionExpression')
                 msg += argument->ToString();
             }
 
@@ -1048,6 +1057,11 @@ Signature *ETSChecker::ValidateSignatures(ArenaVector<Signature *> &signatures,
             // May need to re-check the arguments now that we know the particular signature to call.
             ValidateSignature({sig, nullptr, TypeRelationFlag::WIDENING | TypeRelationFlag::NO_SUBSTITUTION_NEEDED},
                               arguments, pos, FindTypeInferenceArguments(arguments), true);
+        } else {
+            ValidateSignature(
+                {sig, nullptr,
+                 TypeRelationFlag::WIDENING | TypeRelationFlag::NO_SUBSTITUTION_NEEDED | TypeRelationFlag::NO_THROW},
+                arguments, pos, FindTypeInferenceArguments(arguments), true);
         }
         return sig;
     }

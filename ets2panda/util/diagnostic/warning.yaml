@@ -110,6 +110,10 @@ warning:
   id: 3
   message: "Prohibit top-level statements."
 
+- name: PROMISE_NO_MATCHING_SIG
+  id: 49710
+  message: "No matching signature found for Promise.then/catch: {}"
+
 - name: REPLACE_ASYNC_FUNCTION_WITH_COROUTINE
   id: 5
   message: "Replace asynchronous function with coroutine."

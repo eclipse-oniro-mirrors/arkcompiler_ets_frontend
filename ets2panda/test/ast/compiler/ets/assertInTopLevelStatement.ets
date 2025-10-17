@@ -28,3 +28,4 @@ let promise2 = promise1.catch((value: string): string => {
     return "bye";
 })
 
+/* @@? 25:31 Warning Warning: No matching signature found for Promise.then/catch: ((p1: String) => String) */
