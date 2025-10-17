@@ -16,6 +16,7 @@
 import * as ts from 'typescript';
 import type { CommandLineOptions } from '../CommandLineOptions';
 import { createCompilerHost, readDeclareFiles } from './ResolveSdks';
+import * as path from 'node:path';
 
 function getTargetESVersionLib(optionsTarget: ts.ScriptTarget): string[] {
   switch (optionsTarget) {
@@ -40,18 +41,7 @@ export function formTscOptions(
       projectReferences: cmdOptions.parsedConfigFile.projectReferences,
       configFileParsingDiagnostics: ts.getConfigFileParsingDiagnostics(cmdOptions.parsedConfigFile)
     };
-    Object.assign(options.options, {
-      allowJs: true,
-      checkJs: false,
-      emitNodeModulesFiles: true,
-      importsNotUsedAsValues: ts.ImportsNotUsedAsValues.Preserve,
-      module: ts.ModuleKind.CommonJS,
-      moduleResolution: ts.ModuleResolutionKind.NodeJs,
-      noEmit: true,
-      maxFlowDepth: 2000,
-      types: [],
-      incremental: true
-    });
+    Object.assign(options.options, getDefaultCompilerOptions());
   } else {
     const rootNames = cmdOptions.inputFiles.concat(readDeclareFiles(cmdOptions.sdkDefaultApiPath ?? ''));
     const ESVersion = cmdOptions.followSdkSettings ? ts.ScriptTarget.ES2021 : ts.ScriptTarget.Latest;
@@ -67,6 +57,12 @@ export function formTscOptions(
       }
     };
   }
+  if (cmdOptions.sdkDefaultApiPath) {
+    const etsLoaderPath = path.resolve(cmdOptions.sdkDefaultApiPath, './build-tools/ets-loader');
+    Object.assign(options.options, {
+      etsLoaderPath: etsLoaderPath
+    });
+  }
   options.options = Object.assign(options.options, overrideCompilerOptions);
   if (cmdOptions.sdkDefaultApiPath && cmdOptions.arktsWholeProjectPath && cmdOptions.sdkExternalApiPath) {
     options.host = createCompilerHost(
@@ -77,4 +73,20 @@ export function formTscOptions(
     );
   }
   return options;
+}
+
+function getDefaultCompilerOptions(): ts.CompilerOptions {
+  return {
+    allowJs: true,
+    checkJs: false,
+    emitNodeModulesFiles: true,
+    importsNotUsedAsValues: ts.ImportsNotUsedAsValues.Preserve,
+    module: ts.ModuleKind.CommonJS,
+    moduleResolution: ts.ModuleResolutionKind.NodeJs,
+    noEmit: true,
+    maxFlowDepth: 2000,
+    types: [],
+    incremental: true,
+    needDoArkTsLinter: true
+  };
 }

@@ -59,9 +59,9 @@
             "column": 42,
             "endLine": 50,
             "endColumn": 44,
-            "problem": "TsOverload",
+            "problem": "SdkApiStaticOverload",
             "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "rule": "APIs involving overloading within in the SDK must use new names (sdk-api-static-overload)",
             "severity": "ERROR"
         },
         {
@@ -79,9 +79,9 @@
             "column": 43,
             "endLine": 51,
             "endColumn": 45,
-            "problem": "TsOverload",
+            "problem": "SdkApiStaticOverload",
             "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "rule": "APIs involving overloading within in the SDK must use new names (sdk-api-static-overload)",
             "severity": "ERROR"
         },
         {
@@ -139,9 +139,9 @@
             "column": 42,
             "endLine": 86,
             "endColumn": 44,
-            "problem": "TsOverload",
+            "problem": "SdkApiStaticOverload",
             "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "rule": "APIs involving overloading within in the SDK must use new names (sdk-api-static-overload)",
             "severity": "ERROR"
         }
     ]

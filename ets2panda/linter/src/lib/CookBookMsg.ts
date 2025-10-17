@@ -446,6 +446,7 @@ cookBookTag[412] = 'No unfixed length tuple support (arkts-no-unfixed-len-tuple)
 
 cookBookTag[413] =
   'Subclass can\'t call members of super class in static context (arkts-no-super-call-in-static-context)';
+cookBookTag[414] = 'APIs involving overloading within in the SDK must use new names (sdk-api-static-overload)';
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';
 }

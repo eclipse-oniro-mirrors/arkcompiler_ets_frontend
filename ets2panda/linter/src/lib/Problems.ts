@@ -303,6 +303,7 @@ export enum FaultID {
   SuperInStaticContext,
   EntryHasInvalidParamsWithV2,
   EntryHasInvalidLocalStorageWithV2,
+  SdkApiStaticOverload,
   // this should always be last enum
   LAST_ID
 }
