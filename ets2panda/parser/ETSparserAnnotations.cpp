@@ -66,7 +66,7 @@ ir::Expression *ETSParser::ParseAnnotationName()
         ident = expr->AsIdentifier();
     } else {
         Lexer()->Rewind(save);
-        if (Lexer()->Lookahead() == '.') {
+        if (IS_USAGE && Lexer()->Lookahead() == '.') {
             auto opt = TypeAnnotationParsingOptions::NO_OPTS;
             expr = ParseTypeReference(&opt);
             ES2PANDA_ASSERT(expr != nullptr);

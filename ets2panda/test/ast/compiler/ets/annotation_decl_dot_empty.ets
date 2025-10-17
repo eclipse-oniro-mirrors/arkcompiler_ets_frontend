@@ -17,6 +17,6 @@
 {
 }
 
-/* @@? 16:12 Error SyntaxError: Invalid annotation name. */
-/* @@? 16:12 Error TypeError: Cannot find type 'Message'. */
-/* @@? 17:1 Error SyntaxError: Identifier expected. */
+/* @@? 16:19 Error SyntaxError: Expected '{', got '.'. */
+/* @@? 17:1 Error SyntaxError: Identifier expected, got '{'. */
+/* @@? 18:1 Error SyntaxError: Identifier expected, got '}'. */
