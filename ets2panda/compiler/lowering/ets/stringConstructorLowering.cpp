@@ -43,6 +43,8 @@ static constexpr char const FORMAT_CHECK_NULLISH_EXPRESSION[] =
     "(@@I3 instanceof null ? \"null\" : (@@I4 instanceof undefined ? \"undefined\" : (@@I5 as Object).toString()))";
 
 static constexpr char const FORMAT_TO_STRING_EXPRESSION[] = "((@@E1 as Object).toString())";
+
+static constexpr char const FORMAT_TO_STRING_PRIMITIVE_EXPRESSION[] = "@@E1.toString(@@E2)";
 // NOLINTEND(modernize-avoid-c-arrays)
 
 ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
@@ -89,7 +91,10 @@ ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
 
         // Create BlockExpression
         ir::Expression *blockExpr = nullptr;
-        if (argType->PossiblyETSNull() && !argType->PossiblyETSUndefined()) {
+        if (argType->IsETSObjectType() && argType->AsETSObjectType()->IsBoxedPrimitive()) {
+            blockExpr =
+                parser->CreateFormattedExpression(FORMAT_TO_STRING_PRIMITIVE_EXPRESSION, argType->ToString(), arg);
+        } else if (argType->PossiblyETSNull() && !argType->PossiblyETSUndefined()) {
             blockExpr = parser->CreateFormattedExpression(FORMAT_CHECK_NULL_EXPRESSION, tmpIdentName, arg, tmpIdentName,
                                                           tmpIdentName);
         } else if (argType->PossiblyETSUndefined() && !argType->PossiblyETSNull()) {
