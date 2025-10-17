@@ -89,7 +89,6 @@ pandasm::Program *Compiler::Compile(const SourceFile &input, const util::Options
     public_lib::Context context;
     ThreadSafeArenaAllocator allocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
     context.allocator = &allocator;
-    context.compilingState = public_lib::CompilingState::SINGLE_COMPILING;
 
     try {
         return compiler_->Compile(compiler::CompilationUnit {input, options, parseStatus, ext_, diagnosticEngine},
@@ -98,34 +97,6 @@ pandasm::Program *Compiler::Compile(const SourceFile &input, const util::Options
         error_ = e;
         return nullptr;
     }
-}
-
-unsigned int Compiler::CompileM(std::vector<SourceFile> &inputs, util::Options &options,
-                                util::DiagnosticEngine &diagnosticEngine, std::vector<pandasm::Program *> &result)
-{
-    public_lib::Context context;
-    context.transitionMemory =
-        new public_lib::TransitionMemory(new ThreadSafeArenaAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true));
-    context.allocator = context.transitionMemory->PermanentAllocator();
-
-    context.compilingState = public_lib::CompilingState::MULTI_COMPILING_INIT;
-    unsigned int overallRes = 0;
-    for (auto &input : inputs) {
-        try {
-            options.SetOutput(std::string(input.dest));
-            LOG_IF(options.IsListFiles(), INFO, ES2PANDA)
-                << "> es2panda: compiling from '" << input.filePath << "' to '" << input.dest << "'";
-            auto program =
-                compiler_->Compile(compiler::CompilationUnit {input, options, 0, ext_, diagnosticEngine}, &context);
-            result.push_back(program);
-        } catch (const util::ThrowableDiagnostic &err) {
-            overallRes |= 1U;
-            diagnosticEngine.Log(err);
-        }
-        context.compilingState = public_lib::CompilingState::MULTI_COMPILING_FOLLOW;
-    }
-    delete context.transitionMemory;
-    return overallRes;
 }
 
 std::string Compiler::GetPhasesList() const

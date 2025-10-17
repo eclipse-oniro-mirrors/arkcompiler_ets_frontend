@@ -36,7 +36,6 @@ Program::Program(ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
       extension_(varbinder != nullptr ? varbinder->Extension() : ScriptExtension::INVALID),
       etsnolintCollection_(allocator_->Adapter()),
       cfg_(allocator_->New<compiler::CFG>(allocator_)),
-      functionScopes_(allocator_->Adapter()),
       varbinders_(allocator_->Adapter()),
       checkers_(allocator_->Adapter())
 {
@@ -161,35 +160,19 @@ bool Program::NodeContainsETSNolint(const ir::AstNode *node, ETSWarnings warning
     return nodeEtsnolints->second.find(warning) != nodeEtsnolints->second.end();
 }
 
-void Program::SetFlag(ProgramFlags flag)
-{
-    ES2PANDA_ASSERT(VarBinder() != nullptr && VarBinder()->GetContext() != nullptr);
-    auto compilingState = VarBinder()->GetContext()->compilingState;
-    if (compilingState == public_lib::CompilingState::MULTI_COMPILING_INIT ||
-        compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-        programFlags_ |= flag;
-    }
-}
-
-bool Program::GetFlag(ProgramFlags flag) const
-{
-    return (programFlags_ & flag) != 0U;
-}
-
 void Program::SetASTChecked()
 {
-    programFlags_ |= ProgramFlags::AST_CHECKED;
+    isAstChecked_ = true;
 }
 
 void Program::RemoveAstChecked()
 {
-    programFlags_ &= ~ProgramFlags::AST_CHECKED;
+    isAstChecked_ = false;
 }
 
 bool Program::IsASTChecked()
 {
-    return ((programFlags_ & ProgramFlags::AST_CHECKED) != 0U) ||
-           ((programFlags_ & ProgramFlags::AST_CHECK_PROCESSED) != 0U);
+    return isAstChecked_;
 }
 
 Program::~Program()  // NOLINT(modernize-use-equals-default)

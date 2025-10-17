@@ -262,10 +262,6 @@ ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseDefaultSources(std::stri
     GetContext().Status() &= ~ParserStatus::IN_DEFAULT_IMPORTS;
 
     std::vector<Program *> programs;
-    auto *ctx = GetProgram()->VarBinder()->GetContext();
-    if (ctx->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-        return statements;
-    }
 
     if (!Context()->compiledByCapi) {
         AddExternalSource(ParseSources());
@@ -342,22 +338,6 @@ void ETSParser::AddGenExtenralSourceToParseList(public_lib::Context *ctx)
         ctx->parser->AsETSParser()->GetImportPathManager()->AddToParseList(importData);
     }
     ctx->parser->AsETSParser()->AddExternalSource(ctx->parser->AsETSParser()->ParseSources(true));
-}
-
-static bool SearchImportedExternalSources(ETSParser *parser, const std::string_view &path)
-{
-    auto *ctx = parser->GetGlobalProgram()->VarBinder()->GetContext();
-    if (ctx->compilingState != public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-        return false;
-    }
-    for (const auto &[moduleName, extPrograms] : ctx->externalSources) {
-        for (auto *const extProg : extPrograms) {
-            if (extProg->SourceFilePath() == path) {
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 bool ETSParser::TryMergeFromCache(util::ImportPathManager::ImportMetadata const &importData)
@@ -474,10 +454,6 @@ std::vector<Program *> ETSParser::ParseSources(bool firstSource)
         for (size_t idx = 0; idx < parseList.size(); idx++) {
             if (parseList[idx].isParsed) {
                 // Handle excluded files, which are already set to be parsed before parsing them
-                continue;
-            }
-            if (SearchImportedExternalSources(this, parseList[idx].importData.resolvedSource)) {
-                parseList[idx].isParsed = true;
                 continue;
             }
             directImportsFromMainSource.emplace_back(parseList[idx].importData.resolvedSource);

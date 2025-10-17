@@ -64,8 +64,7 @@ using ArgRange = std::pair<uint32_t, uint32_t>;
 
 class Checker {
 public:
-    explicit Checker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine,
-                     ThreadSafeArenaAllocator *programAllocator = nullptr);
+    explicit Checker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine);
     virtual ~Checker() = default;
 
     NO_COPY_SEMANTIC(Checker);
@@ -238,9 +237,10 @@ public:
 
     virtual void CleanUp();
 
+    // legacy API, use Allocator() instead
     [[nodiscard]] ThreadSafeArenaAllocator *ProgramAllocator()
     {
-        return programAllocator_ == nullptr ? allocator_ : programAllocator_;
+        return allocator_;
     }
 
     bool IsDeclForDynamicStaticInterop() const;
@@ -251,7 +251,6 @@ protected:
 
 private:
     ThreadSafeArenaAllocator *allocator_;
-    ThreadSafeArenaAllocator *programAllocator_ {nullptr};
     CheckerContext context_;
     GlobalTypesHolder *globalTypes_ {nullptr};
     TypeRelation *relation_;

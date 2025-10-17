@@ -81,10 +81,9 @@ using TypePtr = Type *;
 
 class ETSChecker final : public Checker {
 public:
-    explicit ETSChecker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine,
-                        ThreadSafeArenaAllocator *programAllocator = nullptr)
+    explicit ETSChecker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
         // NOLINTNEXTLINE(readability-redundant-member-init)
-        : Checker(allocator, diagnosticEngine, programAllocator),
+        : Checker(allocator, diagnosticEngine),
           arrayTypes_(Allocator()->Adapter()),
           objectInstantiationMap_(Allocator()->Adapter()),
           invokeToArrowSignatures_(Allocator()->Adapter()),

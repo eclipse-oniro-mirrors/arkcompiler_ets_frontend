@@ -370,11 +370,6 @@ options:
   default: []
   description: Bytecode optimizer's compiler arguments
 
-- name: perm-arena
-  type: bool
-  default: false
-  description: Place AST trees in permanent arena
-
 - name: dump-perf-metrics
   type: bool
   default: false

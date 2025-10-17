@@ -347,7 +347,7 @@ static void InitializeContext(Context *res)
                                         parser::ParserStatus::NO_OPTS);
     res->parser->SetContext(res);
 
-    res->PushChecker(res->allocator->New<checker::ETSChecker>(res->allocator, *res->diagnosticEngine, res->allocator));
+    res->PushChecker(res->allocator->New<checker::ETSChecker>(res->allocator, *res->diagnosticEngine));
     res->PushAnalyzer(res->allocator->New<checker::ETSAnalyzer>(res->GetChecker()));
     res->GetChecker()->SetAnalyzer(res->GetAnalyzer());
 

@@ -80,34 +80,12 @@ static int CompileFromSource(es2panda::Compiler &compiler, es2panda::SourceFile 
 
 using StringPairVector = std::vector<std::pair<std::string, std::string>>;
 
-static int CompileMultipleFiles(es2panda::Compiler &compiler, std::vector<SourceFile> &inputs, util::Options *options,
-                                util::DiagnosticEngine &diagnosticEngine)
-{
-    std::vector<pandasm::Program *> result;
-    auto overallRes = compiler.CompileM(inputs, *options, diagnosticEngine, result);
-    for (size_t i = 0; i < result.size(); i++) {
-        auto *program = result[i];
-        if (program == nullptr) {
-            overallRes |= 1U;
-            continue;
-        }
-        options->SetOutput(std::string(inputs[i].dest));
-        overallRes |= (unsigned int)util::GenerateProgram(
-            program, *options,
-            [&diagnosticEngine](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
-                diagnosticEngine.LogDiagnostic(kind, params);
-            });
-    }
-    return overallRes;
-}
-
-static unsigned int ReleaseInputsAndReturn(std::vector<std::string *> &parserInputs, unsigned int returnCode)
+static void ReleaseInputs(std::vector<std::string *> &parserInputs)
 {
     for (auto *input : parserInputs) {
         delete input;
     }
     parserInputs.clear();
-    return returnCode;
 }
 
 static int CompileFromConfig(es2panda::Compiler &compiler, util::Options *options,
@@ -136,10 +114,6 @@ static int CompileFromConfig(es2panda::Compiler &compiler, util::Options *option
         inputs.push_back(input);
     }
 
-    if (options->IsPermArena() && (options->GetExtension() == util::gen::extension::ETS)) {
-        return ReleaseInputsAndReturn(parserInputs, CompileMultipleFiles(compiler, inputs, options, diagnosticEngine));
-    }
-
     for (auto &input : inputs) {
         LOG_IF(options->IsListFiles(), INFO, ES2PANDA)
             << "> es2panda: compiling from '" << input.filePath << "' to '" << input.dest << "'";
@@ -151,7 +125,8 @@ static int CompileFromConfig(es2panda::Compiler &compiler, util::Options *option
             overallRes |= static_cast<unsigned>(res);
         }
     }
-    return ReleaseInputsAndReturn(parserInputs, overallRes);
+    ReleaseInputs(parserInputs);
+    return static_cast<int>(overallRes);
 }
 
 static std::optional<std::vector<util::Plugin>> InitializePlugins(std::vector<std::string> const &names,

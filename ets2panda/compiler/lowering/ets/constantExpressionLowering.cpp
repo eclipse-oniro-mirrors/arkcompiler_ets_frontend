@@ -1351,10 +1351,6 @@ static void PostCheckGlobalIfPackage(public_lib::Context *context, ir::ClassDefi
 
 bool ConstantExpressionLoweringImpl::PerformForModule(parser::Program *program, std::string_view name)
 {
-    if (program->GetFlag(parser::ProgramFlags::AST_CONSTANT_EXPRESSION_LOWERED)) {
-        return true;
-    }
-
     program->Ast()->IterateRecursively([this](ir::AstNode *node) {
         if (node->IsExpression()) {
             PopulateDAGs(node->AsExpression());
@@ -1389,8 +1385,6 @@ bool ConstantExpressionLoweringImpl::PerformForModule(parser::Program *program, 
     if (program->IsPackage()) {
         PostCheckGlobalIfPackage(context_, program->GlobalClass());
     }
-
-    program->SetFlag(parser::ProgramFlags::AST_CONSTANT_EXPRESSION_LOWERED);
     return true;
 }
 

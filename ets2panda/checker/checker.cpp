@@ -20,12 +20,8 @@
 #include "checker/types/ts/unionType.h"
 
 namespace ark::es2panda::checker {
-Checker::Checker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine,
-                 ThreadSafeArenaAllocator *programAllocator)
-    : allocator_(allocator),
-      programAllocator_(programAllocator),
-      context_(this, CheckerStatus::NO_OPTS),
-      diagnosticEngine_(diagnosticEngine)
+Checker::Checker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
+    : allocator_(allocator), context_(this, CheckerStatus::NO_OPTS), diagnosticEngine_(diagnosticEngine)
 {
     relation_ = ProgramAllocator()->New<TypeRelation>(this);
     globalTypes_ = ProgramAllocator()->New<GlobalTypesHolder>(ProgramAllocator());

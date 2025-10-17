@@ -275,8 +275,7 @@ void Recheck(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, checke
 
         ClearHelper(program);
 
-        auto newChecker =
-            ctx->allocator->New<checker::ETSChecker>(ctx->allocator, *ctx->diagnosticEngine, ctx->allocator);
+        auto newChecker = ctx->allocator->New<checker::ETSChecker>(ctx->allocator, *ctx->diagnosticEngine);
         auto analyzer = ctx->allocator->New<checker::ETSAnalyzer>(newChecker);
 
         ctx->PushAnalyzer(analyzer);
