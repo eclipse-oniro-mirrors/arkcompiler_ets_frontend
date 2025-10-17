@@ -17,7 +17,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<observer.TextChangeEventInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -57,7 +57,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<observer.TextChangeEventInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -91,7 +91,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<observer.WindowSizeLayoutBreakpointInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -125,7 +125,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<observer.WindowSizeLayoutBreakpointInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -159,7 +159,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<observer.TextChangeEventInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -199,7 +199,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<observer.TextChangeEventInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -233,7 +233,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<string>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -267,7 +267,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<ContinuationResult>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -301,7 +301,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<ContinuationResult>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -335,7 +335,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<string>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -369,7 +369,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<boolean>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -403,7 +403,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<CaptionsStyle>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -437,7 +437,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<boolean>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -471,7 +471,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<CaptionsStyle>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -511,7 +511,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<TabContentInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -551,7 +551,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<TabContentInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -585,7 +585,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<TabContentInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -619,7 +619,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<TabContentInfo>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -653,7 +653,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<AvoidArea>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -687,7 +687,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<AvoidArea>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -721,7 +721,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "(sessionId: string, fields: Array<string>) => void",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -755,7 +755,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "(sessionId: string, fields: Array<string>) => void",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -789,8 +789,8 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
-                        "is_optional": false,
+                        "type": "(sessionId: string, networkId: string, status: 'online' | 'offline') => void",
+                        "is_optional": true,
                         "has_default": false
                     }
                 ],
@@ -811,7 +811,7 @@
             "api_info": {
                 "line": 0,
                 "problem": "OverloadBlacklist",
-                "api_name": "on",
+                "api_name": "off",
                 "api_type": "MethodSignature",
                 "api_optional": false,
                 "api_func_args": [
@@ -823,8 +823,8 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
-                        "is_optional": false,
+                        "type": "(sessionId: string, networkId: string, status: 'online' | 'offline') => void",
+                        "is_optional": true,
                         "has_default": false
                     }
                 ],
@@ -857,7 +857,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "(kbController: KeyboardController, textInputClient: TextInputClient) => void",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -891,7 +891,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "(kbController: KeyboardController, textInputClient: TextInputClient) => void",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -919,13 +919,13 @@
                 "api_func_args": [
                     {
                         "name": "type",
-                        "type": "keyboardShow | keyboardHide",
+                        "type": "keyboardShow' | 'keyboardHide",
                         "is_optional": false,
                         "has_default": false
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "() => void",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -953,13 +953,13 @@
                 "api_func_args": [
                     {
                         "name": "type",
-                        "type": "keyboardShow | keyboardHide",
+                        "type": "keyboardShow' | 'keyboardHide",
                         "is_optional": false,
                         "has_default": false
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "() => void",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -993,7 +993,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "(colors: Array<RgbaColor>, wallpaperType: WallpaperType) => void",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1027,7 +1027,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "(colors: Array<RgbaColor>, wallpaperType: WallpaperType) => void",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1061,7 +1061,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<string>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1095,7 +1095,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<string>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1135,7 +1135,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<Array<AppAccountInfo>>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1169,7 +1169,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<Array<AppAccountInfo>>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1203,7 +1203,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<string>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1237,7 +1237,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<string>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1271,7 +1271,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<window.RectChangeOptions>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1305,7 +1305,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<window.RectChangeOptions>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1339,7 +1339,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<{ networkId: string, msg: CooperateMsg }>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1373,7 +1373,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "Callback<void>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1401,13 +1401,13 @@
                 "api_func_args": [
                     {
                         "name": "type",
-                        "type": "headerReceive",
+                        "type": "\"headerReceive\"",
                         "is_optional": false,
                         "has_default": false
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "AsyncCallback<Object>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1441,7 +1441,7 @@
                     },
                     {
                         "name": "callback",
-                        "type": "Callback",
+                        "type": "AsyncCallback<Object>",
                         "is_optional": false,
                         "has_default": false
                     }
@@ -1449,6 +1449,1147 @@
                 "parent_api": [
                     {
                         "api_name": "HttpRequest",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "volumeChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<VolumeEvent>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "ringerModeChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<AudioRingMode>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "deviceChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<DeviceChangeAction>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "interrupt",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "interrupt",
+                        "type": "AudioInterrupt",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<InterruptAction>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "volumeChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<VolumeEvent>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioVolumeManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "spatializationEnabledChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<boolean>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioSpatializationManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "headTrackingEnabledChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<boolean>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioSpatializationManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "deviceChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<DeviceChangeAction>",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "interrupt",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "interrupt",
+                        "type": "AudioInterrupt",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<InterruptAction>",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "volumeChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<VolumeEvent>",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioVolumeManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "spatializationEnabledChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<boolean>",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioSpatializationManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.audio.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "headTrackingEnabledChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<boolean>",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioSpatializationManager",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "bufferingUpdate",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "(infoType: BufferingInfoType, value: number) => void",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "play' | 'pause' | 'stop' | 'reset' | 'dataLoad' | 'finish' | 'volumeChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "() => void",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "timeUpdate",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<number>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "audioInterrupt",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "(info: audio.InterruptEvent) => void",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "error",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "ErrorCallback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "prepare' | 'start' | 'pause' | 'resume' | 'stop' | 'release' | 'reset",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "() => void",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioRecorder",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "error",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "ErrorCallback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AudioRecorder",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "playbackCompleted",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<void>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "VideoPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "bufferingUpdate",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "(infoType: BufferingInfoType, value: number) => void",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "VideoPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "startRenderFrame",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "Callback<void>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "VideoPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "videoSizeChanged",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "(width: number, height: number) => void",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "VideoPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "audioInterrupt",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "(info: audio.InterruptEvent) => void",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "VideoPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.media.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "error",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "ErrorCallback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "VideoPlayer",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.avsession.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "playFromAssetId",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "(assetId: number) => void",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AVSession",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.avsession.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "playFromAssetId",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "(assetId: number) => void",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "AVSession",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.camera.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "focusStateChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "AsyncCallback<FocusState>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "CaptureSession",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.camera.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "error",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "ErrorCallback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "CaptureSession",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.camera.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "on",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "captureStart",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "AsyncCallback<number>",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "PhotoOutput",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.camera.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "focusStateChange",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "AsyncCallback<FocusState>",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "CaptureSession",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.camera.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "error",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "ErrorCallback",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "CaptureSession",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "int;"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.multimedia.camera.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBlacklist",
+                "api_name": "off",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "captureStart",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "AsyncCallback<number>",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "PhotoOutput",
                         "api_type": "InterfaceDeclaration"
                     }
                 ],
