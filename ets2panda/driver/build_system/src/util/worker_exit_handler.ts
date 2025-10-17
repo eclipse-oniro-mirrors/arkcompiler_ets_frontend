@@ -60,7 +60,7 @@ export function handleCompileProcessWorkerExit(
     return LogDataFactory.newInstance(
         ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
         getErrorMessage(workerInfo, task, code, signal),
-        "This error is likely caused internally from compiler.",
+        'This error is likely caused internally from compiler.',
         task.payload.fileList[0],
         [`Run locally: ${cmd.join(' ')}`]
     )
@@ -75,6 +75,6 @@ export function handleDeclgenWorkerExit(
     return LogDataFactory.newInstance(
         ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
         getErrorMessage(workerInfo, task, code, signal),
-        "This error is likely caused internally from compiler.",
+        'This error is likely caused internally from compiler.',
     )
 }
