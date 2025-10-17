@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-import { CustomStyles } from '@kit.ArkUI';
-
 import {
   CommonMethod,
   Color,
@@ -23,6 +21,7 @@ import {
   BuilderParam,
   Require,
   Button,
+  CustomStyles,
 } from '@kit.ArkUI';
 
 function NormalStyles(instance: CommonMethod): void {

@@ -14,9 +14,10 @@
  */
 
 'use static'
-import { Entry } from '@kit.ArkUI';
-
-import { Component } from '@kit.ArkUI';
+import {
+  Component,
+  Entry,
+} from '@kit.ArkUI';
 
 @Entry
 @Component

@@ -14,17 +14,14 @@
  */
 
 import {
-  CustomStyles,
-  applyStyles,
-} from '@kit.ArkUI';
-
-import {
   Entry,
   Component,
   CommonMethod,
   Column,
   Text,
   Color,
+  CustomStyles,
+  applyStyles,
 } from '@kit.ArkUI';
 
 @Entry

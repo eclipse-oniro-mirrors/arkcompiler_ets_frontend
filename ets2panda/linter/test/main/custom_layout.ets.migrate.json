@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 60,
+            "line": 59,
             "column": 1,
-            "endLine": 60,
+            "endLine": 59,
             "endColumn": 14,
             "problem": "DecoratorsNotSupported",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 87,
+            "line": 86,
             "column": 1,
-            "endLine": 87,
+            "endLine": 86,
             "endColumn": 14,
             "problem": "DecoratorsNotSupported",
             "suggest": "",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 118,
+            "line": 117,
             "column": 1,
-            "endLine": 118,
+            "endLine": 117,
             "endColumn": 14,
             "problem": "DecoratorsNotSupported",
             "suggest": "",
