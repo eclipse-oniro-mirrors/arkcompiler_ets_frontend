@@ -434,27 +434,35 @@ static std::string FormUnitName(std::string_view name)
     return std::string(name);
 }
 
-// Transform /a/b/c.ets to a.b.c
-static std::string FormRelativeModuleName(std::string relPath)
+std::string ImportPathManager::TruncateFileExtension(std::string path, bool &hasExtension)
 {
-    bool isMatched = false;
+    hasExtension = false;
     // Supported extensions: keep this checking order, and source files should follow header files
     std::array<std::string, ALLOWED_EXTENSIONS_SIZE> supportedExtensionsDesc = {".d.ets", ".ets", ".d.sts", ".sts",
                                                                                 ".d.ts",  ".ts",  ".js",    ".abc"};
     for (const auto &ext : supportedExtensionsDesc) {
-        if (relPath.size() >= ext.size() && relPath.compare(relPath.size() - ext.size(), ext.size(), ext) == 0) {
-            relPath = relPath.substr(0, relPath.size() - ext.size());
-            isMatched = true;
+        if (path.size() >= ext.size() && path.compare(path.size() - ext.size(), ext.size(), ext) == 0) {
+            path = path.substr(0, path.size() - ext.size());
+            hasExtension = true;
             break;
         }
     }
+    return path;
+}
+
+// Transform /a/b/c.ets to a.b.c
+std::string ImportPathManager::FormRelativeModuleName(std::string relPath)
+{
+    bool hasExtension = false;
+    relPath = TruncateFileExtension(relPath, hasExtension);
     if (relPath.empty()) {
         return "";
     }
 
-    if (!isMatched) {
+    if (!hasExtension) {
         ASSERT_PRINT(false, "Invalid relative filename: " + relPath);
     }
+
     while (relPath[0] == util::PATH_DELIMITER) {
         relPath = relPath.substr(1);
     }
@@ -513,8 +521,8 @@ util::StringView ImportPathManager::FormModuleName(const util::Path &path)
     std::string const filePath(path.GetAbsolutePath());
 
     // should be implemented with a stable name -> path mapping list
-    auto const tryFormModuleName = [filePath](std::string_view unitName,
-                                              std::string_view unitPath) -> std::optional<std::string> {
+    auto const tryFormModuleName = [this, filePath](std::string_view unitName,
+                                                    std::string_view unitPath) -> std::optional<std::string> {
         if (filePath.rfind(unitPath, 0) != 0) {
             return std::nullopt;
         }
