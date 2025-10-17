@@ -84,6 +84,7 @@ set(ES2PANDA_LSP_SRC
   ./src/refactors/convert_function.cpp
   ./src/refactors/convert_function_to_class.cpp
   ./src/refactors/convert_import.cpp
+  ./src/refactors/generate_override_methods.cpp
   ./src/refactors/convert_overload_list.cpp
   ./src/refactors/convert_params_to_object.cpp
   ./src/refactors/convert_template.cpp

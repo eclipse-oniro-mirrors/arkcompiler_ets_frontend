@@ -116,6 +116,10 @@ ets2panda_add_gtest(lsp_api_test_refactors_convert_chain CPP_SOURCES
     refactors_convert_chain_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_refactors_generate_override_methods CPP_SOURCES
+    refactors_generate_override_methods_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_refactors_convert_export CPP_SOURCES
     refactors_convert_export_test.cpp
 )

@@ -82,6 +82,7 @@ constexpr std::string_view CONVERT_EXPORT_REFACTOR_NAME = "Convert export";
 constexpr std::string_view CONVERT_IMPORT_REFACTOR_NAME = "Convert import";
 constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_NAME = "Convert to template string";
 constexpr std::string_view CONVERT_CHAIN_REFACTOR_NAME = "Convert to optional chain expression";
+constexpr std::string_view GENERATE_OVERRIDE_METHODS_NAME = "Generate override methods";
 constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_NAME = "Convert to Class";
 constexpr std::string_view INFER_FUNCTION_RETURN_TYPE = "Infer function return type";
 constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_NAME = "Convert overload list to single signature";
@@ -93,6 +94,7 @@ namespace refactor_description {
 constexpr std::string_view CONVERT_FUNCTION_REFACTOR_DESC = "Convert arrow function or function expression";
 constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_DESC = "Convert to template string";
 constexpr std::string_view CONVERT_CHAIN_REFACTOR_DESC = "Convert to optional chain expression";
+constexpr std::string_view GENERATE_OVERRIDE_METHODS_DESC = "Generate override methods";
 constexpr std::string_view CONVERT_IMPORT_REFACTOR_DESC = "Convert to named import";
 constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_DESC =
     "Convert a standalone function, arrow function, or function expression into a class declaration";
