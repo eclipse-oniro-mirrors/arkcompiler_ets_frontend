@@ -105,12 +105,24 @@ ir::AstNode *GetContextualTypeNode(ir::AstNode *node)
         if (node->Parent()->Type() == ir::AstNodeType::CLASS_PROPERTY) {
             auto propertyObj = node->Parent()->AsClassElement();
             auto type = propertyObj->TsType();
+            // note: There should not be a null pointer here.
+            // This is a temporary workaround to avoid null pointer issues.
+            // A proper fix may require modifying the checker-related code in issue 30716.
+            if (!type->Variable() || !type->Variable()->Declaration()) {
+                return nullptr;
+            }
             auto contextualTypeNode = type->Variable()->Declaration()->Node();
             return contextualTypeNode;
         }
         if (node->Parent()->Type() == ir::AstNodeType::ASSIGNMENT_EXPRESSION) {
             auto propertyObj = node->Parent()->AsAssignmentExpression();
             auto type = propertyObj->TsType();
+            // note: There should not be a null pointer here.
+            // This is a temporary workaround to avoid null pointer issues.
+            // A proper fix may require modifying the checker-related code in issue 30716.
+            if (!type->Variable() || !type->Variable()->Declaration()) {
+                return nullptr;
+            }
             auto contextualTypeNode = type->Variable()->Declaration()->Node();
             return contextualTypeNode;
         }
@@ -207,6 +219,9 @@ ir::AstNode *GetNodeAtLocationForQuickInfo(ir::AstNode *node)
         auto object = GetContainingObjectLiteralNode(node);
         if (object != nullptr) {
             auto contextualTypeNode = GetContextualTypeNode(object->Parent());
+            if (!contextualTypeNode) {
+                return nullptr;
+            }
             return GetPropertyNodeFromContextualType(object, contextualTypeNode);
         }
         return GetNodeAtLocation(node);
