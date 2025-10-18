@@ -159,6 +159,8 @@ export const serializationTypeName: Set<string> = new Set([
 
 export const customLayoutFunctionName: Set<string> = new Set(['onMeasureSize', 'onPlaceChildren']);
 
+export const globalDepreApis: Set<string> = new Set(['onMeasure', 'onLayout']);
+
 export const ENTRY_DECORATOR_NAME = 'Entry';
 export const ENTRY_STORAGE = 'storage';
 export const ENTRY_USE_SHARED_STORAGE = 'useSharedStorage';
