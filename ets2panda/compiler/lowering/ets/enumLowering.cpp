@@ -98,11 +98,9 @@ bool EnumLoweringPhase::CheckEnumMemberType(const ArenaVector<ir::AstNode *> &en
                 hasLoggedError = true;
             }
         } else if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::DOUBLE) {
-            if (!init->IsNumberLiteral() ||
-                !(init->AsNumberLiteral()->Number().IsDouble() || init->AsNumberLiteral()->Number().IsFloat())) {
+            if (!init->IsNumberLiteral()) {
                 LogError(diagnostic::ERROR_ARKTS_NO_ENUM_MIXED_TYPES, {}, init->Start());
                 hasLoggedError = true;
-
                 continue;
             }
             if (member->AsTSEnumMember()->IsGenerated()) {
