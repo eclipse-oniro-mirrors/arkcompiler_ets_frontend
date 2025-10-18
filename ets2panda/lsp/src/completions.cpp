@@ -517,17 +517,23 @@ std::vector<CompletionEntry> GetCompletionFromMethodDefinition(ir::MethodDefinit
 
 ir::AstNode *GetIndentifierFromCallExpression(ir::AstNode *node)
 {
-    if (!node->IsCallExpression()) {
+    if (node == nullptr) {
         return nullptr;
     }
-    auto callee = node->AsCallExpression()->Callee();
-    if (callee != nullptr && callee->IsMemberExpression()) {
-        auto object = callee->AsMemberExpression()->Object();
-        if (object->IsCallExpression()) {
-            return GetIndentifierFromCallExpression(object);
-        }
+    if (!node->IsCallExpression() && !node->IsMemberExpression()) {
+        return nullptr;
     }
-    return callee;
+    auto callee = node;
+    if (node->IsCallExpression()) {
+        callee = node->AsCallExpression()->Callee();
+    }
+    if (callee->IsIdentifier()) {
+        return callee;
+    }
+    if (callee == nullptr || !callee->IsMemberExpression()) {
+        return nullptr;
+    }
+    return callee->AsMemberExpression()->Property();
 }
 
 util::StringView GetNameFromDefinition(ir::AstNode *preNode)
@@ -600,8 +606,11 @@ std::vector<CompletionEntry> GetPropertyCompletions(ir::AstNode *preNode, const 
     if (preNode == nullptr) {
         return completions;
     }
-    if (preNode->IsCallExpression()) {
+    if (preNode->IsCallExpression() || preNode->IsMemberExpression()) {
         preNode = GetIndentifierFromCallExpression(preNode);
+    }
+    if (preNode == nullptr) {
+        return completions;
     }
     if (preNode->IsThisExpression()) {
         return GetCompletionFromThisExpression(preNode, triggerWord);

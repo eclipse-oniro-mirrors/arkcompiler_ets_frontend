@@ -63,6 +63,38 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
 
 namespace {
 
+TEST_F(LSPCompletionsTests, getCompletionsAtPositionMultiMember)
+{
+    std::vector<std::string> files = {"getCompletionsAtPositionMultiMember.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class MyC {
+  value: number;
+  meth(): MyD {};
+}
+class MyD {
+  val: MyC = new MyC()
+}
+let d = new MyD()
+d.val.meth().val.)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 122;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("meth", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(GLOBALS_OR_KEYWORDS), "meth()"),
+                                      CompletionEntry("value", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                                                      std::string(GLOBALS_OR_KEYWORDS), "value")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LSPCompletionsTests, getCompletionsAtPosition19)
 {
     std::vector<std::string> files = {"getCompletionsAtPosition20.ets"};
