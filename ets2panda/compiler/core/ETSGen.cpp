@@ -1021,6 +1021,10 @@ void ETSGen::CastToBoolean([[maybe_unused]] const ir::AstNode *node)
             Sa().Emit<I32tou1>(node);
             break;
         }
+        case checker::TypeFlag::ETS_OBJECT:
+        case checker::TypeFlag::ETS_NEVER: {
+            break;
+        }
         default: {
             ES2PANDA_UNREACHABLE();
         }
@@ -1061,7 +1065,8 @@ void ETSGen::CastToByte([[maybe_unused]] const ir::AstNode *node)
             Sa().Emit<I32toi8>(node);
             break;
         }
-        case checker::TypeFlag::ETS_OBJECT: {
+        case checker::TypeFlag::ETS_OBJECT:
+        case checker::TypeFlag::ETS_NEVER: {
             break;
         }
         default: {
@@ -1109,7 +1114,8 @@ void ETSGen::CastToChar([[maybe_unused]] const ir::AstNode *node)
             Sa().Emit<I32tou16>(node);
             break;
         }
-        case checker::TypeFlag::ETS_OBJECT: {
+        case checker::TypeFlag::ETS_OBJECT:
+        case checker::TypeFlag::ETS_NEVER: {
             break;
         }
         default: {
@@ -1154,7 +1160,8 @@ void ETSGen::CastToShort([[maybe_unused]] const ir::AstNode *node)
             Sa().Emit<I32toi16>(node);
             break;
         }
-        case checker::TypeFlag::ETS_OBJECT: {
+        case checker::TypeFlag::ETS_OBJECT:
+        case checker::TypeFlag::ETS_NEVER: {
             break;
         }
         default: {
@@ -1229,7 +1236,8 @@ void ETSGen::CastToFloat(const ir::AstNode *node)
             Sa().Emit<F64tof32>(node);
             break;
         }
-        case checker::TypeFlag::ETS_OBJECT: {
+        case checker::TypeFlag::ETS_OBJECT:
+        case checker::TypeFlag::ETS_NEVER: {
             break;
         }
         default: {
@@ -1267,7 +1275,8 @@ void ETSGen::CastToLong(const ir::AstNode *node)
             break;
         }
         case checker::TypeFlag::ETS_ARRAY:
-        case checker::TypeFlag::ETS_OBJECT: {
+        case checker::TypeFlag::ETS_OBJECT:
+        case checker::TypeFlag::ETS_NEVER: {
             break;
         }
         default: {
@@ -1303,7 +1312,8 @@ void ETSGen::CastToInt(const ir::AstNode *node)
             Sa().Emit<F64toi32>(node);
             break;
         }
-        case checker::TypeFlag::ETS_OBJECT: {
+        case checker::TypeFlag::ETS_OBJECT:
+        case checker::TypeFlag::ETS_NEVER: {
             break;
         }
         default: {

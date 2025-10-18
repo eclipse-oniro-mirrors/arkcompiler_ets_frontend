@@ -69,6 +69,9 @@ void ETSCompiler::Compile(const ir::ClassProperty *st) const
         etsg->LoadDefaultValue(st, st->TsType());
     } else {
         st->Value()->Compile(etsg);
+        if (st->Value()->TsType()->IsETSNeverType()) {
+            return;
+        }
         etsg->ApplyConversion(st->Value(), st->TsType());
     }
 
@@ -399,6 +402,10 @@ void ETSCompiler::Compile(const ir::AssignmentExpression *expr) const
     expr->Right()->Compile(etsg);
     etsg->ApplyConversion(expr->Right(), exprType);
     etsg->SetAccumulatorType(exprType);
+
+    if (expr->Right()->TsType()->IsETSNeverType()) {
+        return;
+    }
 
     if (expr->Right()->TsType()->IsETSBigIntType()) {
         // For bigints we have to copy the bigint object when performing an assignment operation
