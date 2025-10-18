@@ -190,7 +190,7 @@ defines:
     ref: SYMBOL
   - name: 'escompat.Array'
     ref: ESCOMPAT_ARRAY
-  - name: 'escompat.ReadonlyArray'
+  - name: 'std.core.ReadonlyArray'
     ref: ESCOMPAT_READONLYARRAY
   - name: 'ByteType.VAL'
     ref: BYTETYPE_VAL
