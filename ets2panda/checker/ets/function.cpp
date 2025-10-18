@@ -1689,6 +1689,36 @@ checker::Type *ETSChecker::BuildMethodSignature(ir::MethodDefinition *method)
     return methodId->Variable()->SetTsType(funcType);
 }
 
+static bool CheckRestParamOverload(Signature *funcSig, Signature *overloadSig, TypeRelation *relation)
+{
+    if (std::abs(static_cast<int32_t>(funcSig->ArgCount() - overloadSig->ArgCount())) != 1) {
+        return true;
+    }
+    if (!relation->NoReturnTypeCheck() && !relation->IsIdenticalTo(funcSig->ReturnType(), overloadSig->ReturnType())) {
+        return true;
+    }
+
+    for (size_t idx = 0; idx < std::min(funcSig->ArgCount(), overloadSig->ArgCount()); ++idx) {
+        if (!relation->IsIdenticalTo(funcSig->Params()[idx]->TsType(), overloadSig->Params()[idx]->TsType())) {
+            return true;
+        }
+    }
+
+    auto isLastParamIdentical = [&](Signature *withRest, Signature *withArray) {
+        if (withArray->Params().empty()) {
+            return false;
+        }
+        auto *lastParamType = withArray->Params().back()->TsType();
+        bool isArray = lastParamType->IsETSArrayType() || lastParamType->IsETSResizableArrayType();
+        return isArray && relation->IsIdenticalTo(lastParamType, withRest->RestVar()->TsType());
+    };
+    if ((funcSig->HasRestParameter() && isLastParamIdentical(funcSig, overloadSig)) ||
+        (overloadSig->HasRestParameter() && isLastParamIdentical(overloadSig, funcSig))) {
+        return false;
+    }
+    return true;
+}
+
 bool ETSChecker::CheckIdenticalOverloads(ETSFunctionType *func, ETSFunctionType *overload,
                                          const ir::MethodDefinition *const currentFunc, bool omitSameAsm,
                                          TypeRelationFlag relationFlags)
@@ -1701,9 +1731,16 @@ bool ETSChecker::CheckIdenticalOverloads(ETSFunctionType *func, ETSFunctionType 
 
     SavedTypeRelationFlagsContext savedFlagsCtx(Relation(), relationFlags);
 
-    Relation()->SignatureIsIdenticalTo(func->CallSignatures()[0], overload->CallSignatures()[0]);
-    if (Relation()->IsTrue() && func->CallSignatures()[0]->GetSignatureInfo()->restVar ==
-                                    overload->CallSignatures()[0]->GetSignatureInfo()->restVar) {
+    auto *funcSig = func->CallSignatures()[0];
+    auto *overloadSig = overload->CallSignatures()[0];
+    Relation()->SignatureIsIdenticalTo(funcSig, overloadSig);
+    if (Relation()->IsTrue() && funcSig->GetSignatureInfo()->restVar == overloadSig->GetSignatureInfo()->restVar) {
+        LogError(diagnostic::FUNCTION_REDECL_BY_TYPE_SIG, {overload->Name().Mutf8()}, currentFunc->Start());
+        return false;
+    }
+
+    if (funcSig->HasRestParameter() != overloadSig->HasRestParameter() &&
+        !CheckRestParamOverload(funcSig, overloadSig, Relation())) {
         LogError(diagnostic::FUNCTION_REDECL_BY_TYPE_SIG, {overload->Name().Mutf8()}, currentFunc->Start());
         return false;
     }
