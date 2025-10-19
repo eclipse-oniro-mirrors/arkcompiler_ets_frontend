@@ -85,6 +85,11 @@ constexpr std::string_view CONVERT_CHAIN_REFACTOR_NAME = "Convert to optional ch
 constexpr std::string_view GENERATE_OVERRIDE_METHODS_NAME = "Generate override methods";
 constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_NAME = "Convert to Class";
 constexpr std::string_view INFER_FUNCTION_RETURN_TYPE = "Infer function return type";
+
+constexpr std::string_view EXTRACT_CONSTANT_ACTION_NAME = "Extract Constant";
+constexpr std::string_view EXTRACT_FUNCTION_ACTION_NAME = "Extract Function";
+constexpr std::string_view EXTRACT_VARIABLE_ACTION_NAME = "Extract Variable";
+
 constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_NAME = "Convert overload list to single signature";
 constexpr std::string_view CONVERT_PARAMS_TO_OBJECT = "Convert parameters to object and introduce interface";
 constexpr std::string_view GENERATE_CONSTRUCTOR_REFACTOR_NAME = "Generate Constructor";
@@ -99,6 +104,11 @@ constexpr std::string_view CONVERT_IMPORT_REFACTOR_DESC = "Convert to named impo
 constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_DESC =
     "Convert a standalone function, arrow function, or function expression into a class declaration";
 constexpr std::string_view INFER_FUNCTION_RETURN_TYPE_DESC = "Infer function return type";
+
+constexpr std::string_view EXTRACT_CONSTANT_ACTION_DESC = "Extract Constant";
+constexpr std::string_view EXTRACT_FUNCTION_ACTION_DESC = "Extract Function";
+constexpr std::string_view EXTRACT_VARIABLE_ACTION_DESC = "Extract Variable";
+
 constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_DESC =
     "Convert multiple function overloads to a single signature with union types";
 constexpr std::string_view CONVERT_PARAMS_TO_OBJECT_DESC =
