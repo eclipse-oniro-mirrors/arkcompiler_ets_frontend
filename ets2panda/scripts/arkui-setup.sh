@@ -169,6 +169,11 @@ function skip_linker_verification_error() {
 
 export ENABLE_BUILD_CACHE=0
 
+ES2PANDA_LIB_IDL="incremental/tools/panda/node_modules/@panda/sdk/ohos_arm64/include/tools/es2panda/generated/es2panda_lib/es2panda_lib.idl"
+
+npm i @idlizer/idlinter
+npx @idlizer/idlinter --check "${ES2PANDA_LIB_IDL}" || exit 1
+
 # Compile libarkts
 pushd ui2abc/libarkts || exit 1
 run_script "regenerate"

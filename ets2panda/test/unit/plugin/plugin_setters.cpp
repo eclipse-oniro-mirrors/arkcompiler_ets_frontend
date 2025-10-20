@@ -781,7 +781,7 @@ int TestForUpdateStatementSetUpdate()
 
     impl->ForUpdateStatementSetUpdate(context, loop, expr);
 
-    if (impl->ForUpdateStatementUpdateConst(context, loop) != expr) {
+    if (impl->ForUpdateStatementUpdateExpressionConst(context, loop) != expr) {
         return TEST_ERROR_CODE;
     }
     if (impl->AstNodeParentConst(context, expr) != loop) {
